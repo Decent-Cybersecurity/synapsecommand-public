@@ -1,2 +1,2 @@
-# synapsecommand
+# synapsecommand - public
 SynapseCommand integration layer: canonical data model, schemas, adapter SDK
