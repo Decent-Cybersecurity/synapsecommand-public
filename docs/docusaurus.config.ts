@@ -18,10 +18,11 @@ const config: Config = {
   tagline: 'Canonical Data Model, JSON Schema and adapter SDK',
   favicon: 'img/favicon.ico',
 
-  // Placeholder until the project is given its own hostname. Cloudflare Pages serves the
-  // site at <project>.pages.dev, and `url` only affects absolute links (sitemap, og tags),
-  // so a placeholder here cannot break navigation.
-  url: 'https://synapsecommand.pages.dev',
+  // The custom domain the docs are served on. `url` feeds absolute links only — the sitemap,
+  // canonical tags, og tags — so it does not affect navigation, which is exactly why a wrong
+  // value here is worth fixing deliberately: nothing breaks visibly, and every crawler and
+  // every shared link points somewhere that is not the site.
+  url: 'https://docs.synapsecommand.com',
   baseUrl: '/',
 
   // A broken link in a contract reference is a wrong contract, so it fails the build rather
@@ -56,7 +57,7 @@ const config: Config = {
           // a reader who spots a wrong field lands on the file that says DO NOT EDIT and
           // reads why.
           editUrl:
-            'https://github.com/decent-cybersecurity/synapsecommand-public/tree/main/docs/',
+            'https://github.com/decentcybersecurity/synapsecommand-public/tree/main/docs/',
           showLastUpdateTime: true,
         },
         blog: false,
@@ -88,7 +89,7 @@ const config: Config = {
       items: [
         {type: 'docSidebar', sidebarId: 'cdmSidebar', position: 'left', label: 'Documentation'},
         {
-          href: 'https://github.com/decent-cybersecurity/synapsecommand-public',
+          href: 'https://github.com/decentcybersecurity/synapsecommand-public',
           label: 'Repository',
           position: 'right',
         },
@@ -111,7 +112,7 @@ const config: Config = {
             {label: 'Writing an Adapter', to: '/writing-an-adapter'},
             {
               label: 'Repository',
-              href: 'https://github.com/decent-cybersecurity/synapsecommand-public',
+              href: 'https://github.com/decentcybersecurity/synapsecommand-public',
             },
           ],
         },
