@@ -1,0 +1,20 @@
+{
+  "frame": {
+    "hex": "880029C55A43C29BA609E4AEC9C8",
+    "prefix": "*"
+  },
+  "message": {
+    "altitude_raw": 1084,
+    "capability": 0,
+    "cpr_format": 0,
+    "cpr_lat": 85459,
+    "cpr_lon": 2532,
+    "df": 17,
+    "icao": "0029C5",
+    "nic_supplement_b": false,
+    "parity": 11454920,
+    "surveillance_status": 1,
+    "time_sync": false,
+    "type_code": 11
+  }
+}

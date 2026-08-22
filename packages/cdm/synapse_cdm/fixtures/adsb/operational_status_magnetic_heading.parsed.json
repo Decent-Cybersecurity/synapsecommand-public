@@ -1,0 +1,25 @@
+{
+  "frame": {
+    "hex": "880029A2F800A3000059BCC5AD61",
+    "prefix": "*"
+  },
+  "message": {
+    "capability": 0,
+    "capability_class": 163,
+    "df": 17,
+    "geometric_vertical_accuracy": 2,
+    "horizontal_reference_direction": 1,
+    "icao": "0029A2",
+    "nac_position": 9,
+    "nic_baro": true,
+    "nic_supplement_a": true,
+    "operational_mode": 0,
+    "parity": 12954977,
+    "reserved_status_b": 0,
+    "sil_supplement": false,
+    "source_integrity_level": 3,
+    "subtype": 0,
+    "type_code": 31,
+    "version": 2
+  }
+}

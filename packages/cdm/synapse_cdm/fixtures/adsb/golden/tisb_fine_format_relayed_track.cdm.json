@@ -1,0 +1,98 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "adsb_capability": 2,
+      "adsb_control_field_text": "fine-format TIS-B message with ICAO 24-bit address",
+      "adsb_downlink_format": 18,
+      "adsb_frame_kind": "airborne_position",
+      "adsb_type_code": 11,
+      "affiliation_basis": "ADS-B is an unauthenticated cooperative broadcast: it states an identity \u2014 a callsign, an emitter category, an address \u2014 and there is no integrity mechanism beyond the CRC, which detects corruption and not forgery. UNKNOWN is therefore not the format's silence but a refusal to read a self-declared, spoofable claim as an identification",
+      "altitude_basis": "Q bit set \u2014 25-foot increments, 208 x 25 - 1000 ft",
+      "altitude_type": "barometric pressure altitude (1013.25 hPa datum)",
+      "baro_altitude_ft": 4200,
+      "cpr_format": 0,
+      "cpr_format_text": "even",
+      "cpr_lat": 67841,
+      "cpr_lon": 8207,
+      "entity_id_basis": "frame address",
+      "icao_address": "0029B1",
+      "position_source_basis": "DF18 control field 2 \u2014 fine-format TIS-B message with ICAO 24-bit address: a ground station's rebroadcast of a surveillance track it derived by other means, not the aircraft's own GNSS fix. ESTIMATED understates rather than overstates the fix, which is the safe direction for this field",
+      "position_unavailable_reason": "a single extended squitter states a position only WITHIN a CPR zone, and no reference position is configured on this adapter. Recovering the zone needs either a second frame of the opposite parity \u2014 which is a join across time and therefore fusion, see FORMAT_COVERAGE.md \u2014 or a receiver reference position. The raw CPR fields (span 360 degrees) are parked verbatim so a fusion layer holding a proper pair can decode them itself",
+      "source_extras": {
+        "frame": {
+          "hex": "920029B1581B021202200FC50A0A",
+          "prefix": "*"
+        },
+        "message": {
+          "nic_supplement_b": false,
+          "time_sync": false
+        }
+      },
+      "surveillance_status": 0,
+      "surveillance_status_text": "no condition information",
+      "symbol_basis": "derived from affiliation; ADS-B states no symbol",
+      "unavailable_fields": [],
+      "valid_from_basis": "an ADS-B extended squitter carries no time field at all \u2014 not a date, not a second of the minute. The receipt instant is used, and the frame itself states nothing about when. The AVR '@' timestamp, where present, is a free-running 12 MHz receiver counter and not a wall clock, so it is parked and never read as one"
+    },
+    "confidence": null,
+    "entity_id": "71856284-f511-5311-9c7c-e78d979d6316",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "adsb",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ADSB"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029B1",
+        "system": "ICAO24"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "e1feed02-d0d9-5cde-adeb-35a2bcc62f5e",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:00.000Z",
+    "payload": {
+      "adsb_frame_kind": "airborne_position",
+      "adsb_type_code": 11,
+      "event_id_basis": "frame address + observed_at",
+      "frame_parity": 12913162,
+      "observed_at_basis": "an ADS-B extended squitter carries no time field at all \u2014 not a date, not a second of the minute. The receipt instant is used, and the frame itself states nothing about when. The AVR '@' timestamp, where present, is a free-running 12 MHz receiver counter and not a wall clock, so it is parked and never read as one",
+      "parity_basis": "the frame's 24-bit parity field, C50A0A, verified as the Mode S CRC of its first 88 bits. A frame that fails is refused rather than best-effort decoded",
+      "received_at_basis": "the injected clock. An ADS-B frame stream carries no wall-clock timestamp \u2014 the AVR '@' field is a receiver counter \u2014 so unlike AIS there is no feed-supplied delivery instant to prefer over ours",
+      "severity_basis": "ADS-B states no urgency outside a surveillance status of 1 and a type code 28 emergency state; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "71856284-f511-5311-9c7c-e78d979d6316"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "adsb",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ADSB"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029B1",
+        "system": "ICAO24"
+      }
+    ]
+  }
+]

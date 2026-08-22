@@ -1,0 +1,27 @@
+{
+  "object_kind": "entity",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "FUSION",
+    "adapter": "adsb",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "ICAO24", "external_id": "0029E1"}
+  ],
+  "entity_id": "6a5c2f19-84be-4d07-b3e1-9f27c05a6d38",
+  "entity_type": "PLATFORM",
+  "affiliation": "UNKNOWN",
+  "symbol": null,
+  "position": null,
+  "kinematics": null,
+  "attributes": {
+    "adsb_type_code": 4,
+    "emitter_category": 7,
+    "callsign": "EXHELO2"
+  },
+  "valid_from": "2026-04-29T06:12:05.000Z",
+  "valid_to": null,
+  "confidence": null
+}

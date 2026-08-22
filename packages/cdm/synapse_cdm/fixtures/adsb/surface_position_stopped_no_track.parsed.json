@@ -1,0 +1,20 @@
+{
+  "frame": {
+    "hex": "880029D2281403CA130D3EA1A7C5",
+    "prefix": "*"
+  },
+  "message": {
+    "capability": 0,
+    "cpr_format": 0,
+    "cpr_lat": 124169,
+    "cpr_lon": 68926,
+    "df": 17,
+    "ground_track_raw": 64,
+    "icao": "0029D2",
+    "movement_raw": 1,
+    "parity": 10594245,
+    "time_sync": false,
+    "track_valid": false,
+    "type_code": 5
+  }
+}

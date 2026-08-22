@@ -82,8 +82,8 @@ discards a real position on the Greenwich meridian or the equator. The test is f
 
 0 kt is measured stillness, 0° is due north, confidence 0 is certainty-that-*not*. All three
 are real measurements, so none can double as "no data". A source's "value not available"
-sentinel — AIS sends 102.3 for unknown speed, CoT sends 9999999 — is **translated**, never
-passed through.
+sentinel — AIS sends 102.3 for unknown speed, CoT sends 9999999, ADS-B sends 0 in a field
+that is otherwise offset by one — is **translated**, never passed through.
 
 ### 5. Every object states whether it is exercise data
 

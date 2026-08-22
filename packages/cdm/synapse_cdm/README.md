@@ -98,6 +98,16 @@ a plausible reading, and it is the one adapter whose egress format has nowhere t
 it cannot map. Or read `adapters/tak.py`, which is where the awkward cases live: XML rather than JSON, a bidirectional
 `from_cdm()`, a source sentinel that must become null, an enum collapse that has to stay
 recoverable, and the two fixture forms an XML adapter needs in order to be checked at all.
+
+Read `adapters/adsb.py` for the case where the format does not give you the value at all. Three
+of its problems recur in any surveillance feed: a **frame with no timestamp**, so `observed_at`
+is receipt time and has to say so; a **position that needs a second message** to resolve, which
+is where the line between translation and fusion gets drawn and where a reference position
+supplied as *configuration* is legitimate while a cache is not; and **two fields that look like
+one** — a barometric and a GNSS altitude, which must not be collapsed into `alt_m` however
+convenient it would be. It is also the adapter whose gate earned its keep most visibly: the
+byte-exact round trip found two silent data losses that every other check passed.
+
 Then:
 
 **1. Declare the class.** The contract is checked at class-definition time, so a mistake here
@@ -194,7 +204,7 @@ packages/cdm/
     adapter.py      the Adapter ABC, its class-definition-time gates, the registry
     schemas.py      JSON Schema export (+ --check for CI)
     harness.py      the adapter-agnostic validation harness
-    adapters/       one module per external system (pntmap, tak, ais)
+    adapters/       one module per external system (pntmap, tak, ais, adsb)
     fixtures/       synthetic payloads + golden outputs
 schemas/            published JSON Schema, generated — never hand-edited
 tests/test_cdm_*.py

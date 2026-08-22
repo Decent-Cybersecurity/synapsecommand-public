@@ -1,0 +1,17 @@
+{
+  "frame": {
+    "hex": "880029A1E1AAA200000000D0E4D7",
+    "prefix": "*"
+  },
+  "message": {
+    "capability": 0,
+    "df": 17,
+    "emergency_state": 5,
+    "icao": "0029A1",
+    "mode_a_code_raw": 2722,
+    "parity": 13690071,
+    "reserved_status": 0,
+    "subtype": 1,
+    "type_code": 28
+  }
+}

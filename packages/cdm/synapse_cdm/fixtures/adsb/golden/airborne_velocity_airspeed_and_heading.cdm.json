@@ -1,0 +1,105 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "adsb_capability": 0,
+      "adsb_downlink_format": 17,
+      "adsb_frame_kind": "airborne_velocity_air",
+      "adsb_subtype": 3,
+      "adsb_type_code": 19,
+      "affiliation_basis": "ADS-B is an unauthenticated cooperative broadcast: it states an identity \u2014 a callsign, an emitter category, an address \u2014 and there is no integrity mechanism beyond the CRC, which detects corruption and not forgery. UNKNOWN is therefore not the format's silence but a refusal to read a self-declared, spoofable claim as an identification",
+      "airspeed_kt": 411.0,
+      "airspeed_type": "true airspeed",
+      "entity_id_basis": "frame address",
+      "gnss_baro_difference_ft": -125,
+      "heading_deg": 286.875,
+      "icao_address": "0029F2",
+      "position_unavailable_reason": "an ADS-B type code 19 frame carries no position fields",
+      "source_extras": {
+        "frame": {
+          "hex": "880029F29B4F30B3903086B8BCA1",
+          "prefix": "*"
+        },
+        "message": {
+          "airspeed_type": 1,
+          "gnss_baro_diff_sign": 1,
+          "heading_valid": true,
+          "ifr_capability": true,
+          "intent_change": false,
+          "nav_uncertainty_velocity": 1,
+          "reserved_velocity": 0,
+          "vertical_rate_sign": 0,
+          "vertical_rate_source": 1
+        }
+      },
+      "symbol_basis": "derived from affiliation; ADS-B states no symbol",
+      "unavailable_fields": [],
+      "valid_from_basis": "an ADS-B extended squitter carries no time field at all \u2014 not a date, not a second of the minute. The receipt instant is used, and the frame itself states nothing about when. The AVR '@' timestamp, where present, is a free-running 12 MHz receiver counter and not a wall clock, so it is parked and never read as one",
+      "velocity_subtype_text": "airspeed and heading, subsonic",
+      "vertical_rate_source": "barometric"
+    },
+    "confidence": null,
+    "entity_id": "489fe8ad-dc34-5097-bab3-e86b4b8e7e28",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 3.5763,
+      "course_deg": null,
+      "speed_mps": null
+    },
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "adsb",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ADSB"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029F2",
+        "system": "ICAO24"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "38f855d9-31cc-5506-8f28-2c80d4b71a62",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:00.000Z",
+    "payload": {
+      "adsb_frame_kind": "airborne_velocity_air",
+      "adsb_type_code": 19,
+      "event_id_basis": "frame address + observed_at",
+      "frame_parity": 12106913,
+      "observed_at_basis": "an ADS-B extended squitter carries no time field at all \u2014 not a date, not a second of the minute. The receipt instant is used, and the frame itself states nothing about when. The AVR '@' timestamp, where present, is a free-running 12 MHz receiver counter and not a wall clock, so it is parked and never read as one",
+      "parity_basis": "the frame's 24-bit parity field, B8BCA1, verified as the Mode S CRC of its first 88 bits. A frame that fails is refused rather than best-effort decoded",
+      "received_at_basis": "the injected clock. An ADS-B frame stream carries no wall-clock timestamp \u2014 the AVR '@' field is a receiver counter \u2014 so unlike AIS there is no feed-supplied delivery instant to prefer over ours",
+      "severity_basis": "ADS-B states no urgency outside a surveillance status of 1 and a type code 28 emergency state; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "489fe8ad-dc34-5097-bab3-e86b4b8e7e28"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "adsb",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ADSB"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029F2",
+        "system": "ICAO24"
+      }
+    ]
+  }
+]

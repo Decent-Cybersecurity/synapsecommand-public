@@ -1,0 +1,15 @@
+{
+  "frame": {
+    "hex": "880029E1211584834F0C60DAF9FE",
+    "prefix": "*"
+  },
+  "message": {
+    "callsign": "EXRCS01",
+    "capability": 0,
+    "df": 17,
+    "emitter_category": 1,
+    "icao": "0029E1",
+    "parity": 14350846,
+    "type_code": 4
+  }
+}

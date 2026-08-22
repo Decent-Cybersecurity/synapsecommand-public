@@ -2,3 +2,10 @@
 # against golden output. Line-ending normalisation would rewrite them on checkout on Windows
 # and every round-trip test would fail on a difference no reader could see in a diff.
 *.nmea -text
+
+# The same rule for ADS-B frames, and for the same reason one step removed. These files are LF
+# and the emitter produces LF, so a checkout that rewrote them to CRLF would fail
+# test_the_ingest_round_trip_is_byte_exact on a difference no reader could see in a diff —
+# `_parse_frames` tolerates CRLF on the way in, which is exactly what would make the failure
+# look like an adapter defect rather than a checkout artefact.
+*.adsb -text

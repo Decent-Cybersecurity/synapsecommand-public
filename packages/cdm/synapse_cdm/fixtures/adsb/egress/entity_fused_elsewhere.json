@@ -1,0 +1,28 @@
+{
+  "object_kind": "entity",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "FUSION",
+    "adapter": "adsb",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "ICAO24", "external_id": "0029F1"}
+  ],
+  "entity_id": "2c1338c6-ba5f-5d79-82ed-2a07dd39da1e",
+  "entity_type": "PLATFORM",
+  "affiliation": "UNKNOWN",
+  "symbol": null,
+  "position": {
+    "lat": 57.0338, "lon": 22.6741, "alt_m": null,
+    "position_source": "GNSS", "accuracy_m": null
+  },
+  "kinematics": {"speed_mps": 148.62, "course_deg": 302.4, "climb_mps": -7.62},
+  "attributes": {
+    "gnss_baro_difference_ft": -175
+  },
+  "valid_from": "2026-04-29T06:14:22.000Z",
+  "valid_to": null,
+  "confidence": null
+}

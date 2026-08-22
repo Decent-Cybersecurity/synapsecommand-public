@@ -1,0 +1,15 @@
+{
+  "frame": {
+    "hex": "880029E2131583414D4C6091F096",
+    "prefix": "*"
+  },
+  "message": {
+    "callsign": "EXMAST1",
+    "capability": 0,
+    "df": 17,
+    "emitter_category": 3,
+    "icao": "0029E2",
+    "parity": 9564310,
+    "type_code": 2
+  }
+}

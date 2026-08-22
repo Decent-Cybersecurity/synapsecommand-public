@@ -1,0 +1,27 @@
+{
+  "frame": {
+    "hex": "880029F19948D693E85018DD00D6",
+    "prefix": "*"
+  },
+  "message": {
+    "capability": 0,
+    "df": 17,
+    "ew_sign": 0,
+    "ew_velocity_raw": 214,
+    "gnss_baro_diff_raw": 24,
+    "gnss_baro_diff_sign": 0,
+    "icao": "0029F1",
+    "ifr_capability": true,
+    "intent_change": false,
+    "nav_uncertainty_velocity": 1,
+    "ns_sign": 1,
+    "ns_velocity_raw": 159,
+    "parity": 14483670,
+    "reserved_velocity": 0,
+    "subtype": 1,
+    "type_code": 19,
+    "vertical_rate_raw": 20,
+    "vertical_rate_sign": 1,
+    "vertical_rate_source": 0
+  }
+}

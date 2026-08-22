@@ -67,6 +67,25 @@ def _unwrap(annotation):
         return annotation
 
 
+#: A model path inside a table cell, e.g. `Track.samples[].observed_at`.
+MODEL_PATH = re.compile(r"^[A-Z][A-Za-z]+(?:\[\])?(?:\.[A-Za-z_]+(?:\[\])?)+$")
+
+
+def _cell_paths(cell: str) -> list[str]:
+    """Every model path a CDM-field cell names — plural, because one source field can set two.
+
+    A source value legitimately lands in more than one canonical field: an ADS-B surveillance
+    status sets `Event.severity` AND `Event.event_type`, and an AIS navigational status does the
+    same. The first version of this parser read one path per cell, so the SECOND path in such a
+    row was never resolved against the models — a stale name there would have survived exactly
+    the rot this test exists to prevent.
+    """
+    quoted = re.findall(r"`([^`]+)`", cell)
+    candidates = quoted or [cell.strip()]
+    return [c.strip() for c in candidates
+            if c.strip() not in NOT_A_PATH and MODEL_PATH.match(c.strip())]
+
+
 def _cdm_paths() -> list[str]:
     paths = []
     for line in DOC.read_text().splitlines():
@@ -75,11 +94,7 @@ def _cdm_paths() -> list[str]:
         cells = [c.strip() for c in line.strip("|").split("|")]
         if len(cells) < 2:
             continue
-        cell = cells[1].strip("`").strip()
-        if cell in NOT_A_PATH:
-            continue
-        if re.match(r"^[A-Z][A-Za-z]+\.", cell):
-            paths.append(cell)
+        paths += _cell_paths(cells[1])
     return paths
 
 
@@ -91,6 +106,18 @@ def test_the_table_was_actually_parsed():
     assert len(PATHS) >= 25, f"parsed only {len(PATHS)} CDM paths from {DOC.name}"
     assert any(p.startswith("Track.samples[]") for p in PATHS), "STANAG rows missing"
     assert any(p.startswith("PlanObject.") for p in PATHS), "egress rows missing"
+
+
+def test_a_cell_naming_two_fields_yields_both():
+    """The hole the plural parser closed, pinned so it cannot reopen."""
+    assert _cell_paths("`Event.severity` / `Event.event_type`") == [
+        "Event.severity", "Event.event_type"]
+    assert _cell_paths("`Entity.attributes`") == ["Entity.attributes"]
+    assert _cell_paths("—") == []
+    assert _cell_paths("*(derived)*") == []
+    assert any(p == "Event.event_type" for p in PATHS), (
+        "no row in the document names Event.event_type as a second path, so the plural parser "
+        "is not actually being exercised by the table it guards")
 
 
 @pytest.mark.parametrize("path", sorted(set(PATHS)))
@@ -137,13 +164,37 @@ def test_the_documented_gaps_are_still_gaps():
         assert field not in models.Kinematics.model_fields, (
             f"gap 7 (no heading, no turn rate) appears to be closed — Kinematics.{field} now "
             "exists. Update FORMAT_COVERAGE.md, MIGRATIONS.md and the AIS true-heading and "
-            "rate-of-turn rows, which park their values today."
+            "rate-of-turn rows, which park their values today. Note that ADS-B added a "
+            "REQUIREMENT to that gap: a heading needs a stated datum, because an ADS-B heading "
+            "is magnetic and an AIS one is true."
+        )
+    # Gap 9 is asserted on both models on purpose. The open question it records is precisely
+    # WHERE a barometric altitude should hang — off Position, which requires a coordinate, or
+    # off Entity, which does not — so closing it in either place has to come with the document.
+    assert "baro_alt_m" not in models.Position.model_fields, (
+        "gap 9 (no barometric altitude) appears to be closed on Position — update "
+        "FORMAT_COVERAGE.md, MIGRATIONS.md and the ADS-B barometric-altitude row. Check the "
+        "note under gap 9 first: hanging it off Position leaves an altitude with no horizontal "
+        "fix homeless, which is the half of that gap easiest to miss."
+    )
+    assert "baro_alt_m" not in models.Entity.model_fields, (
+        "gap 9 (no barometric altitude) appears to be closed on Entity — update "
+        "FORMAT_COVERAGE.md and MIGRATIONS.md with it."
+    )
+    # Gap 10 is deliberately NOT proposed as a field, so this guards against one appearing
+    # without the decision being written down.
+    for field in ("airspeed_mps", "air_speed_mps"):
+        assert field not in models.Kinematics.model_fields, (
+            f"gap 10 (no air-data speeds) appears to be closed — Kinematics.{field} now "
+            "exists, and that gap has no accepted proposal: it records that indicated "
+            "airspeed, true airspeed and Mach are three quantities and that a consumer "
+            "wanting wind needs gap 7 as well. Write the decision down before the field."
         )
 
 
 def test_the_gap_notes_are_referenced_from_the_table():
     text = DOC.read_text()
-    for number in range(1, 9):
+    for number in range(1, 11):
         assert f"**gap {number}**" in text or f"{number}. **" in text, (
             f"gap {number} is listed but never referenced from a table row"
         )

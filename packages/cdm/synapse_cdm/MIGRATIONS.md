@@ -102,6 +102,69 @@ is worth stating.
   measurement are different kinds of claim, and giving the threshold a numeric home is how it
   would quietly become one.
 
+- **`adapters/adsb.py` 1.0.0 (ADS-B 1090ES, Mode S DF17/DF18, bidirectional)** — type codes
+  1-4, 5-8, 0 and 9-18, 19 subtypes 1-4, 20-22, 28 subtype 1 and 31 subtype 0, at
+  **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  This is the fourth adapter and the first one whose *silences* cost something structural rather
+  than cosmetic, so it adds two gaps to the list below (9, barometric altitude; 10, air-data
+  speeds) and sharpens two that were already open. What it did NOT need is worth stating first,
+  because three existing decisions carried it:
+
+  - **`Position` requiring both coordinates.** ADS-B states a position as two 17-bit Compact
+    Position Reporting values, which are a position *within a zone* and not a position at all.
+    Recovering the zone needs either a second frame of the opposite parity or a reference
+    position — so a frame this adapter cannot decode has NO position, and the model made that
+    unspellable as anything else. A CDM whose Position allowed partial coordinates would have
+    invited exactly the guess this format punishes.
+  - **`Kinematics` every field optional, absent meaning unknown.** Every ADS-B "not available"
+    is a zero in a field that is otherwise offset by one, so the whole family shares one shape
+    and the characteristic bug is forgetting the offset — a value one unit wrong and entirely
+    plausible. Nine fields carry it, and a vertical rate of 0 meaning "not reported" rather
+    than level flight is the one that matters most.
+  - **`PositionSource` as a member-bearing enum.** DF18 control fields 2 and 5 are fine-format
+    TIS-B: a ground station rebroadcasting a surveillance track it derived by other means.
+    ESTIMATED says so; GNSS would promise a fix that survives jamming, which is the dangerous
+    direction and the same error as calling an AIS integrated navigation system INERTIAL.
+
+  Two decisions in the adapter itself are recorded here because they look like schema questions
+  and are not:
+
+  - **The 24-bit address is filed under system `ICAO24`, not `ADSB`.** It is an ICAO Annex 10
+    aircraft address, stable for the airframe and carried identically by Mode S replies, ACAS
+    and ASTERIX — so `ids.derive` makes an ADS-B contact and a future radar contact agree on
+    one `entity_id` without any coordination, which is the property derived identity exists for.
+    `source.system` records the link the copy arrived over. DF18 control fields 1 and 5 state
+    that the address is anonymous or self-assigned, and those get `ADSB_NONICAO` instead: a
+    wrong join is worse than no join, because it merges two aircraft into one track.
+  - **Global CPR even/odd pairing is out of scope, and it is the AIS type 24 argument again.**
+    Two frames of opposite parity must be joined on the address across time; an `Adapter` is a
+    pure function of one payload, so a global decoder would either emit a half-populated object
+    or hold a cache, and a cache in a translator is fusion done where nothing audits it. Type
+    24's parts A and B, AIS cross-payload fragment reassembly and CPR pairing are one decision
+    made three times. Local decoding IS in scope because its reference position is
+    CONFIGURATION — a constructor argument, like the clock — and not state. With no reference
+    configured there is no position, so the default is the conservative one.
+
+  Two defects are recorded because the gates that found them are the reason to keep those gates.
+  The byte-exact round trip caught a **GNSS altitude being silently dropped** on every frame
+  whose CPR could not be decoded: `alt_m` lives on `Position`, `Position` requires a coordinate,
+  and an altitude with no horizontal fix therefore had nowhere to go. The adapter now parks the
+  figure beside the canonical copy, and the shape of the problem is recorded in the gap 9 note —
+  because a Mode C reply states an altitude and no position at all, so the next radar adapter
+  meets it immediately.
+
+  The second is the one no gate in this repository could have caught, and it is worth stating for
+  that reason. The type code 20-22 altitude field was decoded with the **barometric** arithmetic
+  — 25-foot steps behind a Q bit — when it is in fact the plain decimal value of all twelve bits
+  in **metres** (mode-s.org, airborne position chapter). Because the fixture was encoded the same
+  wrong way, the round trip stayed byte-exact, the goldens agreed with themselves and the lossless
+  check passed: the frame simply did not mean what the adapter said, and a real frame carrying
+  1039 in that field would have been reported at 24 975 ft instead of 1039 m. Only reading the
+  reference found it. The lesson recorded here is the one the airtasking track already states as
+  a rule — a field definition is CITED or it is a gap, never inferred from what a magnitude makes
+  plausible — and the citation now sits in `FORMAT_COVERAGE.md` beside the row.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
@@ -128,12 +191,49 @@ evidence that was missing when they were first written down:
   than 5° per 30 s", which is a floor, so a `turn_rate_dpm` of 127 would be a fabricated
   measurement rather than a large one.
 
-A third gap is recorded in `FORMAT_COVERAGE.md` (gap 8, extent) and is deliberately NOT
-proposed as a field here. AIS states four dimensions from the position reference point plus a
-draught, and all of it is parked; but a bounding extent, an offset reference point and a
-draught are three different ideas, and STANAG 4676's own object-size fields should be read
-before any of them is added. A gap with no proposal is a decision too, and this one is
-"not yet understood well enough to name a field for".
+  **ADS-B is the third adapter to park a heading, and it changes the proposal rather than
+  merely confirming it.** An ADS-B heading is referenced to MAGNETIC north unless a type code 31
+  frame's HRD bit says otherwise; an AIS true heading is referenced to true north. A bare
+  `heading_deg` would hold two different measurements under one name, and magnetic variation in
+  the Baltic is around 8° east and a function of place and date — enough to swamp the bow-against-
+  track discrepancy the field exists to expose. So the pair becomes a pair plus a datum, and
+  whoever implements it inherits a cross-frame join as well: ADS-B cannot state the datum in the
+  same frame as the heading.
+
+- **`Position.baro_alt_m`** (or `Entity.baro_alt_m` — the choice is part of the work) —
+  `FORMAT_COVERAGE.md` gap 9, and the strongest-evidenced of these. `Position.alt_m` is
+  documented as metres above the WGS84 ellipsoid, which is what an ADS-B type code 20-22 frame
+  states. Type codes 9-18 — the overwhelming majority of an air picture — state a *pressure*
+  altitude against the 1013.25 hPa datum instead, and the two differ by hundreds of metres in
+  ordinary weather. Every one of them is parked today, so the CDM carries no altitude at all for
+  most air tracks, and deconfliction, airspace checks and any comparison against terrain all
+  read one. Three things belong in the same change: ADS-B's GNSS-barometric difference field is
+  exactly the offset relating the two altitudes; the decision about WHERE the field hangs is
+  load-bearing — on `Position` it inherits the requirement of a coordinate, which leaves an
+  altitude with no horizontal fix homeless, and this format produces that case constantly; and
+  **the datum has to be carried rather than assumed**. `alt_m` says "above the ellipsoid", but a
+  DO-260 version 0 transmitter broadcasts GNSS height against mean sea level and DO-260A/B
+  against the ellipsoid, with the version living in a different frame. That is gap 7's
+  magnetic-versus-true problem in the vertical, and the geoid separation is tens of metres, so it
+  is not a rounding matter. The ADS-B adapter asserts the DO-260A/B reading and names both in
+  `attributes.altitude_type`; a canonical field would have to do better than assert.
+
+Two gaps are recorded in `FORMAT_COVERAGE.md` and deliberately NOT proposed as fields here.
+A gap with no proposal is a decision too, and in both cases the decision is "not yet understood
+well enough to name a field for":
+
+- **Gap 8, extent.** AIS states four dimensions from the position reference point plus a
+  draught, and all of it is parked; but a bounding extent, an offset reference point and a
+  draught are three different ideas, and STANAG 4676's own object-size fields should be read
+  before any of them is added.
+- **Gap 10, air-data speeds.** `Kinematics.speed_mps` is a speed over the ground — what AIS's
+  SOG means and what an ADS-B type 19 subtype 1/2 frame states. Subtypes 3 and 4 state an
+  indicated or true airspeed instead, and the difference between airspeed and ground speed is
+  the wind, which is the fact worth having. It is parked and `speed_mps` is left null on those
+  frames rather than filled with a number every consumer would read as a ground speed. Not
+  proposed because indicated airspeed, true airspeed and Mach are three related-but-distinct
+  quantities and a consumer that wants wind needs gap 7 and its datum as well: adding one
+  `airspeed_mps` now would close a third of a question.
 
 None of these is a blocker for an adapter, and that is the point of writing them down rather
 than adding them: `attributes` keeps the value, so the cost of the delay is private knowledge in

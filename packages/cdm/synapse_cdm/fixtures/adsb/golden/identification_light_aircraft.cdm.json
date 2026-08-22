@@ -1,0 +1,88 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "adsb_capability": 0,
+      "adsb_downlink_format": 17,
+      "adsb_frame_kind": "identification",
+      "adsb_type_code": 4,
+      "affiliation_basis": "ADS-B is an unauthenticated cooperative broadcast: it states an identity \u2014 a callsign, an emitter category, an address \u2014 and there is no integrity mechanism beyond the CRC, which detects corruption and not forgery. UNKNOWN is therefore not the format's silence but a refusal to read a self-declared, spoofable claim as an identification",
+      "callsign": "EXRCS01",
+      "callsign_raw": "EXRCS01",
+      "emitter_category": 1,
+      "emitter_category_set": "A",
+      "emitter_category_text": "light (below 15 500 lb)",
+      "entity_id_basis": "frame address",
+      "icao_address": "0029E1",
+      "position_unavailable_reason": "an ADS-B type code 4 frame carries no position fields",
+      "source_extras": {
+        "frame": {
+          "hex": "880029E1211584834F0C60DAF9FE",
+          "prefix": "*"
+        }
+      },
+      "symbol_basis": "derived from affiliation; ADS-B states no symbol",
+      "unavailable_fields": [],
+      "valid_from_basis": "an ADS-B extended squitter carries no time field at all \u2014 not a date, not a second of the minute. The receipt instant is used, and the frame itself states nothing about when. The AVR '@' timestamp, where present, is a free-running 12 MHz receiver counter and not a wall clock, so it is parked and never read as one"
+    },
+    "confidence": null,
+    "entity_id": "3076857e-27b5-5a64-9bb9-2f699b603bd1",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "adsb",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ADSB"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029E1",
+        "system": "ICAO24"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ccafc0a9-b4ac-54b8-b23e-368134fa571a",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:00.000Z",
+    "payload": {
+      "adsb_frame_kind": "identification",
+      "adsb_type_code": 4,
+      "event_id_basis": "frame address + observed_at",
+      "frame_parity": 14350846,
+      "observed_at_basis": "an ADS-B extended squitter carries no time field at all \u2014 not a date, not a second of the minute. The receipt instant is used, and the frame itself states nothing about when. The AVR '@' timestamp, where present, is a free-running 12 MHz receiver counter and not a wall clock, so it is parked and never read as one",
+      "parity_basis": "the frame's 24-bit parity field, DAF9FE, verified as the Mode S CRC of its first 88 bits. A frame that fails is refused rather than best-effort decoded",
+      "received_at_basis": "the injected clock. An ADS-B frame stream carries no wall-clock timestamp \u2014 the AVR '@' field is a receiver counter \u2014 so unlike AIS there is no feed-supplied delivery instant to prefer over ours",
+      "severity_basis": "ADS-B states no urgency outside a surveillance status of 1 and a type code 28 emergency state; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "3076857e-27b5-5a64-9bb9-2f699b603bd1"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "adsb",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ADSB"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029E1",
+        "system": "ICAO24"
+      }
+    ]
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "frame": {
+    "hex": "880029F29B4F30B3903086B8BCA1",
+    "prefix": "*"
+  },
+  "message": {
+    "airspeed_raw": 412,
+    "airspeed_type": 1,
+    "capability": 0,
+    "df": 17,
+    "gnss_baro_diff_raw": 6,
+    "gnss_baro_diff_sign": 1,
+    "heading_raw": 816,
+    "heading_valid": true,
+    "icao": "0029F2",
+    "ifr_capability": true,
+    "intent_change": false,
+    "nav_uncertainty_velocity": 1,
+    "parity": 12106913,
+    "reserved_velocity": 0,
+    "subtype": 3,
+    "type_code": 19,
+    "vertical_rate_raw": 12,
+    "vertical_rate_sign": 0,
+    "vertical_rate_source": 1
+  }
+}
