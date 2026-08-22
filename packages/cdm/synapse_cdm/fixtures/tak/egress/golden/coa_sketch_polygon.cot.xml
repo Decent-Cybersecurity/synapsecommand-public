@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<event version="2.0" uid="COA-NARVA-PHASE2-ENGAGEMENT-AREA" type="u-d-f" how="h-e" time="2026-04-29T06:15:00.000Z" start="2026-04-29T06:15:00.000Z" stale="2026-04-29T18:00:00.000Z">
+  <point lat="59.36" lon="28.15" hae="9999999.0" ce="9999999.0" le="9999999.0" />
+  <detail>
+    <contact callsign="EA VIPER" />
+    <link point="59.36,28.15,9999999.0" />
+    <link point="59.36,28.24,9999999.0" />
+    <link point="59.41,28.24,9999999.0" />
+    <link point="59.41,28.15,9999999.0" />
+    <link point="59.36,28.15,9999999.0" />
+    <fillColor value="-1761607680" />
+    <strokeColor value="-65536" />
+    <strokeWeight value="3.0" />
+    <synapse_style opacity="0.35" />
+    <synapse_plan object_id="3f2b7c48-9d1e-4a63-8b57-2c9e10d4a771" object_type="COA_SKETCH" geometry="Polygon" schema_version="1.0.0" closed="true" />
+  </detail>
+</event>

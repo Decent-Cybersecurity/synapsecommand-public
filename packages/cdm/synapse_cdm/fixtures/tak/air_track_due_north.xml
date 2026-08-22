@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A hostile air track heading due north, which CoT spells 360.0 and the CDM
+     spells 0.0 — the same bearing, and the only one Kinematics.course_deg admits. The
+     reduction is a declared transform, not a silent fix, because the number on the wire is
+     not the number in the output. how="m-i" is an inertial fix, which stays trustworthy
+     exactly where a GNSS one would not. -->
+<event version="2.0" uid="TAK-AIR-4471" type="a-h-A-M-F-Q"
+       time="2026-04-29T06:09:55Z" start="2026-04-29T06:09:55Z" stale="2026-04-29T06:11:55Z"
+       how="m-i">
+  <point lat="58.9014" lon="24.0553" hae="7620.0" ce="180.0" le="120.0"/>
+  <detail>
+    <track speed="247.2" course="360.0"/>
+    <contact callsign="TRACK 4471"/>
+    <remarks>Non-cooperative. No IFF response.</remarks>
+  </detail>
+</event>

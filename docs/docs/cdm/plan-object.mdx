@@ -1,0 +1,70 @@
+---
+title: PlanObject
+sidebar_label: PlanObject
+sidebar_position: 4
+description: What we push out — a drawing a commander's plan puts on someone else's map.
+---
+
+# `PlanObject`
+
+**What we push out**: a drawing a commander's plan puts on someone else's map. A COA sketch, a
+route, a control measure, an annotation.
+
+`PlanObject` is the egress direction. Everything else in the CDM describes what arrived;
+this one describes what leaves.
+
+→ **[Full field reference](../schema-reference/plan-object.mdx)** (generated from the published
+schema).
+
+## `geometry` is **required** here
+
+Unlike on [`Event`](./event.mdx), where it is optional.
+
+An overlay with no geometry cannot be drawn, so an egress adapter would have to either invent a
+location or silently drop the object — and a COA sketch that quietly fails to appear on the TAK
+client is the worst of the three outcomes, because everyone assumes it arrived. Making the field
+required moves that failure to the adapter, where somebody is looking.
+
+## `style` — hints, and nothing that carries meaning
+
+`style` holds rendering **hints**: stroke, fill, opacity, dash. A receiving client is free to
+ignore every one of them.
+
+That is exactly why nothing which changes **meaning** may live here. An affiliation belongs on
+the [`Entity`](./entity.mdx), not in a colour — a client that ignores `style`, or a colour-blind
+operator, or a monochrome print of the overlay must not lose the difference between friendly and
+hostile. A meaning encoded in a hint is a meaning that can be dropped without anything failing.
+
+## `label` — never an empty string
+
+`None` means unlabelled. `""` is rejected (`min_length=1`), because an empty string renders as a
+blank callout — a visible box with nothing in it, which reads as a broken client rather than as
+an unlabelled object.
+
+## `expires_at` — and the decision hiding in `null`
+
+When the drawing should disappear. CoT's `@stale` maps here on egress.
+
+`null` means "until explicitly removed", and for a stale COA sketch on a live map that is a
+**decision**, not a default. An overlay from a plan that was superseded four hours ago is still
+sitting on somebody's screen looking current. So the field is optional but the choice is not
+invisible: an adapter that emits `null` is stating that this drawing outlives the plan.
+
+## `object_type`
+
+| Value | Use |
+| --- | --- |
+| `COA_SKETCH` | the course-of-action drawing itself |
+| `ROUTE` | a `LineString` a unit is to follow |
+| `CONTROL_MEASURE` | a boundary, a phase line, a restricted area |
+| `ANNOTATION` | a note on the map |
+
+## Why there is no GeoJSON `Feature` wrapper
+
+`PlanObject` **is** the CDM's `Feature`-equivalent: geometry, plus style, plus label. A GeoJSON
+`FeatureCollection` is a list of `PlanObject`s.
+
+Adding the GeoJSON wrappers would give two ways to say one thing, and then every consumer needs
+to handle both. This is recorded as a known gap in `FORMAT_COVERAGE.md` rather than treated as
+an oversight — the CDM's answer to `Feature.properties` is that `properties` is not one field:
+the parts that carry meaning belong on the object, and the parts that do not belong in `style`.

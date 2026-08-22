@@ -1,0 +1,17 @@
+// This file is not used by "docusaurus start/build" commands.
+// It is here to improve your IDE experience (type-checking, autocompletion...),
+// and can also run the package.json "typecheck" script manually.
+{
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "strict": true,
+    // The worked-example component imports a GENERATED .json data module
+    // (src/data/worked-example.json). Docusaurus's own build does not read this file,
+    // but `npm run typecheck` does, and without this the generated data module is an
+    // unresolved import in the one check that would catch a real type error.
+    "resolveJsonModule": true
+  },
+  "exclude": [".docusaurus", "build"]
+}

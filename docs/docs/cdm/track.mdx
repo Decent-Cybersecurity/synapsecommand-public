@@ -1,0 +1,76 @@
+---
+title: Track
+sidebar_label: Track
+sidebar_position: 3
+description: An entity's position history, in time order — where the order is a contract, not a hope.
+---
+
+# `Track`
+
+**An entity's position history**, in time order. This is STANAG 4676's shape, expressed in the
+CDM's vocabulary.
+
+→ **[Full field reference](../schema-reference/track.mdx)** (generated from the published
+schema).
+
+## The order is a contract, not a hope
+
+```python
+@model_validator(mode="after")
+def _ordered(self) -> "Track":
+    ...  # non-decreasing observed_at, or ValueError
+```
+
+A scrambled sample list produces nonsense the moment anything differentiates it — speed from
+consecutive positions, a heading arrow, a predicted point. So non-decreasing timestamps are
+validated **at the boundary**, where the defect is one adapter's bug rather than a mystery in a
+fusion layer three hops downstream. A track that runs backwards yields a negative speed
+somewhere else entirely, and that is a bad place to start debugging.
+
+**Equal timestamps are allowed.** Two sensors reporting the same instant is real, and rejecting
+it would refuse legitimate multi-source data.
+
+## `samples[]` — at least one
+
+Each sample is a `Position` and an `observed_at`. `min_length=1`: a track with no samples is not
+a sparse track, it is an object that should not have been created.
+
+The `Position` inside a sample carries its own `position_source`, which matters more here than
+anywhere else — a track that drifts from `GNSS` to `INERTIAL` mid-flight is telling you
+something about the environment, and a model that hoisted `position_source` to the track would
+erase it.
+
+## `track_quality` — a declared transform, and a trap
+
+`0.0..1.0`, and `null` means **not assessed**.
+
+STANAG 4676 carries track quality as an integer `0–15`. The conversion to the CDM's float is
+`value / 15` — exact arithmetic, reversible, and therefore a **declared transform** rather than
+a gap in meaning. An adapter must declare it in `TRANSFORMS` or the lossless check will
+(correctly) flag it.
+
+:::danger The trap in this field
+4676 quality **0 means "worst"**, not "unknown". CDM `null` means unknown. So a *missing* 4676
+quality must become `null`, and a 4676 quality of `0` must become `0.0` — two source states that
+look similar and translate to genuinely different CDM values. Collapsing them either invents an
+assessment nobody made or discards the worst-quality signal a sensor can send.
+:::
+
+## `track_id` and `entity_id` — two identifiers, one object
+
+`entity_id` is the entity this history belongs to. `track_id` is the history itself.
+
+Keeping them separate is what lets several tracks of one entity coexist — a fused track and a
+single-sensor track for the same vessel — and what lets a track survive being re-keyed. Derive
+`track_id` with `ids.derive()` when the source has no track UUID of its own; the operator-facing
+`trackNumber` goes in `source_ids`, because that is the string an operator will search for.
+
+## The velocity gap, and why it is a transform rather than a loss
+
+4676 carries velocity as a 3-vector `(u, v, w)`. The CDM carries `speed_mps`, `course_deg` and
+`climb_mps` on [`Kinematics`](./entity.mdx#kinematics--every-field-optional-absent-means-unknown).
+
+The conversion is exact arithmetic and reversible, so it is a declared transform. Two details
+an adapter must not skip: the **sign convention** on the vertical component differs between
+sources and has to be declared explicitly, and every velocity component must be declared or the
+lossless check flags each one individually — correctly, because the numbers really did change.

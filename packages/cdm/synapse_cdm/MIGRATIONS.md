@@ -56,10 +56,28 @@ the reference adapter surfaced the reason:
   as dBW, dBm and a 0–100 bar by three different consumers; the unit belongs in the name, as
   it already does in `speed_mps`, `alt_m` and `accuracy_m`.
 
+### Adapters that landed with no schema change
+
+Recorded because "no entry" and "nobody wrote an entry" look identical from here, and the first
+is worth stating.
+
+- **`adapters/tak.py` 1.0.0 (Cursor-on-Target, bidirectional)** — implements every row of the
+  CoT table in `FORMAT_COVERAGE.md` at **schema_version 1.0.0**, with no field added, removed
+  or retyped. Two temptations were declined and are listed below as 1.1.0 candidates instead:
+  a canonical home for the CoT callsign, and one for `point/@le`. Both would have been MINOR
+  and both would have been added in passing, which is the way a canonical model acquires two
+  fields that mean nearly the same thing.
+
+  What it needed instead already existed: `attributes` for the unmapped values, `TRANSFORMS`
+  for the nine paths whose value legitimately changes, and `UNKNOWN` as an enum member for the
+  three CoT affiliation letters the CDM does not carry.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
-added in passing:
+added in passing. **Both are now confirmed by a shipped adapter** rather than anticipated — the
+TAK adapter parks a real value for each of them on every fixture it translates, which is the
+evidence that was missing when they were first written down:
 
 - **`Entity.label`** — a canonical human-readable name. A CoT callsign and a STANAG 4676 track
   number are the strings an operator reads, and today they land in `attributes`, so every
@@ -67,4 +85,12 @@ added in passing:
   look under. Deferred because it needs one owner naming its precedence rules across sources.
 - **`Position.alt_accuracy_m`** — vertical accuracy. `accuracy_m` is horizontal only, so CoT's
   `@le` has no home. It matters for air tracks, where a 300 m vertical error decides whether
-  two aircraft are deconflicted.
+  two aircraft are deconflicted — and the TAK adapter's `air_track_due_north` fixture is
+  exactly that case: `le="120.0"` on a track at 7 620 m, parked at `attributes.vertical_error_m`
+  where no consumer will look for it.
+
+Neither is a blocker for an adapter, and that is the point of writing them down rather than
+adding them: `attributes` keeps the value, so the cost of the delay is private knowledge in
+consumers rather than lost data. When one lands, `tests/test_cdm_format_coverage.py::
+test_the_documented_gaps_are_still_gaps` fails deliberately until the document is closed with
+it — the gap cannot be fixed in code and left open in the prose.

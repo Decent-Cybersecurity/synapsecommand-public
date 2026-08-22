@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. Three awkward paths at once:
+     1. affiliation letter `s` (SUSPECT) has no CDM member and collapses to UNKNOWN — NOT to
+        HOSTILE, because suspicion is not identification (gap 2);
+     2. hae/ce/le are all CoT's 9999999 unknown sentinel and must become null, never be
+        forwarded as a 9999 km altitude;
+     3. @start is absent, so valid_from falls back to @time and the fallback is RECORDED. -->
+<event version="2.0" uid="TAK-VESSEL-77Z" type="a-s-S-X-M"
+       time="2026-04-29T05:58:02Z" stale="2026-04-29T06:28:02Z" how="m-f">
+  <point lat="57.7431" lon="21.4102" hae="9999999.0" ce="9999999.0" le="9999999.0"/>
+  <detail>
+    <contact callsign="UNKNOWN CONTACT 77Z"/>
+    <__group name="Dark Blue"/>
+    <remarks>Radar-only surface contact, no AIS return. Track erratic.</remarks>
+  </detail>
+</event>

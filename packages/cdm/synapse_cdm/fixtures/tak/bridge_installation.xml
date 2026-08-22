@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A ground INSTALLATION (`a-f-G-I-...`), which is why entity_type resolves to
+     FACILITY and not UNIT: calling a bridge a unit is a false statement, not a coarser one,
+     and CoT states which in the function field. Also: how="h-e" (a human typed this, so the
+     position is MANUAL, not GNSS) and a REAL @le, which parks at attributes.vertical_error_m
+     because the CDM has no canonical vertical-accuracy field until 1.1.0 (gap 6). -->
+<event version="2.0" uid="OP-NARVA-BRIDGE-01" type="a-f-G-I-B-A"
+       time="2026-04-29T04:40:00Z" start="2026-04-29T04:40:00Z" stale="2026-04-30T04:40:00Z"
+       how="h-e">
+  <point lat="59.3781" lon="28.1996" hae="18.0" ce="3.0" le="45.0"/>
+  <detail>
+    <contact callsign="BRIDGE ALPHA"/>
+    <remarks>Road bridge, two lanes. Load class not verified.</remarks>
+    <archive/>
+  </detail>
+</event>

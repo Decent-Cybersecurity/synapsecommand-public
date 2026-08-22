@@ -1,0 +1,19 @@
+{
+  "object_kind": "plan_object",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "TAK",
+    "adapter": "tak",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "TAK", "external_id": "NOTE-OP-4471"}
+  ],
+  "object_id": "c07f9a12-3b8d-4c55-a0e6-5d2f8b41c903",
+  "object_type": "ANNOTATION",
+  "label": null,
+  "geometry": {"type": "Point", "coordinates": [24.0553, 58.9014]},
+  "style": {},
+  "expires_at": null
+}

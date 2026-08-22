@@ -1,0 +1,156 @@
+---
+title: Entity
+sidebar_label: Entity
+sidebar_position: 1
+description: Anything that exists on the map, at a stated time, with stated confidence.
+---
+
+# `Entity`
+
+**Anything that exists on the map**, at a stated time, with stated confidence. A unit, a
+platform, a sensor, a facility, an evacuee group, a jamming emitter, an overlay object.
+
+An `Entity` answers *what is there*. If the thing you are translating is something that
+**happened**, it is an [`Event`](./event.mdx); if it is a position **history**, it is a
+[`Track`](./track.mdx); if you are pushing it **out**, it is a [`PlanObject`](./plan-object.mdx).
+
+→ **[Full field reference](../schema-reference/entity.mdx)** (generated from the published
+schema).
+
+## The fields that need an explanation
+
+### `entity_id` — derived, never drawn
+
+```python
+entity_id = ids.derive("PNTMAP", "EMT-4471", kind="entity")   # uuid5, deterministic
+```
+
+The specification says "stable across updates". A random `uuid4` per payload satisfies the
+type and defeats the purpose: the tenth position report for one vessel would create ten
+entities, the map would show ten contacts, and a track would never accumulate.
+
+So identity is a pure function of `(kind, system, external_id)` inside a fixed namespace. Three
+consequences worth stating:
+
+1. Two adapters given the same `(system, external_id)` agree **without coordinating** — no id
+   service, nothing to be unavailable in an air-gapped node.
+2. Golden-output tests become possible at all.
+3. An adapter with no stable upstream identifier **cannot fake one**. It uses
+   `ids.derive_with_basis()`, which reports *which* candidate it keyed on, and records that in
+   `attributes.entity_id_basis`.
+
+That last point is not bookkeeping. An id keyed on a per-report field is stable *for that
+report* and **not** stable for the object across reports, and a consumer accumulating a track
+has to know which it is holding.
+
+### `affiliation` — four members, not seven
+
+`FRIENDLY`, `HOSTILE`, `NEUTRAL`, `UNKNOWN`.
+
+MIL-STD-2525 has seven standard identities. `PENDING`, `ASSUMED_FRIEND` and `SUSPECT` are
+absent from the CDM on purpose: they are **judgements a fusion layer makes**, not facts an
+adapter can read off a wire format. An adapter that invented `ASSUMED_FRIEND` would be doing
+business logic, which adapters may not do.
+
+Wire formats are wider, so the collapse is real and it is recorded rather than smoothed over.
+Cursor-on-Target carries nine affiliation letters; `symbology.affiliation_from_cot()` maps them
+in one place so five adapters cannot grow five slightly different opinions:
+
+| CoT letter | CDM | Why |
+| --- | --- | --- |
+| `f` / `h` / `n` / `u` | `FRIENDLY` / `HOSTILE` / `NEUTRAL` / `UNKNOWN` | direct |
+| `a` assumed friend | `UNKNOWN` | an assumption is not a fact |
+| `s` suspect | `UNKNOWN` | suspicion is not identification — **not** `HOSTILE` |
+| `p` pending, `o` other, `x` unspecified | `UNKNOWN` | not yet judged |
+| `j` joker, `k` faker | `HOSTILE` | friendly acting hostile in exercise; both exercise-only |
+
+An adapter using that table **must** park the original letter in `attributes`. The collapse is
+recoverable only if the source value survives — and that is enforced by the lossless check
+rather than trusted.
+
+:::info `UNKNOWN` is a member, never a null
+Every enum in the CDM carries `UNKNOWN` as a *member*. "We do not know the affiliation" is a
+fact worth recording and worth rendering on a map; a null would be indistinguishable from a
+field the adapter forgot to fill.
+:::
+
+### `position` — absent means unknown
+
+`Position` requires `lat` and `lon`, which is what makes the null-never-zero rule *structural*
+rather than conventional. An adapter cannot express "unknown" as `(0, 0)` even by accident: it
+either omits the `Position` or states a real coordinate.
+
+```python
+# The whole rule, at the one place it can be broken.
+lat, lon = emitter.get("lat"), emitter.get("lon")
+if lat is None or lon is None:
+    return None          # NOT Position(lat=0, lon=0)
+```
+
+`if not lat` would have been the mirror-image defect — it silently discards a real position on
+the Greenwich meridian or the equator. The check is for **absence**.
+
+`position_source` is required on every `Position`, and it is the field that lets a commander
+tell a fix from a guess. When PNTMAP reports jamming over an area, every `GNSS`-sourced
+position inside that area becomes suspect and every `INERTIAL` or `MANUAL` one does not — a
+distinction that is impossible to make after the fact if the adapter flattened them all to
+"position".
+
+`accuracy_m` absent means **unknown** accuracy, not perfect accuracy. Zero would mean a fix
+with no error, which no sensor produces.
+
+### `kinematics` — every field optional, absent means unknown
+
+This is the AIS sentinel lesson in schema form. 0 kt is measured stillness, 0° is a course due
+north, 0 m/s climb is level flight. All three are real measurements, so none of them can double
+as "no data" — the adapter translates the source's sentinel to `None`.
+
+### `symbol` — 20 digits, checked
+
+A MIL-STD-2525**D** SIDC. Validated as twenty digits, because a symbol code a renderer cannot
+parse produces either a blank on the map or a default "unknown" glyph, and both are worse than
+no symbol at all: the operator sees a contact whose affiliation is *silently wrong* rather than
+*visibly absent*. 2525C's 15-character codes belong in `attributes`.
+
+When a source states an affiliation and no symbol,
+`symbology.sidc_from_affiliation(affiliation, synthetic=...)` derives a deliberately generic
+one — symbol set `00`, entity code `000000` — because the CDM knows the standard identity and
+nothing else about the glyph, and a specific-looking symbol we guessed is worse than a generic
+one we can defend.
+
+`synthetic` is keyword-only and **required** there: it selects the 2525D *context* digit, so an
+exercise object cannot silently render as a real-world one on a commander's map.
+
+### `valid_from` / `valid_to` — an interval, validated
+
+`valid_to` before `valid_from` raises. An interval that runs backwards is a translation defect,
+not data, and it is caught at the boundary where it is one adapter's bug rather than a mystery
+in a fusion layer three hops downstream.
+
+`valid_to: null` means still current / open-ended. CoT's `@stale` maps here exactly — CoT
+staleness **is** an interval end.
+
+### `confidence` — and why `0` is a claim
+
+`0..1`, and `null` means unknown. Confidence `0` means *certainty that not*, which is an
+assertion an adapter is rarely entitled to make.
+
+### `attributes` — the never-drop bag
+
+Where source-specific fields live. Do not enumerate leftovers by hand:
+
+```python
+extras = lossless.residual(alert, consumed_paths)
+entity = Entity(..., attributes={"source_extras": extras})
+```
+
+`residual()` is **structure-preserving**, and the first version was not. Rebuilding leftovers
+from dotted leaf paths turned `["GPS", "GALILEO"]` into two keys named
+`affected_constellations[0]` and `affected_constellations[1]`. Nothing was lost by the
+harness's measure — both values were present, so the lossless check passed — and yet a consumer
+could no longer read the field as a list. That is the never-drop rule satisfied in the letter
+and broken in the meaning.
+
+The block a source adds in its next firmware release is exactly the one nobody remembers to
+collect by hand, which is the other reason this is one function rather than five hand-rolled
+loops.

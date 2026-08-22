@@ -1,0 +1,28 @@
+{
+  "object_kind": "plan_object",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "TAK",
+    "adapter": "tak",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "TAK", "external_id": "ROUTE-NARVA-PATROL-BRAVO"}
+  ],
+  "object_id": "b81d55e0-6a44-4f0d-9e21-77aa3c5b1f92",
+  "object_type": "ROUTE",
+  "label": "ROUTE BRAVO",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [28.1908, 59.3762, 31.4],
+      [28.1975, 59.3790],
+      [28.2044, 59.3812]
+    ]
+  },
+  "style": {
+    "stroke_color": "-16711936"
+  },
+  "expires_at": null
+}

@@ -1,0 +1,69 @@
+/**
+ * Placeholder branding: the product name, a single restrained accent, and nothing else.
+ *
+ * No logo and no borrowed palette on purpose — an invented visual identity is harder to remove
+ * later than it is to add now, and this repository is public. The accent is a desaturated
+ * teal chosen only for contrast against both themes; it carries no meaning and is not a brand
+ * claim. Replace these values and the site is rebranded.
+ *
+ * Dark is the default mode (see docusaurus.config.ts), so the dark block below is not an
+ * afterthought — it is the palette most readers will actually see.
+ */
+
+:root {
+  --ifm-color-primary: #0f766e;
+  --ifm-color-primary-dark: #0d6a63;
+  --ifm-color-primary-darker: #0c645d;
+  --ifm-color-primary-darkest: #0a524d;
+  --ifm-color-primary-light: #11827a;
+  --ifm-color-primary-lighter: #128880;
+  --ifm-color-primary-lightest: #149a91;
+
+  --ifm-code-font-size: 92%;
+  --ifm-font-family-monospace: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+
+  /* Used by the worked-example component. Named separately from --ifm-* so a rebrand does not
+     have to know which components exist. */
+  --sc-accent-subtle: rgba(15, 118, 110, 0.14);
+  --sc-accent-text: #0a524d;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #5eead4;
+  --ifm-color-primary-dark: #3ce4c7;
+  --ifm-color-primary-darker: #2ae0c1;
+  --ifm-color-primary-darkest: #1cb69c;
+  --ifm-color-primary-light: #80f0e1;
+  --ifm-color-primary-lighter: #92f2e6;
+  --ifm-color-primary-lightest: #c4f8f1;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
+
+  --sc-accent-subtle: rgba(94, 234, 212, 0.16);
+  --sc-accent-text: #99f6e4;
+}
+
+/* The generated reference pages are wide tables of field names, types and long descriptions.
+   Left- and top-aligned, because a type expression like `Position | null` centred in its cell
+   is harder to scan down a column of forty fields. */
+.markdown table td,
+.markdown table th {
+  vertical-align: top;
+  text-align: left;
+}
+
+/* A table wider than the content area scrolls itself rather than the page. Without this the
+   schema reference gives the whole document a horizontal scrollbar. */
+.markdown table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Field names and type expressions must not wrap mid-token; long prose descriptions in the
+   same table still wrap normally, because this only targets code spans. */
+.markdown table code {
+  white-space: nowrap;
+}

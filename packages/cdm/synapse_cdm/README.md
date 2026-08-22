@@ -5,6 +5,13 @@ Cursor-on-Target, STANAG 4676 tracks, and the simulation feed. Without a canonic
 the middle, five adapters means ten translations and five private notions of "a contact". With
 one, an adapter is a thin translator and nothing else.
 
+**Shipped so far:**
+
+| Adapter | Direction | Reads / writes |
+|---|---|---|
+| [`pntmap`](adapters/pntmap.py) 1.0.0 | ingest | PNTMAP GNSS interference alerts (JSON) → `Entity` + `Event`. The reference adapter — read it first |
+| [`tak`](adapters/tak.py) 1.0.0 | bidirectional | Cursor-on-Target atoms (XML) → `Entity` + `Event`; `PlanObject` → a `u-d-f` drawing, `Entity` → an atom |
+
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
@@ -81,9 +88,13 @@ same pattern the Track contract pins, because two timestamps meaning the same in
 compare equal as *strings* in golden diffs and chain hashes. `received_at` comes from an
 injected clock; adapter code never calls `datetime.now()`.
 
-## Writing adapter #2
+## Writing the next adapter
 
-Read `adapters/pntmap.py` first — every rule above appears in it at least once. Then:
+Read `adapters/pntmap.py` first — every rule above appears in it at least once. Then read
+`adapters/tak.py`, which is where the awkward cases live: XML rather than JSON, a bidirectional
+`from_cdm()`, a source sentinel that must become null, an enum collapse that has to stay
+recoverable, and the two fixture forms an XML adapter needs in order to be checked at all.
+Then:
 
 **1. Declare the class.** The contract is checked at class-definition time, so a mistake here
 fails at import rather than at 03:00 on the first outbound push.
@@ -179,7 +190,7 @@ packages/cdm/
     adapter.py      the Adapter ABC, its class-definition-time gates, the registry
     schemas.py      JSON Schema export (+ --check for CI)
     harness.py      the adapter-agnostic validation harness
-    adapters/       one module per external system
+    adapters/       one module per external system (pntmap, tak)
     fixtures/       synthetic payloads + golden outputs
 schemas/            published JSON Schema, generated — never hand-edited
 tests/test_cdm_*.py

@@ -1,0 +1,82 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "callsign": "DISMOUNT-19",
+      "cot_affiliation_letter": "f",
+      "cot_battle_dimension": "G",
+      "cot_how": "h-t",
+      "cot_type": "a-f-G-U-C-I",
+      "entity_id_basis": "event/@uid",
+      "group_name": "Green",
+      "remarks": "Position reported by voice, grid not passed. GPS denied.",
+      "source_extras": {
+        "event": {
+          "@version": "2.0",
+          "detail": {
+            "__group": {
+              "@role": "Team Lead"
+            }
+          }
+        }
+      },
+      "symbol_basis": "derived from affiliation; CoT states a type, not a 2525D SIDC",
+      "valid_from_basis": "event/@start"
+    },
+    "confidence": null,
+    "entity_id": "b56a20b9-6b8f-57a5-8bce-e65086440d4d",
+    "entity_type": "UNIT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "TAK-DISMOUNT-19",
+        "system": "TAK"
+      }
+    ],
+    "symbol": "10230000000000000000",
+    "valid_from": "2026-04-29T06:13:07.000Z",
+    "valid_to": "2026-04-29T06:18:07.000Z"
+  },
+  {
+    "event_id": "e40d8072-16d7-58bc-9f9b-3818c2f9ffa3",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:13:07.000Z",
+    "payload": {
+      "cot_how": "h-t",
+      "cot_type": "a-f-G-U-C-I",
+      "event_id_basis": "event/@uid + event/@time",
+      "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "b56a20b9-6b8f-57a5-8bce-e65086440d4d"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "TAK-DISMOUNT-19",
+        "system": "TAK"
+      }
+    ]
+  }
+]

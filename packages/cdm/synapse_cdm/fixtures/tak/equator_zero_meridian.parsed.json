@@ -1,0 +1,24 @@
+{
+  "event": {
+    "@version": "2.0",
+    "@uid": "TAK-BUOY-0000",
+    "@type": "a-u-S-X-M",
+    "@time": "2026-04-29T06:00:00Z",
+    "@start": "2026-04-29T06:00:00Z",
+    "@stale": "2026-04-29T12:00:00Z",
+    "@how": "m-g",
+    "point": {
+      "@lat": "0.0",
+      "@lon": "0.0",
+      "@hae": "0.0",
+      "@ce": "25.0",
+      "@le": "9999999.0"
+    },
+    "detail": {
+      "contact": {
+        "@callsign": "DRIFT BUOY 0000"
+      },
+      "remarks": "Calibration buoy. Position and altitude are all genuinely zero."
+    }
+  }
+}

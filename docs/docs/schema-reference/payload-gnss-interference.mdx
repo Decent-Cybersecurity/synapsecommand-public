@@ -1,0 +1,59 @@
+---
+title: "GnssInterferencePayload"
+sidebar_label: "GnssInterferencePayload"
+sidebar_position: 6
+description: "The typed payload for EventType.GNSS_INTERFERENCE."
+---
+
+{/* GENERATED FILE — DO NOT EDIT.
+    Written by docs/scripts/generate-schema-docs.mjs from the JSON Schema named below.
+    Edit the Pydantic model in packages/cdm/synapse_cdm/models.py, re-export with
+    `python -m synapse_cdm.schemas --out schemas`, then re-run `npm run gen:schemas`. */}
+
+# GnssInterferencePayload
+
+| | |
+| --- | --- |
+| Source file | `schemas/payload_gnss_interference.schema.json` |
+| `$id` | `https://synapsecommand.local/cdm/1.0.0/payload_gnss_interference.schema.json` |
+| CDM schema version | `1.0.0` |
+| SHA-256 of source | `987a6669cc209bc3a3281a3e6eee4d889870d363231f6ecbdcd8c1f0b73a3fbb` |
+
+The typed payload for EventType.GNSS_INTERFERENCE.
+
+`extra="allow"` here, unlike the canonical objects: this model's job is to give the fields
+we DO understand a checked shape while letting a source's extra fields ride along in the
+same dict. Forbidding extras here would force an adapter to split one payload across two
+places, and the never-drop rule would be satisfied by the letter while the meaning
+scattered.
+
+## Fields
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `frequency_band` | string | **yes** | GNSS band, e.g. L1, L2, L5, E1, B1 — the source's own name. (min length 1) |
+| `interference_type` | [InterferenceType](#interferencetype) | **yes** |  |
+| `signal_strength_dbm` | number \| null | no | Received power in dBm, negative in practice. None = not reported; the unit is in the field name because a bare 'signal_strength' has been read as dBW, dBm and a 0-100 bar by three different consumers. Default `null`. |
+
+## Referenced definitions
+
+Every `$ref` on this page resolves to one of these, inlined here so the page is a
+complete reference and not a starting point for chasing pointers.
+
+### InterferenceType
+
+JAMMING denies, SPOOFING deceives, and the difference decides the response.
+
+Kept distinct from UNKNOWN deliberately: a receiver that has lost lock knows it is being
+jammed, whereas a receiver reporting a plausible but false position does not know it is
+being spoofed. An adapter that cannot tell says UNKNOWN rather than guessing JAMMING.
+
+Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
+
+member rather than a null wherever the enum has one.
+
+| Value |
+| --- |
+| `JAMMING` |
+| `SPOOFING` |
+| `UNKNOWN` |

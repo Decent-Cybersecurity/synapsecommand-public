@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. No real TAK traffic in this repository. A fully-populated friendly ground
+     atom: every row of the CoT table in FORMAT_COVERAGE.md that a routine contact report
+     carries, plus four fields the table does NOT map (@version, contact/@endpoint,
+     __group/@role, status/@battery, precisionlocation/*) which must park rather than vanish. -->
+<event version="2.0" uid="ANDROID-352629101234567" type="a-f-G-U-C"
+       time="2026-04-29T06:11:20Z" start="2026-04-29T06:11:20Z" stale="2026-04-29T06:16:20Z"
+       how="m-g">
+  <point lat="59.3762" lon="28.1908" hae="31.4" ce="12.0" le="9999999.0"/>
+  <detail>
+    <contact callsign="NARVA-2" endpoint="192.168.20.14:4242:tcp"/>
+    <track speed="3.6" course="187.5"/>
+    <__group name="Cyan" role="Team Member"/>
+    <status battery="72"/>
+    <remarks>Foot patrol north bank. Bridge observation post manned.</remarks>
+    <precisionlocation geopointsrc="GPS" altsrc="GPS"/>
+  </detail>
+</event>

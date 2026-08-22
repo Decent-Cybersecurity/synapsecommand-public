@@ -1,0 +1,117 @@
+---
+title: Event
+sidebar_label: Event
+sidebar_position: 2
+description: Anything that happens — the audit-bearing object, with two timestamps and a source, always.
+---
+
+# `Event`
+
+**Anything that happens.** A detection, a GNSS interference alert, a track update, a status
+change, a plan inject, a simulation result.
+
+`Event` is the audit-bearing object: two timestamps and a source, always.
+
+→ **[Full field reference](../schema-reference/event.mdx)** (generated from the published
+schema).
+
+## `observed_at` vs `received_at` — never the same field
+
+| Field | Means | Comes from |
+| --- | --- | --- |
+| `observed_at` | when the **source** saw it | the payload |
+| `received_at` | when **we** took delivery | the injected clock |
+
+Both are required. Collapsing them loses the one measurement that says whether the picture is
+current: a report observed at 06:12 and received at 09:40 is three and a half hours stale, and
+an object carrying only one timestamp cannot say which of the two it is.
+
+`received_at` is the one field an adapter cannot read from its input, and it never calls
+`datetime.now()`:
+
+```python
+event = Event(..., observed_at=alert["alert_time"], received_at=self.now())
+```
+
+`self.now()` is a **constructor-injected clock**, defaulting to real UTC now. The harness
+injects a frozen one, which is what makes golden-output tests possible at all — an adapter that
+reaches for `datetime.now()` fails the golden check on its second run, and that is the intended
+lesson.
+
+## `severity` — refused, never defaulted
+
+```python
+if severity_word not in SEVERITY:
+    raise ValueError(f"unknown PNTMAP severity {alert.get('severity')!r} ...")
+```
+
+An alert that arrives labelled `INFO` because its severity was unreadable is worse than one
+that fails loudly. The first is a critical alert nobody sees; the second is a fixed adapter.
+
+That is different from an enum which *has* an `UNKNOWN` member — there, using it states the
+truth rather than guessing. `Severity` has no `UNKNOWN` member, so an unreadable severity has
+no honest translation and the payload is refused.
+
+:::note A format that carries no severity at all is a different case
+Refusing applies to a field the source *has* and the adapter cannot read. Where a wire format
+has no concept of urgency — Cursor-on-Target has none — mapping to `INFO` is not a misread; it
+is the honest statement that the format carries no urgency. An adapter doing that says so in
+its docstring, so the two cases stay distinguishable.
+:::
+
+## `payload` — checked without being rewritten
+
+`payload` is both the event-specific field bag and the never-drop bag for events. When
+`event_type` has a registered model in `PAYLOAD_MODELS`, the payload is **validated against it
+and left exactly as the adapter wrote it**.
+
+Validation here is a *check*, not a transformation, for three reasons: the wire form stays plain
+JSON with no discriminated union to negotiate; the exported JSON Schema stays readable; and
+extra keys survive byte-identically instead of being round-tripped through a model that might
+reorder or coerce them. A consumer that wants the parsed object calls `event.typed_payload()`.
+
+An `event_type` with no registered model keeps a free-form payload — which is how a new source
+lands before its shape is understood well enough to pin. Registering one is a MINOR bump.
+
+### The one registered payload
+
+`GNSS_INTERFERENCE` → `GnssInterferencePayload`
+([reference](../schema-reference/payload-gnss-interference.mdx)). It uses `extra="allow"`,
+unlike the canonical objects: its job is to give the fields we *do* understand a checked shape
+while letting a source's extra fields ride along in the same dict. Forbidding extras here would
+force an adapter to split one payload across two places, and the never-drop rule would be
+satisfied by the letter while the meaning scattered.
+
+Note `signal_strength_dbm`, not `signal_strength`. The unit is in the field name because a bare
+`signal_strength` has been read as dBW, dBm and a 0–100 bar by three different consumers.
+
+## `related_entities` — and the object-count decision
+
+A list of `entity_id` values this event concerns; empty when the event concerns no specific
+entity, such as a feed-level status change.
+
+This field is what makes "one payload, two objects" work. A PNTMAP alert describes a thing that
+**exists** (an interference source, at a place, over an interval) and a thing that **happened**
+(interference, observed, over an area). Those are different canonical kinds, and forcing them
+into one would lose whichever half the container was not shaped for. So `to_cdm()` returns
+`[entity, event]` and the event points at the entity.
+
+Note which identifier goes where. The entity's `source_ids` holds the **emitter's** id; the
+event's holds the **alert's** own id — that is what the source deduplicates on, and what an
+auditor holding this event will search for in the source system.
+
+## `geometry` — optional here, required on `PlanObject`
+
+GeoJSON `Point`, `LineString` or `Polygon`, WGS84, **`[lon, lat]`** order.
+
+That inversion is the single most common defect in an integration layer, it is silent, and its
+symptom is a contact in the wrong hemisphere: 24.1E 57.5N is in the Baltic, 57.5E 24.1N is in
+Saudi Arabia. Two things guard it — `Point.lat` / `.lon` accessors, so no adapter needs to
+remember the order, and a latitude validator that rejects anything outside `[-90, 90]`, which
+catches the swap for every coordinate outside the equatorial band where both readings happen to
+be legal. The remaining band is covered by fixture tests.
+
+Polygon rings must be **closed** (first position equals last), and that is enforced rather than
+repaired. A ring that arrives open is a source or adapter defect, and silently closing it
+invents an edge the source never stated — for a jamming footprint that means inventing
+coverage, which is the wrong direction to guess in.

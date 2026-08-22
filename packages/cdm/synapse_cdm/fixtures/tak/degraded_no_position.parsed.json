@@ -1,0 +1,26 @@
+{
+  "event": {
+    "@version": "2.0",
+    "@uid": "TAK-DISMOUNT-19",
+    "@type": "a-f-G-U-C-I",
+    "@time": "2026-04-29T06:13:07Z",
+    "@start": "2026-04-29T06:13:07Z",
+    "@stale": "2026-04-29T06:18:07Z",
+    "@how": "h-t",
+    "point": {
+      "@hae": "9999999.0",
+      "@ce": "9999999.0",
+      "@le": "9999999.0"
+    },
+    "detail": {
+      "contact": {
+        "@callsign": "DISMOUNT-19"
+      },
+      "__group": {
+        "@name": "Green",
+        "@role": "Team Lead"
+      },
+      "remarks": "Position reported by voice, grid not passed. GPS denied."
+    }
+  }
+}

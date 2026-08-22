@@ -20,6 +20,7 @@ consumer        ──▶ Adapter.from_cdm() ─▶ external format          (eg
 packages/cdm/       the synapse_cdm distribution — models, adapter SDK, harness, fixtures
 schemas/            published JSON Schema, GENERATED from the models — never hand-edited
 tests/              the suite; bare `pytest` from this directory runs all of it
+docs/               the documentation site (Docusaurus, deployed to Cloudflare Pages)
 ```
 
 `schemas/` is at the root deliberately: it is the artefact for consumers that are not Python,
@@ -30,7 +31,7 @@ It is generated, and a test fails the build if it drifts from the models.
 
 ```bash
 pip install -e packages/cdm     # editable, for working on the CDM itself
-pytest -q                       # 161 tests; needs no install (see pytest.ini)
+pytest -q                       # the whole suite; needs no install (see pytest.ini)
 ```
 
 Run the reference adapter through the harness — the gate every adapter has to pass:
@@ -41,6 +42,10 @@ python -m synapse_cdm.harness --adapter pntmap \
 ```
 
 ## Where the documentation lives
+
+The rendered site is built from `docs/` — see [`docs/README.md`](docs/README.md) for the
+build and the Cloudflare Pages settings. Its JSON Schema reference is generated from
+`schemas/` and gated against drift, so it cannot document a shape the schemas do not have.
 
 | Document | What it answers |
 |---|---|

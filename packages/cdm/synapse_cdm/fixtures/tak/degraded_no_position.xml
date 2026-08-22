@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A report whose <point> states no coordinates at all — a degraded feed, or a
+     client that lost its fix. The entity arrives with position: None, which is what "we do
+     not know where this is" looks like in the CDM. It is NOT (0, 0), and it is not dropped:
+     the contact still exists, is still identified, and still has an interval. -->
+<event version="2.0" uid="TAK-DISMOUNT-19" type="a-f-G-U-C-I"
+       time="2026-04-29T06:13:07Z" start="2026-04-29T06:13:07Z" stale="2026-04-29T06:18:07Z"
+       how="h-t">
+  <point hae="9999999.0" ce="9999999.0" le="9999999.0"/>
+  <detail>
+    <contact callsign="DISMOUNT-19"/>
+    <__group name="Green" role="Team Lead"/>
+    <remarks>Position reported by voice, grid not passed. GPS denied.</remarks>
+  </detail>
+</event>

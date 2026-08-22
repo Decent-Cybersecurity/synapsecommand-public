@@ -7,3 +7,10 @@ build/
 dist/
 *.egg-info/
 .DS_Store
+
+# Documentation site (Docusaurus)
+docs/node_modules/
+docs/build/
+docs/.docusaurus/
+docs/.cache-loader/
+.wrangler/

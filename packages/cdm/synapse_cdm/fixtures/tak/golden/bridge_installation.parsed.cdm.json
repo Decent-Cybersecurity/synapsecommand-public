@@ -1,0 +1,86 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "callsign": "BRIDGE ALPHA",
+      "cot_affiliation_letter": "f",
+      "cot_battle_dimension": "G",
+      "cot_how": "h-e",
+      "cot_type": "a-f-G-I-B-A",
+      "entity_id_basis": "event/@uid",
+      "remarks": "Road bridge, two lanes. Load class not verified.",
+      "source_extras": {
+        "event": {
+          "@version": "2.0",
+          "detail": {
+            "archive": ""
+          }
+        }
+      },
+      "symbol_basis": "derived from affiliation; CoT states a type, not a 2525D SIDC",
+      "valid_from_basis": "event/@start",
+      "vertical_error_m": 45.0
+    },
+    "confidence": null,
+    "entity_id": "e5f7971a-8d95-5afb-891a-89b74868bbfa",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 3.0,
+      "alt_m": 18.0,
+      "lat": 59.3781,
+      "lon": 28.1996,
+      "position_source": "MANUAL"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "OP-NARVA-BRIDGE-01",
+        "system": "TAK"
+      }
+    ],
+    "symbol": "10230000000000000000",
+    "valid_from": "2026-04-29T04:40:00.000Z",
+    "valid_to": "2026-04-30T04:40:00.000Z"
+  },
+  {
+    "event_id": "6a517446-4374-509d-bc45-e483829681ee",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T04:40:00.000Z",
+    "payload": {
+      "cot_how": "h-e",
+      "cot_type": "a-f-G-I-B-A",
+      "event_id_basis": "event/@uid + event/@time",
+      "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "e5f7971a-8d95-5afb-891a-89b74868bbfa"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "OP-NARVA-BRIDGE-01",
+        "system": "TAK"
+      }
+    ]
+  }
+]

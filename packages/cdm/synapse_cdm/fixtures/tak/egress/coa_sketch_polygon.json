@@ -1,0 +1,29 @@
+{
+  "object_kind": "plan_object",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "TAK",
+    "adapter": "tak",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "TAK", "external_id": "COA-NARVA-PHASE2-ENGAGEMENT-AREA"}
+  ],
+  "object_id": "3f2b7c48-9d1e-4a63-8b57-2c9e10d4a771",
+  "object_type": "COA_SKETCH",
+  "label": "EA VIPER",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [[28.15, 59.36], [28.24, 59.36], [28.24, 59.41], [28.15, 59.41], [28.15, 59.36]]
+    ]
+  },
+  "style": {
+    "stroke_color": "-65536",
+    "stroke_weight": "3.0",
+    "fill_color": "-1761607680",
+    "opacity": "0.35"
+  },
+  "expires_at": "2026-04-29T18:00:00.000Z"
+}

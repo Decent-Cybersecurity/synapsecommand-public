@@ -1,0 +1,206 @@
+---
+title: Writing an Adapter
+sidebar_label: Writing an Adapter
+sidebar_position: 4
+description: The adapter contract, the six steps, and a real PNTMAP fixture beside the real golden output it produces.
+---
+
+import WorkedExample, {WorkedExampleProvenance} from '@site/src/components/WorkedExample';
+
+# Writing an adapter
+
+An adapter is a **pure translator**: external format in, CDM out. It has no configuration, no
+thresholds, no enrichment and no opinions. This page is the tutorial for writing one, built on
+the reference adapter — `packages/cdm/synapse_cdm/adapters/pntmap.py`, which is worth reading
+first because every rule the CDM cares about shows up in it at least once.
+
+## The worked example
+
+One PNTMAP GNSS interference alert, and the exact CDM output it produces under a frozen clock.
+Both files are read from the repository when this page is generated, not transcribed:
+
+<WorkedExample />
+
+Six things to notice, because each one is a rule rather than a style choice.
+
+**One payload became two objects.** The alert describes a thing that *exists* — an interference
+source, at a place, over an interval — and a thing that *happened* — interference, observed,
+over an area. Different canonical kinds, so `to_cdm()` returns `[entity, event]` and the event
+names the entity in `related_entities`.
+
+**`affiliation` is `HOSTILE` only because the payload said `"attribution": "hostile"`.** Remove
+that one key and the entity is `UNKNOWN`, despite being a jamming emitter in the Gulf of Riga.
+Inferring hostility would be an intelligence judgement made inside a translator — invisible to
+the audit trail, unattributable, and wrong the first time the "jammer" turns out to be a
+friendly EW exercise.
+
+**`receiver_count: 14` and `reporting_node` survive** in `attributes.source_extras`. Nothing
+mapped them; nothing dropped them either. `affected_constellations` survives **as a list**,
+which is the structure-preserving behaviour of `lossless.residual()`.
+
+**The two identifiers went to different objects.** The entity's `source_ids` holds
+`EMT-4471` — the emitter. The event's holds `PNTMAP-2026-04-29-0117` — the alert. That is what
+PNTMAP deduplicates on and what an auditor holding this event will search for.
+
+**`entity_id_basis` is stated.** It says the id was keyed on `emitter.emitter_id`, which is
+stable across alerts. Had the emitter been anonymous, the basis would read `alert_id` — stable
+for *that alert* and not for the object — and a consumer accumulating a track needs to know
+which of the two it is holding.
+
+**`received_at` is `2026-04-29T06:15:00.000Z` on every run**, because the harness injects a
+frozen clock. That is what makes the golden file above a fixed expectation rather than a diff
+that changes every second.
+
+<WorkedExampleProvenance />
+
+## 1. Declare the class
+
+:::tip The sketch below is now a finished adapter
+`adapters/tak.py` ships as adapter #2, so the class outlined here exists for real. Read
+`pntmap.py` first — every rule appears in it at least once — then read `tak.py`, which is where
+the awkward cases live: XML rather than JSON, a bidirectional `from_cdm()`, a source sentinel
+that must become `null`, an enum collapse that has to stay recoverable, and the two fixture forms
+an XML adapter needs in order to be checked at all.
+:::
+
+The contract is checked at **class-definition time**, so a mistake here fails at import rather
+than at 03:00 on the first outbound push.
+
+```python
+from synapse_cdm.adapter import Adapter
+from synapse_cdm.models import CDMBase
+
+
+class TakAdapter(Adapter):
+    name = "tak"                     # unique; how the harness and every SourceRef name you
+    version = "0.1.0"                # semver; goes into source.adapter_version
+    direction = "bidirectional"      # then you MUST override from_cdm()
+    system = "TAK"
+
+    TRANSFORMS = {"event.@time": "re-rendered into the CDM's fixed-millisecond form"}
+
+    def to_cdm(self, raw: bytes | dict) -> list[CDMBase]:
+        ...
+```
+
+Four gates run when Python defines the class:
+
+| Gate | Fails when |
+| --- | --- |
+| identity | `name`, `version`, `direction` or `system` is missing — provenance that cannot name its translator is not provenance |
+| direction | not one of `ingest`, `egress`, `bidirectional` |
+| capability | `egress`/`bidirectional` without overriding `from_cdm()` — an adapter that cannot emit must not claim it can |
+| capability | `ingest` *with* `from_cdm()` overridden — declare `bidirectional` so the capability is discoverable |
+| uniqueness | `name` is already registered by another class |
+
+`to_cdm()` **raises** on a payload it cannot translate. It must not return a partial object and
+it must not return an empty list to signal failure: an empty list means "this payload
+legitimately carries nothing", and the two cases have to stay distinguishable.
+
+## 2. Map the fields
+
+`packages/cdm/synapse_cdm/FORMAT_COVERAGE.md` already holds the Cursor-on-Target, STANAG 4676
+and GeoJSON mappings row by row, with every known gap named. **That table is your
+specification** — and a test resolves every path in its *CDM field* column against the actual
+Pydantic models, so a renamed field breaks the build rather than just the prose.
+
+## 3. Park everything else
+
+List the dotted paths you consumed, hand them to `lossless.residual()`, and put the result in
+`attributes["source_extras"]` or `payload["source_extras"]`.
+
+```python
+CONSUMED_TOP = ("alert_id", "alert_time", "valid_until", "severity")
+
+extras = lossless.residual(alert, (*CONSUMED_TOP, *CONSUMED_EMITTER, "interference"))
+```
+
+Do not enumerate leftovers by hand. The block a source adds in its next firmware release is
+exactly the one nobody remembers, and `residual()` collects it without having been told it
+exists.
+
+Keeping the consumed paths as **data** rather than burying them in the translation code is
+deliberate: "what does this adapter understand?" is then answerable by reading one list.
+
+## 4. Refuse what you cannot read
+
+A missing required field, or an unmappable severity, **raises**. Do not default it — an alert
+that arrives labelled `INFO` because its severity was unreadable is worse than one that fails
+loudly.
+
+An enum that *has* an `UNKNOWN` member is a different case: use it, and keep the source's own
+word in `attributes`. Stating "not known" is honest; inventing `JAMMING` is not.
+
+Source sentinels are **translated, never forwarded**. AIS says "speed unknown" with `102.3`;
+CoT says it with `9999999`. An adapter that forwards either puts a ship at 102 knots on a
+commander's map. Because the sentinel's *value* then appears nowhere in the output, the
+translation is declared in `TRANSFORMS` — which is what that mechanism is for.
+
+## 5. Ship fixtures
+
+At least three synthetic payloads under `packages/cdm/synapse_cdm/fixtures/<name>/`, including
+one that exercises the **awkward** path: a missing position, an unknown type, a vendor block you
+have never seen. No real data, ever.
+
+The reference adapter's four fixtures are chosen on that principle — a full alert, an alert with
+no geolocated emitter, an alert with an unknown interference type and unmapped vendor fields,
+and an emitter on the equator at longitude zero, which exists purely to prove that `0.0` is
+treated as a coordinate and not as absence.
+
+## 6. Record the golden output and read it
+
+```bash
+python -m synapse_cdm.harness --adapter tak \
+    --fixtures packages/cdm/synapse_cdm/fixtures/tak --update-golden
+```
+
+:::danger `--update-golden` is how a defect becomes the expectation
+Review the diff before committing it. Both defects found while building the reference adapter
+were caught by **reading a golden file**, not by a failing test.
+:::
+
+## 7. Add the tests
+
+Copy the shape of `tests/test_cdm_pntmap_adapter.py`: one test per claim in your adapter's
+docstring.
+
+If you are bidirectional, the harness already round-trips you — declare
+`direction = "bidirectional"`, override `from_cdm()`, and the `roundtrip` column checks that no
+source value goes missing on the way out. It compares **values, not bytes**: a byte-equal round
+trip is neither achievable nor the point, since key order changes, omitted optional fields come
+back explicit, and XML attribute order is arbitrary.
+
+An adapter emitting XML or USMTF gets `SKIP` on that column and **must ship its own round-trip
+test**, because the harness cannot compare a structure it cannot parse.
+
+## The harness
+
+```
+python -m synapse_cdm.harness --adapter <name|module:Class> --fixtures <dir> [--json]
+                              [--schemas schemas] [--now <RFC3339>] [--update-golden]
+                              [--synthetic true|false]
+```
+
+Six checks per fixture, and **an unrun check reports `SKIP`, never `PASS`** — a capability
+nobody tested must not acquire a green tick.
+
+| Check | Fails when |
+| --- | --- |
+| `translate` | `to_cdm()` raised. One bad fixture never stops the run; the rest are still judged |
+| `schema` | an object violates the **published** JSON Schema in `/schemas` — not the model, which would be testing the model against itself |
+| `provenance` | `source.*` incomplete, `synthetic` unstated, `source_ids` empty, an event missing a timestamp |
+| `lossless` | a source value appears nowhere in the output and is not a declared transform |
+| `roundtrip` | for an `egress`/`bidirectional` adapter, a source value is absent from what `from_cdm()` emitted. `SKIP` for ingest-only |
+| `golden` | the output differs from the recorded expectation, reported path by path |
+
+Nothing in the harness knows anything about any particular adapter. It resolves
+`module:ClassName` as readily as a registered name, which is what makes it usable as the gate
+for adapters the AI adapter factory generates and this repository has never seen — and that
+property is the whole design constraint.
+
+### Determinism
+
+The clock is frozen (`times.FROZEN_NOW`) unless `--now` says otherwise, and ids are derived
+rather than drawn. A fixture therefore produces identical bytes on every machine, which is the
+only reason the golden diff means anything. An adapter that reaches for `datetime.now()` or
+`uuid4()` fails the golden check on its second run.

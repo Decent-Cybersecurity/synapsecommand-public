@@ -1,0 +1,102 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "callsign": "NARVA-2",
+      "cot_affiliation_letter": "f",
+      "cot_battle_dimension": "G",
+      "cot_how": "m-g",
+      "cot_type": "a-f-G-U-C",
+      "entity_id_basis": "event/@uid",
+      "group_name": "Cyan",
+      "remarks": "Foot patrol north bank. Bridge observation post manned.",
+      "source_extras": {
+        "event": {
+          "@version": "2.0",
+          "detail": {
+            "__group": {
+              "@role": "Team Member"
+            },
+            "contact": {
+              "@endpoint": "192.168.20.14:4242:tcp"
+            },
+            "precisionlocation": {
+              "@altsrc": "GPS",
+              "@geopointsrc": "GPS"
+            },
+            "status": {
+              "@battery": "72"
+            }
+          }
+        }
+      },
+      "symbol_basis": "derived from affiliation; CoT states a type, not a 2525D SIDC",
+      "valid_from_basis": "event/@start"
+    },
+    "confidence": null,
+    "entity_id": "db0a297e-fd50-5e82-a169-6cb5ede76ae1",
+    "entity_type": "UNIT",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 187.5,
+      "speed_mps": 3.6
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 12.0,
+      "alt_m": 31.4,
+      "lat": 59.3762,
+      "lon": 28.1908,
+      "position_source": "GNSS"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "ANDROID-352629101234567",
+        "system": "TAK"
+      }
+    ],
+    "symbol": "10230000000000000000",
+    "valid_from": "2026-04-29T06:11:20.000Z",
+    "valid_to": "2026-04-29T06:16:20.000Z"
+  },
+  {
+    "event_id": "9bac927a-773b-57b3-8be4-cce3e2cc37d2",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:11:20.000Z",
+    "payload": {
+      "cot_how": "m-g",
+      "cot_type": "a-f-G-U-C",
+      "event_id_basis": "event/@uid + event/@time",
+      "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "db0a297e-fd50-5e82-a169-6cb5ede76ae1"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "ANDROID-352629101234567",
+        "system": "TAK"
+      }
+    ]
+  }
+]

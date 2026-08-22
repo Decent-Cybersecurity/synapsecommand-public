@@ -1,0 +1,19 @@
+# Cloudflare Pages configuration for the documentation site.
+#
+# Only the OUTPUT directory belongs in this file. Pages takes the build command from the
+# project's settings (or from CI), so the two halves of the deployment are recorded together
+# here to stop them drifting apart:
+#
+#     Build command          cd docs && npm install && npm run build
+#     Build output directory docs/build          <- pages_build_output_dir below
+#     Root directory         /                   (this file's directory)
+#
+# `npm run build` runs `prebuild` first, which regenerates the JSON Schema reference pages from
+# /schemas. So a deploy always renders the schemas as they are in the commit being deployed,
+# and a contributor who forgot to regenerate gets correct pages rather than a stale deploy.
+# The reverse gate — a stale page COMMITTED — is `npm run check:schemas`, which belongs in CI
+# rather than here, because the fix for it is a commit and not a redeploy.
+
+name = "synapsecommand-docs"
+pages_build_output_dir = "docs/build"
+compatibility_date = "2026-08-22"

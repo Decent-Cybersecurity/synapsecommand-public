@@ -1,0 +1,127 @@
+---
+title: Introduction
+sidebar_label: Introduction
+sidebar_position: 1
+slug: /
+description: What the SynapseCommand Canonical Data Model is, why it exists, and the six rules every adapter obeys.
+---
+
+# The Canonical Data Model
+
+Five integration adapters are landing: PNTMAP GNSS alerts, Picogrid Legion, TAK /
+Cursor-on-Target, STANAG 4676 tracks, and the simulation feed.
+
+Without a canonical model in the middle, five adapters means **ten translations** and five
+private notions of what "a contact" is — and the integration layer becomes the place where
+meaning is quietly lost. With one, an adapter is a thin translator and nothing else.
+
+```
+external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer
+consumer        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
+```
+
+## The four objects
+
+Everything an adapter emits is one of four kinds. The split is by **what a thing is**, not by
+which system sent it, which is why one source payload legitimately becomes several objects.
+
+| Object | Means | Read |
+| --- | --- | --- |
+| [`Entity`](./cdm/entity.mdx) | something that **exists** | a unit, a jammer, an evacuee group |
+| [`Event`](./cdm/event.mdx) | something that **happened** | a detection, an interference alert |
+| [`Track`](./cdm/track.mdx) | an entity's **position history** | STANAG 4676's shape |
+| [`PlanObject`](./cdm/plan-object.mdx) | something we **push out** | a COA sketch, a route |
+
+A PNTMAP alert is an `INTERFERENCE_SOURCE` entity **and** a `GNSS_INTERFERENCE` event, so
+`to_cdm()` returns a list. Forcing that into one object would mean inventing a container
+nothing else uses, and losing whichever half the container was not shaped for.
+
+## The rules, and where each one is enforced
+
+None of these is a convention. Each is checked by something that fails a build.
+
+### 1. Adapters never drop data
+
+A field with no canonical home goes into `Entity.attributes` or `Event.payload`, parked under
+`source_extras`. **Enforced:** the harness harvests every scalar in the source payload,
+harvests every scalar in the CDM output, and fails the adapter on a value that appears
+nowhere.
+
+Values that legitimately change — a unit conversion, a re-rendered timestamp — are declared in
+the adapter's `TRANSFORMS` with a reason, and the harness **prints every declaration on every
+run**. An exemption is a visible line in the report, not a silent skip. An adapter that wanted
+to hide a dropped field would have to write down that it was dropping it.
+
+### 2. Adapters are pure translation
+
+No filtering, no enrichment, no thresholds. Each of those is a decision, and a decision made
+inside a translator is invisible to the audit trail and unattributable.
+
+The reference adapter demonstrates the rule where it is most tempting: a GNSS jamming emitter
+gets `affiliation: UNKNOWN` unless the payload states an attribution. Inferring `HOSTILE`
+would be an intelligence judgement — and it would be wrong the first time the "jammer" turns
+out to be a friendly EW exercise.
+
+### 3. An unknown position is `null`, never `(0, 0)`
+
+Structural, not conventional: [`Position`](./schema-reference/entity.mdx#position) **requires**
+`lat` and `lon`, so "unknown" cannot be spelled as zeros — it is spelled by the absence of a
+`Position`. Coordinate zero is a real point in the Gulf of Guinea, and a contact painted there
+is a contact that does not exist.
+
+:::warning The mirror-image defect
+`0.0` **is** a real coordinate, so `if not lat` is as wrong as null-to-zero — it silently
+discards a real position on the Greenwich meridian or the equator. The test is for **absence**
+(`lat is None`), never for falsiness. Both directions have a fixture and a test.
+:::
+
+### 4. An unknown scalar is `null`, never `0`
+
+0 kt is measured stillness, 0° is due north, confidence 0 is certainty-that-*not*. All three
+are real measurements, so none can double as "no data". A source's "value not available"
+sentinel — AIS sends 102.3 for unknown speed, CoT sends 9999999 — is **translated**, never
+passed through.
+
+### 5. Every object states whether it is exercise data
+
+`source.synthetic` is required and has **no default**. Mislabelling exercise data as live can
+reach an operational picture; mislabelling live data as exercise hides it from an operator.
+Neither direction is safe to guess, so the format makes someone state it.
+
+### 6. Identity is derived, never drawn
+
+`entity_id` is `uuid5(namespace, system|external_id)`, so the tenth report about one emitter
+updates one entity instead of creating a tenth. It is also what makes golden-output tests
+possible at all: a derived id is deterministic, a drawn one makes every run differ from every
+other run.
+
+An adapter with no stable upstream identifier cannot fake one — it must record what it keyed
+on, and the harness prints that basis.
+
+### 7. Time has one serialised form
+
+RFC 3339 UTC, exactly three decimals, always `Z`. Two timestamps meaning the same instant must
+compare equal **as strings**, because that is how they are compared in golden diffs and chain
+hashes: `...:44Z`, `...:44.0Z` and `...:44.000000Z` are one instant and three strings.
+
+`received_at` comes from an injected clock; adapter code never calls `datetime.now()`.
+
+## Where to go next
+
+- **[The four objects](./cdm/index.mdx)** — one page each, with the reasoning behind the
+  fields that look odd.
+- **[JSON Schema Reference](./schema-reference/index.mdx)** — generated from the published
+  schemas, which is what a non-Python consumer validates against.
+- **[Writing an Adapter](./writing-an-adapter.mdx)** — the tutorial, built on the PNTMAP
+  reference adapter, with a real fixture and its real golden output side by side.
+- **[Changelog](./changelog.mdx)** — what `schema_version` means and what has changed.
+
+## Installing it
+
+```bash
+pip install -e packages/cdm     # from a clone
+```
+
+The package depends on `pydantic` and `jsonschema` and nothing else. It contains no crypto:
+the `integrity` field is designed and deliberately unpopulated, because a signature computed
+inside a translator is held by nothing that audits it.

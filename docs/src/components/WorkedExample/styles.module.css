@@ -1,0 +1,97 @@
+/*
+ * Side-by-side on a wide screen, stacked below it.
+ *
+ * The breakpoint is 996px because that is Docusaurus's own `--ifm-*` mobile boundary — the
+ * sidebar collapses there, so matching it means the columns go one-up at exactly the width
+ * where the content area stops being wide enough for two.
+ */
+.wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+/* `minmax(0, 1fr)` above rather than `1fr`: a grid child containing a <pre> refuses to shrink
+   below its content width otherwise, and the whole page acquires a horizontal scrollbar. */
+.column {
+  min-width: 0;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.badgeIn,
+.badgeOut {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.45rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+
+.badgeIn {
+  background: var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-emphasis-900);
+}
+
+.badgeOut {
+  background: var(--sc-accent-subtle);
+  color: var(--sc-accent-text);
+}
+
+.path {
+  font-size: 0.72rem;
+  word-break: break-all;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Each column scrolls on its own. The output is legitimately several times the size of the
+   input, and a shared height would leave one column mostly empty. */
+.code {
+  max-height: 32rem;
+  overflow: auto;
+  margin-bottom: 0 !important;
+}
+
+.arrow {
+  align-self: center;
+  font-size: 1.5rem;
+  color: var(--ifm-color-emphasis-600);
+  padding-top: 1.5rem;
+}
+
+.provenance {
+  display: table;
+  width: 100%;
+  font-size: 0.78rem;
+}
+
+.provenance code {
+  word-break: break-all;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 996px) {
+  .wrapper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Rotated so the relationship still reads top-to-bottom once the columns stack. */
+  .arrow {
+    transform: rotate(90deg);
+    padding-top: 0;
+    text-align: center;
+  }
+}

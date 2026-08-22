@@ -1,0 +1,87 @@
+[
+  {
+    "affiliation": "HOSTILE",
+    "attributes": {
+      "callsign": "TRACK 4471",
+      "cot_affiliation_letter": "h",
+      "cot_battle_dimension": "A",
+      "cot_how": "m-i",
+      "cot_type": "a-h-A-M-F-Q",
+      "entity_id_basis": "event/@uid",
+      "remarks": "Non-cooperative. No IFF response.",
+      "source_extras": {
+        "event": {
+          "@version": "2.0"
+        }
+      },
+      "symbol_basis": "derived from affiliation; CoT states a type, not a 2525D SIDC",
+      "valid_from_basis": "event/@start",
+      "vertical_error_m": 120.0
+    },
+    "confidence": null,
+    "entity_id": "dbffc473-afdd-5d98-b14a-50ba86c678df",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 0.0,
+      "speed_mps": 247.2
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 180.0,
+      "alt_m": 7620.0,
+      "lat": 58.9014,
+      "lon": 24.0553,
+      "position_source": "INERTIAL"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "TAK-AIR-4471",
+        "system": "TAK"
+      }
+    ],
+    "symbol": "10260000000000000000",
+    "valid_from": "2026-04-29T06:09:55.000Z",
+    "valid_to": "2026-04-29T06:11:55.000Z"
+  },
+  {
+    "event_id": "4f515e3d-b708-5bc6-aa6f-4063b41e945f",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:09:55.000Z",
+    "payload": {
+      "cot_how": "m-i",
+      "cot_type": "a-h-A-M-F-Q",
+      "event_id_basis": "event/@uid + event/@time",
+      "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "dbffc473-afdd-5d98-b14a-50ba86c678df"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "TAK-AIR-4471",
+        "system": "TAK"
+      }
+    ]
+  }
+]

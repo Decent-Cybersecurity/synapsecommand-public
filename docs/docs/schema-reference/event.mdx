@@ -1,0 +1,177 @@
+---
+title: "Event"
+sidebar_label: "Event"
+sidebar_position: 3
+description: "Anything that happens. The audit-bearing object: two timestamps and a source, always."
+---
+
+{/* GENERATED FILE — DO NOT EDIT.
+    Written by docs/scripts/generate-schema-docs.mjs from the JSON Schema named below.
+    Edit the Pydantic model in packages/cdm/synapse_cdm/models.py, re-export with
+    `python -m synapse_cdm.schemas --out schemas`, then re-run `npm run gen:schemas`. */}
+
+# Event
+
+| | |
+| --- | --- |
+| Source file | `schemas/event.schema.json` |
+| `$id` | `https://synapsecommand.local/cdm/1.0.0/event.schema.json` |
+| CDM schema version | `1.0.0` |
+| SHA-256 of source | `35316ac8789c1b818fad29e2b2ab87a05af784774602b0a4d4ed25acdeeb544a` |
+
+Anything that happens. The audit-bearing object: two timestamps and a source, always.
+
+## Fields
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `event_id` | string (uuid) | **yes** |  |
+| `event_type` | [EventType](#eventtype) | **yes** |  |
+| `geometry` | [Point](#point) \| [LineString](#linestring) \| [Polygon](#polygon) \| null | no | GeoJSON, WGS84, [lon, lat] order — e.g. a jamming footprint. Default `null`. |
+| `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
+| `object_kind` | `"event"` | no |  |
+| `observed_at` | string | **yes** | When the SOURCE saw it. Never receipt time. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `payload` | object | no | Event-specific fields. Validated against PAYLOAD_MODELS[event_type] when one is registered; free-form otherwise. Also the never-drop bag for events. |
+| `received_at` | string | **yes** | When WE took delivery. Never source time. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `related_entities` | array&lt;string (uuid)&gt; | no | entity_id values this event concerns. Empty when the event concerns no specific entity (a feed-level status change). |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"1.0.0"`. |
+| `severity` | [Severity](#severity) | **yes** |  |
+| `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
+| `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
+
+:::info `additionalProperties: false`
+Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
+with a declared escape hatch — `Entity.attributes` and `Event.payload` accept
+anything — so an adapter never has to choose between dropping a field and failing
+validation.
+:::
+
+## Referenced definitions
+
+Every `$ref` on this page resolves to one of these, inlined here so the page is a
+complete reference and not a starting point for chasing pointers.
+
+### EventType
+
+Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
+
+member rather than a null wherever the enum has one.
+
+| Value |
+| --- |
+| `DETECTION` |
+| `GNSS_INTERFERENCE` |
+| `TRACK_UPDATE` |
+| `ALERT` |
+| `STATUS_CHANGE` |
+| `PLAN_INJECT` |
+| `SIM_RESULT` |
+
+### Integrity
+
+DESIGNED, NOT IMPLEMENTED — the field the PQC signature will occupy.
+
+No crypto happens in this package (tests/test_cdm_boundary.py asserts the package imports
+no crypto module). The field exists from day one so that turning signing on is a value
+change rather than a schema change: a schema change would be a MAJOR bump rippling through
+every store and every consumer, and would arrive exactly when the signing work is already
+late.
+
+`algorithm` is a free string rather than an enum, naming what the platform's ledger
+already uses — ML-DSA-87 for entry signatures, SLH-DSA for checkpoints. Free, because the
+algorithm that replaces those is not knowable now, and an enum would make the migration a
+MAJOR bump for a value nobody reasons over programmatically.
+
+All three fields or none. A block holding a signature with no algorithm is unverifiable,
+and an unverifiable signature that LOOKS present is worse than an absent one: it reads as
+assurance to everything downstream that does not check.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `algorithm` | string | **yes** | e.g. ML-DSA-87, SLH-DSA-SHAKE-256s. (min length 1) |
+| `chain_hash` | string | **yes** | Hash binding this object to the chain. (min length 1) |
+| `signature` | string | **yes** | (min length 1) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### LineString
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `coordinates` | array&lt;array&lt;number&gt;&gt; | **yes** | (min items 2) |
+| `type` | `"LineString"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Point
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `coordinates` | array&lt;number&gt; | **yes** |  |
+| `type` | `"Point"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Polygon
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `coordinates` | array&lt;array&lt;array&lt;number&gt;&gt;&gt; | **yes** | (min items 1) |
+| `type` | `"Polygon"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Severity
+
+Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
+
+member rather than a null wherever the enum has one.
+
+| Value |
+| --- |
+| `INFO` |
+| `ADVISORY` |
+| `WARNING` |
+| `CRITICAL` |
+
+### SourceId
+
+One external identifier for an object — the provenance mapping.
+
+A list of these, not one, because the same object arrives from several systems: the same
+vessel is an MMSI to AIS, a track number to STANAG 4676 and a UID to TAK. Fusion joins
+them later; the adapter's job is to record which name its own system used, and never to
+overwrite another system's entry.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `external_id` | string | **yes** | That system's own identifier. (min length 1) |
+| `system` | string | **yes** | The external system, e.g. PNTMAP, TAK. (min length 1) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### SourceRef
+
+Which adapter produced this object, from which system, and whether it is real.
+
+`synthetic` is required and has no default. Every fixture in this repository is synthetic
+and every scenario package is too (TR-12), and the platform keeps the synthetic and live
+layers apart over one interface — so an object that does not say which layer it belongs to
+cannot be filed. A default of `false` would silently promote exercise data to operational
+data, which is the dangerous direction; a default of `true` would silently demote live
+data and hide it from an operator. There is no safe default, so there is no default.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `adapter` | string | **yes** | Adapter name, e.g. pntmap. (min length 1) |
+| `adapter_version` | string | **yes** | Adapter semver. (min length 1) |
+| `synthetic` | boolean | **yes** | true for anything not from a real source (TR-12). |
+| `system` | string | **yes** | The external system this came from. (min length 1) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).

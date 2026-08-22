@@ -1,0 +1,83 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "callsign": "UNKNOWN CONTACT 77Z",
+      "cot_affiliation_letter": "s",
+      "cot_battle_dimension": "S",
+      "cot_how": "m-f",
+      "cot_type": "a-s-S-X-M",
+      "entity_id_basis": "event/@uid",
+      "group_name": "Dark Blue",
+      "remarks": "Radar-only surface contact, no AIS return. Track erratic.",
+      "source_extras": {
+        "event": {
+          "@version": "2.0"
+        }
+      },
+      "symbol_basis": "derived from affiliation; CoT states a type, not a 2525D SIDC",
+      "valid_from_basis": "event/@time (event/@start absent)"
+    },
+    "confidence": null,
+    "entity_id": "be93e3ca-206f-5596-831a-018a9ad7eb6a",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.7431,
+      "lon": 21.4102,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "TAK-VESSEL-77Z",
+        "system": "TAK"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T05:58:02.000Z",
+    "valid_to": "2026-04-29T06:28:02.000Z"
+  },
+  {
+    "event_id": "42206d3b-14f6-54fa-97b0-42c9c64e7d0c",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T05:58:02.000Z",
+    "payload": {
+      "cot_how": "m-f",
+      "cot_type": "a-s-S-X-M",
+      "event_id_basis": "event/@uid + event/@time",
+      "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "be93e3ca-206f-5596-831a-018a9ad7eb6a"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "tak",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "TAK"
+    },
+    "source_ids": [
+      {
+        "external_id": "TAK-VESSEL-77Z",
+        "system": "TAK"
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<event version="2.0" uid="ROUTE-NARVA-PATROL-BRAVO" type="u-d-f" how="h-e" time="2026-04-29T06:15:00.000Z" start="2026-04-29T06:15:00.000Z">
+  <point lat="59.3762" lon="28.1908" hae="31.4" ce="9999999.0" le="9999999.0" />
+  <detail>
+    <contact callsign="ROUTE BRAVO" />
+    <link point="59.3762,28.1908,31.4" />
+    <link point="59.379,28.1975,9999999.0" />
+    <link point="59.3812,28.2044,9999999.0" />
+    <strokeColor value="-16711936" />
+    <synapse_plan object_id="b81d55e0-6a44-4f0d-9e21-77aa3c5b1f92" object_type="ROUTE" geometry="LineString" schema_version="1.0.0" closed="false" />
+  </detail>
+</event>

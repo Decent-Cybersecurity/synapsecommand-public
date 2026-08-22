@@ -1,0 +1,11 @@
+{
+  "label": "JSON Schema Reference",
+  "position": 3,
+  "link": {
+    "type": "doc",
+    "id": "schema-reference/index"
+  },
+  "customProps": {
+    "generated": true
+  }
+}

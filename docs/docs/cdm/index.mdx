@@ -1,0 +1,87 @@
+---
+title: Canonical Data Model
+sidebar_label: Overview
+sidebar_position: 0
+description: The four canonical objects and what every one of them carries.
+---
+
+# The four canonical objects
+
+Everything an adapter emits is an `Entity`, an `Event`, a `Track` or a `PlanObject`. The split
+is by **what a thing is** — not by which system sent it, and not by which consumer wants it.
+
+| Object | Means | Key fields |
+| --- | --- | --- |
+| [`Entity`](./entity.mdx) | something that **exists** | `entity_id`, `entity_type`, `affiliation`, `position`, `kinematics`, `valid_from`/`valid_to`, `confidence`, `attributes` |
+| [`Event`](./event.mdx) | something that **happened** | `event_id`, `event_type`, `severity`, `related_entities`, `geometry`, `payload`, `observed_at`, `received_at` |
+| [`Track`](./track.mdx) | an entity's **position history** | `track_id`, `entity_id`, `samples[]`, `track_quality` |
+| [`PlanObject`](./plan-object.mdx) | something we **push out** | `object_id`, `object_type`, `geometry`, `style`, `label`, `expires_at` |
+
+## What all four carry
+
+Every canonical object inherits `CDMBase`, and none of these four fields is decoration.
+
+### `schema_version`
+
+Semver, in **every** serialised object. A consumer reading an object off a queue has no other
+way to know which shape it is holding, and "we will add versioning when we need it" means
+adding it at the moment two incompatible producers are already in the field.
+
+Compared with `version.compatible()`, not by equality — see the [Changelog](../changelog.mdx).
+
+### `source`
+
+`{system, adapter, adapter_version, synthetic}` — which translator produced this object.
+
+`synthetic` is **required and has no default**. Mislabelling exercise data as live can reach an
+operational picture; mislabelling live data as exercise hides it from an operator. There is no
+safe default, so there is no default.
+
+### `source_ids[]`
+
+Every external identifier the object is known by, **at least one, on every kind**.
+
+:::note This field moved, and the harness is why
+`source_ids` was specified on `Entity` alone. The lossless check found the gap within a minute
+of first running: a PNTMAP alert whose emitter carries its own id produced an entity keyed on
+the emitter and an event keyed on **nothing**, so the alert's own identifier —
+`PNTMAP-2026-04-29-0117` — appeared nowhere in the output.
+
+Three consequences, none acceptable: a redelivery could not be recognised as a duplicate,
+because nothing held the identifier the source deduplicates on; an auditor holding the event
+could not get back to the source record, which is the one question an audit trail exists to
+answer; and **the loss was silent** — every other check passed.
+
+It is a list rather than a single value because the same object arrives from several systems:
+one vessel is an MMSI to AIS, a track number to STANAG 4676 and a UID to TAK. Fusion joins
+them later; an adapter records the name its own system used and never overwrites another
+system's entry.
+:::
+
+### `integrity`
+
+The post-quantum signature block: **designed, deliberately not implemented**.
+
+The field exists from day one so that turning signing on is a *value* change rather than a
+*schema* change — a schema change would be a MAJOR bump rippling through every store and every
+consumer, arriving exactly when the signing work is already late.
+
+No crypto happens in this package, and that is enforced by AST rather than promised: an import
+of `hashlib` or `cryptography` here would mean somebody had started signing objects inside the
+translation layer, where the key material has no business being and where nothing audits it.
+
+All three of its fields or none. A block holding a signature with no algorithm is unverifiable,
+and an unverifiable signature that *looks* present is worse than an absent one: it reads as
+assurance to everything downstream that does not check.
+
+## Why `additionalProperties: false` everywhere
+
+A canonical model whose objects accept unknown keys is not canonical — it is a dict with a
+docstring. The strictness is safe only because it is paired with a **declared escape hatch**:
+`Entity.attributes` and `Event.payload` accept anything, so an adapter never has to choose
+between dropping a field and failing validation.
+
+Strict where the meaning is fixed, open where it is not, and the boundary between the two
+written down. The alternative — `extra="allow"` on the objects themselves — puts
+source-specific fields at the same level as canonical ones, and six months later nobody can
+tell which fields the model guarantees and which one adapter happens to send.
