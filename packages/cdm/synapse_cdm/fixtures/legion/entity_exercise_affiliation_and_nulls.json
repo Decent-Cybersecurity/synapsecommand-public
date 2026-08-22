@@ -1,0 +1,18 @@
+{
+  "id": "f1c70000-0001-8000-8000-000000000004",
+  "organization_id": "f1c70000-0000-8000-8000-000000000001",
+  "parent_id": null,
+  "name": "EXERCISE Aggressor Delta",
+  "type": "Rotary Wing",
+  "status": "degraded",
+  "category": "UXV",
+  "affiliation": "EXERCISE_FRIEND",
+  "top_classification": null,
+  "top_classification_probability": null,
+  "created_at": "2026-04-29T06:05:00Z",
+  "updated_at": "2026-04-29T06:15:00Z",
+  "deleted_at": null,
+  "expires_at": "2026-04-29T18:00:00Z",
+  "is_active": true,
+  "is_expired": false
+}

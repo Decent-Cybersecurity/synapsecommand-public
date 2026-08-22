@@ -1,0 +1,132 @@
+[
+  {
+    "affiliation": "NEUTRAL",
+    "attributes": {
+      "affiliation_basis": "Legion affiliation 'NEUTRAL' -> NEUTRAL; the source vocabulary is fifteen values wide and the CDM's is four, so the original is parked at attributes.legion_affiliation and the collapse is recoverable",
+      "embedded_entity_basis": "this entity was read from the `entity` block embedded in a location document, which is a SUBSET of the standalone Entity schema: classification, is_expired, location_latest, top_classification, top_classification_probability are absent from this endpoint's schema entirely. That is a fact about the API's shape and NOT a claim that Legion does not know them \u2014 they are deliberately kept out of unavailable_fields, and the standalone entity endpoint carries them",
+      "entity_id_basis": "Legion entity id",
+      "entity_type_basis": "Legion category 'DEVICE' -> UNKNOWN deliberately. DETECTION, ALERT and TRACK name a report ABOUT something rather than a thing that exists; WEATHER is a phenomenon the CDM does not model as an entity; DEVICE is Legion's generic bucket and is as easily a radio or a battery as a sensor. Mapping any of them to a specific member would be this translator inventing a category, and the raw value is parked",
+      "legion_affiliation": "NEUTRAL",
+      "legion_category": "DEVICE",
+      "legion_is_active": true,
+      "legion_location_id": "f1c70000-0002-8000-8000-000000000003",
+      "legion_name": "EXERCISE Contact Charlie",
+      "legion_organization_id": "f1c70000-0000-8000-8000-000000000001",
+      "legion_parent_id": "f1c70000-0001-8000-8000-000000000001",
+      "legion_position": {
+        "coordinates": [
+          21.5606,
+          57.3908,
+          8.0
+        ],
+        "crs": "EPSG:4326",
+        "type": "Point"
+      },
+      "legion_status": "active",
+      "legion_type": "Buoy",
+      "legion_updated_at": "2026-04-29T06:09:31Z",
+      "position_basis": "crs EPSG:4326 stated; coordinates read as [longitude, latitude, altitude] per the Legion prose companion, which overrides the EPSG registry's axis order for this code. No conversion applied",
+      "position_source_basis": "ESTIMATED. Legion's location `source` names the SYSTEM that produced the fix ('Synthetic AIS Gateway') and never the positioning method, so there is nothing to read a method from. ESTIMATED understates rather than overstates, which is the safe direction for this field",
+      "source_extras": {
+        "crs": "EPSG:4326",
+        "entity": {
+          "affiliation": "NEUTRAL",
+          "category": "DEVICE",
+          "created_at": "2026-04-29T06:00:00Z",
+          "id": "f1c70000-0001-8000-8000-000000000003",
+          "is_active": true,
+          "name": "EXERCISE Contact Charlie",
+          "organization_id": "f1c70000-0000-8000-8000-000000000001",
+          "parent_id": "f1c70000-0001-8000-8000-000000000001",
+          "status": "active",
+          "type": "Buoy",
+          "updated_at": "2026-04-29T06:09:31Z"
+        },
+        "position": {
+          "coordinates": [
+            21.5606,
+            57.3908,
+            8.0
+          ],
+          "type": "Point"
+        },
+        "source": "Synthetic AIS Gateway",
+        "speed": null
+      },
+      "symbol_basis": "derived from affiliation; Legion states no symbol",
+      "unavailable_fields": [
+        "speed"
+      ],
+      "valid_from_basis": "location recorded_at \u2014 when the source recorded the fix"
+    },
+    "confidence": null,
+    "entity_id": "eb04b352-b5ff-53b2-9e58-278a86609560",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 0.0,
+      "speed_mps": null
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 8.0,
+      "lat": 57.3908,
+      "lon": 21.5606,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0001-8000-8000-000000000003",
+        "system": "LEGION"
+      }
+    ],
+    "symbol": "10240000000000000000",
+    "valid_from": "2026-04-29T06:09:30.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "763b5cb4-7c89-5aa5-a287-eea0beecd89f",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:09:30.000Z",
+    "payload": {
+      "entity_block_embedded": true,
+      "event_type_basis": "TRACK_UPDATE. A location document reports where something was at an instant, which is what that member means",
+      "legion_created_at": "2026-04-29T06:09:31Z",
+      "legion_location_id": "f1c70000-0002-8000-8000-000000000003",
+      "legion_source": "Synthetic AIS Gateway",
+      "observed_at_basis": "location recorded_at \u2014 when the source recorded the fix",
+      "received_at_basis": "the injected clock. Legion's created_at is when the PLATFORM stored the record, which is its receipt and not ours",
+      "severity_basis": "INFO. Legion states no severity on any resource, so this is the format's silence and not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "eb04b352-b5ff-53b2-9e58-278a86609560"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0002-8000-8000-000000000003",
+        "system": "LEGION"
+      }
+    ]
+  }
+]

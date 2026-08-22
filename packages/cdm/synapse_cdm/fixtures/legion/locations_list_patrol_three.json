@@ -1,0 +1,35 @@
+{
+  "crs": "EPSG:4978",
+  "total_count": 9,
+  "paging": {
+    "has_more": true,
+    "next": 2,
+    "previous": null
+  },
+  "results": [
+    {
+      "id": "f1c70000-0002-8000-8000-000000000011",
+      "entity_id": "f1c70000-0001-8000-8000-000000000005",
+      "position": {"type": "Point", "coordinates": [3164936.13, 1357068.79, 5350676.28]},
+      "source": "Synthetic Track Fusion",
+      "recorded_at": "2026-04-29T06:11:00Z",
+      "created_at": "2026-04-29T06:11:01Z"
+    },
+    {
+      "id": "f1c70000-0002-8000-8000-000000000012",
+      "entity_id": "f1c70000-0001-8000-8000-000000000005",
+      "position": {"type": "Point", "coordinates": [3147102.14, 1364945.34, 5359134.15]},
+      "source": "Synthetic Track Fusion",
+      "recorded_at": "2026-04-29T06:13:00Z",
+      "created_at": "2026-04-29T06:13:01Z"
+    },
+    {
+      "id": "f1c70000-0002-8000-8000-000000000013",
+      "entity_id": "f1c70000-0001-8000-8000-000000000005",
+      "position": {"type": "Point", "coordinates": [3129298.52, 1373092.81, 5367424.3]},
+      "source": "Synthetic Track Fusion",
+      "recorded_at": "2026-04-29T06:15:00Z",
+      "created_at": "2026-04-29T06:15:01Z"
+    }
+  ]
+}

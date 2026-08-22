@@ -1,0 +1,32 @@
+{
+  "id": "f1c70000-0002-8000-8000-000000000002",
+  "entity_id": "f1c70000-0001-8000-8000-000000000002",
+  "position": {
+    "type": "Point",
+    "coordinates": [3133607.51, 1384778.07, 5361895.07]
+  },
+  "source": "Synthetic Radar Fusion",
+  "recorded_at": "2026-04-29T06:11:20Z",
+  "created_at": "2026-04-29T06:11:23Z",
+  "bearing": 187.5,
+  "speed": 7.1,
+  "velocity": [-0.9, 6.8, 1.9],
+  "acceleration": [0, 0.01, -0.02],
+  "angular_velocity": [0, 0.01, -0.02],
+  "orientation": [0.707, 0, 0, 0.707],
+  "covariance": [[25, 0, 0], [0, 25, 0], [0, 0, 9]],
+  "radius": 500,
+  "entity": {
+    "id": "f1c70000-0001-8000-8000-000000000002",
+    "organization_id": "f1c70000-0000-8000-8000-000000000001",
+    "parent_id": null,
+    "name": "EXERCISE Contact Bravo",
+    "type": "Surface Vessel",
+    "status": "active",
+    "category": "VEHICLE",
+    "affiliation": "UNKNOWN",
+    "created_at": "2026-04-29T06:02:00Z",
+    "updated_at": "2026-04-29T06:11:23Z",
+    "is_active": true
+  }
+}

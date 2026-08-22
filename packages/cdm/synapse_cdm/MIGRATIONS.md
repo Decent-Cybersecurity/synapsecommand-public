@@ -165,6 +165,54 @@ is worth stating.
   a rule — a field definition is CITED or it is a gap, never inferred from what a magnitude makes
   plausible — and the citation now sits in `FORMAT_COVERAGE.md` beside the row.
 
+- **`adapters/legion.py` 1.0.0 (Picogrid Legion Platform API v3, ingest)** — Entity, Track,
+  Entity/Track Location, Locations list and Event, at **schema_version 1.0.0**, with no field
+  added, removed or retyped.
+
+  The first adapter whose upstream is a REST API rather than a wire format, and the boundary is
+  drawn in the same place: `to_cdm()` takes one already-fetched JSON document and owns no HTTP,
+  no auth, no retries and no pagination. Two decisions carried over from the wire formats and one
+  is new.
+
+  - **Pagination is framing; correlation is fusion.** One page becomes one `Track`, and the
+    adapter never follows `paging.next` — the AIS fragment-buffer argument and the ADS-B CPR
+    argument reaching the same conclusion a third time. Four available joins are declined by
+    name; what IS read is data the payload already embeds, which is reading and not correlating.
+  - **A Legion Track is a CDM `Entity`, not a CDM `Track`.** `GET /v3/entities/{id}` and
+    `GET /v3/tracks/{id}` return byte-identical schemas and a track location's foreign key is
+    named `entity_id`. The CDM `Track` comes from a Locations LIST instead, which is where the
+    history actually lives.
+  - **A vendor API needs a pinned spec, and the pin is load-bearing.** Unlike a ratified
+    standard, Legion can change between deploys, and its `info.version` demonstrably does not
+    move when it does. So `fixtures/legion/spec/openapi_pin.json` records the document's SHA-256
+    (which is also its ETag) and a field-by-field inventory, and a test fails the build on a
+    field with no row in `FORMAT_COVERAGE.md`.
+
+  What the CDM already had was enough, and three existing decisions earned their keep:
+
+  - **`Position` requiring both coordinates, and `PositionSource` being a real vocabulary.**
+    Legion's `crs` defaults to `EPSG:4978` — geocentric X/Y/Z in metres — while its position
+    object is shaped like GeoJSON, so an adapter reading `coordinates` as `[lon, lat]` would
+    place every contact somewhere impossible while emitting well-formed objects. And its
+    location `source` names the SYSTEM that produced a fix, never the method, so
+    `position_source` is ESTIMATED with a basis rather than a borrowed GNSS.
+  - **`Affiliation` having four members and `SourceRef.synthetic` being separate from them.**
+    Legion's enum is fifteen values wide and folds an exercise marking INTO the identity — so
+    this is the widest collapse in the document and also a SPLIT, because the CDM already
+    separates identity from context. `source.synthetic` is a declaration about the feed and is
+    deliberately not rewritten by payload content.
+  - **`attributes` accepting anything.** The four vectors Legion sends (`velocity`,
+    `acceleration`, `angular_velocity`, a quaternion `orientation`), its 3×3 `covariance` and its
+    `speed` all park, because their units and reference frames are documented nowhere and the
+    schema's own `speed` and `velocity` examples contradict each other. That is the ADS-B
+    altitude lesson applied BEFORE the fact rather than after it.
+
+  Four corrections happened during implementation and all four came from a gate rather than a
+  review, which is the note worth keeping: the never-drop check caught the list path pruning
+  every sample's metadata; the pinned inventory caught a hand-read claiming six omitted fields
+  where the spec says five; a TRANSFORMS audit caught six exemptions with no subject; and the
+  harness caught the spec pin being replayed as a payload.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
@@ -200,6 +248,19 @@ evidence that was missing when they were first written down:
   whoever implements it inherits a cross-frame join as well: ADS-B cannot state the datum in the
   same frame as the heading.
 
+- **`Track.attributes`** — an extension bag on `Track`, the one canonical object without one.
+  `Entity` has `attributes` and `Event` has `payload`; `Track` has `track_id`, `entity_id`,
+  `samples` and `track_quality` and nowhere to park anything. The Legion adapter is what makes
+  this concrete: a `Track` built from one page of a paginated history is a FRAGMENT, and how much
+  of the history it holds — `total_count` against the carried sample count — has to be
+  machine-readable or a consumer will compute a speed across a gap it does not know is there.
+  Today those figures ride on the `Entity` the track belongs to, keyed by `track_id`, so a
+  consumer holding both objects can read them and one holding only the `Track` cannot. The three
+  alternatives were all worse: `track_quality` is a 0..1 assessment of how good a track is rather
+  than how complete it is, truncating `samples` would discard real data to express a caveat, and
+  the model is `extra="forbid"` by design. Whoever adds it should decide at the same time whether
+  a *typed* completeness block is better than a free bag, since "how much of this is here" is a
+  question every paginated source will ask.
 - **`Position.baro_alt_m`** (or `Entity.baro_alt_m` — the choice is part of the work) —
   `FORMAT_COVERAGE.md` gap 9, and the strongest-evidenced of these. `Position.alt_m` is
   documented as metres above the WGS84 ellipsoid, which is what an ADS-B type code 20-22 frame

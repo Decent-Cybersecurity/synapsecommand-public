@@ -27,11 +27,17 @@ run is a guess with a table around it.
 | `ais 1.0.0` | implemented by `adapters/ais.py`, with a fixture and a golden file |
 | `ais 1.0.0 · parked` | implemented, but the value lands in `attributes` because of a named gap below |
 | `ais 1.0.0 · egress` | implemented in the `from_cdm()` direction |
+| `legion 1.0.0` | implemented by `adapters/legion.py`, with a fixture and a golden file |
+| `legion 1.0.0 · parked` | implemented, but the value lands in `attributes` because of a named gap below |
 | `adsb 1.0.0` | implemented by `adapters/adsb.py`, with a fixture and a golden file |
 | `adsb 1.0.0 · parked` | implemented, but the value lands in `attributes` because of a named gap below |
 | `adsb 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 | `models` | provided by the models themselves; no adapter code is involved |
 | `not yet` | no adapter implements this row. The mapping is a specification, not a claim |
+
+`legion 1.0.0` and `legion 1.0.0 · parked` joined this list when adapter #5 landed. Until it
+did, every Legion row said `not yet` — the row set was written and reviewed as a specification
+first, and the status column is what recorded the difference.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -508,6 +514,452 @@ reason is indistinguishable from "nobody thought about it".
 | **UAT (978 MHz)** | The other ADS-B data link. A different physical layer, a different frame, and no 1090ES type code in common |
 | **Cross-payload frame buffering** | Not a frame type, but the same decision as AIS's. This adapter translates ONE frame per payload and holds no buffer for the next TCP read. A buffer is state, for the reason global CPR pairing is out of scope, and a feed reader is the right owner of it |
 
+## Picogrid Legion Platform API v3 — ingest (specification only)
+
+Implemented by `adapters/legion.py` (**ingest only** — see the last section for why there is no
+`from_cdm()`). Every row below was written and reviewed as a specification BEFORE any code
+existed, with `legion 1.0.0` in the status column; the markers now say `legion 1.0.0` because the
+adapter runs them. Four of the rows changed during implementation and each change is noted where
+it happened — the harness and the pinned field inventory caught all four.
+
+### The pin, and why this row set has one when the others do not
+
+Every other format in this document is a ratified standard: CoT, NMEA 0183, 1090ES and
+STANAG 4676 change on committee timescales and in public. **Legion is a vendor API, and it can
+move under us between one deploy and the next.** So this row set is pinned to the exact document
+it was read from, retrieval-dated and hashed, the way `airtasking/SOURCES.md` pins its sources:
+
+| | |
+|---|---|
+| Document | combined OpenAPI 3.1 spec, `GET /v3/openapi.json` |
+| Host | `https://api.hopper.west.prod.govcloud.legion.picogrid.com` |
+| `info.version` | `3.0.0` |
+| Retrieved | 2026-08-22T21:04:41Z |
+| Size | 984 135 bytes |
+| SHA-256 | `464857b081f1fb47c82e56b23f7585eb44e475c64cec1678629b41a252f6b9e1` |
+| `ETag` | `"464857b081f1fb47c82e56b23f7585eb44e475c64cec1678629b41a252f6b9e1"` — the server's own ETag IS the SHA-256 of the body, so a re-fetch can be compared without downloading twice |
+| Prose companion | `https://docs.picogrid.com/reference/post_v3-entities-entityid-locations-2.md`, `updatedAt: 2026-05-10T09:22:51.000Z` — the ONLY place the coordinate reference systems are defined |
+
+`info.version` is `3.0.0` and has been since at least the docs snapshot dated 2026-05-21, while
+the paths under it demonstrably change (the tasking bulk endpoint is described as a newer
+alternative to a legacy URL "kept because deployed clients have this URL baked in"). **So the
+version string is not a usable change signal and the hash is.** Whoever revisits this row set
+re-fetches and compares the ETag first; a changed hash with an unchanged `info.version` is the
+expected case, not an anomaly.
+
+Two facts about the document itself that shape everything below:
+
+- **`components.schemas` is empty.** All 108 paths inline their schemas, so there is no single
+  authoritative "Entity schema" object to point a row set at — each resource's field list is
+  read off the response body of the endpoint that returns it. Two endpoints returning the same
+  resource can therefore disagree, and one pair does; see the declines table.
+- **The commercial server 404s on this path.** `servers` lists
+  `https://legion-prod.picogrid.com` as "Commercial Production API", and
+  `GET /v3/openapi.json` there returns `404 RESOURCE_NOT_FOUND`. The spec is only retrievable
+  from the govcloud host, so the pin names that host rather than the API generally.
+
+### What the adapter's input IS — a response payload, not an API client
+
+This is the first adapter whose upstream is a REST API rather than a wire format, and the
+boundary is drawn in the same place it was drawn for AIS and ADS-B: **`to_cdm()` takes one
+already-fetched JSON document and nothing else.**
+
+The adapter does not own, and must never acquire, an HTTP client, an OAuth token, a retry
+policy, a page cursor or a base URL. That is not squeamishness about dependencies — it is the
+same rule that keeps a fragment-reassembly buffer out of the AIS adapter. Transport is where
+state lives, and an adapter that holds state is a fusion layer that nothing audits. The AIS
+adapter translates sentences that a feed reader delivered; the ADS-B adapter translates frames a
+receiver delivered; this one translates documents a caller fetched. What the caller had to do to
+get them — authenticate, follow `paging.next`, retry a 503 — is the caller's, and stays visible
+in the caller's code rather than invisible in ours.
+
+Concretely, the accepted inputs are the parsed bodies of the single-resource and list endpoints
+in scope, distinguished by their own shape rather than by a caller-supplied type tag:
+
+| Input document | Becomes |
+|---|---|
+| one Entity or Track object | `Entity` (+ an `Event` only if the embedded `location_latest` is present, since that is a report of a state at an instant) |
+| one Location object (entity or track) | `Event` + the `Entity` it names, from the embedded `entity` block |
+| one Event object | `Event` |
+| a Locations LIST envelope (`{crs, paging, results[]}`) | ONE `Track`, whose samples are `results[]` in the order given |
+
+### Pagination is framing; correlation across resources is fusion
+
+The type-24 / CPR test, applied to the two things a REST API invites an adapter to do.
+
+**Pagination is framing, and framing belongs to the caller.** A locations list arrives as
+`{crs, paging: {has_more, next, previous}, results[]}` with integer page cursors. One page is
+one payload and becomes one `Track` — a *partial* history, honestly labelled as one. The adapter
+does NOT follow `paging.next`, and it does not stitch page 2 onto page 1, for the reason it does
+not buffer AIS fragments across TCP reads: the moment it does, it holds state, and the question
+"how much history is in this Track?" stops being answerable from the payload. The `paging` block
+is parked, so a consumer can see that more exists.
+
+**Correlation across resources is fusion, and it stays out.** Four joins the API makes
+available and this adapter declines:
+
+- **Entity → its locations.** Two requests. A caller wanting a track fetches the list and hands
+  it over; the adapter will not fetch it.
+- **Event → the entity that produced it.** `Event.source_id` is a uuid and nothing else — no
+  embedded entity, no name, no position. Resolving it means a second request, so the CDM `Event`
+  gets `related_entities` derived from that id (which is free — `ids.derive` is a pure function
+  of the id) and NOTHING else about the entity. A resolved name or position would be a join.
+- **Entity → its parent** (`parent_id`). Same shape, and worse: a hierarchy walk is N requests.
+- **Location list pages → one complete history.** As above.
+
+The one join the adapter DOES perform is not a join at all: where the payload itself embeds a
+related object — `Entity.location_latest`, `Location.entity` — that data arrived in the same
+document and translating it is reading, not correlating. This is exactly the line the AIS
+adapter draws when it reassembles the fragments *present in one payload* while refusing to
+buffer across payloads.
+
+### The round-trip claim, restated for JSON
+
+The other adapters claim a *byte-exact* round trip, which is meaningful because their wire form
+is a canonical sequence of bits. A JSON document has no canonical byte form — key order, integer
+versus float spelling of `500` and `500.0`, and unicode escaping are all free — so byte equality
+would be a claim about a serialiser rather than about a translation.
+
+So for this adapter the claim is **key-for-key equality after canonicalisation**, and
+canonicalisation is defined here rather than left to a library's defaults:
+
+1. **Object keys sorted** lexicographically at every depth. Array order is PRESERVED — it is
+   meaning, not formatting: `results[]` is a time-ordered history and `coordinates[]` is
+   positional.
+2. **Numbers compared by value, not spelling.** `500`, `500.0` and `5e2` are one number.
+   Integers that arrived as integers are re-emitted as integers, because a `paging.next` of
+   `2.0` is a different type to a strict consumer even though it is the same value.
+3. **Absent and null are DISTINCT and both preserved.** This is the one that matters, and it is
+   the JSON-native form of the sentinel discipline — see the next section.
+4. **Timestamp strings re-emitted verbatim**, not re-rendered. The CDM renders timestamps to
+   fixed-millisecond UTC (`times.render`), and re-emitting that form would rewrite
+   `2024-01-15T11:00:00Z` as `2024-01-15T11:00:00.000Z` — the same instant, a different string,
+   and a difference no reader would see. The original string is parked and restored.
+
+### Timestamps: the accepted grammar, and what happens when a document breaks it
+
+No in-scope timestamp carries `format: date-time` (ambiguity 6), so the grammar this adapter
+accepts is stated here rather than inherited from an annotation that is not there. It is exactly
+what `times.parse` accepts, which is deliberately wider than what the CDM emits:
+
+| Accepted | Example | Treatment |
+|---|---|---|
+| RFC 3339 with `Z` | `2026-04-29T06:11:20Z` | parsed as UTC |
+| RFC 3339 with a numeric offset | `2026-04-29T08:11:20+02:00` | converted to UTC |
+| any ISO 8601 form `datetime.fromisoformat` accepts, including fractional seconds of any length | `2026-04-29T06:11:20.123456Z` | parsed, then TRUNCATED to milliseconds on output — never rounded, because rounding `23:59:59.9995` forward moves an event into the next day |
+| a naive form with no zone at all | `2026-04-29T06:11:20` | **assumed UTC, and the assumption is DECLARED** in `payload.observed_at_basis` rather than left silent. The alternative — inferring the host's zone — makes one document parse differently on a laptop and in the enclave |
+
+Everything else is a refusal, and the shape of the refusal is the point. **An unparseable
+`observed_at` parks the whole document with a written reason and never yields an invented
+instant.** `to_cdm()` raises, naming the field, the offending value verbatim and the grammar
+above; it does not fall back to the receipt clock, and it does not emit an object with a
+plausible time. Two reasons:
+
+- The `Adapter` contract forbids a partial object (see `adapter.py`), and an `Event` whose
+  `observed_at` came from our clock while claiming to be the source's observation is precisely
+  a partial object with the gap filled in.
+- A fabricated instant is unfalsifiable downstream. A refused document is visible in the
+  caller's error handling, where somebody can look at the payload; a document silently stamped
+  with the wrong minute is a track that drifts for reasons nobody can find.
+
+The narrow exception is a timestamp that is *absent* rather than malformed, which is a different
+fact and is handled by the fallback chain in the row set — `recorded_at` absent falls back to
+`created_at`, and the basis says so. Absent is the API declining to state; unparseable is the
+API stating something that is not a time.
+
+### "Optional" is not "unknown" — the JSON-native sentinel discipline
+
+AIS spelled "not available" as an in-band number and ADS-B as a zero in an offset field. A JSON
+API spells it three ways, and they mean different things:
+
+| Form | Means | Goes to |
+|---|---|---|
+| key **absent** | the API did not say. May be a field this deployment never populates | nothing — and NOT `unavailable_fields`, because nobody claimed not to know |
+| key present, value **`null`** | the source states it has no value. `parent_id` is `required` AND nullable, so "this entity has no parent" is an assertion | `attributes.unavailable_fields`, exactly as an AIS sentinel does |
+| key present, value **empty** (`""`, `[]`, `{}`) | ambiguous, and the spec never says which. Treated as stated-and-empty, parked verbatim | `attributes.source_extras` |
+
+The distinction is load-bearing here in a way it was not for a wire format, where every field is
+always physically present. `required` in OpenAPI constrains the *document*, not the world: a
+`required` + nullable field is the API's way of saying "you will always be told, and the answer
+may be nothing". Collapsing absent into null would manufacture assertions the API never made.
+
+### Legion Entity — and Legion Track, which is the same resource
+
+`GET /v3/entities/{entityId}` and `GET /v3/tracks/{trackId}` return **byte-identical schemas**
+(verified by comparing the two inline schema objects in the pinned document), and
+`TrackLocation`'s foreign key is named `entity_id` rather than `track_id`. A Legion "Track" is an
+Entity whose `category` is `TRACK`; the `/v3/tracks` paths are a view over one underlying
+resource, not a second resource.
+
+**That settles the mapping question, and not in the direction the resource names suggest. A
+Legion Track is a CDM `Entity`, NOT a CDM `Track`.** The CDM's `Track` is a position history —
+STANAG 4676's shape — and Legion's history lives in its *Locations* collection. So:
+
+| Legion resource | CDM object |
+|---|---|
+| Entity | `Entity` |
+| Track | `Entity`, with `category: TRACK` parked — the same translation, no special case |
+| Entity Location / Track Location (one) | `Event` (a state reported at an instant) + `Position` on the Entity |
+| Entity Locations / Track Locations (a list) | `Track`, samples in payload order |
+| Event | `Event` |
+
+| Legion | CDM field | Status | Notes |
+|---|---|---|---|
+| `id` | `Entity.source_ids[].external_id` | `legion 1.0.0` | system `LEGION`; `format: uuid`. The id `entity_id` is derived from |
+| `organization_id` | `Entity.attributes` | `legion 1.0.0` | the owning org, `format: uuid`. Parked and deliberately NOT read as an affiliation or a classification: a tenant boundary is not a side |
+| `parent_id` | `Entity.attributes` | `legion 1.0.0 · parked` | **gap 11** — the CDM has no hierarchy. `required` AND nullable, so `null` is the assertion "no parent" and lands in `unavailable_fields`, while a uuid is parked. Resolving it is a second request and therefore fusion |
+| `name` | `Entity.attributes` | `legion 1.0.0 · parked` | **gap 1** — no canonical name, and this is the strongest evidence yet: `name` is `required` on every Legion entity, so EVERY object from this source has an operator-facing string with nowhere canonical to go |
+| `type` | `Entity.attributes` | `legion 1.0.0 · parked` | free-form string, example `"Camera"`. No enum, so it is a vendor vocabulary and cannot be mapped to `entity_type` without a table this adapter would be inventing |
+| `status` | `Entity.attributes` | `legion 1.0.0 · parked` | free-form string, example `"active"`. Same reasoning; note it is NOT `is_active`, and the spec never relates the two |
+| `category` | `Entity.entity_type` | `legion 1.0.0` | the one enum that maps: `SENSOR` → SENSOR · `VEHICLE`, `UXV` → PLATFORM · `ZONE`, `GEOMETRIC` → OVERLAY_OBJECT · `DEVICE` → SENSOR is WRONG, so → UNKNOWN unless `type` says otherwise · `DETECTION`, `ALERT`, `TRACK`, `WEATHER` → UNKNOWN, because they name a *report about* something rather than a thing that exists. Raw value parked |
+| `affiliation` | `Entity.affiliation` | `legion 1.0.0` | **gap 2 at its widest: 15 values → 4.** See the affiliation table below — this is the row set's most consequential mapping |
+| `affiliation` | `Entity.attributes` | `legion 1.0.0 · parked` | the original string, always. The collapse is recoverable only because it is parked, which the lossless check enforces rather than trusts |
+| `top_classification` | `Entity.attributes` | `legion 1.0.0 · parked` | **gap 12** — a classifier's verdict (example `"HUMAN"`) has no canonical home, and it is NOT gap 1's operator-facing name |
+| `classification` | `Entity.attributes` | `legion 1.0.0` | **the spec contradicts itself here** — declared `type: object` with the example `"2023-12-15T14:30:00Z"`, which is a string. Parked verbatim, whatever arrives, and NOT parsed as either: see the ambiguity list. Distinct from `top_classification`, and the spec never relates the two |
+| `metadata` | `Entity.attributes` | `legion 1.0.0` | **EXPORT-REVIEW RELEVANT** — a bare `type: object` with no declared properties, so its contents are whatever the deployment puts there, and the spec's own example carries `ip_address`, `manufacturer` and `model`. That is infrastructure detail about our own estate rather than an observation of the world: it describes what we field and where it can be reached. Parked whole with its structure intact (the never-drop rule is not negotiable), flagged at `attributes.export_review` naming the key, and it is the field a deployment should review before a CDM object crosses a releasability boundary. This adapter does not filter it — a translator that dropped data on a guess about classification would be making a release decision invisibly, which is the gateway's job and not ours |
+| `top_classification_probability` | `Entity.confidence` | `legion 1.0.0` | 0..1 and it is a confidence in the classification, which is what the field means. Absent → `None`, never 0.0: `confidence` 0 is certainty-that-not |
+| `created_at` | `Event.received_at` | `legion 1.0.0` | when LEGION stored it — our delivery instant for a document, not the source's observation |
+| `updated_at` | `Entity.attributes` | `legion 1.0.0 · parked` | a store-level mutation timestamp. Deliberately not `valid_from`: it says when the record changed, not when the world did |
+| `deleted_at` | `Entity.valid_to` | `legion 1.0.0` | a soft-delete instant IS an interval end — maps exactly. Absent → `None` |
+| `expires_at` | `Entity.valid_to` | `legion 1.0.0` | the same field, and the two can both be present. `deleted_at` wins when both are set, because a deletion is a fact and an expiry is a schedule; `attributes.valid_to_basis` records which was used |
+| `is_active` | `Entity.attributes` | `legion 1.0.0` | `optional` boolean, parked. Not mapped to the `valid_from`/`valid_to` interval: a derived flag and an interval are two representations of one thing and the interval is the canonical one |
+| `is_expired` | `Entity.attributes` | `legion 1.0.0` | `required` boolean, parked. Derivable from `expires_at`, so a disagreement between them is the source's to explain and not ours to resolve |
+| `location_latest` | `Entity.position` · `Entity.kinematics` | `legion 1.0.0` | the embedded latest location, translated by the Location row set below. Embedded, so reading it is not a join |
+| *(none — Legion states no symbol)* | `Entity.symbol` | `legion 1.0.0` | derived from the affiliation via `symbology.sidc_from_affiliation`; `attributes.symbol_basis` says so |
+| *(derived)* | `Entity.valid_from` | `legion 1.0.0` | the embedded location's `recorded_at` where there is one, else `created_at`, with `attributes.valid_from_basis` naming which — the same fallback-and-record pattern the CoT adapter uses for `@start` |
+
+#### The affiliation collapse, 15 → 4
+
+Legion carries the full MIL-STD-2525 standard identity **and** an exercise marking in one enum.
+The CDM separates the two on purpose, so this is a collapse in one axis and a **split** in the
+other — the first source in this document to force both at once.
+
+| Legion | `Entity.affiliation` | Why |
+|---|---|---|
+| `FRIEND` | FRIENDLY | |
+| `HOSTILE` | HOSTILE | |
+| `NEUTRAL` | NEUTRAL | |
+| `UNKNOWN` | UNKNOWN | |
+| `PENDING` | UNKNOWN | not yet judged; PENDING is a fusion state, not a wire fact |
+| `ASSUMED_FRIEND` | UNKNOWN | an assumption is not an identification. **Not** FRIENDLY — that is the direction the collapse must not round towards |
+| `SUSPECT` | UNKNOWN | suspicion is not identification. **Not** HOSTILE, for the reason the TAK adapter asserts in a test |
+| `JOKER`, `FAKER` | HOSTILE | a friendly acting hostile in exercise; both are exercise-only and both are treated hostile, as the CoT letters `j`/`k` are |
+| `NONE_SPECIFIED` | UNKNOWN | the source declining to state one |
+| `EXERCISE_FRIEND` | FRIENDLY | |
+| `EXERCISE_NEUTRAL` | NEUTRAL | |
+| `EXERCISE_UNKNOWN` | UNKNOWN | |
+| `EXERCISE_PENDING` | UNKNOWN | |
+| `EXERCISE_ASSUMED_FRIEND` | UNKNOWN | |
+
+The five `EXERCISE_*` values carry a second, orthogonal fact: this object is an exercise
+participant. The CDM already has a home for that idea — the 2525D **context** digit, which
+`symbology.sidc_from_affiliation()` takes as `synthetic` — but it does **not** overwrite
+`source.synthetic`, and the distinction is deliberate:
+
+- `source.synthetic` describes the FEED: is this an exercise system? It is a deployment
+  declaration, set once at construction, and payload content may not rewrite it.
+- `attributes.affiliation_exercise` describes the OBJECT: is this contact a simulated
+  participant? A live Legion instance can legitimately hold both during a rehearsal.
+
+Letting a payload field flip the feed-level flag would be an adapter making a decision about
+provenance, which is exactly what adapters may not do. Both facts are recorded, separately, and
+`attributes.affiliation_basis` says which vocabulary produced the UNKNOWN — as it already
+distinguishes AIS's silence from CoT's collapse and ADS-B's unauthenticated claim.
+
+### Entity Location and Track Location — one schema, and the CRS is the whole story
+
+`GET /v3/entities/{entityId}/locations/{entityLocationId}` and the track equivalent return
+byte-identical schemas.
+
+| Legion | CDM field | Status | Notes |
+|---|---|---|---|
+| `id` | `Event.source_ids[].external_id` | `legion 1.0.0` | system `LEGION`; the report's own id, which is what makes a redelivered location recognisable |
+| `entity_id` | `Event.related_entities[]` | `legion 1.0.0` | via `ids.derive`, a pure function of the id — deriving the CDM id is not a join, resolving the entity would be |
+| `position.coordinates` + `crs` | `Position.lat` · `Position.lon` · `Position.alt_m` | `legion 1.0.0` | **the row that decides whether this adapter is correct at all — see the CRS section below** |
+| `position.type` | `Event.geometry` | `legion 1.0.0` | `pattern: ^(Point|LineString|Polygon)$`. A `Point` becomes the Position and NO geometry; a LineString or Polygon has no `Position` at all and becomes `Event.geometry` instead, because a Position is a fix and an area is not |
+| `crs` | `Entity.attributes` | `legion 1.0.0` | parked verbatim as well as consumed, because it is the evidence that the coordinates were read the right way round |
+| `source` | `Entity.attributes` | `legion 1.0.0 · parked` | free-form string, example `"Helios"`. It names the *system* that produced the fix, NOT how the fix was obtained, so it may not become `Position.position_source` |
+| *(derived)* | `Position.position_source` | `legion 1.0.0` | `ESTIMATED`, always, with a basis recording that Legion states a source SYSTEM and never a positioning method. Understating is the safe direction for the field a commander uses to tell a fix from a guess under jamming |
+| `recorded_at` | `Event.observed_at` | `legion 1.0.0` | when the SOURCE recorded it. `optional`: absent, `created_at` is used and `payload.observed_at_basis` says so rather than implying the source stated it |
+| `created_at` | `Event.received_at` | `legion 1.0.0` | when Legion stored it |
+| `bearing` | `Kinematics.course_deg` | `legion 1.0.0` | degrees, `minimum: 0`, `maximum: 360`. **360 is reduced to 0** — the same bearing, and the only one `course_deg`'s `[0, 360)` range admits, exactly as the CoT adapter reduces `@course` |
+| `speed` | `Kinematics.speed_mps` | `legion 1.0.0 · parked` | **units undocumented — see the ambiguity list. Parked at `attributes.speed_raw` and `speed_mps` left null** until the unit is confirmed. This is the ADS-B altitude lesson applied before the fact rather than after it |
+| `velocity` | `Kinematics.speed_mps` · `.course_deg` · `.climb_mps` | `legion 1.0.0 · parked` | **gap 4** — a 3-vector, resolvable into the CDM's scalars by exact arithmetic, but the frame (ECEF or local ENU) and the units are both undocumented, and the answer differs completely between them. Parked whole |
+| `acceleration` | `Entity.attributes` | `legion 1.0.0 · parked` | 3-vector; the CDM models no acceleration. Frame and units undocumented |
+| `angular_velocity` | `Entity.attributes` | `legion 1.0.0 · parked` | **gap 7** — a turn rate, in the half of that gap AIS opened with its rate-of-turn byte. 3-vector, frame and units undocumented |
+| `orientation` | `Entity.attributes` | `legion 1.0.0 · parked` | **gap 7** — a **quaternion** (example `[0.707, 0, 0, 0.707]`, unit norm), which is a heading and more. Component order is undocumented, so even the parked value cannot be interpreted here |
+| `covariance` | `Position.accuracy_m` | `legion 1.0.0 · parked` | **gap 6** — a 3×3 matrix (example diagonal `[25, 25, 9]`, so variances in m²). NOT reduced to `accuracy_m`: that field is one horizontal 1-sigma figure, and collapsing a matrix in an undocumented frame into it would state a precision nobody measured |
+| `radius` | `Position.accuracy_m` | `legion 1.0.0 · parked` | example `500`. Ambiguous between an uncertainty radius and a geometric extent (**gap 8**) and the spec never says which; parked under both readings' names until it does |
+| `entity` | *(the Entity row set)* | `legion 1.0.0` | the embedded owning entity — a SUBSET of the full Entity schema (ambiguity 7), missing five fields the standalone endpoint returns: `classification`, `is_expired`, `location_latest`, `top_classification` and `top_classification_probability`. Note `metadata` is NOT among them — it IS present on the embedded block, and a hand-read of the spec got that wrong until the pinned inventory contradicted it. Translated by the rows above |
+| `entity` (the five omitted fields) | `Entity.attributes` | `legion 1.0.0` | **STRUCTURALLY absent, and deliberately NOT in `unavailable_fields`.** That list means "the source stated it does not know"; these fields are missing because *this endpoint's schema does not contain them*, which is a fact about the API's shape and not a claim about the world. Conflating the two would manufacture five assertions of ignorance per document that Legion never made. Recorded instead at `attributes.embedded_entity_basis`, which names the five fields and says that the standalone entity endpoint carries them — so a consumer knows to fetch it rather than concluding the data does not exist |
+| *(measured)* | `Entity.attributes` | `legion 1.0.0` | `attributes.unavailable_fields`, the sorted list of keys the API stated as `null` — never the ones it simply omitted |
+| everything unmapped | `Entity.attributes` | `legion 1.0.0` | `attributes.source_extras`, structure intact |
+
+#### The CRS, which is where this adapter is most likely to be wrong
+
+`crs` is **optional**, its enum is `EPSG:4978 | EPSG:4326 | EPSG:4979`, and its
+`default` — stated in the schema and confirmed in the prose — is **`EPSG:4978`, which is
+Earth-Centred Earth-Fixed X/Y/Z in metres from the centre of the Earth.** The schema's own
+example is `[4517590.87, 0, 4487348.41]`: a vector of magnitude 6.37 × 10⁶ m, i.e. a point on
+the Earth's surface expressed geocentrically.
+
+So **the default coordinate system is not latitude and longitude**, and an adapter that read
+`coordinates` as `[lon, lat]` — the reasonable guess, given the GeoJSON-shaped `{type,
+coordinates}` object — would place every contact at a nonsensical coordinate while producing
+perfectly well-formed CDM objects. This is the single largest hazard in the row set, and it is
+why `crs` is consumed AND parked.
+
+**`Position` is therefore a DERIVED, ONE-WAY VIEW of the source coordinates, and the source
+coordinates are the record.** `position.coordinates` and `crs` are re-emitted into
+`attributes.legion_position` **verbatim** — the same numbers, in the same order, under the same
+CRS name — and the geodetic `Position` is computed beside them, never instead of them. Three
+reasons, and the third is the one that makes it a rule rather than a preference:
+
+1. A conversion is a claim, and the claim should sit next to its input. A consumer that
+   disagrees with our arithmetic, or that wants the geocentric frame for its own geometry, has
+   the original rather than a round-tripped approximation of it.
+2. The never-drop rule is satisfied by *presence* rather than by a declared exemption, so
+   `TRANSFORMS` does not have to carry the coordinate conversion at all. An exemption is a hole
+   with a reason attached; a verbatim copy is not a hole.
+3. **ECEF → geodetic → ECEF is not the identity in floating point.** Round-tripping through
+   latitude, longitude and height loses low-order millimetres, and an adapter whose only copy of
+   the position had been through that conversion could never prove it had not moved a contact.
+
+The transform is named rather than implied: **ECEF → geodetic on the WGS84 ellipsoid**
+(`a = 6378137.0 m`, `1/f = 298.257223563`), by the closed-form Bowring/Ferrari solution — no
+iteration, so the result is a deterministic function of the input and a golden file means
+something. `attributes.position_basis` records the CRS that was read, the transform that was
+applied and the ellipsoid it was applied on, on every position this adapter produces. An
+`EPSG:4326` document states geodetic coordinates already and its basis says "no conversion".
+
+This adapter is **ingest only** — there is no `from_cdm()` — so "one-way" is a property of the
+mapping and not merely of this release: nothing in the CDM is ever converted back into a Legion
+document, and the row set makes no claim that it could be.
+
+The three cases, and the one that cannot be handled:
+
+| `crs` | Coordinates | Handling |
+|---|---|---|
+| absent or `EPSG:4978` | `[X, Y, Z]` metres, geocentric | converted to geodetic lat/lon/height on the WGS84 ellipsoid — a declared transform, exact to floating point and reversible |
+| `EPSG:4326` | `[longitude, latitude, altitude]` per the prose | used directly; note this is GeoJSON axis order and NOT the EPSG registry's axis order for 4326, which the prose overrides for this API |
+| `EPSG:4979` | **undefined** | **REFUSED.** In the enum, defined nowhere. Its registry axis order is (latitude, longitude, height) — the reverse of what this API documents for 4326 — so the two readings differ by a transposition that yields a plausible wrong position rather than an error. Logged, not guessed |
+
+Note also that `{type, coordinates}` plus a `crs` sibling is **GeoJSON-shaped but not GeoJSON**:
+RFC 7946 fixes the CRS as WGS84 lon/lat and forbids a `crs` member outright. The CDM's own
+`geo.py` is RFC 7946, so a Legion `position` may not be passed into it unconverted.
+
+### Legion Event
+
+Ten fields, no geometry, and no position — which is the whole reason it is a separate row set.
+
+| Legion | CDM field | Status | Notes |
+|---|---|---|---|
+| `id` | `Event.source_ids[].external_id` | `legion 1.0.0` | system `LEGION` |
+| `organization_id` | `Event.payload` | `legion 1.0.0` | parked, as on the Entity |
+| `source_id` | `Event.related_entities[]` | `legion 1.0.0` | `required` uuid: the entity the event is about. Derived, never resolved |
+| `actor_id` | `Event.payload` | `legion 1.0.0` | who caused it, `optional` uuid. Parked and NOT put in `related_entities`: the actor is not the subject, and merging them would make a user look like a contact |
+| `actor_type` | `Event.payload` | `legion 1.0.0` | enum `USER \| ENTITY \| OTHER`. Parked, and the reason the actor stays out of `related_entities` — a `USER` is not a CDM object at all |
+| `event_type` | `Event.payload` | `legion 1.0.0 · parked` | enum `HUMAN \| VEHICLE \| VESSEL \| UAV \| FOOTSTEP \| ANIMAL \| GUNSHOT \| OTHER`. **These are detection CLASSES, not event types** — the name collides with `EventType` and means something else entirely, so it is parked and never mapped to it |
+| *(derived)* | `Event.event_type` | `legion 1.0.0` | `DETECTION`. Legion's own `event_type` says WHAT was detected, so the CDM's axis — what kind of report this is — has to be supplied, and `DETECTION` is what a classified observation is |
+| `event_description` | `Event.payload` | `legion 1.0.0` | free text, `optional`. No canonical home by design |
+| `event_timestamp` | `Event.observed_at` | `legion 1.0.0` | when it happened, `required` |
+| `created_at` | `Event.received_at` | `legion 1.0.0` | when Legion stored it |
+| `metadata` | `Event.payload` | `legion 1.0.0` | a bare `type: object` with no declared properties — free-form, parked whole with its structure intact |
+| *(none — Legion states no severity)* | `Event.severity` | `legion 1.0.0` | `INFO`, with `payload.severity_basis` recording that the format is silent. A `GUNSHOT` is not graded here: that is fusion judging operational significance, and the line sits where AIS's does — at the source's own explicit alarm, which Legion has none of |
+| *(none)* | `Event.geometry` | `legion 1.0.0` | `None`. A Legion Event carries no position whatsoever, and taking one from the entity it names would be both a join and an invention |
+
+### The list envelope, which becomes a Track
+
+| Legion | CDM field | Status | Notes |
+|---|---|---|---|
+| `results[]` | `Track.samples[]` | `legion 1.0.0` | in payload order, which the CDM validates as non-decreasing. A page that arrives out of order is refused rather than sorted: sorting would hide a source defect the caller needs to see |
+| `results[].position` + envelope `crs` | `Track.samples[].position` | `legion 1.0.0` | the envelope's `crs` applies to every result; the per-item `crs` overrides it where present |
+| `results[].recorded_at` | `Track.samples[].observed_at` | `legion 1.0.0` | falling back to `created_at`, as on a single location |
+| `crs` | — | `legion 1.0.0` | **there is no `Track.attributes`** — `Track` has no extension bag at all, unlike `Entity` and `Event`. So the envelope's `crs` and `paging` are parked on the **Entity** the track belongs to, which is the object that has one — recorded here because it is a real consequence of the model's shape |
+| `paging.has_more` | `Entity.attributes` | `legion 1.0.0` | parked so a consumer can see that the history is partial. `optional`, unlike its two siblings, so its absence is not a claim that there is no more |
+| *(computed)* | `Entity.attributes` | `legion 1.0.0` | `attributes.legion_track_completeness` — see the completeness section below. The one place a consumer can machine-read how much of a history it is holding |
+| `paging.next` | `Entity.attributes` | `legion 1.0.0` | `required`, integer or `null` — an offset page cursor. `null` means no next page and lands in `unavailable_fields`; the adapter parks it and never follows it |
+| `paging.previous` | `Entity.attributes` | `legion 1.0.0` | `required`, integer or `null`, on the same terms |
+| `total_count` | `Entity.attributes` | `legion 1.0.0` | `optional` integer, the full size of the collection this page is a window on. Parked, and it is the field that makes a partial Track *measurably* partial: a consumer can compare it against `len(samples)` rather than guessing |
+| *(derived)* | `Track.track_id` | `legion 1.0.0` | `ids.derive` over the entity id plus the page's first and last sample instants — NOT the entity id alone, or every page of one entity's history would collapse into one track id |
+| *(none)* | `Track.track_quality` | `legion 1.0.0` | `None`. Legion states no track quality; `top_classification_probability` is a classification confidence and a different claim |
+
+### Completeness of a partial history must be machine-visible — and where it can live
+
+A `Track` built from one page is a fragment of a history, and a consumer that cannot tell a
+fragment from a whole history will compute a speed across a gap it does not know is there. So the
+figures that answer "how much of this is here?" are recorded rather than left implicit:
+
+| Key | From | Meaning |
+|---|---|---|
+| `total_count` | the envelope, `optional` | how many locations the collection holds in total |
+| `carried_samples` | computed — `len(results)` | how many reached this `Track` |
+| `complete` | computed | `true` only when `total_count` is stated AND equals `carried_samples` AND `paging.has_more` is not true. Any missing input makes it `null`, never `false`: "we cannot tell" and "we can tell it is partial" are different answers |
+| `paging` | the envelope | `has_more`, `next`, `previous`, verbatim |
+| `track_id` | computed | the `Track` these figures describe, so the association survives being read from the Entity |
+
+**They are recorded on the `Entity`, not on the `Track`, and that is a limitation rather than a
+preference.** `Track` has no extension bag: its fields are `track_id`, `entity_id`, `samples` and
+`track_quality`, plus the provenance block every kind carries. There is nowhere on it to put a
+count, and the three alternatives were all worse —
+
+- `track_quality` is a 0..1 assessment of how good the track is, not how much of it arrived.
+  Writing a completeness ratio there would be a false statement in a field consumers act on.
+- Truncating `samples` or refusing a partial page would discard real data to express a caveat.
+- Inventing a key on `Track` is impossible: the model is `extra="forbid"`, by design.
+
+So this adapter emits the `Entity` alongside the `Track` in every list translation — which it
+must do anyway, since the CDM has no way to state a track without the entity it belongs to — and
+the figures ride in `Entity.attributes.legion_track_completeness`, keyed by `track_id`. A
+consumer holding both objects can machine-read completeness; a consumer holding **only** the
+`Track` cannot, and that is a real limit of the model as it stands rather than something this
+adapter can fix. It is the strongest argument yet for a `Track.attributes` bag, and it is
+recorded as a 1.1.0 candidate in `MIGRATIONS.md` rather than acted on here, because adding a bag
+to a canonical object is a schema change and this adapter ships at `schema_version 1.0.0` with
+none.
+
+### Where the pinned spec is ambiguous or contradicts itself
+
+Eight findings, recorded because an adapter author will hit every one of them and because the
+ADS-B lesson was that a plausible inference is worse than a logged gap. **Each is a question for
+the vendor, not a decision for us**, and the row set above handles each by parking rather than
+guessing.
+
+| # | Finding | Consequence for the adapter |
+|---|---|---|
+| 1 | **`crs` is optional and its default is ECEF.** `EPSG:4978` — geocentric X/Y/Z metres — is the stated default, so a `position` with no `crs` is NOT lat/lon. The object is shaped like GeoJSON (`{type, coordinates}`), which invites exactly the wrong reading | the largest hazard in the row set. `crs` is consumed AND parked; an omitted `crs` means ECEF and is converted, never passed through |
+| 2 | **`EPSG:4979` is in the enum and defined nowhere.** The prose companion documents 4978 and 4326 only. The EPSG registry's axis order for 4979 is (lat, lon, h), the reverse of the order this API documents for 4326 | REFUSED by name. A transposition yields a plausible wrong position, which is the failure mode that cannot be detected downstream |
+| 3 | **No units on any scalar or vector.** `speed`, `velocity`, `acceleration`, `angular_velocity`, `orientation` and `radius` carry an example and no description, and no page in the documentation states a unit for any of them | `speed` is parked rather than written to `speed_mps`; the vectors are parked whole. This is the ADS-B altitude mistake declined in advance |
+| 4 | **`speed` and `velocity` examples contradict each other.** `speed` is `2.236`; `velocity` is `[42.5, -3.1, 0]`, whose magnitude is `42.61`. If `speed` were the magnitude of `velocity` the units would be inferable — they are not, and the two cannot both be right about the same instant | closes the one route to inferring the units. The contradiction is the evidence that inference is unsafe here |
+| 5 | **`classification` is declared `type: object` with the example `"2023-12-15T14:30:00Z"`.** An object cannot be that string, and the example is a timestamp unrelated to anything called a classification | parked verbatim whatever arrives, and never parsed as either a timestamp or an object. Its relationship to `top_classification` is also unstated |
+| 6 | **No timestamp in any in-scope resource carries `format: date-time`.** The annotation is used 160 times in the document — exclusively on the `timestamp` field of 5xx error envelopes. All 15 timestamps on Entity, Location, Event and TaskStatus are bare `type: string` | timestamps are parsed permissively (`times.parse` already does) and re-emitted verbatim rather than re-rendered, so an unexpected form survives instead of being normalised into a lie |
+| 7 | **The embedded `entity` is a subset of the Entity resource.** The `entity` block inside a Location omits `is_expired`, `top_classification`, `top_classification_probability`, `classification`, `metadata` and `location_latest`, which the standalone Entity endpoint returns. Two endpoints, one resource, different shapes — a direct consequence of `components.schemas` being empty and every schema inlined | the absent fields are ABSENT, not null: nothing is invented to fill them, and they do not enter `unavailable_fields` because the API made no claim about them |
+| 8 | **`info.version` does not move when the API does.** It has read `3.0.0` across the docs snapshot of 2026-05-21 and this retrieval, while the paths beneath it demonstrably change — the tasking documentation describes a bulk endpoint superseding a legacy URL "kept because deployed clients have this URL baked in" | the SHA-256 is the change signal and the version string is not. `openapi_pin.json` records both, and the ETag makes a re-check cheap |
+
+Two further oddities that are not ambiguities but are worth knowing: the commercial server listed
+in `servers` returns `404` for `GET /v3/openapi.json`, so the spec is retrievable from the
+govcloud host only; and `Entity.metadata`'s own example carries an IP address, which makes that
+field data about our estate rather than about the world — it is parked, and a deployment may
+want it filtered before the CDM object leaves the enclave.
+
+### Deliberately out of scope, and why — each named individually
+
+| Resource | Decision |
+|---|---|
+| **Tasking** (`POST /v3/tasking`, task status, command registration, MQTT topics) | **The highest-value omission, and the reason is structural.** The tentative mapping was Tasking → `PlanObject` egress, and it does not hold: `PlanObject.geometry` is REQUIRED, and a task has no geometry at all — its fields are `entity_id`, `command_name`, `qos` and a free-form `payload`. `PlanObject` is a *drawing*; a task is an *imperative*. Emitting one would mean inventing geometry, which is the exact failure that field's requiredness exists to prevent. And the deeper reason: golden rule 4 keeps a human on the loop for anything that acts, so an adapter that could emit a command is an adapter that can act. If tasking is ever wanted, it needs a CDM object that does not exist yet and an authority model, not a `PlanObject` with a fabricated point |
+| **Feed Data** (`/v3/feeds/**`) | Deferred, not rejected — the most likely next addition. A feed data item is `{entity_id, feed_definition_id, payload, recorded_at, received_at, blob_*}` where `payload` is an arbitrary JSON object whose shape is declared by a *separate* Feed Definition resource. Translating one means either parking an opaque blob — which the never-drop rule already achieves without a row set — or fetching and interpreting its definition, which is a cross-resource join and a second registry. Same category as AIS's DAC/FI application identifiers |
+| **Feed file data / blob download** | Binary payloads behind a blob key. The CDM models no attachment, and a `blob_key` parked without its bytes is a dangling reference — worse than an absent field, because it looks resolvable |
+| **Detection feedback** (`/v3/feeds/data/{id}/detections/{id}/feedback`) | Human adjudication of a detection. It is training-loop data about a *judgement*, not an observation of the world; the CDM has no object for it and inventing one would put an opinion in the entity graph |
+| **Video streams, recordings, HLS playlists, signed download URLs** | Media transport. No CDM object, and the signed-URL endpoints mint short-lived capabilities — a credential-adjacent surface an adapter has no business touching |
+| **WebRTC connections** (`/v3/me/webrtc/**`) | Session plumbing for the video path. Describes a browser's connection, not the world |
+| **Notifications, deliveries, receipts, event subscriptions and channels** | The alerting *mechanism*: who was told, over which channel, and whether they read it. These are objects about the notification system. A CDM object built from one would describe our own message bus, and the CDM does not model that — correctly absent rather than missing |
+| **Permissions, authorization, audit trail, templates, trees** | Access control. `POST /v3/authorization/permissions/check` answers a question about a subject's rights; there is no entity, no event and no position in any of it |
+| **OAuth, JWKS, token introspection, integration manifests, Keycloak registration** | Auth plumbing. Also the boundary this adapter refuses on principle: transport and credentials stay with the caller |
+| **Federation** (`/v3/federation/**`, CA bundles, Nebula certs, enroll/renew/revoke) | Overlay-network identity between Legion instances. It describes the mesh, and it handles certificates — the CDM contains no crypto by an AST-enforced rule (`tests/test_cdm_boundary.py`), so this could not be modelled here even if it were wanted |
+| **Users, organizations, invitations, `/v3/me`, Orion settings** | Tenancy and identity. A user is not a thing on a map. `organization_id` is parked where it appears on an in-scope resource, and the org resource itself stays out |
+| **Search endpoints** (`POST /v3/*/search`) | Not a resource: a query interface returning the same objects the row sets above cover, wrapped in the same envelope. In scope by their *response*, out of scope as an *operation* — the adapter translates what a search returned and knows nothing about the filter that produced it |
+| **`EPSG:4979` coordinates** | Not a resource, but the same decision. In the `crs` enum and defined in no document; its registry axis order contradicts what this API documents for `EPSG:4326`, so a guess yields a plausible wrong position. Refused by name until a source defines it |
+
 ## STANAG 4676 — track ingest
 
 No adapter yet. Every row below is a specification for whoever writes it.
@@ -566,7 +1018,11 @@ No adapter yet. Every row below is a specification for whoever writes it.
    against a vessel name, and nothing anywhere states that the key means the same thing in
    both. A private convention becoming a de-facto standard without an owner is a worse
    position than four keys that visibly disagree, because it removes the signal that a
-   decision is missing.
+   decision is missing. **And Legion settles the question of whether this gap is worth
+   closing.** Its `name` field is `required` on every Entity and every Track, so every single
+   object from that source arrives with an operator-facing string — not sometimes, as with a CoT
+   callsign or an AIS vessel name, but always. A fifth adapter parking a sixth key would be
+   noise; an adapter whose every object has a name and nowhere to put it is the argument.
 2. **Affiliation collapse, 7 → 4.** PENDING, ASSUMED_FRIEND and SUSPECT have no CDM member
    (see `enums.Affiliation` for why: they are judgements, not wire facts). Recoverable only
    because the adapter parks the original — which the lossless check enforces rather than
@@ -577,13 +1033,32 @@ No adapter yet. Every row below is a specification for whoever writes it.
    identity at all, so its entities are UNKNOWN because the format is silent and not because
    a wider vocabulary was collapsed. Nothing is parked because nothing was said, and
    `attributes.affiliation_basis` records which of the two situations produced the UNKNOWN.
+   **Legion widens this to 15 → 4 and adds a second axis.** Its enum carries the full 2525
+   standard identity — PENDING, ASSUMED_FRIEND, SUSPECT, JOKER, FAKER, NONE_SPECIFIED — and
+   five `EXERCISE_*` variants on top, so it is both the widest collapse in this document and
+   the first source to fold *exercise context* into the identity field. The CDM already
+   separates those two ideas, which is why this one is a collapse in one axis and a SPLIT in the
+   other: the exercise marking belongs with the 2525D context digit and with
+   `SourceRef.synthetic`, not with the affiliation. Note what that split must not do — a payload
+   field may not rewrite `source.synthetic`, which is a deployment declaration about the feed
+   rather than a fact about one contact. Whoever revisits this gap should read the Legion
+   affiliation table before proposing anything: a wider `Affiliation` enum would close the
+   collapse and leave the conflation.
 3. **Track quality scale.** 4676 integer 0–15 → CDM float 0–1 is `value / 15`, a declared
    transform. Note that 4676 quality 0 means "worst", not "unknown", and CDM `None` means
    unknown — so a missing 4676 quality must become `None`, never `0.0`.
 4. **Velocity representation.** 4676 carries a 3-vector; the CDM carries speed/course/climb.
    The conversion is exact arithmetic and reversible, so it is a declared transform rather
    than a gap in meaning — but an adapter must declare it or the lossless check will (correctly)
-   flag every velocity component.
+   flag every velocity component. **Legion carries one too, and shows that the transform is only
+   exact when the FRAME is known.** Its `velocity`, `acceleration` and `angular_velocity` are
+   3-vectors whose reference frame is documented nowhere — geocentric ECEF and local
+   east-north-up give completely different answers for the same three numbers, and its position
+   field defaults to ECEF while its `bearing` is plainly a local compass bearing, so neither
+   guess is safe. So the declared transform this gap describes needs a stated frame as its
+   precondition, exactly as gap 7's heading needs a stated datum and gap 9's altitude needs a
+   stated reference surface. The pattern is now three deep: a vector or an angle without its
+   frame is not a measurement.
 5. **Feature / FeatureCollection.** Not modelled. `PlanObject` is the CDM's Feature-equivalent
    (geometry + style + label), and a FeatureCollection is a list of PlanObjects. Adding the
    GeoJSON wrappers would give two ways to say one thing.
@@ -592,6 +1067,16 @@ No adapter yet. Every row below is a specification for whoever writes it.
    a 300 m vertical error decides whether two aircraft are deconflicted. **Now confirmed by a
    shipped adapter**: `air_track_due_north.xml` carries `le="120.0"` on a track at 7 620 m, and
    that 120 m sits in `attributes` where no consumer will look for it.
+
+   **Legion shows the gap is wider than one missing field: the CDM's whole uncertainty model is
+   one scalar.** It sends a 3×3 position `covariance` matrix (example diagonal 25, 25, 9 m², so
+   σ = 5, 5, 3 m) and, separately, a `radius`. `Position` has `accuracy_m` — one horizontal
+   1-sigma number — so a matrix has to be either collapsed or parked, and collapsing it needs
+   the frame the matrix is expressed in, which Legion does not state (gap 4's problem again).
+   Parking is therefore the only honest option today. This is recorded here rather than as a new
+   number because it is the same concept as `alt_accuracy_m`: how precisely do we know where this
+   is. Whoever closes gap 6 should decide whether the answer is two scalars or a small covariance
+   block, and should not discover the question from a fourth adapter.
 7. **Heading and rate of turn.** `Kinematics` carries `course_deg` and nothing else angular, so
    AIS's true heading and rate of turn both land in `attributes`. Course and heading are
    different measurements and the difference is the interesting one: a vessel making 12 knots
@@ -617,6 +1102,15 @@ No adapter yet. Every row below is a specification for whoever writes it.
    heading (HRD is in type 31, the heading in type 19). Whoever closes this gap inherits that
    cross-frame join as part of the problem, which is exactly the kind of thing a gap is for
    discovering before a field is added in passing.
+
+   **Legion is the fourth source to park an orientation and the second to park a turn rate, and
+   it raises the ceiling on both.** Its `orientation` is a unit **quaternion** — an attitude in
+   three axes, of which a heading is one component — and its `angular_velocity` is a 3-vector
+   turn rate. Neither the quaternion's component order nor either vector's frame is documented,
+   so this adapter cannot even interpret what it parks. Two lessons for whoever closes this gap:
+   a scalar `heading_deg` is the right shape for the sources seen so far but it is strictly less
+   than what a platform actually broadcasts, and every one of these fields is uninterpretable
+   without a stated frame or datum.
 8. **Extent.** An entity has a position and no size. AIS states four dimensions from the
    position reference point — to bow, stern, port and starboard — from which length and beam
    follow, and a type 5 message adds draught. All of it is parked. It matters more than it
@@ -627,6 +1121,12 @@ No adapter yet. Every row below is a specification for whoever writes it.
    obvious: a bounding extent, an offset reference point and a draught are three different
    ideas, and STANAG 4676's own object-size fields should be read before any of them is added.
    Recorded here so the next adapter author finds a decision rather than an oversight.
+   **Legion adds a case that cannot be filed on either side of it.** Its location `radius` is a
+   bare number with an example of `500` and no description, and it is genuinely ambiguous between
+   an uncertainty radius (gap 6) and a geometric extent (this gap) — a 500 m *error* and a 500 m
+   *object* are different statements about the world and the spec does not say which it means. It
+   is parked under both readings' names until a source resolves it, which is the honest handling
+   and also the reason this gap should not be closed by guessing a shape.
 9. **No barometric altitude.** `Position.alt_m` is documented as metres HAE — a height above
    the WGS84 ellipsoid — and that is what an ADS-B type code 20-22 frame states, subject to the
    datum caveat below. The type code
@@ -683,3 +1183,30 @@ No adapter yet. Every row below is a specification for whoever writes it.
    consumer that wants wind needs a heading (gap 7) and a datum as well, and adding one
    `airspeed_mps` now would be closing a third of a question. Recorded so the next adapter
    author finds a decision rather than an oversight.
+11. **No entity hierarchy.** A CDM object has no parent. Legion's `parent_id` is `required` and
+   nullable on every Entity and Track — so the source asserts, on every single object, either a
+   parent or explicitly none — and the relationships it carries are the ordinary ones in a
+   sensor estate: a camera on a mast, a radio on a vehicle, a payload on a UXV. Today the id is
+   parked, which means a consumer can see that a parent exists and cannot traverse to it without
+   private knowledge of this adapter's key. It matters for more than tidiness: a camera's
+   position is its mast's position, so a hierarchy is how a fused picture avoids painting six
+   contacts where one installation stands, and destroying a parent destroys its children in a
+   way no consumer of a flat list can infer. *Not yet proposed as a field*, for two reasons worth
+   stating. A `parent_id` on `Entity` would be a uuid pointing at an object that may not be in
+   the same payload — the CDM has no reference-resolution story, and adding a dangling pointer is
+   how a model acquires one by accident. And resolving the hierarchy is a per-level request,
+   which is fusion by this document's own test. The right shape may be a containment relation
+   held by the fusion layer rather than a field on the object, and that decision needs an owner.
+12. **No classification label.** Legion states `top_classification` (example `"HUMAN"`) with a
+   `top_classification_probability` (example `0.95`), and its Event resource has an `event_type`
+   enum — `HUMAN`, `VEHICLE`, `VESSEL`, `UAV`, `FOOTSTEP`, `ANIMAL`, `GUNSHOT` — that is the same
+   idea again. The probability has a canonical home in `Entity.confidence`; **the label does
+   not**. This is deliberately NOT gap 1: a name identifies an individual and a classification
+   says what kind of thing it is, they have different precedence rules across sources, and
+   collapsing them would make `Entity.label` hold `"Axis IP Camera"` for one source and
+   `"HUMAN"` for another. It is also not `entity_type`, which is a closed CDM vocabulary about
+   what the object IS to the model rather than a sensor's verdict about what it looks like. So a
+   classifier's output currently arrives as a confidence with no subject — the number 0.95 with
+   nothing to say what is 95 % likely — which is the worst of the options. *Proposed for 1.1.0
+   only once gap 1 is settled*, because the two must be designed together or the CDM ends up with
+   two nearly-identical string fields and no rule for choosing between them.

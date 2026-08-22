@@ -8,7 +8,9 @@ the table can be read as a specification rather than as a historical document.
 The resolver walks pydantic annotations rather than dictionaries, so `Track.samples[].position.lat`
 is checked all the way down to the float.
 """
+import json
 import pathlib
+import uuid
 import re
 import types
 import typing
@@ -86,15 +88,43 @@ def _cell_paths(cell: str) -> list[str]:
             if c.strip() not in NOT_A_PATH and MODEL_PATH.match(c.strip())]
 
 
+#: The column heading that marks which column of a table holds CDM paths.
+CDM_COLUMN = "CDM field"
+
+
 def _cdm_paths() -> list[str]:
+    """Every CDM path in the document, read from the column its table's header points at.
+
+    HEADER-AWARE, and it has to be. The first version read column 1 of every table in the file,
+    which was wrong in both directions:
+
+    - **It missed the egress tables entirely.** Those are headed `| CDM | AIS | Status | Notes |`
+      — the CDM path is in column ZERO — so every `Position.lat`, `Kinematics.speed_mps` and
+      `Track.samples[].position.lat` on an egress row went unresolved for as long as those rows
+      have existed. A renamed field would not have failed the build.
+    - **It read prose as paths.** A two- or three-column table of decisions has explanatory text
+      in column 1, and any `Model.field` mentioned there was resolved as if it were a mapping.
+      That passes by luck when the path happens to exist and fails confusingly when it does not.
+
+    So a table is parsed only if its header names the CDM column, and the paths are read from
+    that column's index. A table with no such header contributes nothing, which is right: it is
+    not a mapping table.
+    """
     paths = []
+    column = None
     for line in DOC.read_text().splitlines():
-        if not line.startswith("|") or line.startswith("|---") or "| CDM field |" in line:
+        if not line.startswith("|"):
+            column = None            # a blank line or prose ends the table
+            continue
+        if line.startswith("|---"):
             continue
         cells = [c.strip() for c in line.strip("|").split("|")]
-        if len(cells) < 2:
+        if CDM_COLUMN in cells:
+            column = cells.index(CDM_COLUMN)
             continue
-        paths += _cell_paths(cells[1])
+        if column is None or column >= len(cells):
+            continue
+        paths += _cell_paths(cells[column])
     return paths
 
 
@@ -118,6 +148,19 @@ def test_a_cell_naming_two_fields_yields_both():
     assert any(p == "Event.event_type" for p in PATHS), (
         "no row in the document names Event.event_type as a second path, so the plural parser "
         "is not actually being exercised by the table it guards")
+
+
+def test_the_egress_tables_are_parsed_too():
+    """The hole the header-aware parser closed: egress rows put the CDM path in column ZERO.
+
+    Pinned so it cannot silently reopen — a parser that reads a fixed column index would drop
+    every one of these again.
+    """
+    for path in ("Track.samples[].position.lat", "Kinematics.climb_mps"):
+        assert path in PATHS, (
+            f"{path} appears only in an egress table, so its absence means those tables are "
+            "no longer being resolved against the models"
+        )
 
 
 @pytest.mark.parametrize("path", sorted(set(PATHS)))
@@ -190,11 +233,247 @@ def test_the_documented_gaps_are_still_gaps():
             "airspeed, true airspeed and Mach are three quantities and that a consumer "
             "wanting wind needs gap 7 as well. Write the decision down before the field."
         )
+    # Gap 11, entity hierarchy. Asserted on Entity because that is where a parent pointer
+    # would naturally be put, and the gap's whole argument is that putting it there gives the
+    # CDM a dangling reference it has no story for.
+    for field in ("parent_id", "parent_entity_id", "children"):
+        assert field not in models.Entity.model_fields, (
+            f"gap 11 (no entity hierarchy) appears to be closed — Entity.{field} now exists. "
+            "Read that gap's note first: it is unproposed because a uuid pointing outside the "
+            "payload is a reference the CDM cannot resolve, and traversing the hierarchy is a "
+            "per-level request and therefore fusion."
+        )
+    # Gap 12, classification label. Both models, because the label could plausibly be put on
+    # either — and the gap says it must be designed together with gap 1 rather than in passing.
+    for model, field in ((models.Entity, "classification"),
+                         (models.Entity, "top_classification"),
+                         (models.Event, "classification")):
+        assert field not in model.model_fields, (
+            f"gap 12 (no classification label) appears to be closed — {model.__name__}."
+            f"{field} now exists. That gap is proposed only once gap 1 is settled: a name and "
+            "a classification are different concepts and closing one without the other is how "
+            "the CDM ends up with two string fields and no rule for choosing between them."
+        )
+
+
+# The Picogrid Legion row set is a SPECIFICATION: adapter #5 does not exist yet. These two
+# tests pin it in the only two ways available before there is code — the size of the row set,
+# and the presence of the version pin the row set is only trustworthy with.
+LEGION_HEADING = "## Picogrid Legion Platform API v3"
+
+
+def _section(heading: str) -> str:
+    text = DOC.read_text()
+    start = text.index(heading)
+    nxt = text.find("\n## ", start + len(heading))
+    return text[start:nxt if nxt != -1 else len(text)]
+
+
+def test_the_legion_row_set_is_pinned_to_an_exact_spec_document():
+    """Legion is a VENDOR API, so the row set is only meaningful against a pinned document.
+
+    Every other format here is a ratified standard that moves in public on committee timescales.
+    This one can change between two deploys, and its `info.version` demonstrably does not move
+    when it does — so the hash is the change signal and it has to be present.
+    """
+    section = _section(LEGION_HEADING)
+    assert "464857b081f1fb47c82e56b23f7585eb44e475c64cec1678629b41a252f6b9e1" in section, (
+        "the Legion section has lost its SHA-256 pin. Without it the row set describes an "
+        "unknown version of a moving API, which is worse than describing none"
+    )
+    assert "2026-08-22T21:04:41Z" in section, "the retrieval date is part of the pin"
+    assert "/v3/openapi.json" in section, "the pin must name the document it pinned"
+    assert "`3.0.0`" in section, "info.version belongs in the pin even though it is not a signal"
+
+
+# In a subdirectory, not beside the fixtures: `harness.run()` replays every FILE it finds
+# through `to_cdm()`, so a reference document sitting next to the payloads would be fed
+# to the adapter and fail its own gate.
+PIN = (pathlib.Path(synapse_cdm.__file__).resolve().parent
+       / "fixtures/legion/spec/openapi_pin.json")
+
+
+def _pinned_fields() -> dict[str, list[str]]:
+    return {name: sorted(resource["fields"])
+            for name, resource in json.loads(PIN.read_text())["resources"].items()}
+
+
+def test_the_pinned_legion_inventory_matches_the_documents_own_hash():
+    """The inventory is only evidence if it names the document it was read from."""
+    pin = json.loads(PIN.read_text())["source"]
+    assert pin["sha256"] == pin["etag"], (
+        "the server's ETag is the SHA-256 of the body, which is what makes a re-fetch "
+        "comparable without downloading twice; if they have diverged the pin is stale"
+    )
+    assert pin["retrieved_at"] == "2026-08-22T21:04:41Z"
+    assert pin["bytes"] == 984135
+    assert pin["openapi"] == "3.1.0"
+    section = _section(LEGION_HEADING)
+    assert pin["sha256"] in section, "the table and the pin file must name the same document"
+
+
+@pytest.mark.parametrize("resource", sorted(_pinned_fields()))
+def test_every_pinned_legion_field_has_a_row(resource):
+    """"Every field of every in-scope resource" made checkable instead of asserted.
+
+    The failure this guards against is specific and it has already happened once: writing the
+    row set by reading a flattened field dump missed two fields whose schema is a bare
+    `type: object` with no properties, because a flattener that walks leaves does not see them.
+    Both are now rows. The other failure it guards against is an adapter author who cannot map
+    a field deleting the row instead of parking the value — the table would then agree with the
+    code by having stopped asking.
+
+    Matched on either the dotted path or the bare leaf name in backticks, because the table
+    legitimately uses both: a nested field is clearer written as `paging.has_more`, a top-level
+    one as `speed`. Accepting either is looser than demanding one form, and it is the right
+    looseness — this test exists to catch a field that is UNMENTIONED, not to police notation.
+    """
+    section = _section(LEGION_HEADING)
+
+    def mentioned(field: str) -> bool:
+        leaf = field.split(".")[-1].replace("[]", "")
+        # Also the bracketed form: the table writes an array field as `results[]`, which reads
+        # better in prose, while the pinned inventory names the property itself.
+        return any(f"`{form}`" in section
+                   for form in (field, field.replace("[]", ""), f"{field}[]", leaf,
+                                f"{leaf}[]"))
+
+    missing = [f for f in _pinned_fields()[resource] if not mentioned(f)]
+    assert not missing, (
+        f"{resource}: {len(missing)} field(s) from the pinned spec have no row in "
+        f"FORMAT_COVERAGE.md: {missing}. A field with no row is a field nobody decided about"
+    )
+
+
+def test_the_legion_rows_claim_the_adapter_that_now_implements_them():
+    """The status column has to move when the code does, in BOTH directions.
+
+    This test was the opposite of itself until adapter #5 landed: it asserted that no row said
+    `legion 1.0.0`, because a status column claiming an adapter that did not exist is the one
+    thing this table exists to prevent. Now the adapter exists, so the inverse is the risk — a
+    row still saying `not yet` is a shipped mapping nobody updated the document for, which is
+    the same failure pointed the other way.
+    """
+    section = _section(LEGION_HEADING)
+    rows = [line for line in section.splitlines()
+            if line.startswith("|") and not line.startswith("|---")]
+    mapped = [line for line in rows if "`legion 1.0.0" in line]
+    assert len(mapped) >= 49, (
+        f"the Legion row set is down to {len(mapped)} mapped rows, below what the field "
+        "inventory needs. Raising this floor deliberately is fine; losing rows is not"
+    )
+    assert "`not yet`" not in section, (
+        "a Legion row still says `not yet` while adapters/legion.py implements the row set. "
+        "Either the row is genuinely unimplemented — in which case say which and why — or the "
+        "document has fallen behind the code"
+    )
+    assert "legion 1.0.0" in _section("## The status column"), (
+        "the status legend does not define the marker the rows use"
+    )
+
+
+LEGION_FIXTURES = sorted((pathlib.Path(synapse_cdm.__file__).resolve().parent
+                         / "fixtures/legion").glob("*.json"))
+
+
+def _uuids(value, found=None):
+    """Every string in a document that parses as a UUID."""
+    found = [] if found is None else found
+    if isinstance(value, dict):
+        for sub in value.values():
+            _uuids(sub, found)
+    elif isinstance(value, list):
+        for sub in value:
+            _uuids(sub, found)
+    elif isinstance(value, str):
+        try:
+            found.append(uuid.UUID(value))
+        except ValueError:
+            pass
+    return found
+
+
+def test_the_legion_fixture_set_is_not_silently_empty():
+    """A parametrised suite over a glob that matches nothing passes while testing nothing."""
+    assert len(LEGION_FIXTURES) >= 6, (
+        f"expected >=6 Legion fixtures, found {len(LEGION_FIXTURES)}")
+
+
+@pytest.mark.parametrize("path", LEGION_FIXTURES, ids=lambda q: q.name)
+def test_every_legion_fixture_identifier_is_a_version_8_uuid(path):
+    """Synthetic only, and asserted rather than described — see the fixtures README.
+
+    A UUID has no reserved test range, so the guarantee here is RFC 9562 §5.8: version 8 is for
+    custom and experimental use, and a system issuing identifiers normally emits version 4 or 7.
+    A real Legion id pasted in while debugging is therefore a build failure rather than something
+    that ships, which is the same job the MID 299 and ICAO `0029xx` checks do for the other two
+    fixture sets.
+    """
+    found = _uuids(json.loads(path.read_text()))
+    assert found, f"{path.name} contains no identifiers at all — is it the right document?"
+    wrong = [str(u) for u in found if u.version != 8]
+    assert not wrong, (
+        f"{path.name} carries {len(wrong)} non-version-8 identifier(s): {wrong}. Legion issues "
+        "v4 and v7, so a v8 id cannot collide with a real one; anything else may be real"
+    )
+    off_scheme = [str(u) for u in found if not str(u).startswith("f1c7")]
+    assert not off_scheme, (
+        f"{path.name} carries identifier(s) outside the documented `f1c7` prefix: {off_scheme}"
+    )
+
+
+def test_the_legion_fixtures_exercise_both_documented_coordinate_systems():
+    """The CRS is the largest hazard in the row set, so both readings need a fixture.
+
+    One document must omit `crs` entirely — that is the case that decides whether an adapter
+    honours the ECEF default or quietly reads GeoJSON order — and one must state EPSG:4326.
+    """
+    absent = "(absent — ECEF by default)"
+    seen = set()
+    for path in LEGION_FIXTURES:
+        doc = json.loads(path.read_text())
+        # The EFFECTIVE crs, which is not the same as the key being present on the object: a
+        # list envelope declares `crs` once for all of `results`, so a result without its own is
+        # covered by the envelope's and is NOT an exercise of the default. Getting this wrong
+        # made the first version of this test unfalsifiable — the patrol list kept supplying the
+        # "absent" marker no matter what the other fixtures said.
+        envelope = doc.get("crs")
+        for holder, inherited in ((doc, None),
+                                  (doc.get("location_latest") or {}, None),
+                                  *((r, envelope) for r in (doc.get("results") or []))):
+            if isinstance(holder, dict) and "position" in holder:
+                seen.add(holder.get("crs") or inherited or absent)
+    assert absent in seen, (
+        "no fixture omits `crs`, so nothing exercises the ECEF default — the single mapping "
+        "an adapter is most likely to get wrong"
+    )
+    assert "EPSG:4326" in seen, "no fixture states EPSG:4326, so the lat/lon path is unexercised"
+    assert "EPSG:4979" not in seen, (
+        "a fixture uses EPSG:4979, which the row set refuses because no document defines its "
+        "axis order. Remove it or resolve the refusal first"
+    )
+
+
+def test_the_legion_scope_decision_names_what_is_out_and_why():
+    """An out-of-scope list without reasons is indistinguishable from an oversight."""
+    section = _section(LEGION_HEADING)
+    for resource in ("Tasking", "Feed Data", "Video streams", "WebRTC", "Notifications",
+                     "Permissions", "Federation", "EPSG:4979"):
+        assert resource in section, f"{resource!r} is not named in the Legion declines table"
+    # The two structural refusals, which are the ones that carry an argument rather than a note.
+    assert "PlanObject" in section and "geometry" in section, (
+        "the Tasking decline must say WHY a task is not a PlanObject — geometry is required on "
+        "that model and a task has none"
+    )
+    assert "Pagination is framing" in section, (
+        "the pagination-versus-correlation line is the type-24 test applied to a REST API and "
+        "is the scope decision this row set turns on"
+    )
 
 
 def test_the_gap_notes_are_referenced_from_the_table():
     text = DOC.read_text()
-    for number in range(1, 11):
+    for number in range(1, 13):
         assert f"**gap {number}**" in text or f"{number}. **" in text, (
             f"gap {number} is listed but never referenced from a table row"
         )

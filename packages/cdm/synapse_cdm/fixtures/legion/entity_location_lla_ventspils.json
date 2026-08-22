@@ -1,0 +1,27 @@
+{
+  "id": "f1c70000-0002-8000-8000-000000000003",
+  "entity_id": "f1c70000-0001-8000-8000-000000000003",
+  "crs": "EPSG:4326",
+  "position": {
+    "type": "Point",
+    "coordinates": [21.5606, 57.3908, 8.0]
+  },
+  "source": "Synthetic AIS Gateway",
+  "recorded_at": "2026-04-29T06:09:30Z",
+  "created_at": "2026-04-29T06:09:31Z",
+  "bearing": 360,
+  "speed": null,
+  "entity": {
+    "id": "f1c70000-0001-8000-8000-000000000003",
+    "organization_id": "f1c70000-0000-8000-8000-000000000001",
+    "parent_id": "f1c70000-0001-8000-8000-000000000001",
+    "name": "EXERCISE Contact Charlie",
+    "type": "Buoy",
+    "status": "active",
+    "category": "DEVICE",
+    "affiliation": "NEUTRAL",
+    "created_at": "2026-04-29T06:00:00Z",
+    "updated_at": "2026-04-29T06:09:31Z",
+    "is_active": true
+  }
+}

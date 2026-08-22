@@ -1,0 +1,36 @@
+{
+  "id": "f1c70000-0001-8000-8000-000000000001",
+  "organization_id": "f1c70000-0000-8000-8000-000000000001",
+  "parent_id": null,
+  "name": "EXERCISE Mast Alfa",
+  "type": "Camera",
+  "status": "active",
+  "category": "SENSOR",
+  "affiliation": "FRIEND",
+  "top_classification": "STRUCTURE",
+  "top_classification_probability": 0.91,
+  "classification": {},
+  "metadata": {
+    "manufacturer": "Synthetic Optics",
+    "model": "SYN-1448",
+    "resolution": "4K",
+    "weatherproof": true
+  },
+  "created_at": "2026-04-29T05:58:00Z",
+  "updated_at": "2026-04-29T06:14:00Z",
+  "is_active": true,
+  "is_expired": false,
+  "location_latest": {
+    "id": "f1c70000-0002-8000-8000-000000000001",
+    "entity_id": "f1c70000-0001-8000-8000-000000000001",
+    "position": {
+      "type": "Point",
+      "coordinates": [3188199.36, 1417551.34, 5321282.59]
+    },
+    "source": "Synthetic Site Survey",
+    "recorded_at": "2026-04-29T06:14:00Z",
+    "created_at": "2026-04-29T06:14:02Z",
+    "radius": 5,
+    "covariance": [[4, 0, 0], [0, 4, 0], [0, 0, 9]]
+  }
+}

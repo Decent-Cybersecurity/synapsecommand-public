@@ -160,6 +160,44 @@ is worth stating.
   frame did not mean what the adapter said. Only reading the reference found it — which is why
   the citation now sits beside the row in `FORMAT_COVERAGE.md`.
 
+- **`adapters/legion.py` 1.0.0 — Picogrid Legion Platform API v3, ingest.** Entity, Track,
+  Entity/Track Location, Locations list and Event at schema version **1.0.0**, with no field
+  added, removed or retyped.
+
+  The first adapter whose upstream is a REST API, and the boundary sits where it sat for the wire
+  formats: `to_cdm()` takes one already-fetched JSON document and owns no HTTP, no auth, no
+  retries and no pagination. Transport is where state lives, and an adapter holding state is a
+  fusion layer nothing audits.
+
+  Three decisions are worth reading even if you never touch this API:
+
+  - **Pagination is framing; correlation is fusion.** One page becomes one `Track` — a partial
+    history, labelled as one — and the adapter never follows `paging.next`. That is the AIS
+    fragment-buffer argument and the ADS-B CPR-pairing argument reaching the same conclusion a
+    third time. What it *does* read is data the payload already embeds, which is reading rather
+    than correlating.
+  - **A Legion "Track" is a CDM `Entity`, not a CDM `Track`.** The entity and track endpoints
+    return byte-identical schemas and a track location's foreign key is named `entity_id`: a
+    Legion Track is an Entity whose category is `TRACK`, and the history lives in its Locations
+    collection. The resource names point the wrong way.
+  - **A vendor API needs a pinned spec.** Unlike a ratified standard it can move between two
+    deploys, and its `info.version` demonstrably does not move when it does — so the row set is
+    pinned to a document by SHA-256, with a field-by-field inventory, and a test fails the build
+    on a field that has no row.
+
+  The largest hazard is a coordinate: `crs` is optional and defaults to `EPSG:4978`, geocentric
+  X/Y/Z in **metres**, while the position object is shaped like GeoJSON. An adapter reading
+  `coordinates` as `[lon, lat]` would place every contact somewhere impossible while emitting
+  perfectly well-formed CDM objects. So `Position` is a derived one-way view, the source
+  coordinates are re-emitted verbatim beside it, and `attributes.position_basis` records which of
+  two incompatible readings was applied to three bare numbers.
+
+  Four corrections happened during implementation and all four came from a gate rather than a
+  review: the never-drop check caught the list path pruning every sample's metadata, the pinned
+  inventory caught a hand-read claiming six omitted fields where the spec says five, a TRANSFORMS
+  audit caught six exemptions with no subject, and the harness caught the spec pin being replayed
+  as a payload.
+
 ## Proposed for 1.1.0 — MINOR, not yet implemented
 
 These come from `FORMAT_COVERAGE.md`'s gap list, and each is deliberately deferred rather than
@@ -186,6 +224,12 @@ was missing when they were first written down.
   rather than just a third vote**: its heading is referenced to magnetic north unless a type 31
   frame says otherwise, while an AIS heading is true — so the field needs a stated datum, and
   ADS-B cannot supply that datum from the same frame as the heading.
+- **`Track.attributes`** — an extension bag on the one canonical object without one. `Entity`
+  has `attributes`, `Event` has `payload`, `Track` has nowhere to park anything. The Legion
+  adapter makes it concrete: a `Track` from one page of a paginated history is a fragment, and how
+  much of the history it holds must be machine-readable or a consumer computes a speed across a
+  gap it cannot see. Those figures ride on the `Entity` today, so a consumer holding only the
+  `Track` cannot read them.
 - **`Position.baro_alt_m`**, or `Entity.baro_alt_m` — where it hangs is part of the work.
   `alt_m` is metres above the ellipsoid; a barometric altitude is a pressure reading against a
   fixed datum, and the CDM has no home for it. Most air tracks therefore carry no altitude at

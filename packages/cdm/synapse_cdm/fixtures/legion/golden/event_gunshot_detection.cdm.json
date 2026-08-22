@@ -1,0 +1,54 @@
+[
+  {
+    "event_id": "ed4de863-0882-5a4a-8158-0606e91ec2d2",
+    "event_type": "DETECTION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:12:44.000Z",
+    "payload": {
+      "event_type_basis": "DETECTION. Legion's own event_type names the detected CLASS ('GUNSHOT'), not the kind of report, so the CDM's axis is supplied here and the source value is parked",
+      "legion_actor_id": "f1c70000-0001-8000-8000-000000000001",
+      "legion_actor_type": "ENTITY",
+      "legion_created_at": "2026-04-29T06:12:45Z",
+      "legion_event_class": "GUNSHOT",
+      "legion_event_class_is_a_detection_class": true,
+      "legion_event_description": "Synthetic acoustic detection, exercise injection",
+      "legion_metadata": {
+        "confidence": 0.78,
+        "sensor_channel": 3
+      },
+      "legion_organization_id": "f1c70000-0000-8000-8000-000000000001",
+      "observed_at_basis": "event_timestamp",
+      "received_at_basis": "the injected clock. A Legion document carries created_at \u2014 when LEGION stored the record \u2014 which is the platform's receipt and not ours",
+      "severity_basis": "INFO. Legion states no severity or urgency field on any resource; grading a 'GUNSHOT' would be this translator judging operational significance, which belongs to fusion where it is visible and attributable",
+      "source_extras": {
+        "actor_id": "f1c70000-0001-8000-8000-000000000001",
+        "actor_type": "ENTITY",
+        "event_description": "Synthetic acoustic detection, exercise injection",
+        "metadata": {
+          "confidence": 0.78,
+          "sensor_channel": 3
+        }
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "f44cfe73-bd44-5120-a7da-c9794fde918c"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0003-8000-8000-000000000001",
+        "system": "LEGION"
+      }
+    ]
+  }
+]

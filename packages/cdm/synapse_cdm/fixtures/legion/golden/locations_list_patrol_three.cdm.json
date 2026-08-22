@@ -1,0 +1,177 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN. As entity_type_basis: the list states no affiliation, and this is the format's silence rather than a collapsed vocabulary",
+      "entity_id_basis": "Legion entity id, from the locations the page carries",
+      "entity_type_basis": "UNKNOWN. A locations list asserts that these fixes belong to this entity id and states nothing else about the object \u2014 no category, no name, no affiliation. Fetching the entity would be a second request and therefore fusion, so nothing is inferred",
+      "legion_crs": "EPSG:4978",
+      "legion_entity_id": "f1c70000-0001-8000-8000-000000000005",
+      "legion_position": [
+        {
+          "coordinates": [
+            3164936.13,
+            1357068.79,
+            5350676.28
+          ],
+          "crs": "EPSG:4978",
+          "type": "Point"
+        },
+        {
+          "coordinates": [
+            3147102.14,
+            1364945.34,
+            5359134.15
+          ],
+          "crs": "EPSG:4978",
+          "type": "Point"
+        },
+        {
+          "coordinates": [
+            3129298.52,
+            1373092.81,
+            5367424.3
+          ],
+          "crs": "EPSG:4978",
+          "type": "Point"
+        }
+      ],
+      "legion_track_completeness": {
+        "basis": "carried_samples is the length of this page's results; total_count is the collection size Legion stated, or null where it stated none. complete is true only when both agree and paging.has_more is not set, and null when it cannot be established \u2014 never false on missing evidence. This adapter does not follow paging.next: one page is one payload, and stitching pages is state",
+        "carried_samples": 3,
+        "complete": false,
+        "paging": {
+          "has_more": true,
+          "next": 2,
+          "previous": null
+        },
+        "total_count": 9,
+        "track_id": "7553c88a-45af-5c24-9af1-40598b0835cf"
+      },
+      "position_basis": "crs stated as EPSG:4978; coordinates read as geocentric [X, Y, Z] metres and converted to geodetic on the WGS84 ellipsoid (a=6378137.0 m, 1/f=298.257223563) by the closed-form Bowring/Ferrari solution. The source coordinates are re-emitted verbatim at attributes.legion_position; this Position is a derived one-way view",
+      "source_extras": {
+        "paging": {
+          "has_more": true,
+          "next": 2,
+          "previous": null
+        },
+        "results": [
+          {
+            "created_at": "2026-04-29T06:11:01Z",
+            "entity_id": "f1c70000-0001-8000-8000-000000000005",
+            "id": "f1c70000-0002-8000-8000-000000000011",
+            "position": {
+              "type": "Point"
+            },
+            "recorded_at": "2026-04-29T06:11:00Z",
+            "source": "Synthetic Track Fusion"
+          },
+          {
+            "created_at": "2026-04-29T06:13:01Z",
+            "entity_id": "f1c70000-0001-8000-8000-000000000005",
+            "id": "f1c70000-0002-8000-8000-000000000012",
+            "position": {
+              "type": "Point"
+            },
+            "recorded_at": "2026-04-29T06:13:00Z",
+            "source": "Synthetic Track Fusion"
+          },
+          {
+            "created_at": "2026-04-29T06:15:01Z",
+            "entity_id": "f1c70000-0001-8000-8000-000000000005",
+            "id": "f1c70000-0002-8000-8000-000000000013",
+            "position": {
+              "type": "Point"
+            },
+            "recorded_at": "2026-04-29T06:15:00Z",
+            "source": "Synthetic Track Fusion"
+          }
+        ],
+        "total_count": 9
+      },
+      "symbol_basis": "derived from affiliation; a locations list states no symbol",
+      "valid_from_basis": "the first sample's instant on this page"
+    },
+    "confidence": null,
+    "entity_id": "e16afcaf-4d13-534a-a5b5-56b42ded15cb",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 52.0,
+      "lat": 57.6903,
+      "lon": 23.6912,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0001-8000-8000-000000000005",
+        "system": "LEGION"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:11:00.000Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "e16afcaf-4d13-534a-a5b5-56b42ded15cb",
+    "integrity": null,
+    "object_kind": "track",
+    "samples": [
+      {
+        "observed_at": "2026-04-29T06:11:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 40.001,
+          "lat": 57.4102,
+          "lon": 23.2088,
+          "position_source": "ESTIMATED"
+        }
+      },
+      {
+        "observed_at": "2026-04-29T06:13:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 45.0,
+          "lat": 57.5514,
+          "lon": 23.4471,
+          "position_source": "ESTIMATED"
+        }
+      },
+      {
+        "observed_at": "2026-04-29T06:15:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 52.0,
+          "lat": 57.6903,
+          "lon": 23.6912,
+          "position_source": "ESTIMATED"
+        }
+      }
+    ],
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0001-8000-8000-000000000005",
+        "system": "LEGION"
+      }
+    ],
+    "track_id": "7553c88a-45af-5c24-9af1-40598b0835cf",
+    "track_quality": null
+  }
+]

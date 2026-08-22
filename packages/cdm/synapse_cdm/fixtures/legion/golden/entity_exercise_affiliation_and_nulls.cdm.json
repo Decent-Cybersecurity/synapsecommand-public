@@ -1,0 +1,64 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "affiliation_basis": "Legion affiliation 'EXERCISE_FRIEND' -> FRIENDLY; the source vocabulary is fifteen values wide and the CDM's is four, so the original is parked at attributes.legion_affiliation and the collapse is recoverable",
+      "affiliation_exercise": {
+        "basis": "Legion folds an exercise marking into its affiliation enum. The CDM separates identity from context, so the affiliation carries the identity and this records the context. source.synthetic is deliberately NOT changed by it: that flag is a declaration about the feed, not a fact about one contact",
+        "legion_affiliation": "EXERCISE_FRIEND"
+      },
+      "entity_id_basis": "Legion entity id",
+      "entity_type_basis": "Legion category 'UXV' -> PLATFORM; the raw value is parked",
+      "legion_affiliation": "EXERCISE_FRIEND",
+      "legion_category": "UXV",
+      "legion_is_active": true,
+      "legion_is_expired": false,
+      "legion_name": "EXERCISE Aggressor Delta",
+      "legion_organization_id": "f1c70000-0000-8000-8000-000000000001",
+      "legion_status": "degraded",
+      "legion_type": "Rotary Wing",
+      "legion_updated_at": "2026-04-29T06:15:00Z",
+      "source_extras": {
+        "is_active": true,
+        "is_expired": false,
+        "parent_id": null,
+        "status": "degraded",
+        "top_classification": null,
+        "type": "Rotary Wing",
+        "updated_at": "2026-04-29T06:15:00Z"
+      },
+      "symbol_basis": "derived from affiliation; Legion states no symbol",
+      "unavailable_fields": [
+        "deleted_at",
+        "parent_id",
+        "top_classification",
+        "top_classification_probability"
+      ],
+      "valid_from_basis": "entity created_at \u2014 the record's creation instant, the entity itself states no observation time and none was invented",
+      "valid_to_basis": "Legion expires_at \u2014 a scheduled end, used because no deleted_at was stated. Note it may be in the future, which is what an expiry is"
+    },
+    "confidence": null,
+    "entity_id": "ec98e8af-29ac-5805-b443-ee215deeca24",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0001-8000-8000-000000000004",
+        "system": "LEGION"
+      }
+    ],
+    "symbol": "10230000000000000000",
+    "valid_from": "2026-04-29T06:05:00.000Z",
+    "valid_to": "2026-04-29T18:00:00.000Z"
+  }
+]

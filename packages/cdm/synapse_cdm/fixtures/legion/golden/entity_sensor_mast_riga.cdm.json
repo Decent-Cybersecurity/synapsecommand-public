@@ -1,0 +1,163 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "affiliation_basis": "Legion affiliation 'FRIEND' -> FRIENDLY; the source vocabulary is fifteen values wide and the CDM's is four, so the original is parked at attributes.legion_affiliation and the collapse is recoverable",
+      "entity_id_basis": "Legion entity id",
+      "entity_type_basis": "Legion category 'SENSOR' -> SENSOR; the raw value is parked",
+      "export_review": {
+        "basis": "free-form vendor content that may describe our own estate rather than the world \u2014 the API's own example for `metadata` carries an ip_address, a manufacturer and a model. Parked in full because the never-drop rule is not negotiable, and flagged so a deployment reviews it before a CDM object crosses a releasability boundary. This adapter does not filter it",
+        "keys": [
+          "metadata"
+        ]
+      },
+      "legion_affiliation": "FRIEND",
+      "legion_category": "SENSOR",
+      "legion_classification": {},
+      "legion_is_active": true,
+      "legion_is_expired": false,
+      "legion_location_id": "f1c70000-0002-8000-8000-000000000001",
+      "legion_metadata": {
+        "manufacturer": "Synthetic Optics",
+        "model": "SYN-1448",
+        "resolution": "4K",
+        "weatherproof": true
+      },
+      "legion_name": "EXERCISE Mast Alfa",
+      "legion_organization_id": "f1c70000-0000-8000-8000-000000000001",
+      "legion_position": {
+        "coordinates": [
+          3188199.36,
+          1417551.34,
+          5321282.59
+        ],
+        "type": "Point"
+      },
+      "legion_status": "active",
+      "legion_top_classification": "STRUCTURE",
+      "legion_type": "Camera",
+      "legion_updated_at": "2026-04-29T06:14:00Z",
+      "position_basis": "crs ABSENT, so EPSG:4978 by the schema default; coordinates read as geocentric [X, Y, Z] metres and converted to geodetic on the WGS84 ellipsoid (a=6378137.0 m, 1/f=298.257223563) by the closed-form Bowring/Ferrari solution. The source coordinates are re-emitted verbatim at attributes.legion_position; this Position is a derived one-way view",
+      "position_source_basis": "ESTIMATED. Legion's location `source` names the SYSTEM that produced the fix ('Synthetic Site Survey') and never the positioning method, so there is nothing to read a method from. ESTIMATED understates rather than overstates, which is the safe direction for this field",
+      "source_extras": {
+        "classification": {},
+        "is_active": true,
+        "is_expired": false,
+        "location_latest": {
+          "covariance": [
+            [
+              4,
+              0,
+              0
+            ],
+            [
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              9
+            ]
+          ],
+          "created_at": "2026-04-29T06:14:02Z",
+          "entity_id": "f1c70000-0001-8000-8000-000000000001",
+          "id": "f1c70000-0002-8000-8000-000000000001",
+          "position": {
+            "coordinates": [
+              3188199.36,
+              1417551.34,
+              5321282.59
+            ],
+            "type": "Point"
+          },
+          "radius": 5,
+          "recorded_at": "2026-04-29T06:14:00Z",
+          "source": "Synthetic Site Survey"
+        },
+        "metadata": {
+          "manufacturer": "Synthetic Optics",
+          "model": "SYN-1448",
+          "resolution": "4K",
+          "weatherproof": true
+        },
+        "parent_id": null,
+        "status": "active",
+        "top_classification": "STRUCTURE",
+        "type": "Camera",
+        "updated_at": "2026-04-29T06:14:00Z"
+      },
+      "symbol_basis": "derived from affiliation; Legion states no symbol",
+      "unavailable_fields": [
+        "parent_id"
+      ],
+      "valid_from_basis": "embedded location_latest.recorded_at"
+    },
+    "confidence": 0.91,
+    "entity_id": "f44cfe73-bd44-5120-a7da-c9794fde918c",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 25.002,
+      "lat": 56.9236,
+      "lon": 23.9711,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0001-8000-8000-000000000001",
+        "system": "LEGION"
+      }
+    ],
+    "symbol": "10230000000000000000",
+    "valid_from": "2026-04-29T06:14:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "0717af62-175b-5e79-949b-ef9d1911b4e9",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:14:00.000Z",
+    "payload": {
+      "entity_block_embedded": true,
+      "event_type_basis": "TRACK_UPDATE. A location document reports where something was at an instant, which is what that member means",
+      "legion_created_at": "2026-04-29T06:14:02Z",
+      "legion_location_id": "f1c70000-0002-8000-8000-000000000001",
+      "legion_source": "Synthetic Site Survey",
+      "observed_at_basis": "location recorded_at \u2014 when the source recorded the fix",
+      "received_at_basis": "the injected clock. Legion's created_at is when the PLATFORM stored the record, which is its receipt and not ours",
+      "severity_basis": "INFO. Legion states no severity on any resource, so this is the format's silence and not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "f44cfe73-bd44-5120-a7da-c9794fde918c"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "legion",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "LEGION"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0002-8000-8000-000000000001",
+        "system": "LEGION"
+      }
+    ]
+  }
+]

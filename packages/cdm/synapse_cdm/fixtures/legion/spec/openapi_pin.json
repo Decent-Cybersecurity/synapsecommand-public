@@ -1,0 +1,1098 @@
+{
+  "_comment": [
+    "Pinned inventory of the Picogrid Legion resource schemas the FORMAT_COVERAGE.md row",
+    "set was written against. Legion is a VENDOR API: unlike a ratified standard it can",
+    "change between deploys, and its info.version demonstrably does not move when it does.",
+    "So the row set is only trustworthy against a named document, and this file is that",
+    "document's field list plus its hash. tests/test_cdm_format_coverage.py walks it and",
+    "fails the build on a field with no row -- which is how 'every field of every in-scope",
+    "resource' becomes a checkable claim rather than a sentence.",
+    "Regenerate ONLY by re-fetching the spec and re-reading the diff; a field appearing here",
+    "without a row in the table is the gate working, not a nuisance."
+  ],
+  "resources": {
+    "Entity": {
+      "endpoint": "GET /v3/entities/{entityId}",
+      "fields": {
+        "affiliation": {
+          "default": null,
+          "enum": [
+            "PENDING",
+            "UNKNOWN",
+            "ASSUMED_FRIEND",
+            "FRIEND",
+            "NEUTRAL",
+            "SUSPECT",
+            "HOSTILE",
+            "EXERCISE_PENDING",
+            "EXERCISE_UNKNOWN",
+            "EXERCISE_FRIEND",
+            "EXERCISE_NEUTRAL",
+            "EXERCISE_ASSUMED_FRIEND",
+            "JOKER",
+            "FAKER",
+            "NONE_SPECIFIED"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "category": {
+          "default": null,
+          "enum": [
+            "DEVICE",
+            "DETECTION",
+            "ALERT",
+            "WEATHER",
+            "GEOMETRIC",
+            "ZONE",
+            "SENSOR",
+            "VEHICLE",
+            "UXV",
+            "TRACK"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "classification": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "deleted_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "expires_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "is_active": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "boolean"
+        },
+        "is_expired": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "boolean"
+        },
+        "location_latest": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "location_latest.acceleration": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "location_latest.angular_velocity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "location_latest.bearing": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "location_latest.covariance": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "location_latest.created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "location_latest.crs": {
+          "default": "EPSG:4978",
+          "enum": [
+            "EPSG:4978",
+            "EPSG:4326",
+            "EPSG:4979"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "location_latest.entity_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "location_latest.id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "location_latest.orientation": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "location_latest.position": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "object"
+        },
+        "location_latest.position.coordinates": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "array"
+        },
+        "location_latest.position.type": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "location_latest.radius": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "location_latest.recorded_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "location_latest.source": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "location_latest.speed": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "location_latest.velocity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "metadata": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "name": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "organization_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "parent_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": true,
+          "required": true,
+          "type": "string|null"
+        },
+        "status": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "top_classification": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "top_classification_probability": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "type": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "updated_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        }
+      },
+      "note": "byte-identical to GET /v3/tracks/{trackId}"
+    },
+    "Event": {
+      "endpoint": "GET /v3/events/{eventId}",
+      "fields": {
+        "actor_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "actor_type": {
+          "default": null,
+          "enum": [
+            "USER",
+            "ENTITY",
+            "OTHER"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "event_description": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "event_timestamp": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "event_type": {
+          "default": null,
+          "enum": [
+            "HUMAN",
+            "VEHICLE",
+            "VESSEL",
+            "UAV",
+            "FOOTSTEP",
+            "ANIMAL",
+            "GUNSHOT",
+            "OTHER"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "metadata": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "organization_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "source_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        }
+      }
+    },
+    "Location": {
+      "endpoint": "GET /v3/entities/{entityId}/locations/{entityLocationId}",
+      "fields": {
+        "acceleration": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "angular_velocity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "bearing": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "covariance": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "crs": {
+          "default": "EPSG:4978",
+          "enum": [
+            "EPSG:4978",
+            "EPSG:4326",
+            "EPSG:4979"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "entity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "entity.affiliation": {
+          "default": null,
+          "enum": [
+            "PENDING",
+            "UNKNOWN",
+            "ASSUMED_FRIEND",
+            "FRIEND",
+            "NEUTRAL",
+            "SUSPECT",
+            "HOSTILE",
+            "EXERCISE_PENDING",
+            "EXERCISE_UNKNOWN",
+            "EXERCISE_FRIEND",
+            "EXERCISE_NEUTRAL",
+            "EXERCISE_ASSUMED_FRIEND",
+            "JOKER",
+            "FAKER",
+            "NONE_SPECIFIED"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.category": {
+          "default": null,
+          "enum": [
+            "DEVICE",
+            "DETECTION",
+            "ALERT",
+            "WEATHER",
+            "GEOMETRIC",
+            "ZONE",
+            "SENSOR",
+            "VEHICLE",
+            "UXV",
+            "TRACK"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.deleted_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "entity.expires_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "entity.id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.is_active": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "boolean"
+        },
+        "entity.metadata": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "entity.name": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.organization_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.parent_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": true,
+          "required": true,
+          "type": "string|null"
+        },
+        "entity.status": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.type": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity.updated_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "entity_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "orientation": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "position": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "object"
+        },
+        "position.coordinates": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "array"
+        },
+        "position.type": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "radius": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "recorded_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "source": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "speed": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "velocity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        }
+      },
+      "note": "byte-identical to the track-location endpoint; FK is entity_id"
+    },
+    "LocationsList": {
+      "endpoint": "GET /v3/entities/{entityId}/locations",
+      "fields": {
+        "crs": {
+          "default": null,
+          "enum": [
+            "EPSG:4978",
+            "EPSG:4326",
+            "EPSG:4979"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "paging": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "object"
+        },
+        "paging.has_more": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "boolean"
+        },
+        "paging.next": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": true,
+          "required": true,
+          "type": "integer|null"
+        },
+        "paging.previous": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": true,
+          "required": true,
+          "type": "integer|null"
+        },
+        "results": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "array"
+        },
+        "results[].acceleration": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "results[].angular_velocity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "results[].bearing": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "results[].covariance": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "results[].created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].crs": {
+          "default": "EPSG:4978",
+          "enum": [
+            "EPSG:4978",
+            "EPSG:4326",
+            "EPSG:4979"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "results[].entity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "results[].entity.affiliation": {
+          "default": null,
+          "enum": [
+            "PENDING",
+            "UNKNOWN",
+            "ASSUMED_FRIEND",
+            "FRIEND",
+            "NEUTRAL",
+            "SUSPECT",
+            "HOSTILE",
+            "EXERCISE_PENDING",
+            "EXERCISE_UNKNOWN",
+            "EXERCISE_FRIEND",
+            "EXERCISE_NEUTRAL",
+            "EXERCISE_ASSUMED_FRIEND",
+            "JOKER",
+            "FAKER",
+            "NONE_SPECIFIED"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.category": {
+          "default": null,
+          "enum": [
+            "DEVICE",
+            "DETECTION",
+            "ALERT",
+            "WEATHER",
+            "GEOMETRIC",
+            "ZONE",
+            "SENSOR",
+            "VEHICLE",
+            "UXV",
+            "TRACK"
+          ],
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.created_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.deleted_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "results[].entity.expires_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "results[].entity.id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.is_active": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "boolean"
+        },
+        "results[].entity.metadata": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "object"
+        },
+        "results[].entity.name": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.organization_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.parent_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": true,
+          "required": true,
+          "type": "string|null"
+        },
+        "results[].entity.status": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.type": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity.updated_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].entity_id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].id": {
+          "default": null,
+          "enum": null,
+          "format": "uuid",
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].orientation": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "results[].position": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "object"
+        },
+        "results[].position.coordinates": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "array"
+        },
+        "results[].position.type": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].radius": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "results[].recorded_at": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "string"
+        },
+        "results[].source": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": true,
+          "type": "string"
+        },
+        "results[].speed": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "number"
+        },
+        "results[].velocity": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "array"
+        },
+        "total_count": {
+          "default": null,
+          "enum": null,
+          "format": null,
+          "nullable": false,
+          "required": false,
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "source": {
+    "bytes": 984135,
+    "document": "combined OpenAPI 3.1 specification",
+    "etag": "464857b081f1fb47c82e56b23f7585eb44e475c64cec1678629b41a252f6b9e1",
+    "info_version": "3.0.0",
+    "openapi": "3.1.0",
+    "prose_companion": {
+      "updated_at": "2026-05-10T09:22:51.000Z",
+      "url": "https://docs.picogrid.com/reference/post_v3-entities-entityid-locations-2.md",
+      "why": "the only place EPSG:4978 and EPSG:4326 coordinate order and units are defined"
+    },
+    "retrieved_at": "2026-08-22T21:04:41Z",
+    "sha256": "464857b081f1fb47c82e56b23f7585eb44e475c64cec1678629b41a252f6b9e1",
+    "url": "https://api.hopper.west.prod.govcloud.legion.picogrid.com/v3/openapi.json"
+  }
+}

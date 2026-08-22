@@ -1,0 +1,15 @@
+{
+  "id": "f1c70000-0003-8000-8000-000000000001",
+  "organization_id": "f1c70000-0000-8000-8000-000000000001",
+  "source_id": "f1c70000-0001-8000-8000-000000000001",
+  "actor_id": "f1c70000-0001-8000-8000-000000000001",
+  "actor_type": "ENTITY",
+  "event_type": "GUNSHOT",
+  "event_description": "Synthetic acoustic detection, exercise injection",
+  "event_timestamp": "2026-04-29T06:12:44Z",
+  "created_at": "2026-04-29T06:12:45Z",
+  "metadata": {
+    "confidence": 0.78,
+    "sensor_channel": 3
+  }
+}
