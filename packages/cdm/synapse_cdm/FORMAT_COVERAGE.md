@@ -960,6 +960,818 @@ want it filtered before the CDM object leaves the enclave.
 | **Search endpoints** (`POST /v3/*/search`) | Not a resource: a query interface returning the same objects the row sets above cover, wrapped in the same envelope. In scope by their *response*, out of scope as an *operation* — the adapter translates what a search returned and knows nothing about the filter that produced it |
 | **`EPSG:4979` coordinates** | Not a resource, but the same decision. In the `crs` enum and defined in no document; its registry axis order contradicts what this API documents for `EPSG:4326`, so a guess yields a plausible wrong position. Refused by name until a source defines it |
 
+## ASTERIX Category 021 — ADS-B Target Reports (specification only)
+
+No adapter yet. **Every row below says `not yet`**, and that is the point: this row set was
+written and reviewed as a specification BEFORE any code existed, exactly as the Legion row set
+was. The status column is what will record the difference when `adapters/cat021.py` lands.
+
+The closest relative is `adapters/adsb.py`, and the relationship is worth stating precisely
+because it is not "a second ADS-B adapter". **Same underlying data, different wire format, and
+one hop of processing in between.** 1090ES is what an aircraft broadcasts; ASTERIX CAT021 is
+what a ground station emits after it has received those broadcasts, CPR-decoded the position,
+validated it, correlated the type codes into one target report and added its own quality
+assessment. So three of the four hard problems in the ADS-B adapter are simply gone here — the
+position arrives already decoded, the frame types arrive already merged, and the format states
+times — and they are replaced by different ones: a time with no date, a quality vocabulary whose
+meaning depends on a version number in another item, and a ground station that has already made
+judgements this adapter must carry without repeating or re-deciding.
+
+### The pin
+
+CAT021 is a ratified EUROCONTROL specification, so unlike Legion it does not need a hash to be
+trustworthy — a released edition is a fixed document that moves on committee timescales and in
+public. The hashes are recorded anyway, for the reason `airtasking/SOURCES.md` records them: an
+edition number names a document and a SHA-256 names the **copy that was read**, and those are
+different claims.
+
+| | |
+|---|---|
+| Category | **021** — ADS-B Target Reports |
+| Core specification | EUROCONTROL-SPEC-0149-12, ASTERIX Part 12 Category 021, **Edition 2.6**, 21 December 2021, Released |
+| SHA-256 (core) | `c30bab5f6b8fc1ef45ae5e5c24d76312ea571e26f32f8ef81ffcc730e0aa87ab` |
+| Expansion appendix | EUROCONTROL-SPEC-0149-12-A, Appendix A Reserved Expansion Field, **Edition 1.5**, December 2021, Released |
+| SHA-256 (REF) | `5de1f887485d370a9117e5549bdaeeb58a521aa88acc1b0adbb636be9c9fe193` |
+| ASTERIX Part 1 | Edition 3.1, November 2021 — the applicable document for the "Element Populated" convention the REF uses |
+| ADS-B MOPS covered | Versions 0, 1 and 2 in full; Version 3 (ED-102B / DO-260C) **partially**, and mostly in the REF |
+
+Ed 2.6 states on its own cover that it is **NOT backwards compatible to Edition 2.1 or earlier**,
+and Ed 2.2 changed the structure of I021/271 incompatibly. The edition is therefore part of the
+mapping and not a footnote: a row set written against Ed 2.1 would decode I021/271 wrongly and
+every other check would pass.
+
+### The REF is IN SCOPE for 1.0.0 — decided, not deferred
+
+The question is a real one because the Reserved Expansion Field is optional, is a second
+document, and its largest subfield (MES) is military-specific. It is in scope anyway, and the
+reason is not completeness — it is that **the core specification relocates two things into the
+REF that a CAT021 adapter cannot be correct without.**
+
+1. **A Version 3 aircraft's emergency lives in the REF.** I021/200's Priority Status was
+   redefined in ADS-B Version 3, and the core spec's own note says that for Version 3 systems
+   "the Priority Status shall be encoded in the Reserved Expansion Field, Item STA, Primary
+   Subfield" — i.e. in `STA` first extension `PS3`. An adapter that skipped the REF would
+   translate a Version 3 aircraft squawking *unlawful interference* as a record with no
+   emergency at all. A silently missing emergency is the worst failure available in this format,
+   and it is not hypothetical: it is what happens by default on Version 3 equipment.
+2. **A surface target has no ground vector without the REF.** I021/160 is the *Airborne* Ground
+   Vector, and its own note says "The Surface Ground Vector format is defined in the Reserved
+   Expansion Field in the subfield SGV". So without the REF, every aircraft and vehicle on a
+   movement area reports a position and no motion whatsoever — `Kinematics` would be `None` on
+   exactly the targets where a metre matters most.
+
+A third reason is smaller but decides the shape of a CDM gap rather than of this adapter:
+**CAT021 carries a magnetic heading (I021/152) and a true-north heading (REF `TNH`) as two
+separate items.** That is the first source in this document to state a heading *and* its datum
+unambiguously, which is precisely what gap 7 grew a requirement for when ADS-B showed that a
+bare `heading_deg` would hold two different measurements. Parking the REF would have thrown away
+the one piece of evidence that answers the open question.
+
+**What is in scope is the whole REF**: `BPS`, `SelH`, `NAV`, `GAO`, `SGV`, `STA` (primary plus
+all five extensions), `TNH` and `MES` (primary plus all six subfields). Nothing is skipped, so
+the never-drop rule is satisfied by presence rather than by an exemption. What is *declined* is
+one act of interpretation, and it has its own section below: **an authenticated Mode 5 reply is
+not read as an affiliation.**
+
+### What the adapter's input IS — one data block, and nothing else
+
+`to_cdm()` takes **one ASTERIX data block**: the octets from the `CAT` byte through the last
+record, and nothing else. The boundary is drawn where it was drawn for AIS, ADS-B and Legion.
+The adapter does not own, and must never acquire, a socket, a UDP reassembly buffer, a multicast
+group, a stream framer or a station configuration it discovered from the data.
+
+The accepted forms are the raw octets, or the already-parsed dict a fixture twin holds — the
+same `bytes | dict` shape `adsb.py` accepts, for the same reason: the harness's lossless check
+has no leaves to harvest from bytes.
+
+| Input | Becomes |
+|---|---|
+| a data block holding one record | `Entity` + `Event` |
+| a data block holding N records | N × (`Entity` + `Event`), in block order |
+| a data block holding zero records | a refusal — see the wire-form rules |
+
+**A data block never becomes a `Track` on ingest.** Several records in one block are several
+target reports, not one target's history: they may name different aircraft, and nothing in the
+format says otherwise. Building a `Track` from the records that happen to share a Target Address
+would be a correlation decision made inside a translator — the type-24 / CPR / pagination test,
+applied a fourth time. `Track` appears only in the egress direction, where the caller has already
+decided that a history is a history.
+
+### The wire form
+
+#### Data block
+
+    CAT (1 octet, = 21) | LEN (2 octets, big-endian) | FSPEC + items (record 1) | ... | FSPEC + items (record N)
+
+`LEN` is the total length in octets **including CAT and LEN**. Three structural refusals, each
+raising with the offending octets quoted and none of them falling back to a best-effort read:
+
+- **`CAT` ≠ 21.** This adapter speaks one category. A CAT062 or CAT048 block decoded against the
+  CAT021 UAP yields a plausible wrong aircraft, not an error.
+- **`LEN` disagrees with the buffer length.** Reading to the end of the buffer instead would
+  translate whatever followed the block as if it were part of it.
+- **The last record does not end exactly on `LEN`.** A trailing partial record means the parse
+  desynchronised somewhere earlier, so every field already decoded is suspect. Refuse the block,
+  never emit the records parsed before the discrepancy — a partial object is forbidden by the
+  `Adapter` contract, and so is a partial *set* of objects that looks complete.
+
+#### FSPEC
+
+One or more octets. Bits 8..2 signal the presence of the next seven Field Reference Numbers in
+UAP order; bit 1 is `FX`, set when another FSPEC octet follows. Forty-nine FRNs means at most
+seven octets. Items then appear **in FRN order**, back to back, with no separators and no
+lengths of their own except where the item's own format carries one.
+
+- **FRN 43–47 are "Not Used" in the CAT021 UAP.** A set bit there is a refusal: there is no item
+  to decode, so skipping it is impossible and guessing a length would desynchronise every
+  following item in the record.
+- **A set FSPEC bit with no octets left in the block** is a refusal, quoting the FRN.
+- **The FSPEC octets are parked verbatim.** A conforming encoder emits the shortest FSPEC that
+  covers its highest set FRN, but the specification does not forbid a longer one, and the round
+  trip is only byte-exact if the FSPEC we emit is the FSPEC we read.
+
+#### Item format kinds, all five of which CAT021 uses
+
+| Kind | Shape | Items |
+|---|---|---|
+| **Fixed** | exactly N octets | most of them — I021/010 (2), I021/080 (3), I021/130 (6), I021/131 (8), I021/140 (2), … |
+| **Variable** | one octet, `FX` in bit 1, extending one octet at a time | I021/040, I021/090, I021/271, REF `SGV`, REF `STA` |
+| **Repetitive** | one-octet `REP` count, then REP × a fixed block | I021/110 subfield #2 (REP × 15 octets), I021/250 (REP × 8 octets) |
+| **Compound** | a primary subfield of presence bits (itself `FX`-extensible), then the present subfields in bit order | I021/110, I021/220, I021/295, REF `MES` |
+| **Explicit** | one-octet length **including the length octet itself**, then opaque contents | RE (FRN 48) and SP (FRN 49) |
+
+Two traps worth naming because both are the kind that decode into plausible nonsense rather than
+into an error. A **variable** item's extension count is data-dependent, so a decoder that assumed
+one octet would read the next item's first octet as an extension and shift everything after it.
+And a **compound** item's primary subfield is itself `FX`-extensible — I021/295's is up to four
+octets — so the presence map has to be read to its own end before any subfield is consumed.
+
+#### Spare and unused bits are parked verbatim, never normalised
+
+§4.3 says decoders "shall never assume and rely on specific settings of spare or unused Bits" and
+that zeroing them is a *recommendation*. So a real encoder may set them to anything, and an
+adapter that normalised them to zero would break the byte-exact round trip on exactly the traffic
+most worth investigating. Every spare and unused bit is parked as sent, as the AIS adapter parks
+its spare and reserved bits — "they carry no meaning today and are the bits a regional authority
+allocates tomorrow".
+
+#### Multiple records per data block — and why ADS-B's two-frame refusal does not carry over
+
+`adsb.py` refuses a payload holding two frames outright, because accepting them would smuggle a
+CPR even/odd pair in through the framing and let the adapter do a global position decode it has
+declared out of scope. **That reasoning does not transfer, and it is worth saying why rather than
+appearing to relax a rule.** A CAT021 record carries a fully decoded WGS-84 latitude and
+longitude: the ground station did the CPR pairing, upstream, where its own validation flags
+(I021/040 `CPR`, `LDPJ`, `IPC`, `RC`) record that it did. There is no join left for two records
+to smuggle, so translating all of them is reading, not correlating — the same line the AIS
+adapter draws when it reassembles the fragments *present in one payload* while refusing to buffer
+across payloads.
+
+### There is no CRC here, and what replaces it
+
+The single strongest gate in the ADS-B adapter is the 24-bit parity: a frame that fails is
+refused, never best-effort decoded, because a bit flip in the ME field moves an aircraft rather
+than failing to parse. **ASTERIX has no checksum at any level** — no CRC on the data block, none
+on a record, none on an item. Whatever integrity the link has belongs to the transport below it.
+
+So the gate is structural instead, and it is deliberately strict for the same reason the CRC one
+is: a length or an FSPEC that does not add up is the only evidence available that a record was
+corrupted. The block must satisfy `LEN`; the records must tile it exactly; every FSPEC bit must
+name a defined FRN; every variable item must terminate on an `FX` of 0 inside the record; every
+repetitive item's `REP` must fit; every compound item's subfields must all be present; and the
+four items the specification says shall be present in every record — I021/010, I021/040, I021/080
+and I021/090 — must be there. A record failing any of those is refused with the offending octets
+quoted.
+
+This is weaker than a CRC and the difference is named rather than smoothed over: a single bit
+flipped inside a fixed-length field satisfies every structural check and reaches the CDM as a
+measurement. `attributes.integrity_basis` therefore records, on every object, that CAT021 carries
+no checksum and that the structural gate is what passed — so a consumer comparing a CAT021
+contact against a 1090ES one knows which of the two was checked and which was only parsed.
+
+### Time: the format states a time of day and never a date
+
+This is the largest single difference from 1090ES, and it runs the opposite way to the obvious
+expectation. ADS-B carries **no time at all**, so `observed_at` is the receipt instant and the
+basis says so. CAT021 carries **seven** time items — and not one of them carries a date.
+
+| Item | What it is | Encoding |
+|---|---|---|
+| I021/071 | Time of Applicability for **Position** | 24 bits, elapsed time since last midnight UTC, LSB 1/128 s |
+| I021/072 | Time of Applicability for **Velocity** | 24 bits, since last midnight UTC, LSB 1/128 s |
+| I021/073 | Time of Message Reception for **Position** (at the ground station) | 24 bits, since last midnight UTC, LSB 1/128 s |
+| I021/074 | TOMRp **high precision** | 32 bits: 2-bit `FSI` whole-second correction to I021/073, then a 30-bit fraction, LSB 2⁻³⁰ s ≈ 0.93 ns |
+| I021/075 | Time of Message Reception for **Velocity** | 24 bits, since last midnight UTC, LSB 1/128 s |
+| I021/076 | TOMRv **high precision** | as I021/074, against I021/075 |
+| I021/077 | Time of **ASTERIX report transmission** | 24 bits, since last midnight UTC, LSB 1/128 s |
+
+`FSI` is not a rounding hint and must not be read as one: `00` means the high-precision whole
+seconds equal I021/073's, `01` means they are I021/073's **plus one**, `10` means **minus one**,
+and `11` is reserved. Ignoring it puts the fix a whole second out at exactly the moment the
+ground station took the trouble to say it was near a second boundary. A `FSI` of `11` is
+reserved: the high-precision value is discarded to `unresolved_raw` and the plain I021/073 is
+used, because a reserved code has no defined correction and applying one of the other three would
+be a guess with a nanosecond's worth of false authority on it.
+
+#### The reference date comes from the injected clock, and the adapter never reads the wall clock
+
+A time of day is not an instant. Something has to supply the date, and there are only two
+candidates: the payload, which does not carry one, or us.
+
+So the date is taken from `self.now()` — the injected clock, exactly as `received_at` is, and
+never `datetime.now()`. That keeps golden-output tests possible and makes the adapter's behaviour
+a pure function of (payload, clock). It is the AIS construction generalised: AIS states a
+second-of-minute and no date, and `ais.py` resolves it to "the instant bearing that second
+nearest the receipt time", recording both halves in `payload.observed_at_basis`. Here the same
+rule resolves a time-of-day against the receipt date.
+
+#### Midnight rollover falls out of "nearest", in both directions
+
+Every one of these counters "is reset to zero at every midnight". The rule is therefore: the
+candidate instants are the stated time of day on the receipt date, the day before and the day
+after; the one **nearest the receipt instant** wins.
+
+- A report timestamped `23:59:58.500` delivered at `00:00:01.100` on the following day resolves
+  to the **previous** day, which is right — picking today's date would date it 24 hours late.
+- A report timestamped `00:00:00.900` delivered at `23:59:59.700` resolves to the **next** day,
+  which is the same rule run the other way and is what a ground station clock a fraction ahead of
+  ours produces.
+
+`payload.observed_at_basis` names the item that supplied the time of day, the date the clock
+supplied, and — where the nearest candidate was not the receipt date — that a rollover was
+applied. A rollover is a decision about which day a contact was seen on, and a decision nobody
+can see afterwards is not a decision.
+
+**A value at or beyond 86 400 s is a refusal, not a modulo.** Twenty-four bits at 1/128 s reach
+131 071.99 s, so the field can express times of day that do not exist. The specification says the
+counter resets at midnight, so such a value is a corrupt field or a non-conforming encoder;
+taking it modulo 86 400 would move a contact by hours and leave every other check passing. The
+refusal quotes the item, the raw 24-bit integer and the decoded seconds.
+
+#### Which item becomes `observed_at`, and the one it must never become
+
+`Event.observed_at` is "when the SOURCE saw it", so the chain is, in order, and with the step
+that was taken recorded in `payload.observed_at_basis`:
+
+1. **I021/071**, time of applicability of the position — the aircraft's own synchronised
+   measurement instant. The best answer the format has.
+2. **I021/073** (refined by I021/074 where present), time of message reception of the position at
+   the ground station. Not the aircraft's instant, but a stated time about the position rather
+   than about the report. The specification guarantees one of 071 or 073 in any record conveying
+   position, so a positional record never falls past this step.
+3. **I021/072**, then **I021/075** (refined by I021/076), for a record carrying velocity and no
+   position.
+4. **I021/077**, the ground station's own report transmission time — a source-stated time, but
+   about the *report* and not about the observation, which is why it is last.
+5. The injected clock, with the basis stating that the record carried no time item at all.
+
+`Event.received_at` is the injected clock, always. It is the one field an adapter invents rather
+than reads, and it is never any of the seven items above — I021/073 in particular is a receipt
+time *at the ground station*, which is a different party than us and a different instant.
+
+#### One record, two measurement times — and the CDM has one
+
+A record can carry a position applicable at T₁ and a velocity applicable at T₂, and CAT021 states
+both. `Entity` carries one `position` and one `kinematics` with no time on either, and `Event`
+carries one `observed_at`. **So the CDM cannot express that the two were measured at different
+instants**, and this adapter's `observed_at` follows the position, because the fix is the thing
+on the map. The velocity times are parked and the offset is computable from them.
+
+I021/295 **Data Ages** makes this worse and is the reason it is recorded as a gap rather than as
+a quirk: twenty-three subfields, each stating in units of 0.1 s how old one specific item is —
+the geometric height, the ground vector, the target identification, the target status and twenty
+more. The format is telling us, per field, exactly how stale each figure is, and there is nowhere
+canonical to put any of it. See **gap 13**.
+
+#### The high-precision items do not fit a CDM `Timestamp`, and that is not a defect
+
+`times.render` emits exactly three decimal places, deliberately. I021/074 states 2⁻³⁰ s ≈ 0.93 ns
+and even the ordinary items state 1/128 s = 7.8125 ms, which is not a whole number of
+milliseconds — so three units of I021/071 is 23.4375 ms and renders as `.023`.
+
+The consequence is a rule and not a caveat: **the raw wire integers are parked, and egress
+re-emits from the park rather than recomputing from `observed_at`.** This is the Legion
+verbatim-timestamp finding and the Legion ECEF finding wearing one hat — a canonical value
+computed from a source value is a derived, one-way view, and the source value is the record.
+Recomputing an I021/074 from a millisecond timestamp would silently zero twenty of its thirty
+fractional bits and the round trip would report it.
+
+### Position
+
+| | I021/130 | I021/131 |
+|---|---|---|
+| Length | 6 octets | 8 octets |
+| Latitude | 24-bit two's complement, LSB 180/2²³ | 32-bit two's complement, LSB 180/2³⁰ |
+| Longitude | 24-bit two's complement, LSB 180/2²³ | 32-bit two's complement, LSB 180/2³⁰ |
+| LSB in degrees | ≈ 2.145 767 211 914 06 × 10⁻⁵ | ≈ 1.676 380 634 307 8 × 10⁻⁷ |
+| Stated resolution | at least **2.4 m** | at least **2 cm** |
+| Range | −90 ≤ lat ≤ 90, −180 ≤ lon < 180 | identical |
+
+Both are **WGS-84 already**, which is the whole reason this is a two-line decision where Legion's
+took a section: there is no datum conversion, no ellipsoid to name and no axis-order trap. The
+only transform is the scaling by the LSB, and it is exact in binary.
+
+**The source coordinates are the record, and `Position` is a derived, one-way view of them** —
+the same rule Legion's `position_basis` establishes, applied here for a different reason. The raw
+two's-complement integers, the item they came from and the LSB are re-emitted verbatim into
+`attributes.cat021_position`, and `attributes.position_basis` records which item was read, the
+LSB applied and that no datum conversion was performed. A consumer that disagrees with our
+arithmetic has the integers; and an integer scaled to a float and back is not the identity, so an
+adapter whose only copy of the position had been through that conversion could never prove it had
+not moved a contact.
+
+**When both items are present, I021/131 wins.** The encoding rule says "either I021/130 or
+I021/131 shall be sent", but both sit in the UAP at FRN 6 and 7 and a non-conforming encoder can
+set both bits, so the case has to have an answer. The high-resolution item is strictly more
+precise, so it is the one read; both are parked; and if the two disagree by more than one
+I021/130 LSB — which is more than rounding can explain — the discrepancy is recorded at
+`attributes.position_disagreement_deg` rather than quietly resolved. A disagreement between two
+statements by one source is the source's to explain, not ours to average.
+
+**A record with neither item has no position.** `position: None`, never a `Position` holding
+zeros, and never the last known one — this adapter has no memory of a previous record. And
+`0.0, 0.0` is a real coordinate in the Gulf of Guinea, so the absence test is the presence of the
+*item*, never the value of the field.
+
+### Identity
+
+**I021/080 Target Address is the stable key** — the ICAO 24-bit aircraft address, three octets.
+It is the identifier a fusion layer joins on, and `adsb.py`'s note on `ICAO_SYSTEM` names this
+format explicitly: the address is "carried identically by Mode S replies, ACAS and ASTERIX", so
+`ids.derive("ICAO24", …)` agrees across the two adapters without either knowing the other exists.
+That agreement is the single largest reason this adapter is worth having.
+
+**But the address is only an ICAO24 address when I021/040's `ATP` says so**, and that is a
+mandatory item, so the question always has an answer:
+
+| `ATP` | Means | `source_ids[].system` |
+|---|---|---|
+| 0 | 24-bit ICAO address | **`ICAO24`** — joins with the ADS-B adapter's contacts |
+| 1 | Duplicate address | `ADSB_NONICAO` |
+| 2 | Surface vehicle address | `ADSB_NONICAO` |
+| 3 | Anonymous address | `ADSB_NONICAO` |
+| 4–7 | Reserved for future use | `ADSB_NONICAO`, raw value parked |
+
+This is the DF18 `CF` 1/5 decision from `adsb.py`, reached from a different field: filing a
+self-assigned or vehicle address under `ICAO24` would let fusion join the contact to a real
+airframe that happens to share the number, so it goes in a system namespace that cannot collide
+with one.
+
+Two of the rows deserve their reasons stated rather than inherited.
+
+**`ATP` = 1, duplicate address, is a warning and not a category.** The ground station is saying
+the address is *not unique on the wire* — two transmitters are using it. Neither available answer
+is right: under `ICAO24` the contact merges with the genuine airframe, and under `ADSB_NONICAO`
+two different real aircraft still merge with each other. `ADSB_NONICAO` is chosen because it
+errs in the recoverable direction, and `attributes.identity_caveat` records in the object that
+this entity may conflate two airframes. A consumer can act on that; it cannot act on a silent
+merge.
+
+**Reserved `ATP` values are not refused.** `adsb.py` refuses DF18 `CF` 3, 4 and 7 by name, and the
+difference is exactly the one that matters: there, the control field changes the **ME layout**, so
+decoding with the wrong one yields a plausible wrong position. Here `ATP` changes only what the
+address *means*, and every other field decodes identically — so the safe pool is available and a
+refusal would discard a good position to express an uncertainty about a name.
+
+**I021/170 Target Identification is label material, and it is gap 1's most awkward case yet.**
+Eight characters at six bits each, per ICAO Annex 10 Vol. IV §3.1.2.9.1.2 and Table 3-8 — the
+same alphabet `adsb.py` decodes. It is parked at `attributes.target_identification`, with the
+eight decoded characters kept verbatim at `attributes.target_identification_raw` including any
+six-bit value the alphabet does not define, so a malformed identification is visible rather than
+cleaned away.
+
+**It is deliberately NOT parked at `attributes.callsign`**, which is the key the TAK and ADS-B
+adapters both already use. Gap 1 records that their convergence on one private key is *worse*
+than four keys that visibly disagree, because it reads as a general rule and is not one — and
+this item is the proof. The specification defines it as "target identification when flight plan
+is available **or the registration marking when no flight plan is available**". One field, two
+meanings, no bit anywhere in the record saying which arrived. Filing it under `callsign` would
+assert the first meaning half the time.
+
+**I021/070 Mode 3/A Code is parked, and here converging on ADS-B's key IS right.** Twelve bits,
+octal, four digits. It is not a `SourceId` for exactly the reason `adsb.py` gives — a squawk is
+assigned by ATC per flight and reassigned afterwards, so an id keyed on it would split one
+aircraft into many entities and later merge it with a different one. It lands at
+`attributes.mode_a_code` (four octal digits) and `attributes.mode_a_code_raw` (the twelve bits),
+the same keys `adsb.py` uses, and the convergence is safe where the callsign one was not: a Mode
+3/A code means one thing in both formats, because it is the same transponder answering.
+
+**I021/161 Track Number is parked and is not a `SourceId`.** It is "a unique reference to a track
+record within a particular track file" — twelve bits, 0…4095, scoped to one ground station's
+track file, and recycled. An entity keyed on it would merge two aircraft tracked by two stations
+under one number. A SAC/SIC-scoped composite would be unique across stations and would still
+recycle within one, so making it an identifier is a fusion decision about lifetime, not a
+translation.
+
+#### Emitter category → `Entity.entity_type`, every code accounted for
+
+I021/020, one octet. The rule is `adsb.py`'s: a category does **not** generally refine the entity
+type, because a light aircraft, a heavy and a rotorcraft are all `PLATFORM` and inventing a finer
+CDM distinction would put a judgement in a translator. The exception is the same one, reached
+through a different vocabulary — an obstacle is a fixed structure.
+
+| Code | Meaning | `Entity.entity_type` | Note |
+|---|---|---|---|
+| 0 | No ADS-B Emitter Category Information | `PLATFORM` | a **stated absence**, not category zero — named in `attributes.unavailable_fields` |
+| 1 | Light aircraft ≤ 15 500 lbs | `PLATFORM` | |
+| 2 | Small aircraft, 15 500–75 000 lbs | `PLATFORM` | |
+| 3 | Medium aircraft, 75 000–300 000 lbs | `PLATFORM` | |
+| 4 | High Vortex Large | `PLATFORM` | Versions 0–2 only; still sent for a Version 3 system, per the item's own note |
+| 5 | Heavy aircraft ≥ 300 000 lbs | `PLATFORM` | |
+| 6 | Highly manoeuvrable, 5 g and > 400 kt cruise | `PLATFORM` | Versions 0–2 only. **Not read as an affiliation** — a performance class is not a side |
+| 7–9 | Reserved | `PLATFORM` | raw parked and named in `attributes.unresolved_raw`: the source said something this adapter cannot use |
+| 10 | Rotorcraft | `PLATFORM` | |
+| 11 | Glider / sailplane | `PLATFORM` | |
+| 12 | Lighter-than-air | `PLATFORM` | |
+| 13 | Unmanned aerial vehicle | `PLATFORM` | Versions 0–2 only. Parked as stated; REF `STA` second extension `MUO` is the Version 3 statement of the same fact and the two are kept distinct |
+| 14 | Space / transatmospheric vehicle | `PLATFORM` | Versions 0–2 only |
+| 15 | Ultralight / hang-glider / paraglider | `PLATFORM` | |
+| 16 | Parachutist / skydiver | `PLATFORM` | Versions 0–2 only. The least comfortable row in the table: a person under a canopy is not a platform, and the CDM's nearest alternatives (`UNIT`, `EVACUEE_GROUP`) are both **more** wrong. `PLATFORM` overstates slightly; the others would state something false about who this is |
+| 17–19 | Reserved | `PLATFORM` | as 7–9 |
+| 20 | Surface emergency vehicle | `PLATFORM` | a vehicle is a platform; "emergency" here describes its role and is **not** read into `Event.severity` |
+| 21 | Surface service vehicle | `PLATFORM` | |
+| 22 | Fixed ground or tethered obstruction | **`FACILITY`** | the ADS-B exception, reached again |
+| 23 | Cluster obstacle | **`FACILITY`** | |
+| 24 | Line obstacle | **`FACILITY`** | |
+| 25–255 | Undefined | `PLATFORM` | raw parked and named in `unresolved_raw` |
+
+Codes 22, 23 and 24 are the same three objects `adsb.py` maps from category set C values 3, 4 and
+5 — point, cluster and line obstacle. Two formats, two vocabularies, one decision, and the two
+adapters agree because the reasoning is written down rather than because they were written
+together.
+
+The raw code and its standard wording are parked at `attributes.emitter_category` and
+`attributes.emitter_category_text` regardless, as AIS parks a ship type: the collapse to
+`PLATFORM` is recoverable only because the original survives.
+
+### Affiliation is UNKNOWN, and the Mode 5 case is where that is a decision
+
+`Entity.affiliation` is `UNKNOWN` on every record, with `attributes.affiliation_basis` recording
+why. The base reason is `adsb.py`'s and is stronger than AIS's silence: 1090ES is an
+unauthenticated cooperative broadcast, so its self-declared contents are not an identification.
+CAT021 inherits that — everything in a target report except the ground station's own flags
+originated as a self-declared broadcast.
+
+**The REF makes this a real decision rather than an inherited default.** `MES` subfield #1 carries
+`ID` = "Authenticated Mode 5 ID reply/report" and `DA` = "Authenticated Mode 5 Data reply or
+Report". A Mode 5 Level 2 reply that authenticates is a cryptographic IFF response, and in IFF
+doctrine that is what "friend" means. It is the first genuinely *authenticated* identity statement
+any source in this document has carried.
+
+**It is still not read as `FRIENDLY`, and the reason is not timidity.** Turning an authenticated
+Mode 5 reply into `FRIENDLY` is an identification decision — the exact thing `Affiliation`'s own
+docstring puts outside an adapter's remit, and the direction the TAK adapter asserts in a test
+that a collapse must not round towards. It is also the dangerous direction: over-claiming
+`FRIENDLY` from a translator is a fratricide-adjacent error, and the authority that owns an IFF
+verdict is not an integration layer. So the bits are parked in full — `M5`, `ID`, `DA`, `M1`,
+`M2`, `M3`, `MC`, `PO` — `attributes.affiliation_basis` states that the record carried an
+authenticated IFF indication which this adapter deliberately did not read as an identification,
+and the decision is visible in every object rather than absent from the code. See **gap 2**.
+
+### Quality and integrity — every indicator parked, and why each
+
+I021/090 is mandatory in every record and carries up to four octets of them. **Not one becomes a
+canonical field.** The rows below say where each goes; the reasons are three, and they compound.
+
+**They are categories and bounds, not measurements.** `Position.accuracy_m` is one horizontal
+1-sigma figure in metres. NUCp, NIC, NACp, SIL, SDA and GVA are all *categories*; PIC is an
+integrity **containment bound** ("< 0.1 NM", "< 20.0 NM"). A containment bound is the radius
+inside which the true position lies with a stated integrity — not a standard deviation, and
+converting one into the other states a precision nobody measured. This is `adsb.py`'s NACp row
+and `ais.py`'s position-accuracy-flag row, and PIC is the sharpest case yet precisely *because*
+the specification hands over a number in nautical miles and it is still the wrong number.
+
+**Their meaning depends on an item that may not be there.** The primary subfield is literally
+"NUCr **or** NACv" and "NUCp **or** NIC" — which of each pair is present is decided by the MOPS
+version in I021/210, an *optional* item. So a record can carry a quality indicator whose quantity
+is undetermined. The raw bits are parked, I021/210's version is parked beside them, and
+`attributes.quality_basis` states which reading applied — or that none could be established,
+which is the honest answer where I021/210 is absent. This is `adsb.py`'s capability-class row
+generalised: unpacking a field against the wrong version reports capabilities the aircraft never
+claimed.
+
+**They qualify measurements that arrive from elsewhere.** `Entity.confidence` stays `None`: these
+are accuracy and integrity statements about a *position*, not a confidence in the object's
+identity, which is what that field means.
+
+The same treatment covers the ground station's own verdicts in I021/040 — `CL` (report valid /
+suspect / no information), and the second extension's `LLC` (black-list/white-list lookup), `IPC`
+(independent position check failed), `NOGO`, `CPR` (CPR validation failed), `LDPJ` (local
+decoding position jump) and `RCF` (range check failed). All parked, none of them touching
+`confidence` or `severity`. "Suspect" is a data-quality flag and grading it into a number would
+invent the number.
+
+**One of them asks this adapter to filter, and the answer is no.** The specification's own note on
+`RCF` says: "For operational users such a target will be suppressed." An adapter may not filter —
+that is rule 2 of the `Adapter` contract, and a decision made inside a translator is invisible in
+the CDM output and absent from the audit trail. So a range-check-failed target is translated in
+full, its flag is parked, and the suppression decision belongs to a consumer where somebody can
+see it being made. The specification is describing what a *surveillance system* should do; this
+is a translator inside one.
+
+### Row set — the block and record envelope
+
+Nothing here describes the world: it describes the ground station and the framing. All of it is
+parked, and egress rebuilds the block from it.
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `block.category` | `Entity.attributes` | `not yet` | the CAT octet, parked as read. A block whose category is not 21 is refused rather than decoded |
+| `block.length` | `Entity.attributes` | `not yet` | parked, and **recomputed on egress rather than copied** — a length field that disagrees with the octets is discarded by every ASTERIX decoder, the same reason `adsb.py` recomputes its CRC |
+| `block.record_index`, `block.record_count` | `Event.payload` | `not yet` | which record of how many this object came from. Without it, two objects from one block are indistinguishable from two objects from two blocks |
+| `record.fspec` | `Entity.attributes` | `not yet` | the FSPEC octets verbatim. Parked because a conforming encoder's FSPEC is the shortest one that covers its highest FRN and the specification does not forbid a longer one — the round trip is byte-exact only if we re-emit what we read |
+| `record.spare_bits` | `Entity.attributes` | `not yet` | every spare and unused bit, as sent. §4.3 forbids relying on their settings and only *recommends* zeroing them, so normalising would break the round trip on non-conforming traffic |
+| `I021/010` SAC, SIC | `Entity.attributes` | `not yet` | the ADS-B ground station that produced the report, at `attributes.data_source`. **Not a `SourceId`**: it identifies the sensor, not the target, and filing a station under the object's identifiers is how a fused picture ends up with an entity per receiver. See **gap 14** |
+| `I021/400` RID | `Entity.attributes` | `not yet` | Receiver ID — which receiver of a distributed ground system. Parked with the SAC/SIC, same reasoning |
+| `I021/015` Service Identification | `Entity.attributes` | `not yet` | which service this record belongs to, allocated by the system. A subscription fact, parked |
+| `I021/016` RP | `Entity.attributes` | `not yet` | Report Period, LSB 0.5 s; **0 means data-driven mode**, not a period of zero, and 127.5 means "127.5 s or above". Parked with both readings recorded rather than reduced to a number |
+| `RE` (FRN 48) | `Entity.attributes` | `not yet` | the Reserved Expansion Field — parsed in full, see its own row set. Its explicit length octet counts itself |
+| `SP` (FRN 49) | `Entity.attributes` | `not yet` | Special Purpose Field, opaque. Parked verbatim as hex and **never written to on egress** — its contents are defined by bilateral agreement between one sender and one receiver, so a byte we invent is a byte some deployment already means something by |
+
+### Row set — common to every record
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I021/080` Target Address | `Entity.source_ids[].external_id` | `not yet` | the 24-bit address as six hex characters. The id `entity_id` is derived from, on every record |
+| `I021/040` ATP | `Entity.source_ids[].system` | `not yet` | `ICAO24` when ATP is 0, `ADSB_NONICAO` otherwise — see the identity section. The choice is recorded at `attributes.address_type` |
+| `I021/080` + `observed_at` | `Event.event_id` | `not yet` | keyed on BOTH, for the reason the CoT, AIS and ADS-B adapters give: an address identifies the airframe and repeats on every report, so an id keyed on it alone would collapse a whole flight into one event |
+| `I021/020` Emitter Category | `Entity.entity_type` | `not yet` | `PLATFORM`, refined to `FACILITY` only for codes 22, 23 and 24 — see the table above. Every code accounted for |
+| `I021/020` Emitter Category | `Entity.attributes` | `not yet` | code AND wording at `attributes.emitter_category` / `attributes.emitter_category_text`. Code 0 is a stated absence and lands in `unavailable_fields` |
+| *(none)* | `Entity.affiliation` | `not yet` | `UNKNOWN`, always. `attributes.affiliation_basis` distinguishes the ordinary case (an unauthenticated cooperative broadcast) from the Mode 5 case (an authenticated IFF indication this adapter declines to read as an identification) |
+| *(derived)* | `Entity.symbol` | `not yet` | from the affiliation via `symbology.sidc_from_affiliation`, so every CAT021 contact is an UNKNOWN glyph. `attributes.symbol_basis` says so |
+| `I021/040` SIM | `Entity.attributes` | `not yet` | Simulated Target. Parked at `attributes.simulated_target` and it **does NOT rewrite `source.synthetic`** — that is a deployment declaration about the feed and a payload field may not flip it. Exactly the Legion `EXERCISE_*` rule, reached from a one-bit flag |
+| `I021/040` TST | `Entity.attributes` | `not yet` | Test Target, parked on the same terms |
+| `I021/040` RAB | `Entity.attributes` | `not yet` | report from a target transponder or from a **field monitor** (a fixed transponder used to check the station). Parked, and deliberately not turned into `FACILITY`: it says who transmitted, not what kind of thing it is |
+| `I021/040` GBS | `Entity.attributes` | `not yet` | Ground Bit set — the aircraft says it is on the surface. Parked, and it is what selects the surface reading of several other fields, so it is load-bearing rather than cosmetic |
+| `I021/040` DCR, ARC, RC | `Entity.attributes` | `not yet` | differential correction applied; altitude reporting capability (25 ft, 100 ft, unknown, invalid); range check passed with CPR validation pending. Parked |
+| `I021/040` SAA | `Entity.attributes` | `not yet` | Selected Altitude Available — note the **inverted sense**: 0 means the equipment IS capable, 1 means it is not. Parked as sent with the sense recorded, because a consumer reading it the intuitive way gets it backwards |
+| `I021/040` CL, LLC, IPC, NOGO, CPR, LDPJ, RCF | `Entity.attributes` | `not yet` | the ground station's own verdicts. All parked, none touching `confidence` or `severity` — and `RCF` is the row where the specification asks for filtering and the `Adapter` contract refuses. See the quality section |
+| `I021/040` TBC, MBC | `Entity.attributes` | `not yet` | third and fourth extensions: total and maximum bits corrected by the station's error-correction. Each has an "Element Populated" bit — **not populated is not a count of zero**, and the two are kept distinct |
+| `I021/210` VN, VNS, LTT | `Entity.attributes` | `not yet` | MOPS version, version-not-supported, and link technology type (0 other, 1 UAT, 2 1090 ES, 3 VDL 4). Parked, and it is what says how to read I021/090 and I021/200 — which is why a record without it has quality indicators of undetermined meaning |
+| `I021/161` Track Number | `Entity.attributes` | `not yet` | parked, **not a `SourceId`** — twelve bits, scoped to one station's track file, and recycled |
+| `I021/132` Message Amplitude | `Entity.attributes` | `not yet` | dBm, two's complement, of the latest received squitter. A link measurement, parked and never read as a range or a confidence |
+| *(none)* | `Entity.valid_to` | `not yet` | `None`. CAT021 has no staleness field; I021/295 states how old data IS, which is a measurement backwards and not an expiry forwards |
+| *(none)* | `Entity.confidence` | `not yet` | `None`. The quality indicators are position accuracy and integrity categories, and `CL` "report suspect" is a data-quality flag — neither is a confidence in the object's identity |
+| *(derived)* | `Event.related_entities` | `not yet` | the `entity_id` of the record's own entity, as AIS and ADS-B do |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — the sorted list of fields the source explicitly marked not-available, by a sentinel or by clearing a validity bit. "The aircraft said it does not know its selected heading" and "this adapter had nothing to say" are different facts |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — wire values read and not usable: a reserved emitter category, a reserved `FSI`, a geometric height carrying the "greater than" marker, an element whose Element-Populated bit is clear. A DIFFERENT fact from the list above, and the pair is the point |
+| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+
+### Row set — time
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I021/071` Time of Applicability for Position | `Event.observed_at` | `not yet` | first in the chain. Time of day since midnight UTC, LSB 1/128 s; the date comes from the injected clock and `payload.observed_at_basis` names both halves |
+| `I021/073` Time of Message Reception for Position | `Event.observed_at` | `not yet` | second in the chain. A receipt time at the **ground station**, which is neither the aircraft's instant nor ours — used only when I021/071 is absent, and the basis says so |
+| `I021/074` TOMRp high precision | `Entity.attributes` | `not yet` | refines I021/073's whole seconds through `FSI` and adds a 30-bit fraction at 2⁻³⁰ s. **`FSI` is a whole-second correction, not a rounding hint**; `FSI` = 3 is reserved and sends the value to `unresolved_raw`. Parked raw because a CDM `Timestamp` renders three decimal places and cannot hold it |
+| `I021/072` Time of Applicability for Velocity | `Entity.attributes` | `not yet` | parked, and third in the `observed_at` chain for a record with velocity and no position. **This is gap 13**: one record, two measurement instants, one canonical time |
+| `I021/075` Time of Message Reception for Velocity | `Entity.attributes` | `not yet` | as I021/073, for velocity |
+| `I021/076` TOMRv high precision | `Entity.attributes` | `not yet` | as I021/074, against I021/075 |
+| `I021/077` Time of Report Transmission | `Entity.attributes` | `not yet` | when the ground station emitted the ASTERIX record. Parked, and last in the `observed_at` chain: it is a source time about the *report* rather than about the observation |
+| all seven, raw | `Entity.attributes` | `not yet` | the raw 24- and 32-bit integers verbatim at `attributes.cat021_times`, because 1/128 s is not a whole number of milliseconds and egress must re-emit from these rather than recompute from `observed_at` |
+| *(the injected clock)* | `Event.received_at` | `not yet` | when WE took delivery. Never I021/073, which is the ground station's receipt and a different party |
+| `I021/295` Data Ages (23 subfields) | `Entity.attributes` | `not yet` | each item's age in units of 0.1 s, parked under its own key. The maximum, 25.5 s, means "25.5 s **or above**" and is a floor rather than an age, recorded as one — exactly as AIS's 102.2 kt is. **The strongest evidence for gap 13**: the format states per-field staleness and the CDM has nowhere to put any of it |
+
+### Row set — position and altitude
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I021/130` Latitude, Longitude | `Position.lat` / `Position.lon` | `not yet` | 24-bit two's complement each, LSB 180/2²³ ≈ 2.145 767 × 10⁻⁵ °, at least 2.4 m. WGS-84 already: the only transform is the scaling, and there is no datum conversion |
+| `I021/131` Latitude, Longitude | `Position.lat` / `Position.lon` | `not yet` | 32-bit two's complement each, LSB 180/2³⁰ ≈ 1.676 381 × 10⁻⁷ °, at least 2 cm. **Wins when both items are present**, with the disagreement recorded if it exceeds one I021/130 LSB |
+| `I021/130`, `I021/131` raw | `Entity.attributes` | `not yet` | the raw integers, the item they came from and the LSB, verbatim at `attributes.cat021_position` — the source coordinates are the record and `Position` is a derived view, the Legion `position_basis` rule applied where the datum happens to be easy |
+| *(derived)* | `Position.position_source` | `not yet` | `GNSS`. A CAT021 position originated as the aircraft's own GNSS fix, CPR-decoded by the ground station; `attributes.position_source_basis` records that the decode happened upstream and that this adapter did not perform it |
+| *(none)* | `Position.accuracy_m` | `not yet` | `None`, always. Every accuracy statement CAT021 carries is a category or a containment bound — see the quality section. `None` means unknown accuracy, never perfect accuracy |
+| `I021/140` Geometric Height | `Position.alt_m` | `not yet` | "minimum height from a plane tangent to the earth's ellipsoid, defined by WGS-84" — which is exactly what `alt_m` documents, so this maps, feet → metres at LSB 6.25 ft, a declared transform. **CAT021 states the reference surface that a 1090ES frame only implies**, which is the half of gap 9's datum problem this format closes |
+| `I021/140` = `0111111111111111` | `Entity.attributes` | `not yet` | the "greater than" indication. `alt_m` is **absent** and the raw sixteen bits go to `unresolved_raw`: the marker states that a height exists above some bound the item never names, so it is a statement this adapter cannot use, and not the source saying it does not know |
+| `I021/145` Flight Level | `Entity.attributes` | `not yet` | **gap 9** — a barometric flight level, not QNH corrected, LSB ¼ FL, two's complement, −15 to 1500 FL. Parked at `attributes.flight_level` **in FL, the source's own unit**. Note the collision it exposes rather than resolves: `adsb.py` parks the same concept at `attributes.baro_altitude_ft`, and converging on that key would repeat gap 1's mistake of turning a private convention into a de-facto standard without an owner |
+| *(a record can carry both)* | `Position.alt_m` | `not yet` | I021/140 and I021/145 are two different measurements of two different things and both may be present. The geometric one is the only one that reaches `Position`; `attributes.altitude_basis` records which items were present and which was used |
+| `I021/146` Selected Altitude | `Entity.attributes` | `not yet` | **intent, not position** — the MCP/FCU or FMS altitude the crew selected, LSB 25 ft, with a `SAS` availability bit and a 2-bit source. Parked whole. See **gap 15** |
+| `I021/148` Final State Selected Altitude | `Entity.attributes` | `not yet` | intent again, with `MV`/`AH`/`AM` mode bits. Kept for backward compatibility and **shall not be used for Version 2 or higher**, so a record carrying it alongside I021/146 is telling us about the transmitter's vintage. Parked, with the version recorded beside it |
+
+### Row set — velocity, heading and attitude
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I021/160` Ground Speed | `Kinematics.speed_mps` | `not yet` | 15 bits, LSB 2⁻¹⁴ NM/s (≈ 0.22 kt), range 0 ≤ GS < 2 NM/s. NM/s → m/s at exactly 1852 m per NM, a declared transform |
+| `I021/160` Track Angle | `Kinematics.course_deg` | `not yet` | 16 bits, LSB 360/2¹⁶ ≈ 0.005 493 °, clockwise from **True North** — a track over the ground, which is what `course_deg` means, and with its datum stated, which is what gap 7 asks for |
+| `I021/160` RE | `Entity.attributes` | `not yet` | Range Exceeded: the field holds the maximum the avionics could downlink and the true value is **greater**. A floor, not a measurement — the value is kept with `attributes.ground_speed_at_or_above_maximum`, exactly as AIS's 102.2 kt is |
+| `I021/157` Geometric Vertical Rate | `Kinematics.climb_mps` | `not yet` | LSB 6.25 ft/min, two's complement, "with reference to WGS-84" — so it differentiates the same surface `alt_m` is measured against. ft/min → m/s, a declared transform; sign convention matches the CDM's (negative descending) |
+| `I021/155` Barometric Vertical Rate | `Kinematics.climb_mps` | `not yet` | the same field when I021/157 is absent, and parked at `attributes.baro_vertical_rate_ft_min` when both are present. `attributes.climb_basis` names which was used. A record can carry both and they are two measurements, exactly as the two altitudes are |
+| `I021/155`, `I021/157` RE | `Entity.attributes` | `not yet` | as I021/160's — with one ambiguity named rather than resolved: for a **negative** (descending) rate the specification's "the actual value is greater" does not say whether it means greater in magnitude or greater in signed value. Recorded in the ambiguity list; the figure is kept with the floor flag and never silently re-signed |
+| `I021/150` Air Speed | `Entity.attributes` | `not yet` | **gap 10** — IAS (LSB 2⁻¹⁴ NM/s) or Mach (LSB 0.001), selected by the `IM` bit. Parked at `attributes.airspeed_ias_kt` or `attributes.airspeed_mach` with the flag; `speed_mps` stays null, because an airspeed written into a ground-speed field reads as a ground speed to every consumer |
+| `I021/151` True Air Speed | `Entity.attributes` | `not yet` | **gap 10** — LSB 1 kt, with its own RE floor bit. Parked at `attributes.airspeed_true_kt`. CAT021 is the first source to carry indicated **and** true airspeed as separate items, which is why gap 10 says one `airspeed_mps` would close a third of a question |
+| `I021/152` Magnetic Heading | `Entity.attributes` | `not yet` | **gap 7** — LSB 360/2¹⁶, referenced to **magnetic** north. Parked at `attributes.magnetic_heading_deg` |
+| REF `TNH` True North Heading | `Entity.attributes` | `not yet` | **gap 7, and the row that answers its open question** — the same LSB, referenced to **true** north, as a separate item. CAT021 is the first source in this document to state a heading and its datum without a cross-frame join, which is exactly the requirement ADS-B's magnetic-versus-true problem added to that gap |
+| `I021/165` Track Angle Rate | `Entity.attributes` | `not yet` | **gap 7's turn-rate half** — 10 bits, two's complement, LSB 1/32 °/s, maximum 16 °/s meaning "16 °/s or above", positive right and negative left. Parked at `attributes.track_angle_rate_deg_per_s` — note the **unit collision**: gap 7 proposes `turn_rate_dpm` in degrees per *minute*, AIS states degrees per minute, and this states degrees per second. The item's own note says it is not transmitted for 1090 ES, so a record carrying it came from another link technology and I021/210's `LTT` says which |
+| `I021/230` Roll Angle | `Entity.attributes` | `not yet` | **gap 7's attitude half** — LSB 0.01 °, −180 to 180, negative meaning left wing down. Parked. Legion parked a quaternion here; this is one of its components stated on its own, and the note that 1090 ES resolves it only to 1 degree is parked with it |
+| REF `SGV` STP, HTS, HTT, HRD, GSS, HGT | `Kinematics.speed_mps` / `Kinematics.course_deg` | `not yet` | the **Surface** Ground Vector, without which a surface target has no motion at all. `GSS` LSB 0.125 kt → `speed_mps`; `HGT` LSB 2.8125 ° → `course_deg` **only when `HTT` says Ground Track**, since a heading is not a course. `HTS` clear means the heading/track data is not valid, so the course is absent and the field is named in `unavailable_fields` while its wire value goes to `unresolved_raw`. `HRD` states the datum; `STP` means the aircraft has stopped, which is a measurement of stillness and becomes 0.0 m/s and not a null |
+
+### Row set — status, emergency and severity
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I021/200` PS | `Event.severity` / `Event.event_type` | `not yet` | Priority Status 1–6 (general emergency, lifeguard/medical, minimum fuel, no communications, unlawful interference, downed aircraft) → `CRITICAL` / `ALERT`. 0 is no emergency and reads `INFO`. The line is drawn at the standard's own emergency declaration, exactly where `adsb.py` draws it and where `ais.py` draws it at navigational status 14 |
+| `I021/200` SS | `Event.severity` / `Event.event_type` | `not yet` | Surveillance Status 1, Permanent Alert (an emergency condition) → `CRITICAL` / `ALERT`. 2 (temporary alert, a Mode 3/A change) and 3 (SPI) → `INFO`: procedural conditions, not emergencies |
+| `I021/200` ME | `Event.severity` / `Event.event_type` | `not yet` | Military Emergency → `CRITICAL` / `ALERT`. No 1090ES frame carries this bit, so it is new here; it is the standard's own emergency declaration and the line is drawn in the same place |
+| `I021/200` PS, SS, ME | `Entity.attributes` | `not yet` | code AND wording for each, parked. The three are independent and a record can raise more than one |
+| `I021/200` ICF | `Entity.attributes` | `not yet` | Intent Change Flag — new data in BDS registers 40/41/42. **No longer used as of MOPS Version 3 and shall be 0**, so its meaning depends on I021/210 and it is parked with the version beside it |
+| `I021/200` LNAV | `Entity.attributes` | `not yet` | LNAV mode. **The logic is REVERSED relative to ED-102/DO-260**, per the item's own note — 0 means engaged. Parked as sent with the inversion recorded, because a consumer reading it the DO-260 way gets it exactly backwards |
+| REF `STA` PS3 | `Event.severity` / `Event.event_type` | `not yet` | Priority Status for **Version 3** systems, where I021/200's PS is no longer where an emergency lives. Values 1 and 5–7 (general emergency, unlawful interference, aircraft in distress automatic, aircraft in distress manual) → `CRITICAL` / `ALERT`; 2 is UAS/RPAS lost link and 3 minimum fuel and 4 no communication, all `INFO` under the same line the other rows draw. **This row is why the REF is in scope** |
+| REF `STA` PS3 vs `I021/200` PS | `Entity.attributes` | `not yet` | the specification gives an explicit mapping between the two vocabularies, in which Version 3's *aircraft in distress* (6 and 7) both collapse to Version < 3's *general emergency* (1). Both values are parked as stated and the collapse is **never run in reverse** — an adapter inferring 6 or 7 from a 1 would invent a distress activation mode |
+| REF `STA` ES, UAT, RCE, RRL | `Entity.attributes` | `not yet` | 1090 ES IN and UAT IN capability; Reduced Capability Equipment (TABS and others); Reply Rate Limiting active. Each `RCE` and `RRL` carries an **Element Populated** bit and "not populated" is not a value of zero — the two are kept distinct and an unpopulated element is named in `unresolved_raw` |
+| REF `STA` TPW, TSI, MUO, RWC, DAA, DF17CA, SVH, CATC, TAO | `Entity.attributes` | `not yet` | transmit power; transponder side; **manned or unmanned operation**; Remain Well Clear corrective alert; Detect And Avoid capability; the DF17 CA field as store-and-forward; collision-avoidance sense and CAS type; transponder antenna offset. All parked, all Version 3, all with Element Populated bits. `MUO` is deliberately **not** read into `entity_type`: "unmanned" is a crewing fact, and a UAV and an airliner are both `PLATFORM` for the reason a tanker and a tug both are |
+| `I021/008` RA, TC, TS, ARV, CDTI/A, not TCAS, SA | `Entity.attributes` | `not yet` | Aircraft Operational Status while airborne. `RA` says a TCAS/ACAS resolution advisory is **active** — parked, and it does **not** raise severity here: the RA itself arrives in I021/260 and grading an equipment status as an emergency would be the translator judging. Note `not TCAS`'s inverted sense (1 = not operational) and `SA` (1 = single antenna) |
+| `I021/271` POA, CDTI/S, B2 low, RAS, IDENT | `Entity.attributes` | `not yet` | surface capabilities. `POA` states whether the transmitted position **is** the ADS-B position reference point — a fact about where on the airframe the fix is, which is gap 8's offset-reference-point problem stated by a source for the first time. `IDENT` is the IDENT switch, parked and not read as an alert |
+| `I021/271` first extension, L + W | `Entity.attributes` | `not yet` | **gap 8** — length and width as a 4-bit bucket index into the specification's own table (L < 15 m and W < 11.5 m, …, L > 85 m or W > 80 m). Parked as the code AND the bucket's bounds, never as a single number: a bucket is a range and collapsing it to a midpoint would state a size nobody measured. Version 2 and higher encode "no data or unknown" as 0 and omit the extension entirely |
+| `I021/260` TYP, STYP, ARA, RAC, RAT, MTE, TTI, TID | `Event.payload` | `not yet` | the ACAS Resolution Advisory report, a copy of BDS register 3,0 for message type 28 subtype 2. Parked whole as stated fields plus raw bits. **Not decoded into an advisory vocabulary** — `adsb.py` declines type code 28 subtype 2 for exactly this reason: the ARA bits are an ACAS vocabulary defined outside this specification, and decoding them means adopting a second standard |
+| `I021/250` REP, BDSDATA, BDS1, BDS2 | `Entity.attributes` | `not yet` | BDS register data, repetitive: a one-octet count then N × (56-bit register contents + a two-nibble register address). Parked as raw hex per register with its address. The specification's own note says this data "is not encoded in ASTERIX but in the original Squitter format" — so decoding it is a Mode S BDS adapter, which `adsb.py` already names as a different adapter |
+
+### Row set — intent, meteorology and the rest
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I021/110` TIS: NAV, NVB | `Entity.attributes` | `not yet` | trajectory intent status. Note both bits are **negative-sense**: `NAV` = 1 means intent data is *not* available, `NVB` = 1 means it is *not* valid. Parked as sent with the sense recorded |
+| `I021/110` TID: REP × 15-octet trajectory intent points | `Entity.attributes` | `not yet` | **gap 15** — each point carries an altitude (LSB 10 ft), a WGS-84 latitude and longitude (LSB 180/2²³, the same as I021/130), a point type, turn direction, turn-radius availability, a time over point (LSB 1 s since midnight) and a turn radius (LSB 0.01 NM). Parked whole, structure intact, in payload order |
+| `I021/110` TID | `Event.geometry` | `not yet` | **deliberately NOT a geometry.** The points form a 4D path, and a `LineString` in `Event.geometry` would paint an aircraft's declared *future* as something observed. `geometry` stays `None` and the points stay parked — the same reason `adsb.py` defers type code 29 |
+| REF `SelH` HRD, Stat, SelH | `Entity.attributes` | `not yet` | Selected Heading, LSB 0.703125 °, with its own datum bit and a validity bit. Intent, so it is parked beside the selected altitudes rather than beside the headings — `Stat` = 0 means unavailable or invalid and the field is named in `unavailable_fields` |
+| REF `NAV` AP, VN, AH, AM, MFM | `Entity.attributes` | `not yet` | autopilot, VNAV, altitude hold, approach mode, and the MCP/FCU mode-bits status with its Element Populated bit. Intent again. **`MFM#VAL` = 0 means AP/VN/AH/AM are all forced to 0 and I021/200's LNAV to 1** — so a record with `MFM#VAL` clear states nothing about the autopilot, and reading those zeros as "autopilot off" would be a fabricated fact. `unavailable_fields` records it |
+| REF `BPS` | `Entity.attributes` | `not yet` | Barometric Pressure Setting, LSB 0.1 hPa, **and the wire value is the setting minus 800 hPa**. 0 means "800 hPa or less" and 409.5 means "1209.5 hPa or more" — two floors, recorded as floors. It is the offset that would let a consumer relate a flight level to a geometric height, so it belongs with gap 9's bridge alongside ADS-B's GNSS-barometric difference |
+| REF `GAO` | `Entity.attributes` | `not yet` | GPS Antenna Offset, lateral and longitudinal, LSB 2 m, with bit 8 giving the lateral direction (0 left of centreline, 1 right). **gap 8's offset reference point stated numerically for the first time** — this is how far the reported fix is from the airframe's centre, which is what makes a position accurate only to within the aircraft's own size |
+| `I021/220` WS, WD, TMP, TRB | `Entity.attributes` | `not yet` | Met Information, compound: wind speed (LSB 1 kt, 0–300), wind direction (LSB 1 °, 1–360), temperature (LSB 0.25 °C, two's complement, −100 to 100) and turbulence (0–15). All parked. **The CDM models weather nowhere**, and this is a measurement of the atmosphere at the aircraft rather than of the aircraft — correctly parked rather than missing. Note wind direction's range starts at **1**, so it has no zero and 360 is north |
+| REF `MES` SUM, PNO, EM1, XP, FOM, M2 | `Entity.attributes` | `not yet` | Military Extended Squitter, compound, six subfields: the Mode 5 summary bits, PIN and national origin, extended Mode 1 code in octal, X-pulse presence, figure of merit, and Mode 2 code in octal. Parsed in full and **parked in full** — see the affiliation section for the one interpretation this adapter declines. `FOM` is a position-accuracy figure from a Mode 5 transponder and is parked with the other quality categories, never written to `accuracy_m` |
+| REF `MES` SUM PO | `Position.position_source` | `not yet` | the one `MES` bit that is a statement about **how the fix was obtained**: 1 means the position came from a Mode 5 report rather than from ADS-B. It does not change `position_source` — a Mode 5 position is still ultimately a GNSS fix — but `attributes.position_source_basis` records that it arrived by that path, because which link carried a fix is exactly the kind of thing that stops being recoverable later |
+| REF `LEN`, Items Indicator | `Entity.attributes` | `not yet` | the REF's own length octet (which counts itself) and its eight presence bits. Parked, and the length is **recomputed on egress** for the reason the block length is |
+
+### Row set — egress, CDM back to a CAT021 data block
+
+| CDM | CAT021 | Status | Notes |
+|---|---|---|---|
+| `Entity.source_ids[].external_id` | `I021/080` | `not yet` | the `ICAO24` entry, or the `ADSB_NONICAO` one with the parked `ATP` restored. An object with neither is **REFUSED**: deriving a target address would put an aircraft into a surveillance picture under a number nobody allocated, which is `adsb.py`'s refusal word for word |
+| *(configuration)* | `I021/010` SAC, SIC | `not yet` | mandatory in every record, and it names a **ground station** whose codes EUROCONTROL allocates. For an object this adapter ingested, the parked SAC/SIC is restored. For an object that never came from CAT021, `Cat021Adapter(station=(sac, sic))` supplies it — a constant of the deployment, given at construction exactly like `adsb.py`'s reference position and the injected clock. **With no station configured, such an object is REFUSED**, because a SAC/SIC we invent claims an identity that is centrally issued |
+| `Position.lat` / `Position.lon` | `I021/131`, or `I021/130` | `not yet` | encoded from the parked raw integers for an ingested object, and from the coordinates otherwise — in which case **I021/131** is emitted, because choosing the coarse item would discard resolution the CDM was holding. `position: None` emits **neither item**, which is the format's own way of saying nothing and is available here in a way it was not in AIS |
+| `Position.alt_m` | `I021/140` | `not yet` | metres → feet at LSB 6.25 ft, into the geometric height item and never into I021/145. An altitude outside −1500 ft to 150 000 ft is **REFUSED** rather than clipped or wrapped, the same call `adsb.py` makes at 4095 m: a cruise level clipped to a range bound reads as a real altitude to every consumer |
+| `Kinematics.speed_mps` + `.course_deg` | `I021/160` | `not yet` | m/s → 2⁻¹⁴ NM/s and degrees → 360/2¹⁶ steps. A null speed or course omits the whole item rather than encoding a zero — CAT021 can leave an item out, so "not stated" has an honest encoding and 0 kt due north does not have to double as one |
+| `Kinematics.climb_mps` | `I021/157` | `not yet` | into the **geometric** vertical rate, matching the surface `alt_m` is measured against. Null omits the item |
+| `Event.observed_at` | `I021/071` | `not yet` | the time of day, LSB 1/128 s — **from the parked raw integer for an ingested object**, because 1/128 s is not a whole number of milliseconds and recomputing from a rendered timestamp loses the remainder. The date cannot travel: CAT021 states none |
+| `Entity.attributes` | everything parked | `not yet` | the parked fields are read back, which is what makes the round trip byte-exact for a block this adapter ingested — including the FSPEC octets, the spare bits, the raw time integers and the opaque SP field |
+| `Track.samples[]` | N records in **one** data block | `not yet` | one record per sample, in the track's own order. **This is the shape CAT021 has for a history and ADS-B did not**: a data block holds many records natively, so a `Track` becomes one block rather than a stream of separate frames. A track whose encoded records exceed the 65 535-octet `LEN` field is **REFUSED** with the sample count named, rather than split across blocks — splitting is framing, and framing belongs to the caller |
+| `Track.samples[].observed_at` | `I021/071` per record | `not yet` | each sample's own time of day **does** travel, which is the sharpest single improvement over ADS-B egress, where a frame has no time field at all. The **date** still does not: a receiver dates each record against its own midnight, which is right in normal operation and wrong for a replay of an old track. Stated rather than worked around |
+| `Track.track_id`, `Track.track_quality` | — | `not yet` | nowhere to go. I021/161 is a station's own 12-bit recycled track number, not a place to put a UUID |
+| `Entity.entity_id`, `schema_version`, `source`, `affiliation`, `symbol` | — | `not yet` | nowhere to go. See below |
+
+**CAT021 has an extension point, and it is still not usable for this.** Unlike AIS and 1090ES,
+this format has two: the Reserved Expansion Field (FRN 48) and the Special Purpose Field
+(FRN 49), and SP exists precisely for content the specification does not define. It is
+nevertheless **not written to on egress**, and the reason is the one that governs the whole
+document: SP's contents are settled by bilateral agreement between a sender and a receiver, so
+octets we invent are octets some deployment already reads as something else. Writing a CDM
+`entity_id` there would be indistinguishable, on the wire, from a local field that deployment has
+used for years. The RE is worse: its layout **is** defined, by Edition 1.5, so there are no free
+bits in it at all.
+
+So `entity_id`, `track_id`, `track_quality`, `schema_version`, the affiliation, the symbol and
+the whole provenance block have nowhere to go on the way out, exactly as they have in AIS and
+ADS-B — and the round-trip test will name each one with its reason rather than measuring a loss
+it cannot fix.
+
+### What egress is NOT lossy for
+
+A block this adapter ingested. The parked fields are read back, so `to_cdm()` followed by
+`from_cdm()` reproduces the original data block **byte for byte** — the CAT and LEN octets, every
+FSPEC octet, every item in FRN order, every spare bit as sent, the raw time integers at full
+resolution, and the opaque SP payload. That is the claim `ais.py` and `adsb.py` make and it is
+asserted over every ingest fixture.
+
+**Bidirectionality is therefore in scope for 1.0.0, at the same standard as ADS-B**, and no item
+prevents it. Three would have, and each is handled by parking rather than by an exemption:
+
+1. **The high-precision time items** (I021/074, I021/076) state 2⁻³⁰ s and a CDM `Timestamp`
+   renders milliseconds. Parked raw, re-emitted from the park.
+2. **Every ordinary time item** states 1/128 s, which is not a whole number of milliseconds.
+   Same treatment, and it is the reason the rule is stated as a rule rather than as a special
+   case for the high-precision pair.
+3. **Spare and unused bits** may legitimately be non-zero. Parked as sent.
+
+### What the adapter fills that CAT021 does not state
+
+| CAT021 | CDM field | Status | Notes |
+|---|---|---|---|
+| *(none — the format states a time of day and no date)* | `Event.observed_at` | `not yet` | the date comes from the injected clock, and the instant is the one bearing the stated time of day **nearest the receipt instant** — which is what makes midnight rollover fall out in both directions. `payload.observed_at_basis` names the item, the date's source and any rollover applied |
+| *(none)* | `Event.received_at` | `not yet` | the injected clock. Never I021/073, which is the ground station's receipt instant and a different party |
+| *(none — CAT021 states no identity)* | `Entity.affiliation` | `not yet` | `UNKNOWN`, with `attributes.affiliation_basis` distinguishing the ordinary unauthenticated case from the Mode 5 case this adapter declines to read |
+| *(derived)* | `Entity.symbol` | `not yet` | from the affiliation via `symbology.sidc_from_affiliation`; `attributes.symbol_basis` says so |
+| `I021/071` or `I021/073` | `Entity.valid_from` | `not yet` | the position's own applicability instant where there is one, else whatever the `observed_at` chain resolved; `attributes.valid_from_basis` names which, the same fallback-and-record pattern the CoT adapter uses for `@start` |
+| *(none)* | `Entity.valid_to` | `not yet` | `None`. How long a target report stays good is a judgement about data and belongs to fusion — and I021/295's ages measure staleness backwards, not an expiry forwards |
+| *(none — CAT021 has no checksum)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis`, recording that this format carries no CRC at any level and that a structural gate is what the record passed. A consumer comparing a CAT021 contact with a 1090ES one should be able to see which of the two was checked |
+| *(none)* | `Event.severity` | `not yet` | `INFO` where the record declares no emergency, with `payload.severity_basis` recording that this is the format's silence and not a judgement that the flight is calm |
+| *(none)* | `Event.event_type` | `not yet` | `TRACK_UPDATE` for a record carrying position or velocity; `STATUS_CHANGE` for one carrying neither, because calling a record with no position a track update would claim one; `ALERT` where an emergency row above raises it |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` and `attributes.unresolved_raw` — see the common row set. The pair distinguishes "the source said it does not know" from "the source said something and the translator could not use it" |
+
+### Where the specification is ambiguous or contradicts itself
+
+Recorded because an adapter author will hit every one of these, and because the ADS-B lesson was
+that a plausible inference is worse than a logged gap. Each is handled by parking or refusing,
+never by guessing.
+
+| # | Finding | Consequence for the adapter |
+|---|---|---|
+| 1 | **The REF's own edition date contradicts itself.** The cover page reads "Edition date: 21 December 2021"; the Document Characteristics table on page ii reads "Edition Date : 22/12/2021" | the pin above records the edition **number** and the SHA-256 as the identifying facts, and names the date discrepancy rather than picking one of the two |
+| 2 | **`RE` on a negative rate does not say what "greater" means.** I021/155 and I021/157 are two's complement and their Range Exceeded note says "the actual value is greater than the value contained in the field". For a descending rate, greater in magnitude and greater in signed value are opposite claims | the figure is kept with an at-or-beyond-maximum flag and is never re-signed. The flag records that the bound's direction is unstated |
+| 3 | **I021/090's primary subfield holds one of two different quantities and needs another item to say which.** It is "NUCr or NACv" and "NUCp or NIC" by MOPS version — and I021/210, which carries the version, is **optional** | the raw bits are parked with the version beside them and `attributes.quality_basis` states which reading applied, or that none could be established. Never a guess: NUCp and NIC are different scales |
+| 4 | **NUCp 6 means two different things and the disambiguator is in a third item.** The PIC conversion table's note says NUCp 6 maps to PIC 10 for airborne messages and PIC 0 for surface ones, and that the air/ground status "is derived from the GBS-bit in I021/040" | the PIC code is parked as sent and never recomputed from NUCp. Deriving it here would mean reading one item's meaning out of another's bit, which is the cross-item join this adapter declines |
+| 5 | **`ATP` cannot distinguish a surface vehicle from an anonymous address, and the specification says so.** DF18 `CF` = 1 covers self-assigned, ground-vehicle and surface-obstruction addresses alike, so "how CF=1 is encoded in ATP shall be described in the ICD of the ASTERIX system" — a per-deployment decision, with ED-129B recommending ATP = 3 | both values map to `ADSB_NONICAO`, so the ambiguity costs nothing at the identity level; the raw ATP is parked so a deployment that knows its own ICD can recover the distinction |
+| 6 | **I021/140's "greater than" marker names no bound.** `0111111111111111` indicates the aircraft transmits a greater-than indication, and the item's stated range tops out at 150 000 ft — but the note does not say the marker means "above 150 000 ft" | `alt_m` is absent and the raw bits go to `unresolved_raw`. Inventing a floor the specification does not state would be a fabricated measurement, and 204 793.75 ft — the marker read as a value — is not an altitude any aircraft is at |
+| 7 | **I021/148 is deprecated but not removed, and a record may carry it with I021/146.** It "shall not be used for Version 2 or higher", where I021/146 carries the same intent | both are parked as stated, with I021/210's version recorded beside them. Neither is preferred and neither is dropped: a record carrying both is telling us about its transmitter, and resolving the contradiction would erase that |
+| 8 | **I021/295 gives per-item ages and no age for the position.** Twenty-three subfields cover the height, the ground vector, the identification and twenty more; the position has none, because it has its own applicability time | the ages are parked per item, and gap 13 records that the CDM can hold none of them. The absence of a position age is *correct* in the format and is what makes I021/071 the right head of the `observed_at` chain |
+| 9 | **Trajectory intent point size is stated two ways.** The subfield's prose says each point comprises "fifteen octets"; the bit diagram numbers octets 1 through 16 with `REP` as octet 1, i.e. fifteen octets per point after the count | the diagram is authoritative — fifteen octets per point after a one-octet `REP` — and the fixture set carries a two-point trajectory whose total length pins the reading, so a mis-sized point fails a test rather than shifting every field after it |
+
+Two further facts that are not ambiguities but shape the row set: the specification covers ADS-B
+Versions 0, 1 and 2 **in full** and Version 3 only **partially**, with most of Version 3 in the
+REF — so a Version 3 aircraft is under-described by the core document by design. And the up-to-date
+list of SAC codes lives on the EUROCONTROL ASTERIX website rather than in the specification, so
+nothing in this repository pins it; that is a live consequence for the fixtures, recorded below.
+
+### Deliberately out of scope, and why
+
+An unimplemented thing is a decision, so each one is named. "Not supported" without a reason is
+indistinguishable from "nobody thought about it".
+
+| Out | Decision |
+|---|---|
+| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 021's siblings, 023, 034, 048, 062, 063, 065, 240, 247 … | Each has its own UAP and its own item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **CAT023 is the highest-value neighbour**: it is the ground station's own service status, and I021/015 and I021/016 exist in CAT021 precisely because not every service user receives CAT023. **CAT062** is the system-track category and is where a fused air picture actually lives. Both are deferred, not rejected; a category is an adapter |
+| **Interpreting an authenticated Mode 5 reply as an affiliation** | The highest-value omission, and structural rather than effort. REF `MES` carries authenticated Mode 5 ID and Data indications, which in IFF doctrine are what "friend" means — and turning one into `FRIENDLY` is an identification decision that belongs to an IFF authority, not to a translator. Over-claiming `FRIENDLY` is also the dangerous direction. The bits are parked in full and `affiliation_basis` records the decline, so the decision is visible in every object rather than absent from the code |
+| **Correlating records across data blocks** | The type-24 / CPR / pagination test, applied a fourth time. Records within one block are translated because they arrived in one payload; records in the next block are a different payload and joining them means holding a cache, which is fusion done where nothing audits it. It is also why a data block never becomes a `Track` on ingest |
+| **Building a `Track` from records sharing a Target Address** | The same decision one level down. Several records in a block may name several aircraft, and grouping the ones that agree is a correlation heuristic — a decision, made invisibly, inside a translator |
+| **Resolving I021/161 Track Number into an identity** | A station-scoped, recycled 12-bit number. A SAC/SIC-scoped composite would be unique across stations and would still recycle within one, so making it an identifier is a decision about identity lifetime and belongs where it can be audited |
+| **Decoding I021/250 BDS register contents** | The specification's own note says the payload "is not encoded in ASTERIX but in the original Squitter format", and the BDS registers are a separate register set with their own document. `adsb.py` names a Mode S BDS adapter as a different adapter for exactly this reason; the registers are parked as raw hex with their addresses, which the never-drop rule already achieves without a row set |
+| **Decoding I021/260's ARA / RAC advisory bits** | An ACAS resolution-advisory vocabulary defined outside this specification. Decoding one means adopting a second standard — the same category as AIS's DAC/FI application identifiers and `adsb.py`'s type code 28 subtype 2 |
+| **Writing into the SP or RE fields on egress** | SP's contents are defined by bilateral agreement between a sender and a receiver, so an octet invented here is an octet some deployment already reads as something else. The RE's layout is fully defined by Edition 1.5 and has no free bits at all. Both are read on ingest, parked, and restored verbatim |
+| **ASTERIX transport — UDP multicast, stream framing, pcap** | A data block is one payload; how it arrived is the caller's. This is the AIS fragment buffer, the ADS-B frame buffer and Legion's HTTP client, refused a fourth time for the same reason: transport is where state lives, and an adapter that holds state is a fusion layer nothing audits |
+| **The SAC allocation table** | Not an item, but the same decision. The current list is published on the EUROCONTROL ASTERIX website and this repository pins no retrieved copy, so no claim is made here about which codes are allocated. The fixtures' consequence is named in their own section |
+
+### Fixtures plan — written before the fixtures, like the row set
+
+**Everything is synthetic.** No recorded ASTERIX traffic, no real ground station, no real
+aircraft. Each block is hand-built from field values and encoded by the adapter's own
+`_render_block`, exactly as the ADS-B set is built from `.parsed.json` twins — and for the same
+reason, which matters more here than there: an ASTERIX data block is raw octets and cannot carry
+a comment, and its length and FSPEC are functions of its contents, so a hand-edited byte file is
+a mis-parse waiting to happen.
+
+**Each fixture ships twice**, on the ADS-B pattern. `<name>.cat021` holds the octets;
+`<name>.parsed.json` holds exactly what the parser produces from them. The twin exists because
+`lossless.unrepresented()` has no leaf structure to harvest from bytes — a byte-only fixture set
+would show a green run with the never-drop rule never executed. The twin is also the **reviewable
+form**: named fields in the units the specification talks in. Edit the twin, never the octets.
+
+**The worked arithmetic lives in the fixture README**, as it does for ADS-B, because the byte
+file cannot hold it. One table per fixture: octet offsets in hex, the field each octet range
+carries, the raw integer, the arithmetic and the decoded value — so a reviewer can check
+`0x0037 → 55 × 6.25 ft = 343.75 ft` without running anything.
+
+#### The identifiers, and how far each "safe" claim goes
+
+| Identifier | Fixture convention | How strong the claim is |
+|---|---|---|
+| **Target Address** (I021/080) | `0029xx`, the ADS-B fixture block | Same claim, deliberately: the ICAO allocation table's lowest state block begins at `004000`, so everything below it is in no administration's range. **This repository pins no retrieved copy of that table**, which is why the ADS-B README says the claim is weaker than AIS's MID 299 — and reusing the block keeps the two ADS-B-family sets recognisably one family, which is the point, because one fixture exists to show a CAT021 contact and an ADS-B contact deriving the *same* `entity_id` from the same address |
+| **SAC / SIC** (I021/010) | a single fixed pair, `SAC = 0xFE`, `SIC = 0xFE` | **The weakest claim in the set, and it is named rather than dressed up.** SAC codes are allocated by EUROCONTROL and the current list lives on their website; nothing here pins a copy, so no value can be *shown* to be unallocated. The pair is asserted as a constant in the test suite so the assumption is discoverable from a failure rather than from somebody's memory, and if the allocation list is ever pinned the way `airtasking/SOURCES.md` pins a source, the fixtures move |
+| **UUIDs** | the `f1c7…-8…` version-8 convention, where one is needed | CAT021's wire form contains **no UUIDs at all** — its identifiers are a 24-bit address, a SAC/SIC pair, a 12-bit track number and a Mode 3/A code. The UUIDs in the golden files are `entity_id` and `event_id`, which are **derived** uuid5 values and therefore not free to choose. So the convention binds nothing in this set, and that is stated rather than left to look like an omission |
+| **Target Identification** (I021/170) | `EXRCS01`, `EXHELO2`, `EXMAST1` | Fictional and marked as exercise traffic, matching the ADS-B set character for character |
+| **Mode 3/A** (I021/070) | ordinary codes such as `4271` | 7500, 7600 and 7700 are the hijack, radio-failure and emergency codes and are deliberately absent — an emergency in this set is declared through I021/200 and REF `STA`, which is where CAT021 actually carries one |
+| **Positions** | Gulf of Riga, west of Saaremaa, Ventspils, the Riga apron | Baltic-plausible, matching the other four sets, and no vessel's or aircraft's real track |
+
+#### The planned fixtures, and what each one is there to catch
+
+| Fixture | What it exercises | The defect it is there to catch |
+|---|---|---|
+| `airborne_position_time_of_applicability` | The ordinary case: I021/010, /040, /080, /090, /071, /131, /140, /160, /170, /020 | The whole happy path, and the two things that must not happen on it — a geometric height reaching `alt_m` correctly at LSB 6.25 ft, and the high-resolution position decoding at LSB 180/2³⁰ rather than at the coarse item's LSB |
+| `airborne_position_coarse_and_high_resolution` | Both I021/130 **and** I021/131 present | The non-conforming case the encoding rule says cannot happen. I021/131 must win, both must be parked, and a disagreement beyond one coarse LSB must be recorded rather than averaged away |
+| `position_time_of_message_reception_high_precision` | I021/073 + I021/074 with `FSI` = `01` | The whole-second correction. An adapter that ignored `FSI` would be a full second out here, and the fixture's expected instant is one second *after* what I021/073 alone says — the arithmetic is in the README so the difference is visible |
+| `reserved_full_second_indication` | I021/074 with `FSI` = `11` | The reserved code. The high-precision value must go to `unresolved_raw` and the plain I021/073 must be used — declining to decode and losing the data are different outcomes |
+| `midnight_rollover_before` | I021/071 = 23:59:58.500, clock frozen at 00:00:01.100 the next day | The rollover, run backwards. The resolved instant must be on the **previous** day, and `observed_at_basis` must say a rollover was applied |
+| `midnight_rollover_after` | I021/071 = 00:00:00.900, clock frozen at 23:59:59.700 | The same rule run forwards, which is the direction an adapter that special-cased "subtract a day" would get wrong |
+| `time_beyond_one_day` | I021/071 holding 100 000 s | The refusal. A modulo would move the contact by hours and leave every other check passing, so this fixture asserts a raise that quotes the item, the raw integer and the decoded seconds |
+| `surface_vehicle_with_ref_ground_vector` | `ATP` = 2, `GBS` set, REF `SGV` with `HTT` = ground track and `STP` clear | The reason the REF is in scope: a surface target's only motion lives there. Also `ADSB_NONICAO`, because a surface vehicle address is not an ICAO24 address |
+| `surface_stopped_track_invalid` | REF `SGV` with `STP` set and `HTS` clear over a real-looking `HGT` | Two absences of different kinds in one item. Stopped is a **measurement of stillness** → 0.0 m/s and not null; an invalid heading/track is the source declining → absent course, named in `unavailable_fields`, with its wire value in `unresolved_raw` |
+| `emergency_unlawful_interference` | I021/200 `PS` = 5 | `CRITICAL` / `ALERT` at the standard's own emergency declaration, and a temporary alert or an SPI pulse in the same fixture family must **not** do the same |
+| `version_three_emergency_in_ref` | I021/210 `VN` = 3, I021/200 `PS` = 0, REF `STA` first extension `PS3` = 7 | **The fixture that justifies the REF decision.** A Version 3 aircraft in distress whose core-item priority status is zero: an adapter that skipped the REF would translate this as an ordinary track update, and the test asserts `ALERT` at `CRITICAL` |
+| `quality_indicators_without_mops_version` | I021/090 with all three extensions, I021/210 **absent** | The undetermined reading. `quality_basis` must say that no version could be established, and nothing may reach `Position.accuracy_m` or `Entity.confidence` — the PIC containment bound in nautical miles is the most tempting number in the format and it is still the wrong one |
+| `range_check_failed_still_translated` | I021/040 second extension with `RCF` set | The row where the specification asks for filtering. The record must be translated **in full** with the flag parked; a fixture that produced no objects would mean the adapter had started making suppression decisions |
+| `duplicate_address` | `ATP` = 1 | The identity caveat. `ADSB_NONICAO`, and `attributes.identity_caveat` recording that this entity may conflate two airframes |
+| `obstacle_line` | I021/020 = 24 | The one place an emitter category refines the entity type: `FACILITY`, agreeing with `adsb.py`'s category set C line-obstacle mapping through a different vocabulary |
+| `two_records_one_block` | Two records, two different target addresses | Four objects from one payload, in block order, with `record_index` and `record_count` on each — and the assertion that they are two entities and **not** one track |
+| `trajectory_intent_two_points` | I021/110 with `REP` = 2 | The repetitive item's stride. Fifteen octets per point after a one-octet count: a mis-sized point shifts every field after it, and the block's total length is what pins the reading |
+| `mode_five_authenticated` | REF `MES` subfield #1 with `ID` and `DA` set | The declined interpretation. `affiliation` must be `UNKNOWN` and `affiliation_basis` must say that an authenticated IFF indication was present and deliberately not read — a test that asserts a *refusal to decide* rather than a decision |
+| `special_purpose_field_opaque` | An SP field of unknown content | Parked verbatim on ingest, restored verbatim on egress, and never written to for an object that did not arrive with one |
+| `spare_bits_nonzero` | A conforming record with spare bits set to 1 | §4.3's recommendation is not a requirement. The byte-exact round trip must survive it, which it only does if the spare bits are parked as sent rather than normalised |
+
+An `egress/` subdirectory holds the CDM-side fixtures — an `Entity` that never came from CAT021
+(exercising the station-configuration refusal and its absence), and a `Track` of three samples
+that becomes one data block of three records. Reference documents, if any are ever added, go in a
+`spec/` subdirectory and not beside the payloads: `harness.run()` replays every **file** in a
+fixture directory through `to_cdm()`, so a document sitting next to the blocks is fed to the
+adapter and fails as an unrecognised payload.
+
 ## STANAG 4676 — track ingest
 
 No adapter yet. Every row below is a specification for whoever writes it.
@@ -1023,6 +1835,16 @@ No adapter yet. Every row below is a specification for whoever writes it.
    object from that source arrives with an operator-facing string — not sometimes, as with a CoT
    callsign or an AIS vessel name, but always. A fifth adapter parking a sixth key would be
    noise; an adapter whose every object has a name and nowhere to put it is the argument.
+
+   **CAT021 is the first source whose name field cannot be given a precedence rule at all,
+   which is a different kind of evidence from a sixth key.** I021/170 Target Identification is
+   defined as "target identification when flight plan is available **or the registration
+   marking when no flight plan is available**" — one field, two concepts, and no bit anywhere in
+   the record saying which one arrived. So the question this gap waits on ("vessel name or call
+   sign?") cannot even be *asked* of this source until someone decides whether a registration
+   marking is a name. It is also why that row set deliberately does NOT park under
+   `attributes.callsign`: converging on the key TAK and ADS-B already share would assert the
+   flight-plan reading about half the time, silently.
 2. **Affiliation collapse, 7 → 4.** PENDING, ASSUMED_FRIEND and SUSPECT have no CDM member
    (see `enums.Affiliation` for why: they are judgements, not wire facts). Recoverable only
    because the adapter parks the original — which the lossless check enforces rather than
@@ -1044,6 +1866,18 @@ No adapter yet. Every row below is a specification for whoever writes it.
    rather than a fact about one contact. Whoever revisits this gap should read the Legion
    affiliation table before proposing anything: a wider `Affiliation` enum would close the
    collapse and leave the conflation.
+
+   **CAT021 widens it in a third direction, and this one is not about vocabulary size.** Through
+   the Reserved Expansion Field's `MES` subfield it carries *authenticated* Mode 5 IFF
+   indications — `ID` and `DA`, "authenticated Mode 5 ID reply/report" and "authenticated Mode 5
+   Data reply or Report". That is the first cryptographically attested identity statement any
+   source in this document carries, and the adapter still emits `UNKNOWN`, because turning an
+   attestation into FRIENDLY is an adjudication and over-claiming FRIENDLY from a translator is
+   the fratricide-adjacent direction. The consequence for this gap is that the CDM has no way to
+   record **"an identity was attested and has not been adjudicated"** — which is neither UNKNOWN
+   (that understates what arrived) nor FRIENDLY (that overstates what was decided). Whoever
+   revisits this gap should decide whether an attestation belongs beside `affiliation` rather
+   than inside it; a wider enum would not touch this case.
 3. **Track quality scale.** 4676 integer 0–15 → CDM float 0–1 is `value / 15`, a declared
    transform. Note that 4676 quality 0 means "worst", not "unknown", and CDM `None` means
    unknown — so a missing 4676 quality must become `None`, never `0.0`.
@@ -1077,6 +1911,16 @@ No adapter yet. Every row below is a specification for whoever writes it.
    number because it is the same concept as `alt_accuracy_m`: how precisely do we know where this
    is. Whoever closes gap 6 should decide whether the answer is two scalars or a small covariance
    block, and should not discover the question from a fourth adapter.
+
+   **CAT021 supplies the fourth adapter's answer and it is a third shape.** Its `GVA` is a
+   two-bit *Geometric Altitude Accuracy* category — precisely the vertical accuracy this gap
+   wants, still not a metre figure — and its `PIC` is an integrity **containment bound** stated
+   in nautical miles, from "< 0.004 NM" to "> 20.0 NM". PIC is the sharpest case in the whole
+   document because the specification finally hands over a number with a unit on it, **and it is
+   still the wrong kind of number**: a containment bound is a radius inside which the truth lies
+   with a stated integrity, not a 1-sigma error. So the shape question is now three-way — two
+   scalars, a covariance block, or a *bound plus an integrity level*, which is what aviation
+   actually publishes and what a downstream deconfliction check would want to read.
 7. **Heading and rate of turn.** `Kinematics` carries `course_deg` and nothing else angular, so
    AIS's true heading and rate of turn both land in `attributes`. Course and heading are
    different measurements and the difference is the interesting one: a vessel making 12 knots
@@ -1111,6 +1955,21 @@ No adapter yet. Every row below is a specification for whoever writes it.
    a scalar `heading_deg` is the right shape for the sources seen so far but it is strictly less
    than what a platform actually broadcasts, and every one of these fields is uninterpretable
    without a stated frame or datum.
+
+   **CAT021 answers the datum requirement rather than restating it, and it is the first source
+   that can.** It carries a magnetic heading (I021/152) and a true-north heading (REF `TNH`) as
+   two **separate data items**, and REF `SGV`'s `HRD` bit states the datum for a surface heading
+   or ground track in the same item that carries it. So the cross-frame join ADS-B inflicted on
+   this gap — heading in one frame, datum in another — is not inherent to the concept; one real
+   source states both together. A `heading_deg` beside a stated reference datum is therefore
+   demonstrably encodable, which moves this gap from "needs a design" to "needs a decision".
+
+   It also adds a **unit collision on the turn-rate half** that the proposal has to settle rather
+   than inherit: AIS states degrees per minute, the proposal is named `turn_rate_dpm`, and
+   CAT021's I021/165 Track Angle Rate is degrees per **second** at LSB 1/32, with 16 °/s meaning
+   "16 °/s or above" — a floor and not a rate, exactly as AIS's ±127 is. And it parks a third
+   angular quantity beside the other two: I021/230 Roll Angle, which is one component of the
+   attitude Legion sent as a quaternion.
 8. **Extent.** An entity has a position and no size. AIS states four dimensions from the
    position reference point — to bow, stern, port and starboard — from which length and beam
    follow, and a type 5 message adds draught. All of it is parked. It matters more than it
@@ -1127,6 +1986,17 @@ No adapter yet. Every row below is a specification for whoever writes it.
    *object* are different statements about the world and the spec does not say which it means. It
    is parked under both readings' names until a source resolves it, which is the honest handling
    and also the reason this gap should not be closed by guessing a shape.
+
+   **CAT021 states an extent, and its shape is the argument against a scalar.** I021/271's first
+   extension carries length and width as a **four-bit bucket index** into the specification's own
+   table — 2 means "L < 25 m and W < 28.5 m", 15 means "L > 85 m or W > 80 m". A bucket is a
+   range, so an extent field holding a single number would have to pick a midpoint and state a
+   size nobody measured; the parked form keeps the code and the bucket's bounds. It also settles
+   the second of this gap's three ideas: REF `GAO` states the **GPS antenna offset** in metres,
+   lateral and longitudinal, and I021/271's `POA` bit says whether the transmitted position *is*
+   the ADS-B position reference point. That is the offset-reference-point problem — the one that
+   makes a "position" accurate only to within the vessel's or airframe's own size — stated
+   numerically by a source for the first time rather than inferred.
 9. **No barometric altitude.** `Position.alt_m` is documented as metres HAE — a height above
    the WGS84 ellipsoid — and that is what an ADS-B type code 20-22 frame states, subject to the
    datum caveat below. The type code
@@ -1172,6 +2042,27 @@ No adapter yet. Every row below is a specification for whoever writes it.
    reading and names both possibilities in `attributes.altitude_type` rather than silently
    picking one. Whoever closes gap 9 inherits the same requirement gap 7 grew: an altitude field
    needs a stated datum beside it, and a cross-frame join to establish it.
+
+   **CAT021 closes the datum half outright and sharpens the unit half.** Its I021/140 Geometric
+   Height is defined in the item itself as the "minimum height from a plane tangent to the
+   earth's ellipsoid, defined by WGS-84" — so the reference surface is *stated in the same item
+   as the measurement*, and it reaches `alt_m` as a mapping rather than as an assertion. The
+   DO-260 version-0 mean-sea-level ambiguity that made the ADS-B row an assertion does not arise:
+   the ground station resolved it before emitting.
+
+   The unit half gets worse before it gets better, and whoever closes this gap has to decide it.
+   ADS-B parks a pressure altitude at `attributes.baro_altitude_ft`; CAT021 states one as a
+   **Flight Level** at LSB ¼ FL and parks it at `attributes.flight_level`. The two are the same
+   concept in two units under two keys, and the CAT021 row set deliberately declines to converge
+   on the ADS-B key for gap 1's reason — a private convention becoming a de-facto standard
+   without an owner removes the signal that a decision is missing. A `Position.baro_alt_m` would
+   have to name its unit, and both adapters would have to convert into it.
+
+   And the bridge between the two altitudes now has a second span. ADS-B carries the
+   GNSS-barometric difference; CAT021's REF `BPS` carries the **barometric pressure setting**
+   itself, as the aircraft's selected value minus 800 hPa at LSB 0.1 hPa. Between them they are
+   what relates a flight level to a height above the ellipsoid, and both should be considered in
+   the same change rather than in a fifth one.
 10. **No air-data speeds.** `Kinematics.speed_mps` is a speed over the ground: it is what AIS's
    SOG means, what a CoT track speed means, and what an ADS-B type 19 subtype 1/2 frame states.
    Subtypes 3 and 4 state an indicated or true AIRSPEED instead, which is a different
@@ -1183,6 +2074,16 @@ No adapter yet. Every row below is a specification for whoever writes it.
    consumer that wants wind needs a heading (gap 7) and a datum as well, and adding one
    `airspeed_mps` now would be closing a third of a question. Recorded so the next adapter
    author finds a decision rather than an oversight.
+
+   **CAT021 is the evidence that "a third of a question" was the right count.** It carries the
+   three quantities as they actually are: I021/150 Air Speed holds **either** an indicated
+   airspeed (LSB 2⁻¹⁴ NM/s) **or** a Mach number (LSB 0.001), selected by its own `IM` bit, and
+   I021/151 True Air Speed is a **separate data item** at LSB 1 kt with its own range-exceeded
+   floor. So one record can state an indicated airspeed and a true airspeed at once, and a field
+   named `airspeed_mps` would have to drop one of them. Add the true-north heading this format
+   also carries (gap 7) and the ground vector's track angle, and wind becomes computable from a
+   single record — the first time that has been true of any source here, and the reason this gap
+   is worth closing properly rather than a third at a time.
 11. **No entity hierarchy.** A CDM object has no parent. Legion's `parent_id` is `required` and
    nullable on every Entity and Track — so the source asserts, on every single object, either a
    parent or explicitly none — and the relationships it carries are the ordinary ones in a
@@ -1210,3 +2111,61 @@ No adapter yet. Every row below is a specification for whoever writes it.
    nothing to say what is 95 % likely — which is the worst of the options. *Proposed for 1.1.0
    only once gap 1 is settled*, because the two must be designed together or the CDM ends up with
    two nearly-identical string fields and no rule for choosing between them.
+13. **No per-measurement time.** An `Event` carries one `observed_at`, and `Position` and
+   `Kinematics` carry none — so every figure in one object is implicitly of one instant. CAT021
+   says otherwise, twice over. A single record carries **I021/071**, the time of applicability of
+   the *position*, and **I021/072**, the time of applicability of the *velocity*, and they are
+   different instants; the adapter follows the position because the fix is the thing on the map,
+   and the velocity's own time is parked where no consumer will look for it. Then **I021/295 Data
+   Ages** states, in twenty-three separate subfields at LSB 0.1 s, how old each individual item
+   is: the geometric height, the ground vector, the target identification, the target status, the
+   roll angle and eighteen more, each to a maximum of 25.5 s that means "or above".
+
+   It matters more than tidiness. An altitude twenty-five seconds older than the position beside
+   it is, for an aircraft climbing at 2 000 ft/min, roughly 800 feet wrong — and a deconfliction
+   check reading `Position.alt_m` has no way to learn that. The CDM's answer today is that the
+   whole object is stamped with the position's instant, which is the most accurate single answer
+   available and is still a claim the source did not make about most of the fields.
+
+   *Not yet proposed as a field*, and the shape is genuinely open: a time on `Position` and on
+   `Kinematics` would cover the two applicability items and none of the twenty-three ages, while
+   an ages map in `attributes` is exactly the private key this document keeps arguing against.
+   Whoever closes it should read `airtasking`'s staleness discipline first — a per-field age is a
+   freshness statement measured against an `as_of`, which is a problem already solved once in
+   this project rather than a new one.
+14. **No producing sensor.** `SourceRef` records the adapter, its version, the system and whether
+   the data is synthetic — and not **which sensor of that system** produced the object. CAT021 is
+   the first source to state it in every single record: I021/010 Data Source Identification
+   (SAC/SIC) is mandatory and names the ADS-B ground station, and I021/400 Receiver ID names the
+   receiver within a distributed ground system. Both are parked at `attributes.data_source`.
+
+   It is not bookkeeping. A multi-station ADS-B ground network reports one aircraft from several
+   stations, and which station saw it is what a fused picture needs in order to reason about
+   coverage, about a station that has gone quiet, and about a position only one receiver agrees
+   with. Parked, a consumer can read it only by knowing this adapter's private key — gap 1's
+   problem, one layer up.
+
+   *Not yet proposed as a field*, deliberately: a sensor is arguably an `Entity` of type `SENSOR`,
+   and relating an observation to the sensor that made it needs a relation the CDM does not have.
+   That is the same missing machinery as gap 11's hierarchy, and the two should be designed
+   together or the CDM acquires two different kinds of dangling pointer.
+15. **No intent.** The four canonical objects are what exists, what happened, where something has
+   been, and what we push out. **What a target declares it is going to do is none of them** — and
+   `PlanObject` is emphatically not it: that models *our* plan, drawn on somebody else's map.
+
+   ADS-B met this and deferred it, declining type code 29 with the words "it states an *intent*,
+   which the CDM has no object for — a selected altitude is not a position". CAT021 does not allow
+   the deferral, because intent arrives as ordinary in-scope data items that must be mapped or
+   excluded: **I021/146** Selected Altitude and **I021/148** Final State Selected Altitude (the
+   MCP/FCU or FMS altitude the crew dialled in), **I021/110** Trajectory Intent (repeated 4D
+   trajectory-change points, each with a position, an altitude, a time over the point and a turn
+   radius), REF **`SelH`** Selected Heading, and REF **`NAV`** (autopilot, VNAV, altitude hold,
+   approach mode). All of it is parked, and I021/110 is deliberately kept out of `Event.geometry`
+   — a `LineString` there would paint a declared future as an observation, which is the one
+   failure mode a picture cannot survive.
+
+   *Not yet proposed*, and it is a larger question than a field: an intent is a claim about the
+   future with its own confidence, its own expiry and its own author, and the honest shapes are a
+   fifth canonical object or an `Event` type meaning "a target declared X". Recorded here so that
+   whoever meets it next finds a decision rather than an oversight — and so that **two** adapters
+   having now hit it counts as evidence rather than as coincidence.
