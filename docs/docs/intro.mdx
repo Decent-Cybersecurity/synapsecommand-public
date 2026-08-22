@@ -8,12 +8,15 @@ description: What the SynapseCommand Canonical Data Model is, why it exists, and
 
 # The Canonical Data Model
 
-Five integration adapters are landing: PNTMAP GNSS alerts, Picogrid Legion, TAK /
-Cursor-on-Target, STANAG 4676 tracks, and the simulation feed.
+Two integration adapters are shipped and harness-verified — PNTMAP GNSS
+alerts and TAK / Cursor-on-Target (bidirectional) — with more landing
+next: AIS, ADS-B, STANAG 4676 tracks, ASTERIX radar, Picogrid Legion,
+and simulation feeds.
 
-Without a canonical model in the middle, five adapters means **ten translations** and five
-private notions of what "a contact" is — and the integration layer becomes the place where
-meaning is quietly lost. With one, an adapter is a thin translator and nothing else.
+Without a canonical model in the middle, N adapters means N×(N−1)
+translations and N private notions of what "a contact" is — and the
+integration layer becomes the place where meaning is quietly lost. With
+one, an adapter is a thin translator and nothing else.
 
 ```
 external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer
