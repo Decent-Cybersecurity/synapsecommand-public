@@ -1,0 +1,112 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "AIS is a collision-avoidance broadcast and states no identity; UNKNOWN is the format's silence, not a collapsed vocabulary",
+      "ais_message_type": 1,
+      "ais_talker": "AIVDM",
+      "entity_id_basis": "message MMSI",
+      "mmsi_category": "AIS-SART (search and rescue transmitter)",
+      "navigational_status": 14,
+      "navigational_status_text": "AIS-SART, MOB or EPIRB active",
+      "position_accuracy_high": true,
+      "position_source_basis": "utc_second 55 is a real UTC second, which only a positioning system synchronised to UTC supplies; this message type states no EPFD",
+      "rate_of_turn_raw": -128,
+      "repeat_indicator": 0,
+      "source_extras": {
+        "message": {
+          "manoeuvre_indicator": 0,
+          "radio_status": 0,
+          "raim": false,
+          "spare": 0
+        },
+        "sentences": [
+          {
+            "channel": "B",
+            "checksum": "4D",
+            "fill_bits": 0,
+            "fragment_count": 1,
+            "fragment_number": 1,
+            "payload": "1>MFFNNP00QMNK0P8AT00?wf0000",
+            "sequential_id": "",
+            "talker": "AIVDM"
+          }
+        ]
+      },
+      "symbol_basis": "derived from affiliation; AIS states no symbol and no identity",
+      "unavailable_fields": [
+        "rate_of_turn_raw",
+        "true_heading_deg"
+      ],
+      "utc_second_raw": 55,
+      "valid_from_basis": "message utc_second 55, reconciled to the nearest minute of the reception instant 2026-04-29T06:15:00.000Z \u2014 AIS states a second and no date"
+    },
+    "confidence": null,
+    "entity_id": "183de113-8d94-572d-a8c1-9043fc4e242e",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 0.0,
+      "speed_mps": 0.0
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 56.15,
+      "lon": 20.42,
+      "position_source": "GNSS"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "970299001",
+        "system": "AIS"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:14:55.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "4bcf5dad-bc56-5a85-9c04-3e9ee0a6e923",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:14:55.000Z",
+    "payload": {
+      "ais_message_type": 1,
+      "event_id_basis": "message MMSI + observed_at",
+      "observed_at_basis": "message utc_second 55, reconciled to the nearest minute of the reception instant 2026-04-29T06:15:00.000Z \u2014 AIS states a second and no date",
+      "received_at_basis": "no NMEA TAG block on any sentence; the injected clock is the delivery instant",
+      "received_at_unix": null,
+      "severity_basis": "navigational status 14 \u2014 the standard's own active distress transmission"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "183de113-8d94-572d-a8c1-9043fc4e242e"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "CRITICAL",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "970299001",
+        "system": "AIS"
+      }
+    ]
+  }
+]

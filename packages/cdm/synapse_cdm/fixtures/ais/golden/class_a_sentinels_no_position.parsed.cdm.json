@@ -1,0 +1,109 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "AIS is a collision-avoidance broadcast and states no identity; UNKNOWN is the format's silence, not a collapsed vocabulary",
+      "ais_message_type": 3,
+      "ais_talker": "AIVDM",
+      "entity_id_basis": "message MMSI",
+      "mmsi_category": "ship station",
+      "mmsi_mid": "299",
+      "navigational_status": 15,
+      "navigational_status_text": "undefined",
+      "position_accuracy_high": false,
+      "position_source_basis": "utc_second 63 \u2014 positioning system inoperative",
+      "rate_of_turn_raw": -128,
+      "repeat_indicator": 0,
+      "source_extras": {
+        "message": {
+          "manoeuvre_indicator": 0,
+          "radio_status": 0,
+          "raim": false,
+          "spare": 0
+        },
+        "sentences": [
+          {
+            "channel": "B",
+            "checksum": "61",
+            "fill_bits": 0,
+            "fragment_count": 1,
+            "fragment_number": 1,
+            "payload": "34M9RR?P?w<tSF0l4Q@>4?wv0000",
+            "sequential_id": "",
+            "talker": "AIVDM"
+          }
+        ]
+      },
+      "symbol_basis": "derived from affiliation; AIS states no symbol and no identity",
+      "unavailable_fields": [
+        "cog_deg",
+        "lat",
+        "lon",
+        "navigational_status",
+        "rate_of_turn_raw",
+        "sog_knots",
+        "true_heading_deg"
+      ],
+      "utc_second_meaning": "positioning system inoperative",
+      "utc_second_raw": 63,
+      "valid_from_basis": "message utc_second 63 is positioning system inoperative and not a time; the reception instant is used and the message states no other"
+    },
+    "confidence": null,
+    "entity_id": "8cf23745-abe1-5d5c-b126-3fc211c59a7c",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "299000456",
+        "system": "AIS"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "1e522fc9-d098-5515-883a-0cc939e8b717",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:00.000Z",
+    "payload": {
+      "ais_message_type": 3,
+      "event_id_basis": "message MMSI + observed_at",
+      "observed_at_basis": "message utc_second 63 is positioning system inoperative and not a time; the reception instant is used and the message states no other",
+      "received_at_basis": "no NMEA TAG block on any sentence; the injected clock is the delivery instant",
+      "received_at_unix": null,
+      "severity_basis": "AIS states no urgency outside navigational status 14; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "8cf23745-abe1-5d5c-b126-3fc211c59a7c"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "299000456",
+        "system": "AIS"
+      }
+    ]
+  }
+]

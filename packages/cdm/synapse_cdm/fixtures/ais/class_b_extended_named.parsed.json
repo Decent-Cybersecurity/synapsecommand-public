@@ -1,0 +1,39 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDM",
+      "fragment_count": 1,
+      "fragment_number": 1,
+      "sequential_id": "",
+      "channel": "A",
+      "payload": "C4M9SmP0o@GsV<88d1RaJ740:h:T6BV;06T2<a04T2dNBPh1Q120",
+      "fill_bits": 0,
+      "checksum": "6C"
+    }
+  ],
+  "message": {
+    "type": 19,
+    "repeat_indicator": 0,
+    "mmsi": "299000790",
+    "reserved_regional_1": 0,
+    "sog_knots": 22.1,
+    "position_accuracy": false,
+    "lon": 20.9114,
+    "lat": 56.873,
+    "cog_deg": 271.0,
+    "true_heading_deg": 270,
+    "utc_second": 8,
+    "reserved_regional_2": 0,
+    "vessel_name": "EXERCISE CRAFT BRAVO",
+    "ship_type": 37,
+    "dim_to_bow": 12,
+    "dim_to_stern": 3,
+    "dim_to_port": 2,
+    "dim_to_starboard": 2,
+    "epfd": 1,
+    "raim": false,
+    "dte": false,
+    "assigned_mode": false,
+    "spare": 0
+  }
+}

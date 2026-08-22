@@ -4,10 +4,11 @@ SynapseCommand's integration layer: the **Canonical Data Model**, its published 
 and the adapter SDK and validation harness that go with it. Apache 2.0.
 
 This is the contract layer, and it is public because that is what a contract is for. Five
-integration adapters are landing — PNTMAP GNSS alerts, Picogrid Legion, TAK / Cursor-on-Target,
-STANAG 4676 tracks, the simulation feed. Without a canonical model in the middle, five adapters
-means ten translations and five private notions of "a contact"; with one, an adapter is a thin
-translator and nothing else.
+integration adapters are landing — PNTMAP GNSS alerts, AIS, Picogrid Legion, TAK /
+Cursor-on-Target, STANAG 4676 tracks, the simulation feed. Three are shipped and
+harness-verified: `pntmap` (ingest), `tak` (bidirectional) and `ais` (bidirectional). Without a
+canonical model in the middle, N adapters means N×(N−1) translations and N private notions of
+"a contact"; with one, an adapter is a thin translator and nothing else.
 
 ```
 external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer

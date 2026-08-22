@@ -1,0 +1,32 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDM",
+      "fragment_count": 1,
+      "fragment_number": 1,
+      "sequential_id": "",
+      "channel": "A",
+      "payload": "14M9Tah00j0000000003Q2lt0000",
+      "fill_bits": 0,
+      "checksum": "18"
+    }
+  ],
+  "message": {
+    "type": 1,
+    "repeat_indicator": 0,
+    "mmsi": "299000999",
+    "navigational_status": 0,
+    "rate_of_turn_raw": 0,
+    "sog_knots": 5.0,
+    "position_accuracy": false,
+    "lon": 0.0,
+    "lat": 0.0,
+    "cog_deg": 90.0,
+    "true_heading_deg": 90,
+    "utc_second": 30,
+    "manoeuvre_indicator": 0,
+    "spare": 0,
+    "raim": false,
+    "radio_status": 0
+  }
+}

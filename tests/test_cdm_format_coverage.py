@@ -130,11 +130,20 @@ def test_the_documented_gaps_are_still_gaps():
         "gap 6 (no vertical accuracy) appears to be closed — update FORMAT_COVERAGE.md and "
         "the CoT point/@le row."
     )
+    # Gap 7 is two fields on purpose: heading and turn rate answer one question between them,
+    # and a gap opened twice for one concept gets closed twice differently. Both are asserted
+    # so closing either half alone still trips this.
+    for field in ("heading_deg", "turn_rate_dpm"):
+        assert field not in models.Kinematics.model_fields, (
+            f"gap 7 (no heading, no turn rate) appears to be closed — Kinematics.{field} now "
+            "exists. Update FORMAT_COVERAGE.md, MIGRATIONS.md and the AIS true-heading and "
+            "rate-of-turn rows, which park their values today."
+        )
 
 
 def test_the_gap_notes_are_referenced_from_the_table():
     text = DOC.read_text()
-    for number in range(1, 7):
+    for number in range(1, 9):
         assert f"**gap {number}**" in text or f"{number}. **" in text, (
             f"gap {number} is listed but never referenced from a table row"
         )

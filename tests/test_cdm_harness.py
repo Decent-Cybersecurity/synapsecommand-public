@@ -234,3 +234,26 @@ def test_a_declared_egress_that_raises_fails_rather_than_skipping():
     report = harness.run(_adapter(_BrokenEgressAdapter), FIXTURES)
     assert all(r["checks"]["roundtrip"] == "FAIL" for r in report["results"])
     assert "NotImplementedError" in " ".join(report["results"][0]["problems"])
+
+
+def test_a_fixture_directory_may_document_itself(tmp_path):
+    """`README.md` is skipped, and skipped BY NAME rather than by extension.
+
+    A fixture directory that explains what each payload is there to catch is right, and for a
+    binary format it is close to mandatory: an armoured AIS payload cannot carry a comment the
+    way a CoT fixture's XML can, so the prose has to live in a file beside it. Without this the
+    README is replayed as a payload and the adapter fails its own gate on a document.
+
+    Only that one name. A format whose payloads really are Markdown must still be replayable,
+    which is why this is not a `*.md` exclusion — an extension rule would quietly make one
+    class of adapter untestable to spare another a filename.
+    """
+    (tmp_path / "README.md").write_text("# what these fixtures are for\n")
+    (tmp_path / "notes.md").write_text("not the README\n")
+    report = harness.run(_adapter(), tmp_path)
+
+    replayed = {r["fixture"] for r in report["results"]}
+    assert "README.md" not in replayed
+    assert "notes.md" in replayed, (
+        "only README.md is skipped; any other .md file is a payload like any other"
+    )

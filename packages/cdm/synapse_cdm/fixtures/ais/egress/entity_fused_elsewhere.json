@@ -1,0 +1,34 @@
+{
+  "object_kind": "entity",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "FUSION",
+    "adapter": "ais",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "AIS", "external_id": "299000321"}
+  ],
+  "entity_id": "9d41f6b7-5c02-4e88-a13d-6f2b90c47e51",
+  "entity_type": "PLATFORM",
+  "affiliation": "UNKNOWN",
+  "symbol": null,
+  "position": {
+    "lat": 57.4410,
+    "lon": 22.9075,
+    "alt_m": null,
+    "position_source": "GNSS",
+    "accuracy_m": null
+  },
+  "kinematics": {"speed_mps": 4.63, "course_deg": 41.2, "climb_mps": null},
+  "attributes": {
+    "navigational_status": 5,
+    "true_heading_deg": 312,
+    "rate_of_turn_raw": -14,
+    "position_accuracy_high": true
+  },
+  "valid_from": "2026-04-29T06:13:37.000Z",
+  "valid_to": null,
+  "confidence": null
+}

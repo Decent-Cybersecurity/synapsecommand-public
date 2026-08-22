@@ -1,0 +1,112 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "AIS is a collision-avoidance broadcast and states no identity; UNKNOWN is the format's silence, not a collapsed vocabulary",
+      "ais_message_type": 4,
+      "ais_talker": "AIVDM",
+      "base_station_utc": {
+        "day": 29,
+        "hour": 6,
+        "minute": 9,
+        "month": 4,
+        "second": 30,
+        "year": 2026
+      },
+      "entity_id_basis": "message MMSI",
+      "epfd": 7,
+      "epfd_text": "surveyed",
+      "mmsi_category": "coast station",
+      "mmsi_mid": "299",
+      "position_accuracy_high": true,
+      "position_source_basis": "EPFD 7 \u2014 surveyed",
+      "repeat_indicator": 0,
+      "source_extras": {
+        "message": {
+          "radio_status": 0,
+          "raim": true,
+          "spare": 0
+        },
+        "sentences": [
+          {
+            "channel": "A",
+            "checksum": "3F",
+            "fill_bits": 0,
+            "fragment_count": 1,
+            "fragment_number": 1,
+            "payload": "402nOdAva>V9NQP;LhPEJg702000",
+            "sequential_id": "",
+            "talker": "AIVDM"
+          }
+        ]
+      },
+      "symbol_basis": "derived from affiliation; AIS states no symbol and no identity",
+      "unavailable_fields": [],
+      "utc_second_raw": 30,
+      "valid_from_basis": "base station UTC date and time (message 4) \u2014 the one message in scope that states a full instant; nothing is reconciled"
+    },
+    "confidence": null,
+    "entity_id": "88220ec0-6321-5719-a339-81afa3cddb3b",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 56.5089,
+      "lon": 21.0106,
+      "position_source": "MANUAL"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "002990001",
+        "system": "AIS"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:09:30.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "f7b20f52-ced9-5087-83df-8dae1e6c3184",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:09:30.000Z",
+    "payload": {
+      "ais_message_type": 4,
+      "event_id_basis": "message MMSI + observed_at",
+      "observed_at_basis": "base station UTC date and time (message 4) \u2014 the one message in scope that states a full instant; nothing is reconciled",
+      "received_at_basis": "no NMEA TAG block on any sentence; the injected clock is the delivery instant",
+      "received_at_unix": null,
+      "severity_basis": "AIS states no urgency outside navigational status 14; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "88220ec0-6321-5719-a339-81afa3cddb3b"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "002990001",
+        "system": "AIS"
+      }
+    ]
+  }
+]

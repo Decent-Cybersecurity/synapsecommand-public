@@ -72,6 +72,36 @@ is worth stating.
   for the nine paths whose value legitimately changes, and `UNKNOWN` as an enum member for the
   three CoT affiliation letters the CDM does not carry.
 
+- **`adapters/ais.py` 1.0.0 (AIS / NMEA 0183 AIVDM, bidirectional)** — message types 1, 2, 3,
+  4, 5, 18, 19 and 21, at **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  Three temptations were declined and are listed below as 1.1.0 candidates instead. AIS is the
+  format that makes the case for them, because it is the first one where the CDM's silence
+  costs something measurable: a vessel's true heading and its course over ground are different
+  numbers, and the difference between them is the interesting fact — a vessel making good 095
+  while its bow points 070 is being set by wind or current, or is not going where it is
+  pointing on purpose. Both land in `attributes` today, under keys only this adapter knows.
+
+  What the CDM had already was enough for everything else, and two existing decisions earned
+  their keep here specifically:
+
+  - **`Kinematics`'s docstring was written about AIS's 102.3 sentinel before any AIS adapter
+    existed.** Ten of them turned up — position 91/181, speed 102.3, course 360, heading 511,
+    rate of turn −128, UTC second 60–63, IMO/ETA/dimension 0, and draught 0.0. The last is the
+    one worth naming: it is the only sentinel that is also a plausible reading, so an adapter
+    that correctly nulls the other nine can still report that a laden tanker draws nothing.
+  - **`source_ids` being a LIST, and living on `CDMBase`.** A type 5 message states an MMSI and
+    an IMO number, and they are not alternatives: an MMSI is reassigned when a vessel changes
+    flag, an IMO number is fixed for the life of the hull. Both are emitted, under their own
+    system names.
+
+  One decision here is worth recording because it looks like a schema gap and is not.
+  `Position.accuracy_m` stays null for every AIS fix. AIS states position accuracy as one bit —
+  better or worse than 10 m — and writing `10.0` into a 1-sigma metre field would state an
+  error nobody measured. The flag is parked. No new field is proposed for it: a threshold and a
+  measurement are different kinds of claim, and giving the threshold a numeric home is how it
+  would quietly become one.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
@@ -89,8 +119,24 @@ evidence that was missing when they were first written down:
   exactly that case: `le="120.0"` on a track at 7 620 m, parked at `attributes.vertical_error_m`
   where no consumer will look for it.
 
-Neither is a blocker for an adapter, and that is the point of writing them down rather than
-adding them: `attributes` keeps the value, so the cost of the delay is private knowledge in
+- **`Kinematics.heading_deg` and `Kinematics.turn_rate_dpm`**, together and with one owner —
+  `FORMAT_COVERAGE.md` gap 7. AIS carries course over ground, true heading and rate of turn as
+  three separate measurements; the CDM carries the first and parks the other two. They are
+  proposed as a pair because they answer one question between them — where will this be next —
+  and a gap opened twice for one concept gets closed twice differently. Whoever implements it
+  inherits two sentinels: heading 511 means not available, and rate of turn ±127 means "faster
+  than 5° per 30 s", which is a floor, so a `turn_rate_dpm` of 127 would be a fabricated
+  measurement rather than a large one.
+
+A third gap is recorded in `FORMAT_COVERAGE.md` (gap 8, extent) and is deliberately NOT
+proposed as a field here. AIS states four dimensions from the position reference point plus a
+draught, and all of it is parked; but a bounding extent, an offset reference point and a
+draught are three different ideas, and STANAG 4676's own object-size fields should be read
+before any of them is added. A gap with no proposal is a decision too, and this one is
+"not yet understood well enough to name a field for".
+
+None of these is a blocker for an adapter, and that is the point of writing them down rather
+than adding them: `attributes` keeps the value, so the cost of the delay is private knowledge in
 consumers rather than lost data. When one lands, `tests/test_cdm_format_coverage.py::
 test_the_documented_gaps_are_still_gaps` fails deliberately until the document is closed with
 it — the gap cannot be fixed in code and left open in the prose.

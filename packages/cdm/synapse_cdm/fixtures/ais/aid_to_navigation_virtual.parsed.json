@@ -1,0 +1,37 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDM",
+      "fragment_count": 1,
+      "fragment_number": 1,
+      "sequential_id": "",
+      "channel": "B",
+      "payload": "E>jwC>g2d2a1TaRh9`2QTPV@6Pa0mjHP@T;T000003WP12p0C1P@",
+      "fill_bits": 4,
+      "checksum": "38"
+    }
+  ],
+  "message": {
+    "type": 21,
+    "repeat_indicator": 0,
+    "mmsi": "992990010",
+    "aid_type": 30,
+    "name": "EXERCISE SPECIAL MAR",
+    "position_accuracy": false,
+    "lon": 23.5,
+    "lat": 57.9,
+    "dim_to_bow": 0,
+    "dim_to_stern": 0,
+    "dim_to_port": 0,
+    "dim_to_starboard": 0,
+    "epfd": 7,
+    "utc_second": 15,
+    "off_position": false,
+    "regional_reserved": 0,
+    "raim": false,
+    "virtual_aid": true,
+    "assigned_mode": false,
+    "spare": 0,
+    "name_extension": "K ALFA"
+  }
+}

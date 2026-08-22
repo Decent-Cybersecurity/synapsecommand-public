@@ -1,0 +1,32 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDM",
+      "fragment_count": 1,
+      "fragment_number": 1,
+      "sequential_id": "",
+      "channel": "A",
+      "payload": "402nOdAva>V9NQP;LhPEJg702000",
+      "fill_bits": 0,
+      "checksum": "3F"
+    }
+  ],
+  "message": {
+    "type": 4,
+    "repeat_indicator": 0,
+    "mmsi": "002990001",
+    "utc_year": 2026,
+    "utc_month": 4,
+    "utc_day": 29,
+    "utc_hour": 6,
+    "utc_minute": 9,
+    "utc_second": 30,
+    "position_accuracy": true,
+    "lon": 21.0106,
+    "lat": 56.5089,
+    "epfd": 7,
+    "spare": 0,
+    "raim": true,
+    "radio_status": 0
+  }
+}

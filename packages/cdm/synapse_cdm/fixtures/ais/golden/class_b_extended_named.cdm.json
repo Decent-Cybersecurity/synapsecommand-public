@@ -1,0 +1,121 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "AIS is a collision-avoidance broadcast and states no identity; UNKNOWN is the format's silence, not a collapsed vocabulary",
+      "ais_message_type": 19,
+      "ais_talker": "AIVDM",
+      "beam_m": 4,
+      "dim_to_bow": 12,
+      "dim_to_port": 2,
+      "dim_to_starboard": 2,
+      "dim_to_stern": 3,
+      "entity_id_basis": "message MMSI",
+      "epfd": 1,
+      "epfd_text": "GPS",
+      "length_m": 15,
+      "mmsi_category": "ship station",
+      "mmsi_mid": "299",
+      "position_accuracy_high": false,
+      "position_source_basis": "EPFD 1 \u2014 GPS",
+      "repeat_indicator": 0,
+      "ship_type": 37,
+      "ship_type_text": "pleasure craft",
+      "source_extras": {
+        "message": {
+          "assigned_mode": false,
+          "dte": false,
+          "raim": false,
+          "reserved_regional_1": 0,
+          "reserved_regional_2": 0,
+          "spare": 0
+        },
+        "sentences": [
+          {
+            "channel": "A",
+            "checksum": "6C",
+            "fill_bits": 0,
+            "fragment_count": 1,
+            "fragment_number": 1,
+            "payload": "C4M9SmP0o@GsV<88d1RaJ740:h:T6BV;06T2<a04T2dNBPh1Q120",
+            "sequential_id": "",
+            "talker": "AIVDM"
+          }
+        ]
+      },
+      "symbol_basis": "derived from affiliation; AIS states no symbol and no identity",
+      "true_heading_deg": 270,
+      "unavailable_fields": [],
+      "utc_second_raw": 8,
+      "valid_from_basis": "message utc_second 8, reconciled to the nearest minute of the reception instant 2026-04-29T06:15:00.000Z \u2014 AIS states a second and no date",
+      "vessel_name": "EXERCISE CRAFT BRAVO"
+    },
+    "confidence": null,
+    "entity_id": "2ce71c31-04c6-522b-a51f-dcbe975bd028",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": null,
+      "course_deg": 271.0,
+      "speed_mps": 11.3692
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 56.873,
+      "lon": 20.9114,
+      "position_source": "GNSS"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "299000790",
+        "system": "AIS"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:15:08.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "4844e42e-bb43-513c-b1fd-244dfd1b13ba",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:08.000Z",
+    "payload": {
+      "ais_message_type": 19,
+      "event_id_basis": "message MMSI + observed_at",
+      "observed_at_basis": "message utc_second 8, reconciled to the nearest minute of the reception instant 2026-04-29T06:15:00.000Z \u2014 AIS states a second and no date",
+      "received_at_basis": "no NMEA TAG block on any sentence; the injected clock is the delivery instant",
+      "received_at_unix": null,
+      "severity_basis": "AIS states no urgency outside navigational status 14; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2ce71c31-04c6-522b-a51f-dcbe975bd028"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "299000790",
+        "system": "AIS"
+      }
+    ]
+  }
+]

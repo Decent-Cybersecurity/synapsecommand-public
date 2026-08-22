@@ -1,0 +1,37 @@
+{
+  "object_kind": "entity",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "AIS",
+    "adapter": "ais",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "AIS", "external_id": "299000654"},
+    {"system": "IMO", "external_id": "9284702"}
+  ],
+  "entity_id": "1b6e40a9-8f37-4c21-bd05-3ea7c9146f80",
+  "entity_type": "PLATFORM",
+  "affiliation": "UNKNOWN",
+  "symbol": null,
+  "position": null,
+  "kinematics": null,
+  "attributes": {
+    "ais_message_type": 5,
+    "vessel_name": "EXERCISE TANKER ECHO",
+    "call_sign": "ZZ9002B",
+    "destination": "VENTSPILS",
+    "ship_type": 80,
+    "dim_to_bow": 180,
+    "dim_to_stern": 30,
+    "dim_to_port": 16,
+    "dim_to_starboard": 16,
+    "draught_m": 11.4,
+    "epfd": 1,
+    "eta": {"month": 4, "day": 30, "hour": 7, "minute": 15}
+  },
+  "valid_from": "2026-04-29T06:14:52.000Z",
+  "valid_to": null,
+  "confidence": null
+}

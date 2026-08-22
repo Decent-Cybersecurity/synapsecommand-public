@@ -1,0 +1,36 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDM",
+      "fragment_count": 1,
+      "fragment_number": 1,
+      "sequential_id": "",
+      "channel": "A",
+      "payload": "14M9Q>h2B:Qe8fPPuCS7Dmr`0D7k",
+      "fill_bits": 0,
+      "checksum": "31",
+      "tag": {
+        "s": "SC-RX-RIGA",
+        "c": 1777443081
+      }
+    }
+  ],
+  "message": {
+    "type": 1,
+    "repeat_indicator": 0,
+    "mmsi": "299000123",
+    "navigational_status": 0,
+    "rate_of_turn_raw": 9,
+    "sog_knots": 13.8,
+    "position_accuracy": true,
+    "lon": 23.8412,
+    "lat": 57.5981,
+    "cog_deg": 187.5,
+    "true_heading_deg": 189,
+    "utc_second": 20,
+    "manoeuvre_indicator": 0,
+    "spare": 0,
+    "raim": false,
+    "radio_status": 82419
+  }
+}

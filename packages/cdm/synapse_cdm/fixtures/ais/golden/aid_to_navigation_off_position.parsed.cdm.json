@@ -1,0 +1,117 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "AIS is a collision-avoidance broadcast and states no identity; UNKNOWN is the format's silence, not a collapsed vocabulary",
+      "aid_name": "EXERCISE LIGHT BUOY",
+      "aid_name_base": "EXERCISE LIGHT BUOY",
+      "aid_type": 19,
+      "aid_type_text": "beacon, special mark",
+      "ais_message_type": 21,
+      "ais_talker": "AIVDM",
+      "beam_m": 6,
+      "dim_to_bow": 3,
+      "dim_to_port": 3,
+      "dim_to_starboard": 3,
+      "dim_to_stern": 3,
+      "entity_id_basis": "message MMSI",
+      "epfd": 7,
+      "epfd_text": "surveyed",
+      "length_m": 6,
+      "mmsi_category": "aid to navigation",
+      "mmsi_mid": "299",
+      "off_position": true,
+      "position_accuracy_high": true,
+      "position_source_basis": "EPFD 7 \u2014 surveyed",
+      "repeat_indicator": 0,
+      "source_extras": {
+        "message": {
+          "assigned_mode": false,
+          "raim": true,
+          "regional_reserved": 0,
+          "spare": 0
+        },
+        "sentences": [
+          {
+            "channel": "A",
+            "checksum": "5A",
+            "fill_bits": 4,
+            "fragment_count": 1,
+            "fragment_number": 1,
+            "payload": "E>jwC>qRd2a1TaRh64ST:@1:WdP@h:hp@;7P030HHKr@20",
+            "sequential_id": "",
+            "talker": "AIVDM"
+          }
+        ]
+      },
+      "symbol_basis": "derived from affiliation; AIS states no symbol and no identity",
+      "unavailable_fields": [],
+      "utc_second_raw": 52,
+      "valid_from_basis": "message utc_second 52, reconciled to the nearest minute of the reception instant 2026-04-29T06:15:00.000Z \u2014 AIS states a second and no date",
+      "virtual_aid": false
+    },
+    "confidence": null,
+    "entity_id": "a5988f29-f2b6-5fa1-93fe-7a91053e0762",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 56.5312,
+      "lon": 21.045,
+      "position_source": "MANUAL"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "992990011",
+        "system": "AIS"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:14:52.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "e790248f-1302-57b9-b482-b058140ad5ea",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:14:52.000Z",
+    "payload": {
+      "ais_message_type": 21,
+      "event_id_basis": "message MMSI + observed_at",
+      "observed_at_basis": "message utc_second 52, reconciled to the nearest minute of the reception instant 2026-04-29T06:15:00.000Z \u2014 AIS states a second and no date",
+      "received_at_basis": "no NMEA TAG block on any sentence; the injected clock is the delivery instant",
+      "received_at_unix": null,
+      "severity_basis": "AIS states no urgency outside navigational status 14; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "a5988f29-f2b6-5fa1-93fe-7a91053e0762"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "992990011",
+        "system": "AIS"
+      }
+    ]
+  }
+]

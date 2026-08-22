@@ -56,11 +56,17 @@ that changes every second.
 ## 1. Declare the class
 
 :::tip The sketch below is now a finished adapter
-`adapters/tak.py` ships as adapter #2, so the class outlined here exists for real. Read
-`pntmap.py` first — every rule appears in it at least once — then read `tak.py`, which is where
-the awkward cases live: XML rather than JSON, a bidirectional `from_cdm()`, a source sentinel
-that must become `null`, an enum collapse that has to stay recoverable, and the two fixture forms
-an XML adapter needs in order to be checked at all.
+`adapters/tak.py` ships as adapter #2 and `adapters/ais.py` as #3, so the class outlined here
+exists for real, twice. Read `pntmap.py` first — every rule appears in it at least once — then
+`tak.py`, which is where the awkward cases live: XML rather than JSON, a bidirectional
+`from_cdm()`, a source sentinel that must become `null`, an enum collapse that has to stay
+recoverable, and the two fixture forms a non-JSON adapter needs in order to be checked at all.
+
+Read `ais.py` when your format is harder than that: a binary payload rather than text, ten
+in-band sentinels rather than one (including a `0.0` that is also a plausible reading), several
+message types behind one entry point, a time field that states a second and no date — and no
+extension point at all on the way out, so the egress direction has to name what it cannot carry
+instead of parking it.
 :::
 
 The contract is checked at **class-definition time**, so a mistake here fails at import rather

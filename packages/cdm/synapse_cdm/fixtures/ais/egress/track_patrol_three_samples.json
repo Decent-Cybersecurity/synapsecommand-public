@@ -1,0 +1,30 @@
+{
+  "object_kind": "track",
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "AIS",
+    "adapter": "ais",
+    "adapter_version": "1.0.0",
+    "synthetic": true
+  },
+  "source_ids": [
+    {"system": "AIS", "external_id": "299000123"}
+  ],
+  "track_id": "5a1c7e30-2b94-4d18-9f6a-70c3e15b8d42",
+  "entity_id": "c0542054-80da-5686-ace1-a2168db65251",
+  "samples": [
+    {
+      "position": {"lat": 57.5981, "lon": 23.8412, "position_source": "GNSS"},
+      "observed_at": "2026-04-29T06:11:20.000Z"
+    },
+    {
+      "position": {"lat": 57.5904, "lon": 23.8455, "position_source": "GNSS"},
+      "observed_at": "2026-04-29T06:12:40.000Z"
+    },
+    {
+      "position": {"lat": 57.5827, "lon": 23.8498, "position_source": "GNSS"},
+      "observed_at": "2026-04-29T06:14:05.000Z"
+    }
+  ],
+  "track_quality": 0.8
+}

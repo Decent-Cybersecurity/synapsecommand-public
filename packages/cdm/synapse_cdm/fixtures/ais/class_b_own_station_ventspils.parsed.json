@@ -1,0 +1,36 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDO",
+      "fragment_count": 1,
+      "fragment_number": 1,
+      "sequential_id": "",
+      "channel": "B",
+      "payload": "B4M9Sm@0@8HaS88=MJPqgwn5mP06",
+      "fill_bits": 0,
+      "checksum": "02"
+    }
+  ],
+  "message": {
+    "type": 18,
+    "repeat_indicator": 0,
+    "mmsi": "299000789",
+    "reserved_regional_1": 0,
+    "sog_knots": 6.4,
+    "position_accuracy": true,
+    "lon": 21.5388,
+    "lat": 57.3942,
+    "cog_deg": 92.3,
+    "true_heading_deg": 511,
+    "utc_second": 44,
+    "reserved_regional_2": 0,
+    "cs_unit": true,
+    "display_flag": false,
+    "dsc_flag": true,
+    "band_flag": true,
+    "message_22_flag": true,
+    "assigned_mode": false,
+    "raim": true,
+    "radio_status": 393222
+  }
+}

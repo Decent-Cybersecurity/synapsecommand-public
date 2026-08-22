@@ -1,0 +1,51 @@
+{
+  "sentences": [
+    {
+      "talker": "AIVDM",
+      "fragment_count": 2,
+      "fragment_number": 1,
+      "sequential_id": "1",
+      "channel": "A",
+      "payload": "54M9Q>h2=c5qacW3344EPE8<U<F1HE=<Dj04hH56;pI995>jN04RAh@0000000",
+      "fill_bits": 0,
+      "checksum": "76",
+      "tag": {
+        "s": "SC-RX-RIGA",
+        "c": 1777443125
+      }
+    },
+    {
+      "talker": "AIVDM",
+      "fragment_count": 2,
+      "fragment_number": 2,
+      "sequential_id": "1",
+      "channel": "A",
+      "payload": "000000000",
+      "fill_bits": 2,
+      "checksum": "25"
+    }
+  ],
+  "message": {
+    "type": 5,
+    "repeat_indicator": 0,
+    "mmsi": "299000123",
+    "ais_version": 0,
+    "imo_number": 9284702,
+    "call_sign": "ZZ9001A",
+    "vessel_name": "EXERCISE VESSEL ALFA",
+    "ship_type": 70,
+    "dim_to_bow": 95,
+    "dim_to_stern": 25,
+    "dim_to_port": 9,
+    "dim_to_starboard": 9,
+    "epfd": 1,
+    "eta_month": 4,
+    "eta_day": 29,
+    "eta_hour": 18,
+    "eta_minute": 30,
+    "draught_m": 0.0,
+    "destination": "RIGA",
+    "dte": false,
+    "spare": 0
+  }
+}

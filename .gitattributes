@@ -1,0 +1,4 @@
+# NMEA 0183 sentences are terminated by CR LF, and the AIS fixtures are compared byte for byte
+# against golden output. Line-ending normalisation would rewrite them on checkout on Windows
+# and every round-trip test would fail on a difference no reader could see in a diff.
+*.nmea -text

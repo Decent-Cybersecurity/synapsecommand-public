@@ -58,4 +58,15 @@ include = ["synapse_cdm*"]
 # harness is pointed at `synapse_cdm/fixtures/<name>/` and a test resolves every row of
 # FORMAT_COVERAGE.md against the models. A wheel without them cannot run its own gate.
 [tool.setuptools.package-data]
-synapse_cdm = ["fixtures/**/*.json", "*.md"]
+# Every fixture form, not only the JSON one. A wheel that shipped `narva_patrol.parsed.json`
+# without `narva_patrol.xml` — or the AIS goldens without the `.nmea` they were produced from —
+# could still run the harness and would be checking the adapter against half its evidence. The
+# per-directory READMEs are included for the same reason: an armoured AIS payload is not
+# readable, so the file explaining what each fixture is there to catch is part of the fixture.
+synapse_cdm = [
+    "fixtures/**/*.json",
+    "fixtures/**/*.xml",
+    "fixtures/**/*.nmea",
+    "fixtures/**/*.md",
+    "*.md",
+]

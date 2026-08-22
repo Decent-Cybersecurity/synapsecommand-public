@@ -1,0 +1,137 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "AIS is a collision-avoidance broadcast and states no identity; UNKNOWN is the format's silence, not a collapsed vocabulary",
+      "ais_message_type": 5,
+      "ais_talker": "AIVDM",
+      "beam_m": 18,
+      "call_sign": "ZZ9001A",
+      "destination": "RIGA",
+      "dim_to_bow": 95,
+      "dim_to_port": 9,
+      "dim_to_starboard": 9,
+      "dim_to_stern": 25,
+      "entity_id_basis": "message MMSI",
+      "epfd": 1,
+      "epfd_text": "GPS",
+      "eta": {
+        "day": 29,
+        "hour": 18,
+        "minute": 30,
+        "month": 4
+      },
+      "imo_number": 9284702,
+      "length_m": 120,
+      "mmsi_category": "ship station",
+      "mmsi_mid": "299",
+      "position_source_basis": "EPFD 1 \u2014 GPS",
+      "repeat_indicator": 0,
+      "ship_type": 70,
+      "ship_type_text": "cargo (code 70)",
+      "source_extras": {
+        "message": {
+          "ais_version": 0,
+          "dte": false,
+          "spare": 0
+        },
+        "sentences": [
+          {
+            "channel": "A",
+            "checksum": "76",
+            "fill_bits": 0,
+            "fragment_count": 2,
+            "fragment_number": 1,
+            "payload": "54M9Q>h2=c5qacW3344EPE8<U<F1HE=<Dj04hH56;pI995>jN04RAh@0000000",
+            "sequential_id": "1",
+            "tag": {
+              "s": "SC-RX-RIGA"
+            },
+            "talker": "AIVDM"
+          },
+          {
+            "channel": "A",
+            "checksum": "25",
+            "fill_bits": 2,
+            "fragment_count": 2,
+            "fragment_number": 2,
+            "payload": "000000000",
+            "sequential_id": "1",
+            "talker": "AIVDM"
+          }
+        ]
+      },
+      "symbol_basis": "derived from affiliation; AIS states no symbol and no identity",
+      "unavailable_fields": [
+        "draught_m"
+      ],
+      "valid_from_basis": "AIS type 5 carries no time field at all; the reception instant is used, and the message itself states nothing about when",
+      "vessel_name": "EXERCISE VESSEL ALFA"
+    },
+    "confidence": null,
+    "entity_id": "c0542054-80da-5686-ace1-a2168db65251",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "299000123",
+        "system": "AIS"
+      },
+      {
+        "external_id": "9284702",
+        "system": "IMO"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:12:05.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "6c0a38be-c387-5b35-b32f-799789b594f3",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:12:05.000Z",
+    "payload": {
+      "ais_message_type": 5,
+      "event_id_basis": "message MMSI + observed_at",
+      "observed_at_basis": "AIS type 5 carries no time field at all; the reception instant is used, and the message itself states nothing about when",
+      "received_at_basis": "NMEA TAG block c:1777443125 \u2014 the receiver's own delivery timestamp",
+      "received_at_unix": 1777443125,
+      "severity_basis": "AIS states no urgency outside navigational status 14; INFO is the format's silence, not an assessment that nothing is wrong"
+    },
+    "received_at": "2026-04-29T06:12:05.000Z",
+    "related_entities": [
+      "c0542054-80da-5686-ace1-a2168db65251"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "ais",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "AIS"
+    },
+    "source_ids": [
+      {
+        "external_id": "299000123",
+        "system": "AIS"
+      },
+      {
+        "external_id": "9284702",
+        "system": "IMO"
+      }
+    ]
+  }
+]

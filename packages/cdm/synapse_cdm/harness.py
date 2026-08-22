@@ -208,8 +208,13 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         for kind in ("entity", "event", "track", "plan_object") if kind in published
     }
 
+    # README.md is skipped by name, not by extension: a fixture directory that documents
+    # itself is right, and for a binary format it is close to mandatory — an armoured AIS
+    # payload cannot carry a comment the way a CoT fixture's XML can. Only that one name,
+    # because a format whose payloads really are Markdown should still be replayable.
     paths = sorted(p for p in fixtures.iterdir()
-                   if p.is_file() and not p.name.startswith(".") and p.parent.name != GOLDEN_DIR)
+                   if p.is_file() and not p.name.startswith(".")
+                   and p.name != "README.md" and p.parent.name != GOLDEN_DIR)
     golden_dir = fixtures / GOLDEN_DIR
     results = []
     for path in paths:
