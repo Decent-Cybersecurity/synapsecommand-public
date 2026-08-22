@@ -1,0 +1,77 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "entity_id_basis": "emitter.emitter_id",
+      "interference_type": "jamming",
+      "source_extras": {
+        "emitter": {
+          "geolocation_method": "surveyed"
+        },
+        "note": "equatorial emitter \u2014 lat 0.0 is a real latitude and must survive translation"
+      },
+      "symbol_basis": "derived from affiliation; the source states no SIDC"
+    },
+    "confidence": 0.55,
+    "entity_id": "84db0e50-bc3b-5f30-9d66-338c0fbd883a",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 120.0,
+      "alt_m": null,
+      "lat": 0.0,
+      "lon": 6.7,
+      "position_source": "MANUAL"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "EMT-EQ-1",
+        "system": "PNTMAP"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T05:58:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "4097e582-b641-51ad-a4b6-a5af31f969c6",
+    "event_type": "GNSS_INTERFERENCE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T05:58:00.000Z",
+    "payload": {
+      "frequency_band": "L5",
+      "interference_type": "JAMMING",
+      "signal_strength_dbm": -94.0,
+      "source_extras": {}
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "84db0e50-bc3b-5f30-9d66-338c0fbd883a"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "PNTMAP-2026-04-29-0120",
+        "system": "PNTMAP"
+      }
+    ]
+  }
+]

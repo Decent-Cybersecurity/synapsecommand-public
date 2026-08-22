@@ -1,0 +1,49 @@
+{
+  "$defs": {
+    "InterferenceType": {
+      "description": "JAMMING denies, SPOOFING deceives, and the difference decides the response.\n\nKept distinct from UNKNOWN deliberately: a receiver that has lost lock knows it is being\njammed, whereas a receiver reporting a plausible but false position does not know it is\nbeing spoofed. An adapter that cannot tell says UNKNOWN rather than guessing JAMMING.",
+      "enum": [
+        "JAMMING",
+        "SPOOFING",
+        "UNKNOWN"
+      ],
+      "title": "InterferenceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://synapsecommand.local/cdm/1.0.0/payload_gnss_interference.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "description": "The typed payload for EventType.GNSS_INTERFERENCE.\n\n`extra=\"allow\"` here, unlike the canonical objects: this model's job is to give the fields\nwe DO understand a checked shape while letting a source's extra fields ride along in the\nsame dict. Forbidding extras here would force an adapter to split one payload across two\nplaces, and the never-drop rule would be satisfied by the letter while the meaning\nscattered.",
+  "properties": {
+    "frequency_band": {
+      "description": "GNSS band, e.g. L1, L2, L5, E1, B1 \u2014 the source's own name.",
+      "minLength": 1,
+      "title": "Frequency Band",
+      "type": "string"
+    },
+    "interference_type": {
+      "$ref": "#/$defs/InterferenceType"
+    },
+    "signal_strength_dbm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Received power in dBm, negative in practice. None = not reported; the unit is in the field name because a bare 'signal_strength' has been read as dBW, dBm and a 0-100 bar by three different consumers.",
+      "title": "Signal Strength Dbm"
+    }
+  },
+  "required": [
+    "frequency_band",
+    "interference_type"
+  ],
+  "title": "GnssInterferencePayload",
+  "type": "object",
+  "x-cdm-schema-version": "1.0.0"
+}

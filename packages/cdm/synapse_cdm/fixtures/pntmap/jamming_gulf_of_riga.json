@@ -1,0 +1,27 @@
+{
+  "alert_id": "PNTMAP-2026-04-29-0117",
+  "alert_time": "2026-04-29T06:12:44Z",
+  "valid_until": "2026-04-29T07:00:00Z",
+  "severity": "critical",
+  "interference": {
+    "type": "jamming",
+    "band": "L1",
+    "signal_strength_dbm": -71.5,
+    "confidence": 0.87,
+    "affected_constellations": ["GPS", "GALILEO"]
+  },
+  "emitter": {
+    "emitter_id": "EMT-4471",
+    "lat": 57.512,
+    "lon": 21.884,
+    "geolocation_method": "tdoa",
+    "accuracy_m": 2500,
+    "attribution": "hostile"
+  },
+  "affected_area": {
+    "type": "Polygon",
+    "coordinates": [[[21.60, 57.30], [22.15, 57.30], [22.15, 57.72], [21.60, 57.72], [21.60, 57.30]]]
+  },
+  "receiver_count": 14,
+  "reporting_node": "PNT-SENSOR-LIEPAJA-02"
+}

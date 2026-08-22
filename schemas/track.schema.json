@@ -1,0 +1,273 @@
+{
+  "$defs": {
+    "Integrity": {
+      "additionalProperties": false,
+      "description": "DESIGNED, NOT IMPLEMENTED \u2014 the field the PQC signature will occupy.\n\nNo crypto happens in this package (tests/test_cdm_boundary.py asserts the package imports\nno crypto module). The field exists from day one so that turning signing on is a value\nchange rather than a schema change: a schema change would be a MAJOR bump rippling through\nevery store and every consumer, and would arrive exactly when the signing work is already\nlate.\n\n`algorithm` is a free string rather than an enum, naming what the platform's ledger\nalready uses \u2014 ML-DSA-87 for entry signatures, SLH-DSA for checkpoints. Free, because the\nalgorithm that replaces those is not knowable now, and an enum would make the migration a\nMAJOR bump for a value nobody reasons over programmatically.\n\nAll three fields or none. A block holding a signature with no algorithm is unverifiable,\nand an unverifiable signature that LOOKS present is worse than an absent one: it reads as\nassurance to everything downstream that does not check.",
+      "properties": {
+        "algorithm": {
+          "description": "e.g. ML-DSA-87, SLH-DSA-SHAKE-256s.",
+          "minLength": 1,
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "chain_hash": {
+          "description": "Hash binding this object to the chain.",
+          "minLength": 1,
+          "title": "Chain Hash",
+          "type": "string"
+        },
+        "signature": {
+          "minLength": 1,
+          "title": "Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature",
+        "algorithm",
+        "chain_hash"
+      ],
+      "title": "Integrity",
+      "type": "object"
+    },
+    "Position": {
+      "additionalProperties": false,
+      "description": "A fix. Both coordinates required \u2014 that is how the null-never-zero rule is structural.\n\nAn unknown position is the ABSENCE of this object (`entity.position is None`), never a\nPosition holding zeros. Because lat and lon are required here, an adapter cannot express\n\"unknown\" as (0, 0) even by accident: it has to either omit the Position or state a real\ncoordinate. Coordinate zero is a real point in the Gulf of Guinea, and a contact painted\nthere is a contact that does not exist.\n\n`accuracy_m` absent means unknown accuracy, NOT perfect accuracy. Zero would mean a fix\nwith no error, which no sensor produces.",
+      "properties": {
+        "accuracy_m": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metres, 1-sigma. None = unknown, never 0.",
+          "title": "Accuracy M"
+        },
+        "alt_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metres HAE. None = unknown.",
+          "title": "Alt M"
+        },
+        "lat": {
+          "description": "WGS84 decimal degrees.",
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "WGS84 decimal degrees.",
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Lon",
+          "type": "number"
+        },
+        "position_source": {
+          "$ref": "#/$defs/PositionSource",
+          "description": "How the fix was obtained \u2014 the field that survives GNSS denial."
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "position_source"
+      ],
+      "title": "Position",
+      "type": "object"
+    },
+    "PositionSource": {
+      "description": "How the position was obtained. Load-bearing in a GNSS-denied environment.\n\nThis is the field that lets a commander tell a fix from a guess. When PNTMAP reports\njamming over an area, every GNSS-sourced position inside that area becomes suspect and\nevery INERTIAL or MANUAL one does not \u2014 a distinction that is impossible to make after\nthe fact if the adapter flattened them all to \"position\".",
+      "enum": [
+        "GNSS",
+        "INERTIAL",
+        "MANUAL",
+        "ESTIMATED"
+      ],
+      "title": "PositionSource",
+      "type": "string"
+    },
+    "SourceId": {
+      "additionalProperties": false,
+      "description": "One external identifier for an object \u2014 the provenance mapping.\n\nA list of these, not one, because the same object arrives from several systems: the same\nvessel is an MMSI to AIS, a track number to STANAG 4676 and a UID to TAK. Fusion joins\nthem later; the adapter's job is to record which name its own system used, and never to\noverwrite another system's entry.",
+      "properties": {
+        "external_id": {
+          "description": "That system's own identifier.",
+          "minLength": 1,
+          "title": "External Id",
+          "type": "string"
+        },
+        "system": {
+          "description": "The external system, e.g. PNTMAP, TAK.",
+          "minLength": 1,
+          "title": "System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system",
+        "external_id"
+      ],
+      "title": "SourceId",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "description": "Which adapter produced this object, from which system, and whether it is real.\n\n`synthetic` is required and has no default. Every fixture in this repository is synthetic\nand every scenario package is too (TR-12), and the platform keeps the synthetic and live\nlayers apart over one interface \u2014 so an object that does not say which layer it belongs to\ncannot be filed. A default of `false` would silently promote exercise data to operational\ndata, which is the dangerous direction; a default of `true` would silently demote live\ndata and hide it from an operator. There is no safe default, so there is no default.",
+      "properties": {
+        "adapter": {
+          "description": "Adapter name, e.g. pntmap.",
+          "minLength": 1,
+          "title": "Adapter",
+          "type": "string"
+        },
+        "adapter_version": {
+          "description": "Adapter semver.",
+          "minLength": 1,
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "synthetic": {
+          "description": "true for anything not from a real source (TR-12).",
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "system": {
+          "description": "The external system this came from.",
+          "minLength": 1,
+          "title": "System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system",
+        "adapter",
+        "adapter_version",
+        "synthetic"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "TrackSample": {
+      "additionalProperties": false,
+      "description": "One position at one instant. The unit STANAG 4676 calls a track point.",
+      "properties": {
+        "observed_at": {
+          "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        }
+      },
+      "required": [
+        "position",
+        "observed_at"
+      ],
+      "title": "TrackSample",
+      "type": "object"
+    }
+  },
+  "$id": "https://synapsecommand.local/cdm/1.0.0/track.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An entity's position history, in time order. The order is a contract, not a hope.\n\nA scrambled sample list produces nonsense the moment anything differentiates it \u2014 speed\nfrom consecutive positions, a heading arrow, a predicted point. So non-decreasing\ntimestamps are validated here, at the boundary, where the defect is one adapter's bug\nrather than a mystery in a fusion layer three hops downstream.\n\nEqual timestamps are ALLOWED: two sensors reporting the same instant is real, and\nrejecting it would refuse legitimate multi-source data.",
+  "properties": {
+    "entity_id": {
+      "description": "The Entity this history belongs to.",
+      "format": "uuid",
+      "title": "Entity Id",
+      "type": "string"
+    },
+    "integrity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Integrity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "PQC signature block \u2014 designed, not yet populated."
+    },
+    "object_kind": {
+      "const": "track",
+      "default": "track",
+      "title": "Object Kind",
+      "type": "string"
+    },
+    "samples": {
+      "description": "Time-ordered, non-decreasing. At least one.",
+      "items": {
+        "$ref": "#/$defs/TrackSample"
+      },
+      "minItems": 1,
+      "title": "Samples",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "description": "Semver of the CDM this object was written against.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceRef",
+      "description": "Which adapter produced this object. Required on every kind."
+    },
+    "source_ids": {
+      "description": "Every external identifier this object is known by. At least one, on EVERY kind \u2014 see the class docstring.",
+      "items": {
+        "$ref": "#/$defs/SourceId"
+      },
+      "minItems": 1,
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "track_id": {
+      "format": "uuid",
+      "title": "Track Id",
+      "type": "string"
+    },
+    "track_quality": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "0..1. None = not assessed, never 0.",
+      "title": "Track Quality"
+    }
+  },
+  "required": [
+    "source",
+    "source_ids",
+    "track_id",
+    "entity_id",
+    "samples"
+  ],
+  "title": "Track",
+  "type": "object",
+  "x-cdm-schema-version": "1.0.0"
+}

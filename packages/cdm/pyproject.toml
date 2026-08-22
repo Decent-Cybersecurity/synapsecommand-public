@@ -1,0 +1,61 @@
+# Packaging for the Canonical Data Model.
+#
+# The version is read FROM `synapse_cdm/version.py` rather than restated here. The CDM's
+# whole versioning story (MIGRATIONS.md) hangs on one semver string that every serialised
+# object carries as `schema_version`; a second copy of it in packaging metadata would be a
+# copy nothing keeps identical, and the failure mode is silent — a wheel labelled 1.0.0
+# shipping objects that say 1.1.0. setuptools reads the assignment statically, so nothing
+# in the package (and none of its dependencies) is imported at build time.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapse_cdm"
+dynamic = ["version"]
+description = "SynapseCommand Canonical Data Model: the four canonical objects, the adapter SDK, and the validation harness"
+readme = "synapse_cdm/README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{ name = "Decent Cybersecurity" }]
+keywords = ["canonical-data-model", "adapter", "geojson", "stanag-4676", "cursor-on-target"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
+]
+
+# pydantic carries the models; jsonschema is what the harness validates the PUBLISHED schema
+# with (see harness check 2 — validating against the model would test the model against
+# itself). Neither is optional: importing synapse_cdm needs the first, running the harness
+# the second.
+dependencies = [
+    "pydantic>=2.6",
+    "jsonschema>=4.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
+
+[project.urls]
+Homepage = "https://github.com/decent-cybersecurity/synapsecommand-public"
+Documentation = "https://github.com/decent-cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/README.md"
+
+[project.scripts]
+# The two entry points the README documents as `python -m ...`; both stay importable that way.
+cdm-harness = "synapse_cdm.harness:main"
+cdm-schemas = "synapse_cdm.schemas:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "synapse_cdm.version.SCHEMA_VERSION" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["synapse_cdm*"]
+
+# The fixtures and the two reference documents are part of the package, not decoration: the
+# harness is pointed at `synapse_cdm/fixtures/<name>/` and a test resolves every row of
+# FORMAT_COVERAGE.md against the models. A wheel without them cannot run its own gate.
+[tool.setuptools.package-data]
+synapse_cdm = ["fixtures/**/*.json", "*.md"]

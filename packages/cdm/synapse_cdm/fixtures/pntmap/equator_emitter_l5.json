@@ -1,0 +1,19 @@
+{
+  "alert_id": "PNTMAP-2026-04-29-0120",
+  "alert_time": "2026-04-29T05:58:00Z",
+  "severity": "info",
+  "interference": {
+    "type": "jamming",
+    "band": "L5",
+    "signal_strength_dbm": -94.0,
+    "confidence": 0.55
+  },
+  "emitter": {
+    "emitter_id": "EMT-EQ-1",
+    "lat": 0.0,
+    "lon": 6.7,
+    "geolocation_method": "surveyed",
+    "accuracy_m": 120
+  },
+  "note": "equatorial emitter — lat 0.0 is a real latitude and must survive translation"
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "affiliation": "HOSTILE",
+    "attributes": {
+      "entity_id_basis": "emitter.emitter_id",
+      "interference_type": "jamming",
+      "source_extras": {
+        "emitter": {
+          "attribution": "hostile",
+          "geolocation_method": "tdoa"
+        },
+        "receiver_count": 14,
+        "reporting_node": "PNT-SENSOR-LIEPAJA-02"
+      },
+      "symbol_basis": "derived from affiliation; the source states no SIDC"
+    },
+    "confidence": 0.87,
+    "entity_id": "2bcbebf2-45ac-511c-a635-f115c0b9b7ac",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 2500.0,
+      "alt_m": null,
+      "lat": 57.512,
+      "lon": 21.884,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "EMT-4471",
+        "system": "PNTMAP"
+      }
+    ],
+    "symbol": "10260000000000000000",
+    "valid_from": "2026-04-29T06:12:44.000Z",
+    "valid_to": "2026-04-29T07:00:00.000Z"
+  },
+  {
+    "event_id": "a24f7f97-3783-52af-96e3-7f465435341e",
+    "event_type": "GNSS_INTERFERENCE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.6,
+            57.3
+          ],
+          [
+            22.15,
+            57.3
+          ],
+          [
+            22.15,
+            57.72
+          ],
+          [
+            21.6,
+            57.72
+          ],
+          [
+            21.6,
+            57.3
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:12:44.000Z",
+    "payload": {
+      "frequency_band": "L1",
+      "interference_type": "JAMMING",
+      "signal_strength_dbm": -71.5,
+      "source_extras": {
+        "affected_constellations": [
+          "GPS",
+          "GALILEO"
+        ]
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2bcbebf2-45ac-511c-a635-f115c0b9b7ac"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "CRITICAL",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "PNTMAP-2026-04-29-0117",
+        "system": "PNTMAP"
+      }
+    ]
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "entity_id_basis": "emitter.emitter_id",
+      "interference_type": "spoofing",
+      "source_extras": {
+        "emitter": {
+          "attribution": "unknown",
+          "geolocation_method": "none"
+        },
+        "receiver_count": 3
+      },
+      "symbol_basis": "derived from affiliation; the source states no SIDC"
+    },
+    "confidence": 0.42,
+    "entity_id": "35f8905a-8f20-5950-b14e-5e12afef2588",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "EMT-UNLOCATED-9",
+        "system": "PNTMAP"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:31:02.500Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "15797f64-69c2-53da-9dda-4450ac0ac4a7",
+    "event_type": "GNSS_INTERFERENCE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:31:02.500Z",
+    "payload": {
+      "frequency_band": "L1",
+      "interference_type": "SPOOFING",
+      "signal_strength_dbm": null,
+      "source_extras": {
+        "false_position_offset_m": 1830
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "35f8905a-8f20-5950-b14e-5e12afef2588"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "PNTMAP-2026-04-29-0118",
+        "system": "PNTMAP"
+      }
+    ]
+  }
+]

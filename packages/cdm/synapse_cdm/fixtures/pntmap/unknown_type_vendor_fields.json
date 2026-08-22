@@ -1,0 +1,22 @@
+{
+  "alert_id": "PNTMAP-2026-04-29-0119",
+  "alert_time": "2026-04-29T06:44:19Z",
+  "severity": "advisory",
+  "interference": {
+    "type": "anomalous_carrier",
+    "band": "E1",
+    "signal_strength_dbm": -88.25,
+    "confidence": 0.31
+  },
+  "emitter": {
+    "lat": 57.045,
+    "lon": 21.02,
+    "geolocation_method": "aoa",
+    "accuracy_m": 9000
+  },
+  "vendor": {
+    "detector_firmware": "2.11.4-rc3",
+    "raw_snr_db": 4.75,
+    "classifier": {"model": "pnt-cnn-v3", "margin": 0.08}
+  }
+}

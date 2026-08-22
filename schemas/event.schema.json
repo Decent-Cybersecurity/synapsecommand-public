@@ -1,0 +1,322 @@
+{
+  "$defs": {
+    "EventType": {
+      "enum": [
+        "DETECTION",
+        "GNSS_INTERFERENCE",
+        "TRACK_UPDATE",
+        "ALERT",
+        "STATUS_CHANGE",
+        "PLAN_INJECT",
+        "SIM_RESULT"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "Integrity": {
+      "additionalProperties": false,
+      "description": "DESIGNED, NOT IMPLEMENTED \u2014 the field the PQC signature will occupy.\n\nNo crypto happens in this package (tests/test_cdm_boundary.py asserts the package imports\nno crypto module). The field exists from day one so that turning signing on is a value\nchange rather than a schema change: a schema change would be a MAJOR bump rippling through\nevery store and every consumer, and would arrive exactly when the signing work is already\nlate.\n\n`algorithm` is a free string rather than an enum, naming what the platform's ledger\nalready uses \u2014 ML-DSA-87 for entry signatures, SLH-DSA for checkpoints. Free, because the\nalgorithm that replaces those is not knowable now, and an enum would make the migration a\nMAJOR bump for a value nobody reasons over programmatically.\n\nAll three fields or none. A block holding a signature with no algorithm is unverifiable,\nand an unverifiable signature that LOOKS present is worse than an absent one: it reads as\nassurance to everything downstream that does not check.",
+      "properties": {
+        "algorithm": {
+          "description": "e.g. ML-DSA-87, SLH-DSA-SHAKE-256s.",
+          "minLength": 1,
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "chain_hash": {
+          "description": "Hash binding this object to the chain.",
+          "minLength": 1,
+          "title": "Chain Hash",
+          "type": "string"
+        },
+        "signature": {
+          "minLength": 1,
+          "title": "Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature",
+        "algorithm",
+        "chain_hash"
+      ],
+      "title": "Integrity",
+      "type": "object"
+    },
+    "LineString": {
+      "additionalProperties": false,
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "minItems": 2,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "LineString",
+          "default": "LineString",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "LineString",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "coordinates": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "Point",
+          "default": "Point",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "Polygon": {
+      "additionalProperties": false,
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "Polygon",
+          "default": "Polygon",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "Polygon",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "INFO",
+        "ADVISORY",
+        "WARNING",
+        "CRITICAL"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "SourceId": {
+      "additionalProperties": false,
+      "description": "One external identifier for an object \u2014 the provenance mapping.\n\nA list of these, not one, because the same object arrives from several systems: the same\nvessel is an MMSI to AIS, a track number to STANAG 4676 and a UID to TAK. Fusion joins\nthem later; the adapter's job is to record which name its own system used, and never to\noverwrite another system's entry.",
+      "properties": {
+        "external_id": {
+          "description": "That system's own identifier.",
+          "minLength": 1,
+          "title": "External Id",
+          "type": "string"
+        },
+        "system": {
+          "description": "The external system, e.g. PNTMAP, TAK.",
+          "minLength": 1,
+          "title": "System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system",
+        "external_id"
+      ],
+      "title": "SourceId",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "description": "Which adapter produced this object, from which system, and whether it is real.\n\n`synthetic` is required and has no default. Every fixture in this repository is synthetic\nand every scenario package is too (TR-12), and the platform keeps the synthetic and live\nlayers apart over one interface \u2014 so an object that does not say which layer it belongs to\ncannot be filed. A default of `false` would silently promote exercise data to operational\ndata, which is the dangerous direction; a default of `true` would silently demote live\ndata and hide it from an operator. There is no safe default, so there is no default.",
+      "properties": {
+        "adapter": {
+          "description": "Adapter name, e.g. pntmap.",
+          "minLength": 1,
+          "title": "Adapter",
+          "type": "string"
+        },
+        "adapter_version": {
+          "description": "Adapter semver.",
+          "minLength": 1,
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "synthetic": {
+          "description": "true for anything not from a real source (TR-12).",
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "system": {
+          "description": "The external system this came from.",
+          "minLength": 1,
+          "title": "System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system",
+        "adapter",
+        "adapter_version",
+        "synthetic"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://synapsecommand.local/cdm/1.0.0/event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Anything that happens. The audit-bearing object: two timestamps and a source, always.",
+  "properties": {
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "geometry": {
+      "anyOf": [
+        {
+          "discriminator": {
+            "mapping": {
+              "LineString": "#/$defs/LineString",
+              "Point": "#/$defs/Point",
+              "Polygon": "#/$defs/Polygon"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Point"
+            },
+            {
+              "$ref": "#/$defs/LineString"
+            },
+            {
+              "$ref": "#/$defs/Polygon"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "GeoJSON, WGS84, [lon, lat] order \u2014 e.g. a jamming footprint.",
+      "title": "Geometry"
+    },
+    "integrity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Integrity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "PQC signature block \u2014 designed, not yet populated."
+    },
+    "object_kind": {
+      "const": "event",
+      "default": "event",
+      "title": "Object Kind",
+      "type": "string"
+    },
+    "observed_at": {
+      "description": "When the SOURCE saw it. Never receipt time.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "description": "Event-specific fields. Validated against PAYLOAD_MODELS[event_type] when one is registered; free-form otherwise. Also the never-drop bag for events.",
+      "title": "Payload",
+      "type": "object"
+    },
+    "received_at": {
+      "description": "When WE took delivery. Never source time.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+      "title": "Received At",
+      "type": "string"
+    },
+    "related_entities": {
+      "description": "entity_id values this event concerns. Empty when the event concerns no specific entity (a feed-level status change).",
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Related Entities",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "description": "Semver of the CDM this object was written against.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "severity": {
+      "$ref": "#/$defs/Severity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceRef",
+      "description": "Which adapter produced this object. Required on every kind."
+    },
+    "source_ids": {
+      "description": "Every external identifier this object is known by. At least one, on EVERY kind \u2014 see the class docstring.",
+      "items": {
+        "$ref": "#/$defs/SourceId"
+      },
+      "minItems": 1,
+      "title": "Source Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source",
+    "source_ids",
+    "event_id",
+    "event_type",
+    "severity",
+    "observed_at",
+    "received_at"
+  ],
+  "title": "Event",
+  "type": "object",
+  "x-cdm-schema-version": "1.0.0"
+}

@@ -1,0 +1,17 @@
+{
+  "alert_id": "PNTMAP-2026-04-29-0118",
+  "alert_time": "2026-04-29T06:31:02.500Z",
+  "severity": "warning",
+  "interference": {
+    "type": "spoofing",
+    "band": "L1",
+    "confidence": 0.42,
+    "false_position_offset_m": 1830
+  },
+  "emitter": {
+    "emitter_id": "EMT-UNLOCATED-9",
+    "geolocation_method": "none",
+    "attribution": "unknown"
+  },
+  "receiver_count": 3
+}

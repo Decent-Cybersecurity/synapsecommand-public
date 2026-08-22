@@ -1,0 +1,84 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "entity_id_basis": "alert_id",
+      "interference_type": "anomalous_carrier",
+      "source_extras": {
+        "emitter": {
+          "geolocation_method": "aoa"
+        },
+        "vendor": {
+          "classifier": {
+            "margin": 0.08,
+            "model": "pnt-cnn-v3"
+          },
+          "detector_firmware": "2.11.4-rc3",
+          "raw_snr_db": 4.75
+        }
+      },
+      "symbol_basis": "derived from affiliation; the source states no SIDC"
+    },
+    "confidence": 0.31,
+    "entity_id": "74dbb71a-86f1-5e22-9da4-ad618600c19b",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 9000.0,
+      "alt_m": null,
+      "lat": 57.045,
+      "lon": 21.02,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "PNTMAP-2026-04-29-0119",
+        "system": "PNTMAP"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:44:19.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "c6750275-c9ec-5dc6-bdfd-8bac4bb4545f",
+    "event_type": "GNSS_INTERFERENCE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:44:19.000Z",
+    "payload": {
+      "frequency_band": "E1",
+      "interference_type": "UNKNOWN",
+      "signal_strength_dbm": -88.25,
+      "source_extras": {}
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "74dbb71a-86f1-5e22-9da4-ad618600c19b"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "ADVISORY",
+    "source": {
+      "adapter": "pntmap",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "PNTMAP"
+    },
+    "source_ids": [
+      {
+        "external_id": "PNTMAP-2026-04-29-0119",
+        "system": "PNTMAP"
+      }
+    ]
+  }
+]
