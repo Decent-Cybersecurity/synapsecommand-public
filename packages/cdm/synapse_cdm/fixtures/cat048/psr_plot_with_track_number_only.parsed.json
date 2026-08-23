@@ -1,0 +1,67 @@
+{
+  "block": {
+    "category": 48,
+    "length": 19,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "f112",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "20",
+        "I048/040": "0c80d555",
+        "I048/140": "2a3000",
+        "I048/161": "00c7",
+        "I048/170": "2100"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 1,
+          "typ_text": "Single PSR detection"
+        },
+        "I048/040": {
+          "rho_nm": 12.5,
+          "rho_raw": 3200,
+          "theta_deg": 299.9981689453125,
+          "theta_raw": 54613
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/161": {
+          "spare_bits_16_13": 0,
+          "track_number": 199
+        },
+        "I048/170": {
+          "cdm": 0,
+          "cdm_text": "Maintaining",
+          "cnf": 0,
+          "dou": 0,
+          "extent": {
+            "gho": 0,
+            "spare_bits_4_2": 0,
+            "sup": 0,
+            "tcc": 0,
+            "tre": 0
+          },
+          "mah": 0,
+          "rad": 1,
+          "rad_text": "PSR Track"
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

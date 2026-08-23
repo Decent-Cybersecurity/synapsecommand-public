@@ -1,0 +1,60 @@
+{
+  "block": {
+    "category": 48,
+    "length": 15,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e112",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/140": "2a3000",
+        "I048/161": "00c7",
+        "I048/170": "4180"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/161": {
+          "spare_bits_16_13": 0,
+          "track_number": 199
+        },
+        "I048/170": {
+          "cdm": 0,
+          "cdm_text": "Maintaining",
+          "cnf": 0,
+          "dou": 0,
+          "extent": {
+            "gho": 0,
+            "spare_bits_4_2": 0,
+            "sup": 0,
+            "tcc": 0,
+            "tre": 1
+          },
+          "mah": 0,
+          "rad": 2,
+          "rad_text": "SSR/Mode S Track"
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

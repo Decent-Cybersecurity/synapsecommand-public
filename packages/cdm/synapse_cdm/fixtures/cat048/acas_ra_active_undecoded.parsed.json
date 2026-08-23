@@ -1,0 +1,109 @@
+{
+  "block": {
+    "category": 48,
+    "length": 37,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e1a10380",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a1010196",
+        "I048/140": "2a3000",
+        "I048/220": "0029ab",
+        "I048/230": "20e0",
+        "I048/250": "013111111111111131",
+        "I048/260": "3141592653589a"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [
+            {
+              "err": false,
+              "foe_fri": 0,
+              "foe_fri_text": "No Mode 4 interrogation",
+              "me": false,
+              "mi": false,
+              "tst": false,
+              "xpp": false
+            },
+            {
+              "adsb": {
+                "available": false,
+                "populated": false
+              },
+              "pai": {
+                "available": false,
+                "populated": false
+              },
+              "scn": {
+                "available": false,
+                "populated": false
+              },
+              "spare_bit_2": 0
+            },
+            {
+              "acasxv": {
+                "populated": true,
+                "text": "ACAS Xu Version 1",
+                "value": 2
+              },
+              "poxpr": {
+                "populated": true,
+                "supported": true
+              }
+            }
+          ],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/220": {
+          "address": "0029AB",
+          "address_raw": 10667
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        },
+        "I048/250": {
+          "registers": [
+            {
+              "bds1": 3,
+              "bds2": 1,
+              "data": "31111111111111",
+              "extraction": "GICB register 3,1"
+            }
+          ],
+          "rep": 1
+        },
+        "I048/260": {
+          "acas_ra": "3141592653589a"
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

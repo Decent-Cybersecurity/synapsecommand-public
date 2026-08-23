@@ -1,0 +1,114 @@
+{
+  "block": {
+    "category": 48,
+    "length": 39,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "fdd702",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/040": "37805800",
+        "I048/070": "08b9",
+        "I048/090": "0578",
+        "I048/140": "2a3000",
+        "I048/161": "00c7",
+        "I048/170": "4100",
+        "I048/200": "08524111",
+        "I048/220": "0029ab",
+        "I048/230": "20e0",
+        "I048/240": "1584844b0c60"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/040": {
+          "rho_nm": 55.5,
+          "rho_raw": 14208,
+          "theta_deg": 123.75,
+          "theta_raw": 22528
+        },
+        "I048/070": {
+          "code_octal": "4271",
+          "code_raw": 2233,
+          "g": 0,
+          "l": 0,
+          "spare_bit_13": 0,
+          "v": 0
+        },
+        "I048/090": {
+          "flight_level": 350.0,
+          "flight_level_raw": 1400,
+          "g": 0,
+          "v": 0
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/161": {
+          "spare_bits_16_13": 0,
+          "track_number": 199
+        },
+        "I048/170": {
+          "cdm": 0,
+          "cdm_text": "Maintaining",
+          "cnf": 0,
+          "dou": 0,
+          "extent": {
+            "gho": 0,
+            "spare_bits_4_2": 0,
+            "sup": 0,
+            "tcc": 0,
+            "tre": 0
+          },
+          "mah": 0,
+          "rad": 2,
+          "rad_text": "SSR/Mode S Track"
+        },
+        "I048/200": {
+          "groundspeed_nm_s": 0.1300048828125,
+          "groundspeed_raw": 2130,
+          "heading_deg": 91.4996337890625,
+          "heading_raw": 16657
+        },
+        "I048/220": {
+          "address": "0029AB",
+          "address_raw": 10667
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        },
+        "I048/240": {
+          "identification": "EXRDR01",
+          "identification_raw": 23658899377248
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

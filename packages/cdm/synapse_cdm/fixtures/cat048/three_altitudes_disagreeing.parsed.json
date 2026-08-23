@@ -1,0 +1,112 @@
+{
+  "block": {
+    "category": 48,
+    "length": 31,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "f5815a",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/030": "2518",
+        "I048/040": "30002eef",
+        "I048/090": "0578",
+        "I048/100": "8aaa0000",
+        "I048/110": "0590",
+        "I048/140": "2a3000",
+        "I048/220": "0029ab",
+        "I048/230": "20e0"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/030": {
+          "codes": [
+            {
+              "code": 18,
+              "text": "Undecodable Mode C code / Mode S altitude code"
+            },
+            {
+              "code": 12,
+              "text": "Mode C code / Mode S altitude code abnormal value compared to the track"
+            }
+          ]
+        },
+        "I048/040": {
+          "rho_nm": 48.0,
+          "rho_raw": 12288,
+          "theta_deg": 66.0003662109375,
+          "theta_raw": 12015
+        },
+        "I048/090": {
+          "flight_level": 350.0,
+          "flight_level_raw": 1400,
+          "g": 0,
+          "v": 0
+        },
+        "I048/100": {
+          "g": 0,
+          "mode_c_gray_raw": 2730,
+          "quality_bits": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "spare_bits_16_13": 0,
+          "spare_bits_30_29": 0,
+          "v": 1
+        },
+        "I048/110": {
+          "height_ft": 35600.0,
+          "height_raw": 1424,
+          "spare_bits_16_15": 0
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/220": {
+          "address": "0029AB",
+          "address_raw": 10667
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

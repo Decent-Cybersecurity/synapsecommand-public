@@ -1,16 +1,24 @@
 # ASTERIX CAT048 fixtures
 
-**Nothing in this directory is a payload yet.** Adapter #11 is at Phase 1: the row set in
-`../../FORMAT_COVERAGE.md` is a specification with `not yet` in every status column, and this
-file exists now because two of its rulings rest on evidence that has to be recorded *before*
-the octets are generated, not after. Phase 2 adds `spec/build_fixtures.py` and the twins the
-row set already plans, fixture by fixture.
+**Forty-one translatable blocks and eleven refusals.** Adapter #11 shipped in Phase 2, and the
+row set in `../../FORMAT_COVERAGE.md` now claims `cat048 1.0.0` on every row that was `not yet`
+through Phase 1.
 
-What is here now:
+```bash
+python packages/cdm/synapse_cdm/fixtures/cat048/spec/build_fixtures.py
+PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter cat048 \
+    --fixtures packages/cdm/synapse_cdm/fixtures/cat048 --update-golden   # then READ the diff
+```
+
+Edit `spec/build_fixtures.py`, never the `.cat048` octets and never the `.parsed.json` twins.
+
+What is here:
 
 - **`spec/cat048_pin.json`** — the pinned identity of EUROCONTROL-SPEC-0149-4 Edition 1.32 and
   every value extracted from it that a ruling cites, each with its locus. Written first for the
   reason the Legion and CAT021 pins were: a quotation with no pin behind it is a recollection.
+- **`spec/build_fixtures.py`** — the source of truth for both artefacts, plus `check_layouts()`,
+  which asserts every encoder emits the octet count §5.2 states for its item.
 - **this file** — the identifier evidence, below.
 
 **The specification PDF is not committed.** It sits in `spec/` in the working tree because it
@@ -21,15 +29,38 @@ holds a generator while three hashed documents are cited in prose. No `.gitignor
 there is none anywhere in this repository, and inventing one to solve a one-file problem would
 be a new convention adopted in passing.
 
-## Everything will be synthetic
+## Everything is synthetic
 
 No recorded ASTERIX traffic, no real radar station, no real aircraft. As for CAT021, each block
-will be built from field values by `spec/build_fixtures.py` rather than hand-edited, because a
+is built from field values by `spec/build_fixtures.py` rather than hand-edited, because a
 record's **FSPEC** and its block's **LEN** are both functions of the contents: a hand-edited
 byte file is a mis-parse waiting to happen, and a hand-edited twin does not tell you what octets
-it implies. Each `<name>.cat048` will ship with a `<name>.parsed.json` twin, for the reason the
+it implies. Each `<name>.cat048` ships with a `<name>.parsed.json` twin, for the reason the
 CAT021 and ADS-B sets ship twins — `lossless.unrepresented()` has no leaf structure to harvest
 from bytes, so a blocks-only set shows a green run with the never-drop rule never executed.
+
+**The twins are what make the never-drop claim real here.** The harness reports
+`lossless: PASS` on all forty-one of them and `SKIP` on the forty-one binaries, so the rule runs
+at full strength with nothing excused — `AsterixCat048Adapter.TRANSFORMS` is empty, and that is a
+claim rather than an oversight.
+
+## Geometry: two branches, and the fixtures cover both
+
+`Entity.position` exists only when the caller injects a `sensor_position` at construction. The
+tests inject `(57.05, 23.60, 12.0)` — the Gulf of Riga, matching the other sets, at a plausible
+radar-head elevation in metres above **mean sea level**, so that `alt_m - I048/110` is a height
+difference between two MSL figures. Five fixtures exist for the branches:
+
+| Fixture | Branch |
+|---|---|
+| `derived_position_inverts_to_the_polar_values` | site + I048/110 → a `Position`, and the inversion audit runs on it |
+| `injected_site_no_height_item` | site, no height → **no** `Position`, the record still translated |
+| `injected_site_pressure_height_only` | site + I048/090 → a `Position` with the pressure-altitude approximation named |
+| `injected_site_range_at_maximum` | `ERR` set with RHO all-ones → **no** `Position`, because a floor is not a measurement |
+| `mode_s_roll_call_track` | replayed twice, with and without a site, so one fixture proves both outcomes from identical octets |
+
+**No fixture is anywhere on the earth without a site.** RHO and THETA are measured from a station
+whose position the format never carries, so the blocks make no geographic claim at all.
 
 ## The identifiers
 
@@ -100,12 +131,11 @@ are skipped, and `README.md` is skipped by name. That is the only reason these c
   refusal is the absence of one, so these are exercised from `tests/` instead.
 - **`golden/`** — the CDM output, as for every other adapter.
 
-## What the worked arithmetic will look like, and where it will live
+## The worked arithmetic
 
-In this file, one table per fixture, as the ADS-B and CAT021 sets do — octet offsets in hex, the
-field each range carries, the raw integer, the arithmetic and the decoded value — because the
-byte file cannot carry a comment. The arithmetic that matters most in this format is the part
-with no analogue in CAT021:
+The arithmetic that matters most in this format is the part with no analogue in CAT021. Every
+figure below is asserted by `tests/test_cdm_asterix_cat048_adapter.py` against the value §5.2
+prints, so a drift shows as a failure rather than as a stale table:
 
 | Quantity | Arithmetic | Why it is written out |
 |---|---|---|

@@ -1,0 +1,45 @@
+{
+  "block": {
+    "category": 48,
+    "length": 14,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "f0",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "20",
+        "I048/040": "0c80d555",
+        "I048/140": "2a3000"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 1,
+          "typ_text": "Single PSR detection"
+        },
+        "I048/040": {
+          "rho_nm": 12.5,
+          "rho_raw": 3200,
+          "theta_deg": 299.9981689453125,
+          "theta_raw": 54613
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

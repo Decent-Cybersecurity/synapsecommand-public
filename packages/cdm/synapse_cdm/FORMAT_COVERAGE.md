@@ -41,6 +41,9 @@ run is a guess with a table around it.
 | `gmti 1.0.0` | implemented by `adapters/gmtif.py` on the codec in `adapters/gmtif_codec.py`, with a binary fixture twin and a golden file |
 | `gmti 1.0.0 · parked` | implemented, but the value lands in `attributes`/`payload` because of a named gap below |
 | `gmti 1.0.0 · egress` | implemented in the `from_cdm()` direction |
+| `cat048 1.0.0` | implemented by `adapters/asterix_cat048.py` on the codec in `adapters/cat048_codec.py`, with a binary fixture twin and a golden file |
+| `cat048 1.0.0 · parked` | implemented, but the value lands in `attributes`/`payload` because of a named gap below |
+| `cat048 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -71,17 +74,19 @@ by the standard's own byte tables rather than by a schema distributed through na
 representatives — every offset in this row set is checkable against a table in the pinned document,
 and `test_every_segment_layout_sums_to_the_standards_own_byte_count` checks it.
 
-**The ASTERIX Category 048 row set is in that state now.** Every one of its rows says `not yet`,
-because adapter #11 is at Phase 1 and no code implements any of it — the row set was written and
-reviewed as a specification first, exactly as the Legion, NITS and GMTIF sets were. Two things
+**The ASTERIX Category 048 row set went through that state too**, and
+`adapters/asterix_cat048.py` has now landed, so `test_the_row_set_claims_this_adapter` is the
+inverted form: it fails if a row still says `not yet` while the code implements it. Two things
 about it are deliberately unlike the CAT021 rows it sits beside, and both are settlements rather
 than omissions: the **Reserved Expansion Field is parked** rather than in scope, and the reason is
 procedural rather than textual — the appendix that defines it is public and simply was not pinned
 here; and **geometry is derived only when a `sensor_position` is injected at construction**,
 because the format states range and azimuth from a station whose location it never carries, and
-the caller owns that value the way it already owns the clock. When Phase 2 lands, the inverted
-test is the one to write: it should fail if a row still says `not yet` while the code implements
-it.
+the caller owns that value the way it already owns the clock. Note what `cat048 1.0.0` does not
+carry: no `· provisional` qualifier, because every offset in this row set is checkable against a
+table in the pinned document — and `test_the_item_layouts_sum_to_the_standards_own_byte_counts`
+checks it. What it carries instead is the admission in **gap 24**: the *geodesy* is not in the
+pinned document at all, and the inversion audit is what stands in for the document's blessing.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -6455,10 +6460,15 @@ byte-exact only if the FSPEC emitted is the FSPEC read.
   explicitly: "bit-1 (FX) = 0 End of Primary Subfield; = 1 Extension of Primary Subfield into
   next octet". Only seven subfields are defined, so a *second* primary octet has no defined
   subfields — refused, on the same grounds as the trailing FSPEC `FX`.
-- **`FX` is documented as leading somewhere that does not exist, twice.** I048/170's first
-  extent says "= 1 Extension into second extent" and §5.2.19 defines no second extent; Table 2's
-  fourth `FX` follows FRN 28 and no FRN 29 exists. Both are refusals, and both look like ordinary
-  extension bits.
+- **`FX` is documented as leading somewhere that does not exist, THREE times.** Phase 1 recorded
+  two and the adapter found the third. I048/170's first extent says "= 1 Extension into second
+  extent" and §5.2.19 defines no second extent; **I048/020's FIFTH extension says "= 1 Extension
+  into next extension" and §5.2.2 defines no sixth**; and Table 2's fourth `FX` follows FRN 28
+  where no FRN 29 exists. All three are refusals, and all three look like ordinary extension
+  bits. The third was found by writing the length rules rather than by reading, which is the
+  argument for a per-item octet cap: without one the FX chain still refuses — it runs off the end
+  of the record — but the message names the wrong cause, and a refusal that misidentifies itself
+  is one nobody can act on. `refusals/descriptor_sixth_extension.cat048` pins it.
 
 #### Spare and unused bits are parked verbatim, never normalised
 
@@ -6531,22 +6541,22 @@ egress rebuilds the block from it.
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `block.category` | `Entity.attributes` | `not yet` | the CAT octet as read. A block whose category is not 48 is refused rather than decoded |
-| `block.length` | `Entity.attributes` | `not yet` | parked, and **recomputed on egress rather than copied** — a length that disagrees with the octets is discarded by every ASTERIX decoder, the reason `adsb.py` recomputes its CRC |
-| `block.record_index`, `block.record_count` | `Event.payload` | `not yet` | which record of how many. Without it, two objects from one block are indistinguishable from two objects from two blocks |
-| `record.fspec` | `Entity.attributes` | `not yet` | the FSPEC octets verbatim. The shortest covering FSPEC is conventional, not required, so the round trip is byte-exact only if we re-emit what we read |
-| `record.spare_bits` | `Entity.attributes` | `not yet` | every spare and unused bit as sent, per §4.4. Normalising would break the round trip on non-conforming traffic |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis` — that CAT048 defines no checksum at any level and the structural gate is what passed |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — fields the source explicitly marked absent: a validity bit cleared, an item the encoding rules permit to be missing, I048/030 code 0's "target classification is unknown" |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — wire values read and not usable: an I048/030 code in 38–127, a `RAD` of `11` (Invalid), a Gray-coded Mode-C reply, an ACAS advisory, a `CDM` of `11` (Unknown). A **different fact** from the list above, and the pair is the point |
-| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+| `block.category` | `Entity.attributes` | `cat048 1.0.0 · parked` | the CAT octet as read. A block whose category is not 48 is refused rather than decoded |
+| `block.length` | `Entity.attributes` | `cat048 1.0.0 · parked` | parked, and **recomputed on egress rather than copied** — a length that disagrees with the octets is discarded by every ASTERIX decoder, the reason `adsb.py` recomputes its CRC |
+| `block.record_index`, `block.record_count` | `Event.payload` | `cat048 1.0.0 · parked` | which record of how many. Without it, two objects from one block are indistinguishable from two objects from two blocks |
+| `record.fspec` | `Entity.attributes` | `cat048 1.0.0 · parked` | the FSPEC octets verbatim. The shortest covering FSPEC is conventional, not required, so the round trip is byte-exact only if we re-emit what we read |
+| `record.spare_bits` | `Entity.attributes` | `cat048 1.0.0 · parked` | every spare and unused bit as sent, per §4.4. Normalising would break the round trip on non-conforming traffic |
+| *(measured)* | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.integrity_basis` — that CAT048 defines no checksum at any level and the structural gate is what passed |
+| *(measured)* | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.unavailable_fields` — fields the source explicitly marked absent: a validity bit cleared, an item the encoding rules permit to be missing, I048/030 code 0's "target classification is unknown" |
+| *(measured)* | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.unresolved_raw` — wire values read and not usable: an I048/030 code in 38–127, a `RAD` of `11` (Invalid), a Gray-coded Mode-C reply, an ACAS advisory, a `CDM` of `11` (Unknown). A **different fact** from the list above, and the pair is the point |
+| everything unmapped | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.source_extras`, structure intact |
 
 ### Row set — I048/010 Data Source Identifier, and the sensor that everything is relative to
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/010` SAC, SIC | `Entity.attributes` | `not yet` | the radar station, at `attributes.data_source`. **Not a `SourceId`**: it identifies the sensor, not the target, and filing a station under the object's identifiers is how a fused picture ends up with an entity per receiver. **Sharper here than in CAT021** — every measurement in the record is relative to this station, so the SAC/SIC is the key a consumer would need to resolve the geometry at all, and there is nowhere canonical to put it. See **gap 14** and **gap 24** |
-| `I048/010` NOTE | *(no field)* | `not yet` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)" — the URL `fixtures/cat021/spec/sac_pin.json` pinned, which is why the fixtures' SAC evidence transfers by citation rather than by analogy |
+| `I048/010` SAC, SIC | `Entity.attributes` | `cat048 1.0.0 · parked` | §5.2.1's Definition is "Identification of the radar station **from which the data is received**" and its Encoding Rule is "This Item shall be present in every ASTERIX record" — mandatory, and it names the RECEIVER rather than the target. Parked at `attributes.data_source`. **Not a `SourceId`**: it identifies the sensor, not the target, and filing a station under the object's identifiers is how a fused picture ends up with an entity per receiver. **Sharper here than in CAT021** — every measurement in the record is relative to this station, so the SAC/SIC is the key a consumer would need to resolve the geometry at all, and there is nowhere canonical to put it. See **gap 14** and **gap 24** |
+| `I048/010` NOTE | *(no field)* | `cat048 1.0.0` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)" — the URL `fixtures/cat021/spec/sac_pin.json` pinned, which is why the fixtures' SAC evidence transfers by citation rather than by analogy |
 
 ### Row set — I048/020 Type and Properties of the Target Report and Target Capabilities
 
@@ -6555,137 +6565,137 @@ the only severity this format raises.
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/020` TYP | `Entity.entity_type` | `not yet` | `UNKNOWN` for `000` (No detection) and `001` (Single PSR detection); `PLATFORM` for the six SSR and Mode S values. A primary return is an echo before it is an object — settlement 9 |
-| `I048/020` TYP | `Entity.attributes` | `not yet` | code and wording at `attributes.report_type`, all eight values accounted for |
-| `I048/020` TYP | `Event.event_type` | `not yet` | `DETECTION` when TYP ≠ `000`; `TRACK_UPDATE` when TYP = `000`, because §5.2.4 Note 1 says a zero TYP signals no detection and calling it a detection would claim one the item denies. Overridden to `STATUS_CHANGE` by I048/170 `TRE` — settlement 8. **First adapter here whose ordinary case is `DETECTION`**: AIS, ADS-B and CAT021 receive self-reports, a radar detects |
-| `I048/020` SIM | `Entity.attributes` | `not yet` | Simulated target report. Parked at `attributes.simulated_target`, and it **does not rewrite `Entity.source.synthetic`** — that is a deployment declaration about the feed and a payload bit may not flip it. The Legion `EXERCISE_*` rule and CAT021's SIM row, reached from one bit |
-| `I048/020` TST | `Entity.attributes` | `not yet` | Test target report, parked on the same terms |
-| `I048/020` RDP | `Entity.attributes` | `not yet` | Report from RDP Chain 1 or 2. A station-internal routing fact; **what makes it interpretable is CAT034**, which is out of scope — settlement 2 |
-| `I048/020` SPI | `Entity.attributes` | `not yet` | Special Position Identification. Parked, **not a severity** — an ident pulse is a procedural request. The item's own note adds "For Mode S aircraft, the SPI information is also contained in I048/230", so the same fact can arrive twice; both are parked and neither is preferred |
-| `I048/020` RAB | `Entity.attributes` | `not yet` | Report from aircraft transponder, or from a **field monitor (fixed transponder)**. Parked, and deliberately **not** turned into `FACILITY` — CAT021's identical decision: it says who transmitted, not what kind of thing it is |
-| `I048/020` ERR | `Entity.attributes` | `not yet` | Extended Range present. **Decoded and load-bearing**: it is what says the parked `RHO` is a floor rather than a range, since §5.2.4 NOTE 4 recommends RHO be set to all-ones when the REF's ERR item carries the real value. Settlement 1 |
-| `I048/020` XPP | `Entity.attributes` | `not yet` | X-Pulse present. Parked with its note quoted — "This bit shall always be set when the X-pulse has been extracted, independent from the Mode it was extracted with" — so it says nothing about *which* mode |
-| `I048/020` ME | `Event.severity` / `Event.event_type` | `not yet` | Military emergency → `CRITICAL` / `ALERT`. **The only bit in CAT048 that raises severity**, and the line sits exactly where CAT021 puts I021/200 `ME`, `adsb.py` puts emergency state 1–6 and `ais.py` puts navigational status 14 |
-| `I048/020` MI | `Entity.attributes` | `not yet` | Military identification. Parked, **never an affiliation** — settlement 9 |
-| `I048/020` FOE/FRI | `Entity.attributes` | `not yet` | the four Mode 4 values including "Friendly target", parked in full at `attributes.mode_4_foe_fri`, with the M4E note recorded: when the REF carries the three-level result this field "shall be set to '00'", so `00` is ambiguous between "not interrogated" and "unreadable here" |
-| *(none)* | `Entity.affiliation` | `not yet` | `UNKNOWN`, always. `attributes.affiliation_basis` distinguishes the ordinary case from the IFF case this adapter declines to read |
-| *(derived)* | `Entity.symbol` | `not yet` | from the affiliation via `symbology.sidc_from_affiliation`, so every CAT048 contact is an UNKNOWN glyph. `attributes.symbol_basis` says so |
-| `I048/020` ext 2 ADSB, SCN, PAI | `Entity.attributes` | `not yet` | On-Site ADS-B, Surveillance Cluster Network and Passive Acquisition Interface availability, each with an **`#EP` Element Populated bit**. `#EP` clear is **not** a value of "not available" — the two are kept distinct and the unpopulated case lands in `unresolved_raw`. This is the Part 1 convention CAT021's REF needed |
-| `I048/020` ext 3 ACASXV, POXPR | `Entity.attributes` | `not yet` | ACAS Extended Version (0 Non-Extended, 1 ACAS Xa V1, 2 ACAS Xu V1, "3 – 15 Reserved for future versions" → `unresolved_raw`) and Phase Overlay transponder capability. **ACASXV is load-bearing for I048/260**: on ACAS Xu the advisory is split across /260 and /250 |
-| `I048/020` ext 4 POACT, DTFXPR, DTFACT | `Entity.attributes` | `not yet` | Phase Overlay active, and Basic Dataflash capability and activity, each with its `#EP` bit |
-| `I048/020` ext 5 IRMXPR, IRMACT | `Entity.attributes` | `not yet` | Interrogation/Reply Monitoring capability and activity, each with its `#EP` bit |
-| `I048/020` exts 3–5 notes | `Entity.attributes` | `not yet` | the MOPS note is parked as provenance: these functionalities are defined by ED-73F/DO-181F [Ref. 2], and "To populate bits in these extensions, Mode S radars will have to decode/analyse the content of BDS register 1,0 (bits 15, 42 and 44)" — so these bits are the *station's* reading of a register, not the register |
+| `I048/020` TYP | `Entity.entity_type` | `cat048 1.0.0` | `UNKNOWN` for `000` (No detection) and `001` (Single PSR detection); `PLATFORM` for the six SSR and Mode S values. A primary return is an echo before it is an object — settlement 9 |
+| `I048/020` TYP | `Entity.attributes` | `cat048 1.0.0 · parked` | code and wording at `attributes.report_type`, all eight values accounted for |
+| `I048/020` TYP | `Event.event_type` | `cat048 1.0.0` | `DETECTION` when TYP ≠ `000`; `TRACK_UPDATE` when TYP = `000`, because §5.2.4 Note 1 says a zero TYP signals no detection and calling it a detection would claim one the item denies. Overridden to `STATUS_CHANGE` by I048/170 `TRE` — settlement 8. **First adapter here whose ordinary case is `DETECTION`**: AIS, ADS-B and CAT021 receive self-reports, a radar detects |
+| `I048/020` SIM | `Entity.attributes` | `cat048 1.0.0 · parked` | Simulated target report. Parked at `attributes.simulated_target`, and it **does not rewrite `Entity.source.synthetic`** — that is a deployment declaration about the feed and a payload bit may not flip it. The Legion `EXERCISE_*` rule and CAT021's SIM row, reached from one bit |
+| `I048/020` TST | `Entity.attributes` | `cat048 1.0.0 · parked` | Test target report, parked on the same terms |
+| `I048/020` RDP | `Entity.attributes` | `cat048 1.0.0 · parked` | Report from RDP Chain 1 or 2. A station-internal routing fact; **what makes it interpretable is CAT034**, which is out of scope — settlement 2 |
+| `I048/020` SPI | `Entity.attributes` | `cat048 1.0.0 · parked` | Special Position Identification. Parked, **not a severity** — an ident pulse is a procedural request. The item's own note adds "For Mode S aircraft, the SPI information is also contained in I048/230", so the same fact can arrive twice; both are parked and neither is preferred |
+| `I048/020` RAB | `Entity.attributes` | `cat048 1.0.0 · parked` | Report from aircraft transponder, or from a **field monitor (fixed transponder)**. Parked, and deliberately **not** turned into `FACILITY` — CAT021's identical decision: it says who transmitted, not what kind of thing it is |
+| `I048/020` ERR | `Entity.attributes` | `cat048 1.0.0 · parked` | Extended Range present. **Decoded and load-bearing**: it is what says the parked `RHO` is a floor rather than a range, since §5.2.4 NOTE 4 recommends RHO be set to all-ones when the REF's ERR item carries the real value. Settlement 1 |
+| `I048/020` XPP | `Entity.attributes` | `cat048 1.0.0 · parked` | X-Pulse present. Parked with its note quoted — "This bit shall always be set when the X-pulse has been extracted, independent from the Mode it was extracted with" — so it says nothing about *which* mode |
+| `I048/020` ME | `Event.severity` / `Event.event_type` | `cat048 1.0.0` | Military emergency → `CRITICAL` / `ALERT`. **The only bit in CAT048 that raises severity**, and the line sits exactly where CAT021 puts I021/200 `ME`, `adsb.py` puts emergency state 1–6 and `ais.py` puts navigational status 14 |
+| `I048/020` MI | `Entity.attributes` | `cat048 1.0.0 · parked` | Military identification. Parked, **never an affiliation** — settlement 9 |
+| `I048/020` FOE/FRI | `Entity.attributes` | `cat048 1.0.0 · parked` | the four Mode 4 values including "Friendly target", parked in full at `attributes.mode_4_foe_fri`, with the M4E note recorded: when the REF carries the three-level result this field "shall be set to '00'", so `00` is ambiguous between "not interrogated" and "unreadable here" |
+| *(none)* | `Entity.affiliation` | `cat048 1.0.0` | `UNKNOWN`, always. `attributes.affiliation_basis` distinguishes the ordinary case from the IFF case this adapter declines to read |
+| *(derived)* | `Entity.symbol` | `cat048 1.0.0` | from the affiliation via `symbology.sidc_from_affiliation`, so every CAT048 contact is an UNKNOWN glyph. `attributes.symbol_basis` says so |
+| `I048/020` ext 2 ADSB, SCN, PAI | `Entity.attributes` | `cat048 1.0.0 · parked` | On-Site ADS-B, Surveillance Cluster Network and Passive Acquisition Interface availability, each with an **`#EP` Element Populated bit**. `#EP` clear is **not** a value of "not available" — the two are kept distinct and the unpopulated case lands in `unresolved_raw`. This is the Part 1 convention CAT021's REF needed |
+| `I048/020` ext 3 ACASXV, POXPR | `Entity.attributes` | `cat048 1.0.0 · parked` | ACAS Extended Version (0 Non-Extended, 1 ACAS Xa V1, 2 ACAS Xu V1, "3 – 15 Reserved for future versions" → `unresolved_raw`) and Phase Overlay transponder capability. **ACASXV is load-bearing for I048/260**: on ACAS Xu the advisory is split across /260 and /250 |
+| `I048/020` ext 4 POACT, DTFXPR, DTFACT | `Entity.attributes` | `cat048 1.0.0 · parked` | Phase Overlay active, and Basic Dataflash capability and activity, each with its `#EP` bit |
+| `I048/020` ext 5 IRMXPR, IRMACT | `Entity.attributes` | `cat048 1.0.0 · parked` | Interrogation/Reply Monitoring capability and activity, each with its `#EP` bit |
+| `I048/020` exts 3–5 notes | `Entity.attributes` | `cat048 1.0.0 · parked` | the MOPS note is parked as provenance: these functionalities are defined by ED-73F/DO-181F [Ref. 2], and "To populate bits in these extensions, Mode S radars will have to decode/analyse the content of BDS register 1,0 (bits 15, 42 and 44)" — so these bits are the *station's* reading of a register, not the register |
 
 ### Row set — I048/030 Warning/Error Conditions and Target Classification
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/030` code sequence | `Entity.attributes` | `not yet` | `attributes.cat048_warning_error_codes` — an **ordered list** of `{code, text}` in wire order, duplicates preserved, never sorted and never deduplicated. Settlement 7 |
-| `I048/030` raw octets | `Entity.attributes` | `not yet` | the octets verbatim, because egress re-emits from them |
-| `I048/030` code 0 | `Entity.attributes` | `not yet` | accepted despite the "transmitted only if different from zero" rule; "the target classification is unknown" lands in `unavailable_fields` and the non-conformance is recorded |
-| `I048/030` codes 38–63 | `Entity.attributes` | `not yet` | AMG range, unassigned. Code number with no text, in `unresolved_raw` |
-| `I048/030` codes 64–127 | `Entity.attributes` | `not yet` | manufacturer range — "shall be described in the corresponding ICD", and no ICD is pinned. Code number with no text, in `unresolved_raw`, distinguished from the AMG range |
-| `I048/030` codes 12, 18 | `Entity.attributes` | `not yet` | the source's **own** statement that its altitudes disagree or are undecodable, routed here by I048/090's Notes 1 and 2. Named in `attributes.altitude_basis` when present — settlement 5 |
-| `I048/030` codes 35, 36 | `Entity.attributes` | `not yet` | Potential IC Conflict, and IC-Conflict-detection-possible. Parked with code 36's nested NOTE ("the use of this code should be limited to the target acquisition phase") and with the record that **the area lives in CAT034 Message Type 008**, out of scope — settlement 2 |
-| `I048/030` codes 1–5, 7, 10, 19, 20, 23 | `Entity.attributes` | `not yet` | reflection, sidelobe, split plot, second-time-around, angel, fixed PSR plot, phantom SSR plot, birds, flock, wind turbine — the codes saying the return may not be an object. Parked and **not read into `entity_type`**, per Note 7 |
-| `I048/030` code 16 | `Entity.attributes` | `not yet` | "Duplicated or Illegal Mode S Aircraft Address" → `attributes.identity_caveat`, because it is the source telling us the key in I048/220 may not be unique |
-| `I048/030` code 37 | `Entity.attributes` | `not yet` | parked as a code with its text, and `unresolved_raw` records that its meaning is a pointer into the un-pinned REF |
+| `I048/030` code sequence | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.cat048_warning_error_codes` — an **ordered list** of `{code, text}` in wire order, duplicates preserved, never sorted and never deduplicated. Settlement 7 |
+| `I048/030` raw octets | `Entity.attributes` | `cat048 1.0.0 · parked` | the octets verbatim, because egress re-emits from them |
+| `I048/030` code 0 | `Entity.attributes` | `cat048 1.0.0 · parked` | accepted despite the "transmitted only if different from zero" rule; "the target classification is unknown" lands in `unavailable_fields` and the non-conformance is recorded |
+| `I048/030` codes 38–63 | `Entity.attributes` | `cat048 1.0.0 · parked` | AMG range, unassigned. Code number with no text, in `unresolved_raw` |
+| `I048/030` codes 64–127 | `Entity.attributes` | `cat048 1.0.0 · parked` | manufacturer range — "shall be described in the corresponding ICD", and no ICD is pinned. Code number with no text, in `unresolved_raw`, distinguished from the AMG range |
+| `I048/030` codes 12, 18 | `Entity.attributes` | `cat048 1.0.0 · parked` | the source's **own** statement that its altitudes disagree or are undecodable, routed here by I048/090's Notes 1 and 2. Named in `attributes.altitude_basis` when present — settlement 5 |
+| `I048/030` codes 35, 36 | `Entity.attributes` | `cat048 1.0.0 · parked` | Potential IC Conflict, and IC-Conflict-detection-possible. Parked with code 36's nested NOTE ("the use of this code should be limited to the target acquisition phase") and with the record that **the area lives in CAT034 Message Type 008**, out of scope — settlement 2 |
+| `I048/030` codes 1–5, 7, 10, 19, 20, 23 | `Entity.attributes` | `cat048 1.0.0 · parked` | reflection, sidelobe, split plot, second-time-around, angel, fixed PSR plot, phantom SSR plot, birds, flock, wind turbine — the codes saying the return may not be an object. Parked and **not read into `entity_type`**, per Note 7 |
+| `I048/030` code 16 | `Entity.attributes` | `cat048 1.0.0 · parked` | "Duplicated or Illegal Mode S Aircraft Address" → `attributes.identity_caveat`, because it is the source telling us the key in I048/220 may not be unique |
+| `I048/030` code 37 | `Entity.attributes` | `cat048 1.0.0 · parked` | parked as a code with its text, and `unresolved_raw` records that its meaning is a pointer into the un-pinned REF |
 
 ### Row set — position: derived when a sensor position is injected, parked otherwise
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/040` + injected site + a height | `Entity.position` | `not yet` | a `Position`, **derived**. Requires all three: `sensor_position` at construction, `RHO`/`THETA` on the wire, and a height from I048/110 or I048/090. Settlement 3 |
-| `I048/040` + injected site + a height | `Position.lat` / `Position.lon` | `not yet` | the geodesic direct solution from the site, distance `sqrt(RHO² − Δh²)`, bearing `THETA` on WGS-84. Asserted to invert back to `RHO` and `THETA` within the item's own LSBs — 1/256 NM and 360/2¹⁶ ° |
-| no injected site | `Entity.position` | `not yet` | `None`, and the polar values parked. `attributes.position_basis` says no site was injected — the first draft's behaviour, retained as the default rather than as the rule |
-| injected site, **no usable height** | `Entity.position` | `not yet` | `None`, with the missing height named in the basis. **The record is not refused** — it is translatable, and a `Δh = 0` assumption misplaces a target at FL350 overhead by 10.7 km. Settlement 3 |
-| *(derived)* | `Position.position_source` | `not yet` | `ESTIMATED`. **`PositionSource` has no member for a sensor measurement** — `GNSS`, `INERTIAL`, `MANUAL`, `ESTIMATED` — and `ESTIMATED` is the only one that is not an outright false statement about a computed product of a measurement, an injected site and possibly a pressure altitude. It also answers the enum's own purpose correctly: a radar fix is not `GNSS` and survives jamming. `attributes.position_source_basis` records it; the missing member is a 1.1.0 candidate, not a schema change here |
-| *(none)* | `Position.alt_m` | `not yet` | `None` even when a `Position` exists. I048/110 is **mean-sea-level** referenced and `alt_m` is metres above the WGS-84 ellipsoid; the geoid separation needs a model nothing here carries. The height **difference** used for the slant correction is a different quantity, and the geoid largely cancels across a sensor-to-target baseline |
-| *(none)* | `Position.accuracy_m` | `not yet` | `None`. I048/210's per-axis σ are "within the local grid system", collapsing them into one horizontal figure is a modelling choice, and the derivation adds unbounded error of its own. **Gap 17** |
-| *(none)* | `Event.geometry` | `not yet` | `None`. The position lives on the `Entity`, as for every other point-target adapter here; `Event.geometry` is for footprints |
-| `I048/040` RHO, THETA | `Entity.attributes` | `not yet` | `attributes.cat048_measured_position` — raw integers, LSBs (1/256 NM and 360/2¹⁶ °), decoded NM and degrees, the azimuth reference ("local geographical north", §4.3.1) and the SAC/SIC the angles are measured from. **Carried losslessly in both branches**, because egress re-emits from these and a derived `Position` is a one-way view |
-| `I048/040` RHO at maximum with `ERR` set | `Entity.attributes` | `not yet` | a **floor, not a range**: §5.2.4 NOTE 4 recommends all-ones when the REF's ERR item holds the value. Recorded as at-or-beyond-maximum, the AIS 102.2 kt discipline — and **no `Position` is derived from a floor**, because a bound is not a measurement |
-| `I048/040` absent with TYP ≠ 0 | `Entity.attributes` | `not yet` | non-conformance recorded against "This item shall be sent when there is a detection", **not a refusal** — the record is otherwise complete and suppressing it would be filtering |
-| `I048/040` Note 1 | `Entity.attributes` | `not yet` | "In case of no detection, the extrapolated position expressed in slant polar co-ordinates may be sent" — so a TYP = `000` record's polar values are an **extrapolation**, not a measurement. Recorded in the basis, and a `Position` derived from one says so |
-| `I048/040` Note 3 | `Entity.attributes` | `not yet` | "In case of combined detection by a PSR and an SSR, then the SSR position is sent" — parked as provenance, since it says which sensor the numbers came from and nothing else in the record does |
-| `I048/042` X, Y | `Entity.attributes` | `not yet` | `attributes.cat048_calculated_position` — raw two's-complement integers, LSB 1/128 NM, origin "coincides with the radar head position". **Still never a `Position`**, even with a site injected: settlement 3 |
-| `I048/042` + `I048/170` TCC | `Entity.attributes` | `not yet` | **which transform produced I048/042 is signalled in another item**, and the projection is named only as "e.g. a stereographical projection". Both parked, the pair recorded, the cross-item join declined — CAT021 ambiguity 4's rule, and the reason I048/040 is the single source of derived geometry |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.position_basis` — which branch was taken; and when derived, the injected site value, the height item that supplied `Δh`, the WGS-84 earth model, the slant treatment, and that **the arithmetic is this adapter's and not the specification's**. **Gap 24** |
+| `I048/040` + injected site + a height | `Entity.position` | `cat048 1.0.0` | a `Position`, **derived**. Requires all three: `sensor_position` at construction, `RHO`/`THETA` on the wire, and a height from I048/110 or I048/090. Settlement 3 |
+| `I048/040` + injected site + a height | `Position.lat` / `Position.lon` | `cat048 1.0.0` | the geodesic direct solution from the site, distance `sqrt(RHO² − Δh²)`, bearing `THETA` on WGS-84. Asserted to invert back to `RHO` and `THETA` within the item's own LSBs — 1/256 NM and 360/2¹⁶ ° |
+| no injected site | `Entity.position` | `cat048 1.0.0` | `None`, and the polar values parked. `attributes.position_basis` says no site was injected — the first draft's behaviour, retained as the default rather than as the rule |
+| injected site, **no usable height** | `Entity.position` | `cat048 1.0.0` | `None`, with the missing height named in the basis. **The record is not refused** — it is translatable, and a `Δh = 0` assumption misplaces a target at FL350 overhead by 10.7 km. Settlement 3 |
+| *(derived)* | `Position.position_source` | `cat048 1.0.0` | `ESTIMATED`. **`PositionSource` has no member for a sensor measurement** — `GNSS`, `INERTIAL`, `MANUAL`, `ESTIMATED` — and `ESTIMATED` is the only one that is not an outright false statement about a computed product of a measurement, an injected site and possibly a pressure altitude. It also answers the enum's own purpose correctly: a radar fix is not `GNSS` and survives jamming. `attributes.position_source_basis` records it; the missing member is a 1.1.0 candidate, not a schema change here |
+| *(none)* | `Position.alt_m` | `cat048 1.0.0` | `None` even when a `Position` exists. I048/110 is **mean-sea-level** referenced and `alt_m` is metres above the WGS-84 ellipsoid; the geoid separation needs a model nothing here carries. The height **difference** used for the slant correction is a different quantity, and the geoid largely cancels across a sensor-to-target baseline |
+| *(none)* | `Position.accuracy_m` | `cat048 1.0.0` | `None`. I048/210's per-axis σ are "within the local grid system", collapsing them into one horizontal figure is a modelling choice, and the derivation adds unbounded error of its own. **Gap 17** |
+| *(none)* | `Event.geometry` | `cat048 1.0.0` | `None`. The position lives on the `Entity`, as for every other point-target adapter here; `Event.geometry` is for footprints |
+| `I048/040` RHO, THETA | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.cat048_measured_position` — raw integers, LSBs (1/256 NM and 360/2¹⁶ °), decoded NM and degrees, the azimuth reference ("local geographical north", §4.3.1) and the SAC/SIC the angles are measured from. **Carried losslessly in both branches**, because egress re-emits from these and a derived `Position` is a one-way view |
+| `I048/040` RHO at maximum with `ERR` set | `Entity.attributes` | `cat048 1.0.0 · parked` | a **floor, not a range**: §5.2.4 NOTE 4 recommends all-ones when the REF's ERR item holds the value. Recorded as at-or-beyond-maximum, the AIS 102.2 kt discipline — and **no `Position` is derived from a floor**, because a bound is not a measurement |
+| `I048/040` absent with TYP ≠ 0 | `Entity.attributes` | `cat048 1.0.0 · parked` | non-conformance recorded against "This item shall be sent when there is a detection", **not a refusal** — the record is otherwise complete and suppressing it would be filtering |
+| `I048/040` Note 1 | `Entity.attributes` | `cat048 1.0.0 · parked` | "In case of no detection, the extrapolated position expressed in slant polar co-ordinates may be sent" — so a TYP = `000` record's polar values are an **extrapolation**, not a measurement. Recorded in the basis, and a `Position` derived from one says so |
+| `I048/040` Note 3 | `Entity.attributes` | `cat048 1.0.0 · parked` | "In case of combined detection by a PSR and an SSR, then the SSR position is sent" — parked as provenance, since it says which sensor the numbers came from and nothing else in the record does |
+| `I048/042` X, Y | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.cat048_calculated_position` — raw two's-complement integers, LSB 1/128 NM, origin "coincides with the radar head position". **Still never a `Position`**, even with a site injected: settlement 3 |
+| `I048/042` + `I048/170` TCC | `Entity.attributes` | `cat048 1.0.0 · parked` | **which transform produced I048/042 is signalled in another item**, and the projection is named only as "e.g. a stereographical projection". Both parked, the pair recorded, the cross-item join declined — CAT021 ambiguity 4's rule, and the reason I048/040 is the single source of derived geometry |
+| *(measured)* | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.position_basis` — which branch was taken; and when derived, the injected site value, the height item that supplied `Δh`, the WGS-84 earth model, the slant treatment, and that **the arithmetic is this adapter's and not the specification's**. **Gap 24** |
 
 ### Row set — altitude and height
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/090` Flight Level | `Entity.attributes` | `not yet` | **gap 9.** `attributes.flight_level` in **FL, the source's own unit**, LSB ¼ FL, "in two's complement form" per Edition 1.32's clarification. A pressure altitude is not `Position.alt_m`'s metres-above-ellipsoid, and there is no `Position` anyway |
-| `I048/090` V, G | `Entity.attributes` | `not yet` | code-validated and garbled flags. `G` set means "an error correction has been attempted" for Mode S (Note 4) — a statement about the *station's* processing |
-| `I048/090` Note 3 | `Entity.attributes` | `not yet` | `attributes.flight_level_range_basis` — the item defers its range to ICAO Annex 10, which §2.2 does not list and nothing here pins, so the enforced range is the field's own −2048.00 .. +2047.75 FL |
-| `I048/100` Mode-C Gray bits | `Entity.attributes` | `not yet` | **not decoded.** The item is sent "only … when a not validated or undecodable Mode C code has been received", so decoding it would manufacture the value it exists to say is unavailable. Twelve reply bits parked verbatim; `unresolved_raw` records the deliberate decline. No Gray table appears in this document |
-| `I048/100` QXi pulse quality | `Entity.attributes` | `not yet` | twelve per-pulse confidence bits. Note the Mode S case: "all pulse quality bits will be set to high (zero)" when the item is sent for an undecodable Mode S altitude reply — so all-zero does **not** mean twelve good pulses |
-| `I048/100` D1/Q + `I048/230` ARC | `Entity.attributes` | `not yet` | "For Mode S, D1 is also designated as Q, and is used to denote either 25ft or 100ft reporting" — and the capability is in a *different item*. Both parked, the dependency recorded, the join declined |
-| `I048/110` 3D-Height | `Entity.attributes` | `not yet` | `attributes.height_3d_ft` in feet, LSB 25 ft, two's complement, **mean sea level zero reference**. A third datum alongside HAE and the pressure datum — sharpens **gap 9**'s datum note rather than opening a new gap |
-| `I048/090` + `I048/110` both present | `Entity.attributes` | `not yet` | `attributes.cat048_altitude_disagreement` — both values in both units with both datums, and an explicit note that they are **not the same quantity**. Recorded, never adjudicated. Settlement 5 |
-| *(none)* | `Position.alt_m` | `not yet` | never written, even when settlement 3 derives a `Position`. None of the three items is metres-above-ellipsoid: I048/090 is a pressure altitude, I048/110 is mean-sea-level referenced and needs a geoid model, and I048/100 is deliberately undecoded. **A height difference and an absolute height are different claims** — the first is what the slant correction consumes, the second is what `alt_m` would assert |
+| `I048/090` Flight Level | `Entity.attributes` | `cat048 1.0.0 · parked` | **gap 9.** `attributes.flight_level` in **FL, the source's own unit**, LSB ¼ FL, "in two's complement form" per Edition 1.32's clarification. A pressure altitude is not `Position.alt_m`'s metres-above-ellipsoid, and there is no `Position` anyway |
+| `I048/090` V, G | `Entity.attributes` | `cat048 1.0.0 · parked` | code-validated and garbled flags. `G` set means "an error correction has been attempted" for Mode S (Note 4) — a statement about the *station's* processing |
+| `I048/090` Note 3 | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.flight_level_range_basis` — the item defers its range to ICAO Annex 10, which §2.2 does not list and nothing here pins, so the enforced range is the field's own −2048.00 .. +2047.75 FL |
+| `I048/100` Mode-C Gray bits | `Entity.attributes` | `cat048 1.0.0 · parked` | **not decoded.** The item is sent "only … when a not validated or undecodable Mode C code has been received", so decoding it would manufacture the value it exists to say is unavailable. Twelve reply bits parked verbatim; `unresolved_raw` records the deliberate decline. No Gray table appears in this document |
+| `I048/100` QXi pulse quality | `Entity.attributes` | `cat048 1.0.0 · parked` | twelve per-pulse confidence bits. Note the Mode S case: "all pulse quality bits will be set to high (zero)" when the item is sent for an undecodable Mode S altitude reply — so all-zero does **not** mean twelve good pulses |
+| `I048/100` D1/Q + `I048/230` ARC | `Entity.attributes` | `cat048 1.0.0 · parked` | "For Mode S, D1 is also designated as Q, and is used to denote either 25ft or 100ft reporting" — and the capability is in a *different item*. Both parked, the dependency recorded, the join declined |
+| `I048/110` 3D-Height | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.height_3d_ft` in feet, LSB 25 ft, two's complement, **mean sea level zero reference**. A third datum alongside HAE and the pressure datum — sharpens **gap 9**'s datum note rather than opening a new gap |
+| `I048/090` + `I048/110` both present | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.cat048_altitude_disagreement` — both values in both units with both datums, and an explicit note that they are **not the same quantity**. Recorded, never adjudicated. Settlement 5 |
+| *(none)* | `Position.alt_m` | `cat048 1.0.0` | never written, even when settlement 3 derives a `Position`. None of the three items is metres-above-ellipsoid: I048/090 is a pressure altitude, I048/110 is mean-sea-level referenced and needs a geoid model, and I048/100 is deliberately undecoded. **A height difference and an absolute height are different claims** — the first is what the slant correction consumes, the second is what `alt_m` would assert |
 
 ### Row set — the Mode codes and their confidence indicators
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/070` Mode-3/A code | `Entity.attributes` | `not yet` | `attributes.mode_3a_code` in octal, the source's own representation. **Not a `SourceId`** — a squawk is assigned per flight, reassigned, and duplicated across regions |
-| `I048/070` V, G, L | `Entity.attributes` | `not yet` | **`L` means something different here than in I048/050 and /055.** In /070 it is "Mode-3/A code **not extracted during the last scan**"; in /050 and /055 it is "Smoothed … code as provided by a local tracker". Same letter, same relative position, different claim — parked per item with the per-item wording, never through one shared decoder |
-| `I048/070` Note 2 | `Entity.attributes` | `not yet` | "For Mode S, bit 16 is normally set to zero, but can exceptionally be set to one to indicate a non-validated Mode-3/A code (e.g. alert condition detected, but new Mode-3/A code not successfully extracted)" — parked, and it is why a `V` set on a Mode S record is not the same event as on a Mode A/C one |
-| `I048/070` encoding rule | `Entity.attributes` | `not yet` | "For Mode S, once a Mode-3/A code is seen, that code shall be sent every scan" — so a repeated code is not fresh extraction. Recorded, because a consumer counting code changes would otherwise read continuity as re-confirmation |
-| `I048/050` Mode-2 code | `Entity.attributes` | `not yet` | `attributes.mode_2_code` in octal, with V, G, L. A military interrogation mode; the 1.32 NOTE routing an alternative value to `I048/REF/GEN48/ALTM2` is parked as an un-pinned pointer |
-| `I048/055` Mode-1 code | `Entity.attributes` | `not yet` | `attributes.mode_1_code`, 5 bits, with V, G, L. Its NOTE ties V, G, L, A4, A2, A1, B2, B1 to "subfield #5 of data item 'MD5 – Mode 5 Reports'" in the REF — recorded, unreadable here |
-| `I048/060`, `I048/065`, `I048/080` | `Entity.attributes` | `not yet` | per-pulse confidence for Mode-2, Mode-1 and Mode-3/A. Each is sent "only when at least one pulse is of low quality", so **the item's presence is itself the signal** and its absence is not a claim of perfect quality. Parked bit by bit; none reaches `Entity.confidence` |
-| `I048/240` Aircraft Identification | `Entity.attributes` | `not yet` | **gap 1**, a sixth private key for one concept. Eight characters at 6 bits each, decoded with the table `adsb.py` uses, raw 48 bits parked. `attributes.aircraft_identification_basis` records that **this document states no character table** — §5.2.25 Note 1 points to BDS Register 2,0, whose coding is in [Ref. 2] ED-73F/DO-181F, which nothing here pins |
-| `I048/240` semantics | `Entity.attributes` | `not yet` | "aircraft identification when flight plan is available **or the registration marking when no flight plan is available**" — two different kinds of string in one field, with nothing saying which. Recorded rather than guessed |
+| `I048/070` Mode-3/A code | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.mode_3a_code` in octal, the source's own representation. **Not a `SourceId`** — a squawk is assigned per flight, reassigned, and duplicated across regions |
+| `I048/070` V, G, L | `Entity.attributes` | `cat048 1.0.0 · parked` | **`L` means something different here than in I048/050 and /055.** In /070 it is "Mode-3/A code **not extracted during the last scan**"; in /050 and /055 it is "Smoothed … code as provided by a local tracker". Same letter, same relative position, different claim — parked per item with the per-item wording, never through one shared decoder |
+| `I048/070` Note 2 | `Entity.attributes` | `cat048 1.0.0 · parked` | "For Mode S, bit 16 is normally set to zero, but can exceptionally be set to one to indicate a non-validated Mode-3/A code (e.g. alert condition detected, but new Mode-3/A code not successfully extracted)" — parked, and it is why a `V` set on a Mode S record is not the same event as on a Mode A/C one |
+| `I048/070` encoding rule | `Entity.attributes` | `cat048 1.0.0 · parked` | "For Mode S, once a Mode-3/A code is seen, that code shall be sent every scan" — so a repeated code is not fresh extraction. Recorded, because a consumer counting code changes would otherwise read continuity as re-confirmation |
+| `I048/050` Mode-2 code | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.mode_2_code` in octal, with V, G, L. A military interrogation mode; the 1.32 NOTE routing an alternative value to `I048/REF/GEN48/ALTM2` is parked as an un-pinned pointer |
+| `I048/055` Mode-1 code | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.mode_1_code`, 5 bits, with V, G, L. Its NOTE ties V, G, L, A4, A2, A1, B2, B1 to "subfield #5 of data item 'MD5 – Mode 5 Reports'" in the REF — recorded, unreadable here |
+| `I048/060`, `I048/065`, `I048/080` | `Entity.attributes` | `cat048 1.0.0 · parked` | per-pulse confidence for Mode-2, Mode-1 and Mode-3/A. Each is sent "only when at least one pulse is of low quality", so **the item's presence is itself the signal** and its absence is not a claim of perfect quality. Parked bit by bit; none reaches `Entity.confidence` |
+| `I048/240` Aircraft Identification | `Entity.attributes` | `cat048 1.0.0 · parked` | **gap 1**, a sixth private key for one concept. Eight characters at 6 bits each, decoded with the table `adsb.py` uses, raw 48 bits parked. `attributes.aircraft_identification_basis` records that **this document states no character table** — §5.2.25 Note 1 points to BDS Register 2,0, whose coding is in [Ref. 2] ED-73F/DO-181F, which nothing here pins |
+| `I048/240` semantics | `Entity.attributes` | `cat048 1.0.0 · parked` | "aircraft identification when flight plan is available **or the registration marking when no flight plan is available**" — two different kinds of string in one field, with nothing saying which. Recorded rather than guessed |
 
 ### Row set — time
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/140` Time of Day | `Event.observed_at` | `not yet` | 24 bits, 1/128 s since last midnight UTC. The date comes from the injected clock, nearest of (previous day, receipt date, next day). Settlement 4 |
-| `I048/140` raw integer | `Entity.attributes` | `not yet` | parked, and **egress re-emits from it** rather than recomputing from `observed_at` — 1/128 s is 7.8125 ms and `times.render` emits three decimals |
-| `I048/140` > 86 400 s | *(refusal)* | `not yet` | a `CodecError` quoting the item, the raw 24-bit integer and the decoded seconds. Never a modulo. The bound is **stated** by §5.2.17, not inferred |
-| `I048/140` = 86 400.000 s exactly | `Event.observed_at` | `not yet` | **accepted**, on the range's own `<=`, and resolved as midnight of the following day with the reading recorded. §5.2.17's range and its Note 1 disagree about whether the value can occur — ambiguity 1 |
-| `I048/140` absent | `Event.observed_at` | `not yet` | the injected clock, with `payload.observed_at_basis` recording that the record carried no time item and that "failure of all sources of time-stamping" is a case the encoding rule **permits**. A stated absence → `unavailable_fields`, not `unresolved_raw` |
-| *(the injected clock)* | `Event.received_at` | `not yet` | when WE took delivery. Never the radar's time of day, which is a different party and a different instant |
-| *(derived)* | `Entity.valid_from` | `not yet` | the resolved `observed_at`. The state this record describes begins when the radar saw it |
-| *(none)* | `Entity.valid_to` | `not yet` | `None`, **on every record including an End of Track Message** — settlement 8. CAT048 has no staleness field and no scan period (the scan period is in CAT034), and `TRE` ends a station's track record rather than the entity. **Gap 26** |
-| §4.2.1 | `Entity.attributes` | `not yet` | "The target time stamp shall be consistent with the reported plot position" — parked as the reason gap 13 does not bite here: one time, one position, one instant, unlike CAT021's seven items |
+| `I048/140` Time of Day | `Event.observed_at` | `cat048 1.0.0` | 24 bits, 1/128 s since last midnight UTC. The date comes from the injected clock, nearest of (previous day, receipt date, next day). Settlement 4 |
+| `I048/140` raw integer | `Entity.attributes` | `cat048 1.0.0 · parked` | parked, and **egress re-emits from it** rather than recomputing from `observed_at` — 1/128 s is 7.8125 ms and `times.render` emits three decimals |
+| `I048/140` > 86 400 s | *(refusal)* | `cat048 1.0.0` | a `CodecError` quoting the item, the raw 24-bit integer and the decoded seconds. Never a modulo. The bound is **stated** by §5.2.17, not inferred |
+| `I048/140` = 86 400.000 s exactly | `Event.observed_at` | `cat048 1.0.0` | **accepted**, on the range's own `<=`, and resolved as midnight of the following day with the reading recorded. §5.2.17's range and its Note 1 disagree about whether the value can occur — ambiguity 1 |
+| `I048/140` absent | `Event.observed_at` | `cat048 1.0.0` | the injected clock, with `payload.observed_at_basis` recording that the record carried no time item and that "failure of all sources of time-stamping" is a case the encoding rule **permits**. A stated absence → `unavailable_fields`, not `unresolved_raw` |
+| *(the injected clock)* | `Event.received_at` | `cat048 1.0.0` | when WE took delivery. Never the radar's time of day, which is a different party and a different instant |
+| *(derived)* | `Entity.valid_from` | `cat048 1.0.0` | the resolved `observed_at`. The state this record describes begins when the radar saw it |
+| *(none)* | `Entity.valid_to` | `cat048 1.0.0` | `None`, **on every record including an End of Track Message** — settlement 8. CAT048 has no staleness field and no scan period (the scan period is in CAT034), and `TRE` ends a station's track record rather than the entity. **Gap 26** |
+| §4.2.1 | `Entity.attributes` | `cat048 1.0.0 · parked` | "The target time stamp shall be consistent with the reported plot position" — parked as the reason gap 13 does not bite here: one time, one position, one instant, unlike CAT021's seven items |
 
 ### Row set — track number, track status, and the end of a track
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/161` Track Number | `Entity.attributes` | `not yet` | **a carried claim, never an identity key.** `attributes.track_number` on every record, with the SAC/SIC it is scoped to. Reversed from this row set's first draft, which made it a `SourceId` at step 2 of the identity chain — settlement 9 |
-| `I048/161` Track Number | `Entity.attributes` | `not yet` | it cannot ride on a `Track` either: `Track` has `track_id`, `entity_id`, `samples` and `track_quality` and **no extension bag**, which is the existing `Track.attributes` 1.1.0 candidate. So the station's own track number rides on the `Entity` even when the object it describes is a history |
-| `I048/170` CNF | `Entity.attributes` | `not yet` | Confirmed vs Tentative Track. Parked, and **not read into `Entity.confidence`** — a tracker's promotion state is not a probability |
-| `I048/170` RAD | `Entity.attributes` | `not yet` | which sensor maintains the track: Combined, PSR, SSR/Mode S, or `11` **Invalid** → `unresolved_raw`. Its note is parked too: "RAD can change after a number of non-matching with TYP in item 020", so RAD and TYP may legitimately disagree within one record |
-| `I048/170` DOU | `Entity.attributes` | `not yet` | "Low confidence in plot to track association" — a **data-association** verdict, not a confidence in the object. Parked; `Entity.confidence` stays `None` |
-| `I048/170` MAH | `Entity.attributes` | `not yet` | horizontal manoeuvre sensed. Parked; it is a tracker judgement, not a kinematic quantity |
-| `I048/170` CDM | `Entity.attributes` | `not yet` | Climbing / Descending Mode: Maintaining, Climbing, Descending, `11` Unknown → `unresolved_raw`. **A 2-bit category, not a rate** — it never reaches `Kinematics.climb_mps`, which is metres per second. CAT048 states no vertical rate anywhere |
-| `I048/170` TRE | `Event.event_type` | `not yet` | End_of_Track → `STATUS_CHANGE`. **The only terminal declaration any source in this document makes, and the CDM cannot hold it**: `valid_to` stays `None`, because `TRE` ends "this track" — a "track record within a particular track file" per I048/161 — and not the airframe the `entity_id` names. Carried at `attributes.track_end`. Settlement 8, **gap 26** |
-| `I048/170` GHO | `Entity.attributes` | `not yet` | "Ghost target track". Parked, and the object is still emitted in full — the source's verdict is carried, and suppressing or downgrading the record would be the filtering the `Adapter` contract refuses. CAT021's `RCF` row, one format later |
-| `I048/170` SUP | `Entity.attributes` | `not yet` | track maintained with information from a neighbouring node on the cluster or network. A **station-topology** fact; it says another sensor contributed and names neither it nor how, so nothing about it is actionable here |
-| `I048/170` TCC | `Entity.attributes` | `not yet` | which coordinate transformation produced I048/042 — radar plane, or slant-range-corrected and projected. Load-bearing for that item and parked with it |
-| `I048/170` first extent FX = 1 | *(refusal)* | `not yet` | documented as "Extension into second extent", and §5.2.19 defines no second extent. Nothing to decode and no length to guess |
+| `I048/161` Track Number | `Entity.attributes` | `cat048 1.0.0 · parked` | **a carried claim, never an identity key.** `attributes.track_number` on every record, with the SAC/SIC it is scoped to. Reversed from this row set's first draft, which made it a `SourceId` at step 2 of the identity chain — settlement 9 |
+| `I048/161` Track Number | `Entity.attributes` | `cat048 1.0.0 · parked` | it cannot ride on a `Track` either: `Track` has `track_id`, `entity_id`, `samples` and `track_quality` and **no extension bag**, which is the existing `Track.attributes` 1.1.0 candidate. So the station's own track number rides on the `Entity` even when the object it describes is a history |
+| `I048/170` CNF | `Entity.attributes` | `cat048 1.0.0 · parked` | Confirmed vs Tentative Track. Parked, and **not read into `Entity.confidence`** — a tracker's promotion state is not a probability |
+| `I048/170` RAD | `Entity.attributes` | `cat048 1.0.0 · parked` | which sensor maintains the track: Combined, PSR, SSR/Mode S, or `11` **Invalid** → `unresolved_raw`. Its note is parked too: "RAD can change after a number of non-matching with TYP in item 020", so RAD and TYP may legitimately disagree within one record |
+| `I048/170` DOU | `Entity.attributes` | `cat048 1.0.0 · parked` | "Low confidence in plot to track association" — a **data-association** verdict, not a confidence in the object. Parked; `Entity.confidence` stays `None` |
+| `I048/170` MAH | `Entity.attributes` | `cat048 1.0.0 · parked` | horizontal manoeuvre sensed. Parked; it is a tracker judgement, not a kinematic quantity |
+| `I048/170` CDM | `Entity.attributes` | `cat048 1.0.0 · parked` | Climbing / Descending Mode: Maintaining, Climbing, Descending, `11` Unknown → `unresolved_raw`. **A 2-bit category, not a rate** — it never reaches `Kinematics.climb_mps`, which is metres per second. CAT048 states no vertical rate anywhere |
+| `I048/170` TRE | `Event.event_type` | `cat048 1.0.0` | End_of_Track → `STATUS_CHANGE`. **The only terminal declaration any source in this document makes, and the CDM cannot hold it**: `valid_to` stays `None`, because `TRE` ends "this track" — a "track record within a particular track file" per I048/161 — and not the airframe the `entity_id` names. Carried at `attributes.track_end`. Settlement 8, **gap 26** |
+| `I048/170` GHO | `Entity.attributes` | `cat048 1.0.0 · parked` | "Ghost target track". Parked, and the object is still emitted in full — the source's verdict is carried, and suppressing or downgrading the record would be the filtering the `Adapter` contract refuses. CAT021's `RCF` row, one format later |
+| `I048/170` SUP | `Entity.attributes` | `cat048 1.0.0 · parked` | track maintained with information from a neighbouring node on the cluster or network. A **station-topology** fact; it says another sensor contributed and names neither it nor how, so nothing about it is actionable here |
+| `I048/170` TCC | `Entity.attributes` | `cat048 1.0.0 · parked` | which coordinate transformation produced I048/042 — radar plane, or slant-range-corrected and projected. Load-bearing for that item and parked with it |
+| `I048/170` first extent FX = 1 | *(refusal)* | `cat048 1.0.0` | documented as "Extension into second extent", and §5.2.19 defines no second extent. Nothing to decode and no length to guess |
 
 ### Row set — velocity and track quality
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/200` CALCULATED GROUNDSPEED | `Kinematics.speed_mps` | `not yet` | LSB 2⁻¹⁴ NM/s × 1852 m = 0.113 037 109 375 m/s, **exact in float64**. A ground speed in the CDM's own sense, and the one kinematic quantity CAT048 states cleanly |
-| `I048/200` angular component | `Kinematics.course_deg` | `not yet` | Mapped on §5.2.20's **Definition** — "Calculated track velocity expressed in polar co-ordinates" — because the angular component of a velocity vector is a course by construction, and on its **Note**, which pins the datum: "The calculated heading is related to the geographical North at the aircraft position". LSB 360/2¹⁶ °. **Gap 7's magnetic-versus-true hazard is absent BY THE TEXT here**, not by inference: geographical north is stated, so unlike an ADS-B heading there is no datum living in another frame. The field *label* reads "CALCULATED HEADING" and does not govern — ambiguity 3 |
-| `I048/200` raw integers | `Entity.attributes` | `not yet` | parked; egress re-emits from them rather than from the converted floats |
-| *(none)* | `Kinematics.climb_mps` | `not yet` | `None`, always. CAT048 states no vertical rate — I048/170 `CDM` is a four-value category and I048/120 is a line-of-sight scalar |
-| `I048/120` primary CAL, RDS | `Entity.attributes` | `not yet` | which secondary subfield is present. "When used, only one … shall be present" — both set is non-conforming, parsed, parked, recorded, **not refused**. Ambiguity 5 |
-| `I048/120` primary bits 6/2 set | *(refusal)* | `not yet` | presence bits for "Subfields #3/7: Spare", which do not exist. CAT021's Not-Used-FRN reasoning |
-| `I048/120` #1 CAL, D | `Entity.attributes` | `not yet` | Calculated Doppler Speed, 10 bits two's complement, LSB 1 m/s, plus the doubtful bit. **Parks — reaches no `Kinematics` field.** A line-of-sight component is not a ground speed, and the item's own note makes the sign "implementation dependent". Settlement 6, **gap 25** |
-| `I048/120` #2 REP, DOP, AMB, FRQ | `Entity.attributes` | `not yet` | Raw Doppler Speed: repetition factor, Doppler speed and ambiguity range at 1 m/s, transmitter frequency at 1 MHz. `AMB` is a Doppler ambiguity interval and `FRQ` is a radar parameter — **neither is a property of the target at all** |
-| `I048/210` σ(X), σ(Y), σ(V), σ(H) | `Entity.attributes` | `not yet` | "a vector of standard deviations" in the **local grid system** — 1/128 NM, 1/128 NM, 2⁻¹⁴ NM/s, 360/2¹² °. Parked in the source's units. Local-grid axes are the same unresolvable frame as I048/042's, so σ(X) and σ(Y) cannot become `Position.accuracy_m` even if a `Position` existed. **Gap 17** and **gap 24** |
-| *(none)* | `Position.accuracy_m` | `not yet` | never written, even when a `Position` is derived. A per-axis standard deviation "within the local grid system" is not a 1-sigma horizontal metre figure, collapsing σ(X) and σ(Y) into one is a modelling choice, and the derivation in settlement 3 adds error that nothing in the record bounds |
-| *(none)* | `Entity.confidence` / `Track.track_quality` | `not yet` | both `None`. Every quality statement CAT048 carries is a pulse-level flag, a per-axis standard deviation or an association verdict; none is a 0..1 assessment. Settlement 9 |
+| `I048/200` CALCULATED GROUNDSPEED | `Kinematics.speed_mps` | `cat048 1.0.0` | LSB 2⁻¹⁴ NM/s × 1852 m = 0.113 037 109 375 m/s, **exact in float64**. A ground speed in the CDM's own sense, and the one kinematic quantity CAT048 states cleanly |
+| `I048/200` angular component | `Kinematics.course_deg` | `cat048 1.0.0` | Mapped on §5.2.20's **Definition** — "Calculated track velocity expressed in polar co-ordinates" — because the angular component of a velocity vector is a course by construction, and on its **Note**, which pins the datum: "The calculated heading is related to the geographical North at the aircraft position". LSB 360/2¹⁶ °. **Gap 7's magnetic-versus-true hazard is absent BY THE TEXT here**, not by inference: geographical north is stated, so unlike an ADS-B heading there is no datum living in another frame. The field *label* reads "CALCULATED HEADING" and does not govern — ambiguity 3 |
+| `I048/200` raw integers | `Entity.attributes` | `cat048 1.0.0 · parked` | parked; egress re-emits from them rather than from the converted floats |
+| *(none)* | `Kinematics.climb_mps` | `cat048 1.0.0` | `None`, always. CAT048 states no vertical rate — I048/170 `CDM` is a four-value category and I048/120 is a line-of-sight scalar |
+| `I048/120` primary CAL, RDS | `Entity.attributes` | `cat048 1.0.0 · parked` | which secondary subfield is present. "When used, only one … shall be present" — both set is non-conforming, parsed, parked, recorded, **not refused**. Ambiguity 5 |
+| `I048/120` primary bits 6/2 set | *(refusal)* | `cat048 1.0.0` | presence bits for "Subfields #3/7: Spare", which do not exist. CAT021's Not-Used-FRN reasoning |
+| `I048/120` #1 CAL, D | `Entity.attributes` | `cat048 1.0.0 · parked` | Calculated Doppler Speed, 10 bits two's complement, LSB 1 m/s, plus the doubtful bit. **Parks — reaches no `Kinematics` field.** A line-of-sight component is not a ground speed, and the item's own note makes the sign "implementation dependent". Settlement 6, **gap 25** |
+| `I048/120` #2 REP, DOP, AMB, FRQ | `Entity.attributes` | `cat048 1.0.0 · parked` | Raw Doppler Speed: repetition factor, Doppler speed and ambiguity range at 1 m/s, transmitter frequency at 1 MHz. `AMB` is a Doppler ambiguity interval and `FRQ` is a radar parameter — **neither is a property of the target at all** |
+| `I048/210` σ(X), σ(Y), σ(V), σ(H) | `Entity.attributes` | `cat048 1.0.0 · parked` | "a vector of standard deviations" in the **local grid system** — 1/128 NM, 1/128 NM, 2⁻¹⁴ NM/s, 360/2¹² °. Parked in the source's units. Local-grid axes are the same unresolvable frame as I048/042's, so σ(X) and σ(Y) cannot become `Position.accuracy_m` even if a `Position` existed. **Gap 17** and **gap 24** |
+| *(none)* | `Position.accuracy_m` | `cat048 1.0.0` | never written, even when a `Position` is derived. A per-axis standard deviation "within the local grid system" is not a 1-sigma horizontal metre figure, collapsing σ(X) and σ(Y) into one is a modelling choice, and the derivation in settlement 3 adds error that nothing in the record bounds |
+| *(none)* | `Entity.confidence` / `Track.track_quality` | `cat048 1.0.0` | both `None`. Every quality statement CAT048 carries is a pulse-level flag, a per-axis standard deviation or an association verdict; none is a 0..1 assessment. Settlement 9 |
 
 ### Row set — I048/130 Radar Plot Characteristics
 
@@ -6694,38 +6704,38 @@ A compound item of seven one-octet subfields, all parked. It is the radar's own 
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/130` #1 SRL | `Entity.attributes` | `not yet` | SSR plot runlength, LSB 360/2¹³ ° ≈ 0.044 °, unsigned; its note gives the span, "from 0 to 11.21 dg" |
-| `I048/130` #2 SRR | `Entity.attributes` | `not yet` | number of received replies for (M)SSR, LSB 1 |
-| `I048/130` #3 SAM | `Entity.attributes` | `not yet` | amplitude of the (M)SSR reply, LSB 1 dBm, **two's complement per its own note**. A link measurement, never a range or a confidence — `adsb.py`'s message-amplitude rule |
-| `I048/130` #4 PRL | `Entity.attributes` | `not yet` | primary plot runlength, LSB 360/2¹³ °, unsigned, same 11.21 ° span |
-| `I048/130` #5 PAM | `Entity.attributes` | `not yet` | amplitude of the primary plot, LSB 1 dBm, two's complement |
-| `I048/130` #6 RPD | `Entity.attributes` | `not yet` | PSR−SSR range difference, LSB 1/256 NM, two's complement, span ±0.5 NM. **"Sending the maximum value means that the difference in range is equal or greater than the maximum value"** — a floor, recorded as one |
-| `I048/130` #7 APD | `Entity.attributes` | `not yet` | PSR−SSR azimuth difference, LSB 360/2¹⁴ °, two's complement, span "+/-360/2⁷ = +/-2.8125 dg". Its maximum is a floor on the same terms — and its note says "the difference in **range**", which is a copy-paste from #6. Ambiguity 4 |
-| `I048/130` recommendation | `Entity.attributes` | `not yet` | "For a combined target report, subfields RPD and APD of primary subfield should be present" — a *should*, so absence is recorded and never a refusal |
-| `I048/130` second primary octet | *(refusal)* | `not yet` | the primary subfield is `FX`-extensible but only seven subfields are defined |
+| `I048/130` #1 SRL | `Entity.attributes` | `cat048 1.0.0 · parked` | SSR plot runlength, LSB 360/2¹³ ° ≈ 0.044 °, unsigned; its note gives the span, "from 0 to 11.21 dg" |
+| `I048/130` #2 SRR | `Entity.attributes` | `cat048 1.0.0 · parked` | number of received replies for (M)SSR, LSB 1 |
+| `I048/130` #3 SAM | `Entity.attributes` | `cat048 1.0.0 · parked` | amplitude of the (M)SSR reply, LSB 1 dBm, **two's complement per its own note**. A link measurement, never a range or a confidence — `adsb.py`'s message-amplitude rule |
+| `I048/130` #4 PRL | `Entity.attributes` | `cat048 1.0.0 · parked` | primary plot runlength, LSB 360/2¹³ °, unsigned, same 11.21 ° span |
+| `I048/130` #5 PAM | `Entity.attributes` | `cat048 1.0.0 · parked` | amplitude of the primary plot, LSB 1 dBm, two's complement |
+| `I048/130` #6 RPD | `Entity.attributes` | `cat048 1.0.0 · parked` | PSR−SSR range difference, LSB 1/256 NM, two's complement, span ±0.5 NM. **"Sending the maximum value means that the difference in range is equal or greater than the maximum value"** — a floor, recorded as one |
+| `I048/130` #7 APD | `Entity.attributes` | `cat048 1.0.0 · parked` | PSR−SSR azimuth difference, LSB 360/2¹⁴ °, two's complement, span "+/-360/2⁷ = +/-2.8125 dg". Its maximum is a floor on the same terms — and its note says "the difference in **range**", which is a copy-paste from #6. Ambiguity 4 |
+| `I048/130` recommendation | `Entity.attributes` | `cat048 1.0.0 · parked` | "For a combined target report, subfields RPD and APD of primary subfield should be present" — a *should*, so absence is recorded and never a refusal |
+| `I048/130` second primary octet | *(refusal)* | `cat048 1.0.0` | the primary subfield is `FX`-extensible but only seven subfields are defined |
 
 ### Row set — I048/230, I048/250, I048/260
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I048/230` COM | `Entity.attributes` | `not yet` | transponder communications capability, 0–4 defined and "5 to 7 Not assigned" → `unresolved_raw`. Its encoding rule adds "If the datalink capability has not been extracted yet, bits 16/14 shall be set to zero" — so **`0` is ambiguous between "surveillance only" and "not yet extracted"**, and both readings are recorded |
-| `I048/230` STAT | `Entity.attributes` | `not yet` | flight status: the alert / SPI / airborne-or-on-ground vocabulary, 0–5 plus "6 Not assigned" → `unresolved_raw` and "7 Unknown" → `unavailable_fields`. **Alert values do not raise severity** — settlement 9. The airborne/on-ground half is CAT048's only ground indication and it is parked, not read into `entity_type` |
-| `I048/230` SI | `Entity.attributes` | `not yet` | SI/II transponder capability. Added in Edition 1.16, so a record from an older encoder carries a spare bit here instead |
-| `I048/230` MSSC, ARC, AIC | `Entity.attributes` | `not yet` | Mode-S specific service capability, altitude reporting resolution (100 ft or 25 ft), aircraft identification capability. `ARC` is what I048/100's D1/Q bit needs and the join is declined |
-| `I048/230` B1A, B1B | `Entity.attributes` | `not yet` | "BDS 1,0 bit 16" and "BDS 1,0 bits 37/40" — five bits lifted out of a register whose other 51 bits are not here. Parked as the register fragments they are, never as a decoded capability |
-| `I048/250` REP + registers | `Event.payload` | `not yet` | each register as 56 bits of hex plus its `BDS1`/`BDS2` address and extraction mode. **Parked, not exempted** — settlement 10 |
-| `I048/250` BDS1 = BDS2 = 0 | `Event.payload` | `not yet` | "Comm-B broadcast, register unidentified" — **not register 0,0**. Note 3 |
-| `I048/260` ACASRA | `Event.payload` | `not yet` | 56 bits of hex. **Not decoded**: the only cited authority is "ICAO Draft SARPs for ACAS", a draft, unnamed by edition and absent from §2.2. `unresolved_raw` records the decline |
-| `I048/260` presence | `Entity.attributes` | `not yet` | **The item's two sentences assert different things and the row carries both.** The Definition says "Currently active Resolution Advisory (RA), if any, generated by the ACAS associated with the transponder transmitting the report and threat identity data"; the Encoding Rule says "This item shall be present when a Resolution Advisory (RA) has been **generated in the last scan**". An RA generated last scan need not still be active, so **presence asserts less than the Definition's word "currently"** — and since the 56 bits are undecodable here, this adapter cannot tell which of the two it is holding. Parked at `attributes.acas_ra_active` with both sentences quoted, and severity stays a **consumer's act**. Note the divergence from CAT021 explicitly: that row declines on the grounds that "grading an equipment status as an emergency would be the translator judging", which is a judgement argument; **this row declines on a weaker and more specific ground — the text does not establish that an advisory is active at all** |
-| `I048/260` + `I048/250` on ACAS Xu | `Event.payload` | `not yet` | "the Resolution Advisory consists of two parts (BDS30 and BDS31). BDS31 will be transmitted using item 250" — the advisory is **split across two items** and either half alone is incomplete. Recorded, and I048/020 ext 3 `ACASXV` is what says whether this applies |
+| `I048/230` COM | `Entity.attributes` | `cat048 1.0.0 · parked` | transponder communications capability, 0–4 defined and "5 to 7 Not assigned" → `unresolved_raw`. Its encoding rule adds "If the datalink capability has not been extracted yet, bits 16/14 shall be set to zero" — so **`0` is ambiguous between "surveillance only" and "not yet extracted"**, and both readings are recorded |
+| `I048/230` STAT | `Entity.attributes` | `cat048 1.0.0 · parked` | flight status: the alert / SPI / airborne-or-on-ground vocabulary, 0–5 plus "6 Not assigned" → `unresolved_raw` and "7 Unknown" → `unavailable_fields`. **Alert values do not raise severity** — settlement 9. The airborne/on-ground half is CAT048's only ground indication and it is parked, not read into `entity_type` |
+| `I048/230` SI | `Entity.attributes` | `cat048 1.0.0 · parked` | SI/II transponder capability. Added in Edition 1.16, so a record from an older encoder carries a spare bit here instead |
+| `I048/230` MSSC, ARC, AIC | `Entity.attributes` | `cat048 1.0.0 · parked` | Mode-S specific service capability, altitude reporting resolution (100 ft or 25 ft), aircraft identification capability. `ARC` is what I048/100's D1/Q bit needs and the join is declined |
+| `I048/230` B1A, B1B | `Entity.attributes` | `cat048 1.0.0 · parked` | "BDS 1,0 bit 16" and "BDS 1,0 bits 37/40" — five bits lifted out of a register whose other 51 bits are not here. Parked as the register fragments they are, never as a decoded capability |
+| `I048/250` REP + registers | `Event.payload` | `cat048 1.0.0 · parked` | each register as 56 bits of hex plus its `BDS1`/`BDS2` address and extraction mode. **Parked, not exempted** — settlement 10 |
+| `I048/250` BDS1 = BDS2 = 0 | `Event.payload` | `cat048 1.0.0 · parked` | "Comm-B broadcast, register unidentified" — **not register 0,0**. Note 3 |
+| `I048/260` ACASRA | `Event.payload` | `cat048 1.0.0 · parked` | 56 bits of hex. **Not decoded**: the only cited authority is "ICAO Draft SARPs for ACAS", a draft, unnamed by edition and absent from §2.2. `unresolved_raw` records the decline |
+| `I048/260` presence | `Entity.attributes` | `cat048 1.0.0 · parked` | **The item's two sentences assert different things and the row carries both.** The Definition says "Currently active Resolution Advisory (RA), if any, generated by the ACAS associated with the transponder transmitting the report and threat identity data"; the Encoding Rule says "This item shall be present when a Resolution Advisory (RA) has been **generated in the last scan**". An RA generated last scan need not still be active, so **presence asserts less than the Definition's word "currently"** — and since the 56 bits are undecodable here, this adapter cannot tell which of the two it is holding. Parked at `attributes.acas_ra_active` with both sentences quoted, and severity stays a **consumer's act**. Note the divergence from CAT021 explicitly: that row declines on the grounds that "grading an equipment status as an emergency would be the translator judging", which is a judgement argument; **this row declines on a weaker and more specific ground — the text does not establish that an advisory is active at all** |
+| `I048/260` + `I048/250` on ACAS Xu | `Event.payload` | `cat048 1.0.0 · parked` | "the Resolution Advisory consists of two parts (BDS30 and BDS31). BDS31 will be transmitted using item 250" — the advisory is **split across two items** and either half alone is incomplete. Recorded, and I048/020 ext 3 `ACASXV` is what says whether this applies |
 
 ### Row set — SP and RE
 
 | CAT048 | CDM field | Status | Notes |
 |---|---|---|---|
-| `SP` (FRN 27) | `Entity.attributes` | `not yet` | Special Purpose Field, opaque. Parked verbatim as hex and **never written to on egress** — its contents are defined by bilateral agreement between one sender and one receiver, so a byte invented here is a byte some deployment already means something by. No §5.2 description exists for it in this document |
-| `RE` (FRN 28) | `Entity.attributes` | `not yet` | Reserved Expansion Field. Parked verbatim as hex, restored byte-for-byte, **never decoded and never written to**. Settlement 1. The explicit length octet counts itself, per Part 1 |
-| `RE` present | `Entity.attributes` | `not yet` | `attributes.reserved_expansion_basis` — that the RE field arrived, that its layout is in an appendix this repository does not pin, and which of the four losses in settlement 1 the record is exposed to (`ERR` set? `FOE/FRI` = `00`? code 37 present?) |
+| `SP` (FRN 27) | `Entity.attributes` | `cat048 1.0.0 · parked` | Special Purpose Field, opaque. Parked verbatim as hex and **never written to on egress** — its contents are defined by bilateral agreement between one sender and one receiver, so a byte invented here is a byte some deployment already means something by. No §5.2 description exists for it in this document |
+| `RE` (FRN 28) | `Entity.attributes` | `cat048 1.0.0 · parked` | Reserved Expansion Field. Parked verbatim as hex, restored byte-for-byte, **never decoded and never written to**. Settlement 1. The explicit length octet counts itself, per Part 1 |
+| `RE` present | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.reserved_expansion_basis` — that the RE field arrived, that its layout is in an appendix this repository does not pin, and which of the four losses in settlement 1 the record is exposed to (`ERR` set? `FOE/FRI` = `00`? code 37 present?) |
 
 ### Row set — egress, CDM back to a CAT048 data block
 
@@ -6735,13 +6745,13 @@ directly from settlement 3.
 
 | CDM | CAT048 | Status | Notes |
 |---|---|---|---|
-| `Entity.attributes` (the park) | the whole record | `not yet` | every item re-encoded from the **raw wire integers** parked on ingest, in FRN order, under the FSPEC as read. A float that had been through a conversion could not prove it had not moved a contact |
-| `Entity.attributes` | `LEN` | `not yet` | recomputed from the octets, never copied |
-| `Entity.source_ids[].system` | *(nothing)* | `not yet` | read to confirm the object came from CAT048; never written into a record |
-| `Entity.attributes` `track_end` | `I048/170` TRE | `not yet` | re-emitted from the park. **Never inferred from `Entity.valid_to`**, which CAT048 never sets — an entity whose interval was closed by something else must not acquire a track-end bit |
-| a `Track` | *(refusal)* | `not yet` | **A CDM `Track` cannot become a CAT048 block, and settlement 3 narrows the reason rather than removing it.** With a `sensor_position` injected the geometry *is* invertible — geodetic to `RHO`/`THETA` is the same arithmetic run backwards — so the refusal no longer rests on the transform. It rests on what the CDM does not carry: **I048/010 "shall be present in every ASTERIX record"** and there is no SAC/SIC anywhere in a `Track`; there is no FSPEC, no I048/020 `TYP`, and no height item, so the inverse slant correction has no `Δh` either. The refusal names each missing input |
-| an `Entity` that never came from CAT048 | *(refusal)* | `not yet` | same list. Note what is **not** on it any more: the site position, which a caller may now supply. Inventing a SAC/SIC would be a station identity, which is a different and larger act than accepting a site coordinate — the first names a system, the second locates one |
-| `Entity.attributes` SP, RE | `SP`, `RE` | `not yet` | restored verbatim, and **never created** for an object that did not arrive with one |
+| `Entity.attributes` (the park) | the whole record | `cat048 1.0.0 · egress` | every item re-encoded from the **raw wire integers** parked on ingest, in FRN order, under the FSPEC as read. A float that had been through a conversion could not prove it had not moved a contact |
+| `Entity.attributes` | `LEN` | `cat048 1.0.0 · egress` | recomputed from the octets, never copied |
+| `Entity.source_ids[].system` | *(nothing)* | `cat048 1.0.0 · egress` | read to confirm the object came from CAT048; never written into a record |
+| `Entity.attributes` `track_end` | `I048/170` TRE | `cat048 1.0.0 · egress` | re-emitted from the park. **Never inferred from `Entity.valid_to`**, which CAT048 never sets — an entity whose interval was closed by something else must not acquire a track-end bit |
+| a `Track` | *(refusal)* | `cat048 1.0.0 · egress` | **A CDM `Track` cannot become a CAT048 block, and settlement 3 narrows the reason rather than removing it.** With a `sensor_position` injected the geometry *is* invertible — geodetic to `RHO`/`THETA` is the same arithmetic run backwards — so the refusal no longer rests on the transform. It rests on what the CDM does not carry: **I048/010 "shall be present in every ASTERIX record"** and there is no SAC/SIC anywhere in a `Track`; there is no FSPEC, no I048/020 `TYP`, and no height item, so the inverse slant correction has no `Δh` either. The refusal names each missing input |
+| an `Entity` that never came from CAT048 | *(refusal)* | `cat048 1.0.0 · egress` | same list. Note what is **not** on it any more: the site position, which a caller may now supply. Inventing a SAC/SIC would be a station identity, which is a different and larger act than accepting a site coordinate — the first names a system, the second locates one |
+| `Entity.attributes` SP, RE | `SP`, `RE` | `cat048 1.0.0 · egress` | restored verbatim, and **never created** for an object that did not arrive with one |
 
 #### What egress is NOT lossy for
 
@@ -6817,13 +6827,29 @@ An unimplemented thing is a decision. "Not supported" without a reason is indist
 | **The SAC allocation table** | Not an item, but the same shape of decision. §5.2.1's note points at the EUROCONTROL website, and `fixtures/cat021/spec/sac_pin.json` pins a retrieved copy — so unlike CAT021's Phase 1 there *is* a pin here, and the fixtures' consequence is in `fixtures/cat048/README.md`. What is still unpinned is the ICAO 24-bit address allocation table, so the address-block claim stays the weaker of the two |
 | **ICAO Annex 10's flight-level range** | I048/090 Note 3 defers to it and §2.2 does not list it. The field's own range is enforced and `flight_level_range_basis` records that the narrower bound was not readable |
 
-### The fixtures — planned here before they exist
+### The fixtures — planned here before they existed, and now fifty-two
 
-Nothing exists yet; `fixtures/cat048/README.md` carries the identifier evidence and
-`fixtures/cat048/spec/cat048_pin.json` the pin. Phase 2 adds `spec/build_fixtures.py` and the
-twins. **Everything will be synthetic**, each fixture will ship as `<name>.cat048` plus a
-`<name>.parsed.json` twin, and the worked arithmetic will live in the README because a byte file
-cannot hold a comment.
+Nothing existed at Phase 1; now there are **forty-one translatable blocks and eleven refusals**, all built by
+`fixtures/cat048/spec/build_fixtures.py` from field values rather than hand-edited — a record's
+FSPEC and its block's LEN are both functions of the contents. Each ships as `<name>.cat048` plus
+a `<name>.parsed.json` twin, because `lossless.unrepresented()` has no leaf structure to harvest
+from bytes and a blocks-only set would show a green run with the never-drop rule never executed.
+**The twins are what make the claim real here**: the lossless check *passes* on all 41 of them
+rather than skipping, so nothing in this row set is excused.
+
+The set grew past the thirty-four translatable fixtures Phase 1 planned, and the additions are
+named rather than slipped in: `psr_track_two_scans_same_track_number` (gap 27's truncation needs
+two records to be visible at all), `ic_conflict_codes`, `mode_s_alert_is_not_an_emergency`,
+`track_quality_vector`, `mode_1_and_mode_2_with_confidence`, `reserved_expansion_field_carried`,
+`fspec_longer_than_necessary`, `helicopter_classification_not_read_as_a_type`,
+`field_monitor_report`, and the five geometry fixtures settlement 3's reversal required. Five
+refusals were added for the same reason: `descriptor_sixth_extension` (the third FX-to-nowhere),
+`missing_mandatory_data_source`, `plot_characteristics_second_primary_octet`, `wrong_category`
+and `length_disagrees_with_buffer`.
+
+`check_layouts()` in the generator asserts that every encoder emits exactly the octet count §5.2
+states for its item, and `test_the_item_layouts_sum_to_the_standards_own_byte_counts` runs it
+from the suite so it cannot be skipped.
 
 | Fixture | What it exercises | The defect it is there to catch |
 |---|---|---|
@@ -6841,8 +6867,8 @@ cannot hold a comment.
 | `time_of_day_beyond_one_day` | I048/140 holding 100 000 s | The `CodecError`. A modulo would move the contact by hours with every other check passing |
 | `time_of_day_exactly_86400` | I048/140 = 11 059 200 raw | Ambiguity 1's lower boundary. **Accepted**, on §5.2.17's inclusive stated range, and resolved to the next day's midnight |
 | `time_of_day_one_lsb_past_86400` | I048/140 = 11 059 201 raw | Ambiguity 1's upper boundary, one LSB away. **Refused**, so the two fixtures together pin the edge rather than the direction. Ambiguity 14 records that `asterix_cat021.py` refuses the value the fixture above accepts |
-| `midnight_rollover_before` | 23:59:58.500, clock frozen at 00:00:01.100 the next day | The rollover backwards, echoing CAT021's value on purpose so the shared rule is visible |
-| `midnight_rollover_after` | 00:00:00.900, clock frozen at 23:59:59.700 | The same rule forwards — the direction an adapter that special-cased "subtract a day" gets wrong |
+| `midnight_rollover_before` | 23:59:58.500, clock frozen at 00:00:01.100 the next day | The rollover backwards, echoing CAT021's value on purpose so the shared rule is visible. **The clock is injected in the test, not by the harness**: the harness's shared 06:15 clock resolves both of these to the receipt date and exercises nothing, which is a property of one frozen clock per fixture directory rather than of the rule |
+| `midnight_rollover_after` | 00:00:00.900, clock frozen at 23:59:59.700 | The same rule forwards — the direction an adapter that special-cased "subtract a day" gets wrong. Same note about the clock |
 | `no_time_item_at_all` | I048/140 absent | The stated absence §5.2.17 permits. `observed_at` from the clock, the basis saying so, and **no refusal** |
 | `three_altitudes_disagreeing` | /090, /100 and /110 in one record, with I048/030 codes 12 and 18 | Settlement 5 end to end: three quantities, three datums, no arbitration, the disagreement recorded, the Gray bits undecoded, and the source's own codes named in the basis |
 | `flight_level_negative` | /090 holding a negative flight level | Edition 1.32's "in two's complement form" clarification. An unsigned read puts the aircraft at FL 4000 |

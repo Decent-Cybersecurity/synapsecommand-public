@@ -1,0 +1,57 @@
+{
+  "block": {
+    "category": 48,
+    "length": 17,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e18102",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/140": "a8bf40",
+        "I048/220": "0029ab",
+        "I048/230": "20e0"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/140": {
+          "time_of_day_raw": 11059008,
+          "time_of_day_s": 86398.5
+        },
+        "I048/220": {
+          "address": "0029AB",
+          "address_raw": 10667
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

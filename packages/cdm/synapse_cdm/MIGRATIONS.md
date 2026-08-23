@@ -102,6 +102,39 @@ is worth stating.
   measurement are different kinds of claim, and giving the threshold a numeric home is how it
   would quietly become one.
 
+- **`adapters/asterix_cat048.py` 1.0.0 (ASTERIX Category 048, Monoradar Target Reports,
+  bidirectional)** — all 28 UAP FRNs of EUROCONTROL-SPEC-0149-4 Edition 1.32, at
+  **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  This is the eleventh adapter and the first **sensor-side** one: its reports are genuine
+  detections rather than self-reports, which is why `Event.event_type` is `DETECTION` in the
+  ordinary case where AIS, ADS-B and CAT021 all use `TRACK_UPDATE`. Two of its rulings reversed
+  during review and both reversals were away from using an existing field, which is worth
+  recording because the pressure runs the other way:
+
+  - **`Entity.valid_to` was NOT used for the track-end bit.** I048/170's `TRE` is the only
+    explicit terminal declaration any source in `FORMAT_COVERAGE.md` makes, and a first draft
+    wrote it into `valid_to`. It ends "a track record within a particular track file"
+    (§5.2.18), not the airframe the `entity_id` names — so `valid_to` would have told every
+    consumer that did not read a basis key that the aircraft's state ceased. **Gap 26.**
+  - **I048/161 was NOT made a `SourceId`.** A station-scoped, recycled 12-bit number keyed into
+    `entity_id` merges two airframes into one entity. Declining it loses the continuity the
+    radar states across scans — a truncation, named in **gap 27** — and the alternative was a
+    false statement in the field the CDM guarantees is stable across updates.
+
+  What the CDM had was otherwise enough, and one existing decision earned its keep in a way no
+  previous adapter tested: **`Position` requiring both coordinates**. CAT048 states range and
+  azimuth from a station whose location the format never carries, so a caller that injects no
+  `sensor_position` gets `position: None` on every object — and because the model makes a
+  partial coordinate unspellable, there is no way to express that as a half-position. The
+  injected site is the injected clock's precedent applied to geometry, and the arithmetic it
+  enables is declared in `attributes.position_basis` because **the pinned specification supplies
+  none of it** (gap 24).
+
+  One gap it opens is a schema question rather than a parking key, and it is the entry above:
+  `PositionSource` has no member for a sensor measurement, so a derived radar fix is written
+  `ESTIMATED`.
+
 - **`adapters/adsb.py` 1.0.0 (ADS-B 1090ES, Mode S DF17/DF18, bidirectional)** — type codes
   1-4, 5-8, 0 and 9-18, 19 subtypes 1-4, 20-22, 28 subtype 1 and 31 subtype 0, at
   **schema_version 1.0.0**, with no field added, removed or retyped.

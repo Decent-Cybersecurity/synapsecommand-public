@@ -1,0 +1,97 @@
+{
+  "block": {
+    "category": 48,
+    "length": 29,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e19782",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/140": "2a3000",
+        "I048/161": "0058",
+        "I048/170": "4100",
+        "I048/200": "05c3ffff",
+        "I048/210": "0c090407",
+        "I048/220": "0029ab",
+        "I048/230": "20e0"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/161": {
+          "spare_bits_16_13": 0,
+          "track_number": 88
+        },
+        "I048/170": {
+          "cdm": 0,
+          "cdm_text": "Maintaining",
+          "cnf": 0,
+          "dou": 0,
+          "extent": {
+            "gho": 0,
+            "spare_bits_4_2": 0,
+            "sup": 0,
+            "tcc": 0,
+            "tre": 0
+          },
+          "mah": 0,
+          "rad": 2,
+          "rad_text": "SSR/Mode S Track"
+        },
+        "I048/200": {
+          "groundspeed_nm_s": 0.09002685546875,
+          "groundspeed_raw": 1475,
+          "heading_deg": 359.9945068359375,
+          "heading_raw": 65535
+        },
+        "I048/210": {
+          "sigma_h_deg": 0.615234375,
+          "sigma_h_raw": 7,
+          "sigma_v_nm_s": 0.000244140625,
+          "sigma_v_raw": 4,
+          "sigma_x_nm": 0.09375,
+          "sigma_x_raw": 12,
+          "sigma_y_nm": 0.0703125,
+          "sigma_y_raw": 9
+        },
+        "I048/220": {
+          "address": "0029AB",
+          "address_raw": 10667
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

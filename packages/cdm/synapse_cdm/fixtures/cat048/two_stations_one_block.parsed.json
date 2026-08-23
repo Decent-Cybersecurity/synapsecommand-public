@@ -1,0 +1,119 @@
+{
+  "block": {
+    "category": 48,
+    "length": 39,
+    "record_count": 2
+  },
+  "records": [
+    {
+      "fspec": "f18102",
+      "index": 0,
+      "item_octets": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/040": "0f001555",
+        "I048/140": "2a3000",
+        "I048/220": "0029ab",
+        "I048/230": "20e0"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 37
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/040": {
+          "rho_nm": 15.0,
+          "rho_raw": 3840,
+          "theta_deg": 29.9981689453125,
+          "theta_raw": 5461
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764800,
+          "time_of_day_s": 21600.0
+        },
+        "I048/220": {
+          "address": "0029AB",
+          "address_raw": 10667
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        }
+      },
+      "record_count": 2
+    },
+    {
+      "fspec": "f18102",
+      "index": 1,
+      "item_octets": {
+        "I048/010": "2526",
+        "I048/020": "a0",
+        "I048/040": "0f6615c3",
+        "I048/140": "2a3040",
+        "I048/220": "0029ac",
+        "I048/230": "20e0"
+      },
+      "items": {
+        "I048/010": {
+          "sac": 37,
+          "sic": 38
+        },
+        "I048/020": {
+          "extensions": [],
+          "rab": false,
+          "rdp": 0,
+          "sim": false,
+          "spi": false,
+          "typ": 5,
+          "typ_text": "Single ModeS Roll-Call"
+        },
+        "I048/040": {
+          "rho_nm": 15.3984375,
+          "rho_raw": 3942,
+          "theta_deg": 30.6024169921875,
+          "theta_raw": 5571
+        },
+        "I048/140": {
+          "time_of_day_raw": 2764864,
+          "time_of_day_s": 21600.5
+        },
+        "I048/220": {
+          "address": "0029AC",
+          "address_raw": 10668
+        },
+        "I048/230": {
+          "aic": 1,
+          "arc": 1,
+          "b1a": 0,
+          "b1b": 0,
+          "com": 1,
+          "com_text": "Comm. A and Comm. B capability",
+          "mssc": 1,
+          "si": 0,
+          "spare_bit_9": 0,
+          "stat": 0,
+          "stat_text": "No alert, no SPI, aircraft airborne"
+        }
+      },
+      "record_count": 2
+    }
+  ]
+}

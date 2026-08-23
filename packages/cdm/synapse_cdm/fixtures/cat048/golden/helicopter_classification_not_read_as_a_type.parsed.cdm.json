@@ -1,0 +1,209 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always. I048/020's first extension carries FOE/FRI with the literal value '01 Friendly target', plus MI 'Military identification' \u2014 and turning an IFF interrogation result into FRIENDLY is an identification decision belonging to an IFF authority, not to a translator. Over-claiming FRIENDLY is also the dangerous direction. Two further reasons are in the text: \u00a75.2.2's M4E note forces FOE/FRI to '00' whenever the real three-level result is in the REF, so '00' is ambiguous between 'not interrogated' and 'unreadable here'; and '10' is spelled 'Unknown target' rather than 'not interrogated', so the vocabulary makes three distinct claims that an affiliation would collapse",
+      "aircraft_identification": "EXHELO2",
+      "aircraft_identification_basis": "gap 1, a sixth private key for one concept. Eight characters at six bits each \u2014 and THIS DOCUMENT STATES NO CHARACTER TABLE. \u00a75.2.25 Note 1 says 'For the transmission of BDS Register 2,0, Data Item I048/240 is used', and BDS 2,0's coding is in [Ref. 2] ED-73F/DO-181F, which nothing here pins; the alphabet used is the ICAO Annex 10 Vol. IV Table 3-8 set that adsb.py and asterix_cat021.py both apply to the same six bits, cited as their basis rather than as this document's. \u00a75.2.24 also puts two different kinds of string in one field \u2014 'aircraft identification when flight plan is available or the registration marking when no flight plan is available' \u2014 with nothing saying which, so that is recorded rather than guessed",
+      "cat048_block": {
+        "category": 48,
+        "length": 24,
+        "record_count": 1
+      },
+      "cat048_fspec": "e1c142",
+      "cat048_items": {
+        "I048/010": "2525",
+        "I048/020": "a0",
+        "I048/030": "30",
+        "I048/140": "2a3000",
+        "I048/220": "0029ab",
+        "I048/230": "20e0",
+        "I048/240": "15820530fca0"
+      },
+      "cat048_measured_position_nonconformance": "\u00a75.2.4's Encoding Rule is 'This item shall be sent when there is a detection', and TYP = 5 states one. Recorded as a non-conformance and NOT a refusal \u2014 the record is otherwise complete and suppressing it would be filtering",
+      "cat048_time": {
+        "basis": "parked, and EGRESS RE-EMITS FROM THIS rather than recomputing from observed_at: 1/128 s is 7.8125 ms, not a whole number of milliseconds, and times.render emits three decimal places. \u00a74.2.1 adds that 'The target time stamp shall be consistent with the reported plot position', which is why gap 13's one-record-two-instants problem does not arise in this format",
+        "lsb_seconds": 0.0078125,
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "cat048_warning_error_basis": "an ORDERED list in WIRE ORDER, duplicates preserved, never sorted and never deduplicated: \u00a75.2.3's FX annotation reads 'Extension into first extent (next W/E condition value)' and Note 1 stresses that 'a series of one or more codes can be reported per target report'. The order is data, and egress is only byte-exact if the codes go back out in the order they came in. Settlement 7",
+      "cat048_warning_error_codes": [
+        {
+          "code": 24,
+          "text": "Helicopter"
+        }
+      ],
+      "comms_capability": {
+        "aic": 1,
+        "arc": 1,
+        "arc_dependency": "ARC is the altitude reporting capability (100 ft or 25 ft) that I048/100's D1/Q bit needs, and the join is declined",
+        "b1_basis": "B1A is 'BDS 1,0 bit 16' and B1B is 'BDS 1,0 bits 37/40' \u2014 five bits lifted out of a register whose other 51 bits are not here. Parked as the register FRAGMENTS they are, never as a decoded capability",
+        "b1a": 0,
+        "b1b": 0,
+        "com": 1,
+        "com_ambiguity": null,
+        "com_text": "Comm. A and Comm. B capability",
+        "mssc": 1,
+        "si": 0,
+        "si_basis": "SI/II transponder capability, added in Edition 1.16, so a record from an older encoder carries a spare bit here instead",
+        "spare_bit_9": 0,
+        "stat": 0,
+        "stat_text": "No alert, no SPI, aircraft airborne"
+      },
+      "data_source": {
+        "basis": "I048/010, 'Identification of the radar station from which the data is received' (\u00a75.2.1's Definition), whose Encoding Rule is 'This Item shall be present in every ASTERIX record'. NOT a SourceId: it identifies the SENSOR, not the target, and filing a station under the object's identifiers is how a fused picture ends up with an entity per receiver. Sharper here than in CAT021 \u2014 every measurement in the record is relative to this station, so the SAC/SIC is the key a consumer would need to resolve the geometry at all, and the CDM has nowhere canonical for a producing sensor. Gaps 14 and 24",
+        "sac": 37,
+        "sic": 37
+      },
+      "entity_type_basis": "from I048/020 TYP = 5 (Single ModeS Roll-Call), a MANDATORY item (\u00a75.2.2: 'shall be present in every target record'). NOT from I048/030's classification codes, whose own Note 7 says 'The use of this Data Item is implementation specific and shall be described in the ICD of the system generating the Category 048 target reports' \u2014 a per-deployment convention is not a canonical classification. A primary return is an ECHO before it is an object, so TYP 0 and 1 read UNKNOWN. The known infelicity: a flock of birds detected by an SSR-equipped station still reads PLATFORM",
+      "identity_basis": "I048/220, the 24-bit Mode S aircraft address, filed under ICAO24 \u2014 the same system name adsb.py and asterix_cat021.py use, so one airframe seen by a radar and by an ADS-B ground station derives the SAME entity_id without the adapters coordinating. That is a pure function of the address and not a join",
+      "integrity_basis": "CAT048 defines NO checksum at any level \u2014 neither \u00a74.6.2 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined FRN, every variable item terminated inside the record, no FX led nowhere, and the mandatory items were present. This is weaker than a CRC and the difference is named rather than smoothed over: a single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a measurement",
+      "position_basis": {
+        "arithmetic_source": "THIS ADAPTER, not the specification. \u00a74.3.2.1 gives only 'X = RHO * SIN(THETA); Y = RHO * COS(THETA)' and \u00a74.3.2.2 names the WGS-84 ellipsoid and then defers the projection to 'a suitable projection technique \u2026 (e.g. a stereographical projection)'. FORMAT_COVERAGE.md gap 24",
+        "derived": false,
+        "reason": "the record carries no I048/040, so there is no measured position"
+      },
+      "rdp_chain": {
+        "basis": "Report from RDP Chain 1 or 2 \u2014 a station-internal routing fact. What would make it interpretable is CAT034, which is out of scope: settlement 2",
+        "rdp": 0
+      },
+      "report_source": {
+        "basis": "Report from aircraft transponder, or from a field monitor (fixed transponder). Parked and deliberately NOT turned into FACILITY \u2014 CAT021's identical decision: it says who transmitted, not what kind of thing it is",
+        "rab": false
+      },
+      "report_type": {
+        "text": "Single ModeS Roll-Call",
+        "typ": 5
+      },
+      "simulated_target": {
+        "basis": "parked, and it does NOT rewrite Entity.source.synthetic \u2014 that is a deployment declaration about the feed and a payload bit may not flip it. The Legion EXERCISE_* rule and CAT021's SIM row, reached from one bit",
+        "sim": false
+      },
+      "source_extras": {
+        "items": {
+          "I048/010": {
+            "sac": 37,
+            "sic": 37
+          },
+          "I048/020": {
+            "extensions": [],
+            "rab": false,
+            "rdp": 0,
+            "sim": false,
+            "spi": false,
+            "typ": 5,
+            "typ_text": "Single ModeS Roll-Call"
+          },
+          "I048/030": {
+            "codes": [
+              {
+                "code": 24,
+                "text": "Helicopter"
+              }
+            ]
+          },
+          "I048/140": {
+            "time_of_day_raw": 2764800,
+            "time_of_day_s": 21600.0
+          },
+          "I048/220": {
+            "address": "0029AB",
+            "address_raw": 10667
+          },
+          "I048/230": {
+            "aic": 1,
+            "arc": 1,
+            "b1a": 0,
+            "b1b": 0,
+            "com": 1,
+            "com_text": "Comm. A and Comm. B capability",
+            "mssc": 1,
+            "si": 0,
+            "spare_bit_9": 0,
+            "stat": 0,
+            "stat_text": "No alert, no SPI, aircraft airborne"
+          },
+          "I048/240": {
+            "identification": "EXHELO2",
+            "identification_raw": 23648177028256
+          }
+        }
+      },
+      "special_position_identification": {
+        "basis": "parked, NOT a severity \u2014 an ident pulse is a procedural request. \u00a75.2.2's note adds 'For Mode S aircraft, the SPI information is also contained in I048/230', so the same fact can arrive twice; both are parked and neither is preferred",
+        "spi": false
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT048 contact is an UNKNOWN glyph. CAT048 carries no symbology of any kind",
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "ad697527-c90b-59c5-bb5b-a2a01297b8b2",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat048",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT048"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029AB",
+        "system": "ICAO24"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "360cda4c-44ff-571b-aec5-421987a57aa4",
+    "event_type": "DETECTION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "cat048_acas_resolution_advisory": null,
+      "cat048_bds_registers": null,
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "item": "I048/140",
+        "lsb_seconds": 0.0078125,
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "severity_basis": {
+        "declined": [],
+        "event_type_basis": "a monoradar target report IS a sensor detection \u2014 the first adapter in this set whose ordinary case is DETECTION rather than TRACK_UPDATE, because AIS, ADS-B and CAT021 receive self-reports and a radar detects",
+        "raised_by": null
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "ad697527-c90b-59c5-bb5b-a2a01297b8b2"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat048",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT048"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029AB",
+        "system": "ICAO24"
+      }
+    ]
+  }
+]
