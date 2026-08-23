@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NITSRoot>
+  <slab:originatorConfidentialityLabel xmlns:slab="urn:nato:stanag:4774:confidentialitymetadatalabel:1:0"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type="PERMISSIVE" TagName="Releasable to"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>
+  <profile>STANDALONE</profile>
+  <fileUID>f1c70000-0000-8000-8000-000000000001</fileUID>
+  <lidScopeUID>f1c75c09-0000-8000-8000-000000000001</lidScopeUID>
+  <numFiles>1</numFiles>
+  <msgCreatedTime>2026-04-29T06:00:00Z</msgCreatedTime>
+  <nitsVersion>B.2</nitsVersion>
+  <product>
+    <uid>f1c70000-0000-8000-8000-000000000002</uid>
+    <id>SYN-NITS-001</id>
+    <name>Synthetic NITS Track Product</name>
+    <shortName>SNTP</shortName>
+    <effectivity>2026A</effectivity>
+  </product>
+  <collection>
+    <uid>f1c70000-0000-8000-8000-000000000012</uid>
+    <intent>EXERCISE</intent>
+    <essence>SIMULATED</essence>
+    <targetID>AREA-ALPHA</targetID>
+  </collection>
+  <sensor>
+    <uid>f1c70000-0000-8000-8000-000000000010</uid>
+    <lid>1</lid>
+    <sensorID>
+      <stationID>SYNSENS01</stationID>
+      <nationality>ZZZ</nationality>
+    </sensorID>
+    <name>Synthetic EO sensor</name>
+    <description>fixture sensor</description>
+    <modality>IMAGE_SIGNATURE</modality>
+    <url>https://example.invalid/sensor</url>
+    <collectionMode>STARE</collectionMode>
+    <absTimeUncertainty>0.05</absTimeUncertainty>
+    <relTimeUncertainty>0.001</relTimeUncertainty>
+    <comment>not parsed for embedded data</comment>
+    <esmSensor/>
+    <imagingSensor>
+      <motionImageryCoreID>0102030405060708</motionImageryCoreID>
+      <frameHeight>1080</frameHeight>
+      <frameWidth>1920</frameWidth>
+      <fpaIndex>1</fpaIndex>
+      <filter>0.4 0.9</filter>
+      <filter>0.7 0.8</filter>
+      <phenomenology>VIS</phenomenology>
+      <band>VIS-1</band>
+    </imagingSensor>
+    <radarSensor>
+      <platformID>SYN-TAIL-1</platformID>
+      <missionID>7</missionID>
+      <jobID>3</jobID>
+    </radarSensor>
+  </sensor>
+  <tracker>
+    <type>AUTOMATIC_TRACKER</type>
+    <uid>f1c70000-0000-8000-8000-000000000011</uid>
+    <lid>2</lid>
+    <trackerID>
+      <stationID>SYNTRAK01</stationID>
+      <nationality>ZZZ</nationality>
+    </trackerID>
+    <name>Synthetic tracker</name>
+    <description>fixture tracker</description>
+    <version>0.1</version>
+    <supplementaryData>
+      <type>DIGITAL_ELEVATION_MODEL</type>
+      <name>SYN-DEM</name>
+      <version>2026.1</version>
+      <description>fixture DEM</description>
+    </supplementaryData>
+  </tracker>
+  <message>
+    <numDetections>0</numDetections>
+    <numTracks>1</numTracks>
+    <baseTime>2026-04-29T06:00:00Z</baseTime>
+    <relTimeIncrement>1.0</relTimeIncrement>
+    <dynSrcInfo>
+      <uid>f1c70000-0000-8000-8000-000000000040</uid>
+      <lid>4</lid>
+      <relTime>0</relTime>
+      <sensorUID>f1c70000-0000-8000-8000-000000000010</sensorUID>
+      <sensorLocation>
+        <dims>3</dims>
+        <cs>WGS_84</cs>
+        <points>56.9 24.0 250.0</points>
+      </sensorLocation>
+      <groupID>FRAME-GROUP-1</groupID>
+      <numDetections>2</numDetections>
+      <numReportedDetections>1</numReportedDetections>
+      <dynCFT>
+        <uid>f1c70000-0000-8000-8000-000000000041</uid>
+        <lid>5</lid>
+        <cft>
+          <from>ECEF</from>
+          <translation>3183000.0 1421000.0 5322000.0</translation>
+          <rotation>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</rotation>
+        </cft>
+      </dynCFT>
+      <sourceMI>
+        <frameBoundingBox>
+          <nRings>1</nRings>
+          <vertices>56.9 24.0 56.9 24.1 57.0 24.1 57.0 24.0</vertices>
+          <dims>2</dims>
+          <cs>WGS_84</cs>
+        </frameBoundingBox>
+        <frameNumber>41</frameNumber>
+        <niirs>5.5</niirs>
+        <vniirs>5.0</vniirs>
+        <sea>33.0</sea>
+        <tea>47.0</tea>
+        <gsd>0.25</gsd>
+        <grd>0.35</grd>
+        <useableFOV>
+          <nRings>1</nRings>
+          <vertices>0.0 0.0 0.0 1919.0 1079.0 1919.0</vertices>
+          <dims>2</dims>
+          <cs>PIXELS</cs>
+        </useableFOV>
+        <processedFOV>
+          <nRings>1</nRings>
+          <vertices>10.0 10.0 10.0 1900.0 1000.0 1900.0</vertices>
+          <dims>2</dims>
+          <cs>PIXELS</cs>
+        </processedFOV>
+      </sourceMI>
+      <sourceRadar>
+        <revisitIndex>2</revisitIndex>
+        <dwellIndex>7</dwellIndex>
+      </sourceRadar>
+      <sourceESM/>
+    </dynSrcInfo>
+    <track>
+      <uid>f1c70000-0000-8000-8000-000000000034</uid>
+      <segment>
+        <tp>
+          <relTime>0</relTime>
+          <dynSrcUID>f1c70000-0000-8000-8000-000000000040</dynSrcUID>
+          <dynamics>
+            <cs>LOCAL_CARTESIAN</cs>
+            <pos>10.0 20.0 5.0</pos>
+            <vel>1.0 0.0 0.0</vel>
+            <cftUID>f1c70000-0000-8000-8000-000000000041</cftUID>
+          </dynamics>
+          <dynamics>
+            <cs>WGS_84</cs>
+            <pos>56.9496 24.1052 12.0</pos>
+          </dynamics>
+        </tp>
+      </segment>
+      <object>
+        <uid>f1c70000-0000-8000-8000-000000000035</uid>
+      </object>
+    </track>
+  </message>
+</NITSRoot>

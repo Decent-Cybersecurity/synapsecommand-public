@@ -35,6 +35,9 @@ run is a guess with a table around it.
 | `cat021 1.0.0` | implemented by `adapters/asterix_cat021.py`, with a fixture and a golden file |
 | `cat021 1.0.0 · parked` | implemented, but the value lands in `attributes` because of a named gap below |
 | `cat021 1.0.0 · egress` | implemented in the `from_cdm()` direction |
+| `nits 1.0.0` | implemented by `adapters/stanag4676.py`, with a fixture twin and a golden file |
+| `nits 1.0.0 · parked` | implemented, but the value lands in `attributes` because of a named gap below |
+| `nits 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 | `models` | provided by the models themselves; no adapter code is involved |
 | `not yet` | no adapter implements this row. The mapping is a specification, not a claim |
 
@@ -42,10 +45,9 @@ run is a guess with a table around it.
 did, every Legion row said `not yet` — the row set was written and reviewed as a specification
 first, and the status column is what recorded the difference.
 
-**The STANAG 4676 row set is in that state now.** Every one of its rows says `not yet`, and
-`test_the_nits_row_set_claims_no_adapter` fails the build if one claims otherwise before
-`adapters/stanag4676.py` exists — the same test the Legion row set carried, pointed the same way
-round, and it will be inverted when the adapter lands.
+**The STANAG 4676 row set went through that state too**, and `adapters/stanag4676.py` has now
+landed, so `test_the_nits_row_set_claims_its_adapter` is the inverted form: it fails if a row
+still says `not yet` while the code implements it.
 
 ## Cursor-on-Target (TAK) — ingest and egress
 
@@ -1873,10 +1875,17 @@ adapter and fails as an unrecognised payload.
 
 ## STANAG 4676 / AEDP-12 — NATO ISR Tracking Standard (NITS), ingest and egress
 
-No adapter yet. **Every row below says `not yet`, and that is the point** — this row set is
-written and reviewed as a specification before any code exists, exactly as the Legion and CAT021
-row sets were, and the status column is what will record the difference when
-`adapters/stanag4676.py` lands.
+Implemented by `adapters/stanag4676.py` (bidirectional). Ingest translates one `NITSRoot` object
+into an `Entity` and a `Track` per `TrackData`, plus an `Event` per `Detection`, `MotionEvent`,
+`TrackLinkage`, `ProcessedTrack` and retraction-only `TrackSegment`; egress turns them back into
+one STANDALONE `NITSRoot` document.
+
+**Every row below was written and reviewed as a specification BEFORE any code existed**, with
+`not yet` in the status column, exactly as the Legion and CAT021 row sets were. The markers now
+read `nits 1.0.0` because the adapter runs them, and that difference is the whole reason the
+status column exists. Three Phase 1 decisions were overturned on review before any code was
+written — one Track per `TrackData`, `essence` never touching `source.synthetic`, and `FAKER`
+being `FRIENDLY` — and each is a settlement below rather than a footnote.
 
 This is not a 42-item data category. It is a **full UML data model**: 48 classes and 273
 attributes, from `NITSRoot` down through `TrackMessage`, `TrackData`, `TrackSegment` and
@@ -2051,7 +2060,11 @@ interleave ten incompatible paths into one sample list, which is a physically ab
 mint ten `track_id`s from a producer's chunking, which is the thing this settlement rejects. A
 refusal that names the overlapping segments is the only one of the three that leaves the decision
 where it can be made — with the consumer, who can re-request, split by hypothesis, or accept the
-highest-confidence segment, none of which a translator may choose on its behalf.
+highest-confidence segment, none of which a translator may choose on its behalf. Stated once more
+because it is the clause an implementer will be tempted to soften: **never reassembly, and never
+silent best-hypothesis selection.** The refusal quotes the hypothesis structure — how many
+segments overlapped and what confidence each carried — so a consumer can act on it without
+re-reading the document.
 
 **An empty `TrackSegment` contributes no samples, and a retraction-only one becomes an `Event`.**
 `TrackSegment.tp` is `[0..*]` — zero track points is conformant — so a segment with no points is
@@ -2301,6 +2314,15 @@ What that costs, precisely:
   extracted text of a PDF does not preserve.
 - **The `UUID` and `CovarianceMatrix` classes carry a "core class value"** rather than a named
   attribute, i.e. the element's own content. How that content is typed is a schema fact.
+
+**What 1.0.0 ships is a PROVISIONAL binding, and it is a table rather than code.** The adapter
+reads and writes XML today by binding UML attribute names to element names through a single
+constant, `ELEMENT_NAMES`, which is empty: nothing is renamed because nothing is *known* to be
+renamed. Every divergence the XSD turns out to carry is a line in that table, not a change to the
+reader. The parsed-dict path is unaffected either way, every fixture ships as a twin — a
+`.nits.xml` and a `.parsed.json` — and `test_the_xml_twin_and_the_parsed_twin_produce_identical_
+cdm` asserts the two produce byte-identical CDM, which is what makes the provisional binding
+*checkable* rather than merely declared. It found two reader defects on its first run.
 
 So the left column below names **data-model attributes**, and the mapping is stated at the layer
 the standard itself calls implementation-independent: "This document defines the data type of each
@@ -2857,22 +2879,22 @@ Two model-wide facts that would otherwise be repeated on a hundred rows:
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `NITSRoot.profile` | `[1..*]` | `Entity.attributes` | `not yet` | `ComplianceProfile`. See the profiles settlement — read, never followed; unregistered literals parked |
-| `NITSRoot.streamUID` | `[0..1]` | `Entity.attributes` | `not yet` | the DATASTREAM's own `UUID`. Parked; it identifies a stream this adapter does not assemble |
-| `NITSRoot.fileUID` | `[0..1]` | `Entity.attributes` | `not yet` | this object's `UUID`. Parked, and it is the document identifier a consumer needs to deduplicate a retransmission |
-| `NITSRoot.fileLID` | `[0..1]` | `Entity.attributes` | `not yet` | `UInt`. Parked; scoped by `lidScopeUID` like every other local ID |
-| `NITSRoot.lidScopeUID` | `[0..1]` | `Entity.attributes` | `not yet` | **the attribute that decides whether any `lid` in this document may become a `SourceId`.** "Required if local IDs are found in the object" — a document containing local IDs and no scope is non-conforming, and is translated with every `lid` parked rather than keyed |
-| `NITSRoot.numFiles` | `[0..1]` | `Entity.attributes` | `not yet` | how many related files the producer has sent so far, including this one. Parked; the adapter counts nothing and waits for nothing |
-| `NITSRoot.msgCreatedTime` | `[1]` | `Entity.attributes` | `not yet` | when the producer **wrote the file**. Parked, and deliberately neither `observed_at` nor `received_at`: it is a source time about the document, not about an observation, and it is the ordering key the consolidation rule uses |
-| `NITSRoot.nitsVersion` | `[1]` | `Entity.attributes` | `not yet` | `"B.2"` for the target edition. **The version gate**: anything reading `A.*` is refused with the value quoted, per the edition settlement |
-| `NITSRoot.product` | `[0..1]` | `Entity.attributes` | `not yet` | one `ProductIdentification`; its own table below |
-| `NITSRoot.collection` | `[0..*]` | `Entity.attributes` | `not yet` | `CollectionInformation`, one per collection; its own table. **Parked, including `essence`** — no payload field sets `source.synthetic` |
-| `NITSRoot.sensor` | `[0..*]` | `Entity.attributes` | `not yet` | `SensorInformation`, one per sensor; its own table. **Gap 14** |
-| `NITSRoot.tracker` | `[0..*]` | `Entity.attributes` | `not yet` | `TrackerInformation`, one per tracker; its own table. **Gap 14** |
-| `NITSRoot.message` | `[0..*]` | — | `not yet` | `TrackMessage`. The container everything below hangs from; not itself parked, because its contents become objects |
-| *(the XML syntax, not the model)* | `[1]` | `Entity.attributes` | `not yet` | `originatorConfidentialityLabel` — **mandatory on the root element** per Annex B.2. Parked verbatim at `attributes.confidentiality_label.originator`. **Gap 12** |
-| *(the XML syntax)* | `[0..1]` | `Entity.attributes` | `not yet` | `alternativeConfidentialityLabel`, verbatim |
-| *(the XML syntax)* | `[0..1]` | `Entity.attributes` | `not yet` | `metadataConfidentialityLabel`, verbatim |
+| `NITSRoot.profile` | `[1..*]` | `Entity.attributes` | `nits 1.0.0` | `ComplianceProfile`. See the profiles settlement — read, never followed; unregistered literals parked |
+| `NITSRoot.streamUID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the DATASTREAM's own `UUID`. Parked; it identifies a stream this adapter does not assemble |
+| `NITSRoot.fileUID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | this object's `UUID`. Parked, and it is the document identifier a consumer needs to deduplicate a retransmission |
+| `NITSRoot.fileLID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `UInt`. Parked; scoped by `lidScopeUID` like every other local ID |
+| `NITSRoot.lidScopeUID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | **the attribute that decides whether any `lid` in this document may become a `SourceId`.** "Required if local IDs are found in the object" — a document containing local IDs and no scope is non-conforming, and is translated with every `lid` parked rather than keyed |
+| `NITSRoot.numFiles` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | how many related files the producer has sent so far, including this one. Parked; the adapter counts nothing and waits for nothing |
+| `NITSRoot.msgCreatedTime` | `[1]` | `Entity.attributes` | `nits 1.0.0` | when the producer **wrote the file**. Parked, and deliberately neither `observed_at` nor `received_at`: it is a source time about the document, not about an observation, and it is the ordering key the consolidation rule uses |
+| `NITSRoot.nitsVersion` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `"B.2"` for the target edition. **The version gate**: anything reading `A.*` is refused with the value quoted, per the edition settlement |
+| `NITSRoot.product` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | one `ProductIdentification`; its own table below |
+| `NITSRoot.collection` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | `CollectionInformation`, one per collection; its own table. **Parked, including `essence`** — no payload field sets `source.synthetic` |
+| `NITSRoot.sensor` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | `SensorInformation`, one per sensor; its own table. **Gap 14** |
+| `NITSRoot.tracker` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | `TrackerInformation`, one per tracker; its own table. **Gap 14** |
+| `NITSRoot.message` | `[0..*]` | — | `nits 1.0.0` | `TrackMessage`. The container everything below hangs from; not itself parked, because its contents become objects |
+| *(the XML syntax, not the model)* | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | `originatorConfidentialityLabel` — **mandatory on the root element** per Annex B.2. Parked verbatim at `attributes.confidentiality_label.originator`. **Gap 12** |
+| *(the XML syntax)* | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `alternativeConfidentialityLabel`, verbatim |
+| *(the XML syntax)* | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `metadataConfidentialityLabel`, verbatim |
 
 `ComplianceProfile`: `STANDALONE`, `DATASTREAM`. Both handled; see the settlement.
 
@@ -2880,22 +2902,22 @@ Two model-wide facts that would otherwise be repeated on a hundred rows:
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `ProductIdentification.uid` | `[0..1]` | `Entity.attributes` | `not yet` | parked; a product is not a CDM object |
-| `ProductIdentification.lid` | `[0..1]` | `Entity.attributes` | `not yet` | parked |
-| `ProductIdentification.id` | `[1]` | `Entity.attributes` | `not yet` | "a free-form string allowing the data provider to specify the designation (ID) of this STANAG 4676 based product **per that system's ID syntax**" — a per-system syntax, so not a key |
-| `ProductIdentification.name` | `[1]` | `Entity.attributes` | `not yet` | the product's name, e.g. "System X Motion Imagery Track Product". **Not `attributes.callsign`** — it names the product, not the contact |
-| `ProductIdentification.shortName` | `[0..1]` | `Entity.attributes` | `not yet` | e.g. "XMTP" |
-| `ProductIdentification.effectivity` | `[0..1]` | `Entity.attributes` | `not yet` | the named effectivity the product complies with |
+| `ProductIdentification.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | parked; a product is not a CDM object |
+| `ProductIdentification.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | parked |
+| `ProductIdentification.id` | `[1]` | `Entity.attributes` | `nits 1.0.0` | "a free-form string allowing the data provider to specify the designation (ID) of this STANAG 4676 based product **per that system's ID syntax**" — a per-system syntax, so not a key |
+| `ProductIdentification.name` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the product's name, e.g. "System X Motion Imagery Track Product". **Not `attributes.callsign`** — it names the product, not the contact |
+| `ProductIdentification.shortName` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | e.g. "XMTP" |
+| `ProductIdentification.effectivity` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the named effectivity the product complies with |
 
 ### Row set — `CollectionInformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `CollectionInformation.uid` | `[0..1]` | `Entity.attributes` | `not yet` | referenced by `TrackSource.collectionUID` |
-| `CollectionInformation.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `CollectionInformation.intent` | `[1]` | `Entity.attributes` | `not yet` | `CollectionIntentType`. Parked and **does not set `synthetic`**: `EXERCISE` data is frequently real sensor data, and `TEST`, `ENGINEERING` and `INITIALIZATION` say when a collection happened in its programme, not whether it was real |
-| `CollectionInformation.essence` | `[1]` | `Entity.attributes` | `not yet` | `CollectionEssenceType`. **Parked verbatim and does not set `source.synthetic` either** — see the note below. Where it contradicts the deployment declaration the document is refused, never silently flipped |
-| `CollectionInformation.targetID` | `[0..1]` | `Entity.attributes` | `not yet` | "an identifier for the primary **target area**" — an area, not an object, and not a name |
+| `CollectionInformation.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | referenced by `TrackSource.collectionUID` |
+| `CollectionInformation.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `CollectionInformation.intent` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `CollectionIntentType`. Parked and **does not set `synthetic`**: `EXERCISE` data is frequently real sensor data, and `TEST`, `ENGINEERING` and `INITIALIZATION` say when a collection happened in its programme, not whether it was real |
+| `CollectionInformation.essence` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `CollectionEssenceType`. **Parked verbatim and does not set `source.synthetic` either** — see the note below. Where it contradicts the deployment declaration the document is refused, never silently flipped |
+| `CollectionInformation.targetID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | "an identifier for the primary **target area**" — an area, not an object, and not a name |
 
 `CollectionIntentType`: `OPERATIONAL`, `EXERCISE`, `TEST`, `ENGINEERING`, `GROUND_TRUTH`,
 `INITIALIZATION`, `EXPERIMENTAL`. All parked.
@@ -2942,20 +2964,20 @@ its own identity, and `SourceRef` names the adapter and the system and has nowhe
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `SensorInformation.uid` | `[0..1]` | `Entity.attributes` | `not yet` | the target of `TrackSource.sensorUID` and `Detection.sensorUID` |
-| `SensorInformation.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `SensorInformation.sensorID` | `[0..1]` | `Entity.attributes` | `not yet` | an `IDData`; its own table |
-| `SensorInformation.name` | `[1]` | `Entity.attributes` | `not yet` | names the sensor, not the contact |
-| `SensorInformation.description` | `[0..1]` | `Entity.attributes` | `not yet` | |
-| `SensorInformation.modality` | `[1]` | `Entity.attributes` | `not yet` | `ModalityType`. **Deliberately does not refine `Position.position_source`** — see the note below |
-| `SensorInformation.url` | `[0..1]` | `Entity.attributes` | `not yet` | a URL for the sensor information data. Parked and **never fetched**: an adapter that dereferences a URL out of a payload is a network client with a payload-controlled target |
-| `SensorInformation.collectionMode` | `[0..1]` | `Entity.attributes` | `not yet` | free string; the standard expects to drop it in a future release |
-| `SensorInformation.absTimeUncertainty` | `[0..1]` | `Entity.attributes` | `not yet` | seconds of uncertainty in the sensor's clock. **Gap 13** — the CDM has no per-measurement time, let alone an uncertainty on one |
-| `SensorInformation.relTimeUncertainty` | `[0..1]` | `Entity.attributes` | `not yet` | seconds of uncertainty between any two of its times. **Gap 13** |
-| `SensorInformation.comment` | `[0..1]` | `Entity.attributes` | `not yet` | free text, and §2.1.1.4 forbids parsing it for embedded data. Parked as the complete string, never split |
-| `SensorInformation.esmSensor` | `[0..1]` | `Entity.attributes` | `not yet` | an `ESMSensor`, which has no attributes |
-| `SensorInformation.imagingSensor` | `[0..1]` | `Entity.attributes` | `not yet` | an `ImagingSensor`; its own table |
-| `SensorInformation.radarSensor` | `[0..1]` | `Entity.attributes` | `not yet` | a `RadarSensor4607`; its own table |
+| `SensorInformation.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the target of `TrackSource.sensorUID` and `Detection.sensorUID` |
+| `SensorInformation.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `SensorInformation.sensorID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | an `IDData`; its own table |
+| `SensorInformation.name` | `[1]` | `Entity.attributes` | `nits 1.0.0` | names the sensor, not the contact |
+| `SensorInformation.description` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | |
+| `SensorInformation.modality` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `ModalityType`. **Deliberately does not refine `Position.position_source`** — see the note below |
+| `SensorInformation.url` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a URL for the sensor information data. Parked and **never fetched**: an adapter that dereferences a URL out of a payload is a network client with a payload-controlled target |
+| `SensorInformation.collectionMode` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | free string; the standard expects to drop it in a future release |
+| `SensorInformation.absTimeUncertainty` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | seconds of uncertainty in the sensor's clock. **Gap 13** — the CDM has no per-measurement time, let alone an uncertainty on one |
+| `SensorInformation.relTimeUncertainty` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | seconds of uncertainty between any two of its times. **Gap 13** |
+| `SensorInformation.comment` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | free text, and §2.1.1.4 forbids parsing it for embedded data. Parked as the complete string, never split |
+| `SensorInformation.esmSensor` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | an `ESMSensor`, which has no attributes |
+| `SensorInformation.imagingSensor` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | an `ImagingSensor`; its own table |
+| `SensorInformation.radarSensor` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a `RadarSensor4607`; its own table |
 
 `ModalityType`, all eighteen literals parked verbatim: `DOPPLER_SIGNATURE`, `HRR_SIGNATURE`,
 `IMAGE_SIGNATURE`, `HUMINT`, `MASINT`, `ELINT`, `COMINT_EXTERNALS`, `COMINT_INTERNALS`, `OSINT`,
@@ -2978,64 +3000,64 @@ where it resolved.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| *(no attributes)* | — | `Entity.attributes` | `not yet` | §2.5.5: "a placeholder for future additions and does not currently include any attributes". Its **presence** is the datum, so it is parked as a present-and-empty marker; open content may still carry vendor extensions and those land in `source_extras` |
+| *(no attributes)* | — | `Entity.attributes` | `nits 1.0.0` | §2.5.5: "a placeholder for future additions and does not currently include any attributes". Its **presence** is the datum, so it is parked as a present-and-empty marker; open content may still carry vendor extensions and those land in `source_extras` |
 
 #### `RadarSensor4607`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `RadarSensor4607.platformID` | `[1]` | `Entity.attributes` | `not yet` | STANAG 4607 field P8 — a tail number for an aircraft. **Not a `SourceId` for the tracked object**: it identifies the *collecting platform*. Gap 14 |
-| `RadarSensor4607.missionID` | `[1]` | `Entity.attributes` | `not yet` | 4607 field P9 |
-| `RadarSensor4607.jobID` | `[1]` | `Entity.attributes` | `not yet` | 4607 field P10; 0 means no specific request, which is a stated value and not an absence |
+| `RadarSensor4607.platformID` | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | STANAG 4607 field P8 — a tail number for an aircraft. **Not a `SourceId` for the tracked object**: it identifies the *collecting platform*. Gap 14 |
+| `RadarSensor4607.missionID` | `[1]` | `Entity.attributes` | `nits 1.0.0` | 4607 field P9 |
+| `RadarSensor4607.jobID` | `[1]` | `Entity.attributes` | `nits 1.0.0` | 4607 field P10; 0 means no specific request, which is a stated value and not an absence |
 
 #### `ImagingSensor`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `ImagingSensor.motionImageryCoreID` | `[1]` | `Entity.attributes` | `not yet` | a `MiisCoreIdType` per **MISB ST 1204.3**. Parked verbatim and **not decoded**: the MIIS Core Identifier is a separate standard, the same category as CAT021's BDS registers. Note the standard's own erratum — the XSD namespace says `nga.gov` where `nga.mil` was meant, and keeps it for backwards compatibility |
-| `ImagingSensor.frameHeight` | `[0..1]` | `Entity.attributes` | `not yet` | focal-plane height in pixels |
-| `ImagingSensor.frameWidth` | `[0..1]` | `Entity.attributes` | `not yet` | focal-plane width in pixels |
-| `ImagingSensor.fpaIndex` | `[0..1]` | `Entity.attributes` | `not yet` | **1-based**, unlike every pixel index in the model, which is 0-based. Parked as sent with the base recorded |
-| `ImagingSensor.filter` | `[0..*]` | `Entity.attributes` | `not yet` | wavelength/transmission pairs in one flat array, microns and fraction. Parked as pairs |
-| `ImagingSensor.phenomenology` | `[0..1]` | `Entity.attributes` | `not yet` | `SymbolicSpectralRange`: `LWIR`, `MWIR`, `SWIR`, `NIR`, `VIS`, `UV`, `MSI`, `HSI`, `DERIVED`, `UNKNOWN` |
-| `ImagingSensor.band` | `[0..1]` | `Entity.attributes` | `not yet` | the imaging system's own band name, e.g. "LWIR-8" |
+| `ImagingSensor.motionImageryCoreID` | `[1]` | `Entity.attributes` | `nits 1.0.0` | a `MiisCoreIdType` per **MISB ST 1204.3**. Parked verbatim and **not decoded**: the MIIS Core Identifier is a separate standard, the same category as CAT021's BDS registers. Note the standard's own erratum — the XSD namespace says `nga.gov` where `nga.mil` was meant, and keeps it for backwards compatibility |
+| `ImagingSensor.frameHeight` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | focal-plane height in pixels |
+| `ImagingSensor.frameWidth` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | focal-plane width in pixels |
+| `ImagingSensor.fpaIndex` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | **1-based**, unlike every pixel index in the model, which is 0-based. Parked as sent with the base recorded |
+| `ImagingSensor.filter` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | wavelength/transmission pairs in one flat array, microns and fraction. Parked as pairs |
+| `ImagingSensor.phenomenology` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `SymbolicSpectralRange`: `LWIR`, `MWIR`, `SWIR`, `NIR`, `VIS`, `UV`, `MSI`, `HSI`, `DERIVED`, `UNKNOWN` |
+| `ImagingSensor.band` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the imaging system's own band name, e.g. "LWIR-8" |
 
 #### `TrackerInformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackerInformation.type` | `[1]` | `Entity.attributes` | `not yet` | `TrackerType`: `MANUAL_TRACKER`, `AUTOMATIC_TRACKER`, `SEMIAUTOMATIC_TRACKER`. An XML attribute rather than an element, per §2.1.1.7 |
-| `TrackerInformation.uid` | `[0..1]` | `Entity.attributes` | `not yet` | the target of `TrackSource.trackerUID` |
-| `TrackerInformation.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `TrackerInformation.trackerID` | `[0..1]` | `Entity.attributes` | `not yet` | an `IDData` — the station ID and nationality that "provides unique identification of any given STANAG 4676 capable system". **Gap 14**, and the closest thing in the model to naming who produced the data |
-| `TrackerInformation.name` | `[1]` | `Entity.attributes` | `not yet` | names the algorithm |
-| `TrackerInformation.description` | `[0..1]` | `Entity.attributes` | `not yet` | |
-| `TrackerInformation.version` | `[1]` | `Entity.attributes` | `not yet` | the tracker algorithm's version — "useful record in case the tracker algorithm gets updated, or a systematic error is discovered". Parked, and it is the field that makes a stored track re-auditable |
-| `TrackerInformation.supplementaryData` | `[0..*]` | `Entity.attributes` | `not yet` | `SupplementaryData`; its own table |
+| `TrackerInformation.type` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `TrackerType`: `MANUAL_TRACKER`, `AUTOMATIC_TRACKER`, `SEMIAUTOMATIC_TRACKER`. An XML attribute rather than an element, per §2.1.1.7 |
+| `TrackerInformation.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the target of `TrackSource.trackerUID` |
+| `TrackerInformation.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `TrackerInformation.trackerID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | an `IDData` — the station ID and nationality that "provides unique identification of any given STANAG 4676 capable system". **Gap 14**, and the closest thing in the model to naming who produced the data |
+| `TrackerInformation.name` | `[1]` | `Entity.attributes` | `nits 1.0.0` | names the algorithm |
+| `TrackerInformation.description` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | |
+| `TrackerInformation.version` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the tracker algorithm's version — "useful record in case the tracker algorithm gets updated, or a systematic error is discovered". Parked, and it is the field that makes a stored track re-auditable |
+| `TrackerInformation.supplementaryData` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | `SupplementaryData`; its own table |
 
 #### `SupplementaryData`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `SupplementaryData.type` | `[1]` | `Entity.attributes` | `not yet` | `SupplementaryDataType`: `GIS_ROAD_NETWORK`, `DIGITAL_ELEVATION_MODEL`, `SHIPPING_LANE`, `AIR_CORRIDOR`, `DIGITAL_TERRAIN_MODEL`, `DIGITAL_SURFACE_MODEL`, `EDGE_DETECTION_SCENE`, `ILLUMINATION/SHADOW_MAP`, `FOUNDATION_FEATURE_DATA`, `AUTOMATIC_SCENE_SEGMENTATION` |
-| `SupplementaryData.name` | `[1]` | `Entity.attributes` | `not yet` | which DEM, which road network |
-| `SupplementaryData.version` | `[1]` | `Entity.attributes` | `not yet` | recorded "in case a future update to the supplementary data set requires reassessing the tracks" |
-| `SupplementaryData.description` | `[0..1]` | `Entity.attributes` | `not yet` | |
+| `SupplementaryData.type` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `SupplementaryDataType`: `GIS_ROAD_NETWORK`, `DIGITAL_ELEVATION_MODEL`, `SHIPPING_LANE`, `AIR_CORRIDOR`, `DIGITAL_TERRAIN_MODEL`, `DIGITAL_SURFACE_MODEL`, `EDGE_DETECTION_SCENE`, `ILLUMINATION/SHADOW_MAP`, `FOUNDATION_FEATURE_DATA`, `AUTOMATIC_SCENE_SEGMENTATION` |
+| `SupplementaryData.name` | `[1]` | `Entity.attributes` | `nits 1.0.0` | which DEM, which road network |
+| `SupplementaryData.version` | `[1]` | `Entity.attributes` | `nits 1.0.0` | recorded "in case a future update to the supplementary data set requires reassessing the tracks" |
+| `SupplementaryData.description` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | |
 
 ### Row set — `TrackMessage` and the time base
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackMessage.numDetections` | `[0..1]` | `Event.payload` | `not yet` | how many detections the producer says this message holds. Parked, and **checked**: a count that disagrees with the number parsed is recorded at `payload.count_disagreement`, never used to stop parsing. The standard says omitting it "simply means the number is not reported", so absence is not zero |
-| `TrackMessage.numTracks` | `[0..1]` | `Event.payload` | `not yet` | on the same terms |
-| `TrackMessage.baseTime` | `[1]` | `Track.samples[].observed_at` | `not yet` | the absolute UTC base every `relTime` in this message scales from. Absent, naive or malformed is a **refusal quoting the value** — see the time settlement |
-| `TrackMessage.relTimeIncrement` | `[1]` | `Track.samples[].observed_at` | `not yet` | seconds per increment, a `double`. Zero, negative or non-finite is a refusal. Parked verbatim, because egress re-emits from the park rather than recomputing |
-| `TrackMessage.dynSrcInfo` | `[0..*]` | `Entity.attributes` | `not yet` | `DynamicSourceInformation`, one per frame or dwell; its own table |
-| `TrackMessage.detection` | `[0..*]` | `Event.payload` | `not yet` | `Detection`, each becoming its own `Event`; its own table |
-| `TrackMessage.track` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackData`, each becoming an `Entity` and one `Track` per segment |
-| `TrackMessage.processedTrack` | `[0..*]` | `Event.payload` | `not yet` | `ProcessedTrack`, carried verbatim, never acted on |
-| `TrackMessage.trackLinkage` | `[0..*]` | `Event.payload` | `not yet` | `TrackLinkage`, likewise |
-| `TrackMessage.motionEvent` | `[0..*]` | `Event.payload` | `not yet` | `MotionEvent`, each becoming its own `Event` |
+| `TrackMessage.numDetections` | `[0..1]` | `Event.payload` | `nits 1.0.0` | how many detections the producer says this message holds. Parked, and **checked**: a count that disagrees with the number parsed is recorded at `payload.count_disagreement`, never used to stop parsing. The standard says omitting it "simply means the number is not reported", so absence is not zero |
+| `TrackMessage.numTracks` | `[0..1]` | `Event.payload` | `nits 1.0.0` | on the same terms |
+| `TrackMessage.baseTime` | `[1]` | `Track.samples[].observed_at` | `nits 1.0.0` | the absolute UTC base every `relTime` in this message scales from. Absent, naive or malformed is a **refusal quoting the value** — see the time settlement |
+| `TrackMessage.relTimeIncrement` | `[1]` | `Track.samples[].observed_at` | `nits 1.0.0` | seconds per increment, a `double`. Zero, negative or non-finite is a refusal. Parked verbatim, because egress re-emits from the park rather than recomputing |
+| `TrackMessage.dynSrcInfo` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | `DynamicSourceInformation`, one per frame or dwell; its own table |
+| `TrackMessage.detection` | `[0..*]` | `Event.payload` | `nits 1.0.0` | `Detection`, each becoming its own `Event`; its own table |
+| `TrackMessage.track` | `[0..*]` | `Track.samples[]` | `nits 1.0.0` | `TrackData`, each becoming an `Entity` and one `Track` per segment |
+| `TrackMessage.processedTrack` | `[0..*]` | `Event.payload` | `nits 1.0.0` | `ProcessedTrack`, carried verbatim, never acted on |
+| `TrackMessage.trackLinkage` | `[0..*]` | `Event.payload` | `nits 1.0.0` | `TrackLinkage`, likewise |
+| `TrackMessage.motionEvent` | `[0..*]` | `Event.payload` | `nits 1.0.0` | `MotionEvent`, each becoming its own `Event` |
 
 **`TrackMessage` has no `uid` and no `lid`,** which is worth stating because it is the only
 container in the model that cannot be referred to. A `relTime` is therefore meaningful **only
@@ -3049,63 +3071,63 @@ from two samples sharing a base.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `DynamicSourceInformation.uid` | `[0..1]` | `Entity.attributes` | `not yet` | the target of `dynSrcUID` on a `TrackPoint` or a `Detection` |
-| `DynamicSourceInformation.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `DynamicSourceInformation.relTime` | `[0..1]` | `Entity.attributes` | `not yet` | when this frame or dwell was taken. Parked with its absolute resolution beside it |
-| `DynamicSourceInformation.sensorUID` | `[0..1]` | `Entity.attributes` | `not yet` | a reference to `SensorInformation`; "may designate a UID **OR** an LID for the sensor, but not both", and a document setting both is recorded at `attributes.reference_conflict` rather than resolved by preference |
-| `DynamicSourceInformation.sensorLID` | `[0..1]` | `Entity.attributes` | `not yet` | the local form of the same reference |
-| `DynamicSourceInformation.sensorLocation` | `[0..1]` | `Entity.attributes` | `not yet` | a `PositionPoints` holding **one** coordinate: where the sensor was. **Gap 14** in its most concrete form — the format states the observer's position and the CDM cannot relate an observation to an observer. Parked, and deliberately **never** used as the target's position |
-| `DynamicSourceInformation.groupID` | `[0..1]` | `Entity.attributes` | `not yet` | a program-defined ID for a group of source blocks. Program-defined, so not a key |
-| `DynamicSourceInformation.numDetections` | `[0..1]` | `Entity.attributes` | `not yet` | how many detections were in the field of view |
-| `DynamicSourceInformation.numReportedDetections` | `[0..1]` | `Entity.attributes` | `not yet` | how many of them were reported. The pair is a **completeness measure** and is parked as one, the same job Legion's `total_count` versus `carried_samples` does |
-| `DynamicSourceInformation.dynCFT` | `[0..*]` | `Entity.attributes` | `not yet` | `DynamicCFT`; the transforms every local coordinate in this frame resolves through |
-| `DynamicSourceInformation.sourceMI` | `[0..1]` | `Entity.attributes` | `not yet` | `MotionImageryInformation`; its own table |
-| `DynamicSourceInformation.sourceRadar` | `[0..1]` | `Entity.attributes` | `not yet` | `RadarInformation`; its own table |
-| `DynamicSourceInformation.sourceESM` | `[0..1]` | `Entity.attributes` | `not yet` | `ESMInformation`, which has no attributes |
+| `DynamicSourceInformation.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the target of `dynSrcUID` on a `TrackPoint` or a `Detection` |
+| `DynamicSourceInformation.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `DynamicSourceInformation.relTime` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | when this frame or dwell was taken. Parked with its absolute resolution beside it |
+| `DynamicSourceInformation.sensorUID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a reference to `SensorInformation`; "may designate a UID **OR** an LID for the sensor, but not both", and a document setting both is recorded at `attributes.reference_conflict` rather than resolved by preference |
+| `DynamicSourceInformation.sensorLID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the local form of the same reference |
+| `DynamicSourceInformation.sensorLocation` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `PositionPoints` holding **one** coordinate: where the sensor was. **Gap 14** in its most concrete form — the format states the observer's position and the CDM cannot relate an observation to an observer. Parked, and deliberately **never** used as the target's position |
+| `DynamicSourceInformation.groupID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a program-defined ID for a group of source blocks. Program-defined, so not a key |
+| `DynamicSourceInformation.numDetections` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | how many detections were in the field of view |
+| `DynamicSourceInformation.numReportedDetections` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | how many of them were reported. The pair is a **completeness measure** and is parked as one, the same job Legion's `total_count` versus `carried_samples` does |
+| `DynamicSourceInformation.dynCFT` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | `DynamicCFT`; the transforms every local coordinate in this frame resolves through |
+| `DynamicSourceInformation.sourceMI` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `MotionImageryInformation`; its own table |
+| `DynamicSourceInformation.sourceRadar` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `RadarInformation`; its own table |
+| `DynamicSourceInformation.sourceESM` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `ESMInformation`, which has no attributes |
 
 #### `DynamicCFT`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `DynamicCFT.uid` | `[0..1]` | `Entity.attributes` | `not yet` | "each instance of a `DynamicCFT` must have either a UID or an LID" — one with neither cannot be referenced and is recorded as such |
-| `DynamicCFT.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `DynamicCFT.cft` | `[1]` | `Position.lat` | `not yet` | the `CoordinateFrameTransformation` a local `Dynamics` or `Shape` resolves through. Named as reaching `Position` because when it resolves, it is what makes a local coordinate a geodetic one |
+| `DynamicCFT.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | "each instance of a `DynamicCFT` must have either a UID or an LID" — one with neither cannot be referenced and is recorded as such |
+| `DynamicCFT.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `DynamicCFT.cft` | `[1]` | `Position.lat` | `nits 1.0.0` | the `CoordinateFrameTransformation` a local `Dynamics` or `Shape` resolves through. Named as reaching `Position` because when it resolves, it is what makes a local coordinate a geodetic one |
 
 #### `CoordinateFrameTransformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `CoordinateFrameTransformation.from` | `[1]` | `Position.lat` | `not yet` | `CoordinateSystemType`, "restricted to `ECEF` and `ECI_J2K`". **`ECEF` transforms; `ECI_J2K` does not** — the local frame it anchors is attributes-only, per the coordinate settlement. A `from` naming a local, spherical or geodetic system is non-conforming and the CFT is treated as incomplete |
-| `CoordinateFrameTransformation.translation` | `[1]` | `Position.lat` | `not yet` | exactly three doubles, `T1 T2 T3`. Any other count makes the CFT incomplete |
-| `CoordinateFrameTransformation.rotation` | `[1]` | `Position.lat` | `not yet` | exactly nine doubles, `R1..R9` row-major. **The determinant is computed**: `A = Rᵀ L + T` is valid only when `\|det R\| = 1`, and the standard requires the true inverse otherwise. A singular matrix makes the CFT incomplete |
+| `CoordinateFrameTransformation.from` | `[1]` | `Position.lat` | `nits 1.0.0` | `CoordinateSystemType`, "restricted to `ECEF` and `ECI_J2K`". **`ECEF` transforms; `ECI_J2K` does not** — the local frame it anchors is attributes-only, per the coordinate settlement. A `from` naming a local, spherical or geodetic system is non-conforming and the CFT is treated as incomplete |
+| `CoordinateFrameTransformation.translation` | `[1]` | `Position.lat` | `nits 1.0.0` | exactly three doubles, `T1 T2 T3`. Any other count makes the CFT incomplete |
+| `CoordinateFrameTransformation.rotation` | `[1]` | `Position.lat` | `nits 1.0.0` | exactly nine doubles, `R1..R9` row-major. **The determinant is computed**: `A = Rᵀ L + T` is valid only when `\|det R\| = 1`, and the standard requires the true inverse otherwise. A singular matrix makes the CFT incomplete |
 
 #### `MotionImageryInformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `MotionImageryInformation.frameBoundingBox` | `[0..1]` | `Entity.attributes` | `not yet` | a `Polygon` bounding the field of view. **Not `Event.geometry`**: it describes the sensor's coverage, and emitting it as an event's geometry would paint the footprint as the thing observed |
-| `MotionImageryInformation.frameNumber` | `[0..1]` | `Entity.attributes` | `not yet` | arbitrary, and the standard says so: "the consumer is strongly encouraged to use the time stamps instead of frame number". Parked, never used to order anything |
-| `MotionImageryInformation.niirs` | `[0..1]` | `Entity.attributes` | `not yet` | the producer's NIIRS estimate at image centre, per STANAG 7194. An image-quality rating, and **not** `Entity.confidence` |
-| `MotionImageryInformation.vniirs` | `[0..1]` | `Entity.attributes` | `not yet` | the video equivalent, per MISP-2019.1. Likewise |
-| `MotionImageryInformation.sea` | `[0..1]` | `Entity.attributes` | `not yet` | solar elevation angle in degrees |
-| `MotionImageryInformation.tea` | `[0..1]` | `Entity.attributes` | `not yet` | target elevation angle in degrees |
-| `MotionImageryInformation.gsd` | `[0..1]` | `Entity.attributes` | `not yet` | ground sampling distance in metres, one to three values, where **one value is a geometric mean over all known dimensions** and two or three are per-axis. Parked with the count, because the meaning changes with it |
-| `MotionImageryInformation.grd` | `[0..1]` | `Entity.attributes` | `not yet` | ground resolved distance, same encoding, same reading. **Not `Position.accuracy_m`**: a resolution is not a 1-sigma position error |
-| `MotionImageryInformation.useableFOV` | `[0..1]` | `Entity.attributes` | `not yet` | a `Polygon`, "either pixel or real-world coordinates are permitted" and the `Shape` says which |
-| `MotionImageryInformation.processedFOV` | `[0..1]` | `Entity.attributes` | `not yet` | the portion algorithms actually ran on. Parked, and it is the field that says where a *non*-detection means something |
+| `MotionImageryInformation.frameBoundingBox` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a `Polygon` bounding the field of view. **Not `Event.geometry`**: it describes the sensor's coverage, and emitting it as an event's geometry would paint the footprint as the thing observed |
+| `MotionImageryInformation.frameNumber` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | arbitrary, and the standard says so: "the consumer is strongly encouraged to use the time stamps instead of frame number". Parked, never used to order anything |
+| `MotionImageryInformation.niirs` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the producer's NIIRS estimate at image centre, per STANAG 7194. An image-quality rating, and **not** `Entity.confidence` |
+| `MotionImageryInformation.vniirs` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the video equivalent, per MISP-2019.1. Likewise |
+| `MotionImageryInformation.sea` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | solar elevation angle in degrees |
+| `MotionImageryInformation.tea` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | target elevation angle in degrees |
+| `MotionImageryInformation.gsd` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | ground sampling distance in metres, one to three values, where **one value is a geometric mean over all known dimensions** and two or three are per-axis. Parked with the count, because the meaning changes with it |
+| `MotionImageryInformation.grd` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | ground resolved distance, same encoding, same reading. **Not `Position.accuracy_m`**: a resolution is not a 1-sigma position error |
+| `MotionImageryInformation.useableFOV` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a `Polygon`, "either pixel or real-world coordinates are permitted" and the `Shape` says which |
+| `MotionImageryInformation.processedFOV` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the portion algorithms actually ran on. Parked, and it is the field that says where a *non*-detection means something |
 
 #### `RadarInformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `RadarInformation.revisitIndex` | `[1]` | `Entity.attributes` | `not yet` | STANAG 4607 field D2 |
-| `RadarInformation.dwellIndex` | `[1]` | `Entity.attributes` | `not yet` | 4607 field D3. Both are pointers into the source GMTI data; parked, and **not** resolved — reading the 4607 file is a different adapter |
+| `RadarInformation.revisitIndex` | `[1]` | `Entity.attributes` | `nits 1.0.0` | STANAG 4607 field D2 |
+| `RadarInformation.dwellIndex` | `[1]` | `Entity.attributes` | `nits 1.0.0` | 4607 field D3. Both are pointers into the source GMTI data; parked, and **not** resolved — reading the 4607 file is a different adapter |
 
 #### `ESMInformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| *(no attributes)* | — | `Entity.attributes` | `not yet` | §2.5.16: "a placeholder for future capabilities, and currently does not contain any attributes". Present-and-empty is parked as such |
+| *(no attributes)* | — | `Entity.attributes` | `nits 1.0.0` | §2.5.16: "a placeholder for future capabilities, and currently does not contain any attributes". Present-and-empty is parked as such |
 
 ### Row set — the `Detection` / `Evidence` tree
 
@@ -3117,63 +3139,63 @@ reading `adapters/legion.py` gives a Legion Event, reached from a class that say
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Detection.uid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_UID`. "If the data producer intends to associate detections with track points, they must supply each detection with either a UID or an LID" |
-| `Detection.lid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_LID`, and **only when `lidScopeUID` is present** — the composite, never the bare integer |
-| `Detection.relTime` | `[0..1]` | `Event.observed_at` | `not yet` | resolved against the message base. Omitted means zero, which is the standard's rule and not an assumption |
-| `Detection.centroid` | `[0..*]` | `Event.geometry` | `not yet` | a `PositionPoints` holding one coordinate. **Unbounded so the same centroid can be stated in several coordinate systems**, not so several detections can share a class — the standard says so. A `WGS_84` or transformable `ECEF` centroid becomes a `Point`; the rest are attributes-only |
-| `Detection.outline` | `[0..*]` | `Entity.attributes` | `not yet` | a `Shape`, unbounded for the same reason. **Gap 8** — the CDM has no extent, so an outline is parked whole even when its coordinate system would allow a polygon |
-| `Detection.sensorUID` | `[0..1]` | `Event.payload` | `not yet` | which sensor saw it. **Gap 14** |
-| `Detection.sensorLID` | `[0..1]` | `Event.payload` | `not yet` | likewise |
-| `Detection.dynSrcUID` | `[0..1]` | `Event.payload` | `not yet` | which frame or dwell it came from |
-| `Detection.dynSrcLID` | `[0..1]` | `Event.payload` | `not yet` | likewise |
-| `Detection.confidence` | `[0..1]` | `Event.payload` | `not yet` | a `Confidence`. **Gap 18** — parked whole, never reduced to a float |
-| `Detection.source` | `[0..1]` | `Event.payload` | `not yet` | a `TrackSource` scoped to this one detection |
-| `Detection.esm` | `[0..1]` | `Event.payload` | `not yet` | an `ESM`, which has no attributes |
-| `Detection.im` | `[0..1]` | `Event.payload` | `not yet` | an `Image`; its own table |
-| `Detection.radar` | `[0..1]` | `Event.payload` | `not yet` | a `Radar4607`; its own table |
-| `Detection.sm` | `[0..*]` | `Event.payload` | `not yet` | `SensorMeasurement`; its own table |
-| *(derived)* | — | `Event.event_type` | `not yet` | `DETECTION`. The class is one |
-| *(derived)* | — | `Event.severity` | `not yet` | `INFO`, with `payload.severity_basis` recording that NITS grades nothing. Legion's rule: the line sits at the source's own explicit alarm, and there is none |
-| *(none)* | — | `Event.related_entities` | `not yet` | **empty.** A detection is evidence *for* a track point, and the association runs the other way — from `Evidence` inside a `TrackPoint`, not from the detection. Filling this would mean walking that reference backwards, which is a join. **Gap 19** |
+| `Detection.uid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_UID`. "If the data producer intends to associate detections with track points, they must supply each detection with either a UID or an LID" |
+| `Detection.lid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_LID`, and **only when `lidScopeUID` is present** — the composite, never the bare integer |
+| `Detection.relTime` | `[0..1]` | `Event.observed_at` | `nits 1.0.0` | resolved against the message base. Omitted means zero, which is the standard's rule and not an assumption |
+| `Detection.centroid` | `[0..*]` | `Event.geometry` | `nits 1.0.0` | a `PositionPoints` holding one coordinate. **Unbounded so the same centroid can be stated in several coordinate systems**, not so several detections can share a class — the standard says so. A `WGS_84` or transformable `ECEF` centroid becomes a `Point`; the rest are attributes-only |
+| `Detection.outline` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `Shape`, unbounded for the same reason. **Gap 8** — the CDM has no extent, so an outline is parked whole even when its coordinate system would allow a polygon |
+| `Detection.sensorUID` | `[0..1]` | `Event.payload` | `nits 1.0.0 · parked` | which sensor saw it. **Gap 14** |
+| `Detection.sensorLID` | `[0..1]` | `Event.payload` | `nits 1.0.0` | likewise |
+| `Detection.dynSrcUID` | `[0..1]` | `Event.payload` | `nits 1.0.0` | which frame or dwell it came from |
+| `Detection.dynSrcLID` | `[0..1]` | `Event.payload` | `nits 1.0.0` | likewise |
+| `Detection.confidence` | `[0..1]` | `Event.payload` | `nits 1.0.0 · parked` | a `Confidence`. **Gap 18** — parked whole, never reduced to a float |
+| `Detection.source` | `[0..1]` | `Event.payload` | `nits 1.0.0` | a `TrackSource` scoped to this one detection |
+| `Detection.esm` | `[0..1]` | `Event.payload` | `nits 1.0.0` | an `ESM`, which has no attributes |
+| `Detection.im` | `[0..1]` | `Event.payload` | `nits 1.0.0` | an `Image`; its own table |
+| `Detection.radar` | `[0..1]` | `Event.payload` | `nits 1.0.0` | a `Radar4607`; its own table |
+| `Detection.sm` | `[0..*]` | `Event.payload` | `nits 1.0.0` | `SensorMeasurement`; its own table |
+| *(derived)* | — | `Event.event_type` | `nits 1.0.0` | `DETECTION`. The class is one |
+| *(derived)* | — | `Event.severity` | `nits 1.0.0` | `INFO`, with `payload.severity_basis` recording that NITS grades nothing. Legion's rule: the line sits at the source's own explicit alarm, and there is none |
+| *(none)* | — | `Event.related_entities` | `nits 1.0.0` | **empty.** A detection is evidence *for* a track point, and the association runs the other way — from `Evidence` inside a `TrackPoint`, not from the detection. Filling this would mean walking that reference backwards, which is a join. **Gap 19** |
 
 #### `ESM`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| *(no attributes)* | — | `Event.payload` | `not yet` | §2.5.18: a placeholder with no attributes. Parked present-and-empty |
+| *(no attributes)* | — | `Event.payload` | `nits 1.0.0` | §2.5.18: a placeholder with no attributes. Parked present-and-empty |
 
 #### `Radar4607`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Radar4607.reportIndex` | `[1]` | `Event.payload` | `not yet` | 4607 field D32.1, the MTI report's index within the dwell |
-| `Radar4607.hrrType` | `[1]` | `Event.payload` | `not yet` | 4607 field H23, an eight-value enumeration in a `byte` with 8–255 reserved. Parked as the integer **and** the wording; a reserved value goes to `unresolved_raw` |
+| `Radar4607.reportIndex` | `[1]` | `Event.payload` | `nits 1.0.0` | 4607 field D32.1, the MTI report's index within the dwell |
+| `Radar4607.hrrType` | `[1]` | `Event.payload` | `nits 1.0.0` | 4607 field H23, an eight-value enumeration in a `byte` with 8–255 reserved. Parked as the integer **and** the wording; a reserved value goes to `unresolved_raw` |
 
 #### `Image`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Image.pixelMask` | `[0..1]` | `Event.payload` | `not yet` | a `PixelMask`. Image space; attributes-only, per the coordinate settlement |
-| `Image.centroidPixel` | `[0..1]` | `Event.payload` | `not yet` | `[row, column]`, **0-based**, and note the order is row-then-column while the `PIXELS` coordinate system is x-then-y. The two orders are opposite and both appear in this model; each is parked under a key naming which |
-| `Image.color` | `[0..1]` | `Event.payload` | `not yet` | three RGB bytes, the object's dominant colour, per MISB ST 0903.4 Target Color |
-| `Image.chip` | `[0..1]` | `Event.payload` | `not yet` | an `ImageChip`; its own table |
+| `Image.pixelMask` | `[0..1]` | `Event.payload` | `nits 1.0.0` | a `PixelMask`. Image space; attributes-only, per the coordinate settlement |
+| `Image.centroidPixel` | `[0..1]` | `Event.payload` | `nits 1.0.0` | `[row, column]`, **0-based**, and note the order is row-then-column while the `PIXELS` coordinate system is x-then-y. The two orders are opposite and both appear in this model; each is parked under a key naming which |
+| `Image.color` | `[0..1]` | `Event.payload` | `nits 1.0.0` | three RGB bytes, the object's dominant colour, per MISB ST 0903.4 Target Color |
+| `Image.chip` | `[0..1]` | `Event.payload` | `nits 1.0.0` | an `ImageChip`; its own table |
 
 #### `ImageChip`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `ImageChip.type` | `[1]` | `Event.payload` | `not yet` | an IANA image media subtype; MISB ST 0903.4 limits it to `jpeg` and `png`. An XML attribute, not an element |
-| `ImageChip.uri` | `[0..1]` | `Event.payload` | `not yet` | a URI to a stored image. Parked and **never dereferenced** — the same refusal as `SensorInformation.url` |
-| `ImageChip.image` | `[0..1]` | `Event.payload` | `not yet` | the image itself, base64 in the XML syntax. **Parked whole**, never re-encoded and never transcoded: the never-drop rule does not have a size exemption, and a chip that is megabytes is a payload the caller chose to send. The standard notes XML "does not lend itself to inclusion of such binary data", which is a hint about `uri` and not a licence to drop `image` |
+| `ImageChip.type` | `[1]` | `Event.payload` | `nits 1.0.0` | an IANA image media subtype; MISB ST 0903.4 limits it to `jpeg` and `png`. An XML attribute, not an element |
+| `ImageChip.uri` | `[0..1]` | `Event.payload` | `nits 1.0.0` | a URI to a stored image. Parked and **never dereferenced** — the same refusal as `SensorInformation.url` |
+| `ImageChip.image` | `[0..1]` | `Event.payload` | `nits 1.0.0` | the image itself, base64 in the XML syntax. **Parked whole**, never re-encoded and never transcoded: the never-drop rule does not have a size exemption, and a chip that is megabytes is a payload the caller chose to send. The standard notes XML "does not lend itself to inclusion of such binary data", which is a hint about `uri` and not a licence to drop `image` |
 
 #### `SensorMeasurement`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `SensorMeasurement.quantity` | `[1]` | `Entity.attributes` | `not yet` | `MeasurementType`: `SNR`, `RADIANT_INTENSITY`, `RADIANCE`, `DIRECTIONAL_REFLECTANCE`. The units are fixed by the literal and are recorded with the value, because a bare number in W·sr⁻¹·m⁻² has been read as three things |
-| `SensorMeasurement.method` | `[1]` | `Entity.attributes` | `not yet` | `MeasurementMethod`: `MEAN`, `MAX`. Parked, and it changes what the value means |
-| `SensorMeasurement.value` | `[1]` | `Entity.attributes` | `not yet` | the measurement |
-| `SensorMeasurement.uncertainty` | `[0..1]` | `Entity.attributes` | `not yet` | the producer's 1-sigma. **Not `Position.accuracy_m`** — an SNR uncertainty is not a position error, and the class is explicit that it covers sensor quantities and not derived ones like the length of an object |
+| `SensorMeasurement.quantity` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `MeasurementType`: `SNR`, `RADIANT_INTENSITY`, `RADIANCE`, `DIRECTIONAL_REFLECTANCE`. The units are fixed by the literal and are recorded with the value, because a bare number in W·sr⁻¹·m⁻² has been read as three things |
+| `SensorMeasurement.method` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `MeasurementMethod`: `MEAN`, `MAX`. Parked, and it changes what the value means |
+| `SensorMeasurement.value` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the measurement |
+| `SensorMeasurement.uncertainty` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the producer's 1-sigma. **Not `Position.accuracy_m`** — an SNR uncertainty is not a position error, and the class is explicit that it covers sensor quantities and not derived ones like the length of an object |
 
 ### Row set — `TrackData`, `TrackSource`, `TrackSegment`, `TrackPoint`
 
@@ -3181,11 +3203,11 @@ reading `adapters/legion.py` gives a Legion Event, reached from a class that say
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackData.uid` | `[0..1]` | `Track.track_id` | `not yet` | **the track's identity**, via `ids.derive` with `kind="track"`, system `NITS_UID`. Also an `Entity.source_ids[].external_id`, and the fallback key for `Entity.entity_id` when no `TrackedObject` carries one — the `kind` argument is what keeps the two id spaces apart |
-| `TrackData.lid` | `[0..1]` | `Track.track_id` | `not yet` | system `NITS_LID`, **only** as the `lidScopeUID` composite |
-| `TrackData.trackSource` | `[0..1]` | `Entity.attributes` | `not yet` | a `TrackSource` for the track as a whole, overridable per segment; its own table |
-| `TrackData.segment` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackSegment`. **All of them feed the one `Track`, in document order** — a segment is a subdivision of this track, not a track. `attributes.nits_segments[]` records each segment's own attributes against the half-open range of sample indices it covers |
-| `TrackData.object` | `[0..*]` | `Entity.entity_type` | `not yet` | `TrackedObject`. **One `Entity` per `TrackData` regardless of how many objects are stated** — `Track.entity_id` is singular. Where several are present the standard says "the data consumer shall interpret the track data as applying to the set of multiple objects **as a group**", so the group is the entity, every instance is parked in full, and `attributes.tracked_object_count` says how many. Merging their attributes would be the consolidation rule, applied inside a document |
+| `TrackData.uid` | `[0..1]` | `Track.track_id` | `nits 1.0.0` | **the track's identity**, via `ids.derive` with `kind="track"`, system `NITS_UID`. Also an `Entity.source_ids[].external_id`, and the fallback key for `Entity.entity_id` when no `TrackedObject` carries one — the `kind` argument is what keeps the two id spaces apart |
+| `TrackData.lid` | `[0..1]` | `Track.track_id` | `nits 1.0.0` | system `NITS_LID`, **only** as the `lidScopeUID` composite |
+| `TrackData.trackSource` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a `TrackSource` for the track as a whole, overridable per segment; its own table |
+| `TrackData.segment` | `[0..*]` | `Track.samples[]` | `nits 1.0.0` | `TrackSegment`. **All of them feed the one `Track`, in document order** — a segment is a subdivision of this track, not a track. `attributes.nits_segments[]` records each segment's own attributes against the half-open range of sample indices it covers |
+| `TrackData.object` | `[0..*]` | `Entity.entity_type` | `nits 1.0.0` | `TrackedObject`. **One `Entity` per `TrackData` regardless of how many objects are stated** — `Track.entity_id` is singular. Where several are present the standard says "the data consumer shall interpret the track data as applying to the set of multiple objects **as a group**", so the group is the entity, every instance is parked in full, and `attributes.tracked_object_count` says how many. Merging their attributes would be the consolidation rule, applied inside a document |
 
 #### `TrackSource`
 
@@ -3194,14 +3216,14 @@ Eight reference lists, no data of its own. Every one of them is **gap 14** and, 
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackSource.sensorUID` | `[0..*]` | `Entity.attributes` | `not yet` | which sensors produced the detections behind this track |
-| `TrackSource.sensorLID` | `[0..*]` | `Entity.attributes` | `not yet` | the local form |
-| `TrackSource.trackerUID` | `[0..*]` | `Entity.attributes` | `not yet` | which trackers |
-| `TrackSource.trackerLID` | `[0..*]` | `Entity.attributes` | `not yet` | the local form |
-| `TrackSource.collectionUID` | `[0..*]` | `Entity.attributes` | `not yet` | which collections |
-| `TrackSource.collectionLID` | `[0..*]` | `Entity.attributes` | `not yet` | the local form |
-| `TrackSource.productUID` | `[0..*]` | `Entity.attributes` | `not yet` | which products. The standard warns these **cannot** be resolved from the file at all — "the link … must be made with data external to this NITSRoot" — so they are parked as opaque identifiers by the format's own instruction |
-| `TrackSource.productLID` | `[0..*]` | `Entity.attributes` | `not yet` | likewise |
+| `TrackSource.sensorUID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | which sensors produced the detections behind this track |
+| `TrackSource.sensorLID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | the local form |
+| `TrackSource.trackerUID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | which trackers |
+| `TrackSource.trackerLID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | the local form |
+| `TrackSource.collectionUID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | which collections |
+| `TrackSource.collectionLID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | the local form |
+| `TrackSource.productUID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | which products. The standard warns these **cannot** be resolved from the file at all — "the link … must be made with data external to this NITSRoot" — so they are parked as opaque identifiers by the format's own instruction |
+| `TrackSource.productLID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | likewise |
 
 A `TrackSource` inside a `TrackSegment` **overrides** the one on the enclosing `TrackData`, per
 §2.5.24 — for that portion of the track and no more. Both are parked: the track-wide one at
@@ -3216,15 +3238,15 @@ has no bag to attach it to.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackSegment.uid` | `[0..1]` | `Entity.attributes` | `not yet` | **not a `Track.track_id`** — a segment is a subdivision of a track and not a track. Parked at `attributes.nits_segments[].uid`. "The producer only needs to specify this value if they want the power to update previously-reported track segment", so its absence means the producer never intends to revise, which is itself worth recording |
-| `TrackSegment.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise, as the `lidScopeUID` composite where there is a scope |
-| `TrackSegment.segmentSource` | `[0..1]` | `Entity.attributes` | `not yet` | a `TrackSource` overriding the track's, for this segment's sample range only |
-| `TrackSegment.confidence` | `[0..1]` | `Entity.attributes` | `not yet` | **does not reach `Track.track_quality`** — see the note below. A `Confidence`, parked per segment. **Gap 18** |
-| `TrackSegment.comment` | `[0..1]` | `Entity.attributes` | `not yet` | free text; §2.1.1.4 forbids parsing it |
-| `TrackSegment.status` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackStatus`. **Does not set `Entity.valid_to`** — see the note below. **Gap 16** |
-| `TrackSegment.initiationReason` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackInitiationReason`, used only when the status is `INITIATING` |
-| `TrackSegment.terminationReason` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackTerminationReason`, used only when the status is `TERMINATED` |
-| `TrackSegment.tp` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackPoint`, appended to the `TrackData`'s single `Track` in document order. **Zero is conformant**, and a segment with no points contributes no samples — a retraction-only one becomes an `Event` |
+| `TrackSegment.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | **not a `Track.track_id`** — a segment is a subdivision of a track and not a track. Parked at `attributes.nits_segments[].uid`. "The producer only needs to specify this value if they want the power to update previously-reported track segment", so its absence means the producer never intends to revise, which is itself worth recording |
+| `TrackSegment.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise, as the `lidScopeUID` composite where there is a scope |
+| `TrackSegment.segmentSource` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a `TrackSource` overriding the track's, for this segment's sample range only |
+| `TrackSegment.confidence` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | **does not reach `Track.track_quality`** — see the note below. A `Confidence`, parked per segment. **Gap 18** |
+| `TrackSegment.comment` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | free text; §2.1.1.4 forbids parsing it |
+| `TrackSegment.status` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | `TrackStatus`. **Does not set `Entity.valid_to`** — see the note below. **Gap 16** |
+| `TrackSegment.initiationReason` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `TrackInitiationReason`, used only when the status is `INITIATING` |
+| `TrackSegment.terminationReason` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `TrackTerminationReason`, used only when the status is `TERMINATED` |
+| `TrackSegment.tp` | `[0..*]` | `Track.samples[]` | `nits 1.0.0` | `TrackPoint`, appended to the `TrackData`'s single `Track` in document order. **Zero is conformant**, and a segment with no points contributes no samples — a retraction-only one becomes an `Event` |
 
 `TrackStatus`: `INITIATING`, `MAINTAINING`, `SEARCHING`, `TERMINATED`, `GROUND_TRUTH`.
 `TrackInitiationReason`: `SENSOR_ON`, `ENTERED_FOV`, `FOUND`, `REINITIATING`, `COLLECTION_START`.
@@ -3278,22 +3300,22 @@ this table is its evidence.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackPoint.uid` | `[0..1]` | `Entity.attributes` | `not yet` | **gap 16** — a sample has no identity in the CDM, so the point's own UUID is parked on the owning Entity keyed by sample index |
-| `TrackPoint.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `TrackPoint.relTime` | `[0..1]` | `Track.samples[].observed_at` | `not yet` | the integer count. "Required unless the value would be 0", and an omitted value **is** zero. The raw integer is parked so egress re-emits it rather than recomputing from the millisecond `Timestamp` |
-| `TrackPoint.dynSrcUID` | `[0..1]` | `Entity.attributes` | `not yet` | which frame this point came from. **Gap 14**, **gap 16** |
-| `TrackPoint.dynSrcLID` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `TrackPoint.associatedDetection` | `[0..1]` | `Entity.attributes` | `not yet` | whether the point has an associated detection. Note it is a **Boolean about association**, distinct from the `Evidence` that names which detection — so `TRUE` with no `Evidence` is a meaningful state and is recorded as one |
-| `TrackPoint.processType` | `[0..1]` | `Entity.attributes` | `not yet` | `ProcessType`: `MANUAL`, `AUTOMATIC`. **Does not set `Position.position_source`** — it says whether a human or an algorithm created the point, not how the position was obtained. `MANUAL` in the CDM means a manually *entered* coordinate, which is a different claim |
-| `TrackPoint.confidence` | `[0..1]` | `Entity.attributes` | `not yet` | the producer's confidence that this point belongs to the segment. **Gap 18**, **gap 16** — parked whole |
-| `TrackPoint.comment` | `[0..1]` | `Entity.attributes` | `not yet` | free text, unparsed |
-| `TrackPoint.outline` | `[0..1]` | `Entity.attributes` | `not yet` | a `Shape` — the object's estimated outline at this instant. **Gap 8** in its strongest form: a per-instant footprint, and the CDM's `Entity` has no geometry at all |
-| `TrackPoint.outlineObscured` | `[0..1]` | `Entity.attributes` | `not yet` | the obscured part of that outline, "a portion of the outline reported in `TrackPoint: outline`". Parked with the relationship recorded; a document carrying it without `outline` is non-conforming and is noted rather than repaired |
-| `TrackPoint.nearestConfuser` | `[0..1]` | `Entity.attributes` | `not yet` | metres to the nearest similarly-shaped object with similar dynamics. **Not `Position.accuracy_m`** — a confuser distance is a statement about ambiguity of *association*, not about the error of a fix, and the two are opposite kinds of number |
-| `TrackPoint.nearestConfuserConfidence` | `[0..1]` | `Entity.attributes` | `not yet` | a `Confidence` on that distance. **Gap 18** |
-| `TrackPoint.sm` | `[0..*]` | `Entity.attributes` | `not yet` | `SensorMeasurement`, per point. **Gap 16** |
-| `TrackPoint.dynamics` | `[0..*]` | `Track.samples[].position` | `not yet` | `Dynamics`; its own table. The block that produces the sample's position, chosen by the coordinate-system preference order |
-| `TrackPoint.evidence` | `[0..*]` | `Entity.attributes` | `not yet` | `Evidence`; its own table. **Gap 19** |
+| `TrackPoint.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | **gap 16** — a sample has no identity in the CDM, so the point's own UUID is parked on the owning Entity keyed by sample index |
+| `TrackPoint.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `TrackPoint.relTime` | `[0..1]` | `Track.samples[].observed_at` | `nits 1.0.0` | the integer count. "Required unless the value would be 0", and an omitted value **is** zero. The raw integer is parked so egress re-emits it rather than recomputing from the millisecond `Timestamp` |
+| `TrackPoint.dynSrcUID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | which frame this point came from. **Gap 14**, **gap 16** |
+| `TrackPoint.dynSrcLID` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `TrackPoint.associatedDetection` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | whether the point has an associated detection. Note it is a **Boolean about association**, distinct from the `Evidence` that names which detection — so `TRUE` with no `Evidence` is a meaningful state and is recorded as one |
+| `TrackPoint.processType` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `ProcessType`: `MANUAL`, `AUTOMATIC`. **Does not set `Position.position_source`** — it says whether a human or an algorithm created the point, not how the position was obtained. `MANUAL` in the CDM means a manually *entered* coordinate, which is a different claim |
+| `TrackPoint.confidence` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | the producer's confidence that this point belongs to the segment. **Gap 18**, **gap 16** — parked whole |
+| `TrackPoint.comment` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | free text, unparsed |
+| `TrackPoint.outline` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `Shape` — the object's estimated outline at this instant. **Gap 8** in its strongest form: a per-instant footprint, and the CDM's `Entity` has no geometry at all |
+| `TrackPoint.outlineObscured` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the obscured part of that outline, "a portion of the outline reported in `TrackPoint: outline`". Parked with the relationship recorded; a document carrying it without `outline` is non-conforming and is noted rather than repaired |
+| `TrackPoint.nearestConfuser` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | metres to the nearest similarly-shaped object with similar dynamics. **Not `Position.accuracy_m`** — a confuser distance is a statement about ambiguity of *association*, not about the error of a fix, and the two are opposite kinds of number |
+| `TrackPoint.nearestConfuserConfidence` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `Confidence` on that distance. **Gap 18** |
+| `TrackPoint.sm` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | `SensorMeasurement`, per point. **Gap 16** |
+| `TrackPoint.dynamics` | `[0..*]` | `Track.samples[].position` | `nits 1.0.0` | `Dynamics`; its own table. The block that produces the sample's position, chosen by the coordinate-system preference order |
+| `TrackPoint.evidence` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | `Evidence`; its own table. **Gap 19** |
 
 **A `TrackPoint` whose `Dynamics` all sit in an attributes-only coordinate system cannot be a
 `TrackSample`,** because `TrackSample.position` is required and `Position` requires a real
@@ -3308,14 +3330,14 @@ Entity with a basis saying why.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Dynamics.cs` | `[1]` | `Position.lat` | `not yet` | `CoordinateSystemType`, and the attribute the entire coordinate settlement turns on. An XML attribute, not an element |
-| `Dynamics.pos` | `[1]` | `Track.samples[].position.lat` · `Track.samples[].position.lon` · `Track.samples[].position.alt_m` | `not yet` | the centroid position, on every point of the history. Mandatory, which is why a velocity always has a position to build a local horizon at. Raw array parked verbatim at `attributes.nits_position` |
-| `Dynamics.pos` *(last positioned point)* | `[1]` | `Entity.position` | `not yet` | the same value, once more, as the entity's current state — see the state note above. `Track.samples[].position.position_source` and `Entity.position.position_source` are both `ESTIMATED` |
-| `Dynamics.vel` | `[0..1]` | `Entity.kinematics` | `not yet` | **gap 4, and the first source that answers it** — decomposed into `Kinematics.speed_mps`, `Kinematics.course_deg` and `Kinematics.climb_mps` for `ECEF`, for CFT-resolved `LOCAL_CARTESIAN`, and for `WGS_84` **only when the height axis is present**; parked whole for two-dimensional `WGS_84` and for the other three systems. The raw array is always parked. **And gap 16**: the CDM has one `Kinematics`, on the `Entity`, while NITS states a velocity at every point — so only the last positioned point's reaches it and the rest are parked per point |
-| `Dynamics.acc` | `[0..1]` | `Entity.attributes` | `not yet` | the CDM models no acceleration in any frame, so this is parked whole regardless of coordinate system — as `adapters/legion.py` parks its own |
-| `Dynamics.cov` | `[0..1]` | `Entity.attributes` | `not yet` | a `CovarianceMatrix` over position, or position and velocity, or all three. **Gap 17** — parked whole, and never reduced to `Position.accuracy_m` |
-| `Dynamics.cftUID` | `[0..1]` | `Position.lat` | `not yet` | the transform a local coordinate resolves through. Unresolvable within the payload makes the block attributes-only |
-| `Dynamics.cftLID` | `[0..1]` | `Position.lat` | `not yet` | the local form |
+| `Dynamics.cs` | `[1]` | `Position.lat` | `nits 1.0.0` | `CoordinateSystemType`, and the attribute the entire coordinate settlement turns on. An XML attribute, not an element |
+| `Dynamics.pos` | `[1]` | `Track.samples[].position.lat` · `Track.samples[].position.lon` · `Track.samples[].position.alt_m` | `nits 1.0.0` | the centroid position, on every point of the history. Mandatory, which is why a velocity always has a position to build a local horizon at. Raw array parked verbatim at `attributes.nits_position` |
+| `Dynamics.pos` *(last positioned point)* | `[1]` | `Entity.position` | `nits 1.0.0` | the same value, once more, as the entity's current state — see the state note above. `Track.samples[].position.position_source` and `Entity.position.position_source` are both `ESTIMATED` |
+| `Dynamics.vel` | `[0..1]` | `Entity.kinematics` | `nits 1.0.0` | **gap 4, and the first source that answers it** — decomposed into `Kinematics.speed_mps`, `Kinematics.course_deg` and `Kinematics.climb_mps` for `ECEF`, for CFT-resolved `LOCAL_CARTESIAN`, and for `WGS_84` **only when the height axis is present**; parked whole for two-dimensional `WGS_84` and for the other three systems. The raw array is always parked. **And gap 16**: the CDM has one `Kinematics`, on the `Entity`, while NITS states a velocity at every point — so only the last positioned point's reaches it and the rest are parked per point |
+| `Dynamics.acc` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the CDM models no acceleration in any frame, so this is parked whole regardless of coordinate system — as `adapters/legion.py` parks its own |
+| `Dynamics.cov` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `CovarianceMatrix` over position, or position and velocity, or all three. **Gap 17** — parked whole, and never reduced to `Position.accuracy_m` |
+| `Dynamics.cftUID` | `[0..1]` | `Position.lat` | `nits 1.0.0` | the transform a local coordinate resolves through. Unresolvable within the payload makes the block attributes-only |
+| `Dynamics.cftLID` | `[0..1]` | `Position.lat` | `nits 1.0.0` | the local form |
 
 `CoordinateSystemType`: `WGS_84`, `ECEF`, `ECI_J2K`, `LOCAL_CARTESIAN`, `LOCAL_SPHERICAL`,
 `PIXELS`. Handled individually in the coordinate settlement.
@@ -3332,13 +3354,13 @@ say that.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Evidence.type` | `[1]` | `Entity.attributes` | `not yet` | `EvidenceType`: `DIRECT` (the object itself was seen) or `CIRCUMSTANTIAL` (only signs of it). An XML attribute |
-| `Evidence.subtype` | `[0..1]` | `Entity.attributes` | `not yet` | `EvidenceSubtype`: `WAKE`, `DUST_PLUME`, `TIRE_TRACKS`, `SHADOW`, "other values defined by registration" — so an unknown literal is expected and is parked, never refused |
-| `Evidence.uid` | `[0..1]` | `Entity.attributes` | `not yet` | needed only if the producer wants to revise the association later |
-| `Evidence.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
-| `Evidence.detectionUID` | `[0..*]` | `Entity.attributes` | `not yet` | **the chain**: which detections support this track point. Parked as identifiers and **never resolved into the `Event` objects the detections became** — that is a join, and the CDM has no relation to hold it. **Gap 19** |
-| `Evidence.detectionLID` | `[0..*]` | `Entity.attributes` | `not yet` | likewise |
-| `Evidence.confidence` | `[0..1]` | `Entity.attributes` | `not yet` | the producer's confidence in the association itself. **Gap 18** |
+| `Evidence.type` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `EvidenceType`: `DIRECT` (the object itself was seen) or `CIRCUMSTANTIAL` (only signs of it). An XML attribute |
+| `Evidence.subtype` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `EvidenceSubtype`: `WAKE`, `DUST_PLUME`, `TIRE_TRACKS`, `SHADOW`, "other values defined by registration" — so an unknown literal is expected and is parked, never refused |
+| `Evidence.uid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | needed only if the producer wants to revise the association later |
+| `Evidence.lid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `Evidence.detectionUID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | **the chain**: which detections support this track point. Parked as identifiers and **never resolved into the `Event` objects the detections became** — that is a join, and the CDM has no relation to hold it. **Gap 19** |
+| `Evidence.detectionLID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | likewise |
+| `Evidence.confidence` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | the producer's confidence in the association itself. **Gap 18** |
 
 **The evidence chain is the clearest thing NITS has that the CDM cannot say.** A track point is
 supported by evidence, the evidence names detections, each detection names a sensor and a frame,
@@ -3353,20 +3375,20 @@ That is **gap 19**, and this table is why it is opened rather than folded into g
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackedObject.uid` | `[0..1]` | `Entity.entity_id` | `not yet` | **the preferred key**, via `ids.derive`, system `NITS_UID`; also an `Entity.source_ids[].external_id` |
-| `TrackedObject.lid` | `[0..1]` | `Entity.entity_id` | `not yet` | system `NITS_LID`, as the `lidScopeUID` composite only |
-| `TrackedObject.description` | `[0..1]` | `Entity.attributes` | `not yet` | **the near-miss name.** Parked at `attributes.tracked_object_description` and deliberately not at any name-like key — see the identity settlement. **Gap 1** |
-| `TrackedObject.numberOfObjects` | `[0..1]` | `Entity.attributes` | `not yet` | how many objects the track covers, "if two vehicles are so close to each other that they are indistinguishable". The CDM's `Entity` is one thing with no cardinality, so this is parked and the entity is not multiplied — splitting one indistinguishable pair into two entities would invent two positions from one |
-| `TrackedObject.objectColor` | `[0..*]` | `Entity.attributes` | `not yet` | RGB triples "listed in order from most dominant to least dominant" — the order is data and is preserved |
-| `TrackedObject.confidence` | `[0..1]` | `Entity.confidence` | `not yet` | a `Confidence`, and the standard is explicit that it "applies to all attributes in this `TrackedObject` instance". Mapped to `Entity.confidence` **only** when `type` is `PROBABILITY` and `valid` is not `false`, on the same terms as `track_quality` above. **Gap 18** |
-| `TrackedObject.dims` | `[0..1]` | `Entity.attributes` | `not yet` | `[length, width, height, covLL, covLW, covLH, covWW, covWH, covHH]`. **Gap 8** — the CDM has no extent — and **gap 17** for the covariance half. Note the sentinels: an unmeasured dimension is `-1` and an inapplicable covariance is `0`, so `-1` is parked as `unavailable_fields` and never as a length |
-| `TrackedObject.priority` | `[0..1]` | `Entity.attributes` | `not yet` | producer-assigned, 1–255, **1 highest**. Parked and **not** mapped to `Event.severity`: a producer's collection priority is not an operational severity, and the inverted scale is exactly the kind of thing that gets read backwards |
-| `TrackedObject.iffCode` | `[0..*]` | `Entity.source_ids[].external_id` | `not yet` | `IFFCode`; its own table. Only `MODE_S` with a hex-parseable value becomes a `SourceId` |
-| `TrackedObject.objectClass` | `[0..*]` | `Entity.entity_type` | `not yet` | `ObjectClass`; its own table. Sets the entity type through the APP-6 table only, never the symbol |
-| `TrackedObject.idSourceInformation` | `[0..*]` | `Entity.attributes` | `not yet` | `IDSourceInformation`; its own table. Reaches neither affiliation nor confidence |
-| `TrackedObject.id1241` | `[0..1]` | `Entity.affiliation` | `not yet` | `ID1241`; its own table. The only path to `affiliation` in the whole model |
-| `TrackedObject.exampleDetectionUID` | `[0..*]` | `Entity.attributes` | `not yet` | a detection that exemplifies the object. Parked as an identifier, never resolved. **Gap 19** |
-| `TrackedObject.exampleDetectionLID` | `[0..*]` | `Entity.attributes` | `not yet` | likewise |
+| `TrackedObject.uid` | `[0..1]` | `Entity.entity_id` | `nits 1.0.0` | **the preferred key**, via `ids.derive`, system `NITS_UID`; also an `Entity.source_ids[].external_id` |
+| `TrackedObject.lid` | `[0..1]` | `Entity.entity_id` | `nits 1.0.0` | system `NITS_LID`, as the `lidScopeUID` composite only |
+| `TrackedObject.description` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | **the near-miss name.** Parked at `attributes.tracked_object_description` and deliberately not at any name-like key — see the identity settlement. **Gap 1** |
+| `TrackedObject.numberOfObjects` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | how many objects the track covers, "if two vehicles are so close to each other that they are indistinguishable". The CDM's `Entity` is one thing with no cardinality, so this is parked and the entity is not multiplied — splitting one indistinguishable pair into two entities would invent two positions from one |
+| `TrackedObject.objectColor` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | RGB triples "listed in order from most dominant to least dominant" — the order is data and is preserved |
+| `TrackedObject.confidence` | `[0..1]` | `Entity.confidence` | `nits 1.0.0` | a `Confidence`, and the standard is explicit that it "applies to all attributes in this `TrackedObject` instance". Mapped to `Entity.confidence` **only** when `type` is `PROBABILITY` and `valid` is not `false`, on the same terms as `track_quality` above. **Gap 18** |
+| `TrackedObject.dims` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | `[length, width, height, covLL, covLW, covLH, covWW, covWH, covHH]`. **Gap 8** — the CDM has no extent — and **gap 17** for the covariance half. Note the sentinels: an unmeasured dimension is `-1` and an inapplicable covariance is `0`, so `-1` is parked as `unavailable_fields` and never as a length |
+| `TrackedObject.priority` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | producer-assigned, 1–255, **1 highest**. Parked and **not** mapped to `Event.severity`: a producer's collection priority is not an operational severity, and the inverted scale is exactly the kind of thing that gets read backwards |
+| `TrackedObject.iffCode` | `[0..*]` | `Entity.source_ids[].external_id` | `nits 1.0.0` | `IFFCode`; its own table. Only `MODE_S` with a hex-parseable value becomes a `SourceId` |
+| `TrackedObject.objectClass` | `[0..*]` | `Entity.entity_type` | `nits 1.0.0` | `ObjectClass`; its own table. Sets the entity type through the APP-6 table only, never the symbol |
+| `TrackedObject.idSourceInformation` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | `IDSourceInformation`; its own table. Reaches neither affiliation nor confidence |
+| `TrackedObject.id1241` | `[0..1]` | `Entity.affiliation` | `nits 1.0.0` | `ID1241`; its own table. The only path to `affiliation` in the whole model |
+| `TrackedObject.exampleDetectionUID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0 · parked` | a detection that exemplifies the object. Parked as an identifier, never resolved. **Gap 19** |
+| `TrackedObject.exampleDetectionLID` | `[0..*]` | `Entity.attributes` | `nits 1.0.0` | likewise |
 
 **Several `TrackedObject` instances with the same ID are not merged.** §2.5.29 and the
 consolidation rule together describe a producer splitting one object's attributes across
@@ -3381,48 +3403,48 @@ tell which confidence went with which attribute, which is the whole point of the
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `IFFCode.value` | `[1]` | `Entity.source_ids[].external_id` | `not yet` | "the code value transmitted by an IFF system", typed `String` with **no stated syntax for any mode** — see the ambiguity table. Becomes an `ICAO24` `SourceId` only for `MODE_S` and only when it parses as six unambiguous hex digits |
-| `IFFCode.mode` | `[1]` | `Entity.attributes` | `not yet` | `IFFMode`: `MODE1`, `MODE2`, `MODE3`, `MODE4`, `MODE5`, `MODE_C`, `MODE_S`. **`MODE4` and `MODE5` never reach `affiliation`** — the CAT021 decline, second occurrence. `MODE_C` is a pressure altitude and never reaches `Position.alt_m` |
+| `IFFCode.value` | `[1]` | `Entity.source_ids[].external_id` | `nits 1.0.0` | "the code value transmitted by an IFF system", typed `String` with **no stated syntax for any mode** — see the ambiguity table. Becomes an `ICAO24` `SourceId` only for `MODE_S` and only when it parses as six unambiguous hex digits |
+| `IFFCode.mode` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `IFFMode`: `MODE1`, `MODE2`, `MODE3`, `MODE4`, `MODE5`, `MODE_C`, `MODE_S`. **`MODE4` and `MODE5` never reach `affiliation`** — the CAT021 decline, second occurrence. `MODE_C` is a pressure altitude and never reaches `Position.alt_m` |
 
 #### `ObjectClass`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `ObjectClass.table` | `[1]` | `Entity.entity_type` | `not yet` | `APP-6Table`, fourteen literals, all mapped in the table above |
-| `ObjectClass.entity` | `[0..1]` | `Entity.attributes` | `not yet` | the APP-6 entity string |
-| `ObjectClass.entityType` | `[0..1]` | `Entity.attributes` | `not yet` | "required if the tracked object has a listed entity type" |
-| `ObjectClass.entitySubtype` | `[0..1]` | `Entity.attributes` | `not yet` | likewise for a subtype |
-| `ObjectClass.sector1Modifier` | `[0..1]` | `Entity.attributes` | `not yet` | optional APP-6 modifier |
-| `ObjectClass.sector2Modifier` | `[0..1]` | `Entity.attributes` | `not yet` | optional APP-6 modifier |
-| `ObjectClass.code` | `[1]` | `Entity.attributes` | `not yet` | the 6-, 8- or 10-digit code, leading zeroes included, parked **as a string**. **Never composed into `Entity.symbol`** — see the identity settlement |
+| `ObjectClass.table` | `[1]` | `Entity.entity_type` | `nits 1.0.0` | `APP-6Table`, fourteen literals, all mapped in the table above |
+| `ObjectClass.entity` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | the APP-6 entity string |
+| `ObjectClass.entityType` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | "required if the tracked object has a listed entity type" |
+| `ObjectClass.entitySubtype` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | likewise for a subtype |
+| `ObjectClass.sector1Modifier` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | optional APP-6 modifier |
+| `ObjectClass.sector2Modifier` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | optional APP-6 modifier |
+| `ObjectClass.code` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the 6-, 8- or 10-digit code, leading zeroes included, parked **as a string**. **Never composed into `Entity.symbol`** — see the identity settlement |
 
 #### `IDSourceInformation`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `IDSourceInformation.idQualityNumber` | `[1]` | `Entity.attributes` | `not yet` | "describes the quality of an ID Source Result", and typed **`String`** — so it is not a number the adapter may compare, rank or normalise, whatever it looks like |
-| `IDSourceInformation.sourceDeclarationBinary` | `[1]` | `Entity.attributes` | `not yet` | whether the source has a positive result, e.g. an IFF match. Parked; it does not reach `affiliation`, for the reason the class's own definition gives |
-| `IDSourceInformation.sourceDeclarationExtension` | `[1]` | `Entity.attributes` | `not yet` | the precise declaration where the source says more than match/no-match. Encoding defined by AIDPP-01, a document this row set does not adopt |
-| `IDSourceInformation.relTimeCreation` | `[1]` | `Entity.attributes` | `not yet` | when the declaration was created. **Gap 13** — two times on one object and the CDM has no per-measurement time at all |
-| `IDSourceInformation.relTimeExchange` | `[1]` | `Entity.attributes` | `not yet` | when the message sender transmitted it. Deliberately **not** `Event.received_at`: that is a third party's transmission, not our receipt |
-| `IDSourceInformation.idSourceNumber` | `[1]` | `Entity.attributes` | `not yet` | an `IDSourceNumber`; its own table |
+| `IDSourceInformation.idQualityNumber` | `[1]` | `Entity.attributes` | `nits 1.0.0` | "describes the quality of an ID Source Result", and typed **`String`** — so it is not a number the adapter may compare, rank or normalise, whatever it looks like |
+| `IDSourceInformation.sourceDeclarationBinary` | `[1]` | `Entity.attributes` | `nits 1.0.0` | whether the source has a positive result, e.g. an IFF match. Parked; it does not reach `affiliation`, for the reason the class's own definition gives |
+| `IDSourceInformation.sourceDeclarationExtension` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the precise declaration where the source says more than match/no-match. Encoding defined by AIDPP-01, a document this row set does not adopt |
+| `IDSourceInformation.relTimeCreation` | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | when the declaration was created. **Gap 13** — two times on one object and the CDM has no per-measurement time at all |
+| `IDSourceInformation.relTimeExchange` | `[1]` | `Entity.attributes` | `nits 1.0.0` | when the message sender transmitted it. Deliberately **not** `Event.received_at`: that is a third party's transmission, not our receipt |
+| `IDSourceInformation.idSourceNumber` | `[1]` | `Entity.attributes` | `nits 1.0.0` | an `IDSourceNumber`; its own table |
 
 #### `IDSourceNumber`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `IDSourceNumber.sourceType` | `[1]` | `Entity.attributes` | `not yet` | the generic grouping of ID sources |
-| `IDSourceNumber.sourceSubtype` | `[1]` | `Entity.attributes` | `not yet` | the subgroup |
-| `IDSourceNumber.sourceDeviceClass` | `[1]` | `Entity.attributes` | `not yet` | the precise ID source. All three are `String` and all three are defined by AIDPP-01; parked verbatim |
+| `IDSourceNumber.sourceType` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the generic grouping of ID sources |
+| `IDSourceNumber.sourceSubtype` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the subgroup |
+| `IDSourceNumber.sourceDeviceClass` | `[1]` | `Entity.attributes` | `nits 1.0.0` | the precise ID source. All three are `String` and all three are defined by AIDPP-01; parked verbatim |
 
 #### `ID1241`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `ID1241.identity` | `[0..1]` | `Entity.affiliation` | `not yet` | `Identity`, STANAG 1241 Ed. 5. **Gap 2** — six literals into four, mapped in the table above |
-| `ID1241.identityAmplification` | `[0..1]` | `Entity.affiliation` | `not yet` | `IdentityAmplification`: `FAKER`, `JOKER`, `KILO`, `TRAVELER`, `ZOMBIE`. **`FAKER`, `JOKER` and `KILO` yield `FRIENDLY`**, overriding a contradicting `identity`, because Edition B defines all three as friendly in the first word; the exercise role is parked at `attributes.exercise_role`. `TRAVELER` and `ZOMBIE` are `SUSPECT` and set nothing — **gap 2**. See the settlement |
-| `ID1241.identitySourceModality` | `[0..1]` | `Entity.attributes` | `not yet` | a `ModalityType`, "transmitted only if the `identity` is provided". Parked; it says how the identity was reached, and the CDM has no provenance for an affiliation |
-| `ID1241.environment` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackEnvironment`: `LAND`, `SURFACE`, `SUB-SURFACE`, `AIR`, `SPACE`, `UNKNOWN`. **A domain, not a kind** — does not set `entity_type` |
+| `ID1241.identity` | `[0..1]` | `Entity.affiliation` | `nits 1.0.0` | `Identity`, STANAG 1241 Ed. 5. **Gap 2** — six literals into four, mapped in the table above |
+| `ID1241.identityAmplification` | `[0..1]` | `Entity.affiliation` | `nits 1.0.0` | `IdentityAmplification`: `FAKER`, `JOKER`, `KILO`, `TRAVELER`, `ZOMBIE`. **`FAKER`, `JOKER` and `KILO` yield `FRIENDLY`**, overriding a contradicting `identity`, because Edition B defines all three as friendly in the first word; the exercise role is parked at `attributes.exercise_role`. `TRAVELER` and `ZOMBIE` are `SUSPECT` and set nothing — **gap 2**. See the settlement |
+| `ID1241.identitySourceModality` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | a `ModalityType`, "transmitted only if the `identity` is provided". Parked; it says how the identity was reached, and the CDM has no provenance for an affiliation |
+| `ID1241.environment` | `[0..1]` | `Entity.attributes` | `nits 1.0.0` | `TrackEnvironment`: `LAND`, `SURFACE`, `SUB-SURFACE`, `AIR`, `SPACE`, `UNKNOWN`. **A domain, not a kind** — does not set `entity_type` |
 
 ### Row set — the analysis classes, all carried and none acted on
 
@@ -3430,16 +3452,16 @@ tell which confidence went with which attribute, which is the whole point of the
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `ProcessedTrack.type` | `[1]` | `Event.payload` | `not yet` | `ProcessedTrackType`: `FUSED`, `SMOOTHED`. An XML attribute |
-| `ProcessedTrack.uid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_UID` |
-| `ProcessedTrack.lid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_LID`, scoped |
-| `ProcessedTrack.confidence` | `[0..1]` | `Event.payload` | `not yet` | a `Confidence`, and the mechanism by which a producer **retracts** a processing claim: same ID, `valid = false`. Carried, never applied. **Gap 18** |
-| `ProcessedTrack.inputUID` | `[0..*]` | `Event.payload` | `not yet` | "two or more input track UUIDs". Parked as identifiers. **Not `related_entities`** — these are track ids |
-| `ProcessedTrack.inputLID` | `[0..*]` | `Event.payload` | `not yet` | likewise |
-| `ProcessedTrack.outputUID` | `[0..1]` | `Event.payload` | `not yet` | the output track. Parked; the adapter emits no combined track |
-| `ProcessedTrack.outputLID` | `[0..1]` | `Event.payload` | `not yet` | likewise |
-| *(derived)* | — | `Event.observed_at` | `not yet` | **`TrackMessage.baseTime`.** This is the only class in the model with no time attribute of any kind, and `payload.observed_at_basis` says so rather than implying the producer stated an instant |
-| *(derived)* | — | `Event.event_type` | `not yet` | `STATUS_CHANGE`. Not `TRACK_UPDATE`: nothing about a track's state was updated, a *relationship between* tracks was asserted |
+| `ProcessedTrack.type` | `[1]` | `Event.payload` | `nits 1.0.0` | `ProcessedTrackType`: `FUSED`, `SMOOTHED`. An XML attribute |
+| `ProcessedTrack.uid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_UID` |
+| `ProcessedTrack.lid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_LID`, scoped |
+| `ProcessedTrack.confidence` | `[0..1]` | `Event.payload` | `nits 1.0.0 · parked` | a `Confidence`, and the mechanism by which a producer **retracts** a processing claim: same ID, `valid = false`. Carried, never applied. **Gap 18** |
+| `ProcessedTrack.inputUID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | "two or more input track UUIDs". Parked as identifiers. **Not `related_entities`** — these are track ids |
+| `ProcessedTrack.inputLID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | likewise |
+| `ProcessedTrack.outputUID` | `[0..1]` | `Event.payload` | `nits 1.0.0` | the output track. Parked; the adapter emits no combined track |
+| `ProcessedTrack.outputLID` | `[0..1]` | `Event.payload` | `nits 1.0.0` | likewise |
+| *(derived)* | — | `Event.observed_at` | `nits 1.0.0` | **`TrackMessage.baseTime`.** This is the only class in the model with no time attribute of any kind, and `payload.observed_at_basis` says so rather than implying the producer stated an instant |
+| *(derived)* | — | `Event.event_type` | `nits 1.0.0` | `STATUS_CHANGE`. Not `TRACK_UPDATE`: nothing about a track's state was updated, a *relationship between* tracks was asserted |
 
 Note the cardinality contradiction the standard carries here: `inputUID` is described as "two or
 more input track UUIDs" and then, in the same cell, "all currently-defined `ProcessedTrack`s must
@@ -3450,16 +3472,16 @@ the adapter parks whatever count arrives and asserts neither.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackLinkage.type` | `[1]` | `Event.payload` | `not yet` | `TrackLinkageType`: `MERGE`, `SPLIT`, `STITCH`. An XML attribute |
-| `TrackLinkage.uid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_UID` |
-| `TrackLinkage.lid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_LID`, scoped |
-| `TrackLinkage.relTime` | `[0..1]` | `Event.observed_at` | `not yet` | "the time when the relationship started". Resolved against the message base; omitted means zero |
-| `TrackLinkage.confidence` | `[0..1]` | `Event.payload` | `not yet` | the retraction mechanism again. **Gap 18** |
-| `TrackLinkage.preUID` | `[0..*]` | `Event.payload` | `not yet` | tracks existing before the relationship. The counts are type-dependent — `SPLIT` `[1]`, `MERGE` `[2..*]`, `STITCH` `[1]` — and are **checked and recorded**, never enforced by dropping the linkage |
-| `TrackLinkage.postUID` | `[0..*]` | `Event.payload` | `not yet` | tracks existing after — `SPLIT` `[2..*]`, `MERGE` `[1]`, `STITCH` `[1]` |
-| `TrackLinkage.preLID` | `[0..*]` | `Event.payload` | `not yet` | the local forms, same counts |
-| `TrackLinkage.postLID` | `[0..*]` | `Event.payload` | `not yet` | likewise |
-| *(derived)* | — | `Event.event_type` | `not yet` | `STATUS_CHANGE`, and `Event.related_entities` is empty — see the no-fusion settlement |
+| `TrackLinkage.type` | `[1]` | `Event.payload` | `nits 1.0.0` | `TrackLinkageType`: `MERGE`, `SPLIT`, `STITCH`. An XML attribute |
+| `TrackLinkage.uid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_UID` |
+| `TrackLinkage.lid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_LID`, scoped |
+| `TrackLinkage.relTime` | `[0..1]` | `Event.observed_at` | `nits 1.0.0` | "the time when the relationship started". Resolved against the message base; omitted means zero |
+| `TrackLinkage.confidence` | `[0..1]` | `Event.payload` | `nits 1.0.0 · parked` | the retraction mechanism again. **Gap 18** |
+| `TrackLinkage.preUID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | tracks existing before the relationship. The counts are type-dependent — `SPLIT` `[1]`, `MERGE` `[2..*]`, `STITCH` `[1]` — and are **checked and recorded**, never enforced by dropping the linkage |
+| `TrackLinkage.postUID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | tracks existing after — `SPLIT` `[2..*]`, `MERGE` `[1]`, `STITCH` `[1]` |
+| `TrackLinkage.preLID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | the local forms, same counts |
+| `TrackLinkage.postLID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | likewise |
+| *(derived)* | — | `Event.event_type` | `nits 1.0.0` | `STATUS_CHANGE`, and `Event.related_entities` is empty — see the no-fusion settlement |
 
 **A `MERGE` or `SPLIT` may legitimately reuse one identifier on both sides** — a motorcycle riding
 into a trailer, or off one — so a `preUID` equal to a `postUID` is conformant and is **not** a
@@ -3469,16 +3491,16 @@ defect to flag. Recorded here because an adapter author's first instinct is to v
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `MotionEvent.type` | `[1]` | `Event.payload` | `not yet` | `MotionEventType`, seventeen literals. **Parked, not mapped to `EventType`** — see below |
-| `MotionEvent.uid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_UID` |
-| `MotionEvent.lid` | `[0..1]` | `Event.source_ids[].external_id` | `not yet` | system `NITS_LID`, scoped |
-| `MotionEvent.trackUID` | `[0..*]` | `Event.payload` | `not yet` | the tracks involved. Parked as identifiers; **not** `related_entities`, which holds entity ids |
-| `MotionEvent.trackLID` | `[0..*]` | `Event.payload` | `not yet` | likewise |
-| `MotionEvent.startRelTime` | `[1]` | `Event.observed_at` | `not yet` | **the one relTime in the model whose absence does not mean zero** — see below |
-| `MotionEvent.endRelTime` | `[0..1]` | `Event.payload` | `not yet` | parked. Its absence means "unknown **or** instantaneous", two different facts under one silence, and both are recorded as the one silence rather than one being chosen |
-| `MotionEvent.confidence` | `[0..1]` | `Event.payload` | `not yet` | a `Confidence`. **Gap 18** |
-| `MotionEvent.region` | `[0..1]` | `Event.geometry` | `not yet` | a `Shape` for an ROI-type event. **Becomes a `Polygon` geometry** when its coordinate system is `WGS_84` or transformable `ECEF`, through the three polygon corrections; attributes-only otherwise. This and `tripwire` are the only two places in the model where a NITS shape reaches `Event.geometry` |
-| `MotionEvent.tripwire` | `[0..1]` | `Event.geometry` | `not yet` | a `PositionPoints` whose vertices "do not form a closed polygon" — so a **`LineString`**, in vertex order, which the standard says "indicates how the tripwire should be drawn" |
+| `MotionEvent.type` | `[1]` | `Event.payload` | `nits 1.0.0` | `MotionEventType`, seventeen literals. **Parked, not mapped to `EventType`** — see below |
+| `MotionEvent.uid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_UID` |
+| `MotionEvent.lid` | `[0..1]` | `Event.source_ids[].external_id` | `nits 1.0.0` | system `NITS_LID`, scoped |
+| `MotionEvent.trackUID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | the tracks involved. Parked as identifiers; **not** `related_entities`, which holds entity ids |
+| `MotionEvent.trackLID` | `[0..*]` | `Event.payload` | `nits 1.0.0` | likewise |
+| `MotionEvent.startRelTime` | `[1]` | `Event.observed_at` | `nits 1.0.0` | **the one relTime in the model whose absence does not mean zero** — see below |
+| `MotionEvent.endRelTime` | `[0..1]` | `Event.payload` | `nits 1.0.0` | parked. Its absence means "unknown **or** instantaneous", two different facts under one silence, and both are recorded as the one silence rather than one being chosen |
+| `MotionEvent.confidence` | `[0..1]` | `Event.payload` | `nits 1.0.0 · parked` | a `Confidence`. **Gap 18** |
+| `MotionEvent.region` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | a `Shape` for an ROI-type event. **Becomes a `Polygon` geometry** when its coordinate system is `WGS_84` or transformable `ECEF`, through the three polygon corrections; attributes-only otherwise. This and `tripwire` are the only two places in the model where a NITS shape reaches `Event.geometry` |
+| `MotionEvent.tripwire` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | a `PositionPoints` whose vertices "do not form a closed polygon" — so a **`LineString`**, in vertex order, which the standard says "indicates how the tripwire should be drawn" |
 
 `MotionEventType`: `START`, `STOP`, `INTERMITTENT_MOTION`, `LEFT_TURN`, `RIGHT_TURN`,
 `LEFT_U-TURN`, `RIGHT_U-TURN`, `ACCELERATION`, `DECELERATION`, `COLLISION`, `MEETING`, `OBSCURED`,
@@ -3516,10 +3538,10 @@ options and it is the one flagged for challenge.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Shape.dims` | `[1]` | `Event.geometry` | `not yet` | `Dimensionality`, literals `2` and `3`. Decides how the flat vertex array is split into tuples, so getting it wrong shifts every coordinate after the first |
-| `Shape.cs` | `[1]` | `Event.geometry` | `not yet` | `CoordinateSystemType` for every vertex or ellipse parameter. The coordinate settlement decides whether a shape can be a geometry at all |
-| `Shape.cftUID` | `[0..1]` | `Event.geometry` | `not yet` | "if the points are specified in a local coordinate system, then either the `cftLID` or `cftUID` is required" |
-| `Shape.cftLID` | `[0..1]` | `Event.geometry` | `not yet` | the local form |
+| `Shape.dims` | `[1]` | `Event.geometry` | `nits 1.0.0` | `Dimensionality`, literals `2` and `3`. Decides how the flat vertex array is split into tuples, so getting it wrong shifts every coordinate after the first |
+| `Shape.cs` | `[1]` | `Event.geometry` | `nits 1.0.0` | `CoordinateSystemType` for every vertex or ellipse parameter. The coordinate settlement decides whether a shape can be a geometry at all |
+| `Shape.cftUID` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | "if the points are specified in a local coordinate system, then either the `cftLID` or `cftUID` is required" |
+| `Shape.cftLID` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | the local form |
 
 `Shape` is **abstract** and, per the CONVENTIONS, "an instance of the abstract class itself will
 never be contained within a STANAG 4676 file"; a conformant XML document names the concrete type
@@ -3531,15 +3553,15 @@ refusal quoting the element path — guessing between `Polygon` and `Ellipsoid` 
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Polygon.nRings` | `[0..1]` | `Event.geometry` | `not yet` | "shall not be omitted" when the count is not 1. Used as a **checksum on the `NaN` split**, not as the split itself; a disagreement is a refusal quoting both counts |
-| `Polygon.vertices` | `[1]` | `Event.geometry` | `not yet` | one flat `DoubleArray` of all rings, tuples of `dims` values, rings separated by an all-`NaN` null point. Becomes a GeoJSON `Polygon` after the three corrections — axis order, winding, explicit closure — only from `WGS_84` or transformable `ECEF` |
+| `Polygon.nRings` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | "shall not be omitted" when the count is not 1. Used as a **checksum on the `NaN` split**, not as the split itself; a disagreement is a refusal quoting both counts |
+| `Polygon.vertices` | `[1]` | `Event.geometry` | `nits 1.0.0` | one flat `DoubleArray` of all rings, tuples of `dims` values, rings separated by an all-`NaN` null point. Becomes a GeoJSON `Polygon` after the three corrections — axis order, winding, explicit closure — only from `WGS_84` or transformable `ECEF` |
 
 #### `Ellipsoid`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Ellipsoid.center` | `[1]` | `Entity.attributes` | `not yet` | a **9-element** array: `x y z covXX covXY covXZ covYY covYZ covZZ`, in the units of the `Shape`'s coordinate system. Sentinels matter — a 2-D ellipse sets `z` and `covZZ` to `-1`, and an unknown centre uncertainty sets all three diagonals to `-1`, so `-1` is never read as a coordinate or a variance |
-| `Ellipsoid.ellipsoidParameters` | `[1]` | `Entity.attributes` | `not yet` | a `CovarianceMatrix` giving the axis lengths and orientation. **Gap 17** |
+| `Ellipsoid.center` | `[1]` | `Entity.attributes` | `nits 1.0.0` | a **9-element** array: `x y z covXX covXY covXZ covYY covYZ covZZ`, in the units of the `Shape`'s coordinate system. Sentinels matter — a 2-D ellipse sets `z` and `covZZ` to `-1`, and an unknown centre uncertainty sets all three diagonals to `-1`, so `-1` is never read as a coordinate or a variance |
+| `Ellipsoid.ellipsoidParameters` | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `CovarianceMatrix` giving the axis lengths and orientation. **Gap 17** |
 
 **An `Ellipsoid` is never a `Geometry` and never an `accuracy_m`.** It is an uncertainty region,
 not a footprint: the class exists to express an error ellipse whose shape *is* a covariance matrix.
@@ -3554,12 +3576,12 @@ the `DynamicSourceInformation` reference that says which frame they index into.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `PixelMask.pixelPolygon` | `[0..1]` | `Event.payload` | `not yet` | vertices of a polygon in pixel space |
-| `PixelMask.pixelRun` | `[0..1]` | `Event.payload` | `not yet` | a bit mask as row and column runs |
-| `PixelPolygon.nRings` | `[0..1]` | `Event.payload` | `not yet` | as `Polygon.nRings`, and the null point here is all **`-1`**, not `NaN` |
-| `PixelPolygon.integerArray` | `[1]` | `Event.payload` | `not yet` | `[row_1, col_1, row_2, col_2, …]` — **row-then-column, which the standard notes is "the opposite of the order for the `PIXELS` coordinate space"**. Parked with the order named, because two opposite conventions in one model is how a mask lands transposed |
-| `PixelRun.rs` | `[0..*]` | `Event.payload` | `not yet` | each entry is `(start row, start column, run length across columns)` |
-| `PixelRun.cs` | `[0..*]` | `Event.payload` | `not yet` | each entry is `(start row, start column, run length across rows)`. Row and column runs may overlap and both are kept |
+| `PixelMask.pixelPolygon` | `[0..1]` | `Event.payload` | `nits 1.0.0` | vertices of a polygon in pixel space |
+| `PixelMask.pixelRun` | `[0..1]` | `Event.payload` | `nits 1.0.0` | a bit mask as row and column runs |
+| `PixelPolygon.nRings` | `[0..1]` | `Event.payload` | `nits 1.0.0` | as `Polygon.nRings`, and the null point here is all **`-1`**, not `NaN` |
+| `PixelPolygon.integerArray` | `[1]` | `Event.payload` | `nits 1.0.0` | `[row_1, col_1, row_2, col_2, …]` — **row-then-column, which the standard notes is "the opposite of the order for the `PIXELS` coordinate space"**. Parked with the order named, because two opposite conventions in one model is how a mask lands transposed |
+| `PixelRun.rs` | `[0..*]` | `Event.payload` | `nits 1.0.0` | each entry is `(start row, start column, run length across columns)` |
+| `PixelRun.cs` | `[0..*]` | `Event.payload` | `nits 1.0.0` | each entry is `(start row, start column, run length across rows)`. Row and column runs may overlap and both are kept |
 
 Pixel indices are **0-based** throughout, per the CONVENTIONS, and the standard warns that
 converting from a MISB ST 0903 source requires translating 1-based coordinates. The adapter
@@ -3570,24 +3592,24 @@ so a consumer never has to guess which convention a mask arrived in.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `IDData.stationID` | `[1]` | `Entity.attributes` | `not yet` | STANAG 4545's OSTAID: "a sequence of 10 alphanumeric characters, **the last 2 of which must be spaces**". Parked with the padding intact — trimming it would produce a string that is not the OSTAID |
-| `IDData.nationality` | `[1]` | `Entity.attributes` | `not yet` | a `NationalityTrigraph`, three letters per APP-11(D). "In the case of a fused track, the nationality shall be that of the nation fusing the tracks" — so this names the producer, and the pair `stationID` + `nationality` is what "provides unique identification of any given STANAG 4676-capable system". **Gap 14**, and the single best evidence for it in any format here |
+| `IDData.stationID` | `[1]` | `Entity.attributes` | `nits 1.0.0` | STANAG 4545's OSTAID: "a sequence of 10 alphanumeric characters, **the last 2 of which must be spaces**". Parked with the padding intact — trimming it would produce a string that is not the OSTAID |
+| `IDData.nationality` | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | a `NationalityTrigraph`, three letters per APP-11(D). "In the case of a fused track, the nationality shall be that of the nation fusing the tracks" — so this names the producer, and the pair `stationID` + `nationality` is what "provides unique identification of any given STANAG 4676-capable system". **Gap 14**, and the single best evidence for it in any format here |
 
 #### `CovarianceMatrix`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `CovarianceMatrix.covarianceType` | `[1]` | `Entity.attributes` | `not yet` | `CovarianceType`: `POS3D` (6 elements), `VEL3D` (21), `ACC3D` (45), `POS2D` (3), `VEL2D` (10), `ACC2D` (21). An XML attribute. **The element count is a checksum**: a matrix whose value count disagrees with its type is a refusal quoting both |
-| `CovarianceMatrix` *(core class value)* | `[1]` | `Entity.attributes` | `not yet` | the values themselves — "only the diagonal and upper-right triangle elements … reported Left-to-Right, Top-to-Bottom". The class's own content rather than a named attribute, like `UUID`'s. Parked verbatim, ordering intact. **Gap 17** |
+| `CovarianceMatrix.covarianceType` | `[1]` | `Entity.attributes` | `nits 1.0.0` | `CovarianceType`: `POS3D` (6 elements), `VEL3D` (21), `ACC3D` (45), `POS2D` (3), `VEL2D` (10), `ACC2D` (21). An XML attribute. **The element count is a checksum**: a matrix whose value count disagrees with its type is a refusal quoting both |
+| `CovarianceMatrix` *(core class value)* | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | the values themselves — "only the diagonal and upper-right triangle elements … reported Left-to-Right, Top-to-Bottom". The class's own content rather than a named attribute, like `UUID`'s. Parked verbatim, ordering intact. **Gap 17** |
 
 #### `Confidence`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `Confidence.type` | `[1]` | `Entity.attributes` | `not yet` | `CertaintyStatisticType`: `HUMAN_INSTINCT`, `P-VALUE`, `PROBABILITY`, `T-STATISTIC`. An XML attribute. **The attribute that makes the value uninterpretable without it** — see gap 18 |
-| `Confidence.value` | `[1]` | `Entity.confidence` | `not yet` | 0–100. Reaches `Entity.confidence` as `value / 100` **only** when `type` is `PROBABILITY` and `valid` is not `false`; otherwise `None` with the whole block parked |
-| `Confidence.sourceReliability` | `[0..1]` | `Entity.attributes` | `not yet` | 0–100, a **separate** measure of the source, and the standard forbids folding it in: "the data producer must not factor in the reliability of the source into its calculation of its confidence in the value". The adapter must not either, and the CDM has one float — **gap 18** |
-| `Confidence.valid` | `[0..1]` | `Entity.attributes` | `not yet` | the **retraction** flag. `false` means the producer has withdrawn the associated data. Carried verbatim and never applied; a value it invalidates is still parked, because applying a retraction means holding what it retracts. **Gap 18** |
+| `Confidence.type` | `[1]` | `Entity.attributes` | `nits 1.0.0 · parked` | `CertaintyStatisticType`: `HUMAN_INSTINCT`, `P-VALUE`, `PROBABILITY`, `T-STATISTIC`. An XML attribute. **The attribute that makes the value uninterpretable without it** — see gap 18 |
+| `Confidence.value` | `[1]` | `Entity.confidence` | `nits 1.0.0` | 0–100. Reaches `Entity.confidence` as `value / 100` **only** when `type` is `PROBABILITY` and `valid` is not `false`; otherwise `None` with the whole block parked |
+| `Confidence.sourceReliability` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | 0–100, a **separate** measure of the source, and the standard forbids folding it in: "the data producer must not factor in the reliability of the source into its calculation of its confidence in the value". The adapter must not either, and the CDM has one float — **gap 18** |
+| `Confidence.valid` | `[0..1]` | `Entity.attributes` | `nits 1.0.0 · parked` | the **retraction** flag. `false` means the producer has withdrawn the associated data. Carried verbatim and never applied; a value it invalidates is still parked, because applying a retraction means holding what it retracts. **Gap 18** |
 
 The standard's own analogy is worth carrying: `value` "is intended to be analogous to credibility
 (of information) criteria specified in AJP 2.1, whose values range from 1 to 6", and
@@ -3598,18 +3620,18 @@ is the classic two-axis intelligence evaluation, and the CDM has one axis.
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `PositionPoints.dims` | `[1]` | `Event.geometry` | `not yet` | `Dimensionality`, 2 or 3; splits the flat array |
-| `PositionPoints.cs` | `[1]` | `Event.geometry` | `not yet` | `CoordinateSystemType` common to every point |
-| `PositionPoints.points` | `[1]` | `Event.geometry` | `not yet` | vertices "in the order in which they should be drawn", and **unlike a polygon they do not form a closed shape**. A single point becomes a `Point`, several become a `LineString`, and neither is ever closed |
-| `PositionPoints.cftUID` | `[0..1]` | `Event.geometry` | `not yet` | required when the points are local |
-| `PositionPoints.cftLID` | `[0..1]` | `Event.geometry` | `not yet` | the local form |
+| `PositionPoints.dims` | `[1]` | `Event.geometry` | `nits 1.0.0` | `Dimensionality`, 2 or 3; splits the flat array |
+| `PositionPoints.cs` | `[1]` | `Event.geometry` | `nits 1.0.0` | `CoordinateSystemType` common to every point |
+| `PositionPoints.points` | `[1]` | `Event.geometry` | `nits 1.0.0` | vertices "in the order in which they should be drawn", and **unlike a polygon they do not form a closed shape**. A single point becomes a `Point`, several become a `LineString`, and neither is ever closed |
+| `PositionPoints.cftUID` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | required when the points are local |
+| `PositionPoints.cftLID` | `[0..1]` | `Event.geometry` | `nits 1.0.0` | the local form |
 
 #### `UUID`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `UUID` *(core class value)* | `[1]` | `Entity.source_ids[].external_id` | `not yet` | a 128-bit identifier per ITU-T X.667 / ISO/IEC 9834-8. In the XML syntax it is **`xs:base64Binary`, 22 characters**, not the 36-character canonical form — a guide-only fact, and one an adapter emitting canonical UUIDs would fail schema validation on |
-| `UUID.gidp` | `[0..1]` | `Entity.source_ids[].external_id` | `not yet` | the IC Identifier guide prefix. When present the identifier is the composed `guide://<gidp>/<value>`, and **the bare UUID is a different identifier** — keying on it would merge two objects that the producer distinguished |
+| `UUID` *(core class value)* | `[1]` | `Entity.source_ids[].external_id` | `nits 1.0.0` | a 128-bit identifier per ITU-T X.667 / ISO/IEC 9834-8. In the XML syntax it is **`xs:base64Binary`, 22 characters**, not the 36-character canonical form — a guide-only fact, and one an adapter emitting canonical UUIDs would fail schema validation on |
+| `UUID.gidp` | `[0..1]` | `Entity.source_ids[].external_id` | `nits 1.0.0` | the IC Identifier guide prefix. When present the identifier is the composed `guide://<gidp>/<value>`, and **the bare UUID is a different identifier** — keying on it would merge two objects that the producer distinguished |
 
 ### Row set — egress, CDM back to a NITSRoot document
 
@@ -3619,21 +3641,21 @@ parked value it wrote itself on the way in.
 
 | CDM | NITS | Status | Notes |
 |---|---|---|---|
-| `Track.samples[].observed_at` | `TrackPoint.relTime` | `not yet` | **re-emitted from `attributes.nits_times`** for a round trip, never recomputed. For a CDM object of other origin, `relTimeIncrement` is set to `0.001` s so that the CDM's own three-decimal `Timestamp` is exactly representable as an integer count, and `relTime` is whole milliseconds since `baseTime` — exact, with no rounding anywhere |
-| `Track.samples[].observed_at` | `TrackMessage.baseTime` | `not yet` | the earliest sample instant in the message, which is what the standard asks for: "this should be the earliest time among all the time stamps in the constituent parts" |
-| `Track.samples[].position.lat` · `Track.samples[].position.lon` · `Track.samples[].position.alt_m` | `Dynamics.pos` with `cs = WGS_84` | `not yet` | latitude, longitude, height — **latitude first**, the axis order transposed back. A sample with no `alt_m` emits a two-component position, which is the all-or-nothing rule respected rather than a zero invented |
-| `Kinematics.speed_mps` · `Kinematics.course_deg` · `Kinematics.climb_mps` | `Dynamics.vel` | `not yet` | recomposed into the `WGS_84` angular rates using the same two named constants, or re-emitted verbatim from the park where the object came from NITS |
-| `Track.track_id` | `TrackData.uid` | `not yet` | from the park where there is one; otherwise a fresh v5 UUID over the CDM id, with `ProductIdentification.id` naming this system as the issuer. **Segmentation is restored from `attributes.nits_segments[]` where the object came from NITS**, and otherwise the whole history is emitted as a single `TrackSegment` — which §2.5.25 permits outright: "if the data producer deems it unnecessary to break a track into multiple track segments, then all track points of the track can be included is a single `TrackSegment` object" |
-| `Track.entity_id` | `TrackedObject.uid` | `not yet` | on the same terms |
-| `Entity.affiliation` | `ID1241.identity` | `not yet` | `FRIENDLY` → `FRIEND`, `HOSTILE` → `HOSTILE`, `NEUTRAL` → `NEUTRAL`, `UNKNOWN` → `UNKNOWN`. **`ASSUMED_FRIEND` and `SUSPECT` are never emitted** — the CDM cannot hold them, so it cannot state them, and re-widening the collapse would invent a judgement |
-| `Entity.entity_type` | `ObjectClass.table` | `not yet` | only where the ingest parked an APP-6 block, which is re-emitted verbatim. **A CDM entity of other origin emits no `ObjectClass` at all**: `code` is `[1]` and there is no honest code to write |
-| `Entity.confidence` | `TrackedObject.confidence` | `not yet` | as `value = round(confidence × 100)` with `type = PROBABILITY`, which is the only type the CDM's float can honestly claim |
-| `Event.geometry` | `MotionEvent.region` / `.tripwire` | `not yet` | the three polygon corrections run in reverse: rings re-wound to the NITS convention, axis order transposed, the explicit closing position dropped, rings joined by `NaN` null points and `nRings` recomputed |
-| `Entity.attributes` | *(everything parked)* | `not yet` | every parked block is restored to the class and attribute it came from. This is what makes the round trip worth claiming at all |
-| `Entity.attributes` | `originatorConfidentialityLabel` | `not yet` | verbatim from the park for a round-tripped object; from the deployment's configured label, logged as such, for a CDM-native one; **a refusal when neither exists** — the three paths in the classification settlement. A silent `UNCLASSIFIED` is forbidden |
-| *(the injected clock)* | `NITSRoot.msgCreatedTime` | `not yet` | when we wrote the file. The one value egress invents, and it is the same clock `received_at` uses |
-| *(constant)* | `NITSRoot.nitsVersion` | `not yet` | `"B.2"` |
-| *(constant)* | `NITSRoot.profile` | `not yet` | `STANDALONE`, always — see the profiles settlement |
+| `Track.samples[].observed_at` | `TrackPoint.relTime` | `nits 1.0.0 · egress` | **re-emitted from `attributes.nits_times`** for a round trip, never recomputed. For a CDM object of other origin, `relTimeIncrement` is set to `0.001` s so that the CDM's own three-decimal `Timestamp` is exactly representable as an integer count, and `relTime` is whole milliseconds since `baseTime` — exact, with no rounding anywhere |
+| `Track.samples[].observed_at` | `TrackMessage.baseTime` | `nits 1.0.0 · egress` | the earliest sample instant in the message, which is what the standard asks for: "this should be the earliest time among all the time stamps in the constituent parts" |
+| `Track.samples[].position.lat` · `Track.samples[].position.lon` · `Track.samples[].position.alt_m` | `Dynamics.pos` with `cs = WGS_84` | `nits 1.0.0 · egress` | latitude, longitude, height — **latitude first**, the axis order transposed back. A sample with no `alt_m` emits a two-component position, which is the all-or-nothing rule respected rather than a zero invented |
+| `Kinematics.speed_mps` · `Kinematics.course_deg` · `Kinematics.climb_mps` | `Dynamics.vel` | `nits 1.0.0 · egress` | recomposed into the `WGS_84` angular rates using the same two named constants, or re-emitted verbatim from the park where the object came from NITS |
+| `Track.track_id` | `TrackData.uid` | `nits 1.0.0 · egress` | from the park where there is one; otherwise a fresh v5 UUID over the CDM id, with `ProductIdentification.id` naming this system as the issuer. **Segmentation is restored from `attributes.nits_segments[]` where the object came from NITS**, and otherwise the whole history is emitted as a single `TrackSegment` — which §2.5.25 permits outright: "if the data producer deems it unnecessary to break a track into multiple track segments, then all track points of the track can be included is a single `TrackSegment` object" |
+| `Track.entity_id` | `TrackedObject.uid` | `nits 1.0.0 · egress` | on the same terms |
+| `Entity.affiliation` | `ID1241.identity` | `nits 1.0.0 · egress` | `FRIENDLY` → `FRIEND`, `HOSTILE` → `HOSTILE`, `NEUTRAL` → `NEUTRAL`, `UNKNOWN` → `UNKNOWN`. **`ASSUMED_FRIEND` and `SUSPECT` are never emitted** — the CDM cannot hold them, so it cannot state them, and re-widening the collapse would invent a judgement |
+| `Entity.entity_type` | `ObjectClass.table` | `nits 1.0.0 · egress` | only where the ingest parked an APP-6 block, which is re-emitted verbatim. **A CDM entity of other origin emits no `ObjectClass` at all**: `code` is `[1]` and there is no honest code to write |
+| `Entity.confidence` | `TrackedObject.confidence` | `nits 1.0.0 · egress` | as `value = round(confidence × 100)` with `type = PROBABILITY`, which is the only type the CDM's float can honestly claim |
+| `Event.geometry` | `MotionEvent.region` / `.tripwire` | `nits 1.0.0 · egress` | the three polygon corrections run in reverse: rings re-wound to the NITS convention, axis order transposed, the explicit closing position dropped, rings joined by `NaN` null points and `nRings` recomputed |
+| `Entity.attributes` | *(everything parked)* | `nits 1.0.0 · egress` | every parked block is restored to the class and attribute it came from. This is what makes the round trip worth claiming at all |
+| `Entity.attributes` | `originatorConfidentialityLabel` | `nits 1.0.0 · egress` | verbatim from the park for a round-tripped object; from the deployment's configured label, logged as such, for a CDM-native one; **a refusal when neither exists** — the three paths in the classification settlement. A silent `UNCLASSIFIED` is forbidden |
+| *(the injected clock)* | `NITSRoot.msgCreatedTime` | `nits 1.0.0 · egress` | when we wrote the file. The one value egress invents, and it is the same clock `received_at` uses |
+| *(constant)* | `NITSRoot.nitsVersion` | `nits 1.0.0 · egress` | `"B.2"` |
+| *(constant)* | `NITSRoot.profile` | `nits 1.0.0 · egress` | `STANDALONE`, always — see the profiles settlement |
 
 **The round trip is not byte-exact and cannot be, unlike CAT021's.** XML permits insignificant
 whitespace, attribute order and namespace prefix choice, none of which carries information, so
@@ -3658,20 +3680,20 @@ Three things egress will not do:
 
 | NITS | CDM field | Status | Notes |
 |---|---|---|---|
-| *(none)* | `Event.received_at` | `not yet` | the injected clock. Never `msgCreatedTime`, which is when the producer wrote the file, and never `IDSourceInformation.relTimeExchange`, which is when a third party sent a declaration |
-| *(the deployment declaration)* | `Entity.source.synthetic` | `not yet` | **no payload field sets this**, and `CollectionInformation.essence` in particular does not — it is parked, and a parked essence contradicting the declaration is a logged refusal rather than a flip in either direction. The CAT021 `SIM` rule and the Legion `EXERCISE_*` rule, held as a rule |
-| *(configuration, where the object is CDM-native)* | `Entity.attributes` | `not yet` | `attributes.confidentiality_label_basis` — which of the three egress label paths applied. A configured label is declared and logged; a defaulted one is forbidden |
-| *(none — NITS states no severity anywhere)* | `Event.severity` | `not yet` | `INFO`, with `payload.severity_basis` recording that the format grades nothing, including its own `COLLISION` motion event. `TrackedObject.priority` is a collection priority, not an operational severity, and is parked |
-| *(none)* | `Event.event_type` | `not yet` | `DETECTION` for a `Detection`; `STATUS_CHANGE` for a `MotionEvent`, a `TrackLinkage`, a `ProcessedTrack` and a retraction-only segment. **Never `TRACK_UPDATE`**, because in this format a track update is a `Track`, not an `Event` |
-| *(derived)* | `Entity.symbol` | `not yet` | from the affiliation via `symbology.sidc_from_affiliation`; `attributes.symbol_basis` says so, and says that an APP-6 code was present and not composed into a SIDC where one was |
-| *(derived)* | `Position.position_source` | `not yet` | `ESTIMATED`, always, with `attributes.position_source_basis` naming the sensor modality where it resolved and recording why the modality did not refine the field |
-| *(the earliest point instant)* | `Entity.valid_from` | `not yet` | else `TrackMessage.baseTime` for a `TrackData` with no points; `attributes.valid_from_basis` names which |
-| *(none)* | `Entity.valid_to` | `not yet` | `None`, even for a `TERMINATED` segment — four of the six termination reasons say the sensor stopped seeing the object, not that it ceased to exist |
-| *(none — NITS carries no checksum of any kind)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis`, recording that the document passed schema-shaped structural checks and nothing more. A consumer comparing a NITS contact with a CAT021 one should be able to see which of the two was checked, and neither was |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — fields the source explicitly stated it does not know: a `dims` component of `-1`, a two-component `pos` under the all-or-nothing rule, a `MotionEvent` with no `startRelTime`. **An omitted `relTime` is not in this list**, because the standard defines that absence as zero |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — values read and not usable: an unrecognised enumeration literal, a reserved `hrrType`, a `CovarianceMatrix` whose element count disagrees with its type, a coordinate in an attributes-only system |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_references` — references that do not resolve inside this payload, each naming the referring attribute and the class it must point at. **A different fact from both lists above**, and the DATASTREAM profile is why it exists |
-| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure and namespace intact — and here that is not a formality: the schema declares open content on every complex type, so extension elements are expected rather than exceptional |
+| *(none)* | `Event.received_at` | `nits 1.0.0` | the injected clock. Never `msgCreatedTime`, which is when the producer wrote the file, and never `IDSourceInformation.relTimeExchange`, which is when a third party sent a declaration |
+| *(the deployment declaration)* | `Entity.source.synthetic` | `nits 1.0.0` | **no payload field sets this**, and `CollectionInformation.essence` in particular does not — it is parked, and a parked essence contradicting the declaration is a logged refusal rather than a flip in either direction. The CAT021 `SIM` rule and the Legion `EXERCISE_*` rule, held as a rule |
+| *(configuration, where the object is CDM-native)* | `Entity.attributes` | `nits 1.0.0` | `attributes.confidentiality_label_basis` — which of the three egress label paths applied. A configured label is declared and logged; a defaulted one is forbidden |
+| *(none — NITS states no severity anywhere)* | `Event.severity` | `nits 1.0.0` | `INFO`, with `payload.severity_basis` recording that the format grades nothing, including its own `COLLISION` motion event. `TrackedObject.priority` is a collection priority, not an operational severity, and is parked |
+| *(none)* | `Event.event_type` | `nits 1.0.0` | `DETECTION` for a `Detection`; `STATUS_CHANGE` for a `MotionEvent`, a `TrackLinkage`, a `ProcessedTrack` and a retraction-only segment. **Never `TRACK_UPDATE`**, because in this format a track update is a `Track`, not an `Event` |
+| *(derived)* | `Entity.symbol` | `nits 1.0.0` | from the affiliation via `symbology.sidc_from_affiliation`; `attributes.symbol_basis` says so, and says that an APP-6 code was present and not composed into a SIDC where one was |
+| *(derived)* | `Position.position_source` | `nits 1.0.0` | `ESTIMATED`, always, with `attributes.position_source_basis` naming the sensor modality where it resolved and recording why the modality did not refine the field |
+| *(the earliest point instant)* | `Entity.valid_from` | `nits 1.0.0` | else `TrackMessage.baseTime` for a `TrackData` with no points; `attributes.valid_from_basis` names which |
+| *(none)* | `Entity.valid_to` | `nits 1.0.0` | `None`, even for a `TERMINATED` segment — four of the six termination reasons say the sensor stopped seeing the object, not that it ceased to exist |
+| *(none — NITS carries no checksum of any kind)* | `Entity.attributes` | `nits 1.0.0` | `attributes.integrity_basis`, recording that the document passed schema-shaped structural checks and nothing more. A consumer comparing a NITS contact with a CAT021 one should be able to see which of the two was checked, and neither was |
+| *(measured)* | `Entity.attributes` | `nits 1.0.0` | `attributes.unavailable_fields` — fields the source explicitly stated it does not know: a `dims` component of `-1`, a two-component `pos` under the all-or-nothing rule, a `MotionEvent` with no `startRelTime`. **An omitted `relTime` is not in this list**, because the standard defines that absence as zero |
+| *(measured)* | `Entity.attributes` | `nits 1.0.0` | `attributes.unresolved_raw` — values read and not usable: an unrecognised enumeration literal, a reserved `hrrType`, a `CovarianceMatrix` whose element count disagrees with its type, a coordinate in an attributes-only system |
+| *(measured)* | `Entity.attributes` | `nits 1.0.0` | `attributes.unresolved_references` — references that do not resolve inside this payload, each naming the referring attribute and the class it must point at. **A different fact from both lists above**, and the DATASTREAM profile is why it exists |
+| everything unmapped | `Entity.attributes` | `nits 1.0.0` | `attributes.source_extras`, structure and namespace intact — and here that is not a formality: the schema declares open content on every complex type, so extension elements are expected rather than exceptional |
 
 ### Where the specification is ambiguous or contradicts itself
 
@@ -3858,8 +3880,40 @@ round trip depends on.
    parked key. That is Legion's finding restated with the axes separated correctly: Legion folded
    exercise context *into* the identity enum, the CDM already splits the two, and NITS shows that
    the split is right and that the second axis still has nowhere canonical to live. `KILO` is
-   mapped on the same evidence and sets no role; `TRAVELER` and `ZOMBIE` are defined as *suspect*
-   and so set nothing at all, which is this gap's collapse arriving through a third field.
+   mapped on the same evidence and sets no role.
+
+   **`TRAVELER` and `ZOMBIE` are this gap's concrete evidence, and the check was run rather than
+   assumed.** Amendment C's logic is symmetric — an amplification whose definition states an
+   identity is read — so the question is whether the CDM has a member that honestly carries the
+   one they state. It does not: `enums.Affiliation` has exactly four members and its docstring
+   names `SUSPECT` as deliberately absent, "a judgement a fusion layer makes, not a fact an
+   adapter can read off a wire format". So `TRAVELER` ("a **suspect** surface track following a
+   recognized surface traffic route") and `ZOMBIE` ("a **suspect** track, object or entity of
+   special interest") set no affiliation, the stated `identity` governs, and both literals are
+   parked. That is not the discard amendment C forbids — it is this gap, named at the point it
+   costs something, and `test_the_two_suspect_amplifications_never_yield_friendly` fails if
+   `Affiliation` ever grows the member that would close it.
+
+   One case is not merely lossy but contradictory, and it is handled rather than left: a
+   `ZOMBIE` amplification on a `FRIEND` identity. The producer has said the track is suspect and
+   the CDM can express neither the suspicion nor the disagreement, so the affiliation is
+   `UNKNOWN` with both fields parked. Presenting a suspect as `FRIENDLY` is an over-claim in
+   exactly the direction `symbology`'s own table refuses when it says "suspect — not HOSTILE;
+   suspicion is not identification".
+
+   **And a divergence this gap now has to carry.** `symbology.AFFILIATION_FROM_COT` maps CoT's
+   `j` and `k` to `HOSTILE` and `legion.AFFILIATION` maps `JOKER` and `FAKER` to `HOSTILE`, while
+   `adapters/stanag4676.py` maps the same two words to `FRIENDLY`. The definitions agree across
+   all three standards — a friendly acting as an exercise hostile — so this is one concept with
+   two answers in one codebase. It is **stated rather than resolved**, on the I021/170 precedent:
+   those are published behaviours with shipped adapters, fixtures and golden files behind them,
+   and changing one is a 1.1.0 question with a migration note. The argument for the NITS
+   direction is that the CDM models exercise context separately (`SourceRef.synthetic`, the 2525D
+   context digit), so painting a friendly as `HOSTILE` loses the identity to encode a context the
+   model already has a place for; the argument against is that an exercise in which the FAKER
+   renders as friendly is an exercise that has stopped working. Whoever settles this gap settles
+   that too, and `test_this_adapter_diverges_from_two_shipped_ones_and_the_divergence_is_
+   deliberate` pins all three mappings so it cannot be settled by accident.
 3. **Track quality scale.** 4676 integer 0–15 → CDM float 0–1 is `value / 15`, a declared
    transform. Note that 4676 quality 0 means "worst", not "unknown", and CDM `None` means
    unknown — so a missing 4676 quality must become `None`, never `0.0`.

@@ -1,0 +1,204 @@
+{
+  "collection": [
+    {
+      "essence": "SIMULATED",
+      "intent": "EXERCISE",
+      "targetID": "AREA-ALPHA",
+      "uid": "f1c70000-0000-8000-8000-000000000012"
+    }
+  ],
+  "fileUID": "f1c70000-0000-8000-8000-000000000001",
+  "lidScopeUID": "f1c75c09-0000-8000-8000-000000000001",
+  "message": [
+    {
+      "baseTime": "2026-04-29T06:00:00Z",
+      "numDetections": 0,
+      "numTracks": 1,
+      "relTimeIncrement": 1.0,
+      "track": [
+        {
+          "object": [
+            {
+              "id1241": {
+                "environment": "LAND",
+                "identity": "FRIEND"
+              },
+              "uid": "f1c70000-0000-8000-8000-000000000027"
+            }
+          ],
+          "segment": [
+            {
+              "confidence": {
+                "type": "PROBABILITY",
+                "value": 90
+              },
+              "initiationReason": "ENTERED_FOV",
+              "status": "INITIATING",
+              "tp": [
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.9,
+                        24.0
+                      ]
+                    }
+                  ],
+                  "relTime": 0
+                },
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.91,
+                        24.01
+                      ]
+                    }
+                  ],
+                  "relTime": 1
+                }
+              ],
+              "uid": "f1c70000-0000-8000-8000-000000000024"
+            },
+            {
+              "comment": "handed to the imaging sensor",
+              "segmentSource": {
+                "sensorUID": [
+                  "f1c70000-0000-8000-8000-000000000010"
+                ]
+              },
+              "status": "MAINTAINING",
+              "tp": [
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.92,
+                        24.02
+                      ]
+                    }
+                  ],
+                  "relTime": 2
+                },
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.93,
+                        24.03
+                      ]
+                    }
+                  ],
+                  "relTime": 3
+                }
+              ],
+              "uid": "f1c70000-0000-8000-8000-000000000025"
+            },
+            {
+              "status": "TERMINATED",
+              "terminationReason": "EXITED_FOV",
+              "tp": [
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.94,
+                        24.04
+                      ]
+                    }
+                  ],
+                  "relTime": 4
+                }
+              ],
+              "uid": "f1c70000-0000-8000-8000-000000000026"
+            }
+          ],
+          "uid": "f1c70000-0000-8000-8000-000000000023"
+        }
+      ]
+    }
+  ],
+  "msgCreatedTime": "2026-04-29T06:00:00Z",
+  "nitsVersion": "B.2",
+  "numFiles": 1,
+  "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>",
+  "product": {
+    "effectivity": "2026A",
+    "id": "SYN-NITS-001",
+    "name": "Synthetic NITS Track Product",
+    "shortName": "SNTP",
+    "uid": "f1c70000-0000-8000-8000-000000000002"
+  },
+  "profile": [
+    "STANDALONE"
+  ],
+  "sensor": [
+    {
+      "absTimeUncertainty": 0.05,
+      "collectionMode": "STARE",
+      "comment": "not parsed for embedded data",
+      "description": "fixture sensor",
+      "esmSensor": {},
+      "imagingSensor": {
+        "band": "VIS-1",
+        "filter": [
+          [
+            0.4,
+            0.9
+          ],
+          [
+            0.7,
+            0.8
+          ]
+        ],
+        "fpaIndex": 1,
+        "frameHeight": 1080,
+        "frameWidth": 1920,
+        "motionImageryCoreID": "0102030405060708",
+        "phenomenology": "VIS"
+      },
+      "lid": 1,
+      "modality": "IMAGE_SIGNATURE",
+      "name": "Synthetic EO sensor",
+      "radarSensor": {
+        "jobID": 3,
+        "missionID": 7,
+        "platformID": "SYN-TAIL-1"
+      },
+      "relTimeUncertainty": 0.001,
+      "sensorID": {
+        "nationality": "ZZZ",
+        "stationID": "SYNSENS01"
+      },
+      "uid": "f1c70000-0000-8000-8000-000000000010",
+      "url": "https://example.invalid/sensor"
+    }
+  ],
+  "tracker": [
+    {
+      "description": "fixture tracker",
+      "lid": 2,
+      "name": "Synthetic tracker",
+      "supplementaryData": [
+        {
+          "description": "fixture DEM",
+          "name": "SYN-DEM",
+          "type": "DIGITAL_ELEVATION_MODEL",
+          "version": "2026.1"
+        }
+      ],
+      "trackerID": {
+        "nationality": "ZZZ",
+        "stationID": "SYNTRAK01"
+      },
+      "type": "AUTOMATIC_TRACKER",
+      "uid": "f1c70000-0000-8000-8000-000000000011",
+      "version": "0.1"
+    }
+  ]
+}

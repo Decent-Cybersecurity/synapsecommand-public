@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NITSRoot>
+  <slab:originatorConfidentialityLabel xmlns:slab="urn:nato:stanag:4774:confidentialitymetadatalabel:1:0"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type="PERMISSIVE" TagName="Releasable to"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>
+  <profile>STANDALONE</profile>
+  <fileUID>f1c70000-0000-8000-8000-000000000001</fileUID>
+  <lidScopeUID>f1c75c09-0000-8000-8000-000000000001</lidScopeUID>
+  <numFiles>1</numFiles>
+  <msgCreatedTime>2026-04-29T06:00:00Z</msgCreatedTime>
+  <nitsVersion>B.2</nitsVersion>
+  <product>
+    <uid>f1c70000-0000-8000-8000-000000000002</uid>
+    <id>SYN-NITS-001</id>
+    <name>Synthetic NITS Track Product</name>
+    <shortName>SNTP</shortName>
+    <effectivity>2026A</effectivity>
+  </product>
+  <collection>
+    <uid>f1c70000-0000-8000-8000-000000000012</uid>
+    <intent>EXERCISE</intent>
+    <essence>SIMULATED</essence>
+    <targetID>AREA-ALPHA</targetID>
+  </collection>
+  <sensor>
+    <uid>f1c70000-0000-8000-8000-000000000010</uid>
+    <lid>1</lid>
+    <sensorID>
+      <stationID>SYNSENS01</stationID>
+      <nationality>ZZZ</nationality>
+    </sensorID>
+    <name>Synthetic EO sensor</name>
+    <description>fixture sensor</description>
+    <modality>IMAGE_SIGNATURE</modality>
+    <url>https://example.invalid/sensor</url>
+    <collectionMode>STARE</collectionMode>
+    <absTimeUncertainty>0.05</absTimeUncertainty>
+    <relTimeUncertainty>0.001</relTimeUncertainty>
+    <comment>not parsed for embedded data</comment>
+    <esmSensor/>
+    <imagingSensor>
+      <motionImageryCoreID>0102030405060708</motionImageryCoreID>
+      <frameHeight>1080</frameHeight>
+      <frameWidth>1920</frameWidth>
+      <fpaIndex>1</fpaIndex>
+      <filter>0.4 0.9</filter>
+      <filter>0.7 0.8</filter>
+      <phenomenology>VIS</phenomenology>
+      <band>VIS-1</band>
+    </imagingSensor>
+    <radarSensor>
+      <platformID>SYN-TAIL-1</platformID>
+      <missionID>7</missionID>
+      <jobID>3</jobID>
+    </radarSensor>
+  </sensor>
+  <tracker>
+    <type>AUTOMATIC_TRACKER</type>
+    <uid>f1c70000-0000-8000-8000-000000000011</uid>
+    <lid>2</lid>
+    <trackerID>
+      <stationID>SYNTRAK01</stationID>
+      <nationality>ZZZ</nationality>
+    </trackerID>
+    <name>Synthetic tracker</name>
+    <description>fixture tracker</description>
+    <version>0.1</version>
+    <supplementaryData>
+      <type>DIGITAL_ELEVATION_MODEL</type>
+      <name>SYN-DEM</name>
+      <version>2026.1</version>
+      <description>fixture DEM</description>
+    </supplementaryData>
+  </tracker>
+  <message>
+    <numDetections>0</numDetections>
+    <numTracks>1</numTracks>
+    <baseTime>2026-04-29T06:00:00Z</baseTime>
+    <relTimeIncrement>0.0078125</relTimeIncrement>
+    <track>
+      <uid>f1c70000-0000-8000-8000-000000000095</uid>
+      <segment>
+        <tp>
+          <relTime>3</relTime>
+          <dynamics>
+            <cs>WGS_84</cs>
+            <pos>56.4 24.4</pos>
+          </dynamics>
+        </tp>
+        <tp>
+          <relTime>131</relTime>
+          <dynamics>
+            <cs>WGS_84</cs>
+            <pos>56.41 24.41</pos>
+          </dynamics>
+        </tp>
+      </segment>
+      <object>
+        <uid>f1c70000-0000-8000-8000-000000000096</uid>
+      </object>
+    </track>
+  </message>
+</NITSRoot>

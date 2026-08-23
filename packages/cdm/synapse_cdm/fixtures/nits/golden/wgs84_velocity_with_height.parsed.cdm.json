@@ -1,0 +1,278 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "no TrackedObject states an ID1241 identity. UNKNOWN because the document is SILENT, which is a different fact from a wider vocabulary having been collapsed",
+      "confidentiality_label": {
+        "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source document",
+      "consolidation_basis": "\u00a72.1.1.2.3 requires a CONSUMER to interpret an object as the consolidation of every instance sharing its ID across all in-scope data streams, ordered by NITSRoot.msgCreatedTime. This is a translation of ONE document: the material to consolidate is carried in full and the consolidation is not performed",
+      "entity_type_basis": "no TrackedObject states an ObjectClass",
+      "identity_basis": "uid; entity_id from the TrackedObject key",
+      "integrity_basis": "NITS carries no checksum at any level. This document passed structural checks and nothing more",
+      "kinematics_basis": "WGS_84 angular rates scaled by the radii of curvature at (latitude=56.95, height=100.0) on the WGS 84 ellipsoid (a=6378137.0 m, 1/f=298.257223563): v_north = dlat/dt * (M + h), v_east = dlon/dt * (N + h) * cos(lat), both after converting degrees to radians",
+      "nits_message": {
+        "baseTime": "2026-04-29T06:00:00Z",
+        "numDetections": 0,
+        "numTracks": 1,
+        "relTimeIncrement": 1.0
+      },
+      "nits_message_index": 0,
+      "nits_position": [
+        {
+          "blocks": [
+            {
+              "cs": "WGS_84",
+              "pos": [
+                56.95,
+                24.1,
+                100.0
+              ],
+              "vel": [
+                0.0009,
+                0.0016,
+                1.5
+              ]
+            }
+          ],
+          "chosen_cs": "WGS_84"
+        }
+      ],
+      "nits_profiles": [
+        "STANDALONE"
+      ],
+      "nits_root": {
+        "collection": [
+          {
+            "essence": "SIMULATED",
+            "intent": "EXERCISE",
+            "targetID": "AREA-ALPHA",
+            "uid": "f1c70000-0000-8000-8000-000000000012"
+          }
+        ],
+        "fileUID": "f1c70000-0000-8000-8000-000000000001",
+        "lidScopeUID": "f1c75c09-0000-8000-8000-000000000001",
+        "msgCreatedTime": "2026-04-29T06:00:00Z",
+        "nitsVersion": "B.2",
+        "numFiles": 1,
+        "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>",
+        "product": {
+          "effectivity": "2026A",
+          "id": "SYN-NITS-001",
+          "name": "Synthetic NITS Track Product",
+          "shortName": "SNTP",
+          "uid": "f1c70000-0000-8000-8000-000000000002"
+        },
+        "profile": [
+          "STANDALONE"
+        ],
+        "sensor": [
+          {
+            "absTimeUncertainty": 0.05,
+            "collectionMode": "STARE",
+            "comment": "not parsed for embedded data",
+            "description": "fixture sensor",
+            "esmSensor": {},
+            "imagingSensor": {
+              "band": "VIS-1",
+              "filter": [
+                [
+                  0.4,
+                  0.9
+                ],
+                [
+                  0.7,
+                  0.8
+                ]
+              ],
+              "fpaIndex": 1,
+              "frameHeight": 1080,
+              "frameWidth": 1920,
+              "motionImageryCoreID": "0102030405060708",
+              "phenomenology": "VIS"
+            },
+            "lid": 1,
+            "modality": "IMAGE_SIGNATURE",
+            "name": "Synthetic EO sensor",
+            "radarSensor": {
+              "jobID": 3,
+              "missionID": 7,
+              "platformID": "SYN-TAIL-1"
+            },
+            "relTimeUncertainty": 0.001,
+            "sensorID": {
+              "nationality": "ZZZ",
+              "stationID": "SYNSENS01"
+            },
+            "uid": "f1c70000-0000-8000-8000-000000000010",
+            "url": "https://example.invalid/sensor"
+          }
+        ],
+        "tracker": [
+          {
+            "description": "fixture tracker",
+            "lid": 2,
+            "name": "Synthetic tracker",
+            "supplementaryData": [
+              {
+                "description": "fixture DEM",
+                "name": "SYN-DEM",
+                "type": "DIGITAL_ELEVATION_MODEL",
+                "version": "2026.1"
+              }
+            ],
+            "trackerID": {
+              "nationality": "ZZZ",
+              "stationID": "SYNTRAK01"
+            },
+            "type": "AUTOMATIC_TRACKER",
+            "uid": "f1c70000-0000-8000-8000-000000000011",
+            "version": "0.1"
+          }
+        ]
+      },
+      "nits_segments": [
+        {
+          "comment": null,
+          "confidence": null,
+          "index": 0,
+          "initiationReason": null,
+          "lid": null,
+          "point_count": 1,
+          "sample_range": [
+            0,
+            1
+          ],
+          "source": null,
+          "status": null,
+          "terminationReason": null,
+          "uid": null
+        }
+      ],
+      "nits_times": {
+        "baseTime": "2026-04-29T06:00:00Z",
+        "relTime": [
+          0
+        ],
+        "relTimeIncrement": 1.0,
+        "whole_milliseconds": true
+      },
+      "nits_track": {
+        "object": [
+          {
+            "uid": "f1c70000-0000-8000-8000-000000000031"
+          }
+        ],
+        "segment": [
+          {
+            "tp": [
+              {
+                "dynamics": [
+                  {
+                    "cs": "WGS_84",
+                    "pos": [
+                      56.95,
+                      24.1,
+                      100.0
+                    ],
+                    "vel": [
+                      0.0009,
+                      0.0016,
+                      1.5
+                    ]
+                  }
+                ],
+                "relTime": 0
+              }
+            ]
+          }
+        ],
+        "uid": "f1c70000-0000-8000-8000-000000000030"
+      },
+      "nits_track_first_instant": "2026-04-29T06:00:00.000Z",
+      "position_basis": "WGS_84 geodetic, read as (latitude, longitude, ellipsoid height) per Table 2.5.27-2 \u2014 note this is the OPPOSITE axis order from GeoJSON. No datum conversion. The source array is re-emitted verbatim at attributes.nits_position",
+      "position_source_basis": "ESTIMATED on every NITS position. A track point is a tracker's estimate, and SensorInformation.modality is deliberately not read to refine it: reaching it means resolving TrackSource.sensorUID, which under the DATASTREAM profile may point outside this payload \u2014 so the same point would get GNSS in a STANDALONE document and ESTIMATED in a DATASTREAM one",
+      "profile_basis": "profile ['STANDALONE']; recognised ['STANDALONE']. No reference is followed: resolving a DATASTREAM reference means caching objects across payloads, which is state, and state is where fusion hides. An absent profile is not a claim \u2014 \u00a72.5.1 says a consumer shall not infer non-conformance from silence",
+      "symbol_basis": "derived from the affiliation via symbology.sidc_from_affiliation. An APP-6 code, where one is stated, is parked at attributes.app6 and never composed into a SIDC: an APP-6 entity code supplies one of the eight things a 2525D SIDC encodes and composing one would mean inventing six",
+      "synthetic_basis": "essence ['SIMULATED'] parked and checked against the deployment declaration source.synthetic=True; essence never sets it",
+      "track_quality_basis": "None. Edition B states no track-level quality: TrackData has five attributes and none is a confidence. TrackSegment.confidence governs a PORTION of a track, so filling track_quality from one would mean picking a segment or aggregating across them, and mapping it only when there happens to be one segment would make a canonical field depend on how a producer chunked its output",
+      "tracked_object_instances": 1,
+      "valid_from_basis": "the last positioned TrackPoint of this TrackData (sample 0). Position and kinematics come from the SAME point: taking them from different points would put two instants into one Entity with nothing recording the offset, which is CAT021's gap 13 manufactured here rather than inherited",
+      "valid_to_basis": "None. Four of the six TrackTerminationReason literals \u2014 SENSOR_OFF, EXITED_FOV, LOST, OBSCURED \u2014 say the SENSOR stopped seeing the object, not that the object ceased to exist. A truck that drives under a bridge is still a truck"
+    },
+    "confidence": null,
+    "entity_id": "69be3b1e-c3f2-5b56-8238-3496196c0da5",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 1.5,
+      "course_deg": 44.171536,
+      "speed_mps": 139.733276
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 100.0,
+      "lat": 56.95,
+      "lon": 24.1,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4676",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "NITS"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0000-8000-8000-000000000030",
+        "system": "NITS_UID"
+      },
+      {
+        "external_id": "f1c70000-0000-8000-8000-000000000031",
+        "system": "NITS_UID"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "69be3b1e-c3f2-5b56-8238-3496196c0da5",
+    "integrity": null,
+    "object_kind": "track",
+    "samples": [
+      {
+        "observed_at": "2026-04-29T06:00:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 100.0,
+          "lat": 56.95,
+          "lon": 24.1,
+          "position_source": "ESTIMATED"
+        }
+      }
+    ],
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4676",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "NITS"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0000-8000-8000-000000000030",
+        "system": "NITS_UID"
+      },
+      {
+        "external_id": "f1c70000-0000-8000-8000-000000000031",
+        "system": "NITS_UID"
+      }
+    ],
+    "track_id": "dd4781bf-bedf-577c-a178-72a080e0f86b",
+    "track_quality": null
+  }
+]

@@ -1,0 +1,184 @@
+{
+  "collection": [
+    {
+      "essence": "SIMULATED",
+      "intent": "EXERCISE",
+      "targetID": "AREA-ALPHA",
+      "uid": "f1c70000-0000-8000-8000-000000000012"
+    }
+  ],
+  "fileUID": "f1c70000-0000-8000-8000-000000000001",
+  "lidScopeUID": "f1c75c09-0000-8000-8000-000000000001",
+  "message": [
+    {
+      "baseTime": "2026-04-29T06:00:00Z",
+      "numDetections": 0,
+      "numTracks": 2,
+      "processedTrack": [
+        {
+          "confidence": {
+            "type": "PROBABILITY",
+            "value": 70
+          },
+          "inputUID": [
+            "f1c70000-0000-8000-8000-000000000080",
+            "f1c70000-0000-8000-8000-000000000082"
+          ],
+          "outputUID": "f1c70000-0000-8000-8000-000000000085",
+          "type": "FUSED",
+          "uid": "f1c70000-0000-8000-8000-000000000084"
+        }
+      ],
+      "relTimeIncrement": 1.0,
+      "track": [
+        {
+          "object": [
+            {
+              "uid": "f1c70000-0000-8000-8000-000000000081"
+            }
+          ],
+          "segment": [
+            {
+              "tp": [
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.6,
+                        24.4
+                      ]
+                    }
+                  ],
+                  "relTime": 0
+                }
+              ]
+            }
+          ],
+          "uid": "f1c70000-0000-8000-8000-000000000080"
+        },
+        {
+          "object": [
+            {
+              "uid": "f1c70000-0000-8000-8000-000000000083"
+            }
+          ],
+          "segment": [
+            {
+              "tp": [
+                {
+                  "dynamics": [
+                    {
+                      "cs": "WGS_84",
+                      "pos": [
+                        56.62,
+                        24.42
+                      ]
+                    }
+                  ],
+                  "relTime": 2
+                }
+              ]
+            }
+          ],
+          "uid": "f1c70000-0000-8000-8000-000000000082"
+        }
+      ],
+      "trackLinkage": [
+        {
+          "confidence": {
+            "type": "PROBABILITY",
+            "value": 55
+          },
+          "postUID": [
+            "f1c70000-0000-8000-8000-000000000082"
+          ],
+          "preUID": [
+            "f1c70000-0000-8000-8000-000000000080"
+          ],
+          "relTime": 1,
+          "type": "STITCH",
+          "uid": "f1c70000-0000-8000-8000-000000000086"
+        }
+      ]
+    }
+  ],
+  "msgCreatedTime": "2026-04-29T06:00:00Z",
+  "nitsVersion": "B.2",
+  "numFiles": 1,
+  "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>",
+  "product": {
+    "effectivity": "2026A",
+    "id": "SYN-NITS-001",
+    "name": "Synthetic NITS Track Product",
+    "shortName": "SNTP",
+    "uid": "f1c70000-0000-8000-8000-000000000002"
+  },
+  "profile": [
+    "STANDALONE"
+  ],
+  "sensor": [
+    {
+      "absTimeUncertainty": 0.05,
+      "collectionMode": "STARE",
+      "comment": "not parsed for embedded data",
+      "description": "fixture sensor",
+      "esmSensor": {},
+      "imagingSensor": {
+        "band": "VIS-1",
+        "filter": [
+          [
+            0.4,
+            0.9
+          ],
+          [
+            0.7,
+            0.8
+          ]
+        ],
+        "fpaIndex": 1,
+        "frameHeight": 1080,
+        "frameWidth": 1920,
+        "motionImageryCoreID": "0102030405060708",
+        "phenomenology": "VIS"
+      },
+      "lid": 1,
+      "modality": "IMAGE_SIGNATURE",
+      "name": "Synthetic EO sensor",
+      "radarSensor": {
+        "jobID": 3,
+        "missionID": 7,
+        "platformID": "SYN-TAIL-1"
+      },
+      "relTimeUncertainty": 0.001,
+      "sensorID": {
+        "nationality": "ZZZ",
+        "stationID": "SYNSENS01"
+      },
+      "uid": "f1c70000-0000-8000-8000-000000000010",
+      "url": "https://example.invalid/sensor"
+    }
+  ],
+  "tracker": [
+    {
+      "description": "fixture tracker",
+      "lid": 2,
+      "name": "Synthetic tracker",
+      "supplementaryData": [
+        {
+          "description": "fixture DEM",
+          "name": "SYN-DEM",
+          "type": "DIGITAL_ELEVATION_MODEL",
+          "version": "2026.1"
+        }
+      ],
+      "trackerID": {
+        "nationality": "ZZZ",
+        "stationID": "SYNTRAK01"
+      },
+      "type": "AUTOMATIC_TRACKER",
+      "uid": "f1c70000-0000-8000-8000-000000000011",
+      "version": "0.1"
+    }
+  ]
+}

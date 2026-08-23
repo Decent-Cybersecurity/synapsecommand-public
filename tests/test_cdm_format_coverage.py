@@ -893,31 +893,35 @@ def test_the_two_nits_core_value_classes_are_stated_as_such():
     )
 
 
-def test_the_nits_row_set_claims_no_adapter():
-    """Phase 1 stops at the mapping, and the status column is what records that.
+def test_the_nits_row_set_claims_its_adapter():
+    """The status column has to move when the code does, in BOTH directions.
 
-    The inverse of the Legion test, which now asserts that no row still says `not yet`. Here the
-    risk points the other way: a status marker claiming an adapter that does not exist is the one
-    thing this table exists to prevent, and it is exactly what happened to the placeholder row set
-    this section replaced — sixteen rows against an Edition A model nobody had ever run.
+    This test was the opposite of itself through Phase 1: it asserted that NO row said
+    `nits 1.0.0`, because a status marker claiming an adapter that does not exist is the one
+    thing this table exists to prevent — and it is exactly what the Edition A placeholder this
+    section replaced had been doing for as long as it stood. `adapters/stanag4676.py` now exists,
+    so the risk is the inverse: a row still saying `not yet` is a shipped mapping nobody updated
+    the document for.
     """
     section = _section(NITS_HEADING)
     rows = [line for line in section.splitlines()
             if line.startswith("|") and not line.startswith("|---")]
-    mapped = [line for line in rows if "`not yet`" in line]
-    assert len(mapped) >= 250, (
+    mapped = [line for line in rows if "`nits 1.0.0" in line]
+    assert len(mapped) >= 300, (
         f"the STANAG 4676 row set is down to {len(mapped)} mapped rows, below what a 48-class, "
         "273-attribute model needs. Raising this floor deliberately is fine; losing rows is not"
     )
-    for marker in ("nits 1.0.0", "stanag4676 1.0.0", "4676 1.0.0"):
-        assert marker not in section, (
-            f"a STANAG 4676 row claims `{marker}` while no adapter implements it. Either the "
-            "adapter landed — in which case the status legend, this test and the rosters all move "
-            "together — or the document is ahead of the code"
-        )
+    stale = [line for line in rows if "`not yet`" in line]
+    assert not stale, (
+        f"{len(stale)} STANAG 4676 row(s) still say `not yet` while adapters/stanag4676.py "
+        "implements the row set. Either the row is genuinely unimplemented — in which case say "
+        f"which and why — or the document has fallen behind the code: {stale[:3]}"
+    )
+    assert "nits 1.0.0" in _section("## The status column"), (
+        "the status legend does not define the marker the rows use"
+    )
     assert "adapters/stanag4676.py" in section, (
-        "the row set must name the module that will implement it, as the Legion and CAT021 row "
-        "sets did before they landed"
+        "the row set must name the module that implements it"
     )
 
 
@@ -1062,12 +1066,34 @@ def test_faker_and_joker_are_friendly_not_unknown():
         "a consumer cannot tell a FAKER from an ordinary friendly at all, which is worse than the "
         "reading this amendment replaced"
     )
-    # TRAVELER and ZOMBIE are defined as suspect and must not be swept into the same mapping.
+    # TRAVELER and ZOMBIE are defined as SUSPECT, and amendment C's logic applies to them
+    # symmetrically — so the question is whether the CDM has a member that carries it. It does
+    # not, and the answer is pinned in both directions: the rows must not claim FRIENDLY, and
+    # gap 2 must CITE them rather than receiving them silently.
+    from synapse_cdm.enums import Affiliation as _Affiliation
+    assert not hasattr(_Affiliation, "SUSPECT"), (
+        "Affiliation has grown a SUSPECT member, so TRAVELER and ZOMBIE now have a value that "
+        "honestly carries what they state. Map them to it, park the qualifier, and update gap 2 "
+        "and this test together — routing a stated identity through a gap is the discard "
+        "amendment C forbids"
+    )
     for literal in ("`TRAVELER`", "`ZOMBIE`"):
         row = [line for line in section.splitlines() if line.startswith(f"| {literal}")]
         assert row and "`FRIENDLY`" not in row[0], (
             f"{literal} is defined as SUSPECT in Ed B and must not map to FRIENDLY: {row!r}"
         )
+    gaps = DOC.read_text()[DOC.read_text().index("## Gaps, and what each one costs"):]
+    gap_two = gaps[gaps.index("2. **Affiliation collapse"):gaps.index("3. **Track quality")]
+    for literal in ("TRAVELER", "ZOMBIE"):
+        assert literal in gap_two, (
+            f"{literal} states an identity the CDM cannot hold, which is gap 2 — and the gap has "
+            "to name it. A loss recorded only in a row set is a loss nobody counting the cost of "
+            "this gap will find"
+        )
+    assert "symbology.AFFILIATION_FROM_COT" in gap_two and "legion.AFFILIATION" in gap_two, (
+        "three adapters map FAKER/JOKER and one of them disagrees with the other two. The "
+        "divergence belongs in the gap that owns affiliation, stated rather than resolved"
+    )
 
 
 def test_the_wgs84_velocity_conversion_states_both_branches():

@@ -1,0 +1,165 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "no TrackedObject states an ID1241 identity. UNKNOWN because the document is SILENT, which is a different fact from a wider vocabulary having been collapsed",
+      "confidentiality_label": {
+        "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source document",
+      "consolidation_basis": "\u00a72.1.1.2.3 requires a CONSUMER to interpret an object as the consolidation of every instance sharing its ID across all in-scope data streams, ordered by NITSRoot.msgCreatedTime. This is a translation of ONE document: the material to consolidate is carried in full and the consolidation is not performed",
+      "entity_type_basis": "no TrackedObject states an ObjectClass",
+      "identity_basis": "lid scoped by lidScopeUID; entity_id from the TrackedObject key",
+      "integrity_basis": "NITS carries no checksum at any level. This document passed structural checks and nothing more",
+      "kinematics_basis": "no positioned track point, so no local horizon to decompose a velocity against",
+      "nits_message": {
+        "baseTime": "2026-04-29T06:00:00Z",
+        "numDetections": 0,
+        "numTracks": 1,
+        "relTimeIncrement": 1.0
+      },
+      "nits_message_index": 0,
+      "nits_profiles": [
+        "DATASTREAM"
+      ],
+      "nits_root": {
+        "fileLID": 9,
+        "fileUID": "f1c70000-0000-8000-8000-000000000004",
+        "lidScopeUID": "f1c75c09-0000-8000-8000-000000000001",
+        "msgCreatedTime": "2026-04-29T06:00:05Z",
+        "nitsVersion": "B.2",
+        "numFiles": 2,
+        "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>",
+        "profile": [
+          "DATASTREAM"
+        ],
+        "sensor": [
+          {
+            "modality": "IMAGE_SIGNATURE",
+            "name": "Synthetic EO sensor",
+            "uid": "f1c70000-0000-8000-8000-000000000010"
+          }
+        ],
+        "streamUID": "f1c70000-0000-8000-8000-000000000003"
+      },
+      "nits_segments": [
+        {
+          "comment": null,
+          "confidence": null,
+          "index": 0,
+          "initiationReason": null,
+          "lid": null,
+          "point_count": 1,
+          "sample_range": [
+            0,
+            0
+          ],
+          "source": null,
+          "status": null,
+          "terminationReason": null,
+          "uid": null
+        }
+      ],
+      "nits_times": {
+        "baseTime": "2026-04-29T06:00:00Z",
+        "relTime": [
+          0
+        ],
+        "relTimeIncrement": 1.0,
+        "whole_milliseconds": true
+      },
+      "nits_track": {
+        "object": [
+          {
+            "lid": 7
+          }
+        ],
+        "segment": [
+          {
+            "tp": [
+              {
+                "dynamics": [
+                  {
+                    "cftUID": "f1c70000-0000-8000-8000-000000000098",
+                    "cs": "LOCAL_CARTESIAN",
+                    "pos": [
+                      1.0,
+                      2.0
+                    ]
+                  }
+                ],
+                "relTime": 0
+              }
+            ]
+          }
+        ],
+        "trackSource": {
+          "sensorUID": [
+            "f1c70000-0000-8000-8000-000000000010"
+          ]
+        },
+        "uid": "f1c70000-0000-8000-8000-000000000094"
+      },
+      "nits_unpositioned_points": [
+        {
+          "basis": "LOCAL_CARTESIAN: attributes-only \u2014 cftUID f1c70000-0000-8000-8000-000000000098 does not resolve within this NITSRoot object; under the DATASTREAM profile it may be in a previously transmitted file, which this adapter does not fetch",
+          "blocks": [
+            {
+              "cftUID": "f1c70000-0000-8000-8000-000000000098",
+              "cs": "LOCAL_CARTESIAN",
+              "pos": [
+                1.0,
+                2.0
+              ]
+            }
+          ],
+          "observed_at": "2026-04-29T06:00:00.000Z",
+          "point": 0,
+          "segment": 0
+        }
+      ],
+      "position_basis": "LOCAL_CARTESIAN: attributes-only \u2014 cftUID f1c70000-0000-8000-8000-000000000098 does not resolve within this NITSRoot object; under the DATASTREAM profile it may be in a previously transmitted file, which this adapter does not fetch",
+      "profile_basis": "profile ['DATASTREAM']; recognised ['DATASTREAM']. No reference is followed: resolving a DATASTREAM reference means caching objects across payloads, which is state, and state is where fusion hides. An absent profile is not a claim \u2014 \u00a72.5.1 says a consumer shall not infer non-conformance from silence. 1 reference(s) did not resolve within this payload and are listed at attributes.unresolved_references; they are NOT in unavailable_fields, because the source knows and said so in another file",
+      "symbol_basis": "derived from the affiliation via symbology.sidc_from_affiliation. An APP-6 code, where one is stated, is parked at attributes.app6 and never composed into a SIDC: an APP-6 entity code supplies one of the eight things a 2525D SIDC encodes and composing one would mean inventing six",
+      "synthetic_basis": "the document states no CollectionInformation, so no essence to check; source.synthetic is the deployment declaration (True)",
+      "track_quality_basis": "None. Edition B states no track-level quality: TrackData has five attributes and none is a confidence. TrackSegment.confidence governs a PORTION of a track, so filling track_quality from one would mean picking a segment or aggregating across them, and mapping it only when there happens to be one segment would make a canonical field depend on how a producer chunked its output",
+      "tracked_object_instances": 1,
+      "unresolved_references": [
+        {
+          "at": "TrackSegment[0].tp[0]",
+          "class": "DynamicCFT",
+          "reference": "cftUID f1c70000-0000-8000-8000-000000000098"
+        }
+      ],
+      "valid_from_basis": "TrackMessage.baseTime: this TrackData yields no positioned track point, so there is no sample instant to use",
+      "valid_to_basis": "None. Four of the six TrackTerminationReason literals \u2014 SENSOR_OFF, EXITED_FOV, LOST, OBSCURED \u2014 say the SENSOR stopped seeing the object, not that the object ceased to exist. A truck that drives under a bridge is still a truck"
+    },
+    "confidence": null,
+    "entity_id": "50d54a2f-deac-5cef-9227-d1e5ea9c6d92",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4676",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "NITS"
+    },
+    "source_ids": [
+      {
+        "external_id": "f1c70000-0000-8000-8000-000000000094",
+        "system": "NITS_UID"
+      },
+      {
+        "external_id": "f1c75c09-0000-8000-8000-000000000001:7",
+        "system": "NITS_LID"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  }
+]

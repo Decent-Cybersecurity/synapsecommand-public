@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NITSRoot>
+  <slab:originatorConfidentialityLabel xmlns:slab="urn:nato:stanag:4774:confidentialitymetadatalabel:1:0"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type="PERMISSIVE" TagName="Releasable to"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>
+  <profile>DATASTREAM</profile>
+  <streamUID>f1c70000-0000-8000-8000-000000000003</streamUID>
+  <fileUID>f1c70000-0000-8000-8000-000000000004</fileUID>
+  <fileLID>9</fileLID>
+  <lidScopeUID>f1c75c09-0000-8000-8000-000000000001</lidScopeUID>
+  <numFiles>2</numFiles>
+  <msgCreatedTime>2026-04-29T06:00:05Z</msgCreatedTime>
+  <nitsVersion>B.2</nitsVersion>
+  <sensor>
+    <uid>f1c70000-0000-8000-8000-000000000010</uid>
+    <name>Synthetic EO sensor</name>
+    <modality>IMAGE_SIGNATURE</modality>
+  </sensor>
+  <message>
+    <numDetections>0</numDetections>
+    <numTracks>1</numTracks>
+    <baseTime>2026-04-29T06:00:00Z</baseTime>
+    <relTimeIncrement>1.0</relTimeIncrement>
+    <track>
+      <uid>f1c70000-0000-8000-8000-000000000094</uid>
+      <trackSource>
+        <sensorUID>f1c70000-0000-8000-8000-000000000010</sensorUID>
+      </trackSource>
+      <segment>
+        <tp>
+          <relTime>0</relTime>
+          <dynamics>
+            <cs>LOCAL_CARTESIAN</cs>
+            <pos>1.0 2.0</pos>
+            <cftUID>f1c70000-0000-8000-8000-000000000098</cftUID>
+          </dynamics>
+        </tp>
+      </segment>
+      <object>
+        <lid>7</lid>
+      </object>
+    </track>
+  </message>
+</NITSRoot>
