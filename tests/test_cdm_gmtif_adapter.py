@@ -92,7 +92,17 @@ def _gmtif_section() -> str:
     rows as if they were GMTIF's — `test_the_row_set_claims_this_adapter` failed with 130 stale
     `not yet` rows that all belonged to a different format. Finding the next `\n## ` is the same
     rule `tests/test_cdm_format_coverage.py::_section` already uses, and it does not need editing
-    again when adapter #12 lands.
+    again when the next adapter lands — which, since this comment was first written, is **adapter
+    #10** and not #12.
+
+    That correction is worth the two lines because the number was wrong for a RULE reason rather
+    than an arithmetic one. This comment had encoded "the next ordinal is one past the highest that
+    has shipped", which gave #12 after `cat048` at #11. The series does not work that way: a parked
+    ordinal is RESERVED, not skipped — #9 is held for `nffi` and was never issued — so the next
+    free number after `gmti` at #8 was #10, which STANAG 4609 / MISP-2019.1 took. Under the old
+    rule a reserved number is re-issued the moment a park is revisited, at which point an ordinal
+    stops identifying an adapter. `FORMAT_COVERAGE.md`'s ordinal table is now the single authority
+    and `tests/test_cdm_ordinals.py` checks every site against it.
 
     MUTATION-CHECKED, and the check found something worth writing down. Two mutations were run
     against a scratch copy of the document:

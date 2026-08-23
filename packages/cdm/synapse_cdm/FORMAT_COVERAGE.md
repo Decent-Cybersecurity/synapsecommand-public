@@ -88,6 +88,39 @@ table in the pinned document — and `test_the_item_layouts_sum_to_the_standards
 checks it. What it carries instead is the admission in **gap 24**: the *geodesy* is not in the
 pinned document at all, and the inversion audit is what stands in for the document's blessing.
 
+### The adapter ordinals, and why #9 is reserved
+
+Adapters are numbered, the number is cited in prose at three dozen sites across this document, the
+module docstrings, the module README and the suite — and until this section existed it was stated
+inconsistently. The rule, adopted here and applied backwards:
+
+**A parked ordinal is RESERVED, not skipped.** An adapter that was scoped and then parked keeps its
+number; the next adapter takes the next free one. The alternative rule — "the next number is one
+past the highest that has shipped" — silently re-uses a reserved number the moment a park is
+revisited, which is how one row set came to be called both #7 and #9 in two places four thousand
+lines apart.
+
+| # | Adapter | State | Where the number is stated |
+|---|---|---|---|
+| 1 | `pntmap` | shipped | **implied rather than claimed.** `adapters/pntmap.py` calls itself THE REFERENCE ADAPTER and points the reader at the next one; it never writes a number of its own, so this row is the only place #1 is stated |
+| 2 | `tak` | shipped | `adapters/tak.py`, "Adapter #2, and the first BIDIRECTIONAL one" |
+| 3 | `ais` | shipped | `adapters/ais.py`, "Adapter #3, and the second bidirectional one" |
+| 4 | `adsb` | shipped | `adapters/adsb.py`, "Adapter #4, and the third bidirectional one" |
+| 5 | `legion` | shipped | `adapters/legion.py`, "Adapter #5, and the first whose upstream is a REST API" |
+| 6 | `cat021` | shipped | `adapters/asterix_cat021.py`, "Adapter #6, and the fourth bidirectional one" |
+| 7 | `stanag4676` | shipped | `adapters/stanag4676.py`, "Adapter #7", and `tests/test_cdm_stanag4676_adapter.py`'s first line |
+| 8 | `gmti` | shipped | `adapters/gmtif.py`, "Adapter #8" |
+| 9 | `nffi` | **RESERVED, nothing shipped and nothing parked here yet** | **nowhere else in this repository.** This row is the only statement of it: there is no NFFI row set, no pin and no adapter, and the ordinal is held rather than issued. A reserved ordinal with no artefact behind it is exactly the thing this table exists to make visible, so it says so rather than looking like an omission |
+| 10 | `stanag4609` | specification, Phase 1 | this document's STANAG 4609 / MISP-2019.1 section, `fixtures/klv/spec/klv_pin.json` and `MIGRATIONS.md` |
+| 11 | `cat048` | shipped | `fixtures/cat048/README.md`, the module README's harness section, and this document's CAT048 section. **`adapters/asterix_cat048.py` states no ordinal of its own** — the only shipped adapter besides `pntmap` that does not, which is recorded rather than repaired here |
+| 12 | *(forecast)* `cat034` | not scoped | the CAT048 declines table: ASTERIX Category 034 is deferred and "if it lands, it lands as adapter #12 with its own pin". A forecast is not a claim, and the row is here so the next adapter does not take a number that is already spoken for |
+
+`tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
+it: one adapter per ordinal, one ordinal per adapter, and a reserved ordinal permitted to have no
+shipped adapter but never a conflicting claimant. It is the disjunction treatment applied to an
+ordinal — the same reason `test_cdm_prose_counts.py` exists for the adapter *count*, and the same
+reason the STANAG 4609 pin rows are asserted as one composite string rather than three substrings.
+
 ## Cursor-on-Target (TAK) — ingest and egress
 
 Implemented by `adapters/tak.py` (bidirectional). Ingest translates a CoT **atom** into an
@@ -5760,7 +5793,7 @@ negative assertion over every fixture rather than a fixture of its own.
 
 **Every row below was a SPECIFICATION before it was a claim.** The row set was written and
 reviewed with `not yet` in every status column and no code, exactly as the Legion rows were
-before adapter #5 and the NITS and GMTIF rows before #9 and #10; `adapters/asterix_cat048.py`
+before adapter #5 and the NITS and GMTIF rows before #7 and #8; `adapters/asterix_cat048.py`
 then implemented it and the markers became `cat048 1.0.0`. The difference between those two
 states is the whole reason the status column exists — and three rulings reversed in between,
 each noted where it happened.
@@ -7061,6 +7094,629 @@ CAT048 and a `Track`, both exercising the **refusal** in the egress row set, whi
 CAT021's egress set does not have. `refusals/` holds the payloads meant to raise, and `spec/`
 holds the pin and the generator — neither beside the payloads, because `harness.run()` replays
 every file in a fixture directory through `to_cdm()`.
+
+## STANAG 4609 / MISP-2019.1 — NATO Digital Motion Imagery, the KLV metadata stream
+
+**Every row below is a SPECIFICATION and nothing here is a claim.** This is Phase 1: the row set
+is written with `not yet` in every status column and no adapter code, exactly as the Legion rows
+were written before adapter #5, the NITS rows before `stanag4676.py`, the GMTIF rows before
+`gmtif.py` and the CAT048 rows before `asterix_cat048.py`. What is different about this one, and
+what the reader should carry into every table below, is **how little of it is rulable at all**:
+STANAG 4609 promulgates a *profile*, the profile delegates every field dictionary to documents
+published by somebody else, and **not one of those documents is in hand.** So this phase pins two
+texts, rules what those two texts actually decide, and parks the rest against named reopen
+conditions — rather than inventing a field layout out of a document nobody here has read.
+
+**`stanag4609` is adapter #10, under the reserved-ordinal rule.** The series is tabulated once, in
+"The adapter ordinals, and why #9 is reserved" near the top of this document, and the rule it
+adopts is that a **parked ordinal is reserved rather than skipped**: #9 is held for `nffi`, so the
+next free number after `gmti` at #8 is this adapter's, and `cat048` keeps #11. That is a change
+from the rule two tests had encoded — "the next number is one past the highest that has shipped",
+which would have made this adapter #12 — and the old rule was wrong for a reason worth stating: it
+re-issues a reserved number the moment a park is revisited, so an ordinal would stop identifying an
+adapter. `tests/test_cdm_gmtif_adapter.py::_gmtif_section` and
+`tests/test_cdm_asterix_cat048_adapter.py::_section` are amended to the new rule; the CAT048
+declines table's forecast that CAT034 "lands as adapter #12" is untouched, because under the
+reserved-ordinal rule #12 is exactly what is next free after #11. The one site that was simply
+wrong is corrected: the CAT048 preamble called the NITS and GMTIF row sets "#9 and #10" while their
+own modules say #7 and #8, and it now says #7 and #8.
+
+### The name and the fixture directory, ruled before either PDF was copied
+
+Two names have to be chosen and they are not the same name, which is the whole reason this
+subsection exists: commit 80b38d1 had to move three PDFs out of a directory named for the adapter
+and into `fixtures/nits/spec/` because "a copy command had taken the adapter's name where the
+fixture directory's name was wanted", and the harness map that fixed it is now pinned by a test. So
+both names are ruled here, with the reasoning, before anything was copied anywhere.
+
+| | Ruled | |
+|---|---|---|
+| **Adapter name** | `stanag4609` | the STANAG's number |
+| **Fixture directory** | `fixtures/klv` | the content's name |
+
+**Why the adapter takes the STANAG's number.** The roster already contains both conventions —
+`gmti` names the content of STANAG 4607 while `stanag4676` names the standard that carries NITS —
+so precedent does not decide it and the documents have to. They decide it unusually clearly.
+MISP-2019.1 §C.1.2 describes STANAG 4609 in its own words: "**As of STANAG 4609 Edition 4, the
+STANAG is a covering document rather than a standalone document, which points directly to a version
+of the U.S. Motion Imagery Standards Profile (MISP)**", and §C.1.1 says the same of the Edition
+3 → 4 transition. The pinned Edition 5 is exactly that: five pages, of which one is a Letter of
+Promulgation and one is an AGREEMENT clause naming a single external standard. There is therefore no
+NATO document whose *content* could give this adapter its name, while the STANAG number is what an
+ICD, a NISP row and a national ratification record all call the feed. `stanag4609` it is.
+
+**Why the fixture directory takes the content's name.** For the same reason `stanag4676`'s fixtures
+live in `fixtures/nits`: a directory holds *payloads*, and a payload is not a standard. The
+adapter-shaped content here is **the KLV metadata stream** — settlement 1 — so `klv` is what the
+files in that directory will be and `.klv` is what they will be called. Naming the directory
+`stanag4609` would reproduce 80b38d1's bug on the first day rather than in the ninth month.
+
+Three alternatives were considered and each is rejected on a stated ground:
+
+- **`misp`** — names the governing profile, which is a *document*, so the pinned PDF would sit at
+  `fixtures/misp/spec/misb-misp-2019-1.pdf`, a directory named after a file inside it. It also names
+  the wrong layer: the MISP governs the imagery, the audio, the containers and the transport as
+  well, and this adapter reads one of the five.
+- **`misb`** — names the publisher. `fixtures/eurocontrol` would have been wrong for CAT048 for the
+  same reason.
+- **`fmv`** — rejected by the pinned text itself, which is the strongest kind of rejection
+  available. MISP §2.1.1: "**FMV has no formal definition and conveys different meanings to
+  different communities; therefore, the term FMV should not be used in any contractual language.**"
+  A fixture directory name is closer to contractual language than to prose.
+
+`tests/test_cdm_harness.py` carries the adapter-name-to-fixture-directory map, and this commit adds
+`stanag4609 → klv` to it as a **planned** entry beside the nine shipped ones. Planned rather than
+shipped is not a formality: the shipped half of that map is checked against what
+`adapter.discover()` actually returns, so a tenth name there would be a false statement made by a
+test.
+
+### The pins
+
+Two documents, and the relationship between them is the whole reason there are two: the first
+ratifies and promulgates, the second states the requirements. Neither is sufficient alone — the
+STANAG contains no technical requirement of any kind, and the MISP contains no NATO ratification.
+
+| | |
+|---|---|
+| **The wrapper** | **STANAG 4609, NATO Digital Motion Imagery Standard, Edition 5, 30 July 2020.** Published by the NATO Standardization Office (NSO); Letter of Promulgation dated 30 July/juillet 2020, reference `NSO(NAFAG)0845(2020)JCGISR/4609`; supervised under NAFAG (AC/224) / JCGISR. Supersedes "STANAG 4609, Edition 4, dated 19 December 2016". Bilingual English/French throughout; five pages, printed as `- i -` (promulgation), a blank leaf, then `- 1 -` and `- 2 -` |
+| SHA-256 (wrapper) | `f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8`, 273 801 bytes, 5 pages, `fixtures/klv/spec/nato-stanag-4609-edition-5.pdf` |
+| **The normative act** | The wrapper's AGREEMENT clause reads "**Participating nations agree to implement the following standard**" and its STANDARD clause names exactly one: "**U.S. Motion Imagery Standards Board (MISB) Motion Imagery Standards Profile-2019.1 (MISP-2019.1)**". Its IMPLEMENTATION OF THE AGREEMENT clause restates the scope: "MISP-2019.1 defines the technical requirements for motion imagery formats, compression, metadata and transmission protocols for ISR systems and systems that manage and/or exploit motion imagery data." NATO Effective Date: "Not applicable" |
+| **The target** | **MISP-2019.1, Motion Imagery Standards Profile, Motion Imagery Standards Board — title page dated November 2018**, which is also the footer of all 73 pages. Every requirement mapped or parked below cites this document |
+| SHA-256 (target) | `3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea`, 1 372 771 bytes, 73 pages, `fixtures/klv/spec/misb-misp-2019-1.pdf` |
+| **The date tension** | The wrapper promulgates in **July 2020** a profile whose own title page says **November 2018** — twenty months, unexplained in either document, and register entry **KLV 1** |
+| **Named by the wrapper and NOT held** | "MISP-2019.1: Motion Imagery Handbook", the wrapper's only OTHER RELATED DOCUMENT. **Park 10**, and a heavier park than its billing suggests: MISP §3.6.7 says the Handbook "defines the required data items" for Class 1 metadata |
+| **Named by the target and deliberately NOT in scope** | "MISP-2019.1: U.S. Governance" (ref [2]) and "MISP-2019.1: U.S. Specific" (ref [3]). MISP §1.1 sends *U.S.*-specific requirements there and *NATO*-specific ones to STANAG 4609, and the wrapper promulgates neither. So the NATO-implementable set is the profile plus its Handbook, and the two U.S. documents sit outside it by both documents' own construction — an exclusion, not an omission |
+| **Retrieved** | 2026-08-23. Both PDFs are in the working tree because they had to be read, and **neither is committed**, matching every other adapter here: `git ls-files \| grep -c '\.pdf$'` is 0 across the whole repository, and the pin is the artefact |
+
+`fixtures/klv/spec/klv_pin.json` carries the same facts in machine-readable form, on the pattern
+`cat048_pin.json` and `sac_pin.json` set: an edition number names a **document** and a SHA-256 names
+the **copy that was read**, and those are different claims.
+
+**Verification performed, both files, at the committed paths.** SHA-256 recomputed and compared:
+both match. Byte counts recomputed: 273 801 and 1 372 771, both match. Page counts counted from each
+document's own page tree: 5 and 73. Title pages read: the wrapper's reads "STANDARDIZATION AGREEMENT
+/ STANAG 4609 / NATO DIGITAL MOTION IMAGERY STANDARD / EDITION 5 / 30 JULY 2020", the target's reads
+"MOTION IMAGERY STANDARDS PROFILE / Motion Imagery Standards Board / MISP-2019.1 / November 2018".
+The page-counting method was validated before it was trusted, against the seven documents whose page
+counts this file already records — 64, 212, 104, 6, 192, 150 and 5 — and reproduced all seven
+exactly.
+
+**Every site must agree.** Both hashes, both byte counts, both page counts and both paths are stated
+here, in `klv_pin.json` and in `fixtures/klv/README.md`, and `tests/test_cdm_format_coverage.py`
+checks **every occurrence** of each rather than any one of them. That is 80b38d1's finding applied on
+the first day: an `in` check is satisfied by one site, so a fact stated at three sites and checked at
+one is a fact that can drift at two.
+
+### Settlement 1 — three layers arrive together and exactly one of them is this adapter's
+
+A conformant Class 1 Motion Imagery feed is one MPEG-2 Transport Stream carrying a compressed video
+elementary stream, a KLV metadata stream and optionally audio (MISP §3.6.9.1, Figure 9). Three
+layers, one wire. The split is ruled here because every later ruling depends on it, and because
+**the declines are load-bearing on each other** rather than independent.
+
+#### The video essence is DECLINED
+
+MISP §3.6.3.1: "The MISP approves the following compression technologies for Class 1 Motion Imagery:
+H.265/HEVC [35] [36], H.264/AVC [37] [38] and H.262/MPEG-2 [39] [40]." None of it is carried. The
+CDM has four objects — `Entity`, `Event`, `Track`, `PlanObject` — and not one of them holds a pixel;
+there is no field, no payload model and no candidate for one.
+
+What makes this decline *coherent* rather than a breach of the never-drop rule is the next one. The
+never-drop rule is about values that arrive **in the payload**: NITS parks a base64 image chip whole,
+megabytes and all, precisely because the chip is inside the `NITSRoot` the adapter was handed. An
+elementary stream in a different PID of the same multiplex is not in this adapter's payload at all,
+which is the same shape as the NITS decline "Reading the STANAG 4607 GMTI data a `Radar4607` points
+into" — a pointer into another stream in another format is another adapter's business. **So the
+essence is out of scope because the container is, and the two rulings cannot be taken separately.**
+Were the input a transport stream, the essence would be in the payload and the rule would demand it
+be parked.
+
+#### The MPEG-2 Transport Stream is DECLINED as a mapping target and NAMED as the transport
+
+Declined, on the rule this document has already applied to seven formats: transport is the caller's.
+The AIS fragment buffer, the ADS-B frame pair, Legion's HTTP client, CAT021's and CAT048's ASTERIX
+framing, NITS's DATASTREAM resolution and GMTIF's split dwell were each refused for the same reason,
+and a demultiplexer is the same object as a fragment buffer — it holds state across payloads and
+decides which bytes belong together.
+
+Named, because a Phase 2 ingest path has to find the metadata stream and the profile states what it
+may assume about the multiplex. Four requirements, verbatim:
+
+| Requirement ID | Text | Where |
+|---|---|---|
+| `MISP-2015.1-47` | "Class 1 Motion Imagery encapsulated in a MPEG-2 Transport Stream Container shall comply with ISO/IEC 13818-1 [45] \| ITU-T Rec H.222.0 [47]." | §3.6.9.1 |
+| `MISP-2015.1-48` | "Class 1 Motion Imagery encapsulated in a MPEG-2 Transport Stream Container shall comply with MISB ST 1402 [48]" | §3.6.9.1 — the missing full stop is the document's |
+| `MISP-2015.1-49` | "Security metadata encapsulated in a MPEG-2 Transport Stream Container shall be inserted into only one of the two carriage mechanisms available: The Synchronous Stream Multiplex Method or the Asynchronous Stream Multiplex Method in accordance with MISB ST 1402 [48]." | §3.6.9.1 |
+| `MISP-2015.1-50` | "Class 1 Motion Imagery encapsulated in a MPEG-2 Transport Stream Container shall meet the conformance requirements of ISO/IEC 13818-4 [49]." | §3.6.9.1 |
+
+**And the honest consequence: the profile does not itself say how to find the metadata stream.** It
+says the multiplex complies with MISB ST 1402.2, and ST 1402.2 is what names the stream types, the
+descriptors and the two multiplex methods. It is not held — **park 9** — so a Phase 2 that wanted to
+accept a transport stream would need it, and a Phase 2 that accepts a KLV stream directly does not.
+That asymmetry is recorded rather than used as an argument: "the document we do not have would have
+been needed anyway" is not a justification for a scope decision, and settlement 1 stands on the
+transport rule instead.
+
+`MISP-2015.1-49` earns its own row for a second reason. It constrains *where* a particular kind of
+metadata may be carried, and the kind it constrains is security metadata — so a stream that splits
+its labels across both multiplex methods is non-conformant, and a reader who found labels in one
+place cannot conclude there are none in the other. That is a Phase 2 refusal condition, written down
+now while the reason is in front of us.
+
+#### The KLV metadata stream is the adapter-shaped content, and these are the requirements that govern it
+
+Two requirements fix the encoding, and both are quoted with their IDs because an ID is how this
+profile is cited and because both IDs name a version of the profile that is not this one — register
+entry **KLV 2**.
+
+> `MISP-2015.1-07` **KLV (Key-Length-Value) Metadata shall be encoded in accordance with SMPTE
+> ST 336 [13].**
+>
+> `MISP-2015.1-08` **KLV Metadata shall be formatted in accordance with MISB ST 0107 [14].**
+
+Both sit in §3.2.2 ("Metadata"), under the sentence that scopes them: "The following requirements
+apply to all Metadata within the MISP developed as KLV." Two more in the same block govern how values
+*inside* a KLV item are written, and they matter to a Phase 2 because they are where a wrong answer
+is a plausible number rather than an exception:
+
+> `MISP-2015.1-09` When using KLV and mapping between floating point values and integer values, the
+> mapping shall comply with MISB ST 1201 [15].
+>
+> `MISP-2015.1-10` Multi-dimensional arrays of data expressed in KLV shall be formatted in accordance
+> to MISB ST 1303 [16].
+
+And two more make KLV mandatory for this class of feed and make each metadata set's own requirements
+binding:
+
+> `MISP-2015.1-45` Class 1 Motion Imagery Metadata shall be represented using KLV (Key Length Value).
+> *(§3.6.7)*
+>
+> `MISP-2016.1-92` A MISB metadata set shall conform to all requirements as specified for that
+> metadata set. *(§4.4)*
+
+`MISP-2016.1-92` is the one to read twice. It makes the *contents* of documents this repository does
+not hold normative by reference, which is exactly why the entries below are parks and not declines:
+the profile has already agreed to them on the reader's behalf.
+
+### Settlement 2 — the delegation map: what the profile pins, and where it says so
+
+The MISP is a profile, so much of its normative content is a set of pointers. This table is built
+from the profile's own reference apparatus — Appendix B, plus the section that cites each reference —
+and every version string below was read off the pinned copy rather than carried in from anywhere.
+
+| Document | Version the MISP pins | Where the VERSION is stated / where the document is REQUIRED | What it governs |
+|---|---|---|---|
+| **SMPTE ST 336** | **ST 336:2017**, "Data Encoding Protocol Using Key-Length-Value" | **version:** ref [13], Appendix B, PDF page 63. **Required by:** `MISP-2015.1-07`, §3.2.2, which cites it as "SMPTE ST 336 [13]" — unsuffixed | the KLV encoding itself — key form, length form, the triplet |
+| **MISB ST 0107** | **0107.3**, "KLV Metadata in Motion Imagery", **Nov 2018** | **version:** ref [14], Appendix B, and again in the 2019.1 change log. **Required by:** `MISP-2015.1-08`, §3.2.2, which cites it as "MISB ST 0107 [14]" — unsuffixed | how KLV is *formatted* in motion imagery, as distinct from how it is encoded |
+| **MISB ST 0601** | **0601.14**, "UAS Datalink Local Set", **Nov 2018** | **version:** ref [53], Appendix B, and again in the 2019.1 change log. **Required by:** §4.4.4.1 ("The Airborne - UAS Collection is defined in MISB ST 0601 [53]"), plus §§4.4.2.2, 4.4.2.3, 4.4.2.5, 4.4.2.7, 4.4.2.10 and Figure 12 — every one of them unsuffixed | the field dictionary of the airborne UAS collection — the local set an airborne feed actually carries |
+| **MISB ST 0102** | **0102.12**, "Security Metadata Universal and Local Sets for Motion Imagery Data", **Jun 2017** | **version:** ref [55], Appendix B. **Required by:** `MISP-2015.1-73`, §4.4.2.9 — unsuffixed | the security / classification local set, which §4.4.2.9 calls mandatory |
+| **MISB ST 0603** | **0603.5**, "MISP Time System and Timestamps", **Oct 2017** | **version:** ref [12], Appendix B. **Required by:** §2.1.5 and `MISP-2018.3-116`, `MISP-2018.1-97`, `MISP-2018.1-98`; again in §3.6.6 and §4.4.2.12 — every one unsuffixed | the Precision Time Stamp and the Nano Precision Time Stamp — epoch, resolution, timescale |
+| **MISB ST 0903** | **0903.4**, "Video Moving Target Indicator and Track Metadata", **Oct 2014** | **version:** ref [57], Appendix B. **Required by:** §4.4.2.4, the Exploitation Domain — unsuffixed | VMTI detections and motion-imagery-derived track metadata — the part of this format closest to what the CDM is for |
+| **MISB ST 0806** | **0806.4**, "Remote Video Terminal Metadata Set", **Feb 2014** | **version:** ref [59], Appendix B. **Required by:** §4.4.2.4, the Exploitation Domain — unsuffixed | the RVT metadata set |
+| **MISB ST 1402** *(beyond the six)* | **1402.2**, "MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and Metadata", **Oct 2016** | **version:** ref [48], Appendix B, PDF page 64, verbatim — "MISB ST 1402.2 MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and Metadata, Oct 2016." **Required by:** `MISP-2015.1-48` and `-49` in §3.6.9.1, `MISP-2016.1-90` in §3.7.12.1 and the prose of §5.3.1 — **all four unsuffixed**, which is why the version cell cites Appendix B and not them | KLV carriage inside the multiplex, and the two multiplex methods `MISP-2015.1-49` names |
+
+The last row is an addition rather than a confirmation, and it is here because settlement 1 needs it:
+without ST 1402.2 there is no stated way to locate the KLV stream inside a transport stream, so a
+delegation table that stopped at the six field dictionaries would have understated what a Phase 2
+ingest path depends on.
+
+**And the reason the locus column is split in two.** A challenge to the ST 1402 row asked the right
+question of the whole table — §3.6.9.1 and §3.7.12.1 both cite "MISB ST 1402 [48]" with **no
+revision suffix**, so where does `.2` come from? Appendix B, and only Appendix B. Entry [48] reads,
+verbatim: "MISB ST 1402.2 MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and
+Metadata, Oct 2016." So the version stands, and the row now says where it stands on.
+
+Checking that turned the answer into a rule about the document, because it is not a quirk of one
+reference. **Every revision suffix in MISP-2019.1 lives on six of its 73 pages**: the Change Log
+(PDF page 7), Appendix B (PDF pages 63–66), and one stray inside an Appendix A.2 deprecation note
+(PDF page 62, "Note: Requirement moved to MISB ST 0605.9"). **Not one requirement and not one
+section of the body — PDF pages 10 to 57 — states a revision of anything.** Every citation there is
+the bare document number plus a bracketed reference index. So a reader who takes a version from the
+requirement that mandates the document gets no version at all, and a reader who takes one from a
+*later* revision of that document has silently changed what the profile requires. That is why the
+version cell and the requirement cell are now separate columns' worth of fact in one cell, and why
+each row says *unsuffixed* where the requirement is.
+
+It also bounds register entry **KLV 5** precisely, and the bound is what stops that entry drifting:
+the six unversioned references are unversioned **in Appendix B**, which is the one place a version
+would have been stated. ST 1402 is not among them and the count stays six.
+
+Two further mandatory documents are named by requirements and are not in the table above because they
+govern *content* rather than the stream: **MISB ST 1204.1** "Motion Imagery Identification System
+(MIIS) Core Identifier", Oct 2013 (ref [54], required by `MISP-2015.1-68`) and **MISB ST 0902.8**
+"Motion Imagery Sensor Minimum Metadata Set", Nov 2018 (ref [73], required by `MISP-2015.1-75`,
+which §4.4.4 calls "a prerequisite for MISP conformance"). Both are parks.
+
+#### The change log against the reference list, checked rather than assumed
+
+The risk carried into this phase was that MISP-2019.1's change log and its reference list might
+disagree about a version, and that a disagreement would be a register entry rather than a silent
+choice. **Checked, and they agree.** The 2019.1 change log (PDF page 7) reads "Reviewed and Approved
+the following documents: MISP-2019.1, MISP-2019.1: U.S. Governance, MISP-2019.1: U.S. Specific,
+MISP-2019.1: Motion Imagery Handbook, ST 1602.1, ST 1601.1, ST 1504.1, ST 1403.2, ST 1303.1,
+ST 0902.8, ST 0809.2, ST 0601.14, ST 0107.3, RP 0904.4, TRM 1803, NGA Conformance Program Plan for
+Motion Imagery". Every one of those version strings matches its Appendix B entry: ST 0601.14 =
+ref [53], ST 0107.3 = ref [14], ST 0902.8 = ref [73], ST 1303.1 = ref [16], ST 1403.2 = ref [70],
+ST 1504.1 = ref [72], ST 1601.1 = ref [75], ST 1602.1 = ref [76], ST 0809.2 = ref [65], RP 0904.4 =
+ref [7], TRM 1803 = ref [99]. So the two reported readings most at risk — **0601.14 and 0107.3** —
+are each stated **twice** inside the profile and stated the same way both times, which is a stronger
+pin than either statement alone.
+
+#### What the reference list does NOT version
+
+The inconsistency the check did turn up runs the other way, and it is register entry **KLV 5**: most
+Appendix B MISB entries carry a revision suffix and six carry none. `MISB ST 1607 Constructs to
+Amend/Segment KLV Metadata, 2016` (ref [74]), `MISB ST 1101 STANAG 4586 Control on UAS Motion Imagery
+Payloads, Oct 2014` (ref [89]), `MISB RP 1302 Inserting KLV in Session Description Protocol (SDP),
+Feb 2014` (ref [84]) and the three TRMs (refs [98], [99], [100]) are named without one. ST 1607 is the
+one that bites: `MISP-2017.1-95` is a "shall" whose target is a document with no stated revision, so
+the profile pins an artefact and not a version of it.
+
+### Settlement 3 — what is rulable from the held texts, and the premise this phase had to correct
+
+The premise this phase started from was that the MISP normatively fixes the time system — the
+Precision Time Stamp's semantics, **its epoch**, and the requirement that it be present. Read against
+the pinned copy, one third of that is right, one third is right with a qualification that changes
+what an adapter may do, and one third is false. All three are recorded, because the false one is the
+reason there is no `Event.observed_at` mapping below.
+
+**The representation: named, not defined.** §2.1.5: "Absolute Time within the MISP is represented as
+either a Precision Time Stamp or a Nano Precision Time Stamp, which are defined in MISB ST 0603
+[12]." The profile names both and defines neither.
+
+**The epoch: not in the document.** The words **`epoch`, `1970`, `microsecond` and `leap` do not
+occur anywhere in the 73 pages.** The only timescale the profile names, it names as an example:
+"Absolute Time is based on a well-defined reference source, such as International Atomic Time (TAI)".
+So the epoch, the resolution and whether the count is TAI or UTC are all ST 0603.5's — and the
+difference between TAI and UTC is a leap-second table, a second document plus a table that changes,
+inside an adapter contracted to be a pure function of one payload. This is the NITS `ECI_J2K` shape
+rather than the CAT021 rollover shape, and it is **park 3**.
+
+**The requirement that it be present: mandatory for frames, conditional and circular for metadata.**
+This is the finding that matters most to an adapter whose input is a metadata stream. The three
+requirements in §2.1.5 read:
+
+> `MISP-2018.3-116` Every Motion Imagery **frame** shall include a timestamp representing Absolute
+> Time consistent with MISB ST 0603 [12].
+>
+> `MISP-2018.1-97` **Where** Metadata contains a timestamp item representing Absolute Time, the
+> timestamp shall be in accordance with MISB ST 0603 [12].
+>
+> `MISP-2018.1-98` An instantiation of Motion Imagery shall have only one timestamp representation
+> which represents Absolute Time.
+
+The unconditional mandate attaches to a **frame**, which this adapter never sees. The metadata
+requirement is conditional — it governs the *form* of a timestamp that is present, not its presence.
+And the prose introducing them is circular as written: "The presence of a timestamp based on Absolute
+Time is mandatory for all Motion Imagery; it is also mandatory for Metadata packets which include a
+Metadata item for a timestamp based on Absolute Time." A timestamp is mandatory for packets that
+contain one. **So nothing in the pinned profile requires a standalone KLV metadata stream to carry an
+absolute time at all** — register entry **KLV 6** — and the two less equivocal predecessors,
+`MISP-2015.1-03` ("All Motion Imagery shall include a Precision Time Stamp") and `MISP-2015.1-04`
+("Any Metadata that contains a timestamp item shall include a Precision Time Stamp"), are listed in
+Appendix A.2 as **deprecated**, replaced by the two above. The relaxation is documented; it is not a
+drafting slip.
+
+**What that leaves rulable, and it is a short list.** The identity of the input; the KLV item as the
+unit of the stream; that every value in it is governed by a document named in the delegation table;
+that a security local set, a Core Identifier and a minimum metadata set are mandatory *contents*
+without their layouts being stated here; and the two time facts above. Everything whose field layout
+lives in an ST not in hand gets **no mapping row invented for it** — it gets a park with a reopen
+condition, and the row set below is as small as that honestly makes it.
+
+**One thing this profile is silent about that other formats are not.** There is no exercise,
+simulation or synthetic-data declaration anywhere in it: `simulat` has zero occurrences and
+`synthetic` occurs once, inside "Synthetic Aperture Radar". GMTIF carries two such declarations (`P7`
+and `D32.10`) and this format carries none, so `source.synthetic` cannot be set from the payload; the
+nearest hook is MISB ST 1205.1's nomenclature for "injected Motion Imagery test sequences" (§4.4.2.8),
+which is not held. Recorded so a later reader does not go looking.
+
+### How to read the row sets
+
+Left column cites the profile the way the profile cites itself: a requirement ID where there is one,
+a section number otherwise, and a `§`-prefixed number is MISP-2019.1's unless the row says STANAG
+4609. `Status` is **`not yet` on every row**, which is the point — an unimplemented row is a
+specification, and a specification nobody has run is a guess with a table around it. Rows whose Notes
+say *(blocked)* name the park that blocks them, so a Phase 2 reader can tell "not written yet" from
+"cannot be written from the held texts". Those are different states and only one of them is work.
+
+### Row set — what the adapter's input IS, and the envelope it arrives in
+
+**One KLV metadata stream, and nothing else.** Not a transport stream, not a file, not a socket. The
+parsed form a Phase 2 parser produces is what each `.parsed.json` twin will hold and what the
+never-drop check will be measured against, on the pattern `adsb.py`, `asterix_cat021.py` and
+`asterix_cat048.py` already use for binary formats.
+
+| MISP / STANAG 4609 | CDM field | Status | Notes |
+|---|---|---|---|
+| `klv.item.key` | `Entity.attributes` | `not yet` | the item's Key as read. The **byte form** — the 16-byte Universal Label, the abbreviated tags a Local Set uses — is SMPTE ST 336's, so this row is *(blocked)* on parks 4 and 8. What the profile does fix is that the unit is a Key/Length/Value **item**, the word its own change log adopted: «Changed "element" to "item" in referencing KLV triplets, consistent with SMPTE usage» |
+| `klv.item.length` | `Entity.attributes` | `not yet` | the declared length as read, and parked rather than trusted: a length that disagrees with the octets is CAT048's `block.length` problem in a second format. The length *encodings* are ST 336's — *(blocked)* on park 8 |
+| `klv.item.value` | `Entity.attributes` | `not yet` | **parked whole and never interpreted in this phase.** `MISP-2015.1-07` and `-08` name where the interpretation lives and neither document is held, so a value read here is a value whose type is unknown |
+| `klv.item_index`, `klv.item_count` | `Event.payload` | `not yet` | which item of how many, in wire order. Without it, two objects from one stream are indistinguishable from two objects from two streams — the CAT048 `block.record_index` precedent |
+| nested sets | `Entity.attributes` | `not yet` | a Local Set's items live inside a parent item's value. §4.4.1 calls ST 0601 "a Collection of Metadata from several Domains"; §3.6.7 says the Handbook "describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets". So the hierarchy is *(blocked)* on parks 1 and 10, and structure is preserved verbatim rather than flattened |
+| §5.3.2.2 | `Entity.attributes` | `not yet` | `attributes.integrity_basis` — "Many MISP defined KLV metadata sets include error detection (i.e. cyclic redundancy check or CRC) to validate that the transmitted and received data match." The profile asserts that CRCs exist and defines none, so **which** items carry one is each ST's. CAT048's "there is no checksum here either" with a twist: here there may be one, and the pinned text cannot say where |
+| §5.3.2.2 | `Entity.attributes` | `not yet` | the same sentence's instruction — "When errors are detected, it is important receivers properly handle the error and only disregard the erroneous metadata" — is recorded and **not** read as a licence to drop. Parking an item whose CRC failed is not acting on it, which is what "disregard" asks for; deleting it would break the never-drop rule to satisfy a sentence that does not say "shall" |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — every value read and not usable. In this phase that is **every value**, and the row exists so that the admission is structural rather than editorial |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — reserved for values the source states it does not have, once a held ST defines what "absent" looks like. A **different fact** from the row above, and the pair is the point |
+| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+
+### Row set — time
+
+| MISP / STANAG 4609 | CDM field | Status | Notes |
+|---|---|---|---|
+| §2.1.5, MISB ST 0603.5 | `Event.observed_at` | `not yet` | *(blocked)* on park 3, and the row settlement 3 exists to explain. Absolute Time is "either a Precision Time Stamp or a Nano Precision Time Stamp, which are defined in MISB ST 0603 [12]" — the profile names the representations and states neither epoch nor resolution nor timescale, so no arithmetic here can produce an instant |
+| `MISP-2018.3-116` | *(no field)* | `not yet` | "Every Motion Imagery frame shall include a timestamp representing Absolute Time consistent with MISB ST 0603 [12]." The only unconditional presence mandate in the profile, and it attaches to a **frame** — which settlement 1 declined. Recorded because its absence from this adapter's input is a fact about the format rather than an oversight |
+| `MISP-2018.1-97` | `Event.observed_at` | `not yet` | "Where Metadata contains a timestamp item representing Absolute Time, the timestamp shall be in accordance with MISB ST 0603 [12]." **Conditional** — it governs the form of a timestamp that is present. Register entry **KLV 6** |
+| `MISP-2018.1-98` | `Entity.attributes` | `not yet` | "An instantiation of Motion Imagery shall have only one timestamp representation which represents Absolute Time." A **stream** property rather than an item property, so it is a consistency check a Phase 2 runs across a whole fixture and a value with no home on a single object |
+| §2.1.5, Commercial Time Stamp | `Entity.attributes` | `not yet` | "One type of a Relative Time measure is a Commercial Time Stamp, which is also defined in MISB ST 0603." Parked and **never resolved to an absolute instant**: Relative Time is measured against "an internal or local timing reference which may be independent of an external reference", so promoting one means inventing the reference |
+| *(the injected clock)* | `Event.received_at` | `not yet` | when WE took delivery. The one time value in this row set that is not blocked, because it is ours |
+| a Nano Precision Time Stamp | `Entity.attributes` | `not yet` | **the parking rule, which Legion, CAT021 and NITS each reached before this.** `times.render` emits exactly three decimal places, and the two representations this profile names are called *Precision* and *Nano Precision*, so at least one of them states an instant finer than the CDM renders. The raw wire integer is the record and egress re-emits from it rather than recomputing from `observed_at`. **Not a gap** — CAT021 settled that this is not a defect, and I021/074's 2⁻³⁰ s ≈ 0.93 ns is a finer case than this one |
+| §4.4.2.12, MISB ST 1603.2 | `Entity.attributes` | `not yet` | *(blocked)*. The Temporal Domain also carries clock lock and synchronisation status through ST 1603.2 (ref [71]) — a machine-readable statement about the quality of a source's *clock*, which the CDM has nowhere for. Closest to **gap 18**'s provenance question, and named here so whoever opens that has a second format to cite |
+
+### Row set — provenance, and the two things the adapter fills itself
+
+| MISP / STANAG 4609 | CDM field | Status | Notes |
+|---|---|---|---|
+| *(the adapter)* | `SourceRef.adapter` | `not yet` | `stanag4609`, per the ruling above |
+| *(the adapter)* | `SourceRef.adapter_version` | `not yet` | the adapter's own version, never the profile's |
+| *(the caller)* | `SourceRef.system` | `not yet` | the caller's system name. **Not** derived from the stream: the profile's own identity mechanism is ST 1204.1's Core Identifier, *(blocked)* on park 11, and inventing a system name from an unparsed key would be worse than taking one from the caller |
+| *(neither document)* | `SourceRef.synthetic` | `not yet` | `False`, with the reason stated rather than assumed: the profile contains no exercise or simulation declaration of any kind — settlement 3's last paragraph. GMTIF's `P7` has no counterpart here |
+| `MISP-2015.1-68`, MISB ST 1204.1 | `Entity.source_ids` | `not yet` | *(blocked)* on park 11. "Motion Imagery shall contain a Core Identifier in accordance with MISB ST 1204 [54]", and §4.4.2.1 calls it "a mandatory consistent unique identifier for all sensors and platforms". So this format **does** guarantee an identity, and it is the one thing that would let an `Entity` be keyed. Decoding it is a separate standard with its own registry — the NITS MIIS decline and CAT021's BDS registers reached again |
+| `MISP-2015.1-69`, MISB ST 1301.2 | `Entity.attributes` | `not yet` | *(blocked)* on park 11. "Where supplemental identifiers are used with MISB ST 1204 [54], the supplemental identifiers shall be defined by MISB ST 1301 [56]" |
+| `MISP-2015.1-75`, MISB ST 0902.8 | `Entity.attributes` | `not yet` | *(blocked)* on park 12. "Motion Imagery shall contain Motion Imagery Sensor Minimum Metadata in accordance with MISB ST 0902 [73]", which §4.4.4 calls "a prerequisite for MISP conformance". The **minimum** set is the one an adapter would most want and the one whose layout is least available |
+| §4.4.4 | `Entity.attributes` | `not yet` | the Airborne Collection's domain list — "Administrative, Aeronautical, Combat, Image Space, Platform, SAR, Sensor, Security and Temporal" — parked as the profile's own statement of what an airborne feed carries. A table of contents for parks 1 and 2, not a field list |
+
+### Row set — the content requirements the profile states, each delegated
+
+Every row here is a requirement the profile makes normative and a document it makes normative *by
+reference*. None can be mapped and none can be declined, which is what a park is for.
+
+| MISP / STANAG 4609 | CDM field | Status | Notes |
+|---|---|---|---|
+| `MISP-2015.1-73`, MISB ST 0102.12 | `Entity.attributes` | `not yet` | *(blocked)* on park 2. "Motion Imagery shall include Security Metadata in accordance with MISB ST 0102 [55]", and §4.4.2.9: "It is mandatory that Motion Imagery Data be marked correctly and consistently with security classification and other security administration information. The approved practices in this standard are mandatory for all Motion Imagery Data." **The paragraph and the requirement do not use the same term** — register entry **KLV 7** — and the difference decides whether a standalone metadata stream must be labelled. Carried and never invented, the NITS confidentiality rule reached a second time |
+| §4.4.2.4, MISB ST 0903.4 | `Event.payload` | `not yet` | *(blocked)* on park 6. "MISB ST 0903 [57] defines KLV metadata used to deliver Video Moving Target Indicator (VMTI) and Motion Imagery derived track metadata". **This is the part of the format the CDM is actually shaped for** — detections and tracks — and the NITS row set already cites ST 0903.4 twice, for `Image.color` and for the 1-based pixel convention. A Phase 2 holding ST 0903.4 would produce `Event`s of type `DETECTION` and possibly a `Track`; without it, nothing |
+| §4.4.2.4, MISB ST 0806.4 | `Event.payload` | `not yet` | *(blocked)* on park 7. "MISB ST 0806 [59] defines KLV Metadata that supports a Remote Video Terminal (RVT)" |
+| §4.4.2.4, MISB ST 0602.4 / ST 0808.2 | `Event.payload` | `not yet` | *(blocked)*. Annotation metadata (ref [42], `MISP-2015.1-42`) and ancillary text (ref [58]). Both are Exploitation Domain sets and both are operator-authored, which makes them the closest thing this format has to **gap 1**'s canonical name |
+| §4.4.2.5, §4.4.2.7, §4.4.2.10, MISB ST 0601.14 | `Entity.position`, `Entity.kinematics` | `not yet` | *(blocked)* on park 1, and the row a reader will look for first. The Platform Domain "provides the position, kinematics and orientation Metadata of the platform", the Sensor Domain the same for the sensor, and §4.4.2.2's Aeronautical Domain adds "Tail Number, Wind Speed, Crabbing Angle". Every one of those is an ST 0601.14 item, so the profile guarantees the *existence* of a platform position and states not one of its bits. **No row here invents a scale factor for it** |
+| §4.4.2.5, MISB ST 0801.6 / ST 1107.3 / ST 1202.2 / ST 1010.3 | `Entity.attributes` | `not yet` | *(blocked)*. Photogrammetric image-space metadata, its threshold and objective profiles, the two-dimensional transformation parameters `MISP-2015.1-71` mandates, and `MISP-2015.1-72`'s standard deviations and correlation coefficients — **gap 17**'s covariance question again |
+| §4.4.2.11, MISB ST 1206.1 / ST 1403.2 | `Entity.attributes` | `not yet` | *(blocked)*. The SAR Domain, and `MISP-2015.1-74`'s threshold profiles |
+| §4.4.2.13, MISB ST 1504.1 | `Entity.position` | `not yet` | *(blocked)*. The Orbital Location Domain carries "the state vector necessary to determine the position of an orbiting Motion Imagery collector" — which, if it ever lands, is the NITS `ECI_J2K` problem arriving from a second direction: an orbital state vector is not a geodetic position, and converting one needs Earth-orientation parameters |
+| §4.4.8, MISB ST 1607 | `Entity.attributes` | `not yet` | *(blocked)*. `MISP-2017.1-95`: "When metadata items within an instantiating metadata set are changed, the changed metadata shall be signaled using the Amend Local Set and Segment Local Set as defined in MISB ST 1607 [74]." An **amendment mechanism inside the stream**, which is the shape NITS's amendment discipline already met — and the reference that names no revision, register entry **KLV 5** |
+| §4.4.9, Table 8 | *(no field)* | `not yet` | the registries that define keys and data types: SMPTE RP 210v13 (ref [77]), MISB ST 0607.4 (ref [78]) and MISB ST 0807.22 (ref [79]). None held. Recorded because it answers "could a Phase 2 decode an unknown key?" — it could, given the registry, and a registry is a fourth kind of park: a dictionary rather than a standard |
+| §6.1, MISB ST 0805.1 | *(no field)* | `not yet` | **rejected rather than parked**, and it earns its own row. `MISP-2015.1-80`: "KLV to Cursor-on-Target (CoT) encoding shall be in accordance with MISB ST 0805 [86]." A ST 0601 → CoT mapping exists as a standard and this repository already has a CoT adapter, so the tempting path is `stanag4609` → CoT → `tak.py`. Declined: chaining two translations makes this adapter's output depend on a third party's mapping decisions, and the CDM exists so that N adapters need N translations rather than a graph of them. In the declines table |
+
+### The parks, each with a named reopen condition
+
+**Twelve parks over fourteen documents, and the honest thing to say first is that eleven of the
+twelve are public downloads and one is not.** That is a materially weaker blocker than the two this
+document already carries — GMTIF's Annex L, which reads "(TO BE PROVIDED)" in the promulgated text,
+and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through
+national representatives. It is closer to CAT048's Reserved Expansion Field, which was "obtainable,
+and simply not obtained". Saying so is the point: a park whose reason is procurement and a park whose
+reason is procedure should not read the same.
+
+The reopen route for every MISB document is printed in the profile's own FORWARD: "References
+developed by the MISB are available under MISB Public Web Site: `http://www.gwg.nga.mil/misb` or NSG
+Registry Web Site: `https://nsgreg.nga.mil/misb.jsp`". **No NSO gate, no national representative, no
+account** — which is a real difference from the NITS XSD row and is why these say "obtain" and that
+one says "obtain, through one of two channels, and hash both". So the exit condition for parks 1–7
+and 9–12 is the same three steps, stated once here rather than twelve times: obtain **the exact
+version the delegation table pins** — not "the current one", because the profile pins a revision and
+a later revision is a different document; pin it in `fixtures/klv/spec/` by SHA-256, byte count and
+page count, with its title-page identity read; and write the row set that document supports, which
+for parks 1, 2, 6 and 7 means real mapping rows and for the others means a mechanism.
+
+| # | Parked | Version required | Reason, grounded in the delegation table | Reopen condition |
+|---|---|---|---|---|
+| **1** | **MISB ST 0601 — UAS Datalink Local Set** | **0601.14** | The field dictionary of the airborne collection is ST 0601.14, and it is not held. The profile names the fields' *existence* — a platform position, a sensor orientation, a tail number, a wind speed — and not one of their tags, lengths or scale factors. The largest park, and the one that decides whether this adapter can emit an `Entity` at all | Public download from the MISB/NGA registry. **Version .14 specifically**: ST 0601 has revisions on both sides of it, and a tag added in a later revision decoded against an earlier one is a plausible number in the wrong field |
+| **2** | **MISB ST 0102 — Security Metadata Universal and Local Sets** | **0102.12** | `MISP-2015.1-73` makes it mandatory and §4.4.2.9 calls the practices "mandatory for all Motion Imagery Data". The layout is 0102.12's | Public download. Blocks the confidentiality ruling, which by the NITS precedent must be **carried and never invented** — so until it lands, nothing this adapter emits can be claimed conformant |
+| **3** | **MISB ST 0603 — MISP Time System and Timestamps** | **0603.5** | Settlement 3. The profile requires a timestamp's *form* to comply with ST 0603 and states no epoch, no resolution and no timescale; `epoch`, `1970`, `microsecond` and `leap` occur zero times in 73 pages | Public download. Blocks `Event.observed_at` — the one CDM field this format's own users would consider mandatory. **Also decides TAI against UTC**, and if it is TAI the adapter inherits a leap-second dependency no other adapter here has |
+| **4** | **MISB ST 0107 — KLV Metadata in Motion Imagery** | **0107.3** | `MISP-2015.1-08`: KLV "shall be **formatted** in accordance with MISB ST 0107". Distinct from park 8, and the distinction is the profile's: ST 336 says how a triplet is *encoded* and ST 0107.3 says how KLV is formatted *in motion imagery* — packet construction, which sets are permitted, how items are ordered | Public download. Pairs with park 8: neither alone is enough to read a stream, which is why the two are listed apart rather than merged |
+| **5** | **MISB ST 1201 and ST 1303 — float↔integer mapping, multi-dimensional arrays** | **1201.3**, **1303.1** | `MISP-2015.1-09` and `-10`. Every scaled numeric value inside a KLV item is mapped by ST 1201.3 and every array formatted by ST 1303.1 | Public download. The park where a wrong answer is least visible: a float mapping applied with the wrong range yields a number rather than an exception — the class of defect `cat048_codec`'s ellipsoid audit exists for |
+| **6** | **MISB ST 0903 — VMTI and Track Metadata** | **0903.4** | §4.4.2.4. The detections and derived tracks live here, which is the content the CDM is shaped for | Public download. The highest-value park after 1: it is what would make this adapter emit `Event`s of type `DETECTION` rather than only parked bytes |
+| **7** | **MISB ST 0806 — Remote Video Terminal Metadata Set** | **0806.4** | §4.4.2.4 | Public download |
+| **8** | **SMPTE ST 336 — Data Encoding Protocol Using Key-Length-Value** | **ST 336:2017** | `MISP-2015.1-07`. The KLV encoding itself: key forms, the 16-byte Universal Label, the length forms. **The one park in this table that is not a download** — SMPTE is a commercial standards body and ST 336 sits behind a paywall, which the profile concedes in its own register: "Commercial references cited in this document are available from industry organizations" (FORWARD) | **A purchase decision, not a download.** Named as such deliberately: the other eleven need somebody to spend an afternoon and this one needs somebody to spend money, and a table reporting both as "obtain the document" would hide the only entry in it that has to go to a person with a budget |
+| **9** | **MISB ST 1402 — MPEG-2 Transport Stream for Class 1/Class 2** | **1402.2** | `MISP-2015.1-48` and `-49`, §3.6.9.1 and §5.3.1. Names how KLV is carried in the multiplex, and the two multiplex methods | Public download. **Only needed if the input widens** to a transport stream — settlement 1's asymmetry. Listed so the dependency is visible before somebody widens the input casually |
+| **10** | **MISP-2019.1: Motion Imagery Handbook** | the 2019.1 edition, Nov 2018 | STANAG 4609 Ed 5 lists it as its only OTHER RELATED DOCUMENT and MISP §1.3 calls it a companion "providing definitions of terms used with more background and technical detail". But §3.6.7 says of the same document that it "defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets ... **and defines the required data items**" — register entry **KLV 8** | Public download, the same two URLs. Its billing and its stated function disagree, so whoever obtains it answers that first: a document that defines required data items is normative in fact, whatever the wrapper's headings say |
+| **11** | **MISB ST 1204 and ST 1301 — MIIS Core Identifier, Augmentation Identifiers** | **1204.1**, **1301.2** | `MISP-2015.1-68` and `-69`. §4.4.2.1: "a mandatory consistent unique identifier for all sensors and platforms" | Public download. Blocks `Entity.source_ids`, and therefore blocks keying an `Entity` on anything the stream states. The NITS MIIS decline deferred the *decoding*; here the identifier is the only identity the format guarantees, so the same document is a heavier dependency for this adapter than for that one |
+| **12** | **MISB ST 0902 — Motion Imagery Sensor Minimum Metadata Set** | **0902.8** | `MISP-2015.1-75`, and §4.4.4 calls it "a prerequisite for MISP conformance" | Public download. The minimum conformant content of an airborne feed, which makes it the smallest possible Phase 2: **parks 4, 5 and 8 are enough to READ a stream at all, and parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one** |
+
+**What this table is NOT.** It is not a claim that the documents are unobtainable, and it is not a
+licence to defer indefinitely. Eleven of the twelve can be closed by one person with a browser, and
+the reason they are open is that this phase pinned what it read rather than reading what it intended
+to. That is the same admission CAT048's Reserved Expansion Field row makes, and it is weaker than a
+blocker on purpose.
+
+### Where the specification is ambiguous or contradicts itself
+
+Numbered `KLV n`, and the prose is left as the custodians wrote it. Each entry says what was verified
+against which pinned page, because a register entry that cannot be checked is a rumour with a number.
+
+**KLV 1 — the promulgation lag.** STANAG 4609 Edition 5's cover, its Letter of Promulgation and its
+reference `NSO(NAFAG)0845(2020)JCGISR/4609` are all dated **30 July 2020**. The profile it promulgates
+carries **November 2018** on its title page and in the footer of all 73 pages. Twenty months, and
+neither document mentions the gap. It is sharpened rather than excused by the profile's own
+versioning rule in its FORWARD: "Any changes and modifications to this document will be re-released
+by the MISB with an identifying change of release date when issued in a succeeding year, or an
+increase in version number if within the same year as follows: MISP-YEAR.VersionNumber" — so the
+`2019` in `MISP-2019.1` is not the date on the page, and a citation of this content *by year* is
+ambiguous between three of them: 2018 printed, 2019 in the identifier, 2020 promulgated.
+**Consequence adopted here:** every citation in this section names the document by identifier and
+hash, never by date.
+
+**KLV 2 — every requirement ID inside MISP-2019.1 names an earlier profile version.** 120 distinct
+requirement IDs occur in the pinned copy and **not one of them is `MISP-2019.1-nn`**. The
+distribution: `MISP-2015.1` 93, `MISP-2018.1` 17, `MISP-2016.1` 8, `MISP-2018.3` 4, `MISP-2018.2` 3,
+`MISP-2017.1` 3, `MISP-2015.3` 1. So the prefix records **the profile version that introduced the
+requirement** rather than the document that carries it, and `MISP-2015.1-07` is a live requirement of
+MISP-2019.1 and not a reference to a superseded profile. The 2019.1 change log corroborates the
+reading: it lists approvals of other documents and "Minor editorial changes for improved clarity",
+and introduces no requirement of its own. **Consequence adopted here:** requirements are cited by
+their own ID *with the pinned document named beside them*, because an ID alone reads to a NATO reader
+as a citation of MISP-2015.1 — which STANAG 4609 Edition 4 promulgated and Edition 5 superseded.
+
+**KLV 3 — the profile's reference to the STANAG is one edition behind, and its Appendix C is one
+edition ahead.** Appendix B ref [1] reads "NATO STANAG 4609: NATO Digital Motion Imagery Standard,
+**Edition 4**, 19 Dec 2016", and §1.1 sends the reader to "[1]" for "Additional NATO-specific
+requirements, guidance and governance". Appendix C.1.2, later in the same document, discusses
+"**STANAG 4609 Edition 5** as represented in MISP-2019.1" and cites MISB TRM 1803 for the Ed 4 → Ed 5
+mapping. So inside one document the STANAG is both Edition 4 (reference list) and Edition 5
+(Appendix C), and the wrapper actually holding this profile is Edition 5, which supersedes Edition 4
+in as many words. A reader following §1.1's pointer lands on the superseded edition. Not resolvable
+from either pinned text; recorded, with the pin table above stating which wrapper is in hand.
+
+**KLV 4 — external context: the NISP is a year behind the chain.** NISP Volume 1, `ADatP-34(L) /
+Version 12`, dated 19 Jul 2019, 182 pages, lists NATO STANAG 4609 as "Ed 4" against "Standard -
+MISP-2015.1", and its STANAG index reads "STANAG 4609 Ed 4". **Recorded as context and explicitly not
+as an error**: that NISP version predates STANAG 4609 Edition 5 by a year, so it is stale by
+chronology rather than by mistake — which is both the honest reading and the useful one, because it
+means a programme taking the NISP as its authority on which MISP to implement would implement
+MISP-2015.1 and be conformant to a superseded STANAG. This is the treatment AEDP-12 Edition A (2014)
+gets in the NITS pin: history, never a basis. The copy read hashes to
+`12a3b2ab7075390b9edd53fb50538f5a7098c0d8f0a9a69c8af894acb40e1bac`, 1 440 024 bytes, and **it is not
+in `fixtures/klv/spec/`** — so that hash stands on the reading that recorded it and is the one line
+here a later re-verification cannot check.
+
+**KLV 5 — the reference list versions most of its MISB documents and six not at all.** Appendix B
+gives a revision suffix for every document this section relies on (0601.14, 0102.12, 0603.5, 0107.3,
+0903.4, 0806.4, 1402.2, 1201.3, 1303.1, 1204.1, 0902.8) and none for ref [74] "MISB ST 1607
+Constructs to Amend/Segment KLV Metadata, 2016", ref [89] "MISB ST 1101", ref [84] "MISB RP 1302", or
+the three TRMs at refs [98], [99] and [100]. ST 1607 is the one with a requirement pointing at it:
+`MISP-2017.1-95` is a "shall". So for that one mechanism the profile pins a document and not a version
+of it, and a Phase 2 needing the Amend and Segment Local Sets cannot tell from this text which
+revision it must read.
+
+**KLV 6 — nothing in the profile requires a standalone metadata stream to carry an absolute time.**
+Settlement 3 states the reading; this entry records that it is the *standard's* ambiguity and not a
+reading choice. The unconditional mandate `MISP-2018.3-116` attaches to a Motion Imagery **frame**;
+the metadata mandate `MISP-2018.1-97` is conditional on a timestamp being present; and the prose in
+§2.1.5 introducing both is circular — "it is also mandatory for Metadata packets which include a
+Metadata item for a timestamp based on Absolute Time". The two unequivocal predecessors,
+`MISP-2015.1-03` and `MISP-2015.1-04`, are in Appendix A.2 as **deprecated**. §5.5 then contemplates
+exactly the case that falls through: "There are situations where Metadata needs to be transmitted
+separately from the Motion Imagery." Consequence: a conformant standalone KLV stream may carry no
+absolute time at all, so `Event.observed_at` for this format is not merely blocked on park 3 — it may
+be **absent from the source**, which is **gap 23**, "no way to carry an observation whose source
+states no time", reached from a second format.
+
+**KLV 7 — the security mandate's paragraph and its requirement do not use the same term, and
+Appendix E defines both.** §4.4.2.9 says "It is mandatory that **Motion Imagery Data** be marked
+correctly and consistently with security classification" and "The approved practices in this standard
+are mandatory for all **Motion Imagery Data**". The requirement it introduces, `MISP-2015.1-73`, says
+"**Motion Imagery** shall include Security Metadata in accordance with MISB ST 0102 [55]". Appendix E
+defines the two terms distinctly — "**Motion Imagery Data**: Three components: Motion Imagery (see
+definition below), Metadata and/or Audio" against "**Motion Imagery**: Motion Imagery is a sequence of
+pictures that when viewed ... must have the potential for providing informational or intelligence
+value" — so the paragraph's scope includes a metadata stream and the requirement's scope is the
+imagery. That decides whether the input this adapter reads must be labelled at all, and the pinned
+text says both.
+
+**KLV 8 — the document classified as "related" is the one that "defines the required data items".**
+STANAG 4609 Ed 5 puts the Motion Imagery Handbook under OTHER RELATED DOCUMENTS while its AGREEMENT
+clause names only MISP-2019.1, and MISP §1.3 calls the Handbook a companion that "supports material
+presented in the MISP providing definitions of terms used with more background and technical detail".
+Then §3.6.7 says of the same document: "The Motion Imagery Handbook defines the Structure of the
+Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of
+KLV Packs and Local Sets that reduces the bandwidth needed to transmit the data, and **defines the
+required data items**." A document that defines required data items is normative in fact. Neither
+pinned text resolves which reading governs, and park 10 records that whoever obtains the Handbook has
+to answer it before quoting it.
+
+### Deliberately out of scope, and why
+
+An unimplemented thing is a decision, so each one is named, and each says whether it is deferred or
+rejected.
+
+| Out | Deferred or rejected | Decision |
+|---|---|---|
+| **The video essence — H.264/AVC, H.265/HEVC, H.262/MPEG-2 elementary streams** | **rejected** | The CDM carries no pixels: four objects, and no field, payload model or candidate for one. Coherent only together with the container decline — an elementary stream in another PID of the same multiplex is not in this adapter's payload, which is the NITS `Radar4607` shape. Settlement 1 |
+| **The MPEG-2 Transport Stream as an input** | **deferred** | Transport is the caller's, on the rule seven formats have already met. Deferred rather than rejected because a Phase 2 could reasonably accept a demultiplexed metadata PID from a caller that did the demultiplexing; what stays refused is this adapter holding multiplex state. Needs park 9 either way |
+| **Audio** | **rejected** | `MISP-2015.1-46` and MISB ST 1001.1. The same reason as the essence, and the profile says of the content itself: "At present, the MISP does not provide standards for Audio Content other than the Quality Loss discussion in MISB ST 1001 [44]" (§4.3) |
+| **MXF, SDI, GigE Vision, MIE4NITF and JPIP containers and interfaces** | **rejected** | §3.2.3.1, §3.5.2, §3.7.12, §5.4.1. Five more containers for the same three layers. Each would be a transport decision and none changes what a KLV item is |
+| **Class 0, Class 2 and Class 3 Motion Imagery** | **deferred** | The classes are defined by the imagery's characteristics (§2.2) and not by the metadata's, but the metadata encoding differs with them: §4.4 says Class 1 "exclusively mandates that all Metadata be encoded using KLV" while Class 2's encoding "depends on the Container" — under MIE4NITF the metadata is Tagged Record Extensions instead. So a Class 2 feed in MIE4NITF is a different parser, and Class 1 is what this row set is written for |
+| **Single Image Extraction to NITF/NSIF** | **rejected** | `MISP-2015.1-16`. The profile disclaims it itself: "An Image extracted from Motion Imagery is no longer Motion Imagery, and therefore, not subject to the MISP" (§3.3) |
+| **Chaining KLV → CoT → `tak.py` through MISB ST 0805.1** | **rejected** | `MISP-2015.1-80` mandates a ST 0601 → CoT mapping and this repository already has a CoT adapter, so the chain is available and tempting. Refused: two translations in series make this adapter's output depend on a third party's mapping choices, and the CDM exists precisely so that N adapters need N translations rather than a graph of them. A ST 0805 mapping is a *consumer* of the CDM's output, not a route into it |
+| **STANAG 4559 and STANAG 4586 interfaces** | **rejected** | §6.2 and §6.3, through MISB RP 0813.1 and ST 1101. Library integration and payload control are not translation, and ST 1101's messages are commands rather than observations |
+| **The two U.S. companion documents** | **rejected** | "MISP-2019.1: U.S. Governance" and "MISP-2019.1: U.S. Specific". §1.1 scopes them to U.S.-specific requirements and STANAG 4609 Ed 5 promulgates neither, so they sit outside the NATO-implementable set by both documents' construction. Not a park: obtaining them would not widen a NATO adapter's scope |
+| **Deprecated and retired standards** | **rejected** | Appendix A.1 lists the deprecated standards documents and A.2 the deprecated requirements. A feed conforming to `MISB ST 9701`-era MPEG-2 carriage, or to `MISB EG 0104`'s "Predator UAV Basic Universal Metadata Set", is not what this profile describes — and the NITS Edition 1 precedent applies: a different document is a different adapter, never a mode flag |
+| **Claiming conformance** | **rejected** | §1.2: "Conformance to the standards and requirements is mandatory and can only be guaranteed through rigorous testing procedures", and the change log names an "NGA Conformance Program Plan for Motion Imagery" that Appendix B does not reference and this repository does not hold. Nothing this adapter emits will be claimed conformant — the NITS XSD-validation position reached a second time, for the same reason: the document that would settle it is not here |
+
+**No gap is opened by this row set, and that is worth stating rather than leaving to inference** —
+"no entry" and "nobody wrote an entry" look identical from here, which is `MIGRATIONS.md`'s own rule.
+Nothing here is a CDM shortfall: every absence above is a *document* this repository does not hold,
+and the two places where the CDM genuinely has nowhere to put something are already recorded as gap
+18 (the clock-quality metadata of ST 1603.2) and gap 23 (an observation whose source states no time,
+which **KLV 6** shows this format can produce). The sub-millisecond question that a Nano Precision
+Time Stamp raises is settled by CAT021's ruling that it is not a defect. So this phase proposes no
+field and opens no gap, deliberately.
+
+### The fixtures — planned here, before they exist
+
+**Nothing is built in this phase and `fixtures/klv/` holds only `spec/`.** That is deliberate, and it
+is a *checked* condition rather than an accident: since 80b38d1 a harness run against a directory
+whose only content is `spec/` raises `NoFixturesFound` and exits 2, so
+
+```bash
+python -m synapse_cdm.harness --adapter stanag4609 --fixtures packages/cdm/synapse_cdm/fixtures/klv
+```
+
+fails loudly today instead of reporting a vacuous green. **It fails twice over, and the order is
+worth stating** because a reader who runs it will meet the first failure and not the second: the
+adapter name does not resolve yet, so this exact command raises `LookupError: unknown adapter
+'stanag4609'` and exits **1**; point the same directory at any registered adapter and it raises
+`NoFixturesFound` and exits **2**. A test does exactly that — it runs the directory through a
+registered adapter and asserts the raise — because the claim being made here is about the
+*directory*, and an assertion that stopped at the unknown-adapter error would be checking the
+registry instead.
+
+**Everything will be synthetic**, and the honest constraint is sharper here than for any previous
+format: **a fixture cannot be written until park 8 closes, and cannot be interesting until park 4 and
+at least one of parks 1, 6 or 12 close.** A `.klv` payload is a sequence of key/length/value
+triplets, and this phase does not hold the document that says how a key or a length is written.
+Writing bytes anyway would produce a file that *looks* like KLV, a golden file recording what our own
+guess decodes to, and a green harness run asserting that the two agree — which is exactly the
+round-trip trap `packages/cdm/synapse_cdm/README.md` names: self-consistency without an external
+anchor. So the plan below is a plan and not a schedule, and each entry names the parks that gate it.
+
+| Fixture | What it is there to catch | Gated on |
+|---|---|---|
+| `minimal_local_set.klv` | one Local Set, a handful of items, no nesting — the smallest thing that exercises the envelope at all | 4, 8 |
+| `nested_amend_local_set.klv` | ST 1607's Amend LS inside an instantiating set, so the nesting rule and `MISP-2017.1-95` are both exercised | 4, 8, and the revision question in **KLV 5** |
+| `security_local_set_present.klv` | ST 0102.12 security metadata carried and re-emitted unchanged, per the carry-never-invent rule | 2 |
+| `security_local_set_absent.klv` | **KLV 7**'s case: a conformant-looking stream with no security metadata, which must translate rather than refuse while the term question is open | 2 |
+| `precision_time_stamp.klv` | an absolute time that resolves, with the raw integer parked and egress re-emitting from it | 3 |
+| `nano_precision_time_stamp.klv` | the finer representation, so the three-decimal rendering rule is exercised rather than assumed | 3 |
+| `no_absolute_time_at_all.klv` | **KLV 6**'s case: a stream carrying no timestamp, which the profile permits. `Event.observed_at` from the injected clock, the basis recorded, gap 23 cited | 3 |
+| `two_time_representations.klv` | `MISP-2018.1-98`'s violation — both representations in one instantiation — which must be **refused**, and is the only stream-level consistency check the profile states | 3 |
+| `vmti_detections.klv` | ST 0903.4 detections becoming `Event`s of type `DETECTION` — the first fixture in this set that would produce a CDM object describing the world | 6 |
+| `mismms_minimum_set.klv` | ST 0902.8's minimum set, the smallest conformant airborne feed | 12, plus 1 and 11 |
+| `unknown_key_parked.klv` | a key in no held registry, parked whole under `unresolved_raw` and never guessed | 8 |
+| `truncated_final_item.klv` | a declared length that runs past the buffer — CAT048's `records_do_not_tile_len` refusal in a second format | 8 |
+
+Each will ship as a twin: a `.klv` payload and a `.parsed.json` holding the parsed form the
+never-drop check measures against, the pattern the three binary adapters already use. Identifiers
+will follow the Legion rule wherever any are needed, and park 11's Core Identifier question is what
+decides whether they are needed at all.
 
 ## GeoJSON (RFC 7946)
 

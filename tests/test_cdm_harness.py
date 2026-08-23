@@ -360,6 +360,30 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
         "claim that fixtures were judged, and a machine reading one would record a green"
 
 
+#: THE MAP, and it is two maps because there are two kinds of entry.
+#:
+#: `SHIPPED` is the adapter-name-to-fixture-directory map that the `stanag4676` / `nits` mismatch
+#: made a trap: it is checked against what `adapter.discover()` actually returns, so it cannot
+#: drift from the code either way. `PLANNED` is for an adapter whose row set has landed as a
+#: specification and whose code has not — Phase 1, in the pattern Legion, NITS, GMTIF and CAT048
+#: each went through. The two are kept apart rather than merged with a flag because the shipped
+#: half's whole value is being an equality against the registry: a Phase 1 name in there would
+#: make that assertion fail, and relaxing it to a subset check would give up the thing it pins.
+SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat048": "cat048",
+                        "gmti": "gmti", "legion": "legion", "pntmap": "pntmap",
+                        "stanag4676": "nits", "tak": "tak"}
+
+#: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
+#:
+#: `stanag4609` reads STANAG 4609 / MISP-2019.1 KLV metadata streams and its fixtures will live in
+#: `fixtures/klv`, which is the same split as `stanag4676` / `nits`: the adapter is named for the
+#: standard because STANAG 4609 is, in the profile's own words, "a covering document rather than a
+#: standalone document", and the directory is named for the content because a directory holds
+#: payloads. Recorded HERE, on the day the directory was created, rather than after somebody typed
+#: the wrong one — which is exactly what 80b38d1 had to repair.
+PLANNED_FIXTURE_DIRS = {"stanag4609": "klv"}
+
+
 def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():
     """The sweep the gate runs, as a test, so the directory names stop being folklore.
 
@@ -369,9 +393,7 @@ def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():
     for real — `harness.run` would raise on any that were not.
     """
     root = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures"
-    expected = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat048": "cat048",
-                "gmti": "gmti", "legion": "legion", "pntmap": "pntmap",
-                "stanag4676": "nits", "tak": "tak"}
+    expected = SHIPPED_FIXTURE_DIRS
     from synapse_cdm import adapter as adapter_module
     shipped = {n for n, c in adapter_module.discover().items()
                if c.__module__.startswith("synapse_cdm.adapters.")}
@@ -387,4 +409,79 @@ def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():
         assert files, (
             f"{name}: {path} holds no fixture files, so any harness run against it exercises "
             "nothing. If the fixtures moved, fix the map in this test"
+        )
+
+
+def test_a_planned_adapters_fixture_directory_is_mapped_before_its_code_exists():
+    """The Phase 1 half of the map: named on the day the directory appears, not afterwards.
+
+    80b38d1's finding was that the adapter-name-to-fixture-directory relation was folklore until a
+    wrong path was typed into a gate sweep and reported nine greens with one of them having
+    replayed nothing. Pinning the shipped half stops that recurring for shipped adapters; this
+    stops it recurring for the next one, because the window in which the relation is folklore is
+    exactly the window between creating `spec/` and writing an adapter.
+
+    Deliberately asserted in BOTH directions. A planned name must not be in the registry — if it
+    is, the adapter shipped and the entry belongs in `SHIPPED_FIXTURE_DIRS` — and its directory
+    must exist, because a map entry pointing at nothing is worse than no entry.
+    """
+    from synapse_cdm import adapter as adapter_module
+    shipped = {n for n, c in adapter_module.discover().items()
+               if c.__module__.startswith("synapse_cdm.adapters.")}
+    root = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures"
+
+    assert PLANNED_FIXTURE_DIRS, (
+        "the planned half of the map is empty. If the last Phase 1 adapter shipped, its entry "
+        "moves to SHIPPED_FIXTURE_DIRS in the same commit — it does not just disappear"
+    )
+    assert not (set(PLANNED_FIXTURE_DIRS) & set(SHIPPED_FIXTURE_DIRS)), (
+        f"a name is in both halves of the map: "
+        f"{sorted(set(PLANNED_FIXTURE_DIRS) & set(SHIPPED_FIXTURE_DIRS))}"
+    )
+    directories = list(SHIPPED_FIXTURE_DIRS.values()) + list(PLANNED_FIXTURE_DIRS.values())
+    assert len(directories) == len(set(directories)), (
+        f"two adapters claim one fixture directory: {sorted(directories)}. One directory per "
+        "adapter is what makes a harness run attributable"
+    )
+    for name, directory in sorted(PLANNED_FIXTURE_DIRS.items()):
+        assert name not in shipped, (
+            f"{name} is registered as a shipped adapter, so it is no longer planned. Move it to "
+            "SHIPPED_FIXTURE_DIRS — a planned entry for shipped code means the roster and this "
+            "map disagree about what exists"
+        )
+        path = root / directory
+        assert path.is_dir(), (
+            f"{name}: {path} is not a directory. A planned entry has to point at the directory "
+            f"the pin already lives in, or the name is still folklore"
+        )
+        assert (path / "spec").is_dir(), (
+            f"{name}: {path}/spec is missing, and spec/ is where a Phase 1's committed artefact — "
+            "the pin record — lives. Without it there is nothing in the directory at all"
+        )
+
+
+def test_a_planned_adapters_directory_fails_the_harness_rather_than_passing_vacuously():
+    """The two halves of 80b38d1 meeting: a Phase 1 directory is the vacuous-run case, on purpose.
+
+    A directory holding only `spec/` is one of the three shapes that commit made fail. That is not
+    an awkward side effect of committing a pin before any fixture — it is the correct outcome, and
+    it is the strongest thing a Phase 1 can assert about its own fixture directory: nobody can run
+    this adapter's gate and be told it passed.
+    """
+    root = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures"
+    for name, directory in sorted(PLANNED_FIXTURE_DIRS.items()):
+        path = root / directory
+        payloads = [p.name for p in path.iterdir()
+                    if p.is_file() and p.name != "README.md" and not p.name.startswith(".")]
+        assert payloads == [], (
+            f"{name}: {path} holds {payloads}. A planned adapter has no code to replay them "
+            "through, so a payload here is a file nothing judges"
+        )
+        with pytest.raises(harness.NoFixturesFound) as caught:
+            harness.run(_adapter(), path)
+        message = str(caught.value)
+        assert "spec/" in message, (
+            "the message has to name the spec/ convention, because 'only a spec/ subdirectory' is "
+            "precisely the shape a Phase 1 directory has and the reader needs to know it is not a "
+            "path mistake"
         )

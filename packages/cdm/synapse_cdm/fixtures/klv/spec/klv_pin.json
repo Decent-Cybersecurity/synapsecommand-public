@@ -1,0 +1,299 @@
+{
+  "what_this_is": "The pinned identity of the two documents the STANAG 4609 / MISP-2019.1 row set in FORMAT_COVERAGE.md was read from, plus every value extracted from them that a ruling rests on, each with the locus inside the document. House style follows fixtures/cat048/spec/cat048_pin.json, fixtures/cat021/spec/sac_pin.json and fixtures/legion/spec/openapi_pin.json: an edition number names a DOCUMENT and a SHA-256 names the COPY THAT WAS READ, and those are different claims. Neither PDF is committed - see not_committed below.",
+  "adapter": {
+    "name": "stanag4609",
+    "fixture_directory": "klv",
+    "why_the_two_names_differ": "The adapter takes the STANAG's number because STANAG 4609 is, in MISP-2019.1 SS C.1.2's own words, 'a covering document rather than a standalone document, which points directly to a version of the U.S. Motion Imagery Standards Profile (MISP)' - so there is no NATO document whose CONTENT could name the adapter, while the STANAG number is what an ICD, a NISP row and a national ratification record all call the feed. The fixture directory takes the content's name because a directory holds PAYLOADS and a payload is not a standard, which is the same split that puts adapter stanag4676's fixtures in fixtures/nits. The adapter-shaped content is the KLV metadata stream, so the directory is klv and the payload extension will be .klv.",
+    "rejected_directory_names": {
+      "misp": "Names the governing profile, which is a DOCUMENT - the pinned PDF would sit at fixtures/misp/spec/misb-misp-2019-1.pdf, a directory named after a file inside it. It also names the wrong layer: the MISP governs the imagery, the audio, the containers and the transport as well, and this adapter reads one of the five.",
+      "misb": "Names the publisher. fixtures/eurocontrol would have been wrong for CAT048 for the same reason.",
+      "fmv": "Rejected by the pinned text itself, MISP SS 2.1.1: 'FMV has no formal definition and conveys different meanings to different communities; therefore, the term FMV should not be used in any contractual language.' A fixture directory name is closer to contractual language than to prose.",
+      "stanag4609": "Would reproduce the bug commit 80b38d1 had to fix - three NITS PDFs sitting in a directory named for the adapter because a copy command took the adapter's name where the fixture directory's name was wanted."
+    },
+    "phase": "Phase 1. No adapter code, no codec, no fixtures. Every mapping row in FORMAT_COVERAGE.md says `not yet`.",
+    "adapter_number": {
+      "claimed": 10,
+      "on_what_authority": "FORMAT_COVERAGE.md's ordinal table, section 'The adapter ordinals, and why #9 is reserved', which is now the single authority for the series and is checked against every other site by tests/test_cdm_ordinals.py. Under its rule a parked ordinal is RESERVED rather than skipped: #9 is held for nffi, so the next free number after gmti at #8 is this adapter's, and cat048 keeps #11.",
+      "the_rule_this_replaced_and_why_it_was_wrong": "Two tests had encoded 'the next number is one past the highest that has shipped' - tests/test_cdm_gmtif_adapter.py::_gmtif_section and tests/test_cdm_asterix_cat048_adapter.py::_section both predicted #12 for this adapter, and the first version of this pin claimed #12 on their authority. That rule re-issues a reserved number the moment a park is revisited, at which point an ordinal stops identifying an adapter. Both tests are amended to the reserved-ordinal rule.",
+      "the_one_site_that_was_simply_wrong": "FORMAT_COVERAGE.md's CAT048 preamble called the NITS and GMTIF row sets '#9 and #10' while adapters/stanag4676.py and adapters/gmtif.py say #7 and #8. Corrected to #7 and #8. The CAT048 declines table's forecast of #12 for ASTERIX Category 034 is untouched and is consistent: under the reserved-ordinal rule #12 is what is next free after #11."
+    }
+  },
+  "wrapper": {
+    "document": "NATO Standardization Agreement (STANAG) 4609, NATO Digital Motion Imagery Standard",
+    "edition": "5",
+    "edition_date_as_the_document_states_it": "30 JULY/JUILLET 2020",
+    "letter_of_promulgation_date": "30 July/juillet 2020",
+    "letter_of_promulgation_reference": "NSO(NAFAG)0845(2020)JCGISR/4609",
+    "publisher": "the NATO Standardization Office (NSO)",
+    "tasking_authority": "NATO AIR FORCE ARMAMENTS GROUP (NAFAG)/(AC/224), JOINT CAPABILITY GROUP ON INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE (JCGISR)",
+    "supersedes": "STANAG 4609, Edition 4, dated 19 December 2016",
+    "nato_effective_date": "Not applicable.",
+    "security_classification_statement": "This STANAG is a NATO non-classified document to be handled in accordance with C-M(2002)60.",
+    "local_path": "fixtures/klv/spec/nato-stanag-4609-edition-5.pdf",
+    "bytes": 273801,
+    "sha256": "f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8",
+    "pages": 5,
+    "page_layout": "page 1 title, page 2 the bilingual Letter of Promulgation printed '- i -', page 3 a blank leaf, pages 4-5 the STANAG body printed '- 1 -' and '- 2 -'",
+    "retrieved_at": "2026-08-23",
+    "bilingual": "English and French in parallel columns throughout. The French column's font uses a non-standard encoding that renders as letter-spaced mojibake in text extraction; every quotation recorded here is from the ENGLISH column, which extracts cleanly.",
+    "the_normative_act": {
+      "aim": "The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements.",
+      "interoperability_requirement": "To provide common methods for the generation, dissemination, exploitation and archive of Motion Imagery (MI) among National and NATO Intelligence, Surveillance and Reconnaissance (ISR) systems.",
+      "agreement": "Participating nations agree to implement the following standard.",
+      "standard": "U.S. Motion Imagery Standards Board (MISB) Motion Imagery Standards Profile-2019.1 (MISP-2019.1)",
+      "other_related_documents": "U.S. Motion Imagery Standards Board (MISB) Motion Imagery Standards Profile-2019.1 (MISP-2019.1): Motion Imagery Handbook",
+      "implementation_of_the_agreement": "MISP-2019.1 defines the technical requirements for motion imagery formats, compression, metadata and transmission protocols for ISR systems and systems that manage and/or exploit motion imagery data.",
+      "what_it_contains_that_is_technical": "Nothing. The wrapper states no field, no encoding, no layout and no requirement of its own. Every technical requirement this adapter could implement is in the profile it promulgates, which is why there are two pins and not one."
+    },
+    "verification_performed": [
+      "SHA-256 recomputed from the copy at the local path above and compared: match.",
+      "Byte count recomputed from the local copy: 273801, match.",
+      "Page count counted from the document's own page tree: 5.",
+      "Title page read and confirmed to state 'STANDARDIZATION AGREEMENT', 'STANAG 4609', 'NATO DIGITAL MOTION IMAGERY STANDARD', 'EDITION/EDITION 5', '30 JULY/JUILLET 2020', and publication by 'the NATO STANDARDIZATION OFFICE (NSO)'.",
+      "Letter of Promulgation read and confirmed dated 30 July/juillet 2020 with reference NSO(NAFAG)0845(2020)JCGISR/4609.",
+      "AGREEMENT, STANDARD, OTHER RELATED DOCUMENTS, SUPERSEDED DOCUMENTS and IMPLEMENTATION OF THE AGREEMENT clauses read in full and quoted above verbatim."
+    ]
+  },
+  "target": {
+    "document": "Motion Imagery Standards Profile, MISP-2019.1",
+    "issuing_body": "Motion Imagery Standards Board (MISB)",
+    "title_page_date": "November 2018",
+    "footer_date_on_every_page": "November 2018",
+    "local_path": "fixtures/klv/spec/misb-misp-2019-1.pdf",
+    "bytes": 1372771,
+    "sha256": "3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea",
+    "pages": 73,
+    "retrieved_at": "2026-08-23",
+    "structure": "Five numbered sections plus seven appendices: 1 GENERAL, 2 TECHNICAL DATA, 3 STRUCTURE, 4 CONTENT, 5 DISSEMINATION, 6 EXTERNAL INTERFACES, Appendix A Deprecated/Retired Standards & Requirements, Appendix B References, Appendix C NATO Traceability and Implementation Information, Appendix D Acronyms, Appendix E Definitions and Terms, Appendix F MISB Documentation, Appendix G MISB Processes.",
+    "normativity_statement_from_the_forward": "The MISP contains normative requirements. These requirements use the word 'shall' and are mandatory for conformance to the MISP.",
+    "where_its_references_come_from_forward": "References developed by the MISB are available under MISB Public Web Site: http://www.gwg.nga.mil/misb or NSG Registry Web Site: https://nsgreg.nga.mil/misb.jsp",
+    "commercial_references_statement_forward": "Commercial references cited in this document are available from industry organizations.",
+    "version_numbering_rule_forward": "Any changes and modifications to this document will be re-released by the MISB with an identifying change of release date when issued in a succeeding year, or an increase in version number if within the same year as follows: MISP-YEAR.VersionNumber",
+    "verification_performed": [
+      "SHA-256 recomputed from the copy at the local path above and compared: match.",
+      "Byte count recomputed from the local copy: 1372771, match.",
+      "Page count counted from the document's own page tree: 73.",
+      "Title page read and confirmed to state 'MOTION IMAGERY STANDARDS PROFILE', 'Motion Imagery Standards Board', 'MISP-2019.1' and 'November 2018'.",
+      "Change Log (PDF page 7) read in full and compared item by item against Appendix B: every version string agrees. See change_log_against_reference_list below.",
+      "Appendix B read in full, all 103 references.",
+      "Every requirement ID in the document enumerated: 120 distinct IDs, none of them MISP-2019.1-nn. See ambiguity KLV 2."
+    ]
+  },
+  "page_count_method": {
+    "how": "Counted from each PDF's own page tree - occurrences of /Type /Page across raw objects and across every inflated object stream.",
+    "why_it_is_recorded": "A page count is a pin value like any other, so the method that produced it has to be reproducible.",
+    "validated_before_it_was_trusted": "Run against the seven documents whose page counts FORMAT_COVERAGE.md already records - eurocontrol-cat048-part4-edition-1-32.pdf 64, nato-aedp-4607-1-edition-a-v1.pdf 212, nato-aedp-4607-edition-a-v1.pdf 104, nato-stanag-4607-edition-4.pdf 6, nato-aedp-12-1-edition-a-v1.pdf 192, nato-aedp-12-edition-b-v2.pdf 150, nato-stanag-4676-edition-2.pdf 5 - and reproduced all seven exactly. The NATO documents keep their page objects inside compressed object streams and the EUROCONTROL one does not, so both paths are exercised by that check."
+  },
+  "not_committed": {
+    "the_pdfs_are_not_in_git": true,
+    "precedent": "`git ls-files | grep -c '\\.pdf$'` is 0 across the whole repository. fixtures/cat048/spec/, fixtures/gmti/spec/ and fixtures/nits/spec/ each hold specification PDFs in the working tree and none in the index.",
+    "consequence_for_this_directory": "Both files sit in the working tree because they had to be read. They are excluded from the commit by naming the committed paths explicitly rather than by `git add -A`, and .gitignore is deliberately NOT used: no .gitignore exists anywhere in this repository, and introducing one to solve a two-file problem would be a new convention adopted in passing.",
+    "why": "STANAG 4609 Edition 5 carries NATO's own restriction: 'No part of this publication may be reproduced, stored in a retrieval system, used commercially, adapted, or transmitted in any form or by any means, electronic, mechanical, photocopying, recording or otherwise, without the prior permission of the publisher.' A pin plus a hash plus a public retrieval route reproduces the artefact for any reader without this repository redistributing it, which is why all ten adapter efforts here pin rather than vendor."
+  },
+  "delegation_table": {
+    "what_this_is": "The MISP is a profile, so much of its normative content is a set of pointers. Every version string below was read off the pinned copy's Appendix B and cross-checked against the section that cites it. The six the task named are all confirmed exactly as reported; ST 1402 is an addition this reading found necessary.",
+    "entries": [
+      {
+        "document": "SMPTE ST 336",
+        "version_the_misp_pins": "ST 336:2017",
+        "title_as_the_misp_gives_it": "Data Encoding Protocol Using Key-Length-Value",
+        "reference_number": 13,
+        "locus": "Appendix B (PDF page 63); cited by requirement MISP-2015.1-07 in SS 3.2.2",
+        "requirement_text_verbatim": "KLV (Key-Length-Value) Metadata shall be encoded in accordance with SMPTE ST 336 [13].",
+        "governs": "the KLV encoding itself - key form, length form, the triplet",
+        "held": false,
+        "park": 8
+      },
+      {
+        "document": "MISB ST 0107",
+        "version_the_misp_pins": "0107.3",
+        "title_as_the_misp_gives_it": "KLV Metadata in Motion Imagery",
+        "date_the_misp_gives": "Nov 2018",
+        "reference_number": 14,
+        "locus": "Appendix B; cited by requirement MISP-2015.1-08 in SS 3.2.2; also named in the 2019.1 Change Log",
+        "requirement_text_verbatim": "KLV Metadata shall be formatted in accordance with MISB ST 0107 [14].",
+        "governs": "how KLV is FORMATTED in motion imagery, as distinct from how it is encoded",
+        "held": false,
+        "park": 4
+      },
+      {
+        "document": "MISB ST 0601",
+        "version_the_misp_pins": "0601.14",
+        "title_as_the_misp_gives_it": "UAS Datalink Local Set",
+        "date_the_misp_gives": "Nov 2018",
+        "reference_number": 53,
+        "locus": "Appendix B; SS 4.4.4.1 'The Airborne - UAS Collection is defined in MISB ST 0601 [53]'; also SS 4.4.2.2, SS 4.4.2.3, SS 4.4.2.5, SS 4.4.2.7, SS 4.4.2.10 and Figure 12; also named in the 2019.1 Change Log",
+        "governs": "the field dictionary of the airborne UAS collection - the local set an airborne feed actually carries",
+        "held": false,
+        "park": 1
+      },
+      {
+        "document": "MISB ST 0102",
+        "version_the_misp_pins": "0102.12",
+        "title_as_the_misp_gives_it": "Security Metadata Universal and Local Sets for Motion Imagery Data",
+        "date_the_misp_gives": "Jun 2017",
+        "reference_number": 55,
+        "locus": "Appendix B; cited by requirement MISP-2015.1-73 in SS 4.4.2.9",
+        "requirement_text_verbatim": "Motion Imagery shall include Security Metadata in accordance with MISB ST 0102 [55].",
+        "governs": "the security / classification local set, which SS 4.4.2.9 calls mandatory",
+        "held": false,
+        "park": 2
+      },
+      {
+        "document": "MISB ST 0603",
+        "version_the_misp_pins": "0603.5",
+        "title_as_the_misp_gives_it": "MISP Time System and Timestamps",
+        "date_the_misp_gives": "Oct 2017",
+        "reference_number": 12,
+        "locus": "Appendix B; SS 2.1.5 and requirements MISP-2018.3-116, MISP-2018.1-97, MISP-2018.1-98; again in SS 3.6.6 and SS 4.4.2.12",
+        "governs": "the Precision Time Stamp and the Nano Precision Time Stamp - epoch, resolution, timescale",
+        "held": false,
+        "park": 3
+      },
+      {
+        "document": "MISB ST 0903",
+        "version_the_misp_pins": "0903.4",
+        "title_as_the_misp_gives_it": "Video Moving Target Indicator and Track Metadata",
+        "date_the_misp_gives": "Oct 2014",
+        "reference_number": 57,
+        "locus": "Appendix B; SS 4.4.2.4, the Exploitation Domain",
+        "governs": "VMTI detections and motion-imagery-derived track metadata - the part of this format closest to what the CDM is for",
+        "held": false,
+        "park": 6
+      },
+      {
+        "document": "MISB ST 0806",
+        "version_the_misp_pins": "0806.4",
+        "title_as_the_misp_gives_it": "Remote Video Terminal Metadata Set",
+        "date_the_misp_gives": "Feb 2014",
+        "reference_number": 59,
+        "locus": "Appendix B; SS 4.4.2.4, the Exploitation Domain",
+        "governs": "the RVT metadata set",
+        "held": false,
+        "park": 7
+      },
+      {
+        "document": "MISB ST 1402",
+        "version_the_misp_pins": "1402.2",
+        "title_as_the_misp_gives_it": "MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and Metadata",
+        "date_the_misp_gives": "Oct 2016",
+        "reference_number": 48,
+        "locus": "VERSION: ref [48], Appendix B, PDF page 64. REQUIRED BY: MISP-2015.1-48 and MISP-2015.1-49 in SS 3.6.9.1, MISP-2016.1-90 in SS 3.7.12.1, and the prose of SS 5.3.1 - all four unsuffixed.",
+        "governs": "KLV carriage inside the multiplex, and the two multiplex methods MISP-2015.1-49 names",
+        "beyond_the_six_named_and_why": "Without ST 1402.2 there is no stated way to LOCATE the KLV stream inside a transport stream. A delegation table that stopped at the six field dictionaries would have understated what a Phase 2 ingest path depends on.",
+        "held": false,
+        "park": 9,
+        "appendix_b_entry_verbatim": "MISB ST 1402.2 MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and Metadata, Oct 2016.",
+        "why_the_version_cell_cites_appendix_b_and_not_the_requirement": "A challenge asked where '.2' comes from, since SS 3.6.9.1 and SS 3.7.12.1 both cite 'MISB ST 1402 [48]' with no suffix. Appendix B is the answer and the entry is quoted above, so the version stands. The check generalised: see revision_suffixes_live_on_six_pages below."
+      }
+    ],
+    "also_mandatory_and_parked_but_not_stream_governing": [
+      {
+        "document": "MISB ST 1204",
+        "version": "1204.1",
+        "title": "Motion Imagery Identification System (MIIS) Core Identifier",
+        "date": "Oct 2013",
+        "reference_number": 54,
+        "required_by": "MISP-2015.1-68",
+        "park": 11
+      },
+      {
+        "document": "MISB ST 1301",
+        "version": "1301.2",
+        "title": "Motion Imagery Identification System - Augmentation Identifiers Local Set",
+        "date": "Feb 2014",
+        "reference_number": 56,
+        "required_by": "MISP-2015.1-69",
+        "park": 11
+      },
+      {
+        "document": "MISB ST 0902",
+        "version": "0902.8",
+        "title": "Motion Imagery Sensor Minimum Metadata Set",
+        "date": "Nov 2018",
+        "reference_number": 73,
+        "required_by": "MISP-2015.1-75, which SS 4.4.4 calls 'a prerequisite for MISP conformance'",
+        "park": 12
+      },
+      {
+        "document": "MISB ST 1201",
+        "version": "1201.3",
+        "title": "Floating Point to Integer Mapping",
+        "date": "Oct 2017",
+        "reference_number": 15,
+        "required_by": "MISP-2015.1-09",
+        "park": 5
+      },
+      {
+        "document": "MISB ST 1303",
+        "version": "1303.1",
+        "title": "Multi-Dimensional Array Pack",
+        "date": "Nov 2018",
+        "reference_number": 16,
+        "required_by": "MISP-2015.1-10",
+        "park": 5
+      }
+    ],
+    "revision_suffixes_live_on_six_pages": {
+      "finding": "Every revision suffix in MISP-2019.1 occurs on six of its 73 pages: the Change Log (PDF page 7), Appendix B (PDF pages 63-66), and one stray inside an Appendix A.2 deprecation note (PDF page 62, 'Note: Requirement moved to MISB ST 0605.9'). NOT ONE requirement and not one section of the body - PDF pages 10 to 57 - states a revision of anything.",
+      "how_it_was_checked": "Every match of the pattern (ST|RP|TRM|EG) followed by a four-digit number, a dot and a revision number was located by page across the whole pinned document.",
+      "consequence": "A reader who takes a version from the requirement that mandates a document gets no version at all; a reader who takes one from a later revision has silently changed what the profile requires. So every delegation row states where the VERSION is stated separately from where the document is REQUIRED, and says 'unsuffixed' at the requirement.",
+      "what_it_bounds": "Ambiguity KLV 5 precisely: the six unversioned references are unversioned IN APPENDIX B, which is the one place a version would have been stated. ST 1402 is not among them and the count stays six."
+    }
+  },
+  "change_log_against_reference_list": {
+    "the_risk_carried_into_this_phase": "That MISP-2019.1's Change Log and its reference list might disagree about a version, and that a disagreement would be a register entry rather than a silent choice.",
+    "verdict": "CHECKED, AND THEY AGREE. No register entry was needed for this.",
+    "change_log_text_verbatim_pdf_page_7": "2019.1 - Reviewed and Approved the following documents: MISP-2019.1, MISP-2019.1: U.S. Governance, MISP-2019.1: U.S. Specific, MISP-2019.1: Motion Imagery Handbook, ST 1602.1, ST 1601.1, ST 1504.1, ST 1403.2, ST 1303.1, ST 0902.8, ST 0809.2, ST 0601.14, ST 0107.3, RP 0904.4, TRM 1803, NGA Conformance Program Plan for Motion Imagery",
+    "item_by_item": {
+      "ST 0601.14": "= Appendix B ref [53]",
+      "ST 0107.3": "= Appendix B ref [14]",
+      "ST 0902.8": "= Appendix B ref [73]",
+      "ST 1303.1": "= Appendix B ref [16]",
+      "ST 1403.2": "= Appendix B ref [70]",
+      "ST 1504.1": "= Appendix B ref [72]",
+      "ST 1601.1": "= Appendix B ref [75]",
+      "ST 1602.1": "= Appendix B ref [76]",
+      "ST 0809.2": "= Appendix B ref [65]",
+      "RP 0904.4": "= Appendix B ref [7]",
+      "TRM 1803": "= Appendix B ref [99]",
+      "NGA Conformance Program Plan for Motion Imagery": "NOT in Appendix B at all. Named in the Change Log and referenced nowhere. Recorded, and it is why 'Claiming conformance' is in the declines table."
+    },
+    "consequence": "The two readings most at risk - 0601.14 and 0107.3 - are each stated TWICE inside the profile and stated the same way both times, which is a stronger pin than either statement alone."
+  },
+  "ambiguity_register": {
+    "KLV 1": "The promulgation lag. The wrapper's cover, Letter of Promulgation and reference are all dated 30 July 2020; the profile it promulgates carries November 2018 on its title page and in the footer of all 73 pages. Twenty months, unexplained in either document. Sharpened by the profile's own FORWARD versioning rule, which makes the '2019' in MISP-2019.1 an identifier rather than a date - so citing this content by year is ambiguous between 2018 printed, 2019 in the identifier and 2020 promulgated. Consequence adopted: every citation names the document by identifier and hash, never by date.",
+    "KLV 2": "Every requirement ID inside MISP-2019.1 names an earlier profile version. 120 distinct requirement IDs occur and NONE is MISP-2019.1-nn. Distribution: MISP-2015.1 93, MISP-2018.1 17, MISP-2016.1 8, MISP-2018.3 4, MISP-2018.2 3, MISP-2017.1 3, MISP-2015.3 1. The prefix records the profile version that INTRODUCED the requirement, not the document carrying it, so MISP-2015.1-07 is a live requirement of MISP-2019.1. Consequence adopted: requirements are cited by their own ID with the pinned document named beside them, because an ID alone reads to a NATO reader as a citation of MISP-2015.1 - which STANAG 4609 Edition 4 promulgated and Edition 5 superseded.",
+    "KLV 3": "The profile's reference to the STANAG is one edition behind and its Appendix C is one edition ahead. Appendix B ref [1] is 'NATO STANAG 4609: NATO Digital Motion Imagery Standard, Edition 4, 19 Dec 2016' and SS 1.1 sends the reader to [1] for NATO-specific requirements; Appendix C.1.2 discusses 'STANAG 4609 Edition 5 as represented in MISP-2019.1'. So within one document the STANAG is both Edition 4 and Edition 5, and the wrapper actually holding this profile is Edition 5, which supersedes Edition 4. A reader following SS 1.1's pointer lands on the superseded edition.",
+    "KLV 4": "External context, and explicitly not an error: the NISP is a year behind the chain. NISP Volume 1, ADatP-34(L) / Version 12, 19 Jul 2019, 182 pages, lists NATO STANAG 4609 as 'Ed 4' against 'Standard - MISP-2015.1'. That NISP version predates STANAG 4609 Edition 5 by a year, so it is stale by chronology rather than by mistake - which means a programme taking the NISP as its authority would implement MISP-2015.1 and be conformant to a superseded STANAG. The copy read hashes to 12a3b2ab7075390b9edd53fb50538f5a7098c0d8f0a9a69c8af894acb40e1bac, 1440024 bytes, and is NOT in fixtures/klv/spec/ - so that hash stands on the reading that recorded it and is the one value here a later re-verification cannot check. Same treatment AEDP-12 Edition A (2014) gets in the NITS pin: history, never a basis.",
+    "KLV 5": "The reference list versions most of its MISB documents and six not at all. A revision suffix is given for every document this row set relies on (0601.14, 0102.12, 0603.5, 0107.3, 0903.4, 0806.4, 1402.2, 1201.3, 1303.1, 1204.1, 0902.8) and none for ref [74] 'MISB ST 1607 Constructs to Amend/Segment KLV Metadata, 2016', ref [89] 'MISB ST 1101', ref [84] 'MISB RP 1302' or the three TRMs at refs [98], [99], [100]. ST 1607 is the one that bites: MISP-2017.1-95 is a 'shall' whose target names no revision.",
+    "KLV 6": "Nothing in the profile requires a standalone metadata stream to carry an absolute time. The unconditional mandate MISP-2018.3-116 attaches to a Motion Imagery FRAME; the metadata mandate MISP-2018.1-97 is conditional on a timestamp being present; the prose in SS 2.1.5 introducing both is circular - 'it is also mandatory for Metadata packets which include a Metadata item for a timestamp based on Absolute Time'. The two unequivocal predecessors MISP-2015.1-03 and MISP-2015.1-04 are in Appendix A.2 as DEPRECATED. SS 5.5 then contemplates the case that falls through: 'There are situations where Metadata needs to be transmitted separately from the Motion Imagery.' Consequence: Event.observed_at for this format is not merely blocked on park 3, it may be absent from the source - which is gap 23.",
+    "KLV 7": "The security mandate's paragraph and its requirement do not use the same term, and Appendix E defines both. SS 4.4.2.9 says 'It is mandatory that Motion Imagery Data be marked correctly and consistently with security classification' and 'The approved practices in this standard are mandatory for all Motion Imagery Data'; the requirement it introduces, MISP-2015.1-73, says 'Motion Imagery shall include Security Metadata'. Appendix E defines 'Motion Imagery Data' as 'Three components: Motion Imagery (see definition below), Metadata and/or Audio' and 'Motion Imagery' as a sequence of pictures. So the paragraph's scope includes a metadata stream and the requirement's scope is the imagery, which decides whether this adapter's input must be labelled at all.",
+    "KLV 8": "The document classified as 'related' is the one that 'defines the required data items'. STANAG 4609 Ed 5 puts the Motion Imagery Handbook under OTHER RELATED DOCUMENTS while its AGREEMENT clause names only MISP-2019.1, and MISP SS 1.3 calls the Handbook a companion 'providing definitions of terms used with more background and technical detail'. But SS 3.6.7 says of the same document that it 'defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets that reduces the bandwidth needed to transmit the data, and defines the required data items'. A document that defines required data items is normative in fact. Park 10 records that whoever obtains it answers this first."
+  },
+  "parks": {
+    "how_many": "Twelve parks over fourteen documents.",
+    "honest_strength": "Eleven of the twelve are public downloads and one is not. That is materially weaker than the two blockers this repository already carries - GMTIF's Annex L, which reads '(TO BE PROVIDED)' in the promulgated text, and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through national representatives. It is closer to CAT048's Reserved Expansion Field: obtainable, and simply not obtained.",
+    "shared_reopen_route": "The profile's FORWARD prints it: 'References developed by the MISB are available under MISB Public Web Site: http://www.gwg.nga.mil/misb or NSG Registry Web Site: https://nsgreg.nga.mil/misb.jsp'. No NSO gate, no national representative, no account.",
+    "shared_exit_condition": "For parks 1-7 and 9-12: obtain the EXACT version the delegation table pins (not 'the current one' - the profile pins a revision and a later revision is a different document); pin it in fixtures/klv/spec/ by SHA-256, byte count and page count with its title-page identity read; then write the row set that document supports.",
+    "the_one_that_is_not_a_download": {
+      "park": 8,
+      "document": "SMPTE ST 336:2017",
+      "reopen_condition": "A PURCHASE DECISION, NOT A DOWNLOAD. SMPTE is a commercial standards body and ST 336 sits behind a paywall, which the profile concedes in its own register: 'Commercial references cited in this document are available from industry organizations.' The other eleven parks need somebody to spend an afternoon; this one needs somebody to spend money, and a table reporting both as 'obtain the document' would hide the only entry that has to go to a person with a budget."
+    },
+    "smallest_useful_phase_2": "Parks 4, 5 and 8 are enough to READ a stream at all. Parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one."
+  },
+  "searched_and_not_found": {
+    "what_was_searched": "~/Downloads, for the MISB STs themselves.",
+    "method": "Two passes. (1) Filename patterns - 4609, misp, misb, 0601, 0102, 0603, 0107, 0903, 0806, 1402, 1204, 0902, 336, handbook, governance, klv, motion, imagery, smpte. (2) A content pass over every PDF in the tree: for each file, the literal strings in the first 25 content streams were concatenated and stripped of non-alphanumerics before searching, because these PDFs store text with per-glyph kerning splits and a naive substring search returns false negatives on the two documents that ARE present. 1940 PDFs examined in total.",
+    "method_validated": "The content pass was validated against the two known positives before its negative result was trusted: it identifies 4609EFed05.pdf and MISP-2019.1file.pdf and did not identify any other MISB document.",
+    "result": "NO core MISB ST is present. No ST 0601, 0102, 0603, 0107, 0903, 0806, 1402, 1201, 1303, 1204, 1301 or 0902; no Motion Imagery Handbook; no SMPTE ST 336. So this phase was NOT widened, and every park above stands.",
+    "one_neighbour_worth_naming": "4609EFed05.pdf, MISP-2019.1file.pdf, 5527EFed02.pdf, 4607EFed04.pdf and the two AEDP-4607 files were downloaded in one batch on 2026-08-23. 5527EFed02.pdf is a STANAG 5527 wrapper and is unrelated to this adapter; it is named here only so a later reader does not wonder whether it was missed."
+  },
+  "what_this_phase_did_not_do": [
+    "No adapter code, no codec, no fixtures, no golden files. Every mapping row in FORMAT_COVERAGE.md says `not yet`.",
+    "No mapping row was invented for any field whose layout lives in a document not held. That is the whole discipline of this phase and it is why the row set is short.",
+    "No gap was opened and no schema field proposed. Every absence is a DOCUMENT this repository does not hold rather than a CDM shortfall, and the two places where the CDM genuinely has nowhere to put something are already recorded as gap 18 and gap 23.",
+    "The premise that the MISP fixes the Precision Time Stamp's EPOCH was carried into this phase and is FALSE against the pinned copy: `epoch`, `1970`, `microsecond` and `leap` occur zero times in 73 pages, and the only timescale named is an example ('such as International Atomic Time (TAI)'). Recorded as a correction rather than quietly dropped."
+  ]
+}

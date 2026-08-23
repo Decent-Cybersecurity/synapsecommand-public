@@ -2731,3 +2731,621 @@ def test_the_pin_re_verification_filed_its_findings_in_the_ambiguity_registers(h
         f"the register has grown past {max(numbers)} without this test being updated. The numbers "
         "are the convention and a new finding has to extend it deliberately"
     )
+
+
+# ------------------------------- the STANAG 4609 / MISP-2019.1 (KLV metadata stream) row set
+#
+# Adapter #10's row set is a SPECIFICATION: `adapters/stanag4609.py` does not exist yet, and this
+# one is a specification in a stronger sense than the four before it. STANAG 4609 promulgates a
+# PROFILE, the profile delegates every field dictionary to documents published by somebody else,
+# and not one of those documents is in hand. So there is no field inventory to pin the way
+# `test_every_gmtif_field_has_a_row` pins 212 identifiers off the segment layout tables — the
+# equivalent inventory here lives in MISB ST 0601.14, which is park 1.
+#
+# What CAN be pinned, and what these tests do pin:
+#
+#   * the two documents, by hash, byte count, page count and filename, AT EVERY SITE that states
+#     them — FORMAT_COVERAGE.md, spec/klv_pin.json and fixtures/klv/README.md. That is 80b38d1's
+#     finding: an `in` check is satisfied by one site, so a fact stated at three sites and checked
+#     at one can drift at two;
+#   * the delegation table, because every version string in it was a REPORTED reading before it
+#     was a verified one, and a table that silently lost a revision suffix would look identical;
+#   * the scope split, which is three declines that are load-bearing on each other;
+#   * ABSENCES — the two that matter most here are that no requirement ID in the section is
+#     `MISP-2019.1-nn` and that no epoch is stated anywhere. Both are things the pinned text does
+#     NOT contain, and a check that only ever confirms presence cannot refute an invention. That
+#     was the hole 3e0aed0's mutation round closed and it is the hole most available here, because
+#     the temptation in a phase like this one is to fill a gap from memory of the format rather
+#     than from the document.
+
+KLV_HEADING = "## STANAG 4609 / MISP-2019.1"
+
+FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" / "klv"
+KLV_PIN = FIXTURES / "spec" / "klv_pin.json"
+KLV_README = FIXTURES / "README.md"
+
+#: Both pinned documents: filename, SHA-256, byte count, page count. Every one of the four values
+#: is asserted at every site, and the byte counts are asserted in BOTH spellings — the digit form
+#: the JSON uses and the space-grouped form the prose uses — because the two are the same fact and
+#: a half-edit that fixed one would otherwise pass.
+KLV_PINNED_DOCUMENTS = (
+    ("nato-stanag-4609-edition-5.pdf",
+     "f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8", 273801, 5),
+    ("misb-misp-2019-1.pdf",
+     "3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea", 1372771, 73),
+)
+
+#: The delegation map, exactly as the profile pins it. `document` is how the row names it,
+#: `version` is the revision string the profile gives, and `locus` is a phrase the row must carry
+#: so the citation stays checkable against the pinned PDF.
+KLV_DELEGATION = (
+    ("SMPTE ST 336", "ST 336:2017", "MISP-2015.1-07"),
+    ("MISB ST 0107", "0107.3", "MISP-2015.1-08"),
+    ("MISB ST 0601", "0601.14", "§4.4.4.1"),
+    ("MISB ST 0102", "0102.12", "MISP-2015.1-73"),
+    ("MISB ST 0603", "0603.5", "§2.1.5"),
+    ("MISB ST 0903", "0903.4", "§4.4.2.4"),
+    ("MISB ST 0806", "0806.4", "§4.4.2.4"),
+    ("MISB ST 1402", "1402.2", "MISP-2015.1-48"),
+)
+
+
+MIGRATIONS = pathlib.Path(synapse_cdm.__file__).resolve().parent / "MIGRATIONS.md"
+
+
+def _klv_sites() -> dict[str, str]:
+    """The three files that state the pin in full, so a fact can be checked at every one of them."""
+    return {
+        "FORMAT_COVERAGE.md": _section(KLV_HEADING),
+        "fixtures/klv/spec/klv_pin.json": KLV_PIN.read_text(),
+        "fixtures/klv/README.md": KLV_README.read_text(),
+    }
+
+
+def _abbreviated(digest: str) -> str:
+    """`MIGRATIONS.md` and the commit messages ellipsise a hash: `8f9c51ff…c996e`.
+
+    That is this repository's established form in those two places and it is not worth changing —
+    but it is still a statement of the same fact, so it is still a site that can drift. The
+    abbreviation is derived from the full digest here rather than typed twice.
+    """
+    return f"{digest[:8]}…{digest[-8:]}"
+
+
+def test_the_klv_row_set_exists_and_every_row_of_it_says_not_yet():
+    """Phase 1's whole claim: the row set is a specification and nothing in it is implemented.
+
+    Asserted in both directions. A section with no `not yet` rows would mean the status column had
+    been flipped without an adapter; a section with no rows at all would mean this test and every
+    one below it is checking an empty string, which is the failure mode `test_the_table_was_
+    actually_parsed` exists for at the document level.
+    """
+    section = _section(KLV_HEADING)
+    rows = [ln for ln in section.splitlines()
+            if ln.startswith("|") and not ln.startswith("|---")]
+    mapping_rows = [ln for ln in rows if "`not yet`" in ln]
+    assert len(mapping_rows) >= 30, (
+        f"only {len(mapping_rows)} `not yet` rows in the KLV section — the row set is either "
+        "missing or has been flipped without an adapter"
+    )
+    before = DOC.read_text().split(KLV_HEADING)[0]
+    for marker in ("`stanag4609 1.0.0`", "`klv 1.0.0`"):
+        assert marker not in section, (
+            f"{marker} appears in a Phase 1 section. There is no adapter, so a terminal status "
+            "marker here is a claim nothing implements"
+        )
+        assert marker not in before, (
+            f"the status-column table at the top of the document states {marker} for an adapter "
+            "that does not exist"
+        )
+
+
+@pytest.mark.parametrize("filename,digest,size,pages", KLV_PINNED_DOCUMENTS)
+def test_both_klv_pins_agree_at_every_site_that_states_them(filename, digest, size, pages):
+    """Every occurrence, not any occurrence — and each one asserted as ONE composite fact.
+
+    Two lessons from earlier rounds, and the second was found here by mutation. 80b38d1 found the
+    NITS pin naming two directories for one adapter at two sites four hundred lines apart, its own
+    re-pointing test passing because `xsd_pin.json in text` was satisfied by one of the two; so
+    every site that states the pin is checked, not one of them.
+
+    THEN mutation found the residue of the same shape inside a single site. Checking hash, byte
+    count and page count as three independent substrings makes each one a disjunction over the
+    whole file: changing `"pages": 73` to `74` in `klv_pin.json` left the suite green, because the
+    string `73` still occurred in that file's prose. The repair is that a pin row is ONE fact and
+    is asserted as one string — hash, byte count, page count and path together — plus a structural
+    read of the JSON, where the values are addressable and no substring search is needed at all.
+    """
+    spaced = _spaced(size)
+
+    # 1. The JSON, read as data. Two documents, four values each, no substrings.
+    pin = json.loads(KLV_PIN.read_text())
+    key = "wrapper" if filename.startswith("nato-") else "target"
+    record = pin[key]
+    assert record["sha256"] == digest, f"klv_pin.json {key}.sha256 is {record['sha256']}"
+    assert record["bytes"] == size, f"klv_pin.json {key}.bytes is {record['bytes']}"
+    assert record["pages"] == pages, f"klv_pin.json {key}.pages is {record['pages']}"
+    assert record["local_path"] == f"fixtures/klv/spec/{filename}", (
+        f"klv_pin.json {key}.local_path is {record['local_path']}"
+    )
+
+    # 2. FORMAT_COVERAGE.md's pin row, as one composite string.
+    row = f"`{digest}`, {spaced} bytes, {pages} pages, `fixtures/klv/spec/{filename}`"
+    assert row in _section(KLV_HEADING), (
+        f"FORMAT_COVERAGE.md's pin row for {filename} is not\n  {row}\nA row asserted "
+        "value-by-value would pass on a wrong page count, because the right number still occurs "
+        "elsewhere on the page — which is what mutation found"
+    )
+
+    # 3. The fixture README's table row, likewise.
+    readme_row = f"| `spec/{filename}` | `{digest}` | {spaced} | {pages} |"
+    assert readme_row in KLV_README.read_text(), (
+        f"fixtures/klv/README.md's table row for {filename} is not\n  {readme_row}"
+    )
+
+    # 4. MIGRATIONS.md, in this document's own ellipsised form, also as one string.
+    migrations_fact = f"(`{_abbreviated(digest)}`, {spaced} bytes, {pages} pages)"
+    assert migrations_fact in MIGRATIONS.read_text(), (
+        f"MIGRATIONS.md's Phase 1 entry no longer states {filename} as\n  {migrations_fact}\n"
+        "It is the same fact in the ellipsised form this file established, so it drifts the same "
+        "way"
+    )
+
+
+def _group(digits: str) -> list[str]:
+    """`'1372771'` -> `['1', '372', '771']`, the grouping the prose uses."""
+    out, rest = [], digits
+    while len(rest) > 3:
+        out.insert(0, rest[-3:])
+        rest = rest[:-3]
+    out.insert(0, rest)
+    return out
+
+
+def _spaced(size: int) -> str:
+    """The byte count as the prose writes it: groups of three separated by an ordinary space."""
+    return " ".join(_group(str(size)))
+
+
+def test_the_pin_records_that_neither_pdf_is_committed_and_none_is():
+    """The claim and the fact, checked together rather than only the claim.
+
+    Every adapter here pins rather than vendors, and the statement of that is in three documents.
+    A statement that stops being true is worse than no statement, so the repository is asked as
+    well: `git ls-files` is the authority and the prose is the claim.
+    """
+    tracked = [p for p in _tracked_files() if p.endswith(".pdf")]
+    assert tracked == [], f"PDFs are tracked: {tracked}"
+    for label, text in _klv_sites().items():
+        assert "not committed" in text.lower() or "is 0" in text, (
+            f"{label} no longer records that the pinned PDFs stay out of the index"
+        )
+    # And the two files really are present in the working tree, because a pin nobody can
+    # re-verify is a recollection — which is what the pin's own preamble says it is not.
+    for filename, _digest, _size, _pages in KLV_PINNED_DOCUMENTS:
+        path = FIXTURES / "spec" / filename
+        if path.exists():                      # a fresh clone will not have them
+            assert path.stat().st_size == _size, f"{filename} at the pinned path is the wrong size"
+            got = hashlib.sha256(path.read_bytes()).hexdigest()
+            assert got == _digest, f"{filename} at the pinned path hashes to {got}, not {_digest}"
+
+
+def _tracked_files() -> list[str]:
+    import subprocess
+    root = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
+    out = subprocess.run(["git", "ls-files"], cwd=root, capture_output=True, text=True)
+    return out.stdout.splitlines() if out.returncode == 0 else []
+
+
+@pytest.mark.parametrize("document,version,locus", KLV_DELEGATION)
+def test_the_delegation_table_states_the_exact_version_the_profile_pins(document, version, locus):
+    """Each row of the delegation map, with its revision suffix and the locus that proves it.
+
+    The revision suffix is the whole value of this table. "MISB ST 0601" names a document revised
+    at least fourteen times; "0601.14" names the one MISP-2019.1 actually pins, and a tag added in
+    a later revision decoded against an earlier one is a plausible number in the wrong field
+    rather than an exception.
+
+    SCOPED TO THE ROW, and mutation is why. `version in section` is a disjunction over the whole
+    section: each version string is also stated in the parks table and again in register entry
+    KLV 5, so **stripping the suffix off the delegation row left the suite green**. The row is
+    located by its own document name, the version is asserted inside it, and then every OTHER
+    statement of a revision for the same document family is required to agree — because three
+    sites stating one revision is three places it can drift.
+    """
+    section = _section(KLV_HEADING)
+    flat = _flat(section)
+
+    rows = [ln for ln in section.splitlines() if ln.startswith(f"| **{document}**")]
+    assert len(rows) == 1, (
+        f"expected exactly one delegation row opening `| **{document}**`, found {len(rows)}"
+    )
+    row = rows[0]
+    assert version in row, (
+        f"{document}'s delegation row no longer states {version!r}. The version IS the pin — the "
+        f"document name alone identifies a family, not a text.\n  row: {row}"
+    )
+    assert locus in row, (
+        f"{document}'s delegation row no longer carries {locus!r}, so the citation cannot be "
+        f"checked against the pinned PDF.\n  row: {row}"
+    )
+
+    # And no other statement of a revision for this document may disagree with it. The family is
+    # the bare number (`0601`, `336`); the pattern is whatever follows it in the pinned form.
+    family, _, suffix = version.replace("ST ", "").partition("." if "." in version else ":")
+    separator = "." if "." in version.replace("ST ", "") else ":"
+    stated = set(re.findall(rf"\b{re.escape(family)}{re.escape(separator)}(\d+)", section))
+    assert stated == {suffix}, (
+        f"{document} is stated at more than one revision in this section: "
+        f"{sorted(family + separator + x for x in stated)}. The delegation table, the parks table "
+        f"and register entry KLV 5 all name it, and they have to name the same text"
+    )
+    assert document in flat, f"the delegation table no longer names {document}"
+
+
+def test_every_delegation_row_says_where_its_VERSION_comes_from():
+    """The version and the requirement are different pages, and the row has to say which is which.
+
+    A challenge to the ST 1402 row asked the right question of the whole table: §3.6.9.1 and
+    §3.7.12.1 both cite "MISB ST 1402 [48]" with no revision suffix, so where does `.2` come from?
+    Appendix B, and only Appendix B. Checking it generalised into a fact about the document —
+    **every** revision suffix in MISP-2019.1 lives on six of its 73 pages (the Change Log, Appendix
+    B, and one stray in an Appendix A.2 deprecation note), and not one requirement or body section
+    states a revision of anything.
+
+    That matters to a reader in a way a table of bare version strings hides: taking a version from
+    the requirement that mandates a document gets you no version, and taking one from a later
+    revision silently changes what the profile requires. So every row separates the two loci, and
+    this test is what stops them collapsing back into one cell reading "Appendix B; cited by …".
+    """
+    section = _section(KLV_HEADING)
+    flat = _flat(section)
+    rows = [ln for ln in section.splitlines()
+            if ln.startswith("| **") and "Appendix B" in ln and "**version:**" in ln]
+    assert len(rows) == len(KLV_DELEGATION), (
+        f"{len(rows)} delegation rows name where their version comes from, expected "
+        f"{len(KLV_DELEGATION)}. A row that asserts a revision without citing the page it is "
+        "stated on is a version taken on trust"
+    )
+    for row in rows:
+        assert "**version:** ref [" in row, (
+            "the version cell no longer opens with the Appendix B reference number it stands on. "
+            "MUTATION FOUND THIS: replacing the cell with \"per the delegation table\" left the "
+            "row matching, because the *Required by* half happens to mention Appendix B too — so "
+            "the check has to be anchored to the version cell itself and not to the line.\n"
+            f"  {row[:160]}"
+        )
+        assert "**Required by:**" in row, (
+            f"a delegation row states a version and not what requires the document:\n  {row[:160]}"
+        )
+        assert "unsuffixed" in row, (
+            "every requirement in this profile cites its document WITHOUT a revision, and each row "
+            f"has to say so — that is the fact that makes the version cell necessary:\n  {row[:160]}"
+        )
+
+    # The row the challenge was about carries Appendix B's entry verbatim, because a paraphrase
+    # cannot settle a question about a suffix.
+    assert ('"MISB ST 1402.2 MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and '
+            'Metadata, Oct 2016."') in flat, (
+        "Appendix B entry [48] is no longer quoted verbatim. It is the whole evidence for the "
+        "`.2` in the delegation table, and the reason register entry KLV 5's count stays six"
+    )
+
+    # And the generalisation, with the page loci that make it re-runnable against the PDF.
+    for locus in ("PDF page 7", "PDF pages 63–66", "PDF page 62"):
+        assert locus in flat, (
+            f"the Appendix-B-only rule no longer states {locus!r}. Its value is that a reader can "
+            "re-derive it from the pinned document, and a claim about where facts live needs the "
+            "page numbers to be checkable"
+        )
+    assert "PDF pages 10 to 57" in flat, (
+        "the rule's negative half — that no requirement and no body section states a revision — is "
+        "the half a reader acts on, and it needs its page range too"
+    )
+
+
+def test_no_verbatim_requirement_quotation_has_had_a_revision_added_to_it():
+    """AN ABSENCE, and the most plausible well-meant corruption in this section.
+
+    The profile's requirements cite bare document numbers: "SMPTE ST 336 [13]", "MISB ST 0107 [14]",
+    "MISB ST 1402 [48]". An editor who has just read the delegation table will be tempted to make a
+    quotation "more useful" by writing the revision into it — and that turns a verbatim quotation
+    into a misquotation of a normative requirement, which is the one thing a pinned-document section
+    must never do. Presence checks cannot catch an addition; only this can.
+    """
+    section = _section(KLV_HEADING)
+    for wrong in ("SMPTE ST 336:2017 [13]", "MISB ST 0107.3 [14]", "MISB ST 1402.2 [48]",
+                  "MISB ST 0102.12 [55]", "MISB ST 0603.5 [12]", "MISB ST 0601.14 [53]"):
+        assert wrong not in section, (
+            f"{wrong!r} appears in the section. No requirement in MISP-2019.1 cites a revision — "
+            "every one of them writes the bare document number and a bracketed reference index — so "
+            "a suffix beside a bracketed index is a quotation this document has altered"
+        )
+
+
+def test_no_requirement_id_in_the_section_names_this_profile_version():
+    """AN ABSENCE. MISP-2019.1 contains no requirement of its own, and the section must not invent one.
+
+    All 120 requirement IDs in the pinned copy carry an earlier profile version — 93 of them
+    `MISP-2015.1`. That is register entry KLV 2, and it is the kind of finding a later editor
+    "tidies" by rewriting `MISP-2015.1-07` as `MISP-2019.1-07`, which reads more natural and is
+    false. Presence checks cannot catch that; only this can.
+    """
+    section = _section(KLV_HEADING)
+    invented = re.findall(r"MISP-2019\.1-\d+", section)
+    assert invented == [], (
+        f"the section cites {sorted(set(invented))}, and no such requirement ID exists. Every "
+        "requirement in MISP-2019.1 is numbered against the profile version that INTRODUCED it — "
+        "see register entry KLV 2 — so an ID with this document's own version in it was invented"
+    )
+    # And the finding itself is on the record, with the count that makes it checkable.
+    flat = _flat(section)
+    assert "120 distinct" in flat and "`MISP-2015.1` 93" in flat, (
+        "KLV 2's evidence is the enumeration: 120 distinct IDs, 93 of them MISP-2015.1. Without "
+        "the numbers the entry is an impression"
+    )
+
+
+def test_no_epoch_is_stated_anywhere_in_the_section():
+    """AN ABSENCE, and the one this phase's central correction depends on.
+
+    The premise carried into Phase 1 was that the MISP fixes the Precision Time Stamp's epoch. It
+    does not: `epoch`, `1970`, `microsecond` and `leap` occur zero times in its 73 pages. Anyone
+    who knows the format knows the epoch from ST 0603 and will be tempted to write it down — and
+    writing it down would state, in a document whose whole discipline is that it pins what it
+    read, a value that came from memory. So the numeral is banned outright.
+    """
+    section = _section(KLV_HEADING)
+    # `1970` is permitted in exactly one context: the sentence listing the words that do NOT
+    # occur in the profile. Anywhere else it is an epoch, and an epoch here came from memory of
+    # the format rather than from either pinned document. So each occurrence is checked for its
+    # context rather than the numeral being banned outright — banning it would force settlement 3
+    # to state its own evidence in a paraphrase, which is the weaker of the two failures.
+    for match in re.finditer("1970", section):
+        window = _flat(section[max(0, match.start() - 220):match.end() + 220])
+        assert "do not occur anywhere" in window or "occur zero times" in window, (
+            "the section states an epoch. MISB ST 0603.5 is park 3 precisely because the pinned "
+            "profile states none — see settlement 3 — so this value came from somewhere other "
+            f"than the documents this phase read: ...{window[:160]}..."
+        )
+    flat = _flat(section)
+    assert "do not occur anywhere in the 73 pages" in flat, (
+        "settlement 3's evidence for the correction is the absence itself, and it has to be "
+        "stated as an absence a reader can re-run against the PDF"
+    )
+    assert "such as International Atomic Time (TAI)" in flat, (
+        "the only timescale the profile names, it names as an EXAMPLE. Quoting the 'such as' is "
+        "what stops the sentence being read as the profile choosing TAI"
+    )
+
+
+def test_the_scope_split_declines_the_essence_and_the_container_together():
+    """Settlement 1, and the coupling is the part worth pinning rather than the two declines.
+
+    Declining the video essence is only coherent because the container is declined too: an
+    elementary stream in another PID is not in this adapter's payload, so the never-drop rule is
+    not engaged. If a later edit widened the input to a transport stream and left the essence
+    decline in place, the section would be claiming the right to drop megabytes that ARRIVED — and
+    the two sentences are far enough apart that nothing but a test would notice.
+    """
+    section = _section(KLV_HEADING)
+    # The two requirements are quoted in a Markdown blockquote, so a quotation long enough to be
+    # worth pinning is wrapped across lines with a `> ` marker in the middle of it. Flattening
+    # whitespace is not enough on its own — the marker has to come out first, or the only
+    # quotations this file can assert against are the ones short enough to fit on one line, which
+    # is the weakening `_flat` was written to avoid.
+    quoted = _flat(section.replace("\n> ", " "))
+    flat = _flat(section)
+    assert "the essence is out of scope because the container is" in flat, (
+        "the coupling between the two declines is gone. Each reads as defensible alone and the "
+        "pair is what makes either one honest"
+    )
+    assert "One KLV metadata stream, and nothing else" in flat, (
+        "the input's identity is the premise of every decline in settlement 1"
+    )
+    for requirement, text in (
+        ("MISP-2015.1-07", "KLV (Key-Length-Value) Metadata shall be encoded in accordance with "
+                           "SMPTE ST 336 [13]."),
+        ("MISP-2015.1-08", "KLV Metadata shall be formatted in accordance with MISB ST 0107 [14]."),
+    ):
+        assert requirement in flat, f"{requirement} is no longer cited"
+        assert text in quoted, (
+            f"{requirement}'s text is no longer quoted verbatim. A requirement paraphrased is a "
+            "requirement a reader cannot check against the PDF, and these two are the ones that "
+            "define what this adapter reads"
+        )
+
+
+def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
+    """Twelve parks, and the honest difference between eleven downloads and one purchase.
+
+    The reason this is a test and not a convention: the eleven MISB parks and the one SMPTE park
+    have the same SHAPE — "obtain the document and pin it" — and collapsing the twelfth into that
+    phrasing would hide the only entry in the table that cannot be closed by someone with a
+    browser. A park table that reads uniformly is a park table that has lost information.
+    """
+    section = _section(KLV_HEADING)
+    flat = _flat(section)
+    for n in range(1, 13):
+        assert f"| **{n}** |" in section, (
+            f"park {n} is missing from the table. The numbers are cited from the row sets — a hole "
+            "in the numbering is a row pointing at nothing"
+        )
+    assert "| **13** |" not in section, (
+        "the park table has grown past twelve without this test being updated. A new park has to "
+        "extend the numbering deliberately, because every row set cites parks by number"
+    )
+    assert "A purchase decision, not a download" in flat, (
+        "park 8 (SMPTE ST 336) is the one park that is not a download, and saying so is the point "
+        "of the table's honest-strength paragraph"
+    )
+    assert "public downloads and one is not" in flat, (
+        "the count of downloads against purchases is the table's summary claim"
+    )
+    assert "http://www.gwg.nga.mil/misb" in section and "https://nsgreg.nga.mil/misb.jsp" in section, (
+        "the reopen route for the eleven public parks is quoted from the profile's own FORWARD. "
+        "Without the URLs the reopen condition is an instruction to go and look"
+    )
+    # AN ABSENCE, scoped to one row. Park 8 is the SMPTE one, and the failure mode is not that
+    # somebody deletes it — it is that somebody normalises its reopen condition into the phrasing
+    # the other eleven use, at which point the table reads as twelve afternoons of work. The row
+    # is located by its own document name rather than by position, so reordering the table does
+    # not silently turn this into a check on a different row.
+    # Rows of the PARK table specifically: `| **n** | ...`. The delegation table's rows also open
+    # with `| **`, and one of them names SMPTE ST 336 too — a looser filter matched both and
+    # asserted against whichever came first, which is a green test on the wrong table.
+    park_rows = [ln for ln in section.splitlines() if re.match(r"\| \*\*\d+\*\* \|", ln)]
+    smpte = [ln for ln in park_rows if "SMPTE ST 336" in ln]
+    assert len(smpte) == 1, (
+        f"expected exactly one park row for SMPTE ST 336, found {len(smpte)} — the paywalled park "
+        "is the one row in this table whose reopen condition is different in kind"
+    )
+    assert "Public download" not in smpte[0], (
+        "park 8's row now describes itself as a public download. It is not one: SMPTE is a "
+        "commercial standards body and the profile's own FORWARD sends commercial references to "
+        "'industry organizations'. Eleven parks need an afternoon and this one needs a budget, "
+        "and a uniformly-phrased table has lost that distinction"
+    )
+    # And the other eleven DO say it, so the distinction is a real contrast rather than one row
+    # being vague.
+    downloads = [ln for ln in park_rows if "Public download" in ln]
+    assert len(downloads) == 11, (
+        f"{len(downloads)} of the twelve park rows state a public-download reopen condition, "
+        "expected 11. The count IS the honest-strength claim in the paragraph above the table"
+    )
+
+
+def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
+    """Eight entries, `KLV n`, and no ninth without a deliberate edit.
+
+    Numbered per the new adapter's own convention rather than continuing the GMTIF or NITS series,
+    because a register is scoped to the document it reads. The upper guard matters as much as the
+    lower one: these numbers are cited from the row sets and from the fixture plan, so a register
+    that grew without the citations moving is a set of dangling references.
+    """
+    section = _section(KLV_HEADING)
+    for n in range(1, 9):
+        assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
+    assert "**KLV 9 —" not in section, (
+        "the register has grown past KLV 8 without this test being updated"
+    )
+    flat = _flat(section)
+    # The two entries whose value is entirely in a precise quotation.
+    assert "mandatory for Metadata packets which include a Metadata item for a timestamp" in flat, (
+        "KLV 6 rests on the circularity of one sentence, so the sentence has to be quoted. "
+        "Paraphrased, the finding reads as an opinion about drafting"
+    )
+    assert "Three components: Motion Imagery (see definition below), Metadata and/or Audio" in flat, (
+        "KLV 7 is a distinction between two DEFINED terms, so Appendix E's definition is the "
+        "evidence. Without it the entry is an assertion that two phrases differ"
+    )
+    # KLV 4 is external context and must say so, on the AEDP-12-2014 precedent.
+    assert "explicitly not as an error" in flat, (
+        "KLV 4 records the NISP as a year behind the chain, and the honest reading is that it "
+        "PREDATES Edition 5. An entry that filed it as an error would be wrong about the document"
+    )
+    assert "not in `fixtures/klv/spec/`" in flat, (
+        "the NISP copy is not pinned, so the one hash in this section that a later re-verification "
+        "cannot check has to say so — the AEDP-12 Edition A (2014) treatment"
+    )
+
+
+def test_the_name_ruling_states_both_names_and_rejects_the_alternatives_on_grounds():
+    """The adapter name, the fixture directory, and why they differ — with the three rejections.
+
+    80b38d1 had to move three PDFs because one command took the adapter's name where the fixture
+    directory's name was wanted. The fix was a map pinned by a test; this is the other half, which
+    is that the REASON the two names differ is written down at the moment of choosing rather than
+    reconstructed nine months later from a directory listing.
+    """
+    flat = _flat(_section(KLV_HEADING))
+    assert "`stanag4609`" in flat and "`fixtures/klv`" in flat, "the two ruled names are gone"
+    assert "a covering document rather than a standalone document" in flat, (
+        "the adapter-name ruling rests on the profile describing STANAG 4609 in its own words, "
+        "and the quotation is the evidence"
+    )
+    for rejected in ("`misp`", "`misb`", "`fmv`"):
+        assert rejected in flat, f"the rejected alternative {rejected} is no longer named"
+    assert ("FMV has no formal definition and conveys different meanings to different "
+            "communities") in flat, (
+        "`fmv` is rejected BY THE PINNED TEXT, which is the strongest rejection available here. "
+        "Dropping the quotation turns it back into a matter of taste"
+    )
+
+
+def test_the_klv_fixture_directory_holds_no_fixtures_and_says_why():
+    """Phase 1 ships no payload, and the reason is a park rather than a schedule.
+
+    A fixture directory that is empty because nobody got to it and one that is empty because the
+    encoding document is behind a paywall look identical on disk. The README is what distinguishes
+    them, so the README has to name the blocker — and the directory is checked as well, because a
+    stray `.klv` would mean somebody guessed at bytes SMPTE ST 336 defines.
+    """
+    payloads = [p.name for p in FIXTURES.iterdir()
+                if p.is_file() and p.name not in {"README.md"} and not p.name.startswith(".")]
+    assert payloads == [], (
+        f"fixtures/klv holds payloads: {payloads}. Phase 1 has no adapter to replay them through, "
+        "and a .klv written before park 8 closes is a guess at an encoding this repository has "
+        "not read — see the README's own explanation"
+    )
+    assert (FIXTURES / "spec").is_dir(), "fixtures/klv/spec is where the pin lives"
+    readme = KLV_README.read_text()
+    assert "There are none yet" in readme, (
+        "the README's first job is to say that the absence is the state and not an oversight"
+    )
+    # BOTH failure modes, because the command in the README hits the first one and the claim it
+    # is making is about the second. `--adapter stanag4609` does not resolve at all yet, so the
+    # error a reader actually sees is `LookupError: unknown adapter` and exit 1; `NoFixturesFound`
+    # and exit 2 are what the DIRECTORY produces, once there is an adapter to name. A README that
+    # promised only the second would send its reader debugging the wrong thing.
+    assert "NoFixturesFound" in readme, (
+        "the harness command in the README fails today, deliberately, and a reader who runs it "
+        "needs to have been told so before they debug it"
+    )
+    assert "unknown adapter" in readme, (
+        "the README promises a failure the command does not actually produce yet: the adapter name "
+        "is unregistered, so the first error is a LookupError and not NoFixturesFound"
+    )
+    flat = _flat(_section(KLV_HEADING))
+    assert "unknown adapter" in flat and "exits **1**" in flat, (
+        "FORMAT_COVERAGE.md makes the same claim and has to be as precise about it — the two "
+        "failures have different exit codes and only one of them is about this directory"
+    )
+    assert "cannot be written until park 8 closes" in flat, (
+        "the fixture plan's gate is a park, and naming which one is what makes the plan actionable"
+    )
+    assert "self-consistency without an external anchor" in flat, (
+        "the reason not to write bytes anyway is the round-trip trap the module README names. "
+        "Without it, 'we could not write fixtures' reads as an excuse rather than a finding"
+    )
+
+
+def test_migrations_records_the_phase_1_row_set_and_why_it_proposes_nothing():
+    """A Phase 1 that proposes no field, said out loud.
+
+    `MIGRATIONS.md`'s own rule for the section above this one is that "'no entry' and 'nobody wrote
+    an entry' look identical from here". The same indistinguishability applies one level up: a row
+    set that landed with no schema question and one nobody examined for schema questions leave the
+    same trace, which is none. So the entry has to exist and it has to say which gaps it reached
+    rather than only that it reached none.
+    """
+    text = MIGRATIONS.read_text()
+    flat = _flat(text)
+    assert "Row sets written as specifications, with no adapter code yet" in text, (
+        "the Phase 1 heading is gone. Three earlier Phase 1 commits wrote nothing in this file and "
+        "that is the gap it was added to close"
+    )
+    assert "`stanag4609`" in text, "the #10 entry is missing"
+    assert "no gap is opened and no field proposed" in flat, (
+        "the entry's whole content is that it proposes nothing, stated rather than inferred"
+    )
+    for gap in ("Gap 23", "Gap 18"):
+        assert gap in text, (
+            f"{gap} is no longer named. The two places the CDM genuinely has nowhere to put "
+            "something are the useful result of this phase, and an entry that only said 'nothing "
+            "to propose' would have buried them"
+        )
+    assert "epoch" in flat and "such as International Atomic Time (TAI)" in flat, (
+        "the false premise this phase corrected has to be recorded here too — a correction stated "
+        "in one document and not the other is the drift this file's own procedure warns about"
+    )

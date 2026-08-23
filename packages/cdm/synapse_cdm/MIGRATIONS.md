@@ -515,6 +515,75 @@ is worth stating.
   all 136 rows. The reversals are the reason the order matters — each one was away from using an
   existing CDM field, and each was easier to make while the row set was still prose.
 
+### Row sets written as specifications, with no adapter code yet
+
+A new heading, and it needs one sentence of justification because this document dislikes
+conventions adopted in passing. The section above records adapters that **landed** without a schema
+change, "because 'no entry' and 'nobody wrote an entry' look identical from here". A row set that
+has landed as a *specification* and has no adapter yet makes no schema claim at all, so it has
+never had a home here: the Legion, NITS and GMTIF Phase 1 commits wrote nothing in this file, and
+CAT048's wrote only its 1.1.0 candidates. That is the same indistinguishability one level up — a
+Phase 1 that proposes no field and a Phase 1 that nobody thought about look identical from here
+too — so the first is now stated.
+
+- **`stanag4609` — STANAG 4609 / MISP-2019.1, the KLV metadata stream. Phase 1: row set only, no
+  adapter code, no codec, no fixtures.** `stanag4609` is adapter #10, under the reserved-ordinal
+  rule `FORMAT_COVERAGE.md`'s ordinal table now states: `nffi` holds #9 without having shipped, `gmti`
+  has #8, and the next free number is therefore this adapter's. `cat048` keeps #11. Every
+  mapping row in `FORMAT_COVERAGE.md`
+  says `not yet`, and **no gap is opened and no field proposed** — which is the entry.
+
+  Pinned to two documents by SHA-256: **STANAG 4609 Edition 5, 30 July 2020**
+  (`f2f9ae1a…b2dbf8d8`, 273 801 bytes, 5 pages) and the profile its AGREEMENT clause names,
+  **MISP-2019.1, title page November 2018** (`3167362a…b102d5ea`, 1 372 771 bytes, 73 pages).
+  Neither PDF is committed. The fixture directory is `fixtures/klv` rather than
+  `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
+  `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry
+  beside the nine shipped ones.
+
+  **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
+  row set is a *document this repository does not hold* — twelve parks over fourteen documents,
+  eleven of them public downloads and one of them behind SMPTE's paywall — and not a CDM shortfall.
+  The profile delegates every field dictionary it relies on: `MISP-2015.1-07` sends the KLV
+  encoding to SMPTE ST 336:2017, `MISP-2015.1-08` sends the formatting to MISB ST 0107.3, and
+  §4.4.4.1 sends the airborne field dictionary to MISB ST 0601.14. A schema proposal derived from
+  a document nobody here has read would be a field named after a guess.
+
+  Two places where the CDM genuinely has nowhere to put something turned up, and **both are
+  already on the list**, which is the useful result rather than a disappointing one:
+
+  - **Gap 23, an observation whose source states no time**, reached from a second direction. GMTIF
+    got there through three segments that state no time *field*; this profile gets there through a
+    requirement that does not apply. `MISP-2018.3-116` makes an Absolute Time timestamp mandatory
+    on every Motion Imagery **frame** — which this adapter never sees — while `MISP-2018.1-97`
+    makes the metadata case *conditional* on a timestamp being present, and the prose introducing
+    both is circular: "it is also mandatory for Metadata packets which include a Metadata item for
+    a timestamp based on Absolute Time." The two unequivocal predecessors are deprecated. So a
+    **conformant** standalone KLV metadata stream may carry no absolute time at all, and §5.5
+    contemplates exactly that shape of feed. A format that is *permitted* to state no instant is a
+    stronger case for gap 23 than a format whose layout has no field for one, because the second
+    can be read as an oversight and the first cannot.
+  - **Gap 18, confidence and quality provenance**, reached from the clock rather than from the
+    estimate. MISB ST 1603.2 (§4.4.2.12) carries the lock and synchronisation status of the clocks
+    in a timing system, and the CDM has nowhere to say how good a source's clock was. Named here
+    so whoever opens gap 18 has a second format to cite.
+
+  And one candidate was considered and **rejected as a proposal**: the CDM's `Timestamp` renders
+  exactly three decimal places, and this profile names a *Nano* Precision Time Stamp. That is not
+  a new question — `FORMAT_COVERAGE.md`'s CAT021 section already settled that a source instant
+  finer than the rendering is parked verbatim and re-emitted from the park, with I021/074's
+  2⁻³⁰ s ≈ 0.93 ns as a finer case than this one. Adding a field for it would reopen a decision
+  that has held for three adapters.
+
+  **One premise carried into the phase was false and is recorded rather than dropped.** The phase
+  began from the reading that the MISP fixes the Precision Time Stamp's *epoch*. It does not:
+  `epoch`, `microsecond` and `leap` occur zero times in its 73 pages, and the only timescale it
+  names it names as an example — "a well-defined reference source, such as International Atomic
+  Time (TAI)". The epoch, the resolution and the choice between TAI and UTC are all in MISB
+  ST 0603.5, which is park 3 — and if that document says TAI, this adapter inherits a leap-second
+  dependency no other adapter here has. That is a 1.1.0 question nobody can ask yet, which is why
+  it is a park and not a proposal.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
