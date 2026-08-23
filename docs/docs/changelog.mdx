@@ -233,6 +233,55 @@ is worth stating.
   is `nits 1.0.0 · provisional`, and the declines-and-blockers table states the five steps that
   remove it, beginning with obtaining and pinning the XSD.
 
+- **`adapters/gmtif.py` 1.0.0 — STANAG 4607 / AEDP-4607 Edition A Version 1 GMTI,
+  bidirectional.** The packet header, the segment header and all ten defined segments — **212
+  fields** — at **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  Pinned to AEDP-4607 **Edition A Version 1** (February 2024) by SHA-256, alongside AEDP-4607.1
+  and the STANAG 4607 Edition 4 ratification wrapper. Edition 3 is refused with `P1` quoted, and
+  not because the layout changed — it did not. Three enumeration tables did, so an Edition 3
+  packet decoded as Edition A **misclassifies targets with no structural symptom**: every length
+  checks out and the targets are the wrong kind of object.
+
+  **The first non-text wire format**, so the Annex C codec is a layer of its own with its own
+  suite. Seven numeric encodings, two sign-magnitude rather than two's complement and two binary
+  angles whose signed and unsigned forms differ in *both* signedness and exponent — every one a
+  place where a wrong answer is a plausible number rather than an exception. The two strongest
+  tests are the worked examples the standard itself prints: `BA16 0101100100011100` = 125.31006°
+  and −34.876099° = `SA16 1100111001100110`.
+
+  **Targets here are detections, not tracks.** Nothing in the core segments identifies a real
+  target, so each target report becomes one `Entity` and one `DETECTION` `Event` whose key ends in
+  two positional ordinals — and **no target `Track` is ever emitted**, because the standard's own
+  implementation guide sends the reader to the sensor manufacturer for the association rule. The
+  platform is the exception and gets the one `Track`: `P3` + `P8` is the only identity the format
+  guarantees.
+
+  **Two payload declarations of whether the data are real, and neither writes
+  `source.synthetic`** — in any direction, agreement included. `P7` is Mandatory on every packet;
+  a pure-simulated value against a real declaration refuses, a pure-real value against a synthetic
+  one refuses, and `synthesized` — "a mix of real and simulated data" — contradicts neither pure
+  declaration and parks visibly without a refusal. A simulated target inside a purely-real packet
+  is a **separate** refusal, payload against payload.
+
+  **A reference date on the wire, in a different segment from the times it resolves**, and the
+  first adapter here whose date comes from neither the clock nor the object that needs it. Three
+  paths with provenance on every emitted instant, and a Mission Segment contradicting the caller's
+  argument is a refusal quoting both — neither silently wins.
+
+  The `D32.10` mapping is a lookup and never arithmetic (`128 + n` mirrors `n` only for n = 0…13;
+  144–148 mirror 14–18 at **+130**) and `FACILITY` appears nowhere in it. Reserved and extension
+  segment types are **skip-and-record**: exact, because `S2` gives their length, and never silent.
+  `TRANSFORMS` is **empty**, and the round trip is **byte-exact** on all sixteen fixtures.
+
+  Four gaps opened: **20** no detection-versus-track distinction, **21** no home for a radar
+  measurable — and specifically no way to state one *component* of a velocity, **22** no negative
+  information (a dwell that found nothing is this format's primary product and the CDM cannot say
+  so), **23** no way to carry an observation whose source states no time. Gap 20 also carries two
+  stated divergences: where a person maps, and where a detection's fix lives — this adapter and
+  `stanag4676.py` put it in `Event.geometry`, `asterix_cat021.py` and `adsb.py` leave it `None`.
+  Both are 1.1.0 questions with both arguments on the record.
+
 - **`adapters/asterix_cat021.py` 1.0.0 — ASTERIX category 021 ADS-B target reports,
   bidirectional.** All 42 data items plus the RE and SP fields and the whole Reserved
   Expansion Field, at **schema_version 1.0.0**, with no field added, removed or retyped.

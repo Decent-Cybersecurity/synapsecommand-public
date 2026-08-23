@@ -8,13 +8,15 @@ description: What the SynapseCommand Canonical Data Model is, why it exists, and
 
 # The Canonical Data Model
 
-Seven integration adapters are shipped and harness-verified — PNTMAP
+Eight integration adapters are shipped and harness-verified — PNTMAP
 GNSS alerts, TAK / Cursor-on-Target (bidirectional), AIS / NMEA 0183
 AIVDM (bidirectional), ADS-B 1090ES extended squitter (bidirectional),
 Picogrid Legion Platform API v3, ASTERIX category 021 ADS-B target
-reports (bidirectional), and STANAG 4676 / AEDP-12 Edition B NITS tracks
-(bidirectional) — with more landing next: the other ASTERIX categories
-(062 system tracks, 023 service status) and simulation feeds.
+reports (bidirectional), STANAG 4676 / AEDP-12 Edition B NITS tracks
+(bidirectional), and STANAG 4607 / AEDP-4607 Edition A GMTI radar
+detections (bidirectional, byte-exact) — with more landing next: the
+other ASTERIX categories (062 system tracks, 023 service status) and
+simulation feeds.
 
 Without a canonical model in the middle, N adapters means N×(N−1)
 translations and N private notions of what "a contact" is — and the

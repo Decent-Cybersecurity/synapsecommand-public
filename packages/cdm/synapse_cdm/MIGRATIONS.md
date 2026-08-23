@@ -337,6 +337,145 @@ is worth stating.
   two produce byte-identical CDM, which is what makes the binding checkable — it found four
   defects on its first runs, two in the reader and two in the confidentiality label's handling.
 
+- **`adapters/gmtif.py` 1.0.0 (STANAG 4607 / AEDP-4607 Edition A Version 1 GMTI, bidirectional)**
+  — the packet header, the segment header and all ten defined segments, **212 fields**, at
+  **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  Pinned to AEDP-4607 **Edition A Version 1** (February 2024) by SHA-256, with AEDP-4607.1 and
+  the STANAG 4607 Edition 4 ratification wrapper. Edition 3 is refused by name with `P1` quoted,
+  and the reason is not structure: the packet layout is unchanged and what moved is three
+  enumeration tables, so an Edition 3 packet decoded here **misclassifies targets with no
+  structural symptom** — every length checks out and the targets are the wrong kind of object.
+  One adapter with a version-dispatched table is the right shape and Edition 3's tables are not
+  pinned here, so earlier editions are deferred rather than best-effort decoded.
+
+  Landed in four commits, reviewable apart: the row set as a specification with every row saying
+  `not yet` (`f4a67ec`), seven amendments to it before any code (`9d57732`), the adapter
+  (`3d43871`), and six amendments to that (`519ee71`).
+
+  Five things this format has that no earlier one did:
+
+  - **It is the first non-text wire format**, so the Annex C codec is a layer of its own with its
+    own suite: seven numeric encodings, two of them **sign-magnitude** rather than two's
+    complement and two of them **binary angles** whose signed and unsigned forms differ in
+    *both* signedness and exponent. Every one is a place where a wrong answer is a plausible
+    number rather than an exception, so `encode(decode(b)) == b` is asserted over every 16-bit
+    and 8-bit pattern by exhaustion, and the two strongest cases are the worked examples the
+    standard itself prints — `BA16 0101100100011100` = 125.31006° and −34.876099° = `SA16
+    1100111001100110`. No `struct` format anywhere: `int.from_bytes(..., "big")` at every call
+    site, because an explicit `>` is one typo from the native order.
+  - **An existence mask that governs every subsequent field offset**, so one wrong bit
+    desynchronises the rest of the segment. That is what grounds the refuse-versus-record split
+    on something the code can verify — whether the byte offsets of everything after the problem
+    are still known — rather than on a validation annex whose own references name a 2007 edition.
+    A reserved or extension segment type is **skip-and-record**: exact, because §3.2.2 gives its
+    length, and never silent, because a packet carrying an Advanced Dwell Segment nobody decodes
+    would otherwise be indistinguishable from one carrying nothing.
+  - **Targets that are detections rather than tracks.** Nothing in the core segments identifies a
+    real target: `D32.1` is scoped "within the dwell" by its own definition and Conditional
+    besides, `(D2, D3)` does not identify a Dwell Segment, and `D3` wraps. So each target report
+    becomes one `Entity` and one `DETECTION` `Event`, the `entity_id` ends in two **positional**
+    ordinals whose fragility is stated on the object, and **no target `Track` is ever emitted** —
+    the format's own implementation guide sends the reader to the sensor manufacturer for the
+    association rule, so a translator may not invent one. The **platform** is the exception and
+    the only identity the format guarantees: §3.1.8 makes each nation responsible for its
+    platforms being uniquely identified, so `P3` + `P8` is a real `SourceId` and gets the one
+    `Track`.
+  - **A reference date on the wire, in a different segment from the times it resolves.** The first
+    adapter here for which the injected clock supplies no part of a date — `M5`/`M6`/`M7` do —
+    and the first that needs stream context it refuses to hold: §3.3 sends the Mission Segment
+    "at least once every two minutes", so the date may be in an earlier packet. Three paths, and
+    provenance on **every emitted instant** rather than once per packet: the packet's own Mission
+    Segment, an explicit caller argument relaying an earlier packet's date, or a refusal. A
+    Mission Segment contradicting the caller's argument is a refusal quoting both — neither
+    silently wins, because letting the wire win discards a caller statement that may indicate
+    mis-tracked stream state and letting the argument persist lets a stale date override the
+    place §3.3 puts the answer. The caller's date is a **stand-in for absent wire context and not
+    a deployment declaration**, so it gets no protection against the wire.
+  - **Two payload declarations of whether the data are real, one boolean, and neither writes it.**
+    `P7` Exercise Indicator is Mandatory on **every** packet and says real, simulated or
+    synthesized in as many words; `D32.10`'s upper half says it per target. Neither touches
+    `source.synthetic` **in any direction, agreement included** — a rule that let a payload field
+    set a deployment declaration whenever the two matched would bind only on disagreement, which
+    is a default with a conflict check bolted on. Three branches: pure-simulated against a real
+    declaration refuses, pure-real against a synthetic one refuses, and `synthesized` — "a mix of
+    real and simulated data", §3.1.7 — contradicts neither pure declaration and **parks visibly
+    without a refusal**, because refusing would reject the case §3.1.7 exists to describe. A
+    simulated target inside a purely-real packet is a **separate** refusal, payload against
+    payload, naming `P7 = 2` as the value the packet needed.
+
+  **The `D32.10` mapping is a lookup and never arithmetic, and `FACILITY` appears nowhere.**
+  Eighteen of the forty-three named classifications map, every one of them to `PLATFORM`; the
+  rest park as `UNKNOWN` with the standard's wording. `128 + n` mirrors `n` for n = 0…13 and for
+  no other n — 144–148 mirror 14–18 at an offset of **+130**, so an arithmetic decoder reads
+  Clutter-Simulated as Ground-Rotator-Live. The rotator classes park rather than becoming
+  `FACILITY`: they name a Doppler signature class, and reading an installation off a motion
+  characteristic is the inference this adapter already refuses for `M3` Platform Type. The
+  **tagging-device exemption is keyed on the LABEL** and not on a value, because the label has
+  been carried by 140, then 143, then 142 across three editions.
+
+  What the CDM already had was enough again, and one thing it did not have is now written down.
+  **`attributes` accepting anything** is what holds the whole decoded packet verbatim beside the
+  converted values, so `TRANSFORMS` is **empty** and the harness reports `lossless: PASS` on every
+  parsed twin with nothing excused — and it is also what makes the **byte-exact round trip**
+  structural rather than hopeful, because egress re-encodes from the park. Sixteen binary twins,
+  32 files, 32 goldens; `roundtrip` reports SKIP on both halves of every twin because `from_cdm()`
+  returns binary and the harness compares structures, so the byte-exact claim is the adapter's own
+  test and is a stronger claim than the harness could make.
+
+  **Four gaps opened, 20 to 23**, and each has its assertion in the gap test:
+
+  - **20 — no detection-versus-track distinction.** An `Entity` says *this exists* and a `Track`
+    says *where it has been*; neither says *a radar returned energy from this point at this
+    instant and nothing before or after is claimed*. It is why `Entity.valid_to` has no honest
+    value here, why the key ends in positional ordinals, and why twenty-five of `D32.10`'s
+    classifications have no honest `EntityType` — `Clutter` and `Phantom` being *explicit denials
+    that anything is there*. The gap now also carries **two stated divergences**: a person maps
+    `UNKNOWN` here and `PLATFORM` in the shipped CAT021 adapter, and a detection's fix lives in
+    `Event.geometry` here and in `stanag4676.py` while `asterix_cat021.py` and `adsb.py` leave it
+    `None`. Both are 1.1.0 questions with both arguments written down, on the I021/170 precedent.
+  - **21 — no home for a radar measurable**, and specifically no way to state **one component** of
+    a velocity. `D32.7` is the radial component and the tangential part is physically
+    unobservable to a single-look MTI radar, so a target's `Kinematics` is `None` and the radial
+    value is not a speed. Explicitly **not** gap 4: a component is a projection, not a vector with
+    elements missing. Plus SNR, RCS, classification probability, MDV and electrical length.
+  - **22 — no negative information.** Stated by the format's own guide — "the fact that the radar
+    has looked at a particular area and found no targets can be just as important as receiving
+    targets in an area" — and built into the standard, which requires a Dwell Segment "even if no
+    targets are observed". The CDM renders "not looked at", "looked at and empty", "looked at with
+    an MDV of 3 m/s" and "targets found and then filtered out" identically, as empty space.
+  - **23 — no way to carry an observation whose source states no time.** Three GMTIF segments have
+    no time field in their layout at all — Free Text, Processing History, and an HRR segment whose
+    `H2`/`H3` name a dwell in another packet — and `Event.observed_at` is required and documented
+    "Never receipt time". The adapter substitutes the receipt instant and labels it in
+    `payload.observed_at_basis`, which is the least bad of three bad answers and **still a
+    violation of the field's documented meaning on three object kinds**. Two 1.1.0 proposals: make
+    `observed_at` optional so an absence can be an absence, or add a typed, mandatory basis field
+    beside it. **The `models.Event.observed_at` docstring amendment rides the same release**,
+    because its wording is part of the v1.0.0 contract.
+
+  **Three ambiguities were found by implementing rather than by reading**, which is the split
+  worth noticing — a contradiction in a byte-range column and a contradiction between two "shall"
+  statements are both invisible until something has to obey both. **15**: `H15`'s value range
+  restates `B16`'s maximum for a `B32` field and its stated minimum is 2⁻²² where the encoding's
+  LSB is 2⁻²³, so Annex C-4.5 is followed and the range column is not enforced. **16**: §3.1.10
+  requires `P10 = 0` with no dwell data and §3.7.1 gives `J1` a floor of 1, so a literal
+  `J1 == P10` cross-check makes a Job-Definition-only packet — which the guide's own Figure 2-1
+  draws — impossible to represent; the row set's rule was narrowed to §3.1.10's own condition
+  rather than the packet refused. **17**: §3.5.6 and §3.5.7 both end "Either H6 or H7 or both must
+  be reported", so a sparse chip may carry both with the two disagreeing about how many scatterer
+  records follow, and nothing says which governs — which is the written justification for bounding
+  the array by `S2` and parking it whole rather than adjudicating between two "must be reported"
+  fields on a conformant packet.
+
+  One defect is on the record because a review asked the right question of it. `codec.snap`, which
+  quantises a CDM-native position to a field's own resolution on egress, originally **masked** the
+  encoded integer to the field's width — so `snap("SA32", 95.0)` returned **−85.0**, a latitude on
+  the other side of the equator, and `snap("B16", 300.0)` returned −44.0. Clamping to the boundary
+  would have been less bad and still silent. Quantising inside a field's range is the format's
+  stated resolution being applied; moving a value **into** range is not, and an out-of-range value
+  is now a refusal quoting the value and the range.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
