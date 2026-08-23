@@ -1,8 +1,8 @@
 """MIL-STD-2525 standard identity, and the wire vocabularies that carry it.
 
 The CDM's `affiliation` is four members wide (§enums.Affiliation) and the formats it must
-speak are wider. This module holds the mappings in ONE place so that five adapters cannot
-grow five slightly different opinions about what CoT's `a-s-` prefix means.
+speak are wider. This module holds the mappings in ONE place so that six adapters cannot
+grow six slightly different opinions about what CoT's `a-s-` prefix means.
 
 MIL-STD-2525D SIDC, 20 digits, positions that concern us (1-indexed as the standard numbers
 them):

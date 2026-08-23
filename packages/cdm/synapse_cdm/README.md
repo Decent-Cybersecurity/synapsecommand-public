@@ -1,9 +1,9 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Five integration adapters are landing: PNTMAP GNSS alerts, Picogrid Legion, TAK /
-Cursor-on-Target, STANAG 4676 tracks, and the simulation feed. Without a canonical model in
-the middle, five adapters means ten translations and five private notions of "a contact". With
-one, an adapter is a thin translator and nothing else.
+Six integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, and ASTERIX category 021.
+Without a canonical model in the middle, six adapters means fifteen translations and six
+private notions of "a contact". With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
 
@@ -14,6 +14,7 @@ one, an adapter is a thin translator and nothing else.
 | [`ais`](adapters/ais.py) 1.0.0 | bidirectional | AIS NMEA 0183 AIVDM/AIVDO sentences (types 1/2/3, 4, 5, 18/19, 21) → `Entity` + `Event`; `Entity` or `Track` → sentences. The sentinel-heaviest format so far, and the one with no extension point |
 | [`adsb`](adapters/adsb.py) 1.0.0 | bidirectional | ADS-B 1090ES extended squitter frames, Mode S DF17/DF18 (type codes 1-4, 5-8, 0 and 9-18, 19, 20-22, 28, 31) → `Entity` + `Event`; `Entity` or `Track` → DF17 frames. A binary format with a CRC gate, two altitudes that are two different measurements, and no unambiguous position in a single frame |
 | [`legion`](adapters/legion.py) 1.0.0 | ingest | Picogrid Legion Platform API v3 response documents (Entity, Track, Entity/Track Location, Locations list, Event) → `Entity` + `Event` + `Track`. The first REST upstream: transport stays with the caller, one page is one Track, and the coordinates default to geocentric metres |
+| [`cat021`](adapters/asterix_cat021.py) 1.0.0 | bidirectional | ASTERIX category 021 ADS-B target reports, EUROCONTROL SPEC-0149-12 Ed 2.6 with the Reserved Expansion Field Ed 1.5 (all 42 data items, RE and SP) → `Entity` + `Event` **per record**; Entities or a `Track` → one data block. A time of day that carries no date, a quality vocabulary that needs another item to say what it means, and a ground station whose verdicts it carries without re-deciding |
 
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)

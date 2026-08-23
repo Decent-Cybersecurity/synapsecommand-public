@@ -198,6 +198,55 @@ is worth stating.
   audit caught six exemptions with no subject, and the harness caught the spec pin being replayed
   as a payload.
 
+- **`adapters/asterix_cat021.py` 1.0.0 — ASTERIX category 021 ADS-B target reports,
+  bidirectional.** All 42 data items plus the RE and SP fields and the whole Reserved
+  Expansion Field, at **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  Pinned to EUROCONTROL-SPEC-0149-12 **Edition 2.6** and its Appendix A Reserved Expansion Field
+  **Edition 1.5**, both by SHA-256. Ed 2.6 states on its own cover that it is not backwards
+  compatible with Ed 2.1 or earlier, so the edition is part of the mapping and not a footnote.
+
+  Three things this format has that no earlier one did, and each is a decision rather than a
+  translation:
+
+  - **Seven time items and not one date.** Every CAT021 time is elapsed time since last
+    midnight UTC at 1/128 s. The reference date comes from the injected clock and the instant
+    chosen is the one bearing the stated time of day NEAREST the receipt instant — one rule that
+    handles both midnight-rollover directions with no special case, and the AIS
+    second-of-minute construction generalised. A value at or beyond 86 400 s is REFUSED with the
+    raw integer quoted, never taken modulo a day.
+  - **A quality vocabulary that needs another item to say what it means.** I021/090's primary
+    subfield holds "NUCr or NACv" and "NUCp or NIC", decided by the MOPS version in I021/210 —
+    which is optional. Where it is absent the reading is recorded as UNDETERMINED rather than
+    guessed. Nothing in that item reaches `Position.accuracy_m` or `Entity.confidence` under
+    either reading, PIC included: it states a containment bound in nautical miles and a bound is
+    still not a 1-sigma error.
+  - **A ground station that has already judged.** Range checks, CPR validation, an independent
+    position check and a black-list lookup all arrive as flags. They are carried and never
+    re-decided — and `RCF`'s own note in the specification says an operational user will
+    SUPPRESS such a target, which this adapter does not: filtering is a decision, and a decision
+    made inside a translator is invisible in the CDM output.
+
+  What the CDM already had was enough, and two existing decisions earned their keep. The
+  **`ICAO24` source-id namespace** means a CAT021 record and a 1090ES frame of one airframe
+  derive the same `entity_id` without the two adapters coordinating — asserted by a fixture that
+  carries the ADS-B set's own address. And **`attributes` accepting anything** is what lets the
+  wire octets of every item be parked verbatim beside the converted values, which is why
+  `TRANSFORMS` is **empty**: a declared transform is an exemption from the never-drop check, and
+  this adapter needs none. The harness reports `lossless: PASS` on every parsed twin with
+  nothing excused.
+
+  Three gaps opened, each evidenced by something this format states and the CDM cannot hold:
+  **13** no per-measurement time (two applicability instants in one record, plus twenty-three
+  per-item ages in I021/295), **14** no producing sensor (the ground station is named in every
+  single record), and **15** no intent (selected altitudes, trajectory intent, navigation mode —
+  the deferral `adsb.py` made at type code 29, which this format does not allow).
+
+  One decision changed during implementation and a gate found it: `from_cdm()` originally took a
+  single emittable object, which failed the two-record round trip. A data block holds N records
+  and the byte-exact claim is about a BLOCK, so it now emits many Entities as many records in
+  block order.
+
 ## Proposed for 1.1.0 — MINOR, not yet implemented
 
 These come from `FORMAT_COVERAGE.md`'s gap list, and each is deliberately deferred rather than
