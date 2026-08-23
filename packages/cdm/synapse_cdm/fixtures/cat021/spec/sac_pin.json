@@ -1,0 +1,1331 @@
+{
+  "what_this_is": "The EUROCONTROL SAC allocation tables as retrieved, pinned so the CAT021 fixtures' choice of System Area Code rests on evidence rather than on an assertion in a test. House style: fixtures/legion/spec/openapi_pin.json and airtasking/SOURCES.md.",
+  "source": {
+    "document": "EUROCONTROL ASTERIX — System Area Code (SAC) allocation tables",
+    "url": "https://www.eurocontrol.int/asterix",
+    "form": "HTML page; the tables are embedded in the page, not offered as a download. There is no standalone SAC list document and no downloadable artefact to pin: https://www.eurocontrol.int/services/system-area-code-list, cited by older ASTERIX specifications, returns 404.",
+    "retrieved_at": "2026-08-23T05:14:49Z",
+    "bytes": 142913,
+    "sha256": "e063503cee9c623befc3b8688846aa33591ec3bc44495dd5fbb3d6eec4e8d931",
+    "http_last_modified": "Sun, 23 Aug 2026 05:04:18 GMT",
+    "etag": null
+  },
+  "why_the_page_hash_is_not_the_change_signal": {
+    "finding": "Two fetches four minutes apart returned DIFFERENT bytes and an IDENTICAL SAC table. The page is Drupal-rendered and embeds a fresh form_build_id and fresh bootstrap tab element ids on every render; 76 diff lines, none of them inside a SAC table.",
+    "measured": {
+      "earlier_copy_sha256": "2cf0aa13e9892ca66d6b222907b85150285c4f064507c59795c2ca32adf9605f",
+      "pinned_copy_sha256": "e063503cee9c623befc3b8688846aa33591ec3bc44495dd5fbb3d6eec4e8d931",
+      "extraction_identical_across_both": true
+    },
+    "consequence": "The extraction hash below is the change signal and the page hash is not — the exact inverse of the Legion pin, where the served ETag IS the SHA-256 of the body and the document's own info.version is the useless signal. The page hash still earns its place: it identifies the copy that was read, which is a different claim from 'nothing changed'.",
+    "how_to_recheck": "Re-fetch the url, re-run the extraction described under `extraction`, and compare `extraction.sha256`. A changed extraction hash means the allocation list moved and the fixtures must be re-checked against it."
+  },
+  "extraction": {
+    "method": "Every <table> on the page, in document order, mapped onto the six regional headings the page presents in that order; from each, every <tr> whose first cell is exactly two hex digits, kept as [code, country_cell] with tags stripped, entities unescaped, non-breaking spaces folded to spaces and the result trimmed. Serialised as JSON with sorted keys and no whitespace, then SHA-256.",
+    "sha256": "094521427194a736214295d97747eb097cfab73e27d0e312e5e62556ab66542d",
+    "regional_row_counts": {
+      "EUR": 101,
+      "SouthAmericaCaribbean": 50,
+      "USACanada": 10,
+      "African": 55,
+      "MiddleEast": 16,
+      "APAC": 52
+    },
+    "total_rows": 284,
+    "tables": {
+      "EUR": [
+        [
+          "00",
+          "LocalAirport"
+        ],
+        [
+          "01",
+          "EUROCONTROL"
+        ],
+        [
+          "02",
+          "Greece"
+        ],
+        [
+          "03",
+          ""
+        ],
+        [
+          "04",
+          "The Netherlands"
+        ],
+        [
+          "05",
+          ""
+        ],
+        [
+          "06",
+          "Belgium"
+        ],
+        [
+          "07",
+          "NATO"
+        ],
+        [
+          "08",
+          "France"
+        ],
+        [
+          "09",
+          "France"
+        ],
+        [
+          "10",
+          ""
+        ],
+        [
+          "11",
+          "Ukraine"
+        ],
+        [
+          "12",
+          "Monaco"
+        ],
+        [
+          "13",
+          ""
+        ],
+        [
+          "14",
+          "Spain"
+        ],
+        [
+          "15",
+          ""
+        ],
+        [
+          "16",
+          "Hungary"
+        ],
+        [
+          "17",
+          "Bosnia-Herzegovina"
+        ],
+        [
+          "18",
+          "Republic of North Macedonia"
+        ],
+        [
+          "19",
+          "Croatia"
+        ],
+        [
+          "20",
+          "Serbia"
+        ],
+        [
+          "21",
+          "Montenegro"
+        ],
+        [
+          "22",
+          "Italy"
+        ],
+        [
+          "23",
+          ""
+        ],
+        [
+          "24",
+          "Albania"
+        ],
+        [
+          "25",
+          ""
+        ],
+        [
+          "26",
+          "Romania"
+        ],
+        [
+          "27",
+          ""
+        ],
+        [
+          "28",
+          "Switzerland"
+        ],
+        [
+          "29",
+          ""
+        ],
+        [
+          "30",
+          "Slovak Republic"
+        ],
+        [
+          "31",
+          "Czech Republic"
+        ],
+        [
+          "32",
+          "Austria"
+        ],
+        [
+          "33",
+          ""
+        ],
+        [
+          "34",
+          "United Kingdom"
+        ],
+        [
+          "35",
+          "United Kingdom"
+        ],
+        [
+          "36",
+          ""
+        ],
+        [
+          "37",
+          ""
+        ],
+        [
+          "38",
+          "Denmark"
+        ],
+        [
+          "39",
+          "Denmark (MIL)"
+        ],
+        [
+          "40",
+          "Sweden"
+        ],
+        [
+          "41",
+          "Sweden (MIL)"
+        ],
+        [
+          "42",
+          "Norway"
+        ],
+        [
+          "43",
+          "Norway (MIL)"
+        ],
+        [
+          "44",
+          "Finland"
+        ],
+        [
+          "45",
+          "Finland (MIL)"
+        ],
+        [
+          "46",
+          "Lithuania"
+        ],
+        [
+          "47",
+          "Latvia"
+        ],
+        [
+          "48",
+          "Estonia"
+        ],
+        [
+          "49",
+          "Russia North - Western Federal District"
+        ],
+        [
+          "50",
+          "Russia Central Federal District"
+        ],
+        [
+          "51",
+          "Russia Far - Eastern Federal District"
+        ],
+        [
+          "52",
+          "Tajikistan"
+        ],
+        [
+          "53",
+          "Russia Southern & North - Caucasian Federal Districts"
+        ],
+        [
+          "54",
+          "Russia Volga Federal District"
+        ],
+        [
+          "55",
+          "Russia Urals Federal District"
+        ],
+        [
+          "56",
+          "Russia Siberian Federal District"
+        ],
+        [
+          "57",
+          "Belarus"
+        ],
+        [
+          "58",
+          ""
+        ],
+        [
+          "59",
+          ""
+        ],
+        [
+          "60",
+          "Poland"
+        ],
+        [
+          "61",
+          "Germany"
+        ],
+        [
+          "62",
+          "Germany"
+        ],
+        [
+          "63",
+          "Germany (Weather Service)"
+        ],
+        [
+          "64",
+          "Germany (MIL)"
+        ],
+        [
+          "65",
+          "Algeria"
+        ],
+        [
+          "66",
+          "Morocco"
+        ],
+        [
+          "67",
+          "Tunisia"
+        ],
+        [
+          "68",
+          "Portugal"
+        ],
+        [
+          "69",
+          ""
+        ],
+        [
+          "70",
+          "Luxembourg"
+        ],
+        [
+          "71",
+          ""
+        ],
+        [
+          "72",
+          "Ireland"
+        ],
+        [
+          "73",
+          ""
+        ],
+        [
+          "74",
+          "Iceland"
+        ],
+        [
+          "75",
+          ""
+        ],
+        [
+          "76",
+          "France (MIL)"
+        ],
+        [
+          "77",
+          ""
+        ],
+        [
+          "78",
+          "Malta"
+        ],
+        [
+          "79",
+          ""
+        ],
+        [
+          "80",
+          "Cyprus"
+        ],
+        [
+          "81",
+          ""
+        ],
+        [
+          "82",
+          "Armenia"
+        ],
+        [
+          "83",
+          ""
+        ],
+        [
+          "84",
+          "Bulgaria"
+        ],
+        [
+          "85",
+          "Turkey (MIL)"
+        ],
+        [
+          "86",
+          "Turkey"
+        ],
+        [
+          "87",
+          "Turkey (MIL)"
+        ],
+        [
+          "88",
+          "Georgia"
+        ],
+        [
+          "89",
+          ""
+        ],
+        [
+          "90",
+          "Turkmenistan"
+        ],
+        [
+          "91",
+          ""
+        ],
+        [
+          "92",
+          ""
+        ],
+        [
+          "93",
+          "Republic of Slovenia"
+        ],
+        [
+          "94",
+          "Moldova"
+        ],
+        [
+          "95",
+          "Uzbekistan"
+        ],
+        [
+          "96",
+          ""
+        ],
+        [
+          "97",
+          "Kazakhstan"
+        ],
+        [
+          "98",
+          "Kyrgyz Republic"
+        ],
+        [
+          "99",
+          "Azerbaijan"
+        ],
+        [
+          "DF",
+          "Israel"
+        ]
+      ],
+      "SouthAmericaCaribbean": [
+        [
+          "00",
+          "LocalAirport"
+        ],
+        [
+          "E0",
+          "Anguilla (United Kingdom)"
+        ],
+        [
+          "E1",
+          "Antigua & Barbuda"
+        ],
+        [
+          "E2",
+          "Argentina"
+        ],
+        [
+          "E3",
+          "Aruba (Netherlands)"
+        ],
+        [
+          "E4",
+          "Bahamas"
+        ],
+        [
+          "E5",
+          "Barbados"
+        ],
+        [
+          "E6",
+          "Belize"
+        ],
+        [
+          "E7",
+          "Bolivia"
+        ],
+        [
+          "03",
+          "Brasil"
+        ],
+        [
+          "E8",
+          "Brasil"
+        ],
+        [
+          "E9",
+          "Cayman Islands (United Kingdom)"
+        ],
+        [
+          "EA",
+          "Chile"
+        ],
+        [
+          "EB",
+          "Colombia"
+        ],
+        [
+          "EC",
+          "Costa rica"
+        ],
+        [
+          "ED",
+          "Cuba"
+        ],
+        [
+          "EE",
+          "Dominica"
+        ],
+        [
+          "EF",
+          "Dominican Republic"
+        ],
+        [
+          "F0",
+          "Ecuador"
+        ],
+        [
+          "F1",
+          "El Salvador"
+        ],
+        [
+          "08",
+          "Guadeloupe, French Antilles (France)"
+        ],
+        [
+          "08",
+          "Martinique, French Antilles (France)"
+        ],
+        [
+          "08",
+          "French Guiana (France)"
+        ],
+        [
+          "F5",
+          "Grenada"
+        ],
+        [
+          "F6",
+          "Guatemala"
+        ],
+        [
+          "F7",
+          "Guyana"
+        ],
+        [
+          "F8",
+          "Haiti"
+        ],
+        [
+          "F9",
+          "Honduras"
+        ],
+        [
+          "FA",
+          "Jamaica"
+        ],
+        [
+          "FB",
+          "Mexico"
+        ],
+        [
+          "FC",
+          "Montserrat (United Kingdom)"
+        ],
+        [
+          "FD",
+          "Netherland Antilles (Netherlands)"
+        ],
+        [
+          "FE",
+          "Nicaragua"
+        ],
+        [
+          "FF",
+          "Panama"
+        ],
+        [
+          "D0",
+          "Paraguay"
+        ],
+        [
+          "D1",
+          "Peru"
+        ],
+        [
+          "D2",
+          "Puerto Rico (United States)"
+        ],
+        [
+          "D3",
+          "Saint Kitts and Nevis"
+        ],
+        [
+          "D4",
+          "Saint Lucia"
+        ],
+        [
+          "D5",
+          "Saint Vincent and Grenadines"
+        ],
+        [
+          "D6",
+          "Saint Maarten"
+        ],
+        [
+          "D7",
+          "Suriname"
+        ],
+        [
+          "D8",
+          "Tortola"
+        ],
+        [
+          "D9",
+          "Trinidad and Tobago"
+        ],
+        [
+          "DA",
+          "Turks and Caicos Is. (United Kingdom)"
+        ],
+        [
+          "DB",
+          "United States (For sharing with CAR Region)"
+        ],
+        [
+          "DC",
+          "Uruguay"
+        ],
+        [
+          "DD",
+          "Venezuela"
+        ],
+        [
+          "DE",
+          "Virgin Island (United Kingdom)"
+        ],
+        [
+          "DF",
+          "Virgin Island (United States)"
+        ]
+      ],
+      "USACanada": [
+        [
+          "D0",
+          "Atlantic Provinces"
+        ],
+        [
+          "D1",
+          "Quebec"
+        ],
+        [
+          "D2",
+          "Ontario"
+        ],
+        [
+          "D3",
+          "Spare"
+        ],
+        [
+          "D4",
+          "Testing / Training Facilities"
+        ],
+        [
+          "D5",
+          "Central Provinces East"
+        ],
+        [
+          "D6",
+          "Central Provinces West"
+        ],
+        [
+          "D7",
+          "British Columbia Province"
+        ],
+        [
+          "D8",
+          "Nunavut"
+        ],
+        [
+          "D9",
+          "Northern Territory incl. Yukon"
+        ]
+      ],
+      "African": [
+        [
+          "65",
+          "Algeria"
+        ],
+        [
+          "A0",
+          "Angola"
+        ],
+        [
+          "A1",
+          "Benin"
+        ],
+        [
+          "A2",
+          "Botswana"
+        ],
+        [
+          "A3",
+          "Burkina Faso"
+        ],
+        [
+          "A4",
+          "Burundi"
+        ],
+        [
+          "A5",
+          "Cameroon"
+        ],
+        [
+          "A6",
+          "Cape Verde"
+        ],
+        [
+          "A7",
+          "Central African Republic"
+        ],
+        [
+          "A8",
+          "Chad"
+        ],
+        [
+          "A9",
+          "Comoros"
+        ],
+        [
+          "AA",
+          "Congo"
+        ],
+        [
+          "AB",
+          "Côte d’Ivoire"
+        ],
+        [
+          "AC",
+          "Democratic Republic of the Congo"
+        ],
+        [
+          "AD",
+          "Djibouti"
+        ],
+        [
+          "DC",
+          "Egypt"
+        ],
+        [
+          "AE",
+          "Equatorial Guinea"
+        ],
+        [
+          "AF",
+          "Eritrea"
+        ],
+        [
+          "B0",
+          "Ethiopia"
+        ],
+        [
+          "B1",
+          "Gabon"
+        ],
+        [
+          "B2",
+          "Gambia"
+        ],
+        [
+          "B3",
+          "Ghana"
+        ],
+        [
+          "B4",
+          "Guinea"
+        ],
+        [
+          "B5",
+          "Guinea-Bissau"
+        ],
+        [
+          "B6",
+          "Kenya"
+        ],
+        [
+          "08",
+          "La Reunion"
+        ],
+        [
+          "B7",
+          "Lesotho"
+        ],
+        [
+          "B8",
+          "Liberia"
+        ],
+        [
+          "E3",
+          "Libyan Arab Jamahiriya"
+        ],
+        [
+          "B9",
+          "Madagascar"
+        ],
+        [
+          "BA",
+          "Malawi"
+        ],
+        [
+          "BB",
+          "Mali"
+        ],
+        [
+          "BC",
+          "Mauritania"
+        ],
+        [
+          "BD",
+          "Mauritius"
+        ],
+        [
+          "08",
+          "Mayotte"
+        ],
+        [
+          "66",
+          "Morocco"
+        ],
+        [
+          "BE",
+          "Mozambique"
+        ],
+        [
+          "BF",
+          "Namibia"
+        ],
+        [
+          "C0",
+          "Niger"
+        ],
+        [
+          "C1",
+          "Nigeria"
+        ],
+        [
+          "C2",
+          "Rwanda"
+        ],
+        [
+          "C3",
+          "Sao Tome and Principe"
+        ],
+        [
+          "C4",
+          "Senegal"
+        ],
+        [
+          "C5",
+          "Seychelles"
+        ],
+        [
+          "C6",
+          "Sierra Leone"
+        ],
+        [
+          "C7",
+          "Somalia"
+        ],
+        [
+          "C8",
+          "South Africa"
+        ],
+        [
+          "E7",
+          "Sudan"
+        ],
+        [
+          "C9",
+          "Swaziland"
+        ],
+        [
+          "CA",
+          "Togo"
+        ],
+        [
+          "67",
+          "Tunisia"
+        ],
+        [
+          "CB",
+          "Uganda"
+        ],
+        [
+          "CC",
+          "United Republic of Tanzania"
+        ],
+        [
+          "CD",
+          "Zambia"
+        ],
+        [
+          "CE",
+          "Zimbabwe"
+        ]
+      ],
+      "MiddleEast": [
+        [
+          "DA",
+          "Afghanistan"
+        ],
+        [
+          "DB",
+          "Bahrain"
+        ],
+        [
+          "DC",
+          "Egypt"
+        ],
+        [
+          "DD",
+          "Iran, Islamic Republic of"
+        ],
+        [
+          "DE",
+          "Iraq"
+        ],
+        [
+          "E0",
+          "Jordan"
+        ],
+        [
+          "E1",
+          "Kuwait"
+        ],
+        [
+          "E2",
+          "Lebanon"
+        ],
+        [
+          "E3",
+          "Libyan Arab Jamahiriya"
+        ],
+        [
+          "E4",
+          "Oman"
+        ],
+        [
+          "E5",
+          "Qatar"
+        ],
+        [
+          "E6",
+          "Saudi Arabia"
+        ],
+        [
+          "E7",
+          "Sudan"
+        ],
+        [
+          "E8",
+          "Syrian Arab Republic"
+        ],
+        [
+          "E9",
+          "United Arab Emirates"
+        ],
+        [
+          "EA",
+          "Yemen"
+        ]
+      ],
+      "APAC": [
+        [
+          "A2",
+          "Afghanistan"
+        ],
+        [
+          "02",
+          "American Samoa"
+        ],
+        [
+          "04",
+          "Australia"
+        ],
+        [
+          "A4",
+          "Australia"
+        ],
+        [
+          "06",
+          "Bangladesh"
+        ],
+        [
+          "08",
+          "Bhutan"
+        ],
+        [
+          "10",
+          "Brunei Darussalam"
+        ],
+        [
+          "12",
+          "Cambodia"
+        ],
+        [
+          "16",
+          "China"
+        ],
+        [
+          "1A",
+          "China"
+        ],
+        [
+          "1C",
+          "China"
+        ],
+        [
+          "A6",
+          "China"
+        ],
+        [
+          "AA",
+          "China"
+        ],
+        [
+          "18",
+          "Hong Kong, China"
+        ],
+        [
+          "40",
+          "Macao, China"
+        ],
+        [
+          "20",
+          "Taibei, China"
+        ],
+        [
+          "22",
+          "Cook Islands"
+        ],
+        [
+          "24",
+          "DPR. of Korea"
+        ],
+        [
+          "26",
+          "Fiji"
+        ],
+        [
+          "28",
+          "French Polynesia"
+        ],
+        [
+          "30",
+          "India"
+        ],
+        [
+          "32",
+          "Indonesia"
+        ],
+        [
+          "34",
+          "Japan"
+        ],
+        [
+          "36",
+          "Kiribati"
+        ],
+        [
+          "38",
+          "Lao PDR."
+        ],
+        [
+          "42",
+          "Malaysia"
+        ],
+        [
+          "44",
+          "Maldives"
+        ],
+        [
+          "46",
+          "Marshall Islands"
+        ],
+        [
+          "48",
+          "Micronesia"
+        ],
+        [
+          "50",
+          "Mongolia"
+        ],
+        [
+          "52",
+          "Myanmar"
+        ],
+        [
+          "54",
+          "Nauru"
+        ],
+        [
+          "56",
+          "Nepal"
+        ],
+        [
+          "58",
+          "New Caledonia"
+        ],
+        [
+          "60",
+          "New Zealand"
+        ],
+        [
+          "62",
+          "Niue Island"
+        ],
+        [
+          "64",
+          "Pakistan"
+        ],
+        [
+          "66",
+          "Palau"
+        ],
+        [
+          "68",
+          "Papua New Guinea"
+        ],
+        [
+          "72",
+          "Philippines"
+        ],
+        [
+          "74",
+          "Republic of Korea"
+        ],
+        [
+          "76",
+          "Samoa"
+        ],
+        [
+          "78",
+          "Singapore"
+        ],
+        [
+          "80",
+          "Solomon Islands"
+        ],
+        [
+          "82",
+          "Sri Lanka"
+        ],
+        [
+          "84",
+          "Thailand"
+        ],
+        [
+          "86",
+          "Tonga"
+        ],
+        [
+          "88",
+          "Tuvalu"
+        ],
+        [
+          "90",
+          "United States"
+        ],
+        [
+          "92",
+          "Vanuatu"
+        ],
+        [
+          "94",
+          "Vietnam"
+        ],
+        [
+          "96",
+          "Wallis Islands"
+        ]
+      ]
+    }
+  },
+  "reading": {
+    "allocated": "a code whose country cell is non-empty in at least one regional table",
+    "listed_but_blank": "a code the page LISTS with an explicitly empty country cell (<td>&nbsp;</td>) in every table it appears in. This is the page positively showing an unallocated code, and it is the strongest negative evidence available here — the analogue of ITU MID 299 being documented as unallocated, which is what the AIS fixtures rest on.",
+    "absent": "a code that appears in no regional table at all. WEAKER evidence: an absence can mean unallocated, or it can mean the page does not tabulate it. Not used to justify a fixture value.",
+    "listed_but_blank_codes": [
+      "05",
+      "13",
+      "15",
+      "23",
+      "25",
+      "27",
+      "29",
+      "33",
+      "37",
+      "59",
+      "69",
+      "71",
+      "73",
+      "75",
+      "77",
+      "79",
+      "81",
+      "83",
+      "89",
+      "91"
+    ],
+    "absent_codes": [
+      "0A",
+      "0B",
+      "0C",
+      "0D",
+      "0E",
+      "0F",
+      "1B",
+      "1D",
+      "1E",
+      "1F",
+      "2A",
+      "2B",
+      "2C",
+      "2D",
+      "2E",
+      "2F",
+      "3A",
+      "3B",
+      "3C",
+      "3D",
+      "3E",
+      "3F",
+      "4A",
+      "4B",
+      "4C",
+      "4D",
+      "4E",
+      "4F",
+      "5A",
+      "5B",
+      "5C",
+      "5D",
+      "5E",
+      "5F",
+      "6A",
+      "6B",
+      "6C",
+      "6D",
+      "6E",
+      "6F",
+      "7A",
+      "7B",
+      "7C",
+      "7D",
+      "7E",
+      "7F",
+      "8A",
+      "8B",
+      "8C",
+      "8D",
+      "8E",
+      "8F",
+      "9A",
+      "9B",
+      "9C",
+      "9D",
+      "9E",
+      "9F",
+      "CF",
+      "F2",
+      "F3",
+      "F4"
+    ]
+  },
+  "fixture_sac": {
+    "value": "0x29",
+    "decimal": 41,
+    "evidence": [
+      {
+        "region": "EUR",
+        "country_cell": ""
+      }
+    ],
+    "occurrences_across_all_regional_tables": 1,
+    "verdict": "listed_but_blank — unallocated in this copy",
+    "why_this_one": "It is listed-but-blank rather than merely absent, and it echoes the AIS fixtures' MID 299 and the ADS-B fixtures' 0029xx address block on purpose, so a reader who has met one of the three sets recognises the others."
+  },
+  "fixture_sic": {
+    "value": "0x29",
+    "carries_no_allocation_claim": true,
+    "why": "SIC is the System Identification Code assigned by the operator WITHIN a SAC, not centrally by EUROCONTROL, so no allocation list exists for it and none is pinned. Its safety is entirely inherited from the SAC being unallocated. Stated so that the pin is not read as evidence about both halves of the pair."
+  },
+  "rejected": {
+    "0xFE": {
+      "reason": "ALLOCATED — Nicaragua",
+      "evidence": [
+        {
+          "region": "SouthAmericaCaribbean",
+          "country_cell": "Nicaragua"
+        }
+      ],
+      "note": "0xFE/0xFE was the value this row set proposed before the list was pinned, on no evidence at all. The pin is what caught it."
+    },
+    "0xFF": {
+      "reason": "ALLOCATED — Panama",
+      "evidence": [
+        {
+          "region": "SouthAmericaCaribbean",
+          "country_cell": "Panama"
+        }
+      ],
+      "note": "the other obvious placeholder, also allocated."
+    },
+    "0x00": {
+      "reason": "ALLOCATED — LocalAirport",
+      "evidence": [
+        {
+          "region": "EUR",
+          "country_cell": "LocalAirport"
+        },
+        {
+          "region": "SouthAmericaCaribbean",
+          "country_cell": "LocalAirport"
+        }
+      ],
+      "note": "and the most dangerous placeholder of the three, because it is the one an uninitialised field produces."
+    }
+  }
+}

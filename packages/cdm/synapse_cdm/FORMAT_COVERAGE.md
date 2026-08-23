@@ -1348,6 +1348,38 @@ is available **or the registration marking when no flight plan is available**". 
 meanings, no bit anywhere in the record saying which arrived. Filing it under `callsign` would
 assert the first meaning half the time.
 
+**The divergence is deliberate, and its cost is visible: one aircraft, two keys.** The same
+airframe seen by `adsb.py` and by this adapter carries the **same identification string** under
+two different names — `attributes.callsign` from the 1090ES frame and
+`attributes.target_identification` from the CAT021 record. A consumer holding both objects sees
+one aircraft describe itself twice and has to know both keys to read either.
+
+That is accepted rather than regretted, for a reason about what a translator owes. **Reconciling
+two feeds' vocabularies is fusion**, and it is fusion of exactly the kind this document already
+declines four times: AIS type 24's cross-message join, CPR even/odd pairing, Legion's pagination,
+and correlation across CAT021 data blocks. An adapter is a pure function of one payload — it does
+not know the other adapter exists, cannot see its output, and owes it no convergence. **If
+convergence is ever wanted it is a consumer decision**, made where both objects are in hand, where
+the choice is visible, and where a precedence rule for it can be written down and audited. A
+translator reaching for another adapter's key in order to look tidy would be making that decision
+invisibly, in the one place nobody looks for it.
+
+**What must not be claimed here is that CAT021's field is the ambiguous one and ADS-B's is not.**
+They are the same field. I021/170's coding rules cite ICAO Annex 10 Vol. IV §3.1.2.9.1.2 and
+Table 3-8 — the same section and the same table that define the Aircraft Identification carried by
+a 1090ES type code 1–4 frame — so "flight identification, or the registration marking when no
+flight plan is available" is true of both. One arrives direct from the squitter and one relayed
+through a ground station; the ambiguity is identical. The honest statement of the asymmetry is
+therefore that **`attributes.callsign` asserts the flight-plan reading on data that does not
+support it, and `attributes.target_identification` does not.** This is not two row sets weighing
+different evidence and reaching different answers — it is this row set declining to repeat a
+choice made before the ambiguity was noticed.
+
+So `adsb.py`'s key is the one that should move, and it is **not moved here**. It is a published
+`attributes` key that a shipped adapter, its fixtures and its golden files already carry, so
+renaming it is a 1.1.0 question with a migration note behind it, not a side effect of writing a
+sixth row set. The cost is counted in gap 1.
+
 **I021/070 Mode 3/A Code is parked, and here converging on ADS-B's key IS right.** Twelve bits,
 octal, four digits. It is not a `SourceId` for exactly the reason `adsb.py` gives — a squawk is
 assigned by ATC per flight and reassigned afterwards, so an id keyed on it would split one
@@ -1734,11 +1766,61 @@ carries, the raw integer, the arithmetic and the decoded value — so a reviewer
 | Identifier | Fixture convention | How strong the claim is |
 |---|---|---|
 | **Target Address** (I021/080) | `0029xx`, the ADS-B fixture block | Same claim, deliberately: the ICAO allocation table's lowest state block begins at `004000`, so everything below it is in no administration's range. **This repository pins no retrieved copy of that table**, which is why the ADS-B README says the claim is weaker than AIS's MID 299 — and reusing the block keeps the two ADS-B-family sets recognisably one family, which is the point, because one fixture exists to show a CAT021 contact and an ADS-B contact deriving the *same* `entity_id` from the same address |
-| **SAC / SIC** (I021/010) | a single fixed pair, `SAC = 0xFE`, `SIC = 0xFE` | **The weakest claim in the set, and it is named rather than dressed up.** SAC codes are allocated by EUROCONTROL and the current list lives on their website; nothing here pins a copy, so no value can be *shown* to be unallocated. The pair is asserted as a constant in the test suite so the assumption is discoverable from a failure rather than from somebody's memory, and if the allocation list is ever pinned the way `airtasking/SOURCES.md` pins a source, the fixtures move |
+| **SAC / SIC** (I021/010) | `SAC = 0x29`, `SIC = 0x29` | **Pinned, not asserted** — see the SAC pin below. The retrieved copy of the EUROCONTROL allocation tables lists SAC `0x29` with an explicitly empty country cell in the EUR table and nowhere else, which is the page *positively showing* an unallocated code — the same strength of claim ITU MID 299 gives the AIS fixtures, and stronger than the ADS-B address block's. It echoes MID 299 and the `0029xx` block on purpose. **`SIC` carries no allocation claim at all**: a System Identification Code is assigned by the operator *within* a SAC rather than centrally, so no list exists to pin and its safety is inherited entirely from the SAC's |
 | **UUIDs** | the `f1c7…-8…` version-8 convention, where one is needed | CAT021's wire form contains **no UUIDs at all** — its identifiers are a 24-bit address, a SAC/SIC pair, a 12-bit track number and a Mode 3/A code. The UUIDs in the golden files are `entity_id` and `event_id`, which are **derived** uuid5 values and therefore not free to choose. So the convention binds nothing in this set, and that is stated rather than left to look like an omission |
 | **Target Identification** (I021/170) | `EXRCS01`, `EXHELO2`, `EXMAST1` | Fictional and marked as exercise traffic, matching the ADS-B set character for character |
 | **Mode 3/A** (I021/070) | ordinary codes such as `4271` | 7500, 7600 and 7700 are the hijack, radio-failure and emergency codes and are deliberately absent — an emergency in this set is declared through I021/200 and REF `STA`, which is where CAT021 actually carries one |
 | **Positions** | Gulf of Riga, west of Saaremaa, Ventspils, the Riga apron | Baltic-plausible, matching the other four sets, and no vessel's or aircraft's real track |
+
+#### The SAC pin
+
+Phase 1 proposed `0xFE/0xFE` and defended it with an assertion in the test suite. That was wrong
+in a way worth recording: **an assertion on an unverified value relocates a guess from somebody's
+memory into code without checking it.** It fails loudly when someone edits the constant, and never
+fails for the reason that matters — the constant being wrong to begin with. So the list is pinned,
+house style (`fixtures/legion/spec/openapi_pin.json`, `airtasking/SOURCES.md`), and the assertion
+now sits *on top of* the pin rather than in place of one.
+
+`fixtures/cat021/spec/sac_pin.json` carries the whole thing: the URL, the retrieval timestamp, the
+byte count, the SHA-256 of the retrieved page, the full extracted allocation table, and the
+evidence for every value the fixtures use or rejected.
+
+| | |
+|---|---|
+| Document | EUROCONTROL ASTERIX — System Area Code (SAC) allocation tables |
+| URL | `https://www.eurocontrol.int/asterix` |
+| Form | **an HTML page.** The tables are embedded in it; there is no standalone SAC list and no downloadable artefact to pin. `https://www.eurocontrol.int/services/system-area-code-list`, cited by older ASTERIX specifications, returns **404** |
+| Retrieved | 2026-08-23T05:14:49Z |
+| Size | 142 913 bytes |
+| SHA-256 (page) | `e063503cee9c623befc3b8688846aa33591ec3bc44495dd5fbb3d6eec4e8d931` |
+| SHA-256 (extraction) | `094521427194a736214295d97747eb097cfab73e27d0e312e5e62556ab66542d` |
+| Rows extracted | 284, across the six regional tables the page presents |
+
+**The page hash is not the change signal, and that is measured rather than assumed.** Two fetches
+four minutes apart returned **different bytes and an identical SAC table**: the page is
+Drupal-rendered and embeds a fresh `form_build_id` and fresh bootstrap tab element ids on every
+render — 76 diff lines, not one of them inside a table. So the **extraction** hash is what a
+re-check compares, and the page hash earns its place for a different job: it identifies the copy
+that was read, which is a separate claim from "nothing has changed".
+
+That is the exact inverse of the Legion pin, where the server's ETag *is* the SHA-256 of the body
+and the document's own `info.version` is the useless signal. Two sources, two pins, and in each
+case the obvious identifier is the one that does not work — which is the argument for pinning by
+measurement rather than by convention.
+
+**What the pinned copy says about the value Phase 1 proposed:**
+
+| SAC | The pinned copy says | Consequence |
+|---|---|---|
+| `0xFE` | **Nicaragua** — South America & Caribbean table | rejected. This was the Phase 1 proposal, chosen on no evidence; the pin is what caught it |
+| `0xFF` | **Panama** | rejected — the other obvious placeholder, also allocated |
+| `0x00` | **LocalAirport** | rejected, and the most dangerous of the three: it is the value an uninitialised field produces |
+| `0x29` | listed with an **empty country cell**, in the EUR table and in no other | **adopted** |
+
+The pin also separates two grades of negative evidence, because they are not equally good. A code
+the page **lists with a blank country cell** is the page stating that the code has no allocation —
+there are twenty, and `0x29` is one. A code **absent from every table** may be unallocated or may
+simply be untabulated, so no fixture value rests on one. Only the first grade is used.
 
 #### The planned fixtures, and what each one is there to catch
 

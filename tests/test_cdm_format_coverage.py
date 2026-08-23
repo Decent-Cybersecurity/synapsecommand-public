@@ -477,3 +477,119 @@ def test_the_gap_notes_are_referenced_from_the_table():
         assert f"**gap {number}**" in text or f"{number}. **" in text, (
             f"gap {number} is listed but never referenced from a table row"
         )
+
+
+# ---------------------------------------------------------------- the CAT021 SAC pin
+#
+# The CAT021 row set is a SPECIFICATION, like the Legion one was before adapter #5 landed, and
+# these tests pin the one part of it that rests on an external allocation list rather than on a
+# ratified standard: the System Area Code its fixtures use.
+#
+# The first version of that decision was an assertion in a test on a value nobody had checked
+# (`SAC = 0xFE`). That is worth stating because it is a trap the house style invites: an
+# assertion on an unverified constant LOOKS like evidence, fails loudly when someone edits the
+# constant, and never fails for the reason that matters — the constant being wrong to begin with.
+# 0xFE turned out to be Nicaragua. So the assertions below sit on top of a pinned copy of the
+# list rather than in place of one.
+CAT021_HEADING = "## ASTERIX Category 021"
+
+SAC_PIN = (pathlib.Path(synapse_cdm.__file__).resolve().parent
+           / "fixtures/cat021/spec/sac_pin.json")
+
+
+def _sac_pin() -> dict:
+    return json.loads(SAC_PIN.read_text())
+
+
+def _sac_entries(code: str) -> list[tuple[str, str]]:
+    """Every (region, country_cell) the pinned copy shows for one SAC, across all six tables."""
+    return [(region, country)
+            for region, rows in _sac_pin()["extraction"]["tables"].items()
+            for hex_code, country in rows
+            if hex_code == code.upper()]
+
+
+def test_the_sac_pin_names_the_document_it_was_read_from():
+    """A pin that does not identify its source is a number, not evidence."""
+    source = _sac_pin()["source"]
+    assert source["url"] == "https://www.eurocontrol.int/asterix"
+    assert source["retrieved_at"] == "2026-08-23T05:14:49Z"
+    assert source["bytes"] == 142913
+    assert len(source["sha256"]) == 64
+    section = _section(CAT021_HEADING)
+    assert source["sha256"] in section, (
+        "the table and the pin file must name the same retrieved copy"
+    )
+    assert _sac_pin()["extraction"]["sha256"] in section, (
+        "the extraction hash is the re-checkable half of this pin and belongs in the document"
+    )
+
+
+def test_the_sac_extraction_hash_matches_the_table_the_pin_carries():
+    """The pin cannot drift against itself.
+
+    This is the tooth of the whole amendment. Everything else here reads values out of the pin,
+    so a hand-edited pin would satisfy all of it; recomputing the hash over the stored tables is
+    what makes the stored tables the thing that was actually retrieved rather than a
+    plausible-looking transcription of it.
+    """
+    pin = _sac_pin()
+    canonical = json.dumps(pin["extraction"]["tables"], sort_keys=True, separators=(",", ":"))
+    import hashlib
+    recomputed = hashlib.sha256(canonical.encode()).hexdigest()
+    assert recomputed == pin["extraction"]["sha256"], (
+        "the pinned allocation table no longer hashes to the pinned extraction hash — either "
+        "the table was edited by hand or the hash was. Re-fetch and re-extract; do not "
+        "reconcile them by updating one to match the other"
+    )
+    assert sum(len(rows) for rows in pin["extraction"]["tables"].values()) == \
+        pin["extraction"]["total_rows"]
+
+
+def test_the_fixture_sac_is_unallocated_in_the_pinned_copy():
+    """The claim the fixtures actually rest on, checked against the pinned list.
+
+    `listed with an empty country cell` is the strong form of the claim — the page positively
+    showing a code with no allocation, which is what ITU MID 299 gives the AIS fixtures. A code
+    merely ABSENT from every table is the weak form and no fixture value may rest on one.
+    """
+    entries = _sac_entries("29")
+    assert entries, (
+        "SAC 0x29 does not appear in the pinned allocation tables at all. That is the WEAK form "
+        "of the claim and the fixtures may not rest on it — see the pin's `reading` section"
+    )
+    assert all(country == "" for _, country in entries), (
+        f"SAC 0x29 is allocated in the pinned copy: {entries}. The fixtures must move to a "
+        "value the pinned copy shows as unallocated, and the evidence belongs in the commit "
+        "message"
+    )
+
+
+def test_the_rejected_sac_values_are_still_allocated_in_the_pinned_copy():
+    """The negative half, and the one that would have caught the original mistake.
+
+    Without this, a future edit could quietly move the fixtures back to a comfortable-looking
+    placeholder. Each of these three is a real state's allocation, and 0x00 is the one an
+    uninitialised field produces.
+    """
+    for code, expected in (("FE", "Nicaragua"), ("FF", "Panama"), ("00", "LocalAirport")):
+        entries = _sac_entries(code)
+        assert entries and any(country for _, country in entries), (
+            f"SAC 0x{code} reads as unallocated in the pinned copy, but this row set rejected "
+            f"it as allocated to {expected!r}. The pin and the document disagree"
+        )
+
+
+def test_the_sic_claim_is_explicitly_weaker_than_the_sac_one():
+    """SIC is operator-assigned within a SAC, so no list exists for it and none is pinned.
+
+    Asserted because the failure mode is a reader taking the pin as evidence about both halves
+    of the pair, which it is not and does not claim to be.
+    """
+    pin = _sac_pin()
+    assert pin["fixture_sic"]["carries_no_allocation_claim"] is True
+    section = _section(CAT021_HEADING)
+    assert "no allocation claim at all" in section, (
+        "the document must say that the SIC half of the pair rests on the SAC and not on a "
+        "list of its own"
+    )
