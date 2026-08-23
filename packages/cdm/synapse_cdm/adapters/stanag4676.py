@@ -67,6 +67,18 @@ standard permits beside it — and a subordinate field rewriting a primary asser
 a principle rather than an inconsistency: an amplification is READ when the CDM has a member for
 what it states, and recorded when it does not.
 
+And `FAKER` "overriding" a contradicting identity is not adjudication either, which is the half
+of that principle easiest to misread. Its definition IS "Friendly track, object or entity acting
+as exercise hostile" — the identity claim is inside the amplification literal, so reading `FAKER`
+is reading a stated fact, not weighing it against `identity` and picking a winner. `ZOMBIE`'s
+definition asserts *suspicion*, which is exactly the judgement `enums.Affiliation` deliberately
+lacks a member for, so there is nothing to read and it only records.
+
+The principle self-terminates. If `Affiliation` ever grows `SUSPECT`, `ZOMBIE` and `TRAVELER`
+move from recorded to read by this same rule and nothing else has to change —
+`test_the_two_suspect_amplifications_never_yield_friendly` is the tripwire, and it fails the
+build the moment that member appears.
+
 `symbology.AFFILIATION_FROM_COT` maps CoT's `j` and `k` to HOSTILE and `legion.AFFILIATION` maps
 JOKER and FAKER to HOSTILE. This adapter deliberately diverges, and the divergence is stated in
 FORMAT_COVERAGE.md rather than resolved here: those are published behaviours of shipped adapters

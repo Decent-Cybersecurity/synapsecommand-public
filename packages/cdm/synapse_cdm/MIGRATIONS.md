@@ -316,6 +316,15 @@ is worth stating.
   subordinate field rewriting a primary assertion is the move `essence` is forbidden from making
   against `source.synthetic`.
 
+  `FAKER` "overriding" a contradicting identity is not adjudication: its definition is "Friendly
+  track, object or entity acting as exercise hostile", so the identity claim is inside the
+  amplification literal and reading it is reading a stated fact. `ZOMBIE`'s definition asserts
+  suspicion — the judgement `Affiliation` deliberately lacks a member for — so there is nothing
+  to read. **The principle self-terminates**: if `Affiliation` ever grows SUSPECT, `ZOMBIE` and
+  `TRAVELER` move from recorded to read by the same rule, and
+  `test_the_two_suspect_amplifications_never_yield_friendly` is the tripwire that fires when
+  that happens.
+
   `Position.position_source` is the one canonical field this adapter fills from a resolved
   reference chain rather than a constant: `GNSS` where `TrackSource` resolves in-document to an
   `AIS`, `ADS-B` or `BFT` modality, `ESTIMATED` on every other branch including a DATASTREAM

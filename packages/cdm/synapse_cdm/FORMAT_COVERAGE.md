@@ -3957,6 +3957,21 @@ round trip depends on.
    choosing some *other* value to stand in for it — which is a judgement, and the judgement this
    gap exists to record rather than make.
 
+   **`FAKER` "overriding" the identity is not adjudication**, and that is worth saying plainly
+   because "override" is the word that makes it sound like one. Its Edition B definition is
+   "Friendly track, object or entity acting as exercise hostile" — **the identity claim sits
+   inside the amplification literal itself**, so reading `FAKER` is reading a fact the standard
+   states, not weighing two fields against each other and picking a winner. `ZOMBIE`'s definition
+   asserts *suspicion*, which is precisely the judgement `enums.Affiliation` deliberately has no
+   member for, so there is nothing there to read and it can only be recorded.
+
+   **The principle self-terminates, and this gap is what it terminates on.** If `Affiliation`
+   ever grows `SUSPECT`, `ZOMBIE` and `TRAVELER` move from recorded to read by the same rule,
+   with no new rule needed — closing this gap closes them.
+   `test_the_two_suspect_amplifications_never_yield_friendly` is the tripwire: it asserts the
+   member's absence, so it fails the build the moment someone adds it, and whoever does will be
+   sent here.
+
    **And a divergence this gap now has to carry.** `symbology.AFFILIATION_FROM_COT` maps CoT's
    `j` and `k` to `HOSTILE` and `legion.AFFILIATION` maps `JOKER` and `FAKER` to `HOSTILE`, while
    `adapters/stanag4676.py` maps the same two words to `FRIENDLY`. The definitions agree across
