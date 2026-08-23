@@ -1953,18 +1953,18 @@ two different claims.
 | | |
 |---|---|
 | Ratification wrapper | **STANAG 4676 Edition 2**, 13 October 2021, promulgated by the NATO Standardization Office (NSO(NAFAG)1063(2021)JCGISR/4676). Supersedes STANAG 4676 Edition 1 of 20 May 2014. Names exactly one standard: "AEDP-12, Edition B" |
-| SHA-256 (wrapper) | `5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f`, 255 250 bytes, 5 pages, `fixtures/stanag4676/spec/nato-stanag-4676-edition-2.pdf` |
+| SHA-256 (wrapper) | `5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f`, 255 250 bytes, 5 pages, `fixtures/nits/spec/nato-stanag-4676-edition-2.pdf` |
 | **The target** | **AEDP-12, NATO Intelligence, Surveillance and Reconnaissance Tracking Standard, Edition B Version 2, March 2022**. Every mapped element below cites this document. **Version 2 is not a reading of "Edition B" — it is printed on the title page and on the footer of all 150 pages.** The document carries **no NATO Letter of Promulgation**: page I reads "RESERVED FOR NATIONAL LETTER OF PROMULGATION", so no promulgation date is stated anywhere inside it and the pin does not claim one — see ambiguity 12 |
-| SHA-256 (target) | `c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b`, 6 785 016 bytes, 150 pages, `fixtures/stanag4676/spec/nato-aedp-12-edition-b-v2.pdf` |
+| SHA-256 (target) | `c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b`, 6 785 016 bytes, 150 pages, `fixtures/nits/spec/nato-aedp-12-edition-b-v2.pdf` |
 | Implementation Guide | **AEDP-12.1, NITS Implementation Guide, Standards Related Document (SRD), Edition A Version 1, March 2022**. Also carries no NATO Letter of Promulgation. Annex D is the XSD annex and Annex J the Configuration Management Plan; the guide's own Annex F is Binary Encoding, which is what ambiguity 8 is about |
-| SHA-256 (guide) | `7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d`, 6 815 298 bytes, 192 pages, `fixtures/stanag4676/spec/nato-aedp-12-1-edition-a-v1.pdf` |
+| SHA-256 (guide) | `7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d`, 6 815 298 bytes, 192 pages, `fixtures/nits/spec/nato-aedp-12-1-edition-a-v1.pdf` |
 | Historical context only, and **never a basis** | AEDP-12 **Edition A Version 1**, May 2014 — the STANAG 4676 Edition 1 generation, which Edition B's §2.1.1.1 declares incompatible with Edition 2 in as many words. Read for the delta below and for nothing else. Edition B v2's own reference list dates it "May 2014" and marks it "(covered by STANAG 4676)", and the STANAG 4676 Edition 2 cover supersedes "STANAG 4676, Edition 1, dated 20 May 2014" — so the wrapper and the AEDP agree on the generation this document belongs to. **The incompatibility statement is §2.1.1.1, not the foreword**: Edition B v2's FOREWORD (page VII) is about interoperability aims, the CST and the Custodian's address, and says nothing about Edition 1 |
-| SHA-256 (2014) | `a9e88c81369ff4f13a9d4d7e457de55c6cefcc024162efe5a198e395d8898814`, 3 719 388 bytes, 148 pages. **A reseller copy**, per-page watermarked to the licensee, so this hash identifies that copy and not the NATO original — which is one more reason it is context and not a target. **Not present in `fixtures/stanag4676/spec/` and therefore NOT re-verified on 2026-08-23**: this hash stands on the reading that recorded it, and it is the one line in this pin table that the re-verification below could not check. That is a premise, and it is the right premise to carry — a watermarked reseller copy is not a document a later reader can be expected to reproduce |
+| SHA-256 (2014) | `a9e88c81369ff4f13a9d4d7e457de55c6cefcc024162efe5a198e395d8898814`, 3 719 388 bytes, 148 pages. **A reseller copy**, per-page watermarked to the licensee, so this hash identifies that copy and not the NATO original — which is one more reason it is context and not a target. **Not present in `fixtures/nits/spec/` and therefore NOT re-verified on 2026-08-23**: this hash stands on the reading that recorded it, and it is the one line in this pin table that the re-verification below could not check. That is a premise, and it is the right premise to carry — a watermarked reseller copy is not a document a later reader can be expected to reproduce |
 | **The XML schema** | **NOT PINNED, and not obtainable here** — see the encoding settlement, whose reason was corrected on 2026-08-23. The park does not rest on the file being unobtainable: it rests on guide §D.1.1, which versions the XSD on its own axis with its own revision number and revision date inside the file, so the AEDP edition does not name one schema |
 
 **Pin re-verification, 2026-08-23 — three of the four copies are on disk, and they are the copies
 the row set was written from.** Each SHA-256 was recomputed from the file in
-`fixtures/stanag4676/spec/`, each byte count and page count re-measured, each title page re-read.
+`fixtures/nits/spec/`, each byte count and page count re-measured, each title page re-read.
 All three match:
 
 | Filename | Title-page identity, as printed | Bytes | Pages |
@@ -1972,6 +1972,15 @@ All three match:
 | `nato-stanag-4676-edition-2.pdf` | "STANDARDIZATION AGREEMENT / STANAG 4676 / NATO INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE TRACKING STANDARD / EDITION/ÉDITION 2 / 13 October/octobre 2021" | 255 250 | 5 |
 | `nato-aedp-12-edition-b-v2.pdf` | "NATO STANDARD / AEDP-12 / NATO INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE TRACKING STANDARD / Edition B, Version 2 / MARCH 2022" | 6 785 016 | 150 |
 | `nato-aedp-12-1-edition-a-v1.pdf` | "STANDARDS RELATED DOCUMENT / AEDP-12.1 / NATO INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE TRACKING STANDARD IMPLEMENTATION GUIDE / EDITION A VERSION 1 / MARCH 2022" | 6 815 298 | 192 |
+
+**The pins live in `fixtures/nits/spec/`, inside the adapter's own fixture directory**, which is
+where `fixtures/cat048/spec/` and `fixtures/gmti/spec/` already keep theirs, beside the
+`build_fixtures.py` that reads them. They were briefly in a `fixtures/stanag4676/spec/` of their
+own — the adapter is named `stanag4676` and its fixtures are named `nits`, and a copy command took
+the adapter's name — which left this pin record and the XSD exit condition below naming two
+different spec directories for one adapter. Corrected by moving the files, not by re-pointing the
+exit condition: `fixtures/nits/spec/xsd_pin.json` was right, and the pin record is what had drifted.
+The three digests were re-confirmed at the new path before this record was touched.
 
 **Version 2 is resolved explicitly, and the resolution is the AEDP's, not the wrapper's.** The
 STANAG 4676 Edition 2 cover names its standard **without a version** — "STANDARD / AEDP-12,

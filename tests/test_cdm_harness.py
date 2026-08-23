@@ -257,3 +257,134 @@ def test_a_fixture_directory_may_document_itself(tmp_path):
     assert "notes.md" in replayed, (
         "only README.md is skipped; any other .md file is a payload like any other"
     )
+
+
+# ------------------------------------------------------- a run that exercises nothing FAILS
+#
+# The three shapes below are one failure wearing three costumes, and all three used to be
+# survivable: an absent directory raised a bare `FileNotFoundError` naming neither the adapter
+# nor the pattern, and an empty or subdirectory-only one printed "0 passed, 0 failed" and exited
+# 0. The last of those is the dangerous one, because it is indistinguishable in a sweep from a
+# run that judged everything. `--adapter stanag4676 --fixtures fixtures/stanag4676` was the real
+# instance: that directory holds only `spec/`, the fixtures are in `fixtures/nits`, and a
+# nine-adapter gate sweep reported nine greens with one of them having replayed nothing.
+
+EMPTY_CASES = ("absent", "empty", "subdirectory-only")
+
+
+def _empty_case(tmp_path: pathlib.Path, shape: str) -> pathlib.Path:
+    """Idempotent, because the tests below call it twice — once to run, once to assert the path."""
+    target = tmp_path / "fixtures"
+    if shape == "absent":
+        return target                      # never created
+    target.mkdir(exist_ok=True)
+    if shape == "subdirectory-only":
+        (target / "spec").mkdir(exist_ok=True)
+        (target / "spec" / "nato-something-edition-a.pdf").write_bytes(b"%PDF-1.7 not a fixture")
+    return target
+
+
+@pytest.mark.parametrize("shape", EMPTY_CASES)
+def test_a_run_that_matches_no_fixture_raises_rather_than_reporting_a_pass(tmp_path, shape):
+    """`run()` raises, so the check is in front of every caller and not only the CLI.
+
+    Asserted as an exception rather than as a report field on purpose: a report is a claim that
+    fixtures were judged, so there must be no well-formed report for a run that judged none. A
+    caller who catches this gets to decide what to do; a caller who does not gets a traceback,
+    which is the correct outcome for a verification run that verified nothing.
+    """
+    with pytest.raises(harness.NoFixturesFound) as caught:
+        harness.run(_adapter(), _empty_case(tmp_path, shape))
+    message = str(caught.value)
+    # All three things a reader needs at the moment of failure: which run, where, and why.
+    assert "'pntmap'" in message, "the message must name the ADAPTER — a sweep runs nine of them"
+    assert str(_empty_case(tmp_path, shape)) in message, \
+        "the message must name the DIRECTORY SEARCHED, which is the thing that is usually wrong"
+    assert harness.FIXTURE_PATTERN in message, \
+        "the message must quote the PATTERN that matched nothing, or the reader cannot tell " \
+        "whether their files were skipped or absent"
+    assert "FAILURE rather than a pass" in message, \
+        "the message says outright that this is not a pass, because the old behaviour was one"
+
+
+def test_a_subdirectory_only_directory_says_where_the_content_actually_is(tmp_path):
+    """The `spec/`-only case is the one that bit, so it gets the extra line that solves it.
+
+    "exists, 1 entry, none of them a fixture" is true and unhelpful; naming `spec/` and saying
+    the harness does not recurse is what turns the failure into a fix. Pinned standards live in
+    `spec/` beside `build_fixtures.py` for every adapter that has them, so this shape is a caller
+    one level too high rather than an empty repository.
+    """
+    with pytest.raises(harness.NoFixturesFound) as caught:
+        harness.run(_adapter(), _empty_case(tmp_path, "subdirectory-only"))
+    message = str(caught.value)
+    assert "spec/" in message, "the subdirectory that DOES hold something has to be named"
+    assert "does not recurse" in message, \
+        "the reason the content was not found has to be stated, or `spec/` beside 'no fixtures' " \
+        "reads as a harness bug"
+    assert "pinned standards live in spec/, fixtures do not" in message, \
+        "the convention is what tells the caller this is the wrong directory and not an empty one"
+
+
+def test_the_absent_directory_is_the_same_failure_and_says_so(tmp_path):
+    """Absent and empty mean the same thing — nothing was exercised — so they share an exit code.
+
+    Distinguishing them would be distinguishing two ways of proving nothing. The message still
+    says which shape it was, because "DOES NOT EXIST" and "exists, 0 entries" send the reader to
+    different fixes.
+    """
+    with pytest.raises(harness.NoFixturesFound) as caught:
+        harness.run(_adapter(), _empty_case(tmp_path, "absent"))
+    assert "DOES NOT EXIST" in str(caught.value)
+    # And it is NOT a bare FileNotFoundError any more, which named neither adapter nor pattern.
+    assert not isinstance(caught.value, FileNotFoundError)
+
+
+@pytest.mark.parametrize("shape", EMPTY_CASES)
+def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
+        tmp_path, capsys, shape):
+    """Exit 2, not 1, and stderr, not a report.
+
+    2 rather than 1 because the two mean different things: 1 says fixtures ran and some failed,
+    2 says the invocation was wrong. A caller told "1" debugs an adapter; a caller told "2" fixes
+    a path. Both are non-zero, so any gate testing for zero still catches it.
+    """
+    code = harness.main(["--adapter", "pntmap",
+                         "--fixtures", str(_empty_case(tmp_path, shape)), "--json"])
+    assert code == harness.EXIT_NO_FIXTURES == 2, \
+        "a vacuous run must not exit 0, and must be distinguishable from a fixture failure"
+    captured = capsys.readouterr()
+    assert "no fixtures found" in captured.err, "the message belongs on stderr"
+    assert captured.out == "", \
+        "--json must emit NOTHING for a run that did not happen: a well-formed report is a " \
+        "claim that fixtures were judged, and a machine reading one would record a green"
+
+
+def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():
+    """The sweep the gate runs, as a test, so the directory names stop being folklore.
+
+    This is the other half of the fix. Making a vacuous run fail loudly stops a wrong path from
+    passing; this stops the wrong path from being typed, by pinning the adapter-name-to-fixture-
+    directory map that the `stanag4676` / `nits` mismatch made a trap. Every entry is exercised
+    for real — `harness.run` would raise on any that were not.
+    """
+    root = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures"
+    expected = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat048": "cat048",
+                "gmti": "gmti", "legion": "legion", "pntmap": "pntmap",
+                "stanag4676": "nits", "tak": "tak"}
+    from synapse_cdm import adapter as adapter_module
+    shipped = {n for n, c in adapter_module.discover().items()
+               if c.__module__.startswith("synapse_cdm.adapters.")}
+    assert shipped == set(expected), (
+        f"the shipped roster changed: {shipped ^ set(expected)}. A new adapter needs its fixture "
+        "directory added here, and the name of that directory is not always the adapter's name"
+    )
+    for name, directory in sorted(expected.items()):
+        path = root / directory
+        assert path.is_dir(), f"{name}: {path} is not a directory"
+        files = [p for p in path.iterdir() if p.is_file() and p.name != "README.md"
+                 and not p.name.startswith(".")]
+        assert files, (
+            f"{name}: {path} holds no fixture files, so any harness run against it exercises "
+            "nothing. If the fixtures moved, fix the map in this test"
+        )

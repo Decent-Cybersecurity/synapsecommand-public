@@ -57,6 +57,35 @@ from synapse_cdm.models import CDMBase
 GOLDEN_DIR = "golden"
 PASS, FAIL, SKIP = "PASS", "FAIL", "SKIP"
 
+#: The rule that selects a fixture, written down so a run that selects NOTHING can quote it.
+#: It is not a glob — it is three predicates over the directory's immediate children — and the
+#: message says so rather than printing a `*` that would suggest a pattern the code never uses.
+FIXTURE_PATTERN = ("immediate children of the directory that are files, "
+                   "excluding dotfiles and README.md")
+
+#: Exit status for a run that exercised no fixture. Distinct from 1, which means fixtures ran
+#: and some failed: this one means the INVOCATION was wrong, and conflating the two would tell a
+#: caller to debug an adapter when the thing to fix is the path they passed.
+EXIT_NO_FIXTURES = 2
+
+
+class NoFixturesFound(RuntimeError):
+    """A harness run that matched zero fixtures. Raised, never reported as a pass.
+
+    THE FAILURE THIS EXISTS FOR
+    ---------------------------
+    `--adapter stanag4676 --fixtures fixtures/stanag4676` used to print "0 passed, 0 failed" and
+    exit 0. That directory holds only a `spec/` subdirectory of pinned standards; the adapter's
+    fixtures are in `fixtures/nits`. So a gate sweep over all nine adapters reported nine greens
+    while one of them had replayed nothing, and the run that proves the least looks exactly like
+    the run that proves the most.
+
+    It is the same failure `test_cdm_prose_counts.py` guards in prose — "a regex that silently
+    matches nothing is worse than no test at all, it reads as a passing check on a site nobody is
+    checking any more" — reached from the other direction. A verification tool's worst output is
+    not a false failure; it is a true-looking pass over an empty set.
+    """
+
 
 def _load_raw(path: pathlib.Path) -> Any:
     """Fixtures are JSON on disk; adapters may take bytes or dict.
@@ -192,9 +221,46 @@ def _check_roundtrip(adapter: Adapter, objects: list[CDMBase],
     ]
 
 
+def _no_fixtures_message(adapter: Adapter, fixtures: pathlib.Path, *, existed: bool) -> str:
+    """Name the adapter, the directory searched, and the rule that matched nothing.
+
+    All three, because each answers a different question a reader has at the moment of failure:
+    WHICH run was vacuous, WHERE it looked, and WHY nothing there counted. The subdirectory list
+    is the fourth line and it is the one that usually solves it — a directory holding only
+    `spec/` is a caller who pointed one level too high, and saying so beats making them look.
+    """
+    lines = [f"no fixtures found for adapter {adapter.name!r}: nothing was exercised, "
+             f"so this run proves nothing and is a FAILURE rather than a pass",
+             f"  directory searched : {fixtures}"]
+    if not existed:
+        lines.append("  directory          : DOES NOT EXIST")
+    else:
+        children = sorted(p.name + ("/" if p.is_dir() else "") for p in fixtures.iterdir())
+        subdirs = [c for c in children if c.endswith("/")]
+        lines.append(f"  directory          : exists, {len(children)} entr"
+                     f"{'y' if len(children) == 1 else 'ies'}, none of them a fixture")
+        if children:
+            lines.append(f"  what is in it      : {', '.join(children)}")
+        if subdirs:
+            lines.append(f"  note               : the only content is in subdirector"
+                         f"{'y' if len(subdirs) == 1 else 'ies'} "
+                         f"{', '.join(subdirs)} — the harness does not recurse, so check "
+                         f"whether the fixtures live one level down or in a different directory "
+                         f"entirely (pinned standards live in spec/, fixtures do not)")
+    lines.append(f"  pattern that matched nothing : {FIXTURE_PATTERN}")
+    return "\n".join(lines)
+
+
 def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False,
         schema_dir: pathlib.Path | None = None) -> dict:
-    """Replay every fixture. Returns a machine-readable report; never raises on a bad fixture."""
+    """Replay every fixture. Returns a machine-readable report.
+
+    Never raises on a bad FIXTURE — one unparseable payload is a fixture-level FAIL and the rest
+    are still judged. It DOES raise `NoFixturesFound` on a bad INVOCATION, which is a different
+    thing: a directory with no fixtures in it has no per-fixture verdict to record, so there is
+    nothing for a report to carry and a report saying "0 failed" would be true and misleading.
+    Raising here rather than in `main` puts the check in front of every caller, tests included.
+    """
     if schema_dir is not None:
         published = {}
         for path in sorted(schema_dir.glob("*.schema.json")):
@@ -212,9 +278,17 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
     # itself is right, and for a binary format it is close to mandatory — an armoured AIS
     # payload cannot carry a comment the way a CoT fixture's XML can. Only that one name,
     # because a format whose payloads really are Markdown should still be replayable.
+    #
+    # An ABSENT directory and a directory holding no fixtures are the same failure and get the
+    # same treatment, because they have the same meaning: nothing was exercised. Distinguishing
+    # them in the exit code would be distinguishing two ways of proving nothing.
+    if not fixtures.is_dir():
+        raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=False))
     paths = sorted(p for p in fixtures.iterdir()
                    if p.is_file() and not p.name.startswith(".")
                    and p.name != "README.md" and p.parent.name != GOLDEN_DIR)
+    if not paths:
+        raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=True))
     golden_dir = fixtures / GOLDEN_DIR
     results = []
     for path in paths:
@@ -358,8 +432,15 @@ def main(argv: list[str] | None = None) -> int:
     adapter_class = load_adapter(args.adapter)
     adapter = adapter_class(clock=times.frozen_clock(frozen),
                             synthetic=args.synthetic == "true")
-    report = run(adapter, args.fixtures, update_golden=args.update_golden,
-                 schema_dir=args.schemas)
+    try:
+        report = run(adapter, args.fixtures, update_golden=args.update_golden,
+                     schema_dir=args.schemas)
+    except NoFixturesFound as e:
+        # Printed to stderr and NOT as a report: --json callers must not receive a well-formed
+        # report for a run that did not happen, because the shape of a report is a claim that
+        # fixtures were judged.
+        print(f"harness: {e}", file=sys.stderr)
+        return EXIT_NO_FIXTURES
     print(json.dumps(report, indent=2) if args.json else render_report(report))
     return 1 if report["failed"] else 0
 

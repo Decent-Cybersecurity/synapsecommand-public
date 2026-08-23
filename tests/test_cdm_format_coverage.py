@@ -2417,20 +2417,23 @@ NATO_PINS = (
     ("gmti", "nato-aedp-4607-1-edition-a-v1.pdf",
      "877f9b6f1bbcd1ac76cddca751a7222deb5bcf8c8061e6530657eb68f655ed94", 3_010_604, 212,
      "AEDP-4607.1 Ed. A v1, the implementation guide"),
-    ("stanag4676", "nato-stanag-4676-edition-2.pdf",
+    ("nits", "nato-stanag-4676-edition-2.pdf",
      "5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f", 255_250, 5,
      "STANAG 4676 Ed. 2, the ratification wrapper"),
-    ("stanag4676", "nato-aedp-12-edition-b-v2.pdf",
+    ("nits", "nato-aedp-12-edition-b-v2.pdf",
      "c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b", 6_785_016, 150,
      "AEDP-12 Ed. B v2, the target"),
-    ("stanag4676", "nato-aedp-12-1-edition-a-v1.pdf",
+    ("nits", "nato-aedp-12-1-edition-a-v1.pdf",
      "7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d", 6_815_298, 192,
      "AEDP-12.1 Ed. A v1, the implementation guide"),
 )
 
 #: Which section each pinned document's record belongs to. A digest in the wrong row set is the
 #: failure this mapping exists to catch: the two NATO sections have the same table shape.
-NATO_PIN_SECTIONS = {"gmti": GMTIF_HEADING, "stanag4676": NITS_HEADING}
+#: Keyed on the FIXTURE DIRECTORY name, not the adapter name — they differ for this one
+#: adapter (`stanag4676` translates, `fixtures/nits` holds its fixtures and its pins), and
+#: keying on the adapter name is exactly the slip that put the pins in the wrong directory.
+NATO_PIN_SECTIONS = {"gmti": GMTIF_HEADING, "nits": NITS_HEADING}
 
 FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures"
 
@@ -2476,10 +2479,68 @@ def test_the_nato_pin_record_is_complete_and_in_the_right_section(
         "The pin table and the re-verification table state the same two numbers, and they have to "
         "agree — a half-updated pair reads as a record either way"
     )
-    other = _section(NATO_PIN_SECTIONS["stanag4676" if family == "gmti" else "gmti"])
+    other = _section(NATO_PIN_SECTIONS["nits" if family == "gmti" else "gmti"])
     assert digest not in other, (
         f"{label}'s digest appears in the OTHER NATO section as well. The two pin tables have the "
         "same shape, so a copy-paste between them is invisible on a read and fatal to the record"
+    )
+
+
+def test_no_text_points_at_the_old_nits_spec_directory():
+    """One adapter, one spec directory, and the document has to agree with itself about which.
+
+    The pins were briefly in `fixtures/stanag4676/spec/` — the adapter is `stanag4676`, its
+    fixtures are `nits`, and a copy command took the adapter's name — which left the pin record
+    and the XSD exit condition four hundred lines apart naming two different directories for the
+    same adapter's specs. Both statements were individually true, which is why nothing caught it:
+    a contradiction between two accurate sentences is invisible to any check that reads one at a
+    time. This one reads both.
+    """
+    doc = DOC.read_text()
+    section = _flat(_section(NITS_HEADING))
+    # EXACTLY ONE occurrence, and it is the sentence recording the move. Not zero: this document
+    # states its reversals in the place they changed rather than in a commit message — the seven
+    # GMTIF amendments and the three overturned NITS decisions are all written down where they
+    # apply — and a correction that cannot name what it corrected is one the next reader repeats.
+    # So the invariant is "no LIVE path", not "no mention", and the difference is checked.
+    occurrences = doc.count("fixtures/stanag4676")
+    assert occurrences == 1, (
+        f"{occurrences} references to `fixtures/stanag4676`, expected exactly 1 — the historical "
+        "sentence recording the move. More than one means a live path is back; zero means the "
+        "correction stopped saying what it corrected, and the pins go back to the wrong directory "
+        "the next time somebody reads the adapter's name off the roster"
+    )
+    assert "They were briefly in a `fixtures/stanag4676/spec/` of their own" in section, (
+        "the single permitted occurrence is not the historical one any more. Whatever now carries "
+        "that path is pointing at a directory that does not exist"
+    )
+    # And it is nowhere a pin row or an exit condition could pick it up.
+    for line in doc.splitlines():
+        if "fixtures/stanag4676" in line:
+            assert "briefly" in line, f"a non-historical use of the old path: {line[:120]}"
+            assert not line.startswith("|"), (
+                f"the old path is in a TABLE ROW, which is where pin records live: {line[:120]}"
+            )
+    # The pin record and the exit condition, checked against each other rather than each alone.
+    # EVERY mention, not "at least one": `xsd_pin.json` is named twice — the syntax-binding row
+    # and the XSD-validation row both carry the exit condition — so an `in` check passes with one
+    # of the two re-pointed. Same shape as the page-count disjunction the mutation check killed
+    # earlier: a fact stated twice has to be checked at every site or the second one is decoration.
+    pin_paths = re.findall(r"`fixtures/[A-Za-z0-9_./-]*xsd_pin\.json`", DOC.read_text())
+    assert len(pin_paths) == 2, (
+        f"expected the XSD pin path at 2 sites, found {len(pin_paths)}: {pin_paths}. The "
+        "syntax-binding row and the XSD-validation row both state it"
+    )
+    assert set(pin_paths) == {"`fixtures/nits/spec/xsd_pin.json`"}, (
+        f"the XSD exit condition sites disagree about where the pin goes: {sorted(set(pin_paths))}. "
+        "They must name the same directory the pin record names, or the fix for this park sends "
+        "two readers to two places"
+    )
+    assert "`fixtures/nits/spec/nato-aedp-12-edition-b-v2.pdf`" in section, \
+        "the pin record has lost its path for the target document"
+    assert "They were briefly in a `fixtures/stanag4676/spec/` of their own" in section, (
+        "the correction has to say what moved and why, or the next person to add a pin for this "
+        "adapter reads the adapter's name off the roster and repeats it"
     )
 
 
