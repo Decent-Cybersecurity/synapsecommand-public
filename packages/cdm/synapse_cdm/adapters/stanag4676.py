@@ -59,6 +59,14 @@ All three state the identity in the definition's first word, so all three yield 
 exercise role is parked at `attributes.exercise_role`. `TRAVELER` and `ZOMBIE` are defined as
 *suspect*, which has no CDM member, so they set nothing and gap 2 records the loss.
 
+`TRAVELER` and `ZOMBIE` do not DOWNGRADE a stated identity either, whatever it says. Ed B makes
+`identity` and `identityAmplification` two separate attributes with no stated co-occurrence
+restriction, so `FRIEND` + `ZOMBIE` is the designated identity field plus an amplifier the
+standard permits beside it — and a subordinate field rewriting a primary assertion is the move
+`essence` is forbidden from making against `source.synthetic`. Note the asymmetry with `FAKER` is
+a principle rather than an inconsistency: an amplification is READ when the CDM has a member for
+what it states, and recorded when it does not.
+
 `symbology.AFFILIATION_FROM_COT` maps CoT's `j` and `k` to HOSTILE and `legion.AFFILIATION` maps
 JOKER and FAKER to HOSTILE. This adapter deliberately diverges, and the divergence is stated in
 FORMAT_COVERAGE.md rather than resolved here: those are published behaviours of shipped adapters
@@ -68,6 +76,17 @@ CDM already models exercise context separately (`SourceRef.synthetic`, the 2525D
 so painting a friendly as HOSTILE is a fratricide-adjacent over-claim in exactly the direction
 this codebase refuses everywhere else — `symbology`'s own table says "suspect — not HOSTILE;
 suspicion is not identification".
+
+POSITION_SOURCE SPLITS, AND THE SPLIT IS WHAT A COMMANDER READS UNDER JAMMING
+------------------------------------------------------------------------------
+Ed B defines `SensorInformation.modality` as the "category of the sensor according to the type of
+signal it can detect", and for `AIS`, `ADS-B` and `BFT` the detected signal IS a GNSS-derived
+position the object broadcast about itself. So when the `TrackSource` reference chain resolves
+WITHIN this document to one of those, the fix is `GNSS` — a fact the sensor read, and the same
+reading `adapters/ais.py` and `adapters/adsb.py` give their own positions. When the reference
+dangles into a DATASTREAM file we do not have, or the modality is `MIXED`, `OTHER` or `XXXX`, or
+the sensors disagree, it stays `ESTIMATED`. The chain is resolved per SEGMENT, because §2.5.24
+scopes a `segmentSource` to a specific portion of the track.
 
 TRANSFORMS IS EMPTY, AND THAT IS A CLAIM
 -----------------------------------------
@@ -423,6 +442,16 @@ CS_PREFERENCE = (CS_WGS84, CS_ECEF, CS_LOCAL_CARTESIAN)
 #: one of them can be resolved to the ground without an external, time-varying dependency.
 CFT_FROM_RESOLVABLE = (CS_ECEF,)
 CFT_FROM_ALLOWED = (CS_ECEF, CS_ECI)
+
+#: `ModalityType` values whose detected signal is a COOPERATIVE SELF-REPORT. Ed B defines
+#: modality as the "category of the sensor according to the type of signal it can detect", and
+#: for these three the signal detected IS a GNSS-derived position the object broadcast about
+#: itself — a fact the sensor read, not an inference this adapter is making. `adapters/ais.py`
+#: and `adapters/adsb.py` both map their own positions to GNSS for the same reason.
+COOPERATIVE_MODALITIES = ("AIS", "ADS-B", "BFT")
+
+#: The three that name no signal in particular, so they refine nothing.
+UNINFORMATIVE_MODALITIES = ("MIXED", "OTHER", "XXXX")
 
 #: `IFFMode`. Only MODE_S carries a value that is an identifier in another format's terms, and
 #: only when it parses unambiguously as six hex digits — `IFFCode.value` is a bare String with no
@@ -854,6 +883,83 @@ def _is_delimiter(value: Any) -> bool:
     return not isinstance(value, (int, float)) or isinstance(value, bool)
 
 
+class Sensors:
+    """The `SensorInformation` blocks reachable inside one payload, by UID and by LID.
+
+    STANDALONE guarantees at least one sensor block in the document (unless the tracks are
+    ground truth), so a reference there resolves. A DATASTREAM reference may point at a block in
+    a previously transmitted file, which this adapter does not fetch — that is the dangling
+    branch, and it is recorded rather than refused.
+    """
+
+    def __init__(self, document: dict) -> None:
+        self.by_uid: dict[str, dict] = {}
+        self.by_lid: dict[int, dict] = {}
+        for sensor in document.get("sensor") or []:
+            uid = _uuid_text(sensor.get("uid"))
+            if uid:
+                self.by_uid[uid] = sensor
+            if sensor.get("lid") is not None:
+                self.by_lid[int(sensor["lid"])] = sensor
+
+    def referenced_by(self, source: Any) -> tuple[list[dict], list[str]]:
+        """(resolved SensorInformation blocks, references that dangle in this payload)."""
+        if not isinstance(source, dict):
+            return [], []
+        resolved, dangling = [], []
+        for reference in source.get("sensorUID") or []:
+            uid = _uuid_text(reference)
+            found = self.by_uid.get(uid)
+            resolved.append(found) if found else dangling.append(f"sensorUID {uid}")
+        for reference in source.get("sensorLID") or []:
+            found = self.by_lid.get(int(reference))
+            resolved.append(found) if found else dangling.append(f"sensorLID {reference}")
+        return resolved, dangling
+
+
+def position_source_for(source: Any, sensors: Sensors,
+                        profiles: Sequence[str]) -> tuple[PositionSource, str]:
+    """`SensorInformation.modality`, where the reference chain resolves, else ESTIMATED.
+
+    Two branches and both are stated, because the difference between them is not a detail: it is
+    whether a commander can tell a cooperative self-reported fix from a tracker's estimate under
+    jamming. The conservative branch is the wider one on purpose — a dangling reference, a
+    modality that names no signal, or a mix of cooperative and non-cooperative sensors all give
+    ESTIMATED, which understates.
+    """
+    profile = "/".join(profiles) or "unstated"
+    resolved, dangling = sensors.referenced_by(source)
+    if not resolved and not dangling:
+        return PositionSource.ESTIMATED, (
+            "ESTIMATED: the TrackSource references no sensor, so there is no modality to read. A "
+            "NITS track point is a tracker's estimate unless something says otherwise")
+    if dangling:
+        return PositionSource.ESTIMATED, (
+            f"ESTIMATED: {', '.join(dangling)} does not resolve within this NITSRoot object "
+            f"(profile {profile}). Under DATASTREAM the SensorInformation may be in a previously "
+            "transmitted file, which this adapter does not fetch — so the modality is unknown "
+            "here, and unknown means the conservative reading rather than a refusal")
+    modalities = [s.get("modality") for s in resolved]
+    if any(m in UNINFORMATIVE_MODALITIES for m in modalities):
+        return PositionSource.ESTIMATED, (
+            f"ESTIMATED: modality {modalities!r} includes a value that names no signal in "
+            f"particular (one of {', '.join(UNINFORMATIVE_MODALITIES)}), so it refines nothing")
+    if all(m in COOPERATIVE_MODALITIES for m in modalities):
+        return PositionSource.GNSS, (
+            f"GNSS: TrackSource resolves within this NITSRoot object (profile {profile}) to "
+            f"sensor modality {modalities!r}, and Ed B defines modality as the \"category of the "
+            "sensor according to the type of signal it can detect\" — for these the detected "
+            "signal is a GNSS-derived position the object broadcast about itself. That is a fact "
+            "the sensor read, and adapters/ais.py and adapters/adsb.py map their own positions "
+            "the same way")
+    return PositionSource.ESTIMATED, (
+        f"ESTIMATED: modality {modalities!r} is not a cooperative self-report, so the position is "
+        "the tracker's estimate. Note the per-frame route through TrackPoint.dynSrcUID -> "
+        "DynamicSourceInformation.sensorUID is deliberately NOT read: TrackSource is the "
+        "reference the settlement names, and reading two chains that can disagree would need a "
+        "precedence rule nobody has written")
+
+
 class Frames:
     """The `CoordinateFrameTransformation`s reachable inside one payload, by UID and by LID.
 
@@ -914,7 +1020,8 @@ def _cft_complete(cft: dict) -> tuple[bool, str]:
     return True, "complete"
 
 
-def resolve_dynamics(block: dict, frames: Frames, where: str) -> dict:
+def resolve_dynamics(block: dict, frames: Frames, where: str,
+                     position_source: PositionSource = PositionSource.ESTIMATED) -> dict:
     """One `Dynamics` block -> {position, kinematics, basis, kinematics_basis}.
 
     Six coordinate systems, three of which never produce a `Position`:
@@ -1009,7 +1116,7 @@ def resolve_dynamics(block: dict, frames: Frames, where: str) -> dict:
         lat=round(latitude, COORDINATE_DECIMALS),
         lon=round(longitude, COORDINATE_DECIMALS),
         alt_m=None if height is None else round(height, ALTITUDE_DECIMALS),
-        position_source=PositionSource.ESTIMATED,
+        position_source=position_source,
     )
     out["kinematics"], out["kinematics_basis"] = _kinematics(
         cs, vel, numbers, latitude, longitude, height, block, frames, where)
@@ -1287,6 +1394,7 @@ class Stanag4676Adapter(Adapter):
         label = self._read_label(document)
         essence_basis = self._check_essence(document)
 
+        sensors = Sensors(document)
         frames = Frames()
         for message in document.get("message") or []:
             for dyn in message.get("dynSrcInfo") or []:
@@ -1303,7 +1411,7 @@ class Stanag4676Adapter(Adapter):
                                             "trackLinkage", "motionEvent")}
             shared = {
                 "root": root_context, "message": message_context, "message_index": index,
-                "base": base, "frames": frames, "lid_scope": lid_scope,
+                "base": base, "frames": frames, "sensors": sensors, "lid_scope": lid_scope,
                 "profiles": list(profiles), "label": label, "essence_basis": essence_basis,
                 "received": received,
             }
@@ -1479,12 +1587,12 @@ class Stanag4676Adapter(Adapter):
             "no positioned track point, so no local horizon to decompose a velocity against")
         if samples:
             attributes["nits_position"] = [s["raw"] for s in samples]
-            attributes["position_source_basis"] = (
-                "ESTIMATED on every NITS position. A track point is a tracker's estimate, and "
-                "SensorInformation.modality is deliberately not read to refine it: reaching it "
-                "means resolving TrackSource.sensorUID, which under the DATASTREAM profile may "
-                "point outside this payload — so the same point would get GNSS in a STANDALONE "
-                "document and ESTIMATED in a DATASTREAM one")
+            # The state's own segment, not the first: position and kinematics come from the
+            # last positioned point, so the basis has to be that point's segment's.
+            attributes["position_source_basis"] = next(
+                (s["position_source_basis"] for s in reversed(segments)
+                 if s["sample_range"][0] <= len(samples) - 1 < s["sample_range"][1]),
+                "no positioned sample")
             valid_from = state["observed_at"]
             valid_from_basis = (
                 f"the last positioned TrackPoint of this TrackData (sample {len(samples) - 1}). "
@@ -1533,20 +1641,26 @@ class Stanag4676Adapter(Adapter):
         retractions: list[dict] = []
         unpositioned: list[dict] = []
 
-        # Overlap FIRST, before a point is placed. Overlapping segments are usually also out of
-        # order, and the ordering refusal would otherwise fire with the less specific message —
-        # "this point precedes that one" rather than "this is the multi-hypothesis structure".
-        self._refuse_overlap(self._spans(track_data, base), track_data)
+        # BOTH conditions, independently, and every violation of either is quoted in one
+        # refusal. First-match-wins would name whichever happened to be checked first — and a
+        # refusal that names the wrong cause is a guess wearing a refusal's clothes.
+        violations = self._overlaps(self._spans(track_data, base))
 
         for order, segment in enumerate(track_data.get("segment") or []):
             where = f"TrackSegment[{order}]"
             points = segment.get("tp") or []
             start = len(samples)
+            # §2.5.24: a TrackSource inside a segment overrides the track's for that portion of
+            # the track and no more, so the sensor chain is resolved per segment.
+            source, source_basis = position_source_for(
+                segment.get("segmentSource") or track_data.get("trackSource"),
+                shared["sensors"], shared["profiles"])
             for position_in_segment, point in enumerate(points):
                 instant = base.at(point.get("relTime"),
                                   where=f"{where}.tp[{position_in_segment}]")
                 resolved = self._point_position(point, frames,
-                                                f"{where}.tp[{position_in_segment}]")
+                                                f"{where}.tp[{position_in_segment}]",
+                                                source)
                 if resolved["position"] is None:
                     unpositioned.append({
                         "segment": order, "point": position_in_segment,
@@ -1554,14 +1668,13 @@ class Stanag4676Adapter(Adapter):
                         "basis": resolved["basis"], "blocks": point.get("dynamics") or []})
                     continue
                 if samples and instant < samples[-1]["observed_at"]:
-                    raise NitsError(
-                        f"{where}.tp[{position_in_segment}] resolves to "
+                    violations.append(
+                        f"OUT OF ORDER: {where}.tp[{position_in_segment}] resolves to "
                         f"{times.render(instant)}, which precedes "
                         f"{times.render(samples[-1]['observed_at'])} from the preceding point. "
                         "Points are emitted in document order and a track that runs backwards is "
                         "refused rather than sorted: sorting would hide a source defect the "
-                        "caller needs to see"
-                    )
+                        "caller needs to see")
                 samples.append({**resolved, "observed_at": instant})
             span = {
                 "index": order, "sample_range": [start, len(samples)],
@@ -1573,11 +1686,19 @@ class Stanag4676Adapter(Adapter):
                 "confidence": segment.get("confidence"),
                 "comment": segment.get("comment"),
                 "source": segment.get("segmentSource"),
+                "position_source": source.value,
+                "position_source_basis": source_basis,
             }
             segments.append(span)
             if not points and segment.get("confidence") is not None:
                 retractions.append(segment)
 
+        if violations:
+            raise NitsError(
+                f"this TrackData violates {len(violations)} track-ordering rule(s), and every "
+                "one of them is quoted, because a refusal that names only the cause it happened "
+                "to check first is a guess about which one the producer meant:\n  - "
+                + "\n  - ".join(violations))
         return samples, segments, retractions, unpositioned
 
     @staticmethod
@@ -1594,8 +1715,8 @@ class Stanag4676Adapter(Adapter):
         return spans
 
     @staticmethod
-    def _refuse_overlap(spans: list, track_data: dict) -> None:
-        """Segments overlapping in time are the multi-hypothesis case, and it is a refusal.
+    def _overlaps(spans: list) -> list[str]:
+        """Every pair of segments overlapping in time. The multi-hypothesis case, and a refusal.
 
         Table 2.5.25-1's own example: a multi-hypothesis tracker "generates 10 hypothesized
         tracks … isn't sure which of these hypothesized track segments is part of the actual
@@ -1603,26 +1724,33 @@ class Stanag4676Adapter(Adapter):
         physically absurd track; minting a track_id per segment would make identity depend on a
         producer's chunking; and taking the highest-confidence segment would be silent
         best-hypothesis selection. All three are decisions a translator may not make.
+
+        Returns the violations rather than raising, so the caller can quote them ALONGSIDE any
+        out-of-order violations. The two conditions overlap in practice — segments that overlap
+        in time are usually also out of order — and whichever is checked first would otherwise
+        be the only cause a producer ever hears about.
         """
+        found = []
         for (a_order, a_start, a_end, _a), (b_order, b_start, b_end, _b) in \
                 [(x, y) for i, x in enumerate(spans) for y in spans[i + 1:]]:
             if a_start <= b_end and b_start <= a_end:
-                raise NitsError(
-                    f"TrackSegment[{a_order}] spans {times.render(a_start)}..."
-                    f"{times.render(a_end)} and TrackSegment[{b_order}] spans "
-                    f"{times.render(b_start)}...{times.render(b_end)}: they overlap in time "
-                    f"inside one TrackData. That is the multi-hypothesis structure of "
-                    f"Table 2.5.25-1 — {len(spans)} segments, confidences "
-                    f"{[s[3].get('confidence') for s in spans]!r} — and this adapter refuses it "
-                    "rather than interleaving incompatible paths into one history, minting a "
-                    "track per segment, or selecting the highest-confidence segment. Which of "
-                    "those a consumer wants is a consumer's decision"
-                )
+                found.append(
+                    f"OVERLAPPING SEGMENTS: TrackSegment[{a_order}] spans "
+                    f"{times.render(a_start)}...{times.render(a_end)} and "
+                    f"TrackSegment[{b_order}] spans {times.render(b_start)}..."
+                    f"{times.render(b_end)}: they overlap in time inside one TrackData. That is "
+                    f"the multi-hypothesis structure of Table 2.5.25-1 — {len(spans)} segments, "
+                    f"confidences {[s[3].get('confidence') for s in spans]!r} — and this adapter "
+                    "refuses it rather than interleaving incompatible paths into one history, "
+                    "minting a track per segment, or selecting the highest-confidence segment. "
+                    "Which of those a consumer wants is a consumer's decision")
+        return found
 
-    def _point_position(self, point: dict, frames: Frames, where: str) -> dict:
+    def _point_position(self, point: dict, frames: Frames, where: str,
+                        position_source: PositionSource = PositionSource.ESTIMATED) -> dict:
         """The `Dynamics` block a sample's position comes from, by the preference order."""
         blocks = point.get("dynamics") or []
-        resolved = [resolve_dynamics(block, frames, where) for block in blocks]
+        resolved = [resolve_dynamics(block, frames, where, position_source) for block in blocks]
         chosen = None
         for system in CS_PREFERENCE:
             for block, result in zip(blocks, resolved):
@@ -1683,21 +1811,25 @@ class Stanag4676Adapter(Adapter):
                 return Affiliation.FRIENDLY, basis, role
 
             if amplification in AMPLIFICATION_SUSPECT:
-                # SUSPECT has no CDM member (gap 2), so the amplification sets nothing. But it
-                # must not leave a FRIENDLY or NEUTRAL standing either: the producer has said
-                # the track is suspect, and presenting a suspect as friendly is an over-claim in
-                # the direction this codebase refuses everywhere else.
-                if mapped in (Affiliation.FRIENDLY, Affiliation.NEUTRAL):
-                    return Affiliation.UNKNOWN, (
-                        f"IdentityAmplification {amplification!r} states a SUSPECT identity, "
-                        f"which has no CDM member (gap 2), and identity {identity!r} maps to "
-                        f"{mapped.value}. The two contradict and the CDM can express neither the "
-                        "difference nor the suspicion, so UNKNOWN — understating is the safe "
-                        "direction and presenting a suspect as friendly is not"), None
+                # SUSPECT has no CDM member (gap 2), so the amplification sets nothing — and it
+                # does NOT downgrade a stated identity either, whatever that identity is.
+                #
+                # Ed B Table 2.5.34-1 makes these two separate attributes: `identity` is "the
+                # estimated identity/status ... in accordance with STANAG 1241" and
+                # `identityAmplification` is "additional identity/status information
+                # (amplification)". No co-occurrence restriction is stated, so FRIEND + ZOMBIE is
+                # the designated identity field plus an amplifier the standard permits beside it,
+                # not a contradiction for a translator to adjudicate. Downgrading the primary
+                # assertion because of a secondary field is the move `CollectionInformation.
+                # essence` is forbidden from making against source.synthetic, and resolving the
+                # tension is the fusion-layer judgement `enums.Affiliation` says we do not make.
                 return (mapped or Affiliation.UNKNOWN), (
-                    f"identity {identity!r} governs. IdentityAmplification {amplification!r} "
-                    "states a SUSPECT identity and SUSPECT has no CDM member — gap 2, and the "
-                    "loss is recorded rather than rounded towards HOSTILE"), None
+                    f"identity {identity!r} governs — it is the designated identity attribute, "
+                    f"and IdentityAmplification {amplification!r} is \"additional identity/"
+                    "status information\" that Ed B permits beside it with no stated "
+                    "co-occurrence restriction. The amplification states a SUSPECT identity, "
+                    "which has no CDM member: gap 2, recorded rather than rounded towards "
+                    "HOSTILE and never used to downgrade the stated identity"), None
 
             if mapped is not None:
                 lossy = identity in ("ASSUMED_FRIEND", "SUSPECT")
@@ -1994,10 +2126,24 @@ class Stanag4676Adapter(Adapter):
             if isinstance(root, dict) and root not in parked_roots:
                 parked_roots.append(root)
         if len(parked_roots) > 1:
+            # NARROW, and the narrowing is the point. This refuses a VERBATIM ROUND TRIP of two
+            # NITSRoot contexts under one root: §2.1.1.2.3 says that when two objects' lidScopeUID
+            # values differ, "the same local ID value can be used to represent different things",
+            # and re-scoping round-tripped identifiers would break the cross-file correlation
+            # those identifiers exist to provide.
+            #
+            # It does NOT refuse CDM-native egress from many sources. That path mints fresh
+            # identifiers — see `_native_track`, which keys on the CDM's own UUIDs and emits no
+            # local ID at all — so no parked identifier survives and no collision is possible.
+            # A consolidated picture goes through the mint path.
             raise NitsError(
                 f"{len(parked_roots)} different NITSRoot contexts are parked across these "
-                "objects. Each has its own lidScopeUID, so merging them into one document would "
-                "make local IDs from two scopes collide silently. Emit them separately"
+                "objects, which would be a verbatim round trip of two documents under one root. "
+                "Each carries its own lidScopeUID, and §2.1.1.2.3 says that when two differ the "
+                "same local ID may name different things — so merging them would make identifiers "
+                "from two scopes collide silently, and re-scoping them would destroy the "
+                "cross-file correlation they exist for. Emit them separately, or build the "
+                "consolidated picture from CDM-native objects, which mint fresh identifiers"
             )
         label = self._egress_label(entities, events)
         if parked_roots:
@@ -2099,6 +2245,10 @@ class Stanag4676Adapter(Adapter):
                 position.append(sample.position.alt_m)
             points.append({"relTime": int(round(offset)),
                            "dynamics": [{"cs": CS_WGS84, "pos": position}]})
+        # Keyed on the CDM's own UUIDs and carrying NO local ID: `lidScopeUID` is required only
+        # "if local IDs are found in the object", so a document built entirely this way needs no
+        # scope and cannot collide with anything. That is what makes multi-source egress a mint
+        # rather than a merge.
         return {"uid": str(track.track_id), "segment": [{"tp": points}],
                 "object": [{"uid": str(track.entity_id)}]}
 

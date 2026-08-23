@@ -134,6 +134,8 @@
           "initiationReason": null,
           "lid": null,
           "point_count": 1,
+          "position_source": "ESTIMATED",
+          "position_source_basis": "ESTIMATED: the TrackSource references no sensor, so there is no modality to read. A NITS track point is a tracker's estimate unless something says otherwise",
           "sample_range": [
             0,
             1
@@ -180,7 +182,7 @@
       },
       "nits_track_first_instant": "2026-04-29T06:00:00.000Z",
       "position_basis": "WGS_84 geodetic, read as (latitude, longitude, ellipsoid height) per Table 2.5.27-2 \u2014 note this is the OPPOSITE axis order from GeoJSON. No datum conversion. The source array is re-emitted verbatim at attributes.nits_position",
-      "position_source_basis": "ESTIMATED on every NITS position. A track point is a tracker's estimate, and SensorInformation.modality is deliberately not read to refine it: reaching it means resolving TrackSource.sensorUID, which under the DATASTREAM profile may point outside this payload \u2014 so the same point would get GNSS in a STANDALONE document and ESTIMATED in a DATASTREAM one",
+      "position_source_basis": "ESTIMATED: the TrackSource references no sensor, so there is no modality to read. A NITS track point is a tracker's estimate unless something says otherwise",
       "profile_basis": "profile ['STANDALONE']; recognised ['STANDALONE']. No reference is followed: resolving a DATASTREAM reference means caching objects across payloads, which is state, and state is where fusion hides. An absent profile is not a claim \u2014 \u00a72.5.1 says a consumer shall not infer non-conformance from silence",
       "symbol_basis": "derived from the affiliation via symbology.sidc_from_affiliation. An APP-6 code, where one is stated, is parked at attributes.app6 and never composed into a SIDC: an APP-6 entity code supplies one of the eight things a 2525D SIDC encodes and composing one would mean inventing six",
       "synthetic_basis": "essence ['SIMULATED'] parked and checked against the deployment declaration source.synthetic=True; essence never sets it",

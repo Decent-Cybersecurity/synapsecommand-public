@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NITSRoot>
+  <slab:originatorConfidentialityLabel xmlns:slab="urn:nato:stanag:4774:confidentialitymetadatalabel:1:0"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type="PERMISSIVE" TagName="Releasable to"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>
+  <profile>STANDALONE</profile>
+  <fileUID>f1c70000-0000-8000-8000-000000000001</fileUID>
+  <lidScopeUID>f1c75c09-0000-8000-8000-000000000001</lidScopeUID>
+  <numFiles>1</numFiles>
+  <msgCreatedTime>2026-04-29T06:00:00Z</msgCreatedTime>
+  <nitsVersion>B.2</nitsVersion>
+  <product>
+    <uid>f1c70000-0000-8000-8000-000000000002</uid>
+    <id>SYN-NITS-001</id>
+    <name>Synthetic NITS Track Product</name>
+    <shortName>SNTP</shortName>
+    <effectivity>2026A</effectivity>
+  </product>
+  <collection>
+    <uid>f1c70000-0000-8000-8000-000000000012</uid>
+    <intent>EXERCISE</intent>
+    <essence>SIMULATED</essence>
+    <targetID>AREA-ALPHA</targetID>
+  </collection>
+  <sensor>
+    <uid>f1c70000-0000-8000-8000-000000000013</uid>
+    <lid>8</lid>
+    <sensorID>
+      <stationID>SYNADSB01</stationID>
+      <nationality>ZZZ</nationality>
+    </sensorID>
+    <name>Synthetic ADS-B receiver</name>
+    <modality>ADS-B</modality>
+  </sensor>
+  <tracker>
+    <type>AUTOMATIC_TRACKER</type>
+    <uid>f1c70000-0000-8000-8000-000000000011</uid>
+    <lid>2</lid>
+    <trackerID>
+      <stationID>SYNTRAK01</stationID>
+      <nationality>ZZZ</nationality>
+    </trackerID>
+    <name>Synthetic tracker</name>
+    <description>fixture tracker</description>
+    <version>0.1</version>
+    <supplementaryData>
+      <type>DIGITAL_ELEVATION_MODEL</type>
+      <name>SYN-DEM</name>
+      <version>2026.1</version>
+      <description>fixture DEM</description>
+    </supplementaryData>
+  </tracker>
+  <message>
+    <numDetections>0</numDetections>
+    <numTracks>1</numTracks>
+    <baseTime>2026-04-29T06:00:00Z</baseTime>
+    <relTimeIncrement>1.0</relTimeIncrement>
+    <track>
+      <uid>f1c70000-0000-8000-8000-000000000097</uid>
+      <trackSource>
+        <sensorUID>f1c70000-0000-8000-8000-000000000013</sensorUID>
+        <trackerUID>f1c70000-0000-8000-8000-000000000011</trackerUID>
+      </trackSource>
+      <segment>
+        <tp>
+          <relTime>0</relTime>
+          <dynamics>
+            <cs>WGS_84</cs>
+            <pos>57.3 24.7 3000.0</pos>
+          </dynamics>
+        </tp>
+        <tp>
+          <relTime>1</relTime>
+          <dynamics>
+            <cs>WGS_84</cs>
+            <pos>57.31 24.71 3010.0</pos>
+          </dynamics>
+        </tp>
+      </segment>
+      <object>
+        <uid>f1c70000-0000-8000-8000-000000000098</uid>
+      </object>
+    </track>
+  </message>
+</NITSRoot>

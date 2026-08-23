@@ -343,8 +343,11 @@ CASES["exercise_faker_is_friendly"] = doc(track=[{
                 "exampleDetectionUID": [U.format(60)]}],
 }])
 
-# 12 — ZOMBIE against a FRIEND identity: the suspect contradiction, which cannot be expressed.
-CASES["amplification_zombie_contradicts_friend"] = doc(track=[{
+# 12 — ZOMBIE beside a FRIEND identity. Ed B makes `identity` and `identityAmplification` two
+#      separate attributes with no stated co-occurrence restriction, so this is the designated
+#      identity field plus an amplifier the standard permits beside it. The identity governs and
+#      the amplification parks; a subordinate field does not downgrade a primary assertion.
+CASES["amplification_zombie_beside_friend"] = doc(track=[{
     "uid": U.format(72),
     "segment": [{"tp": [wgs84_point(0, 57.20, 24.60)]}],
     "object": [{"uid": U.format(73),
@@ -405,7 +408,24 @@ CASES["datastream_unresolved_references"] = {
     }])],
 }
 
-# 16 — a relTimeIncrement that is not a whole number of milliseconds: the parking rule, and the
+# 16 — a cooperative sensor modality, which is the branch where position_source is a FACT the
+#      sensor read rather than the tracker's estimate. Ed B defines modality as the "category of
+#      the sensor according to the type of signal it can detect", and for ADS-B the detected
+#      signal is a GNSS-derived position the aircraft broadcast about itself.
+CASES["cooperative_modality_is_a_gnss_fix"] = root(
+    sensor=[{"uid": U.format(13), "lid": 8,
+             "sensorID": {"stationID": "SYNADSB01", "nationality": "ZZZ"},
+             "name": "Synthetic ADS-B receiver", "modality": "ADS-B"}],
+    message=[message(track=[{
+        "uid": U.format(97),
+        "trackSource": {"sensorUID": [U.format(13)], "trackerUID": [TRACKER_UID]},
+        "segment": [{"tp": [wgs84_point(0, 57.30, 24.70, 3000.0),
+                            wgs84_point(1, 57.31, 24.71, 3010.0)]}],
+        "object": [{"uid": U.format(98)}],
+    }])],
+)
+
+# 17 — a relTimeIncrement that is not a whole number of milliseconds: the parking rule, and the
 #      one case where egress MUST re-emit from the park rather than recompute.
 CASES["fractional_increment_parks_raw_integers"] = doc(
     baseTime="2026-04-29T06:00:00Z", relTimeIncrement=0.0078125, track=[{

@@ -59,10 +59,11 @@ declaration can be set to match.
 | `motion_event_tripwire` | a `LineString` that is never closed |
 | `detection_evidence_tree` | every leaf of the Detection/Evidence tree, including an image chip and a pixel mask |
 | `exercise_faker_is_friendly` | **amendment C** — `FAKER` yields `FRIENDLY`, the role is parked, Mode 5 is not read |
-| `amplification_zombie_contradicts_friend` | the suspect contradiction, which collapses to `UNKNOWN` |
+| `amplification_zombie_beside_friend` | a suspect amplifier beside a `FRIEND` identity: the identity governs and the amplifier parks |
 | `linkage_processed_track_carried` | `TrackLinkage` and `ProcessedTrack`, carried and never acted on |
 | `segment_retraction_is_an_event` | a retraction-only segment: an `Event`, not a `Track`, and not dropped |
 | `datastream_unresolved_references` | the DATASTREAM profile and a reference that resolves nowhere in this payload |
+| `cooperative_modality_is_a_gnss_fix` | the `position_source` split: a resolving `TrackSource` to an `ADS-B` modality makes the fix `GNSS` |
 | `fractional_increment_parks_raw_integers` | 1/128 s: the raw integers are the record and the `Timestamp` truncates |
 
 ## What is NOT here, and where it is instead

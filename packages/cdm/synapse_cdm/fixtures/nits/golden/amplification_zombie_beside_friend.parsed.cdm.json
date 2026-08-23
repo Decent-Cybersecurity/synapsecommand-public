@@ -1,8 +1,8 @@
 [
   {
-    "affiliation": "UNKNOWN",
+    "affiliation": "FRIENDLY",
     "attributes": {
-      "affiliation_basis": "no TrackedObject states an ID1241 identity. UNKNOWN because the document is SILENT, which is a different fact from a wider vocabulary having been collapsed",
+      "affiliation_basis": "identity 'FRIEND' governs \u2014 it is the designated identity attribute, and IdentityAmplification 'ZOMBIE' is \"additional identity/status information\" that Ed B permits beside it with no stated co-occurrence restriction. The amplification states a SUSPECT identity, which has no CDM member: gap 2, recorded rather than rounded towards HOSTILE and never used to downgrade the stated identity",
       "confidentiality_label": {
         "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>"
       },
@@ -14,113 +14,6 @@
       "kinematics_basis": "the block states no velocity",
       "nits_message": {
         "baseTime": "2026-04-29T06:00:00Z",
-        "dynSrcInfo": [
-          {
-            "dynCFT": [
-              {
-                "cft": {
-                  "from": "ECEF",
-                  "rotation": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                  ],
-                  "translation": [
-                    3183000.0,
-                    1421000.0,
-                    5322000.0
-                  ]
-                },
-                "lid": 5,
-                "uid": "f1c70000-0000-8000-8000-000000000041"
-              }
-            ],
-            "groupID": "FRAME-GROUP-1",
-            "lid": 4,
-            "numDetections": 2,
-            "numReportedDetections": 1,
-            "relTime": 0,
-            "sensorLocation": {
-              "cs": "WGS_84",
-              "dims": 3,
-              "points": [
-                56.9,
-                24.0,
-                250.0
-              ]
-            },
-            "sensorUID": "f1c70000-0000-8000-8000-000000000010",
-            "sourceESM": {},
-            "sourceMI": {
-              "frameBoundingBox": {
-                "_type": "Polygon",
-                "cs": "WGS_84",
-                "dims": 2,
-                "nRings": 1,
-                "vertices": [
-                  56.9,
-                  24.0,
-                  56.9,
-                  24.1,
-                  57.0,
-                  24.1,
-                  57.0,
-                  24.0
-                ]
-              },
-              "frameNumber": 41,
-              "grd": [
-                0.35
-              ],
-              "gsd": [
-                0.25
-              ],
-              "niirs": 5.5,
-              "processedFOV": {
-                "_type": "Polygon",
-                "cs": "PIXELS",
-                "dims": 2,
-                "nRings": 1,
-                "vertices": [
-                  10.0,
-                  10.0,
-                  10.0,
-                  1900.0,
-                  1000.0,
-                  1900.0
-                ]
-              },
-              "sea": 33.0,
-              "tea": 47.0,
-              "useableFOV": {
-                "_type": "Polygon",
-                "cs": "PIXELS",
-                "dims": 2,
-                "nRings": 1,
-                "vertices": [
-                  0.0,
-                  0.0,
-                  0.0,
-                  1919.0,
-                  1079.0,
-                  1919.0
-                ]
-              },
-              "vniirs": 5.0
-            },
-            "sourceRadar": {
-              "dwellIndex": 7,
-              "revisitIndex": 2
-            },
-            "uid": "f1c70000-0000-8000-8000-000000000040"
-          }
-        ],
         "numDetections": 0,
         "numTracks": 1,
         "relTimeIncrement": 1.0
@@ -130,30 +23,14 @@
         {
           "blocks": [
             {
-              "cftUID": "f1c70000-0000-8000-8000-000000000041",
-              "cs": "LOCAL_CARTESIAN",
-              "pos": [
-                10.0,
-                20.0,
-                5.0
-              ],
-              "vel": [
-                1.0,
-                0.0,
-                0.0
-              ]
-            },
-            {
               "cs": "WGS_84",
               "pos": [
-                56.9496,
-                24.1052,
-                12.0
+                57.2,
+                24.6
               ]
             }
           ],
-          "chosen_cs": "WGS_84",
-          "position_disagreement_m": 2889.092
+          "chosen_cs": "WGS_84"
         }
       ],
       "nits_profiles": [
@@ -280,35 +157,23 @@
       "nits_track": {
         "object": [
           {
-            "uid": "f1c70000-0000-8000-8000-000000000035"
+            "id1241": {
+              "identity": "FRIEND",
+              "identityAmplification": "ZOMBIE"
+            },
+            "uid": "f1c70000-0000-8000-8000-000000000073"
           }
         ],
         "segment": [
           {
             "tp": [
               {
-                "dynSrcUID": "f1c70000-0000-8000-8000-000000000040",
                 "dynamics": [
-                  {
-                    "cftUID": "f1c70000-0000-8000-8000-000000000041",
-                    "cs": "LOCAL_CARTESIAN",
-                    "pos": [
-                      10.0,
-                      20.0,
-                      5.0
-                    ],
-                    "vel": [
-                      1.0,
-                      0.0,
-                      0.0
-                    ]
-                  },
                   {
                     "cs": "WGS_84",
                     "pos": [
-                      56.9496,
-                      24.1052,
-                      12.0
+                      57.2,
+                      24.6
                     ]
                   }
                 ],
@@ -317,7 +182,7 @@
             ]
           }
         ],
-        "uid": "f1c70000-0000-8000-8000-000000000034"
+        "uid": "f1c70000-0000-8000-8000-000000000072"
       },
       "nits_track_first_instant": "2026-04-29T06:00:00.000Z",
       "position_basis": "WGS_84 geodetic, read as (latitude, longitude, ellipsoid height) per Table 2.5.27-2 \u2014 note this is the OPPOSITE axis order from GeoJSON. No datum conversion. The source array is re-emitted verbatim at attributes.nits_position",
@@ -331,16 +196,16 @@
       "valid_to_basis": "None. Four of the six TrackTerminationReason literals \u2014 SENSOR_OFF, EXITED_FOV, LOST, OBSCURED \u2014 say the SENSOR stopped seeing the object, not that the object ceased to exist. A truck that drives under a bridge is still a truck"
     },
     "confidence": null,
-    "entity_id": "67a0c775-fd0f-5b34-96c7-a8a1fd3d3d2e",
+    "entity_id": "703a3004-4900-5b3c-ab5d-33dad3cb4ecc",
     "entity_type": "UNKNOWN",
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
     "position": {
       "accuracy_m": null,
-      "alt_m": 12.0,
-      "lat": 56.9496,
-      "lon": 24.1052,
+      "alt_m": null,
+      "lat": 57.2,
+      "lon": 24.6,
       "position_source": "ESTIMATED"
     },
     "schema_version": "1.0.0",
@@ -352,20 +217,20 @@
     },
     "source_ids": [
       {
-        "external_id": "f1c70000-0000-8000-8000-000000000034",
+        "external_id": "f1c70000-0000-8000-8000-000000000072",
         "system": "NITS_UID"
       },
       {
-        "external_id": "f1c70000-0000-8000-8000-000000000035",
+        "external_id": "f1c70000-0000-8000-8000-000000000073",
         "system": "NITS_UID"
       }
     ],
-    "symbol": "10210000000000000000",
+    "symbol": "10230000000000000000",
     "valid_from": "2026-04-29T06:00:00.000Z",
     "valid_to": null
   },
   {
-    "entity_id": "67a0c775-fd0f-5b34-96c7-a8a1fd3d3d2e",
+    "entity_id": "703a3004-4900-5b3c-ab5d-33dad3cb4ecc",
     "integrity": null,
     "object_kind": "track",
     "samples": [
@@ -373,9 +238,9 @@
         "observed_at": "2026-04-29T06:00:00.000Z",
         "position": {
           "accuracy_m": null,
-          "alt_m": 12.0,
-          "lat": 56.9496,
-          "lon": 24.1052,
+          "alt_m": null,
+          "lat": 57.2,
+          "lon": 24.6,
           "position_source": "ESTIMATED"
         }
       }
@@ -389,15 +254,15 @@
     },
     "source_ids": [
       {
-        "external_id": "f1c70000-0000-8000-8000-000000000034",
+        "external_id": "f1c70000-0000-8000-8000-000000000072",
         "system": "NITS_UID"
       },
       {
-        "external_id": "f1c70000-0000-8000-8000-000000000035",
+        "external_id": "f1c70000-0000-8000-8000-000000000073",
         "system": "NITS_UID"
       }
     ],
-    "track_id": "df2cb96a-b9b7-5b30-9664-720185596a70",
+    "track_id": "be77e55e-9370-5f4a-b586-674413a6f47a",
     "track_quality": null
   }
 ]

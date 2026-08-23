@@ -310,6 +310,17 @@ is worth stating.
   `legion.AFFILIATION` map JOKER and FAKER to HOSTILE while this adapter maps them to FRIENDLY.
   Stated rather than resolved, on the I021/170 precedent; whoever settles gap 2 settles that.
 
+  Note where an amplification stops: it is READ when the CDM has a member for what it states and
+  RECORDED when it does not, so `FAKER` sets FRIENDLY and `ZOMBIE` never downgrades a stated
+  identity. Ed B makes the two attributes separate with no co-occurrence restriction, and a
+  subordinate field rewriting a primary assertion is the move `essence` is forbidden from making
+  against `source.synthetic`.
+
+  `Position.position_source` is the one canonical field this adapter fills from a resolved
+  reference chain rather than a constant: `GNSS` where `TrackSource` resolves in-document to an
+  `AIS`, `ADS-B` or `BFT` modality, `ESTIMATED` on every other branch including a DATASTREAM
+  reference that resolves to a file we do not have.
+
   One thing is knowingly incomplete and it is not a gap in the CDM. **The XML element binding is
   provisional**: the normative XSD is distributed through NATO national representatives and
   could not be obtained or hashed, so element names bind to UML attribute names through one

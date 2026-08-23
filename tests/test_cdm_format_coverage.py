@@ -925,6 +925,39 @@ def test_the_nits_row_set_claims_its_adapter():
     )
 
 
+def test_every_nits_row_carries_the_provisional_qualifier():
+    """The XML element binding is provisional, and the STATUS COLUMN has to say so on its own.
+
+    A reader deciding whether to point a real feed at this adapter reads the status column, not
+    the paragraph three sections up — and "provisional" is exactly the kind of caveat that gets
+    read once and forgotten. So it is a marker on every flipped row, and this test is what makes
+    deleting it from one row a build failure rather than an editing slip.
+
+    It comes off in the same commit that pins the XSD, fills `ELEMENT_NAMES` from it and adds
+    schema validation to the fixture build — the exit condition is spelled out in the
+    declines-and-blockers table.
+    """
+    section = _section(NITS_HEADING)
+    rows = [line for line in section.splitlines()
+            if line.startswith("|") and "`nits 1.0.0" in line]
+    assert len(rows) >= 300, f"only {len(rows)} rows carry a nits marker at all"
+    unqualified = [line for line in rows if "· provisional`" not in line]
+    assert not unqualified, (
+        f"{len(unqualified)} STANAG 4676 row(s) claim the adapter without the `· provisional` "
+        f"qualifier: {[r[:90] for r in unqualified[:3]]}. The XML element name these rows bind "
+        "to is not pinned to anything — the XSD is distributed through NATO national "
+        "representatives — so the status column must carry the caveat until it is"
+    )
+    legend = _section("## The status column")
+    for marker in ("`nits 1.0.0 · provisional`", "`nits 1.0.0 · parked · provisional`",
+                   "`nits 1.0.0 · egress · provisional`"):
+        assert marker in legend, f"the legend does not define {marker}"
+    assert "XSD validation of an emitted document" in section, (
+        "provisionality with no stated exit condition is a caveat nobody can ever discharge; "
+        "the blocker row is where the five steps that remove it are written down"
+    )
+
+
 def test_the_nits_settlements_are_each_recorded_by_name():
     """Eight named settlements, each of which an adapter author will otherwise re-decide.
 

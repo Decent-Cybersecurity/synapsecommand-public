@@ -50,6 +50,8 @@
           "initiationReason": null,
           "lid": null,
           "point_count": 1,
+          "position_source": "ESTIMATED",
+          "position_source_basis": "ESTIMATED: modality ['IMAGE_SIGNATURE'] is not a cooperative self-report, so the position is the tracker's estimate. Note the per-frame route through TrackPoint.dynSrcUID -> DynamicSourceInformation.sensorUID is deliberately NOT read: TrackSource is the reference the settlement names, and reading two chains that can disagree would need a precedence rule nobody has written",
           "sample_range": [
             0,
             0

@@ -24,7 +24,7 @@ import synapse_cdm
 from synapse_cdm import ids, lossless, times
 from synapse_cdm.adapters import legion, stanag4676 as nits
 from synapse_cdm.adapters.stanag4676 import NitsError, Stanag4676Adapter
-from synapse_cdm.enums import Affiliation, EntityType, EventType
+from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource
 from synapse_cdm.models import Entity, Event, Track
 
 FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures/nits"
@@ -192,6 +192,22 @@ def test_points_out_of_order_across_segments_are_refused_with_both_instants():
     assert "sorting would hide a source defect" in str(raised.value)
 
 
+def test_a_document_violating_both_ordering_rules_cites_both():
+    """No first-match-wins. A refusal that names only the cause it happened to check first is a
+    guess about which one the producer meant."""
+    document = load("three_contiguous_segments_one_track")
+    segments = document["message"][0]["track"][0]["segment"]
+    segments[1]["tp"][0]["relTime"] = 0       # segment 1 now overlaps segment 0 ...
+    segments[1]["tp"][1]["relTime"] = 1
+    segments[2]["tp"][0]["relTime"] = 0       # ... and segment 2 runs backwards after it
+    with pytest.raises(NitsError) as raised:
+        adapter().to_cdm(document)
+    message = str(raised.value)
+    assert "OVERLAPPING SEGMENTS" in message
+    assert "OUT OF ORDER" in message
+    assert "every one of them is quoted" in message
+
+
 def test_overlapping_segments_are_refused_and_the_message_names_the_hypotheses():
     """The multi-hypothesis producer of Table 2.5.25-1, and the cost amendment A accepts.
 
@@ -354,12 +370,28 @@ def test_the_two_suspect_amplifications_never_yield_friendly(literal):
     assert "gap 2" in entity.attributes["affiliation_basis"]
 
 
-def test_a_suspect_amplification_over_a_friendly_identity_collapses_to_unknown():
-    """The mirror of the FAKER case: the producer has said the track is suspect, and presenting
-    a suspect as FRIENDLY is an over-claim in the direction this codebase refuses everywhere."""
-    entity = entities(translate("amplification_zombie_contradicts_friend"))[0]
-    assert entity.affiliation is Affiliation.UNKNOWN
-    assert "contradict" in entity.attributes["affiliation_basis"]
+def test_a_suspect_amplification_never_downgrades_the_stated_identity():
+    """FRIEND + ZOMBIE stays FRIENDLY, and Ed B's structure is what decides it.
+
+    Table 2.5.34-1 makes these two separate attributes: `identity` is "the estimated
+    identity/status ... in accordance with STANAG 1241", `identityAmplification` is "additional
+    identity/status information (amplification)", and no co-occurrence restriction is stated. So
+    this is the designated identity field plus an amplifier the standard permits beside it — not
+    a contradiction a translator may adjudicate. Downgrading a primary assertion because of a
+    subordinate field is the move `essence` is forbidden from making against `source.synthetic`,
+    and resolving the tension is the fusion-layer judgement `enums.Affiliation` says we do not
+    make.
+
+    This test pinned the opposite reading until it was overturned; it is inverted rather than
+    deleted so the reversal is visible in the history rather than only in a commit message.
+    """
+    entity = entities(translate("amplification_zombie_beside_friend"))[0]
+    assert entity.affiliation is Affiliation.FRIENDLY
+    assert entity.affiliation is not Affiliation.UNKNOWN
+    basis = entity.attributes["affiliation_basis"]
+    assert "governs" in basis and "gap 2" in basis
+    assert entity.attributes["nits_track"]["object"][0]["id1241"]["identityAmplification"] \
+        == "ZOMBIE", "the amplification must still be parked verbatim"
 
 
 @pytest.mark.parametrize("identity,expected", [
@@ -385,6 +417,77 @@ def test_this_adapter_diverges_from_two_shipped_ones_and_the_divergence_is_delib
     assert legion.AFFILIATION["JOKER"] is Affiliation.HOSTILE
     assert legion.AFFILIATION["FAKER"] is Affiliation.HOSTILE
     assert nits.AMPLIFICATION_FRIENDLY == ("FAKER", "JOKER", "KILO")
+
+
+# ------------------------------------------ position_source: the sensor chain, two branches
+
+
+def test_a_cooperative_modality_makes_the_fix_a_gnss_one():
+    """Ed B defines modality as the "category of the sensor according to the type of signal it
+    can detect", and for AIS, ADS-B and BFT the detected signal IS a GNSS-derived position the
+    object broadcast about itself. That is a fact the sensor read, and `adapters/ais.py` and
+    `adapters/adsb.py` map their own positions the same way."""
+    objects = translate("cooperative_modality_is_a_gnss_fix")
+    entity, track = entities(objects)[0], tracks(objects)[0]
+    assert entity.position.position_source is PositionSource.GNSS
+    assert all(s.position.position_source is PositionSource.GNSS for s in track.samples), (
+        "every sample of the segment takes the branch, not only the one the Entity state came from"
+    )
+    basis = entity.attributes["position_source_basis"]
+    assert basis.startswith("GNSS") and "STANDALONE" in basis
+
+
+@pytest.mark.parametrize("modality", ["MIXED", "OTHER", "XXXX", "IMAGE_SIGNATURE",
+                                      "DOPPLER_SIGNATURE"])
+def test_a_modality_that_is_not_a_cooperative_self_report_stays_estimated(modality):
+    document = load("cooperative_modality_is_a_gnss_fix")
+    document["sensor"][0]["modality"] = modality
+    entity = entities(adapter().to_cdm(document))[0]
+    assert entity.position.position_source is PositionSource.ESTIMATED
+    assert entity.attributes["position_source_basis"].startswith("ESTIMATED")
+
+
+def test_a_dangling_sensor_reference_keeps_estimated_and_is_not_a_refusal():
+    """A DATASTREAM reference may resolve to a file we do not have. That is the dangling branch,
+    and unknown means the conservative reading rather than a refusal."""
+    document = load("cooperative_modality_is_a_gnss_fix")
+    document.pop("sensor")
+    objects = adapter().to_cdm(document)
+    entity = entities(objects)[0]
+    assert entity.position.position_source is PositionSource.ESTIMATED
+    basis = entity.attributes["position_source_basis"]
+    assert "does not resolve within this NITSRoot object" in basis
+    assert "does not fetch" in basis
+
+
+def test_a_segment_source_overrides_the_tracks_for_its_own_points_only():
+    """§2.5.24 scopes a segmentSource to a specific portion of the track, so the sensor chain is
+    resolved per segment and two segments of one track can differ."""
+    document = load("cooperative_modality_is_a_gnss_fix")
+    document["sensor"].append({"uid": "f1c70000-0000-8000-8000-000000000014",
+                               "name": "Synthetic radar", "modality": "DOPPLER_SIGNATURE"})
+    segments = document["message"][0]["track"][0]["segment"]
+    segments.append({"segmentSource": {"sensorUID": ["f1c70000-0000-8000-8000-000000000014"]},
+                     "tp": [{"relTime": 2, "dynamics": [{"cs": "WGS_84",
+                                                         "pos": [57.32, 24.72, 3020.0]}]}]})
+    objects = adapter().to_cdm(document)
+    sources = [s.position.position_source for s in tracks(objects)[0].samples]
+    assert sources == [PositionSource.GNSS, PositionSource.GNSS, PositionSource.ESTIMATED]
+    spans = entities(objects)[0].attributes["nits_segments"]
+    assert [s["position_source"] for s in spans] == ["GNSS", "ESTIMATED"]
+    # The Entity state comes from the LAST positioned point, so its basis is that segment's.
+    assert entities(objects)[0].attributes["position_source_basis"].startswith("ESTIMATED")
+
+
+def test_the_per_frame_sensor_route_is_deliberately_not_read():
+    """`TrackPoint.dynSrcUID` -> `DynamicSourceInformation.sensorUID` is a second chain to a
+    modality. Reading both would need a precedence rule for when they disagree, and nobody has
+    written one — so the settlement names TrackSource and this pins that it is the only one."""
+    document = load("local_cartesian_with_complete_cft")
+    document["sensor"][0]["modality"] = "ADS-B"          # reachable only via dynSrcUID
+    entity = entities(adapter().to_cdm(document))[0]
+    assert entity.position.position_source is PositionSource.ESTIMATED
+    assert "references no sensor" in entity.attributes["position_source_basis"]
 
 
 # ------------------------------------------- amendment D: the WGS-84 kinematics split
@@ -1068,12 +1171,67 @@ def test_a_native_track_whose_instants_do_not_divide_the_increment_is_refused():
     assert "not a whole" in str(raised.value)
 
 
-def test_two_documents_cannot_be_merged_into_one_root():
-    """Each NITSRoot has its own lidScopeUID, so merging two would make local IDs collide."""
+def test_a_verbatim_round_trip_of_two_contexts_under_one_root_is_refused():
+    """The NARROW half of the merge refusal, and the half that stands.
+
+    §2.1.1.2.3: when two objects' `lidScopeUID` values differ, "the same local ID value can be
+    used to represent different things". Merging two parked contexts would make identifiers from
+    two scopes collide silently, and re-scoping them would destroy the cross-file correlation
+    those identifiers exist to provide.
+    """
     objects = translate("standalone_basic_track") + translate("datastream_unresolved_references")
     with pytest.raises(NitsError) as raised:
         adapter().from_cdm(objects)
     assert "lidScopeUID" in str(raised.value)
+    assert "verbatim round trip" in str(raised.value)
+    assert "CDM-native objects, which mint fresh identifiers" in str(raised.value)
+
+
+def test_a_consolidated_picture_from_many_sources_is_a_mint_and_not_a_merge():
+    """The other half, and it must NOT refuse. No parked identifier survives this path, so no
+    collision is possible: `_native_track` keys on the CDM's own UUIDs and emits no local ID at
+    all — and `lidScopeUID` is required only "if local IDs are found in the object"."""
+    import datetime as _dt
+    from synapse_cdm.models import Position, SourceId, TrackSample
+
+    start = _dt.datetime(2026, 4, 29, 6, 0, tzinfo=_dt.timezone.utc)
+    label = ('<slab:originatorConfidentialityLabel xmlns:slab="urn:nato:stanag:4774:'
+             'confidentialitymetadatalabel:1:0"><slab:ConfidentialityInformation/>'
+             "</slab:originatorConfidentialityLabel>")
+    emitting = Stanag4676Adapter(clock=times.frozen_clock(), confidentiality_label=label)
+    objects: list = []
+    for system, external in (("AIS", "244110000"), ("ICAO24", "4ca7b3"), ("TAK", "ALPHA-1")):
+        entity_id = ids.derive(system, external, kind="entity")
+        objects.append(Entity(
+            source=emitting.source_ref(),
+            source_ids=[SourceId(system=system, external_id=external)], entity_id=entity_id,
+            entity_type=EntityType.PLATFORM, affiliation=Affiliation.UNKNOWN, valid_from=start))
+        objects.append(Track(
+            source=emitting.source_ref(),
+            source_ids=[SourceId(system=system, external_id=external)],
+            track_id=ids.derive(system, external, kind="track"), entity_id=entity_id,
+            samples=[TrackSample(
+                position=Position(lat=56.0, lon=24.0, position_source="GNSS"),
+                observed_at=start)]))
+
+    document = nits.parse_document(emitting.from_cdm(objects))
+    assert len(document["message"][0]["track"]) == 3, (
+        "three sources consolidated into one STANDALONE document — this is the path the merge "
+        "refusal points a caller at, so it has to work"
+    )
+    assert document["profile"] == ["STANDALONE"]
+
+    def has_lid(value) -> bool:
+        if isinstance(value, dict):
+            return any(k.endswith("LID") or k == "lid" for k in value) or \
+                any(has_lid(v) for v in value.values())
+        return isinstance(value, list) and any(has_lid(v) for v in value)
+
+    assert not has_lid(document), (
+        "the mint path must emit no local ID anywhere: that is what makes a fresh lidScopeUID "
+        "unnecessary and a collision impossible"
+    )
+    assert "lidScopeUID" not in document
 
 
 def test_emitting_nothing_is_refused_rather_than_producing_an_empty_document():
