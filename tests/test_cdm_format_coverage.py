@@ -952,6 +952,185 @@ def test_the_nits_settlements_are_each_recorded_by_name():
     )
 
 
+# ---------------------------------------------------------- the Phase 1 amendments
+#
+# Three Phase 1 decisions were overturned on review and one was split. Each is pinned here, in
+# the direction that would catch it being quietly reverted during Phase 2 — which is the risk a
+# spec-first row set carries once someone is writing code against it and the original reading
+# starts to look more convenient.
+
+
+def test_a_track_is_one_per_trackdata_not_one_per_tracksegment():
+    """Amendment A. `TrackData` is the format's identity boundary; a segment is a subdivision.
+
+    Ed B §2.5.25 defines a TrackSegment as points "adjacent in time" existing so a producer can
+    invalidate a group, report status, or reassign source information for "a specific portion of
+    the track" — and says a producer may put every point of a track in one segment if it likes.
+    A row set that minted a track_id per segment would make the number of tracks a consumer sees
+    depend on a producer's private chunking choice.
+    """
+    section = _section(NITS_HEADING)
+    assert "One `Track` per `TrackData`" in section, (
+        "the structural settlement has been reworded or reverted. It is the decision the whole "
+        "row set turns on and every TrackSegment row depends on it"
+    )
+    assert "One `Track` per `TrackSegment`" not in section, (
+        "the Phase 1 reading is back: one Track per TrackSegment was overturned because it makes "
+        "track identity depend on how a producer chose to chunk its output"
+    )
+    rows = [line for line in section.splitlines()
+            if line.startswith("| `TrackSegment.")]
+    assert rows, "the TrackSegment row table has disappeared"
+    for row in rows:
+        # The CDM-field column, not the whole row: the uid row legitimately says "not a
+        # `Track.track_id`" in its notes, which is the amendment being stated rather than undone.
+        cdm_cell = [c.strip() for c in row.strip("|").split("|")][2]
+        assert "Track.track_id" not in cdm_cell, (
+            f"a TrackSegment attribute is mapped to Track.track_id again: {row[:120]!r}. "
+            "A segment has no track identity under amendment A"
+        )
+    assert "attributes.nits_segments[]" in section, (
+        "per-segment attributes have to land somewhere, and the settlement says a half-open range "
+        "of sample indices on the owning Entity. Losing the key loses the segment structure"
+    )
+    # The cost of the amendment, which the row set is required to name rather than bury.
+    assert "10 hypothesized tracks" in section, (
+        "amendment A refuses a multi-hypothesis TrackData whose segments overlap in time. That is "
+        "a real cost of the settlement and Ed B's own TrackSegment.confidence example describes "
+        "the producer that pays it — the row set must keep naming it"
+    )
+
+
+def test_no_payload_field_sets_source_synthetic():
+    """Amendment B. `SourceRef.synthetic` is a deployment declaration; essence is a payload field.
+
+    The CAT021 row set states the rule for I021/040 SIM and the Legion row set for its EXERCISE_*
+    identities. Phase 1 made an exception for CollectionInformation.essence on the grounds that it
+    is a statement about the same thing; a rule with an exception whenever the payload field looks
+    close enough is a default, not a rule.
+    """
+    section = _section(NITS_HEADING)
+    rows = [line for line in section.splitlines() if line.startswith("| `CollectionInformation.")]
+    assert rows, "the CollectionInformation row table has disappeared"
+    for row in rows:
+        assert "source.synthetic" not in row or "does not set" in row, (
+            f"a CollectionInformation attribute maps to source.synthetic again: {row[:120]!r}"
+        )
+    essence = [r for r in rows if r.startswith("| `CollectionInformation.essence`")]
+    assert len(essence) == 1 and "`Entity.attributes`" in essence[0], (
+        "CollectionInformation.essence must park, not map — it is a payload field and "
+        f"source.synthetic is a deployment declaration. Row: {essence!r}"
+    )
+    assert "logged refusal" in section or "logged conflict" in section, (
+        "a parked essence contradicting the deployment declaration is a refusal that names both "
+        "values. Without it the rule has no teeth: the adapter would simply ignore the conflict"
+    )
+    # The rule is only worth anything if it is the same rule the other row sets state.
+    for other in (_section(CAT021_HEADING), _section(LEGION_HEADING)):
+        assert "synthetic" in other, (
+            "a sibling row set no longer discusses source.synthetic, so the 'this is a rule, not "
+            "a default' argument has lost the precedent it rests on"
+        )
+
+
+def test_faker_and_joker_are_friendly_not_unknown():
+    """Amendment C. Ed B defines FAKER and JOKER as friendly in the definition's first word.
+
+    Phase 1 forced UNKNOWN on the argument that HOSTILE and FRIENDLY were both over-claims. They
+    are not symmetric: HOSTILE contradicts the standard's definition and FRIENDLY restates it, so
+    withholding was a third wrong answer and the one that lost information.
+    """
+    section = _section(NITS_HEADING)
+    amplification = [line for line in section.splitlines()
+                     if line.startswith("| `FAKER`") or line.startswith("| `JOKER`")
+                     or line.startswith("| `KILO`")]
+    assert len(amplification) == 3, (
+        "the IdentityAmplification mapping table is gone or incomplete; all five literals need a "
+        f"decision and the three friendly ones need a row. Found: {amplification!r}"
+    )
+    for row in amplification:
+        assert "`FRIENDLY`" in row, (
+            f"an IdentityAmplification literal Ed B defines as friendly does not map to FRIENDLY: "
+            f"{row[:120]!r}"
+        )
+        assert "`UNKNOWN`" not in row, (
+            f"the Phase 1 reading is back on {row[:40]!r} — FAKER/JOKER/KILO forcing UNKNOWN was "
+            "overturned"
+        )
+    assert "attributes.exercise_role" in section, (
+        "the exercise role is a SECOND fact, not an ambiguity, and it must be parked — otherwise "
+        "a consumer cannot tell a FAKER from an ordinary friendly at all, which is worse than the "
+        "reading this amendment replaced"
+    )
+    # TRAVELER and ZOMBIE are defined as suspect and must not be swept into the same mapping.
+    for literal in ("`TRAVELER`", "`ZOMBIE`"):
+        row = [line for line in section.splitlines() if line.startswith(f"| {literal}")]
+        assert row and "`FRIENDLY`" not in row[0], (
+            f"{literal} is defined as SUSPECT in Ed B and must not map to FRIENDLY: {row!r}"
+        )
+
+
+def test_the_wgs84_velocity_conversion_states_both_branches():
+    """Amendment D. Convert when the height axis is present; park when it is not.
+
+    The radii of curvature are closed forms in (phi, h). Phi is always given; h is optional under
+    Ed B's all-or-nothing third-axis rule, and h = 0 would be a fabricated input rather than a
+    rounded one — so the row splits instead of choosing.
+    """
+    section = _section(NITS_HEADING)
+    assert "Third axis present" in section and "Third axis omitted" in section, (
+        "the WGS_84 kinematics row has to state both branches explicitly. A single sentence "
+        "saying 'converted' hides the case where the conversion has no height to work from"
+    )
+    assert "fabricated input" in section, (
+        "the parked branch's reason is that h = 0 is a fabricated input to the conversion, not a "
+        "rounding of a real one. Without the reason the branch reads as an unfinished mapping"
+    )
+    # LOCAL_CARTESIAN must NOT split the same way: there the standard supplies the missing value.
+    assert "shall set `L₃` equal to 0.0" in section, (
+        "the row set must say why LOCAL_CARTESIAN does not split like WGS_84 — the standard "
+        "mandates L3 = 0.0 for a 2-D local coordinate, so that zero is stated rather than assumed"
+    )
+
+
+def test_local_spherical_is_refused_as_an_unverifiable_convention():
+    """Amendment E. The reason is a producer convention nothing in the data records.
+
+    Not "a drafting error": the slot labelled azimuthal sits in the zenith position of the
+    mandated equations, so a label-driven and an equation-driven producer both emit conformant
+    documents that a consumer cannot tell apart, and both decode to a valid point on a sphere.
+    """
+    section = _section(NITS_HEADING)
+    assert "unverifiable producer convention" in section, (
+        "the LOCAL_SPHERICAL refusal must be stated as an unverifiable convention rather than as "
+        "a defect in the text — the distinction is what makes it a refusal rather than a bug "
+        "report, and it is what a custodian's clarification would resolve"
+    )
+    assert "zenith position" in section, (
+        "the mechanism — the azimuthal-labelled slot appearing as the argument of z = r cos phi — "
+        "is the whole evidence for the refusal"
+    )
+    assert "cannot be used to directly convert to a non-Cartesian coordinate system" in section, (
+        "the standard's own note that the CFT cannot reach WGS 84 directly belongs here: it says "
+        "the route is three hops and that the undetermined hop is the first one"
+    )
+
+
+def test_the_egress_label_paths_are_three_and_named():
+    """Amendment F. Round-tripped, configuration-supplied, or refused. Never defaulted."""
+    section = _section(NITS_HEADING)
+    for path in ("round_tripped", "configuration_supplied"):
+        assert path in section, (
+            f"the egress confidentiality settlement no longer names the {path!r} path. A refusal "
+            "with no stated alternative reads as 'egress does not work', which is not the decision"
+        )
+    assert "silent `UNCLASSIFIED` default remains forbidden" in section, (
+        "the forbidden case has to stay forbidden in as many words. It is the only one of the "
+        "three whose consequence is not a wrong pixel on a map"
+    )
+
+
+
 def test_the_nits_scope_decisions_say_deferred_or_rejected():
     """An out-of-scope list without reasons is indistinguishable from an oversight.
 

@@ -1986,48 +1986,80 @@ splitter, a stream framer or a cache of previously transmitted objects. Splittin
 |---|---|
 | `NITSRoot` | the envelope. Parked on every object the document produces; never an object of its own |
 | `TrackMessage` | the time base and the framing. Parked; never an object of its own |
-| `TrackData` | one **`Entity`**, from its `TrackedObject`s |
-| `TrackSegment` | one **`Track`** each — *not* one Track per `TrackData`. See below |
-| `TrackPoint` | one **`TrackSample`** inside its segment's Track |
+| `TrackData` | one **`Entity`**, from its `TrackedObject`s, and one **`Track`** from all the points of all its segments |
+| `TrackSegment` | **not an object.** A temporal and administrative subdivision of the one `Track`; its own attributes are parked against the sample range it covers |
+| `TrackPoint` | one **`TrackSample`** inside its `TrackData`'s single `Track` |
 | `Detection` | one **`Event`**, `DETECTION` |
 | `MotionEvent` | one **`Event`**, `STATUS_CHANGE` |
 | `TrackLinkage` | one **`Event`**, `STATUS_CHANGE` — carried, never acted on |
 | `ProcessedTrack` | one **`Event`**, `STATUS_CHANGE` — carried, never acted on |
-| a retraction-only `TrackSegment` | one **`Event`**, `STATUS_CHANGE`. It cannot be a `Track`, and the model is what says so |
+| a retraction-only `TrackSegment` | one **`Event`**, `STATUS_CHANGE`. It contributes no samples, and a retraction is data — so it becomes an object of its own rather than being dropped |
 
-**One `Track` per `TrackSegment`, not per `TrackData`.** This is the structural decision the row
-set turns on, and there are three reasons, of which the second is the one that makes it a rule:
+**One `Track` per `TrackData`, and `TrackSegment` is not an identity boundary.** This is the
+structural decision the row set turns on, and the standard settles it in the class definition
+itself. §2.5.25: a `TrackSegment` "encapsulates zero or more track points **adjacent in time**",
+and it exists so that a producer can "later refer to a group of points in order (for example) to
+update the confidence of or invalidate the points, without restating … each individual point",
+can "report the track status of the included track points", and can "associate different track
+source information with just a specific portion of **the track** than specified for the track as
+a whole".
 
-1. A segment is the unit the format lets a producer **address**: it carries its own `uid`/`lid`,
-   its own `confidence`, its own `segmentSource` and its own `status`. `TrackData` above it
-   carries none of those per-point. So the segment is the thing that has an identity, and a CDM
-   `Track` needs one.
-2. **A multi-hypothesis tracker emits several segments for one `TrackData`, and they overlap in
-   time on purpose.** §2.5.25 says exactly that: "a multi-hypothesis tracker generates 10
-   hypothesized tracks … the tracker isn't sure which of these hypothesized track segments is
-   part of the actual track, so it reports all of them". Flattening ten hypotheses into one
-   time-ordered sample list would interleave incompatible paths into a single history — a
-   physically absurd track, produced by an act of fusion, inside a translator.
-3. The CDM's ordering contract then holds exactly where the format promises it. §2.5.25 defines a
-   segment as points "adjacent in time"; it promises nothing about the order of segments.
+Every clause of that is **temporal and administrative subdivision of one track**, not a branch
+into competing histories. The standard's own vocabulary says the same thing twice more: a segment
+carries source information for "a specific portion of the track", and "if the data producer deems
+it unnecessary to break **a track** into multiple track segments, then all track points of the
+track can be included is a single `TrackSegment` object". A thing you may or may not break into
+pieces at your discretion is not the thing that has the identity — **`TrackData` is**, and a row
+set that minted a `track_id` per segment would make the number of tracks a consumer sees depend
+on a producer's private choice about how to chunk its output.
 
-`Track.track_id` is derived from the segment's `uid`, else its `lid` scoped by `lidScopeUID`,
-else the `TrackData` key plus the segment's document index — with `ids.derive_with_basis`
-reporting which. `attributes.nits_track_composition` records how many segments the `TrackData`
-held and which `track_id` each became, so a consumer that *wants* one history has the material to
-join them. Joining them is a consumer decision, made where it can be audited.
+So:
+
+- `Track.track_id` is derived from `TrackData.uid`, else its `lid` as the `lidScopeUID` composite,
+  else the `TrackedObject` key, with `ids.derive_with_basis` reporting which. It never depends on
+  a segment. `ids.derive`'s `kind` argument keeps the track and entity id spaces apart when both
+  fall back to the same `TrackData` key.
+- **Every point of every segment becomes a sample of the one `Track`, in document order.**
+- The segments themselves are parked: `attributes.nits_segments[]` records, per segment and in
+  order, its `uid`/`lid`, its `status` and initiation or termination reason, its `confidence`,
+  its `comment`, its `segmentSource`, and **the half-open range of sample indices it covers**. A
+  consumer that needs to know which points a producer invalidated, or which sensor produced the
+  middle third of a history, reads it there.
+
+**Per-segment source information is parked against its sample range, and this is where gap 16
+bites hardest.** §2.5.25's whole third purpose is to let a producer say "these points came from
+that sensor and those from this one", and the CDM's `TrackSample` has two fields and no extension
+bag — so a fact the format attaches to a *range of points* can only be recorded as an index range
+in the owning `Entity`'s attributes. That works, it is fragile under any list surgery, and it is
+**gap 16**'s argument stated on the one class the format designed for the purpose.
 
 **Points are emitted in document order and a document whose points run backwards is refused, not
-sorted.** That is Legion's rule, verbatim: "sorting would hide a source defect the caller needs to
-see". Within a segment the format promises adjacency in time, so a backwards pair is a producer
-defect and the refusal quotes both instants.
+sorted — and the rule spans segments as well as sitting inside them.** That
+is Legion's rule, verbatim: "sorting would hide a source defect the caller needs to see". The
+format promises adjacency in time *within* a segment and promises nothing about the order of
+segments, so a producer that emits segments out of order, or that emits segments overlapping in
+time, produces a `Track` the CDM refuses. The refusal quotes both instants and both segment
+identifiers.
 
-**An empty `TrackSegment` cannot become a `Track`, and the model is what decides it.**
-`TrackSegment.tp` is `[0..*]` — zero track points is conformant — while `Track.samples` has
-`min_length=1`. A segment with no points is therefore not a history; it is a *statement about* a
-history, which is precisely what the format uses it for (§2.1.1.2.3 c: a segment restated with
-the same ID and `confidence.valid = FALSE` and nothing else). So it becomes an `Event` carrying
-the statement verbatim. The same applies to a `TrackData` with no segments at all.
+**The case that costs, named rather than buried.** `TrackSegment.confidence`'s own description in
+Table 2.5.25-1 offers a multi-hypothesis tracker that "generates 10 hypothesized tracks from a
+sequence of low-SNR … motion images", is unsure "which of these hypothesized track segments is
+part of the actual track, so it reports all of them" with various confidences. If such a producer
+puts all ten under one `TrackData`, their points overlap in time and **this adapter refuses the
+document.** That is a deliberate cost and not an oversight: the alternative readings are to
+interleave ten incompatible paths into one sample list, which is a physically absurd track, or to
+mint ten `track_id`s from a producer's chunking, which is the thing this settlement rejects. A
+refusal that names the overlapping segments is the only one of the three that leaves the decision
+where it can be made — with the consumer, who can re-request, split by hypothesis, or accept the
+highest-confidence segment, none of which a translator may choose on its behalf.
+
+**An empty `TrackSegment` contributes no samples, and a retraction-only one becomes an `Event`.**
+`TrackSegment.tp` is `[0..*]` — zero track points is conformant — so a segment with no points is
+not part of the history; it is a *statement about* the history, which is precisely what the format
+uses it for (§2.1.1.2.3 c: a segment restated with the same ID and `confidence.valid = FALSE` and
+nothing else). It becomes an `Event` carrying the statement verbatim, alongside whatever `Track`
+the `TrackData`'s other segments produced. A `TrackData` whose segments hold **no** points between
+them yields an `Entity` and no `Track` at all, because `Track.samples` has `min_length=1`.
 
 ### Settlement 2 — Time: an absolute base and integer steps, and no rollover to reconstruct
 
@@ -2185,20 +2217,29 @@ Keyed by the element it came from and by the path it was attached to:
 and identifier of the element it marked. Nation-specific extensions ride inside the verbatim
 fragment because they are inside it on the wire.
 
-**The adapter never invents, downgrades, or strips a label. On egress this is a refusal, not a
-default.** A CDM object with no parked originator label **cannot be emitted as a NITS XML
-document**, because emitting one would mean writing an `originatorConfidentialityLabel` the
-adapter made up. There is no safe made-up value: `UNCLASSIFIED` is the dangerous direction, a
-copied label from another object is a marking the originator never applied, and an empty element
-is non-conformant. So the emit refuses and names the object. An egress path that could invent a
-classification is worse than an egress path that does not exist.
+**The adapter never invents, downgrades, or strips a label, and on egress there are exactly three
+paths.** The root element must carry an `originatorConfidentialityLabel`, so every emitted document
+has to get one from somewhere, and "somewhere" is enumerated rather than left to a default:
 
-The consequence is worth stating plainly rather than hiding in the declines table: **a CDM object
-that originated somewhere other than a NITS document cannot be emitted as NITS until the caller
-supplies a label.** The adapter takes one as an explicit argument — a deployment declaration, like
-`source.synthetic` — and records at `attributes.confidentiality_label_basis` that the label was
-supplied by configuration rather than read from a source. That is the same shape as
-`source.synthetic`: a fact about the deployment that a payload may not set.
+| Where the label comes from | When | What is recorded |
+|---|---|---|
+| **the park** | the object round-tripped from a NITS document | the exact fragment that arrived, re-emitted byte-for-byte. `attributes.confidentiality_label_basis` says `round_tripped` and names the source document |
+| **configuration** | a CDM-native object — a track from AIS, ADS-B, CAT021, Legion or CoT — for which the deployment has supplied a label as an explicit argument | the supplied label, with the basis saying `configuration_supplied`, naming the configured value and stating that no source stated it. **A deployment declaration, the same category `source.synthetic` is in and the same category settlement B protects** — a fact about the deployment that a payload may not set |
+| **nowhere** | neither of the above | **refusal**, naming the object. Emitting would mean writing a marking nobody applied |
+
+A **silent `UNCLASSIFIED` default remains forbidden** and is the reason the third row exists rather
+than being folded into the second. There is no safe made-up value: `UNCLASSIFIED` is the dangerous
+direction, a label copied from a neighbouring object is a marking its originator never applied to
+*this* one, and an empty element is non-conformant. An egress path that could invent a
+classification is worse than an egress path that does not exist — but a refusal in the case where
+the deployment *has* declared a label would be a refusal with no argument behind it, which is why
+the middle row is a path and not an exception.
+
+Note where this sits in the standard. Edition B's **core model is silent** on confidentiality
+(§2.1.1.6) and defers the subject **per syntax** to STANAG 4774 / ADatP-4774; the XML syntax is
+the one syntax the standard defines, and it is where the label becomes mandatory. So the refusal
+is not this row set being strict about a model that says nothing — it is the row set obeying the
+only syntax binding the standard has published.
 
 **Gap 12 gets a STANAG 4676 paragraph** below. What NITS adds to it that Legion did not is that
 here the label is **mandatory in the syntax** and **structured by another ratified standard** — so
@@ -2357,10 +2398,10 @@ here does not have to be inferred, because Edition B names ECEF as "**WGS 84** E
 
 | `cs` | Units and order the standard states | 1.0.0 |
 |---|---|---|
-| `WGS_84` | latitude [°], longitude [°], ellipsoid height [m]; third axis optional but all-or-nothing across position, velocity and acceleration | **direct**, with **one transform: the axis order.** Note the trap below |
+| `WGS_84` | latitude [°], longitude [°], ellipsoid height [m]; third axis optional but all-or-nothing across position, velocity and acceleration | **direct** for the position, with **one transform: the axis order.** The velocity splits on the third axis — see the kinematics section. Note the trap below |
 | `ECEF` | x, y, z [m], geocentric, WGS 84 | **transformed**, Bowring/Ferrari on the constants above — the Legion precedent, same closed form, same code path |
 | `LOCAL_CARTESIAN` | x, y, z [m]; third axis optional, all-or-nothing | **transformed only when a complete CFT is present and its `from` is `ECEF`.** Otherwise attributes-only |
-| `LOCAL_SPHERICAL` | radial [m], polar [°], azimuthal [°] | **attributes-only, even with a complete CFT** — the standard's own labels and its own equations disagree about which element is the azimuth. See below |
+| `LOCAL_SPHERICAL` | radial [m], polar [°], azimuthal [°] | **attributes-only, even with a complete CFT** — the slot labelled *azimuthal* sits in the zenith position of the mandated equations, so a producer's slot convention is unverifiable from the data. See below |
 | `ECI_J2K` | x, y, z [m], geocentric, J2000 inertial | **attributes-only** |
 | `PIXELS` | x, y [pixels], two axes only | **attributes-only** |
 
@@ -2394,26 +2435,43 @@ DATASTREAM profile a CFT may be defined in a previously transmitted file, so an 
 `Position` in a STANDALONE document and none in a DATASTREAM one, which is a real property of the
 format and is recorded in the basis rather than smoothed over.
 
-**`LOCAL_SPHERICAL` is attributes-only for a reason that is not the CFT.** The standard mandates
-the spherical-to-Cartesian conversion under an **AEDP-12 Requirement**:
+**`LOCAL_SPHERICAL` is attributes-only, and the blocker is an unverifiable producer convention
+rather than the CFT.** The standard mandates the spherical-to-Cartesian conversion under an
+**AEDP-12 Requirement**:
 
     x = r cosθ sinφ     y = r sinθ sinφ     z = r cosφ
 
-and then states "r, θ and φ are the **radial, polar and azimuthal** values, respectively", while
+and states "r, θ and φ are the **radial, polar and azimuthal** values, respectively", while
 Table 2.5.27-2 gives the array order as "radial [meters], **polar** [degrees], **azimuthal**
-[degrees]". Those two statements cannot both hold. In the given equations the third value is the
-angle measured **from the z-axis** — that is a polar angle, not an azimuth — and the second is the
-angle **in the xy-plane**, which is an azimuth, not a polar angle. A producer who follows the
-*names* and writes its polar angle into the second slot, and a consumer who follows the
-*equations* and feeds the second slot into `θ`, differ by an interchange of two angles: not a
-rounding, but **a plausible wrong position on the other side of the sensor**.
+[degrees]". Read positionally, the third slot — the one labelled *azimuthal* — is the argument of
+`z = r cos φ`. **It sits in the zenith position of the equations.** An azimuth does not determine
+a zenith coordinate, so the label and the equation cannot both be describing the same quantity.
 
-This is the Legion `EPSG:4979` refusal reached a second time, from a different direction, and it
-gets the same answer: **logged, not guessed.** The array is parked verbatim, no `Position` is
-derived, and `position_basis` names the contradiction and cites both statements. It is a
-narrowing of the general rule — "transform when the CFT is present and complete" — and the
+The consequence is not that the standard is unreadable; it is that **two conformant producers can
+populate the array two different ways and nothing in the data says which one did.** A
+label-driven producer writes its elevation-like angle into slot 2 because slot 2 is called
+*polar*; an equation-driven producer writes its bearing there because that is what `θ` is used
+for. Both are following the document. Feeding either into the mandated equations yields a valid
+point on a sphere, so there is no arithmetic failure, no out-of-range value and no error to catch
+— the two readings differ by an interchange of bearing and elevation, which puts the object at a
+**plausible wrong position on the other side of the sensor**.
+
+So applying the equations is **confidently wrong half the time**, and refusing is **withheld
+loudly**: the array is parked verbatim, no `Position` and no `Kinematics` are derived, and
+`position_basis` cites both statements and says which slot could not be identified. This is the
+Legion `EPSG:4979` refusal reached a second time from a different direction, and it gets the same
+answer for the same reason — a transposition that yields a plausible wrong position rather than
+an error is the one class of ambiguity a translator must not resolve by preference.
+
+It is a narrowing of the general rule — "transform when the CFT is present and complete" — and the
 narrowing is stated here rather than buried, because a CFT-bearing `LOCAL_SPHERICAL` block looks
-exactly like a case the rule covers.
+exactly like a case the rule covers. **And the CFT could not finish the job even if the slots were
+unambiguous**: the standard's own note says "the `CoordinateFrameTransformation` class cannot be
+used to directly convert to a non-Cartesian coordinate system (e.g., WGS 84)", so the route is
+spherical → local Cartesian → absolute Cartesian → geodetic, and the first hop is the one that is
+undetermined. What unblocks this is a custodian's clarification or a per-deployment ICD stating
+its own convention, not a closer reading of the text — which is why the declines table records it
+as deferred.
 
 **`ECI_J2K` is attributes-only because the conversion is not arithmetic on the payload.** Going
 from J2000 inertial to Earth-fixed needs the Earth rotation angle at the observation epoch, plus a
@@ -2477,14 +2535,29 @@ decomposition is closed-form:
 - **`ECEF`**, and `LOCAL_CARTESIAN` resolved through a complete ECEF CFT: rotate the velocity into
   the local east/north/up frame at the geodetic position — `speed_mps = hypot(vₑ, vₙ)`,
   `course_deg = atan2(vₑ, vₙ)` reduced into `[0, 360)`, `climb_mps = vᵤ`. Exact, no iteration.
-- **`WGS_84`**: the velocity is stated in **degrees per second** for latitude and longitude and
-  metres per second for elevation — a mixed-unit vector, which is the trap. The scale factors are
-  the meridional and prime-vertical radii of curvature on the same named ellipsoid:
-  `vₙ = lat̊/s · (π/180) · (M + h)` and `vₑ = lon̊/s · (π/180) · (N + h) · cos(lat)`. Exact, from
-  the same two constants, and the basis names them.
+- **`WGS_84`, and it splits in two on whether the height axis is present.** The velocity is
+  stated in **degrees per second** for latitude and longitude and metres per second for elevation
+  — a mixed-unit vector, which is the trap — and the scale factors are the meridional and
+  prime-vertical radii of curvature on the same named ellipsoid:
+  `vₙ = lat̊/s · (π/180) · (M + h)` and `vₑ = lon̊/s · (π/180) · (N + h) · cos(lat)`.
+  - **Third axis present** — so `pos` states an ellipsoid height and, by the all-or-nothing rule,
+    `vel` states an elevation speed: **convert.** Both `φ` and `h` are given, `M` and `N` are
+    closed forms in `φ` on the named constants, and the result is exact arithmetic on stated
+    inputs. `climb_mps` is the elevation speed, already in m/s.
+  - **Third axis omitted** — a conformant two-component position and a two-component velocity:
+    **park whole**, per Legion. `h` would have to be supplied, `h = 0` is the only available
+    guess, and it is a **fabricated input to the conversion** rather than a rounding of a real
+    one. The CDM would then carry a speed derived from a height nobody stated, with nothing in the
+    output distinguishing it from one derived from a stated height. `attributes.kinematics_basis`
+    records that the height axis was absent and that this is why no scalars were derived.
 - **`LOCAL_SPHERICAL`, `ECI_J2K`, `PIXELS`, and any local frame with no complete ECEF CFT**:
   parked whole. The same preconditions as the position, for the same reasons, so a `Kinematics`
   never exists without a `Position` derived from the same block.
+
+Note that `LOCAL_CARTESIAN` does **not** split the way `WGS_84` does, and the difference is that
+the standard supplies the missing component itself: for a two-dimensional local coordinate it is
+an **AEDP-12 Requirement** that "the data consumer shall set `L₃` equal to 0.0". A zero the
+standard mandates is a stated input; a zero height we would have to assume is not.
 
 `course_deg` is `[0, 360)` and a course of exactly 360 reduces to 0 — the CoT and Legion rule.
 `climb_mps` is "negative = descending" and the NITS up-component is positive-up in every Cartesian
@@ -2587,7 +2660,7 @@ CDM's entity type is a coarse kind. All fourteen codes are accounted for; the on
 used; where they disagree the type is `UNKNOWN` and the basis lists all of them, because choosing
 between a producer's own competing classifications is a judgement.
 
-#### Affiliation — 6 into 4, and the amplification that inverts one of them
+#### Affiliation — 6 into 4, and the amplification that states the identity outright
 
 `ID1241.identity` carries STANAG 1241 Edition 5 standard identities. **This is gap 2's own source**
 — the gap was written about 4676 — and Edition B is the occasion to state it exactly:
@@ -2605,17 +2678,38 @@ between a producer's own competing classifications is a judgement.
 The collapse here is 6 → 4, and two of the three members gap 2 names as lost are the two lost. The
 gap's paragraph below carries the correction.
 
-**`IdentityAmplification` never modifies the affiliation, and `FAKER` is why.** The five literals
-are `FAKER` (a *friendly* acting as exercise hostile), `JOKER` (a friendly acting as exercise
-suspect), `KILO` (a friendly high-value object), `TRAVELER` and `ZOMBIE`. A `FAKER` in an exercise
-carries `identity = HOSTILE` and an amplification saying it is really a friend. Both readings are
-over-claims: mapping it to `HOSTILE` paints a friendly aircraft as an enemy, and mapping it to
-`FRIENDLY` reads an exercise role as an identification. So **an `IdentityAmplification` of `FAKER`
-or `JOKER` forces `UNKNOWN`**, with `attributes.affiliation_basis` naming the literal and the
-identity it overrode, and the whole `ID1241` block parked. `KILO`, `TRAVELER` and `ZOMBIE` are
-parked and change nothing. This is a cross-attribute reading of exactly the kind CAT021 declines
-at NUCp-and-GBS — the difference is that here *both* answers are wrong, so declining to answer is
-the only position left.
+**`IdentityAmplification` is read, and three of its five literals state the affiliation
+outright.** Edition B's Table 2.5.34-3 does not describe a role and leave the identity open — it
+states the identity in the first word of the definition:
+
+| `IdentityAmplification` | Edition B's definition | `Entity.affiliation` |
+|---|---|---|
+| `FAKER` | "**Friendly** track, object or entity acting as exercise hostile" | `FRIENDLY` |
+| `JOKER` | "**Friendly** track, object or entity acting as exercise suspect" | `FRIENDLY` |
+| `KILO` | "**Friendly** high-value object" | `FRIENDLY` |
+| `TRAVELER` | "A **suspect** surface track following a recognized surface traffic route" | does not set it — `SUSPECT` has no CDM member, so `identity` governs and **gap 2** applies |
+| `ZOMBIE` | "A **suspect** track, object or entity of special interest" | likewise |
+
+So a `FAKER` arriving with `identity = HOSTILE` — which is what an exercise produces — yields
+`FRIENDLY`, and the amplification wins because it is the more specific statement and because the
+standard has told us in as many words what the object is. **The exercise role is a second fact,
+not an ambiguity**, and it is parked verbatim at `attributes.exercise_role` (`FAKER` or `JOKER`)
+alongside the overridden `identity` at `attributes.nits_identity`, with
+`attributes.affiliation_basis` naming both. A consumer that reads the `FRIENDLY` and ignores
+`attributes.exercise_role` has ignored parked data, which is a different failure from being
+misinformed by the adapter.
+
+This overturns the Phase 1 reading, which forced `UNKNOWN` on the argument that both answers were
+over-claims. They are not symmetric: `HOSTILE` would contradict the standard's own definition, and
+`FRIENDLY` restates it. Withholding an identity the source stated plainly is not the conservative
+choice — it is a third wrong answer, and the one that loses information. Note the contrast with
+the Mode 4 / Mode 5 decline a few paragraphs down, which stands: there the format gives an
+*authentication result* and the identity is an inference from it; here the format gives the
+identity as a definition. Reading a definition is translation; adjudicating an attestation is not.
+
+`KILO` is included on the same evidence, though it names no exercise: its definition also begins
+"Friendly", and mapping `FAKER` to `FRIENDLY` while leaving a plainly friendly high-value object
+`UNKNOWN` would be incoherent. It sets no `exercise_role`, because it is not one.
 
 **`TrackEnvironment` does not become `entity_type`.** `LAND`, `SURFACE`, `SUB-SURFACE`, `AIR`,
 `SPACE`, `UNKNOWN` name a **domain**, not a kind of thing, and a truck and a dismounted patrol are
@@ -2772,7 +2866,7 @@ Two model-wide facts that would otherwise be repeated on a hundred rows:
 | `NITSRoot.msgCreatedTime` | `[1]` | `Entity.attributes` | `not yet` | when the producer **wrote the file**. Parked, and deliberately neither `observed_at` nor `received_at`: it is a source time about the document, not about an observation, and it is the ordering key the consolidation rule uses |
 | `NITSRoot.nitsVersion` | `[1]` | `Entity.attributes` | `not yet` | `"B.2"` for the target edition. **The version gate**: anything reading `A.*` is refused with the value quoted, per the edition settlement |
 | `NITSRoot.product` | `[0..1]` | `Entity.attributes` | `not yet` | one `ProductIdentification`; its own table below |
-| `NITSRoot.collection` | `[0..*]` | `Entity.source.synthetic` | `not yet` | `CollectionInformation`. **The one payload field that does set `synthetic`** — see its table |
+| `NITSRoot.collection` | `[0..*]` | `Entity.attributes` | `not yet` | `CollectionInformation`, one per collection; its own table. **Parked, including `essence`** — no payload field sets `source.synthetic` |
 | `NITSRoot.sensor` | `[0..*]` | `Entity.attributes` | `not yet` | `SensorInformation`, one per sensor; its own table. **Gap 14** |
 | `NITSRoot.tracker` | `[0..*]` | `Entity.attributes` | `not yet` | `TrackerInformation`, one per tracker; its own table. **Gap 14** |
 | `NITSRoot.message` | `[0..*]` | — | `not yet` | `TrackMessage`. The container everything below hangs from; not itself parked, because its contents become objects |
@@ -2800,27 +2894,46 @@ Two model-wide facts that would otherwise be repeated on a hundred rows:
 | `CollectionInformation.uid` | `[0..1]` | `Entity.attributes` | `not yet` | referenced by `TrackSource.collectionUID` |
 | `CollectionInformation.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise |
 | `CollectionInformation.intent` | `[1]` | `Entity.attributes` | `not yet` | `CollectionIntentType`. Parked and **does not set `synthetic`**: `EXERCISE` data is frequently real sensor data, and `TEST`, `ENGINEERING` and `INITIALIZATION` say when a collection happened in its programme, not whether it was real |
-| `CollectionInformation.essence` | `[1]` | `Entity.source.synthetic` | `not yet` | `CollectionEssenceType`. **`REAL` → `false`; `SIMULATED`, `SYNTHETIC` and `SURROGATE` → `true`.** See the note below |
+| `CollectionInformation.essence` | `[1]` | `Entity.attributes` | `not yet` | `CollectionEssenceType`. **Parked verbatim and does not set `source.synthetic` either** — see the note below. Where it contradicts the deployment declaration the document is refused, never silently flipped |
 | `CollectionInformation.targetID` | `[0..1]` | `Entity.attributes` | `not yet` | "an identifier for the primary **target area**" — an area, not an object, and not a name |
 
 `CollectionIntentType`: `OPERATIONAL`, `EXERCISE`, `TEST`, `ENGINEERING`, `GROUND_TRUTH`,
 `INITIALIZATION`, `EXPERIMENTAL`. All parked.
 `CollectionEssenceType`: `REAL`, `SIMULATED`, `SYNTHETIC`, `SURROGATE`.
 
-**Why `essence` sets `synthetic` when CAT021's `SIM` bit may not.** `SourceRef.synthetic` is "true
-for anything not from a real source", and `essence` is a statement about exactly that: whether
-these track data "are derived from real sensor data" or from digitally-simulated data, a
-surrogate sensor, or a mixture. CAT021's I021/040 `SIM` is a different claim — a *simulated target
-inside a real feed* — which is why that row set parks it and refuses to let it flip the field.
-Two formats, two bits that look alike, two different answers, and the difference is what each bit
-is about.
+**`essence` does not set `source.synthetic`, and the rule it obeys is a rule and not a default
+with exceptions.** The temptation is real and it is worth stating before dismissing it:
+`SourceRef.synthetic` is "true for anything not from a real source", and `CollectionEssenceType`
+is a statement about whether these data "are derived from real sensor data" or from
+digitally-simulated data, a surrogate sensor, or a mixture. It looks like the same claim written
+twice.
 
-Two consequences: `collection` is `[0..*]`, so where several collections disagree, `synthetic` is
-`true` if **any** of them is not `REAL`, with `attributes.synthetic_basis` listing every essence —
-understating realness is the safe direction, and a mixed feed is not real. And a `NITSRoot` with
-**no** `CollectionInformation` at all is conformant, in which case `synthetic` takes the
-deployment's configured value and the basis records that the document stated no essence. The model
-gives `synthetic` no default precisely so this cannot be answered by accident.
+It is refused anyway, because **`source.synthetic` is a deployment declaration and a payload field
+may not rewrite one.** That is the rule the CAT021 row set states for I021/040 `SIM` and the Legion
+row set states for its `EXERCISE_*` identities, and a rule that admits an exception whenever the
+payload field looks close enough is not a rule — it is a default. The asymmetry that makes it
+matter is one-sided: a feed configured as real that receives a document claiming `SIMULATED` has
+either been misconfigured or been fed the wrong data, and both are conditions an operator must be
+told about rather than have quietly reflected in a boolean.
+
+So `essence` is parked verbatim at `attributes.nits_collection[].essence`, for every collection,
+and `source.synthetic` is whatever the deployment declared. Three consequences:
+
+- **A contradiction is a logged refusal, in either direction.** A parked `essence` of `SIMULATED`,
+  `SYNTHETIC` or `SURROGATE` against a deployment declaring `synthetic = false` is refused with
+  both values quoted; so is a `REAL` essence against a deployment declaring `synthetic = true`.
+  Symmetric on purpose — a silent flip is forbidden in the direction that understates realness as
+  well as the one that overstates it, because either flip hides the misconfiguration. The case
+  most likely to hit the second branch is a replay of genuinely real data through a pipeline
+  declared synthetic, and it should surface as a configuration question rather than as a boolean
+  nobody looks at.
+- **`collection` is `[0..*]`, so collections may disagree with each other.** All essences are
+  parked in order and the conflict check runs against the deployment declaration for each; the
+  adapter never reduces them to one value.
+- **A `NITSRoot` with no `CollectionInformation` at all is conformant.** There is then nothing to
+  check against, `synthetic` is the deployment's value, and `attributes.synthetic_basis` records
+  that the document stated no essence. The model gives `synthetic` no default precisely so this
+  cannot be answered by accident.
 
 ### Row set — `SensorInformation` and its three specializations
 
@@ -3068,10 +3181,10 @@ reading `adapters/legion.py` gives a Legion Event, reached from a class that say
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackData.uid` | `[0..1]` | `Track.track_id` | `not yet` | via `ids.derive`, system `NITS_UID`. Also an `Entity.source_ids[].external_id`, and the fallback key for `Entity.entity_id` when no `TrackedObject` carries one |
+| `TrackData.uid` | `[0..1]` | `Track.track_id` | `not yet` | **the track's identity**, via `ids.derive` with `kind="track"`, system `NITS_UID`. Also an `Entity.source_ids[].external_id`, and the fallback key for `Entity.entity_id` when no `TrackedObject` carries one — the `kind` argument is what keeps the two id spaces apart |
 | `TrackData.lid` | `[0..1]` | `Track.track_id` | `not yet` | system `NITS_LID`, **only** as the `lidScopeUID` composite |
 | `TrackData.trackSource` | `[0..1]` | `Entity.attributes` | `not yet` | a `TrackSource` for the track as a whole, overridable per segment; its own table |
-| `TrackData.segment` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackSegment`. **One `Track` each**, per the structural decision above; `attributes.nits_track_composition` records the grouping |
+| `TrackData.segment` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackSegment`. **All of them feed the one `Track`, in document order** — a segment is a subdivision of this track, not a track. `attributes.nits_segments[]` records each segment's own attributes against the half-open range of sample indices it covers |
 | `TrackData.object` | `[0..*]` | `Entity.entity_type` | `not yet` | `TrackedObject`. **One `Entity` per `TrackData` regardless of how many objects are stated** — `Track.entity_id` is singular. Where several are present the standard says "the data consumer shall interpret the track data as applying to the set of multiple objects **as a group**", so the group is the entity, every instance is parked in full, and `attributes.tracked_object_count` says how many. Merging their attributes would be the consolidation rule, applied inside a document |
 
 #### `TrackSource`
@@ -3091,23 +3204,27 @@ Eight reference lists, no data of its own. Every one of them is **gap 14** and, 
 | `TrackSource.productLID` | `[0..*]` | `Entity.attributes` | `not yet` | likewise |
 
 A `TrackSource` inside a `TrackSegment` **overrides** the one on the enclosing `TrackData`, per
-§2.5.24. Both are parked, under `attributes.nits_track_source` and
-`attributes.nits_segment_source`, with the override recorded rather than applied by flattening:
-which one was in force is a fact about the document.
+§2.5.24 — for that portion of the track and no more. Both are parked: the track-wide one at
+`attributes.nits_track_source`, and each segment's at `attributes.nits_segments[].source`
+**against the sample index range it governs**, which is the only place the CDM can express "these
+points came from that sensor". The override is recorded rather than applied by flattening, because
+which one was in force over which points is a fact about the document. This is the concrete cost
+of **gap 16**: the format attaches provenance to a range of samples and the CDM's `TrackSample`
+has no bag to attach it to.
 
 #### `TrackSegment`
 
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
-| `TrackSegment.uid` | `[0..1]` | `Track.track_id` | `not yet` | the preferred key, system `NITS_UID`. "The producer only needs to specify this value if they want the power to update previously-reported track segment" — so its absence means the producer never intends to revise, which is itself worth recording |
-| `TrackSegment.lid` | `[0..1]` | `Track.track_id` | `not yet` | as the `lidScopeUID` composite |
-| `TrackSegment.segmentSource` | `[0..1]` | `Entity.attributes` | `not yet` | a `TrackSource` overriding the track's |
-| `TrackSegment.confidence` | `[0..1]` | `Track.track_quality` | `not yet` | **gap 3 and gap 18.** A `Confidence`, not a number — see the note below |
+| `TrackSegment.uid` | `[0..1]` | `Entity.attributes` | `not yet` | **not a `Track.track_id`** — a segment is a subdivision of a track and not a track. Parked at `attributes.nits_segments[].uid`. "The producer only needs to specify this value if they want the power to update previously-reported track segment", so its absence means the producer never intends to revise, which is itself worth recording |
+| `TrackSegment.lid` | `[0..1]` | `Entity.attributes` | `not yet` | likewise, as the `lidScopeUID` composite where there is a scope |
+| `TrackSegment.segmentSource` | `[0..1]` | `Entity.attributes` | `not yet` | a `TrackSource` overriding the track's, for this segment's sample range only |
+| `TrackSegment.confidence` | `[0..1]` | `Entity.attributes` | `not yet` | **does not reach `Track.track_quality`** — see the note below. A `Confidence`, parked per segment. **Gap 18** |
 | `TrackSegment.comment` | `[0..1]` | `Entity.attributes` | `not yet` | free text; §2.1.1.4 forbids parsing it |
 | `TrackSegment.status` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackStatus`. **Does not set `Entity.valid_to`** — see the note below. **Gap 16** |
 | `TrackSegment.initiationReason` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackInitiationReason`, used only when the status is `INITIATING` |
 | `TrackSegment.terminationReason` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackTerminationReason`, used only when the status is `TERMINATED` |
-| `TrackSegment.tp` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackPoint`. **Zero is conformant and `Track.samples` requires one**, so an empty segment becomes an `Event` instead |
+| `TrackSegment.tp` | `[0..*]` | `Track.samples[]` | `not yet` | `TrackPoint`, appended to the `TrackData`'s single `Track` in document order. **Zero is conformant**, and a segment with no points contributes no samples — a retraction-only one becomes an `Event` |
 
 `TrackStatus`: `INITIATING`, `MAINTAINING`, `SEARCHING`, `TERMINATED`, `GROUND_TRUTH`.
 `TrackInitiationReason`: `SENSOR_ON`, `ENTERED_FOV`, `FOUND`, `REINITIATING`, `COLLECTION_START`.
@@ -3125,26 +3242,33 @@ same reading CAT021 gives its own absence of a staleness field, reached here fro
 exists.
 
 **`GROUND_TRUTH` is a status and not a synthetic flag.** It says the track was not produced by a
-tracker; it says nothing about whether the underlying collection was real. `essence` answers that
-and `GROUND_TRUTH` does not touch `source.synthetic`.
+tracker; it says nothing about whether the underlying collection was real. `essence` is the
+format's answer to that question and **neither of them touches `source.synthetic`**, which is the
+deployment's to declare.
 
-**A `Confidence` is not a `track_quality`, and the mapping is a proposal rather than a claim.**
-`Track.track_quality` is a float in `[0, 1]`; `Confidence.value` is an integer percentage in
-`[0, 100]` with a `type` saying what kind of statistic it is and a separate `sourceReliability`.
-The arithmetic is trivial — `value / 100` — and the arithmetic is not the problem. **Gap 18** is:
-a `HUMAN_INSTINCT` 30 and a `P-VALUE` 30 are not the same number, and the CDM's field cannot hold
-the difference. So `track_quality` is populated **only** when `Confidence.type` is `PROBABILITY`
-and `valid` is not `false`, and in every other case it is `None` with the whole `Confidence`
-parked and `attributes.track_quality_basis` naming the statistic type that prevented it. A
-p-value silently rendered as a quality bar is a number that means the opposite of what a reader
-will take it for.
+**`Track.track_quality` is `None` on every NITS track, and the reason is a consequence of the
+`TrackData` identity boundary.** There is no track-level quality in Edition B: `TrackData` has
+five attributes and none of them is a confidence. The only confidence anywhere near a history is
+`TrackSegment.confidence`, and a segment is a *portion* of the track — so filling `track_quality`
+from one would mean either picking a segment, or aggregating across them, and both are judgements.
+Worse, the obvious special case is the worst option available: mapping it when a `TrackData`
+happens to have exactly one segment would make a canonical field's presence depend on how a
+producer chose to chunk its output, which is the same defect the modality-through-`TrackSource`
+reading has and is rejected for the same reason.
 
-**Gap 3 is corrected here.** That gap records "4676 is integer 0–15, CDM is float 0–1" with a
-conversion of `value / 15`. **Edition B has no such field.** `Track/trackQuality` was an Edition A
-attribute; the re-architecture replaced it with the `Confidence` class, whose range is 0–100 and
-whose problem is not the scale at all. The gap's paragraph below carries the correction rather
-than the gap being quietly deleted, because a gap that was closed by a format changing underneath
-it is a different fact from a gap that was wrong.
+So every segment confidence is parked at `attributes.nits_segments[].confidence` against the
+sample range it covers, and `attributes.track_quality_basis` records that Edition B states no
+track-level quality. `TrackedObject.confidence` is a different claim — the producer's confidence
+in the *object description* — and it still reaches `Entity.confidence`, on the `PROBABILITY`-only
+terms set out there.
+
+**Gap 3's subject does not exist in Edition B, and its anchor moves accordingly.** That gap
+records "4676 integer 0–15 → CDM float 0–1" with a conversion of `value / 15`, written against
+`Track/trackQuality` — an **Edition A** attribute. The re-architecture removed it and put nothing
+track-level in its place, so no row in this row set evidences a quality *scale* problem. What the
+`Confidence` class substitutes is a different problem entirely and it has its own number: a value
+is uninterpretable without its `type`, which is **gap 18**. The gap below says so in a sentence
+rather than being deleted or being propped up with an Edition A name the guard test forbids.
 
 #### `TrackPoint`
 
@@ -3187,7 +3311,7 @@ Entity with a basis saying why.
 | `Dynamics.cs` | `[1]` | `Position.lat` | `not yet` | `CoordinateSystemType`, and the attribute the entire coordinate settlement turns on. An XML attribute, not an element |
 | `Dynamics.pos` | `[1]` | `Track.samples[].position.lat` · `Track.samples[].position.lon` · `Track.samples[].position.alt_m` | `not yet` | the centroid position, on every point of the history. Mandatory, which is why a velocity always has a position to build a local horizon at. Raw array parked verbatim at `attributes.nits_position` |
 | `Dynamics.pos` *(last positioned point)* | `[1]` | `Entity.position` | `not yet` | the same value, once more, as the entity's current state — see the state note above. `Track.samples[].position.position_source` and `Entity.position.position_source` are both `ESTIMATED` |
-| `Dynamics.vel` | `[0..1]` | `Entity.kinematics` | `not yet` | **gap 4, and the first source that answers it** — decomposed into `Kinematics.speed_mps`, `Kinematics.course_deg` and `Kinematics.climb_mps` for `WGS_84`, `ECEF` and CFT-resolved `LOCAL_CARTESIAN`, parked whole for the other three systems, and the raw array always parked. **And gap 16**: the CDM has one `Kinematics`, on the `Entity`, while NITS states a velocity at every point — so only the last positioned point's reaches it and the rest are parked per point |
+| `Dynamics.vel` | `[0..1]` | `Entity.kinematics` | `not yet` | **gap 4, and the first source that answers it** — decomposed into `Kinematics.speed_mps`, `Kinematics.course_deg` and `Kinematics.climb_mps` for `ECEF`, for CFT-resolved `LOCAL_CARTESIAN`, and for `WGS_84` **only when the height axis is present**; parked whole for two-dimensional `WGS_84` and for the other three systems. The raw array is always parked. **And gap 16**: the CDM has one `Kinematics`, on the `Entity`, while NITS states a velocity at every point — so only the last positioned point's reaches it and the rest are parked per point |
 | `Dynamics.acc` | `[0..1]` | `Entity.attributes` | `not yet` | the CDM models no acceleration in any frame, so this is parked whole regardless of coordinate system — as `adapters/legion.py` parks its own |
 | `Dynamics.cov` | `[0..1]` | `Entity.attributes` | `not yet` | a `CovarianceMatrix` over position, or position and velocity, or all three. **Gap 17** — parked whole, and never reduced to `Position.accuracy_m` |
 | `Dynamics.cftUID` | `[0..1]` | `Position.lat` | `not yet` | the transform a local coordinate resolves through. Unresolvable within the payload makes the block attributes-only |
@@ -3296,7 +3420,7 @@ tell which confidence went with which attribute, which is the whole point of the
 | NITS | Card | CDM field | Status | Notes |
 |---|---|---|---|---|
 | `ID1241.identity` | `[0..1]` | `Entity.affiliation` | `not yet` | `Identity`, STANAG 1241 Ed. 5. **Gap 2** — six literals into four, mapped in the table above |
-| `ID1241.identityAmplification` | `[0..1]` | `Entity.attributes` | `not yet` | `IdentityAmplification`: `FAKER`, `JOKER`, `KILO`, `TRAVELER`, `ZOMBIE`. **`FAKER` and `JOKER` force `UNKNOWN`** rather than modifying the identity — see the settlement |
+| `ID1241.identityAmplification` | `[0..1]` | `Entity.affiliation` | `not yet` | `IdentityAmplification`: `FAKER`, `JOKER`, `KILO`, `TRAVELER`, `ZOMBIE`. **`FAKER`, `JOKER` and `KILO` yield `FRIENDLY`**, overriding a contradicting `identity`, because Edition B defines all three as friendly in the first word; the exercise role is parked at `attributes.exercise_role`. `TRAVELER` and `ZOMBIE` are `SUSPECT` and set nothing — **gap 2**. See the settlement |
 | `ID1241.identitySourceModality` | `[0..1]` | `Entity.attributes` | `not yet` | a `ModalityType`, "transmitted only if the `identity` is provided". Parked; it says how the identity was reached, and the CDM has no provenance for an affiliation |
 | `ID1241.environment` | `[0..1]` | `Entity.attributes` | `not yet` | `TrackEnvironment`: `LAND`, `SURFACE`, `SUB-SURFACE`, `AIR`, `SPACE`, `UNKNOWN`. **A domain, not a kind** — does not set `entity_type` |
 
@@ -3499,14 +3623,14 @@ parked value it wrote itself on the way in.
 | `Track.samples[].observed_at` | `TrackMessage.baseTime` | `not yet` | the earliest sample instant in the message, which is what the standard asks for: "this should be the earliest time among all the time stamps in the constituent parts" |
 | `Track.samples[].position.lat` · `Track.samples[].position.lon` · `Track.samples[].position.alt_m` | `Dynamics.pos` with `cs = WGS_84` | `not yet` | latitude, longitude, height — **latitude first**, the axis order transposed back. A sample with no `alt_m` emits a two-component position, which is the all-or-nothing rule respected rather than a zero invented |
 | `Kinematics.speed_mps` · `Kinematics.course_deg` · `Kinematics.climb_mps` | `Dynamics.vel` | `not yet` | recomposed into the `WGS_84` angular rates using the same two named constants, or re-emitted verbatim from the park where the object came from NITS |
-| `Track.track_id` | `TrackSegment.uid` | `not yet` | from the park where there is one; otherwise a fresh v5 UUID over the CDM id, with `ProductIdentification.id` naming this system as the issuer |
+| `Track.track_id` | `TrackData.uid` | `not yet` | from the park where there is one; otherwise a fresh v5 UUID over the CDM id, with `ProductIdentification.id` naming this system as the issuer. **Segmentation is restored from `attributes.nits_segments[]` where the object came from NITS**, and otherwise the whole history is emitted as a single `TrackSegment` — which §2.5.25 permits outright: "if the data producer deems it unnecessary to break a track into multiple track segments, then all track points of the track can be included is a single `TrackSegment` object" |
 | `Track.entity_id` | `TrackedObject.uid` | `not yet` | on the same terms |
 | `Entity.affiliation` | `ID1241.identity` | `not yet` | `FRIENDLY` → `FRIEND`, `HOSTILE` → `HOSTILE`, `NEUTRAL` → `NEUTRAL`, `UNKNOWN` → `UNKNOWN`. **`ASSUMED_FRIEND` and `SUSPECT` are never emitted** — the CDM cannot hold them, so it cannot state them, and re-widening the collapse would invent a judgement |
 | `Entity.entity_type` | `ObjectClass.table` | `not yet` | only where the ingest parked an APP-6 block, which is re-emitted verbatim. **A CDM entity of other origin emits no `ObjectClass` at all**: `code` is `[1]` and there is no honest code to write |
 | `Entity.confidence` | `TrackedObject.confidence` | `not yet` | as `value = round(confidence × 100)` with `type = PROBABILITY`, which is the only type the CDM's float can honestly claim |
 | `Event.geometry` | `MotionEvent.region` / `.tripwire` | `not yet` | the three polygon corrections run in reverse: rings re-wound to the NITS convention, axis order transposed, the explicit closing position dropped, rings joined by `NaN` null points and `nRings` recomputed |
 | `Entity.attributes` | *(everything parked)* | `not yet` | every parked block is restored to the class and attribute it came from. This is what makes the round trip worth claiming at all |
-| `Entity.attributes` | `originatorConfidentialityLabel` | `not yet` | verbatim from the park. **No parked label and none supplied by configuration is a refusal**, per the classification settlement |
+| `Entity.attributes` | `originatorConfidentialityLabel` | `not yet` | verbatim from the park for a round-tripped object; from the deployment's configured label, logged as such, for a CDM-native one; **a refusal when neither exists** — the three paths in the classification settlement. A silent `UNCLASSIFIED` is forbidden |
 | *(the injected clock)* | `NITSRoot.msgCreatedTime` | `not yet` | when we wrote the file. The one value egress invents, and it is the same clock `received_at` uses |
 | *(constant)* | `NITSRoot.nitsVersion` | `not yet` | `"B.2"` |
 | *(constant)* | `NITSRoot.profile` | `not yet` | `STANDALONE`, always — see the profiles settlement |
@@ -3525,14 +3649,18 @@ Three things egress will not do:
 - **Emit a `DATASTREAM` document.** It has no earlier files to reference.
 - **Emit a document with a dangling reference.** A parked `sensorUID` whose `SensorInformation`
   is not being written into the same file is a refusal naming the reference.
-- **Emit an invented confidentiality label.** Stated three times in this row set because it is the
-  one failure whose consequence is not a wrong pixel on a map.
+- **Emit an invented confidentiality label.** A configuration-supplied one is not invented — it is
+  declared, logged and attributable to the deployment. A defaulted one is invented, and it is
+  forbidden. Stated three times in this row set because it is the one failure whose consequence is
+  not a wrong pixel on a map.
 
 ### What the adapter fills that NITS does not state
 
 | NITS | CDM field | Status | Notes |
 |---|---|---|---|
 | *(none)* | `Event.received_at` | `not yet` | the injected clock. Never `msgCreatedTime`, which is when the producer wrote the file, and never `IDSourceInformation.relTimeExchange`, which is when a third party sent a declaration |
+| *(the deployment declaration)* | `Entity.source.synthetic` | `not yet` | **no payload field sets this**, and `CollectionInformation.essence` in particular does not — it is parked, and a parked essence contradicting the declaration is a logged refusal rather than a flip in either direction. The CAT021 `SIM` rule and the Legion `EXERCISE_*` rule, held as a rule |
+| *(configuration, where the object is CDM-native)* | `Entity.attributes` | `not yet` | `attributes.confidentiality_label_basis` — which of the three egress label paths applied. A configured label is declared and logged; a defaulted one is forbidden |
 | *(none — NITS states no severity anywhere)* | `Event.severity` | `not yet` | `INFO`, with `payload.severity_basis` recording that the format grades nothing, including its own `COLLISION` motion event. `TrackedObject.priority` is a collection priority, not an operational severity, and is parked |
 | *(none)* | `Event.event_type` | `not yet` | `DETECTION` for a `Detection`; `STATUS_CHANGE` for a `MotionEvent`, a `TrackLinkage`, a `ProcessedTrack` and a retraction-only segment. **Never `TRACK_UPDATE`**, because in this format a track update is a `Track`, not an `Event` |
 | *(derived)* | `Entity.symbol` | `not yet` | from the affiliation via `symbology.sidc_from_affiliation`; `attributes.symbol_basis` says so, and says that an APP-6 code was present and not composed into a SIDC where one was |
@@ -3552,7 +3680,7 @@ refusing, never by guessing.
 
 | # | Finding | Consequence for the adapter |
 |---|---|---|
-| 1 | **`LOCAL_SPHERICAL`'s angle names contradict its own mandated equations.** Table 2.5.27-2 orders the array "radial, **polar**, azimuthal"; §2.5.13's normative conversion says "r, θ and φ are the radial, polar and azimuthal values, respectively" and then uses φ as the angle from the z-axis and θ as the angle in the xy-plane — which is the reverse of what those two words mean. A producer following the names and a consumer following the equations differ by an interchange of two angles | `LOCAL_SPHERICAL` is **attributes-only**: no `Position`, no `Kinematics`, the array parked verbatim and the contradiction cited in the basis. The Legion `EPSG:4979` refusal, reached from a different format |
+| 1 | **`LOCAL_SPHERICAL`'s slot convention is unverifiable from the data.** Table 2.5.27-2 orders the array "radial, **polar**, azimuthal"; §2.5.13's normative conversion binds those three positionally to `r`, `θ`, `φ` and then puts `φ` — the slot labelled *azimuthal* — in the zenith position, `z = r cos φ`. A label-driven producer and an equation-driven producer therefore place bearing and elevation in swapped slots, both conformantly, and **both produce a valid point on a sphere**, so there is no range violation and no arithmetic failure to detect | `LOCAL_SPHERICAL` is **attributes-only**: no `Position`, no `Kinematics`, the array parked verbatim and both statements cited in the basis. Applying the equations would be confidently wrong half the time; refusing is withheld loudly. The Legion `EPSG:4979` refusal, reached from a different format. Note also that the CFT "cannot be used to directly convert to a non-Cartesian coordinate system (e.g., WGS 84)", so even an unambiguous slot order would leave a three-hop route whose first hop is the undetermined one |
 | 2 | **`MotionEvent.startRelTime` is `[1]` and its own description contemplates its absence** — "where the `startRelTime` is unknown, it means the data producer does not know the start time, i.e. the value does not default to `baseTime`". A mandatory attribute cannot be unknown | the `Event` is still emitted, `observed_at` falls to `baseTime`, `payload.unavailable_fields` names the attribute and the basis states that the substitute is ours. The one place the model-wide "omitted `relTime` means zero" rule is overridden, and it is overridden by the standard, not by us |
 | 3 | **`ProcessedTrack.inputUID` says two things in one cell**: "two or more input track UUIDs", then "all currently-defined `ProcessedTracks` must have **a single** input track specified as either a UID or LID" | whatever count arrives is parked and neither statement is enforced. A `FUSED` track with one input is conformant under one reading and not the other, and refusing it would drop data over a drafting error |
 | 4 | **`IFFCode.value` is a bare `String` with no stated syntax for any of the seven modes.** A Mode 3/A code is octal, a Mode S address is 24 bits usually written hex, a Mode C value is an altitude — and the model gives one untyped string for all of them | only `MODE_S` with an unambiguous six-hex-digit value becomes an `ICAO24` `SourceId`. Everything else is parked raw with the radix recorded as unstated. **This is the single narrowest condition in the row set and it guards the single largest cross-adapter win** |
@@ -3581,7 +3709,7 @@ or rejected.
 | **Interpreting Mode 4 or Mode 5 IFF as an affiliation** | **rejected** | An authenticated IFF reply is what "friend" means in IFF doctrine, and reading one is an identification decision belonging to an IFF authority. Over-claiming `FRIENDLY` is also the dangerous direction. The second format to force this and the second to decline it |
 | **Composing a 2525D SIDC from an APP-6 code** | **rejected** | An APP-6 entity code supplies one of the eight things a SIDC encodes. Composing one means inventing six, and a wrong symbol is worse than none — the model's own `symbol` validator says so |
 | **`ECI_J2K` → geodetic** | **deferred** | Needs Earth rotation angle at epoch, an IAU precession–nutation model and daily Earth-orientation parameters — a second standard plus a live external feed, in an adapter contracted to be a pure function of one payload. The standard puts these conversions outside its own scope. Deferred against a future release that is willing to carry an EOP dependency |
-| **`LOCAL_SPHERICAL` → geodetic** | **deferred** | Blocked by ambiguity 1, not by effort. If the custodian resolves the polar/azimuthal contradiction, this becomes a five-line closed form |
+| **`LOCAL_SPHERICAL` → geodetic** | **deferred** | Blocked by ambiguity 1, not by effort: which slot holds the bearing is a producer convention the data does not record. A custodian's clarification, or a per-deployment ICD declaring its own convention, turns this into a five-line closed form — a document, not a design |
 | **`PIXELS` → geodetic** | **rejected** | Needs a sensor model, exterior orientation and a terrain surface, none of which NITS carries — and the format concedes it by restricting `CoordinateFrameTransformation.from` to the two absolute Cartesian systems, so no mechanism exists |
 | **Decoding the MIIS Core Identifier (MISB ST 1204.3)** | **deferred** | A separate standard with its own registry, in the same category as CAT021's BDS registers. Parked whole, which the never-drop rule already satisfies |
 | **Decoding AIDPP-01 / STANAG 4162 IDCP encodings** | **deferred** | `sourceDeclarationExtension` and the `IDSourceNumber` triple are defined by another publication. Adopting it means becoming an ID fusion node, which is also a rejection on the merits |
@@ -3606,7 +3734,9 @@ allocation list is pinned for it**, so that claim will be the weakest in the set
 
 The eight cases the set has to catch, chosen because each is a decision above that a golden file
 can pin: a minimal STANDALONE track; the same content as DATASTREAM with references pointing
-outside the file; a multi-hypothesis `TrackData` with three overlapping segments; a `TrackPoint`
+outside the file; a `TrackData` whose three segments are contiguous in time, so the one-Track
+rule and the per-segment index ranges are both exercised, and a second whose segments **overlap**,
+which must be refused; a `TrackPoint`
 carrying `Dynamics` in `WGS_84` **and** `LOCAL_CARTESIAN` with a complete ECEF CFT, so the
 preference order and the disagreement check both run; a `LOCAL_SPHERICAL` block that must produce
 no `Position`; a complex multi-ring `Polygon` with `NaN` delimiters exercising all three
@@ -3715,29 +3845,34 @@ round trip depends on.
    and `PENDING` is not among them, so the collapse here is 6 → 4 and the two members lost are
    `ASSUMED_FRIEND` and `SUSPECT`, two of the three this gap names.
 
-   **What NITS adds is a case where both available answers are wrong.**
-   `ID1241.identityAmplification` carries `FAKER` and `JOKER`, defined as a *friendly* track
-   "acting as exercise hostile" and "acting as exercise suspect" — so an exercise `FAKER` arrives
-   as `identity = HOSTILE` with an amplification saying it is really a friend. Mapping the
-   identity paints a friendly aircraft as an enemy; mapping the amplification reads an exercise
-   role as an identification. The row set forces `UNKNOWN` and records both fields, which is the
-   only position left, and it is a *worse* answer than either would be if the CDM could hold
-   "friendly, playing hostile". Note this is the exercise-context conflation Legion exposed,
-   arriving a second time in a different field — and unlike Legion's `EXERCISE_*` variants, here
-   it is not merely conflated with the identity, it **inverts** it.
+   **What NITS adds is the exercise-context conflation Legion exposed, arriving in a second field
+   and inverting rather than merely colouring the identity.** `ID1241.identityAmplification`
+   carries `FAKER` and `JOKER`, defined as a *friendly* track "acting as exercise hostile" and
+   "acting as exercise suspect", so an exercise `FAKER` arrives as `identity = HOSTILE` with an
+   amplification saying it is really a friend. The row set maps **`FRIENDLY`** and parks the role
+   at `attributes.exercise_role`, because the standard states the identity in the definition's
+   first word — reading it is translation, not adjudication.
+
+   The consequence for this gap is that **the CDM can carry the identity and cannot carry the
+   role**, so a `FAKER` and an ordinary friendly are the same `affiliation` and differ only in a
+   parked key. That is Legion's finding restated with the axes separated correctly: Legion folded
+   exercise context *into* the identity enum, the CDM already splits the two, and NITS shows that
+   the split is right and that the second axis still has nowhere canonical to live. `KILO` is
+   mapped on the same evidence and sets no role; `TRAVELER` and `ZOMBIE` are defined as *suspect*
+   and so set nothing at all, which is this gap's collapse arriving through a third field.
 3. **Track quality scale.** 4676 integer 0–15 → CDM float 0–1 is `value / 15`, a declared
    transform. Note that 4676 quality 0 means "worst", not "unknown", and CDM `None` means
    unknown — so a missing 4676 quality must become `None`, never `0.0`.
-   **Corrected by Edition B, and the correction is the interesting part.** This gap was written
-   against `Track/trackQuality`, an Edition A attribute. **Edition B has no such field.** The
-   re-architecture replaced it with the `Confidence` class, whose `value` is 0–100 rather than
-   0–15 — so the scale problem is gone, the conversion is `value / 100`, and the transform this
-   gap describes no longer has anything to convert. What replaced it is a harder problem, and it
-   is **gap 18**: a `Confidence` carries a `type` saying which *statistic* the number is, and a
-   separate `sourceReliability`, so 30 means three different things depending on a sibling
-   attribute. The gap is left standing rather than deleted because "closed by the format changing
-   underneath it" is a different fact from "wrong", and an adapter meeting an Edition A feed would
-   still need it.
+   **No row in the STANAG 4676 row set evidences this gap, and that is the honest statement of
+   its position.** It was written against `Track/trackQuality`, an **Edition A** attribute;
+   Edition B removed it in the re-architecture and put nothing track-level in its place, so
+   `Track.track_quality` is `None` on every NITS track and there is no scale to convert. The
+   nearest Edition B row is `TrackSegment.confidence`, which parks — it governs a portion of a
+   track rather than the track, and it is a `Confidence` rather than a number, which is
+   **gap 18**'s problem and not this one. The gap is left standing rather than deleted because
+   "closed by the format changing underneath it" is a different fact from "wrong", and an adapter
+   meeting an Edition A feed would still need it; it is deliberately **not** re-anchored to an
+   Edition A name, which the guard test forbids and which would misrepresent the current row set.
 4. **Velocity representation.** 4676 carries a 3-vector; the CDM carries speed/course/climb.
    The conversion is exact arithmetic and reversible, so it is a declared transform rather
    than a gap in meaning — but an adapter must declare it or the lossless check will (correctly)
@@ -3750,21 +3885,25 @@ round trip depends on.
    precondition, exactly as gap 7's heading needs a stated datum and gap 9's altitude needs a
    stated reference surface. The pattern is now three deep: a vector or an angle without its
    frame is not a measurement.
-   **NITS answers this gap, and it is the first source that can.** The precondition the Legion
-   entry identified — a stated frame — is met in full: `Dynamics.cs` names one of six coordinate
-   systems and Table 2.5.27-2 gives the units of the velocity vector for every one of them. So
-   the declared transform this gap describes is performed rather than deferred, for `WGS_84`,
-   `ECEF` and CFT-resolved `LOCAL_CARTESIAN`, with the ellipsoid constants named and the raw
-   vector re-emitted beside the scalars.
+   **NITS answers this gap in part, and the rows that evidence it are `Dynamics.vel` and
+   `Dynamics.acc`.** The precondition the Legion entry identified — a stated frame — is met in
+   full: `Dynamics.cs` names one of six coordinate systems and Table 2.5.27-2 gives the units of
+   the velocity vector for every one of them. So the declared transform is performed rather than
+   deferred for `ECEF`, for CFT-resolved `LOCAL_CARTESIAN`, and for `WGS_84` **when its optional
+   height axis is present** — with the ellipsoid constants named and the raw vector re-emitted
+   beside the scalars.
 
-   Two things worth carrying forward. First, **a stated frame is not the same as an easy one**:
+   Three things worth carrying forward. First, **a stated frame is not the same as an easy one**:
    the `WGS_84` velocity is in *degrees per second* for latitude and longitude and metres per
    second for elevation, so the conversion needs the meridional and prime-vertical radii of
    curvature and is latitude-dependent — a mixed-unit vector that reads like a plain one. Second,
-   the transform is still refused for `LOCAL_SPHERICAL`, `ECI_J2K` and `PIXELS`, so the pattern
-   this gap identified holds exactly: **the conversion is arithmetic once the frame is stated, and
-   nothing once it is not.** The gap stays open for Legion's sake and closes, in practice,
-   wherever a format states its frame.
+   **a stated frame is not the same as stated inputs**: a two-dimensional `WGS_84` block gives no
+   ellipsoid height, `h = 0` would be a fabricated input to that same conversion, and the row
+   parks rather than converting. That is a *fourth* precondition this gap now carries, beside a
+   frame, a datum and a reference surface — **the conversion's own arguments have to be stated,
+   not just its coordinate system.** Third, the transform is still refused entirely for
+   `LOCAL_SPHERICAL`, `ECI_J2K` and `PIXELS`. `Dynamics.acc` parks in every case, because the CDM
+   models no acceleration at all — which is the half of this gap no format has yet touched.
 5. **Feature / FeatureCollection.** Not modelled. `PlanObject` is the CDM's Feature-equivalent
    (geometry + style + label), and a FeatureCollection is a list of PlanObjects. Adding the
    GeoJSON wrappers would give two ways to say one thing.
@@ -4021,8 +4160,15 @@ round trip depends on.
    group**"; `TrackedObject.numberOfObjects` states how many objects one track covers when they
    are indistinguishable. That is group membership without a hierarchy — a many-to-one that is not
    a parent — and a `parent_id` would not express it. What would express it, and what would also
-   express the six reference kinds this format uses, is a relation: see **gap 19**, which this gap
-   should be closed alongside.
+   express the six reference kinds this format uses, is a relation.
+
+   **One design question, three gap numbers.** Gaps **11**, **14** and **19** are the same missing
+   thing seen from three sides — containment, provenance and reference — and they are on the
+   1.1.0 roadmap **as a single item, to be resolved together under whichever number survives**.
+   Closing this one alone would give the CDM a parent pointer it cannot resolve while leaving the
+   other two open, which is how a model acquires three kinds of dangling pointer instead of one
+   relation. Gap numbers are append-only, so the two that are subsumed stay in the list and say
+   which number carried the decision.
 12. **No classification label.** Legion states `top_classification` (example `"HUMAN"`) with a
    `top_classification_probability` (example `0.95`), and its Event resource has an `event_type`
    enum — `HUMAN`, `VEHICLE`, `VESSEL`, `UAV`, `FOOTSTEP`, `ANIMAL`, `GUNSHOT` — that is the same
@@ -4052,10 +4198,13 @@ round trip depends on.
    field holding `"SECRET"` would look complete and have lost the compartment. **It is per-object,
    not per-feed**: portion marking means one document can carry several, so a single label on a
    `SourceRef` would be wrong. And **the egress direction is where the gap bites hardest**: the
-   row set has to refuse to emit a NITS document for any CDM object with no parked label, because
-   there is no safe value to invent — `UNCLASSIFIED` is the dangerous direction and a copied label
-   is a marking its originator never applied. A CDM that cannot carry a label cannot round-trip
-   through this format at all without the caller supplying one out of band.
+   row set has exactly three paths and the third is a refusal: a round-tripped object re-emits its
+   parked label, a CDM-native object may egress under an explicitly configured and logged
+   deployment label, and an object with neither is refused — because there is no safe value to
+   invent, `UNCLASSIFIED` being the dangerous direction and a copied label a marking its
+   originator never applied. **A CDM that cannot carry a label cannot round-trip through this
+   format without the deployment supplying one out of band**, which is the cost of this gap stated
+   as an operational fact rather than as a modelling preference.
 13. **No per-measurement time.** An `Event` carries one `observed_at`, and `Position` and
    `Kinematics` carry none — so every figure in one object is implicitly of one instant. CAT021
    says otherwise, twice over. A single record carries **I021/071**, the time of applicability of
@@ -4124,7 +4273,13 @@ round trip depends on.
    to parked identifiers because `SourceRef` names the adapter and the system and nothing else.
    Note that the gap's own note — that a sensor is arguably an `Entity` of type `SENSOR` and that
    relating an observation to it needs a relation the CDM lacks — is exactly right here, and the
-   relation it needs is **gap 19**. Three gaps (11, 14, 19) now converge on one missing thing.
+   relation it needs is **gap 19**.
+
+   **One design question, three gap numbers.** Gaps **11**, **14** and **19** are the same missing
+   thing seen from three sides — containment, provenance and reference — and they are on the
+   1.1.0 roadmap **as a single item, to be resolved together under whichever number survives**. A
+   `SourceRef.sensor` field added on its own would answer this gap and leave the evidence chain
+   and the group membership unanswerable, and would do it with a pointer nothing can resolve.
 15. **No intent.** The four canonical objects are what exists, what happened, where something has
    been, and what we push out. **What a target declares it is going to do is none of them** — and
    `PlanObject` is emphatically not it: that models *our* plan, drawn on somebody else's map.
@@ -4163,6 +4318,14 @@ round trip depends on.
    pointing at the right thing the moment anything re-segments, filters or merges the track. It is
    gap 1's problem — private per-adapter keys standing in for canonical structure — one level
    further down, where it also breaks under list surgery.
+
+   **The segment case is the sharpest of these and it is not hypothetical.** One `TrackData`
+   becomes one `Track`, so a `TrackSegment` — which the standard designed precisely so a producer
+   could attach a status, a confidence and a *different sensor* to one portion of a track — has
+   nowhere structural to live. It is parked at `attributes.nits_segments[]` as a half-open range
+   of sample indices with its own attributes hung off it. Every fact the format states about a
+   *span* of a history is therefore expressed in this adapter's private index arithmetic, which is
+   the clearest statement available of what the CDM is missing here.
 
    The same shape appears for velocity: `Kinematics` hangs off `Entity`, so a history with a
    velocity at every point yields one `Kinematics` and N parked vectors.
@@ -4262,6 +4425,12 @@ round trip depends on.
    `relations` list on `CDMBase` with a typed predicate; a fifth canonical object (a `Relation`
    with a subject, a predicate, an object and a confidence, which would also give retraction from
    **gap 18** somewhere to live); or a decision that relations belong in the store and not in the
-   interchange model. **Gaps 11 and 14 should be closed by whatever closes this one**, and both
-   say so. Three adapters have now hit it — Legion's `parent_id`, CAT021's ground station, and
-   this format's six reference kinds — and a fourth will not add information.
+   interchange model.
+
+   **One design question, three gap numbers.** Gaps **11** (containment), **14** (provenance) and
+   **19** (reference) are the same missing thing seen from three sides, and both of the others
+   carry this same paragraph pointing here. They are on the 1.1.0 roadmap **as a single item, to
+   be resolved together under whichever number survives** — gap numbers are append-only, so 11 and
+   14 stay in the list and name the number that carried the decision. Three adapters have now hit
+   it — Legion's `parent_id`, CAT021's ground station, and this format's six reference kinds —
+   and a fourth will not add information.
