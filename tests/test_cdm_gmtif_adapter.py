@@ -80,11 +80,45 @@ def platform(objects):
 
 # ==================================================== the layouts against the row set
 
+GMTIF_HEADING = "## STANAG 4607 / AEDP-4607"
+
+
+def _gmtif_section() -> str:
+    r"""The GMTIF section of FORMAT_COVERAGE.md, ending at the NEXT top-level heading.
+
+    Not at a named one. These tests originally sliced to `"\n## GeoJSON"`, which was correct only
+    while STANAG 4607 happened to be the last format section in the document: the ASTERIX CAT048
+    row set was then written between the two, and every GMTIF row-set test began reading CAT048's
+    rows as if they were GMTIF's — `test_the_row_set_claims_this_adapter` failed with 130 stale
+    `not yet` rows that all belonged to a different format. Finding the next `\n## ` is the same
+    rule `tests/test_cdm_format_coverage.py::_section` already uses, and it does not need editing
+    again when adapter #12 lands.
+
+    MUTATION-CHECKED, and the check found something worth writing down. Two mutations were run
+    against a scratch copy of the document:
+
+    - **A decoy `## ` section with `not yet` rows, a decoy `| Form | Range | LSB |` table and the
+      string "row 17", inserted immediately after the GMTIF section.** With this helper: all four
+      call sites pass. With the old brittle slice: only ONE of the four fails. That asymmetry is
+      the finding — three of the four call sites assert the *presence* of something, so a slice
+      that is too WIDE can only ever mask a deletion, never produce a failure. Over-inclusion is
+      invisible to them by construction, which is exactly how the original defect survived
+      review.
+    - **A shuffle: the GeoJSON section moved to sit BEFORE the GMTIF section.** With this helper:
+      all four pass. With the brittle slice: `text.index("\n## GeoJSON")` lands before the start
+      index, the slice is empty, and **all four fail**. So the shuffle is the mutation that proves
+      every call site is load-bearing, and the decoy is the one that proves the failure mode is
+      silent.
+    """
+    text = DOC.read_text()
+    start = text.index(GMTIF_HEADING)
+    nxt = text.find("\n## ", start + len(GMTIF_HEADING))
+    return text[start:nxt if nxt != -1 else len(text)]
+
 
 def _row_set_fields() -> set[str]:
     """Every field identifier the GMTIF row set gives a row, read from the document."""
-    text = DOC.read_text()
-    section = text[text.index("## STANAG 4607 / AEDP-4607"):text.index("\n## GeoJSON")]
+    section = _gmtif_section()
     found = set()
     for line in section.splitlines():
         if not line.startswith("| `"):
@@ -1400,7 +1434,7 @@ def test_the_parked_classification_label_is_a_triple_and_never_codeword_names():
 def test_the_row_set_claims_this_adapter():
     """The status column has to move when the code does. This is the inverted Phase 1 test."""
     text = DOC.read_text()
-    section = text[text.index("## STANAG 4607 / AEDP-4607"):text.index("\n## GeoJSON")]
+    section = _gmtif_section()
     rows = [line for line in section.splitlines()
             if line.startswith("|") and not line.startswith("|---")]
     stale = [line for line in rows if "`not yet`" in line]
@@ -1642,8 +1676,7 @@ def test_the_h6_h7_record_count_collision_is_recorded_and_not_merely_sidestepped
     assert "custodian's act" in row and "Phase 3 author" in row, (
         "the row has to say whose act the resolution is and who will need it, or it reads as a "
         "note rather than as a handover")
-    flat = " ".join(text[text.index("## STANAG 4607 / AEDP-4607"):
-                         text.index("\n## GeoJSON")].split())
+    flat = " ".join(_gmtif_section().split())
     assert "row 17" in flat, "row 14 must cross-reference it, per the amendment-H discipline"
     # And the behaviour the row justifies: the array is bounded by S2, not by H6 or H7.
     objects = adapter().to_cdm(
@@ -1700,15 +1733,14 @@ def test_snap_quantises_inside_the_field_because_that_is_the_formats_own_resolut
 
 def test_snap_is_the_only_place_the_native_path_loses_anything_and_the_row_set_states_the_lsbs():
     """Amendment 4a. The precisions are a property of the FORMAT, listed once as such."""
-    text = DOC.read_text()
-    section = text[text.index("## STANAG 4607 / AEDP-4607"):text.index("\n## GeoJSON")]
+    section = _gmtif_section()
     flat = " ".join(section.split())
     assert "the FORMAT'S stated resolution, not a translator's loss" in flat
     # Scoped to the resolution TABLE, sliced by its own header: every form name also appears in
     # the field rows' Form column, so a section-wide substring check would pass on those and a
     # row could be deleted with nothing noticing. That is exactly what the first version of this
     # assertion did, and a mutation check is what found it.
-    lines = text.splitlines()
+    lines = section.splitlines()
     header = next(i for i, line in enumerate(lines)
                   if line.startswith("| Form | Range | LSB |"))
     table = []

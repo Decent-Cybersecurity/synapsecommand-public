@@ -542,6 +542,75 @@ evidence that was missing when they were first written down:
   is not a rounding matter. The ADS-B adapter asserts the DO-260A/B reading and names both in
   `attributes.altitude_type`; a canonical field would have to do better than assert.
 
+- **A sensor frame — `Position`'s sensor-relative counterpart, plus `Kinematics`'s radial
+  component** — `FORMAT_COVERAGE.md` gaps 24 and 25, proposed as **one** change with two fields
+  because they are one missing concept. ASTERIX CAT048 is the format that makes the case, and it
+  makes it harder than any previous one: it states a target's position as a slant range and an
+  azimuth **from a station whose location the format never carries** (§4.3.1 names "the radar site
+  location" as the origin; no data item holds it), and its I048/120 states a Doppler speed along
+  that same line of sight. `Position` requires both coordinates, so **every CAT048 `Entity` has
+  `position: None`** while the record carries 32 bits of range and bearing; `Kinematics.speed_mps`
+  is a ground speed, so a target crossing the beam would report zero through it while making three
+  hundred knots. Both park today, under keys only that adapter knows, and so do I048/042's
+  local-grid Cartesian components and I048/210's per-axis standard deviations in the same grid.
+
+  **Deferred, and blocked on gap 14 rather than on effort.** A sensor-relative position is
+  meaningless without a machine-readable identity for the sensor it is relative to, and
+  `SourceRef` names the adapter and the system and cannot name the producing sensor. Adding the
+  geometry half alone would yield a range and a bearing from an unnamed origin — worse than
+  parking it, because it *looks* like a position. Whoever takes this on inherits four constraints
+  that are already known: **a slant range is not a ground range**, and §4.3.2.2 concedes the radar
+  itself converts using "either the measured height or an assumed target height", so no consumer
+  can silently promote a sensor-frame fix either; **the frame's definition can live in a different
+  item**, since CAT048 signals which of two transforms produced I048/042 through `TCC` in
+  I048/170, so the field must carry *which* frame and not merely *that* it is relative; **the sign
+  of a radial speed is undefined by the standard** — §5.2.15 makes it "implementation dependent
+  and shall be described in the ICD", with a bare recommendation as the fallback, so this is gap
+  7's magnetic-versus-true datum problem in a third axis; and **gap 17 overlaps**, because a
+  covariance expressed in a local grid is uncarryable for exactly the reason the position in that
+  grid is.
+
+  **Amended after review.** The geometry half of this is no longer a blocker for the adapter: an
+  injected `sensor_position` — a constructor argument, the injected-clock precedent — lets CAT048
+  derive a geodetic `Position`, so the format is carryable today. What remains proposed is the
+  ability to carry the measurement *as a measurement* rather than only its converted product, and
+  one concrete sub-item now has a name of its own:
+
+  - **A `PositionSource` member for a sensor measurement.** The enum offers `GNSS`, `INERTIAL`,
+    `MANUAL` and `ESTIMATED`, and a monoradar return is none of them. CAT048 writes `ESTIMATED`
+    because it is the only value that is not an outright false statement — and because it answers
+    the question the enum's docstring says the field exists for, since a radar fix is not `GNSS`
+    and survives jamming that a GNSS fix does not. But a direct range-and-bearing measurement,
+    converted with a known site, is not an estimate, and every future sensor format will hit the
+    same wall. Adding a member is a MINOR bump; naming it is the work, because it has to
+    distinguish a *measurement in a sensor frame* from a *fix* without becoming a modality list.
+
+- **A vocabulary for the life of a track** — `FORMAT_COVERAGE.md` gaps 26 and 27, proposed as one
+  change because they are the two ends of one missing concept, and both come from CAT048 reversing
+  a first draft that had used an existing field for each.
+
+  **Gap 26, the end.** I048/170's `TRE` bit is "End of track lifetime (last report for this
+  track)" — the only explicit terminal declaration any source in this document makes. The first
+  draft wrote it into `Entity.valid_to`; that is wrong, because `valid_to` is "When it ceased" on
+  an object whose `entity_id` is a 24-bit airframe address, while `TRE` ends "a track record within
+  a particular track file" (I048/161). Using it would tell every consumer that did not read a basis
+  key that the aircraft's state ceased.
+
+  **Gap 27, the identity.** The first draft made I048/161 a `SourceId` when no aircraft address was
+  present. That is wrong for the reason CAT021's declines table already gave: a station-scoped,
+  recycled 12-bit number keyed into `entity_id` merges two airframes into one entity. Declining it
+  costs real continuity — consecutive scans of one PSR track now produce different `entity_id`
+  values — and that truncation is the honest price of not making a false statement.
+
+  **Why one change.** A radar track is the smallest complete example of the thing the CDM cannot
+  express: it has a start, an identity scoped to one sensor, a confidence (`CNF`, `DOU`) and an
+  explicit end, and the CDM can hold none of the four *as such*. Closing only the end would let a
+  consumer learn that a track stopped without being able to say which track it was. This is **gap
+  15 / gap 19 territory** — a typed relation or a fifth object kind — and `Track.attributes`
+  (already proposed above) is the cheap partial move that would at least give the track number and
+  the status bits a home on the object they describe rather than on the `Entity` beside it.
+  Whoever opens gap 19 should read both rows first.
+
 Two gaps are recorded in `FORMAT_COVERAGE.md` and deliberately NOT proposed as fields here.
 A gap with no proposal is a decision too, and in both cases the decision is "not yet understood
 well enough to name a field for":

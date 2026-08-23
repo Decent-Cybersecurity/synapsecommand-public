@@ -1,0 +1,1141 @@
+{
+  "what_this_is": "The pinned identity of the document the CAT048 row set in FORMAT_COVERAGE.md was read from, plus every value extracted from it that a ruling rests on, each with the locus inside the document. House style follows fixtures/cat021/spec/sac_pin.json and fixtures/legion/spec/openapi_pin.json: an edition number names a DOCUMENT and a SHA-256 names the COPY THAT WAS READ, and those are different claims. The PDF itself is deliberately NOT committed - see not_committed below.",
+  "source": {
+    "document": "EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 4 Category 048: Monoradar Target Reports",
+    "publications_reference": "SPEC-0149-4",
+    "document_identifier": "EUROCONTROL-SPEC-0149-4",
+    "isbn": "978-2-87497-028-3",
+    "edition": "1.32",
+    "status": "Released Issue",
+    "intended_for": "General Public",
+    "edition_date_as_the_document_states_it": "01/07/2024",
+    "publication_date_as_the_page_states_it": "2 July 2024",
+    "why_two_dates": "The document's own cover and its Document Characteristics table (page ii) both read 'Edition Date: 01/07/2024', and the Document Change Record (page vi) dates edition 1.32 'July 2024'. The EUROCONTROL publication page lists the same file as '2 July 2024'. This pin records the DOCUMENT's own claim as the edition date and the PAGE's claim as the publication date, and does not pick one: the identifying facts are the edition number and the SHA-256.",
+    "publication_page": "https://www.eurocontrol.int/publication/cat048-eurocontrol-specification-surveillance-data-exchange-asterix-part4",
+    "bundle_url": "https://www.eurocontrol.int/archive_download/all/node/11127",
+    "bundle_link_text": "Download all",
+    "individual_download_url": "https://www.eurocontrol.int/sites/default/files/2024-07/eurocontrol-cat048-part4-edition-1-32.pdf",
+    "member_filename_within_the_bundle": "eurocontrol-cat048-part4-edition-1-32.pdf",
+    "how_strong_the_member_filename_claim_is": "GRADE 2 of 3. The zip was not retained here, so the member name was not read out of the archive. What IS verified: the local file's basename is character-for-character the basename of the page's own individual Edition 1.32 download URL, and the byte count matches the size the page states for that entry (708.62 KB = 725626 / 1024 = 708.619 KB). So the claim is 'the member name equals the individual download's basename', not 'the archive was inspected'. Stated at its real strength rather than asserted, on the sac_pin.json principle that grades of evidence are not interchangeable.",
+    "retrieved_at": "2026-08-23",
+    "bytes": 725626,
+    "sha256": "8f9c51ff18b0a4cb6b6c1ae752622ffe9b0dbecef721f0ee123bd352000c996e",
+    "pages": 64,
+    "pdf_version": "1.7",
+    "verification_performed": [
+      "SHA-256 recomputed from the local copy and compared to the value above: match.",
+      "Byte count recomputed from the local copy: 725626, match.",
+      "Page count counted from the document's own page tree: 64, match.",
+      "Title page read and confirmed to state 'Edition: 1.32', 'Edition date: 01/07/2024', 'Status: Released Issue', 'ASTERIX Part 4 Category 048', 'Monoradar Target Reports'.",
+      "Page ii Document Characteristics table read and confirmed to state Edition Number 1.32 and Edition Date 01/07/2024.",
+      "Page byte count cross-checked against the publication page's stated 708.62 KB for the Edition 1.32 entry: match."
+    ]
+  },
+  "not_committed": {
+    "the_pdf_is_not_in_git": true,
+    "precedent": "fixtures/cat021/spec/ holds sac_pin.json and build_fixtures.py and no specification PDF; fixtures/gmti/spec/ holds build_fixtures.py and no PDF, while three hashed documents are cited in FORMAT_COVERAGE.md. `git ls-files | grep -ci pdf` is 0 across the whole repository.",
+    "consequence_for_this_directory": "The file sits in the working tree because it had to be read. It is excluded from the commit by naming the committed paths explicitly rather than by `git add -A`, and .gitignore is deliberately NOT used: no .gitignore exists anywhere in this repository, and introducing one to solve a one-file problem would be a new convention adopted in passing.",
+    "why": "The document is redistributable only on EUROCONTROL's own terms (page 64: 'It may be copied in whole or in part, provided that EUROCONTROL is mentioned as the source and it is not used for commercial purposes ... The information in this document may not be modified without prior written permission from EUROCONTROL.'). A pin plus a URL plus a hash reproduces the artefact for any reader without this repository redistributing it, which is exactly why the other nine adapter efforts pin rather than vendor."
+  },
+  "part_1_dependency": {
+    "reference": "EUROCONTROL Specification SUR.ET1.ST05.2000-STD-01-01. All Purpose Structured EUROCONTROL Surveillance Information Exchange - ASTERIX.",
+    "edition_this_document_pins": "3.1",
+    "date_this_document_states": "28 October 2021",
+    "status_this_document_states": "Released Issue",
+    "locus": "section 2.2, Reference Documents, reference 1",
+    "quoted": "EUROCONTROL Specification SUR.ET1.ST05.2000-STD-01-01. All Purpose Structured EUROCONTROL Surveillance Information Exchange - ASTERIX. Edition 3.1, Released Issue, 28 October 2021.",
+    "does_it_match_what_cat021_relied_on": "The EDITION matches. FORMAT_COVERAGE.md's CAT021 pin table carries the row 'ASTERIX Part 1 | Edition 3.1, November 2021 - the applicable document for the \"Element Populated\" convention the REF uses'. Same edition number, so the existing basis is cited rather than a second one obtained.",
+    "the_date_disagrees_and_is_recorded_rather_than_reconciled": "The CAT021 row says November 2021; CAT048 section 2.2 says 28 October 2021. One of the two is a publication date and the other an edition date, or one is simply wrong. Neither document was retrieved, so this pin records the discrepancy and CAT048's own claim, and changes nothing in the CAT021 prose.",
+    "no_copy_of_part_1_has_ever_been_retrieved_or_hashed_in_this_repository": true,
+    "what_that_costs_and_what_it_does_not": "It costs nothing that a diff would have recovered, because there is nothing to diff: the editions agree. What it DOES cost is stated plainly - 'the editions agree' is a weaker claim than 'the FSPEC/FX/UAP mechanics were compared', and this repository cannot make the stronger one for either category.",
+    "what_cat021_actually_took_from_part_1": "Only the Element-Populated convention, per its pin row. adapters/asterix_cat021.py contains no reference to Part 1 at all: its FSPEC handling (seven FRNs per octet, FX in bit 1, extend while set) is implemented directly from the CAT021 document's own layout. So CAT021's structural machinery was never Part 1-derived in this repository, and the transfer question is answered by re-deriving the mechanics from CAT048's own text rather than by inheriting code.",
+    "cat048_internal_corroboration_for_the_fspec_layout": {
+      "claim": "Seven FRNs per FSPEC octet with FX in bit 1, and at most four octets.",
+      "evidence_from_this_document_alone": "Table 2 in section 5.3.1 lists 28 numbered FRNs and interleaves four explicit rows reading 'FX | n.a. | Field Extension Indicator | n.a.' - positioned after FRN 7, after FRN 14, after FRN 21 and after FRN 28. Four groups of seven plus four FX bits is exactly 32 bits, so the UAP itself fixes both the stride and the maximum length without Part 1 being read.",
+      "why_this_matters": "It converts the one structural fact the category does not state in prose into a fact its own normative table does state, which is the difference between an inherited assumption and a checkable one."
+    },
+    "what_cat048_does_not_state_and_therefore_still_inherits": [
+      "The octet-level encoding of the FSPEC is never written out in prose. Section 4.6.2 says only 'FSPEC is the Field Specification'; section 4.7 says 'Messages shall be composed of Data Items assembled in the order defined by the Field Reference Number (FRN) in the associated UAP' and 'Transmitted items shall always be in a Record with the corresponding FSPEC bits set to one'. The bit-for-bit reading is corroborated by Table 2 (above) but stated by Part 1.",
+      "The Special Purpose Field and the Reserved Expansion Field have NO section 5.2 description anywhere in this document. They appear only as FRN 27 and FRN 28 of Table 2, with a length notation of '1+1+' that the UAP's own legend does not define - the legend explains a stand-alone figure and '1+' and nothing else. Their explicit-length form is Part 1's."
+    ]
+  },
+  "reserved_expansion_field": {
+    "in_scope_for_1_0_0": false,
+    "disposition": "PARKED verbatim, octet-for-octet, and restored unchanged on egress. Never decoded, never written to, never exempted from the lossless gate.",
+    "why_the_pin_forces_it": "AMENDED. It does not force it. The honest statement: this document defines no part of the Reserved Expansion Field (FRN 28 has no section 5.2 entry, and REF contents are named only by path from inside other items' notes), so decoding it FROM THE PINNED TEXT ALONE would mean inventing a structure - but the appendix that does define it is a public download that was identified in the same session as the core specification and simply was not acquired. That is a procedural park, not a textual one, and it is weaker than the two precedents it resembles: GMTIF's Controlled Extension blocker rests on a pinned section reading '(TO BE PROVIDED)', and the NITS XSD row rests on a schema distributed through national representatives. Neither is obtainable; Appendix A is. Reopen condition: acquire and pin it.",
+    "the_separate_publication_identified_but_NOT_pinned": {
+      "title_as_the_page_states_it": "CAT048 - EUROCONTROL Specification for Surveillance Data Exchange ASTERIX Part 4 Category 48 (Appendix A)",
+      "publication_page": "https://www.eurocontrol.int/publication/cat048-eurocontrol-specification-surveillance-data-exchange-asterix-part-4-category-48",
+      "bundle_url": "https://www.eurocontrol.int/archive_download/all/node/11312",
+      "latest_edition_listed": "1.13",
+      "latest_edition_date_listed": "4 December 2024",
+      "latest_edition_url": "https://www.eurocontrol.int/sites/default/files/2024-12/eurocontrol-cat-048-appendix-a-p4-ed1-13.pdf",
+      "contemporaneous_edition_listed": "1.12",
+      "contemporaneous_edition_date_listed": "2 July 2024",
+      "contemporaneous_edition_url": "https://www.eurocontrol.int/sites/default/files/2024-07/eurocontrol-cat-048-appendix-a-p4-ed1-12.pdf",
+      "how_strong_this_identification_is": "GRADE 2 of 3. Read off the publication page's own download listing on 2026-08-23. No copy was retrieved, no byte count taken and no hash computed, so nothing here is a pin - it is a named exit condition.",
+      "the_decision_phase_2_inherits_and_must_not_take_by_default": "Appendix A Edition 1.12 is dated the same day as the pinned core Edition 1.32 (2 July 2024); Edition 1.13 is five months LATER (4 December 2024) than any core edition this pin covers. So 'pin the latest' silently pairs a July core with a December appendix, and 'pin the contemporaneous one' silently pins a superseded appendix. Whichever is chosen, the pairing is a claim and belongs in the pin rather than in a download."
+    },
+    "this_document_depends_on_the_appendix_and_does_not_cite_it": {
+      "finding": "Section 2.2 lists exactly five reference documents - Part 1, ED-73F/DO-181F, ED-275/DO-386, EMS Edition 4.0, and Part 2b Category 034 Edition 1.30. The Reserved Expansion Field appendix is NOT among them, yet eight passages in section 5.2 make normative statements about its contents.",
+      "consequence": "A reader who obtains every document section 2.2 names still cannot decode a CAT048 record that sets FRN 28."
+    },
+    "ref_paths_and_items_this_document_names_without_defining": [
+      {
+        "name": "M4E",
+        "locus": "5.2.2, NOTE to bits 3/2 of extension 1 (FOE/FRI)",
+        "quoted": "IFF interrogators supporting a three level classification of the processing of the Mode 4 interrogation result shall encode the detailed response information in data item M4E of the Reserved Expansion Field of category 048. In this case the value for FOE/FRI in I048/020 shall be set to “00”. However, even those interrogators shall use I048/020 to encode the information “No reply”."
+      },
+      {
+        "name": "ERR / “Extended Range Report”",
+        "locus": "5.2.4, NOTE 4",
+        "quoted": "For targets having a range beyond the maximum range the data item “Extended Range Report” has been added to the Reserved Expansion Field of category 048. The presence of this data item is indicated by the ERR bit set to one in data item I048/020, first extension. The ERR data item shall only be sent if the value of RHO is equal to or greater than 256NM. Please note that if this data item is used, the Encoding Rule to data item I048/040 still applies, meaning that the extra item in the Reserved Expansion Field shall be transmitted in addition to data item I048/040. If the Extended Range Report item in the Reserved Expansion Field is used, it is recommended to set the value of RHO in data item I048/040 to its maximum, meaning bits 32/17 all set to 1."
+      },
+      {
+        "name": "ERR, restated",
+        "locus": "5.2.2, NOTE to bit 7 of extension 1 (ERR)",
+        "quoted": "This bit set to “1” indicates that the range of the target is beyond the maximum range in data item I048/040.In this case –and this case only -the ERR Data Item in the Reserved Expansion Field shall provide the range value of the Measured Position in Polar Coordinates."
+      },
+      {
+        "name": "I048/REF/GEN48/ALTM2",
+        "locus": "5.2.6, second NOTE",
+        "quoted": "For radar systems interrogation with various technologies (such as military radars interrogating in Mode S and Mode 5), element I048/REF/GEN48/ALTM2 provides the possibility to transmit an alternative Mode-2 value. If this Data Item carries a Mode-2 value that has been derived from a Mode 5 Reply/Report, then bit-4 in I048/REF/MD5/SF#1 or bit-4 in I048/REF/M5N/SF#1 shall be set to 1."
+      },
+      {
+        "name": "MD5 / M5N subfield #5",
+        "locus": "5.2.7, second NOTE",
+        "quoted": "The values of the bits for V, G, L, A4, A2, A1, B2 and B1 shall be identical to the values of the corresponding bits in subfield #5 of data item “MD5 –Mode 5 Reports” and in subfield #5 of data item “MD5 –Mode 5 Reports, New Format” in the Reserved Expansion Field."
+      },
+      {
+        "name": "I048/REF/GEN48/ALTM3",
+        "locus": "5.2.10, NOTE 3",
+        "quoted": "For radar systems interrogation with various technologies (such as military radars interrogating in Mode S and Mode 5), element I048/REF/GEN48/ALTM3 provides the possibility to transmit an alternative Mode-3/A value. If this Data Item carries a Mode-3/A value that has been derived from a Mode 5 Reply/Report, then bit-3 in I048/REF/MD5/SF#1 or bit-3 in I048/REF/M5N/SF#1 shall be set to 1."
+      },
+      {
+        "name": "I048/REF/GEN48/ALTFL",
+        "locus": "5.2.12, NOTE 5",
+        "quoted": "For radar systems interrogating with various technologies (such as military radars interrogating in Mode S and Mode 5), element I048/REF/GEN48/ALTFL provides the possibility to transmit an alternative Flight Level value. If this Data Item carries a Flight Level value that has been derived from a Mode 5 Reply/Report, then bit-2 in I048/REF/MD5/SF#1 or bit-2 in I048/REF/M5N/SF#1 shall be set to 1."
+      },
+      {
+        "name": "“the Mode 5 items in the REF”",
+        "locus": "5.2.3, Code 37",
+        "quoted": "Duplicate Mode 5 PIN (refer to the Mode 5 items in the REF)"
+      }
+    ],
+    "what_parking_the_ref_actually_loses": [
+      "A target beyond 256 NM has its true range ONLY in the REF's ERR item, and section 5.2.4 NOTE 4 recommends that RHO in I048/040 be set to its maximum in that case. So the parked RHO of such a target is a FLOOR and not a range, and must be recorded as one - the AIS 102.2 kt discipline. The ERR bit in I048/020 first extension is what says so, and it IS decoded.",
+      "An IFF interrogator using the three-level Mode 4 classification is required to set FOE/FRI to “00” in I048/020 and put the real result in M4E. “00” means “No Mode 4 interrogation”. So without the REF, an interrogation that happened and produced a result is indistinguishable from one that never happened - and the only exception the note preserves is “No reply”.",
+      "A Mode-2, Mode-3/A or Flight Level value derived from a Mode 5 Reply/Report is flagged as such by a bit in I048/REF/MD5/SF#1 or I048/REF/M5N/SF#1. Without the REF, a Mode 5-derived value is indistinguishable from a conventionally interrogated one, and the alternative values in GEN48/ALTM2, ALTM3 and ALTFL are not readable at all.",
+      "I048/030 Code 37 is uninterpretable by construction: its own text is a pointer into the REF."
+    ]
+  },
+  "cat034_boundary": {
+    "in_scope_for_adapter_11": false,
+    "reference_locus": "section 2.2, Reference Documents, reference 5",
+    "quoted": "EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 2b: Category 034 Monoradar Service Messages (EUROCONTROL-SPEC-0149-2b) Edition 1.30.",
+    "this_document_puts_service_messages_outside_itself": {
+      "locus": "section 4.1",
+      "quoted": "The transmission of monoradar information shall require the transmission of two types of messages: • data messages of radar target reports; • radar service messages used to signal status information of the radar station to the user systems (not covered by this document)."
+    },
+    "what_declining_it_loses": [
+      "Antenna rotation timing context. CAT034's North-marker and sector-crossing messages are what relate a target report's time of day to the antenna's azimuth sweep and to the scan period. Without them there is no scan interval, so nothing downstream can reason about the expected update rate of a track, or about how stale an un-updated track is. CAT048 itself carries no scan period and no antenna position.",
+      "The area within which an Interrogator Code conflict is detectable. Section 5.2.3 NOTE 6 is explicit: 'Together with Codes 35 and 36 the possibility to communicate the area within which the detection of an IC Conflict is possible was implemented in the Category 034 Specification Ref. [5] by means of Message Type 008.' So I048/030 codes 35 and 36 arrive here as a bare assertion that a potential IC conflict exists or is detectable, with the WHERE unreadable.",
+      "Radar station status - the plain content of a service message per section 4.1, including which RDP chain is live, which is what makes I048/020's RDP bit interpretable beyond 'chain 1' or 'chain 2'."
+    ],
+    "the_structural_reason_and_not_only_the_effort_reason": "CAT034's value is almost entirely CONTEXT ACCUMULATED ACROSS MESSAGES - the last North marker, the current sector, the standing station status. A translator that held any of it would be holding stream state, which is the transport refusal every adapter in this repository has made: AIS's fragment buffer, ADS-B's frame buffer, Legion's HTTP client, CAT021's UDP reassembly. A different UAP and a different item catalogue make it a different adapter; needing state to be useful is what makes it a different KIND of thing."
+  },
+  "extracted_values_every_ruling_rests_on": {
+    "note": "Each entry is a value or a sentence the CAT048 row set in FORMAT_COVERAGE.md cites, with the section it was read from. Quotations are transcribed from the pinned copy's own text layer.",
+    "uap": {
+      "locus": "section 5.3.1, Table 2 - Standard UAP",
+      "is_the_sole_item_roster": true,
+      "why": "Edition 1.32's Document Change Record (page vi) lists 'Table “Standard Data Items” removed' against section 5.1. Section 5.1 in this edition is prose only: 'The standardised Data Items which shall be used for the transmission of monoradar target reports from a Mode S station are described in the following pages.' The Table of Contents still carries the heading '5.1 Standard Data Items' at page 13, so the heading survived the table's removal.",
+      "legend_quoted": "the first column indicates the Field Reference Number (FRN) associated to each Data Item used in the UAP; the fourth column gives the format and the length of each item, a stand-alone figure indicates the octet-count of a fixed-length Data Item, 1+ indicates a variable-length Data Item comprising a first part of 1 octet followed by n-octets extents as necessary.",
+      "legend_does_not_define": [
+        "1+1+",
+        "1+8*n"
+      ],
+      "rows": [
+        {
+          "frn": 1,
+          "item": "I048/010",
+          "uap_description": "Data Source Identifier",
+          "length": "2"
+        },
+        {
+          "frn": 2,
+          "item": "I048/140",
+          "uap_description": "Time-of-Day",
+          "length": "3"
+        },
+        {
+          "frn": 3,
+          "item": "I048/020",
+          "uap_description": "Type and Properties of the Target Report and Target Capabilities",
+          "length": "1+"
+        },
+        {
+          "frn": 4,
+          "item": "I048/040",
+          "uap_description": "Measured Position in Slant Polar Coordinates",
+          "length": "4"
+        },
+        {
+          "frn": 5,
+          "item": "I048/070",
+          "uap_description": "Mode-3/A Code in Octal Representation",
+          "length": "2"
+        },
+        {
+          "frn": 6,
+          "item": "I048/090",
+          "uap_description": "Flight Level in Binary Representation",
+          "length": "2"
+        },
+        {
+          "frn": 7,
+          "item": "I048/130",
+          "uap_description": "Radar Plot Characteristics",
+          "length": "1+1+"
+        },
+        {
+          "frn": "FX",
+          "item": "n.a.",
+          "uap_description": "Field Extension Indicator",
+          "length": "n.a."
+        },
+        {
+          "frn": 8,
+          "item": "I048/220",
+          "uap_description": "Aircraft Address",
+          "length": "3"
+        },
+        {
+          "frn": 9,
+          "item": "I048/240",
+          "uap_description": "Aircraft Identification",
+          "length": "6"
+        },
+        {
+          "frn": 10,
+          "item": "I048/250",
+          "uap_description": "Mode S MB Data",
+          "length": "1+8*n"
+        },
+        {
+          "frn": 11,
+          "item": "I048/161",
+          "uap_description": "Track Number",
+          "length": "2"
+        },
+        {
+          "frn": 12,
+          "item": "I048/042",
+          "uap_description": "Calculated Position in Cartesian Coordinates",
+          "length": "4"
+        },
+        {
+          "frn": 13,
+          "item": "I048/200",
+          "uap_description": "Calculated Track Velocity in Polar Representation",
+          "length": "4"
+        },
+        {
+          "frn": 14,
+          "item": "I048/170",
+          "uap_description": "Track Status",
+          "length": "1+"
+        },
+        {
+          "frn": "FX",
+          "item": "n.a.",
+          "uap_description": "Field Extension Indicator",
+          "length": "n.a."
+        },
+        {
+          "frn": 15,
+          "item": "I048/210",
+          "uap_description": "Track Quality",
+          "length": "4"
+        },
+        {
+          "frn": 16,
+          "item": "I048/030",
+          "uap_description": "Warning/Error Conditions/Target Classification",
+          "length": "1+"
+        },
+        {
+          "frn": 17,
+          "item": "I048/080",
+          "uap_description": "Mode-3/A Code Confidence Indicator",
+          "length": "2"
+        },
+        {
+          "frn": 18,
+          "item": "I048/100",
+          "uap_description": "Mode-C Code and Confidence Indicator",
+          "length": "4"
+        },
+        {
+          "frn": 19,
+          "item": "I048/110",
+          "uap_description": "Height Measured by 3D Radar",
+          "length": "2"
+        },
+        {
+          "frn": 20,
+          "item": "I048/120",
+          "uap_description": "Radial Doppler Speed",
+          "length": "1+"
+        },
+        {
+          "frn": 21,
+          "item": "I048/230",
+          "uap_description": "Communications / ACAS Capability and Flight Status",
+          "length": "2"
+        },
+        {
+          "frn": "FX",
+          "item": "n.a.",
+          "uap_description": "Field Extension Indicator",
+          "length": "n.a."
+        },
+        {
+          "frn": 22,
+          "item": "I048/260",
+          "uap_description": "ACAS Resolution Advisory Report",
+          "length": "7"
+        },
+        {
+          "frn": 23,
+          "item": "I048/055",
+          "uap_description": "Mode-1 Code in Octal Representation",
+          "length": "1"
+        },
+        {
+          "frn": 24,
+          "item": "I048/050",
+          "uap_description": "Mode-2 Code in Octal Representation",
+          "length": "2"
+        },
+        {
+          "frn": 25,
+          "item": "I048/065",
+          "uap_description": "Mode-1 Code Confidence Indicator",
+          "length": "1"
+        },
+        {
+          "frn": 26,
+          "item": "I048/060",
+          "uap_description": "Mode-2 Code Confidence Indicator",
+          "length": "2"
+        },
+        {
+          "frn": 27,
+          "item": "SP-Data Item",
+          "uap_description": "Special Purpose Field",
+          "length": "1+1+"
+        },
+        {
+          "frn": 28,
+          "item": "RE-Data Item",
+          "uap_description": "Reserved Expansion Field",
+          "length": "1+1+"
+        },
+        {
+          "frn": "FX",
+          "item": "n.a.",
+          "uap_description": "Field Extension Indicator",
+          "length": "n.a."
+        }
+      ],
+      "derived_fspec_geometry": {
+        "defined_frns": 28,
+        "fx_rows": 4,
+        "bits": 32,
+        "max_fspec_octets": 4,
+        "not_used_frns": "NONE. Every one of the 28 FRNs names a defined item, which is a structural difference from Category 021 (whose UAP marks FRNs 43-47 'Not Used'). The refusal case here is the FX bit of the FOURTH octet instead: it is present in Table 2 but no FRN 29 exists, so a record that sets it names nothing.",
+        "trailing_fx_after_frn_28": true
+      },
+      "uap_names_that_disagree_with_the_section_5_2_headings": [
+        {
+          "frn": 2,
+          "uap": "Time-of-Day",
+          "heading": "Time of Day",
+          "locus": "5.2.17"
+        },
+        {
+          "frn": 4,
+          "uap": "Measured Position in Slant Polar Coordinates",
+          "heading": "Measured Position in Polar Co-ordinates",
+          "locus": "5.2.4"
+        },
+        {
+          "frn": 10,
+          "uap": "Mode S MB Data",
+          "heading": "BDS Register Data",
+          "locus": "5.2.25",
+          "note": "The item was RENAMED in Edition 1.29 per the Document Change Record ('Data Item renamed and Note added to Data Item I048/250'). Table 2 still carries the pre-1.29 name three editions later."
+        },
+        {
+          "frn": 13,
+          "uap": "Calculated Track Velocity in Polar Representation",
+          "heading": "Calculated Track Velocity in Polar Co-ordinates",
+          "locus": "5.2.20"
+        },
+        {
+          "frn": 16,
+          "uap": "Warning/Error Conditions/Target Classification",
+          "heading": "Warning/Error Conditions and Target Classification",
+          "locus": "5.2.3"
+        },
+        {
+          "frn": 18,
+          "uap": "Mode-C Code and Confidence Indicator",
+          "heading": "Mode-C Code and Code Confidence Indicator",
+          "locus": "5.2.13"
+        },
+        {
+          "frn": 19,
+          "uap": "Height Measured by 3D Radar",
+          "heading": "Height Measured by a 3D Radar",
+          "locus": "5.2.14"
+        }
+      ]
+    },
+    "i048_030_warning_error_conditions_and_target_classification": {
+      "locus": "section 5.2.3",
+      "definition_quoted": "Warning/error conditions detected by a radar station for the target report involved.Target Classification information for the target involved.",
+      "format_quoted": "Variable length Data Item comprising a first part of one-octet, followed by one-octet extents as necessary.",
+      "structure": {
+        "bits_8_2": "Code describing the information",
+        "bit_1": "FX = 0 End of Data Item; = 1 Extension into first extent (next W/E condition value)"
+      },
+      "code_field_width_bits": 7,
+      "table_enumerated_from_edition_1_32_own_text": {
+        "0": "Not defined; never used.",
+        "1": "Multipath Reply (Reflection)",
+        "2": "Reply due to sidelobe interrogation/reception",
+        "3": "Split plot",
+        "4": "Second time around reply",
+        "5": "Angel",
+        "6": "Slow moving target correlated with road infrastructure (terrestrial vehicle)",
+        "7": "Fixed PSR plot",
+        "8": "Slow PSR target",
+        "9": "Low quality PSR plot",
+        "10": "Phantom SSR plot",
+        "11": "Non-Matching Mode-3/A Code",
+        "12": "Mode C code / Mode S altitude code abnormal value compared to the track",
+        "13": "Target in Clutter Area",
+        "14": "Maximum Doppler Response in Zero Filter",
+        "15": "Transponder anomaly detected –see Note 4 below",
+        "16": "Duplicated or Illegal Mode S Aircraft Address",
+        "17": "Mode S error correction applied",
+        "18": "Undecodable Mode C code / Mode S altitude code",
+        "19": "Birds",
+        "20": "Flock of Birds",
+        "21": "Mode-1 was present in original reply",
+        "22": "Mode-2 was present in original reply",
+        "23": "Plot potentially caused by Wind Turbine",
+        "24": "Helicopter",
+        "25": "Maximum number of re-interrogations reached (surveillance information)",
+        "26": "Maximum number of re-interrogations reached (BDS Extractions)",
+        "27": "BDS Overlay Incoherence",
+        "28": "Potential BDS Swap Detected",
+        "29": "Track Update in the Zenithal Gap",
+        "30": "Mode S Track re-acquired",
+        "31": "Duplicated Mode 5 Pair NO/PIN detected",
+        "32": "Wrong DF reply format detected",
+        "33": "Transponder anomaly (MS XPD replies with Mode A/C to Mode A/C-only all-call)–see Note 5 below",
+        "34": "Transponder anomaly (SI capability report wrong) –see Note 5 below",
+        "35": "Potential IC Conflict",
+        "36": "IC Conflict detection possible –no conflict currently detected",
+        "37": "Duplicate Mode 5 PIN (refer to the Mode 5 items in the REF)"
+      },
+      "highest_code_defined": 37,
+      "code_37_added_in": "1.32",
+      "code_36_carries_a_flagged_note": {
+        "flag_text_in_the_change_record": "Values 35 & 36 added to I048/030 (Check NOTE on Code = 36); Note 3 deleted",
+        "change_record_edition": "1.31",
+        "the_note_itself_locus": "5.2.3, NOTE 5, sub-bullet for Code 36",
+        "quoted": "Code 36 indicates that a plot is in a configuration that it would be possible to detect an ICConflict with another interrogator.Currently no potential IC Conflict has been detected. NOTE: Although implementation dependent, the use of this code should be limited to the target acquisition phase."
+      },
+      "encoding_rule_quoted": "This Data Item is optional. When used, it shall be transmitted only if different from zero. The zero value for this field means no warning neither error conditions and that the target classification is unknown. If Codes 33 or 34 are sent, also Code 15 shall be sent –see Notes below. Values 0-63 are allocated by the AMG, values 64 to 127 are available for allocation by manufacturers and shall be described in the corresponding ICD.",
+      "notes_quoted": {
+        "1": "It has to be stressed that a series of one or more codes can be reported per target report.",
+        "2": "Data conveyed in this item are of secondary importance, and can generally also be derived from the processing of mandatory items.",
+        "3": "Note outdated and deleted.",
+        "4": "As of Edition 1.28 of this specification it is possible to indicate specific Transponder Anomalies by means of dedicated Codes (such as Codes 33 and 34). Code 15 is kept for backwards compatibility. It needs to be understood that ASTERIX Encoders implementing Category 048 in line with Edition 1.27 or earlier of this specification cannot indicate specific Transponder Anomalies.",
+        "5_head": "Values 25 to 30 and 32 to 36 have been defined to comply with the Edition 4.0 of theEUROCONTROL Specification for European Mode S Station (EMS) [Ref. 4] and to provide the possibility to report the following information:",
+        "5_bullets": [
+          "Code 25: the maximum number of permitted re-interrogations to acquire the surveillance information has been reached;",
+          "Code 26: the maximum number of permitted re-interrogations to extract BDS Registers has been reached;",
+          "Code 27: inconsistency detected between the contents of the message and the BDS register overlayed;",
+          "Code 28: a BDS swap has been detected and the respective information has been discarded;",
+          "Code 29: the track has been updated while being in the zenithal gap (also referred to as “Cone of Silence”);",
+          "Code 30: the radar had lost track of an aircraft and subsequently re-acquired it.",
+          "Code 32: the transponder has used a wrong Downlink Format",
+          "Codes 33 & 34: reporting specific Transponder Anomalies .",
+          "Code 35 indicates that a plot has been obtained despite a high probability of an ICConflict with another interrogator.",
+          "Code 36 indicates that a plot is in a configuration that it would be possible to detect an ICConflict with another interrogator.Currently no potential IC Conflict has been detected."
+        ],
+        "6": "Together with Codes 35 and 36 the possibility to communicate the area within which the detection of an IC Conflict is possible was implemented in the Category 034 Specification Ref. [5]by means of Message Type 008.",
+        "7": "The use of this Data Item is implementation specific and shall be described in the ICD of the system generating the Category 048 target reports."
+      }
+    },
+    "i048_040_measured_position_in_polar_co_ordinates": {
+      "locus": "section 5.2.4",
+      "definition_quoted": "Measured position of an aircraft in local polar co-ordinates.",
+      "format_quoted": "Four-octet fixed length Data Item.",
+      "rho": {
+        "bits": "32/17",
+        "lsb": "1/256 NM",
+        "max_range_quoted": "Max. range = 256-(1/256) NM"
+      },
+      "theta": {
+        "bits": "16/1",
+        "lsb_quoted": "360°/ 2^16 = approx. 0.0055°"
+      },
+      "encoding_rule_quoted": "This item shall be sent when there is a detection.",
+      "notes_quoted": {
+        "1": "In case of no detection, the extrapolated position expressed in slant polar co-ordinates may be sent, except for a track cancellation message. No detection is signalled by the TYP field set to zero in I048/020 Target Report Descriptor.",
+        "2": "This item represents the measured target position of the plot, even if associated with a track, for the present antenna scan. It is expressed in polar co-ordinates in the local reference system, centred on the radar station.",
+        "3": "In case of combined detection by a PSR and an SSR, then the SSR position is sent."
+      },
+      "the_radar_site_reference_as_the_text_states_it": {
+        "locus": "section 4.3.1",
+        "quoted": "The measured position, as contained in plots or tracks, shall be provided by Data Item I048/040 as slant polar co-ordinates, with the radar site location serving as the origin of the polar co-ordinate system. The reference for the azimuth shall be local geographical north."
+      },
+      "the_site_location_is_not_in_the_message": "No data item in Table 2 carries the radar site's position, and section 4.5.4 assigns each Radar System a SAC/SIC code rather than a coordinate. So the origin named in 4.3.1 is a deployment fact, not a wire fact. AMENDED RULING: geometry IS derived when a sensor_position is injected at construction - the injected-clock precedent, since I048/140 carries no date either and the adapter supplies one from configuration. What stays refused is the adapter OBTAINING the site itself from the payload or from a lookup table it owns, which is the act asterix_cat021.py names.",
+      "no_conversion_arithmetic_is_in_this_document": {
+        "finding": "The pinned text supplies no polar-to-geodetic arithmetic of any kind.",
+        "what_it_does_supply": "Section 4.3.2.1 gives only the radar-plane identities 'X = RHO * SIN(THETA); Y = RHO * COS(THETA)' - no slant correction and no geodetic step. Section 4.3.2.2 names the WGS-84 Ellipsoid and then defers the projection: 'apply a suitable projection technique for the final 3D to 2D conversion (e.g. a stereographical projection)'.",
+        "what_it_does_not_supply": [
+          "a geodesic direct solution",
+          "a slant-range correction formula",
+          "a named projection for the target position"
+        ],
+        "consequence": "The derived latitude and longitude are the ADAPTER'S arithmetic, not the specification's - a first for a binary format in this repository. Two of the three inputs are the document's own (the WGS-84 ellipsoid per 4.3.2.2, and 'local geographical north' per 4.3.1); the arithmetic is not. The audit is an inversion test: the derived position must return RHO and THETA within the item's own LSBs, 1/256 NM and 360/2^16 deg. Recorded in FORMAT_COVERAGE.md gap 24."
+      }
+    },
+    "i048_042_calculated_position_in_cartesian_co_ordinates": {
+      "locus": "section 5.2.5",
+      "definition_quoted": "Calculated position of an aircraft in Cartesian co-ordinates.",
+      "format_quoted": "Four-octet fixed length Data Item in Two’s Complement.",
+      "x": {
+        "bits": "32/17",
+        "lsb": "1/128 NM",
+        "max_range_quoted": "Max. range = 256 NM"
+      },
+      "y": {
+        "bits": "16/1",
+        "lsb": "1/128 NM",
+        "max_range_quoted": "Max. range =256 NM"
+      },
+      "encoding_rule_quoted": "This item is optional.",
+      "the_origin_is_the_radar_head": {
+        "locus": "section 4.3.2.2",
+        "quoted": "The exported calculated position is expressed in a 2D Cartesian co-ordinate system, which is a plane tangential to the WGS-84 Ellipsoid at the location of the radar head. The origin of the Cartesian co-ordinate system coincides with the radar head position. The Y-axis points to the geographical north at that position. The X-axis is perpendicular to the Y-axis and points to the east. The X, Y co-ordinates are calculated using either the measured height or an assumed target height and apply a suitable projection technique for the final 3D to 2D conversion (e.g. a stereographical projection)."
+      },
+      "the_radar_plane_alternative": {
+        "locus": "section 4.3.2.1",
+        "quoted": "When no stereographical projection is performed, the 3D to 2D co-ordinate transformation process is defined by the following simple equations: X = RHO * SIN(THETA); Y = RHO * COS(THETA); Whereby: RHO = measured slant range THETA = measured azimuth The reference for the azimuth shall be local geographical north."
+      },
+      "which_of_the_two_applies_is_signalled_in_another_item": {
+        "locus": "section 4.3.2.2",
+        "quoted": "The type of co-ordinate reference system in use is signalled by a flag within the Track Status Data Item I048/170."
+      }
+    },
+    "i048_090_flight_level_in_binary_representation": {
+      "locus": "section 5.2.12",
+      "definition_quoted": "Flight Level converted into binary representation.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "bit_16_v_quoted": "= 0 Code validated / = 1 Code not validated",
+      "bit_15_g_quoted": "= 0 Default / = 1 Garbled code",
+      "bits_14_1_quoted": "(Flight Level) LSB= 1/4 FL in two’s complement form",
+      "the_1_32_clarification": {
+        "change_record_entry": "Clarification “in two’s complement form” and Note added to I048/090",
+        "change_record_locus": "page vi, edition 1.32 row, sections affected 5.2.12"
+      },
+      "encoding_rule_quoted": "This data item shall be sent when Mode C code or Mode S altitude code is present and decodable. It represents the flight level of the plot, even if associated with a track.",
+      "notes_quoted": {
+        "1": "When Mode C code / Mode S altitude code is present but not decodable, the “Undecodable Mode C code / Mode S altitude code” Warning/Error should be sent in I048/030.",
+        "2": "When local tracking is applied and the received Mode C code / Mode S altitude code corresponds to an abnormal value (the variation with the previous plot is estimated too important by the tracker), the “Mode C code / Mode S altitude code abnormal value compared to the track“ Warning/Error should be sent in I048/030.",
+        "3": "The value shall be within the range described by ICAO Annex 10",
+        "4": "For Mode S, bit 15 (G) is set to one when an error correction has been attempted.",
+        "5": "For radar systems interrogating with various technologies (such as military radars interrogating in Mode S and Mode 5), element I048/REF/GEN48/ALTFL provides the possibility to transmit an alternative Flight Level value. If this Data Item carries a Flight Level value that has been derived from a Mode 5 Reply/Report, then bit-2 in I048/REF/MD5/SF#1 or bit-2 in I048/REF/M5N/SF#1 shall be set to 1."
+      },
+      "which_note_is_the_1_32_addition": "NOT DETERMINABLE from the pinned copy alone. The Document Change Record says a Note was added to 5.2.12 in 1.32; the section now carries five. Note 3 - 'The value shall be within the range described by ICAO Annex 10' - is the only one whose subject matter is not traceable to an earlier change-record entry, so it is the likely insertion, but establishing that requires Edition 1.31, which this repository does not pin. Recorded as an inference, not a finding.",
+      "note_3_is_load_bearing_and_unresolvable_here": "It bounds the field by reference to ICAO Annex 10, which is a document section 2.2 does not list and this repository does not pin. So the item's own stated range is 14 bits of two's complement at 1/4 FL - -2048.00 to +2047.75 FL - and the narrower ICAO range it defers to is not readable here."
+    },
+    "i048_100_mode_c_code_and_code_confidence_indicator": {
+      "locus": "section 5.2.13",
+      "definition_quoted": "Mode-C height in Gray notation as received from the transponder together with the confidence level for each reply bit as provided by a MSSR/Mode S station.",
+      "format_quoted": "Four-octet fixed length Data Item.",
+      "layout": {
+        "bit_32": "V",
+        "bit_31": "G",
+        "bits_30_29": "Spare bits set to 0",
+        "bits_28_17": "Mode-C reply in Gray notation",
+        "bits_16_13": "Spare bits set to 0",
+        "bits_12_1": "(QXi) = 0 High quality pulse Xi; = 1 Low quality pulse Xi"
+      },
+      "encoding_rule_quoted": "This data item is optional. When used, it shall only be sent when a not validated or undecodable Mode C code has been received. For Mode A/C, it represents the confidence level for each reply bit of the Mode C code of the plot. For Mode S, if this item is sent because of an undecodable Mode-C code received in a Mode S altitude reply, all pulse quality bits will be set to high (zero).",
+      "notes_quoted": {
+        "1": "For Mode S, D1 is also designated as Q, and is used to denote either 25ft or 100ft reporting.",
+        "2": "For Mode S, bit-31 (G) is set when an error correction has been attempted."
+      },
+      "no_gray_decode_table_is_given_in_this_document": true
+    },
+    "i048_110_height_measured_by_a_3d_radar": {
+      "locus": "section 5.2.14",
+      "definition_quoted": "Height of a target as measured by a 3D radar. The height shall use mean sea level as the zero reference level.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "bits_16_15": "Spare bits set to zero",
+      "bits_14_1_quoted": "(3D-Height) 3D height, in binary notation. Negative values are expressed in two’s complement LSB = 25 ft",
+      "encoding_rule_quoted": "This data item is optional.",
+      "datum": "mean sea level",
+      "derived_range": {
+        "lsb_ft": 25,
+        "bits": 14,
+        "min_ft": -204800,
+        "max_ft": 204775,
+        "arithmetic": "14-bit two's complement spans -8192..8191; x 25 ft"
+      }
+    },
+    "i048_120_radial_doppler_speed": {
+      "locus": "section 5.2.15",
+      "definition_quoted": "Information on the Doppler Speed of the target report.",
+      "format_quoted": "Compound Data Item, comprising a primary subfield of one octet, followed by one of the two defined subfields.",
+      "primary_subfield": {
+        "bit_8_cal": "Subfield #1: Calculated Doppler Speed; = 0 Absence of Subfield #1; = 1 Presence of Subfield #1",
+        "bit_7_rds": "Subfield #2: Raw Doppler Speed; = 0 Absence of Subfield #2; = 1 Presence of Subfield #2",
+        "bits_6_2_quoted": "(Spare) Subfields #3/7: Spare; = 0 Absence of Subfield; = 1 Presence of Subfield",
+        "bit_1_fx": "= 0 End of Data Item; = 1 Extension into first extension"
+      },
+      "subfield_1_calculated_doppler_speed": {
+        "octets": 2,
+        "bit_16_d_quoted": "= 0 Doppler speed is valid; = 1 Doppler speed is doubtful",
+        "bits_15_11": "(Spare) Fixed to zero",
+        "bits_10_1_quoted": "(CAL) Calculated Doppler Speed, coded in two’s complement LSB= 1 m/sec",
+        "note_quoted": "Although the meaning of a positive or negative value is implementation dependent and shall be described in the ICD of the system generating the ASTERIX record, it is recommended to transmit a positive value for targets moving away from the radar.",
+        "derived_range": {
+          "bits": 10,
+          "lsb_mps": 1,
+          "min_mps": -512,
+          "max_mps": 511
+        }
+      },
+      "subfield_2_raw_doppler_speed": {
+        "octets": 7,
+        "bits_56_49": "(REP) Repetition Factor",
+        "bits_48_33": "(DOP) Doppler Speed LSB= 1 m/sec",
+        "bits_32_17": "(AMB) Ambiguity Range LSB= 1 m/sec",
+        "bits_16_1": "(FRQ) Transmitter Frequency LSB= 1 Mhz"
+      },
+      "encoding_rule_quoted": "This data item is optional. When used, only one secondary subfield shall be present.",
+      "the_1_31_resolution_correction_and_note": {
+        "change_record_entries": [
+          "Resolution of I048/120 corrected",
+          "Note added to I048/120"
+        ],
+        "change_record_edition": "1.31",
+        "sections_affected": "5.2.15"
+      },
+      "the_1_23_fx_change": {
+        "change_record_entry": "Bit 1 of I048/120 changed to FX-bit in line with Part 1 of ASTERIX",
+        "change_record_edition": "1.23"
+      }
+    },
+    "i048_130_radar_plot_characteristics": {
+      "locus": "section 5.2.16",
+      "definition_quoted": "Additional information on the quality of the target report.",
+      "format_quoted": "Compound Data Item.",
+      "primary_subfield_is_fx_extensible_quoted": "bit-1 (FX) = 0 End of Primary Subfield; = 1 Extension of Primary Subfield into next octet",
+      "subfields": [
+        {
+          "n": 1,
+          "flag": "SRL",
+          "name": "SSR Plot Runlength",
+          "octets": 1,
+          "lsb_quoted": "LSB=360/2^13 dg (0.044 dg)",
+          "note_quoted": "The total range covered is therefore from 0 to 11.21 dg.",
+          "signed": false
+        },
+        {
+          "n": 2,
+          "flag": "SRR",
+          "name": "Number of Received Replies for (M)SSR",
+          "octets": 1,
+          "lsb_quoted": "LSB= 1",
+          "signed": false
+        },
+        {
+          "n": 3,
+          "flag": "SAM",
+          "name": "Amplitude of (M)SSR Reply",
+          "octets": 1,
+          "lsb_quoted": "LSB= 1 dBm",
+          "note_quoted": "Negative values are coded in two’s complement form.",
+          "signed": true
+        },
+        {
+          "n": 4,
+          "flag": "PRL",
+          "name": "Primary Plot Runlength",
+          "octets": 1,
+          "lsb_quoted": "LSB= 360/2^13 dg (0.044 dg)",
+          "note_quoted": "The total range covered is therefore from 0 to 11.21 dg.",
+          "signed": false
+        },
+        {
+          "n": 5,
+          "flag": "PAM",
+          "name": "Amplitude of Primary Plot",
+          "octets": 1,
+          "lsb_quoted": "LSB= 1 dBm",
+          "note_quoted": "Negative values are coded in two’s complement form.",
+          "signed": true
+        },
+        {
+          "n": 6,
+          "flag": "RPD",
+          "name": "Difference in Range between PSR and SSR plot",
+          "octets": 1,
+          "lsb_quoted": "LSB= 1/256 NM",
+          "notes_quoted": [
+            "Negative values are coded in two's complement form.",
+            "The covered range difference is +/-0.5 NM.",
+            "Sending the maximum value means that the difference in range is equal or greater than the maximum value."
+          ],
+          "signed": true
+        },
+        {
+          "n": 7,
+          "flag": "APD",
+          "name": "Difference in Azimuth between PSR and SSR plot",
+          "octets": 1,
+          "lsb_quoted": "LSB= 360/2^14 dg",
+          "notes_quoted": [
+            "Negative values are coded in two's complement form.",
+            "The covered azimuth difference is +/-360/2^7 = +/-2.8125 dg.",
+            "Sending the maximum value means that the difference in range is equal or greater than the maximum value."
+          ],
+          "signed": true
+        }
+      ],
+      "encoding_rule_quoted": "This data item is optional. When used, all secondary subfields are optional. Recommendation: For a combined target report, subfields RPD and APD of primary subfield should be present."
+    },
+    "i048_140_time_of_day": {
+      "locus": "section 5.2.17",
+      "definition_quoted": "Absolute time stamping expressed as Co-ordinated Universal Time (UTC).",
+      "format_quoted": "Three-octet fixed length Data Item.",
+      "bits_24_1_quoted": "(Time-of-Day) Acceptable Range of values: 0<= Time-of-Day<=24 hrs",
+      "bit_1_lsb_quoted": "= 2^-7 seconds = 1/128 seconds",
+      "encoding_rule_quoted": "This data item shall be present in every ASTERIX record, except in case of failure of all sources of time-stamping. The time information, coded in three octets, shall reflect the exact time of an event, expressed as a number of 1/128 s elapsed since last midnight.",
+      "notes_quoted": {
+        "1": "The time of day value is reset to 0 each day at midnight.",
+        "2": "Every radar station using ASTERIX should be equipped with at least one synchronised time source"
+      },
+      "time_management_section_quoted": {
+        "4_2_1": "The target time stamp shall be consistent with the reported plot position.",
+        "4_2_2": "The timestamping shall comply with the following requirements: • every individual target report shall have its own individual timestamp; • co-ordinated Universal Time (UTC) as specified in ICAO Annex 5 shall be used to time stamp radar data."
+      },
+      "derived_arithmetic": {
+        "field_bits": 24,
+        "max_raw": 16777215,
+        "max_expressible_seconds": 131071.9921875,
+        "seconds_in_a_day": 86400,
+        "raw_at_86400_s": 11059200,
+        "expressible_but_out_of_range": true
+      },
+      "boundary_ruling": {
+        "accepted": "raw 11059200 = 86400.000 s exactly, on the normative structure block's inclusive 'Acceptable Range of values: 0<= Time-of-Day<=24 hrs'. Note prose cannot narrow a range the normative block states.",
+        "refused": "raw 11059201 = 86400 + 1/128 s, and everything above it.",
+        "cross_adapter_finding": "asterix_cat021.py refuses exactly 86400.000 s - its guard is 'if seconds >= SECONDS_PER_DAY' - and its stated reason is inference from reset prose ('the counter resets at every midnight, so it cannot reach 86400') with no acceptable-range line cited. So this repository will accept in CAT048 the value it refuses in CAT021. The two rest on DIFFERENT RECORDED BASES; whether the two DOCUMENTS differ is not establishable here, because no CAT021 copy is pinned with an extracted text layer. Recorded as ambiguity 14 and deliberately not harmonised."
+      }
+    },
+    "i048_161_track_number": {
+      "locus": "section 5.2.18",
+      "definition_quoted": "An integer value representing a unique reference to a track record within a particular track file.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "layout_quoted": "0 0 0 0 TRACK NUMBER (0..4095)",
+      "bits": 12,
+      "encoding_rule_quoted": "This data item shall be sent when the radar station outputs tracks.",
+      "identity_ruling_amended": {
+        "first_draft": "A SourceId under a SAC:SIC:track composite when no aircraft address was present.",
+        "overturned": true,
+        "why": "A station-scoped, recycled 12-bit number (0..4095, 'within a particular track file') keyed into entity_id merges two different airframes hours apart into one entity - a false statement in the field the CDM guarantees is stable across updates. CAT021's declines table had already rejected exactly this. The track number is a carried claim in attributes, never an identity key; identity is the aircraft address when present and report-scoped otherwise. The cost - consecutive scans of one PSR track producing different entity_id values - is recorded as gap 27."
+      }
+    },
+    "i048_170_track_status": {
+      "locus": "section 5.2.19",
+      "definition_quoted": "Status of monoradar track (PSR and/or SSR updated).",
+      "format_quoted": "Variable length Data Item comprising a first part of one-octet, followed by one-octet extents as necessary.",
+      "first_part": {
+        "bit_8_cnf": "Confirmed vs. Tentative Track; = 0 Confirmed Track; = 1 Tentative Track",
+        "bits_7_6_rad": "Type of Sensor(s) maintaining Track; = 00 Combined Track; = 01 PSR Track; = 10 SSR/Mode S Track; = 11 Invalid",
+        "bit_5_dou": "Signals level of confidence in plot to track association process; = 0 Normal confidence; = 1 Low confidence in plot to track association.",
+        "bit_4_mah": "Manoeuvre detection in Horizontal Sense; = 0 No horizontal man.sensed; = 1 Horizontal man. sensed",
+        "bits_3_2_cdm": "Climbing / Descending Mode; = 00 Maintaining; = 01 Climbing; = 10 Descending; = 11 Unknown",
+        "bit_1_fx": "= 0 End of Data Item; = 1 Extension into first extent",
+        "note_quoted": "RAD can change after a number of non-matching with TYP in item 020."
+      },
+      "first_extent": {
+        "bit_8_tre": "Signal for End_of_Track; = 0 Track still alive; = 1 End of track lifetime(last report for this track)",
+        "bit_7_gho": "Ghost vs. true target; = 0 True target track.; = 1 Ghost target track.",
+        "bit_6_sup": "Track maintained with track information from neighbouring Node B on the cluster, or network; = 0 no; = 1 yes",
+        "bit_5_tcc": "Type of plot coordinate transformation mechanism: = 0 Tracking performed in so-called 'Radar Plane', i.e. neither slant range correction nor stereographical projection was applied. = 1 Slant range correction and a suitable projection technique are used to track in a 2D.reference plane, tangential to the earth model at the Radar Site co-ordinates.",
+        "bits_4_2": "(spare) Spare bits, set to 0",
+        "bit_1_fx": "= 0 End of Data Item; = 1 Extension into second extent"
+      },
+      "encoding_rule_quoted": "This data item shall be sent when the radar station outputs tracks.",
+      "no_second_extent_is_defined": "The first extent's FX is documented as '= 1 Extension into second extent', but section 5.2.19 defines no second extent. Same shape as the trailing FX after FRN 28 in Table 2.",
+      "tre_ruling_amended": {
+        "first_draft": "Entity.valid_to = the record's observed_at.",
+        "overturned": true,
+        "why": "TRE reads 'End of track lifetime (last report for this track)' and I048/161 scopes the thing as 'a unique reference to a track record within a particular track file'. What ends is one radar's track record, not the airframe the entity_id names. Entity.valid_to is 'When it ceased' on an object keyed on a 24-bit aircraft address, so writing the track-end instant there is a false statement about a longer-lived thing. valid_to stays None on every CAT048 record; TRE is carried at attributes.track_end and Event.event_type becomes STATUS_CHANGE. The truncation is recorded as gap 26."
+      }
+    },
+    "i048_200_calculated_track_velocity_in_polar_co_ordinates": {
+      "locus": "section 5.2.20",
+      "definition_quoted": "Calculated track velocity expressed in polar co-ordinates.",
+      "format_quoted": "Four-octet fixed length Data Item.",
+      "groundspeed": {
+        "bits": "32/17",
+        "label_quoted": "CALCULATED GROUNDSPEED (max. 2 NM/s)",
+        "lsb_quoted": "= (2)^-14 NM/s = approx. 0.22 kt"
+      },
+      "heading": {
+        "bits": "16/1",
+        "label_quoted": "CALCULATED HEADING",
+        "lsb_quoted": "= 360°/ 2^16 = approx. 0.0055°"
+      },
+      "encoding_rule_quoted": "This data item shall be sent when the radar station outputs tracks, except for a track cancellation message.",
+      "note_quoted": "The calculated heading is related to the geographical North at the aircraft position.",
+      "derived_arithmetic": {
+        "nm_in_metres": 1852,
+        "lsb_mps": 0.113037109375,
+        "exact_in_float64": true,
+        "why": "2^-14 x 1852 is a dyadic rational times an integer; 1852 needs 11 significand bits, so the product is exact."
+      },
+      "mapping_basis": {
+        "maps_to": "Kinematics.course_deg",
+        "cited_on": [
+          "the Definition",
+          "the Note"
+        ],
+        "not_cited_on": "the bit-diagram field label 'CALCULATED HEADING'",
+        "why": "The Definition is 'Calculated track velocity expressed in polar co-ordinates', and the angular component of a velocity vector is a course by construction. The Note pins the datum: 'The calculated heading is related to the geographical North at the aircraft position.' Geographic north is STATED, so gap 7's magnetic-versus-true hazard is absent by the text rather than by inference. An encoder that puts a bow heading in that field contradicts its own item's Definition - that is the encoder's nonconformance, not a reading this row set must accommodate."
+      }
+    },
+    "i048_210_track_quality": {
+      "locus": "section 5.2.21",
+      "definition_quoted": "Track quality in the form of a vector of standard deviations.",
+      "format_quoted": "Four-octet fixed length Data Item.",
+      "octets": [
+        {
+          "octet": 1,
+          "field": "Sigma (X)",
+          "meaning_quoted": "Standard Deviation on the horizontal axis of the local grid system",
+          "lsb": "1/128 NM",
+          "note_quoted": "The standard deviation is per definition a positive value, hence the range covered is : 0<= Sigma(X)<2 NM"
+        },
+        {
+          "octet": 2,
+          "field": "Sigma (Y)",
+          "meaning_quoted": "Standard Deviation on the vertical axis of the local grid system",
+          "lsb": "1/128 NM",
+          "note_quoted": "The standard deviation is per definition a positive value, hence the range covered is: 0<= Sigma (Y)<2 NM"
+        },
+        {
+          "octet": 3,
+          "field": "Sigma (V)",
+          "meaning_quoted": "Standard Deviation on the groundspeed within the local grid system",
+          "lsb_quoted": "= (2)^-14 NM/s = 0.22 Kt",
+          "note_quoted": "The standard deviation is per definition a positive value, hence the range covered is: 0<=Sigma (V)<56.25 Kt"
+        },
+        {
+          "octet": 4,
+          "field": "Sigma (H)",
+          "meaning_quoted": "Standard Deviation on the heading within the local grid system",
+          "lsb_quoted": "= 360/(2)^12 degrees = 0.08789 degrees",
+          "note_quoted": "The standard deviation is per definition a positive value; hence the range covered is: 0 <= sigma (H) < 22.5 degrees."
+        }
+      ],
+      "encoding_rule_quoted": "This item is optional."
+    },
+    "i048_220_aircraft_address": {
+      "locus": "section 5.2.22",
+      "definition_quoted": "Aircraft address (24-bits Mode S address) assigned uniquely to each aircraft.",
+      "format_quoted": "Three-octet fixed length Data Item.",
+      "bits_24_1_quoted": "24-bits Mode S address, A23 to A0",
+      "encoding_rule_quoted": "This item shall be present in every ASTERIX record conveying data related to a Mode S target, except for an “End of Track Message” (i.e. I048/170, First Extension, Bit 8 is set to “1”)in which this Data Item is optional.",
+      "note_quoted": "The Encoding Rule for Data Item I048/220 has been relaxed in Edition 1.30 for the “End of Track Message”. In order to prevent interoperability problems it is recommended that systems sending I048/220 in an “End of Track Message” continue to do so."
+    },
+    "i048_230_communications_acas_capability_and_flight_status": {
+      "locus": "section 5.2.23",
+      "definition_quoted": "Communications capability of the transponder, capability of the on-board ACAS equipment and flight status.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "com_quoted": "bits-16/14 (COM) Communications capability of the transponder; = 0 No communications capability (surveillance only); = 1 Comm. A and Comm. B capability; = 2 Comm. A, Comm. B and Uplink ELM; = 3 Comm. A, Comm. B, Uplink ELM and Downlink ELM; = 4 Level 5 Transponder capability; 5 to 7 Not assigned",
+      "stat_quoted": "bits-13/11 (STAT) Flight Status; = 0 No alert, no SPI, aircraft airborne; = 1 No alert, no SPI, aircraft on ground; = 2 Alert, no SPI, aircraft airborne; = 3 Alert, no SPI, aircraft on ground; = 4 Alert, SPI, aircraft airborne or on ground; = 5 No alert, SPI, aircraft airborne or on ground; = 6 Not assigned; = 7 Unknown",
+      "si_quoted": "bit-10 (SI) SI/II Transponder Capability; = 0 SI-Code Capable; = 1 II-Code Capable",
+      "bit_9": "(spare) spare bit set to zero",
+      "mssc_quoted": "bit-8 (MSSC) Mode-S Specific Service Capability; = 0 No; = 1 Yes",
+      "arc_quoted": "bit-7 (ARC) Altitude reporting capability; = 0 100 ft resolution; = 1 25 ft resolution",
+      "aic_quoted": "bit-6 (AIC) Aircraft identification capability; = 0 No; = 1 Yes",
+      "b1a_quoted": "bit-5 (B1A) BDS 1,0 bit 16",
+      "b1b_quoted": "bits 4/1 (B1B) BDS 1,0 bits 37/40",
+      "encoding_rule_quoted": "This item shall be present in every ASTERIX record conveying data related to a Mode S target, except for an “End of Track Message” (i.e. I048/170, First Extension, Bit 8 is set to “1”) in which this Data Item is optional. If the datalink capability has not been extracted yet, bits 16/14 shall be set to zero.",
+      "note_quoted": "The Encoding Rule for Data Item I048/230 has been relaxed in Edition 1.30 for the “End of Track Message”. In order to prevent interoperability problems it is recommended that systems sending I048/230 in an “End of Track Message” continue to do so.",
+      "the_si_ii_addition": {
+        "change_record_entry": "SI/II Indication added to I048/230",
+        "change_record_edition": "1.16"
+      },
+      "the_stat_7_addition": {
+        "change_record_entry": "Value 7 defined for STAT in I048/230",
+        "change_record_edition": "1.23"
+      }
+    },
+    "i048_240_aircraft_identification": {
+      "locus": "section 5.2.24",
+      "definition_quoted": "Aircraft identification (in 8 characters) obtained from an aircraft equipped with a Mode S transponder.",
+      "format_quoted": "Six-octet fixed length Data Item.",
+      "bits_48_1_quoted": "Characters 1-8 (coded on 6 bits each) defining aircraft identification when flight plan is available or the registration marking when no flight plan is available.",
+      "encoding_rule_quoted": "After the first extraction of aircraft identification, this item shall be present in every ASTERIX record conveying data related to a Mode S target, except for an “End of Track Message” (i.e. I048/170, First Extension, Bit 8 is set to “1”) in which this Data Item is optional. Bit-48 is the MSB of character 1. Bit-1 is the LSB of character 8.",
+      "notes_quoted": {
+        "1": "This data item contains the flight identification as available in the respective Mode S transponder registers.",
+        "2": "The Encoding Rule for Data Item I048/240 has been relaxed in Edition 1.30 for the “End of Track Message”. In order to prevent interoperability problems it is recommended that systems sending I048/240 in an “End of Track Message” continue to do so."
+      },
+      "no_six_bit_character_table_is_given_in_this_document": true,
+      "where_the_table_lives_instead": "Section 5.2.25 NOTE 1 says 'For the transmission of BDS Register 2,0, Data Item I048/240 is used', and BDS Register 2,0's character coding is defined in [Ref. 2] EUROCAE ED-73F/RTCA DO-181F, which this repository does not pin."
+    },
+    "i048_250_bds_register_data": {
+      "locus": "section 5.2.25",
+      "heading_name": "BDS Register Data",
+      "uap_name": "Mode S MB Data",
+      "definition_quoted": "BDS Register Data as extracted from the aircraft transponder.",
+      "format_quoted": "Repetitive Data Item starting with a one-octet Field Repetition Indicator (REP) followed by at least one BDS Register comprising one seven octet BDS Register Data and one octet BDS Register code.",
+      "layout_quoted": {
+        "bits_72_65": "(REP) Repetition factor",
+        "bits_64_9": "(BDSDATA) 56-bit message conveying BDS Register Data",
+        "bits_8_5": "(BDS1) BDS Register Address 1",
+        "bits_4_1": "(BDS2) BDS Register Address 2"
+      },
+      "format_prose_says_eight_octets_per_register": "one seven octet BDS Register Data and one octet BDS Register code",
+      "bit_diagram_spans": "octets 2 to 9, i.e. eight octets per register after the one-octet REP",
+      "uap_length_notation": "1+8*n",
+      "encoding_rule_quoted": "This item shall be present in every ASTERIX record conveying data related to a Mode S target, provided BDS Register Data has been extracted in the last scan. In an “End of Track Message” (i.e. I048/170, First Extension, Bit 8 is set to “1”) this Data Item is optional.",
+      "notes_quoted": {
+        "1": "For the transmission of BDS Register 2,0, Data Item I048/240 is used.",
+        "2": "For the transmission of BDS Register 3,0, Data Item I048/260 is used. In case of ACAS Xu (as defined in [3]), the Resolution Advisory consists of two parts (BDS Register 3,0 and BDS Register 3,1). BDS Register 3,1 will be transmitted using Data Item I048/250. For the detailed definition of BDS Register 3,0 and 3,1please refer to [2] Tables B-3-48a and B-3-49.",
+        "3": "In case of data extracted via Comm-B broadcast, all bits of fields BDS1 and BDS2 are set to 0; in case of data extracted via GICB requests, the fields BDS1 and BDS2 correspond to the GICB register number.",
+        "4": "The Encoding Rule for Data Item I048/250 has been relaxed in Edition 1.30 for the “End of Track Message”. In order to prevent interoperability problems it is recommended that systems sending I048/250 in an “End of Track Message” continue to do so."
+      },
+      "the_1_29_rename": {
+        "change_record_entry": "Data Item renamed and Note added to Data Item I048/250",
+        "change_record_edition": "1.29"
+      }
+    },
+    "i048_260_acas_resolution_advisory_report": {
+      "locus": "section 5.2.26",
+      "definition_quoted": "Currently active Resolution Advisory (RA), if any, generated by the ACAS associated with the transponder transmitting the report and threat identity data.",
+      "format_quoted": "Seven-octet fixed length Data Item.",
+      "bits_56_1_quoted": "(ACASRA) Currently active ACAS Resolution Advisory (RA)",
+      "encoding_rule_quoted": "This item shall be present when a Resolution Advisory (RA) has been generated in the last scan.",
+      "notes_quoted": {
+        "1": "Refer to ICAO Draft SARPs for ACAS for detailed explanations.",
+        "2": "In case of ACAS Xu, the Resolution Advisory consists of two parts (BDS30 and BDS31). BDS31 will be transmitted using item 250."
+      },
+      "why_no_decode": "The only decode authority the item cites is 'ICAO Draft SARPs for ACAS' - a DRAFT, unnamed by edition, and not in section 2.2's reference list. There is no field breakdown of the 56 bits anywhere in this document.",
+      "the_definition_and_the_encoding_rule_assert_different_things": {
+        "definition_says": "Currently active Resolution Advisory (RA), if any, generated by the ACAS associated with the transponder transmitting the report and threat identity data.",
+        "encoding_rule_says": "This item shall be present when a Resolution Advisory (RA) has been generated in the last scan.",
+        "divergence": "An RA generated in the last scan need not still be active, so the item's PRESENCE asserts less than the Definition's word 'currently'. Because the 56 bits are undecodable from this document, the adapter cannot tell which of the two it is holding.",
+        "consequence": "Severity stays a consumer's act. Note the divergence from CAT021's I021/008 basis: that row declines on the grounds that grading an equipment status as an emergency would be the translator judging - a judgement argument. This row declines on a weaker and more specific ground: the text does not establish that an advisory is active at all."
+      }
+    },
+    "i048_010_data_source_identifier": {
+      "locus": "section 5.2.1",
+      "definition_quoted": "Identification of the radar station from which the data is received.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "bits_16_9": "(SAC) System Area Code",
+      "bits_8_1": "(SIC) System Identification Code",
+      "encoding_rule_quoted": "This Item shall be present in every ASTERIX record.",
+      "note_quoted": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix).",
+      "why_that_note_matters_here": "It is the same URL fixtures/cat021/spec/sac_pin.json pinned. So the SAC evidence transfers by the pinned document's own pointer rather than by analogy - see the fixtures README."
+    },
+    "i048_020_type_and_properties_of_the_target_report_and_target_capabilities": {
+      "locus": "section 5.2.2",
+      "definition_quoted": "Type and properties of the target report and capabilities of the target.",
+      "format_quoted": "Variable length Data Item comprising a first part of one-octet, followed by one-octet extents as necessary.",
+      "encoding_rule_quoted": "This Data Item shall be present in every target record.",
+      "extensions_defined": 5,
+      "first_part": {
+        "bits_8_6_typ": {
+          "000": "No detection",
+          "001": "Single PSR detection",
+          "010": "Single SSR detection",
+          "011": "SSR + PSR detection",
+          "100": "Single ModeS All-Call",
+          "101": "Single ModeS Roll-Call",
+          "110": "ModeS All-Call + PSR",
+          "111": "ModeS Roll-Call +PSR"
+        },
+        "bit_5_sim": "= 0 Actual target report; = 1 Simulated target report",
+        "bit_4_rdp": "= 0 Report from RDP Chain 1; = 1 Report from RDP Chain 2",
+        "bit_3_spi": "= 0 Absence of SPI; = 1 Special Position Identification",
+        "bit_2_rab": "= 0 Report from aircraft transponder; = 1 Report from field monitor (fixed transponder)",
+        "bit_1_fx": "= 0 End of Data Item; = 1 Extension into first extent",
+        "note_quoted": "For Mode S aircraft, the SPI information is also contained in I048/230."
+      },
+      "first_extension": {
+        "bit_8_tst": "= 0 Real target report; = 1 Test target report",
+        "bit_7_err": "= 0 No Extended Range; = 1 Extended Range present",
+        "bit_6_xpp": "= 0 No X-Pulse present; = 1 X-Pulse present",
+        "bit_5_me": "= 0 No military emergency; = 1 Military emergency",
+        "bit_4_mi": "= 0 No military identification; = 1 Military identification",
+        "bits_3_2_foe_fri": {
+          "00": "No Mode 4 interrogation",
+          "01": "Friendly target",
+          "10": "Unknown target",
+          "11": "No reply"
+        },
+        "bit_1_fx": "= 0 End of Data Item; = 1 Extension into next extent",
+        "note_xpp_quoted": "To bit 6 of extension 1 (XPP): This bit shall always be set when the X-pulse has been extracted, independent from the Mode it was extracted with."
+      },
+      "second_extension": {
+        "purpose_quoted": "Presence of external data for a target",
+        "adsb": "bits-8/7 (ADSB) On-Site ADS-B Information; bit-8 ADSB#EP Element Populated Bit; bit-7 ADSB#VAL = 0 not available, = 1 available",
+        "scn": "bits-6/5 (SCN) Surveillance Cluster Network Information; bit-6 SCN#EP; bit-5 SCN#VAL",
+        "pai": "bits-4/3 (PAI) Passive Acquisition Interface Information; bit-4 PAI#EP; bit-3 PAI#VAL",
+        "bit_2": "(SPARE) Spare Bit, set to 0",
+        "explanation_quoted": "To Extension 2: The EUROCONTROL Specification for European Mode S Stations Edition 4.0 (EMS 4.0) [Ref. 4] defines new functionalities that can use external data inputs. The possibilities described in EMS 4.0 cover the presence of target information acquired via the on-site ADS-B, the Surveillance Cluster Network or the Passive Acquisition Interface. The second extension provides information –per target –on whether such information is available supporting performance improvements, e.g. Passive Acquisition, and new features, e.g. detection of a potential IC Conflict.",
+        "added_in": "1.31 (Second Extension added to I048/020); 1.32 adds 'Additional data added to I048/020'"
+      },
+      "third_extension": {
+        "purpose_quoted": "ACAS and Transponder Capabilities",
+        "acasxv": "bits-8/4 (ACASXV) ACAS Extended Version; bit-8 ACASXV#EP; bits-7/4 ACASXV#VAL = 0 Non-Extended Version, = 1 ACAS Xa Version 1, = 2 ACAS Xu Version 1, = 3 –15 Reserved for future versions",
+        "poxpr": "bits-3/2 (POXPR) PO Transponder Capability; bit-3 POXPR#EP; bit-2 POXPR#VAL = 0 PO not supported (PPM only), = 1 PO supported"
+      },
+      "fourth_extension": {
+        "purpose_quoted": "Transponder Capabilities contd.",
+        "poact": "bits-8/7 (POACT) PO active for current plot",
+        "dtfxpr": "bits-6/5 (DTFXPR) Basic Dataflash Transponder Capability",
+        "dtfact": "bits-4/3 (DTFACT) Basic Dataflash active for current plot",
+        "bit_2": "(SPARE) Spare Bit, set to 0"
+      },
+      "fifth_extension": {
+        "purpose_quoted": "Transponder Capabilities contd.",
+        "irmxpr": "bits-8/7 (IRMXPR) IRM Transponder Capability",
+        "irmact": "bits-6/5 (IRMACT) IRM active for current plot",
+        "bits_4_2": "(SPARE) Spare Bit, set to 0"
+      },
+      "notes_to_extensions_3_4_5_quoted": {
+        "mops": "To Extensions 3, 4, and 5: The transponder MOPS ED-73F/DO-181F (Minimum Operational Performance Standard –[Ref. 2]) defines new optional functionalities: • Basic Dataflash (to reduce BDS registers extractions by ground systems) • IRM (Interrogation/Reply Monitoring) • Phase Overlay (to convey more data within a single long Roll Call Reply, using Downlink Formats 20 and 21)",
+        "bds_dependency": "To Extensions 3 and 4: To populate bits in these extensions, Mode S radars will have to decode/analyse the content of BDS register 1,0 (bits 15, 42 and 44) as per [Ref. 2 ]."
+      },
+      "the_element_populated_convention": "Extensions 2 through 5 pair every value bit with an '#EP' Element Populated bit. This is the Part 1 convention FORMAT_COVERAGE.md's CAT021 pin row already cites Part 1 Edition 3.1 for, and it is the one place the Part 1 dependency is substantive here rather than structural: 'not populated' is NOT a value of zero."
+    },
+    "i048_050_mode_2_code": {
+      "locus": "section 5.2.6",
+      "definition_quoted": "Reply to Mode-2 interrogation.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "layout": "bit-16 (V) validated; bit-15 (G) garbled; bit-14 (L) 0 = as derived from the reply of the transponder, 1 = Smoothed Mode-2 code as provided by a local tracker; bit-13 spare set to 0; bits-12/1 Mode-2 code in octal representation",
+      "encoding_rule_quoted": "This item is optional. When used, it shall be sent when : • Mode-2 is present. Then, it represents the Mode-2 code for the plot, even if associated with a track. • Mode-2 is absent and local tracking is performed. It shall then be sent with the bit-14 (L) set to one.",
+      "note_quoted": "Bit 15 has no meaning in the case of a smoothed Mode-2 and is set to 0 for a calculated track.",
+      "the_1_32_note_addition": {
+        "change_record_entry": "Note added to I048/050",
+        "change_record_edition": "1.32",
+        "sections_affected": "5.2.6"
+      }
+    },
+    "i048_055_mode_1_code": {
+      "locus": "section 5.2.7",
+      "definition_quoted": "Reply to Mode-1 interrogation",
+      "format_quoted": "One octet fixed length data item.",
+      "layout": "bit-8 (V); bit-7 (G); bit-6 (L); bits-5/1 Mode-1 code",
+      "encoding_rule_quoted": "This item is optional. When used, it shall be sent when: • Mode-1 is present. Then, it represents the Mode-1 code for the plot, even if associated with a track. • Mode-1 is absent and local tracking is performed. It shall then be sent with the bit-6 (L) set to one.",
+      "note_quoted": "Bit 7 has no meaning in the case of a smoothed Mode-1 and is set to 0 for a calculated track.",
+      "the_1_24_note_addition": {
+        "change_record_entry": "Note added to data item I048/055",
+        "change_record_edition": "1.24"
+      }
+    },
+    "i048_070_mode_3a_code": {
+      "locus": "section 5.2.10",
+      "definition_quoted": "Mode-3/A code converted into octal representation.",
+      "format_quoted": "Two-octet fixed length Data Item.",
+      "layout": "bit-16 (V); bit-15 (G); bit-14 (L) 0 = Mode-3/A code derived from the reply of the transponder, 1 = Mode-3/A code not extracted during the last scan; bit-13 spare set to 0; bits-12/1 Mode-3/A reply in octal representation",
+      "encoding_rule_quoted": "• When Mode-3/A code is present, this item shall be sent. Then, it represents the Mode-3/A code for the plot, even if associated with a track. • When Mode-3/A code is absent and local tracking is performed, it shall be sent with the bit-14 (L) set to one. • For Mode S, once a Mode-3/A code is seen, that code shall be sent every scan, provided the radar is receiving replies for that aircraft.",
+      "notes_quoted": {
+        "1": "Bit 15 has no meaning in the case of a smoothed Mode-3/A code and is set to 0 for a calculated track. For Mode S, it is set to one when an error correction has been attempted.",
+        "2": "For Mode S, bit 16 is normally set to zero, but can exceptionally be set to one to indicate a non-validated Mode-3/A code (e.g. alert condition detected, but new Mode-3/A code not successfully extracted)."
+      },
+      "the_1_32_note_addition": {
+        "change_record_entry": "Note added to I048/070",
+        "change_record_edition": "1.32",
+        "sections_affected": "5.2.10"
+      },
+      "bit_14_l_semantics_differ_from_i048_050_and_i048_055": "In I048/050 and I048/055 bit L set means 'Smoothed code as provided by a local tracker'. In I048/070 bit L set means 'Mode-3/A code not extracted during the last scan'. Same flag letter, same bit position within its item, different meaning."
+    },
+    "confidence_indicator_items": {
+      "i048_060": {
+        "locus": "section 5.2.8",
+        "definition_quoted": "Confidence level for each bit of a Mode-2 reply as provided by a monopulse SSR station.",
+        "format_quoted": "Two-octet fixed length Data Item.",
+        "layout": "bits-16/13 Spare bits set to 0; bits-12/1 (QXi) = 0 High quality pulse Xi, = 1 Low quality pulse Xi",
+        "encoding_rule_quoted": "This data item is optional. When used, it shall be transmitted only when at least one pulse is of low quality. It represents the confidence level for each reply bit of the Mode-2 code of the plot."
+      },
+      "i048_065": {
+        "locus": "section 5.2.9",
+        "definition_quoted": "Confidence level for each bit of a Mode-1 reply as provided by a monopulse SSR station.",
+        "format_quoted": "One-octet fixed length Data Item.",
+        "layout": "bits-8/6 Spare bits set to zero; bits-5/1 (QXi) = 0 High quality pulse Xi, = 1 Low quality pulse Xi",
+        "encoding_rule_quoted": "This data item is optional. When used, it shall be transmitted only when at least one pulse is of low quality. It represents the confidence level for each reply bit of the Mode-1 code of the plot."
+      },
+      "i048_080": {
+        "locus": "section 5.2.11",
+        "definition_quoted": "Confidence level for each bit of a Mode-3/A reply as provided by a monopulse SSR station.",
+        "format_quoted": "Two-octet fixed length Data Item.",
+        "layout": "bits-16/13 Spare bits set to 0; bits-12/1 (QXi) = 0 High quality pulse Xi, = 1 Low quality pulse Xi",
+        "encoding_rule_quoted": "This data item is optional. When used, it shall be transmitted only when at least one pulse is of low quality. It represents the confidence level for each reply bit of the Mode-3/A code of the plot."
+      }
+    },
+    "framing": {
+      "locus": "section 4.6.2",
+      "data_block_layout_quoted": "CAT = 048 LEN FSPEC Items of the first record FSPEC Items of the last record",
+      "definitions_quoted": "• Data Category (CAT) = 048, is a one-octet field indicating that the Data Block contains radar target reports; • Length Indicator (LEN) is a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields; • FSPEC is the Field Specification.",
+      "one_uap_for_plots_and_tracks_quoted": "A single User Application Profile (UAP) is defined and shall be used whether plot or track information is provided by the radar.",
+      "plot_vs_track_quoted": "Radar target reports shall be transmitted either in the form of plots or tracks. A track is a superset of a plot, containing additional data generated by a local tracking system at the radar site.",
+      "composition_quoted": "Messages shall be composed of Data Items assembled in the order defined by the Field Reference Number (FRN) in the associated UAP. Transmitted items shall always be in a Record with the corresponding FSPEC bits set to one.",
+      "no_checksum_anywhere": "Neither section 4.6.2 nor section 4.7 nor any section 5.2 item defines a CRC, checksum or parity field at block, record or item level."
+    },
+    "spare_bits": {
+      "locus": "section 4.4",
+      "quoted": "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits. However in order to improve the readability of binary dumps of ASTERIX records, it is recommended to set all spare bits to zero.",
+      "consequence": "Zeroing is a RECOMMENDATION, so a conforming encoder may set them to anything and a byte-exact round trip requires parking them as sent. Same wording and same consequence as Category 021 section 4.3."
+    },
+    "addressing": {
+      "locus": "section 4.5.4",
+      "quoted": "By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Radar System.",
+      "radar_sensor_quoted": "In the framework of category 048 a Radar Sensor is a detection/measurement device, either of the Primary (PSR), Secondary Surveillance Radar (SSR, MSSR) or Mode S type, which uses a single rotating antenna assembly.",
+      "radar_system_quoted": "In the framework of category 048 a Radar System is a construction, consisting of either one single sensor or a combination of two sensors of different types.",
+      "combiner_quoted": "The Radar Data Combiner is a function which combines (merges) the digitized target reports (plots) from two sensors constituting one Radar System.",
+      "why_this_matters_for_the_fixtures": "Because 'a dedicated and unambiguous SAC/SIC code shall be assigned to every Radar System' is the specification's own reason not to reuse the CAT021 fixtures' SAC: an ADS-B ground station and a monoradar are not one Radar System."
+    },
+    "scope": {
+      "locus": "section 1.1",
+      "quoted": "This document describes the message structure for the transmission of monoradar target reports from a radar station (conventional Secondary Surveillance Radar (SSR), monopulse, Mode S, conventional primary radar or primary radar using Moving Target Detection (MTD) processing), to one or more Surveillance Data Processing (SDP) Systems. Monoradar target reports are data out of Data Category 048."
+    },
+    "copyright": {
+      "locus": "page 64",
+      "quoted": "© EUROCONTROL - July 2024 This document is published by EUROCONTROL for information purposes. It may be copied in whole or in part, provided that EUROCONTROL is mentioned as the source and it is not used for commercial purposes (i.e. for financial gain). The information in this document may not be modified without prior written permission from EUROCONTROL."
+    }
+  },
+  "how_this_pin_was_read": {
+    "no_pdf_library_was_available_in_this_environment": "pypdf, pymupdf and pdfminer are all absent and pip is externally managed, so the text layer was extracted with a purpose-built stdlib reader.",
+    "why_that_is_recorded": "A quotation is only as good as the extraction that produced it. Two extraction defects were found and fixed before any text here was trusted, and both would have silently corrupted quotations: (1) the document uses bare CR line terminators, so a multiline-anchored object scan found 3 of 259 objects and the first pass returned an empty document; (2) glyph runs are heavily kerned - 'Monoradar' is stored as (Mo)3(no)4(r)-15(ad)4(ar) - so word spacing had to be computed from each font's own /Widths array rather than guessed from gaps, which is what turned 'PotentialICConflict' into 'Potential IC Conflict' and 'shallbe sent' into 'shall be sent'. A NUL byte emitted by the Symbol font's Identity-H CMap was also truncating bulleted lines at display time, which made the I048/030 table look 11 codes shorter than it is.",
+    "verification_that_the_extraction_is_complete": "The I048/030 code table was read end to end and contains every code from 0 to 37 with no gaps, which is the strongest internal check available: a lossy extraction of a 38-row table shows as missing integers."
+  }
+}
