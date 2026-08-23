@@ -1,0 +1,85 @@
+{
+  "block": {
+    "category": 21,
+    "length": 42,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb113101c10104",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/020": "15",
+        "I021/040": "4140",
+        "I021/071": "2b8900",
+        "I021/080": "0029a4",
+        "I021/090": "00",
+        "I021/131": "143d50050885e71d",
+        "I021/170": "1583414d4c60",
+        "I021/210": "12",
+        "RE": "050860c1a8"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/020": {
+          "emitter_category": 21
+        },
+        "I021/040": {
+          "address_type": 2,
+          "altitude_reporting_capability": 0,
+          "confidence_level": 0,
+          "differential_correction": 0,
+          "ground_bit_set": 1,
+          "range_check": 0,
+          "report_from_field_monitor": 0,
+          "selected_altitude_not_available": 0,
+          "simulated_target": 0,
+          "test_target": 0
+        },
+        "I021/071": {
+          "time_of_day_raw": 2853120
+        },
+        "I021/080": {
+          "target_address": 10660
+        },
+        "I021/090": {
+          "nucp_or_nic": 0,
+          "nucr_or_nacv": 0
+        },
+        "I021/131": {
+          "latitude_raw": 339562501,
+          "longitude_raw": 142993181
+        },
+        "I021/170": {
+          "target_identification_raw": "EXMAST1 "
+        },
+        "I021/210": {
+          "link_technology": 2,
+          "mops_version": 2,
+          "version_not_supported": 0
+        },
+        "RE": {
+          "item_octets": {
+            "SGV": "60c1a8"
+          },
+          "items": {
+            "SGV": {
+              "aircraft_stopped": 0,
+              "ground_speed_raw": 96,
+              "heading_reference": 0,
+              "heading_track_is_ground_track": 1,
+              "heading_track_raw": 84,
+              "heading_track_valid": 1
+            }
+          },
+          "items_indicator": 8,
+          "length": 5
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "block": {
+    "category": 21,
+    "length": 33,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb113101010102",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/040": "00",
+        "I021/071": "2bca00",
+        "I021/080": "0029c1",
+        "I021/090": "00",
+        "I021/131": "147ab502087a143a",
+        "I021/210": "12",
+        "SP": "04deadbe"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/040": {
+          "address_type": 0,
+          "altitude_reporting_capability": 0,
+          "range_check": 0,
+          "report_from_field_monitor": 0
+        },
+        "I021/071": {
+          "time_of_day_raw": 2869760
+        },
+        "I021/080": {
+          "target_address": 10689
+        },
+        "I021/090": {
+          "nucp_or_nic": 0,
+          "nucr_or_nacv": 0
+        },
+        "I021/131": {
+          "latitude_raw": 343586050,
+          "longitude_raw": 142218298
+        },
+        "I021/210": {
+          "link_technology": 2,
+          "mops_version": 2,
+          "version_not_supported": 0
+        },
+        "SP": {
+          "contents": "deadbe",
+          "length": 4
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "block": {
+    "category": 21,
+    "length": 27,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb1120",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/040": "00",
+        "I021/071": "2ba200",
+        "I021/080": "0029c7",
+        "I021/090": "65a12db0",
+        "I021/131": "147ab502087a143a"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/040": {
+          "address_type": 0,
+          "altitude_reporting_capability": 0,
+          "range_check": 0,
+          "report_from_field_monitor": 0
+        },
+        "I021/071": {
+          "time_of_day_raw": 2859520
+        },
+        "I021/080": {
+          "target_address": 10695
+        },
+        "I021/090": {
+          "geometric_altitude_accuracy": 2,
+          "nac_position": 0,
+          "nic_baro": 1,
+          "nucp_or_nic": 2,
+          "nucr_or_nacv": 3,
+          "position_integrity_category": 11,
+          "sil_supplement": 1,
+          "source_integrity_level": 1,
+          "system_design_assurance": 1
+        },
+        "I021/131": {
+          "latitude_raw": 343586050,
+          "longitude_raw": 142218298
+        }
+      }
+    }
+  ]
+}

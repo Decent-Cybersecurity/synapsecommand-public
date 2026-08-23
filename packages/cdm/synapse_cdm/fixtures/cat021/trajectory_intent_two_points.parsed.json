@@ -1,0 +1,88 @@
+{
+  "block": {
+    "category": 21,
+    "length": 60,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb11310104",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/040": "00",
+        "I021/071": "2bc000",
+        "I021/080": "0029c1",
+        "I021/090": "00",
+        "I021/110": "c00002000960291a2b10a3d7700057e400000103e82962fd1048d1800059100000",
+        "I021/131": "147ab502087a143a",
+        "I021/210": "12"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/040": {
+          "address_type": 0,
+          "altitude_reporting_capability": 0,
+          "range_check": 0,
+          "report_from_field_monitor": 0
+        },
+        "I021/071": {
+          "time_of_day_raw": 2867200
+        },
+        "I021/080": {
+          "target_address": 10689
+        },
+        "I021/090": {
+          "nucp_or_nic": 0,
+          "nucr_or_nacv": 0
+        },
+        "I021/110": {
+          "trajectory_intent_not_available": 0,
+          "trajectory_intent_not_valid": 0,
+          "trajectory_intent_points": [
+            {
+              "altitude_raw": 2400,
+              "latitude_raw": 2693675,
+              "longitude_raw": 1090519,
+              "point_type": 7,
+              "tcp_non_compliance": 0,
+              "tcp_number": 0,
+              "tcp_number_not_available": 0,
+              "time_over_point_not_available": 0,
+              "time_over_point_s": 22500,
+              "turn_direction": 0,
+              "turn_radius_available": 0,
+              "turn_radius_raw": 0
+            },
+            {
+              "altitude_raw": 1000,
+              "latitude_raw": 2712317,
+              "longitude_raw": 1067217,
+              "point_type": 8,
+              "tcp_non_compliance": 0,
+              "tcp_number": 1,
+              "tcp_number_not_available": 0,
+              "time_over_point_not_available": 0,
+              "time_over_point_s": 22800,
+              "turn_direction": 0,
+              "turn_radius_available": 0,
+              "turn_radius_raw": 0
+            }
+          ]
+        },
+        "I021/131": {
+          "latitude_raw": 343586050,
+          "longitude_raw": 142218298
+        },
+        "I021/210": {
+          "link_technology": 2,
+          "mops_version": 2,
+          "version_not_supported": 0
+        }
+      }
+    }
+  ]
+}

@@ -255,6 +255,51 @@ def test_the_documented_gaps_are_still_gaps():
             "the CDM ends up with two string fields and no rule for choosing between them."
         )
 
+    # Gap 13, per-measurement time. Asserted on Position and Kinematics because that is where a
+    # measurement instant would naturally hang, and on Event because the twenty-three data ages
+    # would need somewhere too. CAT021 states TWO applicability times in one record.
+    for model in (models.Position, models.Kinematics):
+        for field in ("observed_at", "measured_at", "age_s"):
+            assert field not in model.model_fields, (
+                f"gap 13 (no per-measurement time) appears to be closed — {model.__name__}."
+                f"{field} now exists. Read that gap first: CAT021 states an applicability time "
+                "for the POSITION and a different one for the VELOCITY in the same record, and "
+                "I021/295 states twenty-three per-item ages besides. A time on two models "
+                "covers the first and none of the second, so closing half of it silently is "
+                "the risk."
+            )
+    assert "data_ages" not in models.Event.model_fields, (
+        "gap 13 appears to be closed on Event — update FORMAT_COVERAGE.md and the I021/295 row."
+    )
+
+    # Gap 14, the producing sensor. SourceRef names the ADAPTER and the SYSTEM; CAT021 names the
+    # ground station in every single record and the CDM has nowhere to put it.
+    for field in ("sensor", "sensor_id", "station", "producer"):
+        assert field not in models.SourceRef.model_fields, (
+            f"gap 14 (no producing sensor) appears to be closed — SourceRef.{field} now exists. "
+            "That gap is unproposed on purpose: a sensor is arguably an Entity of type SENSOR, "
+            "and relating an observation to it needs a relation the CDM does not have — the "
+            "same missing machinery as gap 11's hierarchy, and the two should be designed "
+            "together or the CDM acquires two kinds of dangling pointer."
+        )
+
+    # Gap 15, intent. Asserted three ways because an intent could plausibly be added as a fifth
+    # kind, as an ObjectType, or as an EventType — and the gap says the shape is the question.
+    assert "intent" not in models.KINDS, (
+        "gap 15 (no intent) appears to be closed with a fifth canonical object. Update "
+        "FORMAT_COVERAGE.md, MIGRATIONS.md and the I021/110, I021/146, I021/148, REF/SelH and "
+        "REF/NAV rows, which park their values today."
+    )
+    from synapse_cdm.enums import EventType as _EventType, ObjectType as _ObjectType
+    assert not any(member.name.startswith("INTENT") for member in _EventType), (
+        "gap 15 appears to be closed with an EventType. That is one of the two honest shapes — "
+        "write the decision down in MIGRATIONS.md before the member."
+    )
+    assert not any(member.name.startswith("INTENT") for member in _ObjectType), (
+        "gap 15 appears to be closed with an ObjectType. Read that gap first: PlanObject models "
+        "OUR plan drawn on somebody else's map, and a target's declared future is not that."
+    )
+
 
 # The Picogrid Legion row set is a SPECIFICATION: adapter #5 does not exist yet. These two
 # tests pin it in the only two ways available before there is code — the size of the row set,

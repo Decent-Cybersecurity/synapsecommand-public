@@ -1,0 +1,88 @@
+{
+  "block": {
+    "category": 21,
+    "length": 48,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb117b19c104",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/020": "03",
+        "I021/040": "00",
+        "I021/070": "08b9",
+        "I021/071": "2b8400",
+        "I021/080": "0029c1",
+        "I021/090": "00",
+        "I021/131": "147ab502087a143a",
+        "I021/140": "04c0",
+        "I021/145": "03e8",
+        "I021/157": "00c0",
+        "I021/160": "07d253e9",
+        "I021/170": "1584834f0c60",
+        "I021/210": "12",
+        "I021/400": "07"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/020": {
+          "emitter_category": 3
+        },
+        "I021/040": {
+          "address_type": 0,
+          "altitude_reporting_capability": 0,
+          "range_check": 0,
+          "report_from_field_monitor": 0
+        },
+        "I021/070": {
+          "mode_3a_raw": 2233
+        },
+        "I021/071": {
+          "time_of_day_raw": 2851840
+        },
+        "I021/080": {
+          "target_address": 10689
+        },
+        "I021/090": {
+          "nucp_or_nic": 0,
+          "nucr_or_nacv": 0
+        },
+        "I021/131": {
+          "latitude_raw": 343586050,
+          "longitude_raw": 142218298
+        },
+        "I021/140": {
+          "geometric_height_raw": 1216
+        },
+        "I021/145": {
+          "flight_level_raw": 1000
+        },
+        "I021/157": {
+          "range_exceeded": 0,
+          "vertical_rate_raw": 192
+        },
+        "I021/160": {
+          "ground_speed_raw": 2002,
+          "range_exceeded": 0,
+          "track_angle_raw": 21481
+        },
+        "I021/170": {
+          "target_identification_raw": "EXRCS01 "
+        },
+        "I021/210": {
+          "link_technology": 2,
+          "mops_version": 2,
+          "version_not_supported": 0
+        },
+        "I021/400": {
+          "receiver_id": 7
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "address_type": "anonymous address",
+      "address_type_raw": 3,
+      "affiliation_basis": "UNKNOWN. Everything in a CAT021 target report except the ground station's own flags originated as an unauthenticated cooperative broadcast: it states an identity \u2014 a target identification, an emitter category, an address \u2014 with no integrity mechanism behind it, so reading one as an identification would be reading a spoofable claim",
+      "cat021_block": {
+        "category": 21,
+        "length": 34,
+        "record_count": 1
+      },
+      "cat021_fspec": "cb113101c0",
+      "cat021_items": {
+        "I021/010": "2929",
+        "I021/020": "18",
+        "I021/040": "60",
+        "I021/071": "2bb100",
+        "I021/080": "0029b0",
+        "I021/090": "00",
+        "I021/131": "1467d69107aa7e65",
+        "I021/170": "1583414d4c60",
+        "I021/210": "12"
+      },
+      "cat021_position": {
+        "item": "I021/131",
+        "latitude_raw": 342349457,
+        "longitude_raw": 128613989,
+        "lsb_deg": 1.6763806343078613e-07
+      },
+      "cat021_record_index": 0,
+      "cat021_times": {
+        "I021/071": 2863360
+      },
+      "data_source": {
+        "sac": 41,
+        "sic": 41
+      },
+      "emitter_category": 24,
+      "emitter_category_text": "line obstacle",
+      "entity_id_basis": "I021/080 target address, filed under ADSB_NONICAO",
+      "integrity_basis": "ASTERIX carries NO checksum at any level \u2014 not on the data block, not on a record, not on an item \u2014 so unlike a 1090ES frame this record was not verified, it was PARSED. What it passed is a structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined FRN, every variable item terminated inside the record, and the four mandatory items were present. A single bit flipped inside a fixed-length field would satisfy all of that",
+      "link_technology": "1090 ES",
+      "mops_version": 2,
+      "mops_version_text": "ED-102A / DO-260B (ADS-B Version 2)",
+      "position_basis": "I021/131, two's complement, LSB 180/2^30 = 1.676380634307861e-07 degrees (at least 2 cm). WGS-84 already, so there is NO datum conversion and no ellipsoid to name \u2014 the only transform is the scaling, and it is exact in binary. The raw integers are re-emitted verbatim at attributes.cat021_position: the source coordinates are the record and this Position is a derived, one-way view of them",
+      "position_source_basis": "GNSS. A CAT021 position originated as the aircraft's own GNSS fix; the ground station CPR-decoded it upstream, which is why this adapter has no CPR decision to make and adsb.py does",
+      "quality_basis": "I021/210 states MOPS version 2 (ED-102A / DO-260B (ADS-B Version 2)), so I021/090's primary subfield reads as NACv / NIC (ADS-B Version 1 or higher). Every value in this item is a CATEGORY or a containment BOUND, so none of it reaches Position.accuracy_m \u2014 which is one horizontal 1-sigma figure in metres \u2014 or Entity.confidence, which is a confidence in the object's identity. PIC is the sharpest case: it states a bound in nautical miles and is still not a standard deviation",
+      "source_extras": {
+        "items": {
+          "I021/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I021/020": {
+            "emitter_category": 24
+          },
+          "I021/040": {
+            "address_type": 3,
+            "altitude_reporting_capability": 0,
+            "range_check": 0,
+            "report_from_field_monitor": 0
+          },
+          "I021/071": {
+            "time_of_day_raw": 2863360
+          },
+          "I021/080": {
+            "target_address": 10672
+          },
+          "I021/090": {
+            "nucp_or_nic": 0,
+            "nucr_or_nacv": 0
+          },
+          "I021/131": {
+            "latitude_raw": 342349457,
+            "longitude_raw": 128613989
+          },
+          "I021/170": {
+            "target_identification_raw": "EXMAST1 "
+          },
+          "I021/210": {
+            "link_technology": 2,
+            "mops_version": 2,
+            "version_not_supported": 0
+          }
+        }
+      },
+      "symbol_basis": "derived from affiliation; CAT021 states no symbol",
+      "target_address": "0029B0",
+      "target_identification": "EXMAST1",
+      "target_identification_raw": "EXMAST1 ",
+      "valid_from_basis": "I021/071, the time of applicability of the POSITION \u2014 the aircraft's own synchronised measurement instant, and the best answer this format has. CAT021 states a time of DAY and never a date: 22370.0000000 s since midnight UTC. The date is the injected clock's, and the instant chosen is the one bearing that time of day NEAREST the receipt instant. The raw wire integer is parked at attributes.cat021_times: 1/128 s is not a whole number of milliseconds, so a value recomputed from this timestamp would lose the remainder"
+    },
+    "confidence": null,
+    "entity_id": "f05da512-33fe-5113-8079-55ec779daf21",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.3907999881,
+      "lon": 21.5606000461,
+      "position_source": "GNSS"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat021",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT021"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029B0",
+        "system": "ADSB_NONICAO"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:12:50.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ae3b00e8-c7b7-5440-a4da-7c3f71cb9523",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:12:50.000Z",
+    "payload": {
+      "cat021_record_count": 1,
+      "cat021_record_index": 0,
+      "event_id_basis": "I021/080 target address + observed_at",
+      "observed_at_basis": "I021/071, the time of applicability of the POSITION \u2014 the aircraft's own synchronised measurement instant, and the best answer this format has. CAT021 states a time of DAY and never a date: 22370.0000000 s since midnight UTC. The date is the injected clock's, and the instant chosen is the one bearing that time of day NEAREST the receipt instant. The raw wire integer is parked at attributes.cat021_times: 1/128 s is not a whole number of milliseconds, so a value recomputed from this timestamp would lose the remainder",
+      "received_at_basis": "the injected clock. CAT021 states seven times and not one of them is ours: I021/073 and I021/075 are receipt instants at the GROUND STATION, which is a different party, and I021/077 is when it transmitted the report",
+      "severity_basis": "no emergency is declared. INFO records that the format is SILENT here \u2014 I021/200's priority status, surveillance status and military emergency bit, and REF/STA's Version 3 priority status, all read as no condition \u2014 and not that a translator judged the flight to be calm"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "f05da512-33fe-5113-8079-55ec779daf21"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat021",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT021"
+    },
+    "source_ids": [
+      {
+        "external_id": "0029B0",
+        "system": "ADSB_NONICAO"
+      }
+    ]
+  }
+]

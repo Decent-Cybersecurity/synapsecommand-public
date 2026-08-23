@@ -1,0 +1,79 @@
+{
+  "block": {
+    "category": 21,
+    "length": 41,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb117149c0",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/020": "03",
+        "I021/040": "00",
+        "I021/071": "2b9800",
+        "I021/080": "0029c1",
+        "I021/090": "00",
+        "I021/131": "14aa362907a4fa50",
+        "I021/140": "1360",
+        "I021/160": "0817bc72",
+        "I021/170": "1584834f0c60",
+        "I021/200": "54",
+        "I021/210": "12"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/020": {
+          "emitter_category": 3
+        },
+        "I021/040": {
+          "address_type": 0,
+          "altitude_reporting_capability": 0,
+          "range_check": 0,
+          "report_from_field_monitor": 0
+        },
+        "I021/071": {
+          "time_of_day_raw": 2856960
+        },
+        "I021/080": {
+          "target_address": 10689
+        },
+        "I021/090": {
+          "nucp_or_nic": 0,
+          "nucr_or_nacv": 0
+        },
+        "I021/131": {
+          "latitude_raw": 346699305,
+          "longitude_raw": 128252496
+        },
+        "I021/140": {
+          "geometric_height_raw": 4960
+        },
+        "I021/160": {
+          "ground_speed_raw": 2071,
+          "range_exceeded": 0,
+          "track_angle_raw": 48242
+        },
+        "I021/170": {
+          "target_identification_raw": "EXRCS01 "
+        },
+        "I021/200": {
+          "intent_change_flag": 0,
+          "lnav_mode_raw": 1,
+          "military_emergency": 0,
+          "priority_status": 5,
+          "surveillance_status": 0
+        },
+        "I021/210": {
+          "link_technology": 2,
+          "mops_version": 2,
+          "version_not_supported": 0
+        }
+      }
+    }
+  ]
+}

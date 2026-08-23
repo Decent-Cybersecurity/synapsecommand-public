@@ -1,0 +1,61 @@
+{
+  "block": {
+    "category": 21,
+    "length": 34,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "cb113101c0",
+      "index": 0,
+      "item_octets": {
+        "I021/010": "2929",
+        "I021/020": "18",
+        "I021/040": "60",
+        "I021/071": "2bb100",
+        "I021/080": "0029b0",
+        "I021/090": "00",
+        "I021/131": "1467d69107aa7e65",
+        "I021/170": "1583414d4c60",
+        "I021/210": "12"
+      },
+      "items": {
+        "I021/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I021/020": {
+          "emitter_category": 24
+        },
+        "I021/040": {
+          "address_type": 3,
+          "altitude_reporting_capability": 0,
+          "range_check": 0,
+          "report_from_field_monitor": 0
+        },
+        "I021/071": {
+          "time_of_day_raw": 2863360
+        },
+        "I021/080": {
+          "target_address": 10672
+        },
+        "I021/090": {
+          "nucp_or_nic": 0,
+          "nucr_or_nacv": 0
+        },
+        "I021/131": {
+          "latitude_raw": 342349457,
+          "longitude_raw": 128613989
+        },
+        "I021/170": {
+          "target_identification_raw": "EXMAST1 "
+        },
+        "I021/210": {
+          "link_technology": 2,
+          "mops_version": 2,
+          "version_not_supported": 0
+        }
+      }
+    }
+  ]
+}
