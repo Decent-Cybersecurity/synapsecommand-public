@@ -1,0 +1,53 @@
+{
+  "header": {
+    "P1": "41",
+    "P10": 77,
+    "P2": 164,
+    "P3": "ZZ",
+    "P4": 5,
+    "P5": "ZZ",
+    "P6": 65,
+    "P7": 129,
+    "P8": "ZZSYN00001",
+    "P9": 4242
+  },
+  "segments": [
+    {
+      "fields": {
+        "M1": "SYNMSN0001",
+        "M2": "SYNFLT0001",
+        "M3": 200,
+        "M4": "SYN-CFG-1",
+        "M5": 2026,
+        "M6": 4,
+        "M7": 29
+      },
+      "ordinal": 0,
+      "size": 44,
+      "type": 1
+    },
+    {
+      "fields": {
+        "F1": "SYNORIG",
+        "F2": "SYNRECIP",
+        "F3": "SYNTHETIC FIXTURE MESSAGE, LINE ONE\nLINE TWO"
+      },
+      "ordinal": 1,
+      "size": 69,
+      "type": 6
+    },
+    {
+      "fields": {
+        "T1": 77,
+        "T2": 3,
+        "T3": 11,
+        "T4": 30601000,
+        "T5": 16,
+        "T6": 16
+      },
+      "ordinal": 2,
+      "size": 19,
+      "type": 10
+    }
+  ]
+}

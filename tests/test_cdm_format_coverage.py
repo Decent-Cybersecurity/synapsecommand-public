@@ -1455,11 +1455,13 @@ def test_the_gmtif_row_set_is_the_size_a_212_field_format_needs():
     The per-segment test above passes if every identifier appears anywhere in the section, so it
     cannot see a row that was merged into another or a table that lost its header. This counts
     actual rows carrying the status marker, which is the thing a merged row destroys.
+
+    The marker it counts changed when Phase 2 landed: it was `not yet` while the row set was a
+    specification and it is `gmti 1.0.0` now that `adapters/gmtif.py` runs it.
     """
     section = _section(GMTIF_HEADING)
-    flat = _flat(section)
     rows = [line for line in section.splitlines()
-            if line.startswith("| `") and "`not yet`" in line]
+            if line.startswith("| `") and "`gmti 1.0.0" in line]
     expected = sum(len(v) for v in GMTIF_FIELDS.values())
     assert expected == 212, f"the inventory itself has drifted: {expected} fields, not 212"
     assert len(rows) >= expected, (
@@ -1468,37 +1470,42 @@ def test_the_gmtif_row_set_is_the_size_a_212_field_format_needs():
     )
 
 
-def test_no_gmtif_row_claims_an_adapter_that_does_not_exist():
-    """The status column must not claim code nobody has written. This is the direction that matters.
+def test_the_gmtif_row_set_claims_the_adapter_that_now_implements_it():
+    """The status column has to move when the code does, in BOTH directions.
 
-    A marker saying `gmtif 1.0.0` while `adapters/gmtif.py` is absent is precisely what the Edition
-    A STANAG 4676 placeholder was doing for as long as it stood, and it is the failure this column
-    exists to prevent. When the adapter lands, this test inverts — as the NITS one did — and starts
-    failing on rows that still say `not yet`.
+    This test was the opposite of itself through Phase 1: it asserted that NO row said
+    `gmti 1.0.0`, because a status marker claiming an adapter that does not exist is the one thing
+    this table exists to prevent — and it is exactly what the Edition A STANAG 4676 placeholder had
+    been doing for as long as it stood. `adapters/gmtif.py` now exists, so the risk is the inverse:
+    a row still saying `not yet` is a shipped mapping nobody updated the document for. Inverted
+    rather than deleted, so the reversal is readable in the history.
     """
     import synapse_cdm.adapters as _adapters
     module = pathlib.Path(_adapters.__file__).resolve().parent / "gmtif.py"
+    codec_module = module.with_name("gmtif_codec.py")
+    assert module.exists() and codec_module.exists(), (
+        "adapters/gmtif.py or adapters/gmtif_codec.py is gone. If the adapter is being withdrawn, "
+        "this test inverts back and every row returns to `not yet` in the same commit"
+    )
     section = _section(GMTIF_HEADING)
-    flat = _flat(section)
     rows = [line for line in section.splitlines()
             if line.startswith("|") and not line.startswith("|---")]
-    claimed = [line for line in rows if "gmtif 1.0.0" in line]
-    if module.exists():
-        pytest.fail(
-            "adapters/gmtif.py now exists, so this test has to be inverted the way "
-            "test_the_nits_row_set_claims_its_adapter was: flip every GMTIF row from `not yet` to "
-            "its marker, add the marker to the status-column legend, and assert that no row is "
-            "left saying `not yet`"
-        )
-    assert not claimed, (
-        f"{len(claimed)} GMTIF row(s) claim a `gmtif 1.0.0` marker while adapters/gmtif.py does "
-        f"not exist: {[r[:90] for r in claimed[:3]]}. An unimplemented row is a specification and "
-        "must say so"
+    stale = [line for line in rows if "`not yet`" in line]
+    assert not stale, (
+        f"{len(stale)} GMTIF row(s) still say `not yet` while adapters/gmtif.py implements the row "
+        f"set: {[r[:90] for r in stale[:3]]}"
     )
-    assert "`not yet`" in section, "the GMTIF row set has stopped saying `not yet` at all"
-    assert "adapters/gmtif.py` does not exist" in flat, (
-        "the section must state that no adapter implements it, in the prose as well as in the "
-        "status column"
+    assert "adapters/gmtif.py" in section and "adapters/gmtif_codec.py" in section, (
+        "the row set must name both modules that implement it — the codec is a layer of its own "
+        "with its own test suite, and a reader looking for the byte handling has to be sent there"
+    )
+    legend = _section("## The status column")
+    for marker in ("`gmti 1.0.0`", "`gmti 1.0.0 · parked`", "`gmti 1.0.0 · egress`"):
+        assert marker in legend, f"the legend does not define the marker {marker} the rows use"
+    assert "· provisional" not in _flat(section), (
+        "a `· provisional` qualifier has appeared on a GMTIF row. Unlike NITS, nothing here is "
+        "provisional: a binary format's field offsets are fixed by the standard's own byte tables, "
+        "those tables are in the pinned document, and the layouts are summed against them"
     )
 
 

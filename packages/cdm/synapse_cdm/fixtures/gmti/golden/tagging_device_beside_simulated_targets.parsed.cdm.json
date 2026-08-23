@@ -1,0 +1,560 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "accuracy_basis": "None, always. The format states twelve uncertainty figures and not one is a single horizontal 1-sigma metre value: D12 and D13 are two orthogonal horizontal components in centimetres and reducing them to one scalar means choosing an RSS, a semi-major axis or a DRMS the source did not state; D32.12 is a SLANT-range standard deviation, which is not a horizontal error without a grazing angle the format never gives; and J22, the nominal fallback \u00a73.7.16 mandates, is an angle in degrees. None means unknown accuracy, never perfect",
+      "affiliation_basis": "UNKNOWN. GMTIF states no affiliation, no IFF, no identity and no allegiance anywhere in any segment \u2014 it is a radar detection format and a Doppler return carries no allegiance. P3 Nationality is the PLATFORM's country and is parked at attributes.platform_nationality; reading it as an affiliation would invent a coalition membership from a country code",
+      "alt_datum_basis": "Metres HAE. \u00a73.4.9, \u00a73.15.4 and \u00a73.4.32.6 each say \"above the WGS 84 ellipsoid\" without qualification, and the standard is followed \u2014 but guide \u00a7E.8 says heights are measured \"either from the reference ellipsoid, or from mean sea level if a geoid model is being used\", and the two readings differ by the geoid undulation, up to about 105 m. The declared models are parked at J27/J28",
+      "confidentiality_label": {
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "classification": "UNCLASSIFIED",
+        "code_bits": [
+          6,
+          0
+        ],
+        "system": "ZZ"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source packet",
+      "coverage_basis": "the dwell area (D24-D27), the bounding area (J6-J13), the minimum detectable velocity (D31/J24), the detection probability (J25) and the false alarm density (J26) are parked and none becomes a Geometry. Guide \u00a7D.2: \"the fact that the radar has looked at a particular area and found no targets can be just as important as receiving targets in an area\" \u2014 and the CDM has no object for a searched area, so a Dwell Segment with D5 = 0 produces a platform sample and nothing else. Gap 22",
+      "entity_key_basis": "P3 + P8 = ZZ/ZZSYN00001. \u00a73.1.8 makes the owning nation responsible for its platforms being \"uniquely identified within the set of platforms it owns\", so this is the one globally unique identifier in the format and the only SourceId this adapter mints from a stated key",
+      "gmti_packet": {
+        "P1": "41",
+        "P10": 77,
+        "P2": 166,
+        "P3": "ZZ",
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "P7": 1,
+        "P8": "ZZSYN00001",
+        "P9": 4242
+      },
+      "gmti_segments": [
+        {
+          "fields": {
+            "M1": "SYNMSN0001",
+            "M2": "SYNFLT0001",
+            "M3": 200,
+            "M4": "SYN-CFG-1",
+            "M5": 2026,
+            "M6": 4,
+            "M7": 29
+          },
+          "ordinal": 0,
+          "size": 44,
+          "type": 1
+        },
+        {
+          "fields": {
+            "D2": 3,
+            "D24": 57.05000001937151,
+            "D25": 24.40000000409782,
+            "D26": 12.5,
+            "D27": 1.4996337890625,
+            "D3": 11,
+            "D4": 1,
+            "D5": 3,
+            "D6": 30600000,
+            "D7": 57.30999999213964,
+            "D8": 24.72000002861023,
+            "D9": 850000
+          },
+          "mask": 18374690609299849216,
+          "ordinal": 1,
+          "size": 90,
+          "targets": [
+            {
+              "D32.10": 142,
+              "D32.16": 64,
+              "D32.17": 909001,
+              "D32.2": 57.20000000204891,
+              "D32.3": 24.600000008940697
+            },
+            {
+              "D32.10": 129,
+              "D32.16": 3,
+              "D32.17": 909002,
+              "D32.2": 57.2099999897182,
+              "D32.3": 24.6100000385195
+            },
+            {
+              "D32.10": 200,
+              "D32.16": 0,
+              "D32.17": 0,
+              "D32.2": 57.220000019297004,
+              "D32.3": 24.619999984279275
+            }
+          ],
+          "type": 2
+        }
+      ],
+      "integrity_basis": "the packet passed structural checks and nothing more: P2 against the byte count, each S2 against the segment boundaries, and each existence mask against its field sequence. \u00a72.2 puts error detection in \"the lower layers of the communications media\", so GMTIF carries no checksum or cryptographic protection of any kind",
+      "job_definition_count": 0,
+      "kinematics_basis": "the last positioned sample states no velocity (D15/D16/D17 absent), and it is never back-filled from an earlier sample",
+      "platform_id": "ZZSYN00001",
+      "platform_nationality": "ZZ",
+      "platform_track_basis": {
+        "counts": {
+          "dwell_center": 1
+        },
+        "mixed": false,
+        "note": "D6 is \"the temporal center of the dwell\" (\u00a73.4.6) and L1 is \"the time the report is prepared\" (\u00a73.15.1) \u2014 a midpoint of an interval whose duration the format never states, and a producer's authoring instant. A consumer interpolating or averaging across a MIXED run would be mixing an observation midpoint with an authoring timestamp, so a mixed track is the one it must not smooth. The samples belong to one Track because P3 + P8 identifies the platform in the shared Packet Header and each segment states its own instant, not because guide \u00a7E.8 says the two positions coincide \u2014 that sentence is silent about the instants and cannot license an ordered list"
+      },
+      "platform_track_points": [
+        {
+          "observed_at": "2026-04-29T08:30:00.000Z",
+          "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+          "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+          "sample_index": 0,
+          "segment_ordinal": 1,
+          "source_segment": "dwell",
+          "time_basis": "dwell_center"
+        }
+      ],
+      "position_basis": "the last platform position in the packet (sample 0, from the dwell segment). Position and kinematics come from the SAME sample: taking them from different samples would put two instants into one Entity with nothing recording the offset",
+      "position_source_basis": "ESTIMATED. The platform's position comes from a navigation system the format never names, so GNSS would be a fabrication \u2014 and it is the one value whose wrongness costs something in a PNT-denied environment",
+      "processing_history_absent": true,
+      "processing_history_basis": "no Processing History Segment. Guide FAQ Q11: \"if processing is not applied to the original radar job, then the Processing History Segment is not transmitted\", so its absence means the data are unmodified \u2014 a fact worth recording rather than an absence of one",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "symbol_basis": "None. symbology.sidc_from_affiliation needs an affiliation, and composing a symbol from a target classification alone would draw one with an invented standard identity",
+      "synthetic_basis": "P7 = 1 ('Operation, Simulated Data') parked verbatim: programme 'operation', provenance 'simulated'. It NEVER sets source.synthetic, which is the deployment declaration (True) \u2014 agreement is not an exception to that rule",
+      "target_classification_conflict_basis": "1 target report(s) declare a simulated classification ([129]) and P7's provenance is 'simulated', which does not contradict them. The classification is parked in full and never sets source.synthetic",
+      "track_quality_basis": "None. GMTIF states no track quality because it states no track. J25 Nominal Detection Probability is the probability that \"an unobscured ten square-meter target will be detected\" \u2014 a sensor performance figure about a hypothetical target, not a quality of this history",
+      "unresolved_raw": [
+        "M3 Platform Type = 200, which Table 3-8 leaves \"Available for Future Use\"",
+        "D32.10 = 200, which Table 3-11 reserves"
+      ],
+      "valid_from_basis": "the last platform position in the packet (sample 0, from the dwell segment). Position and kinematics come from the SAME sample: taking them from different samples would put two instants into one Entity with nothing recording the offset",
+      "valid_to_basis": "None. A GMTI packet states where the platform was at an instant and makes no claim about when that ceased to be true"
+    },
+    "confidence": null,
+    "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 8500.0,
+      "lat": 57.30999999213964,
+      "lon": 24.72000002861023,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001",
+        "system": "GMTIF-PLATFORM"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T08:30:00.000Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
+    "integrity": null,
+    "object_kind": "track",
+    "samples": [
+      {
+        "observed_at": "2026-04-29T08:30:00.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 8500.0,
+          "lat": 57.30999999213964,
+          "lon": 24.72000002861023,
+          "position_source": "ESTIMATED"
+        }
+      }
+    ],
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001",
+        "system": "GMTIF-PLATFORM"
+      }
+    ],
+    "track_id": "3c8b288f-c8c1-5628-9eb3-d3dff85cc78f",
+    "track_quality": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "accuracy_basis": "None. D32.12 is a SLANT-range standard deviation and projecting it to a ground error needs a grazing angle the format never states; D32.13 is a cross-range figure in decimetres, orthogonal to it, and combining two orthogonal components into one scalar means choosing a convention the source did not",
+      "affiliation_basis": "UNKNOWN. GMTIF states no affiliation, no IFF and no identity anywhere",
+      "confidence_basis": "None. D32.11 is \"the estimated probability that the target classification appearing in field D32.10 is correctly classified\" \u2014 a confidence about the CLASSIFICATION \u2014 and Entity.confidence is a bare float with no stated subject, so writing 70 there would say \"we are 70% sure this object exists\" about a source that said \"we are 70% sure it is a wheeled vehicle\". Gap 18",
+      "confidentiality_label": {
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "classification": "UNCLASSIFIED",
+        "code_bits": [
+          6,
+          0
+        ],
+        "system": "ZZ"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source packet",
+      "entity_key_basis": "P3/P8/P9/P10/D2/D3 plus the Dwell Segment's ordinal position in the packet and the report's ordinal position in the segment: 'ZZ/ZZSYN00001/4242/77/3/11/s1/r0'. The last two are POSITIONAL and therefore not stable under any re-segmentation of the packet \u2014 and \u00a73.4.32 permits exactly that re-segmentation (\"targets detected within a dwell may be split among multiple Dwell Segments\"), as does guide \u00a7D.2. D32.1 MTI Report Index is dwell-scoped by its own definition and Conditional besides, so there is nothing stabler to key on. Gap 20",
+      "entity_type_basis": "D32.10 = 142 ('Tagging Device') -> UNKNOWN; the value that breaks the halves, and the EXEMPTION FROM THE INTRA-PAYLOAD SIMULATION CHECK IS KEYED ON THIS LABEL rather than on 142. \u00a73.4.32.16's condition is a disjunction \u2014 \"simulated OR a tagging device is detected\" \u2014 so the standard itself treats a tag as distinct from simulation, and the label has been carried by 140, then 143, then 142 across three editions",
+      "gmti_target_report": {
+        "D32.10": 142,
+        "D32.16": 64,
+        "D32.17": 909001,
+        "D32.2": 57.20000000204891,
+        "D32.3": 24.600000008940697
+      },
+      "kinematics_basis": "None. D32.7 is \"the component of velocity \u2026 along the line of sight\", one component of a vector whose tangential part is physically unobservable to a single-look MTI radar \u2014 so the target's speed is unknown (the radial component is a LOWER BOUND, and writing a lower bound into speed_mps would state a measurement nobody made) and its course is unknown. D32.7 and D32.8 park in full and the Doppler un-wrapping D32.8 invites is not performed: \u00a73.4.32.8 addresses it to \"the tracker\" and makes the multiple depend on an expected speed nobody stated. Gap 21",
+      "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+      "position_basis": "hi_res: D32.2/D32.3 as SA32/BA32, exact binary-angle conversions with a 4.7 mm and 9.3 mm LSB respectively",
+      "position_source_basis": "ESTIMATED. A target position is a radar geolocation through the terrain and geoid models J27/J28 \u2014 processing code 0x2000 \"Target Coordinate Conversion\" says so outright. Never GNSS: the target did not report itself",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "symbol_basis": "None; there is no affiliation to derive one from",
+      "synthetic_basis": "P7 = 1 ('Operation, Simulated Data') parked verbatim: programme 'operation', provenance 'simulated'. It NEVER sets source.synthetic, which is the deployment declaration (True) \u2014 agreement is not an exception to that rule",
+      "target_classification": 142,
+      "target_classification_text": "Tagging Device",
+      "track_basis": "no Track. Associating target reports across dwells is what a GMTI tracker does, and guide FAQ Q10 says the way to do it \"is best recommended by the sensor manufacturer as it may depend on the sensor's particular design purpose and mission\" \u2014 a format whose own implementation guide sends the reader to the vendor for the association rule is not one a translator may invent one for",
+      "valid_to_basis": "None, and it is the least satisfactory statement in this row set. A GMTI detection asserts existence at ONE instant and asserts nothing afterwards: valid_to = valid_from would say the object ceased to exist immediately, which is false, and None reads as \"still current\" to anything holding state. There is no third option in the model. Gap 20"
+    },
+    "confidence": null,
+    "entity_id": "9bd19044-63ca-5e40-89ea-bf3f8e812a49",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.20000000204891,
+      "lon": 24.600000008940697,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s1/r0",
+        "system": "GMTIF-TARGET"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T08:30:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "cd2cea34-73ed-5f16-a4bf-26fa8c697cb8",
+    "event_type": "DETECTION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T08:30:00.000Z",
+    "payload": {
+      "geometry_basis": "None. The fix lives on the Entity this event's related_entities names, matching asterix_cat021.py and adsb.py: duplicating one measurement into two objects invites the two to diverge",
+      "gmti_dwell": {
+        "D2": 3,
+        "D24": 57.05000001937151,
+        "D25": 24.40000000409782,
+        "D26": 12.5,
+        "D27": 1.4996337890625,
+        "D3": 11,
+        "D4": 1,
+        "D5": 3,
+        "D6": 30600000,
+        "D7": 57.30999999213964,
+        "D8": 24.72000002861023,
+        "D9": 850000
+      },
+      "gmti_target_report": {
+        "D32.10": 142,
+        "D32.16": 64,
+        "D32.17": 909001,
+        "D32.2": 57.20000000204891,
+        "D32.3": 24.600000008940697
+      },
+      "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "severity_basis": "INFO. GMTIF grades nothing \u2014 there is no severity, priority-of-threat or alert level anywhere in the format. J5 and R3 are tasking priorities and are parked"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "9bd19044-63ca-5e40-89ea-bf3f8e812a49"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s1/r0",
+        "system": "GMTIF-TARGET"
+      }
+    ]
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "accuracy_basis": "None. D32.12 is a SLANT-range standard deviation and projecting it to a ground error needs a grazing angle the format never states; D32.13 is a cross-range figure in decimetres, orthogonal to it, and combining two orthogonal components into one scalar means choosing a convention the source did not",
+      "affiliation_basis": "UNKNOWN. GMTIF states no affiliation, no IFF and no identity anywhere",
+      "confidence_basis": "None. D32.11 is \"the estimated probability that the target classification appearing in field D32.10 is correctly classified\" \u2014 a confidence about the CLASSIFICATION \u2014 and Entity.confidence is a bare float with no stated subject, so writing 70 there would say \"we are 70% sure this object exists\" about a source that said \"we are 70% sure it is a wheeled vehicle\". Gap 18",
+      "confidentiality_label": {
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "classification": "UNCLASSIFIED",
+        "code_bits": [
+          6,
+          0
+        ],
+        "system": "ZZ"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source packet",
+      "entity_key_basis": "P3/P8/P9/P10/D2/D3 plus the Dwell Segment's ordinal position in the packet and the report's ordinal position in the segment: 'ZZ/ZZSYN00001/4242/77/3/11/s1/r1'. The last two are POSITIONAL and therefore not stable under any re-segmentation of the packet \u2014 and \u00a73.4.32 permits exactly that re-segmentation (\"targets detected within a dwell may be split among multiple Dwell Segments\"), as does guide \u00a7D.2. D32.1 MTI Report Index is dwell-scoped by its own definition and Conditional besides, so there is nothing stabler to key on. Gap 20",
+      "entity_type_basis": "D32.10 = 129 ('Tracked Vehicle, Simulated Target') -> PLATFORM; the type half is READ and the simulated half is only RECORDED \u2014 it does not set source.synthetic. Note that 128 + n maps to n for n = 0..13 and for no other n: 144-148 mirror 14-18 at an offset of +130, so this is a lookup and never arithmetic",
+      "gmti_target_report": {
+        "D32.10": 129,
+        "D32.16": 3,
+        "D32.17": 909002,
+        "D32.2": 57.2099999897182,
+        "D32.3": 24.6100000385195
+      },
+      "kinematics_basis": "None. D32.7 is \"the component of velocity \u2026 along the line of sight\", one component of a vector whose tangential part is physically unobservable to a single-look MTI radar \u2014 so the target's speed is unknown (the radial component is a LOWER BOUND, and writing a lower bound into speed_mps would state a measurement nobody made) and its course is unknown. D32.7 and D32.8 park in full and the Doppler un-wrapping D32.8 invites is not performed: \u00a73.4.32.8 addresses it to \"the tracker\" and makes the multiple depend on an expected speed nobody stated. Gap 21",
+      "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+      "position_basis": "hi_res: D32.2/D32.3 as SA32/BA32, exact binary-angle conversions with a 4.7 mm and 9.3 mm LSB respectively",
+      "position_source_basis": "ESTIMATED. A target position is a radar geolocation through the terrain and geoid models J27/J28 \u2014 processing code 0x2000 \"Target Coordinate Conversion\" says so outright. Never GNSS: the target did not report itself",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "symbol_basis": "None; there is no affiliation to derive one from",
+      "synthetic_basis": "P7 = 1 ('Operation, Simulated Data') parked verbatim: programme 'operation', provenance 'simulated'. It NEVER sets source.synthetic, which is the deployment declaration (True) \u2014 agreement is not an exception to that rule",
+      "target_classification": 129,
+      "target_classification_text": "Tracked Vehicle, Simulated Target",
+      "track_basis": "no Track. Associating target reports across dwells is what a GMTI tracker does, and guide FAQ Q10 says the way to do it \"is best recommended by the sensor manufacturer as it may depend on the sensor's particular design purpose and mission\" \u2014 a format whose own implementation guide sends the reader to the vendor for the association rule is not one a translator may invent one for",
+      "valid_to_basis": "None, and it is the least satisfactory statement in this row set. A GMTI detection asserts existence at ONE instant and asserts nothing afterwards: valid_to = valid_from would say the object ceased to exist immediately, which is false, and None reads as \"still current\" to anything holding state. There is no third option in the model. Gap 20"
+    },
+    "confidence": null,
+    "entity_id": "e0b81667-4039-56b5-af47-09ef035cb385",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.2099999897182,
+      "lon": 24.6100000385195,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s1/r1",
+        "system": "GMTIF-TARGET"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T08:30:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "1822462d-7d85-5413-8224-4c5c8a2df513",
+    "event_type": "DETECTION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T08:30:00.000Z",
+    "payload": {
+      "geometry_basis": "None. The fix lives on the Entity this event's related_entities names, matching asterix_cat021.py and adsb.py: duplicating one measurement into two objects invites the two to diverge",
+      "gmti_dwell": {
+        "D2": 3,
+        "D24": 57.05000001937151,
+        "D25": 24.40000000409782,
+        "D26": 12.5,
+        "D27": 1.4996337890625,
+        "D3": 11,
+        "D4": 1,
+        "D5": 3,
+        "D6": 30600000,
+        "D7": 57.30999999213964,
+        "D8": 24.72000002861023,
+        "D9": 850000
+      },
+      "gmti_target_report": {
+        "D32.10": 129,
+        "D32.16": 3,
+        "D32.17": 909002,
+        "D32.2": 57.2099999897182,
+        "D32.3": 24.6100000385195
+      },
+      "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "severity_basis": "INFO. GMTIF grades nothing \u2014 there is no severity, priority-of-threat or alert level anywhere in the format. J5 and R3 are tasking priorities and are parked"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "e0b81667-4039-56b5-af47-09ef035cb385"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s1/r1",
+        "system": "GMTIF-TARGET"
+      }
+    ]
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "accuracy_basis": "None. D32.12 is a SLANT-range standard deviation and projecting it to a ground error needs a grazing angle the format never states; D32.13 is a cross-range figure in decimetres, orthogonal to it, and combining two orthogonal components into one scalar means choosing a convention the source did not",
+      "affiliation_basis": "UNKNOWN. GMTIF states no affiliation, no IFF and no identity anywhere",
+      "confidence_basis": "None. D32.11 is \"the estimated probability that the target classification appearing in field D32.10 is correctly classified\" \u2014 a confidence about the CLASSIFICATION \u2014 and Entity.confidence is a bare float with no stated subject, so writing 70 there would say \"we are 70% sure this object exists\" about a source that said \"we are 70% sure it is a wheeled vehicle\". Gap 18",
+      "confidentiality_label": {
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "classification": "UNCLASSIFIED",
+        "code_bits": [
+          6,
+          0
+        ],
+        "system": "ZZ"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source packet",
+      "entity_key_basis": "P3/P8/P9/P10/D2/D3 plus the Dwell Segment's ordinal position in the packet and the report's ordinal position in the segment: 'ZZ/ZZSYN00001/4242/77/3/11/s1/r2'. The last two are POSITIONAL and therefore not stable under any re-segmentation of the packet \u2014 and \u00a73.4.32 permits exactly that re-segmentation (\"targets detected within a dwell may be split among multiple Dwell Segments\"), as does guide \u00a7D.2. D32.1 MTI Report Index is dwell-scoped by its own definition and Conditional besides, so there is nothing stabler to key on. Gap 20",
+      "entity_type_basis": "D32.10 = 200 ('Reserved') -> UNKNOWN; Table 3-11 reserves this value, so it parks in unresolved_raw \u2014 the source said something this adapter cannot use",
+      "gmti_target_report": {
+        "D32.10": 200,
+        "D32.16": 0,
+        "D32.17": 0,
+        "D32.2": 57.220000019297004,
+        "D32.3": 24.619999984279275
+      },
+      "kinematics_basis": "None. D32.7 is \"the component of velocity \u2026 along the line of sight\", one component of a vector whose tangential part is physically unobservable to a single-look MTI radar \u2014 so the target's speed is unknown (the radial component is a LOWER BOUND, and writing a lower bound into speed_mps would state a measurement nobody made) and its course is unknown. D32.7 and D32.8 park in full and the Doppler un-wrapping D32.8 invites is not performed: \u00a73.4.32.8 addresses it to \"the tracker\" and makes the multiple depend on an expected speed nobody stated. Gap 21",
+      "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+      "position_basis": "hi_res: D32.2/D32.3 as SA32/BA32, exact binary-angle conversions with a 4.7 mm and 9.3 mm LSB respectively",
+      "position_source_basis": "ESTIMATED. A target position is a radar geolocation through the terrain and geoid models J27/J28 \u2014 processing code 0x2000 \"Target Coordinate Conversion\" says so outright. Never GNSS: the target did not report itself",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "symbol_basis": "None; there is no affiliation to derive one from",
+      "synthetic_basis": "P7 = 1 ('Operation, Simulated Data') parked verbatim: programme 'operation', provenance 'simulated'. It NEVER sets source.synthetic, which is the deployment declaration (True) \u2014 agreement is not an exception to that rule",
+      "target_classification": 200,
+      "target_classification_text": "Reserved",
+      "track_basis": "no Track. Associating target reports across dwells is what a GMTI tracker does, and guide FAQ Q10 says the way to do it \"is best recommended by the sensor manufacturer as it may depend on the sensor's particular design purpose and mission\" \u2014 a format whose own implementation guide sends the reader to the vendor for the association rule is not one a translator may invent one for",
+      "valid_to_basis": "None, and it is the least satisfactory statement in this row set. A GMTI detection asserts existence at ONE instant and asserts nothing afterwards: valid_to = valid_from would say the object ceased to exist immediately, which is false, and None reads as \"still current\" to anything holding state. There is no third option in the model. Gap 20"
+    },
+    "confidence": null,
+    "entity_id": "48b4d2fe-9678-54e5-8c44-151e357d42ac",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 57.220000019297004,
+      "lon": 24.619999984279275,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s1/r2",
+        "system": "GMTIF-TARGET"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T08:30:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "5ad4c9ff-6098-5d33-9dca-de23f2c0f1e4",
+    "event_type": "DETECTION",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T08:30:00.000Z",
+    "payload": {
+      "geometry_basis": "None. The fix lives on the Entity this event's related_entities names, matching asterix_cat021.py and adsb.py: duplicating one measurement into two objects invites the two to diverge",
+      "gmti_dwell": {
+        "D2": 3,
+        "D24": 57.05000001937151,
+        "D25": 24.40000000409782,
+        "D26": 12.5,
+        "D27": 1.4996337890625,
+        "D3": 11,
+        "D4": 1,
+        "D5": 3,
+        "D6": 30600000,
+        "D7": 57.30999999213964,
+        "D8": 24.72000002861023,
+        "D9": 850000
+      },
+      "gmti_target_report": {
+        "D32.10": 200,
+        "D32.16": 0,
+        "D32.17": 0,
+        "D32.2": 57.220000019297004,
+        "D32.3": 24.619999984279275
+      },
+      "observed_at_basis": "D6 = 30600000 ms after midnight UTC on 2026-04-29 (in_packet: Mission Segment M5/M6/M7 = 2026-04-29)",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "severity_basis": "INFO. GMTIF grades nothing \u2014 there is no severity, priority-of-threat or alert level anywhere in the format. J5 and R3 are tasking priorities and are parked"
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "48b4d2fe-9678-54e5-8c44-151e357d42ac"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s1/r2",
+        "system": "GMTIF-TARGET"
+      }
+    ]
+  }
+]

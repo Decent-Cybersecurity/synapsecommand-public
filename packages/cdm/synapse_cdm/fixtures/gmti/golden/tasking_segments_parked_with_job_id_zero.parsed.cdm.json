@@ -1,0 +1,210 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "accuracy_basis": "None, always. The format states twelve uncertainty figures and not one is a single horizontal 1-sigma metre value: D12 and D13 are two orthogonal horizontal components in centimetres and reducing them to one scalar means choosing an RSS, a semi-major axis or a DRMS the source did not state; D32.12 is a SLANT-range standard deviation, which is not a horizontal error without a grazing angle the format never gives; and J22, the nominal fallback \u00a73.7.16 mandates, is an angle in degrees. None means unknown accuracy, never perfect",
+      "affiliation_basis": "UNKNOWN. GMTIF states no affiliation, no IFF, no identity and no allegiance anywhere in any segment \u2014 it is a radar detection format and a Doppler return carries no allegiance. P3 Nationality is the PLATFORM's country and is parked at attributes.platform_nationality; reading it as an affiliation would invent a coalition membership from a country code",
+      "alt_datum_basis": "Metres HAE. \u00a73.4.9, \u00a73.15.4 and \u00a73.4.32.6 each say \"above the WGS 84 ellipsoid\" without qualification, and the standard is followed \u2014 but guide \u00a7E.8 says heights are measured \"either from the reference ellipsoid, or from mean sea level if a geoid model is being used\", and the two readings differ by the geoid undulation, up to about 105 m. The declared models are parked at J27/J28",
+      "confidentiality_label": {
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "classification": "UNCLASSIFIED",
+        "code_bits": [
+          6,
+          0
+        ],
+        "system": "ZZ"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source packet",
+      "coverage_basis": "the dwell area (D24-D27), the bounding area (J6-J13), the minimum detectable velocity (D31/J24), the detection probability (J25) and the false alarm density (J26) are parked and none becomes a Geometry. Guide \u00a7D.2: \"the fact that the radar has looked at a particular area and found no targets can be just as important as receiving targets in an area\" \u2014 and the CDM has no object for a searched area, so a Dwell Segment with D5 = 0 produces a platform sample and nothing else. Gap 22",
+      "entity_key_basis": "P3 + P8 = ZZ/ZZSYN00001. \u00a73.1.8 makes the owning nation responsible for its platforms being \"uniquely identified within the set of platforms it owns\", so this is the one globally unique identifier in the format and the only SourceId this adapter mints from a stated key",
+      "gmti_packet": {
+        "P1": "41",
+        "P10": 0,
+        "P2": 317,
+        "P3": "ZZ",
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "P7": 129,
+        "P8": "ZZSYN00001",
+        "P9": 4242
+      },
+      "gmti_segments": [
+        {
+          "fields": {
+            "M1": "SYNMSN0001",
+            "M2": "SYNFLT0001",
+            "M3": 200,
+            "M4": "SYN-CFG-1",
+            "M5": 2026,
+            "M6": 4,
+            "M7": 29
+          },
+          "ordinal": 0,
+          "size": 44,
+          "type": 1
+        },
+        {
+          "fields": {
+            "J1": 77,
+            "J10": 56.59999998752028,
+            "J11": 25.099999979138374,
+            "J12": 56.59999998752028,
+            "J13": 24.10000003874302,
+            "J14": 1,
+            "J15": 300,
+            "J16": 65535,
+            "J17": 65535,
+            "J18": 65535,
+            "J19": 255,
+            "J2": 200,
+            "J20": 65535,
+            "J21": 65535,
+            "J22": 180.0,
+            "J23": 65535,
+            "J24": 255,
+            "J25": 255,
+            "J26": 255,
+            "J27": 1,
+            "J28": 1,
+            "J3": "SYNRDR",
+            "J4": 1,
+            "J5": 20,
+            "J6": 57.600000011734664,
+            "J7": 24.10000003874302,
+            "J8": 57.600000011734664,
+            "J9": 25.099999979138374
+          },
+          "ordinal": 1,
+          "size": 73,
+          "type": 5
+        },
+        {
+          "fields": {
+            "R1": "SYNREQ01",
+            "R10": 56.59999998752028,
+            "R11": 24.10000003874302,
+            "R12": 1,
+            "R13": 300,
+            "R14": 40,
+            "R15": 2026,
+            "R16": 4,
+            "R17": 29,
+            "R18": 6,
+            "R19": 30,
+            "R2": "SYNTASK01",
+            "R20": 0,
+            "R21": 120,
+            "R22": 600,
+            "R23": 300,
+            "R24": 255,
+            "R25": "None",
+            "R26": 0,
+            "R3": 5,
+            "R4": 57.600000011734664,
+            "R5": 24.10000003874302,
+            "R6": 57.600000011734664,
+            "R7": 25.099999979138374,
+            "R8": 56.59999998752028,
+            "R9": 25.099999979138374
+          },
+          "ordinal": 2,
+          "size": 84,
+          "type": 101
+        },
+        {
+          "fields": {
+            "A1": 77,
+            "A10": 25.099999979138374,
+            "A11": 56.59999998752028,
+            "A12": 25.099999979138374,
+            "A13": 56.59999998752028,
+            "A14": 24.10000003874302,
+            "A15": 1,
+            "A16": 600,
+            "A17": 300,
+            "A18": 1,
+            "A19": 2026,
+            "A2": "SYNREQ01",
+            "A20": 4,
+            "A21": 29,
+            "A22": 6,
+            "A23": 32,
+            "A24": 0,
+            "A25": "ZZ",
+            "A3": "SYNTASK01",
+            "A4": 200,
+            "A5": "SYNRDR",
+            "A6": 20,
+            "A7": 57.600000011734664,
+            "A8": 24.10000003874302,
+            "A9": 57.600000011734664
+          },
+          "ordinal": 3,
+          "size": 84,
+          "type": 102
+        }
+      ],
+      "integrity_basis": "the packet passed structural checks and nothing more: P2 against the byte count, each S2 against the segment boundaries, and each existence mask against its field sequence. \u00a72.2 puts error detection in \"the lower layers of the communications media\", so GMTIF carries no checksum or cryptographic protection of any kind",
+      "job_definition_count": 1,
+      "job_p10_basis": "P10 is 0 per \u00a73.1.10 (no Dwell, HRR or Range-Doppler segment in this packet) and J1 = [77] is the job being defined. The J1/P10 equality is required only under \u00a73.1.10's own condition \u2014 see ambiguity 16",
+      "kinematics_basis": "this packet carries no Dwell or Platform Location Segment, so it states no platform position",
+      "platform_id": "ZZSYN00001",
+      "platform_nationality": "ZZ",
+      "position_basis": "this packet carries no Dwell or Platform Location Segment, so it states no platform position",
+      "position_source_basis": "ESTIMATED. The platform's position comes from a navigation system the format never names, so GNSS would be a fabrication \u2014 and it is the one value whose wrongness costs something in a PNT-denied environment",
+      "processing_history_absent": true,
+      "processing_history_basis": "no Processing History Segment. Guide FAQ Q11: \"if processing is not applied to the original radar job, then the Processing History Segment is not transmitted\", so its absence means the data are unmodified \u2014 a fact worth recording rather than an absence of one",
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "symbol_basis": "None. symbology.sidc_from_affiliation needs an affiliation, and composing a symbol from a target classification alone would draw one with an invented standard identity",
+      "synthetic_basis": "P7 = 129 ('Exercise, Simulated Data') parked verbatim: programme 'exercise', provenance 'simulated'. It NEVER sets source.synthetic, which is the deployment declaration (True) \u2014 agreement is not an exception to that rule; the exercise programme axis parks too \u2014 exercise data \"originates from live-fly or other non-simulated operational sources\" as often as not",
+      "target_classification_conflict_basis": "no target report declares itself simulated, so the intra-payload check found nothing to compare against P7",
+      "unavailable_fields": [
+        "J16: present with its documented No-Statement value 65535 (\u00a72.4), so the source sent the field and said it does not know",
+        "J17: present with its documented No-Statement value 65535 (\u00a72.4), so the source sent the field and said it does not know",
+        "J18: present with its documented No-Statement value 65535 (\u00a72.4), so the source sent the field and said it does not know",
+        "J19: present with its documented No-Statement value 255 (\u00a72.4), so the source sent the field and said it does not know",
+        "J20: present with its documented No-Statement value 65535 (\u00a72.4), so the source sent the field and said it does not know",
+        "J21: present with its documented No-Statement value 65535 (\u00a72.4), so the source sent the field and said it does not know",
+        "J23: present with its documented No-Statement value 65535 (\u00a72.4), so the source sent the field and said it does not know",
+        "J24: present with its documented No-Statement value 255 (\u00a72.4), so the source sent the field and said it does not know",
+        "J25: present with its documented No-Statement value 255 (\u00a72.4), so the source sent the field and said it does not know",
+        "J26: present with its documented No-Statement value 255 (\u00a72.4), so the source sent the field and said it does not know",
+        "J22: present with its documented No-Statement value 180.0 degrees (\u00a72.4)",
+        "R24: present with its documented No-Statement value 255 (\u00a72.4), so the source sent the field and said it does not know",
+        "R25: present with its documented No-Statement value 'None' (\u00a72.4), so the source sent the field and said it does not know"
+      ],
+      "unresolved_raw": [
+        "M3 Platform Type = 200, which Table 3-8 leaves \"Available for Future Use\"",
+        "J2 Sensor ID Type = 200, \"Available for Future Use\" in Table 3-15"
+      ],
+      "valid_from_basis": "the injected clock: the packet states no platform position and therefore no instant for the platform's state",
+      "valid_to_basis": "None. A GMTI packet states where the platform was at an instant and makes no claim about when that ceased to be true"
+    },
+    "confidence": null,
+    "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001",
+        "system": "GMTIF-PLATFORM"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  }
+]

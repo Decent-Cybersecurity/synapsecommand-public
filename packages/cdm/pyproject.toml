@@ -73,6 +73,11 @@ synapse_cdm = [
     # not the octets they were parsed from — half the evidence, and the half the byte-exact
     # round trip is measured against.
     "fixtures/**/*.cat021",
+    # And the raw GMTI packets, for the same reason one adapter along: a wheel carrying the
+    # `.parsed.json` twins without the `.gmti` halves would ship the decoded forms and not the
+    # bytes they were decoded from — and the bytes are what the byte-exact round trip and the
+    # hand-verified Annex C layout are measured against.
+    "fixtures/**/*.gmti",
     "fixtures/**/*.md",
     # The CAT021 fixture generator, which is that set's reviewable form: an ASTERIX block cannot
     # carry a comment and cannot be rebuilt from its twin (LEN and FSPEC are functions of the

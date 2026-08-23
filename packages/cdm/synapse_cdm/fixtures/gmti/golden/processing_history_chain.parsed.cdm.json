@@ -1,0 +1,204 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "accuracy_basis": "None, always. The format states twelve uncertainty figures and not one is a single horizontal 1-sigma metre value: D12 and D13 are two orthogonal horizontal components in centimetres and reducing them to one scalar means choosing an RSS, a semi-major axis or a DRMS the source did not state; D32.12 is a SLANT-range standard deviation, which is not a horizontal error without a grazing angle the format never gives; and J22, the nominal fallback \u00a73.7.16 mandates, is an angle in degrees. None means unknown accuracy, never perfect",
+      "affiliation_basis": "UNKNOWN. GMTIF states no affiliation, no IFF, no identity and no allegiance anywhere in any segment \u2014 it is a radar detection format and a Doppler return carries no allegiance. P3 Nationality is the PLATFORM's country and is parked at attributes.platform_nationality; reading it as an affiliation would invent a coalition membership from a country code",
+      "alt_datum_basis": "Metres HAE. \u00a73.4.9, \u00a73.15.4 and \u00a73.4.32.6 each say \"above the WGS 84 ellipsoid\" without qualification, and the standard is followed \u2014 but guide \u00a7E.8 says heights are measured \"either from the reference ellipsoid, or from mean sea level if a geoid model is being used\", and the two readings differ by the geoid undulation, up to about 105 m. The declared models are parked at J27/J28",
+      "confidentiality_label": {
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "classification": "UNCLASSIFIED",
+        "code_bits": [
+          6,
+          0
+        ],
+        "system": "ZZ"
+      },
+      "confidentiality_label_basis": "round_tripped: read from the source packet",
+      "coverage_basis": "the dwell area (D24-D27), the bounding area (J6-J13), the minimum detectable velocity (D31/J24), the detection probability (J25) and the false alarm density (J26) are parked and none becomes a Geometry. Guide \u00a7D.2: \"the fact that the radar has looked at a particular area and found no targets can be just as important as receiving targets in an area\" \u2014 and the CDM has no object for a searched area, so a Dwell Segment with D5 = 0 produces a platform sample and nothing else. Gap 22",
+      "entity_key_basis": "P3 + P8 = ZZ/ZZSYN00001. \u00a73.1.8 makes the owning nation responsible for its platforms being \"uniquely identified within the set of platforms it owns\", so this is the one globally unique identifier in the format and the only SourceId this adapter mints from a stated key",
+      "gmti_packet": {
+        "P1": "41",
+        "P10": 77,
+        "P2": 148,
+        "P3": "ZZ",
+        "P4": 5,
+        "P5": "ZZ",
+        "P6": 65,
+        "P7": 129,
+        "P8": "ZZSYN00001",
+        "P9": 4242
+      },
+      "gmti_segments": [
+        {
+          "fields": {
+            "M1": "SYNMSN0001",
+            "M2": "SYNFLT0001",
+            "M3": 200,
+            "M4": "SYN-CFG-1",
+            "M5": 2026,
+            "M6": 4,
+            "M7": 29
+          },
+          "ordinal": 0,
+          "size": 44,
+          "type": 1
+        },
+        {
+          "fields": {
+            "C1": 2,
+            "C2": "ZZ",
+            "C3": "ZZSYN00001",
+            "C4": 4242,
+            "C5": 77
+          },
+          "ordinal": 1,
+          "records": [
+            {
+              "C6.1": 1,
+              "C6.2": "ZY",
+              "C6.3": "ZYSYN00001",
+              "C6.4": 900,
+              "C6.5": 500,
+              "C6.6": 1
+            },
+            {
+              "C6.1": 2,
+              "C6.2": "ZY",
+              "C6.3": "ZYSYN00002",
+              "C6.4": 901,
+              "C6.5": 501,
+              "C6.6": 2048
+            }
+          ],
+          "size": 72,
+          "type": 12
+        }
+      ],
+      "integrity_basis": "the packet passed structural checks and nothing more: P2 against the byte count, each S2 against the segment boundaries, and each existence mask against its field sequence. \u00a72.2 puts error detection in \"the lower layers of the communications media\", so GMTIF carries no checksum or cryptographic protection of any kind",
+      "job_definition_count": 0,
+      "kinematics_basis": "this packet carries no Dwell or Platform Location Segment, so it states no platform position",
+      "platform_id": "ZZSYN00001",
+      "platform_nationality": "ZZ",
+      "position_basis": "this packet carries no Dwell or Platform Location Segment, so it states no platform position",
+      "position_source_basis": "ESTIMATED. The platform's position comes from a navigation system the format never names, so GNSS would be a fabrication \u2014 and it is the one value whose wrongness costs something in a PNT-denied environment",
+      "processing_history_absent": false,
+      "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
+      "symbol_basis": "None. symbology.sidc_from_affiliation needs an affiliation, and composing a symbol from a target classification alone would draw one with an invented standard identity",
+      "synthetic_basis": "P7 = 129 ('Exercise, Simulated Data') parked verbatim: programme 'exercise', provenance 'simulated'. It NEVER sets source.synthetic, which is the deployment declaration (True) \u2014 agreement is not an exception to that rule; the exercise programme axis parks too \u2014 exercise data \"originates from live-fly or other non-simulated operational sources\" as often as not",
+      "target_classification_conflict_basis": "no target report declares itself simulated, so the intra-payload check found nothing to compare against P7",
+      "unresolved_raw": [
+        "M3 Platform Type = 200, which Table 3-8 leaves \"Available for Future Use\""
+      ],
+      "valid_from_basis": "the injected clock: the packet states no platform position and therefore no instant for the platform's state",
+      "valid_to_basis": "None. A GMTI packet states where the platform was at an instant and makes no claim about when that ceased to be true"
+    },
+    "confidence": null,
+    "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001",
+        "system": "GMTIF-PLATFORM"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "c09fa6f9-c5b0-5611-9c06-089dd99149b1",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:00.000Z",
+    "payload": {
+      "based_on_dataset_id": "ZZ/ZZSYN00001/4242/77",
+      "chain": [
+        {
+          "dataset_id": "ZY/ZYSYN00001/900/500",
+          "processing_performed": [
+            "Area Filtering"
+          ],
+          "sequence": 1
+        },
+        {
+          "dataset_id": "ZY/ZYSYN00002/901/501",
+          "processing_performed": [
+            "Security Filtering"
+          ],
+          "sequence": 2
+        }
+      ],
+      "completeness_basis": "eight of C6.6's fourteen operations are ELIMINATIONS \u2014 area, classification, LOS-velocity, SNR, de-clutter, bandwidth, revisit and time filtering \u2014 so this field is the closest the format comes to saying what is missing, and it says only THAT something was removed and never WHAT. Gap 22",
+      "gmti_processing_history": {
+        "fields": {
+          "C1": 2,
+          "C2": "ZZ",
+          "C3": "ZZSYN00001",
+          "C4": 4242,
+          "C5": 77
+        },
+        "ordinal": 1,
+        "records": [
+          {
+            "C6.1": 1,
+            "C6.2": "ZY",
+            "C6.3": "ZYSYN00001",
+            "C6.4": 900,
+            "C6.5": 500,
+            "C6.6": 1
+          },
+          {
+            "C6.1": 2,
+            "C6.2": "ZY",
+            "C6.3": "ZYSYN00002",
+            "C6.4": 901,
+            "C6.5": 501,
+            "C6.6": 2048
+          }
+        ],
+        "size": 72,
+        "type": 12
+      },
+      "observed_at_basis": "the injected clock. The Processing History Segment states no time of any kind",
+      "resolution_basis": "carried in full, in order, and resolved never. C2-C5 name the original radar job and each C6.2-C6.5 record names one modifying system, so the chain is a provenance graph across packets this adapter will never see. Gap 14 and gap 19",
+      "severity_basis": "INFO; the format grades nothing",
+      "unresolved_references": [
+        "based-on <DataSetID> ZZ/ZZSYN00001/4242/77 names a radar job that is not this packet"
+      ]
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "47cef385-9333-5635-9bca-a5e76a4e54f9"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "gmti",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "GMTIF"
+    },
+    "source_ids": [
+      {
+        "external_id": "ZZ/ZZSYN00001/4242/processing1",
+        "system": "GMTIF-PROCESSING"
+      }
+    ]
+  }
+]

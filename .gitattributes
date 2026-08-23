@@ -9,3 +9,10 @@
 # `_parse_frames` tolerates CRLF on the way in, which is exactly what would make the failure
 # look like an adapter defect rather than a checkout artefact.
 *.adsb -text
+
+# GMTI packets are raw binary — 32 bytes of header and length-prefixed segments — and
+# test_every_fixture_round_trips_byte_for_byte compares them byte for byte against what the
+# adapter emits. Git would classify them as binary on its own (they contain NULs), but the
+# marker is explicit because the consequence of being wrong is a failure that reads as an
+# adapter defect rather than as a checkout artefact.
+*.gmti -text -diff
