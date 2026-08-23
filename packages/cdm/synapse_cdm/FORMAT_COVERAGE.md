@@ -4149,6 +4149,15 @@ taken:
    a receipt instant in an `observed_at`, it is forced by a mandatory schema field meeting a
    segment that states no time, and the basis makes it visible on every such object rather than
    leaving a plausible instant unexplained.
+
+   **This violates `Event.observed_at`'s own documented meaning — "When the SOURCE saw it. Never
+   receipt time" — on three object kinds, and that is a CDM gap rather than an adapter footnote.**
+   It is **gap 23**: the model has no way to express "the source stated no instant", because
+   `observed_at` is required with no default and no canonical field for saying where it came from,
+   so the three available answers are to discard the data, to invent an instant, or to substitute
+   one and label the substitution in an untyped dict. The third is the least bad and it is still a
+   violation; the gap carries the two 1.1.0 proposals and the reason the docstring amendment has to
+   ride the same release.
 4. There is no fourth step.
 
 **`Event.received_at` is the injected clock, always** — the one field an adapter invents rather
@@ -5347,7 +5356,7 @@ two paths and a refusal, and the refusal is the decision that row asked for.
 |---|---|---|---|
 | `Entity.attributes` | the whole packet | `gmti 1.0.0 · egress` | **path 1, round-tripped.** `attributes.gmti_packet` and `attributes.gmti_segments` hold every decoded field, so egress re-encodes and the result is **byte-identical** to what arrived. `P2` and every `S2` are recomputed and then checked against the parked values: recomputing without checking would let a decoder bug and an encoder bug cancel out invisibly, which is exactly what a round trip is supposed to catch |
 | `Entity.position` · `Entity.kinematics` · `Entity.valid_from` | `L1`–`L7` in a Platform Location Segment, under a Mission Segment | `gmti 1.0.0 · egress` | **path 2, CDM-native platform state.** `P10 = 0`, which is the packet shape §3.1.10 provides for outright — "if the Packet contains no Dwell, HRR, or Range-Doppler segments, then the Job ID in the Packet Header shall be 0" — so nothing has to be invented to satisfy it. Requires a configured `platform_identity` and `mission_reference_date`; requires all three of `course_deg`, `speed_mps` and `climb_mps`, because `L5`/`L6`/`L7` are Mandatory and none has a No-Statement value |
-| `Track.samples[].position.lat` · `Track.samples[].position.lon` | *(nothing, for more than one sample)* | `gmti 1.0.0 · egress` | **a CDM-native `Track` with two or more samples is refused.** Every Platform Location Segment carries its own Mandatory `L5`/`L6`/`L7` velocity and the CDM holds ONE `Kinematics` per `Entity`, so emitting N segments would repeat one velocity at every sample — a fabrication for all but the one the `Entity`'s state came from. That is **gap 16** arriving on the egress side, and a refusal is more honest than N plausible velocities |
+| `Track.samples[].position.lat` · `Track.samples[].position.lon` | *(nothing, for more than one sample)* | `gmti 1.0.0 · egress` | **a CDM-native `Track` with two or more samples is refused, and the refusal names the exit.** `L5` Platform Track and `L6` Platform Speed are Mandatory in every Platform Location Segment and are each defined "at the time the report is prepared" (§3.15.5, §3.15.6), with `L7` taking the same instant from `L1`; the CDM holds ONE `Kinematics` per `Entity`. So emitting N segments would repeat the latest velocity onto N−1 earlier instants, which **fabricates a Mandatory measurement N−1 times** — **gap 16** on the egress side. **The exit is the caller's and the message says so**: the last sample is the one instant where every Mandatory field has an honest value, because it is the instant the `Entity`'s own position and kinematics were taken from, so a single-sample `Track` — or the `Entity` alone, which needs no `Track` — emits a valid packet. Truncating a history has a cost, so it is a decision the caller takes visibly rather than one this adapter takes silently |
 | *(anything else)* | — | `gmti 1.0.0 · egress` | **path 3, refusal.** A CDM-native object that is not a platform would have to become a Dwell Segment target report, and `D7`/`D8`/`D9` (where the sensor was) and `D24`–`D27` (what area it swept) are Mandatory and unstated. **A configured value for them is not a deployment declaration — it is an invented measurement**, and a GMTI packet claiming a radar saw something it did not is the silent-`UNCLASSIFIED` failure in a different field |
 | `Entity.attributes` | `P4` · `P5` · `P6` | `gmti 1.0.0 · egress` | the three label paths, unchanged from settlement 3: the parked triple, an explicitly configured one, or a refusal. A **partial** configured triple is also refused — a classification with no system digraph is a marking whose policy has been removed |
 | `Entity.source` | `P7` | `gmti 1.0.0 · egress` | a CDM-native packet has no source `P7` to re-emit, and amendment 2 run backwards would be just as wrong: the deployment's `synthetic` declaration is the only honest source for it, and it is emitted as a **configured** value rather than as a reading of anything. A round-tripped packet re-emits the `P7` that arrived |
@@ -5361,19 +5370,39 @@ round-tripped packet is refused for the same reason: nothing from another format
 may cross into an emitted packet. That is `stanag4676.py`'s consolidation refusal reached in a
 format with no local IDs at all.
 
-**One quantisation, named because it is the only loss on either path.** A CDM-native position is a
-decimal degree with no reason to sit on a binary-angle grid, so `codec.snap` rounds it to the
-field's own LSB — 4.7 mm for `SA32`, 9.3 mm for `BA32`, a centimetre for `L4`, a millimetre per
-second for `L6`. Quantising to a field's resolution is what encoding *is*, not a fabrication. The
-one place it is visible is `L5` Platform Track, whose `BA16` LSB of 0.0055° can move a course by up
-to 2.7 millidegrees, and the module's docstring names it there. The round-trip path never quantises
-anything, because it re-encodes the integers that arrived.
+**Quantisation on the native path is the FORMAT'S stated resolution, not a translator's loss — and
+amendment 4 records it here as a property of the format rather than as an apology.** Phase 1's
+position rule was already "convert, stating precision"; these are the precisions, every one of them
+the standard's own arithmetic (Annex C-4.6's 360/2ⁿ, C-4.7's 180/2ⁿ, C-4.5's magnitude over
+2^fraction), and `codec._bounds` computes them rather than restating them:
+
+| Form | Range | LSB | What the LSB is worth |
+|---|---|---|---|
+| `SA32` | −90 … +89.99999996 | 4.1910 × 10⁻⁸ ° | ≈ **4.7 mm** of latitude. `D7`, `D24`, `D32.2`, `J6`, `L2` |
+| `BA32` | 0 … 359.99999992 | 8.3819 × 10⁻⁸ ° | ≈ **9.3 mm** of longitude at the equator. `D8`, `D25`, `D32.3`, `J7`, `L3` |
+| `SA16` | −90 … +89.9972534 | 0.00274658203125 ° | pitch and roll — `D22`, `D23`, `D29`, `D30` — where it is 2.7 hundredths of a degree of attitude rather than a distance |
+| `BA16` | 0 … 359.9945068 | 0.0054931640625 ° | ≈ **611 m** of longitude, and **the one visible loss on the native egress path**: `L5` Platform Track is a `BA16`, so a course quantises to within 2.7 millidegrees |
+| `B16` | ±255.9921875 | 1/128 | `D26` Dwell Area Range Half Extent, so **7.8 m** on a kilometre-scale extent |
+| `B32` | ±255.99999988 | 2⁻²³ | `H15`, `H30`, `H31` |
+| `H32` | ±32767.99998474 | 2⁻¹⁶ | `H13`, `H14`, `H22` |
+| `D9` · `L4` | ±2 × 10⁹ cm | 1 cm | height |
+| `D16` · `L6` | 0 … 8 × 10⁶ mm/s | 1 mm/s | ground speed |
+| `D17` · `L7` | −128 … +127 dm/s | 0.1 m/s | vertical velocity, and the coarsest scalar in the format |
+
+**Quantising is legitimate; clamping and wrapping are not.** A value outside a field's range is a
+**refusal quoting the value and the range** — `codec.snap` does not mask the encoded integer to the
+field's width and does not clamp to the boundary. Amendment 4 is where that was fixed, and the
+defect it fixed was the worse of the two available: the first implementation **masked**, so a
+latitude of 95° came back as **−85°**, on the other side of the equator, and a `B16` of 300 came
+back as −44. Clamping would have been less bad and still silent. **The round-trip path never
+quantises anything at all**, because it re-encodes the integers that arrived.
 
 ### What the adapter fills that GMTIF does not state
 
 | GMTIF | CDM field | Status | Notes |
 |---|---|---|---|
 | *(none)* | `Event.received_at` | `gmti 1.0.0` | the injected clock. GMTIF carries no producer-side creation time anywhere, so unlike NITS there is not even a wrong candidate to warn against — and unlike CAT021 the clock is **not** consulted for the date, which settlement 2 states against that precedent |
+| *(none — three segments state no time at all)* | `Event.observed_at` | `gmti 1.0.0 · parked` | the receipt instant on a Free Text, Processing History or dwell-less HRR `Event`, with `payload.observed_at_basis` recording that the format stated no source time. **This contradicts the field's own docstring** and is the least bad of three bad answers — see the `observed_at` chain and **gap 23**, which is the model change that would let an absence be an absence |
 | *(the deployment declaration)* | `SourceRef.synthetic` | `gmti 1.0.0` | **no payload field sets this, and agreement is not an exception** — amendment 2. `P7` Exercise Indicator, `D32.10`'s simulated half, `M4`'s test-article marking and `J14 = 100` Test/Status Mode all park; a pure-real-versus-synthetic or pure-simulated-versus-real contradiction is a logged refusal; a `P7` of *synthesized* contradicts neither pure declaration and parks visibly without one. Amendment B held as a rule for the third format, and the first one where the payload's declaration is Mandatory on every packet |
 | *(none — GMTIF states no affiliation anywhere)* | `Entity.affiliation` | `gmti 1.0.0` | `UNKNOWN` on every object, with `attributes.affiliation_basis` recording that the format carries no identity, no IFF and no allegiance, and that `P3` Nationality is the platform's country and not the contact's side |
 | *(none)* | `Entity.symbol` | `gmti 1.0.0` | `None` on every object. `symbology.sidc_from_affiliation` needs an affiliation, and composing a symbol from `D32.10` alone would draw one with an invented standard identity |
@@ -5392,6 +5421,11 @@ anything, because it re-encodes the integers that arrived.
 | *(measured)* | `Entity.attributes` | `gmti 1.0.0` | `attributes.unresolved_raw` — values read and not usable: a reserved enumeration literal, a `D6` beyond Table 3-9's stated maximum, an unsupported segment's bytes, a `J14` in a reserved range |
 | *(measured)* | `Entity.attributes` | `gmti 1.0.0 · parked` | `attributes.unresolved_references` — an `H5` pointing at a target report not in this packet, and a Processing History `<DataSetID>` naming a job this packet is not. **Gap 19** |
 | everything unmapped | `Entity.attributes` | `gmti 1.0.0` | `attributes.source_extras`, including `source_extras.unsupported_segments[]` with each skipped segment's type code, size and raw bytes. Unlike NITS, whose schema declares open content on every type, GMTIF has **no extension mechanism inside a defined segment** — the extension point is a whole segment type, which is why the unsupported-segment park is a named key rather than a formality |
+| *(the whole packet, verbatim)* | `Entity.attributes` | `gmti 1.0.0` | `attributes.gmti_packet` — the ten Packet Header fields as decoded — and `attributes.gmti_segments`, the ordered list of every segment with its type, its size, its existence mask where it has one, and every field it carried. **This is what makes `TRANSFORMS` empty**: every source value is present verbatim as well as converted, so the never-drop rule is satisfied by presence rather than by a declared exemption. It is also what makes the byte-exact round trip structural rather than hopeful, because egress re-encodes from it |
+| *(per target report)* | `Entity.attributes` | `gmti 1.0.0` | `attributes.gmti_target_report`, and `payload.gmti_dwell` on the matching `DETECTION` `Event` — so an object holding one detection can be read without the platform `Entity` beside it |
+| *(measured)* | `Entity.attributes` | `gmti 1.0.0` | `attributes.target_classification_conflict_basis` — the result of the intra-payload simulation check, on every platform `Entity`, whether or not it found anything. A check that only reports when it fires is a check nobody can tell ran |
+| `D32.2`/`D32.3`, or the recovered delta | `Event.geometry` | `gmti 1.0.0` | **a `Point` in `[lon, lat]` order on every `DETECTION` `Event` from a target report** — amendment 1 reversed the Phase 2 reading, which was `None` everywhere. A GMTI target report **is** a position measurement: the detection's location is the payload's primary content, and `Event.geometry` is the CDM's field for where an event happened, so `None` put the one thing the report is about somewhere a consumer holding the `Event` alone cannot reach. **Two elements and never three** — `D32.6` is Optional, a two-element `Point` is the honest shape when the source stated no height, and a `Point` that sometimes has a third element makes every consumer branch; `Position.alt_m` on the `Entity` carries the height. This follows `stanag4676.py` and diverges from `asterix_cat021.py` and `adsb.py`, which is recorded in **gap 20** rather than resolved here |
+| *(none)* | `Event.geometry` | `gmti 1.0.0` | `None` on an HRR `Event` and on the three `STATUS_CHANGE` kinds, with `payload.geometry_basis` saying why in each: an HRR segment states range-Doppler indices in a sensor-relative space rather than a position, and a Free Text, Test and Status or Processing History segment states no location at all |
 
 ### Where the specification is ambiguous or contradicts itself
 
@@ -5413,9 +5447,10 @@ following the more authoritative statement, or by refusing — never by guessing
 | 11 | **`T2` and `T3` are ranged `1` to 65 535 where their `D2`/`D3` and `H2`/`H3` counterparts start at `0`** — and §3.4.2 defines a Revisit Index of "0" as the first revisit | parked as read, neither corrected nor refused. An off-by-one against its own siblings means a Test and Status Segment reporting the *first* dwell of the *first* revisit cannot state it, and no adapter behaviour can fix that |
 | 12 | **Guide FAQ Q11's worked example contradicts its own text**, showing `C1 = 3` beside the first and only Processing Record where the text says `C1` "is set to 1" for the first processing | `C1` is checked against the records actually present and a mismatch is a refusal, per the standard's own definition of the field. The guide's example is informative and does not override it |
 | 13 | **`D27` Dwell Angle Half Extent is two different quantities in one field**, selected by whether the radar dwells: half the 3 dB beamwidth, or "the angle between the beginning of the dwell to the center of the dwell" | parked with both readings named, and never used to derive a dwell duration or a dwell-area polygon. The format states nothing that says which kind of radar produced the packet |
-| 14 | **`H7` and `H14` are each two quantities in one field**, selected by `H23` and by nothing respectively: `H7` is a range-sample count or a total scatterer count, `H14` is a Doppler bin spacing or a PRF | parked under both names. `H14` is the worse of the two because nothing selects between them |
+| 14 | **`H7` and `H14` are each two quantities in one field**, selected by `H23` and by nothing respectively: `H7` is a range-sample count or a total scatterer count, `H14` is a Doppler bin spacing or a PRF | parked under both names. `H14` is the worse of the two because nothing selects between them — and `H7`'s dual meaning is what creates the collision **row 17** records, so the two are read together |
 | 15 | **`H15`'s value range restates `B16`'s maximum for a `B32` field, and its minimum is off by a bit.** Table 3-12 gives `H15` Center Frequency a range of "2.384e-7 to 255.9921875" GHz. Annex C-4.5 makes `B32` one sign bit, eight integer bits and **23** fraction bits, so its maximum is 255.999999881 and its LSB is 2^-23 = 1.192e-7 — while 255.9921875 is exactly `B16`'s maximum (256 − 1/128) and 2.384e-7 is exactly 2^-22. So the value-range column appears to have been carried over from a 16-bit field and then had its low end halved once too few times. `H30` and `H31` are `B32` too and their stated range, "0 to 100", says nothing either way | found while implementing, and it costs nothing: Annex C-4.5 defines the ENCODING and Table 3-12 only annotates it, so the field is decoded per C-4.5 and the range column is not enforced. Recorded because an implementer who validated `H15` against the table would reject conformant values between 255.9921875 and 255.999999881, and would accept nothing below 2.384e-7 that the field can in fact carry |
 | 16 | **§3.1.10 and §3.7.1 together make a Job-Definition-only packet unrepresentable under a literal `J1`/`P10` cross-check.** §3.1.10: "if the Packet contains no Dwell, HRR, or Range-Doppler segments, then the Job ID in the Packet Header shall be 0". §3.7.1 and Table 3-14 give `J1` a range of 1 to 4 294 967 295. So a packet carrying a Job Definition Segment and no dwell data must have `P10 = 0` and `J1 ≥ 1`, and the two can never be equal — yet guide Figure 2-1 draws exactly that packet ("Packet Header / Segment Header / Segment No. 1 (Job Definition Segment)") | found while implementing, and the Phase 1 row set had to be narrowed rather than the packet refused. The `J1`/`P10` equality is required **only under §3.1.10's own condition** — that the packet does carry a Dwell, HRR or Range-Doppler segment — and outside it `J1` is the job being *defined* rather than the job the header's data belongs to. Both "shall" statements are kept and Figure 2-1 stays conformant; the fixture `tasking_segments_parked_with_job_id_zero` is what pins the narrowing |
+| 17 | **`H6` and `H7` may both be reported and the standard never says which bounds the scatterer array.** §3.5.6 makes `H6` the "number of Range Doppler pixels that exceed target scatterer threshold and **are reported in this segment**" — a count of records present. §3.5.7 makes `H7` the "number of Range Bins/Samples in a Range Doppler Chip", and then: "**when used with a Sparse HRR chip this field shall define the total number of scatterer records**" — so `H7` is a *dimension* for a contiguous chip and a *record count* for a sparse one, selected by `H23`. Both paragraphs end with the same sentence: "**Either H6 or H7 or both must be reported**." So the unresolved case is explicit in the text rather than hypothetical: a **sparse** chip (`H23 = 3`) carrying **both**, where `H6` states one number of records and `H7` states another. Nothing in §3.5.32 or anywhere else says which governs, and the two readings produce arrays of different lengths — so both produce a *valid-looking* parse of a different number of bytes | **this row is the written justification for the hex-blob parking, and it is why the array is bounded by `S2` instead.** The declines table rejects mapping HRR signature data at all, so the adapter never needs the count: the array is the remainder of the segment, whose end §3.2.2's `S2` gives exactly, and the question is left where the standard left it. Adjudicating `H6` against `H7` would be a translator choosing between two "must be reported" fields on a conformant packet, which is a custodian's act. `H25` and `H26` are still validated (1-or-2 and 0-1-or-2), because they size a record and any other value makes the array indeterminate under *every* reading. **A Phase 3 author who decodes the array has to resolve this first**, and the resolution is an erratum or a per-deployment ICD, not a preference. Row 14 records `H7`'s dual meaning; this row records the collision it creates |
 
 ### Deliberately out of scope, and why
 
@@ -5425,7 +5460,7 @@ rejected, or blocked.
 | Out | Deferred, rejected or blocked | Decision |
 |---|---|---|
 | **Emitting a CDM-native Dwell Segment target report** | **rejected** | The decision Phase 1's deferred egress row asked to be made, made. `D7`/`D8`/`D9` state where the sensor was and `D24`–`D27` state what area it swept; all seven are Mandatory and no CDM object states any of them. A configured value for them would not be a deployment declaration — it would be an **invented observation footprint**, and a packet claiming a radar saw something it did not is worse than a packet that does not exist. See the egress row set: a CDM-native platform state emits a Platform Location Segment under `P10 = 0` instead, which is a shape the standard provides for and which needs nothing invented |
-| **Emitting a multi-sample CDM-native platform history** | **rejected** | `L5`/`L6`/`L7` are Mandatory in every Platform Location Segment and the CDM holds one `Kinematics` per `Entity`, so N segments would repeat one velocity N times. **Gap 16** on the egress side, refused rather than fabricated |
+| **Emitting a multi-sample CDM-native platform history** | **rejected, with the exit named** | `L5`/`L6`/`L7` are Mandatory in every Platform Location Segment and the CDM holds one `Kinematics` per `Entity`, so N segments would repeat one velocity onto N−1 instants it was not measured at. **Gap 16** on the egress side, refused rather than fabricated — and the refusal tells the caller that a single-sample `Track` holding the latest sample emits a valid packet, so the truncation is theirs to choose rather than ours to perform |
 | **STANAG 4607 Edition 3 and earlier** | **deferred** | Same packet structure, same masks, **different enumeration tables** — guide Annex M item 28 moves `Tagging Device` from 143 to 142 and adds ten target classifications. So this is one adapter with a version-dispatched enumeration table, not a second adapter, which is a deliberate departure from the STANAG 4676 Edition 1 decline. Building it needs Edition 3's tables from a document this repository has not pinned. A packet whose `P1` is not `"41"` is refused with the value quoted |
 | **The Range-Doppler Segment (`S1 = 4`)** | **deferred** | §3.6 in the standard is the single word "RESERVED", and §3 says "A preliminary description of the Range-Doppler Segment is provided in the associated guidance". **Preliminary is not normative**, and the guide is not normative for the format. Skipped by `S2`, parked, logged and recorded, on §3.2.1 and §3.2.2 |
 | **LRI (7), Group (8), Attached Target (9) and System-Specific (11) Segments** | **rejected as unimplementable** | Four paragraphs reading "[THIS PARAGRAPH IS RESERVED FOR FUTURE DEFINITION]". There is nothing to defer to. Skipped and parked |
@@ -6471,6 +6506,38 @@ negative assertion over every fixture rather than a fixture of its own.
    `test_the_person_divergence_from_cat021_is_deliberate_and_pinned` fixes both mappings so the
    question cannot be closed by accident in either direction, and it fails the build if
    `EntityType` grows the member that would close it properly.
+
+   **A second divergence this gap carries, and it is the same question about the same objects:
+   WHERE A DETECTION'S POSITION LIVES.** Four shipped adapters emit an `Entity` plus a `DETECTION`
+   `Event` for one target report, and they disagree about `Event.geometry`:
+
+   | Adapter | `Event.geometry` on a detection |
+   |---|---|
+   | `adapters/stanag4676.py` | a `Point`, from the `Detection`'s `centroid` |
+   | `adapters/gmtif.py` | a `Point`, from the target report's recovered position (amendment 1; it was `None` in the Phase 2 commit) |
+   | `adapters/asterix_cat021.py` | `None` |
+   | `adapters/adsb.py` | `None` |
+
+   Both arguments, because whoever settles this has to weigh them rather than inherit a majority:
+
+   - **For a `Point` (the NITS and GMTIF answer).** `Event.geometry` is documented as GeoJSON in
+     WGS84 and is the CDM's only field for *where an event happened*. A detection's whole content
+     is a location at an instant, so leaving it `None` puts the one thing the event is about
+     somewhere a consumer holding the `Event` alone cannot reach — and `related_entities` is a list
+     of ids, not a join a consumer can perform without the `Entity` in hand. **Gap 19** is exactly
+     the observation that a bare id is not a resolvable reference.
+   - **For `None` (the CAT021 and ADS-B answer).** The fix is a *state* of the object, which is
+     what `Entity.position` is for, and writing one measurement into two objects gives it two
+     places to be edited and two places to drift. It also duplicates bytes in every store and
+     every wire format the CDM is serialised into, on the most numerous object kind there is.
+
+   **Stated rather than resolved, on the I021/170 precedent**, and note the asymmetry with the
+   person divergence above: there the shipped adapter is the one that would have to change, and
+   here the shipped adapters are two of four. Neither is touched.
+   `test_where_a_detections_position_lives_diverges_across_four_adapters` pins all four so the
+   question cannot be closed by accident, and it is a **1.1.0** question — the honest fix is a
+   documented rule for the whole model (a detection's fix belongs in one named place, and every
+   adapter follows it) with a migration note, not a fifth adapter voting.
    - **A consumer that fuses would have to undo this first.** The honest input to a tracker is a
      stream of detections; what it receives is a stream of `Entity` objects each claiming to be a
      thing that exists.
@@ -6559,3 +6626,49 @@ negative assertion over every fixture rather than a fixture of its own.
    sensor made it, and `SourceRef` cannot. Recorded here so that whoever meets it next — and
    anything with a footprint will, since this is the first sensor format in this document whose
    coverage is stated rather than implied — finds a decision rather than an oversight.
+
+23. **No way to carry an observation whose source states no time.** `Event.observed_at` is
+   documented as "When the SOURCE saw it. Never receipt time." It is also **required**, with no
+   default and no companion field for saying where it came from — so an adapter meeting a payload
+   that states an observation and no instant has three options, and all three break something the
+   model says.
+
+   **STANAG 4607 is where that stops being hypothetical, because three of its segments state no
+   time of any kind.** Not "an optional time that happened to be absent" — no time field exists in
+   the layout at all:
+
+   | Segment | What it states | Why it has no instant |
+   |---|---|---|
+   | Free Text (§3.8) | `F1`, `F2`, `F3` — an operator's message | three fields, none of them temporal |
+   | Processing History (§3.14) | the `<DataSetID>` chain of every system that modified the data | five fields plus N records, none of them temporal, and §3.14's own "shall be transmitted every 3 minutes" is a *cadence* rather than a stamp |
+   | HRR (§3.5) whose `H2`/`H3` name a dwell **not in this packet** | a range-Doppler signature | the segment borrows its instant from the Dwell Segment those two fields point at, and resolving the pointer across packets is a join the fusion line refuses |
+
+   The three options, and why the chosen one is still a violation:
+
+   - **Refuse the object.** It is data, and the never-drop rule says data is not discarded because
+     a field the CDM requires is absent from the source. This would delete an operator's message
+     for having no timestamp.
+   - **Invent an instant** — the epoch, the packet's other times, the enclosing dwell's `D6`. Every
+     one of these produces a plausible instant nobody stated, which is the failure mode every time
+     settlement in this document exists to prevent.
+   - **Use the receipt instant and say so** — what `adapters/gmtif.py` does, with
+     `payload.observed_at_basis` recording that the format stated no source time. **This violates
+     the field's own documented meaning on three object kinds**, and the basis string is a
+     convention rather than a contract: it is a key in an untyped `payload` dict, so nothing
+     validates it, nothing requires it, and a consumer that does not know to look sees a normal
+     `observed_at` and takes it for a source time.
+
+   *Proposed for 1.1.0, and it is two changes rather than one.* Make `observed_at` **optional**
+   (MINOR — a nullable field), so "the source stated no instant" is expressible as an absence
+   rather than as a substitution; **or** add a canonical basis field beside it so the substitution
+   is at least typed and mandatory. The first is cleaner and pushes the problem onto consumers that
+   currently assume a value; the second is smaller and leaves the wrong value in place with a label.
+   **The docstring amendment rides the same release**, because `models.Event.observed_at`'s "Never
+   receipt time" is part of the CDM v1.0.0 contract and editing it in a patch release would change
+   what shipped objects claim about themselves.
+
+   Note which gap this is NOT. **Gap 13** is that a CDM object carries one instant where a source
+   states several — a *resolution* problem. This is that a source states **none**, and no number of
+   per-measurement times fixes it. And note the interaction with **gap 20**: a detection with no
+   instant is even less like a tracked object than one with an instant, so whatever closes 20 has
+   to decide whether an observation kind implies a time.

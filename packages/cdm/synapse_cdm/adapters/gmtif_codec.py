@@ -358,24 +358,61 @@ def to_raw(form: str, value: int | float) -> int:
     return int.from_bytes(write(form, value), "big", signed=False)
 
 
-def snap(form: str, value: int | float) -> int | float:
-    """The nearest value this form can actually carry.
+#: The value a form can hold, as (minimum, maximum, LSB). Stated once here rather than derived at
+#: each call site, because `snap` needs the bounds to refuse and the egress row set quotes the LSBs
+#: as properties of the format. Every one of these is the standard's own: Annex C-4.6's 360/2^n,
+#: C-4.7's 180/2^n and C-4.5's magnitude-over-2^fraction.
+def _bounds(form: str) -> tuple[float, float, float]:
+    bits = 8 * WIDTHS[form]
+    if form.startswith("BA"):
+        lsb = BA_NUMERATOR / float(1 << (bits - 3))
+        return 0.0, lsb * ((1 << bits) - 1), lsb
+    if form.startswith("SA"):
+        lsb = SA_NUMERATOR / float(1 << (bits - 2))
+        return -lsb * (1 << (bits - 1)), lsb * ((1 << (bits - 1)) - 1), lsb
+    if form in SIGN_MAGNITUDE:
+        _bits, fraction = SIGN_MAGNITUDE[form]
+        lsb = 1.0 / float(1 << fraction)
+        limit = ((1 << (bits - 1)) - 1) * lsb
+        return -limit, limit, lsb
+    if form.startswith("S"):
+        return float(-(1 << (bits - 1))), float((1 << (bits - 1)) - 1), 1.0
+    return 0.0, float((1 << bits) - 1), 1.0
 
-    The writers above REFUSE a value off their grid, and that is right for the round-trip path:
-    a parked wire value re-encodes exactly or something has gone wrong. It is wrong for the
+
+def snap(form: str, value: int | float) -> int | float:
+    """The nearest value this form can carry — and a REFUSAL if the value is not in its range.
+
+    The writers above refuse a value off their grid, and that is right for the round-trip path: a
+    parked wire value re-encodes exactly or something has gone wrong. It is wrong for the
     CDM-native egress path, where the input is a `Position` in decimal degrees that has no reason
     to sit on a binary-angle grid — and refusing every such position would make CDM-native egress
     impossible rather than careful.
 
-    Quantising to a field's own LSB is what ENCODING IS, not a fabrication: `SA32` holds 4.7 mm,
-    `BA32` holds 9.3 mm, `L4` holds a centimetre and `L6` holds a millimetre per second. The one
-    field where the loss is worth naming is `BA16`, whose 0.0055 deg LSB can move a course by up
-    to 2.7 millidegrees — and `gmtif._native_packet`'s docstring names it there rather than here.
+    QUANTISING IS LEGITIMATE AND CLAMPING IS NOT, AND NEITHER IS WRAPPING. Rounding to a field's
+    own LSB is the format's stated resolution being applied, not a translator losing something:
+    `SA32` resolves 4.7 mm, `BA32` 9.3 mm, `L4` a centimetre, `L6` a millimetre per second. A value
+    OUTSIDE the field's range is a different thing entirely, and the first version of this function
+    got it wrong in the worst available way — it masked the encoded integer to the field's width,
+    so a latitude of 95 deg came back as **-85 deg**, on the other side of the equator, and a `B16`
+    of 300 came back as -44. Clamping to the boundary would have been less bad and still wrong: it
+    would put a contact at exactly 90 deg and say nothing. So the range is checked and a value
+    outside it is a refusal quoting the value and the range, which is what a caller handing an
+    impossible coordinate to an encoder needs to be told.
     """
-    return from_raw(form, to_raw(form, from_raw(form, _nearest_raw(form, value))))
+    low, high, lsb = _bounds(form)
+    if not low <= value <= high:
+        raise CodecError(
+            f"{form} cannot carry {value!r}: the field's range is [{low!r}, {high!r}] with an LSB "
+            f"of {lsb!r}. Quantising a value to a field's own resolution is what encoding is; "
+            "moving a value INTO range is not, and neither masking it to the field width nor "
+            "clamping it to the boundary would tell you that the value was impossible"
+        )
+    return from_raw(form, _nearest_raw(form, value))
 
 
 def _nearest_raw(form: str, value: int | float) -> int:
+    """The encoded integer nearest to `value`. Callers check the range first; this does not."""
     bits = 8 * WIDTHS[form]
     if form.startswith("BA"):
         raw = int(round(value * (1 << (bits - 3)) / BA_NUMERATOR))

@@ -450,6 +450,24 @@ def test_the_documented_gaps_are_still_gaps():
         "drawn on somebody else's map, and a foreign sensor's tasked bounding area is the reverse."
     )
 
+    # Gap 23, an observation whose source states no time. Asserted on the REQUIREDNESS of
+    # observed_at and on the absence of a canonical basis field, which are the gap's two proposals
+    # — and the GMTIF adapter violates the field's docstring on three object kinds today, so this
+    # is the one gap in the list whose interim is a known contract violation rather than a park.
+    assert models.Event.model_fields["observed_at"].is_required(), (
+        "gap 23 appears to be closed by making Event.observed_at optional. That is the cleaner of "
+        "its two proposals and it pushes work onto every consumer that assumes a value — and "
+        "models.Event.observed_at's \'Never receipt time\' docstring is part of the v1.0.0 "
+        "contract, so it has to be edited in the SAME release. Update the gap, MIGRATIONS.md and "
+        "the docstring together."
+    )
+    for field in ("observed_at_basis", "observed_at_source", "time_basis"):
+        assert field not in models.Event.model_fields, (
+            f"gap 23 appears to be closed with Event.{field} — a typed, mandatory basis beside the "
+            "instant. That is the smaller proposal and it leaves the wrong value in place with a "
+            "label, which is a real choice and not a lesser one. Write it down before the field."
+        )
+
 
 # The Picogrid Legion row set is a SPECIFICATION: adapter #5 does not exist yet. These two
 # tests pin it in the only two ways available before there is code — the size of the row set,
@@ -1978,7 +1996,7 @@ def test_the_gmtif_gaps_are_referenced_from_the_row_set():
     """
     section = _section(GMTIF_HEADING)
     flat = _flat(section)
-    for gap in (1, 4, 6, 7, 8, 9, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22):
+    for gap in (1, 4, 6, 7, 8, 9, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23):
         assert f"**gap {gap}**" in flat.lower() or f"**Gap {gap}**" in flat, (
             f"gap {gap} is not cited anywhere in the GMTIF row set, and the row set is either "
             "opening it or sharpening it"

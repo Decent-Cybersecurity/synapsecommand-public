@@ -273,12 +273,18 @@
   {
     "event_id": "7411e011-6f04-5c13-8a2d-ea1176af71c9",
     "event_type": "DETECTION",
-    "geometry": null,
+    "geometry": {
+      "coordinates": [
+        24.49000001884997,
+        57.09000001195818
+      ],
+      "type": "Point"
+    },
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T08:30:00.000Z",
     "payload": {
-      "geometry_basis": "None. The fix lives on the Entity this event's related_entities names, matching asterix_cat021.py and adsb.py: duplicating one measurement into two objects invites the two to diverge",
+      "geometry_basis": "a Point, in [lon, lat] order. A GMTI target report IS a position measurement \u2014 the detection's location is the payload's primary content, and Event.geometry is the CDM's field for where an event happened, so leaving it None would put the one thing the report is about somewhere a consumer holding the Event alone cannot reach. Height is deliberately NOT the third coordinate: D32.6 is Optional and a two-element Point is the honest shape when the source stated no height, while a Point that sometimes has three elements makes every consumer branch. alt_m on the Entity carries it. This follows stanag4676.py, which sets geometry on a Detection event; asterix_cat021.py and adsb.py leave it None, and that divergence is recorded in gap 20 rather than resolved here",
       "gmti_dwell": {
         "D2": 3,
         "D24": 57.05000001937151,

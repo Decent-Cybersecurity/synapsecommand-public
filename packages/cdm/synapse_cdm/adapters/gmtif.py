@@ -83,6 +83,25 @@ offsets are a function of `D1`, so one wrong bit desynchronises everything after
 nothing to continue from. Skipping is available where the format hands over a length, and withheld
 where it does not.
 
+A DETECTION'S FIX LIVES IN BOTH PLACES, AND FOUR SHIPPED ADAPTERS DISAGREE
+--------------------------------------------------------------------------
+A target report becomes an `Entity` whose `position` is the fix AND a `DETECTION` `Event` whose
+`geometry` is a `Point` at the same coordinates. A GMTI target report *is* a position measurement —
+the location is the payload's primary content — and `Event.geometry` is the CDM's only field for
+where an event happened, so leaving it `None` would put the one thing the report is about somewhere
+a consumer holding the `Event` alone cannot reach: `related_entities` is a list of ids and not a
+join anybody can perform without the `Entity` in hand, which is **gap 19**.
+
+Two elements and never three. `D32.6` Geodetic Height is Optional, so a third coordinate would be
+present only sometimes and every consumer would have to branch on the length; `Position.alt_m` on
+the `Entity` carries the height.
+
+`stanag4676.py` sets `geometry` on a `Detection` event and `asterix_cat021.py` and `adsb.py` leave
+it `None`, so this is one concept with two answers in one codebase. It is stated in
+FORMAT_COVERAGE.md's gap 20 rather than resolved here, on the I021/170 precedent: all four are
+published behaviours with fixtures and golden files behind them, and the honest fix is a documented
+rule for the whole model with a migration note rather than a fifth adapter voting.
+
 TRANSFORMS IS EMPTY, AND THAT IS A CLAIM
 -----------------------------------------
 Every decoded field is parked verbatim in `attributes.gmti_packet` and `attributes.gmti_segments`
@@ -101,6 +120,7 @@ from synapse_cdm import ids, lossless, times
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters import gmtif_codec as codec
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
+from synapse_cdm.geo import Point
 from synapse_cdm.models import (CDMBase, Entity, Event, Kinematics, Position, SourceId, Track,
                                 TrackSample)
 
@@ -1583,7 +1603,8 @@ class GmtifAdapter(Adapter):
                 source_ids=[SourceId(system="GMTIF-TARGET", external_id=external)],
                 event_id=ids.derive(SYSTEM, external, kind="event"),
                 event_type=EventType.DETECTION, severity=Severity.INFO,
-                related_entities=[entity_id], geometry=None,
+                related_entities=[entity_id],
+                geometry=Point(coordinates=[position.lon, position.lat]),
                 payload={
                     "gmti_target_report": report,
                     "gmti_dwell": {k: v for k, v in fields.items()},
@@ -1594,9 +1615,17 @@ class GmtifAdapter(Adapter):
                         "alert level anywhere in the format. J5 and R3 are tasking priorities and "
                         "are parked"),
                     "geometry_basis": (
-                        "None. The fix lives on the Entity this event's related_entities names, "
-                        "matching asterix_cat021.py and adsb.py: duplicating one measurement into "
-                        "two objects invites the two to diverge"),
+                        "a Point, in [lon, lat] order. A GMTI target report IS a position "
+                        "measurement — the detection's location is the payload's primary content, "
+                        "and Event.geometry is the CDM's field for where an event happened, so "
+                        "leaving it None would put the one thing the report is about somewhere a "
+                        "consumer holding the Event alone cannot reach. Height is deliberately "
+                        "NOT the third coordinate: D32.6 is Optional and a two-element Point is "
+                        "the honest shape when the source stated no height, while a Point that "
+                        "sometimes has three elements makes every consumer branch. alt_m on the "
+                        "Entity carries it. This follows stanag4676.py, which sets geometry on a "
+                        "Detection event; asterix_cat021.py and adsb.py leave it None, and that "
+                        "divergence is recorded in gap 20 rather than resolved here"),
                 },
                 observed_at=observed, received_at=shared["received"],
             ))
@@ -2011,9 +2040,23 @@ class GmtifAdapter(Adapter):
                 "only segment that carries an object's position without stating where a sensor "
                 "was and what area it swept is the Platform Location Segment, which is \"the "
                 "location of the sensor platform\" (§3.15) — so a non-platform object would have "
-                "to become a Dwell Segment target report, and D7/D8/D9 and D24-D27 are Mandatory "
-                "and unstated. A configured dwell area is a fabricated observation footprint, not "
-                "a deployment declaration"
+                "to become a Dwell Segment target report, and §3.4 makes a Dwell Segment a report "
+                "\"for which the sensor provides a single time, sensor position, reference "
+                "position on the ground with SIMPLE ESTIMATES FOR THE OBSERVED AREA at the "
+                "reported time\". Seven Mandatory fields state that observed area and no CDM "
+                "object states any of them:\n"
+                "  D7/D8/D9  the sensor's own position at the temporal centre of the dwell\n"
+                "  D24/D25   the centre of the dwell area — where the radar LOOKED, which is not "
+                "where the target is\n"
+                "  D26       the distance from the near edge to that centre, in kilometres\n"
+                "  D27       for a dwelling radar, HALF THE 3-dB BEAMWIDTH — a physical property "
+                "of an antenna the caller does not have, and for a non-dwelling one an angle "
+                "measured from the sensor's position, which the caller does not have either\n"
+                "A configured value for these would not be a deployment declaration in "
+                "source.synthetic's category — it would be an invented observation footprint, and "
+                "a packet claiming a radar swept an area it did not is worse than a packet that "
+                "does not exist. If you must write one, these seven fields are what your writer "
+                "has to be able to assert, and asserting them means knowing the radar"
             )
         missing = [name for name, value in (("position", entity.position),
                                             ("kinematics", entity.kinematics)) if value is None]
@@ -2030,14 +2073,24 @@ class GmtifAdapter(Adapter):
                 "Mandatory and none has a No-Statement value, so an absent one cannot be omitted"
             )
         owning = [t for t in tracks if t.entity_id == entity.entity_id]
-        if any(len(t.samples) > 1 for t in owning):
+        oversized = [t for t in owning if len(t.samples) > 1]
+        if oversized:
             raise GmtifError(
-                "CDM-native egress refuses a Track with more than one sample. Every Platform "
-                "Location Segment carries its own Mandatory L5/L6/L7 velocity and the CDM holds "
-                "ONE Kinematics per Entity, so emitting N segments would repeat one velocity at "
-                "every sample — a fabrication for all but the one the Entity's state came from. "
-                "That is gap 16 arriving on the egress side, and the honest answer is a refusal "
-                "rather than N plausible velocities"
+                f"CDM-native egress refuses a Track with more than one sample "
+                f"({[len(t.samples) for t in oversized]}). L5 Platform Track and L6 Platform "
+                "Speed are Mandatory in every Platform Location Segment and are each defined "
+                "\"at the time the report is prepared\" (§3.15.5, §3.15.6), with L7 taking the "
+                "same instant from L1; the CDM holds ONE Kinematics per Entity. So emitting N "
+                "segments would repeat the latest velocity onto N-1 earlier instants, which "
+                "fabricates a Mandatory measurement N-1 times. That is gap 16 arriving on the "
+                "egress side.\n\n"
+                "THE EXIT IS EXPLICIT AND IT IS YOURS: the LAST sample is the one instant where "
+                "every Mandatory field has an honest value, because it is the instant the "
+                "Entity's own position and kinematics were taken from. Pass a single-sample Track "
+                "holding that sample — or the Entity alone, which needs no Track at all — and "
+                "this call emits a valid packet. Truncating a history is a decision with a cost, "
+                "so it is the caller's to take visibly rather than this adapter's to take "
+                "silently"
             )
         if not self._identity or not self._identity.get("P3") or not self._identity.get("P8"):
             raise GmtifError(

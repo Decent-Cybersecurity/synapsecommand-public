@@ -1317,13 +1317,31 @@ def test_cdm_native_egress_refuses_without_the_deployment_declarations_it_needs(
                 **kwargs).from_cdm([_native_platform()])
 
 
-def test_cdm_native_egress_refuses_a_non_platform_entity_rather_than_inventing_a_dwell():
-    """D7-D9 and D24-D27 are Mandatory and state where the sensor was and what it swept."""
-    with pytest.raises(GmtifError, match="fabricated observation footprint"):
+def test_cdm_native_egress_refuses_a_non_platform_entity_and_names_the_seven_fields():
+    """Amendment 6. A consumer forced to write its own writer must know what it has to assert.
+
+    "Refused" on its own tells nobody anything. The message names each Mandatory field and says
+    why no honest value exists for it — and `D27` is the one that settles the argument, because
+    for a dwelling radar it is half the 3-dB beamwidth, which is a physical property of an antenna
+    rather than a number anybody can configure.
+    """
+    with pytest.raises(GmtifError) as caught:
         adapter(mission_reference_date=_dt.date(2026, 4, 29),
                 platform_identity={"P3": "ZZ", "P8": "Z1"},
                 confidentiality_label={"P4": 5, "P5": "ZZ", "P6": 0}).from_cdm(
             [_native_platform(entity_type=EntityType.UNKNOWN)])
+    message = str(caught.value)
+    for field in ("D7/D8/D9", "D24/D25", "D26", "D27"):
+        assert field in message, f"the refusal does not name {field}: {message[:200]}"
+    assert "SIMPLE ESTIMATES FOR THE OBSERVED AREA" in message, (
+        "§3.4's own words are what make these fields a statement about the OBSERVATION rather "
+        "than about the deployment, which is the whole argument")
+    assert "HALF THE 3-dB BEAMWIDTH" in message, (
+        "D27 is the field that cannot be configured by anyone who does not own the radar, and it "
+        "is what turns 'we decline' into 'nobody could'")
+    assert "invented observation footprint" in message
+    assert "what your writer has to be able to assert" in message, (
+        "the refusal has to hand the consumer the list, or it is a dead end rather than a boundary")
 
 
 def test_cdm_native_egress_refuses_a_multi_sample_track_rather_than_repeating_one_velocity():
@@ -1461,3 +1479,307 @@ def test_the_harness_does_not_pick_up_the_spec_directory_or_the_readme():
     assert "build_fixtures.py" not in names
     assert len(names) == 2 * len(BINARIES), (
         f"{len(names)} fixtures replayed for {len(BINARIES)} packets — every case must be a twin")
+
+
+# ==================================================== the Phase 2 amendments
+#
+# Six amendments applied on review of 3d43871. Each is pinned in the direction that would catch it
+# being quietly reverted, and the two that overturned a Phase 2 reading — geometry on a detection,
+# and `snap` refusing rather than wrapping — are asserted BOTH ways.
+
+
+def test_a_detection_event_carries_the_fix_as_a_point():
+    """Amendment 1, asserted both ways. It reversed the Phase 2 reading, which was None everywhere.
+
+    A GMTI target report IS a position measurement: the detection's location is the payload's
+    primary content and `Event.geometry` is the CDM's field for where an event happened. Leaving it
+    `None` put the one thing the report is about somewhere a consumer holding the `Event` alone
+    cannot reach — `related_entities` is a list of ids, not a join a consumer can perform.
+    """
+    objects = adapter().to_cdm((FIXTURES / "mission_dwell_hi_res_targets.gmti").read_bytes())
+    detections = [e for e in events(objects) if e.event_type is EventType.DETECTION
+                  and "gmti_target_report" in e.payload]
+    assert len(detections) == 3
+    for event in detections:
+        assert event.geometry is not None, (
+            "the Phase 2 reading is back: a DETECTION event with no geometry puts the detection's "
+            "location out of reach of anything holding only the event")
+        assert event.geometry.type == "Point"
+        # [lon, lat], per RFC 7946 and geo._check_lonlat — and the Entity agrees.
+        entity = next(e for e in targets(objects) if e.entity_id == event.related_entities[0])
+        assert event.geometry.coordinates == [entity.position.lon, entity.position.lat]
+        assert "IS a position measurement" in " ".join(event.payload["geometry_basis"].split())
+
+
+def test_a_detection_point_has_two_coordinates_and_never_three():
+    """`D32.6` Geodetic Height is Optional, so a third element would be present only sometimes.
+
+    A `Point` whose length varies makes every consumer branch, and the height already has a
+    canonical home in `Position.alt_m`. Both cases are in the fixture set: the full-mask packet
+    states `D32.6` and the sparse one does not.
+    """
+    for name in ("full_mask_every_optional_group", "sparse_mask_minimum_dwell"):
+        objects = adapter().to_cdm((FIXTURES / f"{name}.gmti").read_bytes())
+        for event in events(objects):
+            if event.geometry is not None:
+                assert len(event.geometry.coordinates) == 2, name
+    with_height = adapter().to_cdm(
+        (FIXTURES / "full_mask_every_optional_group.gmti").read_bytes())
+    assert targets(with_height)[0].position.alt_m == 40.0, (
+        "the height must still arrive — on the Entity, which is where a state belongs")
+
+
+def test_only_a_target_report_gets_a_geometry_and_the_others_say_why_not():
+    """An HRR segment states range-Doppler indices in a sensor-relative space, not a position."""
+    hrr_objects = adapter().to_cdm(
+        (FIXTURES / "hrr_signature_parked_both_time_branches.gmti").read_bytes())
+    hrrs = [e for e in events(hrr_objects) if "gmti_hrr" in e.payload]
+    assert hrrs and all(e.geometry is None for e in hrrs)
+    assert "sensor-relative space" in " ".join(hrrs[0].payload["geometry_basis"].split())
+    text_objects = adapter().to_cdm((FIXTURES / "free_text_and_test_status.gmti").read_bytes())
+    for event in events(text_objects):
+        assert event.geometry is None
+        assert event.event_type is EventType.STATUS_CHANGE
+
+
+def test_where_a_detections_position_lives_diverges_across_four_adapters():
+    """Amendment 1's cost: one concept, two answers, four shipped adapters. Stated, not resolved.
+
+    `stanag4676.py` and `gmtif.py` put a detection's fix in `Event.geometry`; `asterix_cat021.py`
+    and `adsb.py` leave it `None`. All four are published behaviours with fixtures and golden files
+    behind them, so this is a 1.1.0 question with a migration note — the I021/170 precedent — and
+    all four sides are pinned so it cannot be settled by accident.
+    """
+    import pathlib as _p
+    from synapse_cdm.adapters import adsb, asterix_cat021, stanag4676
+    # The two that leave it None, read from the source rather than from behaviour: both construct
+    # their event with a literal `geometry=None`, which is the thing that would have to change.
+    for module in (asterix_cat021, adsb):
+        source = _p.Path(module.__file__).read_text()
+        assert "geometry=None," in source, (
+            f"{module.__name__} no longer sets geometry=None on its target-report event. If it now "
+            "emits a Point, the divergence recorded in gap 20 has been resolved — update the gap, "
+            "the migration note and this test together")
+    # The two that set a Point.
+    assert "geometry=geometry" in _p.Path(stanag4676.__file__).read_text()
+    objects = adapter().to_cdm((FIXTURES / "mission_dwell_hi_res_targets.gmti").read_bytes())
+    assert any(e.geometry is not None for e in events(objects))
+    # And the gap has to carry both arguments, or whoever settles it inherits a majority.
+    gaps = DOC.read_text()
+    gap20 = gaps[gaps.index("20. **No detection"):gaps.index("21. **No home for a radar")]
+    flat = " ".join(gap20.split())
+    assert "WHERE A DETECTION'S POSITION LIVES" in flat
+    assert "For a `Point` (the NITS and GMTIF answer)" in flat
+    assert "For `None` (the CAT021 and ADS-B answer)" in flat
+    assert "1.1.0" in flat
+    for name in ("stanag4676.py", "gmtif.py", "asterix_cat021.py", "adsb.py"):
+        assert name in flat, f"gap 20's divergence table does not name {name}"
+
+
+def test_the_multi_sample_refusal_names_the_single_sample_exit():
+    """Amendment 2. The refusal stands; what changed is that it hands the caller the way out.
+
+    Truncating a history has a cost, so it is the caller's decision to take visibly rather than
+    this adapter's to take silently — but a refusal that does not name the alternative reads as
+    "egress does not work", which is not the decision.
+    """
+    entity = _native_platform()
+    track = Track(
+        source=entity.source, source_ids=entity.source_ids,
+        track_id=gmtif.ids.derive("TAK", "SYN-UAV-1", kind="track"),
+        entity_id=entity.entity_id,
+        samples=[TrackSample(position=entity.position,
+                             observed_at=entity.valid_from - _dt.timedelta(minutes=1)),
+                 TrackSample(position=entity.position, observed_at=entity.valid_from)],
+    )
+    configured = dict(mission_reference_date=_dt.date(2026, 4, 29),
+                      platform_identity={"P3": "ZZ", "P8": "Z1"},
+                      confidentiality_label={"P4": 5, "P5": "ZZ", "P6": 0})
+    with pytest.raises(GmtifError) as caught:
+        adapter(**configured).from_cdm([entity, track])
+    message = str(caught.value)
+    assert "THE EXIT IS EXPLICIT AND IT IS YOURS" in message
+    assert "single-sample Track" in message
+    assert "at the time the report is prepared" in message, (
+        "the reason has to be the standard's: L5 and L6 are each defined at the report's own "
+        "instant, so repeating the latest velocity onto an earlier one fabricates a Mandatory "
+        "measurement")
+    assert "gap 16" in message
+    # And the exit works: the last sample alone emits a valid packet.
+    single = Track(
+        source=entity.source, source_ids=entity.source_ids, track_id=track.track_id,
+        entity_id=entity.entity_id, samples=[track.samples[-1]],
+    )
+    out = adapter(**configured).from_cdm([entity, single])
+    assert [s["type"] for s in gmtif.decode_packet(out)["segments"]] == [1, 13]
+    # …as does the Entity alone, which needs no Track at all.
+    assert adapter(**configured).from_cdm([entity]) == out
+
+
+def test_the_h6_h7_record_count_collision_is_recorded_and_not_merely_sidestepped():
+    """Amendment 3. Parking the array is right; leaving the reason unwritten was not.
+
+    The adapter never needs the count, so the contradiction cost nothing to sidestep — which is
+    exactly why it would have gone unrecorded, and a Phase 3 author decoding the array has to
+    resolve it first.
+    """
+    # Scoped to the ambiguity ROW, not to the whole section: the H6/H7 sentences also appear in
+    # the field rows and in the adapter's own conditional-group refusal, so a section-wide check
+    # would pass on those and the row could be deleted without anything noticing.
+    text = DOC.read_text()
+    rows = [line for line in text.splitlines() if line.startswith("| 17 | **`H6` and `H7`")]
+    assert len(rows) == 1, "ambiguity 17, the H6/H7 record-count collision, is gone"
+    row = " ".join(rows[0].split())
+    assert "are reported in this segment" in row, "H6's own words"
+    assert "shall define the total number of scatterer records" in row, "H7's own words"
+    assert "Either H6 or H7 or both must be reported" in row, (
+        "the sentence both paragraphs end with is what makes the collision reachable rather than "
+        "hypothetical")
+    assert "sparse" in row.lower() and "carrying **both**" in row, (
+        "the unresolved case has to be NAMED: a sparse chip reporting both, where the two "
+        "disagree about how many records follow")
+    assert "written justification for the hex-blob parking" in row
+    assert "custodian's act" in row and "Phase 3 author" in row, (
+        "the row has to say whose act the resolution is and who will need it, or it reads as a "
+        "note rather than as a handover")
+    flat = " ".join(text[text.index("## STANAG 4607 / AEDP-4607"):
+                         text.index("\n## GeoJSON")].split())
+    assert "row 17" in flat, "row 14 must cross-reference it, per the amendment-H discipline"
+    # And the behaviour the row justifies: the array is bounded by S2, not by H6 or H7.
+    objects = adapter().to_cdm(
+        (FIXTURES / "hrr_signature_parked_both_time_branches.gmti").read_bytes())
+    hrrs = [e for e in events(objects) if "gmti_hrr" in e.payload]
+    assert hrrs[0].payload["gmti_hrr"]["scatterers_hex"] == "10203040"
+    assert "bounded by S2" in " ".join(hrrs[0].payload["scatterer_basis"].split())
+    # H25/H26 are still validated, because they size a record under EVERY reading.
+    module = _spec()
+    spec = module.packet([module.mission(), module.hrr(ordinal=1)], job=0)
+    spec["segments"][1]["fields"]["H25"] = 3
+    spec["segments"][1].pop("size")
+    spec["segments"][1]["size"] = len(gmtif._encode_segment(spec["segments"][1]))
+    spec["header"]["P2"] = gmtif.PACKET_HEADER_BYTES + sum(s["size"] for s in spec["segments"])
+    with pytest.raises(GmtifError, match="SCATTERER RECORD WIDTH"):
+        adapter().to_cdm(gmtif.encode_packet(spec))
+
+
+@pytest.mark.parametrize("form,value", [
+    ("SA32", 95.0), ("SA32", -95.0), ("SA16", 90.0), ("BA32", 400.0), ("BA32", -5.0),
+    ("BA16", 720.0), ("B16", 300.0), ("B16", -256.0), ("H32", 40000.0), ("I16", 70000.0),
+])
+def test_snap_refuses_a_value_outside_the_field_and_never_wraps_or_clamps(form, value):
+    """Amendment 4b, asserted both ways. The Phase 2 implementation WRAPPED, which is the worst.
+
+    It masked the encoded integer to the field's width, so `snap("SA32", 95.0)` returned **-85.0**
+    — a latitude on the other side of the equator — and `snap("B16", 300.0)` returned -44.0.
+    Clamping to the boundary would have been less bad and still silent. Quantising to a field's own
+    LSB is the format's stated resolution being applied; moving a value INTO range is not.
+    """
+    low, high, _lsb = codec._bounds(form)
+    with pytest.raises(codec.CodecError, match="cannot carry") as caught:
+        codec.snap(form, value)
+    message = str(caught.value)
+    assert repr(value) in message, "the refusal must quote the value"
+    assert repr(low) in message and repr(high) in message, "…and the range"
+    assert "neither masking it to the field width nor" in message, (
+        "the message has to say what it is NOT doing, because both wrong answers look like "
+        "successes to the caller")
+
+
+@pytest.mark.parametrize("form,value", [
+    ("SA32", 57.31), ("SA32", -89.9999), ("BA32", 24.72), ("BA32", 0.0), ("BA16", 92.0),
+    ("SA16", 1.5), ("B16", 12.5), ("H32", 120.5), ("I32", 850000),
+])
+def test_snap_quantises_inside_the_field_because_that_is_the_formats_own_resolution(form, value):
+    snapped = codec.snap(form, value)
+    _low, _high, lsb = codec._bounds(form)
+    assert abs(snapped - value) <= lsb / 2 + 1e-12, (
+        f"snap moved {value} to {snapped}, further than half an LSB ({lsb})")
+    # And the snapped value is exactly representable, which is the point.
+    assert codec.from_raw(form, codec.to_raw(form, snapped)) == snapped
+
+
+def test_snap_is_the_only_place_the_native_path_loses_anything_and_the_row_set_states_the_lsbs():
+    """Amendment 4a. The precisions are a property of the FORMAT, listed once as such."""
+    text = DOC.read_text()
+    section = text[text.index("## STANAG 4607 / AEDP-4607"):text.index("\n## GeoJSON")]
+    flat = " ".join(section.split())
+    assert "the FORMAT'S stated resolution, not a translator's loss" in flat
+    # Scoped to the resolution TABLE, sliced by its own header: every form name also appears in
+    # the field rows' Form column, so a section-wide substring check would pass on those and a
+    # row could be deleted with nothing noticing. That is exactly what the first version of this
+    # assertion did, and a mutation check is what found it.
+    lines = text.splitlines()
+    header = next(i for i, line in enumerate(lines)
+                  if line.startswith("| Form | Range | LSB |"))
+    table = []
+    for line in lines[header + 2:]:
+        if not line.startswith("|"):
+            break
+        table.append(line)
+    forms = {cell.strip() for row in table
+             for cell in row.strip("|").split("|")[:1]
+             for cell in cell.split("·")}
+    required = {"`SA32`", "`BA32`", "`SA16`", "`BA16`", "`B16`", "`B32`", "`H32`"}
+    missing = required - forms
+    assert not missing, (
+        f"the egress resolution table no longer lists {sorted(missing)}. Every scaled form the "
+        "format uses has to state its own LSB there, because the table is what closes the "
+        "'quantisation recorded nowhere' objection documentarily")
+    assert len(table) >= 10, f"the resolution table is down to {len(table)} rows"
+    assert "4.7 mm" in flat and "9.3 mm" in flat and "2.7 millidegrees" in flat
+    assert "Quantising is legitimate; clamping and wrapping are not" in flat
+    assert "came back as **−85°**" in flat, (
+        "the defect amendment 4 fixed belongs on the record: a reader who sees only the rule "
+        "cannot tell whether it was ever broken")
+    # The round-trip path quantises nothing, which is what makes the byte-exact claim possible.
+    assert "never\nquantises anything at all" in section or \
+        "never quantises anything at all" in flat
+
+
+def test_the_gap_for_an_observation_with_no_source_time_exists_and_names_all_three():
+    """Amendment 5. A documented "Never receipt time" violated on three object kinds is a CDM gap.
+
+    Asserted the awkward way round, like every other gap: `observed_at` must still be REQUIRED and
+    there must still be no canonical basis field, so a gap quietly closed in code without the
+    document being updated fails the build.
+    """
+    from synapse_cdm import models
+    field = models.Event.model_fields["observed_at"]
+    assert field.is_required(), (
+        "Event.observed_at has become optional, which is one of the two proposals gap 23 makes. "
+        "Update the gap, MIGRATIONS.md and models.Event.observed_at's docstring together — the "
+        '"Never receipt time" wording is part of the v1.0.0 contract and rides the same release')
+    for name in ("observed_at_basis", "observed_at_source", "time_basis"):
+        assert name not in models.Event.model_fields, (
+            f"Event.{name} now exists, which is gap 23's OTHER proposal — a typed, mandatory basis "
+            "beside the instant. That is the smaller change and it leaves the wrong value in place "
+            "with a label; write the decision down before the field")
+    gaps = DOC.read_text()
+    gap23 = gaps[gaps.index("23. **No way to carry an observation whose source states no time"):]
+    flat = " ".join(gap23.split())
+    for segment in ("Free Text", "Processing History", "HRR"):
+        assert segment in flat, f"gap 23 must name the {segment} Segment as one of the three"
+    assert "Never receipt time" in flat
+    assert "payload.observed_at_basis" in flat and "convention rather than a contract" in flat, (
+        "the interim has to be described as what it is: a key in an untyped dict that nothing "
+        "validates and nothing requires")
+    assert "Gap 13" in flat or "gap 13" in flat, (
+        "the distinction from gap 13 is the whole reason this is a new number: 13 is a source "
+        "stating SEVERAL instants, 23 is a source stating NONE")
+
+
+def test_the_three_timeless_object_kinds_all_say_the_format_stated_no_time():
+    """The interim convention, exercised on all three so none of them can quietly stop saying it."""
+    seen = set()
+    for name in ("free_text_and_test_status", "processing_history_chain",
+                 "hrr_signature_parked_both_time_branches"):
+        for event in events(adapter().to_cdm((FIXTURES / f"{name}.gmti").read_bytes())):
+            if event.observed_at != event.received_at:
+                continue
+            basis = " ".join(event.payload["observed_at_basis"].split())
+            assert basis.startswith("the injected clock"), basis
+            assert "no time" in basis or "NO TIME OF ITS OWN" in basis, basis
+            seen |= {k for k in ("gmti_free_text", "gmti_processing_history", "gmti_hrr")
+                     if k in event.payload}
+    assert seen == {"gmti_free_text", "gmti_processing_history", "gmti_hrr"}, (
+        f"only {sorted(seen)} exercised the receipt-time fallback; gap 23 names three")
