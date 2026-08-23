@@ -193,10 +193,10 @@ Nothing in the harness knows anything about any particular adapter — it resolv
 `module:ClassName` as readily as a registered name, which is what makes it usable as the gate
 for adapters the AI adapter factory generates and this repository has never seen.
 
-### Two things the harness cannot check for you, both found by mutation
+### Three things the harness cannot check for you
 
 Adapter #11 mutation-checked its own assertions and each mutation found a hole that a green run
-had been hiding. Both generalise, so they are here rather than in one adapter's notes.
+had been hiding. All three generalise, so they are here rather than in one adapter's notes.
 
 **A fixture whose behaviour is invariant under the harness clock exercises nothing.** The harness
 injects ONE frozen instant for a whole fixture directory. CAT048's two midnight-rollover fixtures
@@ -226,7 +226,39 @@ So audit the model separately, against something outside the implementation —
 - `asterix_cat021`'s scale factors are the safe kind: each is a single stated LSB, checkable
   against the document without running anything.
 
-Neither lesson is something the five checks can produce, and that is the point of writing them
+**The roster sweep is a manual protocol act, and prose counts are what it is for.** When an
+adapter joins the shipped roster, six documents restate how many adapters there are and three of
+them do the pair arithmetic as well — and nothing in the harness reads prose. The sweep is:
+
+1. **`grep` every spelled-out number within 120 characters of the word "adapter"**, across
+   `*.md`, `*.mdx` and `*.py`. The narrower form — grepping for the *previous* count word, "eight"
+   or "nine" — is what the adapter #11 sweep started with, and it missed
+   `synapse_cdm/__init__.py`, which still said "five adapters means ten translations" four
+   adapters later. A site that is stale by more than one release does not contain the previous
+   count word, so searching for it cannot find the sites that have drifted furthest.
+2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
+   documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for nine adapters is 72
+   against 36; neither was wrong on its own page and together they were a contradiction.
+3. **Read every sentence that states the count TWICE.** `symbology.py` and
+   `docs/docs/cdm/entity.mdx` both carry "so that nine adapters cannot grow nine slightly
+   different opinions", and commit 94c000a had to repair that sentence half-updated —
+   "seven adapters cannot grow six" — which reads as prose either way.
+4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
+   a private name key, and it had been undercounting itself by one adapter since adapter #6. A
+   count that IS the argument decays exactly like any other.
+
+**A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
+`Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see
+the two prose sentences in the same section that still described the row set as unimplemented.
+Anything that parses tables will report clean while the paragraphs around them contradict them.
+
+`tests/test_cdm_prose_counts.py` now pins the six sites the sweep has already had to fix, so a
+half-edit at a KNOWN site fails a build. It is deliberately an allowlist and not a scanner — a
+general prose-number check would flag "two altitudes that are two different measurements" and
+need an exemption list larger than the sweep it replaced — so **finding a NEW site is still the
+sweep's job**, and adding it to that allowlist is how the sweep's work stops being undone.
+
+None of the three is something the five checks can produce, and that is the point of writing them
 down here: a green harness run is a floor.
 
 ## Layout
