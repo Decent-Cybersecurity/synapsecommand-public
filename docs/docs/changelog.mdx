@@ -198,6 +198,37 @@ is worth stating.
   audit caught six exemptions with no subject, and the harness caught the spec pin being replayed
   as a payload.
 
+- **`adapters/stanag4676.py` 1.0.0 — STANAG 4676 / AEDP-12 Edition B Version 2 NITS tracks,
+  bidirectional.** The full UML model — 48 classes and 273 attributes — at **schema_version
+  1.0.0**, with no field added, removed or retyped.
+
+  Pinned to AEDP-12 **Edition B Version 2** (March 2022) by SHA-256, alongside the AEDP-12.1
+  Implementation Guide and the STANAG 4676 Edition 2 ratification wrapper. Edition A is refused
+  by name — the standard says the two are incompatible and that the model was re-architected
+  "from scratch", so a 2014 feed is a separate adapter and not a mode.
+
+  One `Track` per `TrackData`: a `TrackSegment` is a temporal and administrative subdivision of
+  a track, not an identity boundary, so segments park against the range of sample indices they
+  cover. Points out of time order are refused quoting both instants, and segments overlapping in
+  time — the multi-hypothesis structure the standard's own text describes — are refused quoting
+  the hypothesis count and confidences, never reassembled and never silently resolved to the
+  best-scoring branch.
+
+  Three of its six coordinate systems cannot produce a position and each says why. The mandatory
+  STANAG 4774 confidentiality label is carried as the exact fragment that arrived and egress
+  refuses rather than inventing one. `TrackLinkage`, `ProcessedTrack` and the standard's own
+  normative cross-stream consolidation rule are all carried and none is performed.
+
+  **The XML element binding is provisional and labelled as such**: the normative XSD is
+  distributed through NATO national representatives and is not pinned here, so element names
+  bind through one empty table. Every fixture is an XML/parsed twin and a test asserts the two
+  produce byte-identical CDM.
+
+  Four gaps opened: **16** no per-sample extension, **17** no state-vector uncertainty, **18** no
+  confidence provenance and no retraction, **19** no relation object. Gap 2 gained `TRAVELER` and
+  `ZOMBIE` as evidence and a stated divergence: three adapters map FAKER and JOKER and this one
+  disagrees with the other two, deliberately and on the record.
+
 - **`adapters/asterix_cat021.py` 1.0.0 — ASTERIX category 021 ADS-B target reports,
   bidirectional.** All 42 data items plus the RE and SP fields and the whole Reserved
   Expansion Field, at **schema_version 1.0.0**, with no field added, removed or retyped.

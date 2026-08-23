@@ -1,9 +1,10 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Six integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
-NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, and ASTERIX category 021.
-Without a canonical model in the middle, six adapters means fifteen translations and six
-private notions of "a contact". With one, an adapter is a thin translator and nothing else.
+Seven integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021, and
+STANAG 4676 / AEDP-12 Edition B NITS tracks. Without a canonical model in the middle, seven
+adapters means twenty-one translations and seven private notions of "a contact". With one, an
+adapter is a thin translator and nothing else.
 
 **Shipped so far:**
 
@@ -15,6 +16,7 @@ private notions of "a contact". With one, an adapter is a thin translator and no
 | [`adsb`](adapters/adsb.py) 1.0.0 | bidirectional | ADS-B 1090ES extended squitter frames, Mode S DF17/DF18 (type codes 1-4, 5-8, 0 and 9-18, 19, 20-22, 28, 31) → `Entity` + `Event`; `Entity` or `Track` → DF17 frames. A binary format with a CRC gate, two altitudes that are two different measurements, and no unambiguous position in a single frame |
 | [`legion`](adapters/legion.py) 1.0.0 | ingest | Picogrid Legion Platform API v3 response documents (Entity, Track, Entity/Track Location, Locations list, Event) → `Entity` + `Event` + `Track`. The first REST upstream: transport stays with the caller, one page is one Track, and the coordinates default to geocentric metres |
 | [`cat021`](adapters/asterix_cat021.py) 1.0.0 | bidirectional | ASTERIX category 021 ADS-B target reports, EUROCONTROL SPEC-0149-12 Ed 2.6 with the Reserved Expansion Field Ed 1.5 (all 42 data items, RE and SP) → `Entity` + `Event` **per record**; Entities or a `Track` → one data block. A time of day that carries no date, a quality vocabulary that needs another item to say what it means, and a ground station whose verdicts it carries without re-deciding |
+| [`stanag4676`](adapters/stanag4676.py) 1.0.0 | bidirectional | STANAG 4676 / AEDP-12 **Edition B Version 2** NITS tracks — the full UML model, 48 classes and 273 attributes → an `Entity` + a `Track` per `TrackData` and an `Event` per detection, motion event, linkage and retraction; back to one STANDALONE `NITSRoot`. Six coordinate systems of which three cannot yield a position, a mandatory STANAG 4774 confidentiality label that is carried and never invented, and a format that models fusion without asking a translator to perform it. **The XML element binding is provisional** — the normative XSD is distributed through national representatives and is not pinned here |
 
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)

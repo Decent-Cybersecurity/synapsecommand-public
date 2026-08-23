@@ -262,6 +262,61 @@ is worth stating.
   and the byte-exact claim is about a BLOCK, so it now emits many Entities as many records in
   block order.
 
+- **`adapters/stanag4676.py` 1.0.0 (STANAG 4676 / AEDP-12 Edition B Version 2 NITS tracks,
+  bidirectional)** — the full UML model, 48 classes and 273 attributes, at **schema_version
+  1.0.0**, with no field added, removed or retyped.
+
+  Pinned to AEDP-12 **Edition B Version 2** (March 2022) by SHA-256, with the AEDP-12.1
+  Implementation Guide and the STANAG 4676 Edition 2 ratification wrapper. Edition A is refused
+  by name: §2.1.1.1 says the two editions are incompatible and that the model was re-architected
+  "from scratch", so a 2014 feed is a separate adapter rather than a mode.
+
+  Four things this format has that no earlier one did:
+
+  - **A relative time model.** `baseTime` is absolute and every instant is an integer count of
+    `relTimeIncrement` seconds from it, so unlike CAT021 there is nothing to reconstruct and the
+    injected clock supplies no part of an observation time. But `relTimeIncrement` is a double,
+    and 1/128 s and 1/29.97 s — the cases the model exists to serve — are not whole
+    milliseconds, so the raw integers are parked and egress re-emits from them.
+  - **A mandatory confidentiality label that the CORE MODEL does not mention.** Ed B §2.1.1.6 is
+    silent on confidentiality and defers per syntax; Annex B.2 then makes a STANAG 4774
+    `originatorConfidentialityLabel` mandatory on the root element. It is carried as the exact
+    fragment that arrived — never parsed, never re-serialised — and egress has three paths: the
+    park, an explicit deployment-supplied label, or a refusal. This is **gap 12**'s strongest
+    evidence and the reason it is no longer "one vendor states a string".
+  - **Six coordinate systems, three of which cannot produce a position.** `ECI_J2K` needs daily
+    Earth-orientation parameters, `PIXELS` needs a sensor model, and `LOCAL_SPHERICAL` is
+    refused because the slot the standard labels *azimuthal* is the argument of `z = r cos phi`
+    in its own mandated equations — two conformant producers can fill the array two ways and
+    nothing in the data says which. Logged, not guessed: the Legion `EPSG:4979` refusal reached
+    from a different direction.
+  - **A format that models fusion.** `TrackLinkage`, `ProcessedTrack`, `IDSourceInformation` and
+    §2.1.1.2.3's normative consolidation across data streams are all carried and none is
+    performed. The consolidation rule is the sharpest case, because the standard *requires* a
+    consumer to do it — and a stateful reducer inside a translator is exactly what the adapter
+    contract forbids.
+
+  What the CDM already had was enough again, and the same two decisions earned their keep. The
+  **`ICAO24` namespace** now serves three adapters: a NITS `IFFCode` in `MODE_S` whose value
+  parses as six hex digits derives the same `entity_id` as a 1090ES frame and a CAT021 record.
+  And **`attributes` accepting anything** is what holds a 273-attribute model verbatim beside
+  the converted values, so `TRANSFORMS` is **empty** and the harness reports `lossless: PASS` on
+  every parsed twin with nothing excused.
+
+  Four gaps opened in Phase 1 and all four stand: **16** no per-sample extension, **17** no
+  state-vector uncertainty, **18** no confidence provenance and no retraction, **19** no relation
+  object. Gap 2 gained two things during implementation: `TRAVELER` and `ZOMBIE` as concrete
+  evidence, and a **divergence between three adapters** — `symbology.AFFILIATION_FROM_COT` and
+  `legion.AFFILIATION` map JOKER and FAKER to HOSTILE while this adapter maps them to FRIENDLY.
+  Stated rather than resolved, on the I021/170 precedent; whoever settles gap 2 settles that.
+
+  One thing is knowingly incomplete and it is not a gap in the CDM. **The XML element binding is
+  provisional**: the normative XSD is distributed through NATO national representatives and
+  could not be obtained or hashed, so element names bind to UML attribute names through one
+  empty table, `ELEMENT_NAMES`. Every fixture ships as an XML/parsed twin and a test asserts the
+  two produce byte-identical CDM, which is what makes the binding checkable — it found four
+  defects on its first runs, two in the reader and two in the confidentiality label's handling.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
