@@ -1,11 +1,11 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Eight integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Nine integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
-STANAG 4676 / AEDP-12 Edition B NITS tracks, and STANAG 4607 / AEDP-4607 Edition A GMTI.
-Without a canonical model in the middle, eight adapters means twenty-eight translations and
-eight private notions of "a contact". With one, an adapter is a thin translator and nothing
-else.
+STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI, and
+ASTERIX category 048 monoradar target reports. Without a canonical model in the middle, nine
+adapters means thirty-six translations and nine private notions of "a contact". With one, an
+adapter is a thin translator and nothing else.
 
 **Shipped so far:**
 
@@ -19,6 +19,7 @@ else.
 | [`cat021`](adapters/asterix_cat021.py) 1.0.0 | bidirectional | ASTERIX category 021 ADS-B target reports, EUROCONTROL SPEC-0149-12 Ed 2.6 with the Reserved Expansion Field Ed 1.5 (all 42 data items, RE and SP) → `Entity` + `Event` **per record**; Entities or a `Track` → one data block. A time of day that carries no date, a quality vocabulary that needs another item to say what it means, and a ground station whose verdicts it carries without re-deciding |
 | [`stanag4676`](adapters/stanag4676.py) 1.0.0 | bidirectional | STANAG 4676 / AEDP-12 **Edition B Version 2** NITS tracks — the full UML model, 48 classes and 273 attributes → an `Entity` + a `Track` per `TrackData` and an `Event` per detection, motion event, linkage and retraction; back to one STANDALONE `NITSRoot`. Six coordinate systems of which three cannot yield a position, a mandatory STANAG 4774 confidentiality label that is carried and never invented, and a format that models fusion without asking a translator to perform it. **The XML element binding is provisional** — the normative XSD is distributed through national representatives and is not pinned here |
 | [`gmti`](adapters/gmtif.py) 1.0.0 | bidirectional | STANAG 4607 / AEDP-4607 **Edition A Version 1** GMTI packets — the packet header, the segment header and all ten defined segments, 212 fields → one `Entity` + `Track` for the **platform** and an `Entity` + `DETECTION` `Event` **per target report**; back to one packet, **byte for byte**. The first non-text wire format: seven numeric encodings on their own tested codec layer ([`gmtif_codec`](adapters/gmtif_codec.py)), existence masks that govern every subsequent field offset, and a format whose targets are detections rather than tracks — so **no target `Track` is ever emitted**, because associating reports across dwells is what a GMTI tracker does and the standard's own guide sends the reader to the sensor vendor for the rule |
+| [`cat048`](adapters/asterix_cat048.py) 1.0.0 | bidirectional | ASTERIX category 048 monoradar target reports, EUROCONTROL SPEC-0149-4 **Edition 1.32** (all 28 UAP data items, SP and RE) → `Entity` + `Event` **per record**; Entities → one data block, **byte for byte**, on its own tested codec layer ([`cat048_codec`](adapters/cat048_codec.py)). The sensor-side complement of `cat021`, and the first adapter whose ordinary case is a `DETECTION` rather than a `TRACK_UPDATE` — a radar detects where AIS, ADS-B and CAT021 receive self-reports. **Position is derived only when the caller injects a `sensor_position`**: the format states slant range and azimuth from a station whose location it never carries, and the geodesy is not in the specification at all |
 
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
@@ -191,6 +192,42 @@ Five checks per fixture, and an unrun check reports `SKIP` — never `PASS`:
 Nothing in the harness knows anything about any particular adapter — it resolves
 `module:ClassName` as readily as a registered name, which is what makes it usable as the gate
 for adapters the AI adapter factory generates and this repository has never seen.
+
+### Two things the harness cannot check for you, both found by mutation
+
+Adapter #11 mutation-checked its own assertions and each mutation found a hole that a green run
+had been hiding. Both generalise, so they are here rather than in one adapter's notes.
+
+**A fixture whose behaviour is invariant under the harness clock exercises nothing.** The harness
+injects ONE frozen instant for a whole fixture directory. CAT048's two midnight-rollover fixtures
+describe times of day that resolve to the receipt date at that instant — so they produced correct
+golden files, passed every check, and tested no rollover in either direction. A fixture that
+depends on the *relationship* between the payload's time and the clock has to inject its own clock
+from `tests/`, and the fixture row should say so; the harness pass is about the golden file, not
+about the behaviour. This will recur for every format that states a time of day without a date,
+which is most of them.
+
+**A round trip proves self-consistency, never correctness. Correctness needs an external anchor.**
+`encode(decode(x)) == x` and `inverse(direct(x)) == x` both pass when the two halves share a wrong
+constant, because the error cancels. Replacing WGS-84's semi-major axis with its semi-minor — a
+21 km error — passed every one of CAT048's geodesic inversion tests for exactly that reason. The
+hole class is **any derive/invert pair whose shared constants encode a MODEL rather than a single
+documented scale factor**: an LSB is one number a reviewer checks against the specification by
+eye, an ellipsoid or a projection is not, and only the second kind can hide inside a round trip.
+So audit the model separately, against something outside the implementation —
+
+- `cat048_codec` pins WGS-84 by its published constants and by three geodesic distances computed
+  independently of it (one degree of longitude at the equator, one of latitude, the quarter
+  meridian).
+- `gmtif_codec` already had the right shape and it is worth naming as the pattern: its strongest
+  tests are the worked examples the standard itself prints — `BA16 0101100100011100` = 125.31006°
+  and −34.876099° = `SA16 1100111001100110` — which are anchors the implementation cannot
+  influence.
+- `asterix_cat021`'s scale factors are the safe kind: each is a single stated LSB, checkable
+  against the document without running anything.
+
+Neither lesson is something the five checks can produce, and that is the point of writing them
+down here: a green harness run is a floor.
 
 ## Layout
 

@@ -201,6 +201,54 @@ def test_the_slant_correction_figures_the_row_set_quotes():
     assert 200.0 - at_two_hundred == pytest.approx(0.083, abs=0.002)
 
 
+def test_the_impossible_geometry_is_a_named_gap():
+    """Gap 28. The ruling shipped as a call-site comment and that was the wrong home for it.
+
+    A decision nobody can find later is not a decision — the principle the whole `*_basis`
+    discipline serves — so the row and the call site have to agree, and this asserts that they
+    do.
+    """
+    section = _section_of_doc("## Gaps, and what each one costs")
+    start = section.index("28. **No way to say a measurement is geometrically impossible.**")
+    nxt = section.find("\n29. **", start)
+    row = section[start:nxt if nxt != -1 else len(section)]
+    assert "pressure altitude stands in for a geometric height" in row, "the cause"
+    assert "Refuse the record" in row and "Rejected" in row, "the first rejected alternative"
+    assert "Clamp the ground range to zero" in row, "the second rejected alternative"
+    assert "at the antenna" in row, "…and why it is the dangerous one"
+    assert "**Shipped.**" in row, "and the choice actually made"
+    source = (PACKAGE / "adapters" / "cat048_codec.py").read_text()
+    assert "gap 28" in source, "the call-site flag has to cite the row it now lives in"
+
+
+def test_an_impossible_geometry_is_named_in_the_basis_and_the_record_translates():
+    """The behaviour gap 28 rules, end to end.
+
+    A pressure altitude far enough from the geometric height that |Δh| exceeds the slant range —
+    which is the case the gap says arises in practice, not a contrived one.
+    """
+    parsed = json.loads(
+        (FIXTURES / "injected_site_pressure_height_only.parsed.json").read_text())
+    items = parsed["records"][0]["items"]
+    # RHO 0.5 NM with the target still reporting FL350: |Δh| is 5.76 NM, so no ground range
+    # exists. A short-range high-altitude report is exactly where the slant term dominates.
+    # BOTH fields, because the twin carries the raw integer AND the decoded value and the
+    # adapter reads the decoded one. Editing one is what `spec/build_fixtures.py` exists to
+    # prevent — and setting only `rho_raw` here silently left the position derived, which is
+    # a small demonstration of why the README says to edit the generator and never the twin.
+    items["I048/040"]["rho_raw"] = codec.to_raw("rho", 0.5)
+    items["I048/040"]["rho_nm"] = 0.5
+    objects = adapter(sensor_position=SITE).to_cdm(parsed)
+    assert len(objects) == 2, "the record translates in full — refusing it would be filtering"
+    entity = next(o for o in objects if isinstance(o, Entity))
+    assert entity.position is None, "…and clamping to zero would put it at the antenna"
+    reason = entity.attributes["position_basis"]["reason"]
+    assert "geometry is impossible" in reason
+    assert "PRESSURE altitude" in reason, "the cause has to be in the reason, not just the rule"
+    # The measurement is still carried, as in every other non-derived branch.
+    assert entity.attributes["cat048_measured_position"]["rho_nm"] == 0.5
+
+
 def test_an_impossible_geometry_yields_no_ground_range():
     fl350_m = 35000.0 * codec.FEET_TO_METRES
     assert codec.ground_range_m(1.0, fl350_m) is None

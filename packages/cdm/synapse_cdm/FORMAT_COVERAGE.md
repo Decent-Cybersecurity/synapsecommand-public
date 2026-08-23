@@ -5600,10 +5600,12 @@ negative assertion over every fixture rather than a fixture of its own.
 
 ## ASTERIX Category 048 — Monoradar Target Reports, ingest and egress
 
-**Every row below is a SPECIFICATION.** No adapter implements any of it: the status column reads
-`not yet` throughout, exactly as the Legion rows did before adapter #5 and the NITS and GMTIF
-rows did before #9 and #10. Phase 2 turns the markers into `cat048 1.0.0`, and the difference
-between the two states is the whole reason the status column exists.
+**Every row below was a SPECIFICATION before it was a claim.** The row set was written and
+reviewed with `not yet` in every status column and no code, exactly as the Legion rows were
+before adapter #5 and the NITS and GMTIF rows before #9 and #10; `adapters/asterix_cat048.py`
+then implemented it and the markers became `cat048 1.0.0`. The difference between those two
+states is the whole reason the status column exists — and three rulings reversed in between,
+each noted where it happened.
 
 CAT048 is the **sensor-side complement of CAT021**, and the relationship is worth stating
 precisely because it is not "a second ASTERIX adapter". §1.1: this document "describes the
@@ -6531,8 +6533,10 @@ hedging: 2⁻¹⁴ NM/s × 1852 m = 0.113 037 109 375 m/s, a dyadic rational tim
 
 Left column names data items as §5.2 numbers them, with the subfield or bit where one matters.
 The parsed form the adapter's own parser produces is what each `.parsed.json` twin will hold and
-what the never-drop check is measured against. `Status` is `not yet` on every row: **the mapping
-is a specification, not a claim.**
+what the never-drop check is measured against. `Status` reads `cat048 1.0.0` on every row now,
+so **the mapping is a claim and `tests/test_cdm_asterix_cat048_adapter.py` is what makes it
+one** — including `test_the_row_set_claims_this_adapter`, which fails if a row slips back to
+`not yet` while the code implements it.
 
 ### Row set — the block and record envelope
 
@@ -6647,7 +6651,7 @@ the only severity this format raises.
 | `I048/050` Mode-2 code | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.mode_2_code` in octal, with V, G, L. A military interrogation mode; the 1.32 NOTE routing an alternative value to `I048/REF/GEN48/ALTM2` is parked as an un-pinned pointer |
 | `I048/055` Mode-1 code | `Entity.attributes` | `cat048 1.0.0 · parked` | `attributes.mode_1_code`, 5 bits, with V, G, L. Its NOTE ties V, G, L, A4, A2, A1, B2, B1 to "subfield #5 of data item 'MD5 – Mode 5 Reports'" in the REF — recorded, unreadable here |
 | `I048/060`, `I048/065`, `I048/080` | `Entity.attributes` | `cat048 1.0.0 · parked` | per-pulse confidence for Mode-2, Mode-1 and Mode-3/A. Each is sent "only when at least one pulse is of low quality", so **the item's presence is itself the signal** and its absence is not a claim of perfect quality. Parked bit by bit; none reaches `Entity.confidence` |
-| `I048/240` Aircraft Identification | `Entity.attributes` | `cat048 1.0.0 · parked` | **gap 1**, a sixth private key for one concept. Eight characters at 6 bits each, decoded with the table `adsb.py` uses, raw 48 bits parked. `attributes.aircraft_identification_basis` records that **this document states no character table** — §5.2.25 Note 1 points to BDS Register 2,0, whose coding is in [Ref. 2] ED-73F/DO-181F, which nothing here pins |
+| `I048/240` Aircraft Identification | `Entity.attributes` | `cat048 1.0.0 · parked` | **gap 1**, the EIGHTH private key for one concept — see the corrected tally there. Eight characters at 6 bits each, decoded with the table `adsb.py` uses, raw 48 bits parked. `attributes.aircraft_identification_basis` records that **this document states no character table** — §5.2.25 Note 1 points to BDS Register 2,0, whose coding is in [Ref. 2] ED-73F/DO-181F, which nothing here pins |
 | `I048/240` semantics | `Entity.attributes` | `cat048 1.0.0 · parked` | "aircraft identification when flight plan is available **or the registration marking when no flight plan is available**" — two different kinds of string in one field, with nothing saying which. Recorded rather than guessed |
 
 ### Row set — time
@@ -6968,9 +6972,33 @@ every file in a fixture directory through `to_cdm()`.
    nation responsible for its uniqueness — so `P3` + `P8` is both the string an operator reads *and*
    a globally unique identifier, which no earlier adapter's name field was. It becomes a
    `SourceId` for that reason and still parks at `attributes.platform_id` as a name, because a
-   `SourceId` is a provenance mapping and not a label. So the tally is now five adapters and six
-   private keys, and this one demonstrates the missing distinction rather than merely widening
-   it: an identifier and a name are different things, and the CDM has a field for one of them.
+   `SourceId` is a provenance mapping and not a label. It demonstrates the missing distinction
+   rather than merely widening it: an identifier and a name are different things, and the CDM has
+   a field for one of them.
+
+   **CAT048 adds an eighth key, and the roster sweep found the tally had been wrong before it.**
+   `attributes.aircraft_identification` — I048/240, eight characters at six bits, "aircraft
+   identification when flight plan is available **or the registration marking when no flight plan
+   is available**", so the field holds two different kinds of string with nothing saying which.
+   Counting properly, because the count is the argument:
+
+   | Key | Adapter(s) |
+   |---|---|
+   | `attributes.callsign` | `tak` (a CoT operator label) **and** `adsb` (a flight identifier the crew types) — one key, two adapters, two precedence rules, which is the convergence this gap calls worse than disagreement |
+   | `attributes.vessel_name` | `ais` |
+   | `attributes.call_sign` | `ais` |
+   | `attributes.aid_name` | `ais` |
+   | `name` | `legion` — a required field rather than an attributes key, which is the evidence that closing this gap is worth it |
+   | `attributes.target_identification` | `cat021` |
+   | `attributes.platform_id` | `gmti` |
+   | `attributes.aircraft_identification` | `cat048` |
+
+   **Seven adapters, eight private keys.** The previous tally read "five adapters and six private
+   keys" and omitted `cat021`'s `target_identification` — which that row set calls "gap 1's most
+   awkward case yet" and explicitly says is "counted in gap 1". So the gap had been undercounting
+   itself by one adapter and one key since adapter #6, which is a small demonstration of why a
+   count in prose needs a sweep: the number is the whole argument here, and nothing failed a build
+   when it drifted.
 2. **Affiliation collapse, 7 → 4.** PENDING, ASSUMED_FRIEND and SUSPECT have no CDM member
    (see `enums.Affiliation` for why: they are judgements, not wire facts). Recoverable only
    because the adapter parks the original — which the lossless check enforces rather than
@@ -8100,3 +8128,31 @@ every file in a fixture directory through `to_cdm()`.
    CDM lacks. Whoever opens gap 19 should read this row and gap 26 together, because a radar track
    is the smallest complete example available — it has a start, an identity scoped to one station,
    a confidence, and an explicit end, and the CDM can hold exactly none of the four as such.
+
+28. **No way to say a measurement is geometrically impossible.** CAT048's slant-range correction
+   needs the target's height above the site: the ground range is `sqrt(RHO² − Δh²)`, so `|Δh|`
+   larger than `RHO` has no real solution. That is not a hypothetical. It happens whenever a
+   **pressure altitude stands in for a geometric height** — settlement 3's second height source,
+   I048/090, which is used exactly when the measured I048/110 is absent. A flight level and a
+   geometric height differ by hundreds of metres in ordinary weather, and at short range that is
+   more than enough to make `|Δh| > RHO`.
+
+   **This was shipped as a call-site comment in `cat048_codec.ground_range_m` and that was the
+   wrong home for it**, because a decision nobody can find later is not a decision — which is the
+   principle the whole `*_basis` discipline exists to serve. The three candidate behaviours, with
+   the two rejected ones named:
+
+   | Behaviour | Verdict |
+   |---|---|
+   | **Refuse the record** | Rejected. The record is otherwise complete and translatable — it has an identity, a time, Mode codes, a track status. Refusing it because one derived view cannot be computed is the adapter filtering, which the `Adapter` contract forbids in as many words |
+   | **Clamp the ground range to zero** | Rejected, and it is the dangerous one. It puts the contact **at the antenna** — a plausible position, structurally valid, and wrong by up to the target's own altitude. The same failure mode as reading a floor as a value |
+   | **Derive no position and record why** | **Shipped.** `Entity.position` is `None`, the polar values are parked as in every other non-derived branch, and `attributes.position_basis.reason` names the impossibility with both figures in it. The record translates in full |
+
+   *Not proposed as a field, and the reason is that the CDM has nowhere for a NEGATIVE result
+   about a measurement.* `unavailable_fields` says the source declined to state something;
+   `unresolved_raw` says a stated value could not be used. This is a third thing: two stated
+   values that cannot both be true of one geometry. It is closest to **gap 18**'s confidence
+   provenance — a machine-readable statement about why a derived value is absent — and whoever
+   opens that should decide whether "the source contradicted itself" is a case of it or a fourth
+   bag. Until then the basis string carries it, and `test_the_impossible_geometry_is_a_named_gap`
+   asserts that this row and the call site still agree.

@@ -282,6 +282,47 @@ is worth stating.
   `stanag4676.py` put it in `Event.geometry`, `asterix_cat021.py` and `adsb.py` leave it `None`.
   Both are 1.1.0 questions with both arguments on the record.
 
+- **`adapters/asterix_cat048.py` 1.0.0 — ASTERIX category 048 monoradar target reports,
+  bidirectional.** All 28 UAP data items of EUROCONTROL-SPEC-0149-4 **Edition 1.32**, SP and RE
+  included, at **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  The **sensor-side complement of `cat021`**, and the first adapter whose ordinary case is a
+  `DETECTION` rather than a `TRACK_UPDATE` — a radar detects where AIS, ADS-B and CAT021 receive
+  self-reports. Which inverts three of CAT021's easy problems: one time item rather than seven, a
+  target that may not be an object at all (the format has codes for a reflection, an angel, a
+  bird and a wind turbine), and a position that is **slant range and azimuth from a station whose
+  location the format never carries**.
+
+  **Geometry is derived only when the caller injects a `sensor_position`.** That is the
+  injected-clock precedent applied to geometry: I048/140 carries no date and the adapter supplies
+  one from configuration, I048/040 carries no site and the site is the same class of deployment
+  fact. What stays forbidden is the adapter *obtaining* either for itself. With no site, the polar
+  measurement is parked and `Entity.position` is `None` — and because `Position` requires both
+  coordinates, that absence is unspellable as anything else.
+
+  **The geodesy is not in the specification at all**, and the row set says so rather than
+  implying otherwise. §4.3.2.1 gives only the radar-plane identities and §4.3.2.2 names the
+  WGS-84 ellipsoid before deferring the projection to "a suitable projection technique". So the
+  derived latitude and longitude are the adapter's arithmetic, declared in
+  `attributes.position_basis`, and audited two ways: an inversion back to `RHO` and `THETA`
+  within the items' own least significant bits, and — because a round trip proves only
+  self-consistency — an independent pin of the ellipsoid against three published geodesic
+  distances.
+
+  **Three rulings reversed under review, all away from reusing an existing field.** `Entity.valid_to`
+  is not set by the track-end bit, because `TRE` ends "a track record within a particular track
+  file" and not the airframe the `entity_id` names. The 12-bit track number is a carried claim
+  and never an identity key, because keying on a recycled number merges two airframes into one
+  entity. And the Reserved Expansion Field is parked for a **procedural** reason — the appendix
+  that defines it is a public download that was identified and not acquired — which is a weaker
+  park than the two it resembles, and is recorded as one.
+
+  **Byte-exact both ways**, on its own tested codec layer (`cat048_codec`): the FSPEC re-derived
+  from Category 048's own Table 2 rather than shared with `cat021`, bounds computed from the
+  standard's printed maxima, and egress that re-encodes from the parsed items and then checks the
+  result against the octets parked on ingest — so byte-exactness is a proven property of the
+  decoder/encoder pair rather than a consequence of copying the input back out.
+
 - **`adapters/asterix_cat021.py` 1.0.0 — ASTERIX category 021 ADS-B target reports,
   bidirectional.** All 42 data items plus the RE and SP fields and the whole Reserved
   Expansion Field, at **schema_version 1.0.0**, with no field added, removed or retyped.

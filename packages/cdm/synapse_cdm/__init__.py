@@ -2,11 +2,13 @@
 
 WHY THIS EXISTS
 ---------------
-Five integration adapters are landing (PNTMAP GNSS alerts, Picogrid Legion, TAK /
-Cursor-on-Target, STANAG 4676 tracks, the simulation feed). Without a canonical model in
-the middle, five adapters means ten translations and five private notions of "a contact",
-and the integration layer becomes the place where meaning is quietly lost. With one, an
-adapter is a thin translator and nothing else: external format in, CDM out.
+Nine integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
+ADS-B 1090ES, Picogrid Legion, ASTERIX category 021, STANAG 4676 NITS, STANAG 4607 GMTI and
+ASTERIX category 048), with the other ASTERIX categories and the simulation feed landing next.
+Without a canonical model in the middle, nine adapters means thirty-six translations and nine
+private notions of "a contact", and the integration layer becomes the place where meaning is
+quietly lost. With one, an adapter is a thin translator and nothing else: external format in,
+CDM out.
 
 The CDM is deliberately NOT the Track contract (`synapse-data/contracts/track.schema.json`,
 which lives in the SynapseCommand product repository, not here).

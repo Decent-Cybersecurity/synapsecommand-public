@@ -562,11 +562,14 @@ def ground_range_m(slant_range_nm: float, height_difference_m: float) -> float |
     5.76 NM and its ground range is ~0, so treating slant as ground paints it 10.7 km out.
 
     `None` when |Δh| exceeds the slant range, which is geometrically impossible and happens in
-    practice when a PRESSURE altitude stands in for a geometric height. NO ROW OF THE RULING
-    DOCUMENT COVERS THIS CASE; the choice made here is to derive no position and say so, on
-    the same terms as the no-height case, rather than to refuse the record (which would be
-    filtering a translatable report) or to clamp the ground range to zero (which would put the
-    contact at the antenna).
+    practice when a PRESSURE altitude stands in for a geometric height. **FORMAT_COVERAGE.md
+    gap 28** carries the ruling and the two rejected alternatives: refusing the record would be
+    the adapter filtering a translatable report, and clamping the ground range to zero would put
+    the contact at the antenna with a plausible-looking position. Shipped behaviour is to derive
+    nothing and name it in `attributes.position_basis.reason`.
+
+    This comment was the ONLY home for that decision when it shipped, which was the wrong home:
+    a decision nobody can find later is not a decision, and the gap row is where a reader looks.
     """
     slant_m = slant_range_nm * METRES_PER_NM
     if abs(height_difference_m) > slant_m:

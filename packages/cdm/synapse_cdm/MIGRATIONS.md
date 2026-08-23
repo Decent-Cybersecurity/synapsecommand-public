@@ -102,39 +102,6 @@ is worth stating.
   measurement are different kinds of claim, and giving the threshold a numeric home is how it
   would quietly become one.
 
-- **`adapters/asterix_cat048.py` 1.0.0 (ASTERIX Category 048, Monoradar Target Reports,
-  bidirectional)** — all 28 UAP FRNs of EUROCONTROL-SPEC-0149-4 Edition 1.32, at
-  **schema_version 1.0.0**, with no field added, removed or retyped.
-
-  This is the eleventh adapter and the first **sensor-side** one: its reports are genuine
-  detections rather than self-reports, which is why `Event.event_type` is `DETECTION` in the
-  ordinary case where AIS, ADS-B and CAT021 all use `TRACK_UPDATE`. Two of its rulings reversed
-  during review and both reversals were away from using an existing field, which is worth
-  recording because the pressure runs the other way:
-
-  - **`Entity.valid_to` was NOT used for the track-end bit.** I048/170's `TRE` is the only
-    explicit terminal declaration any source in `FORMAT_COVERAGE.md` makes, and a first draft
-    wrote it into `valid_to`. It ends "a track record within a particular track file"
-    (§5.2.18), not the airframe the `entity_id` names — so `valid_to` would have told every
-    consumer that did not read a basis key that the aircraft's state ceased. **Gap 26.**
-  - **I048/161 was NOT made a `SourceId`.** A station-scoped, recycled 12-bit number keyed into
-    `entity_id` merges two airframes into one entity. Declining it loses the continuity the
-    radar states across scans — a truncation, named in **gap 27** — and the alternative was a
-    false statement in the field the CDM guarantees is stable across updates.
-
-  What the CDM had was otherwise enough, and one existing decision earned its keep in a way no
-  previous adapter tested: **`Position` requiring both coordinates**. CAT048 states range and
-  azimuth from a station whose location the format never carries, so a caller that injects no
-  `sensor_position` gets `position: None` on every object — and because the model makes a
-  partial coordinate unspellable, there is no way to express that as a half-position. The
-  injected site is the injected clock's precedent applied to geometry, and the arithmetic it
-  enables is declared in `attributes.position_basis` because **the pinned specification supplies
-  none of it** (gap 24).
-
-  One gap it opens is a schema question rather than a parking key, and it is the entry above:
-  `PositionSource` has no member for a sensor measurement, so a derived radar fix is written
-  `ESTIMATED`.
-
 - **`adapters/adsb.py` 1.0.0 (ADS-B 1090ES, Mode S DF17/DF18, bidirectional)** — type codes
   1-4, 5-8, 0 and 9-18, 19 subtypes 1-4, 20-22, 28 subtype 1 and 31 subtype 0, at
   **schema_version 1.0.0**, with no field added, removed or retyped.
@@ -509,6 +476,45 @@ is worth stating.
   stated resolution being applied; moving a value **into** range is not, and an out-of-range value
   is now a refusal quoting the value and the range.
 
+- **`adapters/asterix_cat048.py` 1.0.0 (ASTERIX Category 048, Monoradar Target Reports,
+  bidirectional)** — all 28 UAP FRNs of EUROCONTROL-SPEC-0149-4 Edition 1.32, at
+  **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  This is the eleventh adapter and the first **sensor-side** one: its reports are genuine
+  detections rather than self-reports, which is why `Event.event_type` is `DETECTION` in the
+  ordinary case where AIS, ADS-B and CAT021 all use `TRACK_UPDATE`. Two of its rulings reversed
+  during review and both reversals were away from using an existing field, which is worth
+  recording because the pressure runs the other way:
+
+  - **`Entity.valid_to` was NOT used for the track-end bit.** I048/170's `TRE` is the only
+    explicit terminal declaration any source in `FORMAT_COVERAGE.md` makes, and a first draft
+    wrote it into `valid_to`. It ends "a track record within a particular track file"
+    (§5.2.18), not the airframe the `entity_id` names — so `valid_to` would have told every
+    consumer that did not read a basis key that the aircraft's state ceased. **Gap 26.**
+  - **I048/161 was NOT made a `SourceId`.** A station-scoped, recycled 12-bit number keyed into
+    `entity_id` merges two airframes into one entity. Declining it loses the continuity the
+    radar states across scans — a truncation, named in **gap 27** — and the alternative was a
+    false statement in the field the CDM guarantees is stable across updates.
+
+  What the CDM had was otherwise enough, and one existing decision earned its keep in a way no
+  previous adapter tested: **`Position` requiring both coordinates**. CAT048 states range and
+  azimuth from a station whose location the format never carries, so a caller that injects no
+  `sensor_position` gets `position: None` on every object — and because the model makes a
+  partial coordinate unspellable, there is no way to express that as a half-position. The
+  injected site is the injected clock's precedent applied to geometry, and the arithmetic it
+  enables is declared in `attributes.position_basis` because **the pinned specification supplies
+  none of it** (gap 24).
+
+  One gap it opens is a schema question rather than a parking key, and it is the entry above:
+  `PositionSource` has no member for a sensor measurement, so a derived radar fix is written
+  `ESTIMATED`.
+
+  **Three commits, and the row set came first.** `70b8c07` wrote the row set as a specification
+  with `not yet` in every status column and no code; `7e13f27` amended it under review, reversing
+  three of its own rulings; `6cb283e` shipped the adapter against the amended rulings and flipped
+  all 136 rows. The reversals are the reason the order matters — each one was away from using an
+  existing CDM field, and each was easier to make while the row set was still prose.
+
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
@@ -643,6 +649,33 @@ evidence that was missing when they were first written down:
   (already proposed above) is the cheap partial move that would at least give the track number and
   the status bits a home on the object they describe rather than on the `Entity` beside it.
   Whoever opens gap 19 should read both rows first.
+
+- **A presentation profile that strips `*_basis` keys** — recorded because the need is real and
+  the shape is not settled, and explicitly NOT implemented here.
+
+  ASTERIX CAT048 is the first adapter whose prose outweighs its data: every ruling rides on every
+  object as a `*_basis` string, so a golden file for a ONE-record data block runs to roughly 250
+  lines. That is deliberate and it stays — the basis strings ARE the audit trail, they are what
+  makes "this adapter declined to decide X, and here is the sentence that forced it" survive into
+  the objects a consumer holds, and a golden file that did not carry them would let a ruling change
+  without a diff. Stripping them from the stored form would be exactly the loss the never-drop rule
+  exists to prevent.
+
+  What is missing is a **view**. A map client painting a thousand contacts does not need the
+  paragraph explaining why `Position.accuracy_m` is null, and a wire profile that carried it would
+  spend most of its bytes on prose. So the proposal is a projection — drop keys matching `*_basis`
+  and the `unavailable_fields` / `unresolved_raw` pair — with one hard constraint: **it must be a
+  view and never the stored form.** The stripped object must not be what a store keeps, what a
+  ledger hashes, or what a golden file records.
+
+  **Cross-adapter, not CAT048's.** Every adapter here emits basis keys and the convention is
+  already eight formats deep — `observed_at_basis`, `affiliation_basis`, `position_basis`,
+  `symbol_basis`, `severity_basis`, `quality_basis`, `integrity_basis`. Whoever takes it on should
+  decide three things at once: whether the projection is a function in the package or a flag on the
+  serialiser, whether `attributes.source_extras` goes with it (it is data, not prose, so probably
+  not), and whether a stripped object should say that it was stripped — because a consumer that
+  cannot tell a basis-free object from an object whose adapter never wrote one has lost the
+  distinction the keys exist to make.
 
 Two gaps are recorded in `FORMAT_COVERAGE.md` and deliberately NOT proposed as fields here.
 A gap with no proposal is a decision too, and in both cases the decision is "not yet understood

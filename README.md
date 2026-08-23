@@ -3,12 +3,14 @@
 SynapseCommand's integration layer: the **Canonical Data Model**, its published JSON Schema,
 and the adapter SDK and validation harness that go with it. Apache 2.0.
 
-This is the contract layer, and it is public because that is what a contract is for. Five
-integration adapters are landing — PNTMAP GNSS alerts, AIS, Picogrid Legion, TAK /
-Cursor-on-Target, STANAG 4676 tracks, the simulation feed. Three are shipped and
-harness-verified: `pntmap` (ingest), `tak` (bidirectional) and `ais` (bidirectional). Without a
-canonical model in the middle, N adapters means N×(N−1) translations and N private notions of
-"a contact"; with one, an adapter is a thin translator and nothing else.
+This is the contract layer, and it is public because that is what a contract is for. **Nine
+integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
+`adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti` and `cat048` — the last four
+byte-exact on the wire where the format is binary. More are landing next: the other ASTERIX
+categories (062 system tracks, 023 service status) and the simulation feed. Without a canonical
+model in the middle, N adapters means N(N−1)/2 translations and N private notions of "a
+contact" — thirty-six and nine as of today; with one, an adapter is a thin translator and
+nothing else.
 
 ```
 external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer
@@ -50,7 +52,7 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 
 | Document | What it answers |
 |---|---|
-| [`packages/cdm/synapse_cdm/README.md`](packages/cdm/synapse_cdm/README.md) | the four objects, the seven rules and where each is enforced, and how to write adapter #2 |
+| [`packages/cdm/synapse_cdm/README.md`](packages/cdm/synapse_cdm/README.md) | the four objects, the seven rules and where each is enforced, and how to write the next adapter |
 | [`packages/cdm/synapse_cdm/FORMAT_COVERAGE.md`](packages/cdm/synapse_cdm/FORMAT_COVERAGE.md) | field-by-field CoT / STANAG 4676 / GeoJSON mappings and the named gaps |
 | [`packages/cdm/synapse_cdm/MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md) | what MAJOR/MINOR/PATCH mean for `schema_version`, and the procedure for changing the schema |
 
