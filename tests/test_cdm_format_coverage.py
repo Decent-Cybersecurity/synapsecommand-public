@@ -382,6 +382,74 @@ def test_the_documented_gaps_are_still_gaps():
         "rows both argue from what it can and cannot hold; update them with it."
     )
 
+    # ------------------------------------------------------------ the STANAG 4607 gaps
+    #
+    # Three gaps opened by adapter #8's row set, asserted the same awkward way round: the CDM must
+    # still NOT have the field, so a gap quietly closed in code without the document being updated
+    # fails the build.
+
+    # Gap 20, detection versus tracked object. Asserted four ways because the four honest shapes
+    # are very different — an Entity field, an EntityType member, an EventType member, or a fifth
+    # canonical object — and the gap's whole argument is that choosing between them is the work.
+    for field in ("observation_kind", "is_detection", "duration_s", "instantaneous"):
+        assert field not in models.Entity.model_fields, (
+            f"gap 20 (no detection/track distinction) appears to be closed — Entity.{field} now "
+            "exists. Read that gap first: a GMTI target report has no identifier, no continuity "
+            "and no successor, so its Entity.valid_to has no honest value and its entity_id ends "
+            "in two positional ordinals. The fix is a decision about what the four kinds are for, "
+            "not a boolean."
+        )
+    from synapse_cdm.enums import EntityType as _EntityType
+    assert not any(m.name in ("DETECTION", "OBSERVATION", "CONTACT") for m in _EntityType), (
+        "gap 20 appears to be closed with an EntityType member. That is one of the four shapes — "
+        "and note the OTHER half of that gap, which is that twenty-one of D32.10's forty-three "
+        "named classifications (Person, Animal, Beacon, Clutter, Phantom, Large Multiple-Return) "
+        "have no honest EntityType either. Write the decision down before the member."
+    )
+    assert "detection" not in models.KINDS and "observation" not in models.KINDS, (
+        "gap 20 appears to be closed with a fifth canonical object. Gaps 15, 19 and 20 are all "
+        "asking the model to hold something that is not one of the four kinds — resolve them "
+        "together, and note that deciding the four kinds are complete is also an answer."
+    )
+
+    # Gap 21, radar measurables. Asserted on Kinematics because a velocity COMPONENT would go
+    # there, and on Entity because SNR and RCS are properties of the return rather than of the
+    # object — which is the part of the gap that argues they belong on an Event instead.
+    for field in ("radial_speed_mps", "range_rate_mps", "los_speed_mps"):
+        assert field not in models.Kinematics.model_fields, (
+            f"gap 21 (no radar measurables) appears to be closed — Kinematics.{field} now exists. "
+            "A radial component is meaningless without the bearing it was measured along, so that "
+            "field needs a frame beside it or it states a speed in a direction nobody named. This "
+            "is NOT gap 4: a component is a projection, not a vector with elements missing."
+        )
+    for field in ("snr_db", "rcs_dbsm", "radar_cross_section"):
+        assert field not in models.Entity.model_fields, (
+            f"gap 21 appears to be closed on Entity — Entity.{field} now exists. Read the gap: an "
+            "SNR and an RCS are properties of the RETURN, which argues they are Event payload and "
+            "not Entity state — the same argument as gap 20's."
+        )
+
+    # Gap 22, negative information. Asserted on KINDS, on both enums a coverage statement could
+    # plausibly become, and on PlanObject — because the gap's argument is that putting somebody
+    # else's sensor footprint into the kind reserved for OUR plans is the wrong shape.
+    for name in ("coverage", "observation_area", "surveillance"):
+        assert name not in models.KINDS, (
+            f"gap 22 (no negative information) appears to be closed with a {name!r} canonical "
+            "object. That is one of the three honest shapes. Note the interaction with gap 14: a "
+            "coverage statement is worthless without saying which sensor made it, and SourceRef "
+            "cannot — so the two move together or the CDM gets a footprint with no owner."
+        )
+    assert not any(m.name.startswith(("COVERAGE", "SURVEIL", "NO_DETECT")) for m in _EventType), (
+        "gap 22 appears to be closed with an EventType. That is the cheapest of the three shapes "
+        "and it is defensible — it makes a non-observation an occurrence — but it needs the "
+        "sensitivity fields (MDV, detection probability, false alarm density) and the footprint to "
+        "go somewhere, and Event.payload is an untyped dict. Write it down in MIGRATIONS.md first."
+    )
+    assert not any(m.name.startswith(("COVERAGE", "SENSOR", "FOOTPRINT")) for m in _ObjectType), (
+        "gap 22 appears to be closed with an ObjectType. Read the gap: PlanObject models OUR plan "
+        "drawn on somebody else's map, and a foreign sensor's tasked bounding area is the reverse."
+    )
+
 
 # The Picogrid Legion row set is a SPECIFICATION: adapter #5 does not exist yet. These two
 # tests pin it in the only two ways available before there is code — the size of the row set,
@@ -394,6 +462,35 @@ def _section(heading: str) -> str:
     start = text.index(heading)
     nxt = text.find("\n## ", start + len(heading))
     return text[start:nxt if nxt != -1 else len(text)]
+
+
+def _flat(text: str) -> str:
+    """The same text with every run of whitespace collapsed to one space.
+
+    Prose in FORMAT_COVERAGE.md is hard-wrapped at 100 columns, so a phrase a test wants to pin is
+    as likely as not to have a newline in the middle of it. Asserting against the raw text makes
+    the test fail when a paragraph is re-flowed — an edit that changes nothing — and the usual
+    repair is to shorten the asserted phrase until it fits on one line, which weakens the
+    assertion for a formatting reason. Collapsing whitespace first lets the phrase be as long as
+    it needs to be. Table rows are single lines and survive this unchanged, so row-level checks
+    can use it too.
+    """
+    return " ".join(text.split())
+
+
+def _subsection(heading: str) -> str:
+    """One `###`-level block, from its heading to the next heading of the same or higher level.
+
+    `_section` is too coarse for a check that has to be table-local. The GMTIF reserved-segment-code
+    table has rows beginning `| 8 |`, and so does the D32.10 classification table, and so does the
+    ambiguities table — so a "does code 8 have a row" assertion scoped to the whole section passes
+    on any of the three, which is a green test proving nothing. This narrows it to the table.
+    """
+    text = DOC.read_text()
+    start = text.index(heading)
+    rest = text[start + len(heading):]
+    ends = [o for o in (rest.find("\n## "), rest.find("\n### ")) if o != -1]
+    return heading + (rest[:min(ends)] if ends else rest)
 
 
 def test_the_legion_row_set_is_pinned_to_an_exact_spec_document():
@@ -1236,4 +1333,670 @@ def test_the_nits_row_set_does_not_reopen_the_placeholder_it_replaced():
     assert "supersedes the placeholder row set" in section, (
         "the section must record that it replaced an earlier table rather than silently deleting "
         "one; gap 3's premise was corrected in the same move and the trail has to be readable"
+    )
+
+
+# ------------------------------------------------ the STANAG 4607 / AEDP-4607 (GMTIF) row set
+#
+# Adapter #8's row set is a SPECIFICATION: `adapters/gmtif.py` does not exist yet. These tests pin
+# it in the ways available before there is code — the documents it was read from, the completeness
+# of the field inventory it claims to cover, the settlements it turns on, the declines it makes,
+# and the fact that every row still says `not yet`.
+#
+# The completeness test is the one with teeth, and it has to be a TRANSCRIPTION. GMTIF is a binary
+# wire format: there is no XSD, no JSON schema and no machine-readable field list anywhere in the
+# three pinned documents, so there is nothing to pin the way `test_every_pinned_legion_field_has_a_
+# row` pins Legion's own hashed inventory. The inventory below is transcribed from the segment
+# layout tables of AEDP-4607 Ed. A v1 (Tables 3-1, 3-6, 3-7, 3-9, 3-10, 3-12, 3-13, 3-14, 3-19,
+# 3-20, 3-21, 3-22, 3-24, 4-1, 4-2) and is the same idea applied to a format that cannot be
+# machine-checked: 212 field identifiers, and a missing row for any one of them fails the build.
+
+GMTIF_HEADING = "## STANAG 4607 / AEDP-4607"
+
+#: Every field of every header and segment, by the standard's own identifier, per segment layout
+#: table. Container rows (D32, H32, C6) are included because the row set gives them a row: they
+#: are where the "one Entity and one Event per target report" and "the array is parked" decisions
+#: are stated, and a container with no row is a container nobody decided about.
+GMTIF_FIELDS: dict[str, tuple[str, ...]] = {
+    # Table 3-1
+    "Packet Header": tuple(f"P{i}" for i in range(1, 11)),
+    # Table 3-6
+    "Segment Header": ("S1", "S2"),
+    # Table 3-7
+    "Mission Segment": tuple(f"M{i}" for i in range(1, 8)),
+    # Table 3-9, including the D32 target-report container
+    "Dwell Segment": tuple(f"D{i}" for i in range(1, 33)),
+    # Table 3-10
+    "Target Report": tuple(f"D32.{i}" for i in range(1, 19)),
+    # Table 3-12, including the H32 scatterer container
+    "HRR Segment": tuple(f"H{i}" for i in range(1, 33)),
+    # Table 3-13
+    "HRR Scatterer Record": tuple(f"H32.{i}" for i in range(1, 5)),
+    # Table 3-14
+    "Job Definition Segment": tuple(f"J{i}" for i in range(1, 29)),
+    # Table 3-19
+    "Free Text Segment": ("F1", "F2", "F3"),
+    # Table 3-20
+    "Test and Status Segment": tuple(f"T{i}" for i in range(1, 7)),
+    # Tables 3-21 and 3-22
+    "Processing History Segment": tuple(f"C{i}" for i in range(1, 7))
+                                 + tuple(f"C6.{i}" for i in range(1, 7)),
+    # Table 3-24
+    "Platform Location Segment": tuple(f"L{i}" for i in range(1, 8)),
+    # Table 4-1
+    "Job Request Segment": tuple(f"R{i}" for i in range(1, 27)),
+    # Table 4-2
+    "Job Acknowledge Segment": tuple(f"A{i}" for i in range(1, 26)),
+}
+
+#: Every S1 value that is NOT one of the ten defined segment types. Each needs a row saying what
+#: happens on encounter, because "no silent omissions" covers the value space and not only the
+#: fields — a packet carrying segment type 8 has to have a documented outcome.
+GMTIF_RESERVED_SEGMENT_CODES = ("4", "7", "8", "9", "11", "14–100", "103–127", "128–255")
+
+
+def test_the_gmtif_row_set_names_the_documents_it_was_read_from():
+    """An edition number names a document; a SHA-256 names the copy that was read.
+
+    Three documents, and the third one is load-bearing rather than decorative: the standard defers
+    the scale-factor choice to the guide in as many words, and the guide is where the delta-position
+    arithmetic, the sensor-equals-platform-position statement and the refuse-versus-record split
+    actually live. So the pin has to carry it, and the row set has to say what it took from it.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for label, digest in (
+        ("AEDP-4607 Ed. A v1, the target",
+         "13f054c2bced1444aac9b5e85682b0b14b82f1d83988bf183f9324095c11a5d9"),
+        ("AEDP-4607.1 Ed. A v1, the implementation guide and validation procedures",
+         "877f9b6f1bbcd1ac76cddca751a7222deb5bcf8c8061e6530657eb68f655ed94"),
+        ("STANAG 4607 Ed. 4, the ratification wrapper",
+         "e102f47c51e74d26f61f02947df1228330e0ab6176b4b55c28447cf74574751b"),
+    ):
+        assert digest in section, f"the pin has lost its SHA-256 for {label}"
+    assert "Edition A Version 1" in flat and "February 2024" in section
+    assert "16 February 2024" in section, "the STANAG wrapper's date is part of the citation"
+    assert "NOT PINNED" in flat, (
+        "the pin must say that the Controlled Extension field definitions — five approved segment "
+        "types whose Annex L.4 tables read '(TO BE PROVIDED)' — could not be obtained. A pin table "
+        "that lists only what was pinned reads as if nothing was missing"
+    )
+    assert "(TO BE PROVIDED)" in flat, (
+        "the exact words Annex L.4 uses are the evidence for the blocker; paraphrasing them makes "
+        "the claim unverifiable against the document"
+    )
+
+
+@pytest.mark.parametrize("segment", sorted(GMTIF_FIELDS))
+def test_every_gmtif_field_has_a_row(segment):
+    """"Every field of every segment" made checkable instead of asserted.
+
+    The failure this guards against is the one a 212-field binary format invites: writing the row
+    set segment by segment and quietly skipping the fields that were hard to place — the HRR
+    signature parameters, the nominal sensor values, the tasking segments. A skipped field is
+    indistinguishable, in a finished document, from a field nobody had to think about.
+
+    Matched on the identifier followed by a SPACE, which is what makes `D32.1` and `D32.10`
+    distinguishable and `D3` and `D31` too. The row set's left column is `` `D32.10 Target
+    Classification` ``, so the space is always there.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    missing = [f for f in GMTIF_FIELDS[segment] if f"`{f} " not in section]
+    assert not missing, (
+        f"{segment}: {len(missing)} field(s) from the segment layout table have no row: "
+        f"{missing}. Map it or decline it with a reason; do not drop the row"
+    )
+
+
+def test_the_gmtif_row_set_is_the_size_a_212_field_format_needs():
+    """A transcription can be complete field by field and still have lost whole tables.
+
+    The per-segment test above passes if every identifier appears anywhere in the section, so it
+    cannot see a row that was merged into another or a table that lost its header. This counts
+    actual rows carrying the status marker, which is the thing a merged row destroys.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    rows = [line for line in section.splitlines()
+            if line.startswith("| `") and "`not yet`" in line]
+    expected = sum(len(v) for v in GMTIF_FIELDS.values())
+    assert expected == 212, f"the inventory itself has drifted: {expected} fields, not 212"
+    assert len(rows) >= expected, (
+        f"only {len(rows)} status-bearing rows for {expected} fields. Raising this floor "
+        "deliberately is fine; losing rows is not"
+    )
+
+
+def test_no_gmtif_row_claims_an_adapter_that_does_not_exist():
+    """The status column must not claim code nobody has written. This is the direction that matters.
+
+    A marker saying `gmtif 1.0.0` while `adapters/gmtif.py` is absent is precisely what the Edition
+    A STANAG 4676 placeholder was doing for as long as it stood, and it is the failure this column
+    exists to prevent. When the adapter lands, this test inverts — as the NITS one did — and starts
+    failing on rows that still say `not yet`.
+    """
+    import synapse_cdm.adapters as _adapters
+    module = pathlib.Path(_adapters.__file__).resolve().parent / "gmtif.py"
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    rows = [line for line in section.splitlines()
+            if line.startswith("|") and not line.startswith("|---")]
+    claimed = [line for line in rows if "gmtif 1.0.0" in line]
+    if module.exists():
+        pytest.fail(
+            "adapters/gmtif.py now exists, so this test has to be inverted the way "
+            "test_the_nits_row_set_claims_its_adapter was: flip every GMTIF row from `not yet` to "
+            "its marker, add the marker to the status-column legend, and assert that no row is "
+            "left saying `not yet`"
+        )
+    assert not claimed, (
+        f"{len(claimed)} GMTIF row(s) claim a `gmtif 1.0.0` marker while adapters/gmtif.py does "
+        f"not exist: {[r[:90] for r in claimed[:3]]}. An unimplemented row is a specification and "
+        "must say so"
+    )
+    assert "`not yet`" in section, "the GMTIF row set has stopped saying `not yet` at all"
+    assert "adapters/gmtif.py` does not exist" in flat, (
+        "the section must state that no adapter implements it, in the prose as well as in the "
+        "status column"
+    )
+
+
+def test_the_gmtif_settlements_are_each_recorded_by_name():
+    """Eight named settlements, each of which an adapter author will otherwise re-decide.
+
+    Asserted by name rather than by content because the failure mode is a settlement being edited
+    away during implementation — the row set is reviewed once, as a specification, and the
+    settlements are the part of it that is expensive to rediscover.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for phrase in (
+        "Edition A Version 1 is the only target",              # 1, the edition gate
+        "the reference date is ON THE WIRE",                   # 2, time
+        "the digraph is what makes them mean anything",        # 3, confidentiality
+        "two payload declarations, one boolean",               # 4, simulation
+        "a detection is not a track",                          # 5, identity
+        "integer-domain delta recovery",                       # 6, positions
+        "The existence mask is the schema",                    # 7, the mask
+        "A translator owes no fusion",                         # 8, fusion
+    ):
+        assert phrase in section, f"the settlement headed {phrase!r} is gone from the row set"
+
+
+def test_the_reference_date_is_read_from_the_wire_and_never_from_the_clock():
+    """Settlement 2, and it is a DEPARTURE from the CAT021 precedent that has to stay stated.
+
+    CAT021 takes the date from the injected clock because the format states none. GMTIF states one,
+    in M5/M6/M7, and the clock must therefore never supply it — writing the receipt instant's date
+    into a mission reference would date every dwell in the packet to the day we happened to read it
+    and every other check would pass. The three paths are the whole of the decision.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "the injected clock is not the date source" in flat, (
+        "the settlement heading must say it, because a reader who knows the CAT021 rule will "
+        "assume it carries over"
+    )
+    for path in ("in_packet", "caller_supplied_stream_context"):
+        assert path in flat, (
+            f"the reference-date settlement no longer names the {path!r} path. A refusal with no "
+            "stated alternative reads as 'a packet without a Mission Segment does not work', "
+            "which is not the decision — the specification says mission context carries across "
+            "packets in a stream, and the caller is the only thing that holds a stream"
+        )
+    assert "It supplies `Event.received_at` and nothing else in" in flat, (
+        "the clock's entire remit in this adapter has to be stated in one place, or the second "
+        "path above reads as permission to reach for it"
+    )
+
+
+def test_a_dwell_past_midnight_is_exact_addition_and_never_a_modulo():
+    """Settlement 2's departure from the brief, pinned in the direction of the fallback it replaced.
+
+    The brief for this row set stated a fallback — refuse, quoting the raw integer — for the case
+    where the text was silent about dwells spanning midnight. The text is not silent: it says so in
+    D6's own definition, in a note under the Reference Time fields, and in Annex C-3 with a worked
+    example. So the rule is exact addition, and the risk is that an implementer meets a D6 of
+    117,935,200 and "fixes" it with a modulo because it looks out of range.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "with the possible addition of multiples of 86400000 for multi-day missions" in flat, (
+        "the standard's own words are the whole authority for exact addition. Losing the quote "
+        "leaves the rule looking like a choice"
+    )
+    assert "117 935 200" in flat or "117,935,200" in flat, (
+        "Annex C-3's worked example is what makes the rule checkable against the document, and the "
+        "fixture set reproduces it — so the number has to be in the row set for the two to agree"
+    )
+    assert "no modulo" in flat.lower() or "not a modulo" in section.lower(), (
+        "the forbidden repair has to be forbidden in as many words: a modulo silently moves every "
+        "dwell of a multi-day mission back onto day one"
+    )
+    assert "46 days" in flat and "49 days" in flat, (
+        "Table 3-9's stated range and Annex C-3's stated capacity disagree, and the row set "
+        "resolves it by converting and recording. Both numbers belong in the ambiguity"
+    )
+
+
+def test_no_payload_field_sets_source_synthetic_in_gmtif_either():
+    """Settlement 4. The STANAG 4676 amendment-B rule, held for a third format.
+
+    The temptation here is stronger than it was for NITS, because P7 Exercise Indicator is
+    MANDATORY on every packet and says 'real', 'simulated' or 'synthesized' in as many words. A
+    rule that admits an exception whenever the payload field looks close enough is a default, not
+    a rule.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    rows = [line for line in section.splitlines() if line.startswith("| `P7 ")]
+    assert len(rows) == 1, f"the P7 Exercise Indicator row is missing or duplicated: {rows!r}"
+    assert "`Entity.attributes`" in rows[0], (
+        f"P7 must park, not map — it is a payload field and source.synthetic is a deployment "
+        f"declaration. Row: {rows[0]!r}"
+    )
+    assert "does not set" in rows[0], (
+        "the P7 row has to say so on the row, because that is where an implementer looks"
+    )
+    assert "logged refusal" in flat or "logged conflict" in flat, (
+        "a parked P7 contradicting the deployment declaration is a refusal that names both "
+        "values. Without it the rule has no teeth: the adapter would ignore the conflict"
+    )
+    # The synthesized case is the one a future editor is most likely to soften into "undecidable".
+    assert "true for anything not from a real source" in flat, (
+        "the `synthesized` row of the conflict table is decided from SourceRef.synthetic's own "
+        "definition, and quoting it is what makes the decision reviewable rather than arbitrary"
+    )
+    # And the rule has to be the same rule the sibling row sets state.
+    for other in (_section(CAT021_HEADING), _section(NITS_HEADING)):
+        assert "synthetic" in other, (
+            "a sibling row set no longer discusses source.synthetic, so the 'this is a rule, not "
+            "a default' argument has lost the precedent it rests on"
+        )
+
+
+def test_the_target_classification_table_is_a_lookup_and_never_arithmetic():
+    """Settlement 4's second half. `128 + n` is wrong for every n above 13, and 142 is not simulated.
+
+    This is the finding that most repays being written down: the live and simulated halves of
+    Table 3-11 mirror each other for codes 0-13 and then diverge by an inserted value, so an
+    adapter computing `live = code - 128` reads Clutter-Simulated as Ground-Rotator-Live. Both of
+    the codes that break the pattern were added or moved in Edition A, which is also the
+    edition-gate argument.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for code, wording in (("| 142 |", "Tagging Device"),
+                          ("| 143 |", "Reserved"),
+                          ("| 144 |", "Clutter, Simulated Target"),
+                          ("| 127 |", "Unknown, Live")):
+        row = [line for line in section.splitlines() if line.startswith(code)]
+        assert row and wording in row[0], (
+            f"the D32.10 row for {code.strip('| ')} is missing or has lost the standard's wording "
+            f"({wording!r}); the enumeration must account for every value it names"
+        )
+    assert "+130, not +128" in flat, (
+        "the offset trap is the reason this table is transcribed rather than computed. Losing the "
+        "statement invites the arithmetic back"
+    )
+    assert "a tagging device is detected" in flat, (
+        "D32.16's disjunction is the evidence that code 142 is NOT a simulated target, which is "
+        "what exempts it from the intra-payload conflict check. Without the quote the exemption "
+        "looks like a special case somebody invented"
+    )
+    assert "Exempt from the intra-payload simulation conflict check" in flat, (
+        "the exemption has to be stated on the row it applies to"
+    )
+
+
+def test_the_two_simulation_conflict_checks_are_independent():
+    """Settlement 4. Payload-versus-deployment and payload-versus-payload are different failures.
+
+    The STANAG 4676 segment-ordering rule is the precedent: first-match-wins means a producer only
+    ever hears about whichever check happened to run first, and a refusal that names the wrong
+    cause is a guess wearing a refusal's clothes.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "intra-payload contradiction" in flat, (
+        "a P7 of 'Operation, Real Data' carrying a simulated target report is a contradiction "
+        "inside the payload, not with the deployment. Collapsing the two loses the only refusal "
+        "that can name P7 = 2 as the value the producer needed"
+    )
+    assert "checked and reported independently" in flat, (
+        "the independence is the point; without it the section describes two checks and one code "
+        "path"
+    )
+
+
+def test_no_target_track_is_ever_emitted():
+    """Settlement 5, asserted in the direction that would catch it being softened during Phase 2.
+
+    Associating detections across dwells is what a GMTI tracker does, and the format's own
+    implementation guide sends the reader to the sensor manufacturer for the rule. An implementer
+    who has just written a working platform Track will find a target Track very easy to add.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "no target `Track` is emitted from" in flat or "no `Track` for any target, ever" in flat, (
+        "the no-target-Track rule has been reworded or removed. It is the decision the identity "
+        "settlement turns on and it is the format's whole difference from the other seven"
+    )
+    # The platform Track IS emitted, and the guide sentence is what licenses it. Both halves have
+    # to stand, because the argument is that one is stated identity and the other is inference.
+    assert "are assumed to be the same" in flat, (
+        "guide §E.8's sentence is what makes one platform Track out of two segment types a reading "
+        "rather than a merge. Losing the quote leaves the platform Track unjustified while the "
+        "target Track is refused, which is the inconsistent-looking half"
+    )
+    assert "best recommended by the sensor manufacturer" in flat, (
+        "the guide declining to specify the association rule is the strongest argument that a "
+        "translator may not invent one"
+    )
+    # No row may put a target quantity into a Track.
+    target_rows = [line for line in section.splitlines() if line.startswith("| `D32.")]
+    assert target_rows, "the target report row table has disappeared"
+    for row in target_rows:
+        cdm_cell = [c.strip() for c in row.strip("|").split("|")][3]
+        assert "Track." not in cdm_cell, (
+            f"a target-report field is mapped into a Track: {row[:120]!r}. A GMTI detection has no "
+            "history, and building one is fusion"
+        )
+
+
+def test_the_entity_key_admits_that_it_is_positional():
+    """Settlement 5. The honest part of the identity decision is the part that says it is fragile.
+
+    GMTIF guarantees no identifier below the job, so the target entity_id ends in two ordinals —
+    and the format explicitly permits the re-segmentation that invalidates them. A row set that
+    derived the key and did not say this would be claiming a stability the format does not offer.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "attributes.entity_key_basis" in flat, (
+        "the derived key's components have to be recorded on the object, or a consumer cannot tell "
+        "a stable id from a positional one"
+    )
+    assert "positional" in flat and "re-segmentation" in flat, (
+        "the fragility is the finding. §3.4.32 and guide §D.2 both permit a dwell to be split "
+        "differently on retransmission, which gives the same detection a different entity_id"
+    )
+    assert "within the dwell" in flat, (
+        "D32.1 MTI Report Index states its own scope, and quoting it is what rules out the "
+        "tempting reading that it is a report identifier"
+    )
+
+
+def test_the_position_arithmetic_is_stated_in_the_integer_domain():
+    """Settlement 6. Guide §E.7 requires it, and a float-degrees implementation is wrong at the seam.
+
+    The delta reconstruction is not "multiply and add in degrees". It is signed 32-bit arithmetic
+    for latitude, unsigned 32-bit arithmetic for longitude, and the longitude case is REQUIRED to
+    wrap — which is how a dwell straddling the prime meridian recovers at all.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "congruent" in flat and "mod 2^n" in flat, (
+        "the guide's own requirement that unsigned overflow wrap is the authority for the "
+        "longitude branch; without it the wrap looks like a bug being preserved"
+    )
+    assert "a latitude has no seam to wrap at" in flat, (
+        "the asymmetry is the substance: longitude wrapping is correct and latitude wrapping is a "
+        "defect, so one is converted and the other is refused"
+    )
+    assert "never two conversions with arithmetic in between" in flat, (
+        "the rule an implementer needs in one sentence"
+    )
+    # The exclusive-or between the hi-res and delta pairs, which is where guessing almost works.
+    assert "if and only if" in flat, (
+        "the standard's own 'if and only if' governs D10/D11 against D32.4/D32.5, and it is what "
+        "makes a delta report with no scale factors a refusal instead of a scale factor of zero"
+    )
+
+
+def test_the_height_unit_split_is_stated_on_the_rows_and_in_a_table():
+    """Settlement 6. Two altitudes in centimetres and one height in metres, in the same packet.
+
+    A single conversion factor applied to all three puts the target 100x too high or the platform
+    100x too low, and neither error has a structural symptom. This is the cheapest possible test
+    for the most likely possible bug.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for field, unit in (("`D9 ", "**cm**"), ("`L4 ", "**cm**"), ("`D32.6 ", "**m**")):
+        row = [line for line in section.splitlines() if line.startswith(f"| {field}")]
+        assert row, f"the {field.strip('` ')} row is missing"
+        assert unit in row[0], (
+            f"the {field.strip('` ')} row must mark its unit emphatically: two of these three "
+            f"fields are centimetres and one is metres, and the row is where an implementer looks"
+        )
+    assert "unit split" in flat, "the settlement must name the trap it is preventing"
+
+
+def test_accuracy_m_is_none_everywhere_and_the_reason_is_recorded():
+    """Settlement 6. Twelve uncertainty figures, not one of them a horizontal 1-sigma scalar.
+
+    Asserted because D12 and D13 are the most reducible uncertainty pair in any format in this
+    document — both horizontal, both 1-sigma, both centimetres, orthogonal — so this is where the
+    discipline is most likely to be relaxed "just this once".
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    fills = [line for line in section.splitlines()
+             if line.startswith("|") and "`Position.accuracy_m`" in line]
+    assert fills, "the fills table has lost its Position.accuracy_m row"
+    assert any("`None`, always" in line for line in fills), (
+        "the fills table must state that accuracy_m is None on every object, not merely that "
+        "individual fields park"
+    )
+    for row in [line for line in section.splitlines()
+                if line.startswith("| `D12 ") or line.startswith("| `D13 ")
+                or line.startswith("| `D32.12 ")]:
+        assert "`Entity.attributes`" in row, (
+            f"an uncertainty field has been mapped out of attributes: {row[:120]!r}"
+        )
+    assert "a slant is not a horizontal error" in section or \
+           "a slant is not horizontal" in flat, (
+        "D32.12's refusal needs its reason on the page: a line-of-sight standard deviation needs a "
+        "grazing angle to become a ground error, and the format states none"
+    )
+
+
+def test_the_mask_discipline_keeps_absence_and_no_statement_apart():
+    """Settlement 7. §2.4 creates a fourth category the existence mask cannot express.
+
+    "For Mandatory Fields for which no information is being provided, a 'No Statement' value may be
+    transmitted" — so a Mandatory field is always present and may still say nothing. A row set that
+    collapsed that into "absent" would lose the difference between a source that did not send a
+    field and a source that sent it to say it does not know.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "No Statement" in flat, "the fourth category has to be named"
+    assert "the source sent it and said it does not know" in flat, (
+        "the distinction is the finding, and it has to be stated rather than implied by a list of "
+        "sentinels"
+    )
+    # The standard's own exception to its own mask rules, which desynchronises a reader that
+    # misses it.
+    assert "not present even if the existence mask indicates they are" in flat, (
+        "§3.4.1's D5 = 0 exception makes a mask that claims target-report fields CONFORMANT when "
+        "the count is zero. A reader that honours the mask instead consumes bytes belonging to the "
+        "next segment, and the row set has to quote the exception"
+    )
+    # Annex G Subtest 18 is the authority for refuse-versus-record, and it is quoted rather than
+    # paraphrased because the two obligations are different.
+    assert "must alert the user and abort the process" in flat, (
+        "the guide's own words for the error case. Without them the refusals in this row set look "
+        "like this document's preference rather than the validation annex's requirement"
+    )
+    assert "continue the unpack process" in flat, (
+        "and the guide's own words for the unsupported case, which is why a reserved segment type "
+        "is skipped rather than refused"
+    )
+
+
+@pytest.mark.parametrize("code", GMTIF_RESERVED_SEGMENT_CODES)
+def test_every_reserved_segment_type_code_has_a_row(code):
+    """"No silent omissions" covers the value space of an enumeration, not only the field list.
+
+    A packet carrying segment type 8 has a documented outcome or it does not, and the CAT021 rule
+    says it must. All eight of these resolve to the same behaviour — skip by S2, park, record — and
+    that is precisely why it would be easy to leave them out.
+    """
+    # Table-local, not section-local: `| 8 |` also begins a D32.10 classification row and an
+    # ambiguity row, so a section-wide check would pass on either and prove nothing.
+    table = _subsection("### Row set — the reserved and extension segment type codes")
+    rows = [line for line in table.splitlines() if line.startswith(f"| {code} |")]
+    assert rows, (
+        f"segment type code {code} has no row in the reserved-and-extension table saying what "
+        "happens on encounter. Every S1 value that is not one of the ten defined segments needs "
+        "one, and the CAT021 rule covers an enumeration's value space and not only its fields"
+    )
+    assert "skip" in rows[0] and ("park" in rows[0] or "parked" in rows[0]), (
+        f"code {code}'s row no longer states the skip-by-S2-and-park behaviour. Annex G Subtest "
+        "18's continue branch is what makes this a record rather than a refusal, and a row that "
+        "does not say so leaves the outcome to whoever writes the parser"
+    )
+
+
+def test_the_controlled_extension_blocker_is_recorded_with_an_exit_condition():
+    """Five approved extension segment types, and no pinned document defines any of them.
+
+    This is the GMTIF equivalent of the STANAG 4676 XSD blocker and it is worse in one way: the
+    document that should carry the field tables IS pinned, and the section is empty. A blocker with
+    no exit condition is a caveat nobody can ever discharge.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for name in ("Advanced Dwell", "Advanced Job Definition", "Advanced Platform Location",
+                 "Target Centroid", "Releasability"):
+        assert name in flat, (
+            f"the registered Controlled Extension {name!r} is not named. Five are approved in "
+            "guide Annex L.3.1 and a producer may emit any of them"
+        )
+    assert "blocked, with a stated exit condition" in flat, (
+        "this is neither a deferral nor a rejection: the definitions do not exist to implement. "
+        "Recording it as one of those would hide the only thing standing between this row set and "
+        "a complete one"
+    )
+    assert "Exit condition" in flat, (
+        "the steps that discharge the blocker have to be written down, in order, the way the NITS "
+        "XSD blocker's five are"
+    )
+
+
+def test_the_gmtif_scope_decisions_say_deferred_rejected_or_blocked():
+    """An out-of-scope list without reasons is indistinguishable from an oversight.
+
+    And this row set needs three words rather than two: several of these are blocked on a document
+    that does not exist rather than on anyone's judgement, and "deferred" would imply somebody
+    could pick it up tomorrow.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for out in ("Egress", "Edition 3", "Range-Doppler Segment", "Controlled Extension",
+                "Job Request and Job Acknowledge", "signature data", "Reassembling a dwell",
+                "Associating target reports across dwells", "terrain or geoid models",
+                "DIS Entity State PDU", "NSIF", "Transport"):
+        assert out in section, f"{out!r} is not named in the GMTIF declines table"
+    for word in ("**deferred**", "**rejected**", "**blocked"):
+        assert word in flat, (
+            f"the declines table must use {word}: 'not supported' with no reason is what this "
+            "column exists to stop, and the three are different promises"
+        )
+    assert "rejected as unimplementable" in flat, (
+        "the four segments whose paragraphs read 'RESERVED FOR FUTURE DEFINITION' are not deferred "
+        "— there is nothing to defer to — and the distinction is worth the extra word"
+    )
+
+
+def test_the_gmtif_ambiguities_are_recorded_rather_than_resolved_silently():
+    """Fourteen findings, and the first three each change what an adapter does.
+
+    Asserted on the ones whose loss would change behaviour rather than merely cost a reader time:
+    the P6 double table (which is the whole argument for parking the label), the D6 range
+    disagreement, and the truth-tag guard naming the wrong classification code.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "NOCONTRACT" in flat and "EUFOR" in flat, (
+        "the two published codeword tables for P6 have to be quoted side by side. It is a "
+        "demonstrated contradiction rather than an analogy, and it is the strongest argument in "
+        "this row set for carrying rather than interpreting a classification"
+    )
+    assert "Edition 2, 2 August 2007" in flat, (
+        "Annex G's own reference list is what explains the divergence — the validation annex was "
+        "carried forward without being re-based on Edition A — and the cause is what tells a "
+        "reader which table is stale"
+    )
+    assert "classification code `140`" in flat, (
+        "the truth-tag guard names a code that Table 3-11 defines as something else, which is what "
+        "blocks the only SourceId candidate in the format"
+    )
+
+
+def test_the_gmtif_gaps_are_referenced_from_the_row_set():
+    """A gap opened by a row set that the row set never cites is a gap nobody will find.
+
+    Three new gaps and eleven cross-referenced ones, and the row set has to point at each — the
+    amendment-H discipline: where the finding is the same finding, say so rather than opening a
+    fourteenth number.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    for gap in (1, 4, 6, 7, 8, 9, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22):
+        assert f"**gap {gap}**" in flat.lower() or f"**Gap {gap}**" in flat, (
+            f"gap {gap} is not cited anywhere in the GMTIF row set, and the row set is either "
+            "opening it or sharpening it"
+        )
+
+def test_the_gmtif_rows_are_actually_resolved_against_the_models():
+    """The whole point of the CDM-field column is that something checks it. Prove it is checked.
+
+    `test_every_mapped_cdm_path_exists_on_the_models` is parametrised over the paths the parser
+    found, so a section whose tables were headed `| GMTIF | ... | CDM | Status |` instead of
+    `CDM field` would contribute ZERO paths and the parametrised test would stay green by
+    contributing no cases. That is the failure mode this catches: a silent zero looks exactly like
+    a clean pass.
+    """
+    doc = DOC.read_text()
+    section = _section(GMTIF_HEADING)
+    paths, column = [], None
+    for line in section.splitlines():
+        if not line.startswith("|"):
+            column = None
+            continue
+        if line.startswith("|---"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if CDM_COLUMN in cells:
+            column = cells.index(CDM_COLUMN)
+            continue
+        if column is None or column >= len(cells):
+            continue
+        paths += _cell_paths(cells[column])
+    assert len(paths) >= 150, (
+        f"the GMTIF section resolved only {len(paths)} CDM path cells. A 212-field row set that "
+        "contributes almost nothing to the resolver has a table header the parser does not "
+        "recognise — check that every mapping table says exactly 'CDM field'"
+    )
+    # The paths the settlements turn on, each of which would be the tell if a whole table were
+    # dropped: the platform Track, the target position, the two velocity halves, and the three
+    # fields the fills table pins to a constant.
+    for required in ("Track.samples[].position.lat", "Track.samples[].observed_at",
+                     "Position.lat", "Position.lon", "Position.alt_m",
+                     "Kinematics.course_deg", "Kinematics.speed_mps", "Kinematics.climb_mps",
+                     "Position.accuracy_m", "Entity.affiliation", "SourceRef.synthetic",
+                     "Entity.entity_type", "Event.observed_at", "Event.received_at"):
+        assert required in paths, (
+            f"{required} is not among the paths the GMTIF section resolves. Either the row that "
+            "should carry it has lost its CDM field, or its table's header no longer names the "
+            "column — and in both cases the row stopped being checked against the models"
+        )
+    # And every one of them must be in the document-wide set the parametrised test walks.
+    assert set(paths) <= set(PATHS), (
+        "the GMTIF section resolves paths the document-wide parser does not see, which means the "
+        "two disagree about where the tables are"
     )
