@@ -301,6 +301,88 @@ def test_the_documented_gaps_are_still_gaps():
     )
 
 
+    # ------------------------------------------------------------ the STANAG 4676 gaps
+    #
+    # Four gaps opened by adapter #7's row set. Each is asserted the awkward way round, like the
+    # rest: the CDM must still NOT have the field, so a gap quietly closed in code without the
+    # document being updated fails the build.
+
+    # Gap 16, no per-sample extension. Asserted on TrackSample because that is where a bag would
+    # naturally go, and on Track because the Legion row set already found there is none there
+    # either — and the gap's argument is precisely that the smallest diff (a dict on the CDM's
+    # most-repeated object) is the wrong size.
+    for field in ("attributes", "payload", "extras"):
+        assert field not in models.TrackSample.model_fields, (
+            f"gap 16 (no per-sample extension) appears to be closed — TrackSample.{field} now "
+            "exists. Read that gap first: a NITS TrackPoint carries sixteen attributes and a "
+            "thousand-point track would carry a thousand dicts, so the honest options are a bag "
+            "here, a parallel per-sample structure on Track, or deciding that a rich track point "
+            "is an Event with a position."
+        )
+    assert "attributes" not in models.Track.model_fields, (
+        "gap 16 appears to be closed on Track — update FORMAT_COVERAGE.md, MIGRATIONS.md and the "
+        "Legion envelope rows, which park a page's crs and paging on the owning Entity today "
+        "precisely because Track has no bag."
+    )
+
+    # Gap 17, state-vector uncertainty. Asserted on Position and Kinematics because a covariance
+    # would hang off one of them, and the gap says both plus gap 6 have to be designed together.
+    for field in ("covariance", "covariance_matrix", "accuracy_matrix"):
+        assert field not in models.Position.model_fields, (
+            f"gap 17 (no state-vector uncertainty) appears to be closed — Position.{field} now "
+            "exists. That gap is unproposed because a covariance is meaningless without the frame "
+            "it was expressed in, and Position is always WGS84 geodetic — so the field needs a "
+            "frame beside it or it states a matrix in units nobody named."
+        )
+    for field in ("covariance", "accuracy_mps", "uncertainty"):
+        assert field not in models.Kinematics.model_fields, (
+            f"gap 17 appears to be closed on Kinematics — Kinematics.{field} now exists. The "
+            "velocity and acceleration terms are 15 of the 21 numbers in a NITS VEL3D matrix and "
+            "are the part a consumer needs to judge a predicted position."
+        )
+
+    # Gap 18, confidence provenance and retraction. Asserted three ways because the gap has two
+    # halves and the easy half is the one likely to be added alone.
+    for model, field in ((models.Entity, "confidence_type"),
+                         (models.Entity, "source_reliability"),
+                         (models.Track, "quality_type")):
+        assert field not in model.model_fields, (
+            f"gap 18 (no confidence provenance) appears to be closed — {model.__name__}.{field} "
+            "now exists. That is the EASY half. Read the gap: the hard half is retraction — a "
+            "NITS Confidence.valid of FALSE withdraws a previously emitted object, and the CDM "
+            "has no concept of one object superseding another."
+        )
+    for field in ("superseded_by", "retracted", "valid"):
+        assert field not in models.Entity.model_fields, (
+            f"gap 18's retraction half appears to be closed — Entity.{field} now exists. That "
+            "touches identity, valid_to and whether a consumer holds state at all, and the row "
+            "set carries retractions without applying them — so whatever closes this decides "
+            "WHERE they are applied. Write that down before the field."
+        )
+
+    # Gap 19, no relation object. Asserted on CDMBase's subclasses and on KINDS, because the three
+    # honest shapes are a list on the base, a fifth canonical object, or neither.
+    for model in (models.Entity, models.Event, models.Track):
+        for field in ("relations", "links", "related"):
+            assert field not in model.model_fields, (
+                f"gap 19 (no relation object) appears to be closed — {model.__name__}.{field} "
+                "now exists. Gaps 11 and 14 both say they should be closed by whatever closes "
+                "this one, so all three entries move together or the CDM acquires three kinds of "
+                "dangling pointer."
+            )
+    assert "relation" not in models.KINDS, (
+        "gap 19 appears to be closed with a fifth canonical object. That is one of the three "
+        "honest shapes and it would also give gap 18's retraction somewhere to live — write both "
+        "decisions down in MIGRATIONS.md before the object."
+    )
+    # The one relation the CDM does have, pinned: gap 19's whole argument is that it holds entity
+    # ids and nothing else, so a NITS track linkage cannot go in it.
+    assert "related_entities" in models.Event.model_fields, (
+        "Event.related_entities has been renamed or removed. Gap 19 and the NITS TrackLinkage "
+        "rows both argue from what it can and cannot hold; update them with it."
+    )
+
+
 # The Picogrid Legion row set is a SPECIFICATION: adapter #5 does not exist yet. These two
 # tests pin it in the only two ways available before there is code — the size of the row set,
 # and the presence of the version pin the row set is only trustworthy with.
@@ -518,7 +600,7 @@ def test_the_legion_scope_decision_names_what_is_out_and_why():
 
 def test_the_gap_notes_are_referenced_from_the_table():
     text = DOC.read_text()
-    for number in range(1, 13):
+    for number in range(1, 20):
         assert f"**gap {number}**" in text or f"{number}. **" in text, (
             f"gap {number} is listed but never referenced from a table row"
         )
@@ -637,4 +719,283 @@ def test_the_sic_claim_is_explicitly_weaker_than_the_sac_one():
     assert "no allocation claim at all" in section, (
         "the document must say that the SIC half of the pair rests on the SAC and not on a "
         "list of its own"
+    )
+
+
+# ------------------------------------------------------ the STANAG 4676 / AEDP-12 row set
+#
+# Adapter #7's row set is a SPECIFICATION: `adapters/stanag4676.py` does not exist yet. These
+# tests pin it in the four ways available before there is code — the documents it was read from,
+# the completeness of the model it claims to cover, the settlements it turns on, and the fact
+# that every row still says `not yet`.
+#
+# The completeness test is the one with teeth. STANAG 4676 Edition B Version 2 is a full UML data
+# model, not a field list, and "no silent omissions" is only a claim until something counts. The
+# inventory below is transcribed from the Edition B attribute tables (§2.5, §2.6) and Annex D's
+# alphabetical entity list, and it is the Legion `test_every_pinned_legion_field_has_a_row` idea
+# applied to a model that has no machine-readable schema available to pin instead.
+
+NITS_HEADING = "## STANAG 4676 / AEDP-12"
+
+#: Every class in AEDP-12 Ed. B v2 Annex D, with the attributes its §2.5 / §2.6 table gives it.
+#: Three classes are empty on purpose — the standard says so in as many words.
+NITS_MODEL: dict[str, tuple[str, ...]] = {
+    # 2.5 — MAIN
+    "NITSRoot": ("profile", "streamUID", "fileUID", "fileLID", "lidScopeUID", "numFiles",
+                 "msgCreatedTime", "nitsVersion", "product", "collection", "sensor", "tracker",
+                 "message"),
+    "ProductIdentification": ("uid", "lid", "id", "name", "shortName", "effectivity"),
+    "CollectionInformation": ("uid", "lid", "intent", "essence", "targetID"),
+    "SensorInformation": ("uid", "lid", "sensorID", "name", "description", "modality", "url",
+                          "collectionMode", "absTimeUncertainty", "relTimeUncertainty", "comment",
+                          "esmSensor", "imagingSensor", "radarSensor"),
+    "ESMSensor": (),
+    "RadarSensor4607": ("platformID", "missionID", "jobID"),
+    "ImagingSensor": ("motionImageryCoreID", "frameHeight", "frameWidth", "fpaIndex", "filter",
+                      "phenomenology", "band"),
+    "TrackerInformation": ("type", "uid", "lid", "trackerID", "name", "description", "version",
+                           "supplementaryData"),
+    "SupplementaryData": ("type", "name", "version", "description"),
+    "TrackMessage": ("numDetections", "numTracks", "baseTime", "relTimeIncrement", "dynSrcInfo",
+                     "detection", "track", "processedTrack", "trackLinkage", "motionEvent"),
+    "DynamicSourceInformation": ("uid", "lid", "relTime", "sensorUID", "sensorLID",
+                                 "sensorLocation", "groupID", "numDetections",
+                                 "numReportedDetections", "dynCFT", "sourceMI", "sourceRadar",
+                                 "sourceESM"),
+    "DynamicCFT": ("uid", "lid", "cft"),
+    "CoordinateFrameTransformation": ("from", "translation", "rotation"),
+    "MotionImageryInformation": ("frameBoundingBox", "frameNumber", "niirs", "vniirs", "sea",
+                                 "tea", "gsd", "grd", "useableFOV", "processedFOV"),
+    "RadarInformation": ("revisitIndex", "dwellIndex"),
+    "ESMInformation": (),
+    "Detection": ("uid", "lid", "relTime", "centroid", "outline", "sensorUID", "sensorLID",
+                  "dynSrcUID", "dynSrcLID", "confidence", "source", "esm", "im", "radar", "sm"),
+    "ESM": (),
+    "Radar4607": ("reportIndex", "hrrType"),
+    "Image": ("pixelMask", "centroidPixel", "color", "chip"),
+    "ImageChip": ("type", "uri", "image"),
+    "SensorMeasurement": ("quantity", "method", "value", "uncertainty"),
+    "TrackData": ("uid", "lid", "trackSource", "segment", "object"),
+    "TrackSource": ("sensorUID", "sensorLID", "trackerUID", "trackerLID", "collectionUID",
+                    "collectionLID", "productUID", "productLID"),
+    "TrackSegment": ("uid", "lid", "segmentSource", "confidence", "comment", "status",
+                     "initiationReason", "terminationReason", "tp"),
+    "TrackPoint": ("uid", "lid", "relTime", "dynSrcUID", "dynSrcLID", "associatedDetection",
+                   "processType", "confidence", "comment", "outline", "outlineObscured",
+                   "nearestConfuser", "nearestConfuserConfidence", "sm", "dynamics", "evidence"),
+    "Dynamics": ("cs", "pos", "vel", "acc", "cov", "cftUID", "cftLID"),
+    "Evidence": ("type", "subtype", "uid", "lid", "detectionUID", "detectionLID", "confidence"),
+    "TrackedObject": ("uid", "lid", "description", "numberOfObjects", "objectColor", "confidence",
+                      "dims", "priority", "iffCode", "objectClass", "idSourceInformation",
+                      "id1241", "exampleDetectionUID", "exampleDetectionLID"),
+    "IFFCode": ("value", "mode"),
+    "ObjectClass": ("table", "entity", "entityType", "entitySubtype", "sector1Modifier",
+                    "sector2Modifier", "code"),
+    "IDSourceInformation": ("idQualityNumber", "sourceDeclarationBinary",
+                            "sourceDeclarationExtension", "relTimeCreation", "relTimeExchange",
+                            "idSourceNumber"),
+    "IDSourceNumber": ("sourceType", "sourceSubtype", "sourceDeviceClass"),
+    "ID1241": ("identity", "identityAmplification", "identitySourceModality", "environment"),
+    "ProcessedTrack": ("type", "uid", "lid", "confidence", "inputUID", "inputLID", "outputUID",
+                       "outputLID"),
+    "TrackLinkage": ("type", "uid", "lid", "relTime", "confidence", "preUID", "postUID", "preLID",
+                     "postLID"),
+    "MotionEvent": ("type", "uid", "lid", "trackUID", "trackLID", "startRelTime", "endRelTime",
+                    "confidence", "region", "tripwire"),
+    # 2.6 — COMMON
+    "Shape": ("dims", "cs", "cftUID", "cftLID"),
+    "Polygon": ("nRings", "vertices"),
+    "Ellipsoid": ("center", "ellipsoidParameters"),
+    "PixelMask": ("pixelPolygon", "pixelRun"),
+    "PixelPolygon": ("nRings", "integerArray"),
+    "PixelRun": ("rs", "cs"),
+    "IDData": ("stationID", "nationality"),
+    "CovarianceMatrix": ("covarianceType",),
+    "Confidence": ("type", "value", "sourceReliability", "valid"),
+    "PositionPoints": ("dims", "cs", "points", "cftUID", "cftLID"),
+    "UUID": ("gidp",),
+}
+
+#: The two classes whose payload is the element's own content rather than a named attribute.
+NITS_CORE_VALUE_CLASSES = ("CovarianceMatrix", "UUID")
+
+
+def test_the_nits_row_set_names_the_documents_it_was_read_from():
+    """An edition number names a document; a SHA-256 names the copy that was read.
+
+    Four documents, and the fourth is the interesting one: the 2014 edition is pinned as
+    *compatibility context* and the row set is explicitly not built against it. Pinning a document
+    you did not map from is unusual and it is the point — the edition-delta settlement rests on
+    having read it.
+    """
+    section = _section(NITS_HEADING)
+    for label, digest in (
+        ("AEDP-12 Ed. B v2, the target",
+         "c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b"),
+        ("AEDP-12.1 Ed. A v1, the implementation guide",
+         "7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d"),
+        ("STANAG 4676 Ed. 2, the ratification wrapper",
+         "5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f"),
+        ("AEDP-12 Ed. A v1 2014, compatibility context only",
+         "a9e88c81369ff4f13a9d4d7e457de55c6cefcc024162efe5a198e395d8898814"),
+    ):
+        assert digest in section, f"the pin has lost its SHA-256 for {label}"
+    assert "Edition B Version 2" in section and "March 2022" in section
+    assert "13 October 2021" in section, "the STANAG wrapper's date is part of the citation"
+    assert "NOT PINNED" in section, (
+        "the pin must say that the XSD — normative for conformance, and distributed through "
+        "national representatives — could not be obtained or hashed. A pin table that lists only "
+        "what was pinned reads as if nothing was missing"
+    )
+
+
+@pytest.mark.parametrize("nits_class", sorted(NITS_MODEL))
+def test_every_nits_class_and_attribute_has_a_row(nits_class):
+    """"Every class and every attribute" made checkable instead of asserted.
+
+    The failure this guards against is the one a 48-class model invites: writing the row set class
+    by class and quietly skipping the attributes that were hard to place. A skipped attribute is
+    indistinguishable, in a finished document, from an attribute nobody had to think about.
+
+    Matched on the qualified form the row set uses in its left column (`TrackPoint.relTime`), not
+    on the bare leaf, because a model this size reuses `uid`, `lid`, `type`, `name` and `value`
+    across dozens of classes and a bare-leaf match would pass on any of them.
+    """
+    section = _section(NITS_HEADING)
+    assert f"`{nits_class}" in section or f"**{nits_class}" in section, (
+        f"{nits_class} is a class in AEDP-12 Ed. B v2 Annex D and is not mentioned in the row set "
+        "at all. A class with no row is a class nobody decided about"
+    )
+    missing = [a for a in NITS_MODEL[nits_class] if f"`{nits_class}.{a}`" not in section]
+    assert not missing, (
+        f"{nits_class}: {len(missing)} attribute(s) from the Edition B table have no row: "
+        f"{missing}. Map it or decline it with a reason; do not drop the row"
+    )
+    if not NITS_MODEL[nits_class]:
+        assert "no attributes" in section, (
+            f"{nits_class} has no attributes in the standard, and the row set must say so rather "
+            "than leaving the class looking forgotten"
+        )
+
+
+def test_the_two_nits_core_value_classes_are_stated_as_such():
+    """`UUID` and `CovarianceMatrix` carry their payload as the element's own content.
+
+    Pinned because the attribute inventory above cannot express it — the value has no attribute
+    name — so without this the two classes would look like a one-attribute and a zero-attribute
+    class rather than what they are.
+    """
+    section = _section(NITS_HEADING)
+    assert section.count("*(core class value)*") >= len(NITS_CORE_VALUE_CLASSES), (
+        "the row set must name the core class value of "
+        f"{', '.join(NITS_CORE_VALUE_CLASSES)} explicitly; the attribute tables in the standard "
+        "list only their siblings"
+    )
+
+
+def test_the_nits_row_set_claims_no_adapter():
+    """Phase 1 stops at the mapping, and the status column is what records that.
+
+    The inverse of the Legion test, which now asserts that no row still says `not yet`. Here the
+    risk points the other way: a status marker claiming an adapter that does not exist is the one
+    thing this table exists to prevent, and it is exactly what happened to the placeholder row set
+    this section replaced — sixteen rows against an Edition A model nobody had ever run.
+    """
+    section = _section(NITS_HEADING)
+    rows = [line for line in section.splitlines()
+            if line.startswith("|") and not line.startswith("|---")]
+    mapped = [line for line in rows if "`not yet`" in line]
+    assert len(mapped) >= 250, (
+        f"the STANAG 4676 row set is down to {len(mapped)} mapped rows, below what a 48-class, "
+        "273-attribute model needs. Raising this floor deliberately is fine; losing rows is not"
+    )
+    for marker in ("nits 1.0.0", "stanag4676 1.0.0", "4676 1.0.0"):
+        assert marker not in section, (
+            f"a STANAG 4676 row claims `{marker}` while no adapter implements it. Either the "
+            "adapter landed — in which case the status legend, this test and the rosters all move "
+            "together — or the document is ahead of the code"
+        )
+    assert "adapters/stanag4676.py" in section, (
+        "the row set must name the module that will implement it, as the Legion and CAT021 row "
+        "sets did before they landed"
+    )
+
+
+def test_the_nits_settlements_are_each_recorded_by_name():
+    """Eight named settlements, each of which an adapter author will otherwise re-decide.
+
+    Asserted by name rather than by content because the failure mode is a settlement being edited
+    away during implementation — the row set is reviewed once, as a specification, and the
+    settlements are the part of it that is expensive to rediscover.
+    """
+    section = _section(NITS_HEADING)
+    for phrase in (
+        "Edition B Version 2 is the only target",          # 1, the edition delta
+        "no rollover to reconstruct",                       # 2, time
+        "the model is silent, the syntax is not",           # 3, confidentiality
+        "plain-text XML in 1.0.0, EXI deferred",            # 4, encoding
+        "STANDALONE is read and emitted",                   # 5, compliance profiles
+        "three of them do not produce a Position",          # 6, coordinates
+        "almost none of them is a name",                    # 7, identity
+        "A translator owes no fusion",                      # 8, fusion
+    ):
+        assert phrase in section, f"the settlement headed {phrase!r} is gone from the row set"
+    # The two that are load-bearing enough to assert on their substance, not their heading.
+    assert "does not default to `baseTime`" in section, (
+        "MotionEvent.startRelTime is the single exception to the model-wide rule that an omitted "
+        "relTime means zero, and the exception is the standard's own words. Losing it means an "
+        "adapter silently dates every timeless motion event to the message base"
+    )
+    assert "originatorConfidentialityLabel" in section and "TN-1491" in section, (
+        "the confidentiality settlement must name the 4774 element that is mandatory on the root "
+        "and the binding document, or 'carried, not interpreted' has nothing behind it"
+    )
+
+
+def test_the_nits_scope_decisions_say_deferred_or_rejected():
+    """An out-of-scope list without reasons is indistinguishable from an oversight.
+
+    And this row set has to go one further than Legion's: the brief for it was explicitly that a
+    decline says *deferred* where deferred is the truth, because several of these are blocked on a
+    document or on a custodian's erratum rather than on anyone's judgement.
+    """
+    section = _section(NITS_HEADING)
+    for out in ("EXI encoding", "STANAG 4676 Edition 1", "DATASTREAM", "ECI_J2K",
+                "LOCAL_SPHERICAL", "PIXELS", "MIIS Core Identifier", "AIDPP-01",
+                "Mode 4 or Mode 5", "consolidation rule", "2525D SIDC"):
+        assert out in section, f"{out!r} is not named in the STANAG 4676 declines table"
+    assert "**deferred**" in section and "**rejected**" in section, (
+        "the declines table must distinguish the two. 'Not supported' with no reason is what this "
+        "column exists to stop, and 'deferred' and 'rejected' are different promises"
+    )
+    assert "blocked, not declined" in section, (
+        "the XML syntax binding is blocked on an XSD distributed through national representatives "
+        "and hashable nowhere in this repository. That is neither a deferral nor a rejection, and "
+        "recording it as one of those would hide the only thing standing between this row set and "
+        "Phase 2"
+    )
+
+
+def test_the_nits_row_set_does_not_reopen_the_placeholder_it_replaced():
+    """The Edition A row set that stood here is gone, and must not come back by accident.
+
+    Its class names are the tell: `trackUUID`, `trackNumber`, `trackPointPosition` and
+    `IdentityIndicator` are Edition A, and a document asserting them alongside the Edition B model
+    would be claiming two incompatible readings of one format.
+    """
+    rows = [line for line in DOC.read_text().splitlines()
+            if line.startswith("|") and not line.startswith("|---")]
+    for stale in ("TrackMessage/trackUUID", "Track/trackNumber",
+                  "TrackPoint/trackPointPosition", "IdentityIndicator"):
+        # In a ROW, not in prose: the edition-delta settlement quotes these names in order to say
+        # they are gone, and a substring check over the whole file would fire on the explanation.
+        offenders = [r for r in rows if stale in r.split("|")[1]]
+        assert not offenders, (
+            f"{stale!r} is an Edition A name and is back in a mapping row. The edition-delta "
+            "settlement says a 2014 feed is a separate adapter, not a mode"
+        )
+    section = _section(NITS_HEADING)
+    assert "supersedes the placeholder row set" in section, (
+        "the section must record that it replaced an earlier table rather than silently deleting "
+        "one; gap 3's premise was corrected in the same move and the trail has to be readable"
     )
