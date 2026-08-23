@@ -1603,10 +1603,29 @@ def test_no_payload_field_sets_source_synthetic_in_gmtif_either():
         "a parked P7 contradicting the deployment declaration is a refusal that names both "
         "values. Without it the rule has no teeth: the adapter would ignore the conflict"
     )
-    # The synthesized case is the one a future editor is most likely to soften into "undecidable".
-    assert "true for anything not from a real source" in flat, (
-        "the `synthesized` row of the conflict table is decided from SourceRef.synthetic's own "
-        "definition, and quoting it is what makes the decision reviewable rather than arbitrary"
+    # Amendment 2. Agreement is not an exception, and the mixture is not resolved onto the boolean.
+    assert "INCLUDING AGREEMENT" in flat, (
+        "amendment 2's operative words. The Phase 1 reading had `synthesized` 'agreeing with' a "
+        "synthetic = true declaration, which is a payload field writing a deployment declaration "
+        "whenever the two happen to match — a default with a conflict check bolted on, not a rule"
+    )
+    assert "writing a value that happens to match is still writing it" in flat, (
+        "the reason, in one sentence. Without it the rule reads as a preference about which field "
+        "wins rather than as the boundary CAT021 and 4676 amendment B both draw"
+    )
+    assert "parked visibly, NO refusal" in flat, (
+        "the third branch. A P7 of `synthesized` means 'a mix of real and simulated data' in "
+        "§3.1.7's own words, so it contradicts neither PURE declaration and must not be refused — "
+        "refusing it would reject the case §3.1.7 exists to describe"
+    )
+    assert "a mixture is exactly what neither pure declaration describes" in flat, (
+        "the mixture's reasoning has to come from the standard's definition of P7 = 2, not from "
+        "SourceRef.synthetic's docstring. Reading the field's own definition to adjudicate a "
+        "payload value is amendment B's forbidden move arrived at one step further back"
+    )
+    assert "true for anything not from a real source" not in flat, (
+        "the Phase 1 justification is back: SourceRef.synthetic's docstring was used to resolve a "
+        "payload value onto the boolean. Amendment 2 removed it, and it must not return"
     )
     # And the rule has to be the same rule the sibling row sets state.
     for other in (_section(CAT021_HEADING), _section(NITS_HEADING)):
@@ -1825,15 +1844,21 @@ def test_the_mask_discipline_keeps_absence_and_no_statement_apart():
         "the count is zero. A reader that honours the mask instead consumes bytes belonging to the "
         "next segment, and the row set has to quote the exception"
     )
-    # Annex G Subtest 18 is the authority for refuse-versus-record, and it is quoted rather than
-    # paraphrased because the two obligations are different.
-    assert "must alert the user and abort the process" in flat, (
-        "the guide's own words for the error case. Without them the refusals in this row set look "
-        "like this document's preference rather than the validation annex's requirement"
+    # Amendment 5. The refuse-versus-record split no longer rests on guide Annex G Subtest 18,
+    # which sits in the annex ambiguity 1 discredits, and now rests on whether the parse can
+    # continue deterministically — a property the adapter can verify against §3.2.1 and §3.2.2.
+    assert "whether the parse can continue deterministically" in flat, (
+        "the re-grounded criterion. A row set cannot discredit an annex over its P6 table in one "
+        "settlement and cite the same annex as authority in another, so the split has to stand on "
+        "something checkable: whether the byte offsets of everything after the problem are known"
     )
-    assert "continue the unpack process" in flat, (
-        "and the guide's own words for the unsupported case, which is why a reserved segment type "
-        "is skipped rather than refused"
+    assert "Skipping is available where the format hands over a length and withheld where it does not" in flat, (
+        "the criterion stated in one sentence, which is what an implementer will read"
+    )
+    assert "§3.2.1 is **silent** on receiver behaviour" in flat, (
+        "the honest admission that there is no normative statement of the split anywhere in the "
+        "pinned set. Without it the new grounding reads as a discovered rule rather than as a "
+        "construction this row set is responsible for"
     )
 
 
@@ -1931,9 +1956,9 @@ def test_the_gmtif_ambiguities_are_recorded_rather_than_resolved_silently():
         "carried forward without being re-based on Edition A — and the cause is what tells a "
         "reader which table is stale"
     )
-    assert "classification code `140`" in flat, (
-        "the truth-tag guard names a code that Table 3-11 defines as something else, which is what "
-        "blocks the only SourceId candidate in the format"
+    assert "the truth tags guard on classification value `140`" in flat.lower(), (
+        "the truth-tag discrepancy row is gone. It is what blocks the only SourceId candidate in "
+        "the format, and amendment 6 keys it on the LABEL rather than on a value"
     )
 
 
@@ -2000,3 +2025,332 @@ def test_the_gmtif_rows_are_actually_resolved_against_the_models():
         "the GMTIF section resolves paths the document-wide parser does not see, which means the "
         "two disagree about where the tables are"
     )
+
+
+# ------------------------------------------------------- the GMTIF Phase 1 amendments
+#
+# Seven amendments applied on review, still before any adapter code. Each is pinned here in the
+# direction that would catch it being quietly reverted during Phase 2 — which is the risk a
+# spec-first row set carries once someone is writing code against it and the original reading
+# starts to look more convenient. Two of the seven overturned a Phase 1 reading, so those two are
+# asserted BOTH ways: the new rule must be present and the old one must be absent.
+
+
+def test_a_rotator_class_is_not_a_facility():
+    """Amendment 1. `Stationary Rotator` and `Ground Rotator` are Doppler signature classes.
+
+    Phase 1 mapped D32.10 codes 5, 16, 133 and 146 to FACILITY on the reasoning that a rotating
+    antenna that does not move is a fixed structure — presented as the ADS-B/CAT021 obstacle
+    exception reached through a third vocabulary. It is not that exception: ADS-B's category set C
+    and CAT021's codes 22-24 NAME an obstacle, while a rotator class names the spectrum of a
+    return. Inferring an installation from a motion characteristic is the inference this row set
+    already refuses for M3 Platform Type.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    table = _subsection("#### `D32.10` Target Classification — every one of the 256 values accounted for")
+    # The MAPPING column, not the row and not the prose: the amendment's own explanation names
+    # FACILITY in order to say it is gone, and row 5's note states the reversal outright — both of
+    # which a looser check would fire on. This is the 4676 TrackSegment test's discipline.
+    mapping_rows = [line for line in table.splitlines()
+                    if line.startswith("| ") and not line.startswith("|---")
+                    and len(line.strip("|").split("|")) >= 3]
+    offenders = [r for r in mapping_rows
+                 if "FACILITY" in [c.strip() for c in r.strip("|").split("|")][2]]
+    assert not offenders, (
+        f"the D32.10 table has a FACILITY mapping again: {[r[:100] for r in offenders]}. "
+        "Amendment 1 removed the only one this table claimed, and the collapse is now uniform: a "
+        "vehicle, vessel or aircraft is a PLATFORM and everything else parks as UNKNOWN"
+    )
+    for code, wording in (("| 5 |", "Stationary Rotator, Live"),
+                          ("| 16 |", "Ground Rotator Live"),
+                          ("| 146 |", "Ground Rotator Simulated")):
+        row = [line for line in table.splitlines() if line.startswith(code)]
+        assert row and wording in row[0], f"the D32.10 row for {code.strip('| ')} is gone"
+        assert "`UNKNOWN`" in row[0], (
+            f"{wording!r} no longer maps to UNKNOWN: {row[0][:140]!r}. Amendment 1 reversed this "
+            "and a reversion would put an installation claim behind a Doppler signature"
+        )
+    assert "Doppler signature class" in flat, (
+        "the reason has to be stated, because 'Stationary Rotator' reads architectural and that is "
+        "exactly the trap. It is a class of RETURN, not a class of object"
+    )
+    assert "refuses for `M3` Platform Type" in flat or "refuses for `M3`" in flat, (
+        "the consistency argument is what makes this a rule rather than a taste: the row set "
+        "already declines to read an inventory of NATO hardware as an affiliation, and reading a "
+        "motion characteristic as an installation is the same move"
+    )
+    # The count moved, and the count is what a reader checks the table against.
+    assert "eighteen of the forty-three named values" in flat, (
+        "the mapped-value count was not updated with the amendment. Four values left the mapped "
+        "set, so twenty-two became eighteen and twenty-one became twenty-five"
+    )
+    assert "the other twenty-five park" in flat, "the parked count was not updated either"
+
+
+def test_the_person_divergence_from_cat021_is_deliberate_and_pinned():
+    """Amendment 7. One concept, two answers, stated rather than resolved.
+
+    D32.10 code 9 `Person, Live Target` maps to UNKNOWN here; CAT021's emitter category 16
+    `Parachutist / skydiver` maps to PLATFORM in a SHIPPED adapter with a fixture and a golden file
+    behind it. Both mappings are pinned so the question cannot be closed by accident in either
+    direction, on the I021/170 precedent gap 2 uses for FAKER.
+    """
+    gmtif = _subsection("#### `D32.10` Target Classification — every one of the 256 values accounted for")
+    person = [line for line in gmtif.splitlines() if line.startswith("| 9 |")]
+    assert person and "Person, Live" in person[0], "the D32.10 person row is gone"
+    assert "`UNKNOWN`" in person[0], (
+        f"GMTI `Person, Live Target` no longer maps to UNKNOWN: {person[0][:140]!r}. If this is a "
+        "deliberate change, it settles the divergence recorded in gap 20 and the gap, the CAT021 "
+        "row and this test all move together"
+    )
+    cat021 = _section(CAT021_HEADING)
+    para = [line for line in cat021.splitlines() if line.startswith("| 16 |")]
+    assert para and "Parachutist" in para[0], "the CAT021 parachutist row is gone"
+    assert "`PLATFORM`" in para[0], (
+        f"the SHIPPED CAT021 adapter's parachutist mapping has changed: {para[0][:140]!r}. That is "
+        "a published behaviour with a fixture and a golden file behind it, so changing it is a "
+        "1.1.0 question with a migration note — not a side effect of an eighth adapter's row set"
+    )
+    # The divergence lives in the gap that owns the EntityType shortage, with BOTH arguments.
+    gaps = DOC.read_text()
+    gap20 = gaps[gaps.index("20. **No detection"):gaps.index("21. **No home for a radar")]
+    flat20 = _flat(gap20)
+    assert "Parachutist / skydiver" in flat20 and "Person, Live Target" in flat20, (
+        "gap 20 must name both sides of the divergence. A loss recorded only in a row set is a "
+        "loss nobody counting the cost of this gap will find"
+    )
+    assert "For `PLATFORM` (the CAT021 answer)" in flat20 and \
+           "For `UNKNOWN` (the GMTIF answer)" in flat20, (
+        "both arguments have to be written down, not just the one this row set took. Whoever "
+        "settles this weighs them; inheriting a preference is what the I021/170 treatment exists "
+        "to prevent"
+    )
+    assert "1.1.0" in flat20, (
+        "the divergence is a 1.1.0 resolution question and has to say so, or it reads as an "
+        "inconsistency somebody forgot"
+    )
+    # And it closes properly only when the enum grows the member both answers are working around.
+    from synapse_cdm.enums import EntityType as _ET
+    assert not any(m.name in ("PERSON", "DISMOUNT", "INDIVIDUAL") for m in _ET), (
+        "EntityType has grown a member for a person, which is the honest resolution of the "
+        "divergence rather than either mapping. Map both sides to it, update gap 20 and this "
+        "test together, and write the migration note — the CAT021 change is the MINOR-bump half"
+    )
+
+
+def test_the_platform_track_parks_a_time_basis_per_sample():
+    """Amendment 3. D6 is a dwell midpoint and L1 is an authoring instant; one Track holds both.
+
+    The platform Track stands, but the mixed time semantics have to be visible on the samples or a
+    consumer will interpolate across them. And the argument no longer rests on guide §E.8, which is
+    silent about the instants and lives in the guide whose Annex G this row set discredits.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "attributes.platform_track_points[]" in flat, (
+        "the per-sample record is the amendment. Without it a four-sample platform Track mixing "
+        "dwell centres and report-preparation instants is indistinguishable from four homogeneous "
+        "samples, and nothing in the CDM would show it"
+    )
+    for basis in ("dwell_center", "report_prepared"):
+        assert basis in flat, (
+            f"the {basis!r} time basis is not named. The two instants are different KINDS of "
+            "instant — a midpoint of an unstated interval and a producer's authoring time — and "
+            "the sample has to say which it is"
+        )
+    assert "would be mixing an observation midpoint with an authoring timestamp" in flat, (
+        "the consequence, stated. It is why this is a settlement and not bookkeeping"
+    )
+    assert "attributes.platform_track_basis" in flat, (
+        "the per-track summary has to exist too: a mixed track is the one a consumer must not "
+        "smooth, and that fact belongs somewhere a consumer reads once rather than per sample"
+    )
+    # The re-grounding, asserted in both directions.
+    assert "the standard's own field definitions are what license it" in flat, (
+        "the platform Track's justification is now §3.4.6/§3.4.7 and §3.15.1/§3.15.2 — each "
+        "segment states the platform's position AND the instant, under one Packet Header whose "
+        "P3 + P8 identifies the platform uniquely. That is on the wire, in the standard"
+    )
+    assert "the guide is what licenses it" not in flat, (
+        "the Phase 1 heading is back. Amendment 3 moved the argument off guide §E.8 because that "
+        "sentence is about POSITIONS and says nothing about the instants — which is the half that "
+        "decides whether two samples belong in one ordered list"
+    )
+    assert "It says **nothing** about `D6` versus" in flat, (
+        "§E.8's limit has to be stated where §E.8 is cited, or a later reader will promote it back "
+        "to an authority. It corroborates the position coincidence and carries no time semantics"
+    )
+
+
+def test_the_reference_date_provenance_is_per_instant_and_the_wire_is_not_overridden():
+    """Amendment 4. Two conditions on the caller-supplied path, and one re-classification.
+
+    (a) The path is recorded on every emitted instant, because a consumer holding an Event does not
+    necessarily hold the Entity whose attributes explained it. (b) A Mission Segment contradicting
+    the caller's argument is a refusal — neither silently wins. And the argument is a stand-in for
+    absent wire context, NOT a deployment declaration, so it gets no amendment-B protection.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "payload.reference_date_basis" in flat, (
+        "condition (a): an Event's observed_at is an absolute instant computed from the reference "
+        "date, and the Event has to carry the provenance of that date itself"
+    )
+    assert "on every emitted instant, not once per packet" in flat, (
+        "the condition stated as a rule. A basis on the owning Entity is not enough"
+    )
+    assert "must be distinguishable from one computed from a date it did" in flat, (
+        "the reason, which is the whole point of recording it at all"
+    )
+    assert "Neither\nsilently wins" in section or "Neither silently wins" in flat, (
+        "condition (b): a Mission Segment contradicting the caller's date is a refusal quoting "
+        "both. Letting the wire win discards a caller statement that may indicate mis-tracked "
+        "stream state; letting the argument persist lets a stale date override §3.3's own home "
+        "for the answer. Both failures are silent"
+    )
+    assert "Identical values are not a contradiction" in flat, (
+        "the case that would otherwise refuse a perfectly good packet: a caller confirming what "
+        "the Mission Segment says is agreement, not conflict"
+    )
+    # The re-classification, asserted both ways.
+    assert "is NOT a deployment declaration" in flat, (
+        "amendment 4's third part. The Phase 1 text called the caller's date a deployment "
+        "declaration and likened it to the 4676 configured confidentiality label, which gave it "
+        "amendment-B protection against the wire that it must not have"
+    )
+    assert "the wire is its designated home" in flat, (
+        "the distinction needs its reason: synthetic and a confidentiality label are facts about "
+        "the DEPLOYMENT that no payload may contradict; a reference date is a fact about the "
+        "MISSION whose designated home is the Mission Segment"
+    )
+    paths = _subsection("#### The Mission Segment may be in a different packet, and there are exactly three date paths")
+    caller_row = [l for l in paths.splitlines() if "caller_supplied_stream_context" in l and l.startswith("|")]
+    assert caller_row, "the caller path has lost its row in the three-paths table"
+    assert "**A deployment declaration**" not in paths, (
+        "the Phase 1 classification is back in the three-paths table"
+    )
+
+
+def test_reserved_segments_are_skip_and_record_and_never_a_silent_skip():
+    """Amendment 5. The behaviour stands on §3.2.1 and §3.2.2, and the record is mandatory.
+
+    The Annex G citation is struck — it is the annex this row set discredits over its P6 table — and
+    the operative half is that a skipped segment must leave a trace. Otherwise a packet carrying an
+    Advanced Dwell Segment nobody can decode is indistinguishable from one carrying nothing, and
+    that particular segment's absence from the output would look like an empty dwell.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "skip-and-record" in flat, "the behaviour needs a name that includes the record"
+    assert "never a silent skip" in flat, (
+        "the forbidden case has to be forbidden in as many words, on every row and in the prose"
+    )
+    assert "The floor is the count, never nothing" in flat, (
+        "the minimum has to be stated: where a deployment caps the parked byte volume, the type "
+        "code, the size and a count still go in with the omission stated"
+    )
+    assert "would look like an empty dwell" in flat, (
+        "the concrete consequence. `S1 = 128` is Advanced Dwell, so silently dropping it produces "
+        "a plausible-looking dwell with no targets — which is gap 22's failure mode arriving "
+        "through a parser shortcut"
+    )
+    # Grounded on the standard's own clauses, and NOT on the discredited annex.
+    assert "§3.2.1 reserves those codes" in flat and "§3.2.2" in flat, (
+        "the two clauses that carry the behaviour: the reservation says the adapter cannot decode "
+        "them and S2 says exactly where they end"
+    )
+    assert "Annex G Subtest 18's \"continue\" branch rather than leniency" not in flat, (
+        "the Phase 1 grounding is back in the reserved-codes table intro"
+    )
+    assert "struck every\n  citation of Annex G as *authority*" in section or \
+           "struck every citation of Annex G as *authority*" in flat, (
+        "the pin has to record that Annex G is read as evidence against itself and never as "
+        "authority, or a later reader will cite it again"
+    )
+    # Every row states the behaviour including the record.
+    table = _subsection("### Row set — the reserved and extension segment type codes")
+    rows = [l for l in table.splitlines() if l.startswith("| ") and "|" in l[2:]
+            and not l.startswith("| `S1`") and not l.startswith("|---")]
+    assert len(rows) >= len(GMTIF_RESERVED_SEGMENT_CODES), "the reserved-codes table lost rows"
+    for row in rows:
+        assert "log and record" in row or "logged" in row, (
+            f"a reserved-code row does not state the record: {row[:110]!r}. Skipping without "
+            "recording is the one behaviour amendment 5 forbids"
+        )
+
+
+def test_the_tagging_device_exemption_is_keyed_on_the_label_not_the_number():
+    """Amendment 6. The value has been 140, then 143, then 142 — so the rule keys on the label.
+
+    Running the discrepancy down changed the grounds of a decline, and the row set says so. The
+    prose was correct when written: guide Annex M.1 added `Tagging Device` at 140 and the very next
+    errata item introduced the battery-strength sentence citing 140. The standard never re-based the
+    number. So the condition is statable, and what blocks it is that stating it means making an
+    editorial correction to a normative document.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "keyed on the LABEL" in flat, (
+        "the exemption must be written against `Tagging Device`, not against 142. A rule keyed on "
+        "the number silently changes behaviour the next time the value moves — and it has moved "
+        "twice already"
+    )
+    # All four loci, so an erratum request can be written from this row alone.
+    for locus in ("PDF page 45", "PDF page 47", "page M-9", "page M-31"):
+        assert locus in flat, (
+            f"ambiguity 3 no longer cites {locus}. The four loci are what make the trail "
+            "checkable, and they are what an erratum request would have to quote"
+        )
+    assert "140 → 143 → 142" in flat, (
+        "the trail in one line. Without it the discrepancy reads as a typo rather than as a stale "
+        "cross-reference with a documented origin"
+    )
+    assert "it was correct when written" in flat, (
+        "the finding that changes the grounds: the prose refers to the class, not to the number"
+    )
+    # The grounds are re-based rather than left standing, and the old reason is gone as a reason.
+    assert "re-based the grounds" in flat, (
+        "a decline whose strongest reason has been undermined has to be re-argued in the open, not "
+        "left with a weakened argument in place"
+    )
+    assert "It is not unstatable." in flat, (
+        "the Phase 1 reason was that the condition is unstatable. It is statable; the objection is "
+        "now that stating it means re-basing a normative cross-reference, which is a custodian's "
+        "act. Saying so is what keeps the decline honest"
+    )
+    assert "the wrong one is\n  the conformant one" in section or \
+           "the wrong one is the conformant one" in flat, (
+        "the precedent for declining an editorial correction is the 4676 row set using the "
+        "acknowledged-wrong nga.gov namespace. Losing it leaves the refusal looking like timidity"
+    )
+    # And the disjunction still carries the exemption itself.
+    assert "a disjunction is only meaningful if" in flat or \
+           "a disjunction, which is only\n   meaningful if" in section, (
+        "the exemption rests on D32.16/D32.17's own conditional, which is untouched by the "
+        "provenance finding: the standard treats a tagging device as distinct from simulation"
+    )
+
+
+def test_the_gmtif_amendments_are_recorded_as_amendments():
+    """Seven amendments, and a reversal nobody can see in the document is one nobody can review.
+
+    The 4676 row set states its overturned Phase 1 decisions in the rows they changed rather than
+    in a footnote, and this is the same discipline: the preamble counts them and each row that
+    changed says which amendment changed it.
+    """
+    section = _section(GMTIF_HEADING)
+    flat = _flat(section)
+    assert "Seven amendments were applied on review" in flat, (
+        "the section must say that it was amended and how many times, before a reader reaches a "
+        "row that contradicts what they remember"
+    )
+    assert "The two overturned readings are visible in the rows they changed" in flat, (
+        "the discipline, stated: a reversal recorded only in a commit message is a reversal the "
+        "next reader of the document cannot audit"
+    )
+    for n in range(1, 8):
+        assert f"amendment {n}" in flat.lower(), (
+            f"amendment {n} is not cited anywhere in the row set. Each one changed something "
+            "specific and the place it changed has to name it"
+        )

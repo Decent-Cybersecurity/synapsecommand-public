@@ -3824,6 +3824,18 @@ specification nobody has run is a guess with a table around it. It was written a
 any code, exactly as the Legion, CAT021 and STANAG 4676 row sets were — and like theirs, the
 mapping column is the adapter's brief.
 
+**Seven amendments were applied on review, still before any code, and each is stated where it
+applies rather than as a footnote.** Two overturned a Phase 1 reading — the rotator classes no
+longer map to `FACILITY` (1), and `P7` no longer writes `source.synthetic` even when it agrees with
+the deployment declaration (2). Three tightened one that stood: the platform `Track` now parks a
+time basis per sample and rests on the standard's field definitions rather than a guide annex (3),
+the caller-supplied reference date carries per-instant provenance and is refused rather than
+preferred when the wire contradicts it (4), and reserved segments are skip-**and-record** on
+§3.2.1 and §3.2.2 rather than on a stale validation annex (5). One re-based the grounds of a
+decline after running a discrepancy to its source (6). One recorded a divergence from a shipped
+adapter rather than resolving it (7). The two overturned readings are visible in the rows they
+changed, because a reversal nobody can see in the document is a reversal nobody can review.
+
 This is a **binary, byte-aligned, message-oriented wire format**, not a UML model and not an XML
 syntax. It has a packet header, a segment header, ten defined segment types and two nested record
 arrays, and every field of every one of them has a row here, with the standard's own
@@ -3867,17 +3879,19 @@ at all and that this row set depends on:
   that overflow from addition or underflow from subtraction yield a result that is congruent
   mod 2^n". Nothing in the standard says this, and an adapter that reconstructed in degrees would
   get the prime-meridian case wrong. Settlement 6.
-- **The sensor position and the platform position are the same point.** Guide §E.8: the Dwell
-  Segment's sensor position "for periods when the sensor is collecting data and the platform
-  position transmitted in the Platform Location Segment … for periods when the sensor is not
-  collecting data **are assumed to be the same**." That single sentence is what licenses one
-  platform `Track` out of two different segment types. Settlement 5.
-- **Refusing and recording are two different obligations, and the guide says which is which.**
-  Annex G Subtest 18 splits them: on an **unsupported feature** the reader "must at least alert
-  the user … and provide an option to either abort the process or continue the unpack process",
-  and if it continues it "must unpack, interpret, and present the information of supported
-  features"; on a **packet with an error** it "must alert the user and **abort** the process".
-  Settlement 7 is that split, applied.
+- **The provenance of the truth-tag "140".** Guide Annex M is a change record, and it is where the
+  standard's most consequential stale cross-reference becomes traceable rather than merely wrong:
+  M-9 shows `Tagging Device` being *added to the classification table at value 140*, and the very
+  next item, M-10, is the errata that *introduced* the battery-strength prose citing 140 and
+  widened `D32.16`'s condition to "simulated **or a tagging device is detected**". The two were
+  written as one coherent pair. Ambiguity 3 below follows the trail from there.
+- **Annex G is read for one thing only: as evidence against itself.** Amendment 5 struck every
+  citation of Annex G as *authority*. Its own reference list cites "STANAG 4607, Edition 2,
+  2 August 2007" and AEDP-7 Edition 1, so it was carried forward without being re-based on Edition
+  A — which is how it comes to publish a `P6` codeword table contradicting the standard's
+  (ambiguity 1). A row set cannot discredit an annex in one settlement and lean on it in another,
+  so nothing here rests on it. **The rest of the guide is used where it is not stale** — §E.7,
+  §D.2, §E.8, Annex L, Annexes M and N and the FAQ — and each use is cited to its own section.
 - **Negative information is the point of the format, in its own words.** Guide §D.2: "the fact
   that the radar has looked at a particular area and found no targets can be just as important as
   receiving targets in an area." That sentence is **gap 22**.
@@ -3971,7 +3985,7 @@ Two consequences that are easy to miss and are settled here rather than in the c
 | Processing History Segment | one **`Event`**, `STATUS_CHANGE`. Carried verbatim, resolved never — **gap 14** and **gap 19** |
 | Job Request Segment | **nothing.** Parked whole; see the declines table |
 | Job Acknowledge Segment | **nothing.** Parked whole; see the declines table |
-| a reserved or extension segment type | **nothing.** Its bytes are parked verbatim and the rest of the packet translates — Annex G Subtest 18's "continue" branch |
+| a reserved or extension segment type | **nothing.** Skip-and-record: the skip is exact because `S2` gives its length, the type code and size are always logged, the bytes are parked by default, and the rest of the packet translates. Never a silent skip |
 
 **The platform `Entity` is one per packet, and every target `Entity` is one per target report.** A
 packet carrying a Mission Segment, a Job Definition Segment and four Dwell Segments holding 300
@@ -4043,8 +4057,7 @@ Dwell Time (field D6) specified in any associated Dwell Segments is referenced t
 Time (fields M5-M7) in the Mission Segment, and **will not be resolved as to the day of the
 mission until the Mission Segment is received from the transmitting platform**." Guide §A.1.3 adds
 that it is "preferable that it be sent more often (e.g., every thirty seconds), and ideally within
-each STANAG 4607 packet", and Annex G Subtest 04 states the cost outright: "Without the Mission
-Segment, the date and time of the GMTIF data is [not] known."
+each STANAG 4607 packet".
 
 **So mission context does carry across packets in a stream — the specification says so — and
 carrying it is the caller's job, because this adapter holds no state between payloads.** That is
@@ -4052,9 +4065,47 @@ the same boundary every other settlement here draws, and it produces three paths
 
 | Where the reference date comes from | When | What is recorded |
 |---|---|---|
-| **the packet's own Mission Segment** | the normal case, and the one the guide calls ideal | `M5`/`M6`/`M7` as read. `attributes.reference_date_basis` says `in_packet` |
-| **the caller, as an explicit argument** | the packet has a Dwell, Test and Status or Platform Location Segment and no Mission Segment, and the caller — who owns the stream and has seen an earlier packet's Mission Segment — supplies the date | the supplied date, with the basis saying `caller_supplied_stream_context`, naming the value and stating that this packet did not carry it. **A deployment declaration**, the same category `source.synthetic` is in and the same category the STANAG 4676 confidentiality label's configured path is in |
+| **the packet's own Mission Segment** | the normal case, and the one the guide calls ideal | `M5`/`M6`/`M7` as read. Basis `in_packet` |
+| **the caller, as an explicit argument** | the packet has a Dwell, Test and Status or Platform Location Segment and no Mission Segment, and the caller — who owns the stream and has seen an earlier packet's Mission Segment — supplies the date | the supplied date, basis `caller_supplied_stream_context`, naming the value and stating that this packet did not carry it |
 | **nowhere** | neither of the above | **refusal**, naming the segments that carried a time and had no date to resolve it against |
+
+**Amendment 4 attached two conditions to the middle path, and the first of them corrects a
+mis-classification in the Phase 1 text.**
+
+**(a) The path that supplied the date is recorded on every emitted instant, not once per packet.**
+A basis field on the owning `Entity` is not enough: an `Event`'s `observed_at`, a `TrackSample`'s
+`observed_at` and an `Entity`'s `valid_from` are each an absolute instant computed from the
+reference date, and a consumer holding one object does not necessarily hold the `Entity` whose
+`attributes` explained it. So `payload.reference_date_basis` is set on every `Event`,
+`attributes.platform_track_points[].reference_date_basis` on every platform sample, and
+`attributes.reference_date_basis` on the `Entity` — each naming the path, and for the caller path
+naming the supplied value. **An instant computed from a date the wire did not carry must be
+distinguishable from one computed from a date it did, on the object that carries the instant.**
+
+**(b) A Mission Segment contradicting the caller's argument is a refusal quoting both. Neither
+silently wins.** If a packet carries a Mission Segment *and* the caller supplied a date, and the
+two differ, the adapter refuses with both values quoted and both origins named. The two failure
+modes it forbids are symmetric and both are silent: letting the wire win discards a caller
+statement that may be the correct one and may indicate the caller has mis-tracked the stream;
+letting the argument persist over an in-packet Mission Segment means a stale caller-held date
+overrides the wire, which is the worse of the two because the wire is where §3.3 puts the answer.
+A contradiction here means the caller's stream tracking and the producer disagree about what day it
+is, and that is an operator's problem, not a precedence rule's. (Identical values are not a
+contradiction: the caller has simply confirmed what the packet says, the `in_packet` path is used,
+and the basis records that the argument agreed.)
+
+**The caller's argument is a stand-in for absent wire context, and it is NOT a deployment
+declaration.** The Phase 1 text called it one and likened it to the STANAG 4676 confidentiality
+label's configured path; that was wrong, and the difference has teeth. A deployment declaration —
+`source.synthetic`, a configured confidentiality label — states a fact about the *deployment* that
+no payload is competent to contradict, which is why amendment B protects it *against* the wire. A
+reference date is a fact about the *mission*, the wire is its designated home (§3.3 names the
+Mission Segment), and the caller is only relaying what an earlier packet in the same stream said.
+So it gets no amendment-B protection: where the wire speaks, the wire is not overridden, and where
+the two disagree neither is preferred — which is condition (b). A configured confidentiality label
+beats silence and is never contradicted by a payload; a caller-supplied date beats silence and is
+refused when a payload contradicts it. Two different categories, and the row set now says which is
+which.
 
 **The injected clock is never the third path.** It supplies `Event.received_at` and nothing else in
 this adapter. Writing the receipt instant's date into the mission reference would date every dwell
@@ -4204,22 +4255,39 @@ default with exceptions, and this is the third format to test it.
 `Exercise, Real Data` is real sensor data collected during an exercise and calling it synthetic
 would be false. The provenance axis parks under amendment B.
 
-**A contradiction with the deployment declaration is a logged conflict refusal, in either
-direction, and `synthesized` resolves to the boolean's own words:**
+**`P7` NEVER WRITES `source.synthetic`, IN EITHER DIRECTION — INCLUDING AGREEMENT.** Amendment 2
+reversed a reading that had `synthesized` "agreeing with" a `synthetic = true` declaration, and the
+correction is not a detail. The rule that shipped twice — in CAT021's I021/040 `SIM` row and in
+STANAG 4676 amendment B — is that **a payload field may not touch a deployment declaration**, and
+writing a value that happens to match is still writing it. A row set that let a payload field set
+the boolean whenever the two agreed would have a rule that only bound on disagreement, which is a
+default with a conflict check bolted on. `synthetic` comes from the deployment declaration alone,
+whatever `P7` says, and `attributes.synthetic_basis` records that the packet stated a provenance
+and that the declaration is what was used.
 
-| `P7` provenance | deployment `synthetic = false` | deployment `synthetic = true` |
+**What `P7` does instead is participate in a conflict check, and it has three branches:**
+
+| `P7` provenance | deployment `synthetic = false` (real) | deployment `synthetic = true` (synthetic) |
 |---|---|---|
-| real (0, 128) | agrees | **conflict — refusal, both values quoted** |
-| simulated (1, 129) | **conflict — refusal, both values quoted** | agrees |
-| synthesized (2, 130) | **conflict — refusal, both values quoted** | agrees |
+| **pure real** (0, 128) | consistent — parked, no refusal | **conflict — logged refusal, both values quoted** |
+| **pure simulated** (1, 129) | **conflict — logged refusal, both values quoted** | consistent — parked, no refusal |
+| **synthesized** (2, 130) | **parked visibly, NO refusal** | **parked visibly, NO refusal** |
 
-The `synthesized` row is the one that needs its reasoning stated rather than assumed, because a
-boolean cannot represent a mixture and the temptation is to call it undecidable. It is decidable
-from `SourceRef.synthetic`'s own definition — "**true for anything not from a real source**" — and
-a mixture of real and simulated data is not (purely) from a real source, so `true` agrees with it
-and `false` contradicts it. The asymmetry is real and it is the right way round: a feed configured
-as operational that receives a packet declaring any simulated content has either been misconfigured
-or been fed the wrong data, and both are conditions an operator must be told about.
+The third row is the one that changed, and the reasoning is the standard's rather than the
+boolean's. `P7 = 2` means "a mix of real and simulated data" in §3.1.7's own words, so it does not
+contradict a declaration of *pure* real or a declaration of *pure* synthetic — it is a third
+statement, and a mixture is exactly what neither pure declaration describes. The previous reading
+resolved it onto `true` by reading `SourceRef.synthetic`'s docstring, which was the field's
+definition being used to adjudicate a payload value: the same move amendment B forbids, arrived at
+one step further back. So a synthesized packet translates under whatever the deployment declared,
+and `attributes.synthetic_basis` says in as many words that the packet declared a mixture, that the
+CDM's boolean cannot hold one, and which declaration was used — visibly, on every object, rather
+than as a refusal that would reject the case §3.1.7 exists to describe.
+
+The two conflict branches keep their asymmetry and it is the right way round: a feed configured as
+operational that receives a packet declaring its data *purely* simulated has either been
+misconfigured or been fed the wrong data, and so has the reverse, and both are conditions an
+operator must be told about rather than have quietly reflected in a boolean.
 
 A **reserved** `P7` value (3–127, 131–255) states neither fact. It parks in
 `attributes.unresolved_raw`, no conflict check runs, and `attributes.synthetic_basis` records that
@@ -4240,12 +4308,16 @@ boundary are settled here because each is a trap:
    `live = code - 128` would read `144` (Clutter, Simulated) as `16` (Ground Rotator Live) and
    `142` (Tagging Device) as `14` (Clutter, Live). Two of the three edition-A additions land
    inside exactly that gap, which is why item #28 of the change list is where this trap came from.
-2. **`142` and `143` are the two values in the upper half that the table does not label
-   "Simulated", and the format proves it.** `D32.16` is "sent only if the MTI Target in this report
-   **is simulated OR a tagging device is detected**" (§3.4.32.16) — a disjunction, which is only
-   meaningful if a tagging device is not simulated. So a `142` report is a **real** detection of a
-   real emitter that happens to sit in the numeric range above 127, and no simulation inference
-   attaches to it.
+2. **The `Tagging Device` label and `Reserved` are the two entries in the upper half the table does
+   not mark "Simulated", and the format proves the first of them.** `D32.16` is "sent only if the
+   MTI Target in this report **is simulated OR a tagging device is detected**" (§3.4.32.16) — a
+   disjunction, which is only meaningful if a tagging device is not simulated. So a
+   `Tagging Device` report is a **real** detection of a real emitter that happens to sit in the
+   numeric range above 127, and no simulation inference attaches to it. **The exemption is written
+   against the label, not the number** (amendment 6): the label has been carried by `140`, `143`
+   and now `142` across three editions, so under Ed A the exempt values are `142` and `143`
+   (`Reserved`, exempt because the table does not mark it Simulated either) and a future
+   renumbering moves the exemption with the label rather than stranding it.
 3. **A simulated target report inside a packet declaring real data is an intra-payload
    contradiction, and it is a separate refusal from the deployment conflict.** `P7 = 0` says
    "Operation, Real Data" about the whole packet; a `D32.10` of 129 says this target came from a
@@ -4268,26 +4340,47 @@ target — "for simulated data, the truth tag relates targets back to the truth 
 tagging device was detected, the tag's battery strength and "the tag identification number
 transmitted by a tagging device".
 
-Both park, raw, always, and neither becomes a `SourceId`. Three reasons, in increasing weight:
+Both park, raw, always, and neither becomes a `SourceId`. **Amendment 6 re-based the grounds for
+that, because running down the `140`/`142` discrepancy changed the strongest reason and the row set
+says so rather than leaving a weakened argument standing.**
 
-- **The guard condition names the wrong class.** Both fields' text says "If the target
-  classification field is classified as **140** then the truth tag application field will indicate
-  the battery strength". Table 3-11 defines `140` as `Large Multiple-Return, Simulated Land Target`
-  and `142` as `Tagging Device`. So the standard states no usable condition for deciding whether
-  `D32.16` holds a DIS application field or a battery percentage, and an adapter that guessed
-  would render a simulator's routing number as a percentage or the reverse. Recorded in the
-  ambiguities table; the consequence here is that neither reading is applied.
+The Phase 1 reason was that "the condition that distinguishes a DIS application field from a
+battery percentage is unstatable from the pinned text". It is not unstatable. Ambiguity 3 traces
+the value through the pinned documents — `Tagging Device` was **140** when this prose was written
+(guide Annex M.1, pages M-9 and M-10, added the table value and the prose in adjacent items of one
+errata), then **143** in STANAG 4607 Ed 3, then **142** in Ed A — so the prose plainly means *the
+class labelled Tagging Device* and the standard simply never re-based the number. The condition is
+therefore **statable, and only by an editorial correction to a normative document.** That is a
+different objection and a narrower one, and it is the first of the three below.
+
+- **Applying it means re-basing a normative cross-reference, which is a custodian's act and not a
+  translator's.** Reading the prose against `142` requires *us* to decide that the standard meant a
+  number it does not say — and this document declines that move elsewhere on weaker provocation:
+  the STANAG 4676 row set uses the acknowledged-wrong `nga.gov` namespace because the wrong one is
+  the conformant one. The alternative is worse rather than safer: applying the prose literally to
+  `140` would read a battery percentage off a `Large Multiple-Return, Simulated Land Target`, which
+  is nonsense the standard cannot have meant. **Neither reading is safe, both are now understood,
+  and the understanding is what is recorded.**
 - **A DIS entity identifier is ground truth from a simulation**, and keying a CDM `Entity` on it
   would make the adapter a simulation harness: it would give simulated targets the cross-dwell
   identity continuity that real targets provably do not have, so the same pipeline would produce
   tracked objects in exercise and unassociated hits in operations. That is the worst possible
-  place for a behavioural difference.
+  place for a behavioural difference, and it is untouched by the provenance finding.
 - **The tag identification number is genuinely a persistent real-world identifier**, and it is the
-  one candidate in the whole format with a case for `SourceId`. It fails on the first reason: the
-  condition that distinguishes it from a DIS entity number is unstatable from the pinned text. If
-  a custodian's erratum fixes `140` to `142`, this becomes a five-line change and a `SourceId`
-  with `system = "GMTIF-TAG"` — a document, not a design. Recorded in the declines table as
-  deferred, blocked on the erratum.
+  one candidate in the whole format with a case for `SourceId`. What it now waits on is smaller
+  than it was: a custodian's erratum re-basing `140` to `142` in §3.4.32.16 and §3.4.32.17 turns
+  this into a five-line change and a `SourceId` with `system = "GMTIF-TAG"`, keyed on the label
+  rather than the number so the next renumbering costs nothing. Recorded in the declines table as
+  deferred, blocked on the erratum — and the ambiguity row now carries the exact page references an
+  erratum request would have to cite.
+
+**The exemption from the intra-payload simulation conflict check does not depend on any of that**,
+and amendment 6 leaves it standing. It rests on the conditionals themselves: `D32.16` and `D32.17`
+are each "sent only if the MTI Target in this report is simulated **or** a tagging device is
+detected", and a disjunction is only meaningful if its two branches are different — so **the
+standard itself treats a tagging device as distinct from simulation**, whatever value carries the
+label. The exemption is written against the label and covers whichever value or values carry it,
+which under Ed A is `142`.
 
 ### Settlement 5 — Identity: a detection is not a track, and no target `Track` is ever emitted
 
@@ -4349,30 +4442,52 @@ as "still current", which overstates by however long ago the dwell was. There is
 in the model, so `None` is chosen, `attributes.valid_to_basis` says in as many words that a GMTI
 detection makes no persistence claim, and the honest fix is a model change — **gap 20**.
 
-#### The platform gets one `Entity` and one `Track`, and the guide is what licenses it
+#### The platform gets one `Entity` and one `Track`, and the standard's own field definitions are what license it
 
 The platform is the one thing in this format with a stated, globally unique, cross-packet identity,
-and the format reports its position and velocity in two segments:
+and the format reports its position and velocity in two segments — each with **its own instant, and
+the two instants do not mean the same thing**:
 
-- **Dwell Segment**: `D7`/`D8`/`D9` sensor position, `D15`/`D16`/`D17` sensor ground track, ground
-  speed and vertical velocity, at the temporal centre of the dwell (`D6`).
-- **Platform Location Segment**: `L2`/`L3`/`L4` platform position, `L5`/`L6`/`L7` platform ground
-  track, ground speed and vertical velocity, at the time the report was prepared (`L1`).
+| Segment | Position | Velocity | Instant | What the instant IS |
+|---|---|---|---|---|
+| Dwell Segment | `D7`/`D8`/`D9` | `D15`/`D16`/`D17` | `D6` | §3.4.6 / §3.4.7: "the **temporal center of the dwell**" — the midpoint of the collection interval |
+| Platform Location Segment | `L2`/`L3`/`L4` | `L5`/`L6`/`L7` | `L1` | §3.15.1 / §3.15.2: "the time the **report is prepared**" — a producer-side authoring instant |
 
-These are the same quantities about the same object at different times, and **guide §E.8 says they
-are the same point**: the sensor position "for periods when the sensor is collecting data and the
-platform position … for periods when the sensor is not collecting data are assumed to be the
-same." The two segments are complementary by design — §3.15 says the Platform Location Segment is
-sent "during periods when the sensor is not collecting data" — so they interleave rather than
-compete.
+**Amendment 3 moved the argument off the guide and onto those two definitions.** The Phase 1 text
+rested the platform `Track` on guide §E.8's sentence that the two positions "are assumed to be the
+same" — and that sentence cannot carry it, for two reasons. It is a statement about *positions* and
+is entirely silent about the *instants*, which is the half that decides whether two samples belong
+in one ordered list. And it lives in the same guide whose Annex G this row set discredits two
+settlements later over its `P6` table, so leaning on an unverifiable guide sentence for a
+structural decision is exactly the move ambiguity 1 exists to warn against. §E.8 is recorded below
+as corroborating the position coincidence and nothing more.
+
+**What actually licenses one `Track` is on the wire, in the standard, twice over.** Each of `D7`–`D9`
+and `L2`–`L4` states the position *of the platform carrying the sensor* at an instant the same
+segment states, and both segments sit under one Packet Header whose `P3` + `P8` identifies that
+platform uniquely (§3.1.8). So the subject is stated, the instant is stated, and no association
+step is performed or possible — every sample in the packet belongs to the platform named in the
+packet header by construction. The two segments are complementary by design, which the standard
+also says itself: §3.15 sends the Platform Location Segment "during periods when the sensor is not
+collecting data", so they interleave rather than compete.
 
 So one `Entity` per packet for the platform, keyed on `P3` + `P8` with `SourceId(system="GMTIF-PLATFORM", external_id="XN/AB12345678")`,
 and **one `Track` whose samples are every platform position the packet states, in document order**.
-This is not fusion and the distinction is the whole point: the identity is *stated on the wire* by
-a header the segments share, so no association step is performed and none is possible — every
-sample in the packet belongs to the platform named in the packet header by construction.
 
-Three rules on that `Track`, each borrowed and each stated:
+**Every sample parks its own time basis, and that is the amendment's substance rather than its
+bookkeeping.** `attributes.platform_track_points[]` records, per sample and in order:
+
+| Key | Value | Why it has to be there |
+|---|---|---|
+| `time_basis` | `dwell_center` for a `D6`-sourced sample, `report_prepared` for an `L1`-sourced one | the two are not the same kind of instant. A dwell centre is the midpoint of an interval whose duration the format never states; a preparation time is when a producer wrote a record. **A consumer interpolating or averaging across a mixed run would be mixing an observation midpoint with an authoring timestamp, and nothing in the CDM would show it** |
+| `source_segment` | `dwell` or `platform_location`, with the segment's ordinal position in the packet | so the sample can be traced back to the bytes it came from without re-parsing |
+| `sample_index` | the index into `Track.samples` | because `TrackSample` has two fields and no bag — **gap 16**, keyed by index for the fourth time |
+
+`attributes.platform_track_basis` states the same thing once for the whole track: how many samples
+came from each basis, and whether the track is mixed. A single-basis track is the common case and
+says so; a mixed one is flagged, because a mixed track is the one a consumer must not smooth.
+
+Three further rules on that `Track`, each borrowed and each stated:
 
 - **Document order, and a packet whose platform positions run backwards in time is refused, not
   sorted.** Legion's rule verbatim: "sorting would hide a source defect the caller needs to see."
@@ -4386,6 +4501,14 @@ Three rules on that `Track`, each borrowed and each stated:
 - **A packet with one platform position yields a one-sample `Track`** (`Track.samples` has
   `min_length=1`), and a packet with none — a Mission Segment or Free Text Segment alone — yields
   no `Track` and an `Entity` with `position: None`.
+
+**Where guide §E.8 does and does not help, stated once so nobody re-derives it.** It says the Dwell
+Segment's sensor position and the Platform Location Segment's platform position "are assumed to be
+the same", which corroborates that the samples describe one point and settles a question the
+standard leaves implicit — the sensor is mounted somewhere on the platform, and the offset is not
+carried anywhere in the format. It is recorded for that. It says **nothing** about `D6` versus
+`L1`, so it cannot license putting the two into one ordered list, and the per-sample `time_basis`
+above is what stands in for the sentence the guide does not contain.
 
 #### No target `Track`, and this is the fusion line for this format
 
@@ -4612,7 +4735,7 @@ velocity to field D32.7" to un-alias a Doppler-wrapped velocity. Choosing the mu
 tracker's decision, informed by the target's expected speed, and the standard addresses it to "the
 tracker" rather than to the reader. Both values park; nothing is un-wrapped.
 
-### Settlement 7 — The existence mask is the schema, and refusing and recording are two obligations
+### Settlement 7 — The existence mask is the schema, and a skip is only safe when a length is stated
 
 #### Mandatory, Conditional, Optional — and "No Statement", which is a fourth thing
 
@@ -4674,26 +4797,44 @@ No Statement value** (the source sent it and said it does not know) — two diff
    rule-2 violation, and reading those bits would consume bytes belonging to the next segment. The
    exception is checked first, and `attributes.mask_basis` records that it fired.
 
-#### Unsupported is not the same as erroneous, and Annex G Subtest 18 is the authority
+#### Unsupported is not the same as erroneous, and the difference is whether the parse can continue deterministically
 
-The two obligations are stated in the pinned validation annex and this row set follows the split
-rather than inventing one:
+**Amendment 5 struck the authority the Phase 1 text cited here.** That text grounded this split on
+guide Annex G Subtest 18's two bullets — "alert the user … and provide an option to either abort
+the process or continue" versus "alert the user and abort the process" — and it cannot: Subtest 18
+sits in the annex this row set discredits two settlements earlier over its `P6` table, and an annex
+whose own references name STANAG 4607 Edition 2 of 2007 is not authority for behaviour under
+Edition A. §3.2.1 is **silent** on receiver behaviour, so there is no normative statement of the
+split anywhere in the pinned set.
 
-> Upon detecting an **unsupported feature** of a GMTIF packet, the interpret application must at
-> least alert the user of the event and provide an option to either abort the process or continue
-> the unpack process. If the process is continued the interpret application must unpack, interpret,
-> and present the information of supported features … Upon detecting a GMTIF Packet **with an
-> error**, the interpret application must alert the user and abort the process.
+**So the split stands on something the adapter can verify for itself: whether the byte offsets of
+everything after the problem are still known.**
+
+- A **reserved or extension segment type** costs nothing to skip and the skip is *exact*, because
+  `S2` "specif[ies] the number of bytes in this header and the data segment which follows this
+  header" (§3.2.2). §3.2.1 reserves those codes for future use, so the adapter knows it does not
+  know the contents, and it knows precisely where they end. The parse continues with no guessing.
+- A **mask violation, a broken conditional group or a size mismatch** destroys exactly that. A
+  Dwell Segment is a sequence of variable-length fields whose offsets are a function of `D1`, so
+  one wrong bit desynchronises everything after it, and continuing means reading values from the
+  wrong bytes. There is nothing to continue *from*.
+
+Skipping is available where the format hands over a length and withheld where it does not. That is
+a stronger footing than a stale annex's preference, and it is checkable against §3.2.1 and §3.2.2.
 
 | Case | Behaviour | Where it is recorded |
 |---|---|---|
-| a **reserved or extension segment type** (4, 7, 8, 9, 11, 14–100, 103–127, 128–255) | its `S2` size is used to skip it exactly; the raw bytes are parked verbatim; **the rest of the packet translates** | `attributes.source_extras.unsupported_segments[]` with the code, the size and the bytes, plus `attributes.unresolved_raw` |
-| an **unrecognised enumeration value** in a defined field — a reserved `P7`, `M3`, `J2`, `J14`, `J27`, `J28`, `H16`, `H17`, `H18`, `H23`, `A18` or `D32.10` | the value is parked, the object is still produced | `attributes.unresolved_raw` |
-| a **mask violation, a broken conditional group, a size mismatch, a wrong `P1`, a missing reference date, a `synthetic` conflict** | **refusal** | the refusal message, quoting the offending values |
+| a **reserved or extension segment type** (4, 7, 8, 9, 11, 14–100, 103–127, 128–255) | its `S2` size is used to skip it exactly; **skip-and-record, never a silent skip**; **the rest of the packet translates** | `attributes.source_extras.unsupported_segments[]` with the type code, the size and the raw bytes — or, where a deployment caps the parked volume, the type code, the size and a count with the omission stated — plus `attributes.unresolved_raw` |
+| an **unrecognised enumeration value** in a defined field — a reserved `P7`, `M3`, `J2`, `J14`, `J27`, `J28`, `H16`, `H17`, `H18`, `H23`, `A18` or `D32.10` | the value is parked, the object is still produced. The field's *length* is known, so the parse never loses its place | `attributes.unresolved_raw` |
+| a **mask violation, a broken conditional group, a size mismatch, a wrong `P1`, a missing or contradicted reference date, a `synthetic` conflict** | **refusal** | the refusal message, quoting the offending values |
 
-**"Alert the user" is not optional and it is what the basis fields are.** A reader that silently
-continued past an unsupported segment would fail Subtest 18 as surely as one that crashed, so a
-skipped segment that left no trace in `attributes` would be non-conformant, not merely impolite.
+**A silent skip is forbidden, and that is the amendment's operative half.** A consumer holding the
+output of this adapter must be able to tell that the packet contained material the adapter did not
+read — otherwise a document carrying a Controlled Extension it cannot decode is indistinguishable
+from one that carried nothing, and the Advanced Dwell Segment (`S1 = 128`) is precisely a segment
+whose *absence from the output would look like an empty dwell*. So every skipped segment is logged
+and recorded: at minimum its type code, its size and a count, and by default its bytes verbatim.
+The floor is the count, never nothing.
 
 **There is no checksum, and the format says whose problem that is.** §2.2: "The data format
 described herein allows for loss of packets but assumes that the packets received are error-free
@@ -4782,21 +4923,29 @@ parked on every object the packet produces, because every one of them is a fact 
 ### Row set — the reserved and extension segment type codes
 
 Every value of `S1` is accounted for. The defined ten have their own row sets below; these are the
-rest, and each one states what happens on encounter. **None of them is a refusal**, and that is
-Annex G Subtest 18's "continue" branch rather than leniency: refusing a packet because it contains
-an LRI Segment would discard the Dwell Segments beside it, which is a larger loss than not
-decoding a segment nobody has defined.
+rest, and each one states what happens on encounter.
+
+**None of them is a refusal, and none of them is a silent skip either.** The behaviour is
+**skip-and-record**, and it stands on two clauses of the standard and nothing else (amendment 5
+struck the guide citation that used to appear here): §3.2.1 reserves these codes "for future use",
+so the adapter knows it cannot decode them, and §3.2.2 makes `S2` "the number of bytes in this
+header and the data segment which follows", so the skip is exact rather than a resynchronisation
+guess. Refusing the packet instead would discard the Dwell Segments beside the undecodable one,
+which is a larger loss than not decoding a segment nobody has defined — but skipping *silently*
+would be worse than either, because the output would then be indistinguishable from a packet that
+carried nothing. Every row below therefore reads **skip by `S2`, park, log and record**, and the
+record names the type code and the size even where a deployment caps the parked bytes.
 
 | `S1` | Standard's name | On encounter | Notes |
 |---|---|---|---|
-| 4 | **Reserved** (the Range-Doppler Segment) | skip by `S2`, park the bytes, record in `unresolved_raw` | Table 2-1 lists a Range-Doppler Segment and §3 says "A preliminary description of the Range-Doppler Segment is provided in the associated guidance for this standard (AEDP-4607.1)". **Preliminary is not normative**, and §3.6 in the standard itself is the single word "RESERVED". Deferred in the declines table |
-| 7 | Low Reflectivity Index (LRI) Segment | skip, park, record | §3.9: "[THIS PARAGRAPH IS RESERVED FOR FUTURE DEFINITION]" |
-| 8 | Group Segment | skip, park, record | §3.10, same |
-| 9 | Attached Target Segment | skip, park, record | §3.11, same |
-| 11 | System-Specific Segment | skip, park, record | §3.13, same |
-| 14–100 | Reserved for new Segments | skip, park, record | Table 3-6 |
-| 103–127 | Reserved for future use | skip, park, record | Table 3-6 |
-| 128–255 | **Reserved for Extensions** | skip, park, record — and the record names the registered extension where the code has one | Five are registered and approved in guide Annex L.3.1: **128** Advanced Dwell, **129** Advanced Job Definition, **130** Advanced Platform Location, **131** Target Centroid, **132** Releasability. **Their field definitions do not exist in any pinned document** — §L.4 reads "(TO BE PROVIDED)" — so this is a blocker, not a decline. `132 Releasability` is the one that will matter most, being a security extension over the fields of settlement 3 |
+| 4 | **Reserved** (the Range-Doppler Segment) | skip by `S2`, park the bytes, log and record in `unresolved_raw` — never a silent skip | Table 2-1 lists a Range-Doppler Segment and §3 says "A preliminary description of the Range-Doppler Segment is provided in the associated guidance for this standard (AEDP-4607.1)". **Preliminary is not normative**, and §3.6 in the standard itself is the single word "RESERVED". Deferred in the declines table |
+| 7 | Low Reflectivity Index (LRI) Segment | skip by `S2`, park, log and record — never a silent skip | §3.9: "[THIS PARAGRAPH IS RESERVED FOR FUTURE DEFINITION]" |
+| 8 | Group Segment | skip by `S2`, park, log and record — never a silent skip | §3.10, same |
+| 9 | Attached Target Segment | skip by `S2`, park, log and record — never a silent skip | §3.11, same |
+| 11 | System-Specific Segment | skip by `S2`, park, log and record — never a silent skip | §3.13, same |
+| 14–100 | Reserved for new Segments | skip by `S2`, park, log and record — never a silent skip | Table 3-6 |
+| 103–127 | Reserved for future use | skip by `S2`, park, log and record — never a silent skip | Table 3-6 |
+| 128–255 | **Reserved for Extensions** | skip by `S2`, park, log and record — never a silent skip, and the record names the registered extension where the code has one | Five are registered and approved in guide Annex L.3.1: **128** Advanced Dwell, **129** Advanced Job Definition, **130** Advanced Platform Location, **131** Target Centroid, **132** Releasability. **Their field definitions do not exist in any pinned document** — §L.4 reads "(TO BE PROVIDED)" — so this is a blocker, not a decline. `132 Releasability` is the one that will matter most, being a security extension over the fields of settlement 3 |
 
 **§3.2.1 and Table 3-6 disagree about this table and the disagreement is recorded rather than
 resolved.** §3.2.1's prose says values "4, 7, 8, 9, 11, 14-100, and **103-255** are reserved for
@@ -4832,7 +4981,7 @@ area. **This is where the platform `Entity` and its `Track` sample come from.**
 | `D3 Dwell Index` | M | 2 I16 | `Entity.attributes` | `not yet` | "temporally sequential count of a dwell within the revisit", and "dwell counts are allowed to wrap". Parked; a key component, not a key — guide §D.2 says multiple segments may share it |
 | `D4 Last Dwell of Revisit` | M | 1 FL8 | `Entity.attributes` | `not yet` | a completeness flag: `1` means no more dwells in this revisit. Parked and **never acted on** — waiting for the rest of a revisit is state. §3.4.4's note that `D3 = 0` with `D4 = 1` means "first and only dwell" is recorded in the basis, because it is how a non-dwelling radar expresses itself in a dwell format |
 | `D5 Target Report Count` | M | 2 I16 | `Entity.attributes` | `not yet` | the count **in this segment**, not in the dwell (§3.4.5). Checked against the reports actually present; a mismatch is a refusal. `0` is conformant and mandatory to send — §3.4 requires a Dwell Segment "even if no targets are observed" — and that is **gap 22** |
-| `D6 Dwell Time` | M | 4 I32, ms | `Event.observed_at`, `Track.samples[].observed_at` | `not yet` | milliseconds from midnight UTC of the `M5`/`M6`/`M7` date to the **temporal centre** of the dwell, "with the possible addition of multiples of 86400000 for multi-day missions". Exact addition, no modulo — settlement 2. Every target report in the segment shares it, which is **gap 13** |
+| `D6 Dwell Time` | M | 4 I32, ms | `Event.observed_at`, `Track.samples[].observed_at` | `not yet` | milliseconds from midnight UTC of the `M5`/`M6`/`M7` date to the **temporal centre** of the dwell, "with the possible addition of multiples of 86400000 for multi-day missions". Exact addition, no modulo — settlement 2. Every target report in the segment shares it, which is **gap 13**. **Amendment 3**: the platform sample this field times parks `time_basis = dwell_center`, because a dwell midpoint and `L1`'s report-preparation instant are different kinds of instant in one sample list |
 | `D7 Sensor Position – Latitude` | M | 4 SA32, deg | `Position.lat` | `not yet` | the platform's latitude at the dwell centre. Exact `SA32` conversion, LSB ≈ 4.7 mm |
 | `D8 Sensor Position – Longitude` | M | 4 BA32, deg | `Position.lon` | `not yet` | 0–360 East, reduced to [-180, 180]. Exact, LSB ≈ 9.3 mm |
 | `D9 Sensor Position – Altitude` | M | 4 S32, **cm** | `Position.alt_m` | `not yet` | HAE per §3.4.9, ÷ 100. **Centimetres**, against `D32.6`'s metres — settlement 6's unit table |
@@ -4890,8 +5039,21 @@ One row of this table is one target report, and one target report is **one `Enti
 
 The `entity_type` collapse is the CAT021 rule: a classification does not generally refine the CDM's
 type, because a tracked vehicle, a wheeled vehicle and a small vehicle are all `PLATFORM`, and
-inventing a finer CDM distinction would put a judgement in a translator. There are two exceptions
-and one large abstention, and each is argued rather than asserted.
+inventing a finer CDM distinction would put a judgement in a translator. **There are no
+exceptions here** — every value either maps to `PLATFORM` or parks as `UNKNOWN` — and the large
+abstention is argued value by value rather than asserted.
+
+**Amendment 1 removed the one exception this table used to claim.** Codes 5 and 16 mapped to
+`FACILITY` on the reasoning that a rotating antenna that does not move is a fixed structure, which
+read as the ADS-B/CAT021 obstacle exception reached through a third vocabulary. It is not that
+exception and the difference is the whole point: ADS-B's category set C says *obstacle* and
+CAT021's codes 22–24 say *fixed ground or tethered obstruction* — both name the thing. `Stationary
+Rotator` and `Ground Rotator` name a **Doppler signature class**: a return whose spectrum is
+consistent with a rotating scatterer. Inferring an installation from a motion characteristic is
+precisely the inference this row set refuses for `M3` Platform Type, where an inventory of NATO
+hardware is not read as an affiliation, and refusing it there while making it here would be the
+rule admitting an exception whenever the label sounded architectural. Both map `UNKNOWN` with the
+raw value and the standard's wording parked.
 
 | Code | Standard's wording | `Entity.entity_type` | Note |
 |---|---|---|---|
@@ -4900,43 +5062,46 @@ and one large abstention, and each is argued rather than asserted.
 | 2 | Wheeled Vehicle, Live | `PLATFORM` | |
 | 3 | Rotary Wing Aircraft, Live | `PLATFORM` | |
 | 4 | Fixed Wing Aircraft, Live | `PLATFORM` | |
-| 5 | Stationary Rotator, Live | **`FACILITY`** | a rotating antenna that does not move is a fixed structure, which is the ADS-B/CAT021 obstacle exception reached through a third vocabulary. **Not `SENSOR`**: `SENSOR` names a sensing asset, and what the radar detected is a rotating object whose function is an inference |
+| 5 | Stationary Rotator, Live | `UNKNOWN` | **amendment 1 reversed this from `FACILITY`.** A rotator class is a statement about the *return's* spectrum, not about a structure — the format never says the scatterer is installed, mounted, permanent or man-made. `FACILITY` asserts an installation from a motion characteristic; `SENSOR` additionally asserts a function. Raw value and wording parked |
 | 6 | Maritime, Live | `PLATFORM` | a vessel |
 | 7 | Beacon, Live | `UNKNOWN` | a cooperative emitter, which may be on a vehicle, on a structure or on the ground. Every CDM member would state a host the source did not |
 | 8 | Amphibious, Live | `PLATFORM` | |
-| 9 | Person, Live | `UNKNOWN` | **the most uncomfortable row, and it diverges from CAT021's parachutist deliberately.** There, `PLATFORM` was the class-wide default and a skydiver was an oddity inside it; here there is no default, and `UNIT` names a military formation while `EVACUEE_GROUP` names a humanitarian role — both state something specific and false. `UNKNOWN` with the wording parked loses nothing that the raw does not carry |
+| 9 | Person, Live | `UNKNOWN` | **the most uncomfortable row, and it diverges from the shipped CAT021 adapter deliberately.** There, `PLATFORM` is the class-wide default and a parachutist is an oddity inside it; here there is no default, and `UNIT` names a military formation while `EVACUEE_GROUP` names a humanitarian role — both state something specific and false. `UNKNOWN` with the wording parked loses nothing that the raw does not carry. **The divergence is recorded with both arguments in gap 20 and marked a 1.1.0 resolution question** (amendment 7); the CAT021 adapter is not touched |
 | 10 | Vehicle, Live | `PLATFORM` | |
 | 11 | Animal, Live | `UNKNOWN` | no member, and none of them is close |
 | 12 | Large Multiple-Return, Live Land Target | `UNKNOWN` | **an unresolved group of objects**, not one object. `EVACUEE_GROUP` is the CDM's only plural member and it names a specific humanitarian category. The count is unstated, so even `Entity` is a slight overstatement — one object standing for several |
 | 13 | Large Multiple-Return, Live Maritime Target | `UNKNOWN` | as 12 |
 | 14 | Clutter, Live | `UNKNOWN` | **an explicit statement that this is not an object.** The CDM has no way to emit a detection while denying that anything is there, so the `Entity` is emitted with `UNKNOWN` and `attributes.target_classification_text` carries the denial. New in Edition A — settlement 1 |
 | 15 | Phantom Live | `UNKNOWN` | as 14: a phantom is a false detection, stated as such. New in Edition A |
-| 16 | Ground Rotator Live | **`FACILITY`** | as 5. New in Edition A |
+| 16 | Ground Rotator Live | `UNKNOWN` | as 5, and reversed with it. "Ground" locates the return, it does not make the scatterer a structure. New in Edition A |
 | 17 | Small Vehicle, Live | `PLATFORM` | New in Edition A |
 | 18 | Low-slow Flyer, Live | `PLATFORM` | New in Edition A. §1.1 says the format's scope includes "targets flying at low speeds close to the surface of the earth", so this is in scope rather than an anomaly |
 | 19–125 | Reserved | `UNKNOWN` | parked in `unresolved_raw`: the source said something this adapter cannot use. **In Edition 3 this range began at 14** |
 | 126 | Other, Live | `UNKNOWN` | a stated "none of the above", which is different from 0 and from 127 and the basis says which |
 | 127 | Unknown, Live | `UNKNOWN` | a **stated unknown** — §3.4.32.10: "If a target cannot be classified, it shall be marked as 'unknown'" — so unlike 0 it is not in `unavailable_fields` |
-| 128–141 | the same fourteen classes, Simulated | as 0–13 above | **the type half is read and the simulated half is only recorded.** `128 + n` maps to `n` for `n = 0..13` and **for no other n** |
-| 142 | **Tagging Device** | `UNKNOWN` | **the value that breaks the halves.** No live counterpart, no "Simulated" in its name, and §3.4.32.16's condition — "if the MTI Target in this report is simulated **or** a tagging device is detected" — proves it is not simulated. **Exempt from the intra-payload simulation conflict check.** It was `143` in Edition 3 |
-| 143 | Reserved | `UNKNOWN` | parked in `unresolved_raw`. Also exempt from the conflict check, for the same reason as 142: the table does not label it Simulated |
+| 128–141 | the same fourteen classes, Simulated | as 0–13 above | **the type half is read and the simulated half is only recorded.** `128 + n` maps to `n` for `n = 0..13` and **for no other n**. Includes `133` Stationary Rotator, Simulated, which parks as `UNKNOWN` with its live twin under amendment 1 |
+| 142 | **Tagging Device** | `UNKNOWN` | **the value that breaks the halves.** No live counterpart, no "Simulated" in its name, and §3.4.32.16's condition — "if the MTI Target in this report is simulated **or** a tagging device is detected" — is a disjunction, so the standard itself treats a tagging device as distinct from simulation. **Exempt from the intra-payload simulation conflict check, and the exemption is keyed on the LABEL rather than on 142** (amendment 6): the value has been `140`, then `143` in Edition 3, then `142` here, so a rule written against the number would silently change behaviour on the next renumbering. Ambiguity 3 has the trail |
+| 143 | Reserved | `UNKNOWN` | parked in `unresolved_raw`. Also exempt from the conflict check, and for a *weaker* reason than the `Tagging Device` label's: the table does not mark it Simulated, but no clause of the standard says what it is either — so the exemption here is withholding an inference rather than reading a stated distinction, and the basis says which. It carried `Tagging Device` in Edition 3 |
 | 144 | Clutter, Simulated Target | `UNKNOWN` | mirrors **14** at an offset of +130. `144 - 128 = 16` is Ground Rotator Live, which is what an arithmetic decoder would say |
 | 145 | Phantom Simulated | `UNKNOWN` | mirrors 15 |
-| 146 | Ground Rotator Simulated | **`FACILITY`** | mirrors 16 |
+| 146 | Ground Rotator Simulated | `UNKNOWN` | mirrors 16, and reversed with it |
 | 147 | Small Vehicle, Simulated | `PLATFORM` | mirrors 17 |
 | 148 | Low-slow Flyer, Simulated | `PLATFORM` | mirrors 18 |
 | 149–253 | Reserved | `UNKNOWN` | `unresolved_raw`. In Edition 3 this range began at 143 |
 | 254 | Other, Simulated | `UNKNOWN` | mirrors 126 |
 | 255 | Unknown, Simulated | `UNKNOWN` | mirrors 127; a stated unknown |
 
-**So: twenty-two of the forty-three named values map to a CDM member that carries their meaning**
-— 1, 2, 3, 4, 6, 8, 10, 17, 18 and their simulated twins 129, 130, 131, 132, 134, 136, 138, 147, 148
-to `PLATFORM`, and 5 and 16 with their twins 133 and 146 to `FACILITY` — and **the other twenty-one
-park.** The abstentions are not a shortage of effort: `Person`, `Animal`,
-`Large Multiple-Return`, `Clutter`, `Phantom` and `Beacon` are six statements a ground surveillance
-radar makes routinely, and `EntityType`'s eight members were designed for a different question.
-That is worth recording as a pressure on the enum rather than as a gap of its own, and it is
-recorded in **gap 20**.
+**So: eighteen of the forty-three named values map to a CDM member that carries their meaning** —
+1, 2, 3, 4, 6, 8, 10, 17, 18 and their simulated twins 129, 130, 131, 132, 134, 136, 138, 147, 148,
+all to `PLATFORM` — and **the other twenty-five park.** `FACILITY` appears nowhere in this table
+after amendment 1, so the mapping is now uniform: a vehicle, a vessel or an aircraft is a
+`PLATFORM` and everything else is `UNKNOWN` with its wording preserved.
+
+The abstentions are not a shortage of effort. `Person`, `Animal`, `Beacon`, `Stationary Rotator`,
+`Ground Rotator`, `Large Multiple-Return`, `Clutter` and `Phantom` are eight statements a ground
+surveillance radar makes routinely, and `EntityType`'s eight members were designed for a different
+question. That is a pressure on the enum rather than a gap of its own, and it is recorded in
+**gap 20** — which amendment 1 makes four values worse.
 
 ### Row set — HRR Segment, H1–H31
 
@@ -5075,7 +5240,7 @@ samples join the same `Track` as the Dwell Segment's sensor positions.
 
 | GMTIF | M/C/O | Form | CDM field | Status | Notes |
 |---|---|---|---|---|---|
-| `L1 Location Time` | M | 4 I32, ms | `Track.samples[].observed_at` | `not yet` | milliseconds from midnight of the `M5`/`M6`/`M7` date "to the time the report is prepared", with the same multi-day addition as `D6`. **Note that it times the report's preparation, not an observation** — the nearest thing to a source-side creation time in the format, and it is used as the sample instant because it is the only instant the segment has. The basis says so |
+| `L1 Location Time` | M | 4 I32, ms | `Track.samples[].observed_at` | `not yet` | milliseconds from midnight of the `M5`/`M6`/`M7` date "to the time the report is prepared", with the same multi-day addition as `D6`. **Note that it times the report's preparation, not an observation** — the nearest thing to a source-side creation time in the format, and it is used as the sample instant because it is the only instant the segment has. **Amendment 3**: the sample parks `time_basis = report_prepared` at `attributes.platform_track_points[]`, so it is never averaged against a `D6`-sourced dwell-centre sample unknowingly |
 | `L2 Platform Position – Latitude` | M | 4 SA32, deg | `Track.samples[].position.lat` | `not yet` | exact `SA32` |
 | `L3 Platform Position – Longitude` | M | 4 BA32, deg | `Track.samples[].position.lon` | `not yet` | 0–360 East reduced to [-180, 180] |
 | `L4 Platform Position – Altitude` | M | 4 S32, **cm** | `Track.samples[].position.alt_m` | `not yet` | HAE, ÷ 100. **Centimetres**, matching `D9` and not `D32.6` |
@@ -5163,7 +5328,7 @@ Job Request Segment and for the same reason.
 | GMTIF | CDM field | Status | Notes |
 |---|---|---|---|
 | *(none)* | `Event.received_at` | `not yet` | the injected clock. GMTIF carries no producer-side creation time anywhere, so unlike NITS there is not even a wrong candidate to warn against — and unlike CAT021 the clock is **not** consulted for the date, which settlement 2 states against that precedent |
-| *(the deployment declaration)* | `SourceRef.synthetic` | `not yet` | **no payload field sets this.** `P7` Exercise Indicator, `D32.10`'s simulated half, `M4`'s test-article marking and `J14 = 100` Test/Status Mode all park, and a contradiction is a logged refusal rather than a flip in either direction. Amendment B held as a rule for the third format, and the first one where the declaration is Mandatory on every packet |
+| *(the deployment declaration)* | `SourceRef.synthetic` | `not yet` | **no payload field sets this, and agreement is not an exception** — amendment 2. `P7` Exercise Indicator, `D32.10`'s simulated half, `M4`'s test-article marking and `J14 = 100` Test/Status Mode all park; a pure-real-versus-synthetic or pure-simulated-versus-real contradiction is a logged refusal; a `P7` of *synthesized* contradicts neither pure declaration and parks visibly without one. Amendment B held as a rule for the third format, and the first one where the payload's declaration is Mandatory on every packet |
 | *(none — GMTIF states no affiliation anywhere)* | `Entity.affiliation` | `not yet` | `UNKNOWN` on every object, with `attributes.affiliation_basis` recording that the format carries no identity, no IFF and no allegiance, and that `P3` Nationality is the platform's country and not the contact's side |
 | *(none)* | `Entity.symbol` | `not yet` | `None` on every object. `symbology.sidc_from_affiliation` needs an affiliation, and composing a symbol from `D32.10` alone would draw one with an invented standard identity |
 | *(none — GMTIF grades nothing)* | `Event.severity` | `not yet` | `INFO` on every `Event`, with `payload.severity_basis` recording that the format grades nothing — **including `T5` Hardware Status, where a failed datalink bit is the most gradeable thing in the format**. Grading it is an operational judgement about a platform this adapter knows nothing else about. `J5` and `R3` are tasking priorities, not severities, and are parked |
@@ -5174,7 +5339,8 @@ Job Request Segment and for the same reason.
 | *(none)* | `Track.track_quality` | `not yet` | `None`, always — GMTIF states no track quality because it states no track |
 | *(none)* | `Entity.valid_to` | `not yet` | `None`, always, including on target `Entity` objects whose existence claim covers one instant. The least satisfactory statement in this row set, and **gap 20** is the honest fix |
 | *(the composite key)* | `Entity.attributes` | `not yet` | `attributes.entity_key_basis` — every component of the derived `entity_id`, and the statement that the last two are **positional** and therefore unstable under any re-segmentation of the packet |
-| *(the date's provenance)* | `Entity.attributes` | `not yet` | `attributes.reference_date_basis` — `in_packet`, `caller_supplied_stream_context` or the refusal. A configured date is declared and logged; a clock-derived one is forbidden |
+| *(measured, per platform track sample)* | `Entity.attributes` | `not yet` | `attributes.platform_track_points[]` — per sample, its `time_basis` (`dwell_center` from `D6`, or `report_prepared` from `L1`), its source segment type and ordinal, and its `Track.samples` index; plus `attributes.platform_track_basis` stating the per-basis counts and whether the track is mixed. **Amendment 3**, and it exists so that no consumer averages a dwell-centre position against a report-preparation position unknowingly. **Gap 16** and **gap 13** together |
+| *(the date's provenance)* | `Entity.attributes` | `not yet` | `attributes.reference_date_basis`, `payload.reference_date_basis` and `attributes.platform_track_points[].reference_date_basis` — `in_packet` or `caller_supplied_stream_context`, **on every emitted instant** rather than once per packet (amendment 4a). A caller-supplied date is named and logged; a clock-derived one is forbidden; a caller date contradicting an in-packet Mission Segment is a refusal quoting both (amendment 4b) |
 | *(none — GMTIF carries no checksum of any kind)* | `Entity.integrity` | `not yet` | `None`, with `attributes.integrity_basis` recording that the packet passed structural checks — `P2` against the byte count, each `S2` against the segment boundaries, each existence mask against its field sequence — and nothing more, because §2.2 puts error detection in the transmission layer |
 | *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — and here it holds **two distinguishable kinds** of fact: a field the existence mask says is absent, and a Mandatory field present with its own documented No-Statement value. Settlement 7 keeps them apart, because "the source did not send it" and "the source sent it and said it does not know" are different statements |
 | *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — values read and not usable: a reserved enumeration literal, a `D6` beyond Table 3-9's stated maximum, an unsupported segment's bytes, a `J14` in a reserved range |
@@ -5190,7 +5356,7 @@ following the more authoritative statement, or by refusing — never by guessing
 |---|---|---|
 | 1 | **`P6`'s sixteen caveat bits mean two different things in two pinned documents.** Standard Table 3-4 assigns NATO releasability codewords (`EU`, `EUFOR`, `ISAF`, `KFOR`, `NRF`, `NMI`, `PFP`, `RS`, `THE PUBLIC`); guide Annex G Table G-1 assigns the same bits US-flavoured caveats (`NOCONTRACT`, `ORCON`, `PROPIN`, `WNINTEL`, `REL 4-EYES`, `REL 9-EYES`). Annex G's own reference list cites STANAG 4607 **Edition 2, 2 August 2007** and AEDP-7 Edition 1, so the validation annex was carried forward without being re-based. The standard's own note then says the table is "representative … not an exhaustive list" and that "each nation shall be responsible for developing and publishing their own packet security handling codes" | `P4`/`P5`/`P6` park verbatim as a triple, `P6` as the raw integer plus set bit positions and **never as codeword names**, and `P5`'s digraph is what a consumer resolves them with. Settlement 3. This is the single strongest argument in this row set for parking rather than interpreting, and it is a demonstrated contradiction rather than an analogy |
 | 2 | **`D6`'s value range and its stated capacity disagree.** Table 3-9 gives "0 to 4 x (10^9)" ms — 46 days 7 h — while §3.3.7 says "the maximum value of field D6 is equivalent to 49 days" and Annex C-3 says "up to 49 days and 17 hours", which is the full `I32` range. The same disagreement applies to `T4` and `L1` | the arithmetic is unambiguous either way, so the value is **converted**, the raw integer is parked, and `unresolved_raw` records that it exceeded the table's declared maximum. A refusal would reject a value two of three statements permit |
-| 3 | **`D32.16` and `D32.17` guard their tagging-device reading on classification code `140`, which Table 3-11 defines as `Large Multiple-Return, Simulated Land Target`.** `142` is `Tagging Device`. Guide Annex M item 28 shows that `Tagging Device` was `143` in Edition 3, so `140` was never right in either edition | both truth tags park raw under both readings' names and neither is interpreted: the condition that decides whether `D32.16` is a DIS Application field or a battery percentage does not exist in the pinned text. This is what blocks the one candidate `SourceId` in the format, and it is the narrowest condition in the row set guarding the largest single loss. Deferred on an erratum |
+| 3 | **The truth tags guard on classification value `140` and the table puts `Tagging Device` at `142` — and the disagreement is a stale cross-reference whose whole history is inside the pinned set.** Checked against the PDFs' raw content streams rather than a text extraction. **Locus A**, AEDP-4607 Ed A V1 Table 3-11, page 25 (PDF page 45): `140 = Large Multiple-Return, Simulated Land Target`, `142 = Tagging Device`, `143 = Reserved`. **Locus B**, §3.4.32.16 and §3.4.32.17, page 27 (PDF page 47): "If the target classification field is classified as **140** then the truth tag application field will indicate the battery strength of the tagging device" and "If the target classification field is **140** then the truth tag entity field will be the tag identification number transmitted by a tagging device". **Locus C**, guide Annex M.1 (Errata Sheet No. 3, STANAG 4607 Ed 2 → Ed 3), page M-9: the change record for "Page A-30, Table 2-4.2 Target Classification" **adds `Tagging Device` at value 140**, and the immediately following item on page M-10, "Page A-31 Paragraph 2.4.32.16", is the errata that *introduced* the battery-strength prose citing 140 and widened the condition to "simulated **or a tagging device is detected**". **Locus D**, guide Annex M.2 item 28, page M-31: Ed 3's table is quoted with `143 = Tagging Device`, replaced by `142` for Ed A. So the value moved **140 → 143 → 142** across three editions and the prose was never re-based; it was correct when written and refers to the class, not to the number | **the ambiguity is keyed on the LABEL, `Tagging Device`, not on a value**, and every rule that depends on it is written against the label so that a future edition moving the number again does not silently change behaviour. Under Ed A the label is carried by `142`, so `142` is the value the tagging-device exemption covers. Both truth tags still park raw under both readings' names and neither is interpreted — see the settlement for the re-based grounds, which are no longer "the condition is unstatable" |
 | 4 | **§3.2.1's prose and Table 3-6 disagree about the extension range.** The prose reserves "103-255 … for future use"; the table splits `103–127` from `128–255` "Reserved for Extensions", and guide Annex L has assigned five of the latter since 2008 | none, because the behaviour is identical: skip by `S2`, park, record. The table and the registry are followed, and the disagreement is recorded so the next reader does not have to re-derive it |
 | 5 | **The guide says heights may be orthometric; the standard says they are ellipsoidal, unconditionally.** §3.4.9, §3.15.4 and §3.4.32.6 all say "above the WGS 84 ellipsoid"; guide §E.8 says heights are "either from the reference ellipsoid, or from mean sea level if a geoid model is being used", and `J28` names one. The two readings differ by the geoid undulation, up to about 105 m | the standard wins: `alt_m` is HAE. `J27`/`J28` park and `attributes.alt_datum_basis` records the guide's contradicting sentence and the declared model, so a consumer that needs to resolve it has both halves. **Gap 9**'s neighbourhood |
 | 6 | **Table 3-13 gives `H32.3` and `H32.4` a Bytes value of `1` and a Form of `I16`**, which cannot both be true | `I16` is followed — the stated value range is 0 to 65 535, which needs two bytes — and the contradiction is recorded. An adapter that believed the Bytes column would desynchronise the whole scatterer array |
@@ -5212,7 +5378,7 @@ rejected, or blocked.
 |---|---|---|
 | **Egress — CDM back to a GMTIF packet** | **deferred** | Phase 1 specifies ingest. Egress is not a symmetry problem here but an authorship problem: `P4`/`P5`/`P6` are Mandatory and settlement 3's three paths govern them; `P8` Platform ID must be a real platform's tail number; `M5`–`M7` must be a real mission date; and `J1`/`J14` must name a real radar job in a real mode. A CDM-native object has none of those, so egress means either a configuration-supplied job definition or a refusal — the same shape as the confidentiality paths, and it should ship with that decision made rather than parked |
 | **STANAG 4607 Edition 3 and earlier** | **deferred** | Same packet structure, same masks, **different enumeration tables** — guide Annex M item 28 moves `Tagging Device` from 143 to 142 and adds ten target classifications. So this is one adapter with a version-dispatched enumeration table, not a second adapter, which is a deliberate departure from the STANAG 4676 Edition 1 decline. Building it needs Edition 3's tables from a document this repository has not pinned. A packet whose `P1` is not `"41"` is refused with the value quoted |
-| **The Range-Doppler Segment (`S1 = 4`)** | **deferred** | §3.6 in the standard is the single word "RESERVED", and §3 says "A preliminary description of the Range-Doppler Segment is provided in the associated guidance". **Preliminary is not normative**, and the guide is not normative for the format. Skipped by `S2` and parked, per Annex G Subtest 18's continue branch |
+| **The Range-Doppler Segment (`S1 = 4`)** | **deferred** | §3.6 in the standard is the single word "RESERVED", and §3 says "A preliminary description of the Range-Doppler Segment is provided in the associated guidance". **Preliminary is not normative**, and the guide is not normative for the format. Skipped by `S2`, parked, logged and recorded, on §3.2.1 and §3.2.2 |
 | **LRI (7), Group (8), Attached Target (9) and System-Specific (11) Segments** | **rejected as unimplementable** | Four paragraphs reading "[THIS PARAGRAPH IS RESERVED FOR FUTURE DEFINITION]". There is nothing to defer to. Skipped and parked |
 | **Controlled Extension Segments 128–132** | **blocked, with a stated exit condition** | Guide Annex L.3.1 registers five *approved and validated* extensions — Advanced Dwell, Advanced Job Definition, Advanced Platform Location, Target Centroid, Releasability — and **§L.4, which is supposed to hold their field tables, reads "(TO BE PROVIDED)"**. So a conformant producer may emit segment types a pinned document names and no pinned document defines. **Exit condition, in order:** obtain the five field tables from the STANAG 4607 Custodian or a revision of AEDP-4607.1 that fills §L.4; pin them by SHA-256 the way `sac_pin.json` pins the ASTERIX allocation list; write the row sets; and implement `132 Releasability` **first**, because it extends the fields of settlement 3 and a security extension nobody decodes is the one park with a real cost. Until then all five are skipped and parked |
 | **Job Request and Job Acknowledge Segments** | **rejected** | They are tasking: a request for sensor service and its acknowledgement. The CDM's four kinds are what exists, what happened, where something has been, and what *we* push out — and a request addressed to somebody else's sensor is none of them. `PlanObject` is emphatically not it, for the reason the CAT021 intent gap states: it models our plan drawn on somebody else's map, and this is somebody else's plan drawn on ours. The standard itself calls both segments "recommendations only and … not required for this format". Parked whole, every field with a row, so that a release which grows a tasking object finds a decision rather than an omission. **Gap 15** is the neighbouring open question |
@@ -5228,7 +5394,7 @@ rejected, or blocked.
 | **Decoding DIS Entity State PDU truth tags** | **deferred** | A separate standard with its own identifier semantics, and the guard condition that selects between its two readings names the wrong classification code (ambiguity 3). Parked whole, which the never-drop rule already satisfies |
 | **Embedding: NSIF/STANAG 4545 DES, NITF, STANAG 7023, STANAG 4559 libraries** | **rejected** | Guide Annex B describes GMTIF carried inside three imagery formats and retrieved from an ISR library. Extracting a GMTIF packet from an NSIF Data Extension Segment is an NSIF reader's job, and the boundary is the same one §2.1 draws: this adapter's input is one packet, and getting one is the caller's problem |
 | **Transport: datalinks, packet sequence numbers, loss detection, channelisation, error correction** | **rejected** | §2.2 puts all of it in "the lower layers of the communications media" and guide §D.4 puts it in a mux/demux layer explicitly outside the format. By the standard's own instruction |
-| **Claiming conformance for anything this adapter emits or reads** | **blocked, and it always will be** | Guide Annex G's compliance testing is a *program* — test events, a registration authority, a certificate — not a document one can execute. Nothing here can claim a packet it reads is conformant or that a packet it emits would pass Subtest 05; only that every value it re-emits equals the value it read. Recorded so that "validated against AEDP-4607.1" is never written down about this adapter |
+| **Claiming conformance for anything this adapter emits or reads** | **blocked, and it always will be** | Two reasons and the second is amendment 5's. Guide Annex G's compliance testing is a *program* — test events, a registration authority, a certificate — not a document one can execute. And Annex G is **stale**: its own reference list cites STANAG 4607 Edition 2 of 2007, which is how it comes to publish a `P6` codeword table contradicting the standard's (ambiguity 1), so passing its subtests would not establish conformance to Edition A even if one could run them. Nothing here can claim a packet it reads is conformant or that one it emits would pass; only that every value it re-emits equals the value it read. Recorded so that "validated against AEDP-4607.1" is never written down about this adapter |
 
 ### The fixtures — planned here, before they exist
 
@@ -5297,8 +5463,9 @@ golden file can hold still:
 9. **A packet carrying an unsupported segment between two supported ones** — type `132`
    (Releasability, registered and undefined) with a valid `S2` — which must be skipped exactly,
    parked with its bytes, recorded, and must leave the segment after it decoded correctly. This is
-   Annex G Subtest 18's continue branch as a golden file, and it is the fixture that proves the
-   blocker is contained rather than merely named.
+   the skip-and-record rule as a golden file — the golden asserts the type code, the size and the
+   parked bytes are all present, so a silent skip fails it — and it is the fixture that proves the
+   Controlled Extension blocker is contained rather than merely named.
 
 A tenth is worth naming as **deliberately absent**: there is no fixture for a target `Track`,
 because settlement 5 says no target `Track` is ever produced, and the test that enforces that is a
@@ -6190,11 +6357,45 @@ negative assertion over every fixture rather than a fixture of its own.
      in a differently-split packet gets a different `entity_id`. **This is gap 1 and gap 16's
      problem — private index arithmetic standing in for canonical structure — arriving at the level
      of object identity itself.**
-   - **`EntityType`'s eight members were designed for a different question**, and twenty-one of
+   - **`EntityType`'s eight members were designed for a different question**, and **twenty-five** of
      `D32.10`'s forty-three named classifications have no honest home in them: `Person`, `Animal`,
-     `Beacon`, `Large Multiple-Return` (an unresolved group of unstated size), `Clutter` and
-     `Phantom` — the last two being *explicit denials that anything is there*, which the CDM cannot
-     express while still emitting an object. A detection type is not an entity type.
+     `Beacon`, `Stationary Rotator` and `Ground Rotator` (Doppler signature classes, not
+     structures — see amendment 1), `Large Multiple-Return` (an unresolved group of unstated size),
+     `Clutter` and `Phantom` — the last two being *explicit denials that anything is there*, which
+     the CDM cannot express while still emitting an object. A detection type is not an entity type,
+     and amendment 1 raised the count from twenty-one by declining to read a motion characteristic
+     as an installation.
+
+   **A divergence this gap now has to carry, and it is a person.** `D32.10` code 9 is
+   `Person, Live Target` and this row set maps it to `UNKNOWN`. CAT021's I021/020 emitter category
+   16 is `Parachutist / skydiver` and the **shipped** `asterix_cat021.py` maps it to `PLATFORM`,
+   with its row admitting in as many words that "a person under a canopy is not a platform" and
+   that `PLATFORM` "overstates slightly". So one concept — a human being detected by a sensor —
+   has two answers in one codebase, and it is **stated rather than resolved**, on the I021/170
+   precedent that gap 2 uses for FAKER: the CAT021 behaviour is published, with an adapter, a
+   fixture and a golden file behind it, and changing it is a 1.1.0 question with a migration note
+   rather than a side effect of an eighth adapter.
+
+   Both arguments, because whoever settles this has to weigh them rather than inherit a preference:
+
+   - **For `PLATFORM` (the CAT021 answer).** ADS-B and CAT021 carry aircraft and nothing else, so
+     `PLATFORM` is the class-wide default and a skydiver is an oddity *inside* a population that is
+     otherwise entirely platforms. Mapping the oddity to `UNKNOWN` would put a hole in an otherwise
+     uniform column, and a consumer filtering for `PLATFORM` to get "air traffic" would silently
+     lose the one contact under a canopy — which is a contact that matters.
+   - **For `UNKNOWN` (the GMTIF answer).** A ground surveillance radar reports vehicles, vessels,
+     aircraft, animals, groups, clutter and dismounts in one stream, so there is **no class-wide
+     default to be an oddity inside**. `PLATFORM` here is not a slight overstatement of a
+     surrounding norm; it is a positive claim that a walking human is a platform, made about a
+     population where "vehicle" and "person" are adjacent enumeration values the source
+     deliberately distinguished. And the raw wording is parked either way, so `UNKNOWN` loses
+     nothing a consumer cannot recover.
+
+   The honest resolution is probably neither: the shape both answers are working around is that
+   `EntityType` has no member for a person, which is this gap's argument and not a mapping choice.
+   `test_the_person_divergence_from_cat021_is_deliberate_and_pinned` fixes both mappings so the
+   question cannot be closed by accident in either direction, and it fails the build if
+   `EntityType` grows the member that would close it properly.
    - **A consumer that fuses would have to undo this first.** The honest input to a tracker is a
      stream of detections; what it receives is a stream of `Entity` objects each claiming to be a
      thing that exists.
