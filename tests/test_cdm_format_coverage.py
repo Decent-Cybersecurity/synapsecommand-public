@@ -8,6 +8,7 @@ the table can be read as a specification rather than as a historical document.
 The resolver walks pydantic annotations rather than dictionaries, so `Track.samples[].position.lat`
 is checked all the way down to the float.
 """
+import hashlib
 import json
 import pathlib
 import uuid
@@ -2379,3 +2380,293 @@ def test_the_gmtif_amendments_are_recorded_as_amendments():
             f"amendment {n} is not cited anywhere in the row set. Each one changed something "
             "specific and the place it changed has to name it"
         )
+
+
+# --------------------------------------------------- the pin records for the two NATO row sets
+#
+# THE PDFs ARE NOT TRACKED, SO THE PIN RECORD IS THE COMMITTED ARTEFACT
+# ---------------------------------------------------------------------
+# None of the nine adapters tracks its specification: `fixtures/*/spec/*.pdf` is untracked
+# everywhere, deliberately, because NATO and EUROCONTROL documents are redistributable only on
+# their own terms and a repository is not a document library. What gets committed instead is the
+# pin record — filename, SHA-256, byte count, page count and the title-page identity as printed —
+# and a pin record nothing checks is a recollection with a hash in it. So these two tests exist
+# for the two halves that can be checked without the file and with it:
+#
+#   * the record is COMPLETE and in the right section — every field of every pin, asserted against
+#     the prose. This runs everywhere, including on a clone that has never seen a PDF.
+#   * the record is TRUE of the copy on disk — hash and byte count recomputed. This can only run
+#     where the file is, so it SKIPS when the file is absent, and the skip names the file.
+#
+# The page count is deliberately not recomputed. Reading it needs a PDF library, this package has
+# no PDF dependency and is not acquiring one for a test, and the byte count plus the hash already
+# identify the copy exactly. A page count is there for a human comparing a document in their hands
+# against this table, which is a different job from identifying bytes.
+#
+# Mutation-checked, all four ways, on the 2026-08-23 re-verification: a wrong digit in a byte
+# count, a wrong page count, a filename pointing at the wrong document, and a digest moved from
+# one section to the other each fail with the pin and the label named.
+
+NATO_PINS = (
+    ("gmti", "nato-stanag-4607-edition-4.pdf",
+     "e102f47c51e74d26f61f02947df1228330e0ab6176b4b55c28447cf74574751b", 558_866, 6,
+     "STANAG 4607 Ed. 4, the ratification wrapper"),
+    ("gmti", "nato-aedp-4607-edition-a-v1.pdf",
+     "13f054c2bced1444aac9b5e85682b0b14b82f1d83988bf183f9324095c11a5d9", 1_724_707, 104,
+     "AEDP-4607 Ed. A v1, the target"),
+    ("gmti", "nato-aedp-4607-1-edition-a-v1.pdf",
+     "877f9b6f1bbcd1ac76cddca751a7222deb5bcf8c8061e6530657eb68f655ed94", 3_010_604, 212,
+     "AEDP-4607.1 Ed. A v1, the implementation guide"),
+    ("stanag4676", "nato-stanag-4676-edition-2.pdf",
+     "5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f", 255_250, 5,
+     "STANAG 4676 Ed. 2, the ratification wrapper"),
+    ("stanag4676", "nato-aedp-12-edition-b-v2.pdf",
+     "c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b", 6_785_016, 150,
+     "AEDP-12 Ed. B v2, the target"),
+    ("stanag4676", "nato-aedp-12-1-edition-a-v1.pdf",
+     "7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d", 6_815_298, 192,
+     "AEDP-12.1 Ed. A v1, the implementation guide"),
+)
+
+#: Which section each pinned document's record belongs to. A digest in the wrong row set is the
+#: failure this mapping exists to catch: the two NATO sections have the same table shape.
+NATO_PIN_SECTIONS = {"gmti": GMTIF_HEADING, "stanag4676": NITS_HEADING}
+
+FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures"
+
+
+def _grouped(n: int) -> str:
+    """`1724707` as `1 724 707`, which is how the pin tables spell a byte count."""
+    return f"{n:,}".replace(",", " ")
+
+
+@pytest.mark.parametrize("family,filename,digest,size,pages,label",
+                         NATO_PINS, ids=lambda q: q if isinstance(q, str) else "")
+def test_the_nato_pin_record_is_complete_and_in_the_right_section(
+        family, filename, digest, size, pages, label):
+    """Filename, SHA-256, byte count and page count, all four, all in the owning section.
+
+    The filename is the field that was missing until the 2026-08-23 re-verification, and it is the
+    one a reader needs most: a hash identifies a copy only if you can find the copy. `spec/` holds
+    three PDFs per adapter with names that differ by two characters — `nato-aedp-4607-edition-a-v1`
+    against `nato-aedp-4607-1-edition-a-v1` — so "the AEDP" is not a locator and the pin now says
+    which file it means.
+    """
+    section = _section(NATO_PIN_SECTIONS[family])
+    flat = _flat(section)
+    assert f"`fixtures/{family}/spec/{filename}`" in flat, (
+        f"the pin for {label} does not name its file. Without the path the hash identifies a copy "
+        f"nobody can locate, and {family}/spec/ holds three documents with near-identical names"
+    )
+    assert digest in section, f"the pin has lost its SHA-256 for {label}"
+    assert f"{_grouped(size)} bytes" in flat, (
+        f"the pin for {label} has lost or changed its byte count. Expected {_grouped(size)} bytes"
+    )
+    # BOTH sites, not either: the page count is stated twice per document — in the pin table row
+    # and in the re-verification table — and this assertion was written as a disjunction first,
+    # which the mutation check killed. Breaking the pin row left the re-verification row matching,
+    # so the test passed on a document whose two statements of the same fact disagreed. That is the
+    # half-edited-sentence failure `test_cdm_prose_counts.py` exists for, reproduced here in one
+    # test, and a fact stated twice has to be checked twice or the second site is decoration.
+    assert f"{pages} pages" in flat, (
+        f"the pin table row for {label} has lost its page count. Expected {pages}"
+    )
+    assert f"| {_grouped(size)} | {pages} |" in section, (
+        f"the re-verification table row for {label} does not read `| {_grouped(size)} | {pages} |`. "
+        "The pin table and the re-verification table state the same two numbers, and they have to "
+        "agree — a half-updated pair reads as a record either way"
+    )
+    other = _section(NATO_PIN_SECTIONS["stanag4676" if family == "gmti" else "gmti"])
+    assert digest not in other, (
+        f"{label}'s digest appears in the OTHER NATO section as well. The two pin tables have the "
+        "same shape, so a copy-paste between them is invisible on a read and fatal to the record"
+    )
+
+
+@pytest.mark.parametrize("family,filename,digest,size,pages,label",
+                         NATO_PINS, ids=lambda q: q if isinstance(q, str) else "")
+def test_the_pinned_nato_copy_matches_its_record_when_the_file_is_present(
+        family, filename, digest, size, pages, label):
+    """The other half: the record is true of the bytes, where the bytes are.
+
+    Skips rather than fails when the PDF is absent, because absent is the NORMAL state — the specs
+    are untracked and a fresh clone has none of them. A skip is honest here in a way it would not
+    be for a prose check: this test makes no claim it cannot check, and the skip message names the
+    file so that a reader who does hold the document knows what to drop in to make it run.
+    """
+    path = FIXTURES / family / "spec" / filename
+    if not path.exists():
+        pytest.skip(f"{path.relative_to(FIXTURES.parent)} is untracked and not present; "
+                    f"drop the document in to verify {label} against its pin")
+    raw = path.read_bytes()
+    assert len(raw) == size, (
+        f"{filename} is {len(raw)} bytes, and the pin for {label} says {size}. Either the pin is "
+        "stale or this is a different copy of the same edition — which is exactly the difference "
+        "an edition number cannot express and a hash can"
+    )
+    assert hashlib.sha256(raw).hexdigest() == digest, (
+        f"{filename} does not hash to the pin recorded for {label}. Every citation in the row set "
+        "is a claim about the copy that was read, and this is not it"
+    )
+
+
+def test_the_annex_l_reopen_condition_records_the_date_it_was_checked():
+    """A blocker with a reopen condition has to say when the condition was last tested.
+
+    The Controlled Extension blocker is the one park in this row set that a document revision can
+    dissolve without anybody noticing, because §L.4 filling in is not an event this repository sees.
+    So the check is a dated act, and the date is the artefact: "still blocked" with no date behind
+    it is indistinguishable from "nobody has looked since 2024".
+
+    The quote is asserted as well as the date. §L.4's exact words are the evidence, and the annex
+    promising the tables in §L.2 and delivering nothing in §L.4 is what makes this a blocker rather
+    than an omission — a paraphrase of either half loses the contradiction.
+    """
+    flat = _flat(_section(GMTIF_HEADING))
+    assert "checked against the promulgated Edition A Version 1 text on 2026-08-23 and remains " \
+           "unmet" in flat, (
+        "the reopen condition must record the date it was last checked and the edition it was "
+        "checked against. A blocker whose currency cannot be dated is a blocker nobody can retire"
+    )
+    assert "Section L.4 of this Annex provides the tables, descriptions, and rules of use for each " \
+           "Controlled Extension." in flat, (
+        "§L.2's promise is half the finding. Without it §L.4's silence reads as a section that was "
+        "never meant to hold anything"
+    )
+    assert "(TO BE PROVIDED)" in flat, (
+        "the exact words §L.4 uses are the other half, and paraphrasing them makes the claim "
+        "unverifiable against the document"
+    )
+    assert "A populated record sheet is not a populated registry" in flat, (
+        "§L.3.1 IS populated and §L.4 is not, and a reader who checks only the first will conclude "
+        "the registry exists. The distinction is the blocker and it has to be stated"
+    )
+
+
+def test_the_nits_xsd_park_rests_on_configuration_management_not_on_procurement():
+    """The park's reason was corrected on 2026-08-23, and the correction has to stay corrected.
+
+    The original reason was "the file cannot be obtained here", which is a fact about this
+    repository rather than about the standard — a reader with the right national representative
+    dissolves it in a phone call, and the park would then be standing on nothing. Guide §D.1.1 is
+    the reason that survives obtaining the file: the Custodian versions the XSD on its own axis,
+    inside the file, so the AEDP edition does not name one schema. This test pins the corrected
+    ground and the retracted overstatement together, because a correction that leaves the old
+    sentence in place beside it has corrected nothing.
+    """
+    section = _section(NITS_HEADING)
+    flat = _flat(section)
+    assert "The XSD file contains the schema revision number, revision date, and change log." in flat, (
+        "guide §D.1.1 is the ground this park now rests on, quoted. Summarising it loses the three "
+        "things the exit condition has to record"
+    )
+    assert "the AEDP edition does not fix it" in flat, (
+        "the consequence of §D.1.1 has to be stated, not left to the reader: 'the XSD for Edition B "
+        "Version 2' does not name one artefact"
+    )
+    assert "APAN mirror" not in flat, (
+        "the retracted claim is back. Ed B §B.5 names DiWEB and the guide's §D.1 names APAN; "
+        "neither document mentions the other's channel and nothing says the two hold the same "
+        "file, so calling one a mirror of the other asserts a link the pinned text does not"
+    )
+    assert "Neither document mentions the other's channel" in flat, (
+        "what replaced the mirror claim has to say what is actually true of the two channels"
+    )
+    assert "the schema's own revision number and revision date from inside the file" in flat, (
+        "the exit condition has to require the revision number, not just a SHA-256. A hash with no "
+        "revision number cannot say which revision of a self-versioning document it identifies"
+    )
+    assert "The root element of a STANAG 4676 object in XML format must be the NITSRoot element " \
+           "of type NITSRoot." in flat, (
+        "guide §D.2's AEDP-12 Requirement callout is what settlement 1's root-element refusal now "
+        "rests on, and it is the one syntax fact the XSD cannot move"
+    )
+    # Every cite in this park carries a PAGE, printed and PDF. Three of these four sentences were
+    # challenged on 2026-08-23 by an independent read that had gone to the wrong section — §C.1.1
+    # for §D.1.1, and a §D.6 wording that is not in the document — and a section number alone is
+    # what made that possible. A page number is checkable by someone holding the PDF in a way a
+    # section number is not, so it is now part of the citation rather than a courtesy.
+    for cite, page in (("Edition B §B.5**, printed page B-4 (PDF page 144)", "B.5"),
+                       ("Guide §D.1**, printed page D-1 (PDF page 156)", "D.1"),
+                       ("Guide §D.1.1**, printed page D-1 (PDF page 156)", "D.1.1"),
+                       ("guide §D.6**, printed page D-2 (PDF page 157)", "D.6"),
+                       ("§C.1.1**, \"Configuration Management of the 4676 Data Model\", printed page "
+                        "C-1 (PDF page 147)", "C.1.1")):
+        assert cite in flat, (
+            f"the §{page} citation has lost its page number. The challenge this park survived was "
+            "possible because the cites named sections and not pages"
+        )
+    # The §C.1.1 / §D.1.1 distinction, which is the live way to get this park wrong.
+    assert "§D.1.1 is not §C.1.1" in flat, (
+        "the two configuration-management sections have to be distinguished in the prose. §C.1.1 "
+        "comes first in the document, is about the DATA MODEL files, and gives no change log — a "
+        "reader who stops there concludes this row set quoted a section that says something else"
+    )
+    assert "The files contain revision number and date." in flat, (
+        "§C.1.1's own sentence is what makes the distinction checkable. Paraphrasing it leaves the "
+        "reader with two section numbers and no way to tell which one this park needs"
+    )
+    # And the absence findings, which no section number can show.
+    assert "neither phrase occurs anywhere in the pinned guide" in flat, (
+        "the reported alternative §D.6 wording — the XSD as 'the normative reference for "
+        "conformance' in a 'STANAG 4676 library' — is absent from the pinned guide, and the absence "
+        "is the finding. A citation check that only ever confirms presence cannot refute a misquote"
+    )
+    assert "`DiWEB` and `Defense Investment` appear **nowhere** in the 192-page guide" in flat, (
+        "the two-channels claim rests on each document NOT naming the other's channel, which is an "
+        "absence and has to be stated as one"
+    )
+
+
+def test_the_2014_edition_is_recorded_as_history_and_never_as_a_basis():
+    """AEDP-12 Edition A Version 1 exists, was examined, and is not a pin.
+
+    The trap this guards is small and specific: the 2014 document has a hash in the pin table, and a
+    hash in a pin table looks like a pin. It is there because the edition-delta settlement rests on
+    having read the document, and the row that carries it has to say — in the same cell — that it is
+    a watermarked reseller copy, that it is history rather than a target, and that it was NOT
+    re-verified in the 2026-08-23 pass because it is not in `spec/`. An unqualified hash would make
+    the row set claim four pinned documents where it has three.
+    """
+    section = _section(NITS_HEADING)
+    flat = _flat(section)
+    assert "Historical context only, and **never a basis**" in flat, (
+        "the 2014 row's label is what stops its hash reading as a pin"
+    )
+    assert "NOT re-verified on 2026-08-23" in flat, (
+        "the one line of the pin table the re-verification could not check has to say so. A "
+        "re-verification that silently skips a row reads as a re-verification of every row"
+    )
+    assert "The incompatibility statement is §2.1.1.1, not the foreword" in flat, (
+        "the locus matters: Edition B v2's FOREWORD says nothing about Edition 1, and a reader sent "
+        "there to check settlement 1's premise would find nothing and conclude the premise was "
+        "invented"
+    )
+    # And the settlement that depends on it still cites the right section.
+    assert "§2.1.1.1" in flat, "settlement 1's citation of the incompatibility clause is gone"
+
+
+@pytest.mark.parametrize("heading,numbers", [
+    (GMTIF_HEADING, (18, 19)),
+    (NITS_HEADING, (12, 13, 14)),
+])
+def test_the_pin_re_verification_filed_its_findings_in_the_ambiguity_registers(heading, numbers):
+    """Five new findings, numbered per each register's own convention, prose left alone.
+
+    The re-verification's job was to rule, not to edit: a date or edition discrepancy between a
+    cover and its AEDP goes into the register at the next number and the normative prose stays as
+    the custodian wrote it. So the check is that the numbers exist and are consecutive with what was
+    already there — a finding recorded outside the register is a finding the next reader will
+    re-derive from scratch.
+    """
+    section = _section(heading)
+    for n in numbers:
+        assert f"\n| {n} | **" in section, (
+            f"ambiguity {n} is missing from the register. The 2026-08-23 re-verification filed "
+            f"findings at {', '.join(str(x) for x in numbers)} and a register with a hole in its "
+            "numbering is a register somebody has edited around"
+        )
+    assert f"\n| {max(numbers) + 1} | **" not in section, (
+        f"the register has grown past {max(numbers)} without this test being updated. The numbers "
+        "are the convention and a new finding has to extend it deliberately"
+    )

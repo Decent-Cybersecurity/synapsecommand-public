@@ -1953,14 +1953,54 @@ two different claims.
 | | |
 |---|---|
 | Ratification wrapper | **STANAG 4676 Edition 2**, 13 October 2021, promulgated by the NATO Standardization Office (NSO(NAFAG)1063(2021)JCGISR/4676). Supersedes STANAG 4676 Edition 1 of 20 May 2014. Names exactly one standard: "AEDP-12, Edition B" |
-| SHA-256 (wrapper) | `5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f`, 255 250 bytes, 5 pages |
-| **The target** | **AEDP-12, NATO Intelligence, Surveillance and Reconnaissance Tracking Standard, Edition B Version 2, March 2022**. Every mapped element below cites this document |
-| SHA-256 (target) | `c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b`, 6 785 016 bytes, 150 pages |
-| Implementation Guide | **AEDP-12.1, NITS Implementation Guide, Standards Related Document (SRD), Edition A Version 1, March 2022** |
-| SHA-256 (guide) | `7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d`, 6 815 298 bytes, 192 pages |
-| Compatibility context only | AEDP-12 **Edition A Version 1**, May 2014 — the Edition 1 model. Read for the delta below and for nothing else |
-| SHA-256 (2014) | `a9e88c81369ff4f13a9d4d7e457de55c6cefcc024162efe5a198e395d8898814`, 3 719 388 bytes, 148 pages. **A reseller copy**, per-page watermarked to the licensee, so this hash identifies that copy and not the NATO original — which is one more reason it is context and not a target |
-| **The XML schema** | **NOT PINNED, and not obtainable here** — see the encoding settlement |
+| SHA-256 (wrapper) | `5c74626102ca0b24735a98c6e0b67191d241afec075f2298c72e51b6223f8a9f`, 255 250 bytes, 5 pages, `fixtures/stanag4676/spec/nato-stanag-4676-edition-2.pdf` |
+| **The target** | **AEDP-12, NATO Intelligence, Surveillance and Reconnaissance Tracking Standard, Edition B Version 2, March 2022**. Every mapped element below cites this document. **Version 2 is not a reading of "Edition B" — it is printed on the title page and on the footer of all 150 pages.** The document carries **no NATO Letter of Promulgation**: page I reads "RESERVED FOR NATIONAL LETTER OF PROMULGATION", so no promulgation date is stated anywhere inside it and the pin does not claim one — see ambiguity 12 |
+| SHA-256 (target) | `c55573231a5882f031862b06589d5a7abaeda9cf7c0b7a55d81843eeb7dc138b`, 6 785 016 bytes, 150 pages, `fixtures/stanag4676/spec/nato-aedp-12-edition-b-v2.pdf` |
+| Implementation Guide | **AEDP-12.1, NITS Implementation Guide, Standards Related Document (SRD), Edition A Version 1, March 2022**. Also carries no NATO Letter of Promulgation. Annex D is the XSD annex and Annex J the Configuration Management Plan; the guide's own Annex F is Binary Encoding, which is what ambiguity 8 is about |
+| SHA-256 (guide) | `7a4267fced81c760c8a8b487a70b9bb8507b9f765cb32bc4a0a97996b0c4341d`, 6 815 298 bytes, 192 pages, `fixtures/stanag4676/spec/nato-aedp-12-1-edition-a-v1.pdf` |
+| Historical context only, and **never a basis** | AEDP-12 **Edition A Version 1**, May 2014 — the STANAG 4676 Edition 1 generation, which Edition B's §2.1.1.1 declares incompatible with Edition 2 in as many words. Read for the delta below and for nothing else. Edition B v2's own reference list dates it "May 2014" and marks it "(covered by STANAG 4676)", and the STANAG 4676 Edition 2 cover supersedes "STANAG 4676, Edition 1, dated 20 May 2014" — so the wrapper and the AEDP agree on the generation this document belongs to. **The incompatibility statement is §2.1.1.1, not the foreword**: Edition B v2's FOREWORD (page VII) is about interoperability aims, the CST and the Custodian's address, and says nothing about Edition 1 |
+| SHA-256 (2014) | `a9e88c81369ff4f13a9d4d7e457de55c6cefcc024162efe5a198e395d8898814`, 3 719 388 bytes, 148 pages. **A reseller copy**, per-page watermarked to the licensee, so this hash identifies that copy and not the NATO original — which is one more reason it is context and not a target. **Not present in `fixtures/stanag4676/spec/` and therefore NOT re-verified on 2026-08-23**: this hash stands on the reading that recorded it, and it is the one line in this pin table that the re-verification below could not check. That is a premise, and it is the right premise to carry — a watermarked reseller copy is not a document a later reader can be expected to reproduce |
+| **The XML schema** | **NOT PINNED, and not obtainable here** — see the encoding settlement, whose reason was corrected on 2026-08-23. The park does not rest on the file being unobtainable: it rests on guide §D.1.1, which versions the XSD on its own axis with its own revision number and revision date inside the file, so the AEDP edition does not name one schema |
+
+**Pin re-verification, 2026-08-23 — three of the four copies are on disk, and they are the copies
+the row set was written from.** Each SHA-256 was recomputed from the file in
+`fixtures/stanag4676/spec/`, each byte count and page count re-measured, each title page re-read.
+All three match:
+
+| Filename | Title-page identity, as printed | Bytes | Pages |
+|---|---|---|---|
+| `nato-stanag-4676-edition-2.pdf` | "STANDARDIZATION AGREEMENT / STANAG 4676 / NATO INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE TRACKING STANDARD / EDITION/ÉDITION 2 / 13 October/octobre 2021" | 255 250 | 5 |
+| `nato-aedp-12-edition-b-v2.pdf` | "NATO STANDARD / AEDP-12 / NATO INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE TRACKING STANDARD / Edition B, Version 2 / MARCH 2022" | 6 785 016 | 150 |
+| `nato-aedp-12-1-edition-a-v1.pdf` | "STANDARDS RELATED DOCUMENT / AEDP-12.1 / NATO INTELLIGENCE, SURVEILLANCE AND RECONNAISSANCE TRACKING STANDARD IMPLEMENTATION GUIDE / EDITION A VERSION 1 / MARCH 2022" | 6 815 298 | 192 |
+
+**Version 2 is resolved explicitly, and the resolution is the AEDP's, not the wrapper's.** The
+STANAG 4676 Edition 2 cover names its standard **without a version** — "STANDARD / AEDP-12,
+Edition B" — and unlike the STANAG 4607 cover it names no version anywhere else either, so the
+ratification wrapper alone cannot tell a reader which Edition B this row set is against. The pinned
+AEDP settles it from its own side: **Edition B, Version 2** on the title page and in the footer of
+every one of its 150 pages. This section's target row now says Version 2 for that reason rather
+than by inference, and ambiguity 12 records what the wrapper leaves open.
+
+**The pinned Version 2 text is the text the adapter was built against, and these are the clauses
+that were compared** — each one load-bearing for a settlement, an ambiguity or a row, matched
+verbatim in the pinned copy: §2.1.1.1's "STANAG 4676 Ed. 2 is incompatible with STANAG 4676 Ed. 1 …
+re-architect the data model and XML-based syntax from scratch" (settlement 1); §2.1.1.6's "The core
+STANAG 4676 data model is silent on confidentiality metadata" (settlement 3); §2.1.1.7's attributes
+that "should be interpreted as 'elements'" with `type` the exception (settlement 4 and ambiguity 5);
+§2.1.1.8's "two options for encoding the model, plain-text XML and EXI … The Custodial Support Team
+recommends the use EXI over plain-text encoded XML" (settlement 4); the CONVENTIONS clause on
+`xsi:type`, "`<outline xsi:type="Polygon">…</outline>`", and the naming clause's tags "reduced in
+size to as little as two letters"; §2.5.13's `z = r cosϕ` against Table 2.5.27-2's "radial, polar
+and azimuthal values, respectively" (ambiguity 1, still live and still unresolvable from the data);
+§2.6.3's ellipsoid "defined based on a center, the lengths of the axes (**not the semi-axes**)"
+against its own worked example squaring a radius (ambiguity 6, still live); `MotionEvent.startRelTime`'s
+"i.e. the value does not default to baseTime" (ambiguity 2); `ProcessedTrack.inputUID`'s "must have
+a single input track specified as either a UID or LID" beside its own "two or more" (ambiguity 3);
+`NITSRoot.msgCreatedTime`'s citation of "the ISO 8001 standard" (ambiguity 10); and the
+`motionImageryCoreID` note that "the XML schema incorrectly defines the name space using nga.gov
+instead of nga.mil" (ambiguity 11). Nothing was re-based and no row moved: every ambiguity checked
+is present in the promulgated Version 2 text, which is what makes them the standard's rather than
+an artefact of the copy that was read.
 
 **The guide is normative only where it says so.** AEDP-12.1 §1.3 states in its own words that
 "the information in this guide is informative but not mandatory", and §1.2 that it is "not
@@ -2338,12 +2378,75 @@ with this reason.** Three grounds, in order of weight:
 
 This is the largest known hole in the row set and it is named here rather than discovered later.
 
-**The XML schema is normative for conformance** (Edition B §B.6, guide §D.6: "The XML schema
-defined within the standard is normative for conformance only"), and it is **not distributed with
-the standard**. Edition B §B.5: the `.xsd` and `.xml` files "are available on the NATO Defense
-Investment Web Site (DiWEB) … Request access through your respective NATO JCGISR National
-Representative", with the guide adding an APAN mirror. Neither is a public URL and neither can be
-hashed into this repository, so **no pin exists for the one document that fixes the syntax**.
+**The XML schema is normative for conformance**, and the two documents say it in the same two
+sentences. **Edition B §B.6**, printed page B-4 (PDF page 144), and **guide §D.6**, printed page D-2
+(PDF page 157), each read in full: "The XML schema defined within the standard is normative for
+conformance only. Implementations may use any method to write the XML formatted data as long as that
+resulting data conforms to the schema." Both sections are two sentences long and neither carries a
+third, so the attribution is to both and not to §B.6 alone. Checked on 2026-08-23 against a reported
+alternative wording for §D.6 — one making the XSD "the normative reference for conformance" and
+placing it in a "STANAG 4676 library": **neither phrase occurs anywhere in the pinned guide.**
+`normative reference` has no hits in its 192 pages and `normative` has exactly two, this sentence
+and §G.2's "STANAG 4676 defines the normative XML schema using XML Schema 1.1" on PDF page 167. Recorded because
+that wording would have moved the park's attribution, and the absence of a phrase is the one thing a
+section number cannot show.
+
+And the schema is **not distributed with the standard** — neither AEDP contains it, and the
+standard's Annex B and the guide's Annex D are prose *about* the schema rather than the schema.
+
+**The two documents name two different, unlinked distribution channels, and this row set said
+"mirror" where the text says no such thing** — corrected on the 2026-08-23 re-verification, because
+the difference is the difference between one artefact and two. **Edition B §B.5**, printed page B-4
+(PDF page 144): "The .xsd and .xml electronic files are available on the NATO Defense Investment Web
+Site (DiWEB) under the JCGISR link in the STANAG 4676 section: https://diweb.hq.nato.int. Request
+access through your respective NATO JCGISR National Representative." **Guide §D.1**, printed page
+D-1 (PDF page 156): "The .xsd and .xml electronic files are available on the All Partners Network
+Access (APAN) site under the 4676 Community: https://wss.apan.org/csa/4676_CST/SitePages/Home.aspx",
+followed by "To request access to the APAN and the 4676 Community site:" and five numbered steps, the
+second of which is "Select 'Create An Account'". **Neither document mentions the other's channel** —
+`DiWEB` and `Defense Investment` appear **nowhere** in the 192-page guide, and `APAN` appears nowhere
+in the 150-page standard — and nothing in either says the two hold the same file. Both are
+access-controlled and neither is a public URL, so no pin exists for the one document that fixes the
+syntax; but the reason is now two unreconciled sources rather than one unreachable one.
+
+**And the ground that actually carries this park is not procurement at all — it is configuration
+management, which was missing from the reason recorded here before.** **Guide §D.1.1**, printed page
+D-1 (PDF page 156), in full: "For configuration management purposes, the 4676 XSD schema is
+maintained by the Custodian. As new versions or editions of the 4676 standard are ratified, the
+latest version of the XSD schema will be copied to the All Partners Network Access (APAN) site under
+the 4676 Community: https://wss.apan.org/csa/4676_CST/SitePages/Home.aspx. **The XSD file contains
+the schema revision number, revision date, and change log.** This provides the mechanism to identify
+the latest version and manage updates to the schema." So the schema is versioned **on its own axis**,
+inside its own file, by the Custodian, and the AEDP edition does not fix it: "the XSD for Edition B
+Version 2" does not name one artefact, and two files with different hashes can both be it. That is
+why this is a park and not an errand. Obtaining the file through a national representative — which a
+reader with the right phone number could do tomorrow — would dissolve the *procurement* reason and
+leave this one standing untouched, which is the test of whether a reason was the real one.
+
+**§D.1.1 is not §C.1.1, and confusing the two is the one live way to get this park wrong** — so the
+distinction is recorded rather than left to be re-derived. The guide configuration-manages **two
+different artefacts in two different annexes, with different metadata**, and the weaker one comes
+first in the document. **§C.1.1**, "Configuration Management of the 4676 Data Model", printed page
+C-1 (PDF page 147), in full: "For configuration management purposes, the data model files are
+maintained by the Custodian. The files contain revision number and date. This provides the mechanism
+to identify the latest version and manage updates to the data model." That is the **data model**
+files, and it gives **revision number and date only — no change log**. §D.1.1 nine pages later is
+the **XSD**, and it is the one that adds the change log. A reader who finds §C.1.1 first and stops
+there will conclude that this row set quoted a section that says something else, which is exactly
+what an independent read of the pinned guide reported on 2026-08-23; the resolution is that both
+sections exist, both are quoted above, and the exit condition cites §D.1.1 because the XSD is what
+it is about. Nothing in the argument depends on the change log — "revision number and date" alone
+already means an edition does not name a revision — but the quote is §D.1.1's and it is reproduced
+in full so the next reader compares sentences instead of section numbers.
+
+**What the guide says about the root element is the part that costs nothing and is worth having.**
+Edition B §B.1 and guide §D.2, the latter under an explicit **AEDP-12 Requirement** callout, carry
+the same sentence: "The root element of a STANAG 4676 object in XML format must be the NITSRoot
+element of type NITSRoot." Settlement 1 refuses a document whose root is `TrackMessage`, and that
+refusal now rests on a normative callout in the pinned guide rather than on the edition delta alone.
+It is also the single syntax fact the XSD *cannot* move, so it is the one element name below that is
+not provisional in substance — the qualifier stays on the row anyway, because a status column that
+carries exceptions is a status column nobody can read.
 
 What that costs, precisely:
 
@@ -3784,6 +3887,9 @@ refusing, never by guessing.
 | 9 | **Two opposite pixel orders in one model, and the standard flags it itself.** `PixelPolygon.integerArray` is `[row, col]` and "the order of coordinates for an individual point is the opposite of the order for the `PIXELS` coordinate space", which is `[x, y]`. `Image.centroidPixel` is `[row, column]` again | every pixel value is parked under a key naming its order. Nothing is transposed, because the only correct transposition depends on which of the two conventions a given attribute uses and the model uses both |
 | 10 | **`NITSRoot.msgCreatedTime` cites "the ISO 8001 standard".** There is no ISO 8001 relevant here; ISO 8601 is meant, and the W3C note the same sentence references is the timezone note | `times.parse` accepts the value; the citation is noted and nothing turns on it |
 | 11 | **`ImagingSensor.motionImageryCoreID` carries an acknowledged wrong namespace.** The standard says "the XML schema incorrectly defines the name space using `nga.gov` instead of `nga.mil`; the XML schema retains the use of `nga.gov` for backwards compatibility" | the wrong namespace is the conformant one and is used as-is. Recorded because it looks exactly like a bug to fix |
+| 12 | **The ratification wrapper names no version, and it predates the version this row set is against by five months.** STANAG 4676 Edition 2 was promulgated **13 October 2021** and its STANDARD line reads "AEDP-12, Edition B" with no version, in both the English and the French column. The pinned AEDP is **Edition B, Version 2, MARCH 2022**. Neither AEDP in the pinned set carries a NATO Letter of Promulgation — both reserve that page for a *national* letter — so **no promulgation date for Edition B Version 2 is stated in any pinned document**, only the month on its title page. Contrast STANAG 4607, whose cover names "Edition A, version 1" explicitly and whose AEDPs both carry a NATO Letter of Promulgation dated 16 February 2024 | none for the parse, and it is why this section's target row now states Version 2 on the AEDP's own authority rather than the wrapper's. The consequence is for *citation*: a claim that this row set is against "the ratified Edition B" would be a claim the wrapper cannot support past October 2021, and any Version 2 promulgation date is a premise from outside the pinned set. Recorded, and the prose is left as the documents have it |
+| 13 | **The guide describes the XSD's status two incompatible ways, one page apart.** §D.1, printed page D-1 (PDF page 156): "The schema is provided as a guide and may not be suitable for all programs. It is used for conformance testing." §D.6, printed page D-2 (PDF page 157), and Edition B §B.6, printed page B-4 (PDF page 144), identically: "The XML schema defined within the standard is **normative for conformance only**. Implementations may use any method to write the XML formatted data as long as that resulting data conforms to the schema." A schema that is normative for conformance and a schema that is "provided as a guide" are two different objects, and the second sentence is the one that appears in the standard as well | none, and the park survives either reading — which is the point of recording it rather than choosing. Under §D.6 the schema is what conformance means and nothing here can claim it; under §D.1 the schema is advisory and *still* the only thing that fixes the element names, so the provisional binding is unaffected. A park that needs only one of two contradictory sentences to be true is the kind worth keeping. Found on the 2026-08-23 re-verification, in the same pass that corrected the encoding settlement's recorded reason. **Neither pole of this contradiction is a claim that some *third* artefact is normative**: the guide nowhere says the data model, or anything else, is "the normative reference" — the phrase does not occur in it — so the ambiguity is about the XSD's status and not about which document wins |
+| 14 | **§2.1.1.1 names the wrong edition in its own second sentence.** The clause settlement 1 quotes reads "Upon analysis of the new features needed for STANAG 4676 **Ed. 1**, along with implementation concerns related to the large size of STANAG 4676 Ed. 1 data, it was determined that the best course of action to ensure that STANAG 4676 Ed. 2 met all of the functional and data size requirements was to re-architect …". The features being analysed are Edition 2's; Edition 1 is the thing whose *size* was the concern. So of the sentence's two references to Ed. 1 the first is wrong and the second is right, which is why it reads as prose — a reader who notices one of them notices the wrong one half the time | none — the operative sentence is the one before it, "STANAG 4676 Ed. 2 is incompatible with STANAG 4676 Ed. 1", which is unambiguous and is what settlement 1 rests on. Recorded because settlement 1 quotes this passage with an ellipsis, and a reader who opens §2.1.1.1 to check the quote will hit the slip and wonder whether the ellipsis hid it |
 
 ### Deliberately out of scope, and why
 
@@ -3809,8 +3915,8 @@ or rejected.
 | **Reading the STANAG 4607 GMTI data a `Radar4607` points into** | **rejected** | `revisitIndex`, `dwellIndex` and `reportIndex` are pointers into a different file in a different format. A GMTI reader is a different adapter |
 | **Dereferencing `SensorInformation.url` or `ImageChip.uri`** | **rejected** | An adapter that fetches a URL out of its payload is a network client with a payload-controlled target, in a component that is supposed to have no network at all |
 | **Transport: file servers, MIME multipart streams, sockets, APAN or DiWEB retrieval** | **rejected** | §2.1.1.2 puts transport outside the standard's scope and §2.5.1 makes one file one root object. Splitting a stream is the caller's job, by the standard's own instruction |
-| **The XML syntax binding** | **blocked, not declined** | Element names, attribute-versus-element and the base64 UUID form all depend on the XSD, which is distributed through national representatives and cannot be pinned here. 1.0.0 ships a **provisional** binding through one table, `ELEMENT_NAMES`, and every row above carries `· provisional` so the status column says so on its own |
-| **XSD validation of an emitted document** | **blocked, with a stated exit condition** | The schema "is normative for conformance" (Ed B §B.6), so nothing here can claim a document it emits is conformant — only that every value it re-emits equals the value it read. **Exit condition, in order:** obtain `stanag4676.xsd` and `stanag4774_confidentialitymetadatalabel.xsd` through a NATO JCGISR national representative (DiWEB, mirrored on APAN); pin both by SHA-256 as `fixtures/nits/spec/xsd_pin.json`, the way `sac_pin.json` pins the ASTERIX allocation list; fill `ELEMENT_NAMES` from the schema and re-run the twin test, which fails on every name that moved; add a validation step to the fixture build so each `.nits.xml` is checked against the schema; and drop `· provisional` from the status column in the same commit. Until all five are done the qualifier stays, and `test_every_nits_row_carries_the_provisional_qualifier` fails the build if one is removed early |
+| **The XML syntax binding** | **blocked, not declined** | Element names, attribute-versus-element and the base64 UUID form all depend on the XSD, which the pinned edition does not fix: guide §D.1.1 has the Custodian re-issuing it on its own revision axis, with its revision number and date inside the file, so "the schema for Edition B Version 2" names no single artefact — and it is distributed through access-controlled channels besides. Re-based on §D.1.1 on 2026-08-23; the previous reason named only the distribution. 1.0.0 ships a **provisional** binding through one table, `ELEMENT_NAMES`, and every row above carries `· provisional` so the status column says so on its own |
+| **XSD validation of an emitted document** | **blocked, with a stated exit condition** | The schema "is normative for conformance" (Ed B §B.6), so nothing here can claim a document it emits is conformant — only that every value it re-emits equals the value it read. **Exit condition, in order** — revised 2026-08-23, because a SHA-256 alone under-identifies a document that versions itself: obtain `stanag4676.xsd` and `stanag4774_confidentialitymetadatalabel.xsd`, from **either** DiWEB through a NATO JCGISR national representative (Ed B §B.5) **or** the APAN 4676 Community (guide §D.1) — and if both, hash both, because neither document says the two channels hold the same file; pin them as `fixtures/nits/spec/xsd_pin.json` the way `sac_pin.json` pins the ASTERIX allocation list, recording **the schema's own revision number and revision date from inside the file** — the two fields the text guarantees — alongside the SHA-256 and the change log §D.1.1 also names, since the Custodian re-issues the XSD independently of the AEDP edition and a hash with no revision number cannot say which revision it is. The citation is **guide §D.1.1, printed page D-1 (PDF page 156)**, which is about the **XSD**; §C.1.1 on printed page C-1 is the parallel section about the **data model files** and gives revision number and date without a change log, so a pin built from §C.1.1 would record the wrong artefact's metadata; fill `ELEMENT_NAMES` from the schema and re-run the twin test, which fails on every name that moved; add a validation step to the fixture build so each `.nits.xml` is checked against the schema; and drop `· provisional` from the status column in the same commit. Until all five are done the qualifier stays, and `test_every_nits_row_carries_the_provisional_qualifier` fails the build if one is removed early |
 
 ### The fixtures — planned here, before they exist
 
@@ -3888,13 +3994,54 @@ read**.
 | | |
 |---|---|
 | Ratification wrapper | **STANAG 4607 Edition 4**, 16 February 2024, promulgated by the NATO Standardization Office (NSO(NAFAG)0232(2024)JCGISR/4607). Supersedes STANAG 4607 Edition 3 of 14 September 2010. Names exactly one standard: "AEDP-4607, Edition A" |
-| SHA-256 (wrapper) | `e102f47c51e74d26f61f02947df1228330e0ab6176b4b55c28447cf74574751b`, 558 866 bytes, 6 pages |
-| **The target** | **AEDP-4607, NATO Ground Moving Target Indicator Format (GMTIF), Edition A Version 1, February 2024**. Every mapped field below cites this document |
-| SHA-256 (target) | `13f054c2bced1444aac9b5e85682b0b14b82f1d83988bf183f9324095c11a5d9`, 1 724 707 bytes, 104 pages |
-| Implementation Guide and validation | **AEDP-4607.1, NATO GMTIF Implementation Guide, Standards Related Document (SRD), Edition A Version 1**, 212 pages. Carries the test and validation procedures (Annex G), the coordinate and position-recovery arithmetic (Annex E), the Registry of Controlled Extensions (Annex L) and the change history (Annexes M and N) |
-| SHA-256 (guide) | `877f9b6f1bbcd1ac76cddca751a7222deb5bcf8c8061e6530657eb68f655ed94`, 3 010 604 bytes |
-| **The Controlled Extension field definitions** | **NOT PINNED, and not obtainable here.** Annex L.3.1 registers five *approved* extension segment types — 128 Advanced Dwell, 129 Advanced Job Definition, 130 Advanced Platform Location, 131 Target Centroid, 132 Releasability — and §L.4, the section that gives their field tables, reads **"(TO BE PROVIDED)"**. See the blocker row in the declines table |
+| SHA-256 (wrapper) | `e102f47c51e74d26f61f02947df1228330e0ab6176b4b55c28447cf74574751b`, 558 866 bytes, 6 pages, `fixtures/gmti/spec/nato-stanag-4607-edition-4.pdf` |
+| **The target** | **AEDP-4607, NATO Ground Moving Target Indicator Format (GMTIF), Edition A Version 1, February 2024**. Every mapped field below cites this document. Carries its own **NATO Letter of Promulgation, 16 February 2024** — the wrapper's date exactly — which closes the covering chain from the AEDP's side: "AEDP-4607, Edition A, Version 1 … is promulgated herewith. The agreement of nations to use this publication is recorded in STANAG 4607" |
+| SHA-256 (target) | `13f054c2bced1444aac9b5e85682b0b14b82f1d83988bf183f9324095c11a5d9`, 1 724 707 bytes, 104 pages, `fixtures/gmti/spec/nato-aedp-4607-edition-a-v1.pdf` |
+| Implementation Guide and validation | **AEDP-4607.1, NATO GMTIF Implementation Guide, Standards Related Document (SRD), Edition A Version 1**, 212 pages. Carries the test and validation procedures (Annex G), the coordinate and position-recovery arithmetic (Annex E), the Registry of Controlled Extensions (Annex L) and the change history (Annexes M and N). Its own **NATO Letter of Promulgation is also 16 February 2024**, "approved in conjunction with AEDP-4607", and it "supersedes AEDP-07, Edition 2, which shall be destroyed" — see ambiguity 19 |
+| SHA-256 (guide) | `877f9b6f1bbcd1ac76cddca751a7222deb5bcf8c8061e6530657eb68f655ed94`, 3 010 604 bytes, 212 pages, `fixtures/gmti/spec/nato-aedp-4607-1-edition-a-v1.pdf` |
+| **The Controlled Extension field definitions** | **NOT PINNED, and not obtainable here.** Annex L.3.1 registers five *approved* extension segment types — 128 Advanced Dwell, 129 Advanced Job Definition, 130 Advanced Platform Location, 131 Target Centroid, 132 Releasability — and §L.4, the section that gives their field tables, reads **"(TO BE PROVIDED)"**. **Re-read in the promulgated Edition A Version 1 copy on 2026-08-23: unchanged.** See the blocker row in the declines table |
 | Superseded, and deliberately not read | AEDP-7 Edition 2, the previous implementation guide, which AEDP-4607.1 replaces. Unlike the STANAG 4676 row set, which pinned the 2014 edition as compatibility context and read it for the edition delta, **nothing here was read from AEDP-7**: the delta that matters is recorded inside the pinned guide itself, in Annexes M and N |
+
+**Pin re-verification, 2026-08-23 — the three copies in `fixtures/gmti/spec/` are the copies the row
+set was written from.** Each SHA-256 above was recomputed from the file on disk, each byte count and
+page count re-measured, and each title page re-read for its printed identity. All three match, so
+nothing below is re-based:
+
+| Filename | Title-page identity, as printed | Bytes | Pages |
+|---|---|---|---|
+| `nato-stanag-4607-edition-4.pdf` | "STANDARDIZATION AGREEMENT / STANAG 4607 / NATO GROUND MOVING TARGET INDICATOR FORMAT (GMTIF) / EDITION/ÉDITION 4 / 16 February/février 2024" | 558 866 | 6 |
+| `nato-aedp-4607-edition-a-v1.pdf` | "NATO STANDARD / AEDP-4607 / NATO GROUND MOVING TARGET INDICATOR FORMAT (GMTIF) / Edition A, Version 1 / FEBRUARY 2024" | 1 724 707 | 104 |
+| `nato-aedp-4607-1-edition-a-v1.pdf` | "STANDARDS RELATED DOCUMENT / AEDP-4607.1 / NATO GROUND MOVING TARGET INDICATION FORMAT (GMTIF) - IMPLEMENTATION GUIDE / Edition A, Version 1 / FEBRUARY 2024" | 3 010 604 | 212 |
+
+**The basis is confirmed, and the confirmation is a clause comparison rather than an edition
+string.** What the pin records as the governing text is, verbatim, "**AEDP-4607, NATO Ground Moving
+Target Indicator Format (GMTIF), Edition A Version 1, February 2024**. Every mapped field below
+cites this document" — and the pinned copy *is* that document, not a successor to it. The covering
+chain is stated by both ends independently, which is what makes it a chain and not an assumption:
+the STANAG's AGREEMENT/STANDARD line reads "AEDP-4607, Edition A" and its INTEROPERABILITY
+REQUIREMENTS paragraph names the version — "The data format described in the associated AEDP-4607,
+Edition A, version 1" — while the AEDP's own Letter of Promulgation points back, "The agreement of
+nations to use this publication is recorded in STANAG 4607". So the wrapper's version-less STANDARD
+line is not an ambiguity here: the same cover names Version 1 two paragraphs earlier.
+
+**No substantive divergence was found, and these are the clauses that were compared** — every one a
+clause a settlement or a row set rests on, read in the pinned copy and matched to what this section
+already asserts about it: §2.2's "no provision or need within AEDP-4607 for Start- or End-of Message
+characters"; §3.1.7's "synthesized (a mix of real and simulated data)"; §3.1.8's "uniquely
+identified within the set of platforms it owns"; §3.1.10's "then the Job ID in the Packet Header
+shall be 0 (hex 0x00)"; §3.2.1's "values 4, 7, 8, 9, 11, 14-100, and 103-255 are reserved for
+future use" against Table 3-6's split of `103-127` from `128-255 = Reserved for Extensions`
+(ambiguity 4, still live); §3.2.2's "the number of bytes in this header and the data segment which
+follows this header"; Table 3-4's NATO releasability codewords, `0x0002 EUFOR` and `0x0100 THE
+PUBLIC` among them, against guide Annex G's US-flavoured list (ambiguity 1, still live); §3.4.6's
+"the temporal center of the dwell" against §3.15.1's "the time the report is prepared" (settlement
+5's two kinds of instant); §3.4.10's deferral of the latitude scale factor to the "Implementation
+Guidance Document for this standard"; Table 3-11's `140 = Large Multiple-Return, Simulated Land
+Target` / `142 = Tagging Device` / `143 = Reserved` against §3.4.32.16's and §3.4.32.17's prose
+citing `140` (ambiguity 3, still live, and the value in the pinned table is 142 exactly as recorded);
+and both truth tags' condition, "sent only if the MTI Target in the Report is simulated or a tagging
+device is detected". Ambiguities 1, 3 and 4 are re-confirmed as present in the promulgated text
+rather than closed — they are the standard's, not a stale reading of it.
 
 **Three documents, and the third is not decorative.** The standard defers two things to the guide
 in as many words — the choice of the latitude and longitude scale factors ("shall be chosen in
@@ -5468,6 +5615,8 @@ following the more authoritative statement, or by refusing — never by guessing
 | 15 | **`H15`'s value range restates `B16`'s maximum for a `B32` field, and its minimum is off by a bit.** Table 3-12 gives `H15` Center Frequency a range of "2.384e-7 to 255.9921875" GHz. Annex C-4.5 makes `B32` one sign bit, eight integer bits and **23** fraction bits, so its maximum is 255.999999881 and its LSB is 2^-23 = 1.192e-7 — while 255.9921875 is exactly `B16`'s maximum (256 − 1/128) and 2.384e-7 is exactly 2^-22. So the value-range column appears to have been carried over from a 16-bit field and then had its low end halved once too few times. `H30` and `H31` are `B32` too and their stated range, "0 to 100", says nothing either way | found while implementing, and it costs nothing: Annex C-4.5 defines the ENCODING and Table 3-12 only annotates it, so the field is decoded per C-4.5 and the range column is not enforced. Recorded because an implementer who validated `H15` against the table would reject conformant values between 255.9921875 and 255.999999881, and would accept nothing below 2.384e-7 that the field can in fact carry |
 | 16 | **§3.1.10 and §3.7.1 together make a Job-Definition-only packet unrepresentable under a literal `J1`/`P10` cross-check.** §3.1.10: "if the Packet contains no Dwell, HRR, or Range-Doppler segments, then the Job ID in the Packet Header shall be 0". §3.7.1 and Table 3-14 give `J1` a range of 1 to 4 294 967 295. So a packet carrying a Job Definition Segment and no dwell data must have `P10 = 0` and `J1 ≥ 1`, and the two can never be equal — yet guide Figure 2-1 draws exactly that packet ("Packet Header / Segment Header / Segment No. 1 (Job Definition Segment)") | found while implementing, and the Phase 1 row set had to be narrowed rather than the packet refused. The `J1`/`P10` equality is required **only under §3.1.10's own condition** — that the packet does carry a Dwell, HRR or Range-Doppler segment — and outside it `J1` is the job being *defined* rather than the job the header's data belongs to. Both "shall" statements are kept and Figure 2-1 stays conformant; the fixture `tasking_segments_parked_with_job_id_zero` is what pins the narrowing |
 | 17 | **`H6` and `H7` may both be reported and the standard never says which bounds the scatterer array.** §3.5.6 makes `H6` the "number of Range Doppler pixels that exceed target scatterer threshold and **are reported in this segment**" — a count of records present. §3.5.7 makes `H7` the "number of Range Bins/Samples in a Range Doppler Chip", and then: "**when used with a Sparse HRR chip this field shall define the total number of scatterer records**" — so `H7` is a *dimension* for a contiguous chip and a *record count* for a sparse one, selected by `H23`. Both paragraphs end with the same sentence: "**Either H6 or H7 or both must be reported**." So the unresolved case is explicit in the text rather than hypothetical: a **sparse** chip (`H23 = 3`) carrying **both**, where `H6` states one number of records and `H7` states another. Nothing in §3.5.32 or anywhere else says which governs, and the two readings produce arrays of different lengths — so both produce a *valid-looking* parse of a different number of bytes | **this row is the written justification for the hex-blob parking, and it is why the array is bounded by `S2` instead.** The declines table rejects mapping HRR signature data at all, so the adapter never needs the count: the array is the remainder of the segment, whose end §3.2.2's `S2` gives exactly, and the question is left where the standard left it. Adjudicating `H6` against `H7` would be a translator choosing between two "must be reported" fields on a conformant packet, which is a custodian's act. `H25` and `H26` are still validated (1-or-2 and 0-1-or-2), because they size a record and any other value makes the array indeterminate under *every* reading. **A Phase 3 author who decodes the array has to resolve this first**, and the resolution is an erratum or a per-deployment ICD, not a preference. Row 14 records `H7`'s dual meaning; this row records the collision it creates |
+| 18 | **The implementation guide's document number is spelled four ways across the three pinned documents.** Its own title page and Letter of Promulgation say **`AEDP-4607.1`**; the standard's §3.2 says **`AEDP-4607.01`**; the STANAG cover's English column says `SRD AEDP-4607.1` and its French column says `AEDP-4607.01`. The superseded guide is `AEDP-7` in the standard's body and **`AEDP-07`** in the guide's own Letter of Promulgation. Found on the 2026-08-23 pin re-verification, in documents promulgated on the same day by the same signature | none for the parse — no field carries a document number. It matters for *citation*: this row set writes `AEDP-4607.1` throughout, which is the form the document uses about itself, and a reader grepping the standard for that string will not find it. Recorded rather than harmonised, because picking one spelling for a NATO publication number is a custodian's act |
+| 19 | **The standard sends the reader to a guide that its own co-promulgated guide orders destroyed.** §3.2, in the pinned Edition A Version 1: "AEDP-7 will be replaced by AEDP-4607.01 and as such, AEDP-7 should be treated as the current version of the implementation guidance **until AEDP-4607.01 is published**." AEDP-4607.1 was published on **16 February 2024** — the same Letter of Promulgation date as AEDP-4607 itself, signed by the same Director — and it states that it "supersedes AEDP-07, Edition 2, which shall be destroyed in accordance with the local procedure for the destruction of documents". So the sentence's own condition was satisfied on the day the sentence was promulgated | none, and it is the one ambiguity in this register that *confirms* a decision instead of constraining one: the pin's line "**nothing here was read from AEDP-7**" is what §3.2 would have argued against on a literal reading, and the guide's promulgation letter settles it. The stale sentence is left alone — re-basing normative prose is the act ambiguity 3 declines for the same reason |
 
 ### Deliberately out of scope, and why
 
@@ -5481,7 +5630,7 @@ rejected, or blocked.
 | **STANAG 4607 Edition 3 and earlier** | **deferred** | Same packet structure, same masks, **different enumeration tables** — guide Annex M item 28 moves `Tagging Device` from 143 to 142 and adds ten target classifications. So this is one adapter with a version-dispatched enumeration table, not a second adapter, which is a deliberate departure from the STANAG 4676 Edition 1 decline. Building it needs Edition 3's tables from a document this repository has not pinned. A packet whose `P1` is not `"41"` is refused with the value quoted |
 | **The Range-Doppler Segment (`S1 = 4`)** | **deferred** | §3.6 in the standard is the single word "RESERVED", and §3 says "A preliminary description of the Range-Doppler Segment is provided in the associated guidance". **Preliminary is not normative**, and the guide is not normative for the format. Skipped by `S2`, parked, logged and recorded, on §3.2.1 and §3.2.2 |
 | **LRI (7), Group (8), Attached Target (9) and System-Specific (11) Segments** | **rejected as unimplementable** | Four paragraphs reading "[THIS PARAGRAPH IS RESERVED FOR FUTURE DEFINITION]". There is nothing to defer to. Skipped and parked |
-| **Controlled Extension Segments 128–132** | **blocked, with a stated exit condition** | Guide Annex L.3.1 registers five *approved and validated* extensions — Advanced Dwell, Advanced Job Definition, Advanced Platform Location, Target Centroid, Releasability — and **§L.4, which is supposed to hold their field tables, reads "(TO BE PROVIDED)"**. So a conformant producer may emit segment types a pinned document names and no pinned document defines. **Exit condition, in order:** obtain the five field tables from the STANAG 4607 Custodian or a revision of AEDP-4607.1 that fills §L.4; pin them by SHA-256 the way `sac_pin.json` pins the ASTERIX allocation list; write the row sets; and implement `132 Releasability` **first**, because it extends the fields of settlement 3 and a security extension nobody decodes is the one park with a real cost. Until then all five are skipped and parked |
+| **Controlled Extension Segments 128–132** | **blocked, with a stated exit condition. Re-checked 2026-08-23; the condition is UNMET** | Guide Annex L.3.1 registers five *approved and validated* extensions — Advanced Dwell, Advanced Job Definition, Advanced Platform Location, Target Centroid, Releasability — and **§L.4, which is supposed to hold their field tables, reads "(TO BE PROVIDED)"**. So a conformant producer may emit segment types a pinned document names and no pinned document defines. **The reopen condition was checked against the promulgated Edition A Version 1 text on 2026-08-23 and remains unmet, and the annex now promises the tables in two places and delivers them in neither.** §L.2: "Section L.4 of this Annex provides the tables, descriptions, and rules of use for each Controlled Extension." §L.4, in full: "Descriptions of Controlled Extensions — This section provides tables and descriptions of Controlled Extensions for use with the core set of Headers and Segments identified in Chapter 3 of the standard. **(TO BE PROVIDED)**". §L.3.1's Table L-1 is the half that *is* populated, and its five rows carry submission and approval dates from 2006–2010 with named submitters and approvers (S.C. Bygren and D.T. Bagley, approved by L.A. Moore, 17 Jun 2008 / 17 Mar 2010 / 17 Apr 2010) — so these are extensions approved fourteen to sixteen years before the pinned edition and still undescribed in it, followed by six blank rows numbered `L.4.6` through `L.4.11` for the ones that have not been submitted. **A populated record sheet is not a populated registry**, and the distinction is the whole blocker: the segment type codes are knowable and their field layouts are not. **Exit condition, in order:** obtain the five field tables from the STANAG 4607 Custodian or a revision of AEDP-4607.1 that fills §L.4; pin them by SHA-256 the way `sac_pin.json` pins the ASTERIX allocation list; write the row sets; and implement `132 Releasability` **first**, because it extends the fields of settlement 3 and a security extension nobody decodes is the one park with a real cost. Until then all five are skipped and parked |
 | **Job Request and Job Acknowledge Segments** | **rejected** | They are tasking: a request for sensor service and its acknowledgement. The CDM's four kinds are what exists, what happened, where something has been, and what *we* push out — and a request addressed to somebody else's sensor is none of them. `PlanObject` is emphatically not it, for the reason the CAT021 intent gap states: it models our plan drawn on somebody else's map, and this is somebody else's plan drawn on ours. The standard itself calls both segments "recommendations only and … not required for this format". Parked whole, every field with a row, so that a release which grows a tasking object finds a decision rather than an omission. **Gap 15** is the neighbouring open question |
 | **HRR and Range-Doppler signature data** | **rejected** | `H32.1`–`H32.4` are a scatterer array: magnitudes, phases and bin indices in a sensor-relative range-Doppler space. **A signature is not track state.** Turning one into anything canonical means a target-recognition model, which is a different discipline with its own standards, and the array's *only* geolocatable content is the target report it points at, which is already an object. The segment becomes one `DETECTION` `Event` carrying its parameters and the array parked whole, which is what the never-drop rule requires and the most that can honestly be claimed |
 | **Undoing `H16` threshold decomposition, or applying `H24`'s processing mask** | **rejected** | Signal processing on parked signature data, in an adapter contracted to be a pure function of one payload |
