@@ -4393,3 +4393,646 @@ def test_the_two_ruled_names_agree_at_every_site_that_states_them():
         "purpose — a directory holds payloads and a payload is not a standard — and collapsing "
         "them is the bug 80b38d1 had to repair, not a simplification"
     )
+
+
+# ---------------------------------------- the ASTERIX Category 034 (Monoradar Service Messages) row set
+#
+# Adapter #12's section is a Phase 1 with a FULL row set, which puts it between the two above it and
+# changes what these tests have to guard. STANAG 5527 pins a covering document that states nothing
+# technical, so its risk is a mapping row EXISTING and its tests assert zero. STANAG 4609 pins a
+# profile that delegates every field dictionary, so its risk is a row quoting a document nobody
+# read. Here the document is present and complete — twelve data items with Definitions, Formats,
+# Structures and Encoding Rules, and a fourteen-FRN UAP — so the row set is written FROM it, and
+# the risks are different again:
+#
+#   * a row FLIPPING OFF `not yet` before code exists. Asserted as an equality over the whole
+#     section rather than as a floor, because a Phase 1's claim is that NOTHING is implemented and
+#     a floor cannot say that;
+#   * the PIN being read as current. This is the first pin in this repository that is knowingly
+#     SUPERSEDED — CAT048's own §2.2 names Edition 1.30 — so every site that states the pin must
+#     also state that, and a site that quietly drops it is a site claiming Edition 1.29 is what a
+#     conformant encoder emits;
+#   * the two ruled NAMES collapsing into one by accident rather than by ruling. #9's test asserts
+#     that its two names DIFFER; the naive generalisation of that rule to the whole roster is FALSE
+#     here, so the coincidence is asserted POSITIVELY and with the reasoning required to be present;
+#   * the PAGE COUNT, which needed a method change. The number 41 is not what the method the earlier
+#     pins recorded produces, so the disagreement, the validation and the folio cross-check are all
+#     required to be stated — a corrected number with no record of the correction is indistinguishable
+#     from a typo that happened to be right.
+
+CAT034_HEADING = "## ASTERIX Category 034"
+CAT034_FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" / "cat034"
+CAT034_PIN = CAT034_FIXTURES / "spec" / "cat034_pin.json"
+CAT034_README = CAT034_FIXTURES / "README.md"
+
+#: The pinned document: filename, SHA-256, byte count, page count.
+CAT034_PINNED_DOCUMENT = ("eurocontrol-asterix-cat034-pt2b-ed129.pdf",
+                          "32925e6a04d124cf1f699adb68371bd88806d8cc4ae957df8aacba18cfcae101",
+                          639615, 41)
+
+#: The three lineage PDFs: filename, edition, SHA-256, byte count, page count. NOT pins — the
+#: not-a-pin property is `tests/test_cdm_pins.py`'s; what is checked here is that the RECORD of
+#: them matches the disk, which is the direction that goes stale silently.
+CAT034_HISTORY = (
+    ("eurocontrol-asterix-cat034-pt2b-ed128.pdf", "1.28",
+     "86c13575e95863dcc96b672e47ac8228ccf81f7962428d1a8e8c92752aa91a49", 635545, 43),
+    ("cat034p2bed127.pdf", "1.27",
+     "57585afaef37ce1afa19980a6fe73c90ac0ea7d2fbbe2a24786c0e28f9199264", 265707, 38),
+    ("asterix-cat034-monoradar-service-messages-next-version-of-cat-002part-2b-v1.26-112000.pdf",
+     "1.26", "c0161f64adb3e2b051845e4f4f6f658f1083a6da8fa53e62bc1376c526cd38f5", 188590, 38),
+)
+
+
+def _cat034_sites() -> dict[str, str]:
+    """The three files that state the ruling, so a fact can be checked at every one."""
+    return {
+        "FORMAT_COVERAGE.md": _section(CAT034_HEADING),
+        "fixtures/cat034/spec/cat034_pin.json": CAT034_PIN.read_text(),
+        "fixtures/cat034/README.md": CAT034_README.read_text(),
+    }
+
+
+def test_the_cat034_row_set_exists_and_every_row_of_it_says_not_yet():
+    """Phase 1's whole claim: the mapping is a specification and NOTHING is implemented.
+
+    Asserted as an equality and not as a floor, which is the difference between this and a
+    "has the section got rows" check. `>= 30 rows say not yet` would stay green with one row
+    flipped to `cat034 1.0.0` by an editor who assumed the adapter had landed; `every mapping row
+    says not yet` fails on the first one. The KLV block one screen up makes the same assertion for
+    the same reason, and the FFT block makes the mirror-image one — zero rows, because that phase
+    specified nothing.
+    """
+    section = _section(CAT034_HEADING)
+    rows = [ln for ln in section.splitlines() if ln.startswith("|")]
+    assert len(rows) >= 60, (
+        f"the CAT034 section has {len(rows)} table lines. A twelve-item row set with an egress "
+        "table and a twenty-fixture plan contributes far more than that, so the section has been "
+        "truncated or the heading no longer matches"
+    )
+    not_yet = [ln for ln in rows if "`not yet`" in ln]
+    assert len(not_yet) >= 40, (
+        f"only {len(not_yet)} rows say `not yet`. Every mapping row must, because no adapter "
+        "implements any of them"
+    )
+    # THE EQUALITY: no row carries a terminal status marker for this adapter, anywhere.
+    doc = DOC.read_text()
+    for marker in ("`cat034 1.0.0`", "`cat034 1.0.0 · parked`", "`cat034 1.0.0 · egress`"):
+        assert marker not in doc, (
+            f"{marker} appears in FORMAT_COVERAGE.md. There is no `adapters/asterix_cat034.py`, so "
+            "a terminal status marker is a claim nothing implements — and when the adapter lands "
+            "this assertion inverts, exactly as CAT021's, NITS's, GMTIF's and CAT048's did"
+        )
+    from synapse_cdm import adapter as adapter_module
+    assert "cat034" not in set(adapter_module.discover()), (
+        "`cat034` is a registered adapter, so this section is no longer Phase 1. Flip the rows and "
+        "invert this test in the same commit"
+    )
+    # And the absence is STATED. An unimplemented section and a section that says so look identical
+    # to a grep and completely different to a reader.
+    assert "Every row below says `not yet`, and that is the section." in _flat(section), (
+        "the section no longer opens by saying nothing in it is implemented"
+    )
+
+
+def test_the_cat034_pin_agrees_at_every_site_and_says_it_is_not_the_current_edition():
+    """One document, four sites, the pin row as ONE composite string — plus the supersession.
+
+    The composite-string form is the residue of the mutation found inside `klv_pin.json`: checking
+    hash, bytes and pages as three substrings makes each a disjunction over the whole file, and a
+    wrong page count passes because the right number still occurs elsewhere.
+
+    The second half has no precedent here and is the reason this test is not a copy of the FFT one.
+    **This is the first knowingly superseded pin in this repository.** Nothing about the hash, the
+    bytes or the pages would go wrong if every site forgot that Edition 1.30 exists — and a reader
+    would then take Edition 1.29 for the current standard, which is the one thing this pin must not
+    be read as. So the supersession is asserted at every site that states the pin.
+    """
+    filename, digest, size, pages = CAT034_PINNED_DOCUMENT
+    spaced = _spaced(size)
+
+    # 1. The JSON, read as data. No substrings.
+    pin = json.loads(CAT034_PIN.read_text())["source"]
+    assert pin["sha256"] == digest, f"cat034_pin.json sha256 is {pin['sha256']}"
+    assert pin["bytes"] == size, f"cat034_pin.json bytes is {pin['bytes']}"
+    assert pin["pages"] == pages, f"cat034_pin.json pages is {pin['pages']}"
+    assert pin["edition"] == "1.29", pin["edition"]
+    assert pin["local_path"] == f"fixtures/cat034/spec/{filename}", pin["local_path"]
+
+    # 2. FORMAT_COVERAGE.md's pin row, as one composite string.
+    row = f"`{digest}`, {spaced} bytes, {pages} pages, `fixtures/cat034/spec/{filename}`"
+    assert row in _section(CAT034_HEADING), (
+        f"FORMAT_COVERAGE.md's pin row for {filename} is not\n  {row}"
+    )
+
+    # 3. The fixture README's table row, likewise.
+    readme_row = f"| `spec/{filename}` | `{digest}` | {spaced} | {pages} |"
+    assert readme_row in CAT034_README.read_text(), (
+        f"fixtures/cat034/README.md's table row is not\n  {readme_row}"
+    )
+
+    # 4. MIGRATIONS.md, in this document's own ellipsised form, also as one string.
+    migrations_fact = f"(`{_abbreviated(digest)}`, {spaced} bytes, {pages} pages)"
+    assert migrations_fact in MIGRATIONS.read_text(), (
+        f"MIGRATIONS.md's Phase 1 entry no longer states the pin as\n  {migrations_fact}"
+    )
+
+    # 5. The file itself, when this working tree has it, and no PDF tracked anywhere.
+    path = CAT034_FIXTURES / "spec" / filename
+    if path.exists():
+        assert path.stat().st_size == size, f"{filename} at the pinned path is the wrong size"
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        assert got == digest, f"{filename} at the pinned path hashes to {got}"
+    assert [p for p in _tracked_files() if p.endswith(".pdf")] == [], "PDFs are tracked"
+
+    # 6. THE SUPERSESSION, at all three prose sites and in the JSON as data.
+    superseded = pin_json = json.loads(CAT034_PIN.read_text())
+    node = superseded["the_pin_is_not_the_latest_edition_and_that_is_stated_first"]
+    assert "Edition 1.30" in node["finding"], node["finding"]
+    # SCOPED, and the scoping is the lesson rather than a detail. `"Edition 1.30" in section` is a
+    # disjunction over everything the section says, and mutation showed it: deleting the pin
+    # table's supersession row left the suite green because the prose below still mentioned the
+    # edition. So each site is pinned to the ONE sentence that carries the claim, as a composite
+    # string — the same repair the KLV delegation row needed, reached here by the same route.
+    site_claims = {
+        "FORMAT_COVERAGE.md": (
+            "| **Edition 1.30** | **NOT IN HAND, and it is the current edition.** "
+            "See immediately below |"),
+        # The README's claim has to NAME the superseding edition, not merely assert that one
+        # exists: "1.29 is not the newest" tells a reader to go looking and "Edition 1.30" tells
+        # them what to look for. Mutation removed the number and left the sentence, and the first
+        # version of this string could not tell the difference.
+        "fixtures/cat034/README.md": (
+            "**Edition 1.29 is the newest edition in hand. It is not the newest published**, "
+            "and this repository held the proof before this round began"),
+    }
+    for label, claim in site_claims.items():
+        text = _cat034_sites()[label]
+        assert claim in " ".join(text.split()) or claim in text, (
+            f"{label} no longer carries the supersession claim as\n  {claim}\n"
+            "Edition 1.29 is the covering edition and not the current one. Asserted as one "
+            "composite string because a bare 'Edition 1.30' is satisfied by any other mention"
+        )
+    assert node["reopen_condition"].startswith("Obtain Edition 1.30"), node["reopen_condition"]
+    # And every prose site carries the SOURCED form of the claim: the CAT048 reference quoted with
+    # its document identifier and its edition together. A count of "Edition 1.30" was tried and
+    # rejected — the number occurs four times in the README, so a threshold either passes with the
+    # sourced sentence gutted or fails on an ordinary edit. The quotation cannot be satisfied by
+    # an incidental later mention, which is the property a count does not have.
+    sourced = "(EUROCONTROL-SPEC-0149-2b)"
+    for label in ("FORMAT_COVERAGE.md", "fixtures/cat034/README.md"):
+        flat = _flat(_cat034_sites()[label])
+        assert f"{sourced} **Edition 1.30**" in flat or f"{sourced}\n**Edition 1.30**" in flat, (
+            f"{label} no longer quotes CAT048 §2.2 reference 5 with the identifier and the edition "
+            f"together. That quotation is the EVIDENCE that Edition 1.29 is superseded; without it "
+            "the site asserts a supersession and names no source for it"
+        )
+    # And the source of the supersession claim is the OTHER pin, not a recollection — so the
+    # quotation has to still be there to be cited. Read from the node that holds it rather than
+    # from the whole file, because `"Edition 1.30" in json.dumps(pin)` is a disjunction over 1 400
+    # lines and would survive the cat034_boundary node being deleted outright.
+    cat048_pin = json.loads(
+        (pathlib.Path(synapse_cdm.__file__).resolve().parent
+         / "fixtures" / "cat048" / "spec" / "cat048_pin.json").read_text())
+    boundary = cat048_pin["cat034_boundary"]
+    assert "Edition 1.30" in boundary["quoted"], (
+        "cat048_pin.json's cat034_boundary no longer quotes CAT034 Edition 1.30. That quotation is "
+        "the SOURCE of this section's supersession claim; without it the claim is a recollection"
+    )
+
+
+@pytest.mark.parametrize("filename,edition,digest,size,pages", CAT034_HISTORY,
+                         ids=lambda x: str(x)[:24])
+def test_every_cat034_lineage_entry_matches_the_disk(filename, edition, digest, size, pages):
+    """The lineage record against the files, one test per edition rather than one over three.
+
+    `tests/test_cdm_pins.py` asserts that none of these is a pin. This asserts the other thing:
+    that the RECORD of each one is true. Those are different failures — a lineage entry promoted
+    to a pin is loud, and a lineage entry whose hash silently stops matching its file is not.
+
+    Parametrised per edition so the failure names the edition. The pin gate deliberately does NOT
+    parametrise its two history checks, for the opposite reason given there; here the entries are
+    already a list in the record, so reading them from it adds no second site.
+    """
+    entry = next((e for e in json.loads(CAT034_PIN.read_text())["edition_history"]["files"]
+                  if e["filename"] == filename), None)
+    assert entry is not None, (
+        f"cat034_pin.json's edition_history has no entry for {filename}"
+    )
+    assert entry["edition"] == edition, entry["edition"]
+    assert entry["sha256"] == digest, entry["sha256"]
+    assert entry["bytes"] == size, entry["bytes"]
+    assert entry["pages"] == pages, entry["pages"]
+    assert entry["document_identifier"] in (
+        "SUR.ET1.ST05.2000-STD-02b-01", "EUROCONTROL-SPEC-0149-2b"), entry["document_identifier"]
+    path = CAT034_FIXTURES / "spec" / "history" / filename
+    if not path.exists():
+        pytest.skip(f"{filename} is not in this working tree; the record of it is")
+    assert path.stat().st_size == size, f"{filename} is {path.stat().st_size} bytes on disk"
+    got = hashlib.sha256(path.read_bytes()).hexdigest()
+    assert got == digest, f"{filename} hashes to {got} on disk"
+
+
+def test_the_reference_number_migration_is_bracketed_and_states_both_sides():
+    """The migration is a FACT OF THE HISTORY and its evidence is that both sides are in hand.
+
+    The claim "the reference number changed between 1.27 and 1.28" is exactly the kind that gets
+    written from a filename and never checked. What makes it checkable here is that the lineage
+    record carries a `document_identifier` for every edition, read off each title page — so the
+    boundary is asserted against the record rather than against the prose that states it.
+    """
+    history = json.loads(CAT034_PIN.read_text())["edition_history"]["files"]
+    by_edition = {e["edition"]: e["document_identifier"] for e in history}
+    by_edition["1.29"] = json.loads(CAT034_PIN.read_text())["source"]["document_identifier"]
+    assert by_edition["1.26"] == "SUR.ET1.ST05.2000-STD-02b-01", by_edition
+    assert by_edition["1.27"] == "SUR.ET1.ST05.2000-STD-02b-01", by_edition
+    assert by_edition["1.28"] == "EUROCONTROL-SPEC-0149-2b", by_edition
+    assert by_edition["1.29"] == "EUROCONTROL-SPEC-0149-2b", by_edition
+    # The boundary is bracketed: the last old and the first new are both held.
+    old = {e for e, i in by_edition.items() if i.startswith("SUR.")}
+    new = {e for e, i in by_edition.items() if i.startswith("EUROCONTROL-")}
+    assert max(old) < min(new), f"the migration is not monotonic: old={old} new={new}"
+    node = json.loads(CAT034_PIN.read_text())["the_reference_number_migration"]
+    assert "1.27" in node["fact"] and "1.28" in node["fact"], node["fact"]
+    # SCOPED to the migration subsection. Both identifiers also appear in the lineage table two
+    # paragraphs up, so `both in section` is a disjunction that survives the migration statement
+    # being reduced to "the reference number changed" — which mutation demonstrated.
+    section = _section(CAT034_HEADING)
+    start = section.index("#### The reference-number migration")
+    end = section.index("\n#### ", start + 10)
+    migration = _flat(section[start:end])
+    assert "`SUR.ET1.ST05.2000-STD-02b-01` → `EUROCONTROL-SPEC-0149-2b`" in migration, (
+        "the migration subsection no longer states the change as one arrow between the two "
+        "identifiers. One side alone reads as the document's only identifier, which is what makes "
+        "a stale ICD citation invisible"
+    )
+    assert "between Edition 1.27 and Edition 1.28" in migration, (
+        "the migration subsection no longer states WHERE the boundary is"
+    )
+    assert "bracketed" in migration, (
+        "the migration subsection no longer records that both sides of the boundary are in hand, "
+        "which is the whole reason this claim is checkable rather than inferred"
+    )
+
+
+def test_the_cat002_lineage_is_recorded_at_the_strength_of_a_filename_and_no_stronger():
+    """A publisher's filename is the whole of the evidence, and the record has to say so.
+
+    This is the assertion that stops a later editor promoting the lineage to a document fact. The
+    claim is true and its source is weak, and both halves have to survive: an edit that deletes the
+    hedge turns "EUROCONTROL names the file this way" into "the standard says so", which no
+    document in hand does.
+    """
+    node = json.loads(CAT034_PIN.read_text())["the_cat002_lineage"]
+    assert "filename" in node["where_the_claim_comes_from_and_where_it_does_not"], node
+    assert "zero times" in node["where_the_claim_comes_from_and_where_it_does_not"], (
+        "the record no longer states that 'Category 002' occurs zero times in the document bodies. "
+        "That measurement is what makes the hedge a finding rather than a caveat"
+    )
+    assert node["what_is_NOT_claimed"], "the not-claimed list is empty"
+    flat = _flat(_section(CAT034_HEADING))
+    assert "publisher's filename" in flat, (
+        "the section no longer says the CAT002 claim rests on a filename"
+    )
+    assert "zero** times" in flat or "**zero**" in flat, (
+        "the section no longer states the zero-occurrence measurement"
+    )
+    # And the same device is recorded as already present for Part 4, which is what makes the
+    # DISPOSITION (record it, do not name the adapter after it) a precedent rather than a choice.
+    assert "next version of cat-001" in flat, (
+        "the section no longer cites CAT048's identically-named history files. Without them the "
+        "decision not to name this adapter `cat002` has no precedent behind it"
+    )
+
+
+def test_the_two_cat034_names_are_the_same_string_and_the_section_says_why():
+    """THE DISJUNCTION TREATMENT, applied to a case where the two names COINCIDE.
+
+    #9's test asserts that its adapter name and fixture directory still DIFFER, because collapsing
+    two rulings with different evidence into one cell hides that they have different lifetimes.
+    The naive generalisation — "an adapter's name always differs from its directory" — is FALSE for
+    the ASTERIX family, and a round that applied it would rename this directory for no reason.
+
+    So the coincidence is asserted POSITIVELY, collected from every site the way #9's difference is,
+    AND the reasoning is required to be present. A ruling that happens to be right with no record
+    of why is the thing the next editor overturns.
+    """
+    import importlib
+    harness_tests = importlib.import_module("tests.test_cdm_harness")
+
+    pin = json.loads(CAT034_PIN.read_text())
+    ordinal_table = _section("### The adapter ordinals")
+
+    adapter_name = {
+        "cat034_pin.json": pin["adapter"]["name"],
+        "cat034_pin.json (the ruling)": pin["adapter"]["name_ruling"]["ruled"],
+        "test_cdm_harness.py PLANNED_FIXTURE_DIRS":
+            next(n for n in harness_tests.PLANNED_FIXTURE_DIRS if n.startswith("cat0")),
+        "FORMAT_COVERAGE.md ordinal table":
+            re.search(r"\|\s*12\s*\|\s*`([a-z0-9]+)`", ordinal_table).group(1),
+    }
+    assert len(set(adapter_name.values())) == 1, (
+        f"the adapter name disagrees across sites: {adapter_name}"
+    )
+    name = next(iter(adapter_name.values()))
+    assert name == "cat034", name
+
+    directory = {
+        "cat034_pin.json": pin["adapter"]["fixture_directory"],
+        "test_cdm_harness.py PLANNED_FIXTURE_DIRS": harness_tests.PLANNED_FIXTURE_DIRS[name],
+        "the pinned path": pin["source"]["local_path"].split("/")[1],
+    }
+    assert len(set(directory.values())) == 1, (
+        f"the fixture directory disagrees across sites: {directory}"
+    )
+    fixture_dir = next(iter(directory.values()))
+    assert fixture_dir == "cat034" and (CAT034_FIXTURES.parent / fixture_dir).is_dir()
+
+    # THE POSITIVE ASSERTION, and the one #9's mirror image would get wrong.
+    assert name == fixture_dir, (
+        "the adapter name and the fixture directory have diverged. They are the same string here "
+        "on purpose — an ASTERIX category IS the payload — exactly as `cat021`'s and `cat048`'s "
+        "are, and splitting them would be applying #9's rule to a case it does not reach"
+    )
+    for other in ("cat021", "cat048"):
+        assert harness_tests.SHIPPED_FIXTURE_DIRS[other] == other, (
+            f"{other}'s directory is no longer its own name, so the precedent this ruling rests on "
+            "has moved. Re-rule the CAT034 name in the same commit"
+        )
+    # And the reasoning is present rather than only the outcome.
+    assert f"`{name}` is adapter #12" in CAT034_README.read_text(), (
+        "fixtures/cat034/README.md no longer states the ordinal in the claim form, which is the "
+        "form tests/test_cdm_ordinals.py binds"
+    )
+    flat = _flat(_section(CAT034_HEADING))
+    assert "precedent and the document agree" in flat.lower(), (
+        "the section no longer records WHAT decided the name. RULING 0 asked for the deciding "
+        "source to be stated, and 'both' is the answer only while it is written down"
+    )
+    assert "only bites when the adapter is named after a" in flat, (
+        "the section no longer says why the payload-versus-standard split does not apply here. "
+        "Without it, the coincidence reads as the bug 80b38d1 repaired rather than as a ruling"
+    )
+
+
+def test_the_page_count_method_change_is_recorded_with_its_validation():
+    """A corrected number with no record of the correction is a typo that happened to be right.
+
+    41 is not what the method `klv_pin.json` records would produce for this file, and this is the
+    first round where the two methods disagree. Three things therefore have to be stated, and each
+    is a different kind of claim: WHAT disagrees (a measurement), WHY the new method is trusted
+    (a validation against ten known answers), and a check that does not depend on either tool (the
+    document's own printed folios). Any one of them alone is an assertion; the three together are
+    a derivation.
+
+    The fourth assertion is the one that keeps the past honest: `klv_pin.json`'s method string must
+    NOT have been rewritten. It describes what was done for those documents and it was correct for
+    them, and editing it to match a later method would erase the fact that the method changed.
+    """
+    node = json.loads(CAT034_PIN.read_text())["page_count_method"]
+    assert "/pages tree" in node["how"].lower(), node["how"]
+    disagreement = node["the_disagreement_measured"]
+    assert "41" in disagreement["edition_1_29"] and "43" in disagreement["edition_1_29"]
+    assert "43" in disagreement["edition_1_28"] and "44" in disagreement["edition_1_28"]
+    assert "38" in disagreement["editions_1_27_and_1_26"]
+    # The validation, and it has to name the reproduced counts rather than assert success.
+    for count in ("64", "73", "212", "104", "192", "150"):
+        assert count in node["the_method_was_validated_before_it_was_preferred"], (
+            f"the validation no longer names the page count {count}. A validation that says "
+            "'all ten reproduced' without the numbers is a claim, not evidence"
+        )
+    assert "printed folios" in node["the_stronger_check_does_not_depend_on_either_tool"]
+    assert "1 + 7 + 33 = 41" in node["the_stronger_check_does_not_depend_on_either_tool"]
+    # The section states it too, because a reader meets 41 there first.
+    flat = _flat(_section(CAT034_HEADING))
+    assert "over-counts two of these four files" in flat, (
+        "the section no longer records that the earlier page-count method over-counts here"
+    )
+    assert "no existing pin moves" in flat, (
+        "the section no longer states that the new method reproduces every existing pin's count. "
+        "Without it, a method change reads as a reason to re-open ten settled numbers"
+    )
+    # AN ABSENCE: the past record is untouched.
+    klv = json.loads((pathlib.Path(synapse_cdm.__file__).resolve().parent
+                      / "fixtures" / "klv" / "spec" / "klv_pin.json").read_text())
+    assert "/Type /Page" in json.dumps(klv), (
+        "klv_pin.json's page_count_method no longer describes the raw-object scan. It was rewritten "
+        "to match the newer method, which erases the fact that the method changed — the CAT034 pin "
+        "records the change deliberately so that record does not have to move"
+    )
+
+
+def test_the_change_record_over_claim_is_measured_and_the_governing_rule_is_stated():
+    """Two of Edition 1.29's three change-record claims are false, and the finding sets a RULE.
+
+    This is not a curiosity. A change record is what a later round reaches for when it wants to
+    know when something was introduced, and the CAT048 lineage round built an entire table from
+    one. So the disposition matters more than the finding: where a record and the text disagree,
+    the TEXT governs. That sentence has to survive, or the next round quietly treats a record as a
+    source again.
+
+    The measurements are asserted as numbers because "identical" is a judgement and "254
+    characters" is a check somebody can repeat.
+    """
+    node = json.loads(CAT034_PIN.read_text())["the_document_change_record_over_claims_and_it_is_measured"]
+    verdicts = {c["claim"]: c["verdict"] for c in node["what_edition_1_29_s_record_says_it_changed"]}
+    assert sum(v == "FALSE" for v in verdicts.values()) == 2, verdicts
+    assert sum(v == "TRUE" for v in verdicts.values()) == 1, verdicts
+    assert "254 characters" in node["section_2_2"], node["section_2_2"]
+    assert "1690 characters" in node["section_3_1"], node["section_3_1"]
+    # The TRUE one is corroborated two ways, which is what makes the two FALSE ones credible.
+    assert "Five types" in node["section_4_6_1_and_5_2_1"]
+    assert "Seven types" in node["section_4_6_1_and_5_2_1"]
+    # THE RULE, at the pin and in the section.
+    assert "TEXT governs" in node["verdict"] or "TEXT GOVERNS" in node["verdict"], node["verdict"]
+    flat = _flat(_section(CAT034_HEADING))
+    assert "where a change record and the text disagree, the TEXT governs" in flat, (
+        "the section no longer states the governing rule the over-claim produced. The finding "
+        "without the rule is trivia; the rule is what the next lineage round inherits"
+    )
+
+
+def test_the_sensor_position_finding_changes_nothing_and_says_so_at_both_ends():
+    """The strongest cross-format finding of the round, and its whole content is a REFUSAL.
+
+    `I034/120` is the value CAT048 settlement 3 has the caller inject and gap 24 records as absent
+    from the CAT048 document. The tempting move is to close gap 24, or to have this adapter hand
+    the position over to the one at #11. Both are cross-payload state, the fusion refusal.
+
+    So this is asserted at BOTH ends: the CAT034 section must state the refusal, and gap 24 must
+    still be open. The second half is the one that decays — a later reader meeting both sections
+    could reasonably conclude the gap was closed and nobody updated the list.
+    """
+    flat = _flat(_section(CAT034_HEADING))
+    assert "I034/120" in flat, "the section no longer names the item"
+    assert "Gap 24 does not close, deliberately" in flat, (
+        "the section no longer states that gap 24 stays open. Without it, the finding reads as a "
+        "closure that nobody recorded"
+    )
+    assert "hand it to nobody" in flat or "hand to nobody" in flat, (
+        "the section no longer states the refusal in as many words"
+    )
+    # Gap 24 is still a gap, in the gaps list, unqualified.
+    gaps = DOC.read_text()[DOC.read_text().index("## Gaps, and what each one costs"):]
+    assert re.search(r"^24\. \*\*No sensor frame", gaps, re.M), (
+        "gap 24 is no longer in the gaps list under its own number. CAT034 carrying a station "
+        "position does not change what the CAT048 document contains"
+    )
+    # And the eighth statement of the fusion refusal is present and numbered — bound to the
+    # SETTLEMENT HEADING, not to the section. "for the eighth time" occurs twice (the heading and
+    # the declines table), so an unscoped `in` is a disjunction: mutation changed the heading and
+    # the suite stayed green because the table still said it.
+    assert "### Settlement 6 — A translator owes no fusion. Stated once, and for the eighth time" \
+        in DOC.read_text(), (
+            "the CAT034 fusion-refusal settlement is no longer numbered as the eighth in its own "
+            "heading. The count is how a reader sees that it is a standing rule and not a "
+            "per-format opinion, and the heading is the site a reader meets first"
+        )
+
+
+def test_gap_29_is_opened_for_the_interference_vocabulary_and_no_field_is_proposed():
+    """The one gap this round opens, and the proposal it deliberately does not make.
+
+    The bar this repository holds itself to is stated in MIGRATIONS.md: one format wanting a shape
+    is a gap and two are a proposal. Only CAT034 has raised this one. So two things are asserted
+    together — that the gap exists with its reasoning, and that nothing was added to the 1.1.0
+    list on the strength of a single format.
+    """
+    gaps = DOC.read_text()[DOC.read_text().index("## Gaps, and what each one costs"):]
+    assert re.search(r"^29\. \*\*No interference vocabulary that is not about GNSS", gaps, re.M), (
+        "gap 29 is not in the gaps list under its own number"
+    )
+    gap = gaps[gaps.index("29. **No interference vocabulary"):]
+    flat = _flat(gap)
+    assert "GnssInterferencePayload" in flat, "gap 29 no longer names the payload it is about"
+    assert "Not proposed as a field for 1.1.0" in flat, (
+        "gap 29 no longer states that it is not a proposal. A gap that does not say why it stopped "
+        "short of one is a proposal somebody forgot to write"
+    )
+    assert "one format wanting a shape is a gap and two are a proposal" in flat, (
+        "gap 29 no longer states the bar it is being held to"
+    )
+    # The row set's ruling agrees with the gap, at the other end of the document.
+    section = _flat(_section(CAT034_HEADING))
+    assert "never sets `GNSS_INTERFERENCE`" in section or \
+           "`GNSS_INTERFERENCE` is never set" in section or \
+           "and it never sets `GNSS_INTERFERENCE`" in section, (
+        "the CAT034 settlement no longer states that GNSS_INTERFERENCE is never set"
+    )
+    assert "**Gap 29** is opened for it" in section, (
+        "the settlement no longer points at the gap it opened"
+    )
+    # AN ABSENCE: nothing was added to the 1.1.0 proposal list.
+    proposed = MIGRATIONS.read_text()
+    proposed = proposed[proposed.index("## Proposed for 1.1.0"):]
+    for token in ("RF_INTERFERENCE", "InterferencePayload", "GNSS_INTERFERENCE"):
+        assert token not in proposed, (
+            f"{token} has appeared in MIGRATIONS.md's 1.1.0 proposal list. One format raised this; "
+            "the bar for a proposal is two, and gap 29 says so"
+        )
+
+
+def test_migrations_records_the_cat034_phase_1_and_what_it_does_not_propose():
+    """The Phase 1 entry, and the two absences that make it an entry rather than an announcement.
+
+    The heading it sits under — "Row sets written as specifications, with no adapter code yet" —
+    exists because a Phase 1 that proposes nothing and a Phase 1 nobody thought about look identical
+    from this file. So the entry has to say what it did NOT propose and why, which is the half a
+    later reader cannot reconstruct.
+    """
+    text = MIGRATIONS.read_text()
+    start = text.index("### Row sets written as specifications, with no adapter code yet")
+    end = text.index("## Proposed for 1.1.0")
+    section = _flat(text[start:end])
+    assert "`cat034` — ASTERIX Part 2b Category 034" in section, (
+        "MIGRATIONS.md has no CAT034 Phase 1 entry under the specifications heading"
+    )
+    assert "no adapter code, no codec, no fixtures" in section
+    assert "**gap 29**" in section, "the entry no longer names the gap it opened"
+    assert "No field is proposed for 1.1.0 on the strength of it" in section, (
+        "the entry no longer says what it declined to propose"
+    )
+    assert "gap 24 does not close" in section.lower(), (
+        "the entry no longer records that the I034/120 finding closes nothing"
+    )
+    # And the changelog page states none of it, for the f99a4b0 reason: Phase 1 is repository
+    # process, not schema history.
+    repo = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
+    page = (repo / "docs" / "docs" / "changelog.mdx").read_text()
+    for token in ("cat034", "CAT034", "Category 034", "I034/", "0149-2b"):
+        assert token not in page, (
+            f"docs/docs/changelog.mdx now mentions {token!r}. That page carries schema history for "
+            "a reader of the published contract; #12 has no schema to report, and gap 29 is a gap "
+            "rather than a proposal — see the f99a4b0 ruling in tests/test_cdm_changelog_claim.py"
+        )
+
+
+def test_the_cat034_rows_are_actually_resolved_against_the_models():
+    """A section that contributes ZERO paths passes the parametrised resolver by contributing no
+    cases, and a silent zero looks exactly like a clean pass.
+
+    The GMTIF block makes the same check for the same reason. What is different here is the egress
+    table: five of the six egress row sets in this document are headed `| CDM | <format> | ... |`
+    and therefore contribute nothing to the resolver at all — the defect `_cdm_paths`'s docstring
+    records. GMTIF's was repaired; CAT034's is written repaired. So this test asserts that the
+    egress paths ARE among the resolved set, which is the half no other ASTERIX section can claim.
+    """
+    section = _section(CAT034_HEADING)
+    paths, column = [], None
+    for line in section.splitlines():
+        if not line.startswith("|"):
+            column = None
+            continue
+        if line.startswith("|---"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if CDM_COLUMN in cells:
+            column = cells.index(CDM_COLUMN)
+            continue
+        if column is None or column >= len(cells):
+            continue
+        paths += _cell_paths(cells[column])
+    assert len(paths) >= 30, (
+        f"the CAT034 section resolved only {len(paths)} CDM path cells. A twelve-item row set with "
+        "an egress table contributes far more, so a table header the parser does not recognise has "
+        "crept in — check that every mapping table says exactly 'CDM field'"
+    )
+    # THE HEADERS THEMSELVES, counted. A floor plus a required-paths list is not enough and
+    # mutation proved it: dropping ONE table's header left both satisfied, because that table's
+    # paths (`Entity.attributes`, `Event.payload`) also occur in six others. Nine mapping tables
+    # go in and nine have to be parseable, so the count is the claim — the same reason the
+    # `not yet` check above is an equality rather than a floor.
+    headers = section.count("| CAT034 | CDM field | Status | Notes |")
+    assert headers == 7, (
+        f"{headers} of the CAT034 ingress row-set tables are headed `| CAT034 | CDM field | Status "
+        "| Notes |`, expected 7. A table headed anything else contributes ZERO paths to the "
+        "resolver and its rows silently stop being checked against the models — which a floor "
+        "cannot catch, because the other tables carry the floor on their own"
+    )
+    assert section.count("| CDM field | CAT034 | Status | Notes |") == 1, (
+        "the egress table's header changed. There is exactly one egress table"
+    )
+    assert section.count("| CDM field | Filled with | Why the format cannot say |") == 1, (
+        "the fills table's header changed. There is exactly one fills table"
+    )
+    # The paths the settlements turn on. Each would be the tell if a whole table were dropped.
+    for required in ("Entity.position", "Position.lat", "Position.lon", "Position.alt_m",
+                     "Position.accuracy_m", "Position.position_source", "Entity.entity_type",
+                     "Entity.affiliation", "Entity.source_ids", "Entity.attributes",
+                     "Event.payload", "Event.event_type", "Event.severity", "Event.geometry",
+                     "SourceRef.synthetic", "Event.received_at"):
+        assert required in paths, (
+            f"{required} is not among the paths the CAT034 section resolves. Either the row that "
+            "should carry it has lost its CDM field, or its table's header no longer names the "
+            "column — and in both cases the row stopped being checked against the models"
+        )
+    # The egress half specifically, which is what the header change bought.
+    egress = section[section.index("### Row set — egress"):]
+    assert "| CDM field | CAT034 | Status | Notes |" in egress, (
+        "the CAT034 egress table's header no longer names the CDM column, so its rows have stopped "
+        "being resolved against the models — the state the other five egress tables are still in, "
+        "and the one this table was written out of"
+    )
+    assert set(paths) <= set(PATHS), (
+        f"the section resolves paths the document-wide sweep does not: "
+        f"{sorted(set(paths) - set(PATHS))}"
+    )

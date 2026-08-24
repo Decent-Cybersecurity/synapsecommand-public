@@ -1,0 +1,384 @@
+{
+  "what_this_is": "The pinned identity of the document the CAT034 row set in FORMAT_COVERAGE.md was read from, plus every value extracted from it that a ruling cites, each with its locus. Written before the row set, for the reason the Legion, CAT021, CAT048, KLV and FFT pins were: a quotation with no pin behind it is a recollection.",
+  "adapter": {
+    "name": "cat034",
+    "ordinal": 12,
+    "phase": "1 - specification only. No adapter code, no codec, no fixtures.",
+    "fixture_directory": "cat034",
+    "name_ruling": {
+      "ruled": "cat034",
+      "confidence": "settled",
+      "deciding_source": "PRECEDENT AND DOCUMENT AGREEING, and the ruling says which half does what.",
+      "what_precedent_decides": "The roster carries two conventions - `gmti` names the content of STANAG 4607 while `stanag4676`, `stanag4609` and `stanag5527` name the standard - and for the ASTERIX family it is settled and unanimous: `cat021` for Part 4 Category 021 and `cat048` for Part 4 Category 048, each the category number and nothing else, each with its fixture directory carrying the SAME string. Two prior members, one convention, no counter-example. So unlike the three STANAG rulings, precedent DOES decide this one, and it decides it before the document is opened.",
+      "what_the_document_adds": "That the precedent is applicable rather than merely available. STANAG 4609 Edition 5 and STANAG 5527 Edition 2 could not name their own adapters because neither states a field, a message, an encoding or an identifier. This document states twelve: I034/000, /010, /020, /030, /041, /050, /060, /070, /090, /100, /110 and /120, each with a Definition, a Format, a Structure and an Encoding Rule, plus a fourteen-FRN standard UAP in section 5.3. It is a content document, so the covering-document reasoning that produced `stanag4609` and `stanag5527` does not reach it.",
+      "the_two_agree": "Precedent says category-number-only; the document says it is a category with a number. Both give `cat034`, and the ruling records both rather than picking the shorter answer - the document alone would leave the FORM of the name open (`asterix034`, `monoradar_service`, `msm`), and precedent alone would be a habit applied to a document nobody checked was of the same kind.",
+      "why_the_fixture_directory_is_the_SAME_string_here_and_differs_for_the_STANAGs": "A directory holds payloads and a payload is not a standard - the split that puts `stanag4676`'s fixtures in `fixtures/nits`, `stanag4609`'s in `fixtures/klv` and `stanag5527`'s in `fixtures/fft`. That split only bites when the adapter is named after a STANDARD, because then the standard's name is the wrong name for the bytes. Here the adapter is already named after the CONTENT - an ASTERIX category IS the payload, and `.cat034` is what the files will be called - so the two names coincide, and they coincide the way `cat021` and `cat048` do rather than by the collapse `tests/test_cdm_format_coverage.py` warns about for #9. Recorded explicitly because a test that asserts adapter-name != directory-name for #9 must NOT be generalised to this family."
+    },
+    "rejected_candidates": [
+      {
+        "candidate": "asterix034 / asterix_cat034",
+        "why_rejected": "Names the family rather than the member, and the family already has two members here with plain category names. `adapters/asterix_cat021.py` and `adapters/asterix_cat048.py` are MODULE names carrying the family prefix while the REGISTERED names are `cat021` and `cat048` - so the prefix already has a job, and it is not this one."
+      },
+      {
+        "candidate": "msm / monoradar_service",
+        "why_rejected": "Names the content in prose the way `gmti` and `nits` do, which is the OTHER convention. Adopting it here would put two conventions inside one format family, so a reader could not predict the name of ASTERIX category 062 from the names of 021, 034 and 048. `MSM` is also not the document's own abbreviation: section 3.2's abbreviation list does not contain it."
+      },
+      {
+        "candidate": "spec0149-2b / eurocontrol034",
+        "why_rejected": "The first names a document identifier, the rejection `misp` and `adatp36` both took; the second names the publisher, the rejection `misb` took - `fixtures/eurocontrol` would have been wrong for CAT048 for the same reason."
+      },
+      {
+        "candidate": "cat002",
+        "why_rejected": "The EUROCONTROL publication filename for edition 1.26 calls this document the 'next version of cat 002 part 2b', so the lineage is real and recorded below. It is still not this adapter's name: Category 002 is a DIFFERENT category number with a different UAP, no copy of it is in hand, and naming an adapter after the format it replaced would make the registered name disagree with the CAT octet the adapter reads. The CAT048 family has the identical shape - its own history filenames say 'next version of cat-001' - and it is named `cat048`."
+      }
+    ]
+  },
+  "source": {
+    "document": "EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 2b Category 034: Monoradar Service Messages",
+    "publications_reference": "SPEC-0149-2b",
+    "document_identifier": "EUROCONTROL-SPEC-0149-2b",
+    "isbn": "978-2-87497-028-3",
+    "edition": "1.29",
+    "edition_date_as_the_document_states_it": "15/03/2021",
+    "status_on_the_cover": "Released Edition",
+    "status_in_the_page_iii_checkbox_table": "Released Issue",
+    "why_two_status_words": "The cover's DOCUMENT IDENTIFIER block reads 'Status : Released Edition' and every running header on all 41 pages repeats 'Released Edition', while the page-iii STATUS, AUDIENCE AND ACCESSIBILITY table ticks 'Released Issue' among Working Draft / Draft / Proposed Issue / Released Issue. Both are recorded and neither is picked, on the CAT048 precedent for its two edition dates: the identifying facts are the edition number and the hash. Register entry 1.",
+    "intended_for": "General Public",
+    "accessible_via": "Internet (www.eurocontrol.int), ticked; Intranet and Extranet not ticked",
+    "approved_by": "the ASTERIX Maintenance Group (AMG). Page iii: 'This document has been approved by the ASTERIX Maintenance Group (AMG). For management approval of the complete set of ASTERIX documentation refer to Part 1.'",
+    "contact_person_as_the_document_states_it": "Alexander Engel, +32-2-729 3355, DECMA/PCS/SCS/STAN",
+    "abstract_quoted": "This document describes the application of ASTERIX to the transmission of Monoradar Service Messages.",
+    "keywords_as_the_document_lists_them": [
+      "Monoradar Data",
+      "ASTERIX",
+      "Service Messages",
+      "Data Item",
+      "Category 34",
+      "UAP"
+    ],
+    "retrieved_at": "2026-08-24",
+    "bytes": 639615,
+    "sha256": "32925e6a04d124cf1f699adb68371bd88806d8cc4ae957df8aacba18cfcae101",
+    "pages": 41,
+    "pdf_version": "1.6",
+    "local_path": "fixtures/cat034/spec/eurocontrol-asterix-cat034-pt2b-ed129.pdf",
+    "verification_performed": [
+      "SHA-256 and byte count checked against the supplied manifest BEFORE the document was read.",
+      "Both re-checked at the committed path after the file was placed. 1/1, no mismatch.",
+      "Identity taken from the document itself and not from the filename: cover DOCUMENT IDENTIFIER block and the page-ii Document Characteristics table both read Edition Number 1.29, Edition Date 15/03/2021, EUROCONTROL-SPEC-0149-2b.",
+      "Page count taken from the catalog's page tree and cross-checked against the document's own printed folios. See page_count_method."
+    ]
+  },
+  "page_count_method": {
+    "how": "The page objects REACHABLE FROM THE CATALOG'S /Pages TREE, walked in /Kids order.",
+    "why_this_is_not_the_method_the_earlier_pins_recorded": "klv_pin.json records the method as 'occurrences of /Type /Page across raw objects and across every inflated object stream'. That method OVER-COUNTS this document and the edition below it, and this is the first round in which the two disagree.",
+    "the_disagreement_measured": {
+      "edition_1_29": "tree 41, raw-object 43. The two extra page objects are ORPHANS - present in the file, absent from the page tree. Both are unreplaced EUROCONTROL template leaves: one is an unused decorative cover variant, the other reads 'Edition: 1.3 / Edition date: 11 May 2020 / Reference nr: EUROCONTROL-SPEC-0149-8' beside the literal typography placeholders 'Subtitle Roboto Light 24pt' and 'Date, period or phase Roboto Regular 14pt' - so it names a DIFFERENT EUROCONTROL specification, Part 8, at an edition and date that are not this document's.",
+      "edition_1_28": "tree 43, raw-object 44. Different cause: that file has been INCREMENTALLY UPDATED twice - three %%EOF markers and three startxref entries - and page object 3056 exists in two generations. The raw-object scan counts both. Edition 1.28's page tree still CONTAINS the two template leaves that Edition 1.29 orphaned, which is why 43 - 2 = 41.",
+      "editions_1_27_and_1_26": "tree 38, raw-object 38. The two methods agree."
+    },
+    "the_method_was_validated_before_it_was_preferred": "The page-tree walk was run against all ten documents this repository already pins and reproduced every recorded count - 64, 5, 73, 5, 212, 104, 6, 192, 150, 5 - so no existing pin moves and nothing recorded before this round is called into question. The raw-object method reproduces the same ten. They part company only on these two files.",
+    "the_stronger_check_does_not_depend_on_either_tool": "Edition 1.29's own printed folios. PDF page 1 is an unnumbered cover; PDF pages 2 to 8 print ii, iii, iv, v, vi, vii, viii; PDF pages 9 to 41 print 1 to 33. 1 + 7 + 33 = 41, read off the pages rather than counted by a regex.",
+    "consequence_recorded_rather_than_acted_on": "klv_pin.json's page_count_method string is left exactly as it is. It describes what was done for those documents, it was correct for them, and rewriting a past record to match a later method would erase the fact that the method changed. This entry is where the change is stated."
+  },
+  "premises_named": [
+    "The DECORATIVE COVER BANNER of editions 1.28 and 1.29 uses a font with no usable ToUnicode map. It extracts as '1SRS6EHEV7IVZMGI 1IWWEKIW ... Edition: 1.  Edition date:  1EVGL 202' - lowercase letters shifted +4 ('e'->'I', 'r'->'V', 'a'->'E'), capitals mapped to digits ('M'->'1', 'R'->'6', 'S'->'7'), and DIGITS DROPPED ENTIRELY. Decoded it reads 'MonoRadar Service Messages ... March 202_'. This is the same class of defect cat048_pin.json records for its editions 1.27 and 1.31, and it is handled the same way: no identity value is taken from the banner. Every value above comes from the cover's DOCUMENT IDENTIFIER block and the page-ii Document Characteristics table, both of which extract cleanly.",
+    "Edition 1.30 IS NOT IN HAND and it is the current edition, not a future one. See edition_1_30_not_obtained."
+  ],
+  "the_pin_is_not_the_latest_edition_and_that_is_stated_first": {
+    "finding": "Edition 1.29 is the newest edition IN HAND. It is NOT the newest published. This repository already holds the evidence, and held it before this round: cat048_pin.json's cat034_boundary quotes CAT048 Edition 1.32 section 2.2 reference 5 as 'EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 2b: Category 034 Monoradar Service Messages (EUROCONTROL-SPEC-0149-2b) Edition 1.30.'",
+    "so_the_pin_is_the_covering_edition_and_not_the_governing_one": "Ruled, and named as what it is. Every row of the CAT034 row set is read against Edition 1.29 and no row is read against any other edition. What CANNOT be claimed is that Edition 1.29 is what a conformant 2026 CAT034 encoder implements - CAT048's own reference list says otherwise, and CAT048 Edition 1.32 is a pinned document in this repository.",
+    "what_edition_1_30_is_known_to_contain_without_being_in_hand": {
+      "claim": "Message Type 008, and the area within which an Interrogator Code conflict is detectable.",
+      "evidence": "CAT048 Edition 1.32 section 5.2.3 NOTE 6, already pinned and already quoted in cat048_pin.json: 'Together with Codes 35 and 36 the possibility to communicate the area within which the detection of an IC Conflict is possible was implemented in the Category 034 Specification Ref. [5] by means of Message Type 008.' Ref. [5] is Edition 1.30.",
+      "corroborated_by_the_four_editions_in_hand_and_not_only_by_that_note": "The standardised Message Type list grows exactly as the change records say it does, and it stops one short of 008: edition 1.26 lists 001-004, 1.27 lists 001-004, 1.28 lists 001-005 (the 1.28 record says 'Data Item I034/000: new message type 5'), 1.29 lists 001-007 (the 1.29 record says 'new message types 6&7'). 008 is therefore the next value and Edition 1.30 is where CAT048 says it landed. This is an inference from two independent sources agreeing, and it is recorded AS an inference: no text of Edition 1.30 has been read.",
+      "what_is_NOT_claimed": "What else Edition 1.30 changed, its date, its status, its page count, its reference list, or whether any item this row set maps was altered. None of that is establishable from anything in hand."
+    },
+    "reopen_condition": "Obtain Edition 1.30 from the EUROCONTROL publication page for Part 2b. It is a public download on the same terms as every other document in this directory - the same terms the 22-file CAT048 bundle came on - so this is the weakest kind of park in this repository: not an access decision, not a purchase, a retrieval nobody has performed. When it lands, Edition 1.30 becomes the pin, Edition 1.29 joins the history beside the other three, and the Message Type table gains an eighth column."
+  },
+  "edition_history": {
+    "what_this_is": "The lineage, NOT pins. The governing text for this row set is Edition 1.29 alone and no row is read against any other edition. These three files exist so that a claim about when something was introduced can be checked against the standard's own change records rather than recalled.",
+    "home": "fixtures/cat034/spec/history/",
+    "count": 3,
+    "editions_in_hand": "1.26, 1.27 and 1.28",
+    "these_are_not_pins": "tests/test_cdm_pins.py derives the pin set from the *_pin.json records and from FORMAT_COVERAGE.md's pin rows, never from 'PDFs found under spec/', and asserts in both directions that nothing under a history/ directory is a pin. The treatment is CAT048's, adopted here unchanged rather than re-derived - it was recorded in commit 844e336, 'CAT048 edition lineage: 22 editions read, no row moved, and the pin gate derives itself', and it is stated in fixtures/cat048/spec/cat048_pin.json under edition_history and in FORMAT_COVERAGE.md under 'The edition history'.",
+    "why_spec_history_and_not_somewhere_else": "844e336's three reasons carry over without modification and are not restated here at length: not fixtures/cat034/history/, which separates the lineage from the pin record that is the only reason to consult it; not outside the repository, the AEDP-12 Edition A treatment, which is right for a watermarked reseller copy whose hash nobody can reproduce and wrong for publisher-issued files; and the risk the placement carries - non-pins inside spec/ reading as pins - is why the pin gate derives its set from the records rather than from the disk.",
+    "committed": false,
+    "why_not_committed": "Same rule as every pin here: `git ls-files | grep -c '.pdf$'` is 0 across the whole repository. EUROCONTROL's documents on EUROCONTROL's terms, and a hash plus an edition reproduces every one of them.",
+    "verification_performed": "All three SHA-256 digests and byte counts verified against the supplied manifest before use, then re-verified at the committed path after landing: 3/3 both times, no mismatch. Title page read for every one; Document Change Record located and read for 1.28 and 1.29; the standardised Message Type list read for all four editions.",
+    "files": [
+      {
+        "filename": "eurocontrol-asterix-cat034-pt2b-ed128.pdf",
+        "edition": "1.28",
+        "edition_date_on_the_title_page": "02/03/2021",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-2b",
+        "sha256": "86c13575e95863dcc96b672e47ac8228ccf81f7962428d1a8e8c92752aa91a49",
+        "bytes": 635545,
+        "pages": 43,
+        "note": "Thirteen days before Edition 1.29. The two editions are two weeks apart and the second changes one data item."
+      },
+      {
+        "filename": "cat034p2bed127.pdf",
+        "edition": "1.27",
+        "edition_date_on_the_title_page": "May 2007",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-02b-01",
+        "sha256": "57585afaef37ce1afa19980a6fe73c90ac0ea7d2fbbe2a24786c0e28f9199264",
+        "bytes": 265707,
+        "pages": 38
+      },
+      {
+        "filename": "asterix-cat034-monoradar-service-messages-next-version-of-cat-002part-2b-v1.26-112000.pdf",
+        "edition": "1.26",
+        "edition_date_on_the_title_page": "November 2000",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-02b-01",
+        "sha256": "c0161f64adb3e2b051845e4f4f6f658f1083a6da8fa53e62bc1376c526cd38f5",
+        "bytes": 188590,
+        "pages": 38
+      }
+    ]
+  },
+  "the_reference_number_migration": {
+    "fact": "The document identifier changes mid-lineage, between Edition 1.27 and Edition 1.28: SUR.ET1.ST05.2000-STD-02b-01 becomes EUROCONTROL-SPEC-0149-2b.",
+    "sourced_to_the_documents_and_not_to_the_filenames": "Read off the title pages and identification sheets of the four editions in hand. Editions 1.26 (November 2000) and 1.27 (May 2007) print 'SUR.ET1.ST05.2000-STD-02b-01' on the title page and again in the DOCUMENT IDENTIFICATION SHEET's PROGRAMME REFERENCE INDEX. Editions 1.28 (02/03/2021) and 1.29 (15/03/2021) print 'DOCUMENT IDENTIFIER : EUROCONTROL-SPEC-0149-2b' on the cover and 'Publications Reference: SPEC-0149-2b' in the page-ii Document Characteristics table.",
+    "the_boundary_is_exact_because_both_sides_are_in_hand": "1.27 is the last edition carrying the old reference and 1.28 is the first carrying the new one, and this is the rare case where a migration boundary is bracketed by two documents rather than inferred from one. The gap it spans is fourteen years, May 2007 to March 2021, with no intervening edition published.",
+    "what_the_change_record_calls_it": "Edition 1.28's record entry reads 'Document migrated to new template', SECTIONS AFFECTED 'All'. The record does not mention the reference number; the title pages do.",
+    "the_same_migration_is_recorded_for_part_4": "cat048_pin.json's edition_history records SUR.ET1.ST05.2000-STD-04-01 for editions 1.10 to 1.21 and EUROCONTROL-SPEC-0149-4 from 1.22 on. So Part 4 migrated at edition 1.22 (24/10/2016) and Part 2b at edition 1.28 (02/03/2021), four and a half years apart - the parts were re-referenced independently and the suffix is the only thing the two identifiers share.",
+    "consequence_for_a_reader": "A CAT034 interface control document citing SUR.ET1.ST05.2000-STD-02b-01 is citing edition 1.27 or earlier, which is 2007 or older, which is four Message Types rather than seven."
+  },
+  "the_cat002_lineage": {
+    "claim": "Category 034 is the successor of ASTERIX Category 002.",
+    "where_the_claim_comes_from_and_where_it_does_not": "It comes from EUROCONTROL's own publication filename for edition 1.26: `asterix-cat034-monoradar-service-messages-next-version-of-cat-002part-2b-v1.26-112000.pdf`, which is the name the file carries as published and the name it is stored under here. It does NOT come from the body of any of the four documents: 'Category 002', 'CAT 002' and 'CAT002' occur zero times in the extracted text of all four editions, and the only '002' any of them contains is the Message Type value for a Sector crossing message.",
+    "so_the_claim_is_recorded_at_its_actual_strength": "A publisher's filename, not a normative statement. That is weaker than a clause and stronger than a recollection, and it is written down at that strength rather than promoted to a document fact.",
+    "the_identical_shape_exists_for_part_4_and_is_already_in_this_repository": "cat048_pin.json's edition_history lists six files named `asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.NN-*.pdf`, editions 1.15 to 1.20. So EUROCONTROL names Part 4 the next version of Category 001 by exactly the same device, and CAT048 is named `cat048`. The precedent for what to DO with the lineage is therefore also in hand: record it, do not name the adapter after it.",
+    "what_is_NOT_claimed": "That Category 002 is withdrawn, that its UAP maps item-for-item onto Category 034's, that any deployed system still emits it, or what its item catalogue contains. No copy of Category 002 has been retrieved, and none of the four documents in hand describes it.",
+    "the_symmetry_worth_recording": "Category 001 -> Category 048 (Part 4, target reports) and Category 002 -> Category 034 (Part 2b, service messages) are the same succession performed twice, and the pairing survives into the successors: Part 4 section 4.1 excludes service messages and Part 2b section 4.1 excludes target reports, in the same sentence with the parenthetical moved. See the_two_documents_exclude_each_other."
+  },
+  "the_two_documents_exclude_each_other": {
+    "cat034_edition_1_29_section_4_1_quoted": "The transmission of monoradar information shall require the transmission of two types of messages: - data messages or radar target reports containing plot or track information (not covered by this document); - radar service messages used to signal status information of the radar station to the user systems.",
+    "cat048_edition_1_32_section_4_1_quoted": "The transmission of monoradar information shall require the transmission of two types of messages: - data messages of radar target reports; - radar service messages used to signal status information of the radar station to the user systems (not covered by this document).",
+    "why_this_is_recorded": "It is the same sentence with the parenthetical moved, and it is the cleanest possible statement of the boundary FORMAT_COVERAGE.md's CAT048 settlement 2 draws in prose. Each document defines the pair and disclaims the other half. So the two adapters are not a split somebody here invented for convenience - they are the split the standard itself makes, twice, in matching words.",
+    "consequence_for_the_scope_of_adapter_12": "Adapter #12's input is a CAT034 data block and nothing else, exactly as adapter #11's is a CAT048 data block and nothing else. Neither reads the other's category, and a stream carrying both is a caller's demultiplexing problem - the transport refusal every adapter here has already made."
+  },
+  "the_document_change_record_over_claims_and_it_is_measured": {
+    "what_edition_1_29_s_record_says_it_changed": [
+      {
+        "claim": "List of References updated",
+        "sections": "2.2",
+        "verdict": "FALSE"
+      },
+      {
+        "claim": "Definitions updated",
+        "sections": "3.1",
+        "verdict": "FALSE"
+      },
+      {
+        "claim": "Data Item I034/000: new message types 6&7",
+        "sections": "4.6.1 & 5.2.1",
+        "verdict": "TRUE"
+      }
+    ],
+    "how_each_verdict_was_reached": "By diffing Edition 1.28's page against Edition 1.29's, both of which are in hand, both of whose bodies extract cleanly, and both of which were read from the page tree so the comparison is page-for-page rather than stream-for-stream.",
+    "section_2_2": "Both editions list the same two reference documents in the same order with the same edition and date: '1. EUROCONTROL Standard SUR.ET1.ST05.2000-STD-01-01. All Purpose Structured EUROCONTROL Surveillance Information Exchange - ASTERIX. Edition 3.0, Released Issue, 07 December 2020. 2. EUROCONTROL Standard SUR.ET1.1000-STD-01-01. Radar Surveillance in En-Route Airspace and Major Terminal Areas.' Normalised for whitespace and soft hyphens the two extractions are byte-identical at 254 characters.",
+    "section_3_1": "Identical at 1690 characters, normalised the same way. The only difference on the two pages is the running header's edition number, 1.28 against 1.29.",
+    "section_4_6_1_and_5_2_1": "Real, and checkable twice over. Section 4.6.1 reads 'Five types of radar service messages have been identified' in Edition 1.28 and 'Seven types' in Edition 1.29; section 5.2.1's standardised list runs 001-005 in Edition 1.28 and 001-007 in Edition 1.29, adding '006 SSR Jamming Strobe message' and '007 Mode S Jamming Strobe message'; and Table 2's Message Types matrix gains two columns.",
+    "verdict": "Two of the three claims Edition 1.29's own change record makes about Edition 1.29 are contradicted by Edition 1.29. Register entry 2. RULED: where a change record and the text disagree, the TEXT governs.",
+    "why_this_is_worth_a_register_entry_rather_than_a_shrug": "The CAT048 round found Edition 1.27 disagreeing with itself about its own date, and ruled the cover over the record. This is the same class of defect in the same publisher's change records, found in a different document, and it sets the standing rule for this row set: WHERE A CHANGE RECORD AND THE TEXT DISAGREE, THE TEXT GOVERNS. The record is a navigation aid for finding what to read, not a source.",
+    "what_this_does_NOT_impugn": "The 1.28 record's own claims, which were not diffed against 1.27 - the reference migration means 1.27 is a different template and a page-for-page diff would compare layouts rather than content. Edition 1.28's 'new message type 5' claim IS confirmed, because the 1.26, 1.27 and 1.28 message-type lists were all read: 004, 004, 005."
+  },
+  "the_change_record_and_the_editions_that_are_not_in_it": {
+    "editions_the_record_lists": [
+      "1.0",
+      "1.1",
+      "1.2",
+      "1.21",
+      "1.22",
+      "1.23",
+      "1.24",
+      "1.26",
+      "1.27",
+      "1.28",
+      "1.29"
+    ],
+    "edition_1_25_is_absent_from_the_record_entirely": "The table runs 1.24 (September 1999) straight to 1.26 (November 2000). No 1.25 row, and no note that one is missing, in either Edition 1.28's record or Edition 1.29's - both of which introduce themselves as recording 'the complete history of the successive editions of the present document'. Whether Edition 1.25 ever existed is NOT establishable from anything in hand. Register entry 3, and it is the direct analogue of cat048 register entry 15, where Edition 1.32's record claims completeness and omits two editions that demonstrably exist.",
+    "the_numbering_is_not_decimal_and_this_matters_for_reading_the_table": "The sequence 1.0, 1.1, 1.2, 1.21, 1.22, 1.23, 1.24 is revisions OF 1.2, not editions between 1.2 and 1.3. So there is no gap at 1.3 through 1.20 to look for, and the series only becomes conventional at 1.24 -> 1.26.",
+    "the_status_column_disagrees_with_edition_1_26_s_own_title_page": "The record's status column reads 'Proposed' against Edition 1.26, while the Edition 1.26 document in hand states 'Status : Released Issue' on its title page and ticks 'Released Issue' in its DOCUMENT STATUS AND TYPE table. Edition 1.27 gets no status word in the record at all and its own title page says 'Released Issue'. Register entry 4. The column association is read from a linearised text extraction of a table, which is the weakest reading in this record, and it is written down at that strength.",
+    "editions_1_28_and_1_29_are_dated_only_to_the_month_by_the_record": "'March 2021' for both, while the title pages give 02/03/2021 and 15/03/2021. Consistent, not contradictory, and noted because the record's granularity is what made cat048's Edition 1.27 date dispute possible."
+  },
+  "what_the_document_defines": {
+    "data_items": [
+      "I034/000 Message Type",
+      "I034/010 Data Source Identifier",
+      "I034/020 Sector Number",
+      "I034/030 Time of Day",
+      "I034/041 Antenna Rotation Speed",
+      "I034/050 System Configuration and Status",
+      "I034/060 System Processing Mode",
+      "I034/070 Message Count Values",
+      "I034/090 Collimation Error",
+      "I034/100 Generic Polar Window",
+      "I034/110 Data Filter",
+      "I034/120 3D-Position Of Data Source"
+    ],
+    "count": 12,
+    "note_on_the_range": "The items run I034/000 to I034/120 and the series is NOT contiguous: there is no I034/040 (the rotation item is /041) and no I034/080. Both absences are properties of the catalogue as published; neither document in hand explains either.",
+    "two_item_rosters_exist_in_this_edition_and_they_do_not_hold_the_same_thing": "Section 5.1's Table 1 'Standard Data Items of Category 034' lists the twelve items with their System Units. Section 5.3's Table 3 'Standard UAP for Radar Service Messages' lists FOURTEEN FRNs - the same twelve plus an RE-Data Item and an SP-Data Item. So the twelve-item roster and the fourteen-FRN UAP are both correct and neither is redundant. NOTE THE CONTRAST WITH CAT048: Edition 1.32 of Part 4 DELETED its section 5.1 table, leaving the UAP as the sole roster, and FORMAT_COVERAGE.md's CAT048 pin section says so. Part 2b Edition 1.29 still has both.",
+    "the_uap_in_full": [
+      {
+        "frn": 1,
+        "item": "I034/010",
+        "description": "Data Source Identifier",
+        "octets": "2"
+      },
+      {
+        "frn": 2,
+        "item": "I034/000",
+        "description": "Message Type",
+        "octets": "1"
+      },
+      {
+        "frn": 3,
+        "item": "I034/030",
+        "description": "Time-of-Day",
+        "octets": "3"
+      },
+      {
+        "frn": 4,
+        "item": "I034/020",
+        "description": "Sector Number",
+        "octets": "1"
+      },
+      {
+        "frn": 5,
+        "item": "I034/041",
+        "description": "Antenna Rotation Period",
+        "octets": "2"
+      },
+      {
+        "frn": 6,
+        "item": "I034/050",
+        "description": "System Configuration and Status",
+        "octets": "1+"
+      },
+      {
+        "frn": 7,
+        "item": "I034/060",
+        "description": "System Processing Mode",
+        "octets": "1+"
+      },
+      {
+        "frn": "FX",
+        "item": "N/A.",
+        "description": "Field Extension Indicator",
+        "octets": "N/A."
+      },
+      {
+        "frn": 8,
+        "item": "I034/070",
+        "description": "Message Count Values",
+        "octets": "(1+2*N)"
+      },
+      {
+        "frn": 9,
+        "item": "I034/100",
+        "description": "Generic Polar Window",
+        "octets": "8"
+      },
+      {
+        "frn": 10,
+        "item": "I034/110",
+        "description": "Data Filter",
+        "octets": "1"
+      },
+      {
+        "frn": 11,
+        "item": "I034/120",
+        "description": "3D-Position of Data Source",
+        "octets": "8"
+      },
+      {
+        "frn": 12,
+        "item": "I034/090",
+        "description": "Collimation Error",
+        "octets": "2"
+      },
+      {
+        "frn": 13,
+        "item": "RE-Data Item",
+        "description": "Reserved Expansion Field",
+        "octets": "1+1+"
+      },
+      {
+        "frn": 14,
+        "item": "SP-Data Item",
+        "description": "Special Purpose Field",
+        "octets": "1+1+"
+      },
+      {
+        "frn": "FX",
+        "item": "N/A.",
+        "description": "Field Extension Indicator",
+        "octets": "n.a."
+      }
+    ],
+    "the_uap_locus": "Section 5.3, Table 3, printed page 33, quoted: 'The following standard UAP shown in Table 3 shall be used for the transmission of radar service messages'.",
+    "the_uap_is_fixed_and_single": "Section 4.6.2, printed page 11: 'A single User Application Profile (UAP) is defined and shall be used whether plot or track information is provided by the radar.' One UAP, no variants, no conditional layouts - which is what makes a bidirectional adapter answerable at all. See the_uap_supports_egress.",
+    "message_types_standardised_in_this_edition": {
+      "001": "North Marker message",
+      "002": "Sector crossing message",
+      "003": "Geographical filtering message",
+      "004": "Jamming Strobe message",
+      "005": "Solar Storm Message",
+      "006": "SSR Jamming Strobe Message",
+      "007": "Mode S Jamming Strobe Message"
+    },
+    "message_types_locus": "Section 5.2.1, NOTE 3, printed page 13; the per-type item matrix is Table 2, printed page 14, with M for mandatory, O for optional and X for never present.",
+    "all_message_type_values_are_reserved": "Section 5.2.1 NOTE 2, quoted: 'All Message Type values are reserved for common standard use.' So a value outside 001-007 is not a private extension point - it is a value this edition does not define, and Edition 1.30 defines at least one more of them."
+  },
+  "the_uap_supports_egress": {
+    "question_the_standing_protocol_asks": "Bidirectional if the UAP supports it.",
+    "answer": "It supports it, and the evidence is the same shape CAT021 and CAT048 rest on.",
+    "why": [
+      "ONE UAP, stated as one - section 4.6.2, 'A single User Application Profile (UAP) is defined and shall be used'. There is no variant to choose between on the way out.",
+      "FIXED FRN ORDER with FX extension - Table 3 numbers 14 FRNs and interleaves two explicit FX rows, so the FSPEC layout is seven FRNs per octet with FX in bit 1, at most two octets. That is the Part 1 mechanic CAT048's row set had to source from Part 1 and CAT034's own table states positionally.",
+      "EVERY ITEM HAS A STATED LENGTH - the fourth column of Table 3 gives an octet count for each: a bare figure for fixed-length items, '1+' for the two compound items, '(1+2*N)' for the repetitive one. Nothing is length-by-context.",
+      "SPARE AND UNUSED BITS ARE ADDRESSED - section 4.4, 'Unused Bits in Data Items', which is what makes parking them verbatim a rule rather than a choice.",
+      "NO CHECKSUM AT ANY LEVEL, exactly as in CAT021 and CAT048, so egress has nothing to recompute except the block LEN and the FSPEC."
+    ],
+    "so_phase_2_owes_a_byte_exact_from_cdm_and_the_row_set_says_so": "The egress row set is written in Phase 1 as a specification, on the CAT021 and CAT048 pattern, and every row of it says `not yet`.",
+    "what_is_NOT_claimed": "That egress has been implemented, attempted or tested. Nothing has. This entry records that the FORMAT does not block it, which is a claim about the document."
+  },
+  "the_finding_that_matters_most_to_the_adapter_already_shipped": {
+    "finding": "I034/120 carries the 3D position of the data source in WGS-84 - the exact value adapter #11 has to have INJECTED at construction.",
+    "quoted": "5.2.12 Data Item I034/120 3D-Position Of Data Source. Definition: 3D-Position of Data Source in WGS 84 Co-ordinates. Format: Eight-octet fixed length Data Item. bits-64/49 (Height of Data Source) Signed Height of the Data Source, expressed in meters above WGS 84 reference ellipsoid. Bit-49 (LSB) = 1 metre. Bits-48/25 (Latitude) Latitude in WGS 84 expressed in twos complement. Range: -90<= latitude<= 90 degrees. Bit 25 (LSB) = 180/2^23 degrees = 2.145767*10^-05 degrees. This corresponds to an accuracy of at least 2.3844 metres. Bits-24/1 (Longitude) Longitude in WGS 84 expressed in twos complement. Range: -180 <= longitude<180 degrees. Bit-1 (LSB) = 180/2^23 degrees.",
+    "why_it_matters": "FORMAT_COVERAGE.md's CAT048 settlement 3 derives geometry only when a `sensor_position` is injected at construction, because 'the format states range and azimuth from a station whose location it never carries, and the caller owns that value the way it already owns the clock'. Gap 24 records that the geodesy is not in the pinned CAT048 document at all. THIS document carries the station's location, at 1 m height resolution and 180/2^23 degrees in latitude and longitude, on the wire, in an item the station itself sends.",
+    "and_it_changes_nothing_in_this_phase_which_is_the_point": "Reading I034/120 out of a CAT034 record and feeding it to a CAT048 adapter is CROSS-PAYLOAD STATE - holding a value from one message to interpret another - which is the fusion refusal every adapter here has made, stated seven times in FORMAT_COVERAGE.md and about to be stated an eighth. Adapter #12 will translate I034/120 into a Position on the CAT034 object that carries it, and it will not hand it to adapter #11. What a CALLER does with two adapters' output is a caller's decision, and the row set will say so.",
+    "what_this_does_to_gap_24": "Nothing, deliberately. Gap 24 is about CAT048's document not containing the geodesy, and CAT034's containing a coordinate does not change what CAT048's contains. Recorded here so that a later reader meeting both sections does not conclude the gap was closed and nobody noticed."
+  },
+  "the_isbn_does_not_identify_the_part": {
+    "finding": "This document's ISBN is 978-2-87497-028-3. cat048_pin.json records the SAME ISBN, 978-2-87497-028-3, for EUROCONTROL Specification ASTERIX Part 4 Category 048 Edition 1.32.",
+    "so": "The ISBN is shared across at least two ASTERIX parts at two different editions eleven years apart, and it identifies neither the part nor the edition. Recorded so that no site here ever uses it as an identifier, and so that a reader who notices the repetition finds it already accounted for rather than reading it as a transcription error. Register entry 5.",
+    "what_is_NOT_claimed": "Which publication the ISBN was originally issued for, whether EUROCONTROL assigns one per specification series, or whether any other part carries it. Two documents is what is in hand."
+  },
+  "not_committed": {
+    "the_pdfs_are_not_in_git": true,
+    "precedent": "Every other spec directory here. fixtures/cat021/spec/ holds sac_pin.json and build_fixtures.py and no PDF; fixtures/cat048/spec/ holds a pin, a generator and 22 untracked history PDFs; fixtures/fft/spec/ and fixtures/klv/spec/ hold pins and untracked PDFs.",
+    "consequence_for_this_directory": "The four files sit in the working tree because they had to be read. They are excluded from the commit by not being added, and tests/test_cdm_pins.py asserts that `git ls-files` returns no .pdf anywhere in the repository.",
+    "why": "The document is redistributable only on EUROCONTROL's own terms. A pin plus an edition plus a hash reproduces the artefact for any reader without this repository redistributing it, which is exactly why the other eleven adapter efforts pin rather than vendor."
+  },
+  "ambiguity_register": {
+    "convention": "Numbered from 1 within this row set, the convention each format section uses for its own register. CAT048's runs to 18 and CAT034's does not continue it.",
+    "entries": {
+      "1": "The document states its own status two ways: 'Released Edition' on the cover and in all 41 running headers, 'Released Issue' ticked in the page-iii STATUS, AUDIENCE AND ACCESSIBILITY table. Both recorded, neither picked.",
+      "2": "Edition 1.29's Document Change Record makes three claims about Edition 1.29 and two are contradicted by Edition 1.29: section 2.2 is identical to Edition 1.28's at 254 characters and section 3.1 is identical at 1690, normalised for whitespace and soft hyphens. Ruled: where the record and the text disagree, the TEXT governs.",
+      "3": "Edition 1.25 appears in no change record in hand, in a table introduced as 'the complete history of the successive editions'. Whether it existed is not establishable here.",
+      "4": "The change record's status column reads 'Proposed' against Edition 1.26 while the Edition 1.26 document in hand says 'Released Issue' on its title page and in its checkbox table; Edition 1.27 gets no status word in the record and says 'Released Issue' on its own title page. The column association is read from a linearised extraction of a table and is recorded at that strength.",
+      "5": "The ISBN 978-2-87497-028-3 is carried by this document and by CAT048 Edition 1.32. It identifies neither the part nor the edition and is never used as an identifier here.",
+      "6": "Edition 1.28 says 'The list of items present for the four message types is defined in the following table' immediately after listing FIVE message types, and its Table 1 has five columns. Edition 1.29 repairs the sentence to 'The list of items present for each message type'. A stale count in the publisher's own text, fixed in the following edition - and the reason this round's own stale-count sweep is not a formality.",
+      "7": "The item series is not contiguous: no I034/040 and no I034/080. Neither absence is explained by any document in hand.",
+      "8": "Editions 1.28 and 1.29 carry a decorative cover banner whose font has no usable ToUnicode map and whose digits do not extract at all; Edition 1.29 additionally retains two ORPHANED template page objects, one of which names EUROCONTROL-SPEC-0149-8 Edition 1.3 dated 11 May 2020 beside unreplaced typography placeholders. Neither affects any identity value, all of which come from blocks that extract cleanly."
+    }
+  }
+}

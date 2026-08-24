@@ -99,6 +99,7 @@ SWEPT = (
     "packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
     "packages/cdm/synapse_cdm/MIGRATIONS.md",
     "packages/cdm/synapse_cdm/README.md",
+    "packages/cdm/synapse_cdm/fixtures/cat034/README.md",
     "packages/cdm/synapse_cdm/fixtures/cat048/README.md",
     "packages/cdm/synapse_cdm/fixtures/fft/README.md",
     "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json",
@@ -132,7 +133,7 @@ DISTRIBUTIVE: tuple[tuple[str, str, int, str], ...] = (
     ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
      "were written before adapter #5, the NITS rows before", 5, "legion"),
     ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
-     "| 12 | *(forecast)* `cat034` |", 12, "cat034"),
+     "| 12 | `cat034` | specification, Phase 1 |", 12, "cat034"),
     ("docs/docs/writing-an-adapter.mdx",
      "ships as adapter #2 and `adapters/ais.py` as #3", 2, "tak"),
     ("tests/test_cdm_format_coverage.py",
@@ -233,8 +234,8 @@ def test_the_phase_one_ordinals_have_no_adapter_and_no_rival_claimant():
     registered = set(adapter.discover())
     held = {n: name for n, (name, state) in SERIES.items() if state != "shipped"}
     assert held, (
-        "no ordinal is held for an unshipped adapter, so this check is vacuous. #12's cat034 "
-        "forecast alone should keep it non-empty"
+        "no ordinal is held for an unshipped adapter, so this check is vacuous. Three ordinals "
+        "are at Phase 1 — #9, #10 and #12 — so any of them alone should keep it non-empty"
     )
     for ordinal, name in sorted(held.items()):
         assert name not in registered, (

@@ -2,7 +2,7 @@
 
 WHY THIS EXISTS, AND WHY IT IS AN ALLOWLIST AND NOT A SCANNER
 ------------------------------------------------------------
-Six documents state how many adapters are shipped, and three of them do the pair arithmetic as
+Seven documents state how many adapters are shipped, and three of them do the pair arithmetic as
 well. Nothing failed a build when those numbers drifted, so they drifted: the roster sweep for
 adapter #11 found `README.md` stale by six adapters, `synapse_cdm/__init__.py` stale by four,
 two documents disagreeing about whether the translation count is `N×(N−1)` or `N(N−1)/2`, and
@@ -181,6 +181,11 @@ SITES: tuple[Site, ...] = (
          r"so that (?P<n>[a-z]+) adapters cannot grow (?P<n2>[a-z]+) slightly different "
          r"opinions",
          count_groups=("n", "n2")),
+    # A SEVENTH site, added by the CAT034 round's stale-count sweep rather than by a repair.
+    # It had never drifted; it had simply never been guarded, and it is the first thing a
+    # contributor reads. See the note above `test_the_allowlist_covers_every_site_the_sweep_...`.
+    Site("CONTRIBUTING.md", "the shipped-adapter sentence",
+         r"the contract layer that (?P<n>[a-z]+) integration adapters translate into"),
 )
 
 
@@ -202,9 +207,20 @@ def test_the_registry_is_the_authority_and_is_not_empty():
 
 
 def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
-    """The allowlist is the sweep's output, so it has to name each file the sweep repaired."""
+    """The allowlist is the sweep's output, so it has to name each file the sweep touched.
+
+    Six of the seven are files the adapter #11 roster sweep REPAIRED. The seventh,
+    `CONTRIBUTING.md`, was added by the CAT034 round's sweep and had never been wrong — which is
+    the more interesting way for a site to get here. That sweep went looking for a count that
+    would have to MOVE and correctly found none: adapter #12 is Phase 1, the convention these
+    sites state is SHIPPED adapters, and a Phase 1 ships nothing, so every "nine" in the tree is
+    still nine. What it found instead was a seventh file making the same claim as `README.md`, in
+    the first paragraph a contributor reads, guarded by nothing. A correct count with no gate on
+    it is the state all six of the others were in before they drifted.
+    """
     covered = {site.path for site in SITES}
     assert covered == {
+        "CONTRIBUTING.md",
         "README.md",
         "docs/docs/intro.mdx",
         "docs/docs/cdm/entity.mdx",
@@ -212,7 +228,7 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
         "packages/cdm/synapse_cdm/__init__.py",
         "packages/cdm/synapse_cdm/symbology.py",
     }, (
-        "the allowlist no longer matches the six files the adapter #11 roster sweep repaired. "
+        "the allowlist no longer matches the seven files the roster sweeps have covered. "
         "Adding a site is fine; losing one silently is how the sweep's work gets undone"
     )
 

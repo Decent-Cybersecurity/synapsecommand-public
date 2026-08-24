@@ -7,7 +7,7 @@ stale: the last one named **eight** pinned PDFs while the tree at that moment he
 Nothing was wrong with any of the nine — the list had simply not been extended when CAT048's
 EUROCONTROL pin landed, and a gate that under-counts what it is checking reports a clean run over a
 smaller tree than the one in front of it. (Those two numbers are the historical ones and they are
-left as they were. The tree holds **ten** pins across **five** homes today, and nothing below
+left as they were. The tree holds **eleven** pins across **six** homes today, and nothing below
 restates that: the gate derives it, which is the point.)
 
 So the enumeration is gone. This module *discovers* the pin set from the two places the repository
@@ -66,11 +66,17 @@ against a synthetic record — the only honest way to keep a zero-member class l
 
 WHAT IS NOT A PIN
 -----------------
-`fixtures/cat048/spec/history/` holds 22 CAT048 edition PDFs — the lineage, 1.10 to 1.32. They are
-covered by the zero-tracked check like every other PDF and they are **not pins**: the governing text
-is Edition 1.32 alone. That distinction is asserted in both directions here, because the placement
-invites the opposite reading — 80b38d1's harness message tells a reader that "pinned standards live
-in `spec/`", and 21 non-pins inside `spec/` would otherwise read as 21 pins.
+**Two** `spec/history/` directories now hold edition lineages, and neither holds a pin.
+`fixtures/cat048/spec/history/` holds 22 CAT048 edition PDFs — 1.10 to 1.32, governing text
+Edition 1.32 alone — and `fixtures/cat034/spec/history/` holds 3 CAT034 edition PDFs — 1.26, 1.27
+and 1.28, governing text Edition 1.29 alone. All 25 are covered by the zero-tracked check like every
+other PDF and none is a pin. That distinction is asserted in both directions here, because the
+placement invites the opposite reading — 80b38d1's harness message tells a reader that "pinned
+standards live in `spec/`", and 24 non-pins inside `spec/` would otherwise read as 24 pins.
+
+The rule is written against `history/` as a NAME rather than against the two directories that have
+one, so the third lineage needs no edit here. What does need an edit each time is the per-format
+count check, and that is deliberate: a count nobody restates is a count nobody notices going stale.
 """
 import hashlib
 import json
@@ -233,8 +239,9 @@ def discover_citations() -> dict[str, dict]:
 def spec_pdfs_on_disk() -> set[str]:
     """PDFs sitting DIRECTLY in a `fixtures/*/spec/` directory — not in a subdirectory of one.
 
-    Non-recursive on purpose: `spec/history/` holds 22 edition PDFs that are not pins, and a
-    recursive glob would sweep them into the set this module says must equal the pins.
+    Non-recursive on purpose: the two `spec/history/` directories hold 25 edition PDFs between
+    them and none is a pin, so a recursive glob would sweep them into the set this module says must
+    equal the pins.
     """
     out = set()
     for spec in sorted(FIXTURES.glob("*/spec")):
@@ -259,19 +266,20 @@ def test_the_pin_set_was_actually_discovered():
     """A gate that discovered no pins would pass every check below and prove nothing.
 
     The floor is deliberately a hard number and not `>= 1`: this repository has pinned standards for
-    five adapters, and a discovery that found one of them is a broken parser rather than a small
-    tree. The floor moves when a pin lands — 9 to 10, and four homes to five, when STANAG 5527's
-    covering document landed in `fixtures/fft/spec/` — and moving it is the deliberate act, because
-    a floor left behind is a gate reporting a clean run over a smaller tree than the one in front
-    of it. That is the same failure this module was written for, one level up.
+    six adapters, and a discovery that found one of them is a broken parser rather than a small
+    tree. The floor moves when a pin lands — 9 to 10 and four homes to five when STANAG 5527's
+    covering document landed in `fixtures/fft/spec/`, then 10 to 11 and five homes to six when
+    CAT034 Edition 1.29 landed in `fixtures/cat034/spec/` — and moving it is the deliberate act,
+    because a floor left behind is a gate reporting a clean run over a smaller tree than the one in
+    front of it. That is the same failure this module was written for, one level up.
     """
-    assert len(PINS) >= 10, (
+    assert len(PINS) >= 11, (
         f"discovered only {len(PINS)} pins: {sorted(PINS)}. Both statements of a pin are parsed — "
         "the *_pin.json records and FORMAT_COVERAGE.md's pin rows — so a low count means one of the "
         "two parsers has stopped matching"
     )
     homes = {p.rsplit("/", 1)[0] for p in PINS}
-    assert len(homes) >= 5, f"pins found in only {sorted(homes)}"
+    assert len(homes) >= 6, f"pins found in only {sorted(homes)}"
     # And both sources are load-bearing, which is why neither can be dropped.
     from_doc = {p for p, v in PINS.items() if "FORMAT_COVERAGE.md" in v["sources"]}
     from_json = {p for p, v in PINS.items() if any(s.endswith("_pin.json") for s in v["sources"])}
@@ -476,6 +484,87 @@ def test_the_cat048_edition_history_is_covered_but_is_not_a_pin():
     assert hist["committed"] is False
 
 
+def test_the_cat034_edition_history_is_covered_but_is_not_a_pin():
+    """The same absence, for the second lineage, and it is NOT a parametrised copy of the first.
+
+    Two `spec/history/` directories exist now and the temptation is to fold the two checks into one
+    parametrised case over `(directory, count, pin file)`. Declined, and the reason is the reason
+    the count is a hard number at all: a parametrised form takes its expected count from a table,
+    and a table is one more place to update in the same edit that made it wrong. Two tests naming
+    two counts in two sentences fail with the format's name in the message and cannot be satisfied
+    by editing one row.
+
+    What IS shared is the property, and it is asserted the same way in both directions: none of the
+    lineage files is in the derived pin set, and the derived set does not shrink because of them.
+    """
+    history = sorted((PKG / "fixtures" / "cat034" / "spec" / "history").glob("*.pdf"))
+    if not history:
+        pytest.skip("the edition history is not in this working tree; the record of it is")
+    rels = {str(p.relative_to(PKG)) for p in history}
+    assert len(rels) == 3, f"the CAT034 edition history holds {len(rels)} PDFs, expected 3"
+    overlap = sorted(rels & set(PINS))
+    assert not overlap, (
+        f"a CAT034 history PDF is recorded as a pin: {overlap}. The governing text is Edition 1.29 "
+        "alone; 1.26, 1.27 and 1.28 are the lineage, and a lineage entry promoted to a pin would "
+        "make this document say a row was read against an edition it was not"
+    )
+    for rel in sorted(rels):
+        assert _repo_rel(rel) not in TRACKED, f"{rel} is tracked"
+    pin = json.loads((PKG / "fixtures" / "cat034" / "spec" / "cat034_pin.json").read_text())
+    hist = pin["edition_history"]
+    assert hist["count"] == len(rels), (
+        f"cat034_pin.json says the history holds {hist['count']} files and the disk holds "
+        f"{len(rels)}"
+    )
+    assert hist["home"] == "fixtures/cat034/spec/history/", hist["home"]
+    assert hist["committed"] is False
+    # The pin is NOT among them, which is the half the CAT048 test never had to state: there the
+    # pinned edition is also present in `history/` as a 23rd copy of itself, and here it is not.
+    assert not any("ed129" in r for r in rels), (
+        "Edition 1.29 is in fixtures/cat034/spec/history/. It is the pin and it lives in spec/ "
+        "itself; a second copy under history/ would be an unrecorded PDF and the closure check "
+        "would be right to say so"
+    )
+
+
+def test_every_history_directory_is_one_a_pin_record_declares(capsys):
+    """AN ABSENCE over the NAME rather than over the two directories that currently have one.
+
+    `spec_pdfs_on_disk()` is non-recursive, so ANY subdirectory of a `spec/` is invisible to the
+    closure property — which is exactly what makes `history/` safe and exactly what would make an
+    undeclared `spec/drafts/` a place to hide a PDF from this gate. So the sweep is inverted: every
+    subdirectory of every `spec/` that holds PDFs must be a `history/` whose format's pin record
+    declares it, with a matching count.
+
+    Written as a rule about the shape rather than about CAT048 and CAT034, because the third
+    lineage should land against a gate that already covers it.
+    """
+    declared, found = {}, {}
+    for pin_file in sorted(FIXTURES.rglob("*_pin.json")):
+        hist = json.loads(pin_file.read_text()).get("edition_history")
+        if isinstance(hist, dict) and "home" in hist:
+            declared[hist["home"].rstrip("/")] = hist["count"]
+    for spec in sorted(FIXTURES.glob("*/spec")):
+        for sub in sorted(p for p in spec.iterdir() if p.is_dir()):
+            pdfs = sorted(sub.glob("*.pdf"))
+            if pdfs:
+                found[str(sub.relative_to(PKG))] = len(pdfs)
+    undeclared = sorted(set(found) - set(declared))
+    assert not undeclared, (
+        f"these subdirectories of a fixtures/*/spec/ hold PDFs and no pin record declares them: "
+        f"{undeclared}. spec_pdfs_on_disk() is non-recursive, so a PDF in one is invisible to the "
+        "closure property — which is what makes a declared history/ safe and an undeclared "
+        "subdirectory a blind spot"
+    )
+    for home, count in sorted(declared.items()):
+        if home in found:
+            assert found[home] == count, (
+                f"{home} holds {found[home]} PDFs and its pin record declares {count}"
+            )
+    print(f"HISTORY: {len(found)} declared lineage directories, "
+          f"{sum(found.values())} PDFs, 0 of them pins")
+
+
 def test_the_pin_gate_states_its_derived_count_and_homes(capsys):
     """The gate's output, so a push gate can invoke this instead of restating a list.
 
@@ -491,9 +580,17 @@ def test_the_pin_gate_states_its_derived_count_and_homes(capsys):
         lines.append(f"  {home}/  ({len(homes[home])})")
         for name in homes[home]:
             lines.append(f"      {name}  {PINS[home + '/' + name]['sha256'][:12]}…")
-    history = sorted((PKG / "fixtures" / "cat048" / "spec" / "history").glob("*.pdf"))
-    lines.append(f"  NOT pins: {len(history)} CAT048 edition PDFs in "
-                 f"fixtures/cat048/spec/history/ — the lineage, covered by the zero-tracked check")
+    # Every lineage directory, not just CAT048's. A hard-coded home printed a truthful line while
+    # a second lineage sat unmentioned beside it, which is the shape of under-reporting this whole
+    # module exists to end.
+    histories = {str(sub.relative_to(PKG)): len(sorted(sub.glob("*.pdf")))
+                 for spec in sorted(FIXTURES.glob("*/spec"))
+                 for sub in sorted(p for p in spec.iterdir() if p.is_dir())
+                 if sorted(sub.glob("*.pdf"))}
+    lines.append(f"  NOT pins: {sum(histories.values())} edition PDFs across "
+                 f"{len(histories)} lineage directories — covered by the zero-tracked check")
+    for home in sorted(histories):
+        lines.append(f"      {home}/  ({histories[home]})")
     # The cited class, printed at zero as well as at one. A class that only appears in the output
     # once it has a member is a class a reader has no reason to believe is being checked.
     lines.append(f"  CITED, not carried: {len(CITED)}"

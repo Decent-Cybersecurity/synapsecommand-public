@@ -389,7 +389,15 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat04
 #: produce/consume FFT data"), and the document that decides what the payload really is called is
 #: not in hand. If ADatP-36 Edition B names it otherwise, THIS ENTRY is what moves — which is the
 #: whole reason the map is pinned by a test instead of living in somebody's memory of a `cp`.
-PLANNED_FIXTURE_DIRS = {"stanag4609": "klv", "stanag5527": "fft"}
+#:
+#: `cat034` reads ASTERIX Category 034 Monoradar Service Messages and its fixtures will live in
+#: `fixtures/cat034` — **the same string, and that is the ruling rather than a shortcut.** The
+#: split above bites when an adapter is named after a STANDARD, because then the standard's name is
+#: the wrong name for the bytes. An ASTERIX category IS the payload, so the two names coincide the
+#: way `cat021`'s and `cat048`'s already do in the shipped half. Recorded here explicitly so that
+#: nobody generalises `stanag5527`'s "these two must differ" rule across the whole map: it is true
+#: of the three STANAG adapters and false of the three ASTERIX ones.
+PLANNED_FIXTURE_DIRS = {"cat034": "cat034", "stanag4609": "klv", "stanag5527": "fft"}
 
 
 def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():
