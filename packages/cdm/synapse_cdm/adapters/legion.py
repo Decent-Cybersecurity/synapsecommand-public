@@ -320,9 +320,15 @@ def _coordinates_of(position: Any, crs: str | None) -> tuple[float, float, float
         latitude, longitude = (round(latitude, COORDINATE_DECIMALS),
                               round(longitude, COORDINATE_DECIMALS))
         altitude = round(altitude, ALTITUDE_DECIMALS)
+        # The crs clause is built here rather than inline in the f-string below, and the reason
+        # is a version floor rather than taste: a replacement field cannot span a newline before
+        # PEP 701 (3.12), and this package declares `requires-python = ">=3.11"`. The rendered
+        # text is unchanged in both branches — `tests/test_cdm_version_floor.py` evaluates the
+        # old form and this one against the same inputs and requires byte-identical output.
+        crs_clause = ('stated as ' + stated if crs
+                      else 'ABSENT, so ' + CRS_DEFAULT + ' by the schema default')
         basis = (
-            f"crs {'stated as ' + stated if crs else 'ABSENT, so ' + CRS_DEFAULT + ' by the '
-             'schema default'}; coordinates read as geocentric [X, Y, Z] metres and converted "
+            f"crs {crs_clause}; coordinates read as geocentric [X, Y, Z] metres and converted "
             f"to geodetic on the WGS84 ellipsoid (a={WGS84_A} m, 1/f={WGS84_INVERSE_FLATTENING}) "
             "by the closed-form Bowring/Ferrari solution. The source coordinates are re-emitted "
             "verbatim at attributes.legion_position; this Position is a derived one-way view")
