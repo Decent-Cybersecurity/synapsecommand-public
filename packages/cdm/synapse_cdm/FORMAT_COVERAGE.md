@@ -8117,10 +8117,77 @@ containing the term — because a search that had found nothing at all would hav
 rather than an absent document. **Result: ADatP-36 is not present in any edition, and neither are
 STANAG 7149 / APP-11, STANAG 2019 / APP-06, or any document using the term NFFI.**
 
+### The classification contingency, and why it is written before the fact that decides it
+
+The park above says **obtain**, and until this round it assumed that obtaining a copy and landing a
+pin were one act. They may not be one act here.
+
+**The doubt, and its provenance, which is not a NATO source.** A third-party standards index —
+GlobalSpec — lists **two** ADatP-36 records: one carries a NATO RESTRICTED marking and one, matching
+Edition A, carries none. **Which edition the marking attaches to is not established, and nothing
+below asserts that Edition B is classified or that it is not.** A reseller index is not the
+promulgating authority, its markings are not that authority's, and two records with one marking
+between them is as consistent with a catalogue artefact as with a fact about the text. The statement
+that decides it is the **NSDD classification line** on the record itself, and it is not in hand.
+
+So the park closes down one of two branches, and both are written now rather than after the fact
+arrives. The asymmetry is the whole justification: if Edition B is unclassified, Branch R cost one
+ruling and an empty gate class; if it is RESTRICTED and unplanned, the round that fetches the
+document becomes a design round with the document already in hand and nowhere lawful to put it.
+
+| | **Branch U** — Edition B unclassified or public | **Branch R** — Edition B NATO RESTRICTED |
+|---|---|---|
+| **What lands on disk** | the plan above, unchanged: the copy in `fixtures/fft/spec/`, untracked like every other pinned standard here | **none of the document's bytes.** No PDF in the working tree, not even untracked |
+| **What is recorded** | a pin: identity, SHA-256, byte count, page count, path | **cite-not-carry**: promulgation identity, edition, date and the NSDD classification line. **No hash**, because a hash of content this repository may not redistribute is a measurement of a copy it may not hold |
+| **What the row set rests on** | quotations, as every other row set in this document does | **clause citations** — numbered clauses this repository can name but not reproduce. A reader with their own lawful copy can check every row against it; a reader without one sees exactly which clause each row rests on, and no more |
+| **The two names** | settled on receipt | settled on receipt, identically. Reading a document and carrying it are different acts, and only the second is what this branch forgoes |
+| **How the gate sees it** | the pin set — `tests/test_cdm_pins.py` derives it and asserts closure against the disk | the **cited class**, ruled below, already in that gate, and legal-but-empty today |
+
+**The precedent, located rather than remembered.** This repository already carries one document by
+identity with its bytes outside the tree: **AEDP-12, Edition A Version 1, May 2014**, in the NITS
+pin table above — the row labelled "SHA-256 (2014)". That row records a hash, 3 719 388 bytes and
+148 pages for a copy that is, in its own words, "**Not present in `fixtures/nits/spec/`**", and
+commit `3e0aed0` — the round that re-verified the six NATO texts — recorded the consequence as the
+defect it is: that line is "the one line in this pin table that the re-verification below could not
+check". The CAT048 lineage round `844e336` cites the same treatment by name — "Not 'outside the
+repository', the AEDP-12 Edition A (2014) treatment" — as the precedent it *declined*, because the
+22 edition PDFs are a publisher's bundle anyone can re-fetch.
+
+Branch R takes that shape and inverts its status. There the bytes are outside the tree because a
+watermarked reseller copy is not reproducible, and the recorded hash is a premise nobody else can
+check — an accident, recorded honestly. Here the bytes would be outside the tree **because they may
+not lawfully be inside it**, and the entry would carry **no hash at all** — which removes the very
+thing that made the AEDP-12 line a defect, since there is then no unverifiable measurement left
+standing. A cite-not-carry entry states an identity; it does not measure a copy. Deliberate here,
+defective there, and the difference is worth stating because the two look identical from a file
+listing.
+
+**What the NSDD visit must return, and it is two facts.** Nothing else unblocks this park:
+
+1. **the classification line** on the ADatP-36 Edition B record — the statement that decides the
+   branch, read off the promulgating authority's own record and not off any index;
+2. **which version of Edition B** the copy is — the fact the park already required, because an
+   edition letter alone does not identify a text, which is the point this document has to make by
+   citing AEDP-12 as "Edition B Version 2".
+
+A visit that comes back with the document and with neither fact leaves this park exactly where it
+is.
+
+**The representation is decided now, not on arrival.** The pin gate asserts closure in both
+directions over the pinned set and the PDFs on disk, and a cite-not-carry entry is neither a pin nor
+an absence — it would sit in the one place that gate has no vocabulary for. So the vocabulary is
+added ahead of the entry: `tests/test_cdm_pins.py` now derives a **cited class** alongside the pin
+set, asserts the two disjoint in both directions, requires a cited entry to carry no hash, no byte
+count and no local path, and **fails loudly if a cited document grows bytes anywhere under
+`fixtures/`** — which is that branch's entire point, so it is the case with the sharpest message.
+Under Branch U the class stays legal and empty, and the gate passes with zero members today.
+
 **What closing park 1 would unlock, and what it would not.** It would make a row set possible, a
-fixture plan possible, and the fixture-directory ruling settleable. It would not change the adapter
-name, and it would not by itself produce an adapter: the KLV phase is the standing demonstration
-that a profile in hand and its field dictionaries absent is still Phase 1.
+fixture plan possible, and the fixture-directory ruling settleable — **under either branch**, since
+each of those rests on reading the document rather than on carrying it. What the branch decides is
+narrower than it looks: whether a pin lands, and whether the rows may quote or must cite. It would
+not change the adapter name, and it would not by itself produce an adapter: the KLV phase is the
+standing demonstration that a profile in hand and its field dictionaries absent is still Phase 1.
 
 ## GeoJSON (RFC 7946)
 

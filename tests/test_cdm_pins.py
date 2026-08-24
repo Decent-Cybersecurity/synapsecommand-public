@@ -29,6 +29,41 @@ Equality in both directions is what an enumeration could never give: a pin recor
 from disk fails, and a PDF on disk recorded nowhere fails. The eight-versus-nine drift is caught by
 the second direction, positively, without anybody counting.
 
+THE CITED CLASS, WHICH IS NEITHER A PIN NOR AN ABSENCE
+-------------------------------------------------------
+Everything above assumes that a document this repository names is a document whose bytes it may
+hold. #9's classification contingency breaks that assumption before it has to: if ADatP-36
+Edition B turns out to be NATO RESTRICTED, the FFT round takes the **cite-not-carry** branch —
+promulgation identity, edition, date and the NSDD classification line recorded, and the bytes never
+in this tree at all. See `FORMAT_COVERAGE.md`, "The classification contingency, and why it is
+written before the fact that decides it".
+
+Such an entry is a third thing. It is not a pin — there is no hash, no byte count and no copy to
+compare against — and it is not an absence either, because the repository is asserting a document's
+identity and citing its clauses. The closure property above has no vocabulary for it, so the
+vocabulary is added **before** the first entry exists rather than under time pressure with the
+document already in hand and nowhere lawful to put it.
+
+A cited entry is a node in a `*_pin.json` carrying ``"cite_not_carry": true``. It must state what
+it is (`document`, `edition`, `classification`, `why_not_carried`) and, in `must_not_appear_at`,
+the `fixtures/*/spec/` path the document *would* occupy if it were carried. That last field is what
+gives the class teeth: **a cited document that grows bytes on disk fails**, which is the branch's
+whole point.
+
+Three properties are asserted, and one of them is asserted at zero:
+
+* **disjoint from the pin set, both directions.** One path may not be both recorded as a pin and
+  declared cite-not-carry. The property is symmetric and the two messages are not, because the
+  repair depends on which record is the newer one;
+* **no measurement.** A cited node carrying `sha256`, `bytes`, `pages` or `local_path` has measured
+  a copy, which is the thing the branch forgoes. Refused by key;
+* **no bytes, anywhere under `fixtures/`** — not at `must_not_appear_at` and not under any other
+  name that basename could take, so dropping the file into a `history/` subdirectory fails too.
+
+**Today the class is empty, and that is Branch U's shape, not a broken parser.** An empty discovery
+would satisfy all three vacuously, so the parser is factored out as `citations_in()` and exercised
+against a synthetic record — the only honest way to keep a zero-member class load-bearing.
+
 WHAT IS NOT A PIN
 -----------------
 `fixtures/cat048/spec/history/` holds 22 CAT048 edition PDFs — the lineage, 1.10 to 1.32. They are
@@ -125,6 +160,76 @@ def _walk(node):
             yield from _walk(v)
 
 
+#: What a cite-not-carry entry must state. `must_not_appear_at` is the load-bearing one: it is the
+#: `fixtures/*/spec/` path the document WOULD occupy, and it exists so the gate can check that it
+#: does not.
+CITED_REQUIRED = ("document", "edition", "classification", "why_not_carried", "must_not_appear_at")
+
+#: And what it may not state. Each of these four measures a copy — which is the act this class
+#: exists to decline — and `local_path` additionally is how `discover_pins` recognises a pin, so a
+#: node carrying both keys would be two classes at once.
+CITED_FORBIDDEN = ("sha256", "bytes", "pages", "local_path")
+
+#: A cited entry names a path in the same shape a pin does, and only there: a citation is a
+#: statement about a document that has a home in this layout and is deliberately not in it.
+CITED_PATH = re.compile(r"fixtures/[^/]+/spec/[^/]+\.pdf\Z")
+
+
+def citations_in(node, source: str):
+    """Yield `(must_not_appear_at, entry)` for one node, validating it on the way through.
+
+    Factored out of `discover_citations` so it can be run against a synthetic record. The class has
+    zero members today and every assertion over it is therefore vacuous; a parser that CANNOT match
+    and a parser that finds nothing to match look identical from a green run, and this is the seam
+    that tells them apart.
+    """
+    if not isinstance(node, dict) or node.get("cite_not_carry") is not True:
+        return
+    missing = [k for k in CITED_REQUIRED if not node.get(k)]
+    assert not missing, (
+        f"{source}: a cite_not_carry entry is missing {missing}. A cited document is recorded by "
+        "its IDENTITY, since it is recorded by nothing else — name the document, the edition, the "
+        "classification line that put it in this class, why it is not carried, and the "
+        "fixtures/*/spec/ path it would occupy if it were"
+    )
+    present = [k for k in CITED_FORBIDDEN if k in node]
+    assert not present, (
+        f"{source}: a cite_not_carry entry states {present}. Every one of those measures a COPY of "
+        "the document, and this class exists precisely because this repository holds no copy it "
+        "may redistribute. Either drop the key, or — if the document may in fact be carried — "
+        "delete `cite_not_carry` and record it as an ordinary pin"
+    )
+    path = node["must_not_appear_at"]
+    assert CITED_PATH.fullmatch(path), (
+        f"{source}: must_not_appear_at is {path!r}, which is not a fixtures/*/spec/*.pdf path. It "
+        "names the home the document would have had, so it has to be a path this gate could "
+        "otherwise find a pin at"
+    )
+    yield path, dict(node, recorded_by=source)
+
+
+def discover_citations() -> dict[str, dict]:
+    """`{must_not_appear_at: entry}` for every cite-not-carry node in every pin record.
+
+    One source, unlike the pin set, and the reason is structural rather than an omission:
+    `DOC_PIN_ROW` matches on a SHA-256, a byte count, a page count and a path, which are the exact
+    four things a cited entry does not have. The document parser cannot see one by construction,
+    and that is also why the two classes cannot be confused for each other.
+    """
+    out: dict[str, dict] = {}
+    for pin_file in sorted(FIXTURES.rglob("*_pin.json")):
+        data = json.loads(pin_file.read_text())
+        rel_pin = str(pin_file.relative_to(REPO))
+        for node in _walk(data):
+            for path, entry in citations_in(node, rel_pin):
+                assert path not in out, (
+                    f"{path} is declared cite-not-carry twice — by {out[path]['recorded_by']} and "
+                    f"by {rel_pin}. One document, one record"
+                )
+                out[path] = entry
+    return out
+
+
 def spec_pdfs_on_disk() -> set[str]:
     """PDFs sitting DIRECTLY in a `fixtures/*/spec/` directory — not in a subdirectory of one.
 
@@ -145,6 +250,7 @@ def tracked_files() -> set[str]:
 
 
 PINS = discover_pins()
+CITED = discover_citations()
 DISK = spec_pdfs_on_disk()
 TRACKED = tracked_files()
 
@@ -199,6 +305,111 @@ def test_the_derived_pin_set_equals_the_pdfs_in_spec_directories():
         "record and to FORMAT_COVERAGE.md's pin table, or move it out of spec/ — a PDF in spec/ "
         "that no record names is a document nobody can identify"
     )
+
+
+def test_the_cited_class_is_disjoint_from_the_pin_set_in_both_directions():
+    """A document is carried or it is cited. Never both, and the two messages are not the same.
+
+    The property is one intersection and is symmetric; the REPAIRS are not, which is why it is
+    asserted twice. A path that gained a pin record while a citation stood means somebody landed
+    bytes the citation says may not be here — the citation is the thing to check. A path that
+    gained a citation while a pin record stood means somebody declared an already-carried document
+    uncarriable and left the copy on disk — the copy is the thing to remove.
+
+    Because the two assertions are the same set intersection, only the first can fire on a given
+    run: the mutation log for this round records that the second was demonstrated with the first
+    neutralised, which is the honest way to check a branch that a passing sibling shadows.
+
+    Empty today, because the cited class is empty today. `citations_in` is exercised against a
+    synthetic record below, which is what stops that emptiness from being a broken parser.
+    """
+    both = sorted(set(CITED) & set(PINS))
+    assert not both, (
+        f"recorded as a PIN and declared cite-not-carry: {both}. A pin record states a SHA-256 for "
+        "a copy in this tree and a citation states that no copy may be in this tree. Both cannot "
+        f"be true — check {[CITED[p]['recorded_by'] for p in both]} against the pin record"
+    )
+    # The same fact from the other side, because the repair differs by which record moved last.
+    also_pinned = sorted(p for p in PINS if p in CITED)
+    assert not also_pinned, (
+        f"declared cite-not-carry and ALSO recorded as a pin: {also_pinned}. If the document may "
+        "not be carried, delete the pin record and remove the copy from the working tree; if it "
+        "may, delete the citation. Leaving both makes the gate assert a contradiction quietly"
+    )
+
+
+@pytest.mark.parametrize("path", sorted(CITED) or [None],
+                         ids=lambda p: (p or "none-cited").rsplit("/", 1)[-1])
+def test_no_cited_document_has_grown_bytes_anywhere_under_fixtures(path):
+    """THE TEETH. A cited entry that acquires a file is the failure this class exists to catch.
+
+    Checked two ways, because the obvious one is too narrow. `must_not_appear_at` is the home the
+    document would have had, and a copy that arrives by accident is at least as likely to land in a
+    `spec/history/` subdirectory or beside a fixture as at exactly that path — so the basename is
+    swept across the whole fixture tree as well. Either hit fails, and the repair is the same one:
+    the file goes, not the citation.
+    """
+    if path is None:
+        pytest.skip("the cited class is empty — Branch U's shape, and a legal state. The parser "
+                    "that would populate it is exercised by test_the_citation_parser_is_not_vacuous")
+    entry = CITED[path]
+    full = _full(path)
+    assert not full.exists(), (
+        f"{path} EXISTS. It is declared cite-not-carry by {entry['recorded_by']} — "
+        f"{entry['document']}, {entry['edition']}, {entry['classification']} — which says its bytes "
+        "may not be in this repository at all, tracked or untracked. Delete the file. If the "
+        "classification was wrong, the repair is to correct the citation and re-record the document "
+        "as an ordinary pin, in that order"
+    )
+    name = path.rsplit("/", 1)[-1]
+    elsewhere = sorted(str(q.relative_to(PKG)) for q in FIXTURES.rglob(name))
+    assert not elsewhere, (
+        f"{name} is declared cite-not-carry and a file of that name is under fixtures/ at "
+        f"{elsewhere}. A subdirectory is not a loophole — {entry['document']} may not be in this "
+        "tree under any path. Delete it"
+    )
+
+
+def test_the_citation_parser_is_not_vacuous():
+    """The cited class has zero members, so this is the check that keeps the other two honest.
+
+    Every assertion above is vacuously true today and would stay vacuously true if `citations_in`
+    stopped matching altogether — the same failure one level up from the eight-versus-nine drift,
+    where a gate reports clean over a smaller tree than the one in front of it. So the parser is
+    run against a synthetic record here: it must FIND a well-formed citation, and it must REFUSE
+    each of the three malformations, in-memory and with nothing written to disk.
+    """
+    good = {
+        "cite_not_carry": True,
+        "document": "A NATO standardization document",
+        "edition": "Edition B",
+        "classification": "NATO RESTRICTED, per the NSDD record",
+        "why_not_carried": "the bytes may not be redistributed from a public repository",
+        "must_not_appear_at": "fixtures/fft/spec/a-document-not-carried.pdf",
+    }
+    found = dict(citations_in(good, "synthetic"))
+    assert list(found) == ["fixtures/fft/spec/a-document-not-carried.pdf"], (
+        f"the citation parser did not find a well-formed citation: {found}. Every assertion over "
+        "the cited class is vacuous while this is true, which is exactly what it would look like "
+        "if the class were simply empty"
+    )
+    assert found["fixtures/fft/spec/a-document-not-carried.pdf"]["recorded_by"] == "synthetic"
+
+    # A node that does not opt in is not a citation, so the flag is what selects, not the shape.
+    assert list(citations_in(dict(good, cite_not_carry=False), "synthetic")) == []
+    assert list(citations_in({"document": "x"}, "synthetic")) == []
+    assert list(citations_in("not a dict", "synthetic")) == []
+
+    for key in CITED_REQUIRED:
+        with pytest.raises(AssertionError, match="is missing"):
+            list(citations_in({k: v for k, v in good.items() if k != key}, "synthetic"))
+    for key in CITED_FORBIDDEN:
+        with pytest.raises(AssertionError, match="measures a COPY"):
+            list(citations_in(dict(good, **{key: "anything"}), "synthetic"))
+    for bad in ("a-document-not-carried.pdf", "fixtures/fft/a-document.pdf",
+                "fixtures/fft/spec/history/a-document.pdf", "fixtures/fft/spec/a-document.txt"):
+        with pytest.raises(AssertionError, match="must_not_appear_at"):
+            list(citations_in(dict(good, must_not_appear_at=bad), "synthetic"))
 
 
 @pytest.mark.parametrize("path", sorted(PINS), ids=lambda p: p.rsplit("/", 1)[-1])
@@ -283,9 +494,22 @@ def test_the_pin_gate_states_its_derived_count_and_homes(capsys):
     history = sorted((PKG / "fixtures" / "cat048" / "spec" / "history").glob("*.pdf"))
     lines.append(f"  NOT pins: {len(history)} CAT048 edition PDFs in "
                  f"fixtures/cat048/spec/history/ — the lineage, covered by the zero-tracked check")
+    # The cited class, printed at zero as well as at one. A class that only appears in the output
+    # once it has a member is a class a reader has no reason to believe is being checked.
+    lines.append(f"  CITED, not carried: {len(CITED)}"
+                 + ("" if CITED else " — legal and empty, which is #9's Branch U shape"))
+    for path in sorted(CITED):
+        lines.append(f"      {path}  ({CITED[path]['classification']}) — must not exist")
     print("\n".join(lines))
     out = capsys.readouterr().out
-    assert "PIN GATE:" in out and "NOT pins:" in out
+    assert "PIN GATE:" in out and "NOT pins:" in out, (
+        f"the gate no longer prints its header lines:\n{out}"
+    )
+    assert "CITED, not carried:" in out, (
+        f"the gate no longer prints the cited class:\n{out}\nIt is empty today, which is exactly "
+        "why it has to be printed — a reader who cannot see the line has no way to tell a class "
+        "checked and empty from a class nobody wired up. Restore the CITED line"
+    )
     assert str(len(PINS)) in out
 
 

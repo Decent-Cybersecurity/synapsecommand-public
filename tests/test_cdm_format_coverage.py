@@ -3776,6 +3776,17 @@ FFT_PINNED_DOCUMENT = ("nato-stanag-5527-edition-2.pdf",
                        319795, 5)
 
 
+#: The classification claim, and the hedge that makes an occurrence of it legitimate. Every site
+#: has to be able to SAY what it is not asserting, so the ban is windowed rather than flat — the
+#: same shape `tests/test_cdm_changelog_claim.py` and `tests/test_cdm_ordinals.py` both arrived at,
+#: and for the same reason: a flat ban would have an exemption list longer than itself.
+_CLASSIFICATION_CLAIM = re.compile(
+    r"Edition B is (?:NATO RESTRICTED|RESTRICTED|classified|unclassified|public)", re.I)
+_CLASSIFICATION_HEDGE = re.compile(
+    r"nothing (?:in this record |below |here )?asserts|does not assert|or that it is not|"
+    r"is not established|not in hand|if Edition B", re.I)
+
+
 def _fft_sites() -> dict[str, str]:
     """The three files that state the ruling in full, so a fact can be checked at every one."""
     return {
@@ -4044,6 +4055,146 @@ def test_the_single_park_is_stated_once_and_agrees_at_every_site():
         "the reopen condition no longer excludes 'the current ADatP-36'. Obtaining a later "
         "revision and reading it against this citation is the failure that condition exists for"
     )
+
+
+def test_the_classification_contingency_is_stated_in_the_SAME_two_branch_form_at_every_site():
+    """THE DISJUNCTION SWEEP for #9's park, applied to a fact that does not exist yet.
+
+    The park was single-branched until this round: obtain the document, land the pin. That collapses
+    two acts into one, and it is only safe if the document may be carried. Whether ADatP-36 Edition
+    B may be carried is **not established** — a third-party index shows two records and one
+    RESTRICTED marking between them, which is not a NATO source — so the park now states two
+    branches and every site that states the park must state both.
+
+    The failure this guards is the ordinary one for a fact recorded four times: a later editor
+    tidies one site back to the single-branch form, and the repository then says two different
+    things about what happens when the document arrives. It is worse than the usual case, because
+    the site that keeps the simpler sentence is the one a hurried reader believes.
+
+    Both directions are checked. No site may lose a branch, and **no site may assert the fact that
+    decides it** — this round does not know Edition B's classification and a site that states one
+    has invented it.
+    """
+    sites = dict(_fft_sites())
+    migrations = MIGRATIONS.read_text()
+    entry = migrations[migrations.index("- **`stanag5527` — STANAG 5527"):]
+    entry = entry[:entry.index("\n## ", 10)]
+    sites["MIGRATIONS.md (the stanag5527 entry)"] = entry
+
+    for label, text in sites.items():
+        flat = _flat(text)
+        low_flat = flat.lower()
+        for token in ("Branch U", "Branch R"):
+            assert token in flat, (
+                f"{label} no longer states {token}. The park closes down one of two branches and a "
+                "site that names one of them reads as a settled plan"
+            )
+        # WINDOWED, not a plain `in`. Every one of these sites names cite-not-carry more than
+        # once — the branch, then the precedent paragraph that contrasts it with AEDP-12 — so
+        # `"cite-not-carry" in text` is a disjunction that survives Branch R losing its treatment
+        # entirely. The mutation that found this took the phrase off the branch and left it in the
+        # precedent sentence, and the check passed.
+        attached = [m for m in re.finditer(r"branch r", low_flat)
+                    if "cite-not-carry" in low_flat[m.start():m.end() + 400]]
+        assert attached, (
+            f"{label} names Branch R and does not name cite-not-carry as its treatment within 400 "
+            "characters of it. That phrase is the whole content of the branch — identity recorded, "
+            "bytes never in this repository — and a Branch R without it is a branch with no rule"
+        )
+        assert "nsdd classification line" in low_flat, (
+            f"{label} no longer names the deciding fact. Without it the two branches read as a "
+            "preference between two ways of recording a document rather than as a contingency on "
+            "something nobody here has read"
+        )
+        assert "not established" in low_flat, (
+            f"{label} no longer records that WHICH EDITION the marking attaches to is unestablished."
+            " That sentence is what keeps the contingency a contingency"
+        )
+        # And the fact itself is still not in hand, at any site. A flat ban on the words would ban
+        # the DISCLAIMER along with the claim — every one of these sites has to say "nothing here
+        # asserts that Edition B is classified or that it is not", and that sentence contains the
+        # banned string. That is the lesson the invention check below already records about the
+        # retired reserved name, and the repair is the same windowed form: the phrase is allowed,
+        # an UNHEDGED occurrence of it is not.
+        for m in _CLASSIFICATION_CLAIM.finditer(flat):
+            window = flat[max(0, m.start() - 200):m.end() + 80]
+            assert _CLASSIFICATION_HEDGE.search(window), (
+                f"{label} states {m.group(0)!r} with nothing around it that withholds the claim: "
+                f"…{window}… . The NSDD classification line has not been read, so a site that "
+                "states the answer has invented the fact this whole contingency exists to wait for"
+            )
+        # These take no disclaimer form at all, so they are banned outright.
+        for invented in ("Branch R is taken", "Branch U is taken", "the branch is decided",
+                         "Branch R applies", "Branch U applies"):
+            assert invented.lower() not in flat.lower(), (
+                f"{label} asserts {invented!r}. Neither branch has been taken and this round "
+                "cannot take one"
+            )
+
+    # The precedent is CITED rather than paraphrased, and it is located: a branch that says "like
+    # the AEDP-12 case" without saying where that case is written is a pointer to somebody's memory.
+    flat_doc = _flat(_section(FFT_HEADING))
+    assert "3e0aed0" in flat_doc, (
+        "the Branch R text no longer cites the commit that recorded the AEDP-12 Edition A "
+        "treatment. That precedent is the reason Branch R is a known shape rather than an invention"
+    )
+    assert "SHA-256 (2014)" in flat_doc, (
+        "the Branch R text no longer names the row the precedent lives in. 'The AEDP-12 treatment' "
+        "is not locatable by grep; the row label is"
+    )
+    assert "Not present in `fixtures/nits/spec/`" in _section("## STANAG 4676 / AEDP-12"), (
+        "the AEDP-12 Edition A row no longer says its copy is outside the tree, so the Branch R "
+        "text now cites a precedent this document does not contain"
+    )
+
+    # And the two facts the visit must return, which are the park's exit condition now. WINDOWED
+    # for the same reason as the branch treatment above, and found by the same kind of mutation:
+    # "which version of Edition B" occurs elsewhere in every one of these sites — it is the point
+    # the delegation row and the reopen condition both already make — so a bare `in` check passes
+    # with the fact struck out of the visit's list. Both facts must sit with the visit that has to
+    # return them.
+    for label, text in sites.items():
+        low_flat = _flat(text).lower()
+        windows = [low_flat[m.start():m.end() + 900]
+                   for m in re.finditer(r"nsdd[ _]visit", low_flat)]
+        assert windows, (
+            f"{label} no longer names the NSDD visit at all. It is the act that closes this park "
+            "and the only thing that can return either fact"
+        )
+        for fact in ("classification line", "which version of edition b"):
+            assert any(fact in w for w in windows), (
+                f"{label} names the NSDD visit and does not require {fact!r} of it. The visit has "
+                "to return TWO facts — the classification line decides the branch, the version "
+                "identifies the text — and a visit that returns the document and neither leaves "
+                "the park where it is"
+            )
+    assert "it is two facts" in flat_doc, (
+        "FORMAT_COVERAGE.md no longer states that the NSDD visit must return TWO facts. One of "
+        "them — the classification line — is new this round, and a visit that returns the document "
+        "and neither fact leaves the park where it is"
+    )
+
+
+def test_the_changelog_page_states_none_of_the_number_nine_park():
+    """AN ABSENCE, and it is the one site the sweep must find EMPTY rather than agreeing.
+
+    `f99a4b0` ruled that `docs/docs/changelog.mdx` is a curated summary of `MIGRATIONS.md` for a
+    reader of the published contract, and that "no adapter code, no fixtures, one park, ADatP-36
+    Edition B not in hand" is repository-internal process rather than schema history. A two-branch
+    contingency over a document nobody has read is that same genre, only more so.
+
+    So this round's sweep visits the page and requires it to say nothing — which is a finding the
+    sweep has to record either way, because "the changelog was not checked" and "the changelog
+    correctly says nothing" look identical afterwards.
+    """
+    repo = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
+    page = (repo / "docs" / "docs" / "changelog.mdx").read_text()
+    for token in ("ADatP-36", "5527", "stanag5527", "Branch R", "cite-not-carry", "NSDD"):
+        assert token not in page, (
+            f"docs/docs/changelog.mdx now mentions {token!r}. That page carries schema history for "
+            "a reader of the published contract; #9 has no schema to report, and its park is "
+            "repository process — see the f99a4b0 ruling in tests/test_cdm_changelog_claim.py"
+        )
 
 
 def test_the_two_ruled_names_agree_at_every_site_that_states_them():

@@ -116,4 +116,24 @@ Documents Database, `https://nso.nato.int/nso/`, "or through your national stand
 authorities". That is weaker than eleven of the twelve KLV parks and stronger than the twelfth:
 those are public downloads, SMPTE ST 336 needs a budget, and this one needs an **access** decision.
 
+**And obtaining it may not be the same act as pinning it.** A third-party standards index carries
+two ADatP-36 records, one marked NATO RESTRICTED and one — matching Edition A — unmarked. **Which
+edition the marking attaches to is not established**, and nothing here asserts that Edition B is
+classified or that it is not; the statement that decides it is the NSDD classification line on the
+record, and it is not in hand. So the park closes down one of two branches:
+
+- **Branch U — unclassified or public.** The plan above, unchanged: the copy lands in `spec/` beside
+  the covering document, untracked, and its identity and SHA-256 join the pin table on this page.
+- **Branch R — NATO RESTRICTED.** **Cite-not-carry.** The document's promulgation identity, edition,
+  date and NSDD classification line are recorded; its bytes never enter this repository — no pin, no
+  hash of them, no PDF in `spec/` even untracked — and a mapping table would rest on clause
+  citations rather than on quotations. The precedent is `FORMAT_COVERAGE.md`'s AEDP-12 Edition A
+  (2014) row, whose bytes are likewise outside the tree; that one is a defect `3e0aed0` recorded as
+  such, and this one would be deliberate and would record no hash to leave unverifiable.
+
+The NSDD visit therefore has to return **two** facts, not one: the classification line, and which
+version of Edition B the copy is. `tests/test_cdm_pins.py` already carries the representation for
+the second branch — a **cited class** disjoint from the pin set, which fails loudly if a cited
+document grows bytes on disk, and which is legal and empty today.
+
 Until then #9 is a pinned covering document, two names and this file.

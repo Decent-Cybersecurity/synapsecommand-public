@@ -608,6 +608,24 @@ too — so the first is now stated.
   once — nations should add "interfaces to produce/consume FFT data" — and the document that decides
   what the payload really is, ADatP-36 Edition B, is not in hand.
 
+  **The one park now closes down one of two branches, and both are written.** Obtaining ADatP-36
+  Edition B and landing a pin were assumed to be one act; they may not be. A third-party standards
+  index lists two ADatP-36 records, one carrying a NATO RESTRICTED marking and one — matching
+  Edition A — carrying none, and **which edition the marking attaches to is not established**;
+  nothing here asserts that Edition B is classified or that it is not. Under **Branch U** the plan
+  above is unchanged: a pin in `fixtures/fft/spec/`, identity and hash recorded. Under **Branch R**
+  the treatment is **cite-not-carry** — promulgation identity, edition, date and the NSDD
+  classification line are recorded, the bytes never enter this repository, no hash of them is taken,
+  and a row set would rest on clause citations rather than quotations. The precedent is the AEDP-12
+  Edition A (2014) row in `FORMAT_COVERAGE.md`'s NITS pin table, deliberate here and defective there
+  — `3e0aed0` recorded that row as "the one line in this pin table that the re-verification below
+  could not check", and a cite-not-carry entry records no measurement to leave unchecked. The NSDD
+  visit must return **two** facts to unblock the park: the classification line and which version of
+  Edition B the copy is. `tests/test_cdm_pins.py` carries the representation ahead of the entry — a
+  **cited class**, disjoint from the pin set in both directions, failing loudly if a cited document
+  grows bytes on disk, and legal-but-empty today. **This is repository process and not schema
+  history**, which is why `docs/docs/changelog.mdx` states none of it.
+
   **No gap is opened, no field is proposed, and there is nothing to weigh.** The `stanag4609` entry
   above could name two gaps it reached from a new direction because it held a profile; this one
   holds five pages whose only normative act is the name of another document. The word `shall`

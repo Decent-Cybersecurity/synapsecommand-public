@@ -128,7 +128,37 @@
       "what_it_blocks": "Everything except the pin, the two names and this record. No row set, no mapping table, no fixture, no fixture plan, no gap, no proposed field and no ambiguity register - a register reads a text, and the text this adapter would read is not here.",
       "reopen_condition": "Obtain ADatP-36 EDITION B specifically - the exact edition the STANDARD clause names, not 'the current ADatP-36'. That is the same exit condition the twelve KLV parks carry and it exists for the same reason: a later revision decoded against an earlier citation is a plausible answer to the wrong question. The edition letter alone does not identify a text either, so a copy in hand must also settle which version of Edition B it is.",
       "route": "The pinned document's own RESTRICTION TO REPRODUCTION clause prints the route for NATO standardization documents: 'They can be retrieved from the NATO Standardization Documents Database (https://nso.nato.int/nso/) or through your national standardization authorities.' That clause is about NATO standardization documents generally rather than about ADatP-36 by name, which is why this is recorded as the document's stated route and not as a confirmed availability.",
-      "honest_strength": "Weaker than eleven of the twelve KLV parks and stronger than the twelfth. The MISB parks are public downloads and SMPTE ST 336 needs a purchase decision. This one is neither: NSDD access is by national standardization authority, so the park closes on an ACCESS decision rather than on an afternoon or a budget."
+      "honest_strength": "Weaker than eleven of the twelve KLV parks and stronger than the twelfth. The MISB parks are public downloads and SMPTE ST 336 needs a purchase decision. This one is neither: NSDD access is by national standardization authority, so the park closes on an ACCESS decision rather than on an afternoon or a budget.",
+
+      "classification_contingency": {
+        "why_this_is_here": "Obtaining ADatP-36 Edition B and landing a pin were assumed to be one act. They may not be one act, and the branch is written before the fact that decides it so that the round which lands that fact is execution rather than deliberation.",
+        "the_doubt_and_its_provenance": "A third-party standards index - GlobalSpec - lists TWO ADatP-36 records: one carries a NATO RESTRICTED marking and one, matching Edition A, carries none. WHICH EDITION THE MARKING ATTACHES TO IS NOT ESTABLISHED.",
+        "what_is_NOT_asserted": "Nothing in this record asserts that ADatP-36 Edition B is classified, and nothing asserts that it is not. A reseller index is not the promulgating authority and its markings are not that authority's; two records with one marking between them is as consistent with a catalogue artefact as with a fact about the text.",
+        "the_deciding_fact": "The NSDD classification line on the ADatP-36 Edition B record itself. NOT IN HAND.",
+        "branch_u_unclassified_or_public": {
+          "label": "Branch U - Edition B unclassified or public.",
+          "what_lands": "The plan above, unchanged. The copy goes to fixtures/fft/spec/, untracked like every other pinned standard in this repository.",
+          "what_is_recorded": "A pin: identity, SHA-256, byte count, page count and local_path - the record shape this file already carries for STANAG 5527 Edition 2.",
+          "what_the_row_set_rests_on": "Quotations, as every other row set in FORMAT_COVERAGE.md does.",
+          "how_the_gate_sees_it": "The pin set derived by tests/test_cdm_pins.py, under that module's closure assertion against the PDFs on disk."
+        },
+        "branch_r_nato_restricted": {
+          "label": "Branch R - Edition B NATO RESTRICTED.",
+          "treatment": "CITE-NOT-CARRY.",
+          "what_lands": "None of the document's bytes. No PDF in the working tree, not even untracked.",
+          "what_is_recorded": "Promulgation identity, edition, date and the NSDD classification line. NO HASH - a hash of content this repository may not redistribute is a measurement of a copy it may not hold.",
+          "what_the_row_set_rests_on": "Clause citations: numbered clauses this repository can name but not reproduce. A reader holding their own lawful copy can check every row against it; a reader without one can see which clause each row rests on and no more.",
+          "the_two_names": "Settled on receipt, identically to Branch U. Reading a document and carrying it are different acts, and only the second is what this branch forgoes.",
+          "how_the_gate_sees_it": "The CITED CLASS in tests/test_cdm_pins.py - a node carrying \"cite_not_carry\": true, asserted disjoint from the pin set in both directions, forbidden to carry sha256, bytes, pages or local_path, and failing loudly if the named document grows bytes anywhere under fixtures/. Legal and empty today.",
+          "precedent": "FORMAT_COVERAGE.md's NITS pin table, the row labelled 'SHA-256 (2014)': AEDP-12 Edition A Version 1, May 2014, whose bytes are 'Not present in fixtures/nits/spec/'. Commit 3e0aed0 recorded that row as 'the one line in this pin table that the re-verification below could not check', and commit 844e336 cites the same treatment by name - 'Not \"outside the repository\", the AEDP-12 Edition A (2014) treatment' - as the precedent it DECLINED for the 22 CAT048 editions.",
+          "precedent_inverted": "There the bytes are outside the tree because a watermarked reseller copy is not reproducible, and the recorded hash is a premise nobody else can check - an accident, recorded honestly. Here the bytes would be outside the tree because they may not lawfully be inside it, and the entry would carry no hash at all, which removes the very thing that made the AEDP-12 line a defect. Deliberate here, defective there, and the two look identical from a file listing."
+        },
+        "what_the_nsdd_visit_must_return": [
+          "The classification line on the ADatP-36 Edition B record - the statement that decides the branch, read off the promulgating authority's own record and not off any index.",
+          "Which version of Edition B the copy is - the fact this park already required, because an edition letter alone does not identify a text."
+        ],
+        "a_visit_that_returns_neither_fact": "leaves this park exactly where it is, document in hand or not."
+      }
     }
   },
 
