@@ -1397,6 +1397,72 @@
         "bytes": 725626,
         "pages": 64
       }
-    ]
+    ],
+    "closures_2026_08_24": {
+      "what_this_is": "The three findings 844e336 left on the record, all closed from the bundle already in spec/history/ with nothing new fetched.",
+      "finding_1_ambiguity_13": {
+        "verdict": "RESOLVED. The Note Edition 1.32 added to I048/090 is NOTE 5.",
+        "method": "Edition 1.31's SS 5.2.12 diffed against Edition 1.32's, both extracted from the PDFs in spec/history/.",
+        "ed_1_31_notes": 4,
+        "ed_1_32_notes": 5,
+        "notes_1_to_4": "IDENTICAL in both editions, word for word.",
+        "the_added_note_verbatim_from_ed_1_32": "5. For radar systems interrogating with various technologies (such as military radars interrogating in Mode S and Mode 5), element I048/REF/GEN48/ALTFL provides the possibility to transmit an alternative Flight Level value. If this Data Item carries a Flight Level value that has been derived from a Mode 5 Reply/Report, then bit-2 in I048/REF/MD5/SF#1 or bit-2 in I048/REF/M5N/SF#1 shall be set to 1.",
+        "the_earlier_inference_was_wrong": "The ambiguity recorded Note 3 - the ICAO Annex 10 bound - as the likely insertion, on the reasoning that it was the only Note whose subject matter was not traceable to an earlier change-record entry. Note 3 is present in Edition 1.31 VERBATIM, so the inference was false. Recorded as wrong rather than quietly replaced.",
+        "the_other_half_of_the_record_entry_confirmed_independently": "Ed 1.31: 'bits-14/1 (Flight Level) LSB= 1/4 FL'. Ed 1.32: 'bits-14/1 (Flight Level) LSB= 1/4 FL in two's complement form'. So the change record's 'Clarification ... and Note added' names two distinct changes, not one change described twice.",
+        "consequence_for_the_mapping": "NONE - RESOLVED-NO-CHANGE. Every element Note 5 names (I048/REF/GEN48/ALTFL, I048/REF/MD5/SF#1, I048/REF/M5N/SF#1) is inside the Reserved Expansion Field, which settlement 1 parks whole and never decodes.",
+        "consequence_for_the_RE_park": "The park costs more than settlement 1 stated. The RE can carry an ALTERNATIVE Flight Level for the same target, and a bit inside it states whether I048/090's value was derived from a Mode 5 Reply/Report. So a parked RE hides a second altitude AND the provenance of the first, which makes settlement 5's 'three quantities against three datums' an undercount by one whenever an RE is present. Recorded in settlement 5; nothing acted on here."
+      },
+      "finding_2_the_i048_030_growth_phrasing": {
+        "verdict": "TIGHTENED to the exact count.",
+        "exact_answer": "Ten of the sixteen editions from 1.17 to 1.32 touched I048/030; six did not.",
+        "the_ten": [
+          "1.17",
+          "1.18",
+          "1.19",
+          "1.24",
+          "1.25",
+          "1.26",
+          "1.27",
+          "1.28",
+          "1.31",
+          "1.32"
+        ],
+        "the_six_that_did_not": [
+          "1.20",
+          "1.21",
+          "1.22",
+          "1.23",
+          "1.29",
+          "1.30"
+        ],
+        "single_site_rule": "The ten are listed in exactly ONE place in FORMAT_COVERAGE.md - the I048/030 row of the checked-items table - and the pin row states the count and points at it. A test asserts the enumeration occurs once, because a second copy is a second site to drift.",
+        "assertion_retired": "844e336 froze the loose phrasing with an absence assertion, correct for exactly one round: that round recorded the phrasing as newly checkable and ruled nothing, so freezing it stopped it being edited on the way past. This round rules, so the frozen-loose assertion is RETIRED and replaced by the exact-count and single-site assertions."
+      },
+      "finding_3_edition_1_27_date": {
+        "verdict": "RULED: the edition date IS 18/06/2020.",
+        "rule_applied": "A document's identification pages outrank later documents' statements about it - and, one level finer than the proposed default needed, they outrank the same document's own change record. The cover and the page-ii Document Characteristics are where an edition date is DECLARED as an identity fact, which is the rule the 1.32 pin row already applies and the rule that let a title page overrule a filename in register entry 18.",
+        "the_witness_the_check_turned_up": "Edition 1.27's OWN Document Change Record dates it '1.27 May 2020' on printed page v. So this is not two later documents mis-stating an earlier one - Edition 1.27 disagrees with ITSELF.",
+        "witnesses": {
+          "18/06/2020": [
+            "Ed 1.27 cover",
+            "Ed 1.27 page-ii Document Characteristics"
+          ],
+          "May 2020": [
+            "Ed 1.27's own change record",
+            "Ed 1.28",
+            "Ed 1.29",
+            "Ed 1.30",
+            "Ed 1.31",
+            "Ed 1.32"
+          ]
+        },
+        "why_the_change_record_cannot_be_the_authority": "Its DATE column is month-granularity throughout - every entry from 0.7 to 1.32 is month-only - so it cannot express 18/06 at all. The value it carries is therefore not merely coarse but wrong by a month.",
+        "consequence": "None for the mapping; 1.27 is not the governing text. A reader dating the I048/030 value-31 change from the PINNED edition's own record lands a month early."
+      },
+      "premises_named": [
+        "Edition 1.31's BODY extracts cleanly - readability 0.818 across 70524 characters - so the cover-font problem named in 844e336 is confined to its cover and its change-record pages, and even those extract when read page by page rather than by regex over a truncated slice. The SS 5.2.12 diff therefore rests on readable text on both sides, not on unreadable bytes.",
+        "Editions 1.28 and 1.29 do not restate the 1.27 row on the page their change record starts; their 1.27 entries were read from the preceding page of the same record. Both say May 2020."
+      ]
+    }
   }
 }

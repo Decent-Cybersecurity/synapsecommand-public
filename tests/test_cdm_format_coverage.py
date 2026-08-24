@@ -3463,38 +3463,90 @@ def test_the_verdict_is_stated_and_names_the_items_checked():
     )
 
 
-def test_the_three_follow_up_findings_are_recorded_as_findings_and_not_acted_on():
-    """AN ABSENCE as much as a presence: this pass rules, the next pass edits.
+def test_the_three_findings_are_closed_and_ambiguity_13_names_the_note_it_found():
+    """The follow-up round's own gate, and it REPLACES an assertion that has been retired.
 
-    Ambiguity 13 is now resolvable from Edition 1.31, which is in hand. The temptation is to resolve
-    it here — and resolving it means reading two sections of two documents and changing a register
-    entry, which is a different pass. So the finding is recorded and the register entry must still
-    be open.
+    RETIRED: `"grown in nearly every edition since 1.17" in section`, and the absence assertion
+    beside it that the loose phrasing must stay loose. Both were correct for exactly one round —
+    844e336 recorded the phrasing as newly checkable and ruled nothing, so freezing it was the way
+    to stop it being edited on the way past. This round rules: the phrasing is TIGHTENED to ten of
+    sixteen and the frozen-loose assertion would now guard a sentence that no longer exists. A dead
+    assertion pointing at a retired sentence is worse than no assertion, because the next reader
+    trusts it.
+
+    What replaces it is stricter, not looser: the exact count must be stated, and the ten editions
+    must be listed at exactly ONE site.
     """
     lineage = _flat(_lineage())
-    assert "Ambiguity 13 is now resolvable and is not resolved here" in lineage, (
-        "the highest-value finding of the round is the one most likely to be quietly actioned"
-    )
     section = _section(CAT048_HEADING)
+    flat = _flat(section)
+
+    # 1. Ambiguity 13, closed, and closed with the Note NAMED. "Resolved" without the answer in it
+    #    would be the same unfalsifiable claim the entry started as.
     thirteen = [ln for ln in section.splitlines() if ln.startswith("| 13 | **")]
     assert len(thirteen) == 1, "ambiguity 13's row is gone"
-    assert "is not determinable from the pinned copy" in thirteen[0], (
-        "ambiguity 13 has been resolved in this pass. The lineage section says it is not, so either "
-        "the finding text or the register entry is now lying"
+    assert "RESOLVED" in thirteen[0] and "is Note 5" in thirteen[0], (
+        f"ambiguity 13 must close by naming the Note the diff found.\n  row: {thirteen[0][:200]}"
     )
-    # And the loose phrasing it names is deliberately still loose.
-    assert "grown in nearly every edition since 1.17" in _flat(section), (
-        "the pin table's 'nearly every edition' phrasing was changed. This pass records that it is "
-        "now checkable — ten of sixteen — and rules nothing; changing it is the follow-up's call"
+    assert "is not determinable from the pinned copy" not in thirteen[0], (
+        "AN ABSENCE: the unresolved wording is back in ambiguity 13's row while the lineage section "
+        "says the diff was run. One of the two is now lying"
     )
-    assert "ten of the sixteen editions from 1.17 to 1.32 touched it" in lineage, (
-        "the exact answer to the loose claim is the useful half of that finding"
+    assert "1.31 carries four Notes, 1.32 five, Notes 1–4 identical" in _flat(thirteen[0]), (
+        "the evidence is the count on each side of the diff; without it the row asserts a "
+        "conclusion a reader cannot re-derive"
+    )
+    # And the wrong inference is recorded AS wrong rather than quietly replaced.
+    assert "inference — Note 3 as the likely insertion — was **wrong**" in _flat(thirteen[0]), (
+        "the row no longer says its own earlier inference was wrong. A correction that cannot name "
+        "what it corrected is one the next reader repeats — this document's own rule"
+    )
+
+    # 2. The phrasing, tightened — and the list at exactly one site.
+    assert "grown in nearly every edition since 1.17" not in flat, (
+        "AN ABSENCE, and the inversion of a retired assertion: the loose phrasing is back. This "
+        "round ruled it tightened to the exact count"
+    )
+    assert "grew in **ten of the sixteen editions from 1.17 to 1.32**" in flat, (
+        "the pin row no longer states the exact count the lineage made available"
+    )
+    enumerations = flat.count("1.17, 1.18, 1.19, 1.24, 1.25, 1.26, 1.27, 1.28, 1.31, 1.32")
+    assert enumerations == 1, (
+        f"the ten editions are enumerated {enumerations} times in this section, expected exactly 1. "
+        "A second enumeration is a second site to drift, which is why the pin row points at the "
+        "lineage table instead of repeating it"
+    )
+    # The COUNT, unlike the list, is legitimately stated twice — the pin row and the closure — so it
+    # gets the treatment a twice-stated count gets: both statements compared, not just one checked.
+    # Case-folded: one of the two sites opens a sentence with the count, so "Ten" and "ten" are the
+    # same statement and only a difference in the NUMBER is drift.
+    stated = {(a.lower(), b.lower())
+              for a, b in re.findall(r"(\w+) of the (\w+) editions from 1\.17 to 1\.32", flat)}
+    assert stated == {("ten", "sixteen")}, (
+        f"the I048/030 growth count is stated as {sorted(stated)}. It appears at two sites and they "
+        "have to agree — the half-edit shape `test_cdm_prose_counts.py` exists for, one document down"
+    )
+    assert len(re.findall(r"of the sixteen editions from 1\.17 to 1\.32", flat)) == 2, (
+        "the count is stated at two sites by design — the pin row warns a reader off earlier "
+        "editions and the closure records the ruling. If one went, say which and why"
+    )
+
+    # 3. Ed 1.27's date, ruled, with the witness the ruling turned up.
+    assert "Edition 1.27's own change record dates itself" in lineage, (
+        "the finding that reframed entry 16 — 1.27 disagreeing with ITSELF — is the whole reason "
+        "the ruling is not 'two later documents are wrong'"
+    )
+    assert "all three now closed" in lineage, (
+        "the lineage section still presents the three as open work"
+    )
+    assert "for a **follow-up** ruling rather than this one" not in lineage, (
+        "AN ABSENCE: the follow-up framing survived the round that did the follow-up"
     )
 
 
 @pytest.mark.parametrize("number,phrase", [
     (15, "omits two of them"),
-    (16, "dated two different months"),
+    (16, "disagrees with ITSELF about its own date"),
     (17, "the one edition of the lineage not obtained"),
     (18, "states no edition at all"),
 ])
@@ -3541,3 +3593,144 @@ def test_the_pin_corroboration_records_the_grade_it_upgraded():
     )
     assert pin["source"]["independent_corroboration_2026_08_24"]["verdict"].startswith(
         "BYTE-IDENTICAL"), "the pin record's corroboration verdict changed"
+
+
+def test_the_added_note_is_quoted_verbatim_and_the_diff_evidence_is_recorded():
+    """The §5.2.12 diff, at the document and at the pin record, with the Note itself.
+
+    A resolution that says "it was Note 5" and does not carry Note 5 is a conclusion with no
+    evidence under it — the exact shape the ambiguity had before this round, one level up. So the
+    Note is asserted verbatim, and the pin record's copy is asserted to be the same text: two sites,
+    one quotation, and the disjunction protocol says check both.
+    """
+    note5 = ("For radar systems interrogating with various technologies (such as military radars "
+             "interrogating in Mode S and Mode 5), element I048/REF/GEN48/ALTFL provides the "
+             "possibility to transmit an alternative Flight Level value. If this Data Item carries a "
+             "Flight Level value that has been derived from a Mode 5 Reply/Report, then bit-2 in "
+             "I048/REF/MD5/SF#1 or bit-2 in I048/REF/M5N/SF#1 shall be set to 1.")
+    raw = _section(CAT048_HEADING)
+    # The Notes are quoted in a Markdown blockquote, so the `>` continuation markers come out
+    # before whitespace is collapsed — the same repair the MISP requirement quotations needed.
+    quoted = _flat(re.sub(r"\n>\s*", " ", raw))
+    section = _flat(raw)
+    assert note5 in quoted, (
+        "Note 5 is no longer quoted verbatim in the CAT048 section. It is the answer to ambiguity 13 "
+        "and the evidence for it at once"
+    )
+    pin = json.loads(
+        (pathlib.Path(synapse_cdm.__file__).resolve().parent
+         / "fixtures" / "cat048" / "spec" / "cat048_pin.json").read_text())
+    closure = pin["edition_history"]["closures_2026_08_24"]["finding_1_ambiguity_13"]
+    assert closure["verdict"].startswith("RESOLVED"), closure["verdict"]
+    assert closure["ed_1_31_notes"] == 4 and closure["ed_1_32_notes"] == 5, (
+        "the pin record's note counts are the diff itself; without them the verdict is an assertion"
+    )
+    assert note5 in " ".join(closure["the_added_note_verbatim_from_ed_1_32"].split()), (
+        "the pin record's copy of Note 5 is not the same text as the document's"
+    )
+    assert "was false" in closure["the_earlier_inference_was_wrong"], (
+        "the pin record no longer records that the Note 3 inference was wrong"
+    )
+    # The clarification is a SECOND change, and conflating the two is the easy mistake.
+    assert "in two's complement form" in section
+    assert "two changes, not one described twice" in section, (
+        "the record's §5.2.12 entry names a clarification AND a Note. That they are two distinct "
+        "changes is what the diff established, and it is what stops the next reader concluding the "
+        "'clarification' and the 'Note' were the same edit"
+    )
+
+
+def test_the_RE_park_cost_is_recorded_where_the_park_lives():
+    """Note 5's only real consequence, filed where somebody deciding about the RE will read it.
+
+    The mapping did not move, so the temptation is to record the closure and stop. But Note 5 says
+    the Reserved Expansion Field can carry an ALTERNATIVE Flight Level and a provenance bit for
+    I048/090's value — so the park hides a second altitude and the first one's source. That is a
+    strictly worse park than settlement 1 described, and a cost discovered and not written down is a
+    cost the reopen decision will be made without.
+    """
+    section = _flat(_section(CAT048_HEADING))
+    assert "alternative\n**Flight Level**" in _section(CAT048_HEADING) or \
+        "alternative Flight Level" in section, (
+        "settlement 5 no longer records that the RE can carry an alternative Flight Level"
+    )
+    assert "an undercount by one whenever an RE is present" in section, (
+        "the sharpened cost — settlement 5's 'three quantities against three datums' is short by one "
+        "when an RE is present — is the actionable half of the closure"
+    )
+    pin = json.loads(
+        (pathlib.Path(synapse_cdm.__file__).resolve().parent
+         / "fixtures" / "cat048" / "spec" / "cat048_pin.json").read_text())
+    cost = pin["edition_history"]["closures_2026_08_24"]["finding_1_ambiguity_13"][
+        "consequence_for_the_RE_park"]
+    assert "undercount by one" in cost, "the pin record no longer carries the sharpened park cost"
+
+
+def test_edition_1_27_is_ruled_18_06_2020_with_the_self_disagreement_named():
+    """Finding 3's ruling, and the witness that made it a different finding than it looked.
+
+    The proposed default was "the document outranks later documents". The check found that Edition
+    1.27's OWN change record says May 2020 — so the rule had to go one level finer, to identification
+    pages over change record, and the finding became "1.27 disagrees with itself". Both halves are
+    asserted: the ruled date, and the reason the change record cannot be the authority.
+    """
+    section = _section(CAT048_HEADING)
+    flat = _flat(section)
+    sixteen = [ln for ln in section.splitlines() if ln.startswith("| 16 | **")]
+    assert len(sixteen) == 1, "register entry 16 is gone"
+    row = _flat(sixteen[0])
+    assert "the edition date **is 18/06/2020**" in row, (
+        f"entry 16 no longer states the ruled date.\n  row: {row[:200]}"
+    )
+    assert "disagrees with ITSELF" in row, (
+        "entry 16 still reads as 'later documents are wrong', which is what the check disproved"
+    )
+    assert "month-granularity throughout" in row, (
+        "the reason the change record cannot be the authority — its DATE column cannot express a "
+        "day at all — is what turns a two-witness disagreement into a ruling"
+    )
+    assert "1.28, 1.29, 1.30, 1.31 and 1.32 all repeat that value" in row, (
+        "the propagation is the part that matters to a reader of the PINNED edition's own record"
+    )
+    # And the lineage row agrees with the register, which is the every-site half.
+    lineage_rows = [ln for ln in section.splitlines() if ln.startswith("| 1.27 |")]
+    assert len(lineage_rows) == 1
+    # THE DATE CELL, not the row. MUTATION FOUND THIS: changing the cell from 18/06/2020 to
+    # "May 2020" left the suite green, because the row's NOTES cell also contains 18/06/2020 while
+    # explaining the discrepancy — a disjunction inside one line, which is the same shape as the
+    # pin-row page count and the delegation suffix. The cell is the claim; the note is the reason.
+    cells = [c.strip() for c in lineage_rows[0].strip("|").split("|")]
+    assert cells[1] == "18/06/2020", (
+        f"the lineage table's 1.27 DATE CELL reads {cells[1]!r} and register entry 16 rules for "
+        "18/06/2020. The notes cell mentions the date too, so only the cell itself is the claim"
+    )
+    assert "register entry 16, which rules for" in _flat(lineage_rows[0]), (
+        "the lineage row must point at the ruling rather than restating it"
+    )
+
+
+def test_no_site_still_frames_the_three_findings_as_open():
+    """AN ABSENCE, swept by finding number and by register number rather than by topic.
+
+    The close-out protocol is explicit that a reference to a closed finding is worse than no
+    reference: it sends the next reader looking for work that is done. So the phrases that framed
+    them as open are banned outright, across the document and the tests' own prose.
+    """
+    doc = DOC.read_text()
+    banned = (
+        "Ambiguity 13 is now resolvable and is not resolved here",
+        "for a **follow-up** ruling rather than this one",
+        "nothing here picks a side",
+        "Left exactly as written; the number is available when",
+        "is not determinable from the pinned copy",
+        "establishing it needs Edition 1.31",
+        # NOT banned: "which nothing here pins" on its own. It appears legitimately elsewhere in
+        # this section, about DO-181F, and banning a phrase that has an innocent home is how a
+        # sweep acquires an exemption list longer than itself. The 1.31-specific form above is the
+        # one that framed ambiguity 13 as open.
+    )
+    for phrase in banned:
+        assert phrase not in doc, (
+            f"{phrase!r} still appears in FORMAT_COVERAGE.md. All three findings closed in this "
+            "round, so a sentence framing one as open points a reader at finished work"
+        )
