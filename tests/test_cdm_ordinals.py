@@ -14,10 +14,20 @@ many sites and checked at none.
 THE RULE THIS ENCODES, AND THE ONE IT REPLACES
 ----------------------------------------------
 **A parked ordinal is RESERVED, not skipped.** An adapter that was scoped and then parked keeps its
-number and the next adapter takes the next free one, so #9 is held for `nffi` and STANAG 4609 took
+number and the next adapter takes the next free one, so #9 was held while STANAG 4609 took
 #10 rather than #12. Two test docstrings had encoded the other rule — "one past the highest that
 has shipped" — and both are amended, because that rule re-issues a reserved number the moment a park
 is revisited, at which point an ordinal stops identifying an adapter.
+
+THE RESERVATION HAS SINCE BEEN MADE GOOD, WHICH IS NOT THE SAME AS THE RULE BEING RETIRED
+-----------------------------------------------------------------------------------------
+#9 was reserved for `nffi`, a name that turned out to have no source: not in any document in hand
+and nowhere in this repository except the row that reserved it, which said so itself. STANAG 5527's
+covering document landed in the slot and the name was re-derived from it, so **the number did not
+move and the name did** — #9 is `stanag5527`, at Phase 1. No row in the table is RESERVED any more.
+The rule stands regardless, because it is the rule that gave `stanag4609` #10 rather than #12 and
+the rule that held #9 open long enough for a document to arrive; and `series()` still classifies a
+RESERVED cell, because the next park will need it.
 
 WHAT IS CHECKED, AND WHAT DELIBERATELY IS NOT
 ---------------------------------------------
@@ -55,7 +65,7 @@ PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
 DOC = PKG / "FORMAT_COVERAGE.md"
 
-ORDINAL_TABLE_HEADING = "### The adapter ordinals, and why #9 is reserved"
+ORDINAL_TABLE_HEADING = "### The adapter ordinals, and the reserved-ordinal rule"
 
 #: Every alias a document might use for an adapter, keyed by the registry name the table uses.
 #: Deliberately generous on the prose side and exact on the code side: `gmti` is the registered
@@ -69,7 +79,7 @@ ALIASES: dict[str, tuple[str, ...]] = {
     "cat021": ("cat021", "CAT021", "Category 021"),
     "stanag4676": ("stanag4676", "NITS", "STANAG 4676"),
     "gmti": ("gmti", "gmtif", "GMTIF", "STANAG 4607"),
-    "nffi": ("nffi", "NFFI"),
+    "stanag5527": ("stanag5527", "STANAG 5527"),
     "stanag4609": ("stanag4609", "STANAG 4609", "MISP-2019.1"),
     "cat048": ("cat048", "CAT048", "Category 048"),
     "cat034": ("cat034", "CAT034", "Category 034"),
@@ -90,6 +100,8 @@ SWEPT = (
     "packages/cdm/synapse_cdm/MIGRATIONS.md",
     "packages/cdm/synapse_cdm/README.md",
     "packages/cdm/synapse_cdm/fixtures/cat048/README.md",
+    "packages/cdm/synapse_cdm/fixtures/fft/README.md",
+    "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json",
     "packages/cdm/synapse_cdm/fixtures/klv/README.md",
     "packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json",
     "docs/docs/writing-an-adapter.mdx",
@@ -106,8 +118,10 @@ NEAR = re.compile(r"`([a-z0-9]+)`[^`#\n]{0,14}#(\d+)")
 #: reads the wrong one, and so does "`gmti`'s #8. `cat048` keeps #11". Rather than widen the binder
 #: or exempt the sentences, the rule is now that a sentence pairing an adapter with an ordinal
 #: WRITES THE ADAPTER FIRST. That is a constraint on prose, it is satisfied by every such sentence
-#: in the tree, and it is the honest trade: a binder that guesses at "#9 is held for `nffi`" is a
-#: binder that also guesses at "#8, and `cat048`", and only one of those guesses is right.
+#: in the tree, and it is the honest trade: a binder that guesses at "#9, and `stanag4609`" is a
+#: binder that also guesses at "#8, and `cat048`", and only one of those guesses is right. The
+#: sentences that used to state #9 the wrong way round were reworded when the ordinal was issued,
+#: so the pairing is now bound rather than merely asserted.
 
 #: Lines that state more than one pairing at once, each with the pairing a human read off it.
 #: A line that the sweep cannot bind and that is not here FAILS — adding a row is a deliberate act
@@ -146,10 +160,13 @@ def series() -> dict[int, tuple[str, str]]:
         ordinal, name_cell, state_cell = int(m.group(1)), m.group(2), m.group(3)
         names = re.findall(r"`([a-z0-9]+)`", name_cell)
         assert len(names) == 1, f"ordinal row {ordinal} names {names}, expected exactly one"
-        # RESERVED is tested FIRST and the order is load-bearing: #9's cell reads "RESERVED,
-        # nothing shipped and nothing parked here yet", so a "shipped" test that ran first would
-        # classify the reserved ordinal as shipped and then fail against the registry — a real
-        # failure with a misleading cause, which is the kind that costs an hour.
+        # RESERVED is tested FIRST and the order is load-bearing. No row carries it today — #9
+        # was the only one and its reservation was made good — but the branch stays, because the
+        # cell it was written for read "RESERVED, nothing shipped and nothing parked here yet" and
+        # a "shipped" test running first would classify a reserved ordinal as shipped and then fail
+        # against the registry: a real failure with a misleading cause, the kind that costs an
+        # hour. test_no_ordinal_is_reserved_any_more asserts the absence rather than leaving a
+        # reader to wonder whether this branch has stopped matching.
         state = ("reserved" if "RESERVED" in state_cell else
                  "shipped" if "shipped" in state_cell else "planned")
         out[ordinal] = (names[0], state)
@@ -167,7 +184,7 @@ def test_the_ordinal_table_was_actually_parsed():
         f"the ordinal series has a hole: {sorted(SERIES)}. A reserved ordinal still gets a row — "
         "that is the whole point of reserving it rather than skipping it"
     )
-    assert SERIES[1][0] == "pntmap" and SERIES[9][0] == "nffi", (
+    assert SERIES[1][0] == "pntmap" and SERIES[9][0] == "stanag5527", (
         f"the table's anchors moved: #1 is {SERIES[1][0]!r} and #9 is {SERIES[9][0]!r}"
     )
 
@@ -199,34 +216,138 @@ def test_the_shipped_rows_are_exactly_the_registered_adapters():
     )
 
 
-def test_the_reserved_ordinal_has_no_adapter_and_no_rival_claimant():
+def test_the_phase_one_ordinals_have_no_adapter_and_no_rival_claimant():
     """AN ABSENCE, and the one the reserved-ordinal rule rests on.
 
-    #9 is held for `nffi`, and holding it means two things must stay true: no code implements it,
-    and no OTHER adapter claims the number. The second is the one that decays — the old
-    "next past the highest shipped" rule would have handed #9 to whoever came after `gmti`, and a
-    reserved ordinal with a rival claimant is worse than no reservation at all, because both sites
-    read as correct.
+    #9 was held for `nffi` and is now `stanag5527`; #10 is `stanag4609`. Both are Phase 1, and
+    holding an ordinal for one means two things must stay true: no code implements it, and no OTHER
+    adapter claims the number. The second is the one that decays — the old "next past the highest
+    shipped" rule would have handed #9 to whoever came after `gmti`, and a held ordinal with a rival
+    claimant is worse than no reservation at all, because both sites read as correct.
+
+    Generalised from #9 to every non-shipped ordinal when #9 was issued. The old form named #9
+    directly, which meant the day the reservation was made good the check would have had to be
+    rewritten to keep testing anything — and a check that has to be rewritten every time its
+    subject changes is a check that eventually is not.
     """
-    name, state = SERIES[9]
-    assert state == "reserved", f"#9's state is {state!r}, expected reserved"
     registered = set(adapter.discover())
-    assert name not in registered, (
-        f"{name!r} is registered, so #9 is no longer reserved — move its row to `shipped` and say "
-        "so in the same commit"
+    held = {n: name for n, (name, state) in SERIES.items() if state != "shipped"}
+    assert held, (
+        "no ordinal is held for an unshipped adapter, so this check is vacuous. #12's cat034 "
+        "forecast alone should keep it non-empty"
     )
-    for ordinal, (other, _state) in SERIES.items():
-        assert ordinal == 9 or other != name, f"{name!r} also claims #{ordinal}"
-    # And nothing anywhere claims "adapter #9" for something that exists.
-    for path, line_no, line in _swept_lines():
-        for m in CLAIM.finditer(line):
-            if int(m.group(1)) != 9:
-                continue
-            named = _adapters_named(line)
-            assert named <= {name}, (
-                f"{path}:{line_no} claims adapter #9 for {sorted(named)}, and #9 is reserved for "
-                f"{name!r}: {line.strip()[:120]}"
+    for ordinal, name in sorted(held.items()):
+        assert name not in registered, (
+            f"{name!r} is registered and its row at #{ordinal} is not `shipped` — move the row and "
+            "say so in the same commit"
+        )
+        for other_ordinal, (other, _state) in SERIES.items():
+            assert other_ordinal == ordinal or other != name, (
+                f"{name!r} claims #{ordinal} and #{other_ordinal}"
             )
+        # And nothing anywhere claims this ordinal for something else. Lines on the reviewed
+        # multi-pairing allowlist are read through it rather than through the name set, for the
+        # reason the allowlist exists: #12's own table row mentions three adapters in one cell and
+        # a human has already stated which pairing it makes.
+        for path, line_no, line in _swept_lines():
+            for m in CLAIM.finditer(line):
+                if int(m.group(1)) != ordinal:
+                    continue
+                reviewed = [d for d in DISTRIBUTIVE if d[0] == path and d[1] in line]
+                if reviewed:
+                    for _p, _frag, stated_ordinal, stated_name in reviewed:
+                        assert stated_ordinal != ordinal or stated_name == name, (
+                            f"{path}:{line_no} is allowlisted as pairing #{stated_ordinal} with "
+                            f"{stated_name!r} and the table gives #{ordinal} to {name!r}"
+                        )
+                    continue
+                named = _adapters_named(line)
+                assert named <= {name}, (
+                    f"{path}:{line_no} claims adapter #{ordinal} for {sorted(named)}, and "
+                    f"#{ordinal} is held by {name!r}: {line.strip()[:120]}"
+                )
+
+
+def test_no_ordinal_is_reserved_any_more_and_the_retired_name_is_named_nowhere_as_current():
+    """AN ABSENCE with two halves, and the second is the one that stops a name surviving by default.
+
+    #9's reservation was made good in the STANAG 5527 round: the slot was held for a
+    friendly-force-tracking adapter, a friendly-force-tracking covering document arrived, and the
+    NAME was re-derived from that document because the reserved one had no source — not in any
+    document in hand, and nowhere in this repository except the row that reserved it, which said so
+    itself.
+
+    So two things are asserted. First, that no row carries RESERVED, because `series()` still has a
+    branch for it and a branch matching nothing reads as a passing check on nothing — recorded here
+    rather than left for a reader to discover by mutating the parser. Second, and this is the half
+    with teeth: `nffi` may appear in this repository ONLY where its retirement is recorded. A
+    retired name that drifts back into a sentence as a current one is exactly the failure the
+    re-derivation was for, and it would read as correct at every site.
+    """
+    reserved = {n: name for n, (name, state) in SERIES.items() if state == "reserved"}
+    assert not reserved, (
+        f"ordinals are RESERVED again: {reserved}. That is permitted by the rule — a scoped-then-"
+        "parked adapter keeps its number — but the reservation has to be re-derived from a named "
+        "source when it is issued, which is what retired `nffi`. Update this test deliberately"
+    )
+    RETIRED = "nffi"
+
+    # It is not a row in the table, it is not registered code, and it is not a fixture directory.
+    # Those three are what "current name" would mean, and each is checked positively.
+    assert RETIRED not in {name for name, _state in SERIES.values()}, (
+        f"{RETIRED!r} is back in the ordinal table. It was retired because it had no source"
+    )
+    assert RETIRED not in set(adapter.discover()), f"{RETIRED!r} is a registered adapter"
+    assert not (PKG / "fixtures" / RETIRED).exists(), (
+        f"fixtures/{RETIRED}/ exists. The fixture directory ruling went to `fft`, provisionally, "
+        "and to the retired name never"
+    )
+
+    # WINDOWED rather than line-scoped or file-scoped, and both rejected alternatives are worth
+    # naming because each fails in a different direction. Line-scoped reports the record of the
+    # retirement AS the offence: prose here is hard-wrapped at 100 columns, so a sentence that
+    # retires the name routinely puts the name on one line and the reason on the next. File-scoped
+    # is too generous the other way — mutation showed it: dropping `nffi` into a large test module
+    # passed, because that module happened to contain the word "reserved" four hundred lines away.
+    # So each OCCURRENCE has to be accounted for within a window that hard-wrapped prose can span.
+    WINDOW = 400
+    # "filename pattern" is the one context word that is not about the retirement: two sites use
+    # `nffi` as a SEARCH TERM in the record of what ~/Downloads was swept for, which is a use of
+    # the string and not a use of the name. It is narrow enough that no sentence naming an adapter
+    # could satisfy it by accident, which is the bar every word in this tuple has to clear.
+    RECORDS_IT = ("retire", "no source", "reserved", "reservation", "never uses",
+                  "appears nowhere", "not present", "zero occurrences", "does not occur",
+                  "held for", "has since", "filename pattern")
+    offenders = []
+    for path in sorted(REPO.rglob("*")):
+        if not path.is_file() or path.suffix not in {".py", ".md", ".mdx", ".json"}:
+            continue
+        if "node_modules" in path.parts or ".git" in path.parts:
+            continue
+        try:
+            text = path.read_text()
+        except (OSError, UnicodeDecodeError):
+            continue
+        low = text.lower()
+        for m in re.finditer(RETIRED, low):
+            around = low[max(0, m.start() - WINDOW):m.end() + WINDOW]
+            if not any(w in around for w in RECORDS_IT):
+                line_no = low.count("\n", 0, m.start()) + 1
+                offenders.append(f"{path.relative_to(REPO)}:{line_no}")
+    assert not offenders, (
+        f"{RETIRED!r} is used at these sites with nothing nearby recording what happened to it: "
+        f"{offenders}. The name has no source in any document and none in this repository. It may "
+        "be named as a retired reservation and never as a current one"
+    )
+    # The sweep must find the name SOMEWHERE, or it is a check on an empty set: the retirement is
+    # deliberately recorded rather than erased, so that a reader meeting `nffi` in the history has
+    # somewhere to land.
+    assert any(RETIRED in (REPO / s).read_text().lower()
+               for s in ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
+                         "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json")), (
+        f"{RETIRED!r} is recorded nowhere. Erasing a retired reservation leaves the next reader of "
+        "commit 1b0316b with a name and no explanation"
+    )
 
 
 # --------------------------------------------------------------------------- the sweep

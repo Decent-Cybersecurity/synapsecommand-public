@@ -528,7 +528,7 @@ too — so the first is now stated.
 
 - **`stanag4609` — STANAG 4609 / MISP-2019.1, the KLV metadata stream. Phase 1: row set only, no
   adapter code, no codec, no fixtures.** `stanag4609` is adapter #10, under the reserved-ordinal
-  rule `FORMAT_COVERAGE.md`'s ordinal table now states: `nffi` holds #9 without having shipped, `gmti`
+  rule `FORMAT_COVERAGE.md`'s ordinal table states: `stanag5527` has #9, `gmti`
   has #8, and the next free number is therefore this adapter's. `cat048` keeps #11. Every
   mapping row in `FORMAT_COVERAGE.md`
   says `not yet`, and **no gap is opened and no field proposed** — which is the entry.
@@ -583,6 +583,36 @@ too — so the first is now stated.
   ST 0603.5, which is park 3 — and if that document says TAI, this adapter inherits a leap-second
   dependency no other adapter here has. That is a 1.1.0 question nobody can ask yet, which is why
   it is a park and not a proposal.
+
+- **`stanag5527` — STANAG 5527, Friendly Force Tracking Systems (FFTS) interoperability. Phase 1:
+  the covering document and nothing else — no row set, no adapter code, no codec, no fixtures.**
+  `stanag5527` is adapter #9. The ordinal was RESERVED under a different name and the name is what
+  changed: it was held for `nffi`, which had no source in any document and none in this repository,
+  and the covering document now in hand never uses the term. Under the reserved-ordinal rule the
+  number did not move, so `gmti` keeps #8, `stanag4609` keeps #10 and `cat048` keeps #11.
+
+  **This entry is weaker than the one above it and the heading has to admit that.** That heading
+  says "row sets written as specifications, with no adapter code yet", and this phase has no row
+  set: `FORMAT_COVERAGE.md`'s STANAG 5527 section contains no status column at all, which is a
+  stronger statement of absence than a column of `not yet`. It is recorded here anyway, for the
+  reason the heading was added in the first place — a Phase 1 that proposes nothing and a Phase 1
+  nobody thought about look identical from this file — and the distinction between the two kinds of
+  Phase 1 is stated rather than blurred.
+
+  Pinned to one document by SHA-256: **STANAG 5527 Edition 2, 24 April 2025**
+  (`2dba2026…a2d30b83`, 319 795 bytes, 5 pages). The PDF is not committed. The fixture directory is
+  `fixtures/fft` rather than `fixtures/stanag5527`, the same split that gives adapter `stanag4676`
+  its fixtures in `fixtures/nits` and adapter `stanag4609` its own in `fixtures/klv`, and
+  `tests/test_cdm_harness.py` now carries that as a second **planned** map entry. **That directory
+  ruling is PROVISIONAL** and says so at every site: the covering document supplies a payload noun
+  once — nations should add "interfaces to produce/consume FFT data" — and the document that decides
+  what the payload really is, ADatP-36 Edition B, is not in hand.
+
+  **No gap is opened, no field is proposed, and there is nothing to weigh.** The `stanag4609` entry
+  above could name two gaps it reached from a new direction because it held a profile; this one
+  holds five pages whose only normative act is the name of another document. The word `shall`
+  occurs four times in it and not one of the four governs a data element. A schema proposal derived
+  from that would not be a field named after a guess — it would be a field named after nothing.
 
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 

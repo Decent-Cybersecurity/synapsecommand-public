@@ -3734,3 +3734,375 @@ def test_no_site_still_frames_the_three_findings_as_open():
             f"{phrase!r} still appears in FORMAT_COVERAGE.md. All three findings closed in this "
             "round, so a sentence framing one as open points a reader at finished work"
         )
+
+
+# ------------------------------------- the STANAG 5527 (Friendly Force Tracking) covering document
+#
+# Adapter #9's section is a Phase 1 with NO ROW SET, which is a different thing from the four
+# specifications-before-code that came before it and from the KLV row set above. STANAG 4609
+# promulgates a profile and the profile was in hand, so that phase could write 37 rows saying
+# `not yet` and plan twelve fixtures. STANAG 5527 promulgates ADatP-36 Edition B and ADatP-36
+# Edition B is NOT in hand, so this phase writes no mapping row at all.
+#
+# That inverts what these tests have to do. Everywhere else the risk is a mapping row drifting away
+# from the document; here the risk is a mapping row EXISTING. Five pages of ratification prose are
+# the most inviting possible surface for filling a table in from memory of the format, and nothing
+# in the pinned copy could contradict an invention. So the assertions below are weighted towards
+# absences that a from-memory edit would have to break:
+#
+#   * the section contains no `not yet` row and no terminal status marker, asserted as ZERO rather
+#     than as a floor — the exact opposite of `test_the_klv_row_set_exists_and_every_row_of_it_
+#     says_not_yet`, and for the same underlying reason: the count is the claim;
+#   * the one delegation row names ADatP-36 Edition B and says it is unsuffixed at the requirement,
+#     SCOPED TO THE ROW, because "Edition B" also occurs in the prose around it and an unscoped
+#     `in` check would be a disjunction over the section — the mutation lesson from the KLV
+#     delegation table, applied on the first day here;
+#   * STANAG 7149 and STANAG 2019 are recorded as related and NOT as delegations, asserted in BOTH
+#     directions, because the failure is silent: filing a related document as a delegation
+#     overstates what the nations agreed to implement and reads as correct at every site;
+#   * the fixture directory ruling says PROVISIONAL at every site that states it, and the reopen
+#     conditions are named. A provisional ruling that loses the word is a settled ruling nobody
+#     decided to settle;
+#   * one park, named at every site, and no site names a second.
+
+FFT_HEADING = "## STANAG 5527"
+FFT_FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" / "fft"
+FFT_PIN = FFT_FIXTURES / "spec" / "fft_pin.json"
+FFT_README = FFT_FIXTURES / "README.md"
+
+#: The one pinned document: filename, SHA-256, byte count, page count.
+FFT_PINNED_DOCUMENT = ("nato-stanag-5527-edition-2.pdf",
+                       "2dba2026cab49c2c3c6f576244edc1be1abfe2df9c545a46ae341cc2a2d30b83",
+                       319795, 5)
+
+
+def _fft_sites() -> dict[str, str]:
+    """The three files that state the ruling in full, so a fact can be checked at every one."""
+    return {
+        "FORMAT_COVERAGE.md": _section(FFT_HEADING),
+        "fixtures/fft/spec/fft_pin.json": FFT_PIN.read_text(),
+        "fixtures/fft/README.md": FFT_README.read_text(),
+    }
+
+
+def test_the_stanag5527_section_has_no_row_set_and_says_why():
+    """Phase 1's whole claim here, and it is an ABSENCE asserted as zero rather than as a floor.
+
+    The KLV test one block up asserts `>= 30` rows saying `not yet`, because that phase specified a
+    mapping it could not implement. This one asserts **none**, because this phase specified nothing:
+    `not yet` says a mapping exists and is unimplemented, and there is no document in hand from
+    which a mapping could be written. A row appearing here is not a status-column error — it is a
+    field invented out of five pages of ratification prose, which is the single most likely way this
+    section could go wrong.
+    """
+    section = _section(FFT_HEADING)
+    rows = [ln for ln in section.splitlines() if ln.startswith("|")]
+    assert rows, "the STANAG 5527 section has no tables at all, so this check is vacuous"
+    mapping_rows = [ln for ln in rows if "`not yet`" in ln]
+    assert mapping_rows == [], (
+        f"the STANAG 5527 section has {len(mapping_rows)} `not yet` rows: {mapping_rows[:2]}. "
+        "This phase holds no document from which a mapping row could be written — the AGREEMENT "
+        "clause names ADatP-36 Edition B and it is not in hand — so a row here is an invention"
+    )
+    for marker in ("`stanag5527 1.0.0`", "`fft 1.0.0`"):
+        assert marker not in DOC.read_text(), (
+            f"{marker} appears in FORMAT_COVERAGE.md. There is no adapter, so a terminal status "
+            "marker anywhere in the document is a claim nothing implements"
+        )
+    # And the absence is STATED, not just true. An empty section and a section that explains its
+    # emptiness look identical to a grep and completely different to a reader.
+    flat = _flat(section)
+    assert "Nothing below is a mapping row, and that absence is the section." in flat, (
+        "the section no longer opens by saying it has no row set. The next editor's first instinct "
+        "on meeting a heading with no table is to add one"
+    )
+
+
+def test_the_stanag5527_pin_agrees_at_every_site_that_states_it():
+    """One document, four sites, and the pin row asserted as ONE composite string at each.
+
+    The KLV block's mutation finding, applied here on the first day rather than after: checking
+    hash, byte count and page count as three independent substrings makes each a disjunction over
+    the whole file, and a wrong page count passes because the right number still occurs elsewhere.
+    So the prose sites are checked as one string and the JSON is read as data.
+    """
+    filename, digest, size, pages = FFT_PINNED_DOCUMENT
+    spaced = _spaced(size)
+
+    # 1. The JSON, read as data. No substrings.
+    pin = json.loads(FFT_PIN.read_text())
+    assert pin["sha256"] == digest, f"fft_pin.json sha256 is {pin['sha256']}"
+    assert pin["bytes"] == size, f"fft_pin.json bytes is {pin['bytes']}"
+    assert pin["pages"] == pages, f"fft_pin.json pages is {pin['pages']}"
+    assert pin["local_path"] == f"fixtures/fft/spec/{filename}", pin["local_path"]
+
+    # 2. FORMAT_COVERAGE.md's pin row, as one composite string.
+    row = f"`{digest}`, {spaced} bytes, {pages} pages, `fixtures/fft/spec/{filename}`"
+    assert row in _section(FFT_HEADING), (
+        f"FORMAT_COVERAGE.md's pin row for {filename} is not\n  {row}"
+    )
+
+    # 3. The fixture README's table row, likewise.
+    readme_row = f"| `spec/{filename}` | `{digest}` | {spaced} | {pages} |"
+    assert readme_row in FFT_README.read_text(), (
+        f"fixtures/fft/README.md's table row is not\n  {readme_row}"
+    )
+
+    # 4. MIGRATIONS.md, in this document's own ellipsised form, also as one string.
+    migrations_fact = f"(`{_abbreviated(digest)}`, {spaced} bytes, {pages} pages)"
+    assert migrations_fact in MIGRATIONS.read_text(), (
+        f"MIGRATIONS.md's Phase 1 entry no longer states the pin as\n  {migrations_fact}"
+    )
+
+    # 5. And the file itself, when this working tree has it.
+    path = FFT_FIXTURES / "spec" / filename
+    if path.exists():
+        assert path.stat().st_size == size, f"{filename} at the pinned path is the wrong size"
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        assert got == digest, f"{filename} at the pinned path hashes to {got}"
+    assert [p for p in _tracked_files() if p.endswith(".pdf")] == [], "PDFs are tracked"
+
+
+def test_the_delegation_row_names_adatp36_edition_b_and_records_that_it_is_unsuffixed():
+    """The one delegation row, SCOPED TO THE ROW rather than to the section.
+
+    "Edition B" occurs in the prose around this table as well — in the preamble, in the pin block
+    and in the park — so `"Edition B" in section` would be a disjunction satisfied by any of them
+    and would survive the row losing its version cell entirely. That is precisely the mutation the
+    KLV delegation table taught, and it is cheaper to apply it now than to find it later.
+    """
+    section = _section(FFT_HEADING)
+    rows = [ln for ln in section.splitlines()
+            if ln.startswith("|") and "**ADatP-36**" in ln]
+    assert len(rows) == 1, (
+        f"expected exactly one delegation row for ADatP-36, found {len(rows)}. The AGREEMENT "
+        "clause names exactly one standard, so the table has exactly one row"
+    )
+    row = _flat(rows[0])
+    assert "**Edition B**" in row, "the delegation row no longer states the edition"
+    assert "unsuffixed at the requirement" in row, (
+        "the delegation row no longer says the requirement cites the document unsuffixed. That "
+        "phrase is the convention this repository's delegation rows carry, and dropping it turns "
+        "an edition letter read off one clause into a version the requirement appears to state"
+    )
+    assert "AGREEMENT clause" in row, (
+        "the delegation row no longer names WHERE the document is required. A delegation with no "
+        "requirement locus is a citation, not a delegation"
+    )
+    assert "STANDARD clause" in row, (
+        "the delegation row no longer names where the VERSION is stated. The two loci are separate "
+        "cells' worth of fact for the reason the STANAG 4609 table gives: a reader who takes a "
+        "version from the requirement can get no version at all"
+    )
+    # The document is named as NOT held at every site, because a delegation to a document in hand
+    # and a delegation to one that is not are different claims about this phase.
+    for label, text in _fft_sites().items():
+        assert "not in hand" in text or "NOT held" in text or '"held": false' in text, (
+            f"{label} no longer records that ADatP-36 Edition B is not held"
+        )
+
+
+def test_stanag_7149_and_stanag_2019_are_recorded_as_related_and_never_as_delegations():
+    """AN ABSENCE with a positive half, and the failure it guards is silent in both directions.
+
+    The pinned document names three other documents: one in the AGREEMENT and two under OTHER
+    RELATED DOCUMENTS. Promoting either of the two into the delegation table would overstate what
+    the nations agreed to implement, and demoting the one out of it would understate it. Neither
+    misreading is detectable without the pinned copy, so both are asserted here.
+    """
+    section = _section(FFT_HEADING)
+    delegation_rows = [ln for ln in section.splitlines()
+                       if ln.startswith("|") and "**ADatP-36**" in ln]
+    assert len(delegation_rows) == 1
+    for other in ("7149", "2019"):
+        assert other not in delegation_rows[0], (
+            f"STANAG {other} appears in the delegation row. It is under OTHER RELATED DOCUMENTS "
+            "and not in the AGREEMENT, and the AGREEMENT clause names exactly one standard"
+        )
+    flat = _flat(section)
+    for other, app in (("STANAG 7149", "APP-11"), ("STANAG 2019", "APP-06")):
+        assert f"**{other}**" in flat, f"{other} is no longer recorded at all"
+        assert app in flat, f"{other}'s APP number is no longer recorded"
+    assert "recorded as *related* rather than as delegations" in flat, (
+        "the section no longer states the distinction in as many words. The distinction IS the "
+        "finding — a reader who cannot see it will file all three documents the same way"
+    )
+    # And neither is counted as a park, because nothing here depends on either.
+    assert "from one to three" in flat, (
+        "the section no longer says that calling the related documents parks would inflate what "
+        "this adapter is waiting for. The park count is a fact this round states at three sites"
+    )
+
+
+def test_the_fixture_directory_ruling_says_provisional_at_every_site_and_names_its_reopen():
+    """A provisional ruling that loses the word is a settled ruling nobody decided to settle.
+
+    This is the one thing about #9 that no document in hand can settle: the adapter name is ruled
+    on the covering document and the DIRECTORY name rests on a single clause of it. The word and
+    the overturn conditions are therefore checked at all three sites, in the shape the pin-row
+    lesson gives — every occurrence rather than any one.
+    """
+    for label, text in _fft_sites().items():
+        assert "PROVISIONAL" in text, (
+            f"{label} no longer marks the fixture-directory ruling PROVISIONAL. The adapter name is "
+            "settled and the directory is not, and a site that states only the ruling has lost the "
+            "half a later reader needs"
+        )
+        assert "ADatP-36" in text, (
+            f"{label} states the ruling is provisional without naming what would settle it"
+        )
+    section = _flat(_section(FFT_HEADING))
+    assert "Two findings would overturn it" in section, (
+        "the section no longer names what would overturn the directory ruling. 'Provisional' with "
+        "no overturn condition is a hedge rather than a ruling"
+    )
+    assert "What is not a reopen condition" in section, (
+        "the section no longer says what would NOT reopen the ruling. A provisional ruling attracts "
+        "revisiting for the wrong reasons and the exclusions are the guard against that"
+    )
+    # The adapter name, by contrast, is NOT provisional, and the two must not blur together.
+    assert "no content document can unrule it" in section, (
+        "the section no longer distinguishes the settled adapter name from the provisional "
+        "directory. Both rulings in one undifferentiated block is what this subsection exists to "
+        "avoid"
+    )
+    pin = json.loads(FFT_PIN.read_text())
+    ruling = pin["adapter"]["fixture_directory_ruling"]
+    assert ruling["ruled"] == "fft" and ruling["status"] == "PROVISIONAL", ruling
+    assert len(ruling["provisional"]["what_would_overturn_it"]) == 2, (
+        "the pin record no longer states exactly two overturn conditions"
+    )
+    assert pin["adapter"]["name"] == "stanag5527", pin["adapter"]["name"]
+
+
+def test_the_covering_documents_absences_are_stated_as_counts_and_nothing_is_invented():
+    """AN ABSENCE, and the hole most available in a phase like this one.
+
+    Every other row set here can be checked against a technical document. This one cannot, because
+    the technical document is not in hand — so a sentence about how Friendly Force Tracking works
+    would be unfalsifiable from inside this repository. The guard is that the section's claims about
+    the pinned copy are COUNTS and QUOTATIONS, which a reader can re-run against the PDF, and that
+    the shapes an invention would take are banned outright.
+    """
+    flat = _flat(_section(FFT_HEADING))
+    for claim in (
+        "`shall` occurs four times in five pages and not one of the four governs a data element",
+        "`should` occurs three times",
+        "No requirement is numbered, because there are no requirements to number",
+        "The term NFFI does not occur",
+    ):
+        assert claim in flat, (
+            f"the counted-absence {claim!r} is no longer stated. These counts are what make the "
+            "'this document contains nothing technical' claim checkable against the pinned copy "
+            "rather than an impression of it"
+        )
+    # The shapes an invention would take. Each is a thing ADatP-36 Edition B would decide and the
+    # covering document does not, so any of them appearing here is a claim with no source.
+    # Each pattern is the SHAPE an assertion would take, not a topic word: this section legitimately
+    # says it does NOT state what NFFI stands for, so banning that phrase would ban the disclaimer
+    # along with the claim.
+    for invented in ("local set", "message set is", "the field dictionary defines",
+                     "NFFI is ", "NFFI (N", "the wire format is", "XML schema"):
+        assert invented.lower() not in flat.lower(), (
+            f"{invented!r} appears in the STANAG 5527 section. Nothing about the structure, "
+            "encoding or message set of Friendly Force Tracking is establishable from the pinned "
+            "copy — it is all in ADatP-36 Edition B, which is park 1"
+        )
+
+
+def test_the_single_park_is_stated_once_and_agrees_at_every_site():
+    """One park, three sites, and the count is the claim.
+
+    The KLV phase had twelve parks over fourteen documents and needed a table. This one has one,
+    and the risk runs the other way: a second park drifting in — the two related documents are the
+    obvious candidates — would change what #9 is waiting for from a single access decision into a
+    programme. So the count is asserted, and so is the identity of the one.
+    """
+    for label, text in _fft_sites().items():
+        assert "ADatP-36, Edition B" in text or "ADatP-36 Edition B" in text, (
+            f"{label} no longer names the park's document"
+        )
+    flat = _flat(_section(FFT_HEADING))
+    assert "One park over one document" in flat, (
+        "the section no longer states that there is exactly one park. The count is what stops the "
+        "two related documents drifting in as parks 2 and 3"
+    )
+    assert "**ADatP-36, Edition B. Park 1**, and the only park this phase has" in flat, (
+        "the pin block no longer names park 1 as the only one"
+    )
+    assert "Park 2" not in flat and "park 2" not in flat, (
+        "a second park has appeared without the count above it moving"
+    )
+    pin = json.loads(FFT_PIN.read_text())
+    parks = pin["parks"]
+    assert set(parks) == {"how_many", "park_1"}, (
+        f"fft_pin.json's park set is {sorted(parks)}; exactly one park is recorded and the count "
+        "sits beside it"
+    )
+    assert parks["park_1"]["document"] == "ADatP-36, Edition B", parks["park_1"]["document"]
+    assert "not 'the current ADatP-36'" in parks["park_1"]["reopen_condition"], (
+        "the reopen condition no longer excludes 'the current ADatP-36'. Obtaining a later "
+        "revision and reading it against this citation is the failure that condition exists for"
+    )
+
+
+def test_the_two_ruled_names_agree_at_every_site_that_states_them():
+    """THE DISJUNCTION TREATMENT, applied to the two names #9's round rules.
+
+    A name stated at four sites and checked at one is a name that can drift at three, and this is
+    the exact shape 80b38d1 had to repair: the NITS pin record and the XSD exit condition named two
+    different directories for one adapter, four hundred lines apart, and the test that should have
+    caught it was satisfied by whichever one it happened to read.
+
+    So both names are COLLECTED here rather than asserted at a chosen site — the harness map, the
+    pin record, the fixture README and FORMAT_COVERAGE.md's ordinal table — and required to agree.
+    The harness map is not the authority for either: the ordinal table decides the adapter name and
+    the pin record carries the ruling. It is included because it is the site a mistyped `cp` would
+    contradict, which is the failure the map was pinned to prevent.
+    """
+    import importlib
+    harness_tests = importlib.import_module("tests.test_cdm_harness")
+
+    pin = json.loads(FFT_PIN.read_text())
+    readme = FFT_README.read_text()
+    ordinal_table = _section("### The adapter ordinals")
+
+    adapter_name = {
+        "fft_pin.json": pin["adapter"]["name"],
+        "test_cdm_harness.py PLANNED_FIXTURE_DIRS":
+            next(n for n in harness_tests.PLANNED_FIXTURE_DIRS if n.startswith("stanag5")),
+        "FORMAT_COVERAGE.md ordinal table":
+            re.search(r"\|\s*9\s*\|\s*`([a-z0-9]+)`", ordinal_table).group(1),
+    }
+    assert len(set(adapter_name.values())) == 1, (
+        f"the adapter name disagrees across sites: {adapter_name}"
+    )
+    name = next(iter(adapter_name.values()))
+    assert name == "stanag5527", name
+    assert f"`{name}` is adapter #9" in readme, (
+        f"fixtures/fft/README.md no longer states the ordinal in the claim form. That form is what "
+        f"tests/test_cdm_ordinals.py binds, so without it this site states {name!r} and no number"
+    )
+
+    directory = {
+        "fft_pin.json (adapter.fixture_directory)": pin["adapter"]["fixture_directory"],
+        "fft_pin.json (the ruling)": pin["adapter"]["fixture_directory_ruling"]["ruled"],
+        "test_cdm_harness.py PLANNED_FIXTURE_DIRS": harness_tests.PLANNED_FIXTURE_DIRS[name],
+        "the pinned path": pin["local_path"].split("/")[1],
+    }
+    assert len(set(directory.values())) == 1, (
+        f"the fixture directory disagrees across sites: {directory}. This is 80b38d1's failure "
+        "exactly — one adapter, two directory names, and each site individually plausible"
+    )
+    fixture_dir = next(iter(directory.values()))
+    assert fixture_dir == "fft", fixture_dir
+    assert (FFT_FIXTURES.parent / fixture_dir).is_dir(), (
+        f"every site agrees the directory is {fixture_dir!r} and it does not exist"
+    )
+    # And the two names must still DIFFER, which is the thing the ruling is about. A round that
+    # quietly collapsed them into one would satisfy every agreement check above.
+    assert name != fixture_dir, (
+        "the adapter name and the fixture directory have become the same string. They differ on "
+        "purpose — a directory holds payloads and a payload is not a standard — and collapsing "
+        "them is the bug 80b38d1 had to repair, not a simplification"
+    )

@@ -1,0 +1,174 @@
+{
+  "what_this_is": "The pinned identity of the ONE document the STANAG 5527 section in FORMAT_COVERAGE.md was read from, plus every value extracted from it that a ruling rests on, each with the locus inside the document. House style follows fixtures/klv/spec/klv_pin.json, fixtures/cat048/spec/cat048_pin.json and fixtures/cat021/spec/sac_pin.json: an edition number names a DOCUMENT and a SHA-256 names the COPY THAT WAS READ, and those are different claims. The PDF is not committed - see not_committed below.",
+
+  "phase": "Phase 1, and a NARROWER Phase 1 than stanag4609's. That one pinned a covering document AND the profile its AGREEMENT clause names, so it could write a row set of 37 rows all saying `not yet`. This one pins the covering document ALONE: ADatP-36 Edition B is not in hand, so there is no row set, no mapping table, no fixture plan, no gap and no proposed field. What exists is a pinned document, the rulings that document supports, one delegation row and one park.",
+
+  "adapter": {
+    "name": "stanag5527",
+    "fixture_directory": "fft",
+    "fixture_directory_status": "PROVISIONAL. See fixture_directory_ruling.provisional below. The ADAPTER name is not provisional.",
+    "why_the_two_names_differ": "The adapter takes the STANAG's number because the document in hand states no field, no message, no encoding and no identifier - its content pages are AIM, INTEROPERABILITY REQUIREMENTS, AGREEMENT, STANDARD, OTHER RELATED DOCUMENTS, SUPERSEDED DOCUMENTS and the administrative clauses - so there is no NATO document IN HAND whose content could name the adapter. The directory takes the content's name because a directory holds PAYLOADS and a payload is not a standard, which is the same split that puts adapter stanag4676's fixtures in fixtures/nits and adapter stanag4609's in fixtures/klv.",
+
+    "adapter_name_ruling": {
+      "ruled": "stanag5527",
+      "on_what_evidence": "Direct reading of the pinned document, all five pages. It is a covering document: the AGREEMENT clause reads 'Participating nations agree to implement the following standard.' and the STANDARD clause names exactly one, 'ADatP-36, Edition B'. Nothing else in the document is technical.",
+      "how_this_differs_from_the_stanag4609_ruling": "STANAG 4609's covering-document character was STATED by another document - MISP-2019.1 SS C.1.2, 'a covering document rather than a standalone document'. STANAG 5527's is DEMONSTRATED by direct reading of the document itself, which is the stronger of the two: no second document has to be trusted for the reading to hold.",
+      "precedent_does_not_decide_it": "The roster contains both conventions - gmti names the CONTENT of STANAG 4607 while stanag4676 and stanag4609 name the STANDARD carrying the content - so precedent could support either and the documents had to.",
+      "rejected": {
+        "nffi": "THE RESERVED NAME, RETIRED. Not rejected on the merits of the name but on the absence of a source. (1) It appears in no document in hand: STANAG 5527 Edition 2 never uses the term - zero occurrences across all five pages of extracted text and zero occurrences of the literal bytes 'NFFI' anywhere in the file, checked at both levels. (2) It has no source in this repository either, and the repository already said so: commit 1b0316b's own message recorded 'NFFI appears nowhere in the repository, so the ordinal table's #9 row is the first and only statement of that reservation', and FORMAT_COVERAGE.md's #9 row said 'nowhere else in this repository. This row is the only statement of it'. A name whose only source is the row that uses it is not a derivation. Retiring it rather than letting it survive by default is the whole point of re-deriving a reserved name from a named source. WHAT IS NOT CLAIMED HERE: this record does not state what NFFI stands for, what document defines it, or whether earlier ADatP-36 editions used it. None of that is establishable from any document in hand, and asserting it would be exactly the from-memory claim this phase forbids.",
+        "fft_or_ffts_as_the_ADAPTER_name": "The covering document's own framing, and rejected as an ADAPTER name on the document's own words. 'FFTS' names SYSTEMS - the title is 'FRIENDLY FORCE TRACKING SYSTEMS (FFTS) INTEROPERABILITY' - and an adapter does not translate a system. 'FFT' names a CAPABILITY: the INTEROPERABILITY REQUIREMENTS clause reads 'The specific benefits of a FFT capability in NATO are improved overall situational awareness ...'. Neither is a format name. The format's name is whatever ADatP-36 Edition B calls it, and that document is not in hand. The candidate SURVIVES for the directory, where the document does supply a payload noun - see fixture_directory_ruling.",
+        "adatp36": "The strongest rejected candidate, because ADatP-36 is the standard that actually carries the content. Rejected because it would name the adapter after a DOCUMENT NOBODY HERE HAS READ. The point of ruling a name from documents in hand is that the name is checkable; adatp36 would be derived from a title, an edition letter and nothing else. It also repeats the rejection `misp` took in the STANAG 4609 ruling - a name taken from a governing document rather than from the thing being translated. And if ADatP-36 Edition B arrives and names the content, that name moves the DIRECTORY, not the adapter: the number is the retrieval key for the agreement, which the document's own NATIONAL RATIFICATION RESPONSE and RESTRICTION TO REPRODUCTION clauses both confirm - national responses are recorded in the NSDD against this STANAG, and NATO standardization documents 'can be retrieved from the NATO Standardization Documents Database (https://nso.nato.int/nso/)'."
+      }
+    },
+
+    "fixture_directory_ruling": {
+      "ruled": "fft",
+      "status": "PROVISIONAL",
+      "on_what_evidence": "The covering document supplies a payload noun exactly once, in IMPLEMENTATION OF THE AGREEMENT, page '- 1 -' to '- 2 -': 'the NATO nations should add to the current and future national ground forces tracking systems, interfaces to produce/consume FFT data in compliance with the ADatP-36 standard'. The same clause also says 'the FFT services required to enable seamless ADatP-36 information exchange' and 'near real time FFT data exchange between different security domains'. 'FFT data' is the covering document naming the thing that crosses the wire, and a fixture directory is named for what is in it.",
+      "rejected": {
+        "nffi": "Retired, no source. Same finding as for the adapter name.",
+        "stanag5527": "Would reproduce the bug commit 80b38d1 had to fix - three NITS PDFs sitting in a directory named for the adapter when the directory wanted the content's name. Same rejection stanag4609's directory took.",
+        "adatp36": "A directory named after a document, and worse than misp was for klv: the pinned PDF would sit at fixtures/adatp36/spec/nato-stanag-5527-edition-2.pdf, a directory named after a document that is not even the file inside it.",
+        "ffts": "Names systems, not payloads. The document's payload noun is 'FFT data', not 'FFTS data'."
+      },
+      "considered_and_overruled": {
+        "the_fast_fourier_transform_collision": "'FFT' has a well-known unrelated sense in signal processing. Named here rather than left for a reader to notice. Overruled: the directory sits under fixtures/ beside ais, adsb, cat021, cat048, gmti, klv, legion, nits, pntmap and tak, every one of which is a defence or aviation data format, and the document's own noun governs the name of the document's own payload. A collision with a term from another field is not a reason to override a term the pinned text supplies."
+      },
+      "provisional": {
+        "why": "The payload's name is decided by ADatP-36 Edition B, which is not in hand. A covering document can say what its subject is called; it cannot say what the bytes are called.",
+        "what_would_overturn_it": [
+          "ADatP-36 Edition B in hand naming the on-the-wire payload something other than FFT data - a message-set name, a service name or a schema name - in which case the directory takes that name on the gmti / nits / klv precedent.",
+          "ADatP-36 Edition B in hand defining more than one payload shape at this adapter's layer, in which case one directory is the wrong SHAPE and the ruling is a re-scoping rather than a rename."
+        ],
+        "what_is_NOT_a_reopen_condition": "A preference; the Fast Fourier Transform collision, which is already considered and overruled above; or the arrival of any document other than ADatP-36 Edition B. STANAG 7149 and STANAG 2019 are named by the pinned document as RELATED and neither could decide a payload name.",
+        "what_a_later_move_would_and_would_not_touch": "It would move the directory and the PLANNED_FIXTURE_DIRS entry in tests/test_cdm_harness.py, which is exactly the map 80b38d1 pinned by a test so that such a move is a deliberate edit rather than a typo. It would NOT move the adapter name: stanag5527 is ruled on the covering document and no content document can unrule it."
+      }
+    },
+
+    "adapter_number": {
+      "claimed": 9,
+      "on_what_authority": "FORMAT_COVERAGE.md's ordinal table, section 'The adapter ordinals, and the reserved-ordinal rule', which is the single authority for the series and is checked against every other site by tests/test_cdm_ordinals.py.",
+      "what_changed_in_this_round": "#9 was RESERVED for a name with no source. The reservation itself was correct and is now made good: the slot was held for a friendly-force-tracking adapter and a friendly-force-tracking covering document has landed in it. The NAME is what changed - nffi retired, stanag5527 ruled from the document - and the ordinal did not move. Under the reserved-ordinal rule stanag4609 keeps #10, cat048 keeps #11 and the cat034 forecast keeps #12; nothing else in the series moved, which is the rule working rather than the rule being applied again.",
+      "consequence_for_the_table": "No row in the ordinal table is RESERVED any more. #9's state is now 'specification, Phase 1' - the same state string #10 carries - and the reserved-ordinal RULE still stands, because it is the rule that gave #10 to stanag4609 rather than #12 and that held #9 open long enough for this document to arrive."
+    }
+  },
+
+  "document": "NATO Standardization Agreement (STANAG) 5527, Friendly Force Tracking Systems (FFTS) Interoperability / Interoperabilite des systemes de suivi des forces amies",
+  "edition": "2",
+  "edition_date_as_the_document_states_it": "24 April/avril 2025",
+  "letter_of_promulgation_date": "24 April/avril 2025",
+  "letter_of_promulgation_reference": "NSO(DPC)0523(2025)CAP2/5527",
+  "publisher": "the NATO Standardization Office (NSO)",
+  "tasking_authority": "DIGITAL POLICY COMMITTEE (DPC), Navigation and Identification Capability Panel (CaP 2)",
+  "supersedes": "STANAG 5527, Edition 1, dated 20 March 2017",
+  "nato_effective_date": "Not applicable.",
+  "review_clause": "This STANAG is to be reviewed in accordance with AAP-03. The result of the review is to be recorded within the NSDD.",
+  "security_classification_statement": "This STANAG is a NATO non-classified document to be handled in accordance with C-M(2002)60.",
+  "additional_information_page": "Page '- ii -' carries one word of content under ADDITIONAL INFORMATION / INFORMATIONS SUPPLEMENTAIRES: 'None.' / 'Aucune.' Below it is the Director NSO signature block. That page is a flattened insert and BOTH its columns extract with dropped characters - the English column comes out as 'Thierry POU LET TE / Major Gen rai, FRA (A) / Director, NATO tandardization Office' and the French as 'ETTE / ion, FRA (A) / ureau OTAN'. The signature is legible enough to identify the office - Director, NATO Standardization Office - and the personal name is NOT recorded here as a verified reading, because reconstructing dropped characters is a guess and no ruling depends on it.",
+
+  "local_path": "fixtures/fft/spec/nato-stanag-5527-edition-2.pdf",
+  "bytes": 319795,
+  "sha256": "2dba2026cab49c2c3c6f576244edc1be1abfe2df9c545a46ae341cc2a2d30b83",
+  "pages": 5,
+  "page_layout": "Five leaves. Page 1 the bilingual title page, unnumbered. Page 2 the Letter of Promulgation, printed '- i -'. Page 3 ADDITIONAL INFORMATION / INFORMATIONS SUPPLEMENTAIRES with the Director's signature block, printed '- ii -'. Pages 4 and 5 the agreement itself, printed '- 1 -' and '- 2 -'. The document states four page numbers about itself and has five leaves, which is the cross-check the page count was validated against.",
+  "retrieved_at": "2026-08-24",
+  "bilingual": "English and French in parallel columns throughout. Pages 1, 2, 4 and 5 extract cleanly in both languages and are what every quotation in this record is read from. Page 3 is the exception and is recorded in additional_information_page below: it is a flattened insert whose extraction drops characters in both columns, and no ruling rests on it.",
+
+  "the_normative_act": {
+    "aim": "The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements.",
+    "interoperability_requirement": "To provide friendly ground force information throughout the NATO Command Structure, within the respective chain of command, and to increase situational awareness of the land battle space. The specific benefits of a FFT capability in NATO are improved overall situational awareness, improved command and control, force multiplication, improved synchronization of forces, and reduced risk of fratricide.",
+    "agreement": "Participating nations agree to implement the following standard.",
+    "standard": "ADatP-36, Edition B",
+    "other_related_documents": "STANAG 7149 - NATO MESSAGE CATALOGUE - APP-11; STANAG 2019 - NATO JOINT MILITARY SYMBOLOGY - APP-06",
+    "implementation_of_the_agreement": "To properly take advantage of the standard, the NATO nations should add to the current and future national ground forces tracking systems, interfaces to produce/consume FFT data in compliance with the ADatP-36 standard and should augment the current and future Command and Control systems with interfaces to consume the track position information provided in compliance with the ADatP-36 standard. Nations should also plan for the development and deployment of the FFT services required to enable seamless ADatP-36 information exchange and so ADatP-36 enabled security devices to enable the near real time FFT data exchange between different security domains.",
+    "what_it_contains_that_is_technical": "Nothing. The document states no field, no message, no encoding, no identifier, no layout and no requirement of its own. Its only normative act is the AGREEMENT clause, and that clause's entire content is the name of another document. Counted rather than asserted: across five pages the word 'shall' occurs four times - once in the promulgation letter's ACTIONS BY NATIONS clause, once in NATIONAL RATIFICATION RESPONSE, and twice in IMPLEMENTATION OF THE AGREEMENT and FEEDBACK - and not one of the four governs a data element. Every 'should' (three, all in IMPLEMENTATION OF THE AGREEMENT) is advice about national procurement."
+  },
+
+  "delegation": {
+    "what_this_is": "One row, because the AGREEMENT clause names one standard. The version and requirement loci are separated on the convention the STANAG 4609 delegation table set, and for its reason: a reader who takes a version from the requirement that mandates the document can get no version at all.",
+    "entries": [
+      {
+        "document": "ADatP-36",
+        "version_the_stanag_pins": "Edition B",
+        "version_suffix": "NONE. 'Edition B' is an edition letter and no version, revision or date accompanies it anywhere in the five pages. This is the AEDP-12 shape - that document is cited elsewhere in this repository as 'Edition B Version 2' - so an edition letter alone does not identify a text, and which version of Edition B is intended is not determinable from this document.",
+        "where_the_version_is_stated": "The STANDARD clause, page '- 1 -', verbatim: 'ADatP-36, Edition B'. That is the ONLY place in the document where the edition letter appears - twice, in the English and French columns of the same clause.",
+        "unsuffixed_at_the_requirement": "Yes, and more than unsuffixed. ADatP-36 is named nine times across the document. Exactly two of those nine carry the edition letter, and they are the English and French halves of the STANDARD clause. The other seven - all in IMPLEMENTATION OF THE AGREEMENT - are bare 'ADatP-36' with neither an edition nor a version.",
+        "required_by": "The AGREEMENT clause, page '- 1 -', verbatim: 'Participating nations agree to implement the following standard.' The STANDARD clause immediately below it is the naming; the AGREEMENT clause is the requirement.",
+        "governs": "Everything an adapter would need. Every field, message, encoding, identifier and service of Friendly Force Tracking is in ADatP-36 and none of it is in the covering document.",
+        "held": false,
+        "park": 1
+      }
+    ],
+    "named_as_related_and_explicitly_NOT_delegation": {
+      "why_the_distinction_is_recorded": "Both appear under OTHER RELATED DOCUMENTS and neither appears in the AGREEMENT. The AGREEMENT clause names exactly one standard, so exactly one document is delegated to. Filing a related document as a delegation would overstate what the nations agreed to implement, and it is the kind of overstatement a later reader cannot detect without the pinned copy.",
+      "entries": [
+        {
+          "document": "STANAG 7149",
+          "title_as_the_document_gives_it": "NATO MESSAGE CATALOGUE - APP-11",
+          "version": "None stated. No edition and no version accompany either the STANAG number or APP-11.",
+          "locus": "OTHER RELATED DOCUMENTS, page '- 1 -'",
+          "held": false
+        },
+        {
+          "document": "STANAG 2019",
+          "title_as_the_document_gives_it": "NATO JOINT MILITARY SYMBOLOGY - APP-06",
+          "version": "None stated. No edition and no version accompany either the STANAG number or APP-06.",
+          "locus": "OTHER RELATED DOCUMENTS, page '- 1 -'",
+          "held": false
+        }
+      ]
+    }
+  },
+
+  "parks": {
+    "how_many": "One park over one document, and that is the whole of what this phase is waiting for.",
+    "park_1": {
+      "document": "ADatP-36, Edition B",
+      "why_it_is_the_only_one": "The AGREEMENT clause names one standard and nothing else in the document is technical. There is no second document whose absence costs anything, because there is no content to be missing pieces of.",
+      "what_it_blocks": "Everything except the pin, the two names and this record. No row set, no mapping table, no fixture, no fixture plan, no gap, no proposed field and no ambiguity register - a register reads a text, and the text this adapter would read is not here.",
+      "reopen_condition": "Obtain ADatP-36 EDITION B specifically - the exact edition the STANDARD clause names, not 'the current ADatP-36'. That is the same exit condition the twelve KLV parks carry and it exists for the same reason: a later revision decoded against an earlier citation is a plausible answer to the wrong question. The edition letter alone does not identify a text either, so a copy in hand must also settle which version of Edition B it is.",
+      "route": "The pinned document's own RESTRICTION TO REPRODUCTION clause prints the route for NATO standardization documents: 'They can be retrieved from the NATO Standardization Documents Database (https://nso.nato.int/nso/) or through your national standardization authorities.' That clause is about NATO standardization documents generally rather than about ADatP-36 by name, which is why this is recorded as the document's stated route and not as a confirmed availability.",
+      "honest_strength": "Weaker than eleven of the twelve KLV parks and stronger than the twelfth. The MISB parks are public downloads and SMPTE ST 336 needs a purchase decision. This one is neither: NSDD access is by national standardization authority, so the park closes on an ACCESS decision rather than on an afternoon or a budget."
+    }
+  },
+
+  "searched_and_not_found": {
+    "what_was_searched": "~/Downloads, for ADatP-36 itself.",
+    "method": "Two passes. (1) Filename patterns - adatp, 36, 5527, nffi, fft, friendly - across all 1321 entries. (2) A content pass over every PDF in the directory, 675 of them, matching the first three pages of extracted text against /ADatP\\s*-?\\s*36|Friendly\\s*Force|NFFI/i.",
+    "method_validated": "The content pass was validated by its known positive before its negative result was trusted: it found 5527EFed02.pdf, the covering document itself, which is the only file in the directory that contains the term. A search that had found nothing at all would have been a broken search rather than an absent document.",
+    "result": "ADatP-36 is NOT present in any edition. Neither are STANAG 7149 / APP-11 or STANAG 2019 / APP-06, and neither is any document using the term NFFI.",
+    "one_neighbour_worth_naming": "5527EFed02.pdf is the source of the pinned copy and was already named in fixtures/klv/spec/klv_pin.json's own not-found search, which is where this round started."
+  },
+
+  "page_count_method": {
+    "how": "Counted from the PDF's own page tree - occurrences of /Type /Page across raw objects and across every inflated object stream. This file keeps its page objects inside compressed object streams, so the inflation path is the one that produced the count.",
+    "why_it_is_recorded": "A page count is a pin value like any other, so the method that produced it has to be reproducible.",
+    "validated_before_it_was_trusted": "Run against the NINE documents whose page counts FORMAT_COVERAGE.md already records - eurocontrol-cat048-part4-edition-1-32.pdf 64, nato-aedp-4607-1-edition-a-v1.pdf 212, nato-aedp-4607-edition-a-v1.pdf 104, nato-stanag-4607-edition-4.pdf 6, nato-aedp-12-1-edition-a-v1.pdf 192, nato-aedp-12-edition-b-v2.pdf 150, nato-stanag-4676-edition-2.pdf 5, nato-stanag-4609-edition-5.pdf 5, misb-misp-2019-1.pdf 73 - and reproduced all nine exactly. That is the seven the klv pin validated against plus the two the klv pin itself added.",
+    "cross_checked_against_what_the_file_states_about_itself": "The document prints four page numbers - '- i -', '- ii -', '- 1 -', '- 2 -' - on its second through fifth leaves, with an unnumbered title page first. Four printed folios plus one unnumbered leaf is five, which agrees with the page tree. This is the stronger of the two checks because it does not depend on the tool."
+  },
+
+  "not_committed": {
+    "the_pdf_is_not_in_git": true,
+    "precedent": "`git ls-files | grep -c '\\.pdf$'` is 0 across the whole repository. fixtures/cat048/spec/, fixtures/gmti/spec/, fixtures/nits/spec/, fixtures/klv/spec/ and now fixtures/fft/spec/ all hold PDFs in the working tree and none in the index.",
+    "consequence_for_this_directory": "The file sits in the working tree because it had to be read. It is excluded from the index and the pin is the artefact: a reader with the same SHA-256 has the same document, and a reader without it has a record precise enough to recognise the right copy.",
+    "why": "The document carries NATO's own reproduction terms, printed in the Letter of Promulgation: 'This NATO standardization document is issued by NATO. In case of reproduction, NATO is to be acknowledged. NATO does not charge any fee for its standardization documents at any stage, which are not intended to be sold.' A pin plus a hash reproduces the artefact's identity for any reader without this repository redistributing the document."
+  },
+
+  "verification_performed": [
+    "SHA-256 recomputed at the committed path fixtures/fft/spec/nato-stanag-5527-edition-2.pdf: 2dba2026cab49c2c3c6f576244edc1be1abfe2df9c545a46ae341cc2a2d30b83. Matches.",
+    "Byte count recomputed: 319795. Matches.",
+    "Page count by the method above: 5. The method reproduced all nine previously recorded page counts exactly, and the count agrees with what the document prints about itself.",
+    "Title page read: 'STANDARDIZATION AGREEMENT / ACCORD DE NORMALISATION / STANAG 5527 / FRIENDLY FORCE TRACKING SYSTEMS (FFTS) INTEROPERABILITY / INTEROPERABILITE DES SYSTEMES DE SUIVI DES FORCES AMIES / EDITION/EDITION 2 / 24 April/avril 2025 / NORTH ATLANTIC TREATY ORGANIZATION / Published by the NATO STANDARDIZATION OFFICE (NSO) / (C) NATO/OTAN'.",
+    "Supersession line read from the SUPERSEDED DOCUMENTS clause, page '- 1 -': 'This STANAG supersedes the following document: STANAG 5527, Edition 1, dated 20 March 2017'.",
+    "The absence of NFFI checked at two levels: zero occurrences in the extracted text of all five pages, and zero occurrences of the literal bytes 'NFFI' anywhere in the 319795-byte file including every inflated content stream.",
+    "The nine ADatP-36 mentions located and classified: two carry 'Edition B' (the STANDARD clause, English and French), seven do not (IMPLEMENTATION OF THE AGREEMENT)."
+  ],
+
+  "what_this_phase_did_not_do": [
+    "It wrote no mapping row and no row set. FORMAT_COVERAGE.md's STANAG 5527 section contains no status column at all, which is a stronger statement than a column of `not yet`: `not yet` says a mapping is specified and unimplemented, and nothing here is specified.",
+    "It proposed no CDM field and opened no gap. There is no document in hand to find a shortfall against.",
+    "It opened no ambiguity register. Every previous adapter's register records where a pinned text is ambiguous or self-contradictory; five pages of ratification prose gave nothing to record, and an empty register would be a heading pretending to be a finding.",
+    "It planned no fixtures. The stanag4609 phase could plan twelve because it knew what a payload was; this one does not know what a payload is called, let alone what is in it.",
+    "It stated nothing about the structure, encoding or message set of Friendly Force Tracking. Everything a reader might expect on that subject is in ADatP-36 Edition B and is park 1."
+  ]
+}

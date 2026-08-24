@@ -3,10 +3,12 @@
 WHY THIS EXISTS
 ---------------
 The push gate used to name the pins by hand, and it went stale the way hand-maintained lists go
-stale: the last one named **eight** pinned PDFs while the tree held **nine**. Nothing was wrong
-with any of the nine — the list had simply not been extended when CAT048's EUROCONTROL pin landed,
-and a gate that under-counts what it is checking reports a clean run over a smaller tree than the
-one in front of it.
+stale: the last one named **eight** pinned PDFs while the tree at that moment held **nine**.
+Nothing was wrong with any of the nine — the list had simply not been extended when CAT048's
+EUROCONTROL pin landed, and a gate that under-counts what it is checking reports a clean run over a
+smaller tree than the one in front of it. (Those two numbers are the historical ones and they are
+left as they were. The tree holds **ten** pins across **five** homes today, and nothing below
+restates that: the gate derives it, which is the point.)
 
 So the enumeration is gone. This module *discovers* the pin set from the two places the repository
 already states it, and then compares that set against the disk:
@@ -16,9 +18,9 @@ already states it, and then compares that set against the disk:
   ``| SHA-256 (wrapper) | `<64 hex>`, 558 866 bytes, 6 pages, `fixtures/…/x.pdf` |``.
 
 Both are needed and neither is redundant. `gmti` and `nits` state their pins only in the document;
-`cat048` states its local path only in its pin record; `klv` states both, which is what makes the
-two sources checkable against each other. A pin recorded in neither place is not a pin — it is a
-PDF somebody left in `spec/`.
+`cat048` states its local path only in its pin record; `klv` and `fft` state both, which is what
+makes the two sources checkable against each other. A pin recorded in neither place is not a pin —
+it is a PDF somebody left in `spec/`.
 
 THE CLOSURE PROPERTY, WHICH IS THE PART WITH TEETH
 --------------------------------------------------
@@ -151,16 +153,19 @@ def test_the_pin_set_was_actually_discovered():
     """A gate that discovered no pins would pass every check below and prove nothing.
 
     The floor is deliberately a hard number and not `>= 1`: this repository has pinned standards for
-    four adapters, and a discovery that found one of them is a broken parser rather than a small
-    tree.
+    five adapters, and a discovery that found one of them is a broken parser rather than a small
+    tree. The floor moves when a pin lands — 9 to 10, and four homes to five, when STANAG 5527's
+    covering document landed in `fixtures/fft/spec/` — and moving it is the deliberate act, because
+    a floor left behind is a gate reporting a clean run over a smaller tree than the one in front
+    of it. That is the same failure this module was written for, one level up.
     """
-    assert len(PINS) >= 9, (
+    assert len(PINS) >= 10, (
         f"discovered only {len(PINS)} pins: {sorted(PINS)}. Both statements of a pin are parsed — "
         "the *_pin.json records and FORMAT_COVERAGE.md's pin rows — so a low count means one of the "
         "two parsers has stopped matching"
     )
     homes = {p.rsplit("/", 1)[0] for p in PINS}
-    assert len(homes) >= 4, f"pins found in only {sorted(homes)}"
+    assert len(homes) >= 5, f"pins found in only {sorted(homes)}"
     # And both sources are load-bearing, which is why neither can be dropped.
     from_doc = {p for p, v in PINS.items() if "FORMAT_COVERAGE.md" in v["sources"]}
     from_json = {p for p, v in PINS.items() if any(s.endswith("_pin.json") for s in v["sources"])}

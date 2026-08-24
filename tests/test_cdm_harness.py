@@ -381,7 +381,15 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat04
 #: standalone document", and the directory is named for the content because a directory holds
 #: payloads. Recorded HERE, on the day the directory was created, rather than after somebody typed
 #: the wrong one — which is exactly what 80b38d1 had to repair.
-PLANNED_FIXTURE_DIRS = {"stanag4609": "klv"}
+#:
+#: `stanag5527` is the same split and the same reason — STANAG 5527 Edition 2 is a covering
+#: document whose AGREEMENT clause names ADatP-36 Edition B and states nothing technical of its
+#: own — with one difference this map has to carry rather than smooth over: **its directory is
+#: PROVISIONAL.** `fft` is the payload noun the covering document uses ("interfaces to
+#: produce/consume FFT data"), and the document that decides what the payload really is called is
+#: not in hand. If ADatP-36 Edition B names it otherwise, THIS ENTRY is what moves — which is the
+#: whole reason the map is pinned by a test instead of living in somebody's memory of a `cp`.
+PLANNED_FIXTURE_DIRS = {"stanag4609": "klv", "stanag5527": "fft"}
 
 
 def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():

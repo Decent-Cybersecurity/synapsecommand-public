@@ -73,9 +73,11 @@ def _section() -> str:
 
     The ordinal in this comment was wrong and the reason is a rule rather than a miscount. It said
     "adapter #12 will land after this one", encoding "the next ordinal is one past the highest that
-    has shipped" — CAT048 is #11, so #12. But a parked ordinal is RESERVED, not skipped: #9 is held
-    for `nffi` and was never issued, so the next free number was #10 and STANAG 4609 / MISP-2019.1
-    took it. The old rule re-issues a reserved number as soon as a park is revisited, and an
+    has shipped" — CAT048 is #11, so #12. But a parked ordinal is RESERVED, not skipped: #9 was
+    being held and had not been issued, so the next free number was #10 and STANAG 4609 /
+    MISP-2019.1 took it. (#9 has since been issued — to `stanag5527`, on the covering document
+    that arrived for it — which changes nothing here: the number it was held against is the
+    number it went to.) The old rule re-issues a reserved number as soon as a park is revisited, and an
     ordinal that can name two adapters names neither. `FORMAT_COVERAGE.md`'s ordinal table is the
     authority now and `tests/test_cdm_ordinals.py` holds every site to it. #12 remains spoken for
     by this file's own CAT034 decline, which is consistent: next free after #11.

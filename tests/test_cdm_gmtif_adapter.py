@@ -98,8 +98,9 @@ def _gmtif_section() -> str:
     That correction is worth the two lines because the number was wrong for a RULE reason rather
     than an arithmetic one. This comment had encoded "the next ordinal is one past the highest that
     has shipped", which gave #12 after `cat048` at #11. The series does not work that way: a parked
-    ordinal is RESERVED, not skipped — #9 is held for `nffi` and was never issued — so the next
-    free number after `gmti` at #8 was #10, which STANAG 4609 / MISP-2019.1 took. Under the old
+    ordinal is RESERVED, not skipped — #9 was being held and had not been issued — so the next
+    free number after `gmti` at #8 was #10, which STANAG 4609 / MISP-2019.1 took. #9 has since gone
+    to `stanag5527`, which is the reservation being made good rather than the rule changing. Under the old
     rule a reserved number is re-issued the moment a park is revisited, at which point an ordinal
     stops identifying an adapter. `FORMAT_COVERAGE.md`'s ordinal table is now the single authority
     and `tests/test_cdm_ordinals.py` checks every site against it.
