@@ -4081,6 +4081,41 @@ def test_the_classification_contingency_is_stated_in_the_SAME_two_branch_form_at
     entry = entry[:entry.index("\n## ", 10)]
     sites["MIGRATIONS.md (the stanag5527 entry)"] = entry
 
+    # THE SITE LIST IS DERIVED AGAINST THE TREE, not trusted. A disjunction sweep whose own list of
+    # sites can shrink is not a sweep — drop one entry and it reports clean over three of four,
+    # which is the eight-versus-nine pin drift in a different costume. So the closure is asserted
+    # the way `tests/test_cdm_pins.py` asserts the pin set: every file in the repository that names
+    # a branch must be one this test actually reads. Found by mutation; the list had been a literal.
+    repo = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
+    naming = set()
+    for path in repo.rglob("*"):
+        if path.suffix not in {".md", ".mdx", ".py", ".json"} or not path.is_file():
+            continue
+        if any(part in {".git", "node_modules", "build", ".docusaurus", "__pycache__"}
+               for part in path.parts):
+            continue
+        if path.name == pathlib.Path(__file__).name:
+            continue                       # this module states the branches to check for them
+        if "Branch R" in path.read_text(errors="ignore"):
+            naming.add(str(path.relative_to(repo)))
+    swept = {"packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
+             "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json",
+             "packages/cdm/synapse_cdm/fixtures/fft/README.md",
+             "packages/cdm/synapse_cdm/MIGRATIONS.md"}
+    assert len(sites) == len(swept), (
+        f"the sweep assembled {len(sites)} sites and names {len(swept)}: {sorted(sites)}. The two "
+        "have to move together — a site removed from `sites` and left in `swept` is a site nobody "
+        "checks"
+    )
+    assert naming == swept, (
+        f"the set of files naming a branch is not the set this sweep reads.\n"
+        f"  naming a branch but NOT swept: {sorted(naming - swept)}\n"
+        f"  swept but no longer naming one: {sorted(swept - naming)}\n"
+        "A new site stating the contingency has to be added to `_fft_sites()` (or to `sites` here) "
+        "and to `swept`; a site that has stopped stating it has to be removed from both. Either "
+        "direction left unrepaired is a fact stated somewhere this test does not look"
+    )
+
     for label, text in sites.items():
         flat = _flat(text)
         low_flat = flat.lower()
