@@ -16,7 +16,7 @@
     "bundle_link_text": "Download all",
     "individual_download_url": "https://www.eurocontrol.int/sites/default/files/2024-07/eurocontrol-cat048-part4-edition-1-32.pdf",
     "member_filename_within_the_bundle": "eurocontrol-cat048-part4-edition-1-32.pdf",
-    "how_strong_the_member_filename_claim_is": "GRADE 2 of 3. The zip was not retained here, so the member name was not read out of the archive. What IS verified: the local file's basename is character-for-character the basename of the page's own individual Edition 1.32 download URL, and the byte count matches the size the page states for that entry (708.62 KB = 725626 / 1024 = 708.619 KB). So the claim is 'the member name equals the individual download's basename', not 'the archive was inspected'. Stated at its real strength rather than asserted, on the sac_pin.json principle that grades of evidence are not interchangeable.",
+    "how_strong_the_member_filename_claim_is": "GRADE 3 of 3, upgraded 2026-08-24. It was GRADE 2 because the zip had not been retained, so the member name was read off the publication page's individual-download URL rather than out of the archive. The bundle has now been downloaded again and opened: it holds a member named eurocontrol-cat048-part4-edition-1-32.pdf whose bytes are IDENTICAL to the pinned copy - same SHA-256, same 725626 bytes, cmp reports no difference. So the archive was inspected rather than inferred, and the same artefact has been obtained twice from the same URL on two occasions. The byte-count corroboration against the page's stated 708.62 KB is unchanged and still holds.",
     "retrieved_at": "2026-08-23",
     "bytes": 725626,
     "sha256": "8f9c51ff18b0a4cb6b6c1ae752622ffe9b0dbecef721f0ee123bd352000c996e",
@@ -29,7 +29,17 @@
       "Title page read and confirmed to state 'Edition: 1.32', 'Edition date: 01/07/2024', 'Status: Released Issue', 'ASTERIX Part 4 Category 048', 'Monoradar Target Reports'.",
       "Page ii Document Characteristics table read and confirmed to state Edition Number 1.32 and Edition Date 01/07/2024.",
       "Page byte count cross-checked against the publication page's stated 708.62 KB for the Edition 1.32 entry: match."
-    ]
+    ],
+    "local_path": "fixtures/cat048/spec/eurocontrol-cat048-part4-edition-1-32.pdf",
+    "independent_corroboration_2026_08_24": {
+      "what_was_compared": [
+        "the bundle member's SHA-256 against the pinned copy on disk: match",
+        "the bundle member's SHA-256 against the sha256 recorded in this file: match",
+        "byte counts, all three statements: 725626",
+        "cmp(1) on the two files: no difference"
+      ],
+      "verdict": "BYTE-IDENTICAL. Recorded as independent corroboration of the pin; nothing replaced."
+    }
   },
   "not_committed": {
     "the_pdf_is_not_in_git": true,
@@ -1137,5 +1147,256 @@
     "no_pdf_library_was_available_in_this_environment": "pypdf, pymupdf and pdfminer are all absent and pip is externally managed, so the text layer was extracted with a purpose-built stdlib reader.",
     "why_that_is_recorded": "A quotation is only as good as the extraction that produced it. Two extraction defects were found and fixed before any text here was trusted, and both would have silently corrupted quotations: (1) the document uses bare CR line terminators, so a multiline-anchored object scan found 3 of 259 objects and the first pass returned an empty document; (2) glyph runs are heavily kerned - 'Monoradar' is stored as (Mo)3(no)4(r)-15(ad)4(ar) - so word spacing had to be computed from each font's own /Widths array rather than guessed from gaps, which is what turned 'PotentialICConflict' into 'Potential IC Conflict' and 'shallbe sent' into 'shall be sent'. A NUL byte emitted by the Symbol font's Identity-H CMap was also truncating bulleted lines at display time, which made the I048/030 table look 11 codes shorter than it is.",
     "verification_that_the_extraction_is_complete": "The I048/030 code table was read end to end and contains every code from 0 to 37 with no gaps, which is the strongest internal check available: a lossy extraction of a 38-row table shows as missing integers."
+  },
+  "edition_history": {
+    "what_this_is": "The lineage, NOT pins. The governing text remains Edition 1.32 alone and no row in FORMAT_COVERAGE.md is read against any other edition. These 22 files exist so that a claim about when something was introduced can be checked against the standard's own change records rather than recalled.",
+    "home": "fixtures/cat048/spec/history/",
+    "count": 22,
+    "editions_in_hand": "1.10 through 1.32, except 1.26",
+    "not_obtained": {
+      "edition": "1.26",
+      "date_per_the_change_record": "February 2020",
+      "what_it_changed_per_two_later_records": [
+        "numerous editorial corrections",
+        "I048/030 values 27 to 30 added"
+      ],
+      "why_it_is_recorded_rather_than_elided": "Ambiguity 18's companion, register entry 17."
+    },
+    "these_are_not_pins": "tests/test_cdm_pins.py derives the pin set from the *_pin.json records and from FORMAT_COVERAGE.md's pin rows, never from 'PDFs found under spec/', and asserts in both directions that nothing under a history/ directory is a pin. The placement inside spec/ is deliberate and the reasoning is in FORMAT_COVERAGE.md under 'The edition history'.",
+    "committed": false,
+    "why_not_committed": "Same rule as every pin: `git ls-files | grep -c '.pdf$'` is 0 across the whole repository. These are EUROCONTROL's documents on EUROCONTROL's terms, and a hash plus a bundle URL reproduces every one of them.",
+    "source": {
+      "bundle_url": "https://www.eurocontrol.int/archive_download/all/node/11127",
+      "bundle_link_text": "Download all",
+      "shape": "18 entries: 17 PDFs plus one nested zip, asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.10-to-1.14.zip, holding the five 1.10-1.14 files. 22 PDFs after both are expanded.",
+      "retrieved_at": "2026-08-24"
+    },
+    "verification_performed": "Every one of the 22 SHA-256 digests and byte counts verified against the supplied manifest before use, then re-verified at the committed path after landing: 22/22, no mismatch. Title page read for every one; Document Change Record located and read for every one.",
+    "premises_named": [
+      "Editions 1.27 and 1.31 use a font whose digits do not survive text extraction on the COVER (the cover renders as '1.  ' and '1   . Y R I 2020'). Both editions' numbers and dates were taken instead from their page-iii Document Characteristics tables, which extract cleanly: 1.27 / 18-06-2020 and 1.31 / 03-10-2022. Their change-record BODIES do not extract by this method, so the 1.27 date cross-check was run from Ed 1.30's record and Ed 1.32's, not from 1.27's or 1.31's own.",
+      "Five pre-1.0 editions - 0.7, 0.8, 0.9, 0.9a, 0.9b, March 1998 to January 1999 - are named by the change record and none is published in the bundle. 0.9b is where the Reserved Expansion Indicator was added to the UAP. Context, not obtainable from this source."
+    ],
+    "files": [
+      {
+        "filename": "p4ed110.pdf",
+        "edition": "1.10",
+        "edition_date_on_the_title_page": "February 1999",
+        "status_on_the_title_page": "Draft",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "4cc66f0735c9aeb66fa40d7ea6e385d6bb303a74ad531506a547a1a27de8050e",
+        "bytes": 140245,
+        "pages": 56
+      },
+      {
+        "filename": "p4ed111.pdf",
+        "edition": "1.11",
+        "edition_date_on_the_title_page": "March 1999",
+        "status_on_the_title_page": "Draft",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "a108189a381ed2a2c62708f9644115ddf19cb01d5b64e39566753369dd10db9c",
+        "bytes": 137098,
+        "pages": 55
+      },
+      {
+        "filename": "p4ed112.pdf",
+        "edition": "1.12",
+        "edition_date_on_the_title_page": "September 1999",
+        "status_on_the_title_page": "Proposed Standard",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "a3ce08e6ad40db93cc0963653c43e560f6cbf972e165922cad713741c4a84d68",
+        "bytes": 136197,
+        "pages": 55
+      },
+      {
+        "filename": "p4ed113.pdf",
+        "edition": "1.13",
+        "edition_date_on_the_title_page": "July 2000",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "c5941cf93c26eac9b0aa68b4d14a0824c97602717cef33709d618e3bd44698ec",
+        "bytes": 136046,
+        "pages": 55
+      },
+      {
+        "filename": "p4ed114.pdf",
+        "edition": "1.14",
+        "edition_date_on_the_title_page": "November 2000",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "5ce41f405b2b0015c830d3eaea39f242d955f49823aacc6e7285b0fa5e81cded",
+        "bytes": 240259,
+        "pages": 51
+      },
+      {
+        "filename": "asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.15-042007.pdf",
+        "edition": "1.15",
+        "edition_date_on_the_title_page": "April 2007",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "c7fe5a5d3769273dad521612375d4cc7a22da4bdbe2b0c4178485758d17d576a",
+        "bytes": 143427,
+        "pages": 50
+      },
+      {
+        "filename": "asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.16-032009.pdf",
+        "edition": "1.16",
+        "edition_date_on_the_title_page": "March 2009",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "ff292cf11ec7f9d16249eb7939fd8a7792d5a4811da70c6057daf22d2d69766a",
+        "bytes": 180780,
+        "pages": 50
+      },
+      {
+        "filename": "asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.17-062010.pdf",
+        "edition": "1.17",
+        "edition_date_on_the_title_page": "June 2010",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "998a8c8d8b7ca84b158bda0d78139c69be5755b969951678ce4a820c081769e9",
+        "bytes": 195039,
+        "pages": 50
+      },
+      {
+        "filename": "asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.18-112010.pdf",
+        "edition": "1.18",
+        "edition_date_on_the_title_page": "November 2010",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "2f7055b62d7ee4a1b116b2b62c737ba69647e5eca58ab96caaaea79d8afc9af6",
+        "bytes": 181919,
+        "pages": 50
+      },
+      {
+        "filename": "asterix-cat048-monoradar-target-reports-next-version-of-cat-001-part-4-v1.19-032011.pdf",
+        "edition": "1.19",
+        "edition_date_on_the_title_page": "March 2011",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "a2264c8feabd580ef99fba7695b44d5ce14f1805053a35d0073da3b988b81da3",
+        "bytes": 183235,
+        "pages": 51
+      },
+      {
+        "filename": "asterix-cat048-tmtr-part4-v1.20-20110601.pdf",
+        "edition": "1.20",
+        "edition_date_on_the_title_page": "June 2011",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "ea6118a0e11215974648551c5e9b8503fc2ca6f00edc1441abc3d9b84975ee9e",
+        "bytes": 184496,
+        "pages": 51
+      },
+      {
+        "filename": "cat048-asterix-tmtr-part4-v1.21-20120701.pdf",
+        "edition": "1.21",
+        "edition_date_on_the_title_page": "July 2012",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "SUR.ET1.ST05.2000-STD-04-01",
+        "sha256": "7636eb50dcd0d8d50c947ab177f0c5f3906f06597233f72f10cdef3f597493d7",
+        "bytes": 185397,
+        "pages": 51
+      },
+      {
+        "filename": "cat048pt4ed122.pdf",
+        "edition": "1.22",
+        "edition_date_on_the_title_page": "24/10/2016",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "22d976aa80da2d8d9981bf240919dae856d991bca8ddfaf568a478f01b4b2084",
+        "bytes": 243264,
+        "pages": 53
+      },
+      {
+        "filename": "cat048pt4ed123.pdf",
+        "edition": "1.23",
+        "edition_date_on_the_title_page": "31/07/2017",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "1936b86987c1771ebb7c89909be9fea557da4abf0f3ecb3d427ef1853a67e984",
+        "bytes": 266824,
+        "pages": 53
+      },
+      {
+        "filename": "cat048pt4ed124.pdf",
+        "edition": "1.24",
+        "edition_date_on_the_title_page": "04/03/2019",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "9504ae2134b2ecbe3587107c518f367bad16018248f3af8dbafa2fbd4da22817",
+        "bytes": 370242,
+        "pages": 53
+      },
+      {
+        "filename": "cat-048-09_2019-asterix-spec-0149-4.pdf",
+        "edition": "1.25",
+        "edition_date_on_the_title_page": "08/08/2019",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "0d30521cf8b331715719237974f7e75f9dabf110aa8e9198d6a0e74d22059118",
+        "bytes": 437358,
+        "pages": 55
+      },
+      {
+        "filename": "eurocontrol-cat048-pt4-ed127.pdf",
+        "edition": "1.27",
+        "edition_date_on_the_title_page": "18/06/2020",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "13fd06fc98e836e0c1e66357f8b8b309323853527eda6d9ee78adef8f2a07e54",
+        "bytes": 613446,
+        "pages": 58
+      },
+      {
+        "filename": "eurocontrol-cat048-pt4-ed128.pdf",
+        "edition": "1.28",
+        "edition_date_on_the_title_page": "22/02/2021",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "715797fa45bb5011d7e3c3bf11f1bf63ebc0b9eddd73987487114131f164746a",
+        "bytes": 786311,
+        "pages": 58
+      },
+      {
+        "filename": "eurocontrol-cat048-pt4-ed129.pdf",
+        "edition": "1.29",
+        "edition_date_on_the_title_page": "10/08/2021",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "565f377490373397379161dd49e7badeaee8dd117cb6cc541011299f5fc03228",
+        "bytes": 789847,
+        "pages": 58
+      },
+      {
+        "filename": "eurocontrol-cat048-pt4-ed130.pdf",
+        "edition": "1.30",
+        "edition_date_on_the_title_page": "02/11/2021",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "a8e8acb36c9775d2dd04ba570ba66ecf0f860ab20b94971f2f09e8717bfeb4a7",
+        "bytes": 802466,
+        "pages": 59
+      },
+      {
+        "filename": "eurocontrol-cat048-pt4-ed131.pdf",
+        "edition": "1.31",
+        "edition_date_on_the_title_page": "03/10/2022",
+        "status_on_the_title_page": "Released Edition",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "611e6f9cb452df7274df0875c9a05a9de2e834afb98d15975211c45427b4cc07",
+        "bytes": 1375406,
+        "pages": 63
+      },
+      {
+        "filename": "eurocontrol-cat048-part4-edition-1-32.pdf",
+        "edition": "1.32",
+        "edition_date_on_the_title_page": "01/07/2024",
+        "status_on_the_title_page": "Released Issue",
+        "document_identifier": "EUROCONTROL-SPEC-0149-4",
+        "sha256": "8f9c51ff18b0a4cb6b6c1ae752622ffe9b0dbecef721f0ee123bd352000c996e",
+        "bytes": 725626,
+        "pages": 64
+      }
+    ]
   }
 }

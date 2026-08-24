@@ -3349,3 +3349,195 @@ def test_migrations_records_the_phase_1_row_set_and_why_it_proposes_nothing():
         "the false premise this phase corrected has to be recorded here too — a correction stated "
         "in one document and not the other is the drift this file's own procedure warns about"
     )
+
+
+# ------------------------------------------------- the CAT048 edition lineage (read-and-rule)
+#
+# 22 CAT048 edition PDFs landed in `fixtures/cat048/spec/history/` and NOTHING in the row set moved:
+# the governing text is Edition 1.32 alone. So what these tests pin is not a mapping — it is the
+# lineage's own claims, and specifically the ones a later reader would otherwise have to re-derive
+# from 22 documents: which edition changed which item, which edition is missing, and the verdict
+# that no change record contradicts anything the row set asserts.
+#
+# `tests/test_cdm_pins.py` owns the placement, the counts and the not-a-pin property. This owns the
+# READING.
+
+CAT048_HEADING = "## ASTERIX Category 048"
+LINEAGE_HEADING = "### The edition history"
+
+#: The change-record entries this row set actually leans on, each transcribed from Edition 1.32's
+#: own Document Change Record (printed pages iv–vi) and corroborated against Edition 1.30's.
+#: Keyed by edition, because the edition is the fact a settlement cites when it says "Edition 1.30
+#: relaxed" — and a table that lost the pairing would let that citation drift.
+CAT048_LINEAGE = (
+    ("1.16", "SI/II Indication added to I048/230"),
+    ("1.17", "I048/030 codes 19, 20"),
+    ("1.21", "X-Pulse indication added to I048/020 1st ext."),
+    ("1.22", "definition of `CDM` in I048/170 updated"),
+    ("1.23", "bit 1 of I048/120 changed to an FX-bit in line with Part 1"),
+    ("1.24", "I048/030 value 24 defined and the data item renamed"),
+    ("1.27", "I048/030 value 31"),
+    ("1.30", "the encoding rules of I048/220, /230, /240 and /250 all updated"),
+    ("1.31", "second extension added to I048/020"),
+    ("1.32", "§5.1's \"Standard Data Items\" table removed"),
+)
+
+
+def _lineage() -> str:
+    section = _section(CAT048_HEADING)
+    start = section.index(LINEAGE_HEADING)
+    return section[start:section.index("\n### ", start + 10)]
+
+
+def test_the_lineage_section_exists_and_says_the_pin_did_not_move():
+    """The load-bearing sentence of the whole round: 22 editions, none of them governing.
+
+    A section that lands 21 further editions of the same standard beside the pin is one edit away
+    from a reader concluding that a row was read against one of them. So the disclaimer is asserted,
+    not merely written, and the pin table's own provenance row is asserted with it — that row said
+    "Editions NOT read: 1.31 and earlier" and this commit made it false.
+    """
+    lineage = _flat(_lineage())
+    assert "The governing text is still Edition 1.32 alone" in lineage, (
+        "the lineage section no longer opens by saying the pin did not move"
+    )
+    assert "none of them a pin" in lineage, (
+        "the heading's own disclaimer is what a reader skimming the table of contents sees"
+    )
+    pin_section = _flat(_section(CAT048_HEADING))
+    assert "the governing text is still 1.32 alone and no row is read against any other edition" \
+        in pin_section, (
+        "the pin table's provenance row no longer carries the disclaimer. Before this commit it "
+        "read 'Editions NOT read | 1.31 and earlier', which the commit falsified — a corrected row "
+        "that drops the constraint is worse than the stale one"
+    )
+    assert "Editions NOT read" not in pin_section, (
+        "AN ABSENCE: the stale provenance row is back. All 22 editions are in hand and their change "
+        "records read, so a row saying they were not is a false statement about this repository"
+    )
+
+
+@pytest.mark.parametrize("edition,change", CAT048_LINEAGE, ids=lambda x: str(x)[:34])
+def test_the_lineage_table_pairs_each_edition_with_what_its_record_says_changed(edition, change):
+    """Edition and change on ONE row, because the pairing is the fact.
+
+    Asserted row-scoped rather than section-scoped for the reason mutation keeps finding: every one
+    of these edition numbers appears elsewhere in the section — in the register, in the verdict
+    table, in the pin rows — so `edition in section and change in section` is a disjunction that
+    passes when the two are on different lines.
+    """
+    rows = [ln for ln in _lineage().splitlines() if ln.startswith(f"| {edition} |")
+            or ln.startswith(f"| **{edition}** |")]
+    assert len(rows) == 1, (
+        f"expected exactly one lineage row for edition {edition}, found {len(rows)}"
+    )
+    assert change in rows[0], (
+        f"the lineage row for edition {edition} no longer states {change!r}.\n  row: {rows[0][:180]}"
+    )
+
+
+def test_the_verdict_is_stated_and_names_the_items_checked():
+    """Ruling 3's answer, and the list that makes it more than an assurance.
+
+    "No contradiction" is worth nothing without the checked set beside it: an unnamed sweep that
+    found nothing is indistinguishable from a sweep nobody ran. So the verdict and the item table
+    are asserted together, and the strongest corroboration in it — settlement 8's four items against
+    Edition 1.30's four — is asserted by name.
+    """
+    lineage = _flat(_lineage())
+    assert "No change record contradicts any mapping, any settlement or any refusal" in lineage, (
+        "Ruling 3's verdict is gone. It is the sentence the whole round exists to be able to write"
+    )
+    for item in ("`I048/020`", "`I048/030`", "`I048/120`", "`I048/140`", "`I048/170`",
+                 "`I048/220`", "`I048/260`"):
+        assert item in lineage, f"the checked-items table no longer lists {item}"
+    assert "1.30's record names exactly those four" in lineage, (
+        "the strongest corroboration in the round — settlement 8 says 'the four items Edition 1.30 "
+        "relaxed' and the record names exactly I048/220, /230, /240, /250 — is no longer stated"
+    )
+    # The one place the deletion of §5.1 could have cost something, and did not.
+    assert "the deletion cost nothing" in lineage and "§5.2.15" in lineage, (
+        "1.31 corrected I048/120's resolution in §5.1 and 1.32 deleted §5.1's table. That the row "
+        "set takes the LSB from §5.2.15 instead is the reason the deletion is harmless, and it has "
+        "to be stated or the next reader re-runs the scare"
+    )
+
+
+def test_the_three_follow_up_findings_are_recorded_as_findings_and_not_acted_on():
+    """AN ABSENCE as much as a presence: this pass rules, the next pass edits.
+
+    Ambiguity 13 is now resolvable from Edition 1.31, which is in hand. The temptation is to resolve
+    it here — and resolving it means reading two sections of two documents and changing a register
+    entry, which is a different pass. So the finding is recorded and the register entry must still
+    be open.
+    """
+    lineage = _flat(_lineage())
+    assert "Ambiguity 13 is now resolvable and is not resolved here" in lineage, (
+        "the highest-value finding of the round is the one most likely to be quietly actioned"
+    )
+    section = _section(CAT048_HEADING)
+    thirteen = [ln for ln in section.splitlines() if ln.startswith("| 13 | **")]
+    assert len(thirteen) == 1, "ambiguity 13's row is gone"
+    assert "is not determinable from the pinned copy" in thirteen[0], (
+        "ambiguity 13 has been resolved in this pass. The lineage section says it is not, so either "
+        "the finding text or the register entry is now lying"
+    )
+    # And the loose phrasing it names is deliberately still loose.
+    assert "grown in nearly every edition since 1.17" in _flat(section), (
+        "the pin table's 'nearly every edition' phrasing was changed. This pass records that it is "
+        "now checkable — ten of sixteen — and rules nothing; changing it is the follow-up's call"
+    )
+    assert "ten of the sixteen editions from 1.17 to 1.32 touched it" in lineage, (
+        "the exact answer to the loose claim is the useful half of that finding"
+    )
+
+
+@pytest.mark.parametrize("number,phrase", [
+    (15, "omits two of them"),
+    (16, "dated two different months"),
+    (17, "the one edition of the lineage not obtained"),
+    (18, "states no edition at all"),
+])
+def test_the_lineage_register_entries_are_filed_at_the_next_numbers(number, phrase):
+    """Four findings, numbered 15 to 18 per this section's own convention, prose left alone."""
+    section = _section(CAT048_HEADING)
+    rows = [ln for ln in section.splitlines() if ln.startswith(f"| {number} | **")]
+    assert len(rows) == 1, f"register entry {number} is missing or duplicated"
+    assert phrase in rows[0], (
+        f"register entry {number} no longer states {phrase!r}.\n  row: {rows[0][:180]}"
+    )
+
+
+def test_the_register_did_not_grow_past_eighteen_without_this_test_moving():
+    """The upper guard. These numbers are cited from the lineage table, so a gap dangles a citation."""
+    section = _section(CAT048_HEADING)
+    assert "| 19 | **" not in section, (
+        "the CAT048 register has grown past 18 without this test being updated"
+    )
+    for n in range(1, 19):
+        assert f"| {n} | **" in section, f"register entry {n} vanished"
+
+
+def test_the_pin_corroboration_records_the_grade_it_upgraded():
+    """Ruling 1: the same artefact obtained twice, and an evidence grade that moved because of it.
+
+    The pin recorded its member-filename claim as GRADE 2 of 3 *because* the archive had not been
+    opened. It has now been opened and the member's bytes are the pinned bytes, so the grade moves.
+    A corroboration that did not say which claim it strengthened would be a note nobody could act
+    on — grades of evidence are not interchangeable, which is `sac_pin.json`'s own principle.
+    """
+    flat = _flat(_section(CAT048_HEADING))
+    assert "byte-identical" in flat, "the Ruling 1 verdict is gone"
+    assert "GRADE 2 of 3 to **GRADE 3**" in flat, (
+        "the corroboration no longer names the grade it upgraded, so the pin record and the "
+        "document disagree about how strong the member-filename claim is"
+    )
+    pin = json.loads(
+        (pathlib.Path(synapse_cdm.__file__).resolve().parent
+         / "fixtures" / "cat048" / "spec" / "cat048_pin.json").read_text())
+    strength = pin["source"]["how_strong_the_member_filename_claim_is"]
+    assert strength.startswith("GRADE 3 of 3"), (
+        f"cat048_pin.json still grades the claim as: {strength[:60]}"
+    )
+    assert pin["source"]["independent_corroboration_2026_08_24"]["verdict"].startswith(
+        "BYTE-IDENTICAL"), "the pin record's corroboration verdict changed"

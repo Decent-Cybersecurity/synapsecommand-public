@@ -19,6 +19,14 @@ What is here:
   reason the Legion and CAT021 pins were: a quotation with no pin behind it is a recollection.
 - **`spec/build_fixtures.py`** — the source of truth for both artefacts, plus `check_layouts()`,
   which asserts every encoder emits the octet count §5.2 states for its item.
+- **`spec/history/`** — **22 CAT048 edition PDFs, editions 1.10 to 1.32, and NOT pins.** The
+  governing text is Edition 1.32 alone and no row is read against any other edition; the lineage
+  is here so that a claim about *when* something was introduced can be checked against the
+  standard's own change records instead of recalled. Edition **1.26** is the one edition of the
+  lineage not obtained. Untracked, like every PDF here. The placement is ruled in
+  `../../FORMAT_COVERAGE.md` under "The edition history", and
+  `tests/test_cdm_pins.py` asserts in both directions that nothing in here is a pin — which
+  matters, because the harness's own message says pinned standards live in `spec/`.
 - **this file** — the identifier evidence, below.
 
 **The specification PDF is not committed.** It sits in `spec/` in the working tree because it

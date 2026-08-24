@@ -5846,11 +5846,11 @@ filename, the byte count, the hash, and every extracted value cited below with i
 | Edition date | **01/07/2024** — the document's own claim, on the cover and in the page-ii Document Characteristics table. The publication page lists the same file as "2 July 2024"; the pin records both and picks neither, because the identifying facts are the edition number and the hash |
 | SHA-256 | `8f9c51ff18b0a4cb6b6c1ae752622ffe9b0dbecef721f0ee123bd352000c996e`, 725 626 bytes, 64 pages |
 | Retrieved | 2026-08-23, from the "Download all" bundle at `https://www.eurocontrol.int/archive_download/all/node/11127`, member `eurocontrol-cat048-part4-edition-1-32.pdf` |
-| Corroboration | The publication page states 708.62 KB for its Edition 1.32 entry. 725 626 / 1024 = 708.619 KB, so the pinned copy is the page's file and not some other Edition 1.32 |
+| Corroboration | The publication page states 708.62 KB for its Edition 1.32 entry. 725 626 / 1024 = 708.619 KB, so the pinned copy is the page's file and not some other Edition 1.32. **And the bundle was re-downloaded and opened**: its member of that name is byte-identical to the pinned copy, so the member-filename claim moves from GRADE 2 of 3 to **GRADE 3** — the archive was inspected rather than inferred from a URL basename |
 | ASTERIX Part 1 | Edition 3.1, Released Issue, **28 October 2021** — §2.2 reference 1. See the next section |
 | **Reserved Expansion Field** | **NOT PINNED — obtainable, and simply not obtained.** Defined in a separate publication (Appendix A, SPEC-0149-4A) that this document does not even list among its references. A download, not an unobtainable artefact; see settlement 1 for the reopen condition |
 | CAT034 | §2.2 reference 5 pins Part 2b Category 034 Monoradar Service Messages, Edition 1.30. **Out of scope**, and settlement 2 states what that costs |
-| Editions NOT read | 1.31 and earlier. The I048/030 code table has grown in nearly every edition since 1.17 and the table below is transcribed from 1.32's own text; an earlier edition would enumerate it short |
+| Editions read, and how far | **All 22 published editions, 1.10 to 1.32, are now in hand** at `fixtures/cat048/spec/history/` — title page and Document Change Record read for every one, **full text for 1.32 alone**, and Edition **1.26 not obtained at all**. Before this they were unread, and the row said so. The I048/030 code table has grown in nearly every edition since 1.17 and the table below is transcribed from 1.32's own text; an earlier edition would enumerate it short. See "The edition history" below — **the governing text is still 1.32 alone and no row is read against any other edition** |
 
 **Edition 1.32 removed the item roster.** The Document Change Record (page vi) lists `Table
 "Standard Data Items" removed` against §5.1, and §5.1 in this edition is one sentence of prose:
@@ -5859,6 +5859,111 @@ reports from a Mode S station are described in the following pages." So **§5.3.
 UAP, is the sole item roster**, and the coverage table below is keyed on it — all 28 FRNs
 including the SP and RE slots. The Table of Contents still carries the heading "5.1 Standard
 Data Items" at page 13, so the heading outlived the table.
+
+### The edition history — 22 editions in hand, and none of them a pin
+
+**The governing text is still Edition 1.32 alone.** Every row in this section is read against it
+and nothing below changes that. What is now also in hand is the **lineage**: the EUROCONTROL
+"Download all" bundle for node 11127 holds **22 edition PDFs**, editions **1.10 through 1.32**, and
+all 22 sit in `fixtures/cat048/spec/history/` — untracked, like every other PDF in this repository.
+
+**Why `spec/history/` and not somewhere else**, since these are emphatically not pins:
+
+- **Not `fixtures/cat048/history/`.** A second non-payload subdirectory beside the payloads makes
+  the fixture directory's shape a third thing, and it separates the lineage from the pin record that
+  is the only reason to consult it. The harness does not recurse, so `spec/history/` is as invisible
+  to it as `spec/` already is — verified rather than assumed: the cat048 harness still reports 82.
+- **Not "outside the repository", the AEDP-12 Edition A (2014) treatment.** That precedent is right
+  for one watermarked reseller copy whose hash nobody else can reproduce, and 3e0aed0 recorded its
+  un-reproducibility as the defect it is — "the one line in this pin table that the re-verification
+  could not check". These 22 are the publisher's own bundle from one URL, so landing them makes every
+  one of the 22 re-verifiable, which is the opposite failure mode.
+- **The risk the placement carries, named and mitigated.** 80b38d1's harness message tells a reader
+  that "pinned standards live in spec/", so 21 non-pins inside `spec/` could read as 21 pins. That is
+  exactly why `tests/test_cdm_pins.py` derives the pin set from the **pin records** and from this
+  document's pin rows, never from "PDFs found under spec/", and asserts in both directions that
+  nothing under a `history/` directory is a pin.
+
+**The pin is corroborated, and one evidence grade goes up.** The bundle's own member
+`eurocontrol-cat048-part4-edition-1-32.pdf` is **byte-identical** to the pinned copy already on disk:
+same SHA-256 `8f9c51ff…000c996e`, same 725 626 bytes, `cmp` reports no difference. So the same
+artefact has now been obtained twice, from the same URL on two occasions, and `cat048_pin.json`'s
+member-filename claim moves from **GRADE 2 of 3 to GRADE 3**: that record said "the zip was not
+retained here, so the member name was not read out of the archive", and it has now been read out of
+the archive, with the member's bytes equal to the pinned bytes.
+
+#### The lineage, from Edition 1.32's own Document Change Record
+
+Built from the change records rather than from full-text diffs of 22 documents — Ed 1.32's record
+(printed pages iv–vi) states it claims to be "the complete history of the successive editions", and
+Ed 1.30's record corroborates the tail independently. Title-page identity for all 22 is in
+`cat048_pin.json` under `edition_history`; what follows is the half that touches this row set.
+
+| Edition | Date (title page) | What its record says changed |
+|---|---|---|
+| 1.10 | February 1999 | **Draft.** Not named in Ed 1.32's record at all — register entry 15 |
+| 1.11 | March 1999 | editorial corrections |
+| 1.12 | September 1999 | encoding rules and notes in I048/070, /100, /230 |
+| 1.13 | July 2000 | **Released Issue, and also not named in Ed 1.32's record** — register entry 15 |
+| 1.14 | November 2000 | editorial corrections |
+| 1.15 | April 2007 | Document ID & Signature Page |
+| 1.16 | March 2009 | reference document 2; **SI/II Indication added to I048/230** (§5.2.23) |
+| 1.17 | June 2010 | **I048/030 codes 19, 20** (§5.2.3) |
+| 1.18 | November 2010 | **I048/030 codes 21, 22** |
+| 1.19 | March 2011 | **I048/030 code 23**; signature page |
+| 1.20 | June 2011 | abbreviations; **Note added to I048/020 1st extension (FOE/FRI)** (§5.2.2) |
+| 1.21 | July 2012 | **X-Pulse indication added to I048/020 1st ext.**; UAP annotation for FRNs 23–26 corrected from `I048/YY` to `I048/YYY` (§5.3.1) |
+| 1.22 | 24/10/2016 | migration to the new layout, ALL; **definition of `CDM` in I048/170 updated** (§5.2.19) |
+| 1.23 | 31/07/2017 | Reserved Expansion Field reference added to I048/020 and I048/040; **bit 1 of I048/120 changed to an FX-bit in line with Part 1** (§5.2.15); **`STAT` value 7 defined in I048/230** |
+| 1.24 | 04/03/2019 | **I048/030 value 24 defined and the data item renamed**; **Note added to I048/055** (§5.2.7) |
+| 1.25 | 08/08/2019 | **I048/030 values 25, 26**; editorial correction in I048/260 |
+| **1.26** | **February 2020 (per the record)** | **NOT OBTAINED** — the only edition of the lineage missing. Its substantive change is knowable anyway: "numerous editorial corrections" and **I048/030 values 27 to 30**. Register entry 17 |
+| 1.27 | 18/06/2020 | **I048/030 value 31**; Note 3 in I048/020 modified; **maximum value in I048/040 corrected**; **LSB in I048/140 editorially corrected** (§5.2.17). Ed 1.32's record and Ed 1.30's both date this edition *May 2020* — register entry 16 |
+| 1.28 | 22/02/2021 | reference documents; **I048/030 values 32–34, code 15 updated** |
+| 1.29 | 10/08/2021 | reference documents; **I048/250 renamed and a Note added** (§5.2.25); **Note added to I048/260** |
+| 1.30 | 02/11/2021 | **the encoding rules of I048/220, /230, /240 and /250 all updated for "Track End Messages"** — the four items, and settlement 8 is about exactly these four |
+| 1.31 | 03/10/2022 | reference documents; abbreviations; **resolution of I048/120 corrected in §5.1**; **second extension added to I048/020**; **I048/030 values 35, 36 with the NOTE on code 36, Note 3 deleted**; Note added to I048/120 |
+| 1.32 | 01/07/2024 | reference 2; abbreviations; **§5.1's "Standard Data Items" table removed**; additional data added to I048/020; **I048/030 value 37**; Notes added to I048/050, I048/070; **"in two's complement form" clarified and a Note added to I048/090** |
+
+Five pre-1.0 editions — 0.7, 0.8, 0.9, 0.9a and 0.9b, March 1998 to January 1999 — are named by the
+record and none is published in the bundle. They are the split that created Part 4 in the first
+place ("the ex-part 4 split ... Category 048 - Part 4"), and 0.9b is where the **Reserved Expansion
+Indicator was added to the UAP**. Named as context; not obtainable from this source.
+
+#### Does any change record contradict this row set? No — and here is what was checked
+
+Every data item this row set cites was checked against every change-record entry that names it.
+**No change record contradicts any mapping, any settlement or any refusal.** The items checked, and
+what the record confirms about each:
+
+| Item | Record entries touching it | Verdict |
+|---|---|---|
+| `I048/020` | 1.20, 1.21, 1.23, 1.27, 1.31, 1.32 | consistent, and it **explains** the adapter's own finding that the fifth extension points to a sixth §5.2.2 does not define: extensions were added incrementally, in 1.31 and again in 1.32 |
+| `I048/030` | 1.17, 1.18, 1.19, 1.24, 1.25, 1.26, 1.27, 1.28, 1.31, 1.32 | consistent. Value 37 is the highest and 1.32 added it, which is what the transcribed 0–37 table asserts |
+| `I048/040` | 1.23, 1.27 | consistent; the maximum-value correction predates the pinned edition |
+| `I048/050`, `I048/055` | 1.32, 1.24 | consistent |
+| `I048/070`, `I048/090`, `I048/100` | 1.12, 1.32 | consistent. 1.32's `I048/090` entry is the one ambiguity 13 is about |
+| `I048/120` | 1.23, 1.31 | consistent, **and the deletion cost nothing**: 1.31 corrected the resolution in §5.1, 1.32 deleted §5.1's table, and this row set takes the 1 m/s LSB from **§5.2.15** — the resolution table cites §5.2.15 on that row, not §5.1 |
+| `I048/140` | 1.27 | consistent; the LSB correction predates the pinned edition |
+| `I048/170` | 1.22 | consistent — the `CDM` definition this row set parks is the 1.22 one as carried into 1.32 |
+| `I048/220`, `I048/230`, `I048/240`, `I048/250` | 1.30 (all four), 1.16, 1.23, 1.29 | consistent, and this is the strongest corroboration in the table: settlement 8 says "the four items Edition 1.30 relaxed", and 1.30's record names exactly those four |
+| `I048/260` | 1.25, 1.29 | consistent |
+| §5.1 / the UAP | 1.32 | consistent — the record's own words are quoted in the pin section and in ambiguity 11 |
+
+Three things the lineage puts on the record for a **follow-up** ruling rather than this one, because
+this pass changes no row:
+
+1. **Ambiguity 13 is now resolvable and is not resolved here.** It says which Note Edition 1.32 added
+   to §5.2.12 cannot be determined from the pinned copy, since the record says one was added and the
+   section carries five. Edition 1.31 is now in hand, so a diff of its §5.2.12 against 1.32's names
+   the added Note. That is a reading, and readings belong in their own pass.
+2. **"The I048/030 code table has grown in nearly every edition since 1.17"** — the pin table's own
+   phrasing, written when no other edition was in hand and now checkable. The record's exact answer:
+   ten of the sixteen editions from 1.17 to 1.32 touched it (1.17, 1.18, 1.19, 1.24, 1.25, 1.26,
+   1.27, 1.28, 1.31, 1.32) and six did not. Left exactly as written; the number is available when
+   somebody rules on the phrasing.
+3. **Ed 1.27's date.** Two change records say May 2020 and the document says 18/06/2020 — register
+   entry 16 states it and nothing here picks a side.
 
 ### Part 1 — the mechanics this category does not state, and why nothing was diffed
 
@@ -6995,6 +7100,10 @@ refusing, never by guessing.
 | 12 | **This repository states two different dates for one Part 1 edition.** CAT048 §2.2 says "Edition 3.1, Released Issue, 28 October 2021"; FORMAT_COVERAGE.md's CAT021 pin row says "Edition 3.1, November 2021" | The **edition** is what the dependency rests on and the editions agree, so the existing basis is cited. The date discrepancy is recorded and neither row is edited on a guess, because no copy of Part 1 has ever been retrieved here |
 | 13 | **Which Note Edition 1.32 added to I048/090 is not determinable from the pinned copy.** The change record says one was added to §5.2.12; the section carries five | All five are quoted verbatim in settlement 5 and in the pin. Note 3 is identified as the *likely* insertion and labelled an inference, since establishing it needs Edition 1.31 |
 | 14 | **This repository will refuse and accept the same wire value in two adapters, and the bases differ.** CAT048 accepts exactly 86 400.000 s (ambiguity 1). `asterix_cat021.py` refuses it: the guard is `if seconds >= SECONDS_PER_DAY`, so 86 400.000 s raises, and its stated reason is inference from reset prose — "the counter resets at every midnight, so it cannot reach 86400" — with **no acceptable-range line cited** | **Recorded as a cross-adapter finding, not harmonised.** The two rest on *different recorded bases*: CAT048 §5.2.17 prints an inclusive range in its normative block, and the CAT021 row set quotes only "is reset to zero at every midnight". Whether the CAT021 *document* also prints a range is **not establishable here** — no CAT021 copy is pinned with an extracted text layer, only hashes in prose. So one of two things is true and this repository cannot say which: the documents genuinely differ, or one was read more closely than the other. Harmonising the boundary silently would erase the question; the exit condition is pinning CAT021's text the way CAT048's is now pinned |
+| 15 | **Edition 1.32's Document Change Record claims to be "the complete history of the successive editions" and omits two of them.** Editions **1.10** (February 1999, Draft) and **1.13** (July 2000, **Released Issue**) are absent from the record while 1.11, 1.12 and 1.14 are present — and both documents exist, in `spec/history/`. The 1.13 omission is the sharper half: a Draft going unrecorded is arguable, a Released Issue is not | Nothing, for the mapping. It bears on how far the record can be trusted as a completeness claim, which is exactly what settlement-level reasoning about "when was this introduced" leans on. The lineage table above states what the record says AND what the documents say, and marks the two it does not name |
+| 16 | **Edition 1.27 is dated two different months.** Ed 1.32's change record and Ed 1.30's change record both date it **May 2020**; Ed 1.27's own cover and its page-iii Document Characteristics both read **18/06/2020**. Two records against the document, so it is not a typo in one place | None here, since 1.27 is not the governing text. Recorded because a reader dating a change from the record will be a month early, and because the same class of disagreement is what ambiguity 12 records about the pinned edition's own date |
+| 17 | **Edition 1.26 is the one edition of the lineage not obtained.** The bundle publishes 1.10 to 1.25 and 1.27 to 1.32; 1.26 (February 2020 per the record) is absent from it. **Not silently elided** — and its substantive change is knowable from two later records anyway: "numerous editorial corrections" and I048/030 **values 27 to 30** | None. The values it added are in the pinned 1.32 table already, so the gap costs a *provenance* fact and not a code point. If it is ever wanted, the reopen condition is the same one the Reserved Expansion Field row states: a public EUROCONTROL download, identified and not obtained |
+| 18 | **One history filename states a date the document contradicts, and states no edition at all.** `cat-048-09_2019-asterix-spec-0149-4.pdf` is **Edition 1.25, edition date 08/08/2019** by its cover and its Document Characteristics both; the filename says `09_2019`. Filename left exactly as the publisher shipped it | None. The lineage table and `cat048_pin.json` key on the title-page edition, never the filename, which is the rule the whole `edition_history` record follows — a filename is a label and a title page is a claim |
 
 ### Deliberately out of scope, and why — each named individually
 
