@@ -1,26 +1,34 @@
 # ASTERIX Category 034 / Monoradar Service Messages fixtures
 
-**There are none yet, and there is a plan for sixteen plus four refusals.** Adapter `cat034` is at
-Phase 1: the row set in `../../FORMAT_COVERAGE.md` is written and reviewed as a specification,
-every row of it says `not yet`, and no adapter code, no codec and no fixture exists. What is here
-is a pinned document, three edition PDFs that are not pins, and this file.
+**Twenty of them: seventeen translatable, three refusals.** Adapter `cat034` is at Phase 2 —
+`adapters/asterix_cat034.py` on the codec in `adapters/cat034_codec.py`, bidirectional, and every
+row of the row set in `../../FORMAT_COVERAGE.md` now reads `cat034 1.0.0`. Phase 1 wrote and
+reviewed that row set as a specification with no code behind it; this directory is what shipped
+against it.
 
 ```bash
-# Today this FAILS, deliberately, and it fails TWICE over — the same two failures
-# fixtures/klv/README.md and fixtures/fft/README.md record, in the same order. The adapter name
-# does not resolve yet, so `--adapter cat034` raises `LookupError: unknown adapter 'cat034'` and
-# exits 1. Substitute any registered adapter and it fails again, this time on the directory:
-# exit code 2, `NoFixturesFound`, because the only thing in here is spec/ and a run that
-# exercises nothing must not report a green.
 PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter cat034 \
     --fixtures packages/cdm/synapse_cdm/fixtures/cat034
+# 34 passed, 0 failed — seventeen payloads, each replayed twice
 ```
 
-**`cat034` is adapter #12.** The forecast made good. The ordinal was already spoken for by one
-sentence in the declines table of the section for adapter #11 — "if it lands, it lands as adapter
-#12 with its own pin" — and it has landed, with its own pin, at the number that was held for it. The series is tabulated once, in "The adapter
-ordinals, and the reserved-ordinal rule" near the top of `../../FORMAT_COVERAGE.md`, and that table
-is the authority `tests/test_cdm_ordinals.py` checks every other site against.
+**Thirty-four, not seventeen, and the doubling is the point.** Each fixture ships as
+`<name>.cat034` for the octets and `<name>.parsed.json` for exactly what the parser produces,
+because `lossless.unrepresented()` has no leaf structure to harvest from bytes: a blocks-only set
+would show a green run with the never-drop rule never executed. The binary twin gets `SKIP` on the
+lossless check and says so; the parsed twin gets the check at full strength.
+
+The three refusals live in `refusals/` and are **not** replayed by the harness, because the refusal
+is the expected output and a harness that translated one would be reporting a pass on a block the
+adapter must reject. `../../../../../tests/test_cdm_asterix_cat034_adapter.py` runs them and
+asserts the message names what was wrong.
+
+**`cat034` is adapter #12.** The forecast made good, then made real. The ordinal was spoken for by
+one sentence in the declines table of the section for adapter #11 — "if it lands, it lands as
+adapter #12 with its own pin" — and it landed at that number with that pin. The series is tabulated
+once, in "The adapter ordinals, and the reserved-ordinal rule" near the top of
+`../../FORMAT_COVERAGE.md`, and that table is the authority `tests/test_cdm_ordinals.py` checks
+every other site against.
 
 ## The two names, and why they are one string here
 
@@ -32,7 +40,7 @@ A directory holds *payloads* and a payload is not a standard: that split puts ad
 `stanag4676`'s fixtures in `fixtures/nits`, `stanag4609`'s in `fixtures/klv` and `stanag5527`'s in
 `fixtures/fft`. It bites only when the adapter is named after a **standard**. Here the adapter is
 already named after the **content** — an ASTERIX category *is* the payload, and `.cat034` is what
-these files will be called — so the two coincide, exactly as `cat021`'s and `cat048`'s do.
+these files are called — so the two coincide, exactly as `cat021`'s and `cat048`'s do.
 
 **And this is the first name ruling in this repository that precedent decides.** The three STANAG
 rulings each had to say that the roster carries both conventions "so precedent does not decide it
@@ -42,15 +50,30 @@ is applicable by being a content document at all: twelve data items, each with a
 Format, a Structure and an Encoding Rule, and a fourteen-FRN standard UAP. `spec/cat034_pin.json`
 carries the full ruling with its four rejected candidates.
 
+**The module name carries the family prefix and the registered name does not.** `cat034` is what
+the registry, every `SourceRef` and `--adapter` use; `adapters/asterix_cat034.py` is where the code
+lives. That is not a second convention — it is the same split `adapters/asterix_cat021.py` and
+`adapters/asterix_cat048.py` already make on disk, and the ruling records it as the reason
+`asterix034` and `asterix_cat034` were rejected as *registered* names.
+
 ## What is here
 
 - **`spec/cat034_pin.json`** — the pinned identity of the document and every value extracted from
   it that a ruling cites, each with its locus. Written first, for the reason the Legion, CAT021,
-  CAT048, KLV and FFT pins were: a quotation with no pin behind it is a recollection.
+  CAT048, KLV and FFT pins were: a quotation with no pin behind it is a recollection. Amended at
+  Phase 2 where the shipped adapter settled a question the record had left open.
+- **`spec/build_fixtures.py`** — the source of truth for both artefacts. Edit it, never the
+  `.cat034` octets and never the `.parsed.json` twins: a record's FSPEC and its block's `LEN` are
+  functions of the contents, so a hand-edited byte file is a mis-parse waiting to happen. It
+  carries a `check_layouts()` that asserts every encoder emits exactly the octet count §5.2 and
+  Table 3 state for its item, and the test module calls it, so it cannot be skipped by not running
+  the generator.
 - **`spec/eurocontrol-asterix-cat034-pt2b-ed129.pdf`** — in the working tree because it had to be
   read, and **not committed**, matching every other adapter here. `git ls-files | grep -c '\.pdf$'`
   is 0 across the whole repository.
 - **`spec/history/`** — three edition PDFs that are **not pins**. See below.
+- **`golden/`** — one golden file per replayed fixture, thirty-four of them, written under the
+  harness's frozen clock.
 
 | Document | SHA-256 | Bytes | Pages |
 |---|---|---|---|
@@ -63,22 +86,40 @@ sites can drift at two. The pin row is asserted as **one composite string** rath
 bytes and pages separately, which is the residue of the mutation found inside `klv_pin.json`:
 changing a page count left the suite green because the right number still occurred elsewhere.
 
-## The pin is the covering edition and not the current one
+## Edition 1.30 is cited twice and published nowhere
 
-**Edition 1.29 is the newest edition in hand. It is not the newest published**, and this repository
-held the proof before this round began: `../cat048/spec/cat048_pin.json` quotes CAT048 Edition
-1.32's §2.2 reference 5 naming "Category 034 Monoradar Service Messages (EUROCONTROL-SPEC-0149-2b)
-**Edition 1.30**".
+**Edition 1.29 is the newest edition in hand and it is also the newest edition PUBLISHED** —
+EUROCONTROL's Category 034 publication page was checked on **2026-08-24** and the newest file it
+offers is Edition 1.29, the edition pinned here. Phase 1 recorded the opposite, from a citation and
+without a check, and this is the correction.
+
+**The fact is two-part and both parts are recorded.**
+
+- **Cited.** Two independent sibling specifications name an Edition 1.30 of Part 2b:
+  `../cat048/spec/cat048_pin.json` quotes CAT048 Edition 1.32's §2.2 reference 5 naming "Category
+  034 Monoradar Service Messages (EUROCONTROL-SPEC-0149-2b) **Edition 1.30**", and CAT007 Edition
+  1.12 of July 2024 carries the same reference in its own §2.2. Neither is quoting the other and
+  neither is quoting this repository, and they are three years apart. That the edition exists is
+  not in doubt.
+- **Unpublished.** It is not offered on the publisher's own page for the category. That is a state
+  this repository had no name for: not a pin, not a park like KLV's twelve obtainable-and-not-
+  obtained documents, not #9's classification contingency. **Cited-but-unpublished.**
+
+**The check date is recorded because a future round needs it.** "Was not published" and "was not
+checked" look identical six months later, and the difference decides whether the next reader
+re-checks the page or re-reads this paragraph.
 
 Every row of the row set is read against Edition 1.29 and none against any other edition. What
 Edition 1.30 is known to contain — **Message Type 008**, the Interrogator-Code-conflict area — is
-established from two independent sources agreeing: CAT048 §5.2.3 NOTE 6 says so outright, and the
-four editions here show the Message Type list growing 004 → 004 → 005 → 007 and stopping one short.
-That is recorded **as an inference**; no text of Edition 1.30 has been read.
+established from two sources agreeing: CAT048 §5.2.3 NOTE 6 says so outright, and the four editions
+here show the Message Type list growing 004 → 004 → 005 → 007 and stopping one short. That is
+recorded **as an inference** and the availability check does not touch it: a page that does not
+offer a document says nothing about what the document contains. No text of Edition 1.30 has been
+read.
 
-**The reopen condition is the weakest park in this repository.** Not an access decision like #9's
-and not a purchase like KLV's park 12 — a public download, on the same terms as the four already
-here, that nobody has performed. `message_type_008` is planned as a fixture *now* so that the day
+**The reopen condition got weaker rather than being met.** Phase 1 called it the weakest park in
+this repository — a public download nobody had performed, where the only obstacle was effort.
+Effort will not close it now. `message_type_008` ships as a fixture *today* so that the day
 Edition 1.30 lands, one fixture changes from a park to a translation.
 
 ## The edition history — three editions, and none of them a pin
@@ -113,20 +154,19 @@ rather than to their filenames:
   stronger than a recollection — and *not* used to name anything. The identical device names Part 4
   "next version of cat-001" in six of the CAT048 history filenames, and that adapter is `cat048`.
 
-## Why no fixture exists yet, and what each planned one is for
+## The editions the fixture set can tell apart
 
-Not scheduling, and not the KLV or FFT situation either — those cannot write a fixture because the
-document that says what a payload *is* is absent. Here the document is present and complete. What
-is absent is **adapter code**, and this repository's standing protocol writes the row set first: a
-fixture built before the mapping is a fixture that encodes whatever the implementation happened to
-do. `../../FORMAT_COVERAGE.md` lists all twenty planned fixtures with the defect each is there to
-catch, and four of them are refusals.
+**Message types 006 and 007 are Edition 1.29's own additions** — its change record reads "Data
+Item I034/000: new message types 6&7", and Edition 1.28 standardises 001 to 005. So an adapter
+accidentally written against Edition 1.28 would lack exactly those two, and `mode_s_jamming_strobe`
+is the fixture that catches it: under an Edition 1.28 vocabulary that record classifies as an
+undefined message type at `STATUS_CHANGE` / `ADVISORY` instead of as an `ALERT` at `WARNING`. The
+edition the adapter was written against is therefore a property the suite can measure, not a claim
+in a docstring.
 
-**Everything will be synthetic.** No recorded traffic, no real radar head. Every block built from
-field values by `spec/build_fixtures.py` — a data block is raw octets and cannot carry a comment,
-and its `LEN` and FSPEC are functions of its contents, so a hand-edited byte file is a mis-parse
-waiting to happen. Each fixture ships twice, `<name>.cat034` and `<name>.parsed.json`, because
-`lossless.unrepresented()` has no leaf structure to harvest from bytes.
+## Everything here is synthetic
+
+No recorded ASTERIX traffic, no real radar head, and nothing is hand-written.
 
 **The SAC evidence transfers by citation, not by analogy.** `I034/010` is the same two-octet
 SAC/SIC item CAT021 uses, published in the same EUROCONTROL allocation tables, and
@@ -135,4 +175,22 @@ listed with an explicitly empty country cell in the EUR table and nowhere else. 
 URL, same pinned copy — so these fixtures use `SAC = 0x29` without a second retrieval, and `SIC`
 carries no allocation claim at all for the reason the CAT021 row gives.
 
-Until adapter code exists, #12 is a pinned document, a row set, a lineage and this file.
+**Station coordinates are in the Gulf of Riga, off Ventspils**, matching the other five sets. The
+one station with a position carries a **negative** ellipsoidal height, which is a legal WGS-84
+value and is what exercises §5.2.12's signed height field end to end.
+
+**Times come from the injected clock, never the wall clock.** `midnight_rollover_nearest` is built
+so the wrap happens under the harness's *own* frozen instant rather than only under one a test
+injects — the failure `../../README.md` records for CAT048's two rollover fixtures, which described
+times that resolved to the receipt date at the frozen instant and so tested no rollover in either
+direction.
+
+**One of the twenty was asked for by a mutation rather than by the plan.** `spare_bits_nonzero`
+exists because zeroing a spare bit inside the decoder passed every test: every fixture in the Phase
+1 plan has its spare bits at zero, and a dropped zero re-encodes as a zero. §4.4 is normative about
+exactly that — "Decoders of ASTERIX data shall **never assume and rely on** specific settings of
+spare or unused bits" — so a set that cannot tell a read spare bit from an assumed one is not
+testing the round trip the document requires.
+
+`../../FORMAT_COVERAGE.md` lists all twenty fixtures with the defect each one is there to catch,
+and names the five Phase 1 rows Phase 2 changed and why.

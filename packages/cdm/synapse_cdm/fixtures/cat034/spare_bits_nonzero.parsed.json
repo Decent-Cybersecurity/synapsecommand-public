@@ -1,0 +1,113 @@
+{
+  "block": {
+    "category": 34,
+    "length": 21,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e6",
+      "index": 0,
+      "item_octets": {
+        "I034/000": "01",
+        "I034/010": "2929",
+        "I034/030": "2a3000",
+        "I034/050": "9c010707007f",
+        "I034/060": "9c81031f0f"
+      },
+      "items": {
+        "I034/000": {
+          "message_type": 1
+        },
+        "I034/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I034/030": {
+          "time_of_day_raw": 2764800
+        },
+        "I034/050": {
+          "com": {
+            "msc": 0,
+            "nogo": 0,
+            "ovl_rdp": 0,
+            "ovl_xmt": 0,
+            "rdpc": 0,
+            "rdpr": 0,
+            "spare_bit_1": 1,
+            "tsv": 0
+          },
+          "mds": {
+            "ant": 0,
+            "ch_ab": 0,
+            "dlf": 0,
+            "msc": 0,
+            "ovl_dlf": 0,
+            "ovl_scf": 0,
+            "ovl_sur": 0,
+            "scf": 0,
+            "spare_bits_7_1": 127
+          },
+          "primary": {
+            "com": 1,
+            "fx": 0,
+            "mds": 1,
+            "psr": 1,
+            "spare_bit_2": 0,
+            "spare_bit_6": 0,
+            "spare_bit_7": 0,
+            "ssr": 1
+          },
+          "psr": {
+            "ant": 0,
+            "ch_ab": 0,
+            "msc": 0,
+            "ovl": 0,
+            "spare_bits_3_1": 7
+          },
+          "ssr": {
+            "ant": 0,
+            "ch_ab": 0,
+            "msc": 0,
+            "ovl": 0,
+            "spare_bits_3_1": 7
+          }
+        },
+        "I034/060": {
+          "com": {
+            "red_rdp": 0,
+            "red_xmt": 0,
+            "spare_bit_1": 1,
+            "spare_bit_8": 1
+          },
+          "mds": {
+            "clu": 0,
+            "red_rad": 0,
+            "spare_bits_4_1": 15
+          },
+          "primary": {
+            "com": 1,
+            "fx": 0,
+            "mds": 1,
+            "psr": 1,
+            "spare_bit_2": 0,
+            "spare_bit_6": 0,
+            "spare_bit_7": 0,
+            "ssr": 1
+          },
+          "psr": {
+            "pol": 0,
+            "red_rad": 0,
+            "spare_bits_2_1": 3,
+            "stc": 0
+          },
+          "ssr": {
+            "red_rad": 0,
+            "spare_bits_5_1": 31
+          }
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

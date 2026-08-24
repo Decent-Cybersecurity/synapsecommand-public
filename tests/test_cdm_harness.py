@@ -297,7 +297,10 @@ def test_a_run_that_matches_no_fixture_raises_rather_than_reporting_a_pass(tmp_p
         harness.run(_adapter(), _empty_case(tmp_path, shape))
     message = str(caught.value)
     # All three things a reader needs at the moment of failure: which run, where, and why.
-    assert "'pntmap'" in message, "the message must name the ADAPTER — a sweep runs nine of them"
+    assert "'pntmap'" in message, (
+        "the message must name the ADAPTER — a gate sweep runs one per shipped adapter and the "
+        "output of a failing one has to say which"
+    )
     assert str(_empty_case(tmp_path, shape)) in message, \
         "the message must name the DIRECTORY SEARCHED, which is the thing that is usually wrong"
     assert harness.FIXTURE_PATTERN in message, \
@@ -369,9 +372,9 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 #: each went through. The two are kept apart rather than merged with a flag because the shipped
 #: half's whole value is being an equality against the registry: a Phase 1 name in there would
 #: make that assertion fail, and relaxing it to a subset check would give up the thing it pins.
-SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat048": "cat048",
-                        "gmti": "gmti", "legion": "legion", "pntmap": "pntmap",
-                        "stanag4676": "nits", "tak": "tak"}
+SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat034": "cat034",
+                        "cat048": "cat048", "gmti": "gmti", "legion": "legion",
+                        "pntmap": "pntmap", "stanag4676": "nits", "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
 #:
@@ -390,17 +393,17 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat04
 #: not in hand. If ADatP-36 Edition B names it otherwise, THIS ENTRY is what moves — which is the
 #: whole reason the map is pinned by a test instead of living in somebody's memory of a `cp`.
 #:
-#: `cat034` reads ASTERIX Category 034 Monoradar Service Messages and its fixtures will live in
-#: `fixtures/cat034` — **the same string, and that is the ruling rather than a shortcut.** The
-#: split above bites when an adapter is named after a STANDARD, because then the standard's name is
-#: the wrong name for the bytes. An ASTERIX category IS the payload, so the two names coincide the
-#: way `cat021`'s and `cat048`'s already do in the shipped half. Recorded here explicitly so that
-#: nobody generalises `stanag5527`'s "these two must differ" rule across the whole map: it is true
-#: of the three STANAG adapters and false of the three ASTERIX ones.
-PLANNED_FIXTURE_DIRS = {"cat034": "cat034", "stanag4609": "klv", "stanag5527": "fft"}
+#: `cat034` was the third entry here and **has moved to the shipped half**, which is the transition
+#: this map was split in two to make visible. Its directory is `fixtures/cat034` — the same string
+#: as the adapter name, and that is the ruling rather than a shortcut: the split above bites when an
+#: adapter is named after a STANDARD, because then the standard's name is the wrong name for the
+#: bytes, and an ASTERIX category IS the payload. Recorded here even after the move so that nobody
+#: generalises `stanag5527`'s "these two must differ" rule across the whole map: it is true of the
+#: three STANAG adapters and false of all three ASTERIX ones.
+PLANNED_FIXTURE_DIRS = {"stanag4609": "klv", "stanag5527": "fft"}
 
 
-def test_the_nine_shipped_adapters_all_have_a_real_fixture_directory():
+def test_the_ten_shipped_adapters_all_have_a_real_fixture_directory():
     """The sweep the gate runs, as a test, so the directory names stop being folklore.
 
     This is the other half of the fix. Making a vacuous run fail loudly stops a wrong path from

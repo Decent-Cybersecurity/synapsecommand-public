@@ -515,6 +515,84 @@ is worth stating.
   all 136 rows. The reversals are the reason the order matters — each one was away from using an
   existing CDM field, and each was easier to make while the row set was still prose.
 
+- **`adapters/asterix_cat034.py` 1.0.0 (ASTERIX Category 034, Monoradar Service Messages,
+  bidirectional)** — all 14 UAP FRNs and all 12 data items of EUROCONTROL-SPEC-0149-2b Edition
+  1.29, at **schema_version 1.0.0**, with no field added, removed or retyped.
+
+  This is the twelfth adapter and **the first whose primary object is the sensor itself.** Every
+  record in Part 2b describes the radar station, not a target, which inverts three things every
+  previous adapter took for granted: `Entity.entity_type` is `SENSOR` from the *category* rather
+  than read off any item, `I034/010`'s SAC/SIC is a `SourceId` here where the identical two octets
+  are parked at `attributes.data_source` in `adapters/asterix_cat048.py`, and `Kinematics` is
+  `None` on every object because a station does not move. The one bearing the category carries,
+  `I034/020`'s sector number, is the **antenna's** — writing it into `Kinematics.course_deg` would
+  state that the radar head is travelling on that heading.
+
+  Pinned to one document by SHA-256: **EUROCONTROL-SPEC-0149-2b, ASTERIX Part 2b Category 034,
+  Edition 1.29, 15/03/2021** (`32925e6a…cfcae101`, 639 615 bytes, 41 pages). The PDF is not
+  committed. Three further editions — **1.26, 1.27 and 1.28** — sit in
+  `fixtures/cat034/spec/history/` as the lineage and are explicitly **not pins**.
+
+  **Two rulings Phase 1 deferred were made here, and both are decided by the document rather than
+  by preference** — which is the reason the row set was written first:
+
+  - **No `Geometry` is ever derived from `I034/100`.** Phase 1 asked whether using `I034/120` from
+    the *same record* to turn a polar window into a polygon is a derivation or a state merge.
+    Table 2 answers it: `I034/120` is permitted on message type 001 alone and `I034/100` is
+    forbidden on that one, so **there is no message type for which both are permitted**. The
+    station's position could only ever come from a different record, which is the cross-payload
+    state this repository refuses. `Event.geometry` is `None` on every object.
+  - **A record whose message type this edition does not define is translated, not refused**, at
+    `STATUS_CHANGE` / **`ADVISORY`**. `INFO` would say the message is understood and ordinary;
+    `WARNING` would invent an alarm out of an unknown. `ADVISORY` is the CDM's own middle value and
+    the only one that leaves the record visible to a severity filter while claiming nothing.
+
+  **The gap Phase 1 opened is the gap that shipped, and no field was proposed for it.**
+  `EventType.GNSS_INTERFERENCE` is paired with `GnssInterferencePayload` — `frequency_band`,
+  `interference_type`, `signal_strength_dbm` — and exists for PNTMAP. Three of this category's
+  seven message types are radar jamming strobes, and none of them sets it: they become `ALERT` at
+  `WARNING` with the strobe geometry parked. That is **gap 29**, and it stays a gap rather than
+  becoming a 1.1.0 proposal, because one format wanting a shape is a gap and two are a proposal.
+
+  **And one finding is recorded because it changes nothing, which is the point.** `I034/120`
+  carries the 3D position of the data source in WGS 84 — the value `FORMAT_COVERAGE.md`'s CAT048
+  settlement 3 requires the caller to *inject*, and whose geodesy **gap 24** records as absent from
+  the CAT048 document. The adapter translates it into a `Position` on the object that carries it
+  and hands it to nobody. Gap 24 does not close, deliberately: it is about what the CAT048 document
+  contains. Phase 2 made that **assertable** rather than merely recorded — every such object carries
+  `attributes.position_basis.gap_24` saying so, and a test reads both that key and the gap's own
+  entry in `FORMAT_COVERAGE.md`.
+
+  **What the CDM had was otherwise enough, and one existing decision earned its keep in a new way:
+  `Position` requiring `position_source`.** A surveyed radar head is none of `GNSS`, `INERTIAL` or
+  `ESTIMATED`; `MANUAL` is recorded as the least-wrong of four rather than as a fit, and §5.2.12's
+  "accuracy of at least 2.3844 metres" is parked as a quantisation step rather than written into
+  `accuracy_m`, because reporting a resolution as an accuracy claims the station knows where it is
+  to 2.4 m when the document says only that it cannot say so more finely.
+
+  **Two commits, and the row set came first.** `840e92c` wrote the pin, the ruling and the row set
+  as a specification with `not yet` in every status column and no code; this one shipped the
+  adapter, the codec, twenty fixtures and the test module against those rows, and flipped all of
+  them. Five Phase 1 rows changed in the same commit and each is listed in `FORMAT_COVERAGE.md`
+  under "What Phase 2 changed in the Phase 1 row set" — including two that matter for this file's
+  own discipline. The fixture plan's prose said twenty fixtures and four refusals while its table
+  had nineteen rows and three, because the totals had been counted off a sub-heading rather than
+  off the cells under it. And a **mutation** asked for a twentieth the plan did not have:
+  `spare_bits_nonzero`, because zeroing a spare bit inside the decoder passed every test when every
+  fixture's spare bits were already zero, and §4.4 says a decoder "shall never assume and rely on"
+  their setting.
+
+  **The Edition 1.30 record was corrected, and it is the one correction here that is not about
+  code.** Phase 1 wrote that Edition 1.29 "is not the newest published" and that Edition 1.30 "is
+  the current edition", from a citation and without a check. This round checked EUROCONTROL's
+  Category 034 publication page on **2026-08-24**: the newest file it offers is Edition 1.29, the
+  pin. So the fact is two-part — **cited-but-unpublished**. Two independent sibling specifications
+  name Edition 1.30 (CAT048 Edition 1.32 §2.2 reference 5, already quoted in `cat048_pin.json`, and
+  CAT007 Edition 1.12 of July 2024 §2.2), and no page offers it. The Message Type 008 content
+  stands exactly where it stood, **as an inference**: a page that does not offer a document says
+  nothing about what the document contains. The check date is recorded because "was not published"
+  and "was not checked" are indistinguishable a year later.
+
 ### Row sets written as specifications, with no adapter code yet
 
 A new heading, and it needs one sentence of justification because this document dislikes
@@ -539,7 +617,7 @@ too — so the first is now stated.
   Neither PDF is committed. The fixture directory is `fixtures/klv` rather than
   `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
   `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry
-  beside the nine shipped ones.
+  beside the shipped ones — nine of them when this entry was written, ten since `cat034` landed.
 
   **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
   row set is a *document this repository does not hold* — twelve parks over fourteen documents,
@@ -631,70 +709,6 @@ too — so the first is now stated.
   holds five pages whose only normative act is the name of another document. The word `shall`
   occurs four times in it and not one of the four governs a data element. A schema proposal derived
   from that would not be a field named after a guess — it would be a field named after nothing.
-
-- **`cat034` — ASTERIX Part 2b Category 034, Monoradar Service Messages. Phase 1: row set only, no
-  adapter code, no codec, no fixtures.** `cat034` is adapter #12, and this is the reserved-ordinal
-  rule paying out rather than being applied: the number was not held by a park, it was **forecast**
-  by the declines table of the section for adapter #11 — "if it lands, it lands as adapter #12 with
-  its own pin" — and it landed at exactly that number with exactly that pin. `gmti` keeps #8,
-  `stanag5527` keeps #9,
-  `stanag4609` keeps #10 and `cat048` keeps #11. Every mapping row in `FORMAT_COVERAGE.md` says
-  `not yet`.
-
-  **This entry is the STRONGEST of the three under this heading, and the heading can finally be
-  taken at its word.** `stanag5527`'s entry had to admit it has no row set at all; `stanag4609`'s
-  has one but every field dictionary behind it is a document nobody here has read. This phase pins
-  a document that states twelve data items — `I034/000`, `/010`, `/020`, `/030`, `/041`, `/050`,
-  `/060`, `/070`, `/090`, `/100`, `/110`, `/120` — each with a Definition, a Format, a Structure
-  and an Encoding Rule, plus a fourteen-FRN standard UAP. So the row set is written *from* the
-  document rather than around it, and it is the first Phase 1 here whose egress half is specified
-  on the format's own evidence rather than deferred.
-
-  Pinned to one document by SHA-256: **EUROCONTROL-SPEC-0149-2b, ASTERIX Part 2b Category 034,
-  Edition 1.29, 15/03/2021** (`32925e6a…cfcae101`, 639 615 bytes, 41 pages). The PDF is not
-  committed. Three further editions — **1.26, 1.27 and 1.28** — sit in
-  `fixtures/cat034/spec/history/` as the lineage and are explicitly **not pins**, the treatment
-  commit `844e336` ruled for CAT048's 22. The fixture directory is `fixtures/cat034`, the **same**
-  string as the adapter name, and `tests/test_cdm_harness.py` carries it as a third **planned** map
-  entry beside `stanag4609 → klv` and `stanag5527 → fft`.
-
-  **The name ruling is the first here that precedent decides**, and that is worth one line in this
-  file because the three before it all had to say the opposite. `stanag4676`, `stanag4609` and
-  `stanag5527` each opened by observing that the roster carries both naming conventions "so
-  precedent does not decide it and the documents have to". Inside the ASTERIX family the convention
-  is unanimous — `cat021`, `cat048`, no counter-example — and the document confirms the precedent is
-  applicable by being a content document at all. Both halves are recorded rather than the shorter
-  one. The two names coincide here and that is a ruling, not a collapse: the payload-versus-standard
-  split only bites when an adapter is named after a standard.
-
-  **The pin is the covering edition and not the current one, stated first rather than discovered
-  later.** `cat048_pin.json` already quoted CAT048 Edition 1.32's §2.2 reference 5 naming CAT034
-  **Edition 1.30**, so this repository held the proof that 1.29 is superseded before the round
-  began. Edition 1.30 is not in hand. What it is known to contain — **Message Type 008** — comes
-  from two independent sources agreeing: CAT048 §5.2.3 NOTE 6 says so, and the four editions here
-  show the type list running 004, 004, 005, 007 and stopping one short. Recorded **as an
-  inference**. The reopen condition is a public download nobody has performed, which makes it the
-  weakest park in this repository — weaker than every KLV park and far weaker than #9's access
-  decision — and the fixture plan carries a `message_type_008` tripwire so the day it lands, one
-  planned fixture changes from a park to a translation.
-
-  **No gap is opened by the pin and one is opened by the model, which is the entry's other half.**
-  Three of the seven message types are jamming reports, and the CDM's only interference vocabulary
-  is `EventType.GNSS_INTERFERENCE` paired with `GnssInterferencePayload` — `frequency_band`,
-  `interference_type`, `signal_strength_dbm` — which exists for PNTMAP and is *about GNSS*. A radar
-  jamming strobe is not a GNSS event, so the row set rules it an `ALERT` with the strobe parked and
-  **never** sets `GNSS_INTERFERENCE`. That is **gap 29**, opened rather than the payload model being
-  widened in passing: reusing the GNSS shape would put radar jamming into the field a consumer
-  filters on to find GNSS threats, which is a wrong answer that reads as a right one. **No field is
-  proposed for 1.1.0 on the strength of it** — one format wanting a shape is a gap, and two are a
-  proposal, which is the bar the two entries below this heading were held to.
-
-  **And one finding is recorded because it changes nothing, which is the point.** `I034/120` carries
-  the 3D position of the data source in WGS 84 — the value `FORMAT_COVERAGE.md`'s CAT048 settlement
-  3 requires the caller to *inject*, and whose geodesy **gap 24** records as absent from the CAT048
-  document. Reading it out of a CAT034 record to interpret a CAT048 one is cross-payload state, so
-  adapter #12 will translate it into a `Position` on the object that carries it and hand it to
-  nobody. Gap 24 does not close, deliberately: it is about what the CAT048 document contains.
 
 ## Proposed for 1.1.0 (MINOR — not yet implemented)
 

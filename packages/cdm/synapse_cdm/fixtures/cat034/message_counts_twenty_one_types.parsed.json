@@ -1,0 +1,125 @@
+{
+  "block": {
+    "category": 34,
+    "length": 56,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e180",
+      "index": 0,
+      "item_octets": {
+        "I034/000": "01",
+        "I034/010": "2929",
+        "I034/030": "2a3000",
+        "I034/070": "160000080a1014181e20282832303c38464050485a5064586e60786882708c789680a088aa90b498bea0c80007"
+      },
+      "items": {
+        "I034/000": {
+          "message_type": 1
+        },
+        "I034/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I034/030": {
+          "time_of_day_raw": 2764800
+        },
+        "I034/070": {
+          "counters": [
+            {
+              "counter": 0,
+              "typ": 0
+            },
+            {
+              "counter": 10,
+              "typ": 1
+            },
+            {
+              "counter": 20,
+              "typ": 2
+            },
+            {
+              "counter": 30,
+              "typ": 3
+            },
+            {
+              "counter": 40,
+              "typ": 4
+            },
+            {
+              "counter": 50,
+              "typ": 5
+            },
+            {
+              "counter": 60,
+              "typ": 6
+            },
+            {
+              "counter": 70,
+              "typ": 7
+            },
+            {
+              "counter": 80,
+              "typ": 8
+            },
+            {
+              "counter": 90,
+              "typ": 9
+            },
+            {
+              "counter": 100,
+              "typ": 10
+            },
+            {
+              "counter": 110,
+              "typ": 11
+            },
+            {
+              "counter": 120,
+              "typ": 12
+            },
+            {
+              "counter": 130,
+              "typ": 13
+            },
+            {
+              "counter": 140,
+              "typ": 14
+            },
+            {
+              "counter": 150,
+              "typ": 15
+            },
+            {
+              "counter": 160,
+              "typ": 16
+            },
+            {
+              "counter": 170,
+              "typ": 17
+            },
+            {
+              "counter": 180,
+              "typ": 18
+            },
+            {
+              "counter": 190,
+              "typ": 19
+            },
+            {
+              "counter": 200,
+              "typ": 20
+            },
+            {
+              "counter": 7,
+              "typ": 0
+            }
+          ],
+          "rep": 22
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

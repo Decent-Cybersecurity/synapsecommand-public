@@ -1,0 +1,41 @@
+{
+  "block": {
+    "category": 34,
+    "length": 21,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e106",
+      "index": 0,
+      "item_octets": {
+        "I034/000": "01",
+        "I034/010": "2929",
+        "I034/030": "2a3000",
+        "RE": "060102030405",
+        "SP": "04aabbcc"
+      },
+      "items": {
+        "I034/000": {
+          "message_type": 1
+        },
+        "I034/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I034/030": {
+          "time_of_day_raw": 2764800
+        },
+        "RE": {
+          "contents": "0102030405",
+          "length": 6
+        },
+        "SP": {
+          "contents": "aabbcc",
+          "length": 4
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

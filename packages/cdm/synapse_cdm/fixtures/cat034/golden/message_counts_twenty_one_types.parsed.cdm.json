@@ -1,0 +1,373 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and here it is not even a decision. A monoradar service message states the station's configuration and status and never its allegiance, and this repository does not infer one from a SAC",
+      "cat034_block": {
+        "category": 34,
+        "length": 56,
+        "record_count": 1
+      },
+      "cat034_fspec": "e180",
+      "cat034_items": {
+        "I034/000": "01",
+        "I034/010": "2929",
+        "I034/030": "2a3000",
+        "I034/070": "160000080a1014181e20282832303c38464050485a5064586e60786882708c789680a088aa90b498bea0c80007"
+      },
+      "data_source": {
+        "basis": "I034/010, 'Identification of the radar station from which the data are received' (\u00a75.2.2), M in every column of Table 2. A SourceId here and parked at attributes.data_source in asterix_cat048.py \u2014 the same two octets of the same standard, filed two different ways, and the difference is the whole reason both rows exist: there the SAC/SIC identifies the SENSOR and the object is a target, so filing a station under the object's identifiers is how a fused picture ends up with an entity per receiver; here the station IS the object and the pair is its own identifier",
+        "external_id": "2929",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": "SENSOR, from the category rather than from any item. Every record in Part 2b describes the radar station (\u00a74.1: 'radar service messages used to signal status information of the radar station to the user systems'), so there is nothing to read: the object's type is a property of the format",
+      "identity_basis": "uuid5 over (ASTERIX_SAC_SIC, '2929'). The system name is NOT this adapter's own: a SAC/SIC is allocated across the whole ASTERIX family from one list, so filing it under a category name would say that one station seen through Part 2b is a different station from the same pair seen through any other part. Stable across every record from the station, which is what entity_id promises \u2014 and a pure function of the pair rather than a join",
+      "integrity_basis": "CAT034 defines NO checksum at any level \u2014 neither \u00a74.6.2 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined FRN, every compound item's presence bits named a subfield that exists, no FX led nowhere, and the items Table 2 makes mandatory for this record's own message type were present. This is weaker than a CRC and the difference is named rather than smoothed over: a single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a station status",
+      "position_basis": {
+        "item": null,
+        "reason": "the record carries no I034/120. Table 2 makes it O for a North Marker message and X for every other type, so its absence is ordinary \u2014 and an absent Position is the honest statement, never a Position holding zeros, which is a real point in the Gulf of Guinea"
+      },
+      "source_extras": {
+        "items": {
+          "I034/000": {
+            "message_type": 1
+          },
+          "I034/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I034/030": {
+            "time_of_day_raw": 2764800
+          },
+          "I034/070": {
+            "counters": [
+              {
+                "counter": 0,
+                "typ": 0
+              },
+              {
+                "counter": 10,
+                "typ": 1
+              },
+              {
+                "counter": 20,
+                "typ": 2
+              },
+              {
+                "counter": 30,
+                "typ": 3
+              },
+              {
+                "counter": 40,
+                "typ": 4
+              },
+              {
+                "counter": 50,
+                "typ": 5
+              },
+              {
+                "counter": 60,
+                "typ": 6
+              },
+              {
+                "counter": 70,
+                "typ": 7
+              },
+              {
+                "counter": 80,
+                "typ": 8
+              },
+              {
+                "counter": 90,
+                "typ": 9
+              },
+              {
+                "counter": 100,
+                "typ": 10
+              },
+              {
+                "counter": 110,
+                "typ": 11
+              },
+              {
+                "counter": 120,
+                "typ": 12
+              },
+              {
+                "counter": 130,
+                "typ": 13
+              },
+              {
+                "counter": 140,
+                "typ": 14
+              },
+              {
+                "counter": 150,
+                "typ": 15
+              },
+              {
+                "counter": 160,
+                "typ": 16
+              },
+              {
+                "counter": 170,
+                "typ": 17
+              },
+              {
+                "counter": 180,
+                "typ": 18
+              },
+              {
+                "counter": 190,
+                "typ": 19
+              },
+              {
+                "counter": 200,
+                "typ": 20
+              },
+              {
+                "counter": 7,
+                "typ": 0
+              }
+            ],
+            "rep": 22
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT034 station is an UNKNOWN glyph. CAT034 carries no symbology of any kind",
+      "table_2_disposition": {
+        "basis": "PARKED, never dropped and never an error. Table 2's X means 'never present' for that message type, so an item under an X is a conformance fault in the ENCODER \u2014 and every octet of it is still decodable, its length is still stated, and refusing would discard data the FSPEC correctly announced. \u00a74.4's discipline for a bit that means nothing, applied one level up to an item that means nothing here. A missing M is the opposite case and IS refused, in _check_table_2",
+        "column": {
+          "I034/000": "M",
+          "I034/010": "M",
+          "I034/020": "X",
+          "I034/030": "M",
+          "I034/041": "O",
+          "I034/050": "O",
+          "I034/060": "O",
+          "I034/070": "O",
+          "I034/090": "O",
+          "I034/100": "X",
+          "I034/110": "X",
+          "I034/120": "O"
+        },
+        "items_present_where_the_table_says_X": [],
+        "message_type": 1
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "62650095-2e7e-522b-9e65-1a0aa64fc315",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat034",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT034"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ff251f5e-5f36-5a58-b93c-fb8c0c862a5e",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "message_counts": {
+        "basis": "an ORDERED list with duplicates preserved \u2014 order is data and egress is byte-exact only if the counters go back out as they came in. A COUNT IS NOT A DETECTION: none of the twenty-one TYPs produces an Event per counted item, which would invent target reports this document does not carry",
+        "counters": [
+          {
+            "counter": 0,
+            "text": "No detection (number of misses)",
+            "typ": 0,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 10,
+            "text": "Single PSR target reports",
+            "typ": 1,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 20,
+            "text": "Single SSR target reports (Non-Mode S)",
+            "typ": 2,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 30,
+            "text": "SSR+PSR target reports (Non-Mode S)",
+            "typ": 3,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 40,
+            "text": "Single All-Call target reports (Mode S)",
+            "typ": 4,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 50,
+            "text": "Single Roll-Call target reports (Mode S)",
+            "typ": 5,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 60,
+            "text": "All-Call + PSR (Mode S) target reports",
+            "typ": 6,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 70,
+            "text": "Roll-Call + PSR (Mode S) target reports",
+            "typ": 7,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 80,
+            "text": "Filter for Weather data",
+            "typ": 8,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 90,
+            "text": "Filter for Jamming Strobe",
+            "typ": 9,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 100,
+            "text": "Filter for PSR data",
+            "typ": 10,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 110,
+            "text": "Filter for SSR/Mode S data",
+            "typ": 11,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 120,
+            "text": "Filter for SSR/Mode S+PSR data",
+            "typ": 12,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 130,
+            "text": "Filter for Enhanced Surveillance data",
+            "typ": 13,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 140,
+            "text": "Filter for PSR+Enhanced Surveillance",
+            "typ": 14,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 150,
+            "text": "Filter for PSR+Enhanced Surveillance + SSR/Mode S data not in Area of Prime Interest",
+            "typ": 15,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 160,
+            "text": "Filter for PSR+Enhanced Surveillance + all SSR/Mode S data",
+            "typ": 16,
+            "window": "one completed antenna revolution, between two North crossings"
+          },
+          {
+            "counter": 170,
+            "text": "Re-Interrogations (per sector)",
+            "typ": 17,
+            "window": "one sector"
+          },
+          {
+            "counter": 180,
+            "text": "BDS Swap and wrong DF replies (per sector)",
+            "typ": 18,
+            "window": "one sector"
+          },
+          {
+            "counter": 190,
+            "text": "Mode A/C FRUIT (per sector)",
+            "typ": 19,
+            "window": "one sector"
+          },
+          {
+            "counter": 200,
+            "text": "Mode S FRUIT (per sector)",
+            "typ": 20,
+            "window": "one sector"
+          },
+          {
+            "counter": 7,
+            "text": "No detection (number of misses)",
+            "typ": 0,
+            "window": "one completed antenna revolution, between two North crossings"
+          }
+        ],
+        "rep": 22,
+        "window_basis": "PER COUNTER and never once for the item. \u00a75.2.8's Definition says the values are 'collected for the last completed antenna revolution, counted between two North crossings UNLESS OTHERWISE STATED IN THE TYP DEFINITION BELOW', and four TYPs \u2014 17 to 20 \u2014 do state otherwise. Parking a single window for the item would be wrong for four of the twenty-one"
+      },
+      "message_type": {
+        "basis": "the raw value AND its name, parked, because the collapse onto event_type is 7 -> 2 and must stay recoverable \u2014 and because egress re-emits FROM HERE rather than re-deriving a type from an EventType that four types share",
+        "name": "North Marker message",
+        "raw": 1
+      },
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "item": "I034/030",
+        "lsb_seconds": 0.0078125,
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "severity_basis": {
+        "basis": "STATUS_CHANGE/INFO. A North marker, a sector crossing, a filter activation and a solar storm report are all the station stating what it is doing, which is a status change and not a detection",
+        "gnss_interference_declined": "EventType.GNSS_INTERFERENCE is NEVER set by this adapter, on any message type. It is paired with GnssInterferencePayload, whose fields \u2014 frequency_band, interference_type, signal_strength_dbm \u2014 exist for the PNTMAP adapter, and a radar jamming strobe is not a GNSS event. Reusing the shape because it is the only interference vocabulary in the model would put radar jamming into the field a consumer filters on to find GNSS threats, which is a wrong answer that reads as a right one. FORMAT_COVERAGE.md gap 29",
+        "message_type": 1,
+        "name": "North Marker message"
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "62650095-2e7e-522b-9e65-1a0aa64fc315"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat034",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT034"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ]
+  }
+]

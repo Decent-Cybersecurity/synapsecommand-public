@@ -44,6 +44,9 @@ run is a guess with a table around it.
 | `cat048 1.0.0` | implemented by `adapters/asterix_cat048.py` on the codec in `adapters/cat048_codec.py`, with a binary fixture twin and a golden file |
 | `cat048 1.0.0 · parked` | implemented, but the value lands in `attributes`/`payload` because of a named gap below |
 | `cat048 1.0.0 · egress` | implemented in the `from_cdm()` direction |
+| `cat034 1.0.0` | implemented by `adapters/asterix_cat034.py` on the codec in `adapters/cat034_codec.py`, with a binary fixture twin and a golden file |
+| `cat034 1.0.0 · parked` | implemented, but the value lands in `attributes`/`payload` because of a named gap below |
+| `cat034 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -88,6 +91,22 @@ table in the pinned document — and `test_the_item_layouts_sum_to_the_standards
 checks it. What it carries instead is the admission in **gap 24**: the *geodesy* is not in the
 pinned document at all, and the inversion audit is what stands in for the document's blessing.
 
+**The ASTERIX Category 034 row set went through that state too**, and
+`adapters/asterix_cat034.py` has now landed, so
+`test_the_cat034_row_set_claims_the_adapter_that_now_implements_it` is the inverted form: it fails
+if a row still says `not yet` while the code implements it. What is unlike the CAT048 rows it sits
+beside is the object: **every record in Part 2b describes the radar station itself**, so
+`entity_type` is `SENSOR`, `I034/010`'s SAC/SIC is a `SourceId` here where it is parked at
+`attributes.data_source` there, and there is no `Kinematics` on any object — the one bearing the
+category carries is the antenna's. Two rulings Phase 1 explicitly deferred were made here and both
+rest on the document rather than on preference: no `Geometry` is ever derived from `I034/100`,
+because Table 2 makes it mutually exclusive with the station's own position; and a record whose
+message type this edition does not define is translated, not refused, at `STATUS_CHANGE` /
+`ADVISORY`. Note what `cat034 1.0.0` does not carry: none of its three markers is qualified the
+way the NITS ones are, because every
+offset is checkable against a table in the pinned document and `check_layouts()` sums them against
+the standard's own byte counts on every suite run.
+
 ### The adapter ordinals, and the reserved-ordinal rule
 
 Adapters are numbered, the number is cited in prose at three dozen sites across this document, the
@@ -122,7 +141,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 9 | `stanag5527` | specification, Phase 1 | this document's STANAG 5527 section, `fixtures/fft/spec/fft_pin.json`, `fixtures/fft/README.md` and `MIGRATIONS.md`. **A narrower Phase 1 than the row above**: there is a pinned covering document and no row set at all, because the one standard its AGREEMENT clause names is not in hand. Until this round the row read "RESERVED" and named `nffi` — a name with no source in any document and none in this repository, which is what retired it |
 | 10 | `stanag4609` | specification, Phase 1 | this document's STANAG 4609 / MISP-2019.1 section, `fixtures/klv/spec/klv_pin.json` and `MIGRATIONS.md` |
 | 11 | `cat048` | shipped | `fixtures/cat048/README.md`, the module README's harness section, and this document's CAT048 section. **`adapters/asterix_cat048.py` states no ordinal of its own** — the only shipped adapter besides `pntmap` that does not, which is recorded rather than repaired here |
-| 12 | `cat034` | specification, Phase 1 | this document's CAT034 section, `fixtures/cat034/spec/cat034_pin.json`, `fixtures/cat034/README.md` and `MIGRATIONS.md`. **The forecast made good.** Until this round the row read *(forecast)* and cited the CAT048 declines table — "if it lands, it lands as adapter #12 with its own pin" — and it has landed, with its own pin, at the number that was held for it. A **wider** Phase 1 than #9's and #10's: the pinned document states twelve data items and a fourteen-FRN UAP, so there is a full row set, every row of it `not yet` |
+| 12 | `cat034` | shipped | `adapters/asterix_cat034.py`, "Adapter #12", this document's CAT034 section, `fixtures/cat034/spec/cat034_pin.json`, `fixtures/cat034/README.md` and `MIGRATIONS.md`. **The forecast made good, then made real.** The row read *(forecast)* until Phase 1 and cited the CAT048 declines table — "if it lands, it lands as adapter #12 with its own pin" — and it landed at that number with that pin; Phase 2 shipped the adapter against the row set Phase 1 wrote, and every row of it now says `cat034 1.0.0` |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -6099,6 +6118,14 @@ not a pin.
 CAT048 streams interleave with CAT034 North-marker and sector-crossing messages. **CAT034 is
 out of scope for adapter #11**, and the row states the loss rather than only the decision.
 
+**This settlement is not repealed by `cat034` shipping as adapter #12, and the CAT034 section says
+so from its own side.** Every loss named below is still lost *to this adapter*: a second adapter
+does not give the first one context, because holding CAT034 state to interpret a CAT048 record is
+the fusion this repository refuses. What changed is only that a caller can now hold both adapters'
+output and do the joining where it is visible. Note also that the Edition 1.30 this reference
+names has since been checked for and is **not offered by the publisher** — see the CAT034 pin
+section, which reads this very sentence as one of its two citations.
+
 The document puts service messages outside itself, in §4.1: "The transmission of monoradar
 information shall require the transmission of two types of messages: • data messages of radar
 target reports; • radar service messages used to signal status information of the radar station
@@ -7153,10 +7180,10 @@ An unimplemented thing is a decision. "Not supported" without a reason is indist
 | Out | Decision |
 |---|---|
 | **The Reserved Expansion Field's contents** | Settlement 1. **Not blocked on anything but the act of pinning.** The layout is in Appendix A (SPEC-0149-4A), listed at Edition 1.13 of 4 December 2024 with Edition 1.12 contemporaneous with the pinned core; it is a public download and no copy was retrieved here. The octets are parked verbatim so no *data* is lost; four *interpretations* are, the sharpest being that **a Mode 4 interrogation that happened is indistinguishable from one that did not** — the M4E note forces `FOE/FRI` to `00`, which reads "No Mode 4 interrogation". **Reopen condition: acquire and pin Appendix A** — hash it, record which core edition it is paired with and why (1.12 is contemporaneous, 1.13 is current), and write the subfield row sets. Unlike GMTIF's §L.4 blocker there is nothing to wait for |
-| **Category 034 Monoradar Service Messages** | Settlement 2. Deferred, not rejected, and the loss is stated: antenna rotation timing, the IC-Conflict area for codes 35 and 36, and station status. The structural reason is that CAT034 is only useful as context accumulated across messages, which is stream state |
+| **Category 034 Monoradar Service Messages** | Settlement 2. Deferred, not rejected, and the loss is stated: antenna rotation timing, the IC-Conflict area for codes 35 and 36, and station status. The structural reason is that CAT034 is only useful as context accumulated across messages, which is stream state. **The deferral has since been taken up — `cat034` is adapter #12 and it ships — and this row is unchanged by that.** A second adapter does not give the first one context: holding CAT034 state to interpret a CAT048 record is the fusion this repository refuses, so every loss named here is still lost *to this adapter*. What changed is only that the values now have a CDM object of their own, on which a consumer can do the joining visibly |
 | **Deriving a geodetic position with no injected site** | Settlement 3, and it is a **default rather than a decline**: with a `sensor_position` injected the geometry IS derived. What stays out of scope is the adapter *obtaining* the site itself — inferring it from the payload, or resolving it through a SAC/SIC lookup table it owns. Both are "a station configuration it discovered from the data", which is the act `asterix_cat021.py` refuses by name; a constructor argument is not that act |
 | **Deriving a geodetic position from I048/042** | Settlement 3, and this one is a genuine decline even with a site. Which of two transforms produced it is signalled by `TCC` in I048/170, and the projection is named only as "e.g. a stereographical projection" — so a derivation would need a cross-item join *and* an unnamed projection. I048/040 is the single source of derived geometry, so the arithmetic has one owner |
-| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 023, 034, 062, 063, 065, 240, 247 … | Each has its own UAP and item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **CAT034 is the highest-value neighbour here**, for the reason CAT023 was for CAT021: it is the station's own status. **CAT062** remains where a fused air picture actually lives. A category is an adapter |
+| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 023, 062, 063, 065, 240, 247 … | Each has its own UAP and item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **034 has left this list**, which is what the sentence below it always predicted: it was the highest-value neighbour here for the reason CAT023 is for CAT021 — it is the station's own status — and it is now `cat034`, adapter #12, with its own pin and its own row set. **CAT062** remains where a fused air picture actually lives. A category is an adapter |
 | **Interpreting `FOE/FRI`, `MI` or an authenticated Mode 5 indication as an affiliation** | Settlement 9. The highest-value omission and structural rather than effort: an IFF result belongs to an IFF authority, over-claiming `FRIENDLY` is the dangerous direction, and the M4E note makes `00` ambiguous anyway. The bits are parked in full and `affiliation_basis` records the decline on every object |
 | **Decoding I048/250's register contents** | Settlement 10. A separate register set with its own document, [Ref. 2], unpinned. `adsb.py` already names a Mode S BDS adapter as a different adapter |
 | **Decoding I048/260's advisory bits** | Settlement 10. The only cited authority is "ICAO Draft SARPs for ACAS" — a draft, unnamed by edition, not in §2.2, with no field breakdown anywhere in the document. Decoding would mean adopting a standard this repository cannot identify |
@@ -7314,10 +7341,11 @@ Three alternatives were considered and each is rejected on a stated ground:
   A fixture directory name is closer to contractual language than to prose.
 
 `tests/test_cdm_harness.py` carries the adapter-name-to-fixture-directory map, and this commit adds
-`stanag4609 → klv` to it as a **planned** entry beside the nine shipped ones. Planned rather than
-shipped is not a formality: the shipped half of that map is checked against what
-`adapter.discover()` actually returns, so a tenth name there would be a false statement made by a
-test.
+`stanag4609 → klv` to it as a **planned** entry beside the shipped ones — nine of them at that
+commit, ten since `cat034` landed. Planned rather than shipped is not a formality: the shipped half
+of that map is checked against what `adapter.discover()` actually returns, so a name there with no
+registered adapter behind it would be a false statement made by a test. That is also what made
+`cat034`'s move from one half to the other a one-line edit in the same commit as its code.
 
 ### The pins
 
@@ -8189,21 +8217,38 @@ narrower than it looks: whether a pin lands, and whether the rows may quote or m
 not change the adapter name, and it would not by itself produce an adapter: the KLV phase is the
 standing demonstration that a profile in hand and its field dictionaries absent is still Phase 1.
 
-## ASTERIX Category 034 — Monoradar Service Messages, ingest and egress (specification only)
+## ASTERIX Category 034 — Monoradar Service Messages, ingest and egress
 
-**Every row below says `not yet`, and that is the section.** This is Phase 1: the row set is
-written and reviewed as a specification before any adapter code exists, the way the Legion, NITS,
-GMTIF, CAT048 and KLV row sets were. Nothing here is implemented, nothing here has been run, and
-`tests/test_cdm_format_coverage.py::test_the_cat034_row_set_exists_and_every_row_of_it_says_not_yet`
-is what stops a row claiming otherwise before there is code to claim it for.
+**Not one row below says `not yet` any more, and that is the section.** Phase 1 wrote and reviewed
+every row as a specification before any adapter code existed, the way the Legion, NITS, GMTIF,
+CAT048 and KLV row sets were; Phase 2 shipped `adapters/asterix_cat034.py` on the codec in
+`adapters/cat034_codec.py` against those rows, and
+`tests/test_cdm_format_coverage.py::test_the_cat034_row_set_claims_the_adapter_that_now_implements_it`
+is the **inverted** form of the test that used to hold the section at `not yet`: it now fails if a
+row still says `not yet` while the code implements it. The reversal is inverted rather than deleted
+so it is readable in the history — the treatment CAT021's, NITS's, GMTIF's and CAT048's each got.
 
-It is a **wider** Phase 1 than the two above it. STANAG 5527 pins a covering document that states
-no field at all, so its section has no row set; STANAG 4609 pins a profile that delegates every
-field dictionary it relies on, so its rows say `not yet` and its fixture plan is gated on twelve
-absent documents. This document states **twelve data items** and a **fourteen-FRN standard UAP**,
-each item with a Definition, a Format, a Structure and an Encoding Rule, in a category whose
-sibling this repository already ships. So the row set is written from the document, not around it,
-and what is parked is parked for a reason the document itself supplies.
+It was a **wider** Phase 1 than the two sections above it. STANAG 5527 pins a covering document
+that states no field at all, so its section has no row set; STANAG 4609 pins a profile that
+delegates every field dictionary it relies on, so its rows say `not yet` and its fixture plan is
+gated on twelve absent documents. This document states **twelve data items** and a **fourteen-FRN
+standard UAP**, each item with a Definition, a Format, a Structure and an Encoding Rule, in a
+category whose sibling this repository already ships. So the row set was written from the document,
+not around it, and what is parked is parked for a reason the document itself supplies.
+
+**Two things Phase 2 had to rule that Phase 1 explicitly left open**, and both are below as
+settlements rather than as code comments: whether same-block use of `I034/120` to turn `I034/100`
+into a `Geometry` is a derivation or a state merge (settlement 7 — **Table 2 decides it, and the
+answer is neither: the two items can never both be present**), and what a record whose message type
+this edition does not define becomes (settlement 8, with the Table 2 asymmetry it turns on). What
+Phase 2 changed in the Phase 1 rows is listed in one place, near the bottom of this section.
+
+Note what `cat034 1.0.0` does **not** carry: none of its three markers is qualified the way the
+NITS ones are. Every offset in this row set is checkable against a table in the pinned document,
+and `check_layouts()` in
+`fixtures/cat034/spec/build_fixtures.py` sums them against the standard's own byte counts on every
+suite run. The one mechanic the pinned text does not supply is the RE and SP length convention, and
+it is named at its site rather than qualified in the status column — see the RE and SP row set.
 
 **`cat034` is adapter #12.** The forecast made good: the ordinal table's row for #12 read
 *(forecast)* and pointed at the CAT048 declines table's sentence "if it lands, it lands as adapter
@@ -8270,7 +8315,7 @@ different evidence and different lifetimes must not be written into one cell. Re
 because an assertion that an adapter name differs from its directory is correct for #9 and **wrong
 for this family**.
 
-### The pin — and it is the covering edition, not the current one
+### The pin — and the edition that is cited twice and published nowhere
 
 | | |
 |---|---|
@@ -8283,28 +8328,66 @@ for this family**.
 | SHA-256 (wrapper) | `32925e6a04d124cf1f699adb68371bd88806d8cc4ae957df8aacba18cfcae101`, 639 615 bytes, 41 pages, `fixtures/cat034/spec/eurocontrol-asterix-cat034-pt2b-ed129.pdf` |
 | Retrieved | 2026-08-24. Verified against the supplied manifest before the document was read, and re-verified at the committed path after it landed |
 | ISBN | **978-2-87497-028-3 — and it is not an identifier.** `cat048_pin.json` records the *same* ISBN for Part 4 Category 048 Edition 1.32. Ambiguity 5 |
-| **Edition 1.30** | **NOT IN HAND, and it is the current edition.** See immediately below |
+| **Edition 1.30** | **CITED BY TWO SIBLING SPECIFICATIONS AND OFFERED BY NONE.** Not in hand, and — checked 2026-08-24 — not published: see immediately below |
 | Editions read, and how far | **Four**: 1.29 in full, and 1.26, 1.27, 1.28 at the title page, the change record and the message-type list. All four in `fixtures/cat034/spec/`, one pinned and three not |
 
 `fixtures/cat034/spec/cat034_pin.json` carries the whole thing — every value cited below with its
 locus, the name ruling with its rejected candidates, the lineage, and an eight-entry ambiguity
 register.
 
-**The pin is not the latest edition, and this repository already held the proof before this round
-began.** `cat048_pin.json`'s `cat034_boundary` quotes CAT048 Edition 1.32 §2.2 reference 5 verbatim:
-"ASTERIX Part 2b: Category 034 Monoradar Service Messages (EUROCONTROL-SPEC-0149-2b) **Edition
-1.30**." So Edition 1.30 exists, a pinned document in this repository names it, and it is not among
-the four. **Every row below is read against Edition 1.29 and none against any other edition** —
-which is the CAT048 discipline applied to a weaker starting position, and the weakness is named
-rather than glossed: what cannot be claimed is that Edition 1.29 is what a conformant encoder emits
-today.
+#### The Edition 1.30 fact, in two parts, and Phase 1 recorded one of them wrongly
 
-**What Edition 1.30 is known to contain, and how that is known without reading it.** CAT048 Edition
-1.32 §5.2.3 NOTE 6, already pinned and already quoted in the CAT048 section: "the possibility to
-communicate the area within which the detection of an IC Conflict is possible **was implemented in
-the Category 034 Specification Ref. [5] by means of Message Type 008**." Ref. [5] is Edition 1.30.
-**And the four editions in hand corroborate it independently**, because the standardised
-Message Type list grows exactly as the change records say and stops one short:
+**Phase 1 wrote that Edition 1.29 "is not the newest published" and that Edition 1.30 "is the
+current edition". Neither sentence was checked, and the first is false.** This round checked, and
+the fact splits in two — a citation half that is stronger than Phase 1 said, and an availability
+half that reverses it.
+
+**Part one — Edition 1.30 is cited, by two independent sibling specifications.** Phase 1 rested the
+claim on one citation; there are two, and the second was not known then.
+
+| Citing document | Locus | What it says |
+|---|---|---|
+| **CAT048 Edition 1.32** — pinned here | §2.2 reference 5 | "ASTERIX Part 2b: Category 034 Monoradar Service Messages (EUROCONTROL-SPEC-0149-2b) **Edition 1.30**." Quoted verbatim in `cat048_pin.json`'s `cat034_boundary`, which is the record this claim is read from rather than from recollection |
+| **CAT007 Edition 1.12**, July 2024 — **not** pinned here | §2.2 | the same reference, in the reference list of a different Part 4 category, published three years after Edition 1.29 |
+
+Two ASTERIX specifications from the same publisher, in different parts, name an Edition 1.30 of
+Part 2b. **That the edition exists is therefore not in doubt**, and the two citations are
+independent of each other in the sense that matters: one is not quoting the other, and neither is
+quoting this repository.
+
+**Part two — it is not offered.** EUROCONTROL's publication page for Category 034 was checked on
+**2026-08-24** and the newest file it offers is **Edition 1.29** — the edition pinned here. So:
+
+- **Edition 1.29 is the newest PUBLISHED edition**, and Phase 1's "it is not the newest published"
+  was wrong. The pin is not a covering edition standing in for a current one; it is the current one
+  as far as the publisher's own page goes;
+- **Edition 1.30 is cited-but-unpublished**, which is a third state this repository had no name for.
+  It is not a park like KLV's twelve absent documents, which are obtainable and were not obtained;
+  it is not #9's classification contingency, where a document exists behind an access decision. It
+  is a document two specifications reference and no page offers.
+
+**The check date is recorded because it is what a future round needs.** "Not published" and "not
+checked" look identical in a repository six months later, and the difference decides whether the
+next round re-checks the page or re-reads this paragraph. 2026-08-24 is the date; the page is the
+EUROCONTROL Category 034 publication page, the same one the four editions in hand came from.
+
+**Every row below is read against Edition 1.29 and none against any other edition.** That was true
+under Phase 1's reading and it is true under this one; what changes is the reason it is
+comfortable rather than uncomfortable.
+
+**What is NOT claimed**, and the list is longer than Phase 1's: that Edition 1.30 was withdrawn,
+that it was never published, that it is restricted, that the citations are errors, or that the page
+is complete. A page that does not offer a file is evidence about the page. All that is established
+is that on 2026-08-24 the newest file on it was Edition 1.29.
+
+**What Edition 1.30 is known to contain, and how that is known without reading it. THIS HALF IS
+UNCHANGED, AND IT REMAINS AN INFERENCE.** The availability finding above says nothing about
+contents, so nothing here moves. CAT048 Edition 1.32 §5.2.3 NOTE 6, already pinned and already
+quoted in the CAT048 section: "the possibility to communicate the area within which the detection
+of an IC Conflict is possible **was implemented in the Category 034 Specification Ref. [5] by means
+of Message Type 008**." Ref. [5] is Edition 1.30. **And the four editions in hand corroborate it
+independently**, because the standardised Message Type list grows exactly as the change records say
+and stops one short:
 
 | Edition | Message Types §5.2.1 standardises | What its own record claims |
 |---|---|---|
@@ -8314,12 +8397,20 @@ Message Type list grows exactly as the change records say and stops one short:
 | 1.29 | 001–**007** | "Data Item I034/000: new message types 6&7" |
 | **1.30** | **001–008, inferred** | **not in hand** |
 
-Two independent sources agreeing, and it is recorded **as an inference**: no text of Edition 1.30
-has been read, and nothing here claims what else it changed, its date, its status or its page count.
-**The reopen condition is the weakest kind in this repository** — not an access decision like #9's
-and not a purchase like KLV's park 12, but a public download on the same terms as the four already
-here, which nobody has performed. When it lands it becomes the pin, Edition 1.29 joins the history,
-and the Message Type table gains an eighth column.
+Two independent sources agreeing, and it is recorded **as an inference** — the same standing it had
+at Phase 1 and the same standing it has after the availability check, because a page that does not
+offer a document tells you nothing about what the document says. No text of Edition 1.30 has been
+read, and nothing here claims what else it changed, its date, its status or its page count.
+
+**The reopen condition changed shape and got weaker, which is the opposite of what a park usually
+does.** Phase 1 called it "a public download nobody has performed" — the weakest kind of park here,
+because the only thing standing in the way was effort. It is now a download **that is not offered**,
+so effort will not close it: the next round either finds the page changed, or finds the edition
+somewhere the publisher's own Category 034 page does not link, or leaves it exactly here with a
+newer check date. When it does land it becomes the pin, Edition 1.29 joins the history, and the
+Message Type table gains an eighth column. `message_type_008` already exists as a fixture, and on
+that day it changes from a park to a translation — which is why it was written before the edition
+was reachable.
 
 ### The edition history — three editions in hand, and none of them a pin
 
@@ -8439,14 +8530,23 @@ degrees in latitude and longitude, in an item the station itself sends.
 **And nothing in this row set does anything with that, which is the settlement.** Reading I034/120
 out of a CAT034 record and feeding it to a CAT048 adapter is cross-payload state — holding a value
 from one message to interpret another — and that is the fusion refusal stated seven times already in
-this document and an eighth time below. Adapter #12 will translate I034/120 into a `Position` **on
-the CAT034 object that carries it**, and hand it to nobody. What a *caller* does with two adapters'
+this document and an eighth time below. Adapter #12 translates I034/120 into a `Position` **on the
+CAT034 object that carries it**, and hands it to nobody. What a *caller* does with two adapters'
 output is a caller's decision, and it is one the CDM makes expressible rather than one an adapter
 makes silently.
 
 **Gap 24 does not close, deliberately.** It is about what the CAT048 document contains, and what
 this document contains does not change that. Recorded so a later reader meeting both sections does
 not conclude the gap was closed and nobody noticed.
+
+**And now asserted rather than recorded, which is what Phase 2 added here.** The shipped adapter
+writes `attributes.position_basis.gap_24` on every Entity that carries an `I034/120`, saying in the
+object that the gap is not closed and that the value is handed to no other adapter; it writes
+`attributes.position_basis.handed_to` as `null` beside it.
+`tests/test_cdm_asterix_cat034_adapter.py::test_the_station_position_does_not_close_gap_24` reads
+that key, reads **gap 24's own entry in this document** and fails if either the key stops saying so
+or the gap stops being open. A comment could have said the same thing and no build would have
+noticed it going stale.
 
 ### Settlement 3 — The UAP supports egress, and here is the evidence rather than the assertion
 
@@ -8461,10 +8561,15 @@ support is the same shape CAT021's and CAT048's rests on:
 | A rule for spare and unused bits | §4.4, "Unused Bits in Data Items" — which is what makes parking them verbatim a rule rather than a choice |
 | Nothing to recompute but the framing | **No checksum at any level**, exactly as in CAT021 and CAT048. Egress recomputes the block `LEN` and the FSPEC and copies everything else |
 
-So Phase 2 owes a **byte-exact** `from_cdm()`, the egress row set below is written now as a
-specification, and every row of it says `not yet`. **What is not claimed:** that egress has been
-implemented, attempted or tested. Nothing has been. This settlement records that the *format* does
-not block it.
+So Phase 2 owed a **byte-exact** `from_cdm()` and Phase 2 shipped one: every row of the egress set
+below now says `cat034 1.0.0 · egress`, and
+`tests/test_cdm_asterix_cat034_adapter.py::test_every_fixture_round_trips_byte_for_byte` asserts
+byte equality on **every fixture in the set** rather than the harness's value-presence comparison —
+the harness reports `SKIP` for an adapter whose `from_cdm` returns non-JSON bytes and says in as
+many words that such an adapter must ship its own round-trip test. `build_block()` is what makes
+the property provable rather than trivial: it re-encodes every item **from its parsed fields** and
+compares the result against the octets parked on ingest, so copying the input back out would not
+satisfy it, and a spare bit the decoder read and the encoder forgot is a failure.
 
 ### Settlement 4 — Time: one item, and the CAT048 rule reached a second time
 
@@ -8515,27 +8620,90 @@ and holds nothing between records. That an accumulating consumer would find the 
 than the input is true of every format here, and it is a statement about consumers. So: no sector
 context, no rotation-period cache, no last-North-marker, no station-status merge across records.
 
+### Settlement 7 — No `Geometry` is derived from `I034/100`, and Table 2 is the reason
+
+**Phase 1 named this as the one open adapter-behaviour question in the section** and Phase 2 rules
+it. The question was whether reading `I034/120` and `I034/100` out of *the same record* to produce a
+polygon is a derivation (permitted — one record, no state held) or a state merge (refused). The
+answer is that **it is neither, because the two items can never both be present.**
+
+| Message type | `I034/100` Generic Polar Window | `I034/120` 3D-Position of Data Source |
+|---|---|---|
+| 001 North Marker | **X** | **O** |
+| 002 Sector Crossing | **X** | **X** |
+| 003 Geographical Filtering | **O** | **X** |
+| 004 Jamming Strobe | **M** | **X** |
+| 005 Solar Storm | **M** | **X** |
+| 006 SSR Jamming Strobe | **M** | **X** |
+| 007 Mode S Jamming Strobe | **M** | **X** |
+
+Read straight off Table 2, both columns, all seven types. `I034/120` is permitted on exactly one
+message type and `I034/100` is forbidden on that one. **There is no message type for which both are
+permitted**, so a conformant record carrying a polar window carries no station position and the
+position could only ever come from a *different* record — which is the cross-payload state
+settlement 6 refuses, at a distance of one record rather than one payload.
+
+**And a non-conformant record does not open the door either.** An item present under an `X` is
+parked rather than refused (settlement 8), so a record could arrive carrying both. Deriving from it
+would make the adapter's output depend on the malformation — a polygon that appears only when the
+encoder is broken — which is worse than deriving nothing. So the rule has no exception:
+`Event.geometry` is `None` on every object this adapter emits, the four raw fields are in
+`Event.payload` on every record that carries the item, and
+`payload.generic_polar_window.geometry_basis` states this in the object.
+
+**What a consumer may do is unchanged and is not this adapter's business.** A caller holding a
+station position and a polar window can compute the polygon, visibly, with a geodesy it chooses.
+That is the same disposition CAT048 settlement 3 gives its caller-injected site: the CDM makes the
+computation expressible; the translator does not perform it.
+
+### Settlement 8 — A missing `M` refuses, a present `X` is parked, and an unknown type is neither
+
+Every item in this category except one carries the Encoding Rule "See table in I034/000", so
+**Table 2 is the encoding rule for eleven of the twelve items** rather than a summary of them. That
+makes three cases, and they get three different dispositions.
+
+| Case | Disposition | Why |
+|---|---|---|
+| An item Table 2 marks **M** for this record's message type is **absent** | **REFUSED**, quoting the type, its name and the missing items | The record cannot be read as what it claims to be — a Geographical Filtering message with no `I034/110` states no filter — and ASTERIX carries no checksum at any level, so the mandatory items are part of what replaces one |
+| An item Table 2 marks **X** is **present** | **PARKED**, and named in `attributes.table_2_disposition` | The record says more than its type admits, which is a conformance fault in the *encoder* and not a loss: every octet is decodable, its length is stated, and refusing would discard data the FSPEC correctly announced. §4.4's discipline for a bit that means nothing, applied one level up |
+| The message type is **outside 001–007** | **TRANSLATED**, with the type in `attributes.unresolved_raw` | There is no Table 2 column, so neither rule above can run; the record's only requirement is the two items that are M in every column. An undefined type is not a malformed record — §5.2.1 NOTE 2 makes every value "reserved for common standard use", so it is not a private extension point either |
+
+**`I034/030` is the one exception to the first row and it is the item's own doing.** §5.2.4's
+Encoding Rule reads "For the message types where this data item is mandatory, it shall be sent,
+except in case of failure of all sources of time stamping" — the only item-level text in the
+category that overrides the table. So a missing time of day is a **stated absence** on every message
+type, it lands in `attributes.unavailable_fields`, and `Event.observed_at` falls back to the
+injected clock with the reason recorded in `payload.observed_at_basis`.
+
+**And an undefined message type still needs an `event_type` and a `severity`, which is the ruling
+inside the ruling.** `STATUS_CHANGE` and **`ADVISORY`**. `INFO` would say the message is understood
+and ordinary; `WARNING` would invent an alarm out of an unknown; both are claims the record does not
+support. `ADVISORY` is the CDM's own middle value and the only one that leaves the record visible to
+a consumer filtering on severity while claiming nothing about what it means. **`message_type_008` is
+the fixture that pins it**, and the day Edition 1.30 lands it is the fixture that changes.
+
 ### How to read the row sets
 
 Left column names data items as §5.2 numbers them, with the subfield or bit where one matters.
-`Status` reads `not yet` on **every** row, because no adapter implements any of them — the mapping
-is a specification and not a claim. When `adapters/asterix_cat034.py` lands, the inverted test the
-CAT021, NITS, GMTIF and CAT048 sections all grew applies here too: it fails if a row still says
-`not yet` while the code implements it.
+`Status` reads `cat034 1.0.0` on every row now — `· parked` where the value lands in `attributes`
+or `payload`, `· egress` in the outbound table — because `adapters/asterix_cat034.py` implements
+all of them. It read `not yet` on every row through Phase 1, and the inverted test the CAT021,
+NITS, GMTIF and CAT048 sections all grew applies here too: it fails if a row says `not yet` while
+the code implements it.
 
 ### Row set — the block and record envelope
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `block.category` | `Entity.attributes` | `not yet` | the CAT octet as read. §4.6.2: "Data Category (CAT) = 034, is a one-octet field". A block whose category is not 34 is refused rather than decoded |
-| `block.length` | `Entity.attributes` | `not yet` | §4.6.2's `LEN`, "a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields". Parked, and **recomputed on egress rather than copied**, the CAT048 rule |
-| `block.record_index`, `block.record_count` | `Event.payload` | `not yet` | which record of how many. §4.6.2's layout puts an FSPEC and its items per record with no per-record length, so without this two objects from one block are indistinguishable from two objects from two blocks |
-| `record.fspec` | `Entity.attributes` | `not yet` | the FSPEC octets verbatim. The shortest covering FSPEC is conventional, not required, so the round trip is byte-exact only if what was read is what is re-emitted |
-| `record.spare_bits` | `Entity.attributes` | `not yet` | every spare and unused bit as sent, per §4.4 |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis` — that CAT034 defines no checksum at any level and the structural gate is what passed |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — fields the source explicitly marked absent, including a Time of Day the encoding rule permits to be missing |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — wire values read and not usable: a Message Type outside 001–007, an `I034/110` TYP of 0 ("invalid value"), a counter TYP the edition does not define |
-| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+| `block.category` | `Entity.attributes` | `cat034 1.0.0 · parked` | the CAT octet as read. §4.6.2: "Data Category (CAT) = 034, is a one-octet field". A block whose category is not 34 is refused rather than decoded |
+| `block.length` | `Entity.attributes` | `cat034 1.0.0 · parked` | §4.6.2's `LEN`, "a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields". Parked, and **recomputed on egress rather than copied**, the CAT048 rule |
+| `block.record_index`, `block.record_count` | `Event.payload` | `cat034 1.0.0 · parked` | which record of how many. §4.6.2's layout puts an FSPEC and its items per record with no per-record length, so without this two objects from one block are indistinguishable from two objects from two blocks |
+| `record.fspec` | `Entity.attributes` | `cat034 1.0.0 · parked` | the FSPEC octets verbatim. The shortest covering FSPEC is conventional, not required, so the round trip is byte-exact only if what was read is what is re-emitted |
+| `record.spare_bits` | `Entity.attributes` | `cat034 1.0.0 · parked` | every spare and unused bit as sent, per §4.4 |
+| *(measured)* | `Entity.attributes` | `cat034 1.0.0 · parked` | `attributes.integrity_basis` — that CAT034 defines no checksum at any level and the structural gate is what passed |
+| *(measured)* | `Entity.attributes` | `cat034 1.0.0 · parked` | `attributes.unavailable_fields` — fields the source explicitly marked absent, including a Time of Day the encoding rule permits to be missing |
+| *(measured)* | `Entity.attributes` | `cat034 1.0.0 · parked` | `attributes.unresolved_raw` — wire values read and not usable: a Message Type outside 001–007, an `I034/110` TYP of 0 ("invalid value"), a counter TYP the edition does not define |
+| everything unmapped | `Entity.attributes` | `cat034 1.0.0 · parked` | `attributes.source_extras`, structure intact |
 
 ### Row set — the station, which is the object this category is about
 
@@ -8544,44 +8712,45 @@ every other adapter in this repository and it decides the object shape.
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I034/010` SAC, SIC | `Entity.source_ids` | `not yet` | §5.2.2: "Identification of the radar station from which the data are received", two octets, and its Encoding Rule points at Table 2 where it is **M for every message type**. Unlike CAT048's `I048/010` this **is** the object's own identifier — the station is the entity — so it is a `SourceId` here and parked at `attributes.data_source` there, and the difference is the whole reason both rows exist |
-| `I034/010` | `Entity.entity_type` | `not yet` | `SENSOR`. The one enum value in the CDM that names what a radar station is, and this is the first adapter here whose primary object takes it |
-| `I034/010` | `Entity.affiliation` | `not yet` | `UNKNOWN`, always. A monoradar service message states the station's configuration and never its allegiance, and this repository does not infer one from a SAC |
-| `I034/010` NOTE | *(no field)* | `not yet` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)" — the same URL `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation** rather than by analogy |
-| `I034/120` | `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `not yet` | §5.2.12. Latitude and longitude from the two 24-bit two's-complement fields at 180/2²³ degrees; the altitude from the signed 16-bit height at 1 m above the WGS 84 ellipsoid. **The only item in this category that produces a `Position`**, and settlement 2 is about what is *not* done with it |
-| `I034/120` | `Position.accuracy_m` | `not yet` | `None`. §5.2.12 states "an accuracy of at least 2.3844 metres" — that is the **quantisation step** of the encoding, not a measurement uncertainty, and reporting a resolution as an accuracy claims the station knows where it is to 2.4 m when the document says only that it cannot say so more finely. **Parked as `attributes.position_quantisation_m`** |
-| `I034/120` | `Position.position_source` | `not yet` | `MANUAL`. A surveyed station location, which is what a data-source position is, is none of GNSS, INERTIAL or ESTIMATED. Recorded as the least-wrong of four rather than as a fit |
+| `I034/010` SAC, SIC | `Entity.source_ids` | `cat034 1.0.0` | §5.2.2: "Identification of the radar station from which the data are received", two octets, and its Encoding Rule points at Table 2 where it is **M for every message type**. Unlike CAT048's `I048/010` this **is** the object's own identifier — the station is the entity — so it is a `SourceId` here and parked at `attributes.data_source` there, and the difference is the whole reason both rows exist |
+| `I034/010` | `Entity.entity_type` | `cat034 1.0.0` | `SENSOR`. The one enum value in the CDM that names what a radar station is, and this is the first adapter here whose primary object takes it |
+| `I034/010` | `Entity.affiliation` | `cat034 1.0.0` | `UNKNOWN`, always. A monoradar service message states the station's configuration and never its allegiance, and this repository does not infer one from a SAC |
+| `I034/010` NOTE | *(no field)* | `cat034 1.0.0` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)" — the same URL `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation** rather than by analogy |
+| `I034/120` | `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `cat034 1.0.0` | §5.2.12. Latitude and longitude from the two 24-bit two's-complement fields at 180/2²³ degrees; the altitude from the signed 16-bit height at 1 m above the WGS 84 ellipsoid. **The only item in this category that produces a `Position`**, and settlement 2 is about what is *not* done with it |
+| `I034/120` | `Position.accuracy_m` | `cat034 1.0.0` | `None`. §5.2.12 states "an accuracy of at least 2.3844 metres" — that is the **quantisation step** of the encoding, not a measurement uncertainty, and reporting a resolution as an accuracy claims the station knows where it is to 2.4 m when the document says only that it cannot say so more finely. **Parked as `attributes.position_quantisation_m`** |
+| `I034/120` | `Position.position_source` | `cat034 1.0.0` | `MANUAL`. A surveyed station location, which is what a data-source position is, is none of GNSS, INERTIAL or ESTIMATED. Recorded as the least-wrong of four rather than as a fit |
 
 ### Row set — message type, and the seven records that are one shape
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I034/000` | `Event.event_type` | `not yet` | §5.2.1, one octet, **M in every column of Table 2**. 001 North Marker, 002 Sector Crossing, 003 Geographical Filtering, 005 Solar Storm → `STATUS_CHANGE`; 004, 006, 007 the three jamming strobes → `ALERT`, settlement 5 |
-| `I034/000` | `Event.payload` | `not yet` | the raw type value **and** its name, parked, because the enum collapse above is 7 → 2 and must stay recoverable |
-| `I034/000` NOTE 2 | *(no field)* | `not yet` | "All Message Type values are reserved for common standard use." So a value outside 001–007 is **not** a private extension point — it is a value this edition does not define, and Edition 1.30 defines at least one more. It lands in `attributes.unresolved_raw`, never in `source_extras` |
-| `I034/000` Table 2 | `Entity.attributes` | `not yet` | the M/O/X matrix is the **encoding rule for every other item** — each item's own Encoding Rule reads "See table in I034/000". An item present where Table 2 says X is parked and recorded, never dropped and never treated as an error: §4.4's spare-bit discipline applied one level up |
-| `I034/000` = 004, 006, 007 | `Event.severity` | `not yet` | `WARNING`. A jamming strobe is a report that something is interfering with the sensor, which is neither routine (`INFO`) nor an emergency (`CRITICAL`) |
-| `I034/000` = 001, 002, 003, 005 | `Event.severity` | `not yet` | `INFO`. A North marker is the antenna passing north |
+| `I034/000` | `Event.event_type` | `cat034 1.0.0` | §5.2.1, one octet, **M in every column of Table 2**. 001 North Marker, 002 Sector Crossing, 003 Geographical Filtering, 005 Solar Storm → `STATUS_CHANGE`; 004, 006, 007 the three jamming strobes → `ALERT`, settlement 5 |
+| `I034/000` | `Event.payload` | `cat034 1.0.0 · parked` | the raw type value **and** its name, parked, because the enum collapse above is 7 → 2 and must stay recoverable |
+| `I034/000` NOTE 2 | *(no field)* | `cat034 1.0.0` | "All Message Type values are reserved for common standard use." So a value outside 001–007 is **not** a private extension point — it is a value this edition does not define, and Edition 1.30 defines at least one more. It lands in `attributes.unresolved_raw`, never in `source_extras` |
+| `I034/000` Table 2 | `Entity.attributes` | `cat034 1.0.0 · parked` | the M/O/X matrix is the **encoding rule for every other item** — each item's own Encoding Rule reads "See table in I034/000". An item present where Table 2 says X is parked and recorded, never dropped and never treated as an error: §4.4's spare-bit discipline applied one level up |
+| `I034/000` = 004, 006, 007 | `Event.severity` | `cat034 1.0.0` | `WARNING`. A jamming strobe is a report that something is interfering with the sensor, which is neither routine (`INFO`) nor an emergency (`CRITICAL`) |
+| `I034/000` = 001, 002, 003, 005 | `Event.severity` | `cat034 1.0.0` | `INFO`. A North marker is the antenna passing north |
 
 ### Row set — the sweep: sector, rotation, and the timing context CAT048 does not have
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I034/020` | `Event.payload` | `not yet` | §5.2.3 Sector Number, one octet, "Eight most significant bits of the antenna azimuth", LSB 360°/2⁸ = 1.40625°. **M for a Sector Crossing message and X for every other type.** Parked as both the raw octet and the decoded degrees — it is an antenna bearing, not a target bearing, and putting it in `Kinematics.course_deg` would state that the station is travelling on that heading |
-| `I034/041` | `Event.payload` | `not yet` | §5.2.5 Antenna Rotation Speed — **named "Speed" in the heading and defined as a period**: "Antenna rotation period as measured between two consecutive North crossings or as averaged during a period of time", two octets, LSB 1/128 s. Parked as seconds. **This is the scan period CAT048 settlement 2 names as lost**, and it stays on the CAT034 object |
-| `I034/041` | *(no field)* | `not yet` | and it does **not** set `Entity.valid_to` on anything. A rotation period is a staleness *horizon* for a consumer that also holds target reports; deriving an expiry from it here would be the fusion settlement 6 refuses |
-| `I034/090` | `Event.payload` | `not yet` | §5.2.9 Collimation Error, two octets: range error at LSB 1/128 NM and azimuth error at LSB 360°/2¹⁴ ≈ 0.022°, both two's complement per its NOTE. A PSR-versus-SSR calibration residual for the station — **not** a position accuracy for anything, and never `Position.accuracy_m` |
-| `I034/100` | `Event.geometry` | `not yet` | §5.2.10 Generic Polar Window, eight octets: RHO-START, RHO-END at LSB 1/256 NM (max 256 NM) and THETA-START, THETA-END at LSB 360°/2¹⁶. **M for a Geographical Filtering message.** A polar annulus sector about the station — see the note below on why this is the one row that needs the station's own position to become a `Geometry` at all |
-| `I034/100` | `Event.payload` | `not yet` | the four raw fields, always, whether or not a `Geometry` was produced |
+| `I034/020` | `Event.payload` | `cat034 1.0.0 · parked` | §5.2.3 Sector Number, one octet, "Eight most significant bits of the antenna azimuth", LSB 360°/2⁸ = 1.40625°. **M for a Sector Crossing message and X for every other type.** Parked as both the raw octet and the decoded degrees — it is an antenna bearing, not a target bearing, and putting it in `Kinematics.course_deg` would state that the station is travelling on that heading |
+| `I034/041` | `Event.payload` | `cat034 1.0.0 · parked` | §5.2.5 Antenna Rotation Speed — **named "Speed" in the heading and defined as a period**: "Antenna rotation period as measured between two consecutive North crossings or as averaged during a period of time", two octets, LSB 1/128 s. Parked as seconds. **This is the scan period CAT048 settlement 2 names as lost**, and it stays on the CAT034 object |
+| `I034/041` | *(no field)* | `cat034 1.0.0` | and it does **not** set `Entity.valid_to` on anything. A rotation period is a staleness *horizon* for a consumer that also holds target reports; deriving an expiry from it here would be the fusion settlement 6 refuses |
+| `I034/090` | `Event.payload` | `cat034 1.0.0 · parked` | §5.2.9 Collimation Error, two octets: range error at LSB 1/128 NM and azimuth error at LSB 360°/2¹⁴ ≈ 0.022°, both two's complement per its NOTE. A PSR-versus-SSR calibration residual for the station — **not** a position accuracy for anything, and never `Position.accuracy_m` |
+| `I034/100` | `Event.geometry` | `cat034 1.0.0` | §5.2.10 Generic Polar Window, eight octets: RHO-START, RHO-END at LSB 1/256 NM (max 256 NM) and THETA-START, THETA-END at LSB 360°/2¹⁶. **M for a Geographical Filtering message.** A polar annulus sector about the station — see the note below on why this is the one row that needs the station's own position to become a `Geometry` at all |
+| `I034/100` | `Event.payload` | `cat034 1.0.0 · parked` | the four raw fields, always, whether or not a `Geometry` was produced |
 
-**The one place this category needs geodesy, and the honest position on it.** A polar window is
+**The one place this category needs geodesy, and the ruling Phase 1 left open.** A polar window is
 range and azimuth **from the station**, so turning it into a WGS-84 polygon needs the station's
 position and a direct geodetic computation — the same arithmetic CAT048 settlement 3 owns for its
 range/azimuth pairs, and the same admission **gap 24** makes: the geodesy is in neither document.
-The difference is that here the station's position is frequently **on the wire in the same block**,
-in `I034/120`. Phase 2 has to rule whether same-block use of `I034/120` is a derivation or a state
-merge; **Phase 1 does not rule it**, because it is an adapter-behaviour question and this phase
-parks rather than implements. Until then the row produces `Event.payload` and no `Geometry`.
+Phase 1 recorded that the station's position is sometimes on the wire in the same block, in
+`I034/120`, and left the derivation-versus-state-merge question to Phase 2. **Settlement 7 below
+rules it, and the answer is neither**: Table 2 makes the two items mutually exclusive, so the
+question never arises in a conformant record. The row produces `Event.payload` and no `Geometry`,
+permanently and for a reason the document supplies.
 
 ### Row set — station configuration and processing mode, the two compound items
 
@@ -8592,32 +8761,32 @@ vocabulary for a sensor's channel selection or its overload-reduction step.
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I034/050` primary subfield | `Entity.attributes` | `not yet` | COM / PSR / SSR / MDS presence bits and the two spare subfield bits, with FX. Parked verbatim, including the spares |
-| `I034/050` COM | `Entity.attributes` | `not yet` | `NOGO`, `RDPC`, `RDPR`, `OVL RDP`, `OVL XMT`, `MSC`, `TSV`. **`NOGO` is the operationally loudest bit in the category** — "= 1 Operational use of System is inhibited, i.e. the data shall be discarded by an operational SDPS" — and it is parked rather than raised, because it governs what a *consumer* does with the station's target reports and this adapter emits none |
-| `I034/050` COM `RDPC` | `Entity.attributes` | `not yet` | "RDPC-1 selected" / "RDPC-2 selected". **This is what CAT048 settlement 2 names as missing** for `I048/020`'s `RDP` bit, and it stays here: the two facts meet in a consumer, not in an adapter |
-| `I034/050` PSR, SSR | `Entity.attributes` | `not yet` | `ANT`, `CH-A/B`, `OVL`, `MSC` and three spare bits each. The SSR subfield's `CH-A/B` value `11` reads "Invalid combination" where the PSR subfield's reads "Diversity mode" — **same bit positions, different meaning per sensor**, so the two are parked under separate keys and never merged |
-| `I034/050` MDS | `Entity.attributes` | `not yet` | two octets: `ANT`, `CH-A/B`, `OVL SUR`, `MSC`, `SCF`, `DLF`, `OVL SCF`, `OVL DLF` and seven spares. `CH-A/B` value `11` reads "Illegal combination" here — a **third** wording for one encoding, recorded rather than harmonised |
-| `I034/060` primary subfield | `Entity.attributes` | `not yet` | the same COM / PSR / SSR / MDS shape with FX, and a **different item** — configuration is what the station is, processing mode is what it did "during the last antenna revolution" (§5.2.7) |
-| `I034/060` COM | `Entity.attributes` | `not yet` | `RED-RDP` and `RED-XMT`, three bits each, eight reduction steps. Parked as integers 0–7 with the step's own wording |
-| `I034/060` PSR | `Entity.attributes` | `not yet` | `POL` (linear / circular polarization), `RED-RAD`, `STC` |
-| `I034/060` SSR, MDS | `Entity.attributes` | `not yet` | `RED-RAD` for both, plus `CLU` (Cluster State: autonomous / not autonomous) for Mode S |
+| `I034/050` primary subfield | `Entity.attributes` | `cat034 1.0.0 · parked` | COM / PSR / SSR / MDS presence bits and the two spare subfield bits, with FX. Parked verbatim, including the spares |
+| `I034/050` COM | `Entity.attributes` | `cat034 1.0.0 · parked` | `NOGO`, `RDPC`, `RDPR`, `OVL RDP`, `OVL XMT`, `MSC`, `TSV`. **`NOGO` is the operationally loudest bit in the category** — "= 1 Operational use of System is inhibited, i.e. the data shall be discarded by an operational SDPS" — and it is parked rather than raised, because it governs what a *consumer* does with the station's target reports and this adapter emits none |
+| `I034/050` COM `RDPC` | `Entity.attributes` | `cat034 1.0.0 · parked` | "RDPC-1 selected" / "RDPC-2 selected". **This is what CAT048 settlement 2 names as missing** for `I048/020`'s `RDP` bit, and it stays here: the two facts meet in a consumer, not in an adapter |
+| `I034/050` PSR, SSR | `Entity.attributes` | `cat034 1.0.0 · parked` | `ANT`, `CH-A/B`, `OVL`, `MSC` and three spare bits each. The SSR subfield's `CH-A/B` value `11` reads "Invalid combination" where the PSR subfield's reads "Diversity mode" — **same bit positions, different meaning per sensor**, so the two are parked under separate keys and never merged |
+| `I034/050` MDS | `Entity.attributes` | `cat034 1.0.0 · parked` | two octets: `ANT`, `CH-A/B`, `OVL SUR`, `MSC`, `SCF`, `DLF`, `OVL SCF`, `OVL DLF` and seven spares. `CH-A/B` value `11` reads "Illegal combination" here — a **third** wording for one encoding, recorded rather than harmonised |
+| `I034/060` primary subfield | `Entity.attributes` | `cat034 1.0.0 · parked` | the same COM / PSR / SSR / MDS shape with FX, and a **different item** — configuration is what the station is, processing mode is what it did "during the last antenna revolution" (§5.2.7) |
+| `I034/060` COM | `Entity.attributes` | `cat034 1.0.0 · parked` | `RED-RDP` and `RED-XMT`, three bits each, eight reduction steps. Parked as integers 0–7 with the step's own wording |
+| `I034/060` PSR | `Entity.attributes` | `cat034 1.0.0 · parked` | `POL` (linear / circular polarization), `RED-RAD`, `STC` |
+| `I034/060` SSR, MDS | `Entity.attributes` | `cat034 1.0.0 · parked` | `RED-RAD` for both, plus `CLU` (Cluster State: autonomous / not autonomous) for Mode S |
 
 ### Row set — the counters and the filter
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I034/070` | `Event.payload` | `not yet` | §5.2.8 Message Count Values: a one-octet `REP` followed by `REP` two-octet counters, each a five-bit `TYP` and an eleven-bit `COUNTER`. Parked as an **ordered list**, duplicates preserved — the CAT048 `I048/030` rule, and for the same reason: order is data and egress is byte-exact only if the counters go back out as they came in |
-| `I034/070` `TYP` | `Event.payload` | `not yet` | 21 defined values, 0–20, each parked with its own wording. They are per-revolution tallies of what the station saw — misses, PSR-only, SSR-only, Mode S All-Call and Roll-Call, the filter categories, and 17–20 the per-sector re-interrogation, BDS-swap, Mode A/C FRUIT and Mode S FRUIT counts. **A count is not a detection**: none of them produces an `Event` per counted item, which would invent target reports this document does not carry |
-| `I034/070` definition | `Entity.attributes` | `not yet` | "collected for the last completed antenna revolution, counted between two North crossings **unless otherwise stated in the TYP definition below**" — and four TYPs do state otherwise, 17 to 20 being "per sector". The window is therefore **per counter**, not per item, and parking a single window for the item would be wrong for four of the twenty-one |
-| `I034/110` | `Event.payload` | `not yet` | §5.2.11 Data Filter, one octet. Values 1–9+ name what is being suppressed; **`= 0 invalid value`** is stated by the item itself, so a zero goes to `attributes.unresolved_raw` and never reads as "no filter" |
-| `I034/110` | `Event.event_type` | `not yet` | `STATUS_CHANGE` via message type 003 — a filter activation is the station changing what it will send, which is a status change and not a detection |
+| `I034/070` | `Event.payload` | `cat034 1.0.0 · parked` | §5.2.8 Message Count Values: a one-octet `REP` followed by `REP` two-octet counters, each a five-bit `TYP` and an eleven-bit `COUNTER`. Parked as an **ordered list**, duplicates preserved — the CAT048 `I048/030` rule, and for the same reason: order is data and egress is byte-exact only if the counters go back out as they came in |
+| `I034/070` `TYP` | `Event.payload` | `cat034 1.0.0 · parked` | 21 defined values, 0–20, each parked with its own wording. They are per-revolution tallies of what the station saw — misses, PSR-only, SSR-only, Mode S All-Call and Roll-Call, the filter categories, and 17–20 the per-sector re-interrogation, BDS-swap, Mode A/C FRUIT and Mode S FRUIT counts. **A count is not a detection**: none of them produces an `Event` per counted item, which would invent target reports this document does not carry |
+| `I034/070` definition | `Entity.attributes` | `cat034 1.0.0 · parked` | "collected for the last completed antenna revolution, counted between two North crossings **unless otherwise stated in the TYP definition below**" — and four TYPs do state otherwise, 17 to 20 being "per sector". The window is therefore **per counter**, not per item, and parking a single window for the item would be wrong for four of the twenty-one |
+| `I034/110` | `Event.payload` | `cat034 1.0.0 · parked` | §5.2.11 Data Filter, one octet. Values 1–9+ name what is being suppressed; **`= 0 invalid value`** is stated by the item itself, so a zero goes to `attributes.unresolved_raw` and never reads as "no filter" |
+| `I034/110` | `Event.event_type` | `cat034 1.0.0` | `STATUS_CHANGE` via message type 003 — a filter activation is the station changing what it will send, which is a status change and not a detection |
 
 ### Row set — RE and SP
 
 | CAT034 | CDM field | Status | Notes |
 |---|---|---|---|
-| `RE-Data Item`, FRN 13 | `Entity.attributes` | `not yet` | Reserved Expansion Field, `1+1+`. **Parked verbatim, octet-for-octet, restored unchanged on egress**, never decoded — the CAT048 settlement 1 disposition, and here the procedural reason is the same and one step stronger: this document does not define the field's contents and does not list an appendix that does. Edition 1.21's change record says "Reserved Expansion Indicator added in UAP", so the slot is old and the contents were always elsewhere |
-| `SP-Data Item`, FRN 14 | `Entity.attributes` | `not yet` | Special Purpose Field, `1+1+`. Non-standard by construction. Parked verbatim and restored unchanged |
+| `RE-Data Item`, FRN 13 | `Entity.attributes` | `cat034 1.0.0 · parked` | Reserved Expansion Field, `1+1+`. **Parked verbatim, octet-for-octet, restored unchanged on egress**, never decoded — the CAT048 settlement 1 disposition, and here the procedural reason is the same and one step stronger: this document does not define the field's contents and does not list an appendix that does. Edition 1.21's change record says "Reserved Expansion Indicator added in UAP", so the slot is old and the contents were always elsewhere |
+| `SP-Data Item`, FRN 14 | `Entity.attributes` | `cat034 1.0.0 · parked` | Special Purpose Field, `1+1+`. Non-standard by construction. Parked verbatim and restored unchanged |
 
 ### Row set — egress, CDM back to a CAT034 data block
 
@@ -8635,12 +8804,12 @@ already ship, and it is not made here.
 
 | CDM field | CAT034 | Status | Notes |
 |---|---|---|---|
-| `Entity.source_ids` | `I034/010` | `not yet` | the SAC/SIC the entity was keyed on, back into FRN 1 |
-| `Event.payload` | `I034/000` | `not yet` | the parked raw Message Type, **not** a value re-derived from `Event.event_type` — the collapse is 7 → 2 and only the park is invertible |
-| `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `I034/120` | `not yet` | re-encoded at 180/2²³ degrees and 1 m, from the parked raw fields where they exist. A `Position` edited downstream re-encodes to the nearest representable value and the round trip is then **not** byte-exact, which is stated rather than hidden |
-| `Event.payload`, `Entity.attributes` | every other item | `not yet` | from the park, verbatim |
-| `record.fspec` | the FSPEC | `not yet` | **re-emitted as parked, not recomputed**, so a source's non-minimal FSPEC survives. A record assembled from CDM with no parked FSPEC gets the shortest covering one, and that is the only case where this adapter chooses |
-| `block.length` | `LEN` | `not yet` | **recomputed**, never copied. A LEN that disagrees with the octets is discarded by every ASTERIX decoder |
+| `Entity.source_ids` | `I034/010` | `cat034 1.0.0 · egress` | the SAC/SIC the entity was keyed on, back into FRN 1 |
+| `Event.payload` | `I034/000` | `cat034 1.0.0 · egress` | the parked raw Message Type, **not** a value re-derived from `Event.event_type` — the collapse is 7 → 2 and only the park is invertible |
+| `Entity.position`, `Position.lat`, `Position.lon`, `Position.alt_m` | `I034/120` | `cat034 1.0.0 · egress` | re-encoded at 180/2²³ degrees and 1 m, from the parked raw fields where they exist. A `Position` edited downstream re-encodes to the nearest representable value and the round trip is then **not** byte-exact, which is stated rather than hidden |
+| `Event.payload`, `Entity.attributes` | every other item | `cat034 1.0.0 · egress` | from the park, verbatim |
+| `record.fspec` | the FSPEC | `cat034 1.0.0 · egress` | **re-emitted as parked, not recomputed**, so a source's non-minimal FSPEC survives. A record assembled from CDM with no parked FSPEC gets the shortest covering one, and that is the only case where this adapter chooses |
+| `block.length` | `LEN` | `cat034 1.0.0 · egress` | **recomputed**, never copied. A LEN that disagrees with the octets is discarded by every ASTERIX decoder |
 
 #### What egress is NOT lossy for
 
@@ -8663,7 +8832,14 @@ limit every adapter here has.
 ### Where the specification is ambiguous or contradicts itself
 
 Numbered from 1 within this row set, the convention each section here uses for its own register.
-`fixtures/cat034/spec/cat034_pin.json` carries all eight with their evidence.
+Entries 1 to 8 are Phase 1's and `fixtures/cat034/spec/cat034_pin.json` carries all eight with their
+evidence; **entries 9 to 12 are Phase 2's** and are recorded here, which is the ordinary way a
+register grows between phases. Three of the four were found by writing the codec — each is a place
+where the document's own arithmetic and its own prose had to be preferred to one another, and each
+is a line of code that would otherwise have made the choice silently. The fourth, entry 12, was
+found by a **mutation**: §4.4 and the subfield diagrams disagree about spare bits, and nothing in
+the fixture set could tell which one the decoder was obeying until a fixture carried a spare bit
+that was not zero.
 
 | # | The ambiguity | Disposition |
 |---|---|---|
@@ -8675,6 +8851,10 @@ Numbered from 1 within this row set, the convention each section here uses for i
 | 6 | **Edition 1.28 says "the list of items present for the four message types" immediately after listing five**, and its Table 1 has five columns. Edition 1.29 repairs it to "for each message type" | A stale count in the publisher's own text, fixed one edition later — and the reason this round's own stale-count sweep is not a formality |
 | 7 | The item series is not contiguous: there is **no `I034/040`** (the rotation item is `/041`) and **no `I034/080`** | Neither absence is explained by any document in hand |
 | 8 | Editions 1.28 and 1.29 carry a decorative cover banner whose font has no usable `ToUnicode` map and whose digits do not extract; Edition 1.29 additionally retains **two orphaned template page objects**, one naming `EUROCONTROL-SPEC-0149-8` Edition 1.3 dated 11 May 2020 beside unreplaced typography placeholders | No identity value comes from either. See the page-count note below |
+| 9 | **The same item, the same width, the same LSB, and a range in one part and not the other.** `I034/030` is three octets at 1/128 s and §5.2.4 prints **no** acceptable-range block; CAT048's `I048/140` is three octets at 1/128 s and §5.2.17 prints "Acceptable Range of values: 0<= Time-of-Day<=24 hrs" | **The two adapters draw the boundary one value apart, and neither was harmonised to the other.** `asterix_cat048.py` accepts exactly 86 400 s on §5.2.17's *inclusive* inequality and refuses one LSB past it. `asterix_cat034.py` has no stated range to lean on, so its bound comes from §5.2.4's Definition ("a number of 1/128 s elapsed since last midnight") and NOTE 1 ("reset to zero each day at midnight"), which together make 86 400 s itself unreachable — so it refuses at 86 400. Same shape, different authority, different edge, both written down. The direct analogue of ambiguity 14 in the CAT048 register |
+| 10 | **§5.2.10 prints "Max. Range = 256 NM" twice and the field cannot reach it.** Sixteen bits at 1/256 NM reach 255.996 093 75 NM | The bound in `cat034_codec.FORMS` is the **width**, not the printed figure — `cat048_codec`'s `cartesian` disposition applied unchanged. Preferring the printed figure would make `snap("rho", 256.0)` return a value with no representable raw, and a bound the encoder cannot honour is not a bound |
+| 12 | **§4.4 forbids relying on a spare bit's setting and eleven bit-diagrams legend theirs "set to zero".** §4.4: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits. However … it is recommended to set all spare bits to zero." §5.2.6's and §5.2.7's subfield diagrams then print "Spare bit set to zero" and "Spare bits set to 0" against every spare | **§4.4 governs, because it is the one that binds a DECODER** — the diagrams describe what a conforming encoder does and §4.4 describes what a decoder may assume, and those are different obligations. Every spare bit is read and re-emitted verbatim, and `spare_bits_nonzero` is the fixture that makes the difference observable. A reader who took the diagrams as normative would write a decoder §4.4 forbids |
+| 11 | **Table 3's own legend explains one of its three length notations.** It defines `1+` ("a first part of 1 octet followed by n-octets extents as necessary") and leaves `(1+2*N)` for `I034/070` and `1+1+` for the RE and SP fields unexplained | `(1+2*N)` is recovered from §5.2.8's own Format sentence and costs nothing. `1+1+` is the one that bites, because **no §5.2 section describes either field** and ASTERIX Part 1, which does, is not pinned here. The convention used is the shipped sibling's — a one-octet length counting itself — and it is named at its site rather than qualified in the status column, because the contents are never decoded either way and the exposure is a length rather than a meaning. The exact shape of CAT048's ambiguity 7, reached in a category with one fewer place to look |
 
 **The page count needed a method change, and the method was validated before it was preferred.**
 `klv_pin.json` records the page-count method as "occurrences of `/Type /Page` across raw objects and
@@ -8697,56 +8877,80 @@ later method would erase the fact that the method changed.
 
 | Out of scope | Why |
 |---|---|
-| **Edition 1.30** | Not in hand. It is the current edition and CAT048's own reference list names it. A public download nobody has performed — the weakest park in this repository, and the pin section states what it is known to contain |
+| **Edition 1.30** | Not in hand, and **not offered**: EUROCONTROL's Category 034 publication page was checked on 2026-08-24 and its newest file is Edition 1.29, the pin. Two sibling specifications cite the edition — CAT048 Edition 1.32 §2.2 reference 5 and CAT007 Edition 1.12 §2.2 — so it exists and is unpublished, which is a different state from a park. The pin section states what it is known to contain, as an inference |
 | **ASTERIX Category 002** | The predecessor the publication filename names. No copy retrieved, no clause in any document in hand describes it, and nothing about this row set depends on it |
 | **The Reserved Expansion Field's contents** | This document defines none of it and lists no appendix that does. Parked whole, restored unchanged — CAT048 settlement 1's disposition with a stronger procedural reason |
-| **Deriving a `Geometry` from `I034/100`** | Needs the station's position *and* a geodetic computation neither document states. Phase 2 rules whether same-block `I034/120` use is a derivation or a state merge; Phase 1 does not, because it is adapter behaviour |
+| **Deriving a `Geometry` from `I034/100`** | **Ruled out, permanently, by settlement 7.** Table 2 makes `I034/100` and `I034/120` mutually exclusive across all seven message types, so a conformant record carrying a polar window carries no station position — the derivation Phase 1 left open cannot arise. `Event.geometry` is `None` on every object this adapter emits |
 | **Handing `I034/120` to adapter #11** | Settlement 2. Cross-payload state, which is the fusion refusal, stated for the eighth time in settlement 6 |
 | **Antenna-rotation staleness** | `Entity.valid_to` stays `None`. Deriving an expiry from `I034/041` for objects this adapter did not emit is the same refusal |
 | **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048` and now `cat034` are three of them, and each reads only its own CAT octet |
 
-### The fixtures — planned here, before they exist
+### What Phase 2 changed in the Phase 1 row set
 
-**Everything will be synthetic.** No recorded ASTERIX traffic, no real radar station. Every block
-built from field values by `fixtures/cat034/spec/build_fixtures.py`, which will carry the arithmetic
-in comments — a data block is raw octets and cannot carry one, and its `LEN` and FSPEC are functions
-of its contents, so a hand-edited byte file is a mis-parse waiting to happen. The generator will
-carry a `check_layouts()` that asserts every encoder emits exactly the octet count §5.2 states for
-its item, run from the suite so it cannot be skipped — the CAT048 pattern.
+The standing rule is that where the code and a row disagree the row wins, or the row changes in the
+same commit. Four rows changed and each is listed here as well as at its site, because a change
+recorded only where it happened is a change the next reader has to find.
+
+| What changed | Why |
+|---|---|
+| **`sector_crossing_with_rotation` is also a Table 2 `X` case, and the row now says so** | Phase 1 wrote the fixture as "Type 002 with `I034/020` and `I034/041`" and Table 2 makes `I034/041` **X** for a Sector Crossing. The fixture is built as planned — its stated purpose, the two LSBs and the sector number not reaching `Kinematics.course_deg`, is unaffected — and it turns out to exercise settlement 8's parked-`X` disposition as well. Recorded rather than quietly repaired, because a fixture doing something its row does not claim is how a test stops being read |
+| **`station_position_three_dimensional` keeps the negative height and loses the negative longitude** | Phase 1 asked for both. A negative longitude is not Baltic-plausible and the fixture convention two tables up pins every station to the Gulf of Riga, so honouring the row literally meant moving one synthetic station to the Atlantic to exercise a sign bit. Instead: the negative **height** stays and goes end to end (it is a legal WGS-84 ellipsoidal height); the negative-longitude **bit pattern** is asserted directly against the codec, where two's complement actually lives and where the exact octets can be checked; and a negative two's-complement value still reaches the CDM through `I034/090`, whose range and azimuth errors are signed and ordinary |
+| **`midnight_rollover_nearest` rolls one way under the harness clock and the other under an injected one** | The row said "in both directions, against an injected clock". Only the backward roll is reachable from `times.FROZEN_NOW` — 06:15 — so that is the one the fixture carries, deliberately, because `packages/cdm/synapse_cdm/README.md` records that CAT048's two rollover fixtures passed every check while testing no rollover at all. The forward roll is asserted in the test module against a late-evening clock the test injects itself |
+| **`message_type_008` is a translatable fixture, not a refusal** | Phase 1 listed it under a **Refusals** sub-heading and its own cell said "*not* refused". The cell was right and the heading was wrong, and the two totals in the prose were computed from the heading. Ambiguity 6 in the register above is EUROCONTROL's own version of this defect, one edition apart, and it is the reason the stale-count sweep is not a formality |
+| **`spare_bits_nonzero` is a seventeenth fixture the plan did not have, and a MUTATION is what asked for it** | Zeroing `I034/050`'s COM spare bit inside the decoder **passed every test and every other fixture**, because every fixture in the plan has its spare bits at zero and a dropped zero re-encodes as a zero. §4.4 is normative about exactly this — "Decoders of ASTERIX data shall **never assume and rely on** specific settings of spare or unused bits" — so a set that cannot tell a read spare bit from an assumed one is not testing the round trip §4.4 requires. Every reachable spare bit is set in the new fixture. **So the set is seventeen translatable and three refusals, twenty in all** — Phase 1's prose said twenty and four, its table had nineteen rows and three, and the number it arrived at by miscounting is the number the set arrived at by needing one more |
+
+### The fixtures — twenty of them, built by a generator
+
+**Everything is synthetic.** No recorded ASTERIX traffic, no real radar station. Every block is
+built from field values by `fixtures/cat034/spec/build_fixtures.py`, which carries the arithmetic in
+comments — a data block is raw octets and cannot carry one, and its `LEN` and FSPEC are functions of
+its contents, so a hand-edited byte file is a mis-parse waiting to happen. The generator carries a
+`check_layouts()` that asserts every encoder emits exactly the octet count §5.2 and Table 3 state
+for its item, and `tests/test_cdm_asterix_cat034_adapter.py` calls it, so it cannot be skipped by
+not running the generator — the CAT048 pattern.
 
 **Each fixture ships twice**: `<name>.cat034` for the octets and `<name>.parsed.json` for exactly
 what the parser produces, because `lossless.unrepresented()` has no leaf structure to harvest from
-bytes and a blocks-only set would show a green run with the never-drop rule never executed.
+bytes and a blocks-only set would show a green run with the never-drop rule never executed. So the
+harness replays **34 fixtures** for 17 payloads, and the three refusals live in `refusals/` with no
+golden file, because the refusal is the expected output.
+
+**Seventeen twins, 34 files, 34 goldens.** Harness result: **34 passed, 0 failed** — `lossless`
+PASS on every `.parsed.json` half with `TRANSFORMS` empty and SKIP on every `.cat034` half (a bytes
+fixture has no leaves), and `roundtrip` SKIP on both halves because `from_cdm()` returns binary and
+the harness compares structures. The round trip is asserted instead in
+`tests/test_cdm_asterix_cat034_adapter.py`, byte for byte, on all seventeen.
 
 | Identifier | Fixture convention | How strong the claim is |
 |---|---|---|
 | **SAC / SIC** (`I034/010`) | `SAC = 0x29`, `SIC = 0x29` | **Pinned, by citation.** `fixtures/cat021/spec/sac_pin.json` holds the retrieved EUROCONTROL allocation tables, in which `0x29` is listed with an explicitly empty country cell in the EUR table and nowhere else — the page *positively showing* an unallocated code. Same item, same URL, same pinned copy: the evidence transfers without a second retrieval. `SIC` carries no allocation claim, for the reason the CAT021 row gives |
-| **UUIDs** | the `f1c7…-8…` version-8 convention, where one is needed | CAT034's wire form contains **no UUIDs**: its identifiers are a SAC/SIC pair and nothing else. The UUIDs in the golden files will be `entity_id` and `event_id`, which are **derived** uuid5 values and not free to choose — so the convention binds nothing in this set, stated rather than left looking like an omission |
-| **Station positions** | Gulf of Riga, west of Saaremaa, Ventspils | Baltic-plausible, matching the other five sets, and no real radar head |
+| **UUIDs** | the `f1c7…-8…` version-8 convention, where one is needed | CAT034's wire form contains **no UUIDs**: its identifiers are a SAC/SIC pair and nothing else. The UUIDs in the golden files are `entity_id` and `event_id`, which are **derived** uuid5 values and not free to choose — so the convention binds nothing in this set, stated rather than left looking like an omission |
+| **Station positions** | Gulf of Riga, off Ventspils | Baltic-plausible, matching the other five sets, and no real radar head |
 | **Times** | from the **injected clock**, never the wall clock | Settlement 4. A fixture whose expected output depends on when the suite runs is not a fixture |
 
-| Planned fixture | What it exercises | The defect it is there to catch |
+| Fixture | What it exercises | The defect it is there to catch |
 |---|---|---|
-| `north_marker_minimal` | Message Type 001 with only the M items: `I034/010`, `I034/000`, `I034/030` | The shortest legal record. A one-octet FSPEC, and a parser that assumes FRN order equals item-number order |
-| `sector_crossing_with_rotation` | Type 002 with `I034/020` and `I034/041` | Sector at LSB 360°/2⁸ and rotation period at LSB 1/128 s, and that the sector number does **not** reach `Kinematics.course_deg` |
-| `station_position_three_dimensional` | Type 001 with `I034/120` | `Position` at 180/2²³ degrees and 1 m; `accuracy_m` `None` with the quantisation parked; a **negative** height and a **negative** longitude, both two's complement |
-| `system_status_all_four_subfields` | `I034/050` with COM, PSR, SSR and MDS all present | The compound primary subfield with FX, and that `CH-A/B` = `11` parks three different wordings under three keys rather than one |
-| `processing_mode_reduction_steps` | `I034/060` with every reduction field non-zero | That configuration and processing mode are two items and never merge |
-| `message_counts_twenty_one_types` | `I034/070` with one counter of every defined `TYP` | The `REP` loop, the 5/11 bit split, ordered parking with duplicates, and that the per-sector `TYP`s 17–20 carry a different window from the rest |
+| `north_marker_minimal` | Message Type 001 with only the M items: `I034/010`, `I034/000`, `I034/030` | The shortest legal record. A one-octet FSPEC, and a parser that assumes FRN order equals item-number order — Table 3 puts `I034/010` at FRN 1, `I034/000` at FRN 2 and `I034/030` at FRN 3, so the wire order is 010, 000, 030 |
+| `sector_crossing_with_rotation` | Type 002 with `I034/020` and `I034/041` | Sector at LSB 360°/2⁸ and rotation period at LSB 1/128 s, and that the sector number does **not** reach `Kinematics.course_deg`. **Also a Table 2 `X` case** — `I034/041` is X for this type — so it exercises settlement 8's parked-`X` disposition too |
+| `station_position_three_dimensional` | Type 001 with `I034/120` | `Position` at 180/2²³ degrees and 1 m; `accuracy_m` `None` with the quantisation parked; a **negative** height in two's complement |
+| `system_status_all_four_subfields` | `I034/050` with COM, PSR, SSR and MDS all present | The compound primary subfield, and that `CH-A/B` = `11` parks three different wordings under three keys rather than one |
+| `processing_mode_reduction_steps` | `I034/060` with every reduction field non-zero | That configuration and processing mode are two items and never merge — and that `I034/050`'s MDS subfield is two octets where `I034/060`'s is one, which is the one asymmetry a copied length rule would get wrong |
+| `message_counts_twenty_one_types` | `I034/070` with one counter of every defined `TYP`, plus a **duplicate** | The `REP` loop, the 5/11 bit split, ordered parking with duplicates preserved, and that the per-sector `TYP`s 17–20 carry a different window from the rest |
 | `jamming_strobe_is_not_gnss` | Type 004 with `I034/100` | Settlement 5: `ALERT`, `WARNING`, and `GNSS_INTERFERENCE` **never** set |
-| `geographical_filter_polar_window` | Type 003 with `I034/100` and `I034/110` | The polar window parked as four raw fields with **no** `Geometry`, and `I034/110` = 0 landing in `unresolved_raw` rather than reading as "no filter" |
-| `solar_storm_message` | Type 005, the item Edition 1.28 added | That an edition-specific type is translated and not refused |
-| `mode_s_jamming_strobe` | Type 007, the item Edition 1.29 added | The newest type in the pinned edition |
+| `geographical_filter_polar_window` | Type 003 with `I034/100` and `I034/110` | The polar window parked as four raw fields with **no** `Geometry` (settlement 7), and `I034/110` = 0 landing in `unresolved_raw` rather than reading as "no filter" |
+| `solar_storm_message` | Type 005, the type Edition 1.28 added | That an edition-specific type is translated and not refused |
+| `mode_s_jamming_strobe` | Type 007, the type Edition 1.29 added | **The edition marker.** 006 and 007 are the pinned edition's own additions, so an adapter written against Edition 1.28 would classify this record as an undefined type instead of as an `ALERT` |
 | `time_of_day_absent_where_optional` | Type 004 with no `I034/030` | The permitted absence lands in `unavailable_fields`, not in a filled-in time |
-| `midnight_rollover_nearest` | `I034/030` just before and just after 00:00:00 | Settlement 4's rollover, in both directions, against an injected clock |
-| `two_records_one_block` | Two records, different message types | `block.record_index` / `record_count`, and that egress re-assembles them in order |
-| `non_minimal_fspec` | A record whose FSPEC has a trailing all-zero octet | Byte-exact egress on a legal but non-conventional FSPEC |
+| `midnight_rollover_nearest` | Two records: `I034/030` just before and just after 00:00:00 | Settlement 4's rollover, **under the harness's own frozen clock** rather than only under one a test injects. At 06:15 the 23:59:59 record resolves to the previous day and the 00:00:01 record to the receipt date. The forward roll is unreachable from a 06:15 receipt time and is asserted in the test module against an injected late-evening clock |
+| `two_records_one_block` | Two records, different message types, one station | `block.record_index` / `record_count`, that egress re-assembles them in order, and that both records derive the **same** `entity_id` because the station is the object |
+| `non_minimal_fspec` | A record whose FSPEC has a trailing all-zero octet | Byte-exact egress on a legal but non-conventional FSPEC — the octets are re-emitted as parked, never recomputed |
 | `re_and_sp_carried` | FRN 13 and FRN 14 both present | Both parked octet-for-octet and restored unchanged, neither decoded |
-| **Refusals** | | |
-| `wrong_category` | A block whose CAT octet is 48 | Refused, not decoded against the wrong UAP — the failure CAT048's declines table names |
+| `message_type_008` | A record whose `I034/000` is 008 | **The Edition 1.30 tripwire.** Read, parked in `unresolved_raw`, classified `STATUS_CHANGE`/`ADVISORY` by settlement 8, and *not* refused — an undefined-in-this-edition type is not a malformed record. When Edition 1.30 lands this fixture changes from a park to a translation, which is the point of having written it now |
+| `spare_bits_nonzero` | `I034/050` and `I034/060` together, with **every reachable spare bit set to 1** | §4.4's normative sentence: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits." A decoder that reads a spare bit and an encoder that writes a zero produce a byte-exact round trip on every fixture whose spares are zero — which was all of them until this one. **Added by a mutation, not by the plan.** The three PRIMARY-subfield spare bits are deliberately absent: they are presence bits for subfields that do not exist, so a set one is a refusal rather than a spare |
+| **Refusals** — in `refusals/`, no golden file | | |
+| `wrong_category` | A block whose CAT octet is 48 | Refused, not decoded against the wrong UAP — the failure CAT048's declines table names, from the other side |
 | `length_disagrees_with_buffer` | `LEN` longer than the octets supplied | Refused with the two numbers quoted |
 | `missing_mandatory_data_source` | No `I034/010` | Refused: it is M in every column of Table 2 |
-| `message_type_008` | A record whose `I034/000` is 008 | **The Edition 1.30 tripwire.** Read, parked in `unresolved_raw`, and *not* refused — an undefined-in-this-edition type is not a malformed record. When Edition 1.30 lands this fixture changes from a park to a translation, which is the point of writing it now |
 
 ## GeoJSON (RFC 7946)
 
@@ -9875,6 +10079,17 @@ bytes and a blocks-only set would show a green run with the never-drop rule neve
    Settlement 3 resolves the *practical* problem by taking the site as a constructor argument, on
    the injected-clock precedent. It does not close this gap, and the residue is precise:
 
+   **AND ADAPTER #12 DOES NOT CLOSE IT EITHER, WHICH IS WORTH STATING BEFORE THE LIST.** ASTERIX
+   Category 034's `I034/120` puts a radar station's own WGS-84 position on the wire, at 1 m and
+   180/2²³ degrees, and `adapters/asterix_cat034.py` translates it into a `Position`. That is a
+   coordinate in a *CAT034* record. This gap is about what the **pinned CAT048 document** contains,
+   and what a different specification contains does not change that; handing the value across would
+   be cross-payload state, which is the fusion refusal. The shipped adapter writes
+   `attributes.position_basis.gap_24` on every such object saying exactly this, and
+   `tests/test_cdm_asterix_cat034_adapter.py::test_the_station_position_does_not_close_gap_24`
+   reads both that key and this paragraph, so the gap cannot quietly be treated as closed at either
+   end. CAT034 settlement 2 is the other half of the record.
+
    - **The CDM can only hold the converted product, never the measurement.** `Position` requires
      `lat` and `lon`, so a range and a bearing have to become a geodetic fix or park in
      `attributes`. There is no way to say "1 234 units of 1/256 NM on bearing 0x3F00 from sensor
@@ -10018,7 +10233,7 @@ bytes and a blocks-only set would show a green run with the never-drop rule neve
    |---|---|
    | **Reuse `GNSS_INTERFERENCE`** | Rejected, and it is the dangerous one. A consumer filtering on that value is looking for threats to positioning, and radar jamming would arrive in the same bucket — structurally valid, and wrong in the way that gets acted on. The same failure mode as clamping a range to zero |
    | **Reuse it and set `InterferenceType.UNKNOWN`** | Rejected. It narrows the wrong axis: the type of interference is exactly the thing the three message types *do* state, and what is unknown is nothing. It also leaves `frequency_band` to be filled with a band the document never gives |
-   | **`ALERT`, with the message type and the strobe geometry parked** | **Ruled**, and it is what the CAT034 row set specifies. `Event.severity` is `WARNING`; the strobe's polar window and the raw type value are parked; `GNSS_INTERFERENCE` is never set |
+   | **`ALERT`, with the message type and the strobe geometry parked** | **Ruled**, and it is what `adapters/asterix_cat034.py` now implements rather than what a row set specifies. `Event.severity` is `WARNING`; the strobe's polar window and the raw type value are parked; `GNSS_INTERFERENCE` is never set, on any of the seven message types, and `payload.severity_basis.gnss_interference_declined` says so in every object |
 
    *Not proposed as a field for 1.1.0, and the bar is the one the two live proposals were held to:*
    one format wanting a shape is a gap and two are a proposal. Only this format has raised it. What

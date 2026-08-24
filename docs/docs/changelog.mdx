@@ -332,6 +332,44 @@ is worth stating.
   result against the octets parked on ingest — so byte-exactness is a proven property of the
   decoder/encoder pair rather than a consequence of copying the input back out.
 
+- **`adapters/asterix_cat034.py` 1.0.0 — ASTERIX category 034 monoradar service messages,
+  bidirectional.** All 14 UAP FRNs and all 12 data items of EUROCONTROL-SPEC-0149-2b **Edition
+  1.29**, RE and SP included, at **schema_version 1.0.0**, with no field added, removed or
+  retyped.
+
+  **The first adapter whose primary object is the sensor itself.** Every record in Part 2b
+  describes the radar station rather than a target, and the two documents say so in one sentence
+  with the parenthesis moved: CAT048 §4.1 puts service messages outside itself, CAT034 §4.1 puts
+  target reports outside itself. So `Entity.entity_type` is `SENSOR` from the category rather than
+  read off any item, the SAC/SIC that `asterix_cat048.py` parks as a sensor identifier is a
+  `SourceId` here because the station *is* the object, and `Kinematics` is `None` on every object —
+  the one bearing the category carries is the antenna's, and writing a sector number into
+  `course_deg` would say the radar head is travelling on that heading.
+
+  **`I034/120` carries the station position `cat048` has to be handed, and it is handed to
+  nobody.** Reading it out of one category's record to resolve another's range and azimuth is
+  cross-payload state, so it becomes a `Position` on the CAT034 object that carries it and stops
+  there. The gap that records the missing CAT048 geodesy does not close, and every such object says
+  so in its own `attributes.position_basis` rather than in a comment.
+
+  **Table 2 decided two rulings that looked like preferences.** No `Geometry` is ever derived from
+  the Generic Polar Window, because the item and the station's own position are mutually exclusive
+  across all seven message types — the position could only ever come from a different record. And a
+  record whose message type this edition does not define is translated rather than refused, at
+  `STATUS_CHANGE` / `ADVISORY`: an undefined type is not a malformed record, and neither `INFO` nor
+  `WARNING` is a claim the record supports.
+
+  **A radar jamming strobe is not GNSS interference, and the CDM says so out loud.** Three of the
+  seven message types are jamming reports, the model's only interference vocabulary is paired with
+  a GNSS payload built for PNTMAP, and reusing it would put radar jamming in the field a consumer
+  filters on to find GNSS threats. They become `ALERT` at `WARNING` with the strobe geometry
+  parked, and a gap is opened rather than the payload model widened in passing.
+
+  **Byte-exact both ways**, on its own tested codec layer (`cat034_codec`) — the FSPEC derived from
+  Category 034's own Table 3, which numbers fourteen FRNs in two octets where Category 048's
+  numbers twenty-eight in four, so sharing the sibling's reader would have given this category the
+  wrong ceiling and a refusal message quoting the wrong count.
+
 - **`adapters/asterix_cat021.py` 1.0.0 — ASTERIX category 021 ADS-B target reports,
   bidirectional.** All 42 data items plus the RE and SP fields and the whole Reserved
   Expansion Field, at **schema_version 1.0.0**, with no field added, removed or retyped.

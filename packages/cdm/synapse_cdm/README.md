@@ -1,10 +1,11 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Nine integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Ten integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
-STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI, and
-ASTERIX category 048 monoradar target reports. Without a canonical model in the middle, nine
-adapters means thirty-six translations and nine private notions of "a contact". With one, an
+STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
+ASTERIX category 048 monoradar target reports, and ASTERIX category 034 monoradar service
+messages. Without a canonical model in the middle, ten
+adapters means forty-five translations and ten private notions of "a contact". With one, an
 adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -20,6 +21,7 @@ adapter is a thin translator and nothing else.
 | [`stanag4676`](adapters/stanag4676.py) 1.0.0 | bidirectional | STANAG 4676 / AEDP-12 **Edition B Version 2** NITS tracks — the full UML model, 48 classes and 273 attributes → an `Entity` + a `Track` per `TrackData` and an `Event` per detection, motion event, linkage and retraction; back to one STANDALONE `NITSRoot`. Six coordinate systems of which three cannot yield a position, a mandatory STANAG 4774 confidentiality label that is carried and never invented, and a format that models fusion without asking a translator to perform it. **The XML element binding is provisional** — the normative XSD is distributed through national representatives and is not pinned here |
 | [`gmti`](adapters/gmtif.py) 1.0.0 | bidirectional | STANAG 4607 / AEDP-4607 **Edition A Version 1** GMTI packets — the packet header, the segment header and all ten defined segments, 212 fields → one `Entity` + `Track` for the **platform** and an `Entity` + `DETECTION` `Event` **per target report**; back to one packet, **byte for byte**. The first non-text wire format: seven numeric encodings on their own tested codec layer ([`gmtif_codec`](adapters/gmtif_codec.py)), existence masks that govern every subsequent field offset, and a format whose targets are detections rather than tracks — so **no target `Track` is ever emitted**, because associating reports across dwells is what a GMTI tracker does and the standard's own guide sends the reader to the sensor vendor for the rule |
 | [`cat048`](adapters/asterix_cat048.py) 1.0.0 | bidirectional | ASTERIX category 048 monoradar target reports, EUROCONTROL SPEC-0149-4 **Edition 1.32** (all 28 UAP data items, SP and RE) → `Entity` + `Event` **per record**; Entities → one data block, **byte for byte**, on its own tested codec layer ([`cat048_codec`](adapters/cat048_codec.py)). The sensor-side complement of `cat021`, and the first adapter whose ordinary case is a `DETECTION` rather than a `TRACK_UPDATE` — a radar detects where AIS, ADS-B and CAT021 receive self-reports. **Position is derived only when the caller injects a `sensor_position`**: the format states slant range and azimuth from a station whose location it never carries, and the geodesy is not in the specification at all |
+| [`cat034`](adapters/asterix_cat034.py) 1.0.0 | bidirectional | ASTERIX category 034 monoradar service messages, EUROCONTROL SPEC-0149-2b **Edition 1.29** (all 14 UAP FRNs, all 12 data items, RE and SP) → `Entity` + `Event` **per record**; Entities → one data block, **byte for byte**, on its own tested codec layer ([`cat034_codec`](adapters/cat034_codec.py)). **The first adapter whose primary object is the sensor itself** — every record describes the radar station, so `entity_type` is `SENSOR`, the SAC/SIC that `cat048` parks as a sensor identifier is a `SourceId` here, and no object carries `Kinematics` because the one bearing the category states is the antenna's. Table 2's M/O/X matrix is the encoding rule for eleven of the twelve items, and it is what rules out ever deriving a `Geometry` from the Generic Polar Window: the window and the station's own position are mutually exclusive across all seven message types |
 
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
@@ -204,7 +206,7 @@ in that case, because the shape of a report is itself a claim that fixtures were
 **The fixture directory is not always the adapter's name.** `stanag4676` reads its fixtures from
 `fixtures/nits`, and `--fixtures packages/cdm/synapse_cdm/fixtures/stanag4676` is the invocation
 that used to pass vacuously. Each `fixtures/*/README.md` carries the correct command for its own
-adapter, and `tests/test_cdm_harness.py::test_the_nine_shipped_adapters_all_have_a_real_fixture_directory`
+adapter, and `tests/test_cdm_harness.py::test_the_ten_shipped_adapters_all_have_a_real_fixture_directory`
 pins the whole map so a new adapter cannot join the roster without one.
 
 ### Three things the harness cannot check for you
@@ -241,7 +243,7 @@ So audit the model separately, against something outside the implementation —
   against the document without running anything.
 
 **The roster sweep is a manual protocol act, and prose counts are what it is for.** When an
-adapter joins the shipped roster, six documents restate how many adapters there are and three of
+adapter joins the shipped roster, seven documents restate how many adapters there are and four of
 them do the pair arithmetic as well — and nothing in the harness reads prose. The sweep is:
 
 1. **`grep` every spelled-out number within 120 characters of the word "adapter"**, across
@@ -251,10 +253,11 @@ them do the pair arithmetic as well — and nothing in the harness reads prose. 
    adapters later. A site that is stale by more than one release does not contain the previous
    count word, so searching for it cannot find the sites that have drifted furthest.
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
-   documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for nine adapters is 72
-   against 36; neither was wrong on its own page and together they were a contradiction.
+   documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
+   the day was 72 against 36; neither was wrong on its own page and together they were a
+   contradiction. At ten it is 90 against 45.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that nine adapters cannot grow nine slightly
+   `docs/docs/cdm/entity.mdx` both carry "so that ten adapters cannot grow ten slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
@@ -266,7 +269,7 @@ them do the pair arithmetic as well — and nothing in the harness reads prose. 
 the two prose sentences in the same section that still described the row set as unimplemented.
 Anything that parses tables will report clean while the paragraphs around them contradict them.
 
-`tests/test_cdm_prose_counts.py` now pins the six sites the sweep has already had to fix, so a
+`tests/test_cdm_prose_counts.py` now pins the seven sites the sweep has already had to fix, so a
 half-edit at a KNOWN site fails a build. It is deliberately an allowlist and not a scanner — a
 general prose-number check would flag "two altitudes that are two different measurements" and
 need an exemption list larger than the sweep it replaced — so **finding a NEW site is still the
@@ -294,7 +297,7 @@ packages/cdm/
     adapter.py      the Adapter ABC, its class-definition-time gates, the registry
     schemas.py      JSON Schema export (+ --check for CI)
     harness.py      the adapter-agnostic validation harness
-    adapters/       one module per external system (pntmap, tak, ais, adsb)
+    adapters/       one module per external system (pntmap, tak, ais, adsb, …)
     fixtures/       synthetic payloads + golden outputs
 schemas/            published JSON Schema, generated — never hand-edited
 tests/test_cdm_*.py

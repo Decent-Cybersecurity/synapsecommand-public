@@ -1,0 +1,38 @@
+{
+  "block": {
+    "category": 34,
+    "length": 19,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "e140",
+      "index": 0,
+      "item_octets": {
+        "I034/000": "07",
+        "I034/010": "2929",
+        "I034/030": "2a3000",
+        "I034/100": "0000ffff0000ffff"
+      },
+      "items": {
+        "I034/000": {
+          "message_type": 7
+        },
+        "I034/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I034/030": {
+          "time_of_day_raw": 2764800
+        },
+        "I034/100": {
+          "rho_end_raw": 65535,
+          "rho_start_raw": 0,
+          "theta_end_raw": 65535,
+          "theta_start_raw": 0
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

@@ -2,10 +2,11 @@
 
 WHY THIS EXISTS
 ---------------
-Nine integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
-ADS-B 1090ES, Picogrid Legion, ASTERIX category 021, STANAG 4676 NITS, STANAG 4607 GMTI and
-ASTERIX category 048), with the other ASTERIX categories and the simulation feed landing next.
-Without a canonical model in the middle, nine adapters means thirty-six translations and nine
+Ten integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
+ADS-B 1090ES, Picogrid Legion, ASTERIX category 021, STANAG 4676 NITS, STANAG 4607 GMTI,
+ASTERIX category 048 and ASTERIX category 034), with the other ASTERIX categories and the
+simulation feed landing next.
+Without a canonical model in the middle, ten adapters means forty-five translations and ten
 private notions of "a contact", and the integration layer becomes the place where meaning is
 quietly lost. With one, an adapter is a thin translator and nothing else: external format in,
 CDM out.

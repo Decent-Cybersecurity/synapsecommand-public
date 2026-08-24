@@ -1,0 +1,34 @@
+{
+  "block": {
+    "category": 34,
+    "length": 16,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "c140",
+      "index": 0,
+      "item_octets": {
+        "I034/000": "04",
+        "I034/010": "2929",
+        "I034/100": "1e003c008e39aaab"
+      },
+      "items": {
+        "I034/000": {
+          "message_type": 4
+        },
+        "I034/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I034/100": {
+          "rho_end_raw": 15360,
+          "rho_start_raw": 7680,
+          "theta_end_raw": 43691,
+          "theta_start_raw": 36409
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

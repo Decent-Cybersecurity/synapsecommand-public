@@ -1,0 +1,132 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and here it is not even a decision. A monoradar service message states the station's configuration and status and never its allegiance, and this repository does not infer one from a SAC",
+      "cat034_block": {
+        "category": 34,
+        "length": 10,
+        "record_count": 1
+      },
+      "cat034_fspec": "e0",
+      "cat034_items": {
+        "I034/000": "08",
+        "I034/010": "2929",
+        "I034/030": "2a3000"
+      },
+      "data_source": {
+        "basis": "I034/010, 'Identification of the radar station from which the data are received' (\u00a75.2.2), M in every column of Table 2. A SourceId here and parked at attributes.data_source in asterix_cat048.py \u2014 the same two octets of the same standard, filed two different ways, and the difference is the whole reason both rows exist: there the SAC/SIC identifies the SENSOR and the object is a target, so filing a station under the object's identifiers is how a fused picture ends up with an entity per receiver; here the station IS the object and the pair is its own identifier",
+        "external_id": "2929",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": "SENSOR, from the category rather than from any item. Every record in Part 2b describes the radar station (\u00a74.1: 'radar service messages used to signal status information of the radar station to the user systems'), so there is nothing to read: the object's type is a property of the format",
+      "identity_basis": "uuid5 over (ASTERIX_SAC_SIC, '2929'). The system name is NOT this adapter's own: a SAC/SIC is allocated across the whole ASTERIX family from one list, so filing it under a category name would say that one station seen through Part 2b is a different station from the same pair seen through any other part. Stable across every record from the station, which is what entity_id promises \u2014 and a pure function of the pair rather than a join",
+      "integrity_basis": "CAT034 defines NO checksum at any level \u2014 neither \u00a74.6.2 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined FRN, every compound item's presence bits named a subfield that exists, no FX led nowhere, and the items Table 2 makes mandatory for this record's own message type were present. This is weaker than a CRC and the difference is named rather than smoothed over: a single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a station status",
+      "position_basis": {
+        "item": null,
+        "reason": "the record carries no I034/120. Table 2 makes it O for a North Marker message and X for every other type, so its absence is ordinary \u2014 and an absent Position is the honest statement, never a Position holding zeros, which is a real point in the Gulf of Guinea"
+      },
+      "source_extras": {
+        "items": {
+          "I034/000": {
+            "message_type": 8
+          },
+          "I034/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I034/030": {
+            "time_of_day_raw": 2764800
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT034 station is an UNKNOWN glyph. CAT034 carries no symbology of any kind",
+      "table_2_disposition": {
+        "basis": "Table 2 has no column for this message type, so no M/O/X rule applies to any item in this record beyond the two that are M in every column",
+        "column": null,
+        "items_present_where_the_table_says_X": null,
+        "message_type": 8
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {
+        "I034/000 Message Type": {
+          "raw": 8,
+          "reason": "Edition 1.29 standardises message types 001 to 007 (\u00a75.2.1 NOTE 3) and this record states 008. NOTE 2 says 'All Message Type values are reserved for common standard use', so this is NOT a private extension point \u2014 it is a value this edition does not define, and it lands here rather than in source_extras. The record is translated and not refused: an undefined type is not a malformed record"
+        }
+      }
+    },
+    "confidence": null,
+    "entity_id": "62650095-2e7e-522b-9e65-1a0aa64fc315",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat034",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT034"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ff251f5e-5f36-5a58-b93c-fb8c0c862a5e",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "message_type": {
+        "basis": "the raw value AND its name, parked, because the collapse onto event_type is 7 -> 2 and must stay recoverable \u2014 and because egress re-emits FROM HERE rather than re-deriving a type from an EventType that four types share",
+        "name": null,
+        "raw": 8
+      },
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "item": "I034/030",
+        "lsb_seconds": 0.0078125,
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "severity_basis": {
+        "basis": "STATUS_CHANGE/ADVISORY, and ADVISORY is a ruling rather than a default. The type is undefined in the pinned edition, so severity cannot be read off it: INFO would say the message is understood and ordinary, WARNING would invent an alarm out of an unknown, and both are claims this record does not support. ADVISORY is the CDM's own middle value and the only one that leaves the record VISIBLE to a consumer filtering on severity while claiming nothing about what it means. The type value is in attributes.unresolved_raw, which is where the reader has to go",
+        "edition_note": "Message types 006 and 007 are Edition 1.29's own addition \u2014 its change record reads 'Data Item I034/000: new message types 6&7' \u2014 so an adapter written against Edition 1.28 would classify both of them HERE instead of as ALERTs. That is what makes the pair an edition marker rather than two table entries",
+        "message_type": 8,
+        "name": null
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "62650095-2e7e-522b-9e65-1a0aa64fc315"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "ADVISORY",
+    "source": {
+      "adapter": "cat034",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT034"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ]
+  }
+]

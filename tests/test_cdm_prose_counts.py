@@ -2,7 +2,7 @@
 
 WHY THIS EXISTS, AND WHY IT IS AN ALLOWLIST AND NOT A SCANNER
 ------------------------------------------------------------
-Seven documents state how many adapters are shipped, and three of them do the pair arithmetic as
+Seven documents state how many adapters are shipped, and four of them do the pair arithmetic as
 well. Nothing failed a build when those numbers drifted, so they drifted: the roster sweep for
 adapter #11 found `README.md` stale by six adapters, `synapse_cdm/__init__.py` stale by four,
 two documents disagreeing about whether the translation count is `N×(N−1)` or `N(N−1)/2`, and
@@ -26,8 +26,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that nine adapters
-cannot grow nine slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that ten adapters
+cannot grow ten slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -195,28 +195,35 @@ SITES: tuple[Site, ...] = (
 def test_the_registry_is_the_authority_and_is_not_empty():
     """A count test that found no adapters would pass every comparison and prove nothing."""
     shipped = shipped_adapters()
-    assert len(shipped) >= 9, f"only {len(shipped)} shipped adapters found: {sorted(shipped)}"
+    assert len(shipped) >= 10, f"only {len(shipped)} shipped adapters found: {sorted(shipped)}"
     assert set(shipped) <= set(adapter.discover()), "scoping cannot invent an adapter"
     # And the scoping is load-bearing rather than defensive: the raw registry is
     # larger than this whenever a test module defining an Adapter has been imported.
     assert all(not name.startswith("_") for name in shipped), \
         f"a test double reached the shipped set: {sorted(shipped)}"
-    assert "cat048" in shipped, (
-        "cat048 is not registered, so the roster this module guards is not the one that shipped"
-    )
+    for name in ("cat048", "cat034"):
+        assert name in shipped, (
+            f"{name} is not registered, so the roster this module guards is not the one that "
+            "shipped"
+        )
 
 
 def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
     """The allowlist is the sweep's output, so it has to name each file the sweep touched.
 
     Six of the seven are files the adapter #11 roster sweep REPAIRED. The seventh,
-    `CONTRIBUTING.md`, was added by the CAT034 round's sweep and had never been wrong — which is
-    the more interesting way for a site to get here. That sweep went looking for a count that
-    would have to MOVE and correctly found none: adapter #12 is Phase 1, the convention these
-    sites state is SHIPPED adapters, and a Phase 1 ships nothing, so every "nine" in the tree is
-    still nine. What it found instead was a seventh file making the same claim as `README.md`, in
-    the first paragraph a contributor reads, guarded by nothing. A correct count with no gate on
+    `CONTRIBUTING.md`, was added by the CAT034 **Phase 1** round's sweep and had never been wrong —
+    which is the more interesting way for a site to get here. That sweep went looking for a count
+    that would have to MOVE and correctly found none: adapter #12 was at Phase 1, the convention
+    these sites state is SHIPPED adapters, and a Phase 1 ships nothing, so every "nine" in the tree
+    was still nine. What it found instead was a seventh file making the same claim as `README.md`,
+    in the first paragraph a contributor reads, guarded by nothing. A correct count with no gate on
     it is the state all six of the others were in before they drifted.
+
+    **And CAT034 Phase 2 is what paid for that.** The adapter shipped, the count moved nine to ten
+    at all eleven sites across these seven files, and `CONTRIBUTING.md` was one of them — a site
+    that would have gone stale silently on the very next round after it was added, which is what
+    adding a correct-but-unguarded site to an allowlist is for.
     """
     covered = {site.path for site in SITES}
     assert covered == {

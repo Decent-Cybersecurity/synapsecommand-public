@@ -3,13 +3,13 @@
 SynapseCommand's integration layer: the **Canonical Data Model**, its published JSON Schema,
 and the adapter SDK and validation harness that go with it. Apache 2.0.
 
-This is the contract layer, and it is public because that is what a contract is for. **Nine
+This is the contract layer, and it is public because that is what a contract is for. **Ten
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
-`adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti` and `cat048` — the last four
+`adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `cat048` and `cat034` — the last five
 byte-exact on the wire where the format is binary. More are landing next: the other ASTERIX
 categories (062 system tracks, 023 service status) and the simulation feed. Without a canonical
 model in the middle, N adapters means N(N−1)/2 translations and N private notions of "a
-contact" — thirty-six and nine as of today; with one, an adapter is a thin translator and
+contact" — forty-five and ten as of today; with one, an adapter is a thin translator and
 nothing else.
 
 ```
