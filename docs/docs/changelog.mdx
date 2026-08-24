@@ -12,8 +12,17 @@ no other way to know which shape it is holding, and "we will add versioning when
 means adding it at the moment two incompatible producers are already in the field.
 
 :::note Source of truth
-This page mirrors `packages/cdm/synapse_cdm/MIGRATIONS.md`, which is the file the procedure
-below tells you to edit. When they disagree, the file in the package wins — it sits next to the
+`packages/cdm/synapse_cdm/MIGRATIONS.md` is the source, and this page is a **curated summary** of
+it rather than a copy of it. It carries the schema history and the named field proposals, reworded
+and abridged for a reader of the published contract, and it leaves out what is repository-internal:
+the Phase 1 row sets that ship no adapter code, and the 1.1.0 items that are still design questions
+rather than named fields. It also adds what the file does not carry, such as the compatibility
+example below.
+
+What it never does is make a claim the file does not. Every adapter and every proposed field on this
+page is one that file names too, and `tests/test_cdm_changelog_claim.py` asserts exactly that
+direction. **The reverse is deliberately not asserted** — the file is allowed to run ahead of this
+page, and it does. When the two disagree, the file in the package wins: it sits next to the
 `version.py` it describes.
 :::
 

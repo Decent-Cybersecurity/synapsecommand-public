@@ -72,7 +72,7 @@ docs/
     index.mdx  entity.mdx  event.mdx  track.mdx  plan-object.mdx
   schema-reference/            GENERATED from /schemas
   writing-an-adapter.mdx       the tutorial, with the worked example
-  changelog.mdx                mirrors packages/cdm/synapse_cdm/MIGRATIONS.md
+  changelog.mdx                curated summary of packages/cdm/synapse_cdm/MIGRATIONS.md
 scripts/
   lib/schema-to-mdx.mjs        the generator; pure functions, nothing written here
   lib/paths.mjs                every path resolved from import.meta.url, not process.cwd()
