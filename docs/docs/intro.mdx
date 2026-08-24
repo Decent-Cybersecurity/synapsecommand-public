@@ -79,7 +79,7 @@ Structural, not conventional: [`Position`](./schema-reference/entity.mdx#positio
 `Position`. Coordinate zero is a real point in the Gulf of Guinea, and a contact painted there
 is a contact that does not exist.
 
-:::warning The mirror-image defect
+:::warning[The mirror-image defect]
 `0.0` **is** a real coordinate, so `if not lat` is as wrong as null-to-zero — it silently
 discards a real position on the Greenwich meridian or the equator. The test is for **absence**
 (`lat is None`), never for falsiness. Both directions have a fixture and a test.

@@ -275,7 +275,7 @@ export function renderSchemaPage({schema, source, sha256, title, slug, position}
     lines.push('## Fields', '', fieldTable(schema.properties, schema.required));
     if (schema.additionalProperties === false) {
       lines.push(
-        ':::info `additionalProperties: false`',
+        ':::info[`additionalProperties: false`]',
         'Unknown keys are **rejected**. That is safe only because the CDM pairs strictness',
         'with a declared escape hatch — `Entity.attributes` and `Event.payload` accept',
         'anything — so an adapter never has to choose between dropping a field and failing',

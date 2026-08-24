@@ -43,7 +43,7 @@ rejecting it would refuse legitimate multi-source data.
 | `track_id` | string (uuid) | **yes** |  |
 | `track_quality` | number \| null | no | 0..1. None = not assessed, never 0. Default `null`. (≥ 0; ≤ 1) |
 
-:::info `additionalProperties: false`
+:::info[`additionalProperties: false`]
 Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
 with a declared escape hatch — `Entity.attributes` and `Event.payload` accept
 anything — so an adapter never has to choose between dropping a field and failing

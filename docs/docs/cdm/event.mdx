@@ -52,7 +52,7 @@ That is different from an enum which *has* an `UNKNOWN` member — there, using 
 truth rather than guessing. `Severity` has no `UNKNOWN` member, so an unreadable severity has
 no honest translation and the payload is refused.
 
-:::note A format that carries no severity at all is a different case
+:::note[A format that carries no severity at all is a different case]
 Refusing applies to a field the source *has* and the adapter cannot read. Where a wire format
 has no concept of urgency — Cursor-on-Target has none — mapping to `INFO` is not a misread; it
 is the honest statement that the format carries no urgency. An adapter doing that says so in

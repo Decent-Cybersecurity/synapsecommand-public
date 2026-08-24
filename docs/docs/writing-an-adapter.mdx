@@ -55,7 +55,7 @@ that changes every second.
 
 ## 1. Declare the class
 
-:::tip The sketch below is now a finished adapter
+:::tip[The sketch below is now a finished adapter]
 `adapters/tak.py` ships as adapter #2 and `adapters/ais.py` as #3, so the class outlined here
 exists for real, twice. Read `pntmap.py` first — every rule appears in it at least once — then
 `tak.py`, which is where the awkward cases live: XML rather than JSON, a bidirectional
@@ -160,7 +160,7 @@ python -m synapse_cdm.harness --adapter tak \
     --fixtures packages/cdm/synapse_cdm/fixtures/tak --update-golden
 ```
 
-:::danger `--update-golden` is how a defect becomes the expectation
+:::danger[`--update-golden` is how a defect becomes the expectation]
 Review the diff before committing it. Both defects found while building the reference adapter
 were caught by **reading a golden file**, not by a failing test.
 :::

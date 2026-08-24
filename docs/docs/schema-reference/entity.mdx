@@ -41,7 +41,7 @@ Anything that exists on the map, at a stated time, with stated confidence.
 | `valid_from` | string | **yes** | When this state began. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 | `valid_to` | string \| null | no | When it ceased. None = still current / open-ended. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
 
-:::info `additionalProperties: false`
+:::info[`additionalProperties: false`]
 Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
 with a declared escape hatch — `Entity.attributes` and `Event.payload` accept
 anything — so an adapter never has to choose between dropping a field and failing

@@ -39,7 +39,7 @@ Anything that happens. The audit-bearing object: two timestamps and a source, al
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 
-:::info `additionalProperties: false`
+:::info[`additionalProperties: false`]
 Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
 with a declared escape hatch — `Entity.attributes` and `Event.payload` accept
 anything — so an adapter never has to choose between dropping a field and failing

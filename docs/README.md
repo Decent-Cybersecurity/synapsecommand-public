@@ -7,7 +7,7 @@ cd docs
 npm install
 npm start            # dev server; regenerates the schema reference first
 npm run build        # production build into docs/build
-npm run ci           # what CI runs: check:schemas && typecheck && build
+npm run ci           # what CI runs: check:schemas && typecheck && build && check:admonitions
 ```
 
 ## What is generated and what is written
@@ -48,6 +48,24 @@ packages/cdm/synapse_cdm/models.py            the single source
        └─ npm run check:schemas                →  docs/docs/schema-reference/**
 ```
 
+### The render gate
+
+```bash
+npm run check:admonitions        # after npm run build — it reads build/
+```
+
+Fails if a `:::` directive reached a rendered page as literal text, or if a directive rendered as
+nothing at all. It exists because every admonition on this site was broken and no gate noticed:
+`future.v4: true` disables the MDX-v1 compatibility shim that rewrote `:::note Title` into the
+`:::note[Title]` form `remark-directive` requires, so all twelve directives across eleven pages
+emitted as paragraphs — and `docusaurus build` exits 0, because a directive it cannot parse is
+not an error.
+
+It reads the **built output** rather than the sources on purpose: a source-side lint would have
+to re-implement the parser's opinion about what a valid directive is, and being wrong about that
+was the defect. `<pre>` blocks are stripped before the scan, so a page that documents directive
+syntax in a code block does not trip it.
+
 ## Cloudflare Pages
 
 | Setting | Value |
@@ -78,6 +96,7 @@ scripts/
   lib/paths.mjs                every path resolved from import.meta.url, not process.cwd()
   generate-schema-docs.mjs     writes the generated tree
   check-schema-docs.mjs        the drift gate
+  check-built-admonitions.mjs  the render gate; reads build/, so it runs AFTER the build
 src/
   components/WorkedExample/    the side-by-side fixture -> golden view
   data/worked-example.json     GENERATED

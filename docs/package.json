@@ -5,11 +5,12 @@
   "scripts": {
     "gen:schemas": "node scripts/generate-schema-docs.mjs",
     "check:schemas": "node scripts/check-schema-docs.mjs",
+    "check:admonitions": "node scripts/check-built-admonitions.mjs",
     "prestart": "npm run gen:schemas",
     "start": "docusaurus start",
     "prebuild": "npm run gen:schemas",
     "build": "docusaurus build",
-    "ci": "npm run check:schemas && npm run typecheck && npm run build",
+    "ci": "npm run check:schemas && npm run typecheck && npm run build && npm run check:admonitions",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",
     "typecheck": "tsc",

@@ -68,7 +68,7 @@ An adapter using that table **must** park the original letter in `attributes`. T
 recoverable only if the source value survives — and that is enforced by the lossless check
 rather than trusted.
 
-:::info `UNKNOWN` is a member, never a null
+:::info[`UNKNOWN` is a member, never a null]
 Every enum in the CDM carries `UNKNOWN` as a *member*. "We do not know the affiliation" is a
 fact worth recording and worth rendering on a map; a null would be indistinguishable from a
 field the adapter forgot to fill.

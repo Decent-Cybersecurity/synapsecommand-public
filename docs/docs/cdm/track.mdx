@@ -49,7 +49,7 @@ STANAG 4676 carries track quality as an integer `0–15`. The conversion to the 
 a gap in meaning. An adapter must declare it in `TRANSFORMS` or the lossless check will
 (correctly) flag it.
 
-:::danger The trap in this field
+:::danger[The trap in this field]
 4676 quality **0 means "worst"**, not "unknown". CDM `null` means unknown. So a *missing* 4676
 quality must become `null`, and a 4676 quality of `0` must become `0.0` — two source states that
 look similar and translate to genuinely different CDM values. Collapsing them either invents an

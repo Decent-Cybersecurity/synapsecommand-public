@@ -42,7 +42,7 @@ outcomes, because everyone assumes it arrived.
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `style` | object | no | Rendering HINTS, not requirements — stroke, fill, opacity, dash. A receiving client is free to ignore them, so nothing that changes MEANING may live here (an affiliation belongs on the entity, not in a colour). |
 
-:::info `additionalProperties: false`
+:::info[`additionalProperties: false`]
 Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
 with a declared escape hatch — `Entity.attributes` and `Event.payload` accept
 anything — so an adapter never has to choose between dropping a field and failing
