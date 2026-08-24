@@ -2544,6 +2544,36 @@ def test_no_text_points_at_the_old_nits_spec_directory():
     )
 
 
+def _nato_pin_path(family: str, filename: str) -> pathlib.Path:
+    """Where a pinned NATO document lives, in ONE place rather than at each caller.
+
+    A function rather than an expression inline, because the expression is the thing that was
+    wrong: written out at its only call site it read correctly and resolved to
+    `fixtures/klv/gmti/spec/…`, and nothing compared it against the directory the pin record
+    names. Named and called, it is something a test can assert about without the PDF being here.
+    """
+    return FIXTURES / family / "spec" / filename
+
+
+def _the_copy_matches_the_pin(raw: bytes, filename: str, digest: str, size: int,
+                              label: str) -> None:
+    """Byte count then hash, in one place so a synthetic-bytes companion can exercise the REAL one.
+
+    Extracted for that reason alone: the six real comparisons run only where somebody holds six
+    untracked PDFs, so a copy of this arithmetic in a companion would prove the copy works. The
+    companion calls this.
+    """
+    assert len(raw) == size, (
+        f"{filename} is {len(raw)} bytes, and the pin for {label} says {size}. Either the pin is "
+        "stale or this is a different copy of the same edition — which is exactly the difference "
+        "an edition number cannot express and a hash can"
+    )
+    assert hashlib.sha256(raw).hexdigest() == digest, (
+        f"{filename} does not hash to the pin recorded for {label}. Every citation in the row set "
+        "is a claim about the copy that was read, and this is not it"
+    )
+
+
 @pytest.mark.parametrize("family,filename,digest,size,pages,label",
                          NATO_PINS, ids=lambda q: q if isinstance(q, str) else "")
 def test_the_pinned_nato_copy_matches_its_record_when_the_file_is_present(
@@ -2554,21 +2584,83 @@ def test_the_pinned_nato_copy_matches_its_record_when_the_file_is_present(
     are untracked and a fresh clone has none of them. A skip is honest here in a way it would not
     be for a prose check: this test makes no claim it cannot check, and the skip message names the
     file so that a reader who does hold the document knows what to drop in to make it run.
+
+    THE SKIP WAS DISHONEST FOR THE WHOLE OF ITS LIFE ANYWAY, and not because of anything above.
+    A second module-level `FIXTURES` three hundred lines down (now `KLV_FIXTURES`, see the comment
+    there) meant this body resolved `fixtures/klv/gmti/spec/…`, so the guard was permanently true:
+    six skips reporting six absent documents while all six sat in `spec/` matching their pins to
+    the byte. The two companions below are what a permanently-true guard has to fail against —
+    `_nato_pin_path` is asserted to point where the pin record says, and the comparison itself is
+    exercised on synthetic bytes so it cannot be dead code in a tree that holds no PDFs.
     """
-    path = FIXTURES / family / "spec" / filename
+    path = _nato_pin_path(family, filename)
     if not path.exists():
         pytest.skip(f"{path.relative_to(FIXTURES.parent)} is untracked and not present; "
                     f"drop the document in to verify {label} against its pin")
-    raw = path.read_bytes()
-    assert len(raw) == size, (
-        f"{filename} is {len(raw)} bytes, and the pin for {label} says {size}. Either the pin is "
-        "stale or this is a different copy of the same edition — which is exactly the difference "
-        "an edition number cannot express and a hash can"
+    _the_copy_matches_the_pin(path.read_bytes(), filename, digest, size, label)
+
+
+@pytest.mark.parametrize("family,filename,digest,size,pages,label",
+                         NATO_PINS, ids=lambda q: q if isinstance(q, str) else "")
+def test_the_pin_locator_finds_every_pinned_document_that_is_in_this_tree(
+        family, filename, digest, size, pages, label):
+    """The guard above may be true of a fresh clone; it may not be true of nothing.
+
+    A test that skips itself reports the same thing whether the document is absent or the code is
+    looking in the wrong place, and this repository ran for several rounds in the second state.
+    So the locator is checked independently of whether any PDF is here:
+
+    * the directory it names EXISTS — `fixtures/<family>/spec/` is tracked (each holds a
+      `build_fixtures.py`), so this holds in a fresh clone and fails the moment the locator is
+      re-pointed at a directory that is not the one the pin record names;
+    * and the locator agrees with `spec/`'s own listing about whether this document is here.
+      `.exists()` on a wrong path is False; so is `.exists()` on a right path for an absent
+      document; the difference is invisible from inside the guard and visible from here.
+
+    Which makes this the check a permanently-true skip condition fails against. That is the
+    property the skip needed and did not have.
+    """
+    spec = FIXTURES / family / "spec"
+    assert spec.is_dir(), (
+        f"the pin locator points at {spec}, which is not a directory. The pin record for {label} "
+        f"names `fixtures/{family}/spec/{filename}`, and a locator aimed anywhere else makes "
+        "every one of these tests skip forever while reporting an absent document"
     )
-    assert hashlib.sha256(raw).hexdigest() == digest, (
-        f"{filename} does not hash to the pin recorded for {label}. Every citation in the row set "
-        "is a claim about the copy that was read, and this is not it"
+    on_disk = filename in {q.name for q in spec.iterdir() if q.is_file()}
+    assert _nato_pin_path(family, filename).exists() == on_disk, (
+        f"`spec/` {'holds' if on_disk else 'does not hold'} {filename} and the locator disagrees. "
+        f"The locator resolves to {_nato_pin_path(family, filename)}; the pin record for {label} "
+        f"names `fixtures/{family}/spec/{filename}`"
     )
+
+
+def test_the_pin_comparison_bites_on_synthetic_bytes():
+    """The checking machinery, exercised where no pinned PDF has to be present at all.
+
+    The six comparisons above run only in a tree whose owner holds six untracked NATO documents.
+    There is no CI here that holds them, so on the evidence of the suite alone that arithmetic
+    could be gutted and nothing would say so — the same "passing check on nothing" this file
+    guards against everywhere else, one level up. This calls `_the_copy_matches_the_pin` itself,
+    with bytes it makes up, and requires it to refuse two wrong records.
+
+    The wrong-digest case keeps the RIGHT length, deliberately. Corrupting the bytes would trip
+    the byte-count assertion first and the hash comparison would never run — which is how a
+    companion for two assertions ends up covering one.
+    """
+    raw = b"%PDF-1.4 not a NATO document, and pinned as itself\n"
+    digest = hashlib.sha256(raw).hexdigest()
+
+    _the_copy_matches_the_pin(raw, "synthetic.pdf", digest, len(raw), "a synthetic stand-in")
+
+    with pytest.raises(AssertionError, match="says"):
+        _the_copy_matches_the_pin(raw, "synthetic.pdf", digest, len(raw) + 1,
+                                  "a synthetic stand-in with a stale byte count")
+
+    other = bytes(raw[:-1]) + b"!"
+    assert len(other) == len(raw), "the digest case has to differ in content and not in length"
+    with pytest.raises(AssertionError, match="does not hash to the pin"):
+        _the_copy_matches_the_pin(other, "synthetic.pdf", digest, len(raw),
+                                  "a synthetic stand-in that is a different copy")
 
 
 def test_the_annex_l_reopen_condition_records_the_date_it_was_checked():
@@ -2760,9 +2852,18 @@ def test_the_pin_re_verification_filed_its_findings_in_the_ambiguity_registers(h
 
 KLV_HEADING = "## STANAG 4609 / MISP-2019.1"
 
-FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" / "klv"
-KLV_PIN = FIXTURES / "spec" / "klv_pin.json"
-KLV_README = FIXTURES / "README.md"
+#: PREFIXED, and the prefix is a repair rather than a style choice. This was a second
+#: module-level `FIXTURES`, three hundred lines below the one the NATO pin tests read — and the
+#: later binding is the one every test BODY sees, because the rebinding happens at import and the
+#: bodies run afterwards. So `test_the_pinned_nato_copy_matches_its_record_when_the_file_is_present`
+#: was looking for `fixtures/klv/gmti/spec/nato-stanag-4607-edition-4.pdf`, a path that cannot
+#: exist, and skipped itself six times over — reporting "untracked and not present" about six
+#: documents that were sitting on disk and matching their pins exactly. A skip that cannot stop
+#: skipping is the one kind of skip nothing notices, which is why the two companions above it
+#: exist now. `FFT_FIXTURES` below already had this shape; this matches it.
+KLV_FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" / "klv"
+KLV_PIN = KLV_FIXTURES / "spec" / "klv_pin.json"
+KLV_README = KLV_FIXTURES / "README.md"
 
 #: Both pinned documents: filename, SHA-256, byte count, page count. Every one of the four values
 #: is asserted at every site, and the byte counts are asserted in BOTH spellings — the digit form
@@ -2923,7 +3024,7 @@ def test_the_pin_records_that_neither_pdf_is_committed_and_none_is():
     # And the two files really are present in the working tree, because a pin nobody can
     # re-verify is a recollection — which is what the pin's own preamble says it is not.
     for filename, _digest, _size, _pages in KLV_PINNED_DOCUMENTS:
-        path = FIXTURES / "spec" / filename
+        path = KLV_FIXTURES / "spec" / filename
         if path.exists():                      # a fresh clone will not have them
             assert path.stat().st_size == _size, f"{filename} at the pinned path is the wrong size"
             got = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -3281,14 +3382,14 @@ def test_the_klv_fixture_directory_holds_no_fixtures_and_says_why():
     them, so the README has to name the blocker — and the directory is checked as well, because a
     stray `.klv` would mean somebody guessed at bytes SMPTE ST 336 defines.
     """
-    payloads = [p.name for p in FIXTURES.iterdir()
+    payloads = [p.name for p in KLV_FIXTURES.iterdir()
                 if p.is_file() and p.name not in {"README.md"} and not p.name.startswith(".")]
     assert payloads == [], (
         f"fixtures/klv holds payloads: {payloads}. Phase 1 has no adapter to replay them through, "
         "and a .klv written before park 8 closes is a guess at an encoding this repository has "
         "not read — see the README's own explanation"
     )
-    assert (FIXTURES / "spec").is_dir(), "fixtures/klv/spec is where the pin lives"
+    assert (KLV_FIXTURES / "spec").is_dir(), "fixtures/klv/spec is where the pin lives"
     readme = KLV_README.read_text()
     assert "There are none yet" in readme, (
         "the README's first job is to say that the absence is the state and not an oversight"
