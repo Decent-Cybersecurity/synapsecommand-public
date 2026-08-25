@@ -70,7 +70,9 @@ consumer that has not been redeployed in the same hour.
    `npm run check:schemas` gates in the same way.
 4. **Add an entry below, naming the reason** — not just the change.
 5. **Re-run every adapter's golden files and read the diffs:**
-   `python -m synapse_cdm.harness --adapter <name> --fixtures <dir> --update-golden`.
+   `python -m synapse_cdm.harness --adapter <name> --update-golden`, once per shipped adapter.
+   No `--fixtures`: a shipped adapter declares its own directory and the harness resolves it
+   through `importlib.resources`, so the command is the same from a clone and from an install.
    A golden file updated without being read is how a defect becomes the expectation.
 6. **If a documented gap in `FORMAT_COVERAGE.md` is now closed, close it there too.**
    `tests/test_cdm_format_coverage.py::test_the_documented_gaps_are_still_gaps` fails

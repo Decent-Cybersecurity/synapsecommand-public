@@ -181,10 +181,17 @@ test**, because the harness cannot compare a structure it cannot parse.
 ## The harness
 
 ```
-python -m synapse_cdm.harness --adapter <name|module:Class> --fixtures <dir> [--json]
+python -m synapse_cdm.harness --adapter <name|module:Class> [--fixtures <dir>] [--json]
                               [--schemas schemas] [--now <RFC3339>] [--update-golden]
                               [--synthetic true|false]
 ```
+
+`--fixtures` is **optional for an adapter the package ships** and required for one given as
+`module:ClassName`. Omitted, the harness asks the import system where the package's own fixtures
+are and replays those — so `--adapter pntmap` is the whole command whether you have a clone or
+only a `pip install`. For your adapter, which lives outside the package, the harness will not
+guess at a directory it cannot know: it refuses with exit code `2` rather than reaching for
+`fixtures/<your name>`, which would either miss or, worse, hit ours.
 
 Six checks per fixture, and **an unrun check reports `SKIP`, never `PASS`** — a capability
 nobody tested must not acquire a green tick.

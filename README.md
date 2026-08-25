@@ -42,14 +42,18 @@ You do not need this repository to use the CDM. The distribution is `synapse-cdm
 harness and **every fixture the ten shipped adapters are verified against** — which is what makes
 conformance something you can prove rather than take on trust.
 
-**Install.** It is **not on PyPI yet** — the name is registered to nobody and the metadata is
-ready, but publishing needs a human with credentials, and the checklist for that is
-[`PUBLICATION.md`](PUBLICATION.md). Until then, install the built artefact:
+**Install.** From PyPI, and nothing else is needed:
 
 ```bash
-python -m build packages/cdm                          # writes packages/cdm/dist/
-pip install packages/cdm/dist/synapse_cdm-1.0.0-py3-none-any.whl
+pip install synapse-cdm
 ```
+
+`synapse-cdm` **1.0.0** was published on 2026-08-25 and the upload is recorded, measured and
+closed as ledger entry 5 of [`PUBLICATION.md`](PUBLICATION.md) — including the check that the two
+files on the index are byte-for-byte the two files this repository's wheel gate verified. The
+import name is `synapse_cdm`, with an underscore, because a Python identifier cannot carry a
+hyphen. Installing from a clone is the *contributor* path and is further down, under
+[Working on this repository](#working-on-this-repository); a consumer never needs it.
 
 **Validate a payload against the schema.** The published JSON Schema is generated from the
 models, so the package writes it on demand rather than carrying a copy that could go stale:

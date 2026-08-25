@@ -130,14 +130,17 @@ hashes: `...:44Z`, `...:44.0Z` and `...:44.000000Z` are one instant and three st
 ## Installing it
 
 The distribution is **`synapse-cdm`** — the import name is `synapse_cdm`, because a Python
-identifier cannot carry a hyphen. It is **not on PyPI yet**: the metadata is complete and the
-artefacts are built and verified, but publishing needs a human with credentials. Until then it is
-installed from the built wheel, or from a clone:
+identifier cannot carry a hyphen. It is on PyPI:
 
 ```bash
-pip install ./synapse_cdm-1.0.0-py3-none-any.whl    # the built artefact
-pip install -e packages/cdm                         # or from a clone
+pip install synapse-cdm
 ```
+
+Version **1.0.0**, published 2026-08-25. Working *on* the CDM rather than with it is a different
+command from a clone of the repository — `pip install -e "packages/cdm[test]"`, which is a
+contributor's install and is documented in
+[`CONTRIBUTING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/CONTRIBUTING.md).
+A consumer never needs a clone.
 
 Everything it needs comes with it. The ten shipped adapters' **fixtures are part of the package**,
 so the harness runs against the payloads those adapters are verified on without a repository
