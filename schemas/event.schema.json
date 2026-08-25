@@ -195,7 +195,7 @@
       "type": "object"
     }
   },
-  "$id": "https://synapsecommand.local/cdm/1.0.0/event.schema.json",
+  "$id": "urn:synapsecommand:cdm:1.0.0:event",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Anything that happens. The audit-bearing object: two timestamps and a source, always.",

@@ -27,13 +27,53 @@ from pydantic import BaseModel, TypeAdapter
 from synapse_cdm.models import KINDS, PAYLOAD_MODELS, CDMObject
 from synapse_cdm.version import SCHEMA_VERSION
 
-BASE_ID = "https://synapsecommand.local/cdm"
+#: The base every schema's `$id` is built from. A URN, and the choice is RULED rather than
+#: conventional — see below, because the obvious answer is an `https://` URL and it is wrong here.
+#:
+#: WHAT A CONSUMER ACTUALLY DOES WITH `$id`, which is what decided it:
+#:
+#: 1. **Registers the schema under it**, so `$ref` can resolve. That needs uniqueness and
+#:    stability and nothing else.
+#: 2. **May try to FETCH it.** This is the one that rules out `https://`. Every `$ref` in these
+#:    six schemas is internal — `#/$defs/...`, no schema references another by `$id` — so nothing
+#:    here needs retrieval to work. But an `https://` identifier INVITES retrieval, and this
+#:    repository does not serve these files at any URL and will not promise to: the documentation
+#:    site renders reference PAGES generated from `/schemas`, not the schema files. An identifier
+#:    that promises a fetch and 404s is worse than one that promises nothing.
+#: 3. **Compares it to tell one schema and version from another.** The version is in the path
+#:    either way.
+#:
+#: So the requirement is *identify*, not *locate*, and a URN says exactly that.
+#:
+#: WHAT THIS REPLACES, AND WHY IT WAS NOT MERELY UNRESOLVABLE BUT WRONG. It was
+#: `https://synapsecommand.local/cdm`. RFC 6762 reserves `.local` for multicast DNS — a name
+#: scoped to the local link — so that identifier did not just fail to resolve, it asserted a scope
+#: that is false for a published contract. The pre-publication audit found it.
+#:
+#: REJECTED, each on a stated ground. `https://docs.synapsecommand.com/schemas/...` — resolvable
+#: only if these exact URLs are served forever, which is a promise this repository is not in a
+#: position to make, and a broken promise here is a broken `$ref` for someone else. A `tag:` URI
+#: (RFC 4151) is the most formally correct non-dereferenceable choice and was rejected for
+#: obscurity: tooling and readers both handle `urn:` without explanation. And the formality is
+#: named rather than hidden — `synapsecommand` is not an IANA-registered URN namespace under
+#: RFC 8141, which is common practice for JSON Schema `$id`s and is a smaller problem than an
+#: identifier that tooling will try to dereference.
+#:
+#: CHANGED BEFORE FIRST PUBLICATION, DELIBERATELY. A `$id` is a consumer-visible identifier, and
+#: moving one after consumers exist would break every registration keyed on it. There are none:
+#: the repository is unpublished and `SCHEMA_VERSION` is still 1.0.0. That is exactly why the
+#: correction belongs now rather than behind a version bump — a bump exists to protect consumers,
+#: and publishing the wrong identifier in order to deprecate it later protects nobody.
+BASE_ID = "urn:synapsecommand:cdm"
 
 
 def _schema(model: type[BaseModel], name: str) -> dict:
     schema = model.model_json_schema(mode="serialization")
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["$id"] = f"{BASE_ID}/{SCHEMA_VERSION}/{name}.schema.json"
+    # Colon-delimited throughout and no file extension: a URN names the SCHEMA, not a file,
+    # and `urn:...cdm/1.0.0/entity.schema.json` would read as a half-converted URL — the
+    # locate-shaped thing the ruling above rejected, wearing a urn: prefix.
+    schema["$id"] = f"{BASE_ID}:{SCHEMA_VERSION}:{name}"
     schema["x-cdm-schema-version"] = SCHEMA_VERSION
     return schema
 
@@ -51,7 +91,7 @@ def generate() -> dict[str, dict]:
         out[stem] = _schema(model, stem)
     union = TypeAdapter(CDMObject).json_schema(mode="serialization")
     union["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    union["$id"] = f"{BASE_ID}/{SCHEMA_VERSION}/cdm_object.schema.json"
+    union["$id"] = f"{BASE_ID}:{SCHEMA_VERSION}:cdm_object"
     union["x-cdm-schema-version"] = SCHEMA_VERSION
     out["cdm_object"] = union
     return out

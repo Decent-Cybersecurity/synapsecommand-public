@@ -842,7 +842,7 @@
       "type": "object"
     }
   },
-  "$id": "https://synapsecommand.local/cdm/1.0.0/cdm_object.schema.json",
+  "$id": "urn:synapsecommand:cdm:1.0.0:cdm_object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "discriminator": {
     "mapping": {

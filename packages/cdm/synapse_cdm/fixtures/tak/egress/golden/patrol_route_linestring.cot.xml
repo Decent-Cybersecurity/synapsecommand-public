@@ -7,6 +7,6 @@
     <link point="59.379,28.1975,9999999.0" />
     <link point="59.3812,28.2044,9999999.0" />
     <strokeColor value="-16711936" />
-    <synapse_plan object_id="b81d55e0-6a44-4f0d-9e21-77aa3c5b1f92" object_type="ROUTE" geometry="LineString" schema_version="1.0.0" closed="false" />
+    <synapse_plan object_id="f1c70000-0010-8000-8000-000000000003" object_type="ROUTE" geometry="LineString" schema_version="1.0.0" closed="false" />
   </detail>
 </event>

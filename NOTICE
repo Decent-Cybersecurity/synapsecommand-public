@@ -1,0 +1,44 @@
+synapsecommand-public
+Copyright 2026 Decent Cybersecurity s.r.o.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this work except in compliance with the License. You may obtain a copy of the
+License in the LICENSE file at the root of this repository, or at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+--------------------------------------------------------------------------------
+WHY THIS FILE AND NOT THE APPENDIX IN LICENSE
+
+Apache-2.0's APPENDIX is a TEMPLATE FOR PER-FILE HEADERS — "attach the following
+boilerplate notice, with the fields enclosed by brackets replaced with your own
+identifying information". This repository has no per-file headers: none of its
+769 tracked files carries an SPDX tag or a copyright block, and the licence
+policy is stated at the repository level instead, in README.md and
+CONTRIBUTING.md. Filling in a template for headers that will never exist is
+completing the wrong form.
+
+NOTICE is the file Apache-2.0 actually defines for this. Section 4(d) requires a
+redistributor of a Work that includes a NOTICE file to carry its attribution
+notices forward, which is precisely the effect wanted — and it is achieved
+without editing LICENSE, whose text stays byte-identical to the canonical
+Apache-2.0 so that GitHub's licence detection and any SPDX scanner keep
+recognising it. A modified LICENSE is a licence tools stop being sure about.
+
+WHY ONE YEAR AND NOT A RANGE
+
+2026 is the year of the first commit (d798601, 2026-08-22) and the current year.
+A range asserts a span of authorship, and there is not yet a span to assert. When
+this repository sees a second calendar year of work the convention is to extend
+it then — a range written in advance is a claim about the future.
+
+WHAT THIS FILE DOES NOT COVER
+
+The specification documents this repository PINS are not part of the Work and are
+not covered by this licence. None of their bytes is in this repository or in its
+history: each is recorded by SHA-256, byte count, page count, edition and source
+URL, and the documents themselves remain under their publishers' own terms —
+EUROCONTROL's for the ASTERIX specifications, NATO's for the STANAGs and AEDPs,
+MISB's for the Motion Imagery Standards Profile. See the pin records under
+packages/cdm/synapse_cdm/fixtures/*/spec/ for each document's terms as its own
+front matter states them.

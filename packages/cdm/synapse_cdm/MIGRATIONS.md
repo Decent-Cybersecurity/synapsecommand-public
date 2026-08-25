@@ -56,6 +56,27 @@ the reference adapter surfaced the reason:
   as dBW, dBm and a 0–100 bar by three different consumers; the unit belongs in the name, as
   it already does in `speed_mps`, `alt_m` and `accuracy_m`.
 
+**And one identifier was corrected before first publication, which is why it is recorded here and
+not as a version event.** The published schemas' `$id` was
+`https://synapsecommand.local/cdm/1.0.0/<name>.schema.json` and is now
+`urn:synapsecommand:cdm:1.0.0:<name>`. The old value was not merely unresolvable: RFC 6762
+reserves `.local` for multicast DNS, so an `https://` URI under it asserts a link-local scope,
+which is a false thing for a published contract to say about itself. The pre-publication audit
+found it.
+
+**A URN rather than a served URL, ruled from what a consumer does with an `$id`** — the reasoning
+is at `synapse_cdm/schemas.py`'s `BASE_ID` and the short form is that every `$ref` in these six
+schemas is internal, so nothing needs the identifier to resolve; what an `https://` identifier
+would add is an invitation to fetch something this repository does not serve and will not promise
+to serve.
+
+**No version bump, and that is a decision rather than an omission.** A `$id` is consumer-visible
+and moving one after consumers exist breaks every registration keyed on it — which is exactly the
+argument for doing it NOW: the repository is unpublished, `SCHEMA_VERSION` is still 1.0.0, and
+there is no consumer to protect. A bump exists to protect consumers; publishing a wrong identifier
+in order to deprecate it later protects nobody. If this repository were already public the same
+change would be a MAJOR event, and the entry would read very differently.
+
 ### Adapters that landed with no schema change
 
 Recorded because "no entry" and "nobody wrote an entry" look identical from here, and the first

@@ -3,6 +3,6 @@
   <point lat="58.9014" lon="24.0553" hae="9999999.0" ce="9999999.0" le="9999999.0" />
   <detail>
     <link point="58.9014,24.0553,9999999.0" />
-    <synapse_plan object_id="c07f9a12-3b8d-4c55-a0e6-5d2f8b41c903" object_type="ANNOTATION" geometry="Point" schema_version="1.0.0" closed="false" />
+    <synapse_plan object_id="f1c70000-0010-8000-8000-000000000001" object_type="ANNOTATION" geometry="Point" schema_version="1.0.0" closed="false" />
   </detail>
 </event>

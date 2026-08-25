@@ -14,3 +14,30 @@ docs/build/
 docs/.docusaurus/
 docs/.cache-loader/
 .wrangler/
+
+# Pinned specification documents. NEVER COMMITTED — and until this block existed that was true
+# by discipline plus a test, which is a gate on the COMMIT and not on the operation.
+#
+# THE FAILURE THIS CLOSES. `tests/test_cdm_pins.py::test_no_pdf_is_tracked_anywhere_in_the_
+# repository` asserts `git ls-files` returns no `.pdf` anywhere. It is a good gate and it fires
+# after the fact: `git add -A` from the repository root stages all 36 held documents, and only a
+# suite run or a reading of `git status` catches it before the commit. That near-miss has happened
+# twice. The rule below makes the staging itself refuse, so the gate and the mechanism now fail in
+# the same direction and neither is load-bearing alone.
+#
+# THE EXTENSION SET IS DERIVED, NOT GUESSED. Every file under a `fixtures/*/spec/` directory is a
+# `.pdf` (36), a `.json` pin record (6) or a `.py` generator (5), and the last two are exactly the
+# committed artefacts — which is why this ignores an EXTENSION and not the `spec/` directory. A
+# `spec/` rule would hide the pin records, and the pin record is the whole point of pinning.
+*.pdf
+
+# Archives, because that is how a lineage arrives. `cat048_pin.json` records `bundle_url` as
+# `https://www.eurocontrol.int/archive_download/all/node/11127` under the link text "Download all"
+# — the 22-edition CAT048 lineage came down as one archive. Only `.zip` is evidenced by that
+# record; the siblings are listed because they are the same class with the same failure mode and
+# none of them is ever an artefact of this repository, so the rule costs nothing and the next
+# publisher who serves a tarball does not get to be the test case.
+*.zip
+*.tar
+*.tar.gz
+*.tgz

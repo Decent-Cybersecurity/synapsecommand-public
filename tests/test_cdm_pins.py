@@ -95,6 +95,53 @@ pinned one, `classify()` sorts it into `held`, the declared roster stops matchin
 fails naming the pair. That is deliberate: a document leaving this class is an event somebody has
 to see.
 
+SINGLETON TREE-FACTS: RULED **NOT** MECHANICALLY CHECKED, AND THE MEASUREMENT IS WHY
+-------------------------------------------------------------------------------------
+The pre-publication audit found `cat048_pin.json` asserting "no .gitignore exists anywhere in
+this repository". That was **false when it was written** — `.gitignore` landed in `965e939` on
+2026-08-22 and the sentence in `7e13f27` a day later — and nothing could have caught it: the
+disjunction protocol only compares facts stated at two or more sites, and this was a **singleton**
+claim about the tree, mechanically checkable and checked by nobody.
+
+So: should a sweep parse factual claims about the tree out of the pin records and verify them?
+**No, and the number that decides it was measured rather than argued.** A sweep over path-shaped
+tokens in the six pin records finds **209 distinct tokens, of which 175 do not resolve on disk** —
+and almost none of the 175 is a path. They are ASTERIX data-item numbers (`I048/230`, `I034/120`,
+sixty of them), bit ranges (`bits-16/13`), LSB fractions (`1/128`, `360/2`), DD/MM/YYYY dates
+(`15/03/2021`), compound English (`and/or`, `Warning/Error`, `Mode-3/A`, `SAC/SIC`), bilingual
+NATO headers (`April/avril`), and document references (`ED-73F/DO-181F`). **Eighty-four per cent
+noise**, and the exemption list would have to encode "an ASTERIX item number is not a path" — which
+is exactly the trade `tests/test_cdm_prose_counts.py` refuses in its own docstring: *the
+maintenance cost of the exemption list would exceed the cost of the sweep it replaced.*
+
+And the residue does not rescue it. Every repo-path in the records that does NOT resolve is one of
+three things: a **deliberately-rejected candidate** (`fixtures/adatp36/spec/…`, `fixtures/misp/…`,
+`fixtures/cat034/history/` — named in order to be declined), a **punctuation artefact** of a real
+path (`fixtures/klv.`, `tests/test_cdm_ordinals.py.`), or a **private-core reference** that is
+correctly absent here (`airtasking/SOURCES.md`). Telling those apart needs the SENTENCE, not the
+token. A sweep assuming "mentioned implies must exist" fires on all of them; one assuming nothing
+fires on none.
+
+WHAT ALREADY IS MECHANICAL, WHICH IS WHY THE GAP IS NARROWER THAN IT LOOKS
+--------------------------------------------------------------------------
+Every path that carries weight is already a FIELD with a gate on it. `local_path` must exist and
+must hash to its record — `test_every_pin_is_present_intact_and_untracked`. `must_not_appear_at`
+must NOT exist, anywhere under `fixtures/`, under any name —
+`test_no_cited_document_has_grown_bytes_anywhere_under_fixtures`. What failed was neither: it was a
+**prose aside**, in a field whose job is to explain a decision. Structured claims are gated; prose
+asides are what review is for, and this one got through review twice.
+
+THE COMPENSATING ACT, AND IT PAID FOR ITSELF IMMEDIATELY
+---------------------------------------------------------
+Ruling "no" obliges the round to do by hand what it declined to automate. All twenty-five
+existence claims in the six records were swept and the tree-facts among them verified: `git
+ls-files | grep -ci pdf` is 0; this module does assert that; `asterix_cat021.py` contains no
+reference to Part 1 (0 occurrences); `FORMAT_COVERAGE.md`'s STANAG 5527 section has no status
+column (0). **And the sweep found a SECOND instance of the same false claim**, in
+`klv_pin.json`, written in `1b0316b` on 2026-08-23 — the sentence had been copied between records
+without its premise being re-checked. The audit found one; the hand sweep found the other. That is
+the argument for the manual act being real work rather than a concession.
+
 WHAT IS NOT A PIN
 -----------------
 **Two** `spec/history/` directories now hold edition lineages, and neither holds a pin.
@@ -964,6 +1011,54 @@ def test_every_pin_is_present_intact_and_untracked(path):
         f"{path} hashes to {got} and its record says {entry['sha256']} — this is a different copy "
         f"of the document, whatever its filename says. Recorded by: {entry['sources']}"
     )
+
+
+def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
+    """The MECHANISM behind the gate below, and the two now fail in the same direction.
+
+    `test_no_pdf_is_tracked_anywhere_in_the_repository` is a good check that fires LATE: it runs
+    at suite time, after `git add -A` has already staged 36 held documents, and only a suite run
+    or a careful reading of `git status` stands between that and a commit. The pre-publication
+    audit found the invariant resting on exactly that, and recorded that the near-miss had
+    happened twice. So `.gitignore` now refuses the staging itself.
+
+    Checked through `git check-ignore` rather than by grepping the file, because the question is
+    whether git IGNORES the path — which is what a rule has to achieve — and a rule can be
+    present and shadowed by a later negation. The positive control matters as much: the pin
+    RECORDS and the generators live in the same directories and must still stage, so this asserts
+    both directions and a `spec/`-wide rule would fail it.
+    """
+    import subprocess
+    def ignored(rel: str) -> bool:
+        # `--no-index` is load-bearing and a MUTATION is what found it. Without it, git does not
+        # apply ignore rules to already-TRACKED files and `check-ignore` reports them unignored
+        # whatever the patterns say — so the positive control below could never fire, and a rule
+        # widened to `fixtures/*/spec/` (which would hide the pin records) passed. `--no-index`
+        # asks what the PATTERNS say, which is the question a rule has to answer.
+        return subprocess.run(["git", "check-ignore", "-q", "--no-index", rel],
+                              cwd=REPO).returncode == 0
+
+    # Every held document, by its real path — not a synthetic one, so the rule is checked
+    # against the tree it exists for.
+    documents = sorted(str(p.relative_to(REPO)) for p in FIXTURES.rglob("*.pdf"))
+    assert documents, "no specification documents in the working tree; this check is vacuous here"
+    not_ignored = [d for d in documents if not ignored(d)]
+    assert not not_ignored, (
+        f"{len(not_ignored)} specification document(s) are NOT ignored by git: {not_ignored[:3]}. "
+        "`git add -A` would stage them, and the only thing left between that and a commit is a "
+        "suite run. Restore the `*.pdf` rule in .gitignore"
+    )
+    # An archive, because that is how a lineage arrives — cat048_pin.json records `bundle_url`
+    # pointing at EUROCONTROL's `archive_download/all`.
+    assert ignored("packages/cdm/synapse_cdm/fixtures/klv/spec/anything.zip")
+    # THE POSITIVE CONTROL, both directions. These must still stage.
+    for keep in ("packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json",
+                 "packages/cdm/synapse_cdm/fixtures/cat034/spec/build_fixtures.py"):
+        assert not ignored(keep), (
+            f"{keep} is ignored. The pin record and the generator are the COMMITTED artefacts of "
+            "a spec directory — a `spec/` rule would hide exactly the files pinning exists to "
+            "produce, which is why the rule is on the extension"
+        )
 
 
 def test_no_pdf_is_tracked_anywhere_in_the_repository():

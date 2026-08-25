@@ -236,7 +236,7 @@
       "type": "object"
     }
   },
-  "$id": "https://synapsecommand.local/cdm/1.0.0/entity.schema.json",
+  "$id": "urn:synapsecommand:cdm:1.0.0:entity",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Anything that exists on the map, at a stated time, with stated confidence.",

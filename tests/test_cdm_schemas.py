@@ -37,7 +37,21 @@ def test_each_schema_is_valid_json_schema_and_declares_its_version(path):
     schema = json.loads(path.read_text())
     jsonschema.Draft202012Validator.check_schema(schema)
     assert schema["x-cdm-schema-version"] == SCHEMA_VERSION
-    assert schema["$id"].endswith(f"{path.name}")
+    # THE FILE AND ITS `$id` MUST NAME THE SAME SCHEMA — a file whose `$id` names a different one
+    # is a real defect, and that is what this line has always been for. What changed is the form
+    # of the identifier: it used to end with the FILENAME, because the `$id` was a URL and the
+    # last path segment was the file. It is a URN now — `urn:synapsecommand:cdm:1.0.0:entity` —
+    # so the binding is to the file's STEM rather than to its name, and the version is asserted
+    # inside the identifier rather than only beside it. See `schemas.BASE_ID` for why the URL was
+    # wrong: it pointed at `synapsecommand.local`, which RFC 6762 reserves for link-local mDNS.
+    stem = path.name.removesuffix(".schema.json")
+    assert schema["$id"] == f"urn:synapsecommand:cdm:{SCHEMA_VERSION}:{stem}", (
+        f"{path.name} declares $id {schema['$id']!r}; the ruled form is "
+        f"urn:synapsecommand:cdm:{SCHEMA_VERSION}:{stem}"
+    )
+    # And it is a legal absolute URI, which is all JSON Schema requires of an `$id` — proven by
+    # `check_schema` above rather than asserted here, since a malformed one fails that call.
+    assert ":" in schema["$id"] and not schema["$id"].startswith("http")
 
 
 def test_the_strict_timestamp_pattern_is_published_not_format_date_time():

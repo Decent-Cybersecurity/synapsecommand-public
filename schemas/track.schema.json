@@ -182,7 +182,7 @@
       "type": "object"
     }
   },
-  "$id": "https://synapsecommand.local/cdm/1.0.0/track.schema.json",
+  "$id": "urn:synapsecommand:cdm:1.0.0:track",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "An entity's position history, in time order. The order is a contract, not a hope.\n\nA scrambled sample list produces nonsense the moment anything differentiates it \u2014 speed\nfrom consecutive positions, a heading arrow, a predicted point. So non-decreasing\ntimestamps are validated here, at the boundary, where the defect is one adapter's bug\nrather than a mystery in a fusion layer three hops downstream.\n\nEqual timestamps are ALLOWED: two sensors reporting the same instant is real, and\nrejecting it would refuse legitimate multi-source data.",

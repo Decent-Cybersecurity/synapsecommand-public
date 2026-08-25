@@ -11,7 +11,7 @@
       "type": "string"
     }
   },
-  "$id": "https://synapsecommand.local/cdm/1.0.0/payload_gnss_interference.schema.json",
+  "$id": "urn:synapsecommand:cdm:1.0.0:payload_gnss_interference",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "description": "The typed payload for EventType.GNSS_INTERFERENCE.\n\n`extra=\"allow\"` here, unlike the canonical objects: this model's job is to give the fields\nwe DO understand a checked shape while letting a source's extra fields ride along in the\nsame dict. Forbidding extras here would force an adapter to split one payload across two\nplaces, and the never-drop rule would be satisfied by the letter while the meaning\nscattered.",
