@@ -218,3 +218,112 @@ def test_the_procedure_does_not_promise_a_publishing_mechanism_that_does_not_exi
         "the procedure has to SAY that nothing is automated. Silence on the point is what let "
         "the deploy mechanism be wrong for a whole round"
     )
+
+
+# ------------------------------------------------ what rides on `main` between two releases
+#
+# The SDK close-out round added a CLI affordance (`harness --list-adapters`) and deliberately did
+# not tag or re-cut anything: `1.0.0` is on PyPI, a filename on that index can never be reused,
+# and a re-release is a new version number or it is nothing. So `main` now carries package source
+# that no release contains, while `PACKAGE_VERSION` still reads `1.0.0` — which is the ordinary
+# state of a repository between releases and also the state in which a release's notes get
+# written from memory.
+#
+# `MIGRATIONS.md` names that failure itself, as condition 4 of "What a release requires": "the
+# notes are derived, not remembered. Every claim in a release's notes has to be readable off the
+# tree at the tag." A change that rode on `main` for four months and was never written down is
+# not readable off anything — it is exactly the claim that gets remembered wrongly or dropped.
+#
+# So the condition is made checkable: if the package tree has moved past the tag that names its
+# own version, the file has to say what moved. Both directions, because an `Unreleased` section
+# describing nothing is its own kind of wrong — it reads as pending work on a tree that has none.
+
+
+def _released_tag_for_this_version() -> str | None:
+    """The tag naming `PACKAGE_VERSION`, if this version has been released at all."""
+    return f"v{PACKAGE_VERSION}" if f"v{PACKAGE_VERSION}" in tags() else None
+
+
+def _package_tree_moved_since(tag: str) -> list[str]:
+    """Package files that differ between the tagged commit and `HEAD`.
+
+    Scoped to `packages/cdm` because that is the distribution: a documentation-only commit at the
+    repository root changes nothing a release ships, and requiring a release note for it would
+    make the gate noise. `HEAD` and not the working tree — the unit a release is cut from is a
+    commit, and an uncommitted edit is not yet anything.
+    """
+    out = _git("diff", "--name-only", tag, "HEAD", "--", "packages/cdm")
+    assert out.returncode == 0, out.stderr
+    return sorted(line.strip() for line in out.stdout.splitlines() if line.strip())
+
+
+UNRELEASED = "### Unreleased"
+
+
+def test_package_source_that_has_moved_past_its_released_tag_is_recorded_as_unreleased():
+    """Condition 4 of the release procedure, enforced before the release rather than during it."""
+    _require_git()
+    tag = _released_tag_for_this_version()
+    if tag is None:
+        pytest.skip(f"PACKAGE_VERSION is {PACKAGE_VERSION} and there is no v{PACKAGE_VERSION} "
+                    "tag, so this version has not been released and everything in the tree is "
+                    "unreleased by construction")
+    moved = _package_tree_moved_since(tag)
+    text = MIGRATIONS.read_text()
+    if moved:
+        assert UNRELEASED in text, (
+            f"{len(moved)} package file(s) have changed since {tag} — {moved[:6]} — and "
+            f"MIGRATIONS.md has no `{UNRELEASED}` section. The distribution on the index is "
+            f"{PACKAGE_VERSION} and this tree is not it. Write down what moved, now, while "
+            "somebody knows: the release procedure's condition 4 is that the notes are derived "
+            "rather than remembered, and a change nobody recorded is not derivable from anything"
+        )
+    else:
+        assert UNRELEASED not in text, (
+            f"the package tree is identical to {tag} and MIGRATIONS.md still carries an "
+            f"`{UNRELEASED}` section. It describes changes that are not there — either the "
+            "release absorbed them and the section should have gone with it, or the diff scope "
+            "is wrong"
+        )
+
+
+def test_the_unreleased_section_is_the_first_thing_under_history():
+    """Newest first, and nothing is newer than what has not shipped.
+
+    A reader opening the history wants to know what is in the version they have; the entry that
+    is NOT in any version they can install has to be the one they cannot miss.
+    """
+    text = MIGRATIONS.read_text()
+    if UNRELEASED not in text:
+        pytest.skip("nothing unreleased; the ordering has nothing to order")
+    history = text.index("## History")
+    entries = [(m.start(), m.group(0).strip())
+               for m in re.finditer(r"\n### .+", text[history:])]
+    assert entries, "the History section has no entries"
+    assert entries[0][1].startswith(UNRELEASED), (
+        f"the first entry under `## History` is {entries[0][1]!r}. `{UNRELEASED}` has to come "
+        "first: it is the only entry describing something a reader cannot install"
+    )
+
+
+def test_the_unreleased_section_states_that_it_is_in_no_release():
+    """The section's whole job is to be un-mistakable for a released one.
+
+    `### Unreleased` beside `### 1.0.0 — initial contract` is two headings of the same shape, and
+    a reader skimming for what their installed version contains will read down the list. The
+    heading has to say it, not merely be titled it.
+    """
+    text = MIGRATIONS.read_text()
+    if UNRELEASED not in text:
+        pytest.skip("nothing unreleased")
+    section = text[text.index(UNRELEASED):]
+    section = section[:section.index("\n### ", 1)]
+    assert "no release" in section or "not in" in section, (
+        "the Unreleased section does not say in its own words that nothing in it is in a "
+        f"release. Found:\n{section[:300]}"
+    )
+    assert PACKAGE_VERSION in section, (
+        f"the Unreleased section does not name {PACKAGE_VERSION}, which is the version a reader "
+        "who ran `pip install synapse-cdm` actually has. Saying which release does NOT contain "
+        "this is the entire point of the section"
+    )
