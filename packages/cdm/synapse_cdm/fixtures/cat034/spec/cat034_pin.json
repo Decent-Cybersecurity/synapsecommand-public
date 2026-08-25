@@ -115,11 +115,15 @@
     ],
     "why_two_citations_matter": "They are independent in the sense that decides the question: neither is quoting the other and neither is quoting this repository, and they are three years apart - Edition 1.29 is 15/03/2021 and CAT007 Edition 1.12 is July 2024. One citation could be a stale reference list. Two, from different parts and different years, is a publisher that considers the edition to exist.",
     "availability_check": {
+      "edition": "1.30",
+      "offered": false,
       "checked_on": "2026-08-24",
       "what_was_checked": "EUROCONTROL's publication page for ASTERIX Part 2b Category 034 - the same page the four editions in hand came from.",
       "result": "Edition 1.30 is not offered. The newest file on the page is Edition 1.29, the edition pinned here.",
       "why_the_date_is_recorded": "'was not published' and 'was not checked' are indistinguishable in a repository six months later, and the difference decides whether the next round re-checks the page or re-reads this record. Phase 1 had no date here because Phase 1 did not check.",
-      "what_is_NOT_claimed": "That Edition 1.30 was withdrawn, that it was never published, that it is restricted, that either citation is an error, or that the page is complete. A page that does not offer a file is evidence about the page. All that is established is that on 2026-08-24 the newest file on it was Edition 1.29."
+      "what_is_NOT_claimed": "That Edition 1.30 was withdrawn, that it was never published, that it is restricted, that either citation is an error, or that the page is complete. A page that does not offer a file is evidence about the page. All that is established is that on 2026-08-24 the newest file on it was Edition 1.29.",
+      "what_these_two_fields_are_for": "`edition` and `offered` are the ONLY machine-readable fields in this node and they exist so that class membership can be COMPUTED rather than declared. tests/test_cdm_pins.py pairs them with this record's source.document_identifier to get (EUROCONTROL-SPEC-0149-2b, 1.30), and requires a citation to that same pair to be discoverable elsewhere in the pin records before the pair is a member of the cited-but-unpublished class. Neither half is hand-listed: the citation is found by reading quotations, and the availability is found by reading this node. The prose fields around them are unchanged and remain the record a human reads.",
+      "how_the_reopen_fires": "Set `offered` to true, or let this document's own source.edition become 1.30, and the gate FAILS. That is deliberate. A document leaving this class is an event someone has to see, so it is a test failure rather than a silent change of state: the declared roster in tests/test_cdm_pins.py still names the pair, discovery no longer classifies it as a member, and the two disagree until a human resolves it by pinning the edition and removing the entry."
     }
   },
   "edition_history": {

@@ -103,7 +103,11 @@ without a check, and this is the correction.
   not in doubt.
 - **Unpublished.** It is not offered on the publisher's own page for the category. That is a state
   this repository had no name for: not a pin, not a park like KLV's twelve obtainable-and-not-
-  obtained documents, not #9's classification contingency. **Cited-but-unpublished.**
+  obtained documents, not #9's classification contingency. **Cited-but-unpublished** — which is a
+  CLASS, checked by `tests/test_cdm_pins.py` and printed by the pin gate, not a description. Its
+  two halves are computed from the data rather than declared: the citation is found by reading
+  quotations across the pin records, and the availability comes from the dated check in
+  `spec/cat034_pin.json`. The day Edition 1.30 publishes, the gate fails.
 
 **The check date is recorded because a future round needs it.** "Was not published" and "was not
 checked" look identical six months later, and the difference decides whether the next reader

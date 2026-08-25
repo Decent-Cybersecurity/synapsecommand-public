@@ -8466,7 +8466,12 @@ quoting this repository.
 - **Edition 1.30 is cited-but-unpublished**, which is a third state this repository had no name for.
   It is not a park like KLV's twelve absent documents, which are obtainable and were not obtained;
   it is not #9's classification contingency, where a document exists behind an access decision. It
-  is a document two specifications reference and no page offers.
+  is a document two specifications reference and no page offers. **It is now a CLASS rather than a
+  sentence**, computed by `tests/test_cdm_pins.py` from two halves it finds in the data — a
+  quotation naming an identifier and an edition, and a dated availability check finding that
+  edition not offered — and reported by the pin gate beside the pin count. When the edition
+  publishes, the gate fails; that is the reopen, and it is a failure someone sees rather than a
+  state that quietly changes.
 
 **The check date is recorded because it is what a future round needs.** "Not published" and "not
 checked" look identical in a repository six months later, and the difference decides whether the

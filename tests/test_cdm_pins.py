@@ -64,6 +64,37 @@ Three properties are asserted, and one of them is asserted at zero:
 would satisfy all three vacuously, so the parser is factored out as `citations_in()` and exercised
 against a synthetic record — the only honest way to keep a zero-member class load-bearing.
 
+A THIRD CLASS, AND IT IS COMPUTED WHERE THE OTHER TWO ARE DECLARED
+------------------------------------------------------------------
+**Cited-but-unpublished**: an edition a sibling specification names and no publisher offers. It is
+a fourth thing again — not a pin, not an absence, not a cited-not-carried document, because nobody
+declined to carry it and nobody could. CAT034 Edition 1.30 is the member and the state was prose
+for two rounds before it was a class.
+
+What makes it different from the two above is that **nothing declares it**. A pin is declared by a
+record with a hash; a cite-not-carry entry is declared by a flag; membership here is the
+CONJUNCTION of two halves discovered separately —
+
+* **the citation**, found by reading quotations across every pin record for an identifier followed
+  by an edition. The member's strongest one sits in `cat048_pin.json`, written a round before the
+  cited document had a pin at all;
+* **the availability**, from a dated check in the pin record for that identifier, stating an
+  edition and whether it is `offered`. Two machine-readable fields in a node that is otherwise
+  prose for a human.
+
+A flag would let a round assert the class without doing the work — the state's whole content is
+"somebody looked and did not find it", and a flag records that somebody SAID so. `classify()`
+sorts every cited edition into **held**, **member** or **candidate**, and its docstring carries the
+ruling on the question that decides the class's shape: **a citation alone does not join.** It
+yields a candidate, the candidate set must be empty, and only a dated check turns a question into a
+finding — because inferring unavailability from a citation is the exact mistake that produced the
+class.
+
+**The reopen is a test failure, not a state change.** When the edition publishes it becomes the
+pinned one, `classify()` sorts it into `held`, the declared roster stops matching, and the gate
+fails naming the pair. That is deliberate: a document leaving this class is an event somebody has
+to see.
+
 WHAT IS NOT A PIN
 -----------------
 **Two** `spec/history/` directories now hold edition lineages, and neither holds a pin.
@@ -236,6 +267,178 @@ def discover_citations() -> dict[str, dict]:
     return out
 
 
+# ------------------------------------------------- the cited-but-unpublished class
+#
+# THE THIRD CLASS, AND IT IS COMPUTED WHERE THE OTHER TWO ARE DECLARED
+# ---------------------------------------------------------------------
+# A pin is declared by a record with a hash. A cite-not-carry entry is declared by a flag. This
+# class is declared by NOTHING: a (document identifier, edition) pair is cited-but-unpublished
+# when BOTH halves are found in the data, and the two halves live in different records written by
+# different rounds for different reasons.
+#
+#   the citation     a QUOTATION in any pin record naming an identifier and an edition — found by
+#                    reading the quotation, never by a list. The one member's strongest citation
+#                    sits in `cat048_pin.json`, a record written before the cited document had a
+#                    pin at all, which is exactly the independence that makes discovery worth
+#                    doing rather than asserting.
+#   the availability a dated check in the pin record FOR THAT IDENTIFIER, stating an edition and
+#                    whether it is offered. Two machine-readable fields in a node that is
+#                    otherwise prose.
+#
+# WHY COMPUTED RATHER THAN FLAGGED, which is the whole design and not a preference. A flag would
+# let a round assert the class without doing the work: the state's entire content is "somebody
+# looked for this document and did not find it", and a flag records that somebody SAID so. The
+# conjunction records that somebody DID.
+
+#: A citation: an identifier in parentheses followed by an edition. This is the form EUROCONTROL
+#: reference lists use and the form both of the member's citations are quoted in.
+CITATION = re.compile(r"\(([A-Z][A-Za-z0-9-]*-[A-Za-z0-9-]+)\)\s*Edition\s+(\d+\.\d+)")
+
+#: THE DECLARED ROSTER, and it is the only hand-written thing in this class — deliberately, because
+#: it is what the closure compares against. Discovery computes membership from the data; this says
+#: what the data is expected to yield. A member appearing, disappearing or publishing all show up
+#: as a disagreement between the two.
+CITED_BUT_UNPUBLISHED = (("EUROCONTROL-SPEC-0149-2b", "1.30"),)
+
+
+def _strings(node, path=""):
+    """Every string value in a record, with the dotted path that reached it."""
+    if isinstance(node, dict):
+        for key, value in node.items():
+            yield from _strings(value, f"{path}.{key}" if path else str(key))
+    elif isinstance(node, list):
+        for index, value in enumerate(node):
+            yield from _strings(value, f"{path}[{index}]")
+    elif isinstance(node, str):
+        yield path, node
+
+
+def _pin_records() -> dict[str, dict]:
+    return {str(f.relative_to(REPO)): json.loads(f.read_text())
+            for f in sorted(FIXTURES.rglob("*_pin.json"))}
+
+
+def cited_editions(records: dict[str, dict] | None = None) -> dict[tuple[str, str], list[str]]:
+    """`{(identifier, edition): [where it is quoted]}` — FOUND, never told.
+
+    Every string in every pin record is read, and any that quotes an identifier-and-edition is a
+    citation. That deliberately includes a record's quotation of ANOTHER document's reference list,
+    which is where the strongest evidence lives: `cat048_pin.json` quotes CAT048 Edition 1.32's
+    §2.2 reference 5 naming Part 2b Edition 1.30, and it did so a round before Part 2b had a pin.
+    """
+    found: dict[tuple[str, str], list[str]] = {}
+    for rel, data in (records or _pin_records()).items():
+        for where, text in _strings(data):
+            for match in CITATION.finditer(text):
+                found.setdefault(match.groups(), []).append(f"{rel}:{where}")
+    return found
+
+
+def availability_checks(records: dict[str, dict] | None = None) -> dict[tuple[str, str], dict]:
+    """`{(identifier, edition): entry}` for every dated availability check.
+
+    An availability check is bound to the identifier of the record it lives in — a pin record is
+    about one document, and a check inside it is a check on that document. `edition` and `offered`
+    are read as DATA; every other field in the node is prose for a human and is not parsed.
+    """
+    out: dict[tuple[str, str], dict] = {}
+    for rel, data in (records or _pin_records()).items():
+        identifier = (data.get("source") or {}).get("document_identifier")
+        for node in _walk(data):
+            if not isinstance(node, dict) or "checked_on" not in node:
+                continue
+            assert identifier, (
+                f"{rel} records a dated availability check and its source states no "
+                "document_identifier, so the check cannot be bound to a document"
+            )
+            for field in ("edition", "offered", "result"):
+                assert field in node, (
+                    f"{rel}: an availability check is missing {field!r}. `edition` and `offered` "
+                    "are what class membership is computed from and `result` is what a human "
+                    "reads; a check with prose and no data is the state this class replaced"
+                )
+            assert isinstance(node["offered"], bool), (
+                f"{rel}: availability_check.offered is {node['offered']!r}, not a boolean. "
+                "'Offered' is the finding; a string here would make the class depend on parsing "
+                "prose, which is what it exists to stop"
+            )
+            assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", node["checked_on"]), (
+                f"{rel}: checked_on is {node['checked_on']!r}, not an ISO date. The date is the "
+                "whole point of the entry — 'was not offered' and 'was not checked' are "
+                "indistinguishable without it"
+            )
+            # THE DISJUNCTION, inside one node: the machine-readable fields and the prose that
+            # states the same finding must agree, or the two halves of this record can drift —
+            # and the data half is the one the class is computed from, so a drift would make the
+            # gate right about a document the record describes differently.
+            offered_words = "not offered" not in node["result"].lower()
+            assert offered_words is node["offered"], (
+                f"{rel}: availability_check.offered is {node['offered']!r} and the prose result "
+                f"reads {node['result']!r}. One of them is wrong, and the class is computed from "
+                "the field while a human reads the sentence"
+            )
+            assert f"Edition {node['edition']}" in node["result"], (
+                f"{rel}: availability_check.edition is {node['edition']!r} and the prose result "
+                f"does not mention 'Edition {node['edition']}'. The data field and the sentence a "
+                "human reads are the same fact stated twice and must say the same thing"
+            )
+            key = (identifier, node["edition"])
+            assert key not in out, f"{key} has two availability checks"
+            out[key] = dict(node, recorded_by=rel)
+    return out
+
+
+def held_editions(records: dict[str, dict] | None = None) -> set[tuple[str, str]]:
+    """The (identifier, edition) pairs this repository PINS. A document you hold needs no check."""
+    held = set()
+    for data in (records or _pin_records()).values():
+        source = data.get("source") or {}
+        if source.get("document_identifier") and source.get("edition"):
+            held.add((source["document_identifier"], source["edition"]))
+    return held
+
+
+def classify(records: dict[str, dict] | None = None) -> dict[str, dict]:
+    """Every cited (identifier, edition) sorted into exactly one of three buckets.
+
+    HELD       cited and pinned here. Needs no availability check: the copy is the answer.
+    MEMBER     cited, not held, and a dated check found it NOT offered.
+    CANDIDATE  cited, not held, and no dated check — availability UNKNOWN.
+
+    **THE RULING ON THE EMPTY-ADJACENT QUESTION, and it is the reason CANDIDATE exists at all.**
+    A second citation to an unoffered edition does NOT join this class automatically. Joining
+    requires the dated availability check, and the reason is the mistake that produced the class:
+    CAT034 Phase 1 read a citation and concluded the pinned edition "is not the newest published",
+    which was false — a citation establishes that an edition EXISTS and says nothing whatever about
+    whether anyone offers it. So a citation alone yields a CANDIDATE, which is a question, and only
+    a check turns it into a member, which is a finding.
+
+    And a candidate is not permitted to sit quietly: the gate requires the candidate set to be
+    empty, so a new citation to an edition nobody has looked for FAILS until somebody looks. The
+    alternative — candidates accumulating silently — would make this class the place unanswered
+    questions go to be forgotten, which is the opposite of why it was built.
+    """
+    records = records or _pin_records()
+    citations = cited_editions(records)
+    checks = availability_checks(records)
+    held = held_editions(records)
+    out = {"held": {}, "member": {}, "candidate": {}}
+    for key, sites in sorted(citations.items()):
+        if key in held:
+            out["held"][key] = {"cited_at": sites}
+        elif key in checks and not checks[key]["offered"]:
+            out["member"][key] = {"cited_at": sites, "check": checks[key]}
+        elif key in checks:
+            out["held"][key] = {"cited_at": sites, "check": checks[key]}
+        else:
+            out["candidate"][key] = {"cited_at": sites}
+    return out
+
+
+CLASSIFIED = classify()
+MEMBERS = CLASSIFIED["member"]
+
+
 def spec_pdfs_on_disk() -> set[str]:
     """PDFs sitting DIRECTLY in a `fixtures/*/spec/` directory — not in a subdirectory of one.
 
@@ -376,6 +579,200 @@ def test_no_cited_document_has_grown_bytes_anywhere_under_fixtures(path):
         f"{elsewhere}. A subdirectory is not a loophole — {entry['document']} may not be in this "
         "tree under any path. Delete it"
     )
+
+
+def test_the_cited_but_unpublished_class_matches_its_declared_roster():
+    """CLOSURE, BOTH DIRECTIONS, on a class whose membership is COMPUTED.
+
+    The roster is the only hand-written thing here and it exists to be disagreed with. Discovery
+    reads the citations out of quotations and the availability out of dated checks, and the two
+    sets must be equal:
+
+    * **a pair discovered and not declared** is a document that entered this state and nobody
+      noticed — the direction that catches the real mistake;
+    * **a pair declared and not discovered** is a roster entry whose evidence has gone: either the
+      citation was deleted, or the availability check was, or the edition PUBLISHED and is now
+      held. All three need a human, and all three are the same failure from here.
+    """
+    discovered = set(MEMBERS)
+    declared = set(CITED_BUT_UNPUBLISHED)
+    assert discovered == declared, (
+        f"the cited-but-unpublished class and its roster disagree.\n"
+        f"  discovered and not declared: {sorted(discovered - declared)}\n"
+        f"  declared and not discovered: {sorted(declared - discovered)}\n"
+        "Membership is computed from two halves — a citation quoted in some pin record, and a "
+        "dated availability check in the pin record for that identifier finding the edition not "
+        "offered. A pair leaving this set is an EVENT: most likely the edition published, which "
+        "is the reopen firing."
+    )
+    assert declared, (
+        "the roster is empty, so every assertion over this class is vacuous. That is a legal "
+        "state — it is `cite_not_carry`'s state — but it has to be reached deliberately, and the "
+        "parser is exercised against synthetic records either way"
+    )
+
+
+@pytest.mark.parametrize("member", CITED_BUT_UNPUBLISHED, ids=lambda m: f"{m[0]}-ed{m[1]}")
+def test_every_member_is_still_discoverable_as_cited_by_a_sibling_record(member):
+    """Direction two, per member, with the independence the class rests on made explicit.
+
+    A member's citation is what establishes the edition EXISTS. One citation could be a stale
+    reference list; the member here is cited by two specifications three years apart, and the
+    quotations are recorded in two different pin records — including one written before the cited
+    document had a pin at all. So the check is not just "a citation exists" but "the citation is
+    still found in more than one record", because a single record citing itself would be this
+    repository believing its own summary.
+    """
+    identifier, edition = member
+    sites = cited_editions().get(member)
+    assert sites, (
+        f"{identifier} Edition {edition} is on the roster and no pin record quotes it any more. "
+        "The citation is half the class; without it the entry asserts an edition exists on this "
+        "repository's own say-so"
+    )
+    records = {site.split(":", 1)[0] for site in sites}
+    assert len(records) >= 2, (
+        f"{identifier} Edition {edition} is quoted only in {sorted(records)}. The independence of "
+        "the citations is what makes the existence claim stronger than a recollection — see the "
+        "record's own why_two_citations_matter"
+    )
+    check = availability_checks()[member]
+    assert check["offered"] is False
+    assert check["checked_on"], "a member with no check date is not a member of this class"
+
+
+@pytest.mark.parametrize("member", CITED_BUT_UNPUBLISHED, ids=lambda m: f"{m[0]}-ed{m[1]}")
+def test_a_member_that_publishes_fails_the_gate(member):
+    """THE REOPEN, and it has to be a failure someone SEES rather than a state that changes.
+
+    A document leaves this class by being published, and the way that shows up here is that the
+    edition becomes the pinned one for its identifier. When it does, `classify()` sorts the pair
+    into HELD instead of MEMBER, the roster no longer matches, and the test above fails — loudly,
+    naming the pair. This test is the same event caught one step earlier and with the right words
+    on it, so the failure a reader meets says "the reopen fired" rather than "a set disagreed".
+
+    The repair is not to edit the roster. It is: pin the edition, move the previous one into the
+    lineage, and remove the entry — in that order, because the entry is what records why the
+    document was absent and it should be the last thing to go.
+    """
+    identifier, edition = member
+    held = held_editions()
+    assert (identifier, edition) not in held, (
+        f"THE REOPEN HAS FIRED: {identifier} Edition {edition} is now PINNED, so it is no longer "
+        "cited-but-unpublished. This is the outcome the class was built to make visible. Pin the "
+        "edition, move the superseded one into the lineage, drop the entry from "
+        "CITED_BUT_UNPUBLISHED, and rewrite the availability record as history rather than as a "
+        "current finding."
+    )
+    pinned_editions = {i: e for i, e in held if i == identifier}
+    assert pinned_editions.get(identifier) != edition
+
+
+def test_no_citation_is_left_as_an_unanswered_candidate():
+    """THE RULING, asserted: a citation alone does not join, and it does not sit quietly either.
+
+    A cited edition with no dated availability check is a CANDIDATE — the class's own name for a
+    question. It is not a member, because a citation says an edition exists and says nothing about
+    whether anybody offers it; that inference is exactly the one CAT034 Phase 1 made and got
+    backwards. And it may not accumulate, because a class that silently collects unanswered
+    questions is where they go to be forgotten. So the candidate set must be EMPTY: a new citation
+    fails this test until somebody performs the check that makes it a member — or pins the
+    document, which makes it held.
+    """
+    candidates = CLASSIFIED["candidate"]
+    assert not candidates, (
+        "these editions are cited in a pin record and nobody has checked whether they are "
+        "offered:\n  " + "\n  ".join(
+            f"{i} Edition {e} — quoted at {', '.join(v['cited_at'])}"
+            for (i, e), v in sorted(candidates.items())) +
+        "\nA citation establishes that the edition EXISTS. It establishes nothing about "
+        "availability, so it does not make the edition cited-but-unpublished on its own. Either "
+        "check the publisher's page and record the finding with its date — which makes it a "
+        "member — or pin the document, which makes it held."
+    )
+
+
+def test_the_cited_but_unpublished_parser_is_not_vacuous():
+    """One member is not enough to prove the machine works, so it is run against synthetics.
+
+    Four records, exercising every branch the class has, in memory with nothing written to disk:
+    a well-formed member, a candidate, a held pair, and the REOPEN — the same member with its
+    availability flipped to offered, which must stop being a member.
+    """
+    def record(identifier, edition, *, cite=True, check=None, pinned=None):
+        data = {"source": {"document_identifier": identifier, "edition": pinned or "1.00"}}
+        if cite:
+            data["boundary"] = {"quoted": f"A sibling spec ({identifier}) Edition {edition}."}
+        if check is not None:
+            data["note"] = {"availability_check": {
+                "edition": edition, "offered": check, "checked_on": "2026-01-01",
+                "result": f"Edition {edition} is {'offered' if check else 'not offered'}."}}
+        return data
+
+    key = ("SYNTHETIC-SPEC-1", "9.99")
+    # 1. the member: cited, checked, not offered.
+    found = classify({"synthetic.json": record(*key, check=False)})
+    assert list(found["member"]) == [key], found
+    assert not found["candidate"] and not found["held"]
+
+    # 2. the candidate: cited, never checked. The RULING — it must not become a member.
+    found = classify({"synthetic.json": record(*key)})
+    assert list(found["candidate"]) == [key], found
+    assert not found["member"], (
+        "a citation with no availability check produced a MEMBER. That is the Phase 1 inference "
+        "the class exists to refuse: a citation says the edition exists, not that it is unoffered"
+    )
+
+    # 3. the held pair: cited and pinned. Needs no check; the copy is the answer.
+    found = classify({"synthetic.json": record(*key, pinned=key[1])})
+    assert list(found["held"]) == [key] and not found["member"] and not found["candidate"]
+
+    # 4. THE REOPEN: the same member, offered. It must leave the class.
+    found = classify({"synthetic.json": record(*key, check=True)})
+    assert not found["member"], (
+        "an edition the publisher OFFERS is still classified cited-but-unpublished. The whole "
+        "content of this class is that somebody looked and did not find it"
+    )
+    assert list(found["held"]) == [key], found
+
+    # And the citation reader itself finds a quotation it was never told about.
+    assert cited_editions({"synthetic.json": record(*key)}) == {key: ["synthetic.json:boundary.quoted"]}
+    assert cited_editions({"synthetic.json": record(*key, cite=False)}) == {}
+
+
+def test_every_prose_site_that_names_the_class_points_at_the_gate_that_checks_it():
+    """The class is a registry, not a rewrite — so the prose keeps its words and gains a pointer.
+
+    A named state with no gate behind it is what "cited-but-unpublished" was for one round, and a
+    reader meeting the phrase had no way to find out whether anything checked it. Both sites that
+    name the class now say where it is computed. The `.md` sites are swept and `MIGRATIONS.md` is
+    not: it records what a round DID, in the past tense, and pointing a history entry at a
+    current gate would date it wrongly.
+    """
+    sites = ("FORMAT_COVERAGE.md", "fixtures/cat034/README.md")
+    for rel in sites:
+        text = (PKG / rel).read_text()
+        flat = " ".join(text.split())
+        low = flat.lower()
+        assert "cited-but-unpublished" in low, (
+            f"{rel} no longer names the class. If the name changed, this list and the class's own "
+            "docstring change with it"
+        )
+        # SCOPED TO THE SENTENCE THAT NAMES THE CLASS, not to the file. Both of these documents
+        # mention this module elsewhere — `FORMAT_COVERAGE.md` six times, the README twice — so a
+        # whole-file check is a disjunction that passes while the pointer beside the class name is
+        # gone. That is the same defect a mutation found in the deploy-workflow assertion one round
+        # ago, and it recurred here, which is why the window is now part of the rule rather than a
+        # thing to remember.
+        at = low.index("cited-but-unpublished")
+        window = flat[at:at + 600]
+        assert "tests/test_cdm_pins.py" in window, (
+            f"{rel} names the cited-but-unpublished class and does not say WHERE IT IS CHECKED "
+            f"within 600 characters of naming it. The pointer has to be beside the name: this "
+            "class exists because the state was a phrase with no gate behind it for a round, and "
+            "a reader meeting the phrase has to be able to find the gate without grepping.\n"
+            f"  window: {window[:200]!r}"
+        )
 
 
 def test_the_citation_parser_is_not_vacuous():
@@ -724,6 +1121,16 @@ def test_the_pin_gate_states_its_derived_count_and_homes(capsys):
                  + ("" if CITED else " — legal and empty, which is #9's Branch U shape"))
     for path in sorted(CITED):
         lines.append(f"      {path}  ({CITED[path]['classification']}) — must not exist")
+    # The third class, printed with its two halves, because a COMPUTED class is the one a reader
+    # is least able to check by eye: the count alone would not say what it was computed from.
+    lines.append(f"  CITED BUT UNPUBLISHED: {len(MEMBERS)}"
+                 + ("" if MEMBERS else " — legal and empty"))
+    for (identifier, edition), entry in sorted(MEMBERS.items()):
+        lines.append(f"      {identifier} Edition {edition}  "
+                     f"— cited at {len(entry['cited_at'])} site(s), not offered as of "
+                     f"{entry['check']['checked_on']}")
+    if CLASSIFIED["candidate"]:  # pragma: no cover - the gate above requires this to be empty
+        lines.append(f"      candidates awaiting a check: {len(CLASSIFIED['candidate'])}")
     print("\n".join(lines))
     out = capsys.readouterr().out
     assert "PIN GATE:" in out and "NOT pins:" in out, (
@@ -733,6 +1140,11 @@ def test_the_pin_gate_states_its_derived_count_and_homes(capsys):
         f"the gate no longer prints the cited class:\n{out}\nIt is empty today, which is exactly "
         "why it has to be printed — a reader who cannot see the line has no way to tell a class "
         "checked and empty from a class nobody wired up. Restore the CITED line"
+    )
+    assert "CITED BUT UNPUBLISHED:" in out, (
+        f"the gate no longer prints the computed class:\n{out}\nIt has one member and would be "
+        "legal at zero, which is exactly why the line is unconditional — a reader who cannot see "
+        "it has no way to tell a class checked and empty from a class nobody wired up"
     )
     assert str(len(PINS)) in out
 

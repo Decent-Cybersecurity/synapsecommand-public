@@ -22,6 +22,7 @@ that a checkable claim rather than a preface. They fall into five groups:
 import datetime as _dt
 import json
 import pathlib
+import types
 import re
 
 import pytest
@@ -46,11 +47,33 @@ def adapter(**kwargs) -> GmtifAdapter:
 
 
 def _spec():
-    import importlib.util
+    """The generator, loaded from its SOURCE — never from bytecode. Measured, not precautionary.
+
+    `spec_from_file_location` + `exec_module` runs the ordinary source loader, which consults and
+    writes `__pycache__`. A `.pyc` is revalidated on the source's **mtime in whole seconds and its
+    size**, so a same-length edit reverted inside one second leaves a cache that validates against
+    a file it was not compiled from — and the loader then returns the OLD module while the source
+    on disk says something else. That was reproduced at this exact site: a generator cached with a
+    changed constant, the source restored byte-for-byte, and
+    `test_the_generator_is_the_only_thing_that_writes_the_octets` failed against a correct tree.
+
+    **It is not a mutation-harness-only shape**, which is what the measurement settled. `git
+    checkout -- <file>` restores a file 0.016 s after an edit — the same integer second — so
+    edit, run one test, revert is enough. A mutation harness only makes it routine.
+
+    And the loader is wrong here on its own terms regardless of timing: these tests exist to
+    compare the artefacts on disk against **what this source produces**, so reading bytecode
+    compiled from some other version of it is the one thing they must not do. Compiling in memory
+    reads the source every time and writes nothing.
+
+    `tests/test_cdm_generator_loading.py` holds all three sites to this behaviour by poisoning a
+    cache and requiring the source to win.
+    """
     path = FIXTURES / "spec" / "build_fixtures.py"
-    spec = importlib.util.spec_from_file_location("_gmti_build", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    name = "_gmti_build"
+    module = types.ModuleType(name)
+    module.__file__ = str(path)
+    exec(compile(path.read_text(), str(path), "exec"), module.__dict__)
     return module
 
 
