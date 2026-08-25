@@ -5,15 +5,16 @@
       "affiliation_basis": "UNKNOWN, always, and three separate inferences are declined to keep it that way. \u00a75.2.6's MD4 and MD5 spell one value 'Friendly target' \u2014 an authenticated military-mode reply says a cryptographic exchange succeeded, and reading it as an affiliation is an IDENTIFICATION DECISION, which is the asterix_cat021.py Mode 5 refusal. \u00a75.2.25 Subfield #4's GAT/OAT spells one value 'Operational Air Traffic', which is a set of flight rules and not an allegiance. \u00a75.2.24 Subfield #21 spells one emitter category 'highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)', which describes a fighter and is a performance class \u2014 the GMTIF platform-type refusal. All three are parked with the document's own wording so a fusion layer can make the call where it is attributable",
       "cat062_block": {
         "category": 62,
-        "length": 29,
+        "length": 37,
         "record_count": 1
       },
-      "cat062_fspec": "910db902",
+      "cat062_fspec": "990db902",
       "cat062_items": {
         "I062/010": "2929",
         "I062/040": "1092",
         "I062/070": "2a3000",
         "I062/080": "0c",
+        "I062/105": "00a33e1f003d5383",
         "I062/130": "1360",
         "I062/135": "04c4",
         "I062/136": "04c3",
@@ -96,9 +97,20 @@
       },
       "integrity_basis": "CAT062 defines NO checksum at any level \u2014 neither \u00a74.6 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, every compound item's presence bits named a subfield that exists, every FX led somewhere \u00a75.2 defines, every repetitive item's REP was non-zero, the Reserved Expansion Field's own length tiled its contents exactly, and the four items whose Encoding Rule reads 'This Item shall be present in every ASTERIX record' were present. THIS GATE IS THINNER THAN CAT034'S AND THE DIFFERENCE IS THE ABSENCE OF A TABLE 2: \u00a74.1 gives this category ONE message type, so there is no per-type expectation for a record to be internally inconsistent with. A record carrying only the four mandatory items is legal, minimal and complete. A single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a track position",
       "position_basis": {
-        "cartesian_declined": "I062/100 is present in some records and is NEVER converted: \u00a74.3.2's projection is relative to a reference point no CAT062 item carries and names the projection only by example",
-        "item": null,
-        "reason": "the record carries no I062/105. Its Encoding Rule is 'This Item is optional', so the absence is ordinary \u2014 and an absent Position is the honest statement, never a Position holding zeros, which is a real point in the Gulf of Guinea"
+        "accuracy": {
+          "item": null,
+          "reason": "no I062/500 Subfield #3 in this record, so the accuracy is UNKNOWN. accuracy_m stays None, which means unknown and never perfect \u2014 and it is deliberately NOT derived from Subfield #1, whose components are in the Cartesian frame settlement 6 declines to invert"
+        },
+        "definition": "Calculated Position in WGS-84 Co-ordinates",
+        "item": "I062/105",
+        "latitude_raw": 10698271,
+        "longitude_raw": 4019075,
+        "lsb_degrees": 5.364418029785156e-06,
+        "position_source_basis": "ESTIMATED, always, and it is a ruling rather than a fit. \u00a73.1.2 defines a Calculated Item as 'A piece of information (e.g. the position of a target) derived from raw information through an intermediate processing such as transformation of co-ordinates, TRACKING, code conversion', so a tracker's filtered output is an estimate by construction whatever the sensors underneath it were. GNSS would claim the fix came from a satellite receiver, which is sometimes UPSTREAM of it and never what the item states; INERTIAL and MANUAL are plainly wrong. The underlying technologies are named separately in I062/290 and in the REF's contributing-sensor lists, so a consumer can see that a track was ADS-B-only without this adapter having relabelled the estimate as a GNSS fix"
+      },
+      "position_quantisation_m": {
+        "basis": "PARKED, and deliberately NOT written to Position.accuracy_m. 180/2^25 degrees is the QUANTISATION STEP of the encoding \u2014 the finest difference the field can express, and the finest in this repository \u2014 and reporting it as an accuracy would claim the tracker knows where the target is to 0.6 m when the document says only that it cannot say so more finely. accuracy_m comes from I062/500 Subfield #3 or stays None",
+        "quoted": "The LSB provides a resolution at least better than 0.6m"
       },
       "source_extras": {
         "items": {
@@ -123,6 +135,10 @@
                 "src": 3
               }
             ]
+          },
+          "I062/105": {
+            "latitude_raw": 10698271,
+            "longitude_raw": 4019075
           },
           "I062/130": {
             "altitude_raw": 4960
@@ -174,7 +190,13 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
-    "position": null,
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 9448.800000000001,
+      "lat": 57.38999783992767,
+      "lon": 21.559998393058777,
+      "position_source": "ESTIMATED"
+    },
     "schema_version": "1.0.0",
     "source": {
       "adapter": "cat062",

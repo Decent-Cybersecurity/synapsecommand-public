@@ -53,16 +53,18 @@ PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
 TESTS = REPO / "tests"
 
-#: The three modules that load a generator, and the loader each exposes. Hand-written, and the
-#: closure below re-derives it from the tree so that a fourth loader cannot arrive unlisted.
+#: The modules that load a generator, and the loader each exposes. Hand-written, and the closure
+#: below re-derives it from the tree so that a new loader cannot arrive unlisted.
 LOADERS = {
+    "test_cdm_asterix_cat023_adapter": "_build_fixtures_module",
     "test_cdm_asterix_cat034_adapter": "_build_fixtures_module",
     "test_cdm_asterix_cat048_adapter": "_build_fixtures_module",
+    "test_cdm_asterix_cat062_adapter": "_build_fixtures_module",
     "test_cdm_gmtif_adapter": "_spec",
 }
 
-#: The ten adapter test modules. The seven absent from `LOADERS` are the other half of the
-#: closure: the shape must be absent from them, and that is derived rather than asserted.
+#: The adapter test modules. The ones absent from `LOADERS` are the other half of the closure:
+#: the shape must be absent from them, and that is derived rather than asserted.
 ADAPTER_TEST_MODULES = tuple(sorted(
     p.stem for p in TESTS.glob("test_cdm_*_adapter.py")))
 
@@ -93,16 +95,26 @@ def _generator_path(name: str) -> pathlib.Path:
 # ---------------------------------------------------------------- the closure, both directions
 
 
-def test_exactly_three_adapter_harnesses_load_a_generator_and_the_other_seven_do_not():
+def test_exactly_the_listed_harnesses_load_a_generator_and_the_others_do_not():
     """CLOSURE, and the second half is the one that makes it total.
 
-    Ten adapter test modules. Three load a `build_fixtures.py`; the other seven never mention one,
-    and that absence is DERIVED from the tree rather than taken on trust — a fourth harness that
-    starts loading a generator has to join `LOADERS` and pass the poisoning check with the rest.
+    One adapter test module per shipped adapter. Some load a `build_fixtures.py`; the rest never
+    mention one, and that absence is DERIVED from the tree rather than taken on trust — a harness
+    that starts loading a generator has to join `LOADERS` and pass the poisoning check with the
+    rest.
+
+    THE COUNT IS DERIVED FROM THE REGISTRY and used to be the literal `10`, which went stale the
+    moment `cat062` and `cat023` shipped. That is `tests/test_cdm_prose_counts.py`'s defect one
+    layer in — a count in a place nothing computes it — and it is the third such literal this round
+    found in the suite itself.
     """
-    assert len(ADAPTER_TEST_MODULES) == 10, (
-        f"{len(ADAPTER_TEST_MODULES)} adapter test modules found: {ADAPTER_TEST_MODULES}. Ten "
-        "adapters ship, so a different number means this closure is looking at the wrong set"
+    from synapse_cdm import adapter as adapter_module
+    shipped = {n for n, c in adapter_module.discover().items()
+               if c.__module__.startswith("synapse_cdm.adapters.")}
+    assert len(ADAPTER_TEST_MODULES) == len(shipped), (
+        f"{len(ADAPTER_TEST_MODULES)} adapter test modules and {len(shipped)} shipped adapters: "
+        f"{sorted(ADAPTER_TEST_MODULES)} against {sorted(shipped)}. One harness per adapter is "
+        "what makes this closure total"
     )
     # LOADING is the discriminator, not MENTIONING — and the difference is a real one:
     # `test_cdm_asterix_cat021_adapter` names its generator twice, to assert the file exists and
@@ -119,7 +131,7 @@ def test_exactly_three_adapter_harnesses_load_a_generator_and_the_other_seven_do
         "A harness that starts loading its generator joins LOADERS and is poisoned with the rest"
     )
     silent = [n for n in ADAPTER_TEST_MODULES if n not in LOADERS]
-    assert len(silent) == 7, silent
+    assert silent, "every harness loads a generator, so the second half of the closure is vacuous"
     for name in silent:
         source = (TESTS / f"{name}.py").read_text()
         assert not _loads_a_module_by_path(source), (

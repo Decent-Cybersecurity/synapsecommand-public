@@ -268,6 +268,41 @@ it is nothing.
   eight files is exactly the thing whose own output nobody re-reads. The sentence is restored, the
   whole round's diff was re-scanned for the same signature, and no other site was affected.
 
+- **`tests/test_cdm_asterix_cat062_adapter.py` and `tests/test_cdm_asterix_cat023_adapter.py`.**
+  183 and 124 tests. Each ships **the round trip the harness skips** — `_check_roundtrip` reports
+  SKIP for an adapter whose `from_cdm` returns non-JSON bytes and says in as many words that the
+  adapter must ship its own, and both of these assert BYTE EQUALITY on every fixture rather than
+  the harness's value-presence comparison.
+
+  **Every assertion is scoped to a NAMED table, settlement or fixture.** The CAT062 section is over
+  a thousand lines and `Entity.attributes` appears in fourteen of its seventeen mapping tables, so a
+  section-wide substring check would pass by luck.
+
+  **Eleven mutations, zero survivors, and each caught by the test that names the property.** The
+  ones worth listing because they would otherwise pass every check in the harness: `atan2(Vx, Vy)`
+  → `atan2(Vy, Vx)` (a course reflected about 45°, plausible everywhere); `alt_m` sourced from
+  `I062/135` instead of `I062/130` (a pressure altitude in a field documented as an ellipsoidal
+  height); the record-scoped `entity_id` key reduced to `(SAC/SIC, track number)` (two updates
+  becoming one entity, which is settlement 3's whole subject); `I062/290` Subfield #5 read as one
+  octet instead of two; the FSPEC ceiling lowered to Part 4's four; `I062/110`'s coordinate quantum
+  swapped for `I062/105`'s; the CAT023 service keyed on its four-bit SID alone; `RP = 0` reaching a
+  consumer as `0.0` seconds; a service status severity softened; `GSSP`'s low bound moved to zero;
+  and a spare bit dropped by a decoder.
+
+- **The mutation harness reproduced this repository's own documented stale-bytecode failure, on its
+  first run, and it is worth recording because the prediction was exact.**
+  `tests/test_cdm_generator_loading.py`'s docstring says a `.pyc` is revalidated on the source's
+  mtime **in whole seconds** and its size, that an edit reverted inside one second therefore leaves
+  a cache validating against a file it was not compiled from, and that "a mutation harness only
+  makes it routine". It did: eleven mutations applied and reverted in under a second each left nine
+  tests failing against a **restored** tree, and the failures pointed at the wrong properties
+  entirely. That module's own fix compiles the fixture generators in memory, which is why the
+  generators were unaffected; the ADAPTER modules are imported normally and are not covered by it,
+  and should not be — `import` caching is correct behaviour. What was wrong was a harness that
+  edits source and re-runs without clearing `__pycache__`. Recorded rather than dropped because the
+  first mutation run's output was wrong in the direction that looks like a finding: seven "MISSED"
+  verdicts, every one of them false.
+
 ### 1.0.0 — initial contract
 
 The four objects (`Entity`, `Event`, `Track`, `PlanObject`), `Position`, `Kinematics`,

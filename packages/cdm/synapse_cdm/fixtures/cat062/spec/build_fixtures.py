@@ -323,11 +323,18 @@ def fixtures() -> dict[str, bytes]:
     # Both altitudes present and DISAGREEING, with MRH saying "geometric more reliable". alt_m
     # comes from I062/130 because it is the ellipsoidal one and NOT because MRH said so; the
     # second record flips MRH and the test asserts alt_m does not move.
+    #
+    # BOTH RECORDS CARRY I062/105, and that is not decoration: `Position` requires a latitude and
+    # a longitude, so `alt_m` has nowhere to live in a record with no calculated position. A
+    # fixture without one would assert nothing about which altitude reaches `alt_m`, because none
+    # of them would.
     out["both_altitudes_disagreeing"] = block(
         record(_base(status=_track_status({"mrh": 1, "src": 1}), **{
+            "I062/105": _position(TRACK_LAT, TRACK_LON),
             "I062/130": _geometric_altitude(31000.0),
             "I062/135": _barometric_altitude(305.0, qnh=1)})),
         record(_base(status=_track_status({"mrh": 0, "src": 1}), **{
+            "I062/105": _position(TRACK_LAT, TRACK_LON),
             "I062/130": _geometric_altitude(31000.0),
             "I062/135": _barometric_altitude(305.0, qnh=1)})),
     )
@@ -338,6 +345,7 @@ def fixtures() -> dict[str, bytes]:
     out["three_altitudes_and_a_measured_height"] = block(record(_base(
         status=_track_status({"mrh": 0, "src": 3}),
         **{
+            "I062/105": _position(TRACK_LAT, TRACK_LON),
             "I062/130": _geometric_altitude(31000.0),
             "I062/135": _barometric_altitude(305.0),
             "I062/136": _measured_flight_level(304.75),

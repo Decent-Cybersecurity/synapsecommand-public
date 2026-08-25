@@ -2099,6 +2099,14 @@ def _position(items: dict, unresolved: dict) -> tuple[Position | None, dict]:
                        "optional', so the absence is ordinary — and an absent Position is the "
                        "honest statement, never a Position holding zeros, which is a real point "
                        "in the Gulf of Guinea"),
+            "altitude_has_nowhere_to_go": (
+                "AND THAT TAKES THE ALTITUDE WITH IT. `Position` requires a latitude and a "
+                "longitude — the CDM's null-never-zero rule is structural rather than advisory — "
+                "so a record carrying I062/130 and no I062/105 has no Position, and therefore no "
+                "alt_m, however well-defined the altitude is. The figure is still in "
+                "Event.payload.calculated_geometric_altitude with its LSB and its raw field; what "
+                "is absent is the canonical field, and it is absent because the canonical field "
+                "is part of an object this record cannot support"),
             "cartesian_declined": ("I062/100 is present in some records and is NEVER converted: "
                                    "§4.3.2's projection is relative to a reference point no "
                                    "CAT062 item carries and names the projection only by example"),
