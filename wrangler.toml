@@ -23,9 +23,14 @@
 #
 # THE DEPLOY, IN FULL
 # -------------------
-#     cd docs && npm run ci                       # build + the three gates, from the repo root
+#     npm --prefix docs run ci                    # build + the three gates, from the repo root
 #     npx wrangler pages deploy docs/build \      # or no directory: this file supplies it
 #         --project-name synapsecommand-docs --branch main
+#
+# `npm --prefix docs` and not `cd docs &&`: the two lines are one paste, a `cd` persists across
+# them, and the second line then resolves `docs/build` relative to `docs/` — wrangler exits with
+# `ENOENT ... scandir '.../docs/docs/build'`. Both sites claimed "from the repo root" and only the
+# first line was. Found by running the block exactly as written.
 #
 # `npm run build` runs `prebuild` first, which regenerates the JSON Schema reference pages from
 # /schemas. There is no way to build and skip it, so a deploy renders the schemas as they are in

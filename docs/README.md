@@ -84,9 +84,16 @@ nothing to notice.
 Two commands, from the repository root, in this order:
 
 ```bash
-cd docs && npm run ci        # gen:schemas → check:schemas → typecheck → build → check:admonitions
+npm --prefix docs run ci     # gen:schemas → check:schemas → typecheck → build → check:admonitions
 npx wrangler pages deploy docs/build --project-name synapsecommand-docs --branch main
 ```
+
+`npm --prefix docs`, not `cd docs &&`, and the difference is not style. The two lines are one
+paste and a `cd` persists across them, so the second line then resolved `docs/build` relative to
+`docs/` and wrangler failed with `ENOENT: no such file or directory, scandir
+'.../docs/docs/build'`. Both sites said "from the repository root" and only the first line was.
+Found by running the block exactly as written; `--prefix` runs the script in `docs/` and leaves
+the shell where it was.
 
 The directory argument is optional — `pages_build_output_dir` in `wrangler.toml` supplies it, and
 a no-argument deploy uploads the same file set. Wrangler will warn that the working tree is

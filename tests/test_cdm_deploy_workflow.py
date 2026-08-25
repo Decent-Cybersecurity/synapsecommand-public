@@ -265,3 +265,68 @@ def test_the_built_site_is_not_committed_so_a_deploy_is_the_only_way_it_ships():
         "and deployed, never committed — `npm run check:schemas` is what gates the SOURCE pages "
         "against drift, and a committed build would be a second copy of the rendered contract"
     )
+
+
+# ------------------------------------------------- the sequence has to work as one paste
+#
+# The gate above checks that the two sites AGREE about the mechanism, and they did — about a
+# sequence that does not run. Both said "from the repository root" and both then wrote:
+#
+#     cd docs && npm run ci
+#     npx wrangler pages deploy docs/build --project-name synapsecommand-docs --branch main
+#
+# A `cd` persists across the two lines, so the second resolved `docs/build` relative to `docs/`
+# and wrangler exited `ENOENT: no such file or directory, scandir '.../docs/docs/build'`. Only the
+# first line was from the repository root. Two sites in perfect agreement about a broken command,
+# which is exactly what an agreement check cannot see — and this one needed no network to catch:
+# it is path arithmetic over text already in the tree.
+
+#: The forms that change the shell's directory for every command after them. A subshell —
+#: `(cd docs && …)` — does not, and is deliberately not listed: it is a correct way to write this.
+DIRECTORY_CHANGING = re.compile(r"(?m)^\s*(?:#\s*)?cd\s+\S+\s*&&")
+
+DEPLOY_LINE = re.compile(r"wrangler pages deploy\s+(?P<path>[^\s\\]+)")
+
+
+@pytest.mark.parametrize("site", SITES)
+def test_the_deploy_path_resolves_from_where_the_block_says_it_is_run(site):
+    """The argument must exist relative to the repository root, and nothing may `cd` before it.
+
+    Both halves are needed. Checking only that `docs/build` is the right string passes the broken
+    sequence — the string WAS right, and the working directory was not.
+    """
+    text = _read(site)
+    deploys = list(DEPLOY_LINE.finditer(text))
+    assert deploys, f"{site} states the mechanism but has no `wrangler pages deploy <path>` line"
+    for match in deploys:
+        path = match.group("path")
+        assert path == EXPECTED_OUTPUT_DIR, (
+            f"{site} deploys {path!r} and wrangler.toml declares {EXPECTED_OUTPUT_DIR!r}"
+        )
+        # Everything the reader would have run before reaching this line.
+        before = text[:match.start()]
+        # …but only inside the same block, which for both sites is the deploy sequence itself.
+        block = before[before.rfind("\n\n"):]
+        offender = DIRECTORY_CHANGING.search(block)
+        assert not offender, (
+            f"{site}: the deploy block runs `{offender.group(0).strip()}` before "
+            f"`wrangler pages deploy {path}`. The two lines are one paste and a `cd` persists "
+            f"across them, so {path} would resolve inside that directory — the failure is "
+            f"`ENOENT ... scandir '.../{path.split('/')[0]}/{path}'`. Use `npm --prefix <dir>`, "
+            "or a subshell, or make the path relative to where the block actually leaves you"
+        )
+
+
+def test_the_directory_change_pattern_is_not_vacuous():
+    """A pattern that matched nothing would agree that no block changes directory anywhere.
+
+    Both the broken form and the two correct alternatives are asserted, because a pattern loose
+    enough to flag `npm --prefix` would fail the repaired sequence it was written to permit.
+    """
+    assert DIRECTORY_CHANGING.search("cd docs && npm run ci"), \
+        "the pattern no longer matches the exact line this test was written for"
+    assert DIRECTORY_CHANGING.search("  cd docs && npm run ci"), "indented forms count"
+    assert not DIRECTORY_CHANGING.search("npm --prefix docs run ci"), \
+        "the repaired form must not be flagged"
+    assert not DIRECTORY_CHANGING.search("(cd docs && npm run ci)"), \
+        "a subshell does not change the caller's directory and is a correct way to write this"
