@@ -184,7 +184,14 @@ test**, because the harness cannot compare a structure it cannot parse.
 python -m synapse_cdm.harness --adapter <name|module:Class> [--fixtures <dir>] [--json]
                               [--schemas schemas] [--now <RFC3339>] [--update-golden]
                               [--synthetic true|false]
+python -m synapse_cdm.harness --list-adapters [--json]
 ```
+
+:::note[`--list-adapters` is on `main` and is not in 1.0.0]
+It prints the registry — name, version, direction, fixture directory, system — and exits `0`,
+so the roster stops being something you can only see by getting a name wrong. On the release
+PyPI serves today the flag does not exist; it arrives in the next one.
+:::
 
 `--fixtures` is **optional for an adapter the package ships** and required for one given as
 `module:ClassName`. Omitted, the harness asks the import system where the package's own fixtures

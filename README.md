@@ -89,6 +89,13 @@ No `--fixtures`: for an adapter this package ships, the harness asks the import 
 own fixtures are and replays those, wherever it is installed. Six checks per fixture — translate,
 schema, provenance, lossless, roundtrip, golden — and an unrun check reports `SKIP`, never `PASS`.
 
+`python -m synapse_cdm.harness --list-adapters` prints the names `--adapter` takes, with each
+one's version, direction and fixture directory. Until it existed the roster was reachable only
+through a failure — a `LookupError` from a wrong name, or argparse's usage line, which names the
+flag and not one value it takes. **It is on `main` and not in 1.0.0**, so it needs a clone until
+the next release; see
+[`MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md), "Unreleased".
+
 ## Writing your first adapter
 
 The shortest honest path from an empty file to a green harness run. Nothing below is duplicated

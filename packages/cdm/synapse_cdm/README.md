@@ -35,11 +35,20 @@ pip install synapse-cdm
 
 python -m synapse_cdm.harness --adapter pntmap        # replays the fixtures that came with it
 python -m synapse_cdm.schemas --out ./schemas         # writes the six JSON Schemas, anywhere
+
+python -m synapse_cdm.harness --list-adapters         # the names --adapter takes — NEXT RELEASE
 ```
 
 `--fixtures` is optional for an adapter this package ships: omitted, the harness asks the import
 system where its own fixtures are and replays those, wherever the package is installed. Pass it
 to replay your own set. Both commands also install as `cdm-harness` and `cdm-schemas`.
+
+**`--list-adapters` is on `main` and is not in 1.0.0**, which is what PyPI serves today, so the
+third command above fails on an installed 1.0.0 with argparse's `unrecognized arguments`. It is
+marked rather than hidden because the roster is what a new reader wants first, and the flag it
+will be answered by is worth knowing about a release early. On 1.0.0 the roster is the table at
+the top of this file, or the clause inside `--adapter <anything wrong>`. See MIGRATIONS.md,
+"Unreleased".
 
 The wheel deliberately carries no copy of the published schemas — a third copy of a generated
 artefact is a third thing that can go stale — so `python -m synapse_cdm.schemas --out <dir>`
@@ -200,7 +209,17 @@ there and must ship its own round-trip test.
 python -m synapse_cdm.harness --adapter <name|module:Class> [--fixtures <dir>] [--json]
                               [--schemas <dir>] [--now <RFC3339>] [--update-golden]
                               [--synthetic true|false]
+python -m synapse_cdm.harness --list-adapters [--json]
 ```
+
+`--list-adapters` prints the registry and exits `0`: name, version, direction, **fixture
+directory** and system. The fixture column is there because `stanag4676` replays `fixtures/nits`
+and that relation was folklore until `Adapter.fixture_dir` made it a declaration — folklore that
+produced a nine-adapter sweep reporting nine greens with one of them vacuous. Before this flag the
+roster was reachable only by getting something wrong: `--adapter typo` returns it inside a
+`LookupError`, and a bare invocation returns argparse's usage line, which names `--adapter` and
+not one value it takes. **It is on `main` and is not in 1.0.0**, the version PyPI serves today;
+until the next release it needs a clone or an editable install.
 
 Six checks per fixture, and an unrun check reports `SKIP` — never `PASS`:
 

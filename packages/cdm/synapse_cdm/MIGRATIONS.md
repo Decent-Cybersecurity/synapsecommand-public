@@ -89,10 +89,26 @@ that does not move, and it records nobody.
 Publishing to PyPI. There is no CI in this repository — no `.github/workflows`, and the
 documentation site is deployed by direct upload rather than by a push — so a release is a
 sequence a person runs. Automating an upload before there is anything to run it on would be
-inventing a mechanism. `PUBLICATION.md` carries the checklist of what publishing needs and who
-has to do it.
+inventing a mechanism. `PUBLICATION.md` ledger entry 5 carries the sequence that was followed for
+1.0.0, what was measured off the index afterwards, and which step of it did not run.
 
 ## History
+
+### Unreleased — on `main`, in no release yet
+
+Recorded here so that the next release's notes are **derived rather than remembered**, which is
+condition 4 of "What a release requires". Nothing below is in 1.0.0, and 1.0.0 is not re-cut for
+it: a released filename on PyPI can never be reused, so a re-release is a new version number or
+it is nothing.
+
+- **`harness --list-adapters`** — prints the registered adapters (name, version, direction,
+  fixture directory, system) and exits `0`, with `--json` honoured. The roster used to be
+  reachable only through a failure: inside `load_adapter`'s `LookupError`, or not at all, since
+  a bare invocation gets argparse's usage line naming `--adapter` and not one value it takes.
+  `--adapter` is no longer `required=True` — the requirement is re-imposed with `parser.error`,
+  so a bare invocation still exits `2` with the same usage line and one added sentence.
+  `adapter.roster()` is now the single source both the listing and the refusal read.
+  **Package MINOR when released** — an added CLI surface, nothing removed, no schema touched.
 
 ### 1.0.0 — initial contract
 

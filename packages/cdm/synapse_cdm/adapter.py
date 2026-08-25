@@ -157,6 +157,27 @@ class Adapter(ABC):
         )
 
 
+def roster() -> dict[str, type[Adapter]]:
+    """Every name `--adapter` resolves without a module path, in one place.
+
+    WHY THIS IS A FUNCTION AND NOT TWO SORTED LISTS
+    -----------------------------------------------
+    The roster is stated twice: once by `harness --list-adapters`, which a reader asks for, and
+    once by `load_adapter`'s refusal, which a reader meets by accident. Two independent
+    `sorted(REGISTRY)` calls would be two statements of one fact and could drift the moment one
+    of them grew a filter — "only the ones with fixtures", "only the bidirectional ones" — which
+    is the shape every stale count in this repository started as. So the refusal message and the
+    listing read the same function, and `tests/test_cdm_list_adapters.py` requires the two
+    OUTPUTS to name the same set as well, which is the check that survives someone re-deriving
+    one of them.
+
+    `discover()` first, because the registry is populated by import side effect: without it a
+    fresh process reports an empty roster and the refusal reads "registered: none".
+    """
+    discover()
+    return dict(sorted(REGISTRY.items()))
+
+
 def load_adapter(reference: str) -> type[Adapter]:
     """Resolve 'pntmap' from the registry, or 'package.module:ClassName' by import.
 
@@ -170,11 +191,14 @@ def load_adapter(reference: str) -> type[Adapter]:
         if candidate is None or not (isinstance(candidate, type) and issubclass(candidate, Adapter)):
             raise LookupError(f"{reference} is not an Adapter subclass")
         return candidate
-    discover()
-    if reference not in REGISTRY:
-        known = ", ".join(sorted(REGISTRY)) or "none"
-        raise LookupError(f"unknown adapter {reference!r}; registered: {known}")
-    return REGISTRY[reference]
+    known = roster()
+    if reference not in known:
+        raise LookupError(
+            f"unknown adapter {reference!r}; registered: {', '.join(known) or 'none'}. "
+            "`--list-adapters` prints the same set with each one's version, direction and "
+            "fixture directory, and does not require a failed lookup to do it"
+        )
+    return known[reference]
 
 
 def discover() -> dict[str, type[Adapter]]:

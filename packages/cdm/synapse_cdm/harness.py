@@ -1,6 +1,14 @@
 """The validation harness: replay recorded payloads through an adapter, judge the output.
 
     python -m synapse_cdm.harness --adapter pntmap
+    python -m synapse_cdm.harness --list-adapters      # and this is how you learn the names
+
+`--list-adapters` prints the registry — name, version, direction, fixture directory, system —
+and exits 0. Until it existed the roster was reachable only through a failure: `--adapter typo`
+put it in a `LookupError`, and a bare invocation got argparse's usage line, which names the flag
+and not one value it takes. A tool that had to be misused before its inventory could be read.
+`load_adapter`'s refusal and this listing both read `adapter.roster()`, so they cannot name
+different sets, and `tests/test_cdm_list_adapters.py` compares the two rendered outputs as well.
 
 `--fixtures` is OPTIONAL for an adapter this package ships: omitted, the harness asks the import
 system where its own fixtures are (`adapter.packaged_fixtures`) and replays those. It used to be
@@ -66,7 +74,7 @@ from typing import Any
 import jsonschema
 
 from synapse_cdm import lossless, schemas, times
-from synapse_cdm.adapter import Adapter, load_adapter, packaged_fixtures
+from synapse_cdm.adapter import Adapter, load_adapter, packaged_fixtures, roster
 from synapse_cdm.models import CDMBase
 
 GOLDEN_DIR = "golden"
@@ -423,6 +431,45 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
     }
 
 
+def render_roster(adapters: dict[str, type[Adapter]]) -> str:
+    """The registered names, with what a caller needs in order to choose one.
+
+    WHY THE ROSTER IS PRINTABLE AT ALL
+    ----------------------------------
+    Until `--list-adapters` the only way to see it was to get it wrong: `--adapter typo` raises
+    `LookupError: unknown adapter 'typo'; registered: …`, and a bare invocation gets argparse's
+    usage line, which names the FLAG and not one value it takes. So the answer to "what can I
+    run this against?" was reachable only through a failure, and a tool whose inventory is a
+    side effect of an error message is a tool that has to be misused before it can be used.
+
+    The version, direction and fixture directory are here because each answers a question the
+    name alone leaves open, and the third one especially: `stanag4676` replays `fixtures/nits`,
+    and that split was folklore until `Adapter.fixture_dir` made it a declaration. Printing it
+    means a reader never has to learn it from a vacuous green run.
+    """
+    if not adapters:
+        # An empty roster is a broken import, not an answer, and it must not print as a tidy
+        # empty table. `discover()` populates the registry by import side effect; nothing else
+        # empties it, so reaching here means the adapters package did not load.
+        return ("no adapters are registered. synapse_cdm.adapters failed to import, because "
+                "every adapter this package ships registers itself when its module is imported "
+                "— this is a broken installation rather than an empty inventory")
+    width = max(len(name) for name in adapters)
+    lines = [
+        f"{len(adapters)} adapters registered. Replay any of them with "
+        f"`--adapter <name>` and no `--fixtures`: the fixtures came with the package.",
+        "",
+        f"{'name'.ljust(width)}  {'version'.ljust(7)}  {'direction'.ljust(13)}  "
+        f"{'fixtures'.ljust(11)}  system",
+        "-" * (width + 2 + 7 + 2 + 13 + 2 + 11 + 2 + 6),
+    ]
+    for name, cls in adapters.items():
+        lines.append(f"{name.ljust(width)}  {cls.version.ljust(7)}  "
+                     f"{cls.direction.ljust(13)}  "
+                     f"{(cls.fixture_dir or cls.name).ljust(11)}  {cls.system}")
+    return "\n".join(lines)
+
+
 _COLUMNS = ("translate", "schema", "provenance", "lossless", "roundtrip", "golden")
 
 
@@ -458,9 +505,16 @@ def render_report(report: dict) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--adapter", required=True,
+    # NOT `required=True` any more: `--list-adapters` is the one invocation that legitimately
+    # names no adapter, and argparse would refuse it before main() could answer. The requirement
+    # is re-imposed below with `parser.error`, which keeps the exit status and the usage line
+    # byte-identical to what a missing `--adapter` produced before.
+    parser.add_argument("--adapter", default=None,
                         help="registered name (pntmap) or module:ClassName for an adapter "
-                             "outside this package")
+                             "outside this package. See --list-adapters")
+    parser.add_argument("--list-adapters", action="store_true",
+                        help="print the registered adapters and exit, without needing a failed "
+                             "lookup to see them. Honours --json")
     parser.add_argument("--fixtures", type=pathlib.Path, default=None,
                         help="directory of payloads to replay. Optional for an adapter this "
                              "package ships — omitted, the fixtures that came with the "
@@ -479,6 +533,26 @@ def main(argv: list[str] | None = None) -> int:
                              "diff before committing, this is how a defect becomes expected")
     parser.add_argument("--json", action="store_true", help="machine-readable report on stdout")
     args = parser.parse_args(argv)
+
+    if args.list_adapters:
+        # Answered before anything else and before --adapter is required: a caller who does not
+        # know the names cannot be asked for one in order to be told them.
+        known = roster()
+        if args.json:
+            print(json.dumps({name: {"version": cls.version, "direction": cls.direction,
+                                     "system": cls.system,
+                                     "fixtures": cls.fixture_dir or cls.name}
+                              for name, cls in known.items()}, indent=2))
+        else:
+            print(render_roster(known))
+        # Exit 0 even for an empty roster: `--list-adapters` answers a question, and "none" is a
+        # true answer to it. The broken-installation case is stated in the text rather than in
+        # the status, because a caller scripting this reads the list and not the code.
+        return 0
+    if args.adapter is None:
+        # The same refusal argparse gave when the flag was `required=True` — same exit status,
+        # same usage line — with the one addition that makes it actionable.
+        parser.error("--adapter is required (or --list-adapters to see the registered names)")
 
     frozen: _dt.datetime = times.parse(args.now) if args.now else times.FROZEN_NOW
     adapter_class = load_adapter(args.adapter)
