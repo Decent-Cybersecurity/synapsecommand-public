@@ -1,0 +1,152 @@
+{
+  "block": {
+    "category": 62,
+    "length": 91,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "910d02",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "0110",
+        "I062/390": "fffff0292b4241573131372000bc614e44423733384d4556524145474c4c31385204d8071f0238052b154a090c8041313220202040524947413141204c414d32432020129c42415731313720"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 1,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            },
+            {
+              "aff": 0,
+              "fpc": 1,
+              "fx": 0,
+              "kos": 0,
+              "sim": 0,
+              "stp": 0,
+              "tsb": 0,
+              "tse": 0
+            }
+          ]
+        },
+        "I062/390": {
+          "presence": "fffff0",
+          "subfields": {
+            "ast": {
+              "aircraft_stand_raw": "413132202020"
+            },
+            "cfl": {
+              "cleared_flight_level_raw": 1240
+            },
+            "csn": {
+              "callsign_raw": "42415731313720"
+            },
+            "ctl": {
+              "centre": 7,
+              "position": 31
+            },
+            "dep": {
+              "departure_raw": "45565241"
+            },
+            "dst": {
+              "destination_raw": "45474c4c"
+            },
+            "fct": {
+              "fr": 0,
+              "gat_oat": 1,
+              "hpr": 0,
+              "rvsm": 1,
+              "spare_bit_1": 0
+            },
+            "ifi": {
+              "nbr": 12345678,
+              "spare_bits_30_28": 0,
+              "typ": 0
+            },
+            "pec": {
+              "pre_emergency_raw": "42415731313720"
+            },
+            "pem": {
+              "mode_3a": 668,
+              "spare_bits_16_14": 0,
+              "va": 1
+            },
+            "rds": {
+              "ltr": 82,
+              "nu1": 49,
+              "nu2": 56
+            },
+            "sta": {
+              "star_raw": "4c414d32432020"
+            },
+            "std": {
+              "sid_raw": "52494741314120"
+            },
+            "sts": {
+              "avl": 0,
+              "emp": 1,
+              "spare_bits_4_1": 0
+            },
+            "tac": {
+              "aircraft_type_raw": "42373338"
+            },
+            "tag": {
+              "sac": 41,
+              "sic": 43
+            },
+            "tod": {
+              "entries": [
+                {
+                  "avs": 0,
+                  "day": 0,
+                  "hor": 5,
+                  "min": 43,
+                  "sec": 21,
+                  "spare_bit_7": 0,
+                  "spare_bits_16_15": 0,
+                  "spare_bits_25_22": 0,
+                  "typ": 7
+                },
+                {
+                  "avs": 1,
+                  "day": 1,
+                  "hor": 9,
+                  "min": 12,
+                  "sec": 0,
+                  "spare_bit_7": 0,
+                  "spare_bits_16_15": 0,
+                  "spare_bits_25_22": 0,
+                  "typ": 9
+                }
+              ],
+              "rep": 2
+            },
+            "wtc": {
+              "wtc": 77
+            }
+          }
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

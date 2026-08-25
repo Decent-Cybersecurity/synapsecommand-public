@@ -1,0 +1,409 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and three separate inferences are declined to keep it that way. \u00a75.2.6's MD4 and MD5 spell one value 'Friendly target' \u2014 an authenticated military-mode reply says a cryptographic exchange succeeded, and reading it as an affiliation is an IDENTIFICATION DECISION, which is the asterix_cat021.py Mode 5 refusal. \u00a75.2.25 Subfield #4's GAT/OAT spells one value 'Operational Air Traffic', which is a set of flight rules and not an allegiance. \u00a75.2.24 Subfield #21 spells one emitter category 'highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)', which describes a fighter and is a performance class \u2014 the GMTIF platform-type refusal. All three are parked with the document's own wording so a fusion layer can make the call where it is attributable",
+      "cat062_block": {
+        "category": 62,
+        "length": 42,
+        "record_count": 2
+      },
+      "cat062_fspec": "910d02",
+      "cat062_items": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/390": "010130129c42415731313720"
+      },
+      "data_source": {
+        "basis": "\u00a75.2.1, 'Identification of the system sending the data', M in every record. PARKED, not a SourceId \u2014 the CAT048 disposition and the INVERSE of CAT034's, and the difference is the whole reason both rows exist: there the SAC/SIC IS the object's identity because the station is the object, and here it identifies the SDPS that formed the opinion. Filing a processor under the target's identifiers is how a fused picture ends up with an entity per processor",
+        "external_id": "2929",
+        "item": "I062/010",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": {
+        "default": "PLATFORM. A system track is a track of a moving thing, and every value either refining item can carry is a vehicle, an aircraft or a fixed obstruction. Nothing in the category distinguishes a crewed from an uncrewed aircraft in a way the CDM has a member for \u2014 Appendix A's UAS/RPAS Status does say so and PLATFORM covers both, which is recorded as a gap-shaped absence rather than forced"
+      },
+      "flight_plan": {
+        "basis": "\u00a75.2.25, 'All flight plan related information, provided by ground-based systems'. Everything here is a ground system's statement about an intention rather than an observation of the target, and I062/080's FPC bit is what says whether the correlation happened at all",
+        "pre_emergency_callsign": {
+          "basis": "\u00a75.2.25 Subfield #18, 'used only when an emergency Mode 3/A is associated with the track'. THE PAIR IS THE ONLY PLACE IN THE CATEGORY THAT SAYS WHAT THE TARGET WAS CALLED BEFORE IT STARTED SQUAWKING AN EMERGENCY CODE \u2014 exactly the value an operator needs, and exactly the value a translator must not overwrite the current callsign with",
+          "octets": "42415731313720",
+          "text": "BAW117 ",
+          "trimmed": "BAW117"
+        },
+        "pre_emergency_mode_3a": {
+          "basis": "\u00a75.2.25 Subfield #17, 'used only when the aircraft is transmitting an emergency Mode 3/A code'. VA = 0 makes the twelve bits MEANINGLESS by the item's own NOTE 2, so no code is rendered and the raw bits go to unresolved_raw. THE BIT NUMBERING IS AMBIGUITY 8: the prose says 'bits-16/13 Spare bits set to 0' and then 'bit-13 (VA) Validity', assigning bit 13 twice in four lines. The structure diagram \u2014 three zeros then VA \u2014 is preferred, because it is the only one of the two statements that is internally consistent and it agrees with the twelve-bit Mode 3/A field below it",
+          "octal": "1234",
+          "raw": 668,
+          "valid": true
+        }
+      },
+      "fusion_provenance": {
+        "basis": "EVERY FIELD BELOW IS THE UPSTREAM SDPS'S STATEMENT ABOUT ITS OWN PROCESSING, not a measurement of the target. \u00a73.1.11 defines a track as a 'Time sequence of state vectors of an object estimated by some real time filtering technique using surveillance data as input', \u00a73.1.1 defines amalgamation as merging tracks from co-operating systems, and \u00a73.1.2 defines a Calculated Item as one derived 'through an intermediate processing such as transformation of co-ordinates, tracking, code conversion'. So the document is explicit that its content has been through a fusion process, and this adapter translates that content and performs no fusion of its own. Nothing here is acted on: no age becomes an instant, no staleness flag suppresses a value, no reliability flag arbitrates between two altitudes, no contributing sensor becomes an object or a join",
+        "stated_by": {
+          "external_id": "2929",
+          "sac": 41,
+          "sic": 41
+        },
+        "track_status": {
+          "cnf": {
+            "raw": 0,
+            "text": "Confirmed track"
+          },
+          "military": {
+            "basis": "PARKED with the document's own wording and NOT read as an affiliation. An authenticated military-mode reply says a cryptographic exchange succeeded; reading it as FRIENDLY is an identification decision, which is a fusion judgement and not a fact on a wire \u2014 the asterix_cat021.py Mode 5 refusal reached again"
+          },
+          "mon": {
+            "basis": "THE MOST DIRECT SINGLE BIT IN THE CATEGORY: the tracker saying whether it fused anything for this track",
+            "raw": 0,
+            "text": "Multisensor track"
+          },
+          "mrh": {
+            "basis": "the tracker's assessment, and it ARBITRATES NOTHING here. \u00a75.2.6's fourth NOTE: 'Data Items I062/130, I062/135, and I062/136 may be transmitted in parallel whenever the respective information is available. This is independent from the value transmitted on I062/080 (MRH).' Position.alt_m comes from I062/130 because it is the one item defined as a height above the WGS 84 ellipsoid, not because MRH said so \u2014 settlement 5",
+            "raw": 0,
+            "text": "Barometric altitude (Mode C) more reliable"
+          },
+          "src": {
+            "basis": "the source of the calculated altitude for I062/130, and its first NOTE says it 'may be sent whether data item I062/130 is present or not'. PARKED and never written to Position.position_source, which is about the HORIZONTAL fix \u2014 and two of these eight values, 'speed look-up table' and 'default height', describe an altitude that was not measured at all",
+            "raw": 0,
+            "text": "no source"
+          }
+        }
+      },
+      "identity_basis": "the record states no Mode S address, so the id is scoped to THIS RECORD \u2014 keyed on the SAC/SIC of the emitting system, the raw time of track information, the track number and the record index. Settlement 3 step 2. THE TRACK NUMBER IS IN THE KEY AND IS NOT THE BASIS OF IT, which is a distinction worth stating: inside a record-scoped id it distinguishes two tracks in one block, and it promises no continuity because the time of day is in the key beside it. Keying entity_id on (SAC/SIC, track number) alone was considered and DECLINED: the pair is unique within one SDPS at one moment and entity_id has no expiry, so a key that is reused after a track ends produces one entity spanning two aircraft and there is no field on Entity in which that can be disclosed. FORMAT_COVERAGE.md gap 27 records the truncation \u2014 consecutive updates of one address-less system track get different entity_id values, and that is the honest statement. The continuity the format DOES state is carried where a consumer can act on it: the raw track number, TSB, TSE, I062/510's composed track number and I062/290's track age are all in the object",
+      "identity_caveat": "CAT062 carries no duplicate-Mode-S-address indication of any kind. I062/080's AAC is about an assigned Mode A code, DUPT about a duplicated Mode 3/A code and IDD about a duplicated Flight-ID; none of them is about the 24-bit address this entity may be keyed on. So unlike asterix_cat048.py, which raises a caveat from I048/030 code 16 ('Duplicated or Illegal Mode S Aircraft Address'), there is nothing here to raise and the absence of a warning is not evidence of uniqueness",
+      "implementation_dependent": {
+        "basis": "\u00a74.8 is a NORMATIVE DELEGATION of meaning to a per-deployment Interface Control Document, which is not a document this repository could acquire. Every other park in this adapter is a park because the CDM has no home for the value; these two are parks because THE DOCUMENT SAYS the value's meaning is not standardised. \u00a75.2.23 repeats it twice more for I062/340: 'The term \"last report\" may refer to the \"latest used\" or \"latest measured\". The actual meaning is implementation dependent' and 'The availability of the various data items differs depending on the surveillance technology used and is implementation dependent.' A consumer comparing I062/340 across two SDPSs without knowing this will get a number",
+        "items": [
+          "I062/080 (Track Status), Fifth Extension, Bit-5 (SFC)",
+          "I062/340 (Measured Information)"
+        ],
+        "quoted": "\u00a74.8: 'Such a data item will be marked as \u201cimplementation dependent\u201d in a note. The exact meaning of the data item shall then be described in the Interface Control Document (ICD) of the respective system. In such a case the provisions of the ICD will reflect the actual implementation of the data item.'"
+      },
+      "integrity_basis": "CAT062 defines NO checksum at any level \u2014 neither \u00a74.6 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, every compound item's presence bits named a subfield that exists, every FX led somewhere \u00a75.2 defines, every repetitive item's REP was non-zero, the Reserved Expansion Field's own length tiled its contents exactly, and the four items whose Encoding Rule reads 'This Item shall be present in every ASTERIX record' were present. THIS GATE IS THINNER THAN CAT034'S AND THE DIFFERENCE IS THE ABSENCE OF A TABLE 2: \u00a74.1 gives this category ONE message type, so there is no per-type expectation for a record to be internally inconsistent with. A record carrying only the four mandatory items is legal, minimal and complete. A single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a track position",
+      "position_basis": {
+        "cartesian_declined": "I062/100 is present in some records and is NEVER converted: \u00a74.3.2's projection is relative to a reference point no CAT062 item carries and names the projection only by example",
+        "item": null,
+        "reason": "the record carries no I062/105. Its Encoding Rule is 'This Item is optional', so the absence is ordinary \u2014 and an absent Position is the honest statement, never a Position holding zeros, which is a real point in the Gulf of Guinea"
+      },
+      "source_extras": {
+        "items": {
+          "I062/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I062/040": {
+            "track_number": 4242
+          },
+          "I062/070": {
+            "time_of_day_raw": 2764800
+          },
+          "I062/080": {
+            "octets": [
+              {
+                "cnf": 0,
+                "fx": 0,
+                "mon": 0,
+                "mrh": 0,
+                "spi": 0,
+                "src": 0
+              }
+            ]
+          },
+          "I062/390": {
+            "presence": "010130",
+            "subfields": {
+              "pec": {
+                "pre_emergency_raw": "42415731313720"
+              },
+              "pem": {
+                "mode_3a": 668,
+                "spare_bits_16_14": 0,
+                "va": 1
+              }
+            }
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT062 track is an UNKNOWN glyph in the reality or exercise context its SourceRef.synthetic states. CAT062 carries no symbology of any kind",
+      "track_number": {
+        "basis": "I062/040, \u00a75.2.3, 'Identification of a track', two octets, and its Encoding Rule is 'This Item shall be present in every ASTERIX record'. Parked and NEVER the identity basis: sixteen bits allocated by the emitting system and recycled when a track ends would merge two airframes into one entity, which is false in the direction nothing downstream can detect. I062/080's TSB and TSE put the track boundary on the wire, and being able to see the boundary does not stop the number on the other side of it belonging to a different aircraft. ASTERIX itself found this worth a dedicated status bit in another part: CAT023's I023/100 bit 2 is 'Renumbering Indication for Track ID', whose NOTE reads 'the allocation of Track-IDs (Item I021/161) was re-started'. Different number space, same class of identifier",
+        "raw": 4242
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "2bd2849a-e97f-52eb-ab6f-471b6c8361c0",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|2764800|4242|0",
+        "system": "CAT062_TRACK_REPORT"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "80bf84f9-99dd-573d-af88-4b6f04c51866",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "emergency_basis": {
+        "preferred": null,
+        "rule": "I062/REF/PS3 wins where it is present and populated, because both core items are LOSSY on ADS-B Version 3 equipment by their own back-mapping tables \u2014 2 becomes 4 and both distress values become 1. Otherwise the MORE SEVERE of the two core statements wins, because taking either by position would make the field's meaning depend on which item the record happened to carry",
+        "statements": [],
+        "version_number_finding": "\u00a75.2.6's and \u00a75.2.24's notes both say I062/REF/PS3 'is to be used exclusively for Version 3 ADS-B systems as defined in I062/380/SF#11/VN' \u2014 and THERE IS NO VN FIELD IN SUBFIELD #11. Its sixteen bits are AC, MN, DC, GBS, six spares and STAT. So the field that decides which vocabulary applies is named twice by the core specification and defined nowhere in it. What is used instead is the PRESENCE of PS3, which Appendix A \u00a72.7 defines as 'Information transmitted by aircraft equipped with an ADS-B Version 3 System' \u2014 an inference from the REF, stated as one. FORMAT_COVERAGE.md ambiguity 13"
+      },
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "definition": "Absolute time stamping of the information provided in the track message, in the form of elapsed time since last midnight, expressed as UTC",
+        "item": "I062/070",
+        "lsb_seconds": 0.0078125,
+        "note_1": "This is the time of the track state vector",
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 2,
+      "record_index": 0,
+      "track_number": 4242
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2bd2849a-e97f-52eb-ab6f-471b6c8361c0"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|2764800|4242|0",
+        "system": "CAT062_TRACK_REPORT"
+      }
+    ]
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and three separate inferences are declined to keep it that way. \u00a75.2.6's MD4 and MD5 spell one value 'Friendly target' \u2014 an authenticated military-mode reply says a cryptographic exchange succeeded, and reading it as an affiliation is an IDENTIFICATION DECISION, which is the asterix_cat021.py Mode 5 refusal. \u00a75.2.25 Subfield #4's GAT/OAT spells one value 'Operational Air Traffic', which is a set of flight rules and not an allegiance. \u00a75.2.24 Subfield #21 spells one emitter category 'highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)', which describes a fighter and is a performance class \u2014 the GMTIF platform-type refusal. All three are parked with the document's own wording so a fusion layer can make the call where it is attributable",
+      "cat062_block": {
+        "category": 62,
+        "length": 42,
+        "record_count": 2
+      },
+      "cat062_fspec": "910d02",
+      "cat062_items": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/390": "0101200fc0"
+      },
+      "data_source": {
+        "basis": "\u00a75.2.1, 'Identification of the system sending the data', M in every record. PARKED, not a SourceId \u2014 the CAT048 disposition and the INVERSE of CAT034's, and the difference is the whole reason both rows exist: there the SAC/SIC IS the object's identity because the station is the object, and here it identifies the SDPS that formed the opinion. Filing a processor under the target's identifiers is how a fused picture ends up with an entity per processor",
+        "external_id": "2929",
+        "item": "I062/010",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": {
+        "default": "PLATFORM. A system track is a track of a moving thing, and every value either refining item can carry is a vehicle, an aircraft or a fixed obstruction. Nothing in the category distinguishes a crewed from an uncrewed aircraft in a way the CDM has a member for \u2014 Appendix A's UAS/RPAS Status does say so and PLATFORM covers both, which is recorded as a gap-shaped absence rather than forced"
+      },
+      "flight_plan": {
+        "basis": "\u00a75.2.25, 'All flight plan related information, provided by ground-based systems'. Everything here is a ground system's statement about an intention rather than an observation of the target, and I062/080's FPC bit is what says whether the correlation happened at all",
+        "pre_emergency_mode_3a": {
+          "basis": "\u00a75.2.25 Subfield #17, 'used only when the aircraft is transmitting an emergency Mode 3/A code'. VA = 0 makes the twelve bits MEANINGLESS by the item's own NOTE 2, so no code is rendered and the raw bits go to unresolved_raw. THE BIT NUMBERING IS AMBIGUITY 8: the prose says 'bits-16/13 Spare bits set to 0' and then 'bit-13 (VA) Validity', assigning bit 13 twice in four lines. The structure diagram \u2014 three zeros then VA \u2014 is preferred, because it is the only one of the two statements that is internally consistent and it agrees with the twelve-bit Mode 3/A field below it",
+          "octal": null,
+          "raw": 4032,
+          "valid": false
+        }
+      },
+      "fusion_provenance": {
+        "basis": "EVERY FIELD BELOW IS THE UPSTREAM SDPS'S STATEMENT ABOUT ITS OWN PROCESSING, not a measurement of the target. \u00a73.1.11 defines a track as a 'Time sequence of state vectors of an object estimated by some real time filtering technique using surveillance data as input', \u00a73.1.1 defines amalgamation as merging tracks from co-operating systems, and \u00a73.1.2 defines a Calculated Item as one derived 'through an intermediate processing such as transformation of co-ordinates, tracking, code conversion'. So the document is explicit that its content has been through a fusion process, and this adapter translates that content and performs no fusion of its own. Nothing here is acted on: no age becomes an instant, no staleness flag suppresses a value, no reliability flag arbitrates between two altitudes, no contributing sensor becomes an object or a join",
+        "stated_by": {
+          "external_id": "2929",
+          "sac": 41,
+          "sic": 41
+        },
+        "track_status": {
+          "cnf": {
+            "raw": 0,
+            "text": "Confirmed track"
+          },
+          "military": {
+            "basis": "PARKED with the document's own wording and NOT read as an affiliation. An authenticated military-mode reply says a cryptographic exchange succeeded; reading it as FRIENDLY is an identification decision, which is a fusion judgement and not a fact on a wire \u2014 the asterix_cat021.py Mode 5 refusal reached again"
+          },
+          "mon": {
+            "basis": "THE MOST DIRECT SINGLE BIT IN THE CATEGORY: the tracker saying whether it fused anything for this track",
+            "raw": 0,
+            "text": "Multisensor track"
+          },
+          "mrh": {
+            "basis": "the tracker's assessment, and it ARBITRATES NOTHING here. \u00a75.2.6's fourth NOTE: 'Data Items I062/130, I062/135, and I062/136 may be transmitted in parallel whenever the respective information is available. This is independent from the value transmitted on I062/080 (MRH).' Position.alt_m comes from I062/130 because it is the one item defined as a height above the WGS 84 ellipsoid, not because MRH said so \u2014 settlement 5",
+            "raw": 0,
+            "text": "Barometric altitude (Mode C) more reliable"
+          },
+          "src": {
+            "basis": "the source of the calculated altitude for I062/130, and its first NOTE says it 'may be sent whether data item I062/130 is present or not'. PARKED and never written to Position.position_source, which is about the HORIZONTAL fix \u2014 and two of these eight values, 'speed look-up table' and 'default height', describe an altitude that was not measured at all",
+            "raw": 0,
+            "text": "no source"
+          }
+        }
+      },
+      "identity_basis": "the record states no Mode S address, so the id is scoped to THIS RECORD \u2014 keyed on the SAC/SIC of the emitting system, the raw time of track information, the track number and the record index. Settlement 3 step 2. THE TRACK NUMBER IS IN THE KEY AND IS NOT THE BASIS OF IT, which is a distinction worth stating: inside a record-scoped id it distinguishes two tracks in one block, and it promises no continuity because the time of day is in the key beside it. Keying entity_id on (SAC/SIC, track number) alone was considered and DECLINED: the pair is unique within one SDPS at one moment and entity_id has no expiry, so a key that is reused after a track ends produces one entity spanning two aircraft and there is no field on Entity in which that can be disclosed. FORMAT_COVERAGE.md gap 27 records the truncation \u2014 consecutive updates of one address-less system track get different entity_id values, and that is the honest statement. The continuity the format DOES state is carried where a consumer can act on it: the raw track number, TSB, TSE, I062/510's composed track number and I062/290's track age are all in the object",
+      "identity_caveat": "CAT062 carries no duplicate-Mode-S-address indication of any kind. I062/080's AAC is about an assigned Mode A code, DUPT about a duplicated Mode 3/A code and IDD about a duplicated Flight-ID; none of them is about the 24-bit address this entity may be keyed on. So unlike asterix_cat048.py, which raises a caveat from I048/030 code 16 ('Duplicated or Illegal Mode S Aircraft Address'), there is nothing here to raise and the absence of a warning is not evidence of uniqueness",
+      "implementation_dependent": {
+        "basis": "\u00a74.8 is a NORMATIVE DELEGATION of meaning to a per-deployment Interface Control Document, which is not a document this repository could acquire. Every other park in this adapter is a park because the CDM has no home for the value; these two are parks because THE DOCUMENT SAYS the value's meaning is not standardised. \u00a75.2.23 repeats it twice more for I062/340: 'The term \"last report\" may refer to the \"latest used\" or \"latest measured\". The actual meaning is implementation dependent' and 'The availability of the various data items differs depending on the surveillance technology used and is implementation dependent.' A consumer comparing I062/340 across two SDPSs without knowing this will get a number",
+        "items": [
+          "I062/080 (Track Status), Fifth Extension, Bit-5 (SFC)",
+          "I062/340 (Measured Information)"
+        ],
+        "quoted": "\u00a74.8: 'Such a data item will be marked as \u201cimplementation dependent\u201d in a note. The exact meaning of the data item shall then be described in the Interface Control Document (ICD) of the respective system. In such a case the provisions of the ICD will reflect the actual implementation of the data item.'"
+      },
+      "integrity_basis": "CAT062 defines NO checksum at any level \u2014 neither \u00a74.6 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, every compound item's presence bits named a subfield that exists, every FX led somewhere \u00a75.2 defines, every repetitive item's REP was non-zero, the Reserved Expansion Field's own length tiled its contents exactly, and the four items whose Encoding Rule reads 'This Item shall be present in every ASTERIX record' were present. THIS GATE IS THINNER THAN CAT034'S AND THE DIFFERENCE IS THE ABSENCE OF A TABLE 2: \u00a74.1 gives this category ONE message type, so there is no per-type expectation for a record to be internally inconsistent with. A record carrying only the four mandatory items is legal, minimal and complete. A single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a track position",
+      "position_basis": {
+        "cartesian_declined": "I062/100 is present in some records and is NEVER converted: \u00a74.3.2's projection is relative to a reference point no CAT062 item carries and names the projection only by example",
+        "item": null,
+        "reason": "the record carries no I062/105. Its Encoding Rule is 'This Item is optional', so the absence is ordinary \u2014 and an absent Position is the honest statement, never a Position holding zeros, which is a real point in the Gulf of Guinea"
+      },
+      "source_extras": {
+        "items": {
+          "I062/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I062/040": {
+            "track_number": 4242
+          },
+          "I062/070": {
+            "time_of_day_raw": 2764800
+          },
+          "I062/080": {
+            "octets": [
+              {
+                "cnf": 0,
+                "fx": 0,
+                "mon": 0,
+                "mrh": 0,
+                "spi": 0,
+                "src": 0
+              }
+            ]
+          },
+          "I062/390": {
+            "presence": "010120",
+            "subfields": {
+              "pem": {
+                "mode_3a": 4032,
+                "spare_bits_16_14": 0,
+                "va": 0
+              }
+            }
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT062 track is an UNKNOWN glyph in the reality or exercise context its SourceRef.synthetic states. CAT062 carries no symbology of any kind",
+      "track_number": {
+        "basis": "I062/040, \u00a75.2.3, 'Identification of a track', two octets, and its Encoding Rule is 'This Item shall be present in every ASTERIX record'. Parked and NEVER the identity basis: sixteen bits allocated by the emitting system and recycled when a track ends would merge two airframes into one entity, which is false in the direction nothing downstream can detect. I062/080's TSB and TSE put the track boundary on the wire, and being able to see the boundary does not stop the number on the other side of it belonging to a different aircraft. ASTERIX itself found this worth a dedicated status bit in another part: CAT023's I023/100 bit 2 is 'Renumbering Indication for Track ID', whose NOTE reads 'the allocation of Track-IDs (Item I021/161) was re-started'. Different number space, same class of identifier",
+        "raw": 4242
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "0d1bdd35-178f-52af-9964-b05c559c402e",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|2764800|4242|1",
+        "system": "CAT062_TRACK_REPORT"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "107a5e2e-4b1a-53c1-b677-8cba35ddc4b3",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "emergency_basis": {
+        "preferred": null,
+        "rule": "I062/REF/PS3 wins where it is present and populated, because both core items are LOSSY on ADS-B Version 3 equipment by their own back-mapping tables \u2014 2 becomes 4 and both distress values become 1. Otherwise the MORE SEVERE of the two core statements wins, because taking either by position would make the field's meaning depend on which item the record happened to carry",
+        "statements": [],
+        "version_number_finding": "\u00a75.2.6's and \u00a75.2.24's notes both say I062/REF/PS3 'is to be used exclusively for Version 3 ADS-B systems as defined in I062/380/SF#11/VN' \u2014 and THERE IS NO VN FIELD IN SUBFIELD #11. Its sixteen bits are AC, MN, DC, GBS, six spares and STAT. So the field that decides which vocabulary applies is named twice by the core specification and defined nowhere in it. What is used instead is the PRESENCE of PS3, which Appendix A \u00a72.7 defines as 'Information transmitted by aircraft equipped with an ADS-B Version 3 System' \u2014 an inference from the REF, stated as one. FORMAT_COVERAGE.md ambiguity 13"
+      },
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "definition": "Absolute time stamping of the information provided in the track message, in the form of elapsed time since last midnight, expressed as UTC",
+        "item": "I062/070",
+        "lsb_seconds": 0.0078125,
+        "note_1": "This is the time of the track state vector",
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 2,
+      "record_index": 1,
+      "track_number": 4242
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "0d1bdd35-178f-52af-9964-b05c559c402e"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|2764800|4242|1",
+        "system": "CAT062_TRACK_REPORT"
+      }
+    ]
+  }
+]

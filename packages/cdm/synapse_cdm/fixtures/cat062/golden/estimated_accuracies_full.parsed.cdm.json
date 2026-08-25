@@ -1,0 +1,388 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and three separate inferences are declined to keep it that way. \u00a75.2.6's MD4 and MD5 spell one value 'Friendly target' \u2014 an authenticated military-mode reply says a cryptographic exchange succeeded, and reading it as an affiliation is an IDENTIFICATION DECISION, which is the asterix_cat021.py Mode 5 refusal. \u00a75.2.25 Subfield #4's GAT/OAT spells one value 'Operational Air Traffic', which is a set of flight rules and not an allegiance. \u00a75.2.24 Subfield #21 spells one emitter category 'highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)', which describes a fighter and is a performance class \u2014 the GMTIF platform-type refusal. All three are parked with the document's own wording so a fusion layer can make the call where it is attributable",
+      "cat062_block": {
+        "category": 62,
+        "length": 60,
+        "record_count": 1
+      },
+      "cat062_fspec": "9f8d1d04",
+      "cat062_items": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/100": "005dc0ffc180",
+        "I062/105": "00a33e1f003d5383",
+        "I062/130": "1360",
+        "I062/135": "04c4",
+        "I062/185": "034aff0f",
+        "I062/210": "06fd",
+        "I062/220": "012c",
+        "I062/500": "ff80005a0078ffbf004b009514060a0c0203ff"
+      },
+      "data_source": {
+        "basis": "\u00a75.2.1, 'Identification of the system sending the data', M in every record. PARKED, not a SourceId \u2014 the CAT048 disposition and the INVERSE of CAT034's, and the difference is the whole reason both rows exist: there the SAC/SIC IS the object's identity because the station is the object, and here it identifies the SDPS that formed the opinion. Filing a processor under the target's identifiers is how a fused picture ends up with an entity per processor",
+        "external_id": "2929",
+        "item": "I062/010",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": {
+        "default": "PLATFORM. A system track is a track of a moving thing, and every value either refining item can carry is a vehicle, an aircraft or a fixed obstruction. Nothing in the category distinguishes a crewed from an uncrewed aircraft in a way the CDM has a member for \u2014 Appendix A's UAS/RPAS Status does say so and PLATFORM covers both, which is recorded as a gap-shaped absence rather than forced"
+      },
+      "fusion_provenance": {
+        "basis": "EVERY FIELD BELOW IS THE UPSTREAM SDPS'S STATEMENT ABOUT ITS OWN PROCESSING, not a measurement of the target. \u00a73.1.11 defines a track as a 'Time sequence of state vectors of an object estimated by some real time filtering technique using surveillance data as input', \u00a73.1.1 defines amalgamation as merging tracks from co-operating systems, and \u00a73.1.2 defines a Calculated Item as one derived 'through an intermediate processing such as transformation of co-ordinates, tracking, code conversion'. So the document is explicit that its content has been through a fusion process, and this adapter translates that content and performs no fusion of its own. Nothing here is acted on: no age becomes an instant, no staleness flag suppresses a value, no reliability flag arbitrates between two altitudes, no contributing sensor becomes an object or a join",
+        "estimated_accuracies": {
+          "aa": {
+            "of": "calculated acceleration, in m/s^2 per component",
+            "x": 0.5,
+            "x_raw": 2,
+            "y": 0.75,
+            "y_raw": 3
+          },
+          "aba": {
+            "of": "calculated barometric altitude, in flight levels",
+            "raw": 6,
+            "value": 1.5
+          },
+          "aga": {
+            "of": "calculated geometric altitude, in feet",
+            "raw": 20,
+            "value": 125.0
+          },
+          "arc": {
+            "at_or_above_maximum": "Maximum value means maximum value or above",
+            "of": "calculated rate of climb/descent, in feet per minute",
+            "raw": 255,
+            "value": 1593.75
+          },
+          "atv": {
+            "of": "calculated track velocity, in m/s per component",
+            "x": 2.5,
+            "x_raw": 10,
+            "y": 3.0,
+            "y_raw": 12
+          },
+          "basis": "\u00a75.2.26, 'Overview of all important accuracies' \u2014 THE TRACKER'S OWN ESTIMATED STANDARD DEVIATIONS, which makes them settlement 1 material. All eight subfields carry 'Maximum value means maximum value or above', so a saturated value is a FLOOR and not a measurement. Subfield #3 reaches Position.accuracy_m; the other seven are parked, and Subfields #4, #5 and #8 are the third source in this repository to state a vertical accuracy the CDM has no field for \u2014 FORMAT_COVERAGE.md gap 6",
+          "cartesian_position": {
+            "basis": "in the CARTESIAN frame settlement 6 declines to invert, so it is NOT used for Position.accuracy_m even when Subfield #3 is absent",
+            "x_metres": 45.0,
+            "x_raw": 90,
+            "y_metres": 60.0,
+            "y_raw": 120
+          },
+          "wgs84_position": {
+            "basis": "THE ONE SUBFIELD THAT REACHES A CANONICAL FIELD \u2014 see position_basis",
+            "latitude_component_deg": 0.0004023313522338867,
+            "longitude_component_deg": 0.0007992982864379883,
+            "x_raw": 75,
+            "y_raw": 149
+          },
+          "xy_covariance": {
+            "basis": "the ONE signed accuracy field, in the Cartesian frame. NOTE 2 prints 'The maximum value for the (unsigned) XY covariance component is 16.383 km' and sixteen bits at 0.5 m reach 16383.5 m, so the printed figure is the field's positive extreme minus one LSB and is not a bound the encoder could honour as stated. The WIDTH is the bound and the figure is recorded \u2014 the cat034_codec.py `rho` disposition",
+            "formula": "XY covariance component = sign{Cov(X,Y)} * sqrt{abs[Cov (X,Y)]}",
+            "metres": -32.5,
+            "raw": 65471
+          }
+        },
+        "stated_by": {
+          "external_id": "2929",
+          "sac": 41,
+          "sic": 41
+        },
+        "track_status": {
+          "cnf": {
+            "raw": 0,
+            "text": "Confirmed track"
+          },
+          "military": {
+            "basis": "PARKED with the document's own wording and NOT read as an affiliation. An authenticated military-mode reply says a cryptographic exchange succeeded; reading it as FRIENDLY is an identification decision, which is a fusion judgement and not a fact on a wire \u2014 the asterix_cat021.py Mode 5 refusal reached again"
+          },
+          "mon": {
+            "basis": "THE MOST DIRECT SINGLE BIT IN THE CATEGORY: the tracker saying whether it fused anything for this track",
+            "raw": 0,
+            "text": "Multisensor track"
+          },
+          "mrh": {
+            "basis": "the tracker's assessment, and it ARBITRATES NOTHING here. \u00a75.2.6's fourth NOTE: 'Data Items I062/130, I062/135, and I062/136 may be transmitted in parallel whenever the respective information is available. This is independent from the value transmitted on I062/080 (MRH).' Position.alt_m comes from I062/130 because it is the one item defined as a height above the WGS 84 ellipsoid, not because MRH said so \u2014 settlement 5",
+            "raw": 0,
+            "text": "Barometric altitude (Mode C) more reliable"
+          },
+          "src": {
+            "basis": "the source of the calculated altitude for I062/130, and its first NOTE says it 'may be sent whether data item I062/130 is present or not'. PARKED and never written to Position.position_source, which is about the HORIZONTAL fix \u2014 and two of these eight values, 'speed look-up table' and 'default height', describe an altitude that was not measured at all",
+            "raw": 0,
+            "text": "no source"
+          }
+        }
+      },
+      "identity_basis": "the record states no Mode S address, so the id is scoped to THIS RECORD \u2014 keyed on the SAC/SIC of the emitting system, the raw time of track information, the track number and the record index. Settlement 3 step 2. THE TRACK NUMBER IS IN THE KEY AND IS NOT THE BASIS OF IT, which is a distinction worth stating: inside a record-scoped id it distinguishes two tracks in one block, and it promises no continuity because the time of day is in the key beside it. Keying entity_id on (SAC/SIC, track number) alone was considered and DECLINED: the pair is unique within one SDPS at one moment and entity_id has no expiry, so a key that is reused after a track ends produces one entity spanning two aircraft and there is no field on Entity in which that can be disclosed. FORMAT_COVERAGE.md gap 27 records the truncation \u2014 consecutive updates of one address-less system track get different entity_id values, and that is the honest statement. The continuity the format DOES state is carried where a consumer can act on it: the raw track number, TSB, TSE, I062/510's composed track number and I062/290's track age are all in the object",
+      "identity_caveat": "CAT062 carries no duplicate-Mode-S-address indication of any kind. I062/080's AAC is about an assigned Mode A code, DUPT about a duplicated Mode 3/A code and IDD about a duplicated Flight-ID; none of them is about the 24-bit address this entity may be keyed on. So unlike asterix_cat048.py, which raises a caveat from I048/030 code 16 ('Duplicated or Illegal Mode S Aircraft Address'), there is nothing here to raise and the absence of a warning is not evidence of uniqueness",
+      "implementation_dependent": {
+        "basis": "\u00a74.8 is a NORMATIVE DELEGATION of meaning to a per-deployment Interface Control Document, which is not a document this repository could acquire. Every other park in this adapter is a park because the CDM has no home for the value; these two are parks because THE DOCUMENT SAYS the value's meaning is not standardised. \u00a75.2.23 repeats it twice more for I062/340: 'The term \"last report\" may refer to the \"latest used\" or \"latest measured\". The actual meaning is implementation dependent' and 'The availability of the various data items differs depending on the surveillance technology used and is implementation dependent.' A consumer comparing I062/340 across two SDPSs without knowing this will get a number",
+        "items": [
+          "I062/080 (Track Status), Fifth Extension, Bit-5 (SFC)",
+          "I062/340 (Measured Information)"
+        ],
+        "quoted": "\u00a74.8: 'Such a data item will be marked as \u201cimplementation dependent\u201d in a note. The exact meaning of the data item shall then be described in the Interface Control Document (ICD) of the respective system. In such a case the provisions of the ICD will reflect the actual implementation of the data item.'"
+      },
+      "integrity_basis": "CAT062 defines NO checksum at any level \u2014 neither \u00a74.6 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, every compound item's presence bits named a subfield that exists, every FX led somewhere \u00a75.2 defines, every repetitive item's REP was non-zero, the Reserved Expansion Field's own length tiled its contents exactly, and the four items whose Encoding Rule reads 'This Item shall be present in every ASTERIX record' were present. THIS GATE IS THINNER THAN CAT034'S AND THE DIFFERENCE IS THE ABSENCE OF A TABLE 2: \u00a74.1 gives this category ONE message type, so there is no per-type expectation for a record to be internally inconsistent with. A record carrying only the four mandatory items is legal, minimal and complete. A single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a track position",
+      "position_basis": {
+        "accuracy": {
+          "arithmetic": "sqrt(lat_m^2 + lon_m^2), where lat_m is the latitude component times 111120 m per degree (1 degree = 60 NM = 60 x 1852 m, ICAO's own nautical mile) and lon_m is the longitude component times the same figure times cos(latitude) at I062/105's own latitude. The spherical constant is a DECLARED approximation: the true metres-per-degree of latitude varies by about 0.5 % between equator and pole, and the quantity being scaled is a standard deviation the source has already rounded to 180/2^25 degrees",
+          "at_or_above_maximum": null,
+          "declared_transform": "I062/500 subfields.apw, in TRANSFORMS. The only declared transform in this adapter, and it is declared because the two components become one number and the never-drop check has to be told that rather than left to find two missing values",
+          "definition": "Estimated accuracy (i.e. standard deviation) of the calculated position of a target expressed in WGS-84",
+          "independence_assumed": "YES, and the assumption is the SPECIFICATION'S SILENCE rather than a modelling choice. \u00a75.2.26 states two component standard deviations and states a covariance in a SEPARATE subfield, #2 \u2014 in the CARTESIAN frame, which settlement 6 declines to invert \u2014 so there is no stated WGS-84 covariance to use. Taking the larger component would discard half the information and taking the sum would overstate the uncertainty by up to 41 %",
+          "item": "I062/500 Subfield #3",
+          "latitude_component_deg": 0.0004023313522338867,
+          "latitude_component_raw": 75,
+          "longitude_component_deg": 0.0007992982864379883,
+          "longitude_component_raw": 149,
+          "lsb_degrees": 5.364418029785156e-06,
+          "metres": 65.49686001715148
+        },
+        "definition": "Calculated Position in WGS-84 Co-ordinates",
+        "item": "I062/105",
+        "latitude_raw": 10698271,
+        "longitude_raw": 4019075,
+        "lsb_degrees": 5.364418029785156e-06,
+        "position_source_basis": "ESTIMATED, always, and it is a ruling rather than a fit. \u00a73.1.2 defines a Calculated Item as 'A piece of information (e.g. the position of a target) derived from raw information through an intermediate processing such as transformation of co-ordinates, TRACKING, code conversion', so a tracker's filtered output is an estimate by construction whatever the sensors underneath it were. GNSS would claim the fix came from a satellite receiver, which is sometimes UPSTREAM of it and never what the item states; INERTIAL and MANUAL are plainly wrong. The underlying technologies are named separately in I062/290 and in the REF's contributing-sensor lists, so a consumer can see that a track was ADS-B-only without this adapter having relabelled the estimate as a GNSS fix"
+      },
+      "position_quantisation_m": {
+        "basis": "PARKED, and deliberately NOT written to Position.accuracy_m. 180/2^25 degrees is the QUANTISATION STEP of the encoding \u2014 the finest difference the field can express, and the finest in this repository \u2014 and reporting it as an accuracy would claim the tracker knows where the target is to 0.6 m when the document says only that it cannot say so more finely. accuracy_m comes from I062/500 Subfield #3 or stays None",
+        "quoted": "The LSB provides a resolution at least better than 0.6m"
+      },
+      "source_extras": {
+        "items": {
+          "I062/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I062/040": {
+            "track_number": 4242
+          },
+          "I062/070": {
+            "time_of_day_raw": 2764800
+          },
+          "I062/080": {
+            "octets": [
+              {
+                "cnf": 0,
+                "fx": 0,
+                "mon": 0,
+                "mrh": 0,
+                "spi": 0,
+                "src": 0
+              }
+            ]
+          },
+          "I062/100": {
+            "x_raw": 24000,
+            "y_raw": 16761216
+          },
+          "I062/105": {
+            "latitude_raw": 10698271,
+            "longitude_raw": 4019075
+          },
+          "I062/130": {
+            "altitude_raw": 4960
+          },
+          "I062/135": {
+            "ctba_raw": 1220,
+            "qnh": 0
+          },
+          "I062/185": {
+            "vx_raw": 842,
+            "vy_raw": 65295
+          },
+          "I062/210": {
+            "ax_raw": 6,
+            "ay_raw": 253
+          },
+          "I062/220": {
+            "rate_raw": 300
+          },
+          "I062/500": {
+            "presence": "ff80",
+            "subfields": {
+              "aa": {
+                "x_raw": 2,
+                "y_raw": 3
+              },
+              "aba": {
+                "accuracy_raw": 6
+              },
+              "aga": {
+                "accuracy_raw": 20
+              },
+              "apc": {
+                "x_raw": 90,
+                "y_raw": 120
+              },
+              "apw": {
+                "x_raw": 75,
+                "y_raw": 149
+              },
+              "arc": {
+                "accuracy_raw": 255
+              },
+              "atv": {
+                "x_raw": 10,
+                "y_raw": 12
+              },
+              "cov": {
+                "covariance_raw": 65471
+              }
+            }
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT062 track is an UNKNOWN glyph in the reality or exercise context its SourceRef.synthetic states. CAT062 carries no symbology of any kind",
+      "track_number": {
+        "basis": "I062/040, \u00a75.2.3, 'Identification of a track', two octets, and its Encoding Rule is 'This Item shall be present in every ASTERIX record'. Parked and NEVER the identity basis: sixteen bits allocated by the emitting system and recycled when a track ends would merge two airframes into one entity, which is false in the direction nothing downstream can detect. I062/080's TSB and TSE put the track boundary on the wire, and being able to see the boundary does not stop the number on the other side of it belonging to a different aircraft. ASTERIX itself found this worth a dedicated status bit in another part: CAT023's I023/100 bit 2 is 'Renumbering Indication for Track ID', whose NOTE reads 'the allocation of Track-IDs (Item I021/161) was re-started'. Different number space, same class of identifier",
+        "raw": 4242
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "2bd2849a-e97f-52eb-ab6f-471b6c8361c0",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 9.525,
+      "course_deg": 105.97235438992143,
+      "speed_mps": 218.9527631705067
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 65.49686001715148,
+      "alt_m": 9448.800000000001,
+      "lat": 57.38999783992767,
+      "lon": 21.559998393058777,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|2764800|4242|0",
+        "system": "CAT062_TRACK_REPORT"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "80bf84f9-99dd-573d-af88-4b6f04c51866",
+    "event_type": "TRACK_UPDATE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "calculated_acceleration": {
+        "ax_mps2": 1.5,
+        "ax_raw": 6,
+        "ay_mps2": -0.75,
+        "ay_raw": 253,
+        "basis": "\u00a75.2.16, the same north-oriented frame as I062/185's. PARKED \u2014 THE CDM HAS NO ACCELERATION FIELD, and adding one in passing would be widening the model for one source",
+        "lsb": 0.25
+      },
+      "calculated_barometric_altitude": {
+        "basis": "\u00a75.2.12. PARKED, never Position.alt_m \u2014 a pressure altitude is not a height above anything. Its NOTE is load-bearing: 'This item enables the provision of either QNH or non-QNH corrected Calculated Track Barometric Altitude, BUT NOT BOTH. If needed, the other variant can be provided in I062/REF/MOI/CTBA' \u2014 a container Appendix A Edition 1.3 does not define, so the other variant is unreachable here",
+        "flight_level": 305.0,
+        "qnh_correction_applied": false,
+        "raw": 1220
+      },
+      "calculated_geometric_altitude": {
+        "basis": "\u00a75.2.11, 'Vertical distance between the target and the projection of its position on the earth's ellipsoid, as defined by WGS84'. THE ONE ALTITUDE THAT REACHES Position.alt_m, because it is the only one of six defined as a height above the ellipsoid, which is what alt_m documents itself as. NOTE 1's 'LSB is required to be less than 10 ft by ICAO' is a constraint on the encoding, not an accuracy",
+        "lsb": 6.25,
+        "raw": 4960,
+        "unit": "ft",
+        "value": 31000.0
+      },
+      "calculated_rate_of_climb": {
+        "feet_per_minute": 1875.0,
+        "lsb": 6.25,
+        "raw": 300
+      },
+      "cartesian_position": {
+        "basis": "\u00a75.2.7, parked as metres and NEVER CONVERTED TO A COORDINATE. \u00a74.3.2 states the projection: 'a projection is performed on a plane tangential to the WGS-84 Ellipsoid at the location of the reference point. The Y-axis points to the geographical north at that position. The X-axis is perpendicular to the Y-axis and points to the east. The X, Y co-ordinates are calculated using a suitable projection technique for the final 3D to 2D conversion (e.g. a stereographical projection). It is slant range corrected, the source of altitude being indicated in I062/080 Track Status, Octet 1, bit 6 (MRH).' TWO INDEPENDENT UNKNOWNS, either of them fatal: the reference point is not in any CAT062 item \u2014 Appendix A \u00a72.5's NOTE says it is 'available in the Reserved Expansion Field of CATEGORY 065' \u2014 and the projection is named only by example, so two conforming SDPSs can emit different X for one aircraft and nothing in the record distinguishes them. This is a STRONGER decline than CAT048 settlement 3's, where the geodesy was absent from the document but the inputs were on the wire and a caller could inject the missing one. A consumer holding a CAT065 reference point may invert it visibly",
+        "lsb_metres": 0.5,
+        "x_metres": 12000.0,
+        "x_raw": 24000,
+        "y_metres": -8000.0,
+        "y_raw": 16761216
+      },
+      "emergency_basis": {
+        "preferred": null,
+        "rule": "I062/REF/PS3 wins where it is present and populated, because both core items are LOSSY on ADS-B Version 3 equipment by their own back-mapping tables \u2014 2 becomes 4 and both distress values become 1. Otherwise the MORE SEVERE of the two core statements wins, because taking either by position would make the field's meaning depend on which item the record happened to carry",
+        "statements": [],
+        "version_number_finding": "\u00a75.2.6's and \u00a75.2.24's notes both say I062/REF/PS3 'is to be used exclusively for Version 3 ADS-B systems as defined in I062/380/SF#11/VN' \u2014 and THERE IS NO VN FIELD IN SUBFIELD #11. Its sixteen bits are AC, MN, DC, GBS, six spares and STAT. So the field that decides which vocabulary applies is named twice by the core specification and defined nowhere in it. What is used instead is the PRESENCE of PS3, which Appendix A \u00a72.7 defines as 'Information transmitted by aircraft equipped with an ADS-B Version 3 System' \u2014 an inference from the REF, stated as one. FORMAT_COVERAGE.md ambiguity 13"
+      },
+      "kinematics_basis": {
+        "rate_of_climb": {
+          "aircraft_rates_declined": "I062/380 Subfields #13 and #14 are the aircraft's own barometric and geometric vertical rates. Neither reaches climb_mps: there are TWO of them and one of I062/220, so any promotion would be an arbitration between three numbers",
+          "arithmetic": "feet per minute x 0.3048 / 60 = metres per second, exact in float64",
+          "feet_per_minute": 1875.0,
+          "item": "I062/220",
+          "lsb_feet_per_minute": 6.25,
+          "raw": 300,
+          "sign": "\u00a75.2.17's NOTE: 'A positive value indicates a climb, whereas a negative value indicates a descent' \u2014 the same sign convention climb_mps uses, so no negation is applied"
+        },
+        "velocity": {
+          "course_arithmetic": "degrees(atan2(Vx, Vy)) mod 360. atan2(Vx, Vy) and NOT atan2(Vy, Vx), because \u00a75.2.14's NOTE fixes the frame: 'The y-axis points to the Geographical North at the location of the target'. The components are parked beside the scalars so a course derived from a near-zero vector is visible for what it is",
+          "high_resolution_declined": "\u00a75.2.14's second NOTE says the 0.25 m/s resolution 'is not sufficient for all applications addressing the ground segment especially for slow moving targets' and points at I062/REF/MOI/FPVHR \u2014 a container Appendix A Edition 1.3 does not define. So on a surface target this is the resolution available, and the document says so",
+          "item": "I062/185",
+          "lsb_mps": 0.25,
+          "speed_arithmetic": "hypot(Vx, Vy)",
+          "vx_mps": 210.5,
+          "vx_raw": 842,
+          "vy_mps": -60.25,
+          "vy_raw": 65295
+        }
+      },
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "definition": "Absolute time stamping of the information provided in the track message, in the form of elapsed time since last midnight, expressed as UTC",
+        "item": "I062/070",
+        "lsb_seconds": 0.0078125,
+        "note_1": "This is the time of the track state vector",
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "track_number": 4242
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "2bd2849a-e97f-52eb-ab6f-471b6c8361c0"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|2764800|4242|0",
+        "system": "CAT062_TRACK_REPORT"
+      }
+    ]
+  }
+]

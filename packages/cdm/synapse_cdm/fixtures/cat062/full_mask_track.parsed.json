@@ -1,0 +1,801 @@
+{
+  "block": {
+    "category": 62,
+    "length": 388,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "bfffffff06",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/015": "03",
+        "I062/040": "1092",
+        "I062/060": "2e00",
+        "I062/070": "2a3000",
+        "I062/080": "6513ab4d054380",
+        "I062/100": "005dc0ffc180",
+        "I062/105": "00a33e1f003d5383",
+        "I062/110": "feff10e1071528cf880f54e143c0029cc019",
+        "I062/120": "072e",
+        "I062/130": "1360",
+        "I062/135": "84c4",
+        "I062/136": "04c3",
+        "I062/185": "034aff0f",
+        "I062/200": "66",
+        "I062/210": "06fd",
+        "I062/220": "012c",
+        "I062/245": "000815f1c77820",
+        "I062/270": "81a178",
+        "I062/290": "ffe0320506033e800208090c0d",
+        "I062/295": "ffffffffe0060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324",
+        "I062/300": "00",
+        "I062/340": "fc292a2a80619a04d704c22e00a0",
+        "I062/380": "fffffffef0a1c70815f1c77820c0b604e501cec4d885280001000ce4292a8e0fafe7760055f004e260e0a80030303030303030012c0130fb1e8014beef089c02f0003000ebff2f030328cf880f54e11368040240000000000000405011111111111150012200670856",
+        "I062/390": "fffff0292b4241573131372000bc614e44423733384d4556524145474c4c31385204d8071f0238052b154a090c8041313220202040524947413141204c414d32432020129c42415731313720",
+        "I062/500": "ff80005a0078ffbf004b009514060a0c020314",
+        "I062/510": "112125224570",
+        "RE": "1df802292a050fa1292b080fa201292c0901e0ff4bc0f0a0b6bbe0eed8",
+        "SP": "05aabbccdd"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/015": {
+          "service_identification": 3
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/060": {
+          "ch": 1,
+          "g": 0,
+          "mode_3a": 3584,
+          "spare_bit_13": 0,
+          "v": 0
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 1,
+              "mon": 0,
+              "mrh": 1,
+              "spi": 1,
+              "src": 1
+            },
+            {
+              "aff": 0,
+              "fpc": 1,
+              "fx": 1,
+              "kos": 1,
+              "sim": 0,
+              "stp": 0,
+              "tsb": 0,
+              "tse": 0
+            },
+            {
+              "ama": 1,
+              "fx": 1,
+              "md4": 1,
+              "md5": 1,
+              "me": 0,
+              "mi": 1
+            },
+            {
+              "aac": 0,
+              "ads": 1,
+              "cst": 0,
+              "fx": 1,
+              "mds": 0,
+              "psr": 1,
+              "ssr": 0,
+              "suc": 1
+            },
+            {
+              "ems": 0,
+              "fplt": 0,
+              "fx": 1,
+              "pft": 1,
+              "sds": 0
+            },
+            {
+              "dupf": 1,
+              "dupm": 0,
+              "dupt": 0,
+              "fx": 1,
+              "idd": 0,
+              "iec": 0,
+              "mlat": 1,
+              "sfc": 0
+            },
+            {
+              "fx": 0,
+              "m5i": 1,
+              "spare_bits_7_2": 0
+            }
+          ]
+        },
+        "I062/100": {
+          "x_raw": 24000,
+          "y_raw": 16761216
+        },
+        "I062/105": {
+          "latitude_raw": 10698271,
+          "longitude_raw": 4019075
+        },
+        "I062/110": {
+          "presence": "fe",
+          "subfields": {
+            "em1": {
+              "extended_mode_1": 668,
+              "spare_bits_16_13": 0
+            },
+            "ga": {
+              "ga_raw": 960,
+              "res": 1,
+              "spare_bit_16": 0
+            },
+            "pmn": {
+              "mis": 21,
+              "nat": 7,
+              "pin": 4321,
+              "spare_bits_16_14": 0,
+              "spare_bits_32_31": 0,
+              "spare_bits_8_7": 0
+            },
+            "pos": {
+              "latitude_raw": 2674568,
+              "longitude_raw": 1004769
+            },
+            "sum": {
+              "da": 1,
+              "id": 1,
+              "m1": 1,
+              "m2": 1,
+              "m3": 1,
+              "m5": 1,
+              "mc": 1,
+              "x": 1
+            },
+            "tos": {
+              "tos_raw": 192
+            },
+            "xp": {
+              "spare_bits_8_6": 0,
+              "x1": 1,
+              "x2": 0,
+              "x3": 0,
+              "x5": 1,
+              "xc": 1
+            }
+          }
+        },
+        "I062/120": {
+          "mode_2": 1838,
+          "spare_bits_16_13": 0
+        },
+        "I062/130": {
+          "altitude_raw": 4960
+        },
+        "I062/135": {
+          "ctba_raw": 1220,
+          "qnh": 1
+        },
+        "I062/136": {
+          "flight_level_raw": 1219
+        },
+        "I062/185": {
+          "vx_raw": 842,
+          "vy_raw": 65295
+        },
+        "I062/200": {
+          "adf": 1,
+          "long": 2,
+          "spare_bit_1": 0,
+          "trans": 1,
+          "vert": 1
+        },
+        "I062/210": {
+          "ax_raw": 6,
+          "ay_raw": 253
+        },
+        "I062/220": {
+          "rate_raw": 300
+        },
+        "I062/245": {
+          "characters_raw": 8890343716896,
+          "spare_bits_54_49": 0,
+          "sti": 0
+        },
+        "I062/270": {
+          "octets": [
+            {
+              "field": "length",
+              "fx": 1,
+              "value_raw": 64
+            },
+            {
+              "field": "orientation",
+              "fx": 1,
+              "value_raw": 80
+            },
+            {
+              "field": "width",
+              "fx": 0,
+              "value_raw": 60
+            }
+          ]
+        },
+        "I062/290": {
+          "presence": "ffe0",
+          "subfields": {
+            "ads": {
+              "age_raw": 16000
+            },
+            "es": {
+              "age_raw": 2
+            },
+            "lop": {
+              "age_raw": 12
+            },
+            "mds": {
+              "age_raw": 3
+            },
+            "mlt": {
+              "age_raw": 13
+            },
+            "psr": {
+              "age_raw": 5
+            },
+            "ssr": {
+              "age_raw": 6
+            },
+            "trk": {
+              "age_raw": 50
+            },
+            "uat": {
+              "age_raw": 9
+            },
+            "vdl": {
+              "age_raw": 8
+            }
+          }
+        },
+        "I062/295": {
+          "presence": "ffffffffe0",
+          "subfields": {
+            "acs": {
+              "age_raw": 20
+            },
+            "bps": {
+              "age_raw": 36
+            },
+            "bvr": {
+              "age_raw": 21
+            },
+            "com": {
+              "age_raw": 18
+            },
+            "emc": {
+              "age_raw": 29
+            },
+            "fss": {
+              "age_raw": 16
+            },
+            "gal": {
+              "age_raw": 31
+            },
+            "gsp": {
+              "age_raw": 26
+            },
+            "gvr": {
+              "age_raw": 22
+            },
+            "iar": {
+              "age_raw": 34
+            },
+            "ias": {
+              "age_raw": 13
+            },
+            "mac": {
+              "age_raw": 35
+            },
+            "mb": {
+              "age_raw": 33
+            },
+            "md1": {
+              "age_raw": 7
+            },
+            "md2": {
+              "age_raw": 8
+            },
+            "md4": {
+              "age_raw": 10
+            },
+            "md5": {
+              "age_raw": 11
+            },
+            "mda": {
+              "age_raw": 9
+            },
+            "met": {
+              "age_raw": 28
+            },
+            "mfl": {
+              "age_raw": 6
+            },
+            "mhg": {
+              "age_raw": 12
+            },
+            "pos": {
+              "age_raw": 30
+            },
+            "pun": {
+              "age_raw": 32
+            },
+            "ran": {
+              "age_raw": 23
+            },
+            "sab": {
+              "age_raw": 19
+            },
+            "sal": {
+              "age_raw": 15
+            },
+            "tan": {
+              "age_raw": 25
+            },
+            "tar": {
+              "age_raw": 24
+            },
+            "tas": {
+              "age_raw": 14
+            },
+            "tid": {
+              "age_raw": 17
+            },
+            "vun": {
+              "age_raw": 27
+            }
+          }
+        },
+        "I062/300": {
+          "vfi": 0
+        },
+        "I062/340": {
+          "presence": "fc",
+          "subfields": {
+            "hei": {
+              "height_raw": 1239
+            },
+            "mda": {
+              "g": 0,
+              "l": 1,
+              "mode_3a": 3584,
+              "spare_bit_13": 0,
+              "v": 0
+            },
+            "mdc": {
+              "g": 0,
+              "mode_c_raw": 1218,
+              "v": 0
+            },
+            "pos": {
+              "rho_raw": 10880,
+              "theta_raw": 24986
+            },
+            "sid": {
+              "sac": 41,
+              "sic": 42
+            },
+            "typ": {
+              "rab": 0,
+              "sim": 0,
+              "spare_bits_2_1": 0,
+              "tst": 0,
+              "typ": 5
+            }
+          }
+        },
+        "I062/380": {
+          "presence": "fffffffe",
+          "subfields": {
+            "acs": {
+              "acas_ra": "30303030303030"
+            },
+            "adr": {
+              "address": 15770055
+            },
+            "bps": {
+              "bps_raw": 2134,
+              "spare_bits_16_13": 0
+            },
+            "bvr": {
+              "vertical_rate_raw": 300
+            },
+            "com": {
+              "aic": 1,
+              "arc": 1,
+              "b1a": 0,
+              "b1b": 0,
+              "com": 3,
+              "spare_bits_10_9": 0,
+              "ssc": 1,
+              "stat": 0
+            },
+            "emc": {
+              "ecat": 3
+            },
+            "fss": {
+              "ah": 0,
+              "altitude_raw": 1320,
+              "am": 0,
+              "mv": 1
+            },
+            "gal": {
+              "geometric_altitude_raw": 4968
+            },
+            "gsp": {
+              "ground_speed_raw": 2204
+            },
+            "gvr": {
+              "vertical_rate_raw": 304
+            },
+            "iar": {
+              "indicated_airspeed_raw": 290
+            },
+            "ias": {
+              "air_speed_raw": 1253,
+              "im": 0
+            },
+            "id": {
+              "characters_raw": 8890343716896
+            },
+            "mac": {
+              "mach_number_raw": 103
+            },
+            "mb": {
+              "registers": [
+                {
+                  "bds1": 4,
+                  "bds2": 0,
+                  "bds_data": "40000000000000"
+                },
+                {
+                  "bds1": 5,
+                  "bds2": 0,
+                  "bds_data": "50111111111111"
+                }
+              ],
+              "rep": 2
+            },
+            "met": {
+              "spare_bits_60_57": 0,
+              "temperature_raw": 65327,
+              "tmp": 1,
+              "trb": 1,
+              "turbulence_raw": 3,
+              "wd": 1,
+              "wind_direction_raw": 235,
+              "wind_speed_raw": 48,
+              "ws": 1
+            },
+            "mhg": {
+              "heading_raw": 49334
+            },
+            "pos": {
+              "latitude_raw": 2674568,
+              "longitude_raw": 1004769
+            },
+            "pun": {
+              "pun": 4,
+              "spare_bits_8_5": 0
+            },
+            "ran": {
+              "roll_angle_raw": 64286
+            },
+            "sab": {
+              "ac": 2,
+              "dc": 2,
+              "gbs": 0,
+              "mn": 2,
+              "spare_bits_9_4": 0,
+              "stat": 0
+            },
+            "sal": {
+              "altitude_raw": 1240,
+              "sas": 1,
+              "source": 2
+            },
+            "tan": {
+              "track_angle_raw": 48879
+            },
+            "tar": {
+              "rate_of_turn_raw": 10,
+              "spare_bit_1": 0,
+              "spare_bits_14_9": 0,
+              "ti": 2
+            },
+            "tas": {
+              "true_airspeed_raw": 462
+            },
+            "tid": {
+              "points": [
+                {
+                  "altitude_raw": 3300,
+                  "latitude_raw": 2697870,
+                  "longitude_raw": 1028071,
+                  "nc": 0,
+                  "point_type": 7,
+                  "tca": 0,
+                  "tcp_number": 0,
+                  "td": 1,
+                  "toa": 0,
+                  "tov_raw": 22000,
+                  "tra": 1,
+                  "ttr_raw": 1250
+                }
+              ],
+              "rep": 1
+            },
+            "tis": {
+              "fx": 0,
+              "nav": 0,
+              "nvb": 0,
+              "spare_bits_6_2": 0
+            },
+            "vun": {
+              "velocity_uncertainty": 2
+            }
+          }
+        },
+        "I062/390": {
+          "presence": "fffff0",
+          "subfields": {
+            "ast": {
+              "aircraft_stand_raw": "413132202020"
+            },
+            "cfl": {
+              "cleared_flight_level_raw": 1240
+            },
+            "csn": {
+              "callsign_raw": "42415731313720"
+            },
+            "ctl": {
+              "centre": 7,
+              "position": 31
+            },
+            "dep": {
+              "departure_raw": "45565241"
+            },
+            "dst": {
+              "destination_raw": "45474c4c"
+            },
+            "fct": {
+              "fr": 0,
+              "gat_oat": 1,
+              "hpr": 0,
+              "rvsm": 1,
+              "spare_bit_1": 0
+            },
+            "ifi": {
+              "nbr": 12345678,
+              "spare_bits_30_28": 0,
+              "typ": 0
+            },
+            "pec": {
+              "pre_emergency_raw": "42415731313720"
+            },
+            "pem": {
+              "mode_3a": 668,
+              "spare_bits_16_14": 0,
+              "va": 1
+            },
+            "rds": {
+              "ltr": 82,
+              "nu1": 49,
+              "nu2": 56
+            },
+            "sta": {
+              "star_raw": "4c414d32432020"
+            },
+            "std": {
+              "sid_raw": "52494741314120"
+            },
+            "sts": {
+              "avl": 0,
+              "emp": 1,
+              "spare_bits_4_1": 0
+            },
+            "tac": {
+              "aircraft_type_raw": "42373338"
+            },
+            "tag": {
+              "sac": 41,
+              "sic": 43
+            },
+            "tod": {
+              "entries": [
+                {
+                  "avs": 0,
+                  "day": 0,
+                  "hor": 5,
+                  "min": 43,
+                  "sec": 21,
+                  "spare_bit_7": 0,
+                  "spare_bits_16_15": 0,
+                  "spare_bits_25_22": 0,
+                  "typ": 7
+                },
+                {
+                  "avs": 1,
+                  "day": 1,
+                  "hor": 9,
+                  "min": 12,
+                  "sec": 0,
+                  "spare_bit_7": 0,
+                  "spare_bits_16_15": 0,
+                  "spare_bits_25_22": 0,
+                  "typ": 9
+                }
+              ],
+              "rep": 2
+            },
+            "wtc": {
+              "wtc": 77
+            }
+          }
+        },
+        "I062/500": {
+          "presence": "ff80",
+          "subfields": {
+            "aa": {
+              "x_raw": 2,
+              "y_raw": 3
+            },
+            "aba": {
+              "accuracy_raw": 6
+            },
+            "aga": {
+              "accuracy_raw": 20
+            },
+            "apc": {
+              "x_raw": 90,
+              "y_raw": 120
+            },
+            "apw": {
+              "x_raw": 75,
+              "y_raw": 149
+            },
+            "arc": {
+              "accuracy_raw": 20
+            },
+            "atv": {
+              "x_raw": 10,
+              "y_raw": 12
+            },
+            "cov": {
+              "covariance_raw": 65471
+            }
+          }
+        },
+        "I062/510": {
+          "units": [
+            {
+              "fx": 1,
+              "system_track_number": 4242,
+              "system_unit": 17
+            },
+            {
+              "fx": 0,
+              "system_track_number": 8888,
+              "system_unit": 34
+            }
+          ]
+        },
+        "RE": {
+          "items": {
+            "csn": {
+              "rep": 1,
+              "sensors": [
+                {
+                  "sac": 41,
+                  "sic": 44,
+                  "spare_bits_8_5": 0,
+                  "typ": 9
+                }
+              ]
+            },
+            "cst": {
+              "rep": 2,
+              "sensors": [
+                {
+                  "local_track_number": 4001,
+                  "sac": 41,
+                  "sic": 42,
+                  "spare_bits_24_21": 0,
+                  "typ": 5
+                },
+                {
+                  "local_track_number": 4002,
+                  "sac": 41,
+                  "sic": 43,
+                  "spare_bits_24_21": 0,
+                  "typ": 8
+                }
+              ]
+            },
+            "sts": {
+              "fdr": 1,
+              "fx": 0,
+              "lnav_ep": 1,
+              "lnav_val": 0,
+              "spare_bits_5_2": 0
+            },
+            "tvs": {
+              "vx_raw": 480,
+              "vy_raw": 65355
+            },
+            "v3": {
+              "fx": 0,
+              "primary": 240,
+              "spare_bits_4_2": 0,
+              "subfields": {
+                "as": {
+                  "rce_ep": 1,
+                  "rce_val": 1,
+                  "re": 1,
+                  "rrl_ep": 1,
+                  "rrl_val": 0,
+                  "spare_bits_5_1": 0,
+                  "tao_ep": 1,
+                  "tao_val": 31,
+                  "tpw_ep": 1,
+                  "tpw_val": 2,
+                  "tsi_ep": 1,
+                  "tsi_val": 1
+                },
+                "cass": {
+                  "catc_ep": 1,
+                  "catc_val": 4,
+                  "spare_bit_1": 0,
+                  "svh_ep": 1,
+                  "svh_val": 2
+                },
+                "ps3": {
+                  "ps3_ep": 1,
+                  "ps3_val": 2,
+                  "spare_bits_4_1": 0
+                },
+                "uas": {
+                  "daa_ep": 1,
+                  "daa_val": 1,
+                  "muo_ep": 1,
+                  "muo_val": 1,
+                  "rwc_ep": 1,
+                  "rwc_val": 1,
+                  "spare_bit_1": 0
+                }
+              }
+            }
+          },
+          "items_indicator": 248,
+          "length": 29,
+          "spare_bits_3_1": 0
+        },
+        "SP": {
+          "contents": "aabbccdd",
+          "length": 5
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

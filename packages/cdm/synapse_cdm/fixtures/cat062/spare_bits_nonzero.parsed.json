@@ -1,0 +1,309 @@
+{
+  "block": {
+    "category": 62,
+    "length": 95,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "917d833304",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/060": "1e00",
+        "I062/070": "2a3000",
+        "I062/080": "0101010101017e",
+        "I062/110": "5ac3e7e3ccc1f4f29cf5",
+        "I062/120": "f72e",
+        "I062/200": "01",
+        "I062/245": "3f5054d4820820",
+        "I062/340": "0c340063",
+        "I062/380": "01b14522be63faa9f8bf19ff012c0168ff600ff5f856",
+        "I062/390": "310b20bdf5e0ff470139e5eb554fffc0",
+        "RE": "095f01292af87e80df"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/060": {
+          "ch": 0,
+          "g": 0,
+          "mode_3a": 3584,
+          "spare_bit_13": 1,
+          "v": 0
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 1,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            },
+            {
+              "aff": 0,
+              "fpc": 0,
+              "fx": 1,
+              "kos": 0,
+              "sim": 0,
+              "stp": 0,
+              "tsb": 0,
+              "tse": 0
+            },
+            {
+              "ama": 0,
+              "fx": 1,
+              "md4": 0,
+              "md5": 0,
+              "me": 0,
+              "mi": 0
+            },
+            {
+              "aac": 0,
+              "ads": 0,
+              "cst": 0,
+              "fx": 1,
+              "mds": 0,
+              "psr": 0,
+              "ssr": 0,
+              "suc": 0
+            },
+            {
+              "ems": 0,
+              "fplt": 0,
+              "fx": 1,
+              "pft": 0,
+              "sds": 0
+            },
+            {
+              "dupf": 0,
+              "dupm": 0,
+              "dupt": 0,
+              "fx": 1,
+              "idd": 0,
+              "iec": 0,
+              "mlat": 0,
+              "sfc": 0
+            },
+            {
+              "fx": 0,
+              "m5i": 0,
+              "spare_bits_7_2": 63
+            }
+          ]
+        },
+        "I062/110": {
+          "presence": "5a",
+          "subfields": {
+            "em1": {
+              "extended_mode_1": 668,
+              "spare_bits_16_13": 15
+            },
+            "ga": {
+              "ga_raw": 500,
+              "res": 1,
+              "spare_bit_16": 1
+            },
+            "pmn": {
+              "mis": 12,
+              "nat": 3,
+              "pin": 999,
+              "spare_bits_16_14": 7,
+              "spare_bits_32_31": 3,
+              "spare_bits_8_7": 3
+            },
+            "xp": {
+              "spare_bits_8_6": 7,
+              "x1": 1,
+              "x2": 0,
+              "x3": 1,
+              "x5": 1,
+              "xc": 0
+            }
+          }
+        },
+        "I062/120": {
+          "mode_2": 1838,
+          "spare_bits_16_13": 15
+        },
+        "I062/200": {
+          "adf": 0,
+          "long": 0,
+          "spare_bit_1": 1,
+          "trans": 0,
+          "vert": 0
+        },
+        "I062/245": {
+          "characters_raw": 88325272766496,
+          "spare_bits_54_49": 63,
+          "sti": 0
+        },
+        "I062/340": {
+          "presence": "0c",
+          "subfields": {
+            "mda": {
+              "g": 0,
+              "l": 1,
+              "mode_3a": 1024,
+              "spare_bit_13": 1,
+              "v": 0
+            },
+            "typ": {
+              "rab": 0,
+              "sim": 0,
+              "spare_bits_2_1": 3,
+              "tst": 0,
+              "typ": 3
+            }
+          }
+        },
+        "I062/380": {
+          "presence": "01b14522",
+          "subfields": {
+            "bps": {
+              "bps_raw": 2134,
+              "spare_bits_16_13": 15
+            },
+            "com": {
+              "aic": 1,
+              "arc": 1,
+              "b1a": 1,
+              "b1b": 10,
+              "com": 3,
+              "spare_bits_10_9": 3,
+              "ssc": 1,
+              "stat": 0
+            },
+            "met": {
+              "spare_bits_60_57": 15,
+              "temperature_raw": 65376,
+              "tmp": 1,
+              "trb": 1,
+              "turbulence_raw": 15,
+              "wd": 1,
+              "wind_direction_raw": 360,
+              "wind_speed_raw": 300,
+              "ws": 1
+            },
+            "pun": {
+              "pun": 5,
+              "spare_bits_8_5": 15
+            },
+            "sab": {
+              "ac": 2,
+              "dc": 2,
+              "gbs": 0,
+              "mn": 2,
+              "spare_bits_9_4": 63,
+              "stat": 0
+            },
+            "tar": {
+              "rate_of_turn_raw": 12,
+              "spare_bit_1": 1,
+              "spare_bits_14_9": 63,
+              "ti": 2
+            },
+            "tis": {
+              "fx": 0,
+              "nav": 1,
+              "nvb": 0,
+              "spare_bits_6_2": 31
+            }
+          }
+        },
+        "I062/390": {
+          "presence": "310b20",
+          "subfields": {
+            "fct": {
+              "fr": 0,
+              "gat_oat": 1,
+              "hpr": 1,
+              "rvsm": 1,
+              "spare_bit_1": 1
+            },
+            "ifi": {
+              "nbr": 99999999,
+              "spare_bits_30_28": 7,
+              "typ": 2
+            },
+            "pem": {
+              "mode_3a": 4032,
+              "spare_bits_16_14": 7,
+              "va": 1
+            },
+            "sts": {
+              "avl": 0,
+              "emp": 1,
+              "spare_bits_4_1": 15
+            },
+            "tod": {
+              "entries": [
+                {
+                  "avs": 0,
+                  "day": 0,
+                  "hor": 5,
+                  "min": 43,
+                  "sec": 21,
+                  "spare_bit_7": 1,
+                  "spare_bits_16_15": 3,
+                  "spare_bits_25_22": 15,
+                  "typ": 7
+                }
+              ],
+              "rep": 1
+            }
+          }
+        },
+        "RE": {
+          "items": {
+            "csn": {
+              "rep": 1,
+              "sensors": [
+                {
+                  "sac": 41,
+                  "sic": 42,
+                  "spare_bits_8_5": 15,
+                  "typ": 8
+                }
+              ]
+            },
+            "sts": {
+              "fdr": 0,
+              "fx": 0,
+              "lnav_ep": 1,
+              "lnav_val": 1,
+              "spare_bits_5_2": 15
+            },
+            "v3": {
+              "fx": 0,
+              "primary": 128,
+              "spare_bits_4_2": 0,
+              "subfields": {
+                "ps3": {
+                  "ps3_ep": 1,
+                  "ps3_val": 5,
+                  "spare_bits_4_1": 15
+                }
+              }
+            }
+          },
+          "items_indicator": 95,
+          "length": 9,
+          "spare_bits_3_1": 7
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

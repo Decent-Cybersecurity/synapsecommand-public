@@ -18,7 +18,7 @@ CLI and its exit codes, the fixture set. It follows the general rule and not MIG
 WHY THEY MUST BE ALLOWED TO DIVERGE, WHICH IS MEASURED AND NOT ARGUED
 ---------------------------------------------------------------------
 They are BOTH ``1.0.0`` today, and a reader who sees two equal numbers reasonably concludes
-one of them is redundant. It is not, and the tree already proves it: ``MIGRATIONS.md`` has a
+one ofeleven adapters is redundant. It is not, and the tree already proves it: ``MIGRATIONS.md`` has a
 section titled "Adapters that landed with no schema change" and it holds **nine** entries —
 nine adapters, each of which added thousands of lines of shipped behaviour to this
 distribution at ``schema_version`` 1.0.0, with no field added, removed or retyped.
@@ -41,8 +41,8 @@ the models generate. Neither needs the two strings to be the same string.
 WHERE 1.0.0 CAME FROM, FOR THE PACKAGE
 ---------------------------------------
 Ruled at ``1.0.0`` rather than ``0.1.0``. ``0.x`` says "the API may change under you without
-notice", and that is not what this is: ten adapters are shipped and harness-verified, the
-``Adapter`` contract has been stable across all ten of them, and the whole point of a
+notice", and that is not what this is: eleven adapters are shipped and harness-verified, the
+``Adapter`` contract has been stable across all eleven of them, and the whole point of a
 contract layer is that consumers may depend on it. A ``0.x`` first release would be
 advertising an instability the tree does not have. The coincidence with ``SCHEMA_VERSION``
 1.0.0 is a coincidence of two first releases, and it will not survive the eleventh adapter.

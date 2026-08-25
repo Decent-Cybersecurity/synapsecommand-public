@@ -1,0 +1,65 @@
+{
+  "block": {
+    "category": 62,
+    "length": 21,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "910e",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/290": "cd2032053e8003ff"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 0,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            }
+          ]
+        },
+        "I062/290": {
+          "presence": "cd20",
+          "subfields": {
+            "ads": {
+              "age_raw": 16000
+            },
+            "es": {
+              "age_raw": 3
+            },
+            "mlt": {
+              "age_raw": 255
+            },
+            "psr": {
+              "age_raw": 5
+            },
+            "trk": {
+              "age_raw": 50
+            }
+          }
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

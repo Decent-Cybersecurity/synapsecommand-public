@@ -1,0 +1,106 @@
+{
+  "block": {
+    "category": 62,
+    "length": 25,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "911c",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "010101011904",
+        "I062/380": "8110f0a1c70005"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 1,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            },
+            {
+              "aff": 0,
+              "fpc": 0,
+              "fx": 1,
+              "kos": 0,
+              "sim": 0,
+              "stp": 0,
+              "tsb": 0,
+              "tse": 0
+            },
+            {
+              "ama": 0,
+              "fx": 1,
+              "md4": 0,
+              "md5": 0,
+              "me": 0,
+              "mi": 0
+            },
+            {
+              "aac": 0,
+              "ads": 0,
+              "cst": 0,
+              "fx": 1,
+              "mds": 0,
+              "psr": 0,
+              "ssr": 0,
+              "suc": 0
+            },
+            {
+              "ems": 3,
+              "fplt": 0,
+              "fx": 1,
+              "pft": 0,
+              "sds": 0
+            },
+            {
+              "dupf": 0,
+              "dupm": 0,
+              "dupt": 0,
+              "fx": 0,
+              "idd": 0,
+              "iec": 1,
+              "mlat": 0,
+              "sfc": 0
+            }
+          ]
+        },
+        "I062/380": {
+          "presence": "8110",
+          "subfields": {
+            "adr": {
+              "address": 15770055
+            },
+            "sab": {
+              "ac": 0,
+              "dc": 0,
+              "gbs": 0,
+              "mn": 0,
+              "spare_bits_9_4": 0,
+              "stat": 5
+            }
+          }
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

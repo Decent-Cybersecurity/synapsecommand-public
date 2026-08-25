@@ -1,0 +1,80 @@
+{
+  "block": {
+    "category": 62,
+    "length": 34,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "910d010106",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "RE": "0db001292a0504d201e0ff4bc0",
+        "SP": "05aabbccdd"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 0,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            }
+          ]
+        },
+        "RE": {
+          "items": {
+            "cst": {
+              "rep": 1,
+              "sensors": [
+                {
+                  "local_track_number": 1234,
+                  "sac": 41,
+                  "sic": 42,
+                  "spare_bits_24_21": 0,
+                  "typ": 5
+                }
+              ]
+            },
+            "sts": {
+              "fdr": 1,
+              "fx": 0,
+              "lnav_ep": 1,
+              "lnav_val": 0,
+              "spare_bits_5_2": 0
+            },
+            "tvs": {
+              "vx_raw": 480,
+              "vy_raw": 65355
+            }
+          },
+          "items_indicator": 176,
+          "length": 13,
+          "spare_bits_3_1": 0
+        },
+        "SP": {
+          "contents": "aabbccdd",
+          "length": 5
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

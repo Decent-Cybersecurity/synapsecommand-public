@@ -1,0 +1,2233 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and three separate inferences are declined to keep it that way. \u00a75.2.6's MD4 and MD5 spell one value 'Friendly target' \u2014 an authenticated military-mode reply says a cryptographic exchange succeeded, and reading it as an affiliation is an IDENTIFICATION DECISION, which is the asterix_cat021.py Mode 5 refusal. \u00a75.2.25 Subfield #4's GAT/OAT spells one value 'Operational Air Traffic', which is a set of flight rules and not an allegiance. \u00a75.2.24 Subfield #21 spells one emitter category 'highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)', which describes a fighter and is a performance class \u2014 the GMTIF platform-type refusal. All three are parked with the document's own wording so a fusion layer can make the call where it is attributable",
+      "aircraft_derived_data": {
+        "acas_resolution_advisory": {
+          "basis": "\u00a75.2.24 Subfield #12, seven octets, '56-bit message conveying Mode S Comm B message data of BDS Register 3,0 and ADS-B'. PARKED WHOLE AS HEX AND NEVER DECODED: the only decode authority the item cites is 'Refer to ICAO Draft SARPs for ACAS for detailed explanations' \u2014 a DRAFT, unnamed by edition, absent from \u00a72.2's reference list, and there is no field breakdown of the 56 bits anywhere in this document. The asterix_cat048.py I048/260 disposition",
+          "octets": "30303030303030"
+        },
+        "barometric_pressure_setting": {
+          "basis": "\u00a75.2.24 Subfield #28, and its NOTE is why the key is named as it is: 'BPS is the barometric pressure setting of the aircraft MINUS 800 mb'. So the number is an offset and not a pressure, and Edition 1.19 removed the note '(derived from Mode S BDS 4,0)' to allow it via ADS-B",
+          "millibars_above_800": 213.4,
+          "raw": 2134
+        },
+        "barometric_vertical_rate": {
+          "basis": "the AIRCRAFT'S vertical rate. Neither of the two reaches Kinematics.climb_mps: there are two of them and one I062/220, so any promotion would arbitrate between three numbers",
+          "feet_per_minute": 1875.0,
+          "raw": 300
+        },
+        "basis": "\u00a75.2.24, 'Data derived directly by the aircraft'. Everything here is the AIRCRAFT'S statement rather than the tracker's calculation, so nothing in it becomes a canonical field except Subfield #1, which is settlement 3's identity basis. Where a subfield competes with a tracker-calculated value \u2014 ground speed against I062/185, track angle against the derived course, the two vertical rates against I062/220, the geometric altitude against I062/130, the position against I062/105 \u2014 the aircraft's value is PARKED and the tracker's is used, because choosing between two observers is the arbitration settlement 1 refuses and there is no basis in the record for making it",
+        "bds_registers": {
+          "basis": "\u00a75.2.24 Subfield #25, an ordered list of 56-bit registers with their two four-bit addresses. PARKED WHOLE AS HEX PER REGISTER, NEVER DECODED: the register semantics are in ICAO Annex 10, and the item's own NOTE says the subfield is for DAPs 'that cannot be encoded into other subfields of this item' \u2014 so what is in it is by definition not what the item's other subfields cover. The I048/250 disposition",
+          "registers": [
+            {
+              "bds1": 4,
+              "bds2": 0,
+              "bds_data": "40000000000000"
+            },
+            {
+              "bds1": 5,
+              "bds2": 0,
+              "bds_data": "50111111111111"
+            }
+          ],
+          "rep": 2
+        },
+        "communications_capability": {
+          "aircraft_identification_capability": true,
+          "altitude_reporting": "25 ft resolution",
+          "basis": "\u00a75.2.24 Subfield #10. THE FLIGHT STATUS'S ALERT VALUES DO NOT RAISE SEVERITY: this is the transponder's own status, its values 4 and 5 conflate airborne and on-ground, and the emergency vocabularies in this category are EMS, Subfield #11's STAT and I062/REF/PS3",
+          "bds_1_0_bit_16": 0,
+          "bds_1_0_bits_37_40": 0,
+          "com": {
+            "raw": 3,
+            "text": "Comm. A, Comm. B, Uplink ELM and Downlink ELM"
+          },
+          "flight_status": {
+            "raw": 0,
+            "text": "No alert, no SPI, aircraft airborne"
+          },
+          "specific_service_capability": true
+        },
+        "emitter_category": {
+          "raw": 3,
+          "text": "7000 kg < medium aircraft < 136000 kg"
+        },
+        "final_state_selected_altitude": {
+          "altitude_hold": false,
+          "approach_mode": false,
+          "feet": 33000.0,
+          "lateral_navigation_mode": "in I062/REF/STS/LNAV, per \u00a75.2.24's NOTE \u2014 and it is THE ONE relocation the core specification names that Appendix A Edition 1.3 actually defines",
+          "managed_vertical_mode": true,
+          "raw": 1320
+        },
+        "geometric_altitude": {
+          "lsb": 6.25,
+          "raw": 4968,
+          "unit": "ft",
+          "value": 31050.0
+        },
+        "geometric_vertical_rate": {
+          "basis": "the AIRCRAFT'S vertical rate. Neither of the two reaches Kinematics.climb_mps: there are two of them and one I062/220, so any promotion would arbitrate between three numbers",
+          "feet_per_minute": 1900.0,
+          "raw": 304
+        },
+        "ground_speed": {
+          "lsb": 6.103515625e-05,
+          "raw": 2204,
+          "unit": "NM/s",
+          "value": 0.134521484375
+        },
+        "indicated_airspeed": {
+          "lsb": 1.0,
+          "raw": 290,
+          "unit": "kt",
+          "value": 290.0
+        },
+        "indicated_airspeed_or_mach": {
+          "basis": "THE SUPERSEDED Subfield #4: one field holding either an indicated airspeed at 2^-14 NM/s or a Mach number at 0.001, selected by the IM bit. Subfields #26 and #27 replaced it and this one is 'kept free in order to prevent a full incompatibility with previous releases', so a record may legally carry all three. Its NOTE names 'bit-37' as its presence bit in a four-octet primary numbered 32 to 1 \u2014 a bit that does not exist; the diagram gives bit-29 and the diagram is preferred. Ambiguity 7",
+          "im": 0,
+          "lsb": 6.103515625e-05,
+          "raw": 1253,
+          "selects": "IAS in NM/s",
+          "value": 0.07647705078125
+        },
+        "mach_number": {
+          "lsb": 0.008,
+          "raw": 103,
+          "unit": "Mach",
+          "value": 0.8240000000000001
+        },
+        "magnetic_heading": {
+          "basis": "A MAGNETIC HEADING, NOT A TRUE ONE, and the CDM has no heading field at all \u2014 FORMAT_COVERAGE.md gap 7, which this row is the fourth source to open against. The datum is stated here because a bare heading_deg would hold two different measurements",
+          "lsb": 0.0054931640625,
+          "raw": 49334,
+          "unit": "deg",
+          "value": 270.999755859375
+        },
+        "meteorological_data": {
+          "basis": "\u00a75.2.24 Subfield #20. EACH OF THE FOUR MEASUREMENTS HAS ITS OWN VALIDITY BIT, so an invalid measurement is PRESENT AND MARKED rather than absent \u2014 carried as the value plus the flag, because a consumer ignoring the flag would read a placeholder as a measurement. Wind direction's stated low bound is 1, not 0, so a zero is outside the item's own range and is refused rather than read as north \u2014 the one place in this category where zero is excluded from an angle",
+          "temperature": {
+            "celsius": -52.25,
+            "raw": 65327,
+            "valid": true
+          },
+          "turbulence": {
+            "valid": true,
+            "value": 3
+          },
+          "wind_direction": {
+            "degrees": 235.0,
+            "raw": 235,
+            "valid": true
+          },
+          "wind_speed": {
+            "knots": 48.0,
+            "raw": 48,
+            "valid": true
+          }
+        },
+        "position": {
+          "basis": "\u00a75.2.24 Subfield #22, the AIRCRAFT'S OWN fix via ADS-B at 180/2^23 degrees. Never Entity.position: choosing between the aircraft's fix and the tracker's is arbitration, and note that the tracker's is four times finer at 180/2^25",
+          "latitude": 57.3900032043457,
+          "latitude_raw": 2674568,
+          "longitude": 21.560003757476807,
+          "longitude_raw": 1004769,
+          "quantisation": "This corresponds to a resolution of at least 2.4 meters"
+        },
+        "position_uncertainty": {
+          "basis": "\u00a75.2.24 Subfield #24, a four-bit PUN. The document defines NO SCALE for it, so nothing is derived and it never reaches Position.accuracy_m",
+          "raw": 4
+        },
+        "roll_angle": {
+          "lsb": 0.01,
+          "raw": 64286,
+          "unit": "deg",
+          "value": -12.5
+        },
+        "selected_altitude": {
+          "basis": "SAS = 0 means 'No source information provided', so the Source field is then NOT A STATEMENT \u2014 which is a different fact from Source = 0 'Unknown', and the item distinguishes them. Both are carried",
+          "feet": 31000.0,
+          "raw": 1240,
+          "source": 2,
+          "source_stated": true,
+          "source_text": "FCU/MCP Selected Altitude"
+        },
+        "status_reported_by_adsb": {
+          "acas": {
+            "raw": 2,
+            "text": "ACAS operational"
+          },
+          "basis": "\u00a75.2.24 Subfield #11. Its STAT is one of the three emergency statements \u2014 see payload.emergency_basis \u2014 and on ADS-B Version 3 equipment it is LOSSY BY CONSTRUCTION: the item's own note prints the back-mapping table, in which 2 becomes 4 and both distress values become 1. There is no VN field in this subfield despite two notes citing 'I062/380/SF#11/VN' \u2014 ambiguity 13",
+          "differential_correction": {
+            "raw": 2,
+            "text": "No differential correction"
+          },
+          "ground_bit_set": false,
+          "navigational_aids": {
+            "raw": 2,
+            "text": "Multiple navigational aids operating"
+          },
+          "priority_status": {
+            "back_mapped_from_version_3": {
+              "0": 0,
+              "1": 1,
+              "2": 4,
+              "3": 3,
+              "4": 4,
+              "5": 5,
+              "6": 1,
+              "7": 1
+            },
+            "raw": 0,
+            "text": "No emergency"
+          }
+        },
+        "target_address": {
+          "icao24": "F0A1C7",
+          "raw": 15770055
+        },
+        "target_identification": {
+          "basis": "eight six-bit characters through the ICAO Annex 10 Vol. IV Table 3-8 alphabet, '#' marking a code the alphabet does not define. \u00a75.2.24 cites the coding to '[3] Section 3.1.2.9.1.2 and Table 3-9' and \u00a75.2.18 cites the same alphabet to 'section 3.1.2.9 of [Ref. 3]' \u2014 two section numbers for one table, and [Ref. 3] is ICAO Doc 4444, which is not where the alphabet lives. Ambiguity 6",
+          "raw": 8890343716896,
+          "text": "BAW117  ",
+          "trimmed": "BAW117",
+          "undefined_codes": 0
+        },
+        "track_angle": {
+          "lsb": 0.0054931640625,
+          "raw": 48879,
+          "unit": "deg",
+          "value": 268.5003662109375
+        },
+        "track_angle_rate": {
+          "basis": "\u00a75.2.24 Subfield #16. A SEVEN-BIT two's-complement rate in bits 8/2 with a spare bit 1, so the field reaches \u00b116 and the stated range is \u00b115. NO turn_rate_dpm exists on Kinematics \u2014 gap 7's second half",
+          "rate_of_turn_deg_s": 2.5,
+          "raw": 10,
+          "turn_indicator": {
+            "raw": 2,
+            "text": "Right"
+          }
+        },
+        "trajectory_intent": {
+          "basis": "\u00a75.2.24 Subfield #9, an ORDERED list of fifteen-octet Trajectory Change Points with duplicates preserved. THE ONE REPETITIVE STRUCTURE IN THE CATEGORY WHOSE ELEMENT IS A POSITION, and no Track and no Event.geometry is produced from it: a trajectory intent is a PREDICTION, Track.samples are observations, and a LineString through predicted waypoints would render as a flown path",
+          "points": [
+            {
+              "altitude_ft": 33000.0,
+              "compliance": "TCP compliance",
+              "latitude": 57.89000988006592,
+              "longitude": 22.06001043319702,
+              "point_type": {
+                "raw": 7,
+                "text": "Top of climb (VT)"
+              },
+              "tcp_number": 0,
+              "tcp_number_available": true,
+              "time_over_point_available": true,
+              "time_over_point_note": "TOA = 0, so NOTE 5 applies: TOV 'is defined as the absolute time from midnight' at an LSB of 1 s \u2014 a SECOND time-of-day-shaped field in the category, at a different resolution from I062/070's 1/128 s",
+              "time_over_point_raw": 22000,
+              "time_over_point_seconds": 22000.0,
+              "turn_direction": 1,
+              "turn_radius_available": true,
+              "turn_radius_nm": 12.5
+            }
+          ],
+          "rep": 1
+        },
+        "trajectory_intent_status": {
+          "available": true,
+          "basis": "\u00a75.2.24 Subfield #8, and both bits are stated INVERTED \u2014 NAV = 1 is 'Trajectory Intent Data is NOT available' and NVB = 1 is 'not valid'. Carried as the positive sense with the inversion named, because the wording is what a reader will check against",
+          "valid": true
+        },
+        "true_airspeed": {
+          "lsb": 1.0,
+          "raw": 462,
+          "unit": "kt",
+          "value": 462.0
+        },
+        "velocity_uncertainty": {
+          "basis": "\u00a75.2.24 Subfield #19, 'Velocity uncertainty category of the least accurate velocity component'. A CATEGORY and not a metric value, and the document defines no scale for it anywhere \u2014 so it is parked as the integer and nothing is derived from it",
+          "raw": 2
+        }
+      },
+      "cat062_block": {
+        "category": 62,
+        "length": 388,
+        "record_count": 1
+      },
+      "cat062_fspec": "bfffffff06",
+      "cat062_items": {
+        "I062/010": "2929",
+        "I062/015": "03",
+        "I062/040": "1092",
+        "I062/060": "2e00",
+        "I062/070": "2a3000",
+        "I062/080": "6513ab4d054380",
+        "I062/100": "005dc0ffc180",
+        "I062/105": "00a33e1f003d5383",
+        "I062/110": "feff10e1071528cf880f54e143c0029cc019",
+        "I062/120": "072e",
+        "I062/130": "1360",
+        "I062/135": "84c4",
+        "I062/136": "04c3",
+        "I062/185": "034aff0f",
+        "I062/200": "66",
+        "I062/210": "06fd",
+        "I062/220": "012c",
+        "I062/245": "000815f1c77820",
+        "I062/270": "81a178",
+        "I062/290": "ffe0320506033e800208090c0d",
+        "I062/295": "ffffffffe0060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324",
+        "I062/300": "00",
+        "I062/340": "fc292a2a80619a04d704c22e00a0",
+        "I062/380": "fffffffef0a1c70815f1c77820c0b604e501cec4d885280001000ce4292a8e0fafe7760055f004e260e0a80030303030303030012c0130fb1e8014beef089c02f0003000ebff2f030328cf880f54e11368040240000000000000405011111111111150012200670856",
+        "I062/390": "fffff0292b4241573131372000bc614e44423733384d4556524145474c4c31385204d8071f0238052b154a090c8041313220202040524947413141204c414d32432020129c42415731313720",
+        "I062/500": "ff80005a0078ffbf004b009514060a0c020314",
+        "I062/510": "112125224570",
+        "RE": "1df802292a050fa1292b080fa201292c0901e0ff4bc0f0a0b6bbe0eed8",
+        "SP": "05aabbccdd"
+      },
+      "data_source": {
+        "basis": "\u00a75.2.1, 'Identification of the system sending the data', M in every record. PARKED, not a SourceId \u2014 the CAT048 disposition and the INVERSE of CAT034's, and the difference is the whole reason both rows exist: there the SAC/SIC IS the object's identity because the station is the object, and here it identifies the SDPS that formed the opinion. Filing a processor under the target's identifiers is how a fused picture ends up with an entity per processor",
+        "external_id": "2929",
+        "item": "I062/010",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)",
+        "sac": 41,
+        "sic": 41
+      },
+      "encoder_conformance": {
+        "I062/245_present": {
+          "basis": "\u00a75.2.18's NOTE 2 says of this item: 'As the Callsign of the target can already be transmitted (in I062/380 Subfield #2 if downlinked from the aircraft or in I062/390 Subfield #2 if the target is correlated to a flight plan), and in order to avoid confusion at end user's side, this item SHALL not be used.' So a record carrying it is NON-CONFORMANT \u2014 and it is DECODED AND PARKED, never refused, for three reasons in order of weight. 'SHALL not be used' binds an ENCODER and this is a decoder, so refusing would discard data the FSPEC correctly announced. The item is fully specified, so there is no ambiguity about what its octets mean. And the prohibition is itself worth carrying: a record that uses I062/245 tells a consumer something about the system that emitted it, and that can only be carried if the item is read. The two items it defers to are NOT merged with it \u2014 all three park separately, because choosing one as 'the' callsign is arbitration and doing it on the authority of a note that forbids one of the three would be worse",
+          "sti": 0,
+          "sti_text": "Callsign or registration downlinked from target",
+          "text": "BAW117  ",
+          "trimmed": "BAW117"
+        }
+      },
+      "entity_type_basis": {
+        "default": "PLATFORM. A system track is a track of a moving thing, and every value either refining item can carry is a vehicle, an aircraft or a fixed obstruction. Nothing in the category distinguishes a crewed from an uncrewed aircraft in a way the CDM has a member for \u2014 Appendix A's UAS/RPAS Status does say so and PLATFORM covers both, which is recorded as a gap-shaped absence rather than forced",
+        "emitter_category": {
+          "raw": 3,
+          "text": "7000 kg < medium aircraft < 136000 kg"
+        },
+        "vehicle_fleet": {
+          "raw": 0,
+          "refined_to": "PLATFORM. All seventeen values are ground vehicles, so the item confirms the default and refines nothing else. 7 'Emergency' and 8 'Police' are NOT read as an affiliation or a severity \u2014 the GMTIF platform-type refusal, reached again",
+          "text": "Unknown type of vehicle"
+        }
+      },
+      "flight_plan": {
+        "aircraft_stand": {
+          "octets": "413132202020",
+          "text": "A12   ",
+          "trimmed": "A12"
+        },
+        "aircraft_type": {
+          "basis": "four ASCII characters, NEVER RESOLVED. The designators are ICAO Document 8643, which is not in \u00a72.2's reference list at all \u2014 and \u00a75.2.25's NOTE 2 cites them to '[Ref.4]', which is ICAO Annex 14, the aerodrome design annex. FORMAT_COVERAGE.md ambiguity 6",
+          "octets": "42373338",
+          "text": "B738",
+          "trimmed": "B738"
+        },
+        "basis": "\u00a75.2.25, 'All flight plan related information, provided by ground-based systems'. Everything here is a ground system's statement about an intention rather than an observation of the target, and I062/080's FPC bit is what says whether the correlation happened at all",
+        "callsign": {
+          "basis": "SEVEN ASCII OCTETS, left adjusted and space padded \u2014 and I062/380 Subfield #2's identification is EIGHT SIX-BIT CHARACTERS. Two callsign encodings in one record, which is one of the reasons neither is promoted to a canonical name; the other is that the CDM has no canonical name to promote to, which is gap 1. The untrimmed form is parked as well as the trimmed one, because the padding is what the wire carried and a callsign that is all spaces is a real thing a flight plan system sends",
+          "octets": "42415731313720",
+          "text": "BAW117 ",
+          "trimmed": "BAW117"
+        },
+        "cleared_flight_level": {
+          "basis": "A CLEARANCE IS NOT A MEASUREMENT. It is what the controller told the aircraft to do, so it reaches no altitude field. Edition 1.19's change record says 'clarification added on range' for exactly this subfield",
+          "flight_level": 310.0,
+          "raw": 1240
+        },
+        "current_control_position": {
+          "basis": "two 8-bit codes, and the item's NOTE says both 'have to be defined between communication partners'. Meaningless without a bilateral agreement, so parked as integers and never resolved",
+          "centre": 7,
+          "position": 31
+        },
+        "departure_airport": {
+          "basis": "four ASCII characters, never resolved. 'The Airport Names are indicated in the ICAO Location Indicators book', which is not in hand",
+          "octets": "45565241",
+          "text": "EVRA",
+          "trimmed": "EVRA"
+        },
+        "destination_airport": {
+          "basis": "four ASCII characters, never resolved. 'The Airport Names are indicated in the ICAO Location Indicators book', which is not in hand",
+          "octets": "45474c4c",
+          "text": "EGLL",
+          "trimmed": "EGLL"
+        },
+        "flight_category": {
+          "basis": "PARKED, and 'Operational Air Traffic' is NOT read as an affiliation: it is a set of flight rules for military and state flights, not an allegiance. HPR is a handling priority, not a threat, and it does not raise severity",
+          "flight_rules": {
+            "raw": 0,
+            "text": "Instrument Flight Rules"
+          },
+          "gat_oat": {
+            "raw": 1,
+            "text": "General Air Traffic"
+          },
+          "high_priority": false,
+          "rvsm": {
+            "raw": 1,
+            "text": "Approved"
+          }
+        },
+        "fpps": {
+          "basis": "the flight plan processing system, by SAC/SIC \u2014 a THIRD system named in one record after I062/010 and I062/340 Subfield #1, and joined to nothing",
+          "sac": 41,
+          "sic": 43
+        },
+        "ifps_flight_id": {
+          "basis": "\u00a75.2.25 Subfield #3, a 27-bit NBR the item describes as 'Number from 0 to 99 999 999'. Twenty-seven bits reach 134 217 727, so the stated range is narrower than the field in the useful direction",
+          "number": 12345678,
+          "typ": 0,
+          "typ_text": "Plan Number"
+        },
+        "pre_emergency_callsign": {
+          "basis": "\u00a75.2.25 Subfield #18, 'used only when an emergency Mode 3/A is associated with the track'. THE PAIR IS THE ONLY PLACE IN THE CATEGORY THAT SAYS WHAT THE TARGET WAS CALLED BEFORE IT STARTED SQUAWKING AN EMERGENCY CODE \u2014 exactly the value an operator needs, and exactly the value a translator must not overwrite the current callsign with",
+          "octets": "42415731313720",
+          "text": "BAW117 ",
+          "trimmed": "BAW117"
+        },
+        "pre_emergency_mode_3a": {
+          "basis": "\u00a75.2.25 Subfield #17, 'used only when the aircraft is transmitting an emergency Mode 3/A code'. VA = 0 makes the twelve bits MEANINGLESS by the item's own NOTE 2, so no code is rendered and the raw bits go to unresolved_raw. THE BIT NUMBERING IS AMBIGUITY 8: the prose says 'bits-16/13 Spare bits set to 0' and then 'bit-13 (VA) Validity', assigning bit 13 twice in four lines. The structure diagram \u2014 three zeros then VA \u2014 is preferred, because it is the only one of the two statements that is internally consistent and it agrees with the twelve-bit Mode 3/A field below it",
+          "octal": "1234",
+          "raw": 668,
+          "valid": true
+        },
+        "runway_designation": {
+          "basis": "three ASCII characters. \u00a75.2.25's NOTE 2 cites 'refer to.[5] Section 5' and [5] is EUROCAE ED-102B, the 1090 MHz ADS-B MOPS, which has no runway-designation section. Ambiguity 6",
+          "ltr": "R",
+          "nu1": "1",
+          "nu2": "8",
+          "text": "18R"
+        },
+        "stand_status": {
+          "availability": {
+            "raw": 0,
+            "text": "Available"
+          },
+          "basis": "A STAND STATUS IS ABOUT A PIECE OF GROUND, not about the aircraft, and it does not become a second Entity: inventing a FACILITY per stand from a track message would be creating objects the source did not send",
+          "occupancy": {
+            "raw": 1,
+            "text": "Occupied"
+          }
+        },
+        "standard_instrument_arrival": {
+          "octets": "4c414d32432020",
+          "text": "LAM2C  ",
+          "trimmed": "LAM2C"
+        },
+        "standard_instrument_departure": {
+          "octets": "52494741314120",
+          "text": "RIGA1A ",
+          "trimmed": "RIGA1A"
+        },
+        "times_of_departure_arrival": {
+          "authorship_note": "the item's NOTE: 'Estimated times are derived from flight plan systems. PREDICTED TIMES ARE DERIVED BY THE FUSION SYSTEM, based on surveillance data.' So three of the fourteen TYP values are the tracker's own predictions and eleven are the flight plan's, and the TYP is what tells them apart \u2014 settlement 1's authorship distinction inside one subfield",
+          "basis": "\u00a75.2.25 Subfield #12, an ORDERED list of typed times. NO ABSOLUTE INSTANT IS DERIVED, for three independent reasons: DAY is relative to a date the item does not state, AVS can mark the seconds absent, and DAY = 3 is spelled 'Invalid'. Any one of the three would make an instant an invention",
+          "entries": [
+            {
+              "authored_by": "a flight plan system",
+              "day": 0,
+              "day_text": "Today",
+              "hours": 5,
+              "minutes": 43,
+              "seconds": 21,
+              "seconds_available": true,
+              "seconds_raw": 21,
+              "typ": 7,
+              "typ_text": "Actual take-off time"
+            },
+            {
+              "authored_by": "the fusion system, from surveillance data",
+              "day": 1,
+              "day_text": "Yesterday",
+              "hours": 9,
+              "minutes": 12,
+              "seconds": null,
+              "seconds_available": false,
+              "seconds_raw": 0,
+              "typ": 9,
+              "typ_text": "Predicted landing time"
+            }
+          ],
+          "rep": 2
+        },
+        "wake_turbulence_category": {
+          "basis": "\u00a75.2.25 Subfield #6, one ASCII character which 'SHOULD be one of the following values: L, M, H, J'. 'Should' and not 'shall', and the field is a whole octet, so a fifth character is recorded rather than refused",
+          "character": "M",
+          "raw": 77,
+          "text": "Medium"
+        }
+      },
+      "fusion_provenance": {
+        "basis": "EVERY FIELD BELOW IS THE UPSTREAM SDPS'S STATEMENT ABOUT ITS OWN PROCESSING, not a measurement of the target. \u00a73.1.11 defines a track as a 'Time sequence of state vectors of an object estimated by some real time filtering technique using surveillance data as input', \u00a73.1.1 defines amalgamation as merging tracks from co-operating systems, and \u00a73.1.2 defines a Calculated Item as one derived 'through an intermediate processing such as transformation of co-ordinates, tracking, code conversion'. So the document is explicit that its content has been through a fusion process, and this adapter translates that content and performs no fusion of its own. Nothing here is acted on: no age becomes an instant, no staleness flag suppresses a value, no reliability flag arbitrates between two altitudes, no contributing sensor becomes an object or a join",
+        "composed_track_number": {
+          "basis": "\u00a75.2.27, an ORDERED list, master first \u2014 its NOTE says 'The first unit identification identifies the unit that is responsible for the track amalgamation', so the order is data. THE ITEM THAT PROVES SETTLEMENT 3'S POINT: it exists because a bare track number is ambiguous between co-operating units, and it carries a system unit identification alongside each number precisely so the PAIR is unique. No slave track number is joined to anything \u2014 each names another unit's track in that unit's own space",
+          "units": [
+            {
+              "fx": 1,
+              "system_track_number": 4242,
+              "system_unit": 17
+            },
+            {
+              "fx": 0,
+              "system_track_number": 8888,
+              "system_unit": 34
+            }
+          ]
+        },
+        "data_ages": {
+          "ages": {
+            "acs": {
+              "dates": "I062/380 Subfield #12",
+              "lsb_seconds": 0.25,
+              "raw": 20,
+              "seconds": 5.0
+            },
+            "bps": {
+              "dates": "I062/380 Subfield #28",
+              "lsb_seconds": 0.25,
+              "raw": 36,
+              "seconds": 9.0
+            },
+            "bvr": {
+              "dates": "I062/380 Subfield #13",
+              "lsb_seconds": 0.25,
+              "raw": 21,
+              "seconds": 5.25
+            },
+            "com": {
+              "dates": "I062/380 Subfield #10",
+              "lsb_seconds": 0.25,
+              "raw": 18,
+              "seconds": 4.5
+            },
+            "emc": {
+              "dates": "I062/380 Subfield #21",
+              "lsb_seconds": 0.25,
+              "raw": 29,
+              "seconds": 7.25
+            },
+            "fss": {
+              "dates": "I062/380 Subfield #7",
+              "lsb_seconds": 0.25,
+              "raw": 16,
+              "seconds": 4.0
+            },
+            "gal": {
+              "dates": "I062/380 Subfield #23",
+              "lsb_seconds": 0.25,
+              "raw": 31,
+              "seconds": 7.75
+            },
+            "gsp": {
+              "dates": "I062/380 Subfield #18",
+              "lsb_seconds": 0.25,
+              "raw": 26,
+              "seconds": 6.5
+            },
+            "gvr": {
+              "dates": "I062/380 Subfield #14",
+              "lsb_seconds": 0.25,
+              "raw": 22,
+              "seconds": 5.5
+            },
+            "iar": {
+              "dates": "I062/380 Subfield #26",
+              "lsb_seconds": 0.25,
+              "raw": 34,
+              "seconds": 8.5
+            },
+            "ias": {
+              "dates": "I062/380 Subfield #4",
+              "lsb_seconds": 0.25,
+              "raw": 13,
+              "seconds": 3.25,
+              "superseded": "dates the SUPERSEDED I062/380 Subfield #4. Its own NOTE says the subfield 'is kept free in order to prevent a full incompatibility with previous releases', and Subfields #29 and #30 date the two replacements separately \u2014 so a record may legally carry all three"
+            },
+            "mac": {
+              "dates": "I062/380 Subfield #27",
+              "lsb_seconds": 0.25,
+              "raw": 35,
+              "seconds": 8.75
+            },
+            "mb": {
+              "dates": "I062/380 Subfield #25",
+              "lsb_seconds": 0.25,
+              "one_age_for_many_registers": "ONE age for the whole repetitive I062/380 Subfield #25, so a record carrying five BDS registers carries one age for all five. Its NOTE points at I062/REF/MOI/SI#10 for a per-register version, which Appendix A Edition 1.3 does not define",
+              "raw": 33,
+              "seconds": 8.25
+            },
+            "md1": {
+              "dates": "I062/110 Mode 1",
+              "lsb_seconds": 0.25,
+              "raw": 7,
+              "seconds": 1.75
+            },
+            "md2": {
+              "dates": "I062/120",
+              "lsb_seconds": 0.25,
+              "raw": 8,
+              "seconds": 2.0
+            },
+            "md4": {
+              "dates": "Mode 4 code",
+              "lsb_seconds": 0.25,
+              "raw": 10,
+              "seconds": 2.5
+            },
+            "md5": {
+              "dates": "I062/110 Mode 5",
+              "lsb_seconds": 0.25,
+              "raw": 11,
+              "seconds": 2.75
+            },
+            "mda": {
+              "dates": "I062/060 or I062/REF/MTI/EXM3A",
+              "lsb_seconds": 0.25,
+              "raw": 9,
+              "seconds": 2.25
+            },
+            "met": {
+              "dates": "I062/380 Subfield #20",
+              "lsb_seconds": 0.25,
+              "raw": 28,
+              "seconds": 7.0
+            },
+            "mfl": {
+              "dates": "I062/136 and I062/REF/MOI/ALTQCMFL",
+              "lsb_seconds": 0.25,
+              "raw": 6,
+              "seconds": 1.5
+            },
+            "mhg": {
+              "dates": "I062/380 Subfield #3",
+              "lsb_seconds": 0.25,
+              "raw": 12,
+              "seconds": 3.0
+            },
+            "pos": {
+              "dates": "I062/380 Subfield #22",
+              "lsb_seconds": 0.25,
+              "raw": 30,
+              "seconds": 7.5
+            },
+            "pun": {
+              "dates": "I062/380 Subfield #24",
+              "lsb_seconds": 0.25,
+              "raw": 32,
+              "seconds": 8.0
+            },
+            "ran": {
+              "dates": "I062/380 Subfield #15",
+              "lsb_seconds": 0.25,
+              "raw": 23,
+              "seconds": 5.75
+            },
+            "sab": {
+              "dates": "I062/380 Subfield #11",
+              "lsb_seconds": 0.25,
+              "raw": 19,
+              "seconds": 4.75
+            },
+            "sal": {
+              "dates": "I062/380 Subfield #6",
+              "lsb_seconds": 0.25,
+              "raw": 15,
+              "seconds": 3.75
+            },
+            "tan": {
+              "dates": "I062/380 Subfield #17",
+              "lsb_seconds": 0.25,
+              "raw": 25,
+              "seconds": 6.25
+            },
+            "tar": {
+              "dates": "I062/380 Subfield #16",
+              "lsb_seconds": 0.25,
+              "raw": 24,
+              "seconds": 6.0
+            },
+            "tas": {
+              "dates": "I062/380 Subfield #5",
+              "lsb_seconds": 0.25,
+              "raw": 14,
+              "seconds": 3.5
+            },
+            "tid": {
+              "dates": "I062/380 Subfield #8",
+              "lsb_seconds": 0.25,
+              "raw": 17,
+              "seconds": 4.25
+            },
+            "vun": {
+              "dates": "I062/380 Subfield #19",
+              "lsb_seconds": 0.25,
+              "raw": 27,
+              "seconds": 6.75
+            }
+          },
+          "basis": "\u00a75.2.21. Thirty-one one-octet ages at 1/4 s, each parked WITH THE FIELD IT DATES \u2014 which is the only thing that makes thirty-one integers readable. The item's final NOTE: 'In all the subfields, the age is the time delay since the value was measured.' Recorded and not applied, settlement 1's fifth refusal"
+        },
+        "estimated_accuracies": {
+          "aa": {
+            "of": "calculated acceleration, in m/s^2 per component",
+            "x": 0.5,
+            "x_raw": 2,
+            "y": 0.75,
+            "y_raw": 3
+          },
+          "aba": {
+            "of": "calculated barometric altitude, in flight levels",
+            "raw": 6,
+            "value": 1.5
+          },
+          "aga": {
+            "of": "calculated geometric altitude, in feet",
+            "raw": 20,
+            "value": 125.0
+          },
+          "arc": {
+            "of": "calculated rate of climb/descent, in feet per minute",
+            "raw": 20,
+            "value": 125.0
+          },
+          "atv": {
+            "of": "calculated track velocity, in m/s per component",
+            "x": 2.5,
+            "x_raw": 10,
+            "y": 3.0,
+            "y_raw": 12
+          },
+          "basis": "\u00a75.2.26, 'Overview of all important accuracies' \u2014 THE TRACKER'S OWN ESTIMATED STANDARD DEVIATIONS, which makes them settlement 1 material. All eight subfields carry 'Maximum value means maximum value or above', so a saturated value is a FLOOR and not a measurement. Subfield #3 reaches Position.accuracy_m; the other seven are parked, and Subfields #4, #5 and #8 are the third source in this repository to state a vertical accuracy the CDM has no field for \u2014 FORMAT_COVERAGE.md gap 6",
+          "cartesian_position": {
+            "basis": "in the CARTESIAN frame settlement 6 declines to invert, so it is NOT used for Position.accuracy_m even when Subfield #3 is absent",
+            "x_metres": 45.0,
+            "x_raw": 90,
+            "y_metres": 60.0,
+            "y_raw": 120
+          },
+          "wgs84_position": {
+            "basis": "THE ONE SUBFIELD THAT REACHES A CANONICAL FIELD \u2014 see position_basis",
+            "latitude_component_deg": 0.0004023313522338867,
+            "longitude_component_deg": 0.0007992982864379883,
+            "x_raw": 75,
+            "y_raw": 149
+          },
+          "xy_covariance": {
+            "basis": "the ONE signed accuracy field, in the Cartesian frame. NOTE 2 prints 'The maximum value for the (unsigned) XY covariance component is 16.383 km' and sixteen bits at 0.5 m reach 16383.5 m, so the printed figure is the field's positive extreme minus one LSB and is not a bound the encoder could honour as stated. The WIDTH is the bound and the figure is recorded \u2014 the cat034_codec.py `rho` disposition",
+            "formula": "XY covariance component = sign{Cov(X,Y)} * sqrt{abs[Cov (X,Y)]}",
+            "metres": -32.5,
+            "raw": 65471
+          }
+        },
+        "measured_information": {
+          "basis": "\u00a75.2.23, 'All measured data related to the last report used to update the track' \u2014 the LAST MEASURED values standing beside the calculated ones, which is settlement 1's third refusal: a measured Mode 3/A that differs from I062/060, or a measured position that differs from I062/105, is two statements and stays two statements. \u00a74.8 marks this whole item implementation dependent, so the STRUCTURE is standardised and the MEANING is delegated to a per-deployment ICD",
+          "measured_height": {
+            "basis": "\u00a75.2.23 Subfield #3, 25 ft two's complement, and its NOTE: 'The reference level for this height information is the same as the reference level applied by the sensor system providing this information' \u2014 A DATUM THE RECORD DOES NOT STATE, which is why it never reaches Position.alt_m. Edition 1.19's change record says 'clarification added on structure (Two's Complement)', so an earlier edition left even the signedness open",
+            "feet": 30975.0,
+            "raw": 1239
+          },
+          "measured_mode_3a": {
+            "basis": "the L bit is a THIRD value's provenance: 'Smoothed MODE 3/A code as provided by a sensor local tracker', used per its NOTE 'in case of absence of MODE 3/A code information in the plot or in case of difference between plot and sensor local track MODE 3/A code information' \u2014 so a smoothed code is itself the output of a disagreement the sensor resolved",
+            "garbled": false,
+            "octal": "7000",
+            "raw": 3584,
+            "smoothed": true,
+            "validated": true
+          },
+          "measured_mode_c": {
+            "basis": "carried WITH both flags, and carried even when V says 'Code not validated' \u2014 dropping an unvalidated code would hide that the sensor reported one",
+            "flight_level": 304.5,
+            "garbled": false,
+            "raw": 1218,
+            "validated": true
+          },
+          "measured_position": {
+            "basis": "polar co-ordinates from the sensor above, whose own position is NOT in the record. No geodesy, and the sensor position is doubly absent \u2014 the CAT048 settlement 3 refusal with nothing to inject",
+            "rho_nm": 42.5,
+            "rho_raw": 10880,
+            "theta_deg": 137.252197265625,
+            "theta_raw": 24986,
+            "which_case_is_unstated": "the item's NOTE gives three: 'In case of a plot, the measured bias-corrected polar co-ordinates; In case of a sensor local track, the measured bias-corrected polar co-ordinates of the plot associated to the track; In case of a local track without detection, the EXTRAPOLATED bias-corrected polar co-ordinates.' One of the three is an extrapolation and the item does not say which case it is in \u2014 \u00a74.8's implementation dependence in the item's own words"
+          },
+          "report_type": {
+            "basis": "\u00a75.2.23 Subfield #6. NEITHER SIM NOR TST SETS SourceRef.synthetic \u2014 two more payload flags describing the report where `synthetic` describes the deployment. RAB is 'Report from field monitor (fixed transponder)', a calibration transponder rather than an aircraft, and it does not change entity_type: the object is still whatever the SDPS is tracking and the bit describes the last report's provenance",
+            "field_monitor": false,
+            "raw": 5,
+            "simulated": false,
+            "test": false,
+            "text": "Single ModeS Roll-Call"
+          },
+          "sensor": {
+            "basis": "the contributing sensor, by SAC/SIC. NOT a SourceId and NOT joined to anything: resolving it against a CAT034 station Entity or a CAT048 report is cross-payload state",
+            "external_id": "292A",
+            "sac": 41,
+            "sic": 42
+          }
+        },
+        "stated_by": {
+          "external_id": "2929",
+          "sac": 41,
+          "sic": 41
+        },
+        "track_status": {
+          "aac": {
+            "raw": 0,
+            "text": "Default value"
+          },
+          "aff": {
+            "basis": "the tracker reporting a disagreement between its own inputs",
+            "raw": 0,
+            "text": "default value"
+          },
+          "ama": {
+            "basis": "the clearest statement in the category that the input is fused. \u00a73.1.1: 'Amalgamation is the process by which tracks from co-operating systems are merged to form an \u201camalgamated\u201d track'",
+            "raw": 1,
+            "text": "track resulting from amalgamation process"
+          },
+          "cnf": {
+            "raw": 0,
+            "text": "Confirmed track"
+          },
+          "duplicates": {
+            "basis": "four correlation-failure statements, each with its own NOTE. NONE OF THEM IS ABOUT THE MODE S ADDRESS, which is why attributes.identity_caveat says this category warns of no address duplication",
+            "raw": {
+              "dupf": 1,
+              "dupm": 0,
+              "dupt": 0,
+              "idd": 0
+            },
+            "text": {
+              "dupf": "Duplicate Flight Plan",
+              "dupm": "Duplicate Flight Plan due to manual correlation",
+              "dupt": "Duplicate Mode 3/A Code",
+              "idd": "Duplicate Flight-ID"
+            }
+          },
+          "fpc": {
+            "basis": "the bit that says whether everything in I062/390 is about this target. A consumer reading I062/390 without reading this bit is reading an uncorrelated flight plan",
+            "raw": 1,
+            "text": "Flight plan correlated"
+          },
+          "fplt": {
+            "basis": "THE ONE BIT THAT SAYS THE POSITION MAY NOT BE A MEASUREMENT OF ANYTHING. Its NOTE: the target report 'has been updated by flight plan related data BECAUSE NO SURVEILLANCE DATA WAS AVAILABLE for the target, or was created based on flight plan related data in areas with no surveillance'",
+            "raw": 0,
+            "text": "Default value"
+          },
+          "iec": {
+            "basis": "the tracker reporting that its own emergency inputs disagree, which is what payload.emergency_basis.disagreement is beside",
+            "raw": 0,
+            "text": "Default value"
+          },
+          "kos": {
+            "raw": 1,
+            "text": "Background service used"
+          },
+          "military": {
+            "basis": "PARKED with the document's own wording and NOT read as an affiliation. An authenticated military-mode reply says a cryptographic exchange succeeded; reading it as FRIENDLY is an identification decision, which is a fusion judgement and not a fact on a wire \u2014 the asterix_cat021.py Mode 5 refusal reached again",
+            "m5i_age_unreachable": "the Sixth Extent's NOTE says 'Age of Mode 5 interrogation is provided in I062/REF/MOI/AM5I', and Appendix A Edition 1.3 defines no MOI item at all",
+            "md4": {
+              "raw": 1,
+              "text": "Friendly target"
+            },
+            "md5": {
+              "raw": 1,
+              "text": "Friendly target"
+            },
+            "military_emergency": {
+              "basis": "PARKED and it does NOT raise Event.severity. It is a statement about a PAST REPORT from an unnamed sensor; the emergency vocabularies in this category are I062/080's EMS, I062/380 Subfield #11's STAT and I062/REF/PS3, and raising severity from a fourth independent source would make the field's meaning depend on which one the record carried",
+              "raw": 0,
+              "text": "default value"
+            },
+            "military_identification": {
+              "raw": 1,
+              "text": "Military Identification present in the last report received from a sensor capable of decoding this data"
+            }
+          },
+          "mon": {
+            "basis": "THE MOST DIRECT SINGLE BIT IN THE CATEGORY: the tracker saying whether it fused anything for this track",
+            "raw": 0,
+            "text": "Multisensor track"
+          },
+          "mrh": {
+            "basis": "the tracker's assessment, and it ARBITRATES NOTHING here. \u00a75.2.6's fourth NOTE: 'Data Items I062/130, I062/135, and I062/136 may be transmitted in parallel whenever the respective information is available. This is independent from the value transmitted on I062/080 (MRH).' Position.alt_m comes from I062/130 because it is the one item defined as a height above the WGS 84 ellipsoid, not because MRH said so \u2014 settlement 5",
+            "raw": 1,
+            "text": "Geometric altitude more reliable"
+          },
+          "pft": {
+            "basis": "PARKED rather than raised, and the document declines to standardise what to do with it: 'If and how this information is processed and displayed on the CWP is a LOCAL MATTER AND NOT SUBJECT TO THE CATEGORY 062 SPECIFICATION.' So this adapter does not decide either. And it is NOT read as InterferenceType.SPOOFING or EventType.GNSS_INTERFERENCE: that enum member is paired with GnssInterferencePayload, whose fields exist for the PNTMAP adapter, and a possibly-spoofed radar track is not a GNSS interference event. FORMAT_COVERAGE.md gap 29",
+            "raw": 1,
+            "text": "Potential False Track Indication"
+          },
+          "sds": {
+            "raw": 0,
+            "text": "Combined"
+          },
+          "sfc": {
+            "basis": "\u00a74.8 marks THIS BIT SPECIFICALLY as implementation dependent, and NOTE 5 says it 'is set to 1 when the SDPS considers the target to be on the Surface (the actual meaning is implementation dependent \u2014 please refer to chapter 4.8 above)'. It does NOT change entity_type: a surface target may be an aircraft or a vehicle and the bit does not say which",
+            "raw": 0,
+            "text": "Default value"
+          },
+          "simulated_flag": {
+            "basis": "PARKED and it does NOT set SourceRef.synthetic. `synthetic` states whether the object came from a real source AS THIS PLATFORM IS DEPLOYED, and a payload field cannot decide that: a live SDPS can emit a simulated track and an exercise replay can emit an actual one. The GMTIF settlement 4 ruling and the CAT048 one, reached again \u2014 and note that I062/340 Subfield #6 carries TWO more such bits, SIM and TST",
+            "raw": 0,
+            "text": "Actual track"
+          },
+          "src": {
+            "basis": "the source of the calculated altitude for I062/130, and its first NOTE says it 'may be sent whether data item I062/130 is present or not'. PARKED and never written to Position.position_source, which is about the HORIZONTAL fix \u2014 and two of these eight values, 'speed look-up table' and 'default height', describe an altitude that was not measured at all",
+            "raw": 1,
+            "text": "GNSS"
+          },
+          "staleness": {
+            "basis": "coasting, plus one bit per technology reading 'Age of the last received ... track update is higher than system dependent threshold'. THE THRESHOLD IS SYSTEM-DEPENDENT AND UNSTATED, so these are the tracker's verdicts and not derivable figures. NOTES 2 and 3 are load-bearing and are carried verbatim: 'If the system supports the technology, default value (0) means that the technology was used to produce the report' and 'If the system does not support the technology, default value is MEANINGLESS.' So a clear bit means two different things and the record does not say which \u2014 which is why a clear bit is never inverted into 'this technology contributed'",
+            "extended_coasting_unreachable": "NOTE 4 points at I062/REF/STS/CSX for an extended coasting indication, and Appendix A Edition 1.3's STS defines FDR and LNAV and no CSX. One of the eight REF containers the core specification names and its own newest appendix does not define",
+            "raw": {
+              "ads": 1,
+              "cst": 0,
+              "m5i": 1,
+              "mds": 0,
+              "mlat": 1,
+              "psr": 1,
+              "ssr": 0
+            }
+          },
+          "stp": {
+            "raw": 0,
+            "text": "default"
+          },
+          "suc": {
+            "raw": 1,
+            "text": "Special Used Code (Mode A codes to be defined in the system to mark a track with special interest)"
+          },
+          "tsb": {
+            "raw": 0,
+            "text": "default value"
+          },
+          "tse": {
+            "basis": "the track lifecycle, on the wire. It does NOT set Entity.valid_to: this ends the TRACK, and valid_to on an entity whose entity_id is a 24-bit airframe address would say the aircraft ceased to exist",
+            "raw": 0,
+            "text": "default value"
+          }
+        },
+        "update_ages": {
+          "absence_semantics": "NOTE 5: 'If the data has never been received, then the corresponding subfield is not sent.' SO AN ABSENT SUBFIELD IS A STATED NEVER, not an unknown \u2014 the strongest absence semantics in the category, and the opposite of I062/080's technology bits, whose clear value is 'meaningless' if the technology is unsupported",
+          "ages": {
+            "ads": {
+              "definition": "Age of the last ADS-C report used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 16000,
+              "seconds": 4000.0,
+              "width_note": "TWO OCTETS, where the other nine subfields of this item are one. Edition 1.21's change record reads 'Length of I062/290/SI#5 corrected', so an earlier edition had it wrong \u2014 and a decoder that read it as one octet would desynchronise the record with no length error anywhere"
+            },
+            "es": {
+              "definition": "Age of the last 1090 Extended Squitter ADS-B report used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 2,
+              "seconds": 0.5
+            },
+            "lop": {
+              "definition": "Age of the last magnetic loop detection",
+              "lsb_seconds": 0.25,
+              "raw": 12,
+              "seconds": 3.0
+            },
+            "mds": {
+              "definition": "Age of the last Mode S detection used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 3,
+              "seconds": 0.75
+            },
+            "mlt": {
+              "definition": "Age of the last MLT detection",
+              "lsb_seconds": 0.25,
+              "raw": 13,
+              "seconds": 3.25
+            },
+            "psr": {
+              "definition": "Age of the last primary detection used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 5,
+              "seconds": 1.25
+            },
+            "ssr": {
+              "definition": "Age of the last secondary detection used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 6,
+              "seconds": 1.5
+            },
+            "trk": {
+              "definition": "Actual track age since first occurrence",
+              "excepted_from_the_formula": "NOTE 3 says 'EXCEPT FOR TRACK AGE, the ages are counted from Data Item I062/070', so this one is measured from the track's first occurrence",
+              "lsb_seconds": 0.25,
+              "raw": 50,
+              "seconds": 12.5
+            },
+            "uat": {
+              "definition": "Age of the last UAT ADS-B report used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 9,
+              "seconds": 2.25
+            },
+            "vdl": {
+              "definition": "Age of the last VDL Mode 4 ADS-B report used to update the track",
+              "lsb_seconds": 0.25,
+              "raw": 8,
+              "seconds": 2.0
+            }
+          },
+          "basis": "\u00a75.2.20. Every age is carried as an AGE IN SECONDS and never as an instant. NOTE 3 gives the tracker's own formula \u2014 'Age = Time of track information - Time of last detection used to update the track' \u2014 and NOTE 4 says 'The time of last detection is derived from monosensor category time of day', so the ages are anchored in ANOTHER CATEGORY'S clock. Performing the subtraction here would produce an instant indistinguishable in the output from one the source stated, which is settlement 1's fifth refusal",
+          "formula": "Age = Time of track information - Time of last detection used to update the track"
+        }
+      },
+      "identity_basis": "I062/380 Subfield #1, the 24-bit Mode S Target Address, filed under ICAO24 \u2014 the same system name adsb.py, asterix_cat021.py and asterix_cat048.py use, so one airframe seen by a raw 1090ES frame, an ADS-B ground station, a radar and an SDPS derives the SAME entity_id without the four adapters coordinating. That is a pure function of the address and not a join. Settlement 3 step 1",
+      "identity_caveat": "CAT062 carries no duplicate-Mode-S-address indication of any kind. I062/080's AAC is about an assigned Mode A code, DUPT about a duplicated Mode 3/A code and IDD about a duplicated Flight-ID; none of them is about the 24-bit address this entity may be keyed on. So unlike asterix_cat048.py, which raises a caveat from I048/030 code 16 ('Duplicated or Illegal Mode S Aircraft Address'), there is nothing here to raise and the absence of a warning is not evidence of uniqueness",
+      "implementation_dependent": {
+        "basis": "\u00a74.8 is a NORMATIVE DELEGATION of meaning to a per-deployment Interface Control Document, which is not a document this repository could acquire. Every other park in this adapter is a park because the CDM has no home for the value; these two are parks because THE DOCUMENT SAYS the value's meaning is not standardised. \u00a75.2.23 repeats it twice more for I062/340: 'The term \"last report\" may refer to the \"latest used\" or \"latest measured\". The actual meaning is implementation dependent' and 'The availability of the various data items differs depending on the surveillance technology used and is implementation dependent.' A consumer comparing I062/340 across two SDPSs without knowing this will get a number",
+        "items": [
+          "I062/080 (Track Status), Fifth Extension, Bit-5 (SFC)",
+          "I062/340 (Measured Information)"
+        ],
+        "quoted": "\u00a74.8: 'Such a data item will be marked as \u201cimplementation dependent\u201d in a note. The exact meaning of the data item shall then be described in the Interface Control Document (ICD) of the respective system. In such a case the provisions of the ICD will reflect the actual implementation of the data item.'"
+      },
+      "integrity_basis": "CAT062 defines NO checksum at any level \u2014 neither \u00a74.6 nor \u00a74.7 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, every compound item's presence bits named a subfield that exists, every FX led somewhere \u00a75.2 defines, every repetitive item's REP was non-zero, the Reserved Expansion Field's own length tiled its contents exactly, and the four items whose Encoding Rule reads 'This Item shall be present in every ASTERIX record' were present. THIS GATE IS THINNER THAN CAT034'S AND THE DIFFERENCE IS THE ABSENCE OF A TABLE 2: \u00a74.1 gives this category ONE message type, so there is no per-type expectation for a record to be internally inconsistent with. A record carrying only the four mandatory items is legal, minimal and complete. A single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a track position",
+      "position_basis": {
+        "accuracy": {
+          "arithmetic": "sqrt(lat_m^2 + lon_m^2), where lat_m is the latitude component times 111120 m per degree (1 degree = 60 NM = 60 x 1852 m, ICAO's own nautical mile) and lon_m is the longitude component times the same figure times cos(latitude) at I062/105's own latitude. The spherical constant is a DECLARED approximation: the true metres-per-degree of latitude varies by about 0.5 % between equator and pole, and the quantity being scaled is a standard deviation the source has already rounded to 180/2^25 degrees",
+          "at_or_above_maximum": null,
+          "declared_transform": "I062/500 subfields.apw, in TRANSFORMS. The only declared transform in this adapter, and it is declared because the two components become one number and the never-drop check has to be told that rather than left to find two missing values",
+          "definition": "Estimated accuracy (i.e. standard deviation) of the calculated position of a target expressed in WGS-84",
+          "independence_assumed": "YES, and the assumption is the SPECIFICATION'S SILENCE rather than a modelling choice. \u00a75.2.26 states two component standard deviations and states a covariance in a SEPARATE subfield, #2 \u2014 in the CARTESIAN frame, which settlement 6 declines to invert \u2014 so there is no stated WGS-84 covariance to use. Taking the larger component would discard half the information and taking the sum would overstate the uncertainty by up to 41 %",
+          "item": "I062/500 Subfield #3",
+          "latitude_component_deg": 0.0004023313522338867,
+          "latitude_component_raw": 75,
+          "longitude_component_deg": 0.0007992982864379883,
+          "longitude_component_raw": 149,
+          "lsb_degrees": 5.364418029785156e-06,
+          "metres": 65.49686001715148
+        },
+        "definition": "Calculated Position in WGS-84 Co-ordinates",
+        "item": "I062/105",
+        "latitude_raw": 10698271,
+        "longitude_raw": 4019075,
+        "lsb_degrees": 5.364418029785156e-06,
+        "position_source_basis": "ESTIMATED, always, and it is a ruling rather than a fit. \u00a73.1.2 defines a Calculated Item as 'A piece of information (e.g. the position of a target) derived from raw information through an intermediate processing such as transformation of co-ordinates, TRACKING, code conversion', so a tracker's filtered output is an estimate by construction whatever the sensors underneath it were. GNSS would claim the fix came from a satellite receiver, which is sometimes UPSTREAM of it and never what the item states; INERTIAL and MANUAL are plainly wrong. The underlying technologies are named separately in I062/290 and in the REF's contributing-sensor lists, so a consumer can see that a track was ADS-B-only without this adapter having relabelled the estimate as a GNSS fix"
+      },
+      "position_quantisation_m": {
+        "basis": "PARKED, and deliberately NOT written to Position.accuracy_m. 180/2^25 degrees is the QUANTISATION STEP of the encoding \u2014 the finest difference the field can express, and the finest in this repository \u2014 and reporting it as an accuracy would claim the tracker knows where the target is to 0.6 m when the document says only that it cannot say so more finely. accuracy_m comes from I062/500 Subfield #3 or stays None",
+        "quoted": "The LSB provides a resolution at least better than 0.6m"
+      },
+      "reserved_expansion_field": {
+        "basis": "IN SCOPE AND DECODED IN FULL, which is the CAT021 disposition and not the CAT034 one, because the core specification RELOCATES load-bearing content here and says so in its own abstract: 'Most modifications for the implementation of ADS-B Version 3 have been performed in the Reserved Expansion Field (I062/REF). To make use of these modifications it is recommended also to implement the I062/REF (Edition 1.3 or later).' Appendix A Edition 1.3 defines five items and this adapter reads all five",
+        "eight_containers_the_core_text_names_and_this_edition_does_not_define": [
+          "I062/REF/STS/CSX (extended coasting, \u00a75.2.6 NOTE 4)",
+          "I062/REF/MOI/SCT (special-used-code text, \u00a75.2.6 NOTES 5 and 6)",
+          "I062/REF/MOI/AM5I (Mode 5 interrogation age, \u00a75.2.6 sixth extent and \u00a75.2.20 NOTE 1)",
+          "I062/REF/MOI/AM5L2S (Mode 5 Level 2 Squitter age, \u00a75.2.20 NOTE 2)",
+          "I062/REF/MOI/CTBA (the other QNH variant, \u00a75.2.12 NOTE)",
+          "I062/REF/MOI/ALTQCMFL (QNH-corrected measured flight level, \u00a75.2.13 NOTE 5)",
+          "I062/REF/MOI/FPVHR (high-resolution velocity, \u00a75.2.14 NOTE)",
+          "I062/REF/MOI/SI#10 (per-register BDS ages, \u00a75.2.21 SF#28 NOTE)",
+          "I062/REF/MTI/EXM3A (extended Mode 3/A, \u00a75.2.21 SF#4)"
+        ],
+        "items": {
+          "csn": {
+            "basis": "Appendix A \u00a72.3 and \u00a72.4 \u2014 the contributing sensors, with SAC/SIC, a detection TYP, and (in CST) the sensor's own LOCAL TRACK NUMBER. SETTLEMENT 1'S MOST DIRECT FUSION PROVENANCE: the SDPS naming which systems updated this track in this cycle. Parked as an ORDERED list; no local track number is joined to anything, and no Entity is created per sensor. The two lists mean one thing and differ only in whether the sensor supplied a local track number, so a sensor's presence in one and absence from the other is information. TYP values 1010-1111 are 'Reserved for future use'",
+            "rep": 1,
+            "sensors": [
+              {
+                "sac": 41,
+                "sic": 44,
+                "spare_bits_8_5": 0,
+                "typ": 9,
+                "typ_text": "WAM"
+              }
+            ]
+          },
+          "cst": {
+            "basis": "Appendix A \u00a72.3 and \u00a72.4 \u2014 the contributing sensors, with SAC/SIC, a detection TYP, and (in CST) the sensor's own LOCAL TRACK NUMBER. SETTLEMENT 1'S MOST DIRECT FUSION PROVENANCE: the SDPS naming which systems updated this track in this cycle. Parked as an ORDERED list; no local track number is joined to anything, and no Entity is created per sensor. The two lists mean one thing and differ only in whether the sensor supplied a local track number, so a sensor's presence in one and absence from the other is information. TYP values 1010-1111 are 'Reserved for future use'",
+            "rep": 2,
+            "sensors": [
+              {
+                "local_track_number": 4001,
+                "sac": 41,
+                "sic": 42,
+                "spare_bits_24_21": 0,
+                "typ": 5,
+                "typ_text": "Single Mode S Roll-Call"
+              },
+              {
+                "local_track_number": 4002,
+                "sac": 41,
+                "sic": 43,
+                "spare_bits_24_21": 0,
+                "typ": 8,
+                "typ_text": "ADS-B"
+              }
+            ]
+          },
+          "sts": {
+            "basis": "Appendix A \u00a72.6. FDR distinguishes flight plan data from an active FDPS from data 'retained from no longer active FDPS'. LNAV arrives with the Element-Populated convention and ITS SENSE IS INVERTED relative to every other flag in either document \u2014 'LNAV#VAL = 0 LNAV Mode Engaged' \u2014 so the wording is carried verbatim rather than paraphrased, and lnav_engaged is None when the element is not populated. This is the ONE relocation the core specification names that Appendix A Edition 1.3 actually defines",
+            "flight_data_retained": true,
+            "lnav_engaged": true,
+            "lnav_populated": true,
+            "lnav_val_raw": 0,
+            "spare_bits_5_2": 0
+          },
+          "tvs": {
+            "basis": "Appendix A \u00a72.5, the same shape as I062/185 and A DIFFERENT FRAME: its NOTE says 'The y-axis points to the Geographical North at the SYSTEM REFERENCE POINT as available in the Reserved Expansion Field of category 065.' So the two vectors have different axes and only I062/185's are stated at the target \u2014 which is why this one is never converted to speed and course",
+            "vx_mps": 120.0,
+            "vx_raw": 480,
+            "vy_mps": -45.25,
+            "vy_raw": 65355
+          },
+          "v3": {
+            "primary": 240,
+            "spare_bits_4_2": 0,
+            "subfields": {
+              "aircraft_status": {
+                "reduced_capability": {
+                  "populated": true,
+                  "raw": 1,
+                  "text": "TABS"
+                },
+                "reply_rate_limiting": {
+                  "populated": true,
+                  "raw": 0,
+                  "text": "Reply Rate Limiting is not active"
+                },
+                "spare_bits_5_1": 0,
+                "transmit_power": {
+                  "populated": true,
+                  "raw": 2,
+                  "text": "125 W"
+                },
+                "transponder_antenna_offset": {
+                  "basis": "NOTE 3 makes the RE bit a STATED SATURATION FLAG: 'Bit-12 shall be set to 1 when the aircraft transmits the maximum encodable value (i.e. 31 representing a TAO greater than 58m). In this case TAO#VAL shall be set to the maximum encodable TAO (i.e. 58m).' The at-or-above-maximum discipline made explicit in the wire format rather than in a note about a maximum. NOTE 4: 'The TAO is measured along the longitudinal axis of the aircraft from the forward end'",
+                  "populated": true,
+                  "range_exceeded": true,
+                  "raw": 31
+                },
+                "transponder_side": {
+                  "populated": true,
+                  "raw": 1,
+                  "text": "Transponder #1 (left/pilot side or single)"
+                }
+              },
+              "collision_avoidance_status": {
+                "sense": {
+                  "populated": true,
+                  "raw": 2,
+                  "text": "Blended"
+                },
+                "type_and_capability": {
+                  "populated": true,
+                  "raw": 4,
+                  "text": "Passive CAS with 1030 TCAS Resolution Message receive capability"
+                }
+              },
+              "ps3": {
+                "back_maps_to": 4,
+                "basis": "Appendix A \u00a72.7 Subfield #1 \u2014 THE VALUE SETTLEMENT 2 EXISTS FOR. Three of its eight values have no representation in I062/080's EMS or I062/380 Subfield #11's STAT at all: 'UAS/RPAS - Lost Link', and both aircraft-in-distress values",
+                "populated": true,
+                "raw": 2,
+                "text": "UAS/RPAS - Lost Link"
+              },
+              "uas_status": {
+                "basis": "Appendix A \u00a72.7 Subfield #3. MUO DOES NOT CHANGE entity_type: an unmanned aircraft is still a PLATFORM and the CDM has no crewed/uncrewed distinction, which is recorded as a gap-shaped absence rather than forced. DAA's value 3 is spelled 'Invalid ASTERIX Value' by the document itself",
+                "detect_and_avoid": {
+                  "populated": true,
+                  "raw": 1,
+                  "text": "RWC/RA/OCM Capability"
+                },
+                "manned_unmanned": {
+                  "populated": true,
+                  "raw": 1,
+                  "text": "Unmanned Operation"
+                },
+                "remain_well_clear": {
+                  "populated": true,
+                  "raw": 1,
+                  "text": "RWC Corrective Alert active"
+                }
+              }
+            }
+          }
+        },
+        "items_indicator": 248,
+        "length": 29,
+        "no_fx_finding": "Appendix A \u00a72.2's bit 1 is a SPARE and not a Field Extension Indicator \u2014 the only presence map in either document that cannot extend \u2014 so a set bit 1 here is a spare bit parked as sent and NOT a refusal. That is the opposite treatment from every compound item in the core specification, and getting it backwards would refuse a legal REF. Its NOTE says why: 'The allocation of additional items is the responsibility of the AMG and shall be coordinated in advance!'",
+        "spare_bits_3_1": 0
+      },
+      "source_extras": {
+        "items": {
+          "I062/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I062/015": {
+            "service_identification": 3
+          },
+          "I062/040": {
+            "track_number": 4242
+          },
+          "I062/060": {
+            "ch": 1,
+            "g": 0,
+            "mode_3a": 3584,
+            "spare_bit_13": 0,
+            "v": 0
+          },
+          "I062/070": {
+            "time_of_day_raw": 2764800
+          },
+          "I062/080": {
+            "octets": [
+              {
+                "cnf": 0,
+                "fx": 1,
+                "mon": 0,
+                "mrh": 1,
+                "spi": 1,
+                "src": 1
+              },
+              {
+                "aff": 0,
+                "fpc": 1,
+                "fx": 1,
+                "kos": 1,
+                "sim": 0,
+                "stp": 0,
+                "tsb": 0,
+                "tse": 0
+              },
+              {
+                "ama": 1,
+                "fx": 1,
+                "md4": 1,
+                "md5": 1,
+                "me": 0,
+                "mi": 1
+              },
+              {
+                "aac": 0,
+                "ads": 1,
+                "cst": 0,
+                "fx": 1,
+                "mds": 0,
+                "psr": 1,
+                "ssr": 0,
+                "suc": 1
+              },
+              {
+                "ems": 0,
+                "fplt": 0,
+                "fx": 1,
+                "pft": 1,
+                "sds": 0
+              },
+              {
+                "dupf": 1,
+                "dupm": 0,
+                "dupt": 0,
+                "fx": 1,
+                "idd": 0,
+                "iec": 0,
+                "mlat": 1,
+                "sfc": 0
+              },
+              {
+                "fx": 0,
+                "m5i": 1,
+                "spare_bits_7_2": 0
+              }
+            ]
+          },
+          "I062/100": {
+            "x_raw": 24000,
+            "y_raw": 16761216
+          },
+          "I062/105": {
+            "latitude_raw": 10698271,
+            "longitude_raw": 4019075
+          },
+          "I062/110": {
+            "presence": "fe",
+            "subfields": {
+              "em1": {
+                "extended_mode_1": 668,
+                "spare_bits_16_13": 0
+              },
+              "ga": {
+                "ga_raw": 960,
+                "res": 1,
+                "spare_bit_16": 0
+              },
+              "pmn": {
+                "mis": 21,
+                "nat": 7,
+                "pin": 4321,
+                "spare_bits_16_14": 0,
+                "spare_bits_32_31": 0,
+                "spare_bits_8_7": 0
+              },
+              "pos": {
+                "latitude_raw": 2674568,
+                "longitude_raw": 1004769
+              },
+              "sum": {
+                "da": 1,
+                "id": 1,
+                "m1": 1,
+                "m2": 1,
+                "m3": 1,
+                "m5": 1,
+                "mc": 1,
+                "x": 1
+              },
+              "tos": {
+                "tos_raw": 192
+              },
+              "xp": {
+                "spare_bits_8_6": 0,
+                "x1": 1,
+                "x2": 0,
+                "x3": 0,
+                "x5": 1,
+                "xc": 1
+              }
+            }
+          },
+          "I062/120": {
+            "mode_2": 1838,
+            "spare_bits_16_13": 0
+          },
+          "I062/130": {
+            "altitude_raw": 4960
+          },
+          "I062/135": {
+            "ctba_raw": 1220,
+            "qnh": 1
+          },
+          "I062/136": {
+            "flight_level_raw": 1219
+          },
+          "I062/185": {
+            "vx_raw": 842,
+            "vy_raw": 65295
+          },
+          "I062/200": {
+            "adf": 1,
+            "long": 2,
+            "spare_bit_1": 0,
+            "trans": 1,
+            "vert": 1
+          },
+          "I062/210": {
+            "ax_raw": 6,
+            "ay_raw": 253
+          },
+          "I062/220": {
+            "rate_raw": 300
+          },
+          "I062/245": {
+            "characters_raw": 8890343716896,
+            "spare_bits_54_49": 0,
+            "sti": 0
+          },
+          "I062/270": {
+            "octets": [
+              {
+                "field": "length",
+                "fx": 1,
+                "value_raw": 64
+              },
+              {
+                "field": "orientation",
+                "fx": 1,
+                "value_raw": 80
+              },
+              {
+                "field": "width",
+                "fx": 0,
+                "value_raw": 60
+              }
+            ]
+          },
+          "I062/290": {
+            "presence": "ffe0",
+            "subfields": {
+              "ads": {
+                "age_raw": 16000
+              },
+              "es": {
+                "age_raw": 2
+              },
+              "lop": {
+                "age_raw": 12
+              },
+              "mds": {
+                "age_raw": 3
+              },
+              "mlt": {
+                "age_raw": 13
+              },
+              "psr": {
+                "age_raw": 5
+              },
+              "ssr": {
+                "age_raw": 6
+              },
+              "trk": {
+                "age_raw": 50
+              },
+              "uat": {
+                "age_raw": 9
+              },
+              "vdl": {
+                "age_raw": 8
+              }
+            }
+          },
+          "I062/295": {
+            "presence": "ffffffffe0",
+            "subfields": {
+              "acs": {
+                "age_raw": 20
+              },
+              "bps": {
+                "age_raw": 36
+              },
+              "bvr": {
+                "age_raw": 21
+              },
+              "com": {
+                "age_raw": 18
+              },
+              "emc": {
+                "age_raw": 29
+              },
+              "fss": {
+                "age_raw": 16
+              },
+              "gal": {
+                "age_raw": 31
+              },
+              "gsp": {
+                "age_raw": 26
+              },
+              "gvr": {
+                "age_raw": 22
+              },
+              "iar": {
+                "age_raw": 34
+              },
+              "ias": {
+                "age_raw": 13
+              },
+              "mac": {
+                "age_raw": 35
+              },
+              "mb": {
+                "age_raw": 33
+              },
+              "md1": {
+                "age_raw": 7
+              },
+              "md2": {
+                "age_raw": 8
+              },
+              "md4": {
+                "age_raw": 10
+              },
+              "md5": {
+                "age_raw": 11
+              },
+              "mda": {
+                "age_raw": 9
+              },
+              "met": {
+                "age_raw": 28
+              },
+              "mfl": {
+                "age_raw": 6
+              },
+              "mhg": {
+                "age_raw": 12
+              },
+              "pos": {
+                "age_raw": 30
+              },
+              "pun": {
+                "age_raw": 32
+              },
+              "ran": {
+                "age_raw": 23
+              },
+              "sab": {
+                "age_raw": 19
+              },
+              "sal": {
+                "age_raw": 15
+              },
+              "tan": {
+                "age_raw": 25
+              },
+              "tar": {
+                "age_raw": 24
+              },
+              "tas": {
+                "age_raw": 14
+              },
+              "tid": {
+                "age_raw": 17
+              },
+              "vun": {
+                "age_raw": 27
+              }
+            }
+          },
+          "I062/300": {
+            "vfi": 0
+          },
+          "I062/340": {
+            "presence": "fc",
+            "subfields": {
+              "hei": {
+                "height_raw": 1239
+              },
+              "mda": {
+                "g": 0,
+                "l": 1,
+                "mode_3a": 3584,
+                "spare_bit_13": 0,
+                "v": 0
+              },
+              "mdc": {
+                "g": 0,
+                "mode_c_raw": 1218,
+                "v": 0
+              },
+              "pos": {
+                "rho_raw": 10880,
+                "theta_raw": 24986
+              },
+              "sid": {
+                "sac": 41,
+                "sic": 42
+              },
+              "typ": {
+                "rab": 0,
+                "sim": 0,
+                "spare_bits_2_1": 0,
+                "tst": 0,
+                "typ": 5
+              }
+            }
+          },
+          "I062/380": {
+            "presence": "fffffffe",
+            "subfields": {
+              "acs": {
+                "acas_ra": "30303030303030"
+              },
+              "adr": {
+                "address": 15770055
+              },
+              "bps": {
+                "bps_raw": 2134,
+                "spare_bits_16_13": 0
+              },
+              "bvr": {
+                "vertical_rate_raw": 300
+              },
+              "com": {
+                "aic": 1,
+                "arc": 1,
+                "b1a": 0,
+                "b1b": 0,
+                "com": 3,
+                "spare_bits_10_9": 0,
+                "ssc": 1,
+                "stat": 0
+              },
+              "emc": {
+                "ecat": 3
+              },
+              "fss": {
+                "ah": 0,
+                "altitude_raw": 1320,
+                "am": 0,
+                "mv": 1
+              },
+              "gal": {
+                "geometric_altitude_raw": 4968
+              },
+              "gsp": {
+                "ground_speed_raw": 2204
+              },
+              "gvr": {
+                "vertical_rate_raw": 304
+              },
+              "iar": {
+                "indicated_airspeed_raw": 290
+              },
+              "ias": {
+                "air_speed_raw": 1253,
+                "im": 0
+              },
+              "id": {
+                "characters_raw": 8890343716896
+              },
+              "mac": {
+                "mach_number_raw": 103
+              },
+              "mb": {
+                "registers": [
+                  {
+                    "bds1": 4,
+                    "bds2": 0,
+                    "bds_data": "40000000000000"
+                  },
+                  {
+                    "bds1": 5,
+                    "bds2": 0,
+                    "bds_data": "50111111111111"
+                  }
+                ],
+                "rep": 2
+              },
+              "met": {
+                "spare_bits_60_57": 0,
+                "temperature_raw": 65327,
+                "tmp": 1,
+                "trb": 1,
+                "turbulence_raw": 3,
+                "wd": 1,
+                "wind_direction_raw": 235,
+                "wind_speed_raw": 48,
+                "ws": 1
+              },
+              "mhg": {
+                "heading_raw": 49334
+              },
+              "pos": {
+                "latitude_raw": 2674568,
+                "longitude_raw": 1004769
+              },
+              "pun": {
+                "pun": 4,
+                "spare_bits_8_5": 0
+              },
+              "ran": {
+                "roll_angle_raw": 64286
+              },
+              "sab": {
+                "ac": 2,
+                "dc": 2,
+                "gbs": 0,
+                "mn": 2,
+                "spare_bits_9_4": 0,
+                "stat": 0
+              },
+              "sal": {
+                "altitude_raw": 1240,
+                "sas": 1,
+                "source": 2
+              },
+              "tan": {
+                "track_angle_raw": 48879
+              },
+              "tar": {
+                "rate_of_turn_raw": 10,
+                "spare_bit_1": 0,
+                "spare_bits_14_9": 0,
+                "ti": 2
+              },
+              "tas": {
+                "true_airspeed_raw": 462
+              },
+              "tid": {
+                "points": [
+                  {
+                    "altitude_raw": 3300,
+                    "latitude_raw": 2697870,
+                    "longitude_raw": 1028071,
+                    "nc": 0,
+                    "point_type": 7,
+                    "tca": 0,
+                    "tcp_number": 0,
+                    "td": 1,
+                    "toa": 0,
+                    "tov_raw": 22000,
+                    "tra": 1,
+                    "ttr_raw": 1250
+                  }
+                ],
+                "rep": 1
+              },
+              "tis": {
+                "fx": 0,
+                "nav": 0,
+                "nvb": 0,
+                "spare_bits_6_2": 0
+              },
+              "vun": {
+                "velocity_uncertainty": 2
+              }
+            }
+          },
+          "I062/390": {
+            "presence": "fffff0",
+            "subfields": {
+              "ast": {
+                "aircraft_stand_raw": "413132202020"
+              },
+              "cfl": {
+                "cleared_flight_level_raw": 1240
+              },
+              "csn": {
+                "callsign_raw": "42415731313720"
+              },
+              "ctl": {
+                "centre": 7,
+                "position": 31
+              },
+              "dep": {
+                "departure_raw": "45565241"
+              },
+              "dst": {
+                "destination_raw": "45474c4c"
+              },
+              "fct": {
+                "fr": 0,
+                "gat_oat": 1,
+                "hpr": 0,
+                "rvsm": 1,
+                "spare_bit_1": 0
+              },
+              "ifi": {
+                "nbr": 12345678,
+                "spare_bits_30_28": 0,
+                "typ": 0
+              },
+              "pec": {
+                "pre_emergency_raw": "42415731313720"
+              },
+              "pem": {
+                "mode_3a": 668,
+                "spare_bits_16_14": 0,
+                "va": 1
+              },
+              "rds": {
+                "ltr": 82,
+                "nu1": 49,
+                "nu2": 56
+              },
+              "sta": {
+                "star_raw": "4c414d32432020"
+              },
+              "std": {
+                "sid_raw": "52494741314120"
+              },
+              "sts": {
+                "avl": 0,
+                "emp": 1,
+                "spare_bits_4_1": 0
+              },
+              "tac": {
+                "aircraft_type_raw": "42373338"
+              },
+              "tag": {
+                "sac": 41,
+                "sic": 43
+              },
+              "tod": {
+                "entries": [
+                  {
+                    "avs": 0,
+                    "day": 0,
+                    "hor": 5,
+                    "min": 43,
+                    "sec": 21,
+                    "spare_bit_7": 0,
+                    "spare_bits_16_15": 0,
+                    "spare_bits_25_22": 0,
+                    "typ": 7
+                  },
+                  {
+                    "avs": 1,
+                    "day": 1,
+                    "hor": 9,
+                    "min": 12,
+                    "sec": 0,
+                    "spare_bit_7": 0,
+                    "spare_bits_16_15": 0,
+                    "spare_bits_25_22": 0,
+                    "typ": 9
+                  }
+                ],
+                "rep": 2
+              },
+              "wtc": {
+                "wtc": 77
+              }
+            }
+          },
+          "I062/500": {
+            "presence": "ff80",
+            "subfields": {
+              "aa": {
+                "x_raw": 2,
+                "y_raw": 3
+              },
+              "aba": {
+                "accuracy_raw": 6
+              },
+              "aga": {
+                "accuracy_raw": 20
+              },
+              "apc": {
+                "x_raw": 90,
+                "y_raw": 120
+              },
+              "apw": {
+                "x_raw": 75,
+                "y_raw": 149
+              },
+              "arc": {
+                "accuracy_raw": 20
+              },
+              "atv": {
+                "x_raw": 10,
+                "y_raw": 12
+              },
+              "cov": {
+                "covariance_raw": 65471
+              }
+            }
+          },
+          "I062/510": {
+            "units": [
+              {
+                "fx": 1,
+                "system_track_number": 4242,
+                "system_unit": 17
+              },
+              {
+                "fx": 0,
+                "system_track_number": 8888,
+                "system_unit": 34
+              }
+            ]
+          },
+          "RE": {
+            "items": {
+              "csn": {
+                "rep": 1,
+                "sensors": [
+                  {
+                    "sac": 41,
+                    "sic": 44,
+                    "spare_bits_8_5": 0,
+                    "typ": 9
+                  }
+                ]
+              },
+              "cst": {
+                "rep": 2,
+                "sensors": [
+                  {
+                    "local_track_number": 4001,
+                    "sac": 41,
+                    "sic": 42,
+                    "spare_bits_24_21": 0,
+                    "typ": 5
+                  },
+                  {
+                    "local_track_number": 4002,
+                    "sac": 41,
+                    "sic": 43,
+                    "spare_bits_24_21": 0,
+                    "typ": 8
+                  }
+                ]
+              },
+              "sts": {
+                "fdr": 1,
+                "fx": 0,
+                "lnav_ep": 1,
+                "lnav_val": 0,
+                "spare_bits_5_2": 0
+              },
+              "tvs": {
+                "vx_raw": 480,
+                "vy_raw": 65355
+              },
+              "v3": {
+                "fx": 0,
+                "primary": 240,
+                "spare_bits_4_2": 0,
+                "subfields": {
+                  "as": {
+                    "rce_ep": 1,
+                    "rce_val": 1,
+                    "re": 1,
+                    "rrl_ep": 1,
+                    "rrl_val": 0,
+                    "spare_bits_5_1": 0,
+                    "tao_ep": 1,
+                    "tao_val": 31,
+                    "tpw_ep": 1,
+                    "tpw_val": 2,
+                    "tsi_ep": 1,
+                    "tsi_val": 1
+                  },
+                  "cass": {
+                    "catc_ep": 1,
+                    "catc_val": 4,
+                    "spare_bit_1": 0,
+                    "svh_ep": 1,
+                    "svh_val": 2
+                  },
+                  "ps3": {
+                    "ps3_ep": 1,
+                    "ps3_val": 2,
+                    "spare_bits_4_1": 0
+                  },
+                  "uas": {
+                    "daa_ep": 1,
+                    "daa_val": 1,
+                    "muo_ep": 1,
+                    "muo_val": 1,
+                    "rwc_ep": 1,
+                    "rwc_val": 1,
+                    "spare_bit_1": 0
+                  }
+                }
+              }
+            },
+            "items_indicator": 248,
+            "length": 29,
+            "spare_bits_3_1": 0
+          },
+          "SP": {
+            "contents": "aabbccdd",
+            "length": 5
+          }
+        }
+      },
+      "special_purpose_field": {
+        "basis": "opaque by construction. Parked verbatim as hex and NEVER WRITTEN TO on egress \u2014 a Special Purpose Field's contents are settled by bilateral agreement between one sender and one receiver, so a byte invented here is a byte some deployment already means something by. No \u00a75.2 description exists for it, and the one-octet-length-counting-itself convention is inherited from the shipped ASTERIX siblings: ASTERIX Part 1 defines it, this document cites Part 1 as SPEC-0149 edition 3.1 without reproducing it, and Part 1 is not pinned in this repository",
+        "contents": "aabbccdd",
+        "length": 5
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT062 track is an UNKNOWN glyph in the reality or exercise context its SourceRef.synthetic states. CAT062 carries no symbology of any kind",
+      "track_number": {
+        "basis": "I062/040, \u00a75.2.3, 'Identification of a track', two octets, and its Encoding Rule is 'This Item shall be present in every ASTERIX record'. Parked and NEVER the identity basis: sixteen bits allocated by the emitting system and recycled when a track ends would merge two airframes into one entity, which is false in the direction nothing downstream can detect. I062/080's TSB and TSE put the track boundary on the wire, and being able to see the boundary does not stop the number on the other side of it belonging to a different aircraft. ASTERIX itself found this worth a dedicated status bit in another part: CAT023's I023/100 bit 2 is 'Renumbering Indication for Track ID', whose NOTE reads 'the allocation of Track-IDs (Item I021/161) was re-started'. Different number space, same class of identifier",
+        "raw": 4242
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "4e752151-e071-5a6d-98d0-e0d1532a0933",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": {
+      "climb_mps": 9.525,
+      "course_deg": 105.97235438992143,
+      "speed_mps": 218.9527631705067
+    },
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": 65.49686001715148,
+      "alt_m": 9448.800000000001,
+      "lat": 57.38999783992767,
+      "lon": 21.559998393058777,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "F0A1C7",
+        "system": "ICAO24"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "223d6d2b-1f0a-5d6f-abce-48b406d80435",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "calculated_acceleration": {
+        "ax_mps2": 1.5,
+        "ax_raw": 6,
+        "ay_mps2": -0.75,
+        "ay_raw": 253,
+        "basis": "\u00a75.2.16, the same north-oriented frame as I062/185's. PARKED \u2014 THE CDM HAS NO ACCELERATION FIELD, and adding one in passing would be widening the model for one source",
+        "lsb": 0.25
+      },
+      "calculated_barometric_altitude": {
+        "basis": "\u00a75.2.12. PARKED, never Position.alt_m \u2014 a pressure altitude is not a height above anything. Its NOTE is load-bearing: 'This item enables the provision of either QNH or non-QNH corrected Calculated Track Barometric Altitude, BUT NOT BOTH. If needed, the other variant can be provided in I062/REF/MOI/CTBA' \u2014 a container Appendix A Edition 1.3 does not define, so the other variant is unreachable here",
+        "flight_level": 305.0,
+        "qnh_correction_applied": true,
+        "raw": 1220
+      },
+      "calculated_geometric_altitude": {
+        "basis": "\u00a75.2.11, 'Vertical distance between the target and the projection of its position on the earth's ellipsoid, as defined by WGS84'. THE ONE ALTITUDE THAT REACHES Position.alt_m, because it is the only one of six defined as a height above the ellipsoid, which is what alt_m documents itself as. NOTE 1's 'LSB is required to be less than 10 ft by ICAO' is a constraint on the encoding, not an accuracy",
+        "lsb": 6.25,
+        "raw": 4960,
+        "unit": "ft",
+        "value": 31000.0
+      },
+      "calculated_rate_of_climb": {
+        "feet_per_minute": 1875.0,
+        "lsb": 6.25,
+        "raw": 300
+      },
+      "cartesian_position": {
+        "basis": "\u00a75.2.7, parked as metres and NEVER CONVERTED TO A COORDINATE. \u00a74.3.2 states the projection: 'a projection is performed on a plane tangential to the WGS-84 Ellipsoid at the location of the reference point. The Y-axis points to the geographical north at that position. The X-axis is perpendicular to the Y-axis and points to the east. The X, Y co-ordinates are calculated using a suitable projection technique for the final 3D to 2D conversion (e.g. a stereographical projection). It is slant range corrected, the source of altitude being indicated in I062/080 Track Status, Octet 1, bit 6 (MRH).' TWO INDEPENDENT UNKNOWNS, either of them fatal: the reference point is not in any CAT062 item \u2014 Appendix A \u00a72.5's NOTE says it is 'available in the Reserved Expansion Field of CATEGORY 065' \u2014 and the projection is named only by example, so two conforming SDPSs can emit different X for one aircraft and nothing in the record distinguishes them. This is a STRONGER decline than CAT048 settlement 3's, where the geodesy was absent from the document but the inputs were on the wire and a caller could inject the missing one. A consumer holding a CAT065 reference point may invert it visibly",
+        "lsb_metres": 0.5,
+        "x_metres": 12000.0,
+        "x_raw": 24000,
+        "y_metres": -8000.0,
+        "y_raw": 16761216
+      },
+      "emergency_basis": {
+        "disagreement": {
+          "reason": "two or more independent emergency statements in one record with different severities. \u00a75.2.6's NOTE 1 says EMS may be 'derived from other sources than ADS-B', so the two are not expected to agree \u2014 carried, not resolved away, and I062/080's IEC bit is the tracker saying the same thing",
+          "sources": [
+            {
+              "raw": 0,
+              "source": "I062/080 EMS",
+              "text": "No emergency"
+            },
+            {
+              "raw": 0,
+              "source": "I062/380 SF#11 STAT",
+              "text": "No emergency"
+            },
+            {
+              "raw": 2,
+              "source": "I062/REF/PS3",
+              "text": "UAS/RPAS - Lost Link"
+            }
+          ]
+        },
+        "preferred": "I062/REF/PS3",
+        "rule": "I062/REF/PS3 wins where it is present and populated, because both core items are LOSSY on ADS-B Version 3 equipment by their own back-mapping tables \u2014 2 becomes 4 and both distress values become 1. Otherwise the MORE SEVERE of the two core statements wins, because taking either by position would make the field's meaning depend on which item the record happened to carry",
+        "statements": [
+          {
+            "raw": 0,
+            "severity": "INFO",
+            "source": "I062/080 EMS",
+            "text": "No emergency",
+            "vocabulary": "pre-Version-3"
+          },
+          {
+            "raw": 0,
+            "severity": "INFO",
+            "source": "I062/380 SF#11 STAT",
+            "text": "No emergency",
+            "vocabulary": "pre-Version-3"
+          },
+          {
+            "back_maps_to": 4,
+            "raw": 2,
+            "severity": "WARNING",
+            "source": "I062/REF/PS3",
+            "text": "UAS/RPAS - Lost Link",
+            "vocabulary": "Version 3"
+          }
+        ],
+        "version_number_finding": "\u00a75.2.6's and \u00a75.2.24's notes both say I062/REF/PS3 'is to be used exclusively for Version 3 ADS-B systems as defined in I062/380/SF#11/VN' \u2014 and THERE IS NO VN FIELD IN SUBFIELD #11. Its sixteen bits are AC, MN, DC, GBS, six spares and STAT. So the field that decides which vocabulary applies is named twice by the core specification and defined nowhere in it. What is used instead is the PRESENCE of PS3, which Appendix A \u00a72.7 defines as 'Information transmitted by aircraft equipped with an ADS-B Version 3 System' \u2014 an inference from the REF, stated as one. FORMAT_COVERAGE.md ambiguity 13"
+      },
+      "kinematics_basis": {
+        "rate_of_climb": {
+          "aircraft_rates_declined": "I062/380 Subfields #13 and #14 are the aircraft's own barometric and geometric vertical rates. Neither reaches climb_mps: there are TWO of them and one of I062/220, so any promotion would be an arbitration between three numbers",
+          "arithmetic": "feet per minute x 0.3048 / 60 = metres per second, exact in float64",
+          "feet_per_minute": 1875.0,
+          "item": "I062/220",
+          "lsb_feet_per_minute": 6.25,
+          "raw": 300,
+          "sign": "\u00a75.2.17's NOTE: 'A positive value indicates a climb, whereas a negative value indicates a descent' \u2014 the same sign convention climb_mps uses, so no negation is applied"
+        },
+        "velocity": {
+          "course_arithmetic": "degrees(atan2(Vx, Vy)) mod 360. atan2(Vx, Vy) and NOT atan2(Vy, Vx), because \u00a75.2.14's NOTE fixes the frame: 'The y-axis points to the Geographical North at the location of the target'. The components are parked beside the scalars so a course derived from a near-zero vector is visible for what it is",
+          "high_resolution_declined": "\u00a75.2.14's second NOTE says the 0.25 m/s resolution 'is not sufficient for all applications addressing the ground segment especially for slow moving targets' and points at I062/REF/MOI/FPVHR \u2014 a container Appendix A Edition 1.3 does not define. So on a surface target this is the resolution available, and the document says so",
+          "item": "I062/185",
+          "lsb_mps": 0.25,
+          "speed_arithmetic": "hypot(Vx, Vy)",
+          "vx_mps": 210.5,
+          "vx_raw": 842,
+          "vy_mps": -60.25,
+          "vy_raw": 65295
+        }
+      },
+      "measured_flight_level": {
+        "basis": "\u00a75.2.13, 'Last valid and credible flight level used to update the track'. Its NOTES are the point: 'The criteria to determine the credibility of the flight level are TRACKER DEPENDENT' and 'Credible means: within reasonable range of change with respect to the previous detection' \u2014 so the item's own filter is unspecified. And NOTE 4: 'This item includes the barometric altitude received from ADS-B', so a MEASURED flight level here may not have come from a Mode C reply at all and nothing in the item says which it was. Its NOTE 5 points at I062/REF/MOI/ALTQCMFL for the QNH-corrected variant, undefined in Appendix A Edition 1.3",
+        "lsb": 0.25,
+        "raw": 1219,
+        "unit": "FL",
+        "value": 304.75
+      },
+      "mode_5": {
+        "extended_mode_1": {
+          "basis": "\u00a75.2.9 Subfield #5. Its NOTE gives a STATED DEFAULT rather than an unknown: 'If Subfield #1 is present, the M1 bit in Subfield #1 indicates whether the Extended Mode 1 Code is from a Mode 5 reply or a Mode 1 reply. If Subfield #1 is not present, the Extended Mode 1 Code is from a Mode 1 reply'",
+          "from_mode_5_reply": true,
+          "octal": "1234",
+          "raw": 668
+        },
+        "gnss_derived_altitude": {
+          "basis": "\u00a75.2.9 Subfield #4. THE RES BIT DOES NOT CHANGE THE ARITHMETIC \u2014 NOTE 1: 'GA is coded as a 14-bit two's complement binary number with an LSB of 25 ft IRRESPECTIVE OF THE SETTING OF RES' \u2014 so RES says what the reporting granularity was and the LSB is always 25 ft. Getting that backwards would scale every 100-ft-granularity altitude by four. NOTE 2's 'The minimum value of GA that can be reported is -1000 ft' is a statement about the TRANSPONDER rather than a range on the field, so it is carried as a floor and a pattern below it is not refused",
+          "feet": 24000.0,
+          "raw": 960,
+          "reported_granularity": "25 ft increments",
+          "stated_minimum_reportable_ft": -1000,
+          "valid_at_offset_seconds": -0.5
+        },
+        "pin_national_origin_mission": {
+          "basis": "\u00a75.2.9 Subfield #2, parked as three integers. NO NATIONAL ORIGIN IS RESOLVED TO A NATION: the table is not in this document and reading one would be an identification decision. Its NOTE says NATO changed the layout in 2011 and that the new one is in I062/REF/M5N, WHICH APPENDIX A EDITION 1.3 DOES NOT DEFINE \u2014 and the consequence is sharper here than for the other seven dangling pointers, because the item says equipment certified to the new layout uses the REF version: a modern reply's national origin is unreachable in this category",
+          "mis": 21,
+          "nat": 7,
+          "pin": 4321,
+          "spare_bits_16_14": 0,
+          "spare_bits_32_31": 0,
+          "spare_bits_8_7": 0
+        },
+        "presence": "fe",
+        "reported_position": {
+          "basis": "\u00a75.2.9 Subfield #3, at 180/2^23 degrees. PARKED; never Entity.position. Its NOTE: 'The resolution implied by the LSB is better than the resolution with which Mode 5 position reports are transmitted from aircraft transponders using currently defined formats'",
+          "latitude": 57.3900032043457,
+          "latitude_raw": 2674568,
+          "longitude": 21.560003757476807,
+          "longitude_raw": 1004769,
+          "valid_at_offset_seconds": -0.5
+        },
+        "summary": {
+          "basis": "\u00a75.2.9 Subfield #1. NO AFFILIATION IS READ FROM AN AUTHENTICATED REPLY \u2014 the asterix_cat021.py refusal. NOTES 1 to 3 are carried: the M2, M3 and MC flags 'refer to the contents of data items I062/120, I062/060 and I062/135 respectively' and M1 to Subfield #5; an authenticated reply with the Emergency bit set is what sets I062/080's ME; and one with the Identification of Position bit set is what sets I062/080's SPI",
+          "da": true,
+          "id": true,
+          "m1": true,
+          "m2": true,
+          "m3": true,
+          "m5": true,
+          "mc": true,
+          "x": true
+        },
+        "time_basis": {
+          "absent_is_a_stated_zero": "\u00a75.2.9's NOTE: 'TOS shall be assumed to be zero if Subfield #6 is not present.' So an absent Subfield #6 is not an unknown offset, it is a STATED ZERO \u2014 the one place in this category where an absent field has a defined value rather than meaning 'not reported'",
+          "applies_to": "Subfields #3 and #4 ONLY \u2014 the Mode 5 reported position and the Mode 5 GNSS-derived altitude. Never the track's own time, which is I062/070 unmodified",
+          "base_instant_from": "I062/070",
+          "offset_present": true,
+          "offset_raw": 192,
+          "offset_seconds": -0.5,
+          "substitution": "THE SPECIFICATION NAMES AN ITEM OF A DIFFERENT CATEGORY AND I062/070 IS SUBSTITUTED. \u00a75.2.9 Subfield #6 reads: 'The time at which the Mode 5 Reported Position (Subfield #3) and Mode 5 GNSS-derived Altitude (Subfield #4) are valid is given by Time of Day (I048/140) plus Time Offset.' I048/140 is PART 4's item \u2014 Category 048 \u2014 and Category 062 has no I048/140 and no item numbered 140 at all. Its own time of day is I062/070, at the same LSB of 1/128 s, and the sentence has been carried over from the CAT048 specification without renumbering. Following it literally is impossible; the only reading that produces a value substitutes I062/070. That is a RULING and not a transcription, so it is stated here beside the value rather than applied quietly. FORMAT_COVERAGE.md ambiguity 9"
+        },
+        "x_pulse_presence": {
+          "basis": "\u00a75.2.9 Subfield #7, five X-pulse flags. NOTE THE DUPLICATION: Subfield #1's bit 1 is also an X pulse 'from Mode 5 Data reply or Report', in the same words as this subfield's X5. Two fields, one measurement, and the document does not say they must agree \u2014 so both are parked and a disagreement is recorded, never resolved",
+          "spare_bits_8_6": 0,
+          "x1": true,
+          "x2": false,
+          "x3": false,
+          "x5": true,
+          "xc": true
+        }
+      },
+      "mode_of_movement": {
+        "adf_basis": "the ADF NOTE: 'The ADF, if set, indicates that a difference has been detected in the altitude information derived from radar as compared to other technologies (such as ADS-B).' So it is the tracker telling you two of the altitude items disagree \u2014 settlement 1's fused-content statement in one bit",
+        "altitude_discrepancy": true,
+        "basis": "\u00a75.2.15, 'Calculated Mode of Movement of a target' \u2014 THE TRACKER'S OWN CLASSIFICATION of the motion, parked as four fields and never used to sign or modify climb_mps or course_deg, which are numbers the same record states",
+        "longitudinal": {
+          "raw": 2,
+          "text": "Decreasing Groundspeed"
+        },
+        "transversal": {
+          "raw": 1,
+          "text": "Right Turn"
+        },
+        "vertical": {
+          "raw": 1,
+          "text": "Climb"
+        }
+      },
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "definition": "Absolute time stamping of the information provided in the track message, in the form of elapsed time since last midnight, expressed as UTC",
+        "item": "I062/070",
+        "lsb_seconds": 0.0078125,
+        "note_1": "This is the time of the track state vector",
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "service_identification": {
+        "basis": "\u00a75.2.2, one octet, 'Identification of the service provided to one or more users', and its NOTE says 'the service identification is allocated by the system'. Its Encoding Rule is 'This Item is optional' \u2014 which a reader expecting CAT023's arrangement would not guess, since CAT023 makes its equivalent mandatory for two of three report types. CAT023's I023/015 NOTE 2 names the join to I021/015; a consumer may perform it and this adapter may not",
+        "raw": 3
+      },
+      "target_size_and_orientation": {
+        "basis": "\u00a75.2.19. NOTE 2 MAKES THE FIRST FIELD'S MEANING DEPEND ON WHETHER A LATER FIELD IS PRESENT: 'When the length only is sent, the largest dimension is provided.' So a length-only record states a largest dimension and a length-and-width record states a length \u2014 two different measurements in one field, selected by an FX bit two octets later. The raw field is parked with this flag so both readings survive; calling it a length unconditionally would be wrong for every length-only record. FORMAT_COVERAGE.md ambiguity 10",
+        "length_means": "the target's LENGTH, because a WIDTH extent follows",
+        "length_metres": 64.0,
+        "length_raw": 64,
+        "orientation_basis": "\u00a75.2.19 NOTE 1: 'The orientation gives the direction which the target nose is pointing to, relative to the Geographical North.' Seven bits at 360/2^7 \u2248 2.81\u00b0, so the printed LSB and the field's width agree \u2014 128 is 2^7 and bit 1 is the FX. PARKED and never Kinematics.course_deg: a nose bearing is not a course, and the course comes from I062/185's velocity vector",
+        "orientation_degrees": 225.0,
+        "orientation_raw": 80,
+        "width_metres": 60.0,
+        "width_present": true,
+        "width_raw": 60
+      },
+      "track_mode_2": {
+        "basis": "\u00a75.2.10, twelve bits of octal Mode 2. NO VALIDITY OR GARBLE BITS AT ALL, unlike I062/060 and unlike I062/340 Subfield #5 \u2014 so a Mode 2 code in this category carries no quality statement, and the absence is recorded rather than filled in",
+        "octal": "3456",
+        "raw": 1838
+      },
+      "track_mode_3a": {
+        "basis": "\u00a75.2.4, twelve bits of octal Mode 3/A with V, G and CH. CH is the tracker saying the code changed, which is a statement about a PREVIOUS RECORD this adapter has not seen \u2014 carried, not acted on",
+        "changed": true,
+        "garbled": false,
+        "octal": "7000",
+        "raw": 3584,
+        "validated": true
+      },
+      "track_number": 4242
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "4e752151-e071-5a6d-98d0-e0d1532a0933"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "cat062",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT062"
+    },
+    "source_ids": [
+      {
+        "external_id": "F0A1C7",
+        "system": "ICAO24"
+      }
+    ]
+  }
+]

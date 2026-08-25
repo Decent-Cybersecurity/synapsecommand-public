@@ -1,0 +1,127 @@
+{
+  "block": {
+    "category": 62,
+    "length": 46,
+    "record_count": 2
+  },
+  "records": [
+    {
+      "fspec": "910d0120",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/110": "b4f628cf880f54e143c0c0"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 0,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            }
+          ]
+        },
+        "I062/110": {
+          "presence": "b4",
+          "subfields": {
+            "ga": {
+              "ga_raw": 960,
+              "res": 1,
+              "spare_bit_16": 0
+            },
+            "pos": {
+              "latitude_raw": 2674568,
+              "longitude_raw": 1004769
+            },
+            "sum": {
+              "da": 1,
+              "id": 1,
+              "m1": 1,
+              "m2": 0,
+              "m3": 1,
+              "m5": 1,
+              "mc": 1,
+              "x": 0
+            },
+            "tos": {
+              "tos_raw": 192
+            }
+          }
+        }
+      },
+      "record_count": 2
+    },
+    {
+      "fspec": "910d0120",
+      "index": 1,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/110": "a0a128cf880f54e1"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 0,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            }
+          ]
+        },
+        "I062/110": {
+          "presence": "a0",
+          "subfields": {
+            "pos": {
+              "latitude_raw": 2674568,
+              "longitude_raw": 1004769
+            },
+            "sum": {
+              "da": 1,
+              "id": 0,
+              "m1": 0,
+              "m2": 0,
+              "m3": 0,
+              "m5": 1,
+              "mc": 0,
+              "x": 1
+            }
+          }
+        }
+      },
+      "record_count": 2
+    }
+  ]
+}

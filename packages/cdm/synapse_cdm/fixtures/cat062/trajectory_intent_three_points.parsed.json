@@ -1,0 +1,106 @@
+{
+  "block": {
+    "category": 62,
+    "length": 65,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "911c",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/380": "81c0f0a1c70003000bb8292a8e0fafe7760055f004e2010ce4298593100aec170000000320020ce429e0991065f2840058480000"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 0,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            }
+          ]
+        },
+        "I062/380": {
+          "presence": "81c0",
+          "subfields": {
+            "adr": {
+              "address": 15770055
+            },
+            "tid": {
+              "points": [
+                {
+                  "altitude_raw": 3000,
+                  "latitude_raw": 2697870,
+                  "longitude_raw": 1028071,
+                  "nc": 0,
+                  "point_type": 7,
+                  "tca": 0,
+                  "tcp_number": 0,
+                  "td": 1,
+                  "toa": 0,
+                  "tov_raw": 22000,
+                  "tra": 1,
+                  "ttr_raw": 1250
+                },
+                {
+                  "altitude_raw": 3300,
+                  "latitude_raw": 2721171,
+                  "longitude_raw": 1051372,
+                  "nc": 0,
+                  "point_type": 1,
+                  "tca": 0,
+                  "tcp_number": 1,
+                  "td": 1,
+                  "toa": 1,
+                  "tov_raw": 0,
+                  "tra": 1,
+                  "ttr_raw": 800
+                },
+                {
+                  "altitude_raw": 3300,
+                  "latitude_raw": 2744473,
+                  "longitude_raw": 1074674,
+                  "nc": 0,
+                  "point_type": 8,
+                  "tca": 0,
+                  "tcp_number": 2,
+                  "td": 1,
+                  "toa": 0,
+                  "tov_raw": 22600,
+                  "tra": 0,
+                  "ttr_raw": 0
+                }
+              ],
+              "rep": 3
+            },
+            "tis": {
+              "fx": 0,
+              "nav": 0,
+              "nvb": 0,
+              "spare_bits_6_2": 0
+            }
+          }
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

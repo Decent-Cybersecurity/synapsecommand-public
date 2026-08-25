@@ -1,0 +1,134 @@
+{
+  "block": {
+    "category": 62,
+    "length": 53,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "911d40",
+      "index": 0,
+      "item_octets": {
+        "I062/010": "2929",
+        "I062/040": "1092",
+        "I062/070": "2a3000",
+        "I062/080": "00",
+        "I062/295": "93e77f7fe00608010c0d10141518191c1d202124ff28292c2d303134",
+        "I062/380": "a1010104f0a1c7c0b60067"
+      },
+      "items": {
+        "I062/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I062/040": {
+          "track_number": 4242
+        },
+        "I062/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I062/080": {
+          "octets": [
+            {
+              "cnf": 0,
+              "fx": 0,
+              "mon": 0,
+              "mrh": 0,
+              "spi": 0,
+              "src": 0
+            }
+          ]
+        },
+        "I062/295": {
+          "presence": "93e77f7fe0",
+          "subfields": {
+            "bps": {
+              "age_raw": 52
+            },
+            "bvr": {
+              "age_raw": 24
+            },
+            "com": {
+              "age_raw": 20
+            },
+            "emc": {
+              "age_raw": 255
+            },
+            "gal": {
+              "age_raw": 41
+            },
+            "gsp": {
+              "age_raw": 33
+            },
+            "gvr": {
+              "age_raw": 25
+            },
+            "iar": {
+              "age_raw": 48
+            },
+            "ias": {
+              "age_raw": 12
+            },
+            "mac": {
+              "age_raw": 49
+            },
+            "mb": {
+              "age_raw": 45
+            },
+            "mda": {
+              "age_raw": 8
+            },
+            "met": {
+              "age_raw": 36
+            },
+            "mfl": {
+              "age_raw": 6
+            },
+            "mhg": {
+              "age_raw": 1
+            },
+            "pos": {
+              "age_raw": 40
+            },
+            "pun": {
+              "age_raw": 44
+            },
+            "ran": {
+              "age_raw": 28
+            },
+            "sab": {
+              "age_raw": 21
+            },
+            "sal": {
+              "age_raw": 16
+            },
+            "tan": {
+              "age_raw": 32
+            },
+            "tar": {
+              "age_raw": 29
+            },
+            "tas": {
+              "age_raw": 13
+            }
+          }
+        },
+        "I062/380": {
+          "presence": "a1010104",
+          "subfields": {
+            "adr": {
+              "address": 15770055
+            },
+            "mac": {
+              "mach_number_raw": 103
+            },
+            "mhg": {
+              "heading_raw": 49334
+            }
+          }
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

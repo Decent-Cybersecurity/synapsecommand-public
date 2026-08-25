@@ -158,6 +158,36 @@ it is nothing.
     for a 146-page document and 60 for a 31-page one, where the largest disagreement on record was
     41 against 43.
 
+- **`cat062` — ASTERIX Category 062 SDPS Track Messages, bidirectional.** Adapter #13, shipped
+  against the row set the specification pass wrote. `adapters/asterix_cat062.py` on a codec in
+  `adapters/cat062_codec.py`; 27 data items, six compound items, a six-extent FX chain, and the
+  Reserved Expansion Field decoded in full. **Every row of the CAT062 row set now reads
+  `cat062 1.0.0`**, the roster is eleven, and `Position.accuracy_m` is set from a source for the
+  first time in this repository.
+
+  **The byte-for-byte round trip holds on all 28 fixtures.** Phase 1 promised to rule and record if
+  an item defeated it and named two candidates in advance; neither did, because both derived values
+  are one-way views re-emitted from parked raw fields. Verified independently of the harness, which
+  skips `roundtrip` for a binary format — that skip is a pointer at `tests/`, not a waiver.
+
+  **One row changed and it is on the record.** The row set predicted a declared `TRANSFORMS` entry
+  for the `I062/500` Subfield #3 combination, reasoning that two angular components becoming one
+  metric scalar leaves the degrees unrepresented. Both halves are true and the conclusion does not
+  follow: the never-drop check compares source LEAF values, the leaves are the two raw integers, and
+  those are parked. Measured rather than argued — the check was re-run over all 28 fixtures with
+  `TRANSFORMS` emptied and reported zero losses either way. `cat062` declares none, like its three
+  ASTERIX siblings.
+
+  **Package MINOR when released** — an added adapter, nothing removed, no schema touched.
+
+- **Two gates were stating a count nothing computed, and now derive it.**
+  `tests/test_cdm_harness.py`'s `test_the_packaged_fixtures_resolve_through_import_resources_not_a_
+  repo_path` asserted the bare literal `10`; it now reads the length off `SHIPPED_FIXTURE_DIRS`,
+  which the same module already asserts equal to the registry. That is
+  `tests/test_cdm_prose_counts.py`'s defect one layer in — a count in a place nothing computes it —
+  and the ICAO24 sharer count went from four to five in the same round, which is the second time
+  that sentence has gone stale by an adapter landing.
+
 ### 1.0.0 — initial contract
 
 The four objects (`Entity`, `Event`, `Track`, `PlanObject`), `Position`, `Kinematics`,

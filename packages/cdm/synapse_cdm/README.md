@@ -1,12 +1,12 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Ten integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Eleven integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
-ASTERIX category 048 monoradar target reports, and ASTERIX category 034 monoradar service
-messages. Without a canonical model in the middle, ten
-adapters means forty-five translations and ten private notions of "a contact". With one, an
-adapter is a thin translator and nothing else.
+ASTERIX category 048 monoradar target reports, ASTERIX category 034 monoradar service
+messages, and ASTERIX category 062 SDPS system track messages. Without a canonical model in the
+middle, eleven adapters means fifty-five translations and eleven private notions of "a contact".
+With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
 

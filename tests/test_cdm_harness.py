@@ -373,8 +373,9 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 #: half's whole value is being an equality against the registry: a Phase 1 name in there would
 #: make that assertion fail, and relaxing it to a subset check would give up the thing it pins.
 SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat034": "cat034",
-                        "cat048": "cat048", "gmti": "gmti", "legion": "legion",
-                        "pntmap": "pntmap", "stanag4676": "nits", "tak": "tak"}
+                        "cat048": "cat048", "cat062": "cat062", "gmti": "gmti",
+                        "legion": "legion", "pntmap": "pntmap", "stanag4676": "nits",
+                        "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
 #:
@@ -407,11 +408,11 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat03
 #: first two Phase 1 entries whose row sets are complete rather than partial — 27 items and 9
 #: items respectively, every one dispositioned — so the window in which the relation could be
 #: folklore is the window between this commit and the two that ship the adapters.
-PLANNED_FIXTURE_DIRS = {"cat023": "cat023", "cat062": "cat062",
+PLANNED_FIXTURE_DIRS = {"cat023": "cat023",
                         "stanag4609": "klv", "stanag5527": "fft"}
 
 
-def test_the_ten_shipped_adapters_all_have_a_real_fixture_directory():
+def test_the_eleven_shipped_adapters_all_have_a_real_fixture_directory():
     """The sweep the gate runs, as a test, so the directory names stop being folklore.
 
     This is the other half of the fix. Making a vacuous run fail loudly stops a wrong path from
@@ -571,16 +572,26 @@ def test_only_the_adapter_named_for_a_standard_declares_a_different_directory():
 
 
 def test_the_packaged_fixtures_resolve_through_import_resources_not_a_repo_path():
-    """`packaged_fixtures` must answer with a real directory holding real fixtures, for all ten.
+    """`packaged_fixtures` must answer with a real directory holding real fixtures, for every one.
 
     Asserted through `importlib.resources` rather than by walking up from `__file__`: that is the
     difference between a path that works in a clone and a path that works wherever the package is
     installed, and it is the only difference that matters to somebody who ran `pip install`.
+
+    THE FLOOR IS DERIVED, and it used to be the bare literal `10`. That is the shape
+    `tests/test_cdm_prose_counts.py` exists to catch, one layer in: a count stated in a place
+    nothing computes it, which went stale the moment an adapter landed. `SHIPPED_FIXTURE_DIRS` is
+    this module's own authority for the shipped roster and is itself asserted equal to the registry
+    two tests up, so reading the length off it is one statement rather than two.
     """
     from synapse_cdm.adapter import discover, packaged_fixtures
     shipped = {n: c for n, c in discover().items()
                if c.__module__.startswith("synapse_cdm.adapters.")}
-    assert len(shipped) == 10
+    assert len(shipped) == len(SHIPPED_FIXTURE_DIRS), (
+        f"the shipped roster is {sorted(shipped)} and this module's map names "
+        f"{sorted(SHIPPED_FIXTURE_DIRS)}. A new adapter needs its fixture directory added to "
+        "SHIPPED_FIXTURE_DIRS, which is where the count comes from"
+    )
     for name, cls in sorted(shipped.items()):
         path = packaged_fixtures(cls)
         assert path.is_dir(), f"{name}: {path} is not a directory"

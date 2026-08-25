@@ -31,3 +31,9 @@
 *.cat021 -text -diff
 *.cat034 -text -diff
 *.cat048 -text -diff
+
+# The fourth ASTERIX category, raw data blocks, and the marker is explicit for the same reason the
+# first three are. Added in the SAME COMMIT as the adapter that produces the blocks, which is the
+# habit the paragraph above exists to establish: the two enumerations that went stale did so
+# because the extension arrived one round after the fixtures did.
+*.cat062 -text -diff
