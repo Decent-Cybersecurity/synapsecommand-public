@@ -7956,7 +7956,7 @@ is a *checked* condition rather than an accident: since 80b38d1 a harness run ag
 whose only content is `spec/` raises `NoFixturesFound` and exits 2, so
 
 ```bash
-python -m synapse_cdm.harness --adapter stanag4609 --fixtures packages/cdm/synapse_cdm/fixtures/klv
+python -m synapse_cdm.harness --adapter stanag4609 --fixtures .   # from fixtures/klv
 ```
 
 fails loudly today instead of reporting a vacuous green. **It fails twice over, and the order is
@@ -7974,7 +7974,7 @@ at least one of parks 1, 6 or 12 close.** A `.klv` payload is a sequence of key/
 triplets, and this phase does not hold the document that says how a key or a length is written.
 Writing bytes anyway would produce a file that *looks* like KLV, a golden file recording what our own
 guess decodes to, and a green harness run asserting that the two agree — which is exactly the
-round-trip trap `packages/cdm/synapse_cdm/README.md` names: self-consistency without an external
+round-trip trap this package's `README.md` names: self-consistency without an external
 anchor. So the plan below is a plan and not a schedule, and each entry names the parks that gate it.
 
 | Fixture | What it is there to catch | Gated on |
@@ -9011,7 +9011,7 @@ recorded only where it happened is a change the next reader has to find.
 |---|---|
 | **`sector_crossing_with_rotation` is also a Table 2 `X` case, and the row now says so** | Phase 1 wrote the fixture as "Type 002 with `I034/020` and `I034/041`" and Table 2 makes `I034/041` **X** for a Sector Crossing. The fixture is built as planned — its stated purpose, the two LSBs and the sector number not reaching `Kinematics.course_deg`, is unaffected — and it turns out to exercise settlement 8's parked-`X` disposition as well. Recorded rather than quietly repaired, because a fixture doing something its row does not claim is how a test stops being read |
 | **`station_position_three_dimensional` keeps the negative height and loses the negative longitude** | Phase 1 asked for both. A negative longitude is not Baltic-plausible and the fixture convention two tables up pins every station to the Gulf of Riga, so honouring the row literally meant moving one synthetic station to the Atlantic to exercise a sign bit. Instead: the negative **height** stays and goes end to end (it is a legal WGS-84 ellipsoidal height); the negative-longitude **bit pattern** is asserted directly against the codec, where two's complement actually lives and where the exact octets can be checked; and a negative two's-complement value still reaches the CDM through `I034/090`, whose range and azimuth errors are signed and ordinary |
-| **`midnight_rollover_nearest` rolls one way under the harness clock and the other under an injected one** | The row said "in both directions, against an injected clock". Only the backward roll is reachable from `times.FROZEN_NOW` — 06:15 — so that is the one the fixture carries, deliberately, because `packages/cdm/synapse_cdm/README.md` records that CAT048's two rollover fixtures passed every check while testing no rollover at all. The forward roll is asserted in the test module against a late-evening clock the test injects itself |
+| **`midnight_rollover_nearest` rolls one way under the harness clock and the other under an injected one** | The row said "in both directions, against an injected clock". Only the backward roll is reachable from `times.FROZEN_NOW` — 06:15 — so that is the one the fixture carries, deliberately, because this package's `README.md` records that CAT048's two rollover fixtures passed every check while testing no rollover at all. The forward roll is asserted in the test module against a late-evening clock the test injects itself |
 | **`message_type_008` is a translatable fixture, not a refusal** | Phase 1 listed it under a **Refusals** sub-heading and its own cell said "*not* refused". The cell was right and the heading was wrong, and the two totals in the prose were computed from the heading. Ambiguity 6 in the register above is EUROCONTROL's own version of this defect, one edition apart, and it is the reason the stale-count sweep is not a formality |
 | **`spare_bits_nonzero` is a seventeenth fixture the plan did not have, and a MUTATION is what asked for it** | Zeroing `I034/050`'s COM spare bit inside the decoder **passed every test and every other fixture**, because every fixture in the plan has its spare bits at zero and a dropped zero re-encodes as a zero. §4.4 is normative about exactly this — "Decoders of ASTERIX data shall **never assume and rely on** specific settings of spare or unused bits" — so a set that cannot tell a read spare bit from an assumed one is not testing the round trip §4.4 requires. Every reachable spare bit is set in the new fixture. **So the set is seventeen translatable and three refusals, twenty in all** — Phase 1's prose said twenty and four, its table had nineteen rows and three, and the number it arrived at by miscounting is the number the set arrived at by needing one more |
 

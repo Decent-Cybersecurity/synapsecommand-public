@@ -140,9 +140,10 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Four entries, and the set does not move — entries change **state**, they are not deleted. Entry 1
-is now **ruled on** and stays here as the ruling; entries 2, 3 and 4 are open, and all four were
-previously recorded only in commit messages. None blocks anything.
+Five entries, and the set does not move — entries change **state**, they are not deleted. Entry 1
+is **ruled on** and stays here as the ruling; entries 2, 3 and 4 are open, and all four were
+previously recorded only in commit messages. Entry 5 was opened by the SDK round, which built and
+verified a publishable distribution and stopped short of publishing it. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
@@ -253,6 +254,60 @@ not a guess a round is entitled to make.
 - **Community Standards** reads 50%: `README`, `LICENSE` and `CONTRIBUTING` present; no code of
   conduct, no issue template, no pull-request template. A newly visible page, listed here so the
   absences are on the record as absences rather than oversights.
+
+### 5. `synapse-cdm` is not on PyPI — built, verified, and waiting on a human
+
+The SDK round made `packages/cdm` a real distribution: `python -m build` produces a clean sdist
+and wheel, `gates/wheel_install.py` installs the wheel into an environment with no part of this
+repository on its path and runs the harness and half the suite against it, and `twine check
+--strict` PASSES on both artefacts. What has **not** happened is an upload, and this entry says
+exactly why and exactly what closing it takes.
+
+**The name is free, measured on 2026-08-25.** All three spellings return **HTTP 404** from both
+the JSON API and the simple index — `synapse-cdm`, `synapse_cdm` and `synapsecdm` — and
+`synapse-cdm` is 404 on TestPyPI as well. PEP 503 normalises the first two to the same name, so
+that is one name checked three ways rather than three names. A 404 is availability at a moment,
+not a reservation: nothing holds the name until something is uploaded under it.
+
+**The metadata is complete and it is gated.** `tests/test_cdm_packaging.py` asserts the author is
+`Decent Cybersecurity s.r.o.` as `NOTICE` spells it, the licence expression and both licence
+files, the five project URLs, the classifiers including the declared Python floor, and that the
+long description is a file inside the distribution. `twine check --strict` confirms the README
+renders.
+
+**Why it stopped here.** There are no credentials on this machine — no `~/.pypirc`, no API token
+in the environment — and Trusted Publishing is not an option that merely needs switching on: it
+authenticates a **GitHub Actions workflow**, and this repository has no `.github/workflows` and no
+CI at all (see MIGRATIONS.md, "What is deliberately not automated"). Inventing a publishing
+mechanism to close this entry would be the deploy-claim mistake in a new place: a workflow written
+to satisfy a checklist, never run, describing an automation nobody has watched work.
+
+**What a human has to do, in order.** Nothing below is inferrable from the repository; that is why
+it is written out.
+
+1. Create the PyPI account and enable two-factor authentication on it — PyPI has required 2FA for
+   uploads since 2024, so an account without it cannot publish at all.
+2. Decide the owner. `synapse-cdm` should belong to an organisation account for
+   Decent Cybersecurity s.r.o. rather than to an individual, because the package's declared author
+   is the company and a personal account makes succession a favour rather than a process.
+3. Upload to **TestPyPI first** and install from it into a clean environment. The project page
+   cannot be previewed any other way, and an upload to PyPI is irreversible: a filename can never
+   be reused, even after the release is deleted.
+4. Mint a **project-scoped API token** — scoped to `synapse-cdm` once it exists, which means one
+   throwaway upload under an account-scoped token first, or an initial upload with the wider token
+   and an immediate re-scope.
+5. `python -m build packages/cdm && twine upload packages/cdm/dist/*`, then verify by installing
+   from the index in a clean venv and running `python -m synapse_cdm.harness --adapter pntmap`.
+6. Update the two places that say it is unpublished — `README.md` ("Using it") and
+   `docs/docs/intro.mdx` ("Installing it") — and this entry.
+
+**One accepted limitation, ruled rather than overlooked.** The long description is the package's
+own `README.md`, and its fifteen links are relative (`adapters/pntmap.py`, `MIGRATIONS.md`). PyPI
+does not rewrite relative links, so they will not resolve on the project page. They are left
+relative on purpose: they are correct in all three places the file actually lives — the
+repository, the sdist and the installed package — and the alternative, absolute `blob/main` URLs
+baked into a released wheel, points a 1.0.0 reader at whatever `main` says years later. Navigation
+on the project page is what the five `project.urls` entries are for.
 
 ## The deployment was not affected
 

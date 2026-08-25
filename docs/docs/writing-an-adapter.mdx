@@ -156,8 +156,7 @@ treated as a coordinate and not as absence.
 ## 6. Record the golden output and read it
 
 ```bash
-python -m synapse_cdm.harness --adapter tak \
-    --fixtures packages/cdm/synapse_cdm/fixtures/tak --update-golden
+python -m synapse_cdm.harness --adapter tak --update-golden
 ```
 
 :::danger[`--update-golden` is how a defect becomes the expectation]

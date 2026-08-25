@@ -14,9 +14,8 @@ byte file is a mis-parse waiting to happen and a hand-edited twin would not tell
 it implies. So `spec/build_fixtures.py` is the source of truth for both artefacts:
 
 ```bash
-python packages/cdm/synapse_cdm/fixtures/cat021/spec/build_fixtures.py
-python -m synapse_cdm.harness --adapter cat021 \
-    --fixtures packages/cdm/synapse_cdm/fixtures/cat021 --update-golden   # then READ the diff
+python spec/build_fixtures.py                 # from THIS directory, wherever it is
+python -m synapse_cdm.harness --adapter cat021 --update-golden   # then READ the diff
 ```
 
 Edit the generator, never the `.cat021` and never the `.parsed.json`.

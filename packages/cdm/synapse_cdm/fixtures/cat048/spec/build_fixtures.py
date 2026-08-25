@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Build the CAT048 fixture set. THE SOURCE OF TRUTH FOR BOTH ARTEFACTS.
 
-    python packages/cdm/synapse_cdm/fixtures/cat048/spec/build_fixtures.py
-    PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter cat048 \
-        --fixtures packages/cdm/synapse_cdm/fixtures/cat048 --update-golden   # then READ it
+    python build_fixtures.py                      # from the directory this file is in
+    python -m synapse_cdm.harness --adapter cat048 --update-golden   # then READ it
 
 Edit this file, never the `.cat048` octets and never the `.parsed.json` twins.
 

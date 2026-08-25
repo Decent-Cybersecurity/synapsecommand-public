@@ -2,7 +2,7 @@
 
 Run from the repository root:
 
-    python packages/cdm/synapse_cdm/fixtures/nits/spec/build_fixtures.py
+    python build_fixtures.py                      # from the directory this file is in
 
 Each case is written as a TWIN: a `.nits.xml` document and a `.parsed.json` holding the parsed
 form the never-drop check measures against. Both go through `to_cdm()` when the harness replays

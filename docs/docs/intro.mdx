@@ -129,8 +129,23 @@ hashes: `...:44Z`, `...:44.0Z` and `...:44.000000Z` are one instant and three st
 
 ## Installing it
 
+The distribution is **`synapse-cdm`** — the import name is `synapse_cdm`, because a Python
+identifier cannot carry a hyphen. It is **not on PyPI yet**: the metadata is complete and the
+artefacts are built and verified, but publishing needs a human with credentials. Until then it is
+installed from the built wheel, or from a clone:
+
 ```bash
-pip install -e packages/cdm     # from a clone
+pip install ./synapse_cdm-1.0.0-py3-none-any.whl    # the built artefact
+pip install -e packages/cdm                         # or from a clone
+```
+
+Everything it needs comes with it. The ten shipped adapters' **fixtures are part of the package**,
+so the harness runs against the payloads those adapters are verified on without a repository
+anywhere:
+
+```bash
+python -m synapse_cdm.harness --adapter pntmap      # no --fixtures: they came with the package
+python -m synapse_cdm.schemas --out ./schemas       # the six JSON Schemas, written on demand
 ```
 
 The package depends on `pydantic` and `jsonschema` and nothing else. It contains no crypto:

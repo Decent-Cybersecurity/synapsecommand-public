@@ -5,9 +5,8 @@ real detection. Every packet is built from field values by `spec/build_fixtures.
 only thing that should ever write to this directory:
 
 ```
-python packages/cdm/synapse_cdm/fixtures/gmti/spec/build_fixtures.py
-python -m synapse_cdm.harness --adapter gmti \
-    --fixtures packages/cdm/synapse_cdm/fixtures/gmti
+python spec/build_fixtures.py                 # from THIS directory, wherever it is
+python -m synapse_cdm.harness --adapter gmti
 ```
 
 ## Twins, and why both halves are replayed

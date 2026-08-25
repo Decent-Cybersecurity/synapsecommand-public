@@ -504,3 +504,232 @@ def test_a_planned_adapters_directory_fails_the_harness_rather_than_passing_vacu
             "precisely the shape a Phase 1 directory has and the reader needs to know it is not a "
             "path mistake"
         )
+
+
+# ------------------------------------------------- the fixtures resolve through the PACKAGE
+#
+# The other half of the `stanag4676` / `nits` story, and the half that only appears once the
+# package is something you install rather than something you clone. The map above pinned the
+# relation; it lived in a TEST, so the harness still could not use it, and every document filled
+# `--fixtures` in by hand with `packages/cdm/synapse_cdm/fixtures/<name>` — a path that exists in
+# a clone and nowhere else. `synapse_cdm/README.md` printed it one line below
+# `pip install synapse_cdm`.
+#
+# The relation now lives on the adapter (`Adapter.fixture_dir`) and the harness resolves it
+# through `importlib.resources`. The map above is kept, by hand, as the second independent
+# statement — the pin gate's arrangement — and these tests are what make the two check each other.
+
+
+def test_the_adapters_declare_the_same_fixture_directories_this_module_pins():
+    """Two statements of one fact, each checkable against the other.
+
+    Deliberately NOT rewritten as `SHIPPED_FIXTURE_DIRS = {n: c.fixture_dir or n ...}`. A map
+    derived from the thing it is checking asserts nothing: it would agree with a typo in
+    `fixture_dir` as readily as with the truth. The hand-written half is what makes an accidental
+    edit to an adapter's declaration a build failure, and `test_the_ten_shipped_adapters_all_have_
+    a_real_fixture_directory` above is what keeps the hand-written half honest against the disk.
+    """
+    from synapse_cdm.adapter import discover
+    declared = {name: (cls.fixture_dir or cls.name)
+                for name, cls in discover().items()
+                if cls.__module__.startswith("synapse_cdm.adapters.")}
+    assert declared == SHIPPED_FIXTURE_DIRS, (
+        f"the adapters and this module disagree about where fixtures live: "
+        f"{ {k: v for k, v in declared.items() if SHIPPED_FIXTURE_DIRS.get(k) != v} } vs "
+        f"{ {k: v for k, v in SHIPPED_FIXTURE_DIRS.items() if declared.get(k) != v} }. One of "
+        "the two was edited alone — and if the adapter's declaration is the wrong one, the "
+        "harness is now replaying the wrong directory or none at all"
+    )
+
+
+def test_only_the_adapter_named_for_a_standard_declares_a_different_directory():
+    """Nine of ten leave `fixture_dir` unset, and that is the property worth asserting.
+
+    `fixture_dir = None` means "the same string as `name`". If a future adapter sets it to its own
+    name, the declaration is noise that reads as a meaningful exception; if the exception spreads
+    beyond the adapters named after covering documents, the convention has stopped being a
+    convention. Both are cheap to catch here and expensive to notice later.
+    """
+    from synapse_cdm.adapter import discover
+    overridden = {name: cls.fixture_dir for name, cls in discover().items()
+                  if cls.__module__.startswith("synapse_cdm.adapters.")
+                  and cls.fixture_dir is not None}
+    assert overridden == {"stanag4676": "nits"}, (
+        f"the set of adapters overriding fixture_dir is {overridden}. Exactly one does, and it "
+        "does because STANAG 4676 is a covering document — the adapter is named for the standard "
+        "and the directory for the payload. An override equal to the adapter's own name is a "
+        "no-op that reads as an exception; a new genuine one needs its reason in the class"
+    )
+
+
+def test_the_packaged_fixtures_resolve_through_import_resources_not_a_repo_path():
+    """`packaged_fixtures` must answer with a real directory holding real fixtures, for all ten.
+
+    Asserted through `importlib.resources` rather than by walking up from `__file__`: that is the
+    difference between a path that works in a clone and a path that works wherever the package is
+    installed, and it is the only difference that matters to somebody who ran `pip install`.
+    """
+    from synapse_cdm.adapter import discover, packaged_fixtures
+    shipped = {n: c for n, c in discover().items()
+               if c.__module__.startswith("synapse_cdm.adapters.")}
+    assert len(shipped) == 10
+    for name, cls in sorted(shipped.items()):
+        path = packaged_fixtures(cls)
+        assert path.is_dir(), f"{name}: {path} is not a directory"
+        payloads = [p for p in path.iterdir() if p.is_file() and p.name != "README.md"
+                    and not p.name.startswith(".")]
+        assert payloads, f"{name}: {path} holds no fixture files"
+
+
+def test_the_harness_replays_the_packaged_fixtures_when_none_are_given():
+    """`--fixtures` omitted is a REAL run, not a default that quietly resolves to nothing.
+
+    Exercised through `main` rather than `run`, because the resolution happens in the CLI and a
+    test against `run` would be testing the half that never had the defect.
+    """
+    code = harness.main(["--adapter", "pntmap", "--json"])
+    assert code == 0, "the reference adapter's packaged fixtures must replay green"
+
+
+def test_an_adapter_from_outside_this_package_is_refused_rather_than_guessed_at(capsys):
+    """`module:ClassName` with no `--fixtures` exits 2 and says why.
+
+    The dangerous branch is not the missing directory — it is the COLLIDING one. A third-party
+    adapter named `tak` would otherwise be judged against our CoT fixtures and every check would
+    pass or fail for reasons having nothing to do with it, which is a green run that proves
+    something about someone else's code.
+    """
+    code = harness.main(["--adapter", f"{__name__}:_OutsideAdapter", "--json"])
+    assert code == harness.EXIT_NO_FIXTURES == 2
+    captured = capsys.readouterr()
+    assert captured.out == "", "no report may be printed for a run that did not happen"
+    assert "--fixtures is required" in captured.err
+    assert "will not guess" in captured.err, \
+        "the message has to say that the harness declined to guess, not merely that it failed"
+
+
+class _OutsideAdapter(Adapter):
+    """Stands in for an adapter the factory generated or a partner wrote, in another package.
+
+    Named for a real fixture directory ON PURPOSE: `pntmap` is the collision the refusal above
+    exists for, and a stand-in that could not collide would not exercise it.
+    """
+    name = "outside-pntmap"
+    version = "0.0.1"
+    direction = "ingest"
+    system = "OUTSIDE"
+    fixture_dir = "pntmap"
+
+    def to_cdm(self, raw):
+        raise AssertionError("never reached: the run is refused before any fixture is read")
+
+
+# ------------------------------------------------------ a --schemas directory with no schemas
+#
+# `NoFixturesFound`'s argument reaching check 2, and it was found by running the suite against an
+# INSTALLED wheel rather than the source tree. `tests/test_cdm_gmtif_adapter.py` anchored its
+# schemas directory on the package instead of on itself, which resolves inside a checkout and
+# resolves to nothing once the package is in site-packages. The harness did not say so: it built
+# an empty validator table and reported `unknown object_kind 'entity'` once per object, 32
+# fixtures deep. The wall of failures blamed the adapter for a directory that was not there.
+
+
+def test_a_schemas_directory_with_nothing_in_it_is_refused_rather_than_validated_around(tmp_path):
+    """Empty and absent are one failure, as they are for fixtures, and both name the cause."""
+    empty = tmp_path / "schemas"
+    empty.mkdir()
+    absent = tmp_path / "never-created"
+    for directory, existed in ((empty, True), (absent, False)):
+        with pytest.raises(harness.NoSchemasFound) as caught:
+            harness.run(_adapter(), _packaged_pntmap_fixtures(), schema_dir=directory)
+        message = str(caught.value)
+        assert str(directory) in message, "the directory searched has to be named"
+        assert "unknown kind" in message, (
+            "the message must say what the symptom WOULD have been, because that symptom is "
+            "what the reader will have already seen if they got here from a report"
+        )
+        assert "--out" in message, "the message has to say how to produce the missing files"
+        # Same failure, different fix: one caller has the wrong path, the other has the right
+        # path and an unpopulated directory. The exit code does not distinguish them; the
+        # message must.
+        assert ("DOES NOT EXIST" in message) is not existed, (
+            f"{directory} existed={existed} and the message "
+            f"{'claimed' if existed else 'did not say'} it was absent"
+        )
+
+
+def test_the_cli_reports_a_missing_schema_directory_on_stderr_with_no_report(tmp_path, capsys):
+    """Exit 2 and nothing on stdout: a report is a claim that objects were judged."""
+    (tmp_path / "schemas").mkdir()
+    code = harness.main(["--adapter", "pntmap", "--schemas", str(tmp_path / "schemas"), "--json"])
+    assert code == harness.EXIT_NO_FIXTURES == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "no *.schema.json" in captured.err
+
+
+def _packaged_pntmap_fixtures() -> pathlib.Path:
+    """The packaged set, so this check fails for its own reason and not for a missing directory."""
+    from synapse_cdm.adapter import packaged_fixtures
+    return packaged_fixtures(PntmapAdapter)
+
+
+def test_a_package_that_is_not_on_a_real_filesystem_is_refused_with_a_reason(monkeypatch):
+    """The zip-import branch of `fixture_root`, exercised rather than merely written.
+
+    It is unreachable through a normal `pip install` — pip unpacks — so it was written as a guard
+    and a mutation matrix found it untested: deleting the check left every test green. An
+    unexercised refusal is a message nobody has read, and this one exists precisely for the
+    reader whose situation nobody anticipated, so it has to be the message it claims to be.
+
+    `importlib.resources.files()` is made to return what it really returns for a package inside a
+    zip: a `Traversable` that supports `/` and is not a `pathlib.Path`. The harness reads a
+    fixture directory with `iterdir()` and can write goldens back into it, so a temporary
+    extraction is not a workaround — `--update-golden` would report WROTE for files that vanish.
+    """
+    from synapse_cdm import adapter as adapter_module
+
+    class _NotAPath:
+        """Stands in for `zipfile.Path`: joinable, not a filesystem path."""
+        def __truediv__(self, other):
+            return self
+
+    monkeypatch.setattr(adapter_module.importlib.resources, "files",
+                        lambda package: _NotAPath())
+    with pytest.raises(RuntimeError) as caught:
+        adapter_module.fixture_root()
+    message = str(caught.value)
+    assert "_NotAPath" in message, \
+        "the message must name what it got, or the reader cannot tell which import path they are on"
+    assert "archive" in message, "it has to say WHY — the package is not unpacked"
+    assert "--fixtures" in message, \
+        "and it has to give the way out, which is an extracted directory passed explicitly"
+    # And `packaged_fixtures` must not swallow it into something vaguer on the way past.
+    with pytest.raises(RuntimeError):
+        adapter_module.packaged_fixtures(PntmapAdapter)
+
+
+# ---------------------------------------------- the checks a run produces, against what it renders
+#
+# `_COLUMNS` is a rendering constant, and the count it implies is stated in six documents. Those
+# six live in `tests/test_cdm_prose_counts.py`, which is where a number stated in prose belongs;
+# this is the half that keeps the constant honest about the RUN, so the prose has something real
+# to be compared with. Five of the six said FIVE until the SDK round's sweep — `roundtrip` had
+# been a sixth column, with its own docstring and its own SKIP semantics, since it was added.
+
+
+def test_the_check_columns_are_exactly_the_checks_the_run_produces():
+    """The derived side of the count, so the six prose sites have something real to be compared to.
+
+    `_COLUMNS` is a rendering constant. If a check were added to `run()` and not to it, all six
+    documents would agree with a number that had stopped describing the report — six greens over
+    a column nobody sees.
+    """
+    from synapse_cdm.adapter import packaged_fixtures
+    report = harness.run(_adapter(), packaged_fixtures(PntmapAdapter))
+    for result in report["results"]:
+        assert set(result["checks"]) == set(harness._COLUMNS), (
+            f"{result['fixture']} produced checks {sorted(result['checks'])} and the report "
+            f"renders {sorted(harness._COLUMNS)}. A check missing from _COLUMNS is invisible in "
+            "every report the harness prints"
+        )

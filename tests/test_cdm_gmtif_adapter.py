@@ -1488,7 +1488,14 @@ def test_the_row_set_claims_this_adapter():
 # ==================================================== the harness, inside pytest
 
 
-SCHEMAS = PACKAGE.parent.parent.parent / "schemas"
+#: Anchored on THIS FILE, like every other adapter module in the suite, and not on the package.
+#: It was `PACKAGE.parent.parent.parent / "schemas"` — which is `packages/cdm/../../schemas` in a
+#: checkout and `site-packages/../../schemas` once the package is installed. Against the built
+#: wheel that resolved to a directory that does not exist, `harness.run` found no schemas there,
+#: and every object in all 32 fixtures came back "unknown object_kind" — a wall of failures whose
+#: cause was a missing directory nobody had named. The published schemas are a REPOSITORY
+#: artefact, so the anchor has to be a repository file.
+SCHEMAS = pathlib.Path(__file__).resolve().parents[1] / "schemas"
 
 
 def test_the_harness_passes_every_fixture_against_the_published_schemas():

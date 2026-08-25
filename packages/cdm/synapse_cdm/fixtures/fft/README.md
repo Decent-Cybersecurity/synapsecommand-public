@@ -16,8 +16,7 @@ no fixture plan. There is a pinned document, two ruled names, one delegation row
 # Substitute any registered adapter and it fails again, this time on the directory: exit code 2,
 # `NoFixturesFound`, because the only thing in here is spec/ and a run that exercises nothing must
 # not report a green.
-PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter stanag5527 \
-    --fixtures packages/cdm/synapse_cdm/fixtures/fft
+python -m synapse_cdm.harness --adapter stanag5527 --fixtures .   # from THIS directory
 ```
 
 **`stanag5527` is adapter #9.** The ordinal was reserved and is now issued: the number did not

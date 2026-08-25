@@ -26,19 +26,39 @@ adapter is a thin translator and nothing else.
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
     platform        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 
-Quick start, from the repository root:
+## Quick start
+
+**Using it.** Nothing but the package, from any directory:
 
 ```bash
-pip install -e packages/cdm                 # or: pip install synapse_cdm
-pytest -q                                   # the suite runs without installing anything
+pip install synapse-cdm
 
-python -m synapse_cdm.harness --adapter pntmap --fixtures packages/cdm/synapse_cdm/fixtures/pntmap
-python -m synapse_cdm.schemas --check --out schemas   # fail if the published schemas are stale
+python -m synapse_cdm.harness --adapter pntmap        # replays the fixtures that came with it
+python -m synapse_cdm.schemas --out ./schemas         # writes the six JSON Schemas, anywhere
 ```
 
-The two commands also install as `cdm-harness` and `cdm-schemas`. `pytest` needs no install
-because `pytest.ini` puts `packages/cdm` on the path — the suite judges the working tree, not
-whatever wheel happens to be in the environment.
+`--fixtures` is optional for an adapter this package ships: omitted, the harness asks the import
+system where its own fixtures are and replays those, wherever the package is installed. Pass it
+to replay your own set. Both commands also install as `cdm-harness` and `cdm-schemas`.
+
+The wheel deliberately carries no copy of the published schemas — a third copy of a generated
+artefact is a third thing that can go stale — so `python -m synapse_cdm.schemas --out <dir>`
+produces them on demand instead, and they are identical to the ones the repository publishes.
+
+**Working on it.** From a clone of the repository:
+
+```bash
+pip install -e "packages/cdm[test]"                   # the package, its two deps, and pytest
+pytest -q                                             # the whole suite
+python -m synapse_cdm.schemas --check --out schemas   # fail if the published schemas are stale
+python gates/wheel_install.py                         # and that the WHEEL is what was tested
+```
+
+`pytest.ini` puts `packages/cdm` on the path, so the suite judges the working tree rather than
+whatever wheel happens to be in the environment. That is deliberate and it has a cost — nothing
+in the suite exercises the artefact a partner receives — which is what `gates/wheel_install.py`
+is for: it builds the distribution, installs it into a clean environment and runs the harness and
+half the suite against **that**.
 
 ## The four canonical objects
 
@@ -150,14 +170,16 @@ Do not default it — an alert that arrives labelled `INFO` because its severity
 is worse than one that fails loudly. An enum that *has* an `UNKNOWN` member is different: use
 it, and keep the source's own word in `attributes`.
 
-**5. Ship fixtures.** At least three synthetic payloads under
-`packages/cdm/synapse_cdm/fixtures/<name>/`, including one that exercises the awkward path (a missing
-position, an unknown type, a vendor block you have never seen). No real data, ever.
+**5. Ship fixtures.** At least three synthetic payloads in this package's `fixtures/<name>/`,
+including one that exercises the awkward path (a missing position, an unknown type, a vendor
+block you have never seen). No real data, ever. If your adapter lives outside this package, put
+them wherever you like and pass `--fixtures` — the harness is not fussy about where they are, only
+about there being some.
 
 **6. Record the golden output and read it.**
 
 ```bash
-python -m synapse_cdm.harness --adapter tak --fixtures packages/cdm/synapse_cdm/fixtures/tak --update-golden
+python -m synapse_cdm.harness --adapter tak --update-golden
 ```
 
 Then **review the diff before committing it** — `--update-golden` is how a defect becomes the
@@ -175,12 +197,12 @@ there and must ship its own round-trip test.
 ## The harness
 
 ```
-python -m synapse_cdm.harness --adapter <name|module:Class> --fixtures <dir> [--json]
-                              [--schemas schemas] [--now <RFC3339>] [--update-golden]
+python -m synapse_cdm.harness --adapter <name|module:Class> [--fixtures <dir>] [--json]
+                              [--schemas <dir>] [--now <RFC3339>] [--update-golden]
                               [--synthetic true|false]
 ```
 
-Five checks per fixture, and an unrun check reports `SKIP` — never `PASS`:
+Six checks per fixture, and an unrun check reports `SKIP` — never `PASS`:
 
 | Check | Fails when |
 |---|---|
@@ -195,19 +217,29 @@ Nothing in the harness knows anything about any particular adapter — it resolv
 `module:ClassName` as readily as a registered name, which is what makes it usable as the gate
 for adapters the AI adapter factory generates and this repository has never seen.
 
-**Exit codes: `0` every fixture passed, `1` fixtures ran and some failed, `2` no fixture was
-found.** The third one exists because `2` and `1` send a reader to different places — `1` says
+**Exit codes: `0` every fixture passed, `1` fixtures ran and some failed, `2` the run could not
+happen — no fixture matched, the `--schemas` directory held no schemas, or `--fixtures` was
+omitted for an adapter this package does not ship.** The third one exists because `2` and `1` send a reader to different places — `1` says
 debug the adapter, `2` says fix the path you passed — and because a run that matched nothing used
 to exit `0` with `0 passed, 0 failed`. It does not any more: an absent directory, an empty one and
 one whose only content is a `spec/` subdirectory are the same failure, and the message names the
 adapter, the directory searched and the rule that selected nothing. `--json` prints nothing at all
 in that case, because the shape of a report is itself a claim that fixtures were judged.
 
-**The fixture directory is not always the adapter's name.** `stanag4676` reads its fixtures from
-`fixtures/nits`, and `--fixtures packages/cdm/synapse_cdm/fixtures/stanag4676` is the invocation
-that used to pass vacuously. Each `fixtures/*/README.md` carries the correct command for its own
-adapter, and `tests/test_cdm_harness.py::test_the_ten_shipped_adapters_all_have_a_real_fixture_directory`
-pins the whole map so a new adapter cannot join the roster without one.
+**The fixture directory is not always the adapter's name, and you no longer have to know that.**
+`stanag4676` reads its fixtures from `fixtures/nits` — the adapter is named for a covering
+document and the directory for the bytes it holds — and pointing `--fixtures` at
+`fixtures/stanag4676` is the invocation that used to pass vacuously, because that directory holds
+only pinned standards. Each adapter now DECLARES its directory (`Adapter.fixture_dir`) and the
+harness resolves it through `importlib.resources`, so omitting `--fixtures` is always right for a
+shipped adapter. `tests/test_cdm_harness.py` holds the same map written out by hand and requires
+the two to agree, so a new adapter cannot join the roster without one.
+
+**`--fixtures` is required for `module:ClassName`**, and refused rather than guessed at. This
+package ships fixtures for the adapters IT ships; guessing at `fixtures/<your name>` would either
+miss — a failure naming a directory you never mentioned — or HIT, because your adapter's name
+collided with one of ours, and then your code is judged against our payloads and every check
+passes or fails for reasons that have nothing to do with it.
 
 ### Three things the harness cannot check for you
 
@@ -275,7 +307,7 @@ general prose-number check would flag "two altitudes that are two different meas
 need an exemption list larger than the sweep it replaced — so **finding a NEW site is still the
 sweep's job**, and adding it to that allowlist is how the sweep's work stops being undone.
 
-None of the three is something the five checks can produce, and that is the point of writing them
+None of the three is something the six checks can produce, and that is the point of writing them
 down here: a green harness run is a floor.
 
 ## Layout

@@ -7,8 +7,7 @@ reviewed that row set as a specification with no code behind it; this directory 
 against it.
 
 ```bash
-PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter cat034 \
-    --fixtures packages/cdm/synapse_cdm/fixtures/cat034
+python -m synapse_cdm.harness --adapter cat034
 # 34 passed, 0 failed — seventeen payloads, each replayed twice
 ```
 

@@ -246,9 +246,18 @@ def test_the_declared_floor_is_still_the_one_this_round_ruled_for():
 # ------------------------------------------------------------------------------ file discovery
 
 def discover() -> list[pathlib.Path]:
-    """Every Python file this gate parses: the package and the test suite."""
+    """Every Python file this gate parses: the package, the test suite, and the gate scripts.
+
+    `gates/` was added by the closure below rather than by anyone remembering it — a new top-level
+    directory holding Python failed `test_no_python_file_in_this_repository_escapes_the_gate` on
+    the commit that created it, which is exactly the moment that docstring says the decision has
+    to be made. It is IN SCOPE, and the reason is what the floor is for: `gates/wheel_install.py`
+    is run by a contributor before a pull request, on whatever interpreter they have, and the
+    oldest one this project says it supports is 3.11. A gate that will not parse on the floor the
+    project declares is a gate the floor's users cannot run.
+    """
     out = []
-    for root in (PKG, REPO / "tests"):
+    for root in (PKG, REPO / "tests", REPO / "gates"):
         out.extend(python_files_under(root))
     return sorted(out)
 
@@ -257,10 +266,22 @@ FILES = discover()
 
 
 def test_the_discovery_found_the_tree_and_not_a_corner_of_it():
-    assert len(FILES) >= 45, (
-        f"discovery found only {len(FILES)} Python files. The package alone holds 28 and the "
-        "suite holds more than 20, so the walk has stopped descending"
-    )
+    """A floor gate that walked into an empty directory would parse nothing and report green.
+
+    The expected size is DERIVED per root rather than written as a number. It used to read "the
+    package alone holds 28 and the suite holds more than 20", and both had drifted — 31 and 30 —
+    which is a stale count inside the message of a gate whose whole subject is a declaration that
+    went stale. Counting each root separately also localises the failure: a walk that stopped at
+    the package still finds the suite, and a total would hide that.
+    """
+    for root in (PKG, REPO / "tests", REPO / "gates"):
+        here = [f for f in FILES if f.is_relative_to(root)]
+        expected = sum(1 for _ in root.rglob("*.py") if "__pycache__" not in _.parts)
+        assert here and len(here) == expected, (
+            f"discovery found {len(here)} Python files under {root.relative_to(REPO)} and the "
+            f"directory holds {expected}. The walk has stopped descending, or a root was pruned "
+            "that should not have been"
+        )
 
 
 def test_no_python_file_in_this_repository_escapes_the_gate():

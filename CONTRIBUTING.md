@@ -108,9 +108,13 @@ source sentinel that must become `null`, an enum collapse that has to stay recov
 ### It must pass the full harness
 
 ```bash
-python -m synapse_cdm.harness --adapter <name> \
-    --fixtures packages/cdm/synapse_cdm/fixtures/<name> --schemas schemas
+python -m synapse_cdm.harness --adapter <name> --schemas schemas
 ```
+
+No `--fixtures`: an adapter in this package declares its own fixture directory
+(`Adapter.fixture_dir`) and the harness resolves it through `importlib.resources`. An adapter
+that lives outside this package is loaded as `module:ClassName` and then `--fixtures` is
+required — the harness will not guess at a directory it cannot know.
 
 Every check, every fixture, `0 failed`. The harness knows nothing about any particular adapter,
 so it is the same gate for yours as for ours:
@@ -170,8 +174,21 @@ pip install -e "packages/cdm[test]"                  # editable install, plus py
 pytest -q                                            # the whole suite
 python -m synapse_cdm.schemas --check --out schemas   # published schemas match the models
 
+python gates/wheel_install.py                        # the built WHEEL, in a clean environment
+
 cd docs && npm install && npm run ci                 # docs: drift gate, typecheck, build
 ```
+
+The third line is a **gate rather than a test**, and the distinction is the reason it is here.
+`pytest.ini` puts `packages/cdm` on `sys.path`, so the suite judges the working tree and never an
+installed copy — deliberately, because a stale wheel passing for the source is a green run that
+means nothing. The cost is that nothing in the suite exercises the artefact a partner receives.
+`gates/wheel_install.py` builds the distribution, installs the wheel into an environment with no
+part of this repository on its path, and runs the harness and the package-only half of the suite
+against **that**. It needs a network for `pip`, which is why it is not a suite member.
+
+Add `--mutation-check` and it also builds a wheel with its fixtures stripped out and requires
+itself to refuse it. Run that form if you touched packaging.
 
 The `[test]` extra carries `pytest`; the quotes are for `zsh`, which would otherwise glob the
 brackets. `README.md` documents the same first two lines and a test requires the two to agree.

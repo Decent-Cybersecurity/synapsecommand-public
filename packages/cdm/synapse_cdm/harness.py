@@ -1,18 +1,30 @@
 """The validation harness: replay recorded payloads through an adapter, judge the output.
 
-    python -m synapse_cdm.harness --adapter pntmap --fixtures packages/cdm/synapse_cdm/fixtures/pntmap
+    python -m synapse_cdm.harness --adapter pntmap
+
+`--fixtures` is OPTIONAL for an adapter this package ships: omitted, the harness asks the import
+system where its own fixtures are (`adapter.packaged_fixtures`) and replays those. It used to be
+required, and every document filled it in with a path inside a CLONE of the repository this
+package is developed in — a directory that exists there and nowhere else, printed one line below
+`pip install synapse_cdm`. Pass `--fixtures` to replay your own set, and pass it you must for an
+adapter loaded as `module:ClassName`, which lives outside this package and whose fixtures this
+package cannot know the location of.
 
 WHAT IT IS FOR
 --------------
 Today: the gate an adapter has to pass before it ships. Tomorrow: the gate GENERATED adapters
 have to pass, which is why nothing in this file knows anything about any particular adapter.
 It resolves the adapter by name or by `module:ClassName`, reads whatever fixtures it is
-pointed at, and applies the same five checks to all of them. An adapter the harness has never
+pointed at, and applies the same six checks to all of them. An adapter the harness has never
 heard of is validated by the same code as the reference one, and that property is the whole
 design constraint.
 
-THE FIVE CHECKS, AND WHY EACH ONE EARNS ITS PLACE
--------------------------------------------------
+THE SIX CHECKS, AND WHY EACH ONE EARNS ITS PLACE
+------------------------------------------------
+It said FIVE until the SDK round's stale-count sweep, and it had said five since `roundtrip` was
+added — a sixth column in `_COLUMNS`, a sixth row in every report, and a check with its own
+docstring and its own SKIP semantics, missing from the list that claims to be the list. The
+count is derived by `tests/test_cdm_harness.py` now, at every site that states it.
 1. translate   to_cdm() runs and returns objects. A raised exception is a fixture-level FAIL,
                never a crashed run: one bad payload must not stop the other nineteen from
                being judged (the harness that dies at case five reports nineteen unknowns as
@@ -27,7 +39,10 @@ THE FIVE CHECKS, AND WHY EACH ONE EARNS ITS PLACE
                cannot say where it came from is inadmissible regardless of how well-formed it
                is.
 4. lossless    no source value vanished. See lossless.py. Declared transforms are printed.
-5. golden      the output matches the recorded expectation byte for byte, under a FROZEN
+5. roundtrip   for an egress or bidirectional adapter: raw -> CDM -> raw loses no VALUE. See
+               `_check_roundtrip`, which explains why it is not a byte comparison and why an
+               ingest-only adapter gets SKIP rather than PASS.
+6. golden      the output matches the recorded expectation byte for byte, under a FROZEN
                clock. This is what catches an unintended change in a translation nobody meant
                to touch.
 
@@ -51,7 +66,7 @@ from typing import Any
 import jsonschema
 
 from synapse_cdm import lossless, schemas, times
-from synapse_cdm.adapter import Adapter, load_adapter
+from synapse_cdm.adapter import Adapter, load_adapter, packaged_fixtures
 from synapse_cdm.models import CDMBase
 
 GOLDEN_DIR = "golden"
@@ -63,10 +78,28 @@ PASS, FAIL, SKIP = "PASS", "FAIL", "SKIP"
 FIXTURE_PATTERN = ("immediate children of the directory that are files, "
                    "excluding dotfiles and README.md")
 
-#: Exit status for a run that exercised no fixture. Distinct from 1, which means fixtures ran
-#: and some failed: this one means the INVOCATION was wrong, and conflating the two would tell a
+#: Exit status for a run that could not happen. Distinct from 1, which means fixtures ran and
+#: some failed: this one means the INVOCATION was wrong, and conflating the two would tell a
 #: caller to debug an adapter when the thing to fix is the path they passed.
+#:
+#: Three conditions share it, and sharing is the ruling rather than an omission — a path the
+#: caller passed is wrong in all three, and splitting them would be splitting one repair into
+#: three exit codes nobody would remember: no fixtures matched, no schemas were found in a
+#: `--schemas` directory, and `--fixtures` was omitted for an adapter this package does not ship
+#: and therefore has no fixtures for. The NAME is kept for the first, which is the one every gate
+#: sweep is written against.
 EXIT_NO_FIXTURES = 2
+
+
+class NoSchemasFound(RuntimeError):
+    """A `--schemas` directory with no schemas in it. Raised, never validated around.
+
+    `NoFixturesFound`'s argument, one check along: a run that validated nothing must not be
+    reportable, and the report is where the misdirection happened — an empty validator table
+    turns "the directory is missing" into one "unknown object_kind" line per object, which reads
+    as a broken adapter. Both are INVOCATION errors and both exit `EXIT_NO_FIXTURES`, because
+    both mean the same thing to a caller: fix the path, not the code.
+    """
 
 
 class NoFixturesFound(RuntimeError):
@@ -265,6 +298,21 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         published = {}
         for path in sorted(schema_dir.glob("*.schema.json")):
             published[path.name.removesuffix(".schema.json")] = json.loads(path.read_text())
+        # A `--schemas` directory holding nothing is refused, for the same reason a fixtures
+        # directory holding nothing is. It used to be survivable and the survival was the worst
+        # kind: `published` stayed empty, so `validators` stayed empty, so EVERY object came back
+        # "unknown object_kind 'entity'" — thirty-two fixtures' worth of failures blaming the
+        # objects for a directory that was not there. The cause has to be named where it is known.
+        if not published:
+            raise NoSchemasFound(
+                f"no *.schema.json in {schema_dir}"
+                + ("" if schema_dir.is_dir() else " — the directory DOES NOT EXIST") +
+                ". Check 2 validates against the PUBLISHED schemas, so with none of them there is "
+                "nothing to validate against and every object would be reported as an unknown "
+                "kind. Point --schemas at the published directory, write one with "
+                "`python -m synapse_cdm.schemas --out <dir>`, or omit --schemas to generate them "
+                "in-process from the models"
+            )
         source_of_schemas = str(schema_dir)
     else:
         published = schemas.generate()
@@ -413,7 +461,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--adapter", required=True,
                         help="registered name (pntmap) or module:ClassName for an adapter "
                              "outside this package")
-    parser.add_argument("--fixtures", required=True, type=pathlib.Path)
+    parser.add_argument("--fixtures", type=pathlib.Path, default=None,
+                        help="directory of payloads to replay. Optional for an adapter this "
+                             "package ships — omitted, the fixtures that came with the "
+                             "installed package are used, wherever it is installed. Required "
+                             "for an adapter given as module:ClassName")
     parser.add_argument("--schemas", type=pathlib.Path, default=None,
                         help="validate against the published schemas in this directory "
                              "instead of regenerating them from the models")
@@ -432,10 +484,27 @@ def main(argv: list[str] | None = None) -> int:
     adapter_class = load_adapter(args.adapter)
     adapter = adapter_class(clock=times.frozen_clock(frozen),
                             synthetic=args.synthetic == "true")
+
+    fixtures = args.fixtures
+    if fixtures is None:
+        # Refused rather than guessed for an adapter from outside this package. `synapse_cdm`
+        # ships fixtures for the adapters IT ships; for `module:ClassName` it would be inventing
+        # `synapse_cdm/fixtures/<their name>`, which either does not exist — a confusing failure
+        # naming a directory the caller never mentioned — or DOES, because the name collides with
+        # one of ours, and then a third-party adapter is silently judged against our payloads and
+        # every check passes or fails for reasons that have nothing to do with it.
+        if not adapter_class.__module__.startswith("synapse_cdm.adapters."):
+            print(f"harness: --fixtures is required for {args.adapter!r}: "
+                  f"{adapter_class.__module__}.{adapter_class.__qualname__} is not one of the "
+                  "adapters this package ships, so the package has no fixtures for it and will "
+                  "not guess at a directory", file=sys.stderr)
+            return EXIT_NO_FIXTURES
+        fixtures = packaged_fixtures(adapter_class)
+
     try:
-        report = run(adapter, args.fixtures, update_golden=args.update_golden,
+        report = run(adapter, fixtures, update_golden=args.update_golden,
                      schema_dir=args.schemas)
-    except NoFixturesFound as e:
+    except (NoFixturesFound, NoSchemasFound) as e:
         # Printed to stderr and NOT as a report: --json callers must not receive a well-formed
         # report for a run that did not happen, because the shape of a report is a claim that
         # fixtures were judged.

@@ -1,8 +1,55 @@
-"""The schema version, and what a change to it means.
+"""Two version numbers, what each one governs, and why they are not one number.
 
-Semver, carried in EVERY serialised object as `schema_version`, because a consumer that
-reads an object off a queue has no other way to know which shape it is holding. The full
-policy and the changelog live in synapse_cdm/MIGRATIONS.md; the short form:
+THE DISTINCTION, STATED ONCE
+----------------------------
+This package carries two semver strings and they answer different questions.
+
+``SCHEMA_VERSION`` is the **wire contract's** version. It is carried in EVERY serialised
+object as ``schema_version``, because a consumer that reads an object off a queue has no
+other way to know which shape it is holding. It is governed by ``MIGRATIONS.md`` — that
+document's table decides what a bump means, its History section records every one, and its
+procedure is what a schema change has to walk through.
+
+``PACKAGE_VERSION`` is the **distribution's** version — what ``pip install synapse-cdm==…``
+resolves and what ``importlib.metadata.version("synapse-cdm")`` returns. It is ordinary
+semver over the Python surface: the importable names, the ``Adapter`` contract, the harness
+CLI and its exit codes, the fixture set. It follows the general rule and not MIGRATIONS.md.
+
+WHY THEY MUST BE ALLOWED TO DIVERGE, WHICH IS MEASURED AND NOT ARGUED
+---------------------------------------------------------------------
+They are BOTH ``1.0.0`` today, and a reader who sees two equal numbers reasonably concludes
+one of them is redundant. It is not, and the tree already proves it: ``MIGRATIONS.md`` has a
+section titled "Adapters that landed with no schema change" and it holds **nine** entries —
+nine adapters, each of which added thousands of lines of shipped behaviour to this
+distribution at ``schema_version`` 1.0.0, with no field added, removed or retyped.
+
+Had this package been released before any of them, each would have been a package MINOR and
+none of them a schema bump. The two numbers would already be nine minors apart. Deriving one
+from the other — which is what this file used to do, with the packaging metadata reading
+``SCHEMA_VERSION`` directly — would have produced a distribution that could not express "the
+same contract, more adapters", and the only ways out are both wrong: bump the contract for a
+change no consumer's parser cares about, or ship ten different distributions all labelled
+1.0.0 and let the index refuse the second one.
+
+The failure the old arrangement was defending against is real and is still defended against,
+just not by conflation: the risk was a wheel labelled 1.0.0 shipping objects that say 1.1.0.
+That is a DRIFT problem, and drift is what gates are for — ``tests/test_cdm_release.py``
+requires every release tag to name the ``PACKAGE_VERSION`` of the tree it points at, and
+``tests/test_cdm_schemas.py`` requires the published schemas to carry the ``SCHEMA_VERSION``
+the models generate. Neither needs the two strings to be the same string.
+
+WHERE 1.0.0 CAME FROM, FOR THE PACKAGE
+---------------------------------------
+Ruled at ``1.0.0`` rather than ``0.1.0``. ``0.x`` says "the API may change under you without
+notice", and that is not what this is: ten adapters are shipped and harness-verified, the
+``Adapter`` contract has been stable across all nine of them, and the whole point of a
+contract layer is that consumers may depend on it. A ``0.x`` first release would be
+advertising an instability the tree does not have. The coincidence with ``SCHEMA_VERSION``
+1.0.0 is a coincidence of two first releases, and it will not survive the eleventh adapter.
+
+WHAT EACH BUMP MEANS
+--------------------
+For ``SCHEMA_VERSION`` — the full policy and the changelog are in ``MIGRATIONS.md``; short form:
 
     MAJOR  a field is removed or renamed, a type narrows, an enum member is removed, or an
            optional field becomes required. Consumers break. Requires a migration note.
@@ -10,11 +57,29 @@ policy and the changelog live in synapse_cdm/MIGRATIONS.md; the short form:
            Old readers keep working; old data keeps validating.
     PATCH  documentation, description text, validation message wording. No shape change.
 
-`SCHEMA_VERSION` is compared with `compatible()` rather than by equality, because an object
-written by 1.2.0 is readable by a 1.0.0 consumer and refusing it would be a self-inflicted
-outage.
+For ``PACKAGE_VERSION`` — semver over the Python surface:
+
+    MAJOR  an importable name is removed or its meaning changes, the ``Adapter`` contract
+           changes in a way that breaks a third-party adapter, a harness exit code or flag
+           is removed, the Python floor is raised.
+    MINOR  an adapter is added, a harness flag or check is added, a fixture set is added,
+           a new optional dependency. Existing code keeps working.
+    PATCH  a translation fix, a message, a docstring. No surface change.
+
+    A ``SCHEMA_VERSION`` bump is ALWAYS at least a package MINOR, because the objects this
+    package emits change shape. The reverse does not hold, and that is the whole point.
+
+``SCHEMA_VERSION`` is compared with ``compatible()`` rather than by equality, because an
+object written by 1.2.0 is readable by a 1.0.0 consumer and refusing it would be a
+self-inflicted outage. ``PACKAGE_VERSION`` needs no such helper: ``pip`` resolves it.
 """
+#: The wire contract. Governed by MIGRATIONS.md. Carried in every serialised object.
 SCHEMA_VERSION = "1.0.0"
+
+#: The distribution. Governed by ordinary semver over the Python surface; read by
+#: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
+#: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
+PACKAGE_VERSION = "1.0.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:
@@ -29,6 +94,9 @@ def compatible(written_with: str, read_by: str = SCHEMA_VERSION) -> bool:
     its own minor — a 1.0.0 reader accepts 1.0.x and refuses 2.0.0. A minor from the future
     is ACCEPTED (1.0.0 reads 1.2.0): the additions are optional by definition of MINOR, and
     the alternative is a fleet that stops ingesting the moment one adapter is upgraded.
+
+    This is about SCHEMA_VERSION only. Asking it about PACKAGE_VERSION is a category error:
+    two distributions are not "compatible", one of them is installed.
     """
     w_major, _, _ = parse(written_with)
     r_major, _, _ = parse(read_by)

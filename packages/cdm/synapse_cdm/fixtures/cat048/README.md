@@ -5,9 +5,8 @@ row set in `../../FORMAT_COVERAGE.md` now claims `cat048 1.0.0` on every row tha
 through Phase 1.
 
 ```bash
-python packages/cdm/synapse_cdm/fixtures/cat048/spec/build_fixtures.py
-PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter cat048 \
-    --fixtures packages/cdm/synapse_cdm/fixtures/cat048 --update-golden   # then READ the diff
+python spec/build_fixtures.py                 # from THIS directory, wherever it is
+python -m synapse_cdm.harness --adapter cat048 --update-golden   # then READ the diff
 ```
 
 Edit `spec/build_fixtures.py`, never the `.cat048` octets and never the `.parsed.json` twins.

@@ -287,3 +287,86 @@ def test_a_sentence_stating_the_count_twice_states_it_the_same_way_twice(site):
         "This is the half-edit shape commit 94c000a had to repair by hand: it reads as prose "
         "either way, so nothing but a comparison catches it."
     )
+
+
+# ============================================================== the harness's check count
+#
+# The same defect as the adapter count, in a different number. `harness._COLUMNS` has SIX entries
+# and five documents said FIVE — the package's own README twice, the harness's own module
+# docstring twice, and `README.md` once — while `docs/docs/writing-an-adapter.mdx` alone said six.
+# Nobody had written anything false: the list predated `roundtrip`, which arrived as a sixth
+# column with its own docstring and its own SKIP semantics and was never counted.
+#
+# It is the shape this module exists for and it was missed because this module was scoped to the
+# ADAPTER count. So the scope widens by one number rather than by a general scanner — the
+# objection to a scanner in the header stands — and the closure below is what stops the widening
+# from being a one-off.
+
+from synapse_cdm import harness                                                 # noqa: E402
+
+#: Each site anchored to its own sentence, with the count captured as `n`. Narrow on purpose: a
+#: `\d+ checks` sweep would match the harness's exit-code prose and every fixture README.
+CHECK_SITES: tuple[tuple[str, str], ...] = (
+    ("README.md", r"(?P<n>[A-Z][a-z]+) checks per fixture — translate,"),
+    ("packages/cdm/synapse_cdm/README.md",
+     r"(?P<n>[A-Z][a-z]+) checks per fixture, and an unrun"),
+    ("packages/cdm/synapse_cdm/README.md",
+     r"None of the three is something the (?P<n>[a-z]+) checks"),
+    ("packages/cdm/synapse_cdm/harness.py",
+     r"applies the same (?P<n>[a-z]+) checks to all of them"),
+    ("packages/cdm/synapse_cdm/harness.py", r"THE (?P<n>[A-Z]+) CHECKS, AND WHY EACH ONE"),
+    ("docs/docs/writing-an-adapter.mdx",
+     r"(?P<n>[A-Z][a-z]+) checks per fixture, and \*\*an unrun"),
+)
+
+#: The phrase that appears only where the count is stated. The closure sweeps on it.
+CHECK_PHRASE = "checks per fixture"
+
+
+@pytest.mark.parametrize("path,pattern", CHECK_SITES,
+                         ids=[f"{p}::{i}" for i, (p, _) in enumerate(CHECK_SITES)])
+def test_every_stated_check_count_is_the_number_of_columns_the_harness_renders(path, pattern):
+    """The count, at every site, against `len(harness._COLUMNS)`.
+
+    A pattern that stops matching is a FAILURE and not a pass, for the reason the header gives:
+    it would otherwise read as a green check on a site nobody is checking.
+    """
+    file = REPO / path
+    assert file.exists(), f"{path} does not exist; the allowlist is stale"
+    found = list(re.finditer(pattern, flat(file.read_text())))
+    assert len(found) == 1, (
+        f"{path}: the sentence this is anchored to matched {len(found)} times, expected 1.\n"
+        f"  pattern: {pattern}\nRe-anchor it deliberately; do not delete the row"
+    )
+    stated = spelled(found[0].group("n"))
+    assert stated == len(harness._COLUMNS), (
+        f"{path} says {stated} checks and the harness renders {len(harness._COLUMNS)}: "
+        f"{harness._COLUMNS}. A check that exists and is not counted is a check nobody knows to "
+        "look for in the report"
+    )
+
+
+def test_no_document_states_the_check_count_at_a_site_this_allowlist_does_not_know():
+    """The closure, in the direction an allowlist cannot give itself.
+
+    `CONTRIBUTING.md` carries the six-row table and states no count, which is why it is absent
+    above; a count appearing there would have to be a decision rather than a copy.
+    """
+    known = {path for path, _ in CHECK_SITES}
+    strays = []
+    for path in sorted(REPO.rglob("*")):
+        if path.suffix not in {".md", ".mdx", ".py"} or not path.is_file():
+            continue
+        if any(part in {".git", ".venv", "node_modules", ".docusaurus", "build", "__pycache__"}
+               for part in path.parts):
+            continue
+        rel = str(path.relative_to(REPO))
+        if rel == "tests/test_cdm_prose_counts.py":
+            continue                     # this module quotes the phrase in order to sweep for it
+        if CHECK_PHRASE in path.read_text() and rel not in known:
+            strays.append(rel)
+    assert not strays, (
+        f"these documents state the harness check count and this allowlist does not know them: "
+        f"{strays}. Add each with an anchor to its own sentence — a site nobody checks is how "
+        f"{len(harness._COLUMNS)} checks came to be documented as five in five places at once"
+    )

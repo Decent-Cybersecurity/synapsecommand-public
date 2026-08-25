@@ -24,9 +24,10 @@ consumer        ──▶ Adapter.from_cdm() ─▶ external format          (eg
 ## Layout
 
 ```
-packages/cdm/       the synapse_cdm distribution — models, adapter SDK, harness, fixtures
+packages/cdm/       the synapse-cdm distribution — models, adapter SDK, harness, fixtures
 schemas/            published JSON Schema, GENERATED from the models — never hand-edited
 tests/              the suite; bare `pytest` from this directory runs all of it
+gates/              checks too slow or too networked for the suite; each is a protocol act
 docs/               the documentation site (Docusaurus, deployed to Cloudflare Pages)
 ```
 
@@ -34,7 +35,95 @@ docs/               the documentation site (Docusaurus, deployed to Cloudflare P
 and a Go or TypeScript reader should not have to understand a Python package layout to find it.
 It is generated, and a test fails the build if it drifts from the models.
 
-## Getting started
+## Using it
+
+You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
+`pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
+harness and **every fixture the ten shipped adapters are verified against** — which is what makes
+conformance something you can prove rather than take on trust.
+
+**Install.** It is **not on PyPI yet** — the name is registered to nobody and the metadata is
+ready, but publishing needs a human with credentials, and the checklist for that is
+[`PUBLICATION.md`](PUBLICATION.md). Until then, install the built artefact:
+
+```bash
+python -m build packages/cdm                          # writes packages/cdm/dist/
+pip install packages/cdm/dist/synapse_cdm-1.0.0-py3-none-any.whl
+```
+
+**Validate a payload against the schema.** The published JSON Schema is generated from the
+models, so the package writes it on demand rather than carrying a copy that could go stale:
+
+```bash
+python -m synapse_cdm.schemas --out ./schemas         # six schemas, from anywhere
+```
+
+```python
+import json, jsonschema
+from synapse_cdm import schemas
+
+published = schemas.generate()          # or json.load(open("schemas/entity.schema.json"))
+jsonschema.Draft202012Validator(published["entity"]).validate(json.loads(payload))
+```
+
+Six schemas: one per canonical object, one per registered payload model, and a `cdm_object`
+union carrying the discriminator — so a consumer reading a mixed stream validates without first
+deciding which kind it is holding.
+
+`schemas.generate()` and the files under [`schemas/`](schemas) are the same bytes — a gate in the
+suite fails the build if they ever differ. Use the files for a non-Python consumer; use the
+function when you have the package.
+
+**Run an adapter through the harness.** This is the gate every adapter here has to pass, and it
+is the same code for yours as for ours:
+
+```bash
+python -m synapse_cdm.harness --adapter pntmap
+```
+
+No `--fixtures`: for an adapter this package ships, the harness asks the import system where its
+own fixtures are and replays those, wherever it is installed. Six checks per fixture — translate,
+schema, provenance, lossless, roundtrip, golden — and an unrun check reports `SKIP`, never `PASS`.
+
+## Writing your first adapter
+
+The shortest honest path from an empty file to a green harness run. Nothing below is duplicated
+from the protocol documents; each step names the one that decides it.
+
+1. **Read the reference adapter.** `packages/cdm/synapse_cdm/adapters/pntmap.py`. Every rule
+   appears in it at least once, and it is 250 lines.
+2. **Learn the four objects and the seven rules** —
+   [the package README](packages/cdm/synapse_cdm/README.md) has both, with the site of
+   enforcement named for each rule. There are only four objects and one of them is probably
+   yours.
+3. **Declare the class.** `name`, `version`, `direction`, `system`. The contract is checked at
+   class-definition time, so a mistake fails at import rather than on the first outbound push.
+   Then **derive the id, never draw one** — `ids.derive(system, external_id)`. `entity_id` is
+   required and has no default on purpose: a `uuid4()` per payload creates a tenth contact for
+   the tenth report about one emitter, and makes golden output impossible to diff.
+4. **Write the field mapping down first**, as a row set in
+   [`FORMAT_COVERAGE.md`](packages/cdm/synapse_cdm/FORMAT_COVERAGE.md) — that file's conventions
+   are the specification your `to_cdm()` implements, and a test resolves every CDM path in it
+   against the real models, so it cannot go stale quietly.
+5. **Park what has no home.** `attributes` / `payload`, via `lossless.residual()`. Never
+   enumerate leftovers by hand: the block a source adds in its next firmware release is exactly
+   the one nobody remembers.
+6. **Ship at least three synthetic fixtures**, one of them awkward. No real data, ever — see
+   [`CONTRIBUTING.md`](CONTRIBUTING.md).
+7. **Run the harness and read what it says.** From outside this repository your adapter is a
+   `module:ClassName`, and `--fixtures` is then required rather than guessed at:
+
+   ```bash
+   python -m synapse_cdm.harness --adapter my_package.adapters:MyAdapter --fixtures ./fixtures
+   python -m synapse_cdm.harness --adapter my_package.adapters:MyAdapter --fixtures ./fixtures \
+       --update-golden          # then READ the diff before committing it
+   ```
+
+Contributing the adapter back — sign-off, the fixture rules, what a pull request has to pass — is
+[`CONTRIBUTING.md`](CONTRIBUTING.md), and the tutorial with a real fixture beside its real output
+is <https://docs.synapsecommand.com/writing-an-adapter>.
+
+## Working on this repository
 
 ```bash
 pip install -e "packages/cdm[test]"   # the package, its two dependencies, and pytest
@@ -46,12 +135,18 @@ The `[test]` extra is what makes the second line work: `pytest.ini` puts `packag
 `pytest` itself, and `pydantic` and `jsonschema`, still have to be there. **Keep the quotes**;
 `zsh` reads a bare `packages/cdm[test]` as a glob and fails before `pip` sees it.
 
-Run the reference adapter through the harness — the gate every adapter has to pass:
+That choice has a cost, and it is paid by a separate gate rather than ignored: nothing in the
+suite exercises the artefact a partner receives. `gates/wheel_install.py` builds the
+distribution, installs the wheel into a clean environment with no part of this repository on its
+path, and runs the harness and half the suite against **that**:
 
 ```bash
-python -m synapse_cdm.harness --adapter pntmap \
-    --fixtures packages/cdm/synapse_cdm/fixtures/pntmap --schemas schemas
+python gates/wheel_install.py --mutation-check
 ```
+
+It needs a network, which is why it is a protocol act rather than a suite member. The
+`--mutation-check` half rebuilds the wheel with its fixtures stripped out and requires the gate
+to refuse it — a gate nobody has seen fail is a gate nobody has seen.
 
 ## Where the documentation lives
 

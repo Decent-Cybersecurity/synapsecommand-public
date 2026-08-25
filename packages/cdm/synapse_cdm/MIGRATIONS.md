@@ -4,6 +4,14 @@ Every serialised object carries `schema_version`. A consumer reading an object o
 no other way to know which shape it is holding, and "we will add versioning when we need it"
 means adding it at the moment two incompatible producers are already in the field.
 
+**`schema_version` is not the package's version.** This document governs the first: the wire
+contract, carried in every object, bumped by the table below. The distribution on PyPI carries
+the second — ordinary semver over the Python surface — and the two are allowed to diverge,
+because the section "Adapters that landed with no schema change" is nine entries long and every
+one of them would have been a package release. Both are declared in `version.py`, which is the
+one place the distinction is argued; nothing here restates it. They are both `1.0.0` today, by
+coincidence of two first releases.
+
 ## What each bump means
 
 | Bump | Change | Consumer impact |
@@ -29,12 +37,60 @@ that has not been redeployed in the same hour.
    the build if you forget, and `--check` is the CI form.
 4. Add an entry below, naming the reason — not just the change.
 5. Re-run every adapter's golden files and **read the diffs**:
-   `python -m synapse_cdm.harness --adapter <name> --fixtures <dir> --update-golden`.
+   `python -m synapse_cdm.harness --adapter <name> --update-golden`, once per shipped adapter.
    A golden file updated without being read is how a defect becomes the expectation.
 6. If a documented gap in `FORMAT_COVERAGE.md` is now closed, close it there too —
    `tests/test_cdm_format_coverage.py::test_the_documented_gaps_are_still_gaps` fails
    deliberately when a gap field appears, so the document cannot silently disagree with the
    code.
+
+## Releasing the package — the procedure
+
+A release is a **tag plus an artefact**, and this section exists so that the second release
+follows a written procedure rather than the first one's memory. It governs `PACKAGE_VERSION`.
+A `schema_version` bump is always at least a package MINOR and therefore always a release; the
+reverse does not hold, and most releases will change no schema at all.
+
+### What a release requires
+
+Four conditions, none of them satisfiable by assertion:
+
+1. **The suite is green**, from the repository root, with the count recorded in the commit.
+2. **All ten harnesses are green**, and at least one of them run against the INSTALLED wheel
+   rather than the source tree — `gates/wheel_install.py` does both halves and is the gate this
+   condition means.
+3. **The tag names the package version of the tree it points at.** `v1.0.0` on a tree whose
+   `PACKAGE_VERSION` is `1.0.1` is a release nobody can reproduce, and
+   `tests/test_cdm_release.py` re-derives this for every tag in history rather than for the one
+   being made.
+4. **The notes are derived, not remembered.** Every claim in a release's notes has to be
+   readable off the tree at the tag: the adapter roster from `adapter.discover()`, the fixture
+   count from the harness, the schema list from `python -m synapse_cdm.schemas`. Notes written
+   from memory are how a release claims a capability that slipped.
+
+### The sequence
+
+```bash
+pytest -q                                            # condition 1
+python gates/wheel_install.py --mutation-check       # conditions 2 and the artefact
+python -m synapse_cdm.schemas --check --out schemas  # CURRENT
+
+git tag -a v1.0.0 -m "..."                           # annotated, never lightweight
+git push origin main --follow-tags
+gh release create v1.0.0 --notes-file <derived>      # notes from the tree, not from memory
+```
+
+The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
+tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
+that does not move, and it records nobody.
+
+### What is deliberately not automated
+
+Publishing to PyPI. There is no CI in this repository — no `.github/workflows`, and the
+documentation site is deployed by direct upload rather than by a push — so a release is a
+sequence a person runs. Automating an upload before there is anything to run it on would be
+inventing a mechanism. `PUBLICATION.md` carries the checklist of what publishing needs and who
+has to do it.
 
 ## History
 

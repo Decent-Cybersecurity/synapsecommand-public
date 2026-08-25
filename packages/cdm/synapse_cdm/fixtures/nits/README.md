@@ -5,9 +5,8 @@ no real platform. Every document is built from field values by `spec/build_fixtu
 is the only thing that should ever write to this directory:
 
 ```
-python packages/cdm/synapse_cdm/fixtures/nits/spec/build_fixtures.py
-python -m synapse_cdm.harness --adapter stanag4676 \
-    --fixtures packages/cdm/synapse_cdm/fixtures/nits
+python spec/build_fixtures.py                 # from THIS directory, wherever it is
+python -m synapse_cdm.harness --adapter stanag4676
 ```
 
 ## Twins, and why both halves are replayed

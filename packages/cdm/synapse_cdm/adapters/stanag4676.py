@@ -1362,6 +1362,14 @@ class Stanag4676Adapter(Adapter):
     direction = "bidirectional"
     system = SYSTEM
 
+    #: `fixtures/nits`, not `fixtures/stanag4676`. The adapter is named for the STANDARD, because
+    #: STANAG 4676 is a covering document; the directory is named for the PAYLOAD, because a
+    #: directory holds bytes. `fixtures/stanag4676` holds only pinned specifications, and pointing
+    #: the harness at it used to print "0 passed, 0 failed" and exit 0 — a gate sweep over nine
+    #: adapters reporting nine greens with one of them having replayed nothing. Declared here so
+    #: the harness resolves it and nobody has to remember.
+    fixture_dir = "nits"
+
     #: Empty, and that is a claim. Every source value is present verbatim as well as converted,
     #: so the never-drop rule is satisfied by PRESENCE and `lossless.unrepresented()` runs at
     #: full strength with nothing excused. A declared transform is a hole with a reason attached.

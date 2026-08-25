@@ -1,28 +1,69 @@
-# Packaging for the Canonical Data Model.
+# Packaging for the Canonical Data Model — what ships, what does not, and which version this is.
 #
-# The version is read FROM `synapse_cdm/version.py` rather than restated here. The CDM's
-# whole versioning story (MIGRATIONS.md) hangs on one semver string that every serialised
-# object carries as `schema_version`; a second copy of it in packaging metadata would be a
-# copy nothing keeps identical, and the failure mode is silent — a wheel labelled 1.0.0
-# shipping objects that say 1.1.0. setuptools reads the assignment statically, so nothing
-# in the package (and none of its dependencies) is imported at build time.
+# ---------------------------------------------------------------------------------------------
+# THE VERSION HERE IS THE PACKAGE'S, NOT THE SCHEMA'S. This file used to read
+# `synapse_cdm.version.SCHEMA_VERSION` and defend the choice at length: one semver string, no
+# second copy to drift. The defence was against a real failure and the conclusion was wrong.
+# `schema_version` is the WIRE CONTRACT's version, governed by MIGRATIONS.md and carried in every
+# serialised object; the package version is what `pip install synapse-cdm==…` resolves. They are
+# different facts about different things, and MIGRATIONS.md already proves they must be allowed
+# to diverge — its "Adapters that landed with no schema change" section holds nine entries, nine
+# releases' worth of shipped behaviour at one unchanged `schema_version`. The full ruling is in
+# `synapse_cdm/version.py`, stated once, and nothing restates it here.
+#
+# Both read statically by setuptools, so nothing in the package is imported at build time.
+# ---------------------------------------------------------------------------------------------
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "synapse_cdm"
+# The distribution name, spelled the way PyPI normalises it (PEP 503): `pip install synapse-cdm`.
+# The IMPORT name stays `synapse_cdm` — Python identifiers cannot hold a hyphen — and the two
+# differing is ordinary. Declaring the underscore form here would have worked and would have put
+# a name in the metadata that no index page and no `pip install` line ever shows.
+name = "synapse-cdm"
 dynamic = ["version"]
 description = "SynapseCommand Canonical Data Model: the four canonical objects, the adapter SDK, and the validation harness"
 readme = "synapse_cdm/README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
-authors = [{ name = "Decent Cybersecurity" }]
-keywords = ["canonical-data-model", "adapter", "geojson", "stanag-4676", "cursor-on-target"]
+# Both files, and NOT because a linter asked. NOTICE is load-bearing: Apache-2.0 section 4(d)
+# requires a redistributor of a Work that includes a NOTICE file to carry its attribution notices
+# forward, and a wheel IS a redistribution. Before this line the built wheel carried
+# `License-Expression: Apache-2.0` and not one byte of licence text — an SPDX identifier and
+# nothing to identify. They are copies of the repository-root originals and the copies are
+# allowed to exist only because `tests/test_cdm_packaging.py` makes drift a build failure.
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Decent Cybersecurity s.r.o." }]
+keywords = [
+    "canonical-data-model", "adapter", "adapter-sdk", "json-schema", "geospatial",
+    "cursor-on-target", "asterix", "stanag-4676", "stanag-4607", "ais", "ads-b",
+]
 classifiers = [
+    # 5 - Production/Stable is the same claim `version.py` rules 1.0.0 on, and it is made in
+    # exactly one voice: ten adapters shipped and harness-verified, the Adapter contract
+    # unchanged across all of them. A 0.x/Beta first release would advertise an instability the
+    # tree does not have.
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    # Enumerated rather than left to `Programming Language :: Python :: 3`, because the floor is
+    # a real declaration here — `tests/test_cdm_version_floor.py` asserts the package PARSES at
+    # 3.11 — and the ceiling is what is actually exercised. 3.14 is the interpreter the suite
+    # runs on today; 3.11 is the floor that gate defends.
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+    # Pure Python, no compiled extension, no platform call anywhere in the package.
+    "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
 
@@ -40,7 +81,13 @@ test = ["pytest>=8.0"]
 
 [project.urls]
 Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
-Documentation = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/README.md"
+# The rendered site, not a file in the repository. The previous value pointed at the raw
+# `synapse_cdm/README.md` on GitHub — which is the file PyPI is ALREADY rendering as this
+# project's long description, so "Documentation" led back to the page the reader was on.
+Documentation = "https://docs.synapsecommand.com/"
+Source = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Issues = "https://github.com/Decent-Cybersecurity/synapsecommand-public/issues"
+Changelog = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/MIGRATIONS.md"
 
 [project.scripts]
 # The two entry points the README documents as `python -m ...`; both stay importable that way.
@@ -48,41 +95,85 @@ cdm-harness = "synapse_cdm.harness:main"
 cdm-schemas = "synapse_cdm.schemas:main"
 
 [tool.setuptools.dynamic]
-version = { attr = "synapse_cdm.version.SCHEMA_VERSION" }
+version = { attr = "synapse_cdm.version.PACKAGE_VERSION" }
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["synapse_cdm*"]
 
-# The fixtures and the two reference documents are part of the package, not decoration: the
-# harness is pointed at `synapse_cdm/fixtures/<name>/` and a test resolves every row of
-# FORMAT_COVERAGE.md against the models. A wheel without them cannot run its own gate.
+# ---------------------------------------------------------------------------------------------
+# WHAT SHIPS, BY FILE CLASS. Every class below is a ruling, and the closure is a gate rather than
+# this comment: `tests/test_cdm_packaging.py` walks the tree, applies these globs, and fails on
+# any file that is neither shipped nor in a stated do-not-ship class.
+#
+# SHIPS
+#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, ten adapters.
+#   synapse_cdm/*.md                   README, MIGRATIONS, FORMAT_COVERAGE. The protocol docs a
+#                                      partner writing an adapter reads; MIGRATIONS is also what
+#                                      tells them what `schema_version` will and will not do.
+#   fixtures/*/<payloads>              every fixture, in every form it exists in — the raw wire
+#                                      bytes AND the parsed twin AND the golden output. A partner
+#                                      proves conformance with these; a wheel carrying half the
+#                                      evidence measures an adapter against half its evidence.
+#   fixtures/*/README.md               an armoured AIS payload and a 28-character hex frame are
+#                                      not readable. The file explaining what each fixture is
+#                                      there to catch IS part of the fixture.
+#   fixtures/*/spec/build_fixtures.py  the generators. An ASTERIX block cannot carry a comment and
+#                                      cannot be rebuilt from its twin (LEN and FSPEC are
+#                                      functions of the contents), so the module with the
+#                                      arithmetic in it is the reviewable form of that fixture set.
+#   fixtures/*/spec/*_pin.json         the pin records. NOTICE points at exactly these files for
+#                                      "each document's terms as its own front matter states
+#                                      them" — so a wheel that ships NOTICE and drops them ships a
+#                                      pointer to nothing. They are also the citation of WHICH
+#                                      edition of ASTERIX or STANAG each adapter implements, which
+#                                      is provenance a partner needs and cannot derive.
+#   LICENSE, NOTICE                    into `.dist-info/licenses/`, per `license-files` above.
+#
+# DOES NOT SHIP
+#   fixtures/*/spec/**.pdf             the pinned specification documents. Third-party works under
+#                                      EUROCONTROL's, NATO's and MISB's own terms — NOTICE says
+#                                      outright they "are not part of the Work and are not covered
+#                                      by this licence". None of their bytes is in this repository
+#                                      or its history (they are gitignored), so an sdist built
+#                                      from a clean clone could not carry them anyway — which is
+#                                      exactly why the exclusion has to be POSITIVE. It was
+#                                      previously an accident: the old include list enumerated
+#                                      extensions and `.pdf` simply was not one of them, so a
+#                                      build on a maintainer's machine was one glob away from
+#                                      redistributing a NATO standard under Apache-2.0.
+#   tests/, docs/, pytest.ini,         repository infrastructure. It judges and renders this
+#   wrangler.toml, CONTRIBUTING.md,    package; it is not part of what a consumer installs, and
+#   PUBLICATION.md, DCO, gates/        none of it is under `packages/cdm/` to begin with.
+#
+# THE INCLUDE RULE IS A RECURSIVE GLOB, DELIBERATELY, AND THAT IS THE DEFECT REPAIR
+# ---------------------------------------------------------------------------------
+# It used to be a hand-written list of extensions — `*.json`, `*.xml`, `*.nmea`, `*.adsb`,
+# `*.cat021`, `*.gmti`, `*.md`, `*.py` — with a paragraph beside each new one explaining why the
+# raw bytes matter as much as the parsed twin. Every argument in those paragraphs was right and
+# the list still went stale twice, silently, in the way an enumeration does: CAT048 shipped and
+# nobody added `*.cat048`, CAT034 shipped and nobody added `*.cat034`. The built wheel was missing
+# **72 of the 692 files** the package tracks — every raw ASTERIX data block for two of the ten
+# adapters — while the comment above the list explained at length why exactly those files must
+# never be dropped. The harness still ran against it and still reported green, because the parsed
+# twins were there; it was measuring two adapters against half their evidence.
+#
+# So the enumeration is gone, the same way `tests/test_cdm_pins.py` deleted its list of pins. One
+# recursive glob ships every fixture whatever it is called, and the two things that must NOT be
+# shipped are named positively below.
 [tool.setuptools.package-data]
-# Every fixture form, not only the JSON one. A wheel that shipped `narva_patrol.parsed.json`
-# without `narva_patrol.xml` — or the AIS goldens without the `.nmea` they were produced from,
-# or the ADS-B goldens without the `.adsb` frames — could still run the harness and would be
-# checking the adapter against half its evidence. The per-directory READMEs are included for
-# the same reason: neither an armoured AIS payload nor a 28-character hex frame is readable, so
-# the file explaining what each fixture is there to catch is part of the fixture.
 synapse_cdm = [
-    "fixtures/**/*.json",
-    "fixtures/**/*.xml",
-    "fixtures/**/*.nmea",
-    "fixtures/**/*.adsb",
-    # The raw ASTERIX data blocks. Without them a wheel would carry the CAT021 parsed twins and
-    # not the octets they were parsed from — half the evidence, and the half the byte-exact
-    # round trip is measured against.
-    "fixtures/**/*.cat021",
-    # And the raw GMTI packets, for the same reason one adapter along: a wheel carrying the
-    # `.parsed.json` twins without the `.gmti` halves would ship the decoded forms and not the
-    # bytes they were decoded from — and the bytes are what the byte-exact round trip and the
-    # hand-verified Annex C layout are measured against.
-    "fixtures/**/*.gmti",
-    "fixtures/**/*.md",
-    # The CAT021 fixture generator, which is that set's reviewable form: an ASTERIX block cannot
-    # carry a comment and cannot be rebuilt from its twin (LEN and FSPEC are functions of the
-    # contents), so the module with the arithmetic in it IS the documentation of what each
-    # fixture says. Shipped for the same reason the READMEs are.
-    "fixtures/**/*.py",
+    "fixtures/**/*",
     "*.md",
+]
+
+[tool.setuptools.exclude-package-data]
+# Both depths spelled out rather than one `**`: `spec/` holds the current edition and
+# `spec/history/` holds every superseded one, and setuptools matches these against the relative
+# path with `glob(recursive=True)`. The gate asserts the RESULT — no PDF, and nothing under any
+# `spec/` that is not a generator or a pin record — so a pattern that stopped matching would fail
+# a build rather than quietly widen the wheel.
+synapse_cdm = [
+    "fixtures/*/spec/*.pdf",
+    "fixtures/*/spec/history/*.pdf",
 ]

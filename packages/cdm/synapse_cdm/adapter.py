@@ -30,6 +30,8 @@ delivery. It comes from the injected clock so that golden-output tests are possi
 from __future__ import annotations
 
 import importlib
+import importlib.resources
+import pathlib
 import pkgutil
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar, Literal
@@ -53,6 +55,25 @@ class Adapter(ABC):
     #: Source paths whose values legitimately change in translation, mapped to the REASON.
     #: Printed by the harness on every run; see lossless.py for why the escape is loud.
     TRANSFORMS: ClassVar[dict[str, str]] = {}
+
+    #: The directory under `synapse_cdm/fixtures/` holding this adapter's fixtures, when it is
+    #: NOT the adapter's own name. Left None means "the same string as `name`", which is true of
+    #: nine of the ten shipped adapters.
+    #:
+    #: WHY THIS IS DECLARED BY THE ADAPTER AND NOT LOOKED UP BY THE HARNESS
+    #: -------------------------------------------------------------------
+    #: The relation was folklore, and folklore is how `--adapter stanag4676 --fixtures
+    #: fixtures/stanag4676` came to report a green run that replayed nothing: that directory holds
+    #: only pinned standards, the fixtures are in `fixtures/nits`, and a nine-adapter gate sweep
+    #: reported nine passes with one of them vacuous. `harness.NoFixturesFound` stopped that
+    #: reading as a pass; this stops it being typed. The split is not an accident to be tidied
+    #: away either — an adapter named after a STANDARD is named for a covering document, and the
+    #: directory is named for the bytes it holds, so the two legitimately differ.
+    #:
+    #: `tests/test_cdm_harness.py` holds the same map written out by hand and requires the two to
+    #: agree, which is the pin gate's arrangement: two independent statements of one fact, each
+    #: checkable against the other and both against the disk.
+    fixture_dir: ClassVar[str | None] = None
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
@@ -163,3 +184,51 @@ def discover() -> dict[str, type[Adapter]]:
     for info in pkgutil.iter_modules(package.__path__):
         importlib.import_module(f"{package.__name__}.{info.name}")
     return dict(REGISTRY)
+
+
+def fixture_root() -> pathlib.Path:
+    """The packaged fixtures directory, found through package RESOURCES and not through the repo.
+
+    THE DEFECT THIS EXISTS FOR
+    --------------------------
+    Every documented harness invocation used to spell `--fixtures` out as a path inside a CLONE
+    of the repository this package is developed in — a directory that exists there and nowhere
+    else. The package's own README told an installed reader to `pip install synapse_cdm` and then
+    handed them that path on the next line. So the harness, whose entire purpose is to be the gate
+    an adapter passes, could not be run by anyone who had installed the thing it gates.
+
+    `importlib.resources.files()` asks the IMPORT SYSTEM where this package's data is, which
+    answers correctly for a site-packages install, an editable install, a virtualenv, a checkout
+    on `PYTHONPATH`, and a working directory anywhere at all.
+
+    THE LIMIT, NAMED RATHER THAN HIDDEN
+    -----------------------------------
+    The harness reads a fixture directory with `iterdir()` and writes goldens into it, so it needs
+    a real filesystem. A package imported from inside a zip has no such path and `files()` returns
+    a Traversable that is not a `Path`. That is refused HERE with a message that says what is
+    wrong, rather than surfacing as an `AttributeError` in the middle of a replay — and refused
+    rather than worked around with a temporary extraction, because `--update-golden` writing into
+    an extracted copy would report WROTE for files that vanish.
+    """
+    root = importlib.resources.files("synapse_cdm") / "fixtures"
+    if not isinstance(root, pathlib.Path):
+        raise RuntimeError(
+            "synapse_cdm's fixtures are not on a real filesystem — this package looks to be "
+            f"imported from an archive ({type(root).__name__}). The harness reads a fixture "
+            "directory and can write golden files back into it, so it needs a directory it can "
+            "walk. Install the wheel normally (pip does not zip-import) or pass --fixtures with "
+            "an extracted path"
+        )
+    return pathlib.Path(root)
+
+
+def packaged_fixtures(adapter: type[Adapter] | Adapter) -> pathlib.Path:
+    """Where THIS adapter's fixtures live inside the installed package.
+
+    Returns the directory whether or not it exists. A missing one is not this function's failure
+    to report: `harness.run` already refuses a directory holding no fixtures, with a message that
+    names the adapter, the path and the rule that matched nothing, and duplicating that judgement
+    here would give the same condition two different error messages.
+    """
+    cls = adapter if isinstance(adapter, type) else type(adapter)
+    return fixture_root() / (cls.fixture_dir or cls.name)

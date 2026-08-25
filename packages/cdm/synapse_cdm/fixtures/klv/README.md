@@ -11,8 +11,7 @@ directory holds `spec/` and nothing else.
 # `LookupError: unknown adapter 'stanag4609'` and exits 1. Substitute any registered adapter and
 # it fails again, this time on the directory: exit code 2, `NoFixturesFound`, because the only
 # thing in here is spec/ and a run that exercises nothing must not report a green.
-PYTHONPATH=packages/cdm python -m synapse_cdm.harness --adapter stanag4609 \
-    --fixtures packages/cdm/synapse_cdm/fixtures/klv
+python -m synapse_cdm.harness --adapter stanag4609 --fixtures .   # from THIS directory
 ```
 
 **The directory is `klv` and the adapter is `stanag4609`, and the two names differ on purpose.**

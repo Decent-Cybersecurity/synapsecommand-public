@@ -16,3 +16,18 @@
 # marker is explicit because the consequence of being wrong is a failure that reads as an
 # adapter defect rather than as a checkout artefact.
 *.gmti -text -diff
+
+# The three ASTERIX categories, raw data blocks, and the marker is explicit for the same reason
+# `.gmti`'s is: they contain NULs so git classifies them as binary on its own, and being wrong
+# about that produces a byte-exact round-trip failure that reads as an adapter defect rather than
+# as a checkout artefact.
+#
+# They were missing here, and the omission has a twin. The SDK round found the built wheel short
+# by 72 files — every `.cat048` and `.cat034` block — because `pyproject.toml` listed the
+# extensions it shipped and two adapters had landed since the list was written. This file listed
+# the extensions it protected, and the same two were missing from it. One habit, two enumerations,
+# the same two gaps. The packaging list is now a recursive glob with a gate behind it; this one
+# cannot be, because a path attribute IS a pattern, so it stays a list and is stated here.
+*.cat021 -text -diff
+*.cat034 -text -diff
+*.cat048 -text -diff

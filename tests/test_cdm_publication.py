@@ -3,7 +3,7 @@
 WHY THIS MODULE EXISTS
 ----------------------
 `PUBLICATION.md` records what became true when this repository went public: the protections, the
-probes that witnessed them, and four ledger entries — one ruled on, three still open. Most of it
+probes that witnessed them, and five ledger entries — one ruled on, four still open. Most of it
 is a *witness statement* — a force-push was refused, a check ran and failed and then passed — and
 a witness statement is not gateable. The suite cannot reach GitHub, must not hold a token, and a test that needed one would
 fail for every outsider and turn green only for whoever holds it.
@@ -236,9 +236,30 @@ def test_the_record_states_that_no_rewrite_is_contemplated():
 
 # ------------------------------------------------- 2. the absence NOTICE asserts, over every file
 
-#: The three files whose copyright notices are repository-level and are therefore not per-file
-#: headers. `DCO` carries the Linux Foundation's notice verbatim and is included for that reason.
-LICENCE_FILES = {"LICENSE", "NOTICE", "DCO"}
+#: The files whose copyright notices are LICENCE notices rather than per-file headers.
+#:
+#: The three at the repository root are typed out: `LICENSE`, `NOTICE`, and `DCO`, which carries
+#: the Linux Foundation's notice verbatim and is included for that reason.
+#:
+#: The rest are DERIVED from `packages/cdm/pyproject.toml`'s `license-files`, and the derivation
+#: is the point. A distribution has to carry its licence text and setuptools resolves that glob
+#: against the DISTRIBUTION root, so a copy of `LICENSE` and `NOTICE` sits beside the package —
+#: without them the wheel shipped `License-Expression: Apache-2.0` and no licence text at all,
+#: which is section 4(d) unmet. Those copies are real files with real copyright notices in them,
+#: and this invariant had no vocabulary for that: a fresh clone failed the moment they were
+#: committed. Derived rather than added to the literal set above, because a second distribution
+#: would need the same two files again and a typed list is a list somebody has to remember.
+def _licence_files() -> set[str]:
+    import tomllib
+    root = {"LICENSE", "NOTICE", "DCO"}
+    for pyproject in sorted(REPO.glob("packages/*/pyproject.toml")):
+        declared = tomllib.loads(pyproject.read_text()).get("project", {}).get("license-files", [])
+        rel = pyproject.parent.relative_to(REPO)
+        root |= {str(rel / name) for name in declared}
+    return root
+
+
+LICENCE_FILES = _licence_files()
 
 SPDX = re.compile(r"SPDX-(License-Identifier|FileCopyrightText)")
 
@@ -275,30 +296,35 @@ def test_no_tracked_file_carries_an_spdx_tag():
     )
 
 
-def test_the_only_copyright_notices_are_the_three_repository_level_files():
+def test_the_only_copyright_notices_are_in_licence_files():
     """The other half, and the direction that actually catches a stray header.
 
     An SPDX tag is deliberate and rare. A copyright block pasted at the top of a new module is
     the ordinary way this invariant breaks, and it breaks silently: the file is correct in
     isolation and wrong only relative to a policy stated in a file nobody reads while writing
     code.
+
+    It used to be named for the number three and it broke on a fourth and fifth file that were
+    not headers at all — the licence copies a wheel has to carry. The set is derived now, so the
+    invariant is about the KIND of file rather than about a count.
     """
     _require_git_history()
     carriers = [rel for rel in tracked_files()
                 if rel != SELF and (text := _readable_text(rel)) and COPYRIGHT.search(text)]
     unexpected = sorted(set(carriers) - LICENCE_FILES)
     assert not unexpected, (
-        f"copyright notice(s) outside the repository-level licence files: {unexpected}. NOTICE "
-        f"states the only three are {sorted(LICENCE_FILES)} and that the policy is stated at the "
-        "repository level instead. A header in a source file is a second, per-file licence "
-        "statement — the exact thing NOTICE says this repository does not do"
+        f"copyright notice(s) outside the licence files: {unexpected}. The licence files are "
+        f"{sorted(LICENCE_FILES)} — the three at the root plus whatever a distribution declares "
+        "in `license-files` — and NOTICE states that the policy is stated at the repository "
+        "level instead. A header in a source file is a second, per-file licence statement, the "
+        "exact thing NOTICE says this repository does not do"
     )
 
 
 def test_the_copyright_sweep_is_not_vacuous():
     """A pattern that matched nothing would agree that there are no notices anywhere.
 
-    Asserted against each of the three positively, because they carry the notice in three
+    Asserted against each licence file positively, because they carry the notice in three
     different shapes — `Copyright 2026`, `Copyright (C) 2004, 2006`, and the bracketed `[yyyy]`
     of the Apache appendix — and a pattern could stop seeing one of them and keep passing.
     """
@@ -724,4 +750,64 @@ def test_the_ruling_carries_its_grounds_and_the_measurement_behind_the_first_one
         f"the ruling in {RECORD} no longer says how to reopen it. A closed decision with no "
         "stated way back is indistinguishable from a rule nobody may question, and the sequence "
         "matters here — restore `pull_request` FIRST, or requiring the check deadlocks `main`"
+    )
+
+
+# ------------------------------------------------------- the ledger is a set that does not move
+#
+# `PUBLICATION.md` says so in its own words — "the set does not move, entries change STATE, they
+# are not deleted" — and until now nothing checked it. The count was written out in prose in two
+# places (the file and this module's docstring) and a fifth entry landing meant a person had to
+# remember both. That is a stale-count generator of exactly the kind `tests/test_cdm_prose_counts.py`
+# exists for, one document along, so it gets the same treatment: derive the number, compare it to
+# every place that states it.
+
+
+def ledger_entries() -> list[tuple[int, str]]:
+    """The `### N. …` headings under `## Open ledger`, in file order."""
+    text = _read(RECORD)
+    start = text.index("## Open ledger")
+    rest = text[start + len("## Open ledger"):]
+    end = re.search(r"\n## ", rest)
+    section = rest[:end.start()] if end else rest
+    return [(int(m.group(1)), m.group(2).strip())
+            for m in re.finditer(r"\n### (\d+)\. (.+)", section)]
+
+
+def test_the_ledger_is_numbered_consecutively_from_one():
+    """Numbering is the ledger's only identity: entries are cited by number elsewhere.
+
+    A gap would mean an entry was deleted, which the file forbids in its own terms, and a repeat
+    would mean two entries answer to one citation.
+    """
+    numbers = [n for n, _ in ledger_entries()]
+    assert numbers, f"{RECORD} has an Open ledger section with no numbered entries in it"
+    assert numbers == list(range(1, len(numbers) + 1)), (
+        f"the ledger is numbered {numbers}. It must run 1..N with no gap and no repeat — an entry "
+        "is cited by its number, and the file's own rule is that entries change state rather than "
+        "being deleted"
+    )
+
+
+def test_every_place_that_states_the_ledger_count_states_the_derived_one():
+    """Two sites carry the count in prose. Both are checked against the headings.
+
+    This module is one of them, and it is checked too — a docstring that says "four ledger
+    entries" beside a file holding five is a small wrongness in the one document whose whole job
+    is being right about the repository's state.
+    """
+    count = len(ledger_entries())
+    words = {1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six", 7: "Seven",
+             8: "Eight", 9: "Nine", 10: "Ten"}
+    assert count in words, f"{count} ledger entries; extend the number words in this test"
+    record = _flat(_read(RECORD))
+    assert f"{words[count]} entries, and the set does not move" in record, (
+        f"the ledger holds {count} entries and {RECORD} does not say so in the sentence under "
+        f"`## Open ledger` (looked for {words[count]!r}). The count is stated in prose there and "
+        "is the kind of number that goes stale the moment an entry is added"
+    )
+    mine = _flat((REPO / SELF).read_text().split('"""')[1])
+    assert f"{words[count].lower()} ledger entries" in mine, (
+        f"this module's own docstring does not say there are {words[count].lower()} ledger "
+        "entries. It is a site like any other and it went stale first"
     )

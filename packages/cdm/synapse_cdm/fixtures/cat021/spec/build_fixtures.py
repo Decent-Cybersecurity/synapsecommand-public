@@ -14,7 +14,7 @@ the adapter's own parser produces from them, which is what the harness measures 
 rule against).
 
     python -m synapse_cdm.fixtures.cat021.spec.build_fixtures      # from the package root
-    python packages/cdm/synapse_cdm/fixtures/cat021/spec/build_fixtures.py
+    python build_fixtures.py                      # from the directory this file is in
 
 It lives in `spec/` rather than beside the payloads for the reason the Legion pin does:
 `harness.run()` replays every FILE in a fixture directory through `to_cdm()`, so a module
