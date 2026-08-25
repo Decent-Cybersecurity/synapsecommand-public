@@ -140,10 +140,11 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Five entries, and the set does not move — entries change **state**, they are not deleted. Entry 1
-is **ruled on** and stays here as the ruling; entries 2, 3 and 4 are open, and all four were
-previously recorded only in commit messages. Entry 5 was opened by the SDK round, which built and
-verified a publishable distribution and stopped short of publishing it. None blocks anything.
+Five entries, and the set does not move — entries change **state**, they are not deleted. Two are
+**settled**: entry 1 is a ruling, and entry 5 is closed by an act — the distribution the SDK round
+built and stopped short of publishing was uploaded, and the entry now records what was done, what
+was measured afterwards and which step of its own sequence was skipped. Entries 2, 3 and 4 are
+open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
@@ -255,59 +256,114 @@ not a guess a round is entitled to make.
   conduct, no issue template, no pull-request template. A newly visible page, listed here so the
   absences are on the record as absences rather than oversights.
 
-### 5. `synapse-cdm` is not on PyPI — built, verified, and waiting on a human
+### 5. `synapse-cdm` 1.0.0 is on PyPI — CLOSED, and one step of the sequence it named did not run
 
-The SDK round made `packages/cdm` a real distribution: `python -m build` produces a clean sdist
-and wheel, `gates/wheel_install.py` installs the wheel into an environment with no part of this
-repository on its path and runs the harness and half the suite against it, and `twine check
---strict` PASSES on both artefacts. What has **not** happened is an upload, and this entry says
-exactly why and exactly what closing it takes.
+The SDK round built and verified a publishable distribution and stopped short of publishing it.
+A human with credentials did the upload on **2026-08-25**: `twine check --strict` on both
+artefacts, then `twine upload packages/cdm/dist/*`. The entry stays here in its closed state
+rather than being deleted, and it keeps the six-step sequence it was written around — because the
+sequence is now a record of what was and was not done, which is worth more than the instruction
+was.
 
-**The name is free, measured on 2026-08-25.** All three spellings return **HTTP 404** from both
-the JSON API and the simple index — `synapse-cdm`, `synapse_cdm` and `synapsecdm` — and
-`synapse-cdm` is 404 on TestPyPI as well. PEP 503 normalises the first two to the same name, so
-that is one name checked three ways rather than three names. A 404 is availability at a moment,
-not a reservation: nothing holds the name until something is uploaded under it.
+**What is on the index, measured rather than reported.** `GET https://pypi.org/pypi/synapse-cdm/json`
+and `GET https://pypi.org/simple/synapse-cdm/`, both HTTP 200 on 2026-08-25:
 
-**The metadata is complete and it is gated.** `tests/test_cdm_packaging.py` asserts the author is
-`Decent Cybersecurity s.r.o.` as `NOTICE` spells it, the licence expression and both licence
-files, the five project URLs, the classifiers including the declared Python floor, and that the
-long description is a file inside the distribution. `twine check --strict` confirms the README
-renders.
+| | |
+| --- | --- |
+| project | `synapse-cdm`, **1.0.0 and no other release** |
+| wheel | `synapse_cdm-1.0.0-py3-none-any.whl`, 2 271 091 bytes, uploaded `14:53:12Z` |
+| sdist | `synapse_cdm-1.0.0.tar.gz`, 1 172 220 bytes, uploaded `14:53:14Z` |
+| metadata | author `Decent Cybersecurity s.r.o.`, licence `Apache-2.0`, `Requires-Python >=3.11` |
+| dependencies | `pydantic>=2.6` and `jsonschema>=4.0`, with `pytest>=8.0` behind the `test` extra |
+| project URLs | all five present — Homepage, Documentation, Source, Issues, Changelog |
 
-**Why it stopped here.** There are no credentials on this machine — no `~/.pypirc`, no API token
-in the environment — and Trusted Publishing is not an option that merely needs switching on: it
-authenticates a **GitHub Actions workflow**, and this repository has no `.github/workflows` and no
-CI at all (see MIGRATIONS.md, "What is deliberately not automated"). Inventing a publishing
-mechanism to close this entry would be the deploy-claim mistake in a new place: a workflow written
-to satisfy a checklist, never run, describing an automation nobody has watched work.
+Every one of those is the metadata `tests/test_cdm_packaging.py` asserts against `pyproject.toml`,
+now read back off the index instead: the gate said what the distribution would claim, and this is
+the claim as strangers receive it.
 
-**What a human has to do, in order.** Nothing below is inferrable from the repository; that is why
-it is written out.
+**The uploaded files are the files the gate verified, and that is a hash comparison and not a
+belief.** PyPI serves both artefacts under their SHA-256, and both digests equal
+`shasum -a 256 packages/cdm/dist/*` on the machine that built them:
 
-1. Create the PyPI account and enable two-factor authentication on it — PyPI has required 2FA for
-   uploads since 2024, so an account without it cannot publish at all.
-2. Decide the owner. `synapse-cdm` should belong to an organisation account for
-   Decent Cybersecurity s.r.o. rather than to an individual, because the package's declared author
-   is the company and a personal account makes succession a favour rather than a process.
-3. Upload to **TestPyPI first** and install from it into a clean environment. The project page
-   cannot be previewed any other way, and an upload to PyPI is irreversible: a filename can never
-   be reused, even after the release is deleted.
-4. Mint a **project-scoped API token** — scoped to `synapse-cdm` once it exists, which means one
-   throwaway upload under an account-scoped token first, or an initial upload with the wider token
-   and an immediate re-scope.
-5. `python -m build packages/cdm && twine upload packages/cdm/dist/*`, then verify by installing
-   from the index in a clean venv and running `python -m synapse_cdm.harness --adapter pntmap`.
-6. Update the two places that say it is unpublished — `README.md` ("Using it") and
-   `docs/docs/intro.mdx` ("Installing it") — and this entry.
+```
+03b5df15aeb215f8bfb32c4004be29c62b5ec98b98200a6859cc98ac85dad688  synapse_cdm-1.0.0-py3-none-any.whl
+61892843561f794bf8298427df6d4df7883e5f18d084a2124fbd88975ff4db4e  synapse_cdm-1.0.0.tar.gz
+```
 
-**One accepted limitation, ruled rather than overlooked.** The long description is the package's
-own `README.md`, and its fifteen links are relative (`adapters/pntmap.py`, `MIGRATIONS.md`). PyPI
-does not rewrite relative links, so they will not resolve on the project page. They are left
-relative on purpose: they are correct in all three places the file actually lives — the
-repository, the sdist and the installed package — and the alternative, absolute `blob/main` URLs
-baked into a released wheel, points a 1.0.0 reader at whatever `main` says years later. Navigation
-on the project page is what the five `project.urls` entries are for.
+That is the one connection `tests/test_cdm_release.py` names as beyond it — "whether an artefact
+was ever published for a tag, and whether that artefact came from that tree" — made by hand once
+and written down. `gates/wheel_install.py` proves the local wheel installs clean and passes the
+harness; these two digests are what carry that proof onto the artefact a stranger downloads. The
+tag `v1.0.0` was created at `14:30:06Z` and points at `1a62104`, whose `PACKAGE_VERSION` is
+`1.0.0`; the upload followed it by twenty-three minutes.
+
+**The second upload attempt returned 403, the first had succeeded, and nothing was duplicated.**
+A filename on PyPI can never be reused, even after a release is deleted, so a 403 naming files
+that already exist is the index refusing a re-upload rather than rejecting a credential — it is
+evidence the first upload completed. The index corroborates it from the other side and that is
+the half worth recording: **one** release, **two** files, one of each package type. A duplicate
+upload would have had to appear as a second release or a third file, and there is neither.
+
+**Verified from the index, in an environment with no clone in it.** A fresh virtualenv,
+`pip install synapse-cdm`, and then every registered adapter run through the harness with no
+`--fixtures` — so the fixtures were resolved through `importlib.resources` out of site-packages,
+which is the property the SDK round added and the only one that could not be tested from a
+checkout:
+
+| | | | | |
+| --- | --- | --- | --- | --- |
+| `adsb` 32 | `ais` 22 | `cat021` 40 | `cat034` 34 | `cat048` 82 |
+| `gmti` 32 | `legion` 6 | `pntmap` 4 | `stanag4676` 34 | `tak` 12 |
+
+**Ten adapters, 298 fixture verdicts, 0 failed.** The per-adapter figures are written out because
+298 is a number nobody can check and ten numbers that sum to it are.
+
+**Step 3 did not run.** `synapse-cdm` returns **404 on TestPyPI**, measured in the same minute as
+the two 200s above, so there was no TestPyPI upload and the project page was never previewed
+before an upload that cannot be undone. It is recorded rather than dropped for the reason this
+whole file exists: a written sequence whose steps are quietly skipped becomes a description of
+what somebody meant to do. The risk it was guarding — a long description that renders wrongly on
+a page nobody can amend — was covered from the other direction by `twine check --strict`, which
+passed on both artefacts, so what was lost was the visual preview and not the rendering check.
+
+**What the index cannot show, and is therefore not claimed here.** Steps 1, 2 and 4 — the account's
+two-factor status, whether the owner is the company or a person, and whether the API token is
+project-scoped — are invisible to an anonymous reader: the JSON API carries no maintainer field
+for this project, and `author` is metadata the uploader typed rather than an identity the index
+vouches for. One inference is available and is stated as an inference: PyPI has required 2FA for
+uploads since 2024, so an upload that succeeded came from an account that has it.
+
+**A correction to how the name was checked.** The open form of this entry called `synapse-cdm`,
+`synapse_cdm` and `synapsecdm` "one name checked three ways rather than three names". Two of them
+are one name: `synapse_cdm` now answers `301` to the canonical `synapse-cdm`, which is PEP 503
+normalisation working. `synapsecdm` is **not** that name — normalisation collapses runs of `-`, `_`
+and `.` to a single `-`, it does not delete them — and it is still 404, still unclaimed, and always
+was a different project. Nothing rested on the error; it is corrected here rather than left in a
+sentence that reads as measured.
+
+**The accepted limitation is now a live page rather than a forecast.** The long description is the
+package's own `README.md` and its fifteen links are relative, so they do not resolve on the project
+page. That was ruled deliberate before the upload and the ruling stands: the links are correct in
+all three places the file actually lives — the repository, the sdist and the installed package —
+and absolute `blob/main` URLs baked into a released wheel would point a 1.0.0 reader at whatever
+`main` says years later. The five `project.urls` entries are the navigation, and all five are on
+the page.
+
+**What closing this does not close.** There is still no CI, no `.github/workflows` and no Trusted
+Publishing: the next release is another human act, and MIGRATIONS.md's release procedure is still
+the whole of the mechanism. Nothing here was automated to close the entry, which was the failure
+mode the open form of it named.
+
+**The sequence as written, and what happened to each step.**
+
+| # | Step | Outcome |
+| --- | --- | --- |
+| 1 | PyPI account with 2FA | not observable; inferred from an upload that succeeded |
+| 2 | Decide the owner — organisation, not individual | not observable from the index |
+| 3 | **TestPyPI first**, install from it, preview the page | **DID NOT RUN** — 404 on TestPyPI |
+| 4 | Project-scoped API token | not observable from the index |
+| 5 | `build`, `twine upload`, verify from a clean venv | ran; the verification is the table above |
+| 6 | Update `README.md`, `docs/docs/intro.mdx` and this entry | this commit and the one after it |
 
 ## The deployment was not affected
 
