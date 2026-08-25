@@ -1304,7 +1304,9 @@ def _attributes(message: dict, parsed: dict, consumed: Sequence[str], category: 
         "rate_of_turn_deg_per_min": _rate_of_turn(rot_raw),
         "epfd": epfd,
         "epfd_text": EPFD_TEXT.get(epfd) if isinstance(epfd, int) else None,
-        # gap 1: no canonical name field. Four keys across two adapters, one concept.
+        # gap 1: no canonical name field. The tally of keys and adapters lives in gap 1
+        # and is deliberately not repeated here — this comment said "four keys across two
+        # adapters" and gap 1 now counts eight and seven.
         "vessel_name": message.get("vessel_name") or None,
         "call_sign": message.get("call_sign") or None,
         "destination": message.get("destination") or None,

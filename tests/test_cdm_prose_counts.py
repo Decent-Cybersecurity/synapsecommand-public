@@ -2,7 +2,7 @@
 
 WHY THIS EXISTS, AND WHY IT IS AN ALLOWLIST AND NOT A SCANNER
 ------------------------------------------------------------
-Seven documents state how many adapters are shipped, and four of them do the pair arithmetic as
+Eight documents state how many adapters are shipped, and four of them do the pair arithmetic as
 well. Nothing failed a build when those numbers drifted, so they drifted: the roster sweep for
 adapter #11 found `README.md` stale by six adapters, `synapse_cdm/__init__.py` stale by four,
 two documents disagreeing about whether the translation count is `N×(N−1)` or `N(N−1)/2`, and
@@ -186,6 +186,16 @@ SITES: tuple[Site, ...] = (
     # contributor reads. See the note above `test_the_allowlist_covers_every_site_the_sweep_...`.
     Site("CONTRIBUTING.md", "the shipped-adapter sentence",
          r"the contract layer that (?P<n>[a-z]+) integration adapters translate into"),
+    # The EIGHTH, and this one arrived the way the first six did — by being WRONG. The SDK
+    # close-out sweep found `version.py` arguing the 1.0.0-not-0.x ruling from "ten adapters are
+    # shipped and harness-verified, the `Adapter` contract has been stable across all NINE of
+    # them". One sentence, the count twice, half-updated: the 94c000a shape exactly, surviving
+    # because it reads as prose either way and because nothing here covered the file. It is a
+    # double-count site and it is registered as one.
+    Site("packages/cdm/synapse_cdm/version.py", "the contract-stability sentence",
+         r"(?P<n>[a-z]+) adapters are shipped and harness-verified, the ``Adapter`` contract "
+         r"has been stable across all (?P<n2>[a-z]+) of them",
+         count_groups=("n", "n2")),
 )
 
 
@@ -234,8 +244,9 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
         "packages/cdm/synapse_cdm/README.md",
         "packages/cdm/synapse_cdm/__init__.py",
         "packages/cdm/synapse_cdm/symbology.py",
+        "packages/cdm/synapse_cdm/version.py",
     }, (
-        "the allowlist no longer matches the seven files the roster sweeps have covered. "
+        "the allowlist no longer matches the eight files the roster sweeps have covered. "
         "Adding a site is fine; losing one silently is how the sweep's work gets undone"
     )
 
@@ -369,4 +380,130 @@ def test_no_document_states_the_check_count_at_a_site_this_allowlist_does_not_kn
         f"these documents state the harness check count and this allowlist does not know them: "
         f"{strays}. Add each with an anchor to its own sentence — a site nobody checks is how "
         f"{len(harness._COLUMNS)} checks came to be documented as five in five places at once"
+    )
+
+
+# ======================================================= a count of a SUBSET, derived from code
+#
+# The third number, and it arrived the way the first two did — by being wrong. `stanag4676.py`
+# said in two places that three adapters share the `ICAO24` source-id namespace; `cat048` had
+# made it four, and nothing noticed because the sentence is not the ROSTER count and so looked
+# like a different kind of statement.
+#
+# It is not. A subset count decays exactly like a roster count, and this one is worse than most,
+# because the whole point of the sentence is that several adapters agree: "one airframe seen by N
+# adapters derives one entity_id" is the single largest argument for the CDM in the tree, and it
+# is stated as a number that nothing derives.
+#
+# So it is derived. `ICAO24` is a module-level constant in every adapter that files under it —
+# `ICAO_SYSTEM = "ICAO24"`, `ICAO24_SYSTEM = "ICAO24"` — and reading the sources for it is a fact
+# about the code rather than about the prose. The same AST-over-the-package treatment
+# `tests/test_cdm_boundary.py` gives the dependency and crypto boundaries.
+
+import ast                                                                      # noqa: E402
+
+PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
+
+#: The shared source-id system name whose sharer count is stated in prose.
+SHARED_SYSTEM = "ICAO24"
+
+
+def icao24_adapters() -> set[str]:
+    """Adapter modules that file a source id under the shared `ICAO24` system name.
+
+    By AST rather than by `grep`, so a mention inside a docstring or a comment — `cat034.py` has
+    one, explaining what it is NOT doing — cannot inflate the count. Only a module-level
+    assignment of the literal counts, which is how every adapter that really uses it declares it.
+    """
+    found = set()
+    for path in sorted((PKG / "adapters").glob("*.py")):
+        for node in ast.walk(ast.parse(path.read_text())):
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant) \
+                    and node.value.value == SHARED_SYSTEM:
+                found.add(path.stem)
+    return found
+
+
+#: Sites stating how many adapters share it, anchored to their own sentences.
+SHARED_SITES: tuple[tuple[str, str], ...] = (
+    ("packages/cdm/synapse_cdm/adapters/stanag4676.py",
+     r"including the one (?P<n>[a-z]+) adapters share"),
+    ("packages/cdm/synapse_cdm/adapters/stanag4676.py",
+     r"so one airframe seen by (?P<n>[a-z]+) adapters derives # one entity_id"),
+)
+
+#: `MIGRATIONS.md` states the count too and is deliberately NOT checked against today's value.
+#: It is a CHANGELOG entry: "the `ICAO24` namespace now serves three adapters" sits inside the
+#: `stanag4676` release entry, where "now" means "at that release", and three was right then —
+#: `cat048` shipped two entries later. Updating it would falsify the record the file exists to
+#: keep, which is the same ruling `PUBLICATION.md` makes about its unsigned history. Allowlisted
+#: by path, and required below to still BE a history entry, so the exemption cannot quietly come
+#: to cover a live claim.
+HISTORICAL_SITE = "packages/cdm/synapse_cdm/MIGRATIONS.md"
+
+
+def test_the_shared_namespace_is_shared_by_more_than_one_adapter():
+    """A derivation that found nothing, or one, would make every comparison below vacuous."""
+    found = icao24_adapters()
+    assert len(found) >= 2, (
+        f"the AST derivation found {sorted(found)} filing under {SHARED_SYSTEM!r}. The sentences "
+        "this guards are about several adapters agreeing, so a derivation that finds fewer than "
+        "two is broken rather than informative — check whether the constant was renamed"
+    )
+    assert "stanag4676" in found, (
+        f"{sorted(found)} does not include stanag4676, which is the module carrying the prose "
+        "this section checks"
+    )
+
+
+@pytest.mark.parametrize("path,pattern", SHARED_SITES,
+                         ids=[f"{p.rsplit('/', 1)[-1]}::{i}"
+                              for i, (p, _) in enumerate(SHARED_SITES)])
+def test_every_stated_sharer_count_is_the_number_of_adapters_that_share_it(path, pattern):
+    file = REPO / path
+    assert file.exists(), f"{path} does not exist; this allowlist is stale"
+    found = list(re.finditer(pattern, flat(file.read_text())))
+    assert len(found) == 1, (
+        f"{path}: the sentence this is anchored to matched {len(found)} times, expected 1.\n"
+        f"  pattern: {pattern}\nRe-anchor it deliberately; do not delete the row"
+    )
+    stated = spelled(found[0].group("n"))
+    actual = icao24_adapters()
+    assert stated == len(actual), (
+        f"{path} says {stated} adapters share the {SHARED_SYSTEM!r} namespace and "
+        f"{len(actual)} do: {sorted(actual)}.\n  matched: {found[0].group(0)!r}\n"
+        "This is the count the SDK close-out sweep found stale — cat048 joined and the sentence "
+        "did not. It is the CDM's own headline argument stated as a number nothing derived"
+    )
+
+
+def test_the_historical_statement_of_the_count_is_still_inside_the_history():
+    """The one exemption, checked so that it cannot spread.
+
+    `MIGRATIONS.md` keeps `three` because a changelog entry describes a release rather than
+    today: "the `ICAO24` namespace now serves three adapters" sits in the `stanag4676` entry,
+    where "now" means that release, and three was right then — `cat048` shipped two entries
+    later. That justification holds only while the sentence is still in a history entry. If it
+    moved into the file's live prose it would be a present-tense claim wearing an exemption
+    written for a past one.
+    """
+    text = flat((REPO / HISTORICAL_SITE).read_text())
+    needle = f"**`{SHARED_SYSTEM}` namespace** now serves"
+    assert needle in text, (
+        f"{HISTORICAL_SITE} no longer carries the sentence this exemption is written for "
+        f"(looked for {needle!r}). If the entry was rewritten, drop the exemption rather than "
+        "leaving it pointing at nothing — an exemption covering no site reads as a live ruling"
+    )
+    history = flat((REPO / HISTORICAL_SITE).read_text().split("## History", 1)[1])
+    assert needle in history, (
+        f"the {SHARED_SYSTEM} count in {HISTORICAL_SITE} has moved OUT of `## History`. A "
+        "changelog entry may keep a count that was right at its release; live prose may not"
+    )
+    stated = re.search(rf"{re.escape(needle)} (?P<n>[a-z]+) adapters", text)
+    assert stated, "the historical sentence no longer states a count at all"
+    assert spelled(stated.group("n")) < len(icao24_adapters()), (
+        f"the historical entry says {stated.group('n')!r} and {len(icao24_adapters())} adapters "
+        f"share {SHARED_SYSTEM!r} today. It is exempt because it was RIGHT AT ITS RELEASE and "
+        "has been overtaken; if the two numbers ever meet, the exemption is doing nothing and "
+        "the site should simply be checked like the others"
     )

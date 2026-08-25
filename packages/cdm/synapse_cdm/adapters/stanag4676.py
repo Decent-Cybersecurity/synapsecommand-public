@@ -1886,7 +1886,7 @@ class Stanag4676Adapter(Adapter):
             "choosing between a producer's own competing classifications is a judgement")
 
     def _source_ids(self, track_data: dict, objects_stated: list, lid_scope: str | None) -> list:
-        """Every stable key this TrackData offers, including the one three adapters share."""
+        """Every stable key this TrackData offers, including the one four adapters share."""
         from synapse_cdm.models import SourceId
 
         seen: list[SourceId] = []
@@ -1902,8 +1902,9 @@ class Stanag4676Adapter(Adapter):
         for stated in objects_stated:
             for iff in stated.get("iffCode") or []:
                 if iff.get("mode") == IFF_MODE_S and ICAO24_RE.match(str(iff.get("value", ""))):
-                    # The same 24-bit address adsb.py and asterix_cat021.py key on, so one
-                    # airframe seen by three adapters derives one entity_id. Narrow on purpose:
+                    # The same 24-bit address adsb.py, asterix_cat021.py and
+                    # asterix_cat048.py key on, so one airframe seen by four adapters derives
+                    # one entity_id. Narrow on purpose:
                     # IFFCode.value is a bare String with no stated syntax for any mode, so a
                     # value that is not unambiguously six hex digits is parked and not keyed.
                     add(ICAO24_SYSTEM, str(iff["value"]).lower())

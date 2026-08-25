@@ -294,7 +294,7 @@ So audit the model separately, against something outside the implementation —
   against the document without running anything.
 
 **The roster sweep is a manual protocol act, and prose counts are what it is for.** When an
-adapter joins the shipped roster, seven documents restate how many adapters there are and four of
+adapter joins the shipped roster, eight documents restate how many adapters there are and four of
 them do the pair arithmetic as well — and nothing in the harness reads prose. The sweep is:
 
 1. **`grep` every spelled-out number within 120 characters of the word "adapter"**, across
@@ -314,13 +314,36 @@ them do the pair arithmetic as well — and nothing in the harness reads prose. 
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
    a private name key, and it had been undercounting itself by one adapter since adapter #6. A
    count that IS the argument decays exactly like any other.
+5. **Count the SUBSETS too, and not only the roster.** A count that names a subset — "the
+   `ICAO24` namespace serves N adapters", "the contract has been stable across all N of them" —
+   looks safe because it is not the roster count, and drifts for the same reason with nothing
+   watching. The SDK close-out sweep found both of those wrong: `version.py` argued the
+   1.0.0-not-0.x ruling from "ten adapters are shipped … stable across all NINE of them", one
+   sentence stating the count twice and half-updated; and `stanag4676.py` said three adapters
+   share the `ICAO24` source-id namespace when `cat048` had made it four. The second is the
+   harder shape, because the subset is derivable from the code and the prose was the only place
+   it was ever counted.
+6. **Know which counts are NOT drift, so the sweep does not churn them.** Two kinds are correct
+   while disagreeing with today's roster, and both have to stay: a **past-tense narrative** about
+   a specific past run (`harness.py` and `adapter.py` both describe "a gate sweep over all nine
+   adapters", which is a thing that happened, not a claim about now — the past tense is what
+   marks it, and where it would not, this repository writes "of the day"), and a **changelog
+   entry**, where "now serves three adapters" means at that release and updating it would falsify
+   the record. `tests/test_cdm_prose_counts.py` exempts the `MIGRATIONS.md` occurrence by path
+   and then requires it to still be inside `## History` and still to be *behind* today's number,
+   so the exemption cannot quietly come to cover a live claim.
+7. **Prefer deleting a restated count to re-syncing it.** Two sites this round said what gap 1's
+   table already said and both were stale — `ais.py` at "four keys across two adapters" and the
+   NITS section at "four private keys… no seventh key" while the table read eight and seven.
+   Neither was re-synced; both now cite gap 1 and state no number, because a second statement
+   re-drifts and a citation cannot.
 
 **A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
 `Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see
 the two prose sentences in the same section that still described the row set as unimplemented.
 Anything that parses tables will report clean while the paragraphs around them contradict them.
 
-`tests/test_cdm_prose_counts.py` now pins the seven sites the sweep has already had to fix, so a
+`tests/test_cdm_prose_counts.py` now pins the eight sites the sweep has already had to fix, so a
 half-edit at a KNOWN site fails a build. It is deliberately an allowlist and not a scanner — a
 general prose-number check would flag "two altitudes that are two different measurements" and
 need an exemption list larger than the sweep it replaced — so **finding a NEW site is still the

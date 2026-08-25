@@ -3084,10 +3084,10 @@ compare or rank.
 
 #### The name that is not there
 
-Five formats in this document park an operator-facing name and **gap 1** counts the cost: four
-private keys for one concept, and two adapters that converged on `attributes.callsign` for two
-different things. NITS is the sixth format and it adds no seventh key, because **it has no
-callsign field at all.** There is no name for the tracked contact anywhere in the model.
+Several formats in this document park an operator-facing name and **gap 1** counts them. The
+tally is kept there and deliberately not restated here: a count stated at two sites is a count
+that drifts at one of them, which is exactly how gap 1 came to undercount itself by one adapter
+and one key. NITS adds no key of its own, because **it has no callsign field at all.** There is no name for the tracked contact anywhere in the model.
 
 What it has instead is a set of near-misses, and the discipline is to park each under a key named
 for what it is:
