@@ -58,7 +58,9 @@ class Adapter(ABC):
 
     #: The directory under `synapse_cdm/fixtures/` holding this adapter's fixtures, when it is
     #: NOT the adapter's own name. Left None means "the same string as `name`", which is true of
-    #: nine of the ten shipped adapters.
+    #: eleven of the twelve shipped adapters — `stanag4676`, whose fixtures are in
+    #: `fixtures/nits`, is the only one where the two differ today, and the split below is the
+    #: reason rather than an accident.
     #:
     #: WHY THIS IS DECLARED BY THE ADAPTER AND NOT LOOKED UP BY THE HARNESS
     #: -------------------------------------------------------------------

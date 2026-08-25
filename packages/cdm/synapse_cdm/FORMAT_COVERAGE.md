@@ -1293,8 +1293,11 @@ decided that a history is a history.
 `LEN` is the total length in octets **including CAT and LEN**. Three structural refusals, each
 raising with the offending octets quoted and none of them falling back to a best-effort read:
 
-- **`CAT` ≠ 21.** This adapter speaks one category. A CAT062 or CAT048 block decoded against the
-  CAT021 UAP yields a plausible wrong aircraft, not an error.
+- **`CAT` ≠ 21.** This adapter speaks one category. **A data block of any other ASTERIX category**
+  decoded against the CAT021 UAP yields a plausible wrong aircraft, not an error. Stated as a
+  property rather than as a list of siblings, for the reason the CAT048 section records: an
+  enumeration acquires a defect every time a sibling lands, and this one named CAT062 and CAT048
+  while CAT034, CAT062 and CAT023 were shipping.
 - **`LEN` disagrees with the buffer length.** Reading to the end of the buffer instead would
   translate whatever followed the block as if it were part of it.
 - **The last record does not end exactly on `LEN`.** A trailing partial record means the parse
@@ -1957,7 +1960,7 @@ indistinguishable from "nobody thought about it".
 
 | Out | Decision |
 |---|---|
-| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 021's siblings, 023, 034, 048, 062, 063, 065, 240, 247 … | Each has its own UAP and its own item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **CAT023 is the highest-value neighbour**: it is the ground station's own service status, and I021/015 and I021/016 exist in CAT021 precisely because not every service user receives CAT023. **CAT062** is the system-track category and is where a fused air picture actually lives. Both are deferred, not rejected; a category is an adapter |
+| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 021's siblings, 063, 065, 240, 247 … | Each has its own UAP and its own item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **023, 034, 048 and 062 have left this list**, which is what the sentence below it always predicted. CAT023 was named here as the highest-value neighbour — it is the ground station's own service status, and I021/015 and I021/016 exist in CAT021 precisely because not every service user receives CAT023 — and it is now `cat023`, adapter #14, with its own pin and its own row set; the join between the two is still a consumer's act and is declined on both sides. CAT062 was named as where a fused air picture actually lives, and it is now `cat062`, adapter #13. A category is an adapter, and four of them are |
 | **Interpreting an authenticated Mode 5 reply as an affiliation** | The highest-value omission, and structural rather than effort. REF `MES` carries authenticated Mode 5 ID and Data indications, which in IFF doctrine are what "friend" means — and turning one into `FRIENDLY` is an identification decision that belongs to an IFF authority, not to a translator. Over-claiming `FRIENDLY` is also the dangerous direction. The bits are parked in full and `affiliation_basis` records the decline, so the decision is visible in every object rather than absent from the code |
 | **Correlating records across data blocks** | The type-24 / CPR / pagination test, applied a fourth time. Records within one block are translated because they arrived in one payload; records in the next block are a different payload and joining them means holding a cache, which is fusion done where nothing audits it. It is also why a data block never becomes a `Track` on ingest |
 | **Building a `Track` from records sharing a Target Address** | The same decision one level down. Several records in a block may name several aircraft, and grouping the ones that agree is a correlation heuristic — a decision, made invisibly, inside a translator |
@@ -6957,8 +6960,12 @@ investigating.
 record or item level. So the gate is structural, and deliberately strict for the reason the ADS-B
 parity gate is strict:
 
-- `CAT` ≠ 48 → refusal. A CAT021 or CAT062 block decoded against the CAT048 UAP yields a
-  plausible wrong aircraft, not an error.
+- `CAT` ≠ 48 → refusal. **A data block of any other ASTERIX category** decoded against the CAT048
+  UAP yields a plausible wrong aircraft, not an error — every category has its own item catalogue
+  and its own FSPEC ceiling. The sentence used to enumerate "a CAT021 or CAT062 block", and the
+  enumeration went stale twice: once when CAT034 shipped and once when CAT062 and CAT023 did, at
+  which point the two categories it named were both adapters in this same roster. The property is
+  stated instead, and `adapters/asterix_cat048.py`'s `CATEGORY` comment records the repair.
 - `LEN` disagrees with the buffer → refusal.
 - The records do not tile `LEN` exactly → refusal, and **no records are emitted**, not even those
   parsed before the discrepancy. A partial *set* of objects that looks complete is forbidden by
@@ -7290,7 +7297,7 @@ An unimplemented thing is a decision. "Not supported" without a reason is indist
 | **Category 034 Monoradar Service Messages** | Settlement 2. Deferred, not rejected, and the loss is stated: antenna rotation timing, the IC-Conflict area for codes 35 and 36, and station status. The structural reason is that CAT034 is only useful as context accumulated across messages, which is stream state. **The deferral has since been taken up — `cat034` is adapter #12 and it ships — and this row is unchanged by that.** A second adapter does not give the first one context: holding CAT034 state to interpret a CAT048 record is the fusion this repository refuses, so every loss named here is still lost *to this adapter*. What changed is only that the values now have a CDM object of their own, on which a consumer can do the joining visibly |
 | **Deriving a geodetic position with no injected site** | Settlement 3, and it is a **default rather than a decline**: with a `sensor_position` injected the geometry IS derived. What stays out of scope is the adapter *obtaining* the site itself — inferring it from the payload, or resolving it through a SAC/SIC lookup table it owns. Both are "a station configuration it discovered from the data", which is the act `asterix_cat021.py` refuses by name; a constructor argument is not that act |
 | **Deriving a geodetic position from I048/042** | Settlement 3, and this one is a genuine decline even with a site. Which of two transforms produced it is signalled by `TCC` in I048/170, and the projection is named only as "e.g. a stereographical projection" — so a derivation would need a cross-item join *and* an unnamed projection. I048/040 is the single source of derived geometry, so the arithmetic has one owner |
-| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 023, 062, 063, 065, 240, 247 … | Each has its own UAP and item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **034 has left this list**, which is what the sentence below it always predicted: it was the highest-value neighbour here for the reason CAT023 is for CAT021 — it is the station's own status — and it is now `cat034`, adapter #12, with its own pin and its own row set. **CAT062** remains where a fused air picture actually lives. A category is an adapter |
+| **Every other ASTERIX category** — 001, 002, 004, 008, 010, 011, 019, 020, 063, 065, 240, 247 … | Each has its own UAP and item catalogue, and a block decoded against the wrong one yields a plausible wrong aircraft rather than an error. **034, 062 and 023 have left this list**, which is what the sentence below it always predicted: 034 was the highest-value neighbour here for the reason CAT023 is for CAT021 — it is the station's own status — and it is now `cat034`, adapter #12. CAT062, named here as where a fused air picture actually lives, is now `cat062`, adapter #13, and this row set is the one its settlement 1 had to distinguish itself from: CAT048 is one radar's statement about what it detected, CAT062 is a system's statement about what it concluded. A category is an adapter |
 | **Interpreting `FOE/FRI`, `MI` or an authenticated Mode 5 indication as an affiliation** | Settlement 9. The highest-value omission and structural rather than effort: an IFF result belongs to an IFF authority, over-claiming `FRIENDLY` is the dangerous direction, and the M4E note makes `00` ambiguous anyway. The bits are parked in full and `affiliation_basis` records the decline on every object |
 | **Decoding I048/250's register contents** | Settlement 10. A separate register set with its own document, [Ref. 2], unpinned. `adsb.py` already names a Mode S BDS adapter as a different adapter |
 | **Decoding I048/260's advisory bits** | Settlement 10. The only cited authority is "ICAO Draft SARPs for ACAS" — a draft, unnamed by edition, not in §2.2, with no field breakdown anywhere in the document. Decoding would mean adopting a standard this repository cannot identify |
@@ -9004,7 +9011,7 @@ current.
 | **Deriving a `Geometry` from `I034/100`** | **Ruled out, permanently, by settlement 7.** Table 2 makes `I034/100` and `I034/120` mutually exclusive across all seven message types, so a conformant record carrying a polar window carries no station position — the derivation Phase 1 left open cannot arise. `Event.geometry` is `None` on every object this adapter emits |
 | **Handing `I034/120` to adapter #11** | Settlement 2. Cross-payload state, which is the fusion refusal, stated for the eighth time in settlement 6 |
 | **Antenna-rotation staleness** | `Entity.valid_to` stays `None`. Deriving an expiry from `I034/041` for objects this adapter did not emit is the same refusal |
-| **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048` and now `cat034` are three of them, and each reads only its own CAT octet |
+| **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048`, `cat034`, `cat062` and `cat023` are five of them, and each reads only its own CAT octet. **`cat023` is the closest relative this row set has** — Part 16 is a service-message category with the same fourteen-FRN, two-octet-FSPEC UAP shape and a different item at almost every position, which is why the two codecs share no code and each says so |
 
 ### What Phase 2 changed in the Phase 1 row set
 
@@ -9581,9 +9588,11 @@ fixed-length field satisfies all of that and reaches the CDM as a track position
 
 Every settlement above is an instance and this is the rule: **no joins, no accumulation, no
 arbitration, no enrichment, no inference across payloads.** One record in, one `Entity` and one
-`Event` out. Nine adapters have now made this refusal and this is the first one where the *input*
-is a fused product, which is why settlement 1 exists as well as this paragraph: the rule is
-unchanged and the thing it had to be distinguished from is new.
+`Event` out. **Nine row sets had made this refusal when this one was written**, and CAT023's
+settlement 7 made it the tenth in the same round — so the number names the series up to here rather
+than a roster count, which is what stops it going stale on the next adapter. This is the first one
+where the *input* is a fused product, which is why settlement 1 exists as well as this paragraph:
+the rule is unchanged and the thing it had to be distinguished from is new.
 
 ### Settlement 9 — The item the specification defines, permits, and forbids
 
@@ -9751,7 +9760,7 @@ NITS, GMTIF, CAT048 and CAT034 sections all grew applies here too: it fails if a
 
 | CAT062 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I062/380` SF#1 | `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `cat062 1.0.0` | §5.2.24 SF#1, "24 bits Target Address, A23 to A0", filed under the system name `ICAO24` — the same string `adsb.py`, `asterix_cat021.py` and `asterix_cat048.py` use, so one airframe seen by four adapters derives one `entity_id` without them coordinating. **Settlement 3's step 1** |
+| `I062/380` SF#1 | `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `cat062 1.0.0` | §5.2.24 SF#1, "24 bits Target Address, A23 to A0", filed under the system name `ICAO24` — **the same string every adapter here that has a 24-bit Mode S address uses**, so one airframe seen through any of them derives one `entity_id` without them coordinating. Stated as the property rather than as a count: `tests/test_cdm_prose_counts.py` derives that set by AST, and a sentence naming a number is checked against the derivation. **Settlement 3's step 1** |
 | `I062/380` SF#1 | `Entity.entity_id` | `cat062 1.0.0` | `uuid5(NAMESPACE, "entity\|ICAO24\|<6 hex>")`. A pure function of the address, not a join |
 | `I062/040` | `Event.payload` | `cat062 1.0.0 · parked` | §5.2.3 Track Number, two octets, **mandatory in every record**, and **NEVER the identity basis** — settlement 3. Sixteen bits, allocated by the emitting system and recycled; keying `entity_id` on it merges two airframes into one entity |
 | `I062/040` + `I062/010` + `I062/070` + record index | `Entity.source_ids`, `Entity.entity_id` | `cat062 1.0.0` | **settlement 3's step 2**, used only when no Mode S address is stated. Filed under `CAT062_TRACK_REPORT` and saying so: the track number is *in* the key and is not the basis of it, because the time of day beside it means the key makes no promise of continuity |
@@ -10135,7 +10144,7 @@ the declines table names them individually.
 | **ADS-B Version 3 beyond what the REF defines** | ED-102B and DO-260C are §2.2 references 5 and 6 and neither is in hand. What is implemented is what Appendix A Edition 1.3 states, which is what the core specification says it relocated there. The MOPS themselves define far more |
 | **ASTERIX Part 1** | Not pinned, and this document cites it at edition 3.1 without reproducing it. The RE and SP length convention is inherited from the shipped siblings and the inheritance is named at its site |
 | **Categories 063 and 065** | An SDPS emits all three and 065's REF is where `I062/100`'s reference point lives. Deferred, not rejected; a category is an adapter, and this one is bounded by its `CAT` octet |
-| **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048`, `cat034` and now `cat062` are four of them, and each reads only its own `CAT` octet. The property is stated rather than the siblings enumerated — settlement 3's last paragraph is why |
+| **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048`, `cat034`, `cat062` and `cat023` are five of them, and each reads only its own `CAT` octet. The property is stated rather than the siblings enumerated — settlement 3's last paragraph is why |
 
 ### What Phase 2 changed in the Phase 1 row set
 
@@ -10918,9 +10927,11 @@ symmetry with CAT062's.
    | `attributes.target_identification` | `cat021` |
    | `attributes.platform_id` | `gmti` |
    | `attributes.aircraft_identification` | `cat048` |
+   | `attributes.aircraft_derived_data.target_identification`, `attributes.flight_plan.callsign`, `attributes.encoder_conformance.I062/245_present.text` | `cat062` — **three private keys in ONE adapter**, and they are not redundant: §5.2.24 SF#2 is a downlinked identification or registration, §5.2.25 SF#2 is a flight-plan callsign, and `I062/245` is a third string with an `STI` saying which kind it is. §5.2.18's own NOTE 2 says they are alternatives and forbids the third. Choosing one is the arbitration the fusion refusal declines, so all three park — which is this gap at its worst: an adapter carrying three names for one object because the CDM has nowhere to put even one |
 
-   **Seven adapters, eight private keys.** The previous tally read "five adapters and six private
-   keys" and omitted `cat021`'s `target_identification` — which that row set calls "gap 1's most
+   **Eight adapters, eleven private keys.** The previous tally read "seven adapters and eight
+   private keys" and was correct until `cat062` landed; before that it read "five adapters and six
+   private keys" and omitted `cat021`'s `target_identification` — which that row set calls "gap 1's most
    awkward case yet" and explicitly says is "counted in gap 1". So the gap had been undercounting
    itself by one adapter and one key since adapter #6, which is a small demonstration of why a
    count in prose needs a sweep: the number is the whole argument here, and nothing failed a build
@@ -11790,6 +11801,14 @@ symmetry with CAT062's.
    | `adapters/gmtif.py` | a `Point`, from the target report's recovered position (amendment 1; it was `None` in the Phase 2 commit) |
    | `adapters/asterix_cat021.py` | `None` |
    | `adapters/adsb.py` | `None` |
+
+   **`cat062` and `cat023` were checked against this table when they landed and neither joins it.**
+   `cat062` emits `TRACK_UPDATE` or `ALERT` and never `DETECTION` — a system track is not a
+   detection, which is settlement 1's distinction — and its `Event.geometry` is `None` for a
+   separate reason its own declines table gives: the only geometry-shaped thing in the category is
+   `I062/100`, in a frame that cannot be inverted. `cat023` emits `STATUS_CHANGE` and carries no
+   position at all. Recorded because a reader meeting a target-report category in this repository
+   will look for it here, and its absence should be a finding rather than a gap in the sweep.
 
    Both arguments, because whoever settles this has to weigh them rather than inherit a majority:
 

@@ -10,11 +10,10 @@ left open and what has since been ruled on.
 
 This is the contract layer, and it is public because that is what a contract is for. **Twelve
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
-`adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `cat048` and `cat034` — the last five
-byte-exact on the wire where the format is binary. More are landing next: the other ASTERIX
-categories (062 system tracks, 023 service status). Without a canonical model in the middle,
-N adapters means N(N−1)/2 translations and N private notions of "a contact" — sixty-six and
-twelve as of today; with one, an adapter is a thin translator and nothing else.
+`adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `cat048`, `cat034`, `cat062` and
+`cat023` — the last seven byte-exact on the wire where the format is binary. Without a canonical
+model in the middle, N adapters means N(N−1)/2 translations and N private notions of "a contact" —
+sixty-six and twelve as of today; with one, an adapter is a thin translator and nothing else.
 
 ```
 external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer
@@ -39,7 +38,7 @@ It is generated, and a test fails the build if it drifts from the models.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the ten shipped adapters are verified against** — which is what makes
+harness and **every fixture the twelve shipped adapters are verified against** — which is what makes
 conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:

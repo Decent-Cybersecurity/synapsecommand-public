@@ -396,7 +396,7 @@
     "the_pdfs_are_not_in_git": true,
     "precedent": "Every other spec directory here. fixtures/cat021/spec/ holds sac_pin.json and build_fixtures.py and no PDF; fixtures/cat048/spec/ holds a pin, a generator and 22 untracked history PDFs; fixtures/fft/spec/ and fixtures/klv/spec/ hold pins and untracked PDFs.",
     "consequence_for_this_directory": "The four files sit in the working tree because they had to be read. They are excluded from the commit by not being added, and tests/test_cdm_pins.py asserts that `git ls-files` returns no .pdf anywhere in the repository.",
-    "why": "The document is redistributable only on EUROCONTROL's own terms. A pin plus an edition plus a hash reproduces the artefact for any reader without this repository redistributing it, which is exactly why the other eleven adapter efforts pin rather than vendor."
+    "why": "The document is redistributable only on EUROCONTROL's own terms. A pin plus an edition plus a hash reproduces the artefact for any reader without this repository redistributing it, which is exactly why EVERY adapter effort here pins rather than vendors. Stated without a count, deliberately: three pin records used to state this one practice as three different numbers - eleven here, nine in cat048_pin.json, ten in klv_pin.json - and all three went stale as adapters landed. The practice is universal and derivable from the tree; the count was neither."
   },
   "ambiguity_register": {
     "convention": "Numbered from 1 within this row set, the convention each format section uses for its own register. CAT048's runs to 18 and CAT034's does not continue it.",

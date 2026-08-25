@@ -18,13 +18,13 @@ CLI and its exit codes, the fixture set. It follows the general rule and not MIG
 WHY THEY MUST BE ALLOWED TO DIVERGE, WHICH IS MEASURED AND NOT ARGUED
 ---------------------------------------------------------------------
 They are BOTH ``1.0.0`` today, and a reader who sees two equal numbers reasonably concludes
-one ofeleven adapters is redundant. It is not, and the tree already proves it: ``MIGRATIONS.md`` has a
-section titled "Adapters that landed with no schema change" and it holds **nine** entries —
-nine adapters, each of which added thousands of lines of shipped behaviour to this
+one of them is redundant. It is not, and the tree already proves it: ``MIGRATIONS.md`` has a
+section titled "Adapters that landed with no schema change" and it holds **eleven** entries —
+eleven adapters, each of which added thousands of lines of shipped behaviour to this
 distribution at ``schema_version`` 1.0.0, with no field added, removed or retyped.
 
 Had this package been released before any of them, each would have been a package MINOR and
-none of them a schema bump. The two numbers would already be nine minors apart. Deriving one
+none of them a schema bump. The two numbers would already be eleven minors apart. Deriving one
 from the other — which is what this file used to do, with the packaging metadata reading
 ``SCHEMA_VERSION`` directly — would have produced a distribution that could not express "the
 same contract, more adapters", and the only ways out are both wrong: bump the contract for a
@@ -45,7 +45,10 @@ notice", and that is not what this is: twelve adapters are shipped and harness-v
 ``Adapter`` contract has been stable across all twelve of them, and the whole point of a
 contract layer is that consumers may depend on it. A ``0.x`` first release would be
 advertising an instability the tree does not have. The coincidence with ``SCHEMA_VERSION``
-1.0.0 is a coincidence of two first releases, and it will not survive the eleventh adapter.
+1.0.0 is a coincidence of two first releases, and it did not survive the eleventh: `cat062`
+and `cat023` both landed at ``schema_version`` 1.0.0 with no field added, removed or
+retyped, so the package number is now two adapters ahead of the contract number in the
+only sense that matters — what a release of it would have to be.
 
 WHAT EACH BUMP MEANS
 --------------------

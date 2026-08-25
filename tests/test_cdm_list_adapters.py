@@ -115,13 +115,21 @@ def test_the_listing_states_that_fixtures_do_not_have_to_be_passed():
 # ------------------------------------------------------------------ THE MUTATION CHECK
 #
 # The one this module is for. Everything above passes just as well against a hardcoded tuple of
-# ten names; only these two can tell the difference.
+# names; only these two can tell the difference.
 
 
-def test_removing_an_adapter_from_the_registry_removes_it_from_the_listing(monkeypatch):
-    """Break the registry; the listing must change."""
+@pytest.mark.parametrize("victim", sorted(adapter.roster()))
+def test_removing_an_adapter_from_the_registry_removes_it_from_the_listing(victim, monkeypatch):
+    """Break the registry; the listing must change. Once per registered adapter.
+
+    PARAMETERISED, and it used to name `pntmap` alone. One victim proves the listing is derived
+    FOR THAT ONE — which is the whole property, since there is one code path — and it does not
+    prove that a NEW adapter is reachable by it, because a hand-written roster containing eleven
+    of twelve names passes a one-victim mutation eleven times out of twelve. The parameter list is
+    read from `adapter.roster()`, so an adapter that lands without being listed fails here rather
+    than being covered by a test that never mentions it.
+    """
     before = listed(render())
-    victim = "pntmap"
     assert victim in before, f"{victim} is not listed, so this mutation removes nothing"
     shrunk = {k: v for k, v in adapter.REGISTRY.items() if k != victim}
     monkeypatch.setattr(adapter, "REGISTRY", shrunk)
@@ -137,7 +145,7 @@ def test_removing_an_adapter_from_the_registry_removes_it_from_the_listing(monke
 
 
 def test_adding_an_adapter_to_the_registry_adds_it_to_the_listing(monkeypatch):
-    """The other direction, which is the one an eleventh adapter will exercise for real."""
+    """The other direction, and adapters #13 and #14 exercised it for real."""
     monkeypatch.setattr(adapter, "REGISTRY", dict(adapter.REGISTRY))
 
     class _ProbeAdapter(Adapter):

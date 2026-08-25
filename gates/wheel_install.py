@@ -35,7 +35,7 @@ repository. Every check below is a property of the installed artefact:
     import     synapse_cdm imports, from site-packages and not from the tree
     resources  every shipped adapter's fixtures resolve through importlib.resources
     schemas    the published schemas can be regenerated and re-checked from anywhere
-    harness    all ten adapters replay green with no --fixtures argument at all
+    harness    all twelve adapters replay green with no --fixtures argument at all
     scripts    the cdm-harness and cdm-schemas console entry points work
     prose      no shipped file hands the reader a repo-relative path
     slice      the package-only half of the suite passes against the INSTALLED package

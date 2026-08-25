@@ -75,8 +75,21 @@ ICAO_SYSTEM = "ICAO24"
 #: into one entity, which is a false statement, and gap 27 records the truncation instead.
 REPORT_SYSTEM = "CAT048_REPORT"
 
-#: One octet, and this adapter speaks exactly one category. A CAT021 or CAT062 block decoded
-#: against the CAT048 UAP yields a plausible wrong aircraft rather than an error.
+#: One octet, and this adapter speaks exactly one category.
+#:
+#: THE SIBLING LIST IS GONE, AND ITS ABSENCE IS THE REPAIR. This comment used to read "A CAT021 or
+#: CAT062 block decoded against the CAT048 UAP yields a plausible wrong aircraft rather than an
+#: error", and the enumeration went stale the day CAT034 shipped — the CAT048 declines table said
+#: so itself, in the row that begins "034 has left this list". It then went stale again when CAT062
+#: and CAT023 landed, at which point the two categories it DID name were both adapters in this same
+#: roster and the sentence was describing a hazard against its own siblings.
+#:
+#: A comment that lists siblings acquires a defect every time a sibling lands, so this one states
+#: the PROPERTY: a data block of any other ASTERIX category decoded against the category 048 UAP
+#: yields a plausible wrong aircraft rather than an error, because every category has its own item
+#: catalogue and its own FSPEC ceiling. The roster is `adapter.roster()` and it is derived.
+#: `asterix_cat062.py` and `asterix_cat023.py` were written this way from the start and record the
+#: same ruling at their own `CATEGORY`.
 CATEGORY = 48
 
 #: CAT (1) + LEN (2). LEN counts itself and the CAT octet, per §4.6.2.

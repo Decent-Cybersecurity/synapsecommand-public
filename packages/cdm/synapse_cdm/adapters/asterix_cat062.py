@@ -87,11 +87,14 @@ from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Sou
 #: This adapter's own system name, for `SourceRef.system`.
 SYSTEM = "ASTERIX_CAT062"
 
-#: The source id system for a 24-bit ICAO aircraft address. The SAME string `adsb.py`,
-#: `asterix_cat021.py` and `asterix_cat048.py` file it under, so a CAT062 system track, a CAT048
-#: report, a CAT021 record and a raw 1090ES frame for one airframe all derive the SAME `entity_id`
-#: without any of the four coordinating. That is not a join: it is a pure function of the address,
-#: and it is what lets a fusion layer do the joining where the join is audited.
+#: The source id system for a 24-bit ICAO aircraft address, and the string is what matters rather
+#: than the count: **every adapter here that has a 24-bit Mode S address files it under this
+#: name**, so one airframe seen through any of them derives the SAME `entity_id` without them
+#: coordinating. `adsb.py`, `asterix_cat021.py`, `asterix_cat048.py` and `stanag4676.py` are the
+#: others today, and `tests/test_cdm_prose_counts.py` derives that set by AST rather than from a
+#: list — which is why this comment names the property and the sentences that state a NUMBER are
+#: checked against the derivation. That is not a join: it is a pure function of the address, and
+#: it is what lets a fusion layer do the joining where the join is audited.
 ICAO24_SYSTEM = "ICAO24"
 
 #: Settlement 3's step 2. A record with no aircraft address states no airframe identity, so the id
@@ -2325,10 +2328,11 @@ def _identity(record: dict, items: dict) -> tuple[list[SourceId], dict, str]:
         system, external_id = ICAO24_SYSTEM, f"{address:06X}"
         note = (
             "I062/380 Subfield #1, the 24-bit Mode S Target Address, filed under ICAO24 — the "
-            "same system name adsb.py, asterix_cat021.py and asterix_cat048.py use, so one "
-            "airframe seen by a raw 1090ES frame, an ADS-B ground station, a radar and an SDPS "
-            "derives the SAME entity_id without the four adapters coordinating. That is a pure "
-            "function of the address and not a join. Settlement 3 step 1")
+            "same system name every adapter here that has a 24-bit Mode S address uses, so "
+            "one airframe seen by a raw 1090ES frame, an ADS-B ground station, a radar, a "
+            "NITS track and an SDPS derives the SAME entity_id without any of them "
+            "coordinating. That is a pure function of the address and not a join. "
+            "Settlement 3 step 1")
     else:
         system = REPORT_SYSTEM
         external_id = "|".join(str(part) for part in (

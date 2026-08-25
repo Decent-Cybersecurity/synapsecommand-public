@@ -16,9 +16,10 @@ reports (bidirectional), STANAG 4676 / AEDP-12 Edition B NITS tracks
 (bidirectional), STANAG 4607 / AEDP-4607 Edition A GMTI radar
 detections (bidirectional, byte-exact), ASTERIX category 048
 monoradar target reports (bidirectional, byte-exact), and ASTERIX
-category 034 monoradar service messages (bidirectional, byte-exact) —
-with more landing next: the other ASTERIX categories (062 system
-tracks, 023 service status).
+category 034 monoradar service messages (bidirectional, byte-exact),
+ASTERIX category 062 SDPS system track messages (bidirectional,
+byte-exact), and ASTERIX category 023 CNS/ATM ground station and
+service status reports (bidirectional, byte-exact).
 
 Without a canonical model in the middle, N adapters means N(N−1)/2
 translations and N private notions of what "a contact" is — sixty-six
@@ -142,7 +143,7 @@ contributor's install and is documented in
 [`CONTRIBUTING.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/CONTRIBUTING.md).
 A consumer never needs a clone.
 
-Everything it needs comes with it. The ten shipped adapters' **fixtures are part of the package**,
+Everything it needs comes with it. The twelve shipped adapters' **fixtures are part of the package**,
 so the harness runs against the payloads those adapters are verified on without a repository
 anywhere:
 

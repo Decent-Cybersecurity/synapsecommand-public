@@ -8,7 +8,7 @@
     "name_ruling": {
       "ruled": "cat023",
       "confidence": "settled",
-      "deciding_source": "PRECEDENT, now unanimous across four adapters, and the document agrees on its own cover.",
+      "deciding_source": "PRECEDENT, now unanimous across the four ASTERIX adapters that preceded it, and the document agrees on its own cover.",
       "why": "Every ASTERIX adapter in the roster is `cat` plus the three-digit category number with the fixture directory the same string - cat021, cat048, cat034 and, in this same round, cat062. This is the fifth instance and the first for which the precedent was already unanimous before the question was asked.",
       "the_document_agrees": "The cover reads 'ASTERIX Part 16 Category 023' and section 4.5.2 reads 'Data Category (CAT) = 023, is a one-octet field indicating that the Data Block contains Ground Station and Service Status reports.' Three digits in both places."
     },

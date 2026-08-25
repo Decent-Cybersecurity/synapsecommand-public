@@ -318,6 +318,14 @@ checkout:
 **Ten adapters, 298 fixture verdicts, 0 failed.** The per-adapter figures are written out because
 298 is a number nobody can check and ten numbers that sum to it are.
 
+**Ten is the roster OF 1.0.0 and not of `main`.** `cat062` and `cat023` landed afterwards and
+are in `MIGRATIONS.md`'s `### Unreleased` section, so the tree ships twelve adapters and the
+release this block verifies carries ten. The table above is what a `pip install synapse-cdm`
+gets, which is the whole point of the block: it is a measurement of the artefact a stranger
+downloads, and it does not move when `main` does. The stale-count sweep names this sentence
+as the subset it belongs to rather than updating the number, because updating it would
+falsify the record.
+
 **Step 3 did not run.** `synapse-cdm` returns **404 on TestPyPI**, measured in the same minute as
 the two 200s above, so there was no TestPyPI upload and the project page was never previewed
 before an upload that cannot be undone. It is recorded rather than dropped for the reason this

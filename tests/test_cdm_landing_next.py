@@ -17,34 +17,47 @@ documentation site's — so the disagreement was published.
 
 THE RULING, WHICH IS ABOUT BACKING AND NOT ABOUT WORDING
 ---------------------------------------------------------
-`062` and `023` are backed. `FORMAT_COVERAGE.md`'s "Deliberately out of scope" tables carry a row
-for each, saying what it is and why it is not here yet: CAT023 is the ground station's own service
-status, CAT062 is where a fused air picture lives, and **"Both are deferred, not rejected; a
-category is an adapter"**. A reader who wants to know what the promise means has somewhere to go.
+`062` and `023` were backed. `FORMAT_COVERAGE.md`'s "Deliberately out of scope" tables carried a row
+for each, saying what it is and why it is not here yet, so a reader who wanted to know what the
+promise meant had somewhere to go.
 
 **The simulation feed was backed by nothing at all.** It named no format, so there was no
 specification to pin, no gap-table row to write, and nothing that could ever have become its
-evidence — and it is not that the tree merely lacked one: the word "simulation" occurs in this
-repository only as a PROPERTY of formats that already ship (ASTERIX P7 real/simulated, NITS
-`SIMULATED` essence, the MIL-STD-2525 simulation context digit), never as a feed. It was imported
-prose from the very first commit that lifted this package out — `965e939`, 2026-08-22 — and it
-survived twelve rounds and a publication because no gate compared a roadmap item against the
-tree's ability to justify it.
+evidence. It was imported prose from the very first commit that lifted this package out —
+`965e939`, 2026-08-22 — and it survived twelve rounds and a publication because no gate compared a
+roadmap item against the tree's ability to justify it. It was removed from all three sites rather
+than given a row it could not earn.
 
-So it was removed from all three sites rather than given a row it could not earn. A published
-roadmap item that the tree cannot back is the claim class this repository does not tolerate, and
-inventing a gap-table entry to keep the sentence would be the same defect wearing the fix's
-clothes.
+THE ROADMAP HAS NOW EMPTIED, BECAUSE BOTH MEMBERS LANDED
+---------------------------------------------------------
+`cat062` shipped as adapter #13 and `cat023` as adapter #14, in the round that also wrote their row
+sets. So the roster this module pinned is empty, the three clauses are gone from the three sites,
+and the deferral rows that backed them have become shipped row sets.
 
-WHAT THIS GATE ENFORCES
------------------------
-1. **Every site states the roster, and states the same one.** Anchored patterns, and a pattern
-   that stops matching is a FAILURE — the `tests/test_cdm_prose_counts.py` rule, for the same
-   reason: a silent non-match reads as a green check on a site nobody is checking.
-2. **Every member is backed** by a row in `FORMAT_COVERAGE.md` that defers it. This is the half
-   that would have caught the defect: the simulation feed cannot satisfy it under any wording.
-3. **The retired claim does not come back**, swept over the whole tree rather than over the three
-   sites — because the way it spread in the first place was by being copied.
+**That is the state this module's own instructions anticipated** — "if the roadmap emptied because
+everything landed, remove the site from this module and say so in the same commit" — and it is
+handled by INVERTING the gate rather than by deleting it. Three things are asserted now, and each
+one is a way the empty state could go wrong:
+
+1. **No site states a landing-next clause.** The three patterns are kept verbatim and must match
+   ZERO times each. A clause coming back without a roster behind it is exactly the defect the
+   simulation feed was, and re-adding one is now a deliberate act that fails a build.
+2. **Neither former member reads as deferred any more.** A category with a shipped adapter and a
+   row in a declines table saying it is "deferred, not rejected" is a document telling a reader to
+   wait for something that arrived — which is the same class of stale promise, pointing backwards.
+3. **The retired claim still does not come back**, swept over the whole tree. That half is
+   unchanged and is independent of the roster: it was never about a category.
+
+**The roster is retired rather than emptied to `{}`.** An empty dict with the machinery still
+pointed at it would read as "nothing is planned yet" and would quietly start passing again the
+moment somebody added a member without adding a site. What is asserted instead is the absence of
+the clause, which is a property of the DOCUMENTS and cannot be satisfied by an empty constant.
+
+WHAT A FUTURE ROADMAP DOES
+--------------------------
+Restore the three clause patterns to matching, restore a roster, and restore the
+backed-by-a-deferral-row check — all of it is in this file's history, and the class of defect it
+exists for is not one that stops being possible.
 """
 import os
 import pathlib
@@ -60,17 +73,12 @@ COVERAGE = "packages/cdm/synapse_cdm/FORMAT_COVERAGE.md"
 
 SELF = "tests/test_cdm_landing_next.py"
 
-#: The roster, as ASTERIX category numbers with the descriptor each site gives them.
-#:
-#: PINNED, and it is a ruling rather than a fact the tree computes: what is "landing next" is a
-#: statement of intent, and no test can derive intent from a source tree. What a test CAN do is
-#: require every member to be backed (below) and require the three sites to agree. Landing an
-#: adapter, or adding a fourth promise, is a deliberate edit here in the same commit.
-ROSTER = {"062": "system tracks", "023": "service status"}
+#: The roster as it stood, and it is kept for the closure below rather than for a promise: these
+#: are the two categories whose deferral rows must NOT still say "deferred", because both shipped.
+#: A member here is now a former member.
+LANDED = {"062": "cat062", "023": "cat023"}
 
-#: One per site, and each must match exactly once. The clause is captured so its contents can be
-#: checked; the surrounding sentence differs at every site on purpose, because these are three
-#: audiences and not three copies.
+#: One per site, kept verbatim from when they matched. They must now match ZERO times each.
 CLAUSES = {
     "README.md":
         r"More are landing next: the other ASTERIX categories \((?P<roster>[^)]*)\)\.",
@@ -90,76 +98,90 @@ def _flat(text: str) -> str:
     return " ".join(text.split())
 
 
-def clause(rel: str) -> str:
+@pytest.mark.parametrize("rel", sorted(CLAUSES))
+def test_no_site_states_a_landing_next_clause_any_more(rel):
+    """The inversion. The roadmap emptied because both members landed, so the promise goes.
+
+    The patterns are the ones that used to have to match EXACTLY ONCE. Keeping them and requiring
+    zero is what makes the retirement checkable: a deleted test would leave the sentence free to
+    come back, and a rewritten pattern would leave the OLD sentence free to come back.
+    """
     path = REPO / rel
     assert path.exists(), f"{rel} does not exist; this module's site list is stale"
     found = list(re.finditer(CLAUSES[rel], _flat(path.read_text())))
-    assert len(found) == 1, (
-        f"{rel}: the landing-next clause matched {len(found)} times, expected exactly 1.\n"
-        f"  pattern: {CLAUSES[rel]}\n"
-        "A pattern that stops matching is a FAILURE and not a pass. If the sentence was "
-        "rewritten, re-anchor it deliberately; if the roadmap emptied because everything landed, "
-        "remove the site from this module and say so in the same commit."
-    )
-    return found[0].group("roster")
-
-
-@pytest.mark.parametrize("rel", sorted(CLAUSES))
-def test_every_site_states_the_same_landing_next_roster(rel):
-    """The disjunction. Three audiences, one roster."""
-    stated = clause(rel)
-    for number, descriptor in sorted(ROSTER.items()):
-        assert f"{number} {descriptor}" in stated, (
-            f"{rel} promises {stated!r} and does not name {number} {descriptor!r}. The three "
-            "sites are read by three different people and a roadmap that differs between them is "
-            "a roadmap the reader has to reconcile"
-        )
-    extra = re.sub(r"|".join(f"{n} {d}" for n, d in ROSTER.items()), "", stated)
-    extra = extra.replace(",", "").strip()
-    assert not extra, (
-        f"{rel} promises something beyond the roster: {extra!r}. Every member has to be backed by "
-        f"a deferral row in {COVERAGE} — see the ruling in this module's docstring, and the "
-        "simulation feed, which was published for twelve rounds backed by nothing"
+    assert not found, (
+        f"{rel} states a landing-next clause again: {[m.group(0) for m in found]}.\n"
+        "The roster emptied when cat062 and cat023 shipped, so this promise has nothing behind it "
+        "unless a NEW roster was written with it. If one was, restore the roster and the "
+        "backed-by-a-deferral-row check together — a promise with no backing is the defect the "
+        "simulation feed was, and it survived twelve rounds because nothing compared the two."
     )
 
 
-@pytest.mark.parametrize("number", sorted(ROSTER))
-def test_every_roster_member_is_backed_by_a_deferral_row(number):
-    """THE HALF THAT WOULD HAVE CAUGHT IT. A promise needs somewhere for a reader to go.
+#: The exact phrase the deferral rows used. Specific on purpose: "not merely deferred" and
+#: "deferred to a per-deployment ICD" both contain the word and neither is a roadmap promise, so a
+#: bare `"deferred" in row` reader reports prose as a stale roster entry. This phrase only ever
+#: appears where a category is being held for a future adapter.
+DEFERRAL_PHRASE = "deferred, not rejected"
 
-    Checked against the sentence rather than against the bare number: `062` and `023` occur in
-    this document as data-item numbers, bit ranges and LSB fractions, so a substring search would
-    have declared anything at all backed. What has to be present is a row DEFERRING the category.
+
+def _table_lines() -> list[str]:
+    """Every markdown TABLE ROW in the coverage document, whole.
+
+    Rows and not cells: a declines row states the subject in its first cell and the disposition in
+    its second, so splitting on `|` separates the two halves of the fact being checked — which is
+    what made the first version of this reader miss its own control.
     """
-    text = _flat((REPO / COVERAGE).read_text())
-    rows = [row for row in text.split("|") if f"CAT{number}" in row or f"category {number}" in row]
-    assert rows, (
-        f"{COVERAGE} has no table cell mentioning CAT{number}, so the roadmap promises a category "
-        "the coverage document has never heard of. Either write the deferral row — what it is and "
-        "why it is not here — or take it out of the roster"
-    )
-    deferring = [row for row in rows if "deferred" in row.lower()]
-    assert deferring, (
-        f"{COVERAGE} mentions CAT{number} but no cell says it is deferred. A roadmap entry needs "
-        "the coverage document to record it as deferred-not-rejected; a category merely named in "
-        "passing is not a backing"
-    )
+    return [line for line in (REPO / COVERAGE).read_text().splitlines()
+            if line.startswith("|") and not line.startswith("|---")]
 
 
-def test_the_backing_check_can_fail():
-    """A check that finds everything backed would pass a roster of anything.
+@pytest.mark.parametrize("number,name", sorted(LANDED.items()))
+def test_a_landed_category_no_longer_reads_as_deferred(number, name):
+    """The other direction of the same staleness: a shipped category still described as pending.
 
-    Asserted against a category this repository has never deferred — 240 is in the out-of-scope
-    enumeration as one of the "every other ASTERIX category" list and has no row of its own — so
-    a mutation that widened the search to any mention would show up here.
+    A reader meeting `CAT062` in a declines row that says "deferred, not rejected" is being told to
+    wait for something that arrived two commits ago, which is the roadmap defect pointing
+    backwards. Matched on the PHRASE rather than the word: "not merely deferred" and "deferred to a
+    per-deployment ICD" both contain "deferred" and neither is a promise.
     """
-    text = _flat((REPO / COVERAGE).read_text())
-    rows = [row for row in text.split("|")
-            if "CAT240" in row or "category 240" in row]
-    assert not any("deferred" in row.lower() for row in rows), (
-        "CAT240 now reads as a deferred category, so the backing check can no longer tell a "
-        "roster member from a number in a list. Pick another unbacked category for this control, "
-        "or the roster is checked against nothing"
+    from synapse_cdm import adapter
+    assert name in adapter.roster(), (
+        f"{name} is not registered, so this category has not in fact landed and this test is "
+        "asserting the wrong thing. Either the adapter was removed — in which case a deferral row "
+        "and a roster entry both have to come back — or the registry name changed"
+    )
+    stale = [line for line in _table_lines()
+             if DEFERRAL_PHRASE in line.lower()
+             and (f"CAT{number}" in line or f"category {number}" in line
+                  or f"Category {number}" in line)]
+    assert not stale, (
+        f"{COVERAGE} still describes CAT{number} as {DEFERRAL_PHRASE!r} in {len(stale)} row(s), "
+        f"and `{name}` is a registered adapter:\n  "
+        + "\n  ".join(line.strip()[:180] for line in stale)
+        + "\nA category with a shipped adapter that a declines table still defers is a document "
+        "telling a reader to wait for something that arrived"
+    )
+
+
+def test_the_deferred_check_can_fail():
+    """A reader that found nothing deferred anywhere would pass a roster of anything.
+
+    Asserted against categories this repository HAS deferred and has not shipped — 063 and 065 are
+    named in the CAT062 declines table as an SDPS's other two output categories, and 065's REF is
+    where `I062/100`'s reference point lives — so a mutation that stopped reading the document, or
+    that narrowed the phrase past matching, shows up here rather than as a clean run.
+    """
+    deferred = [line for line in _table_lines() if DEFERRAL_PHRASE in line.lower()]
+    assert deferred, (
+        f"no table row in {COVERAGE} contains {DEFERRAL_PHRASE!r} any more, so the reader above is "
+        "looking at a document it can no longer find a deferral in — and would report every landed "
+        "category clean whether or not it was"
+    )
+    assert any("063" in line and "065" in line for line in deferred), (
+        "categories 063 and 065 are no longer deferred in a row this reader can see. If they "
+        "shipped, they belong in LANDED; if the row was reworded, pick another deferred category "
+        "for this control — an unbacked control is a control that proves nothing"
     )
 
 

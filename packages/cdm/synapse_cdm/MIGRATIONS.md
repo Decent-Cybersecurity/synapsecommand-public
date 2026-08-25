@@ -7,8 +7,8 @@ means adding it at the moment two incompatible producers are already in the fiel
 **`schema_version` is not the package's version.** This document governs the first: the wire
 contract, carried in every object, bumped by the table below. The distribution on PyPI carries
 the second — ordinary semver over the Python surface — and the two are allowed to diverge,
-because the section "Adapters that landed with no schema change" is nine entries long and every
-one of them would have been a package release. Both are declared in `version.py`, which is the
+because the section "Adapters that landed with no schema change" is eleven entries long and
+every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They are both `1.0.0` today, by
 coincidence of two first releases.
 
@@ -222,6 +222,51 @@ it is nothing.
   field reusing the string's own quote and containing a backslash — legal from 3.12 under PEP 701
   and a `SyntaxError` at the declared `requires-python = ">=3.11"` floor. The expression is hoisted
   to a local above the f-string, as the gate's own message suggests.
+
+- **The roster, the gates and the disjunction sweep, after adapters #13 and #14.** No behaviour
+  changed; what changed is every site that stated a fact the two adapters moved.
+
+  **`--list-adapters` shows both, and its mutation check is now parameterised over the whole
+  roster.** It named `pntmap` alone, which proves the listing is derived FOR THAT ONE and does not
+  prove a new adapter is reachable by it — a hand-written roster containing eleven of twelve names
+  passes a one-victim mutation eleven times out of twelve. The parameter list is read from
+  `adapter.roster()`, so an adapter that lands without being listed fails there.
+
+  **The published roadmap emptied, because both of its members landed.** `README.md`,
+  `docs/docs/intro.mdx` and `synapse_cdm/__init__.py` no longer promise "the other ASTERIX
+  categories (062 system tracks, 023 service status)", and `tests/test_cdm_landing_next.py` was
+  INVERTED rather than deleted: the three clause patterns are kept verbatim and must now match ZERO
+  times, so a promise coming back without a roster behind it fails a build. A second half was added
+  in the other direction — a category with a shipped adapter may not still read as "deferred, not
+  rejected" in a declines table, which is the same staleness pointing backwards. The three declines
+  tables that deferred 023 and 062 now record them as landed.
+
+  **The stale-count sweep found six live counts, one disjunction and one thing it was not looking
+  for.** Six sites said ten or nine adapters and now say twelve: `README.md`, `docs/docs/intro.mdx`,
+  `docs/docs/changelog.mdx`, `gates/wheel_install.py`, `pyproject.toml` twice, and `adapter.py`'s
+  "nine of the ten shipped adapters" (now eleven of twelve). The disjunction was three PIN RECORDS
+  stating ONE PRACTICE as three different numbers — "the other eleven adapter efforts", "the other
+  nine", "all ten" — every one of them stale and no two agreeing; all three now state the practice
+  and no count, because the practice is universal and derivable and the count was neither.
+
+  **Two sites were left alone deliberately and say why.** `PUBLICATION.md`'s "Ten adapters, 298
+  fixture verdicts" measures the PUBLISHED 1.0.0 from the index, so it names its subset rather than
+  moving — updating it would falsify the record. `synapse_cdm/README.md`'s and `harness.py`'s
+  "nine adapters" are descriptions of things that happened.
+
+  **And a gap tally moved.** `FORMAT_COVERAGE.md`'s gap 1 counts the private keys adapters invent
+  because the CDM has no canonical name: seven adapters and eight keys became **eight and eleven**,
+  because `cat062` alone carries THREE name-shaped strings that the specification itself says are
+  alternatives and that no adapter may arbitrate between. Gap 7's detection-geometry table was
+  checked and neither new adapter joins it; the check is recorded, because a target-report category
+  absent from that table should be a finding rather than a hole in the sweep.
+
+- **A defect this round introduced and repaired.** A scripted edit for the count sweep corrupted one
+  sentence in `version.py` — "one of them is redundant" became "one ofeleven adapters is redundant"
+  — and it was committed. It was found by the sweep that follows the edits rather than by the edits,
+  which is the argument for running the sweep as a separate act: a script that rewrites prose in
+  eight files is exactly the thing whose own output nobody re-reads. The sentence is restored, the
+  whole round's diff was re-scanned for the same signature, and no other site was affected.
 
 ### 1.0.0 — initial contract
 
@@ -798,6 +843,32 @@ is worth stating.
   stands exactly where it stood, **as an inference**: a page that does not offer a document says
   nothing about what the document contains. The check date is recorded because "was not published"
   and "was not checked" are indistinguishable a year later.
+
+- **`adapters/asterix_cat062.py` 1.0.0 (ASTERIX Category 062 SDPS Track Messages,
+  bidirectional)** — adapter #13, at **schema_version 1.0.0**, with no field added, removed or
+  retyped. The largest ASTERIX category this repository has translated: 27 data items, six compound
+  items, a six-extent FX chain and a Reserved Expansion Field decoded in full, landed against a row
+  set written first with `not yet` in every status column. One Phase 1 row changed and it is listed
+  in `FORMAT_COVERAGE.md` under "What Phase 2 changed in the Phase 1 row set".
+
+  **What it cost the model: nothing, and it is the source that most nearly did.** It is the third
+  to state a vertical accuracy the CDM has no field for (**gap 6**) and the fourth to state a
+  heading with a datum and a turn rate (**gap 7**), and it is the FIRST to state a positional
+  standard deviation in the CDM's own terms — which `Position.accuracy_m` already had a home for,
+  so that one closed rather than reopened. A category whose input is itself a fused product
+  absorbed into the contract without a field is the strongest evidence this section carries.
+
+- **`adapters/asterix_cat023.py` 1.0.0 (ASTERIX Category 023 CNS/ATM Ground Station and Service
+  Status Reports, bidirectional)** — adapter #14, at **schema_version 1.0.0**, with no field added,
+  removed or retyped, and **no Phase 1 row changed at all**. Nine data items on 21 printed pages.
+
+  **The first adapter here that emits TWO Entities from one record**, and it needed nothing of the
+  model to do it: a service is an `Entity` with `entity_type` `SENSOR` — recorded as the least-wrong
+  of eight rather than as a fit — keyed on the pair `(SAC/SIC, Service Identification)`, and the
+  relationship rides on the `Event`'s existing `related_entities`. An `EntityType` member for a
+  service, or a parent field on `Entity`, were both available and both declined: the first would
+  widen a closed vocabulary for one source, and the second would put a relationship in the model
+  that the CDM deliberately leaves to a fusion layer.
 
 ### Row sets written as specifications, with no adapter code yet
 

@@ -43,7 +43,7 @@ keywords = [
 ]
 classifiers = [
     # 5 - Production/Stable is the same claim `version.py` rules 1.0.0 on, and it is made in
-    # exactly one voice: ten adapters shipped and harness-verified, the Adapter contract
+    # exactly one voice: twelve adapters shipped and harness-verified, the Adapter contract
     # unchanged across all of them. A 0.x/Beta first release would advertise an instability the
     # tree does not have.
     "Development Status :: 5 - Production/Stable",
@@ -107,7 +107,7 @@ include = ["synapse_cdm*"]
 # any file that is neither shipped nor in a stated do-not-ship class.
 #
 # SHIPS
-#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, ten adapters.
+#   *.py under synapse_cdm/            the models, the adapter SDK, the harness, twelve adapters.
 #   synapse_cdm/*.md                   README, MIGRATIONS, FORMAT_COVERAGE. The protocol docs a
 #                                      partner writing an adapter reads; MIGRATIONS is also what
 #                                      tells them what `schema_version` will and will not do.
