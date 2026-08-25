@@ -1,0 +1,186 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and here it is not even a decision. A ground station service report states configuration and health and never allegiance, and this repository does not infer one from a SAC",
+      "cat023_block": {
+        "category": 23,
+        "length": 8,
+        "record_count": 1
+      },
+      "cat023_fspec": "c8",
+      "cat023_items": {
+        "I023/000": "01",
+        "I023/010": "2929",
+        "I023/100": "08"
+      },
+      "data_source": {
+        "basis": "I023/010, 'Identification of the Ground Station from which the data is received' (\u00a75.2.2), M in every column of Table 2. A SourceId here and parked at attributes.data_source in asterix_cat048.py and asterix_cat062.py \u2014 the same two octets of the same standard, filed two different ways, and the difference is the whole reason both dispositions exist: there the SAC/SIC identifies the SENSOR or the PROCESSOR and the object is a target, so filing it under the object's identifiers is how a fused picture ends up with an entity per receiver; here the station IS the object and the pair is its own identifier",
+        "external_id": "2929",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (https://www.eurocontrol.int/asterix) \u2014 note HTTPS here and HTTP in Part 2b's equivalent NOTE, which is the same list at two spellings of one URL",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": "SENSOR, from the category rather than from any item. Every record in Part 16 is about a CNS/ATM ground station or a service it provides (\u00a71.1: 'the structure for the transmission of service reports from a CNS/ATM Ground station'), so there is nothing to read: the object's type is a property of the format",
+      "geometry_basis": "Event.geometry is None on every object, PERMANENTLY. I023/200 is a radius and there is no centre in the category, so a circle cannot be derived from a conformant record at all \u2014 which is asterix_cat034.py's settlement 7 shape reached by a shorter route: there because Table 2 makes two items mutually exclusive, here because one of the two does not exist",
+      "ground_station_status": {
+        "msc": {
+          "basis": "the wording matters and is carried verbatim: `0` is 'Monitoring system NOT CONNECTED OR UNKNOWN' \u2014 a two-in-one value \u2014 so a clear bit is not a statement that nothing is connected",
+          "raw": 0,
+          "text": "Monitoring system not connected or unknown"
+        },
+        "nogo": {
+          "basis": "THE OPERATIONALLY LOUDEST BIT IN THE CATEGORY, and it is parked rather than raised into severity. NOTE 2 restates it: 'Bit 8 (NOGO), when set to \"1\" indicates that the data transmitted by the GS is not released for operational use.' It governs what a consumer does with the station's TARGET REPORTS, and this adapter emits none of those \u2014 raising an alert here would be this translator judging data it has never been shown. asterix_cat034.py's reasoning for I034/050's NOGO, reached again in a different part",
+          "raw": 0,
+          "text": "Data is released for operational use"
+        },
+        "odp": {
+          "raw": 0,
+          "text": "Default, no overload"
+        },
+        "overload_basis": "TWO INDEPENDENT OVERLOAD INDICATIONS, parked separately: ODP is 'Data Processor Overload Indicator' and OXT is 'Ground Interface Data Communications Overload'. One is in processing and one is in transmission, and a merged 'overloaded' key would lose which subsystem it was",
+        "oxt": {
+          "raw": 0,
+          "text": "Default, no overload"
+        },
+        "rn": {
+          "basis": "PARKED. **THIS BIT IS CITED AS EVIDENCE IN THE CAT062 ROW SET**, and the citation is worth stating from this side too: FORMAT_COVERAGE.md's CAT062 settlement 3 rules that a system track number is never the basis of an entity_id, because the number is scoped to the emitting system and recycled. This is a different ASTERIX part, written by a different working group, and it carries a dedicated status bit whose entire purpose is to announce that a track-number space has been reused. The two are independent \u2014 nothing in Part 16 is about Part 9 \u2014 and the evidence is about the CLASS of identifier. What is NOT claimed is that I021/161 and I062/040 are the same number space; they are not",
+          "definition": "NOTE 3: 'Bit 2 indicates that the allocation of Track-IDs (Item I021/161) was re-started.'",
+          "raw": 0,
+          "text": "default"
+        },
+        "spo": {
+          "basis": "the one bit in this category that raises Event.severity from the station \u2014 see payload.severity_basis. NOT EventType.GNSS_INTERFERENCE",
+          "raw": 0,
+          "text": "no spoofing detected"
+        },
+        "tsv": {
+          "basis": "PARKED, and it does NOT change how I023/070 is read. An invalid time source with a present time of day is a record whose own clock the station distrusts, and both facts are carried; suppressing observed_at on it would discard the only time the record states",
+          "definition": "NOTE 1: 'A time source is considered as valid when either externally synchronised or running on a local oscillator within the required accuracy of UTC.'",
+          "raw": 1,
+          "text": "invalid"
+        }
+      },
+      "identity_basis": "uuid5 over (ASTERIX_SAC_SIC, '2929'). The system name is NOT this adapter's own: a SAC/SIC is allocated across the whole ASTERIX family from one list, so filing it under a category name would say that one station seen through Part 16 is a different station from the same pair seen through any other part. The SAME string asterix_cat034.py uses, so one station seen through both parts is ONE entity without the two adapters coordinating. AND HERE A CLAUSE SUPPORTS IT RATHER THAN AN INFERENCE: \u00a74.4.1 is a normative section of its own \u2014 'By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Ground Station' \u2014 where Part 2b has only \u00a75.2.2's definition and a NOTE pointing at the published list",
+      "integrity_basis": "CAT023 defines NO checksum at any level \u2014 neither \u00a74.5.2 nor \u00a74.6 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, no FX led to an extension the document does not define, every REP was non-zero, and the items Table 2 makes mandatory for this record's own report type were present. This is weaker than a CRC and the difference is named rather than smoothed over: a single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a station status",
+      "object_is": "the GROUND STATION",
+      "position_basis": "None, ON EVERY OBJECT, and this category is why rather than this adapter. NINE ITEMS AND NOT ONE COORDINATE: I023/200 is an operational range in nautical miles with no centre, and \u00a74.4.1 asserts that a SAC/SIC is dedicated and unambiguous per ground station without saying where any station is. So a consumer holding CAT023 alone cannot place a station on a map, and this adapter does not help it: reading a station position out of a CAT034 record to locate a CAT023 station is cross-payload state, which is the refusal asterix_cat034.py's settlement 2 already made in the other direction. An absent Position is the honest statement, never a Position holding zeros",
+      "source_extras": {
+        "items": {
+          "I023/000": {
+            "report_type": 1
+          },
+          "I023/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I023/100": {
+            "fx": 0,
+            "msc": 0,
+            "nogo": 0,
+            "odp": 0,
+            "oxt": 0,
+            "rn": 0,
+            "spo": 0,
+            "tsv": 1
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT023 station and service is an UNKNOWN glyph. CAT023 carries no symbology of any kind",
+      "table_2_disposition": {
+        "basis": "PARKED, never dropped and never an error. Table 2's X means 'never present' for that report type, so an item under an X is a conformance fault in the ENCODER \u2014 and every octet of it is still decodable, its length is still stated, and refusing would discard data the FSPEC correctly announced. \u00a74.3's discipline for a bit that means nothing, applied one level up to an item that means nothing here. A missing M is the opposite case and IS refused, in _check_table_2",
+        "column": {
+          "I023/000": "M",
+          "I023/010": "M",
+          "I023/015": "X",
+          "I023/070": "M",
+          "I023/100": "M",
+          "I023/101": "X",
+          "I023/110": "X",
+          "I023/120": "X",
+          "I023/200": "O"
+        },
+        "items_present_where_the_table_says_X": [],
+        "report_type": 1,
+        "what_the_table_makes_impossible": "I023/100 is M for type 001 and X for the other two; I023/101, I023/110 and I023/120 are each M for exactly one type and X elsewhere. So a conformant record carries EITHER the station's status OR one service's configuration and status OR one service's statistics, never two of the three \u2014 and a consumer wanting a station's full picture needs three records, which is accumulation across payloads and a consumer's act"
+      },
+      "unavailable_fields": [
+        "I023/070 (the record states no time of day)"
+      ],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "62650095-2e7e-522b-9e65-1a0aa64fc315",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat023",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT023"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:15:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "9a49bae3-db8a-5d27-bca2-c5bea0155676",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:15:00.000Z",
+    "payload": {
+      "observed_at_basis": {
+        "date_from": "the injected clock",
+        "item": null,
+        "reason": "the record carries no I023/070. \u00a75.2.4's Encoding Rule permits exactly this \u2014 'This data item shall be present in every ASTERIX record, except in case of failure of all sources of time-stamping' \u2014 so this is a STATED absence and not a defect, and it is stated even though Table 2 marks the item M for all three report types. The second ASTERIX category in this repository where an item-level rule overrides the presence matrix",
+        "time_of_day_from": "the injected clock; the record stated no time of day"
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "report_type": {
+        "all_values_reserved": "\u00a75.2.1 NOTE 2: 'All Report Type values are reserved for common standard use.' The same sentence Part 2b's I034/000 NOTE 2 carries about Message Types. So a value outside 001-003 is NOT a private extension point \u2014 it is a value this edition does not define \u2014 and it lands in unresolved_raw rather than in source_extras",
+        "basis": "the raw value AND its name, parked, because the collapse onto event_type is 3 -> 1 and egress re-emits FROM HERE rather than re-deriving a type from an EventType all three share",
+        "defined_at": "\u00a75.2.1 NOTE 3 gives the three values and points at \u00a74.5.1.1, \u00a74.5.1.2 and \u00a74.5.1.3 for what each one MEANS \u2014 and those three subsections are where the reporting-period obligations live, so the item that carries the period is I023/100 or I023/101 and the obligation that gives it meaning is in chapter 4",
+        "handling_note": "NOTE 1: 'In applications where transactions of various types are exchanged, the Report Type Data Item facilitates the proper report handling at the receiver side.' The item's own statement of what it is for, and the sentence that makes Table 2 the encoding rule for the other eight items",
+        "name": "Ground Station Status report",
+        "raw": 1
+      },
+      "severity_basis": {
+        "default": "INFO for all three defined report types. A ground station or a service stating what it is doing is routine; the type itself is not an alarm, and Event.event_type is STATUS_CHANGE for all three \u2014 no report type produces ALERT",
+        "raised_by": [],
+        "report_type": 1,
+        "report_type_text": "Ground Station Status report"
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "62650095-2e7e-522b-9e65-1a0aa64fc315"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat023",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT023"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ]
+  }
+]

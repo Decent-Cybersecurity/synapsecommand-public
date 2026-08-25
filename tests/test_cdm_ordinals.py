@@ -84,6 +84,7 @@ ALIASES: dict[str, tuple[str, ...]] = {
     "cat048": ("cat048", "CAT048", "Category 048"),
     "cat034": ("cat034", "CAT034", "Category 034"),
     "cat062": ("cat062", "CAT062", "Category 062"),
+    "cat023": ("cat023", "CAT023", "Category 023"),
 }
 
 #: Which module implements which registry name, for the docstring check. `pntmap` is absent from
@@ -92,7 +93,7 @@ MODULES: dict[str, str] = {
     "tak": "tak", "ais": "ais", "adsb": "adsb", "legion": "legion",
     "asterix_cat021": "cat021", "stanag4676": "stanag4676", "gmtif": "gmti",
     "asterix_cat048": "cat048", "asterix_cat034": "cat034",
-    "asterix_cat062": "cat062",
+    "asterix_cat062": "cat062", "asterix_cat023": "cat023",
 }
 
 #: Files swept. Everything that states an ordinal, found by grepping the tree for the claim form
@@ -103,6 +104,7 @@ SWEPT = (
     "packages/cdm/synapse_cdm/README.md",
     "packages/cdm/synapse_cdm/fixtures/cat034/README.md",
     "packages/cdm/synapse_cdm/fixtures/cat048/README.md",
+    "packages/cdm/synapse_cdm/fixtures/cat023/README.md",
     "packages/cdm/synapse_cdm/fixtures/cat062/README.md",
     "packages/cdm/synapse_cdm/fixtures/fft/README.md",
     "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json",

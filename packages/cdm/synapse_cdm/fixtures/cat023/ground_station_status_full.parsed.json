@@ -1,0 +1,50 @@
+{
+  "block": {
+    "category": 23,
+    "length": 13,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "da",
+      "index": 0,
+      "item_octets": {
+        "I023/000": "01",
+        "I023/010": "2929",
+        "I023/070": "2a3000",
+        "I023/100": "ff78",
+        "I023/200": "c8"
+      },
+      "items": {
+        "I023/000": {
+          "report_type": 1
+        },
+        "I023/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I023/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I023/100": {
+          "extension": {
+            "fx": 0,
+            "gssp_raw": 60
+          },
+          "fx": 1,
+          "msc": 1,
+          "nogo": 1,
+          "odp": 1,
+          "oxt": 1,
+          "rn": 1,
+          "spo": 1,
+          "tsv": 1
+        },
+        "I023/200": {
+          "range_raw": 200
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

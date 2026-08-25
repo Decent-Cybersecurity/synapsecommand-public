@@ -41,8 +41,8 @@ the models generate. Neither needs the two strings to be the same string.
 WHERE 1.0.0 CAME FROM, FOR THE PACKAGE
 ---------------------------------------
 Ruled at ``1.0.0`` rather than ``0.1.0``. ``0.x`` says "the API may change under you without
-notice", and that is not what this is: eleven adapters are shipped and harness-verified, the
-``Adapter`` contract has been stable across all eleven of them, and the whole point of a
+notice", and that is not what this is: twelve adapters are shipped and harness-verified, the
+``Adapter`` contract has been stable across all twelve of them, and the whole point of a
 contract layer is that consumers may depend on it. A ``0.x`` first release would be
 advertising an instability the tree does not have. The coincidence with ``SCHEMA_VERSION``
 1.0.0 is a coincidence of two first releases, and it will not survive the eleventh adapter.

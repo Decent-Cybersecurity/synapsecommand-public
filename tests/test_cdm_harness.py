@@ -372,10 +372,10 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 #: each went through. The two are kept apart rather than merged with a flag because the shipped
 #: half's whole value is being an equality against the registry: a Phase 1 name in there would
 #: make that assertion fail, and relaxing it to a subset check would give up the thing it pins.
-SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat034": "cat034",
-                        "cat048": "cat048", "cat062": "cat062", "gmti": "gmti",
-                        "legion": "legion", "pntmap": "pntmap", "stanag4676": "nits",
-                        "tak": "tak"}
+SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021",
+                        "cat023": "cat023", "cat034": "cat034", "cat048": "cat048",
+                        "cat062": "cat062", "gmti": "gmti", "legion": "legion",
+                        "pntmap": "pntmap", "stanag4676": "nits", "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
 #:
@@ -408,11 +408,10 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat03
 #: first two Phase 1 entries whose row sets are complete rather than partial — 27 items and 9
 #: items respectively, every one dispositioned — so the window in which the relation could be
 #: folklore is the window between this commit and the two that ship the adapters.
-PLANNED_FIXTURE_DIRS = {"cat023": "cat023",
-                        "stanag4609": "klv", "stanag5527": "fft"}
+PLANNED_FIXTURE_DIRS = {"stanag4609": "klv", "stanag5527": "fft"}
 
 
-def test_the_eleven_shipped_adapters_all_have_a_real_fixture_directory():
+def test_the_twelve_shipped_adapters_all_have_a_real_fixture_directory():
     """The sweep the gate runs, as a test, so the directory names stop being folklore.
 
     This is the other half of the fix. Making a vacuous run fail loudly stops a wrong path from

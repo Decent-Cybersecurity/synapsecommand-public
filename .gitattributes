@@ -37,3 +37,7 @@
 # habit the paragraph above exists to establish: the two enumerations that went stale did so
 # because the extension arrived one round after the fixtures did.
 *.cat062 -text -diff
+
+# The fifth ASTERIX category, and the last of this round. Same reason, same habit: the extension
+# arrives in the commit that produces the blocks.
+*.cat023 -text -diff

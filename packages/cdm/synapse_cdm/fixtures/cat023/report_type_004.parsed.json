@@ -1,0 +1,31 @@
+{
+  "block": {
+    "category": 23,
+    "length": 10,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "d0",
+      "index": 0,
+      "item_octets": {
+        "I023/000": "04",
+        "I023/010": "2929",
+        "I023/070": "2a3000"
+      },
+      "items": {
+        "I023/000": {
+          "report_type": 4
+        },
+        "I023/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I023/070": {
+          "time_of_day_raw": 2764800
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

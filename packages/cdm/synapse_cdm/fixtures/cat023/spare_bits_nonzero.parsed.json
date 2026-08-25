@@ -1,0 +1,65 @@
+{
+  "block": {
+    "category": 23,
+    "length": 23,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "f5c0",
+      "index": 0,
+      "item_octets": {
+        "I023/000": "02",
+        "I023/010": "2929",
+        "I023/015": "f9",
+        "I023/070": "2a3000",
+        "I023/101": "ff3ffe",
+        "I023/110": "f8",
+        "I023/120": "0120ff00000007"
+      },
+      "items": {
+        "I023/000": {
+          "report_type": 2
+        },
+        "I023/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I023/015": {
+          "sid": 15,
+          "styp": 9
+        },
+        "I023/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I023/101": {
+          "extension": {
+            "fx": 0,
+            "ssrp_raw": 127
+          },
+          "fx": 1,
+          "rp_raw": 255,
+          "sc": 1,
+          "spare_bits_5_2": 15
+        },
+        "I023/110": {
+          "fx": 0,
+          "spare_bits_8_5": 15,
+          "stat": 4
+        },
+        "I023/120": {
+          "counters": [
+            {
+              "counter": 7,
+              "ref": 1,
+              "spare_bits_39_33": 127,
+              "type": 32
+            }
+          ],
+          "rep": 1
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

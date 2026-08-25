@@ -188,6 +188,41 @@ it is nothing.
   and the ICAO24 sharer count went from four to five in the same round, which is the second time
   that sentence has gone stale by an adapter landing.
 
+- **`cat023` — ASTERIX Category 023 CNS/ATM Ground Station and Service Status Reports,
+  bidirectional.** Adapter #14, shipped against the row set the specification pass wrote, **with no
+  row changed**. `adapters/asterix_cat023.py` on a codec in `adapters/cat023_codec.py`; nine data
+  items, a three-column Table 2 presence matrix, and three items whose `FX` names an extension the
+  document never defines. Every row of the CAT023 row set now reads `cat023 1.0.0` and **the roster
+  is twelve**.
+
+  **The first adapter here that emits TWO Entities from one record.** Report types 002 and 003 are
+  about a SERVICE rather than about the station, and §4.5.1.2 requires the two to be independent, so
+  a service is a second `Entity` keyed on the pair `(SAC/SIC, Service Identification)` — never the
+  SID alone, which §5.2.3's NOTE 1 says is "allocated by the system". Both ids ride on one `Event`
+  in `related_entities`, station first, which is not a join: both are pure functions of fields in
+  the same record. `from_cdm()` re-assembles from the STATION object and refuses a call that passes
+  only the service one.
+
+  **The byte-for-byte round trip holds on all 17 fixtures**, and this category is the easiest case
+  in the family: not one scaled value becomes a canonical numeric field, so there is no arithmetic
+  to invert anywhere. Verified independently of the harness, which skips `roundtrip` for a binary
+  format.
+
+  **`Entity.position` is `None` on every object and `Event.geometry` is `None` permanently.** Nine
+  items and not one coordinate: `I023/200` is an operational range with no centre, and §4.4.1
+  asserts a SAC/SIC is unambiguous per station without saying where any station is. Reading a
+  position out of a CAT034 record to locate a CAT023 station is cross-payload state — the refusal
+  `asterix_cat034.py`'s settlement 2 already made in the other direction.
+
+  **Package MINOR when released** — an added adapter, nothing removed, no schema touched.
+
+- **`tests/test_cdm_version_floor.py` caught a real 3.11 incompatibility in new code**, which is
+  the first time that gate has fired on something written after it existed rather than on something
+  it was written to find. An f-string in `asterix_cat023.py`'s refusal message had a replacement
+  field reusing the string's own quote and containing a backslash — legal from 3.12 under PEP 701
+  and a `SyntaxError` at the declared `requires-python = ">=3.11"` floor. The expression is hoisted
+  to a local above the f-string, as the gate's own message suggests.
+
 ### 1.0.0 — initial contract
 
 The four objects (`Entity`, `Event`, `Track`, `PlanObject`), `Position`, `Kinematics`,

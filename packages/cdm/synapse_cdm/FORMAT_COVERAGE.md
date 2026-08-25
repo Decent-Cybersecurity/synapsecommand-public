@@ -245,7 +245,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 11 | `cat048` | shipped | `fixtures/cat048/README.md`, the module README's harness section, and this document's CAT048 section. **`adapters/asterix_cat048.py` states no ordinal of its own** — the only shipped adapter besides `pntmap` that does not, which is recorded rather than repaired here |
 | 12 | `cat034` | shipped | `adapters/asterix_cat034.py`, "Adapter #12", this document's CAT034 section, `fixtures/cat034/spec/cat034_pin.json`, `fixtures/cat034/README.md` and `MIGRATIONS.md`. **The forecast made good, then made real.** The row read *(forecast)* until Phase 1 and cited the CAT048 declines table — "if it lands, it lands as adapter #12 with its own pin" — and it landed at that number with that pin; Phase 2 shipped the adapter against the row set Phase 1 wrote, and every row of it now says `cat034 1.0.0` |
 | 13 | `cat062` | shipped | `adapters/asterix_cat062.py`, "Adapter #13", this document's CAT062 section, `fixtures/cat062/spec/cat062_pin.json`, `fixtures/cat062/README.md` and `MIGRATIONS.md`. **The widest Phase 1 in this repository, and Phase 2 landed against it with one row changed.** 27 data items, a two-document pin and a full egress row set; the row set was the first written against a source that is itself the output of a fusion process, which is what settlement 1 exists for |
-| 14 | `cat023` | specification, Phase 1 | this document's CAT023 section, `fixtures/cat023/spec/cat023_pin.json` and `MIGRATIONS.md`. **The narrowest Phase 1 with a complete row set**: nine data items on 21 printed pages, every one of them dispositioned. Ruled in the same round as #13 and deliberately not merged with it — a category is an adapter, and these are two categories in two Parts with two UAPs |
+| 14 | `cat023` | shipped | `adapters/asterix_cat023.py`, "Adapter #14", this document's CAT023 section, `fixtures/cat023/spec/cat023_pin.json`, `fixtures/cat023/README.md` and `MIGRATIONS.md`. **The narrowest Phase 1 with a complete row set, and Phase 2 landed with no row changed.** Nine data items on 21 printed pages, every one dispositioned. Ruled in the same round as #13 and deliberately not merged with it — a category is an adapter, and these are two categories in two Parts with two UAPs. **The first adapter here that emits TWO Entities from one record** |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -10226,8 +10226,11 @@ turns Entities that came from CAT023 back into one data block. The left column n
 §5.2 numbers them; the parsed form the adapter's own parser produces is what each `.parsed.json`
 fixture holds.
 
-**Every row below is written and reviewed as a specification BEFORE any code exists**, with
-`not yet` in the status column.
+**Every row below was written and reviewed as a specification BEFORE any code existed**, with
+`not yet` in the status column. The markers now read `cat023 1.0.0` because
+`adapters/asterix_cat023.py` runs them. **No row changed during implementation** — the only
+adjustment was to the fixture set, and it is recorded below: two fixtures had to gain an item
+Table 2 makes mandatory, which the generator refused to write without.
 
 **This is the CAT034 analogue and the resemblance is close enough to be worth bounding.** Both are
 service-message categories whose object is a station; both have a report-or-message-type item
@@ -10559,66 +10562,67 @@ it and reaches the CDM as a station status.
 
 ### How to read the row sets
 
-Left column names data items as §5.2 numbers them. `Status` reads `not yet` on every row: the row
-set is a specification and no code implements it. The marker changes to `cat023 1.0.0` when Phase 2
-lands — `· parked` where the value goes to `attributes` or `payload`, `· egress` in the outbound
-table — and the inverted test applies in both directions.
+Left column names data items as §5.2 numbers them. `Status` reads `cat023 1.0.0` on every row now
+— `· parked` where the value lands in `attributes` or `payload`, `· egress` in the outbound table —
+because `adapters/asterix_cat023.py` implements all of them. It read `not yet` on every row through
+Phase 1, and the inverted test applies: it fails if a row says `not yet` while the code implements
+it.
 
 ### Row set — the block and record envelope
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `block.category` | `Entity.attributes` | `not yet` | the CAT octet as read. §4.5.2: "Data Category (CAT) = 023, is a one-octet field indicating that the Data Block contains Ground Station and Service Status reports". A block whose category is not 23 is refused rather than decoded |
-| `block.length` | `Entity.attributes` | `not yet` | §4.5.2's `LEN`, "a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields". Parked, **recomputed on egress rather than copied** |
-| `block.record_index`, `block.record_count` | `Event.payload` | `not yet` | which record of how many. No per-record length exists in the layout |
-| `record.fspec` | `Entity.attributes` | `not yet` | the FSPEC octets verbatim. §4.6.2 requires only that a present item's bit is set, so a longer-than-minimal FSPEC is legal and the round trip is byte-exact only if what was read is re-emitted |
-| `record.spare_bits` | `Entity.attributes` | `not yet` | every spare and unused bit as sent. §4.3 is normative: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits" |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis` — that CAT023 defines no checksum at any level, and what the structural gate checked |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.table_2_disposition` — the record's Table 2 column and any item present where the column says `X`. Present on every record, empty list and all |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — including a Time of Day the encoding rule permits to be missing |
-| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — values read and not usable: a Report Type outside 001–003, an `I023/015` `STYP` of 0 or above 9, an `I023/110` `STAT` above 5, an `I023/101` `SC` in 2–7 ("reserved for future use"), an `I023/120` `TYPE` in the reserved 5–19 band or above 32 |
-| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+| `block.category` | `Entity.attributes` | `cat023 1.0.0 · parked` | the CAT octet as read. §4.5.2: "Data Category (CAT) = 023, is a one-octet field indicating that the Data Block contains Ground Station and Service Status reports". A block whose category is not 23 is refused rather than decoded |
+| `block.length` | `Entity.attributes` | `cat023 1.0.0 · parked` | §4.5.2's `LEN`, "a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields". Parked, **recomputed on egress rather than copied** |
+| `block.record_index`, `block.record_count` | `Event.payload` | `cat023 1.0.0 · parked` | which record of how many. No per-record length exists in the layout |
+| `record.fspec` | `Entity.attributes` | `cat023 1.0.0 · parked` | the FSPEC octets verbatim. §4.6.2 requires only that a present item's bit is set, so a longer-than-minimal FSPEC is legal and the round trip is byte-exact only if what was read is re-emitted |
+| `record.spare_bits` | `Entity.attributes` | `cat023 1.0.0 · parked` | every spare and unused bit as sent. §4.3 is normative: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits" |
+| *(measured)* | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.integrity_basis` — that CAT023 defines no checksum at any level, and what the structural gate checked |
+| *(measured)* | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.table_2_disposition` — the record's Table 2 column and any item present where the column says `X`. Present on every record, empty list and all |
+| *(measured)* | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.unavailable_fields` — including a Time of Day the encoding rule permits to be missing |
+| *(measured)* | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.unresolved_raw` — values read and not usable: a Report Type outside 001–003, an `I023/015` `STYP` of 0 or above 9, an `I023/110` `STAT` above 5, an `I023/101` `SC` in 2–7 ("reserved for future use"), an `I023/120` `TYPE` in the reserved 5–19 band or above 32 |
+| everything unmapped | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.source_extras`, structure intact |
 
 ### Row set — the station, and the service that is a second object
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/010` SAC, SIC | `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `not yet` | §5.2.2, "Identification of the Ground Station from which the data is received", two octets, `M` in every column. Filed under `ASTERIX_SAC_SIC` — **the same system name `asterix_cat034.py` uses**, so one station seen through two ASTERIX parts is one entity without the adapters coordinating |
-| `I023/010` | `Entity.entity_id` | `not yet` | `uuid5(NAMESPACE, "entity\|ASTERIX_SAC_SIC\|<SACSIC>")`. **Supported by a clause rather than an inference**: §4.4.1, "By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Ground Station." Settlement 1 |
-| `I023/010` | `Entity.entity_type` | `not yet` | `SENSOR`, from the category rather than from any item: every record in Part 16 is about a CNS/ATM ground station or a service it provides |
-| `I023/010` | `Entity.affiliation` | `not yet` | `UNKNOWN`, always. A service status report states configuration and health and never allegiance, and this repository does not infer one from a SAC |
-| `I023/010` NOTE | *(no field)* | `not yet` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (https://www.eurocontrol.int/asterix)" — the same list `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation**. Note the URL is **https** here and **http** in Part 2b's equivalent NOTE |
-| `I023/015` `SID` | `Entity.source_ids`, `Entity.entity_id` | `not yet` | §5.2.3 bits 8/5, Service Identification, four bits. **The second object's key, as the pair `(SAC/SIC, SID)`** — filed under `ASTERIX_CNS_SERVICE` because NOTE 1 says the SID is "allocated by the system" and so means nothing across stations. Settlement 2 |
-| `I023/015` `STYP` | `Entity.attributes` | `not yet` | §5.2.3 bits 4/1, Type of Service, nine defined values: ADS-B VDL4, ADS-B Ext Squitter, ADS-B UAT, TIS-B VDL4, TIS-B Ext Squitter, TIS-B UAT, FIS-B VDL4, GRAS VDL4, MLT. Parked as the integer **and** the wording. **`0` and `10`–`15` are undefined** and there is no "unknown" or "other" value, so an undefined `STYP` goes to `unresolved_raw` |
-| `I023/015` | `Entity.attributes` | `not yet` | `attributes.service_nibble_basis` — that the item is named "Service Type and Identification" while the octet is `SID` in bits 8/5 and `STYP` in bits 4/1, i.e. **the name is in the other order from the bits**. A transposition yields a plausible wrong service rather than an error, so the two nibbles are parked under explicit names |
-| `I023/015` NOTE 2 | *(no field)* | `not yet` | "The service identification is also available in item I021/015." **A join a consumer may perform and this adapter may not** — settlement 7 item 2, and the CAT021 declines table's prediction made good |
-| *(derived)* | `Entity.position` | `not yet` | **`None` on every object, and this category is why.** Nine items and no coordinate: `I023/200` is a radius with no centre and §4.4.1 asserts uniqueness without stating location. `attributes.position_basis` says so explicitly, and says that reading a position out of a CAT034 record would be cross-payload state |
-| *(derived)* | `Entity.kinematics` | `not yet` | `None`, always. A ground station does not move and this category carries no bearing of any kind — not even an antenna's, unlike CAT034 |
-| *(derived)* | `Entity.symbol` | `not yet` | derived from the affiliation through `symbology.sidc_from_affiliation`, so every CAT023 station and service is an `UNKNOWN` glyph. CAT023 carries no symbology |
-| *(derived)* | `Entity.confidence` | `not yet` | `None`, always. Every quality statement in this category is a switch position, an enumerated status or a counter; none is a 0..1 assessment of identity |
-| *(derived)* | `Entity.valid_to` | `not yet` | `None`, always. §4.5.1.1 and §4.5.1.2 give the *reporting period*, from which a consumer could make a staleness horizon; deriving an expiry here would be this adapter reasoning about reports it has not seen |
-| *(derived)* | `Event.related_entities` | `not yet` | the station's `entity_id`, and on report types 002 and 003 the service's as well, station first. **Not a join**: both ids are pure functions of fields in the same record — settlement 2 |
+| `I023/010` SAC, SIC | `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `cat023 1.0.0` | §5.2.2, "Identification of the Ground Station from which the data is received", two octets, `M` in every column. Filed under `ASTERIX_SAC_SIC` — **the same system name `asterix_cat034.py` uses**, so one station seen through two ASTERIX parts is one entity without the adapters coordinating |
+| `I023/010` | `Entity.entity_id` | `cat023 1.0.0` | `uuid5(NAMESPACE, "entity\|ASTERIX_SAC_SIC\|<SACSIC>")`. **Supported by a clause rather than an inference**: §4.4.1, "By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Ground Station." Settlement 1 |
+| `I023/010` | `Entity.entity_type` | `cat023 1.0.0` | `SENSOR`, from the category rather than from any item: every record in Part 16 is about a CNS/ATM ground station or a service it provides |
+| `I023/010` | `Entity.affiliation` | `cat023 1.0.0` | `UNKNOWN`, always. A service status report states configuration and health and never allegiance, and this repository does not infer one from a SAC |
+| `I023/010` NOTE | *(no field)* | `cat023 1.0.0` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (https://www.eurocontrol.int/asterix)" — the same list `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation**. Note the URL is **https** here and **http** in Part 2b's equivalent NOTE |
+| `I023/015` `SID` | `Entity.source_ids`, `Entity.entity_id` | `cat023 1.0.0` | §5.2.3 bits 8/5, Service Identification, four bits. **The second object's key, as the pair `(SAC/SIC, SID)`** — filed under `ASTERIX_CNS_SERVICE` because NOTE 1 says the SID is "allocated by the system" and so means nothing across stations. Settlement 2 |
+| `I023/015` `STYP` | `Entity.attributes` | `cat023 1.0.0 · parked` | §5.2.3 bits 4/1, Type of Service, nine defined values: ADS-B VDL4, ADS-B Ext Squitter, ADS-B UAT, TIS-B VDL4, TIS-B Ext Squitter, TIS-B UAT, FIS-B VDL4, GRAS VDL4, MLT. Parked as the integer **and** the wording. **`0` and `10`–`15` are undefined** and there is no "unknown" or "other" value, so an undefined `STYP` goes to `unresolved_raw` |
+| `I023/015` | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.service_nibble_basis` — that the item is named "Service Type and Identification" while the octet is `SID` in bits 8/5 and `STYP` in bits 4/1, i.e. **the name is in the other order from the bits**. A transposition yields a plausible wrong service rather than an error, so the two nibbles are parked under explicit names |
+| `I023/015` NOTE 2 | *(no field)* | `cat023 1.0.0` | "The service identification is also available in item I021/015." **A join a consumer may perform and this adapter may not** — settlement 7 item 2, and the CAT021 declines table's prediction made good |
+| *(derived)* | `Entity.position` | `cat023 1.0.0` | **`None` on every object, and this category is why.** Nine items and no coordinate: `I023/200` is a radius with no centre and §4.4.1 asserts uniqueness without stating location. `attributes.position_basis` says so explicitly, and says that reading a position out of a CAT034 record would be cross-payload state |
+| *(derived)* | `Entity.kinematics` | `cat023 1.0.0` | `None`, always. A ground station does not move and this category carries no bearing of any kind — not even an antenna's, unlike CAT034 |
+| *(derived)* | `Entity.symbol` | `cat023 1.0.0` | derived from the affiliation through `symbology.sidc_from_affiliation`, so every CAT023 station and service is an `UNKNOWN` glyph. CAT023 carries no symbology |
+| *(derived)* | `Entity.confidence` | `cat023 1.0.0` | `None`, always. Every quality statement in this category is a switch position, an enumerated status or a counter; none is a 0..1 assessment of identity |
+| *(derived)* | `Entity.valid_to` | `cat023 1.0.0` | `None`, always. §4.5.1.1 and §4.5.1.2 give the *reporting period*, from which a consumer could make a staleness horizon; deriving an expiry here would be this adapter reasoning about reports it has not seen |
+| *(derived)* | `Event.related_entities` | `cat023 1.0.0` | the station's `entity_id`, and on report types 002 and 003 the service's as well, station first. **Not a join**: both ids are pure functions of fields in the same record — settlement 2 |
 
 ### Row set — report type
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/000` | `Event.event_type` | `not yet` | §5.2.1, one octet, `M` in every column of Table 2. All three defined types → `STATUS_CHANGE`: a ground station or service stating what it is doing is a status change and not a detection. **No type produces `ALERT`**, and that is a decision — see the `NOGO` and `SPO` rows |
-| `I023/000` | `Event.severity` | `not yet` | `INFO` for all three defined types by default, raised to `WARNING` by `I023/110`'s `STAT` and by `I023/100`'s `SPO` — see those rows. The type itself is not an alarm |
-| `I023/000` | `Event.payload` | `not yet` | the raw value **and** its name, parked, because the collapse onto `event_type` is 3 → 1 and egress re-emits **from here** rather than re-deriving a type from an `EventType` all three share |
-| `I023/000` NOTE 2 | *(no field)* | `not yet` | "All Report Type values are reserved for common standard use." So a value outside 001–003 is **not** a private extension point — it is a value this edition does not define. `STATUS_CHANGE` / `ADVISORY`, raw value in `unresolved_raw`, and the record is translated rather than refused: an undefined type is not a malformed record |
-| `I023/000` NOTE 1 | `Entity.attributes` | `not yet` | "In applications where transactions of various types are exchanged, the Report Type Data Item facilitates the proper report handling at the receiver side." The item's own statement of what it is for — recorded, because it is the sentence that makes Table 2 the encoding rule for the other eight items |
-| `I023/000` Table 2 | `Entity.attributes` | `not yet` | the `M`/`O`/`X` matrix, which is the **encoding rule for eight of the nine items** — every other item's Encoding Rule reads "See Table 2". A missing `M` refuses; a present `X` is parked and recorded. Settlement 4 |
+| `I023/000` | `Event.event_type` | `cat023 1.0.0` | §5.2.1, one octet, `M` in every column of Table 2. All three defined types → `STATUS_CHANGE`: a ground station or service stating what it is doing is a status change and not a detection. **No type produces `ALERT`**, and that is a decision — see the `NOGO` and `SPO` rows |
+| `I023/000` | `Event.severity` | `cat023 1.0.0` | `INFO` for all three defined types by default, raised to `WARNING` by `I023/110`'s `STAT` and by `I023/100`'s `SPO` — see those rows. The type itself is not an alarm |
+| `I023/000` | `Event.payload` | `cat023 1.0.0 · parked` | the raw value **and** its name, parked, because the collapse onto `event_type` is 3 → 1 and egress re-emits **from here** rather than re-deriving a type from an `EventType` all three share |
+| `I023/000` NOTE 2 | *(no field)* | `cat023 1.0.0` | "All Report Type values are reserved for common standard use." So a value outside 001–003 is **not** a private extension point — it is a value this edition does not define. `STATUS_CHANGE` / `ADVISORY`, raw value in `unresolved_raw`, and the record is translated rather than refused: an undefined type is not a malformed record |
+| `I023/000` NOTE 1 | `Entity.attributes` | `cat023 1.0.0 · parked` | "In applications where transactions of various types are exchanged, the Report Type Data Item facilitates the proper report handling at the receiver side." The item's own statement of what it is for — recorded, because it is the sentence that makes Table 2 the encoding rule for the other eight items |
+| `I023/000` Table 2 | `Entity.attributes` | `cat023 1.0.0 · parked` | the `M`/`O`/`X` matrix, which is the **encoding rule for eight of the nine items** — every other item's Encoding Rule reads "See Table 2". A missing `M` refuses; a present `X` is parked and recorded. Settlement 4 |
 
 ### Row set — time
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/070` | `Event.observed_at`, `Entity.valid_from` | `not yet` | §5.2.4, three octets at 1/128 s, "Absolute time stamping expressed as UTC time" |
-| `I023/070` | `Event.payload` | `not yet` | the raw 24-bit count, the LSB and the resolved date's basis. The nearest of three candidate days wins — settlement 3, the fifth adapter to reach this rule |
-| `I023/070` absent | `Entity.attributes` | `not yet` | a **stated absence**, not a defect: the encoding rule permits it "in case of failure of all sources of time-stamping" while Table 2 marks the item `M` for all three types. Lands in `attributes.unavailable_fields` with the rule quoted; `observed_at` falls back to the injected clock. The second ASTERIX category here where an item-level rule overrides the presence matrix |
-| `I023/070` ≥ 86 400 s | *(refusal)* | `not yet` | refused, not taken modulo a day. §5.2.4 prints no acceptable range, so the bound comes from the Definition and the NOTE and 86 400 s itself is unreachable — one value tighter than CAT048's printed inclusive inequality. Ambiguity 8 |
-| *(derived)* | `Event.received_at` | `not yet` | the injected clock. The one field the adapter invents rather than reads |
+| `I023/070` | `Event.observed_at`, `Entity.valid_from` | `cat023 1.0.0` | §5.2.4, three octets at 1/128 s, "Absolute time stamping expressed as UTC time" |
+| `I023/070` | `Event.payload` | `cat023 1.0.0 · parked` | the raw 24-bit count, the LSB and the resolved date's basis. The nearest of three candidate days wins — settlement 3, the fifth adapter to reach this rule |
+| `I023/070` absent | `Entity.attributes` | `cat023 1.0.0 · parked` | a **stated absence**, not a defect: the encoding rule permits it "in case of failure of all sources of time-stamping" while Table 2 marks the item `M` for all three types. Lands in `attributes.unavailable_fields` with the rule quoted; `observed_at` falls back to the injected clock. The second ASTERIX category here where an item-level rule overrides the presence matrix |
+| `I023/070` ≥ 86 400 s | *(refusal)* | `cat023 1.0.0` | refused, not taken modulo a day. §5.2.4 prints no acceptable range, so the bound comes from the Definition and the NOTE and 86 400 s itself is unreachable — one value tighter than CAT048's printed inclusive inequality. Ambiguity 8 |
+| *(derived)* | `Event.received_at` | `cat023 1.0.0` | the injected clock. The one field the adapter invents rather than reads |
 
 ### Row set — `I023/100` Ground Station Status
 
@@ -10627,15 +10631,15 @@ on the extension is refused — settlement 5.
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/100` first part | `Entity.attributes` | `not yet` | `NOGO`, `ODP`, `OXT`, `MSC`, `TSV`, `SPO`, `RN`, `FX`. Parked whole |
-| `I023/100` `NOGO` | `Entity.attributes` | `not yet` | "Operational Release Status of the Data": 0 released for operational use, 1 **"Data must not be used operationally"**, with NOTE 2 restating it. **The operationally loudest bit in the category, and it is parked rather than raised into severity** — it governs what a consumer does with the station's *target reports*, which this adapter never sees. `asterix_cat034.py`'s reasoning for `I034/050`'s `NOGO`, reached again |
-| `I023/100` `ODP`, `OXT` | `Entity.attributes` | `not yet` | Data Processor Overload and Ground Interface Data Communications Overload. Two independent overload indications — one in processing, one in transmission — parked separately, because a merged "overloaded" key would lose which subsystem it was |
-| `I023/100` `MSC` | `Entity.attributes` | `not yet` | Monitoring System Connected Status, and the wording matters: `0` is "Monitoring system **not connected or unknown**" — a two-in-one value, so a clear bit is not a statement that nothing is connected. Carried verbatim |
-| `I023/100` `TSV` | `Entity.attributes` | `not yet` | Time Source Validity, valid / invalid, with NOTE 1 defining valid: "either externally synchronised or running on a local oscillator within the required accuracy of UTC". **Parked, and it does not change how `I023/070` is read**: an invalid time source with a present time of day is a record whose own clock the station distrusts, and both facts are carried. Suppressing `observed_at` on it would discard the only time the record states |
-| `I023/100` `SPO` | `Event.severity`, `Entity.attributes` | `not yet` | "Indication of spoofing attack": 0 no spoofing detected, 1 **potential spoofing attack**. Raises `Event.severity` to `WARNING` — the one bit in this category that does, and it is a decision: the station is reporting a detected attack on itself, which is neither routine (`INFO`) nor an emergency in progress (`CRITICAL`). **Not `EventType.GNSS_INTERFERENCE`**: that member is paired with `GnssInterferencePayload`, whose fields exist for the PNTMAP adapter, and a spoofing indication on an ADS-B ground station is not a GNSS event — gap 29's argument reached a third time |
-| `I023/100` `RN` | `Entity.attributes` | `not yet` | Renumbering Indication for Track ID, with NOTE 3: "Bit 2 indicates that the allocation of Track-IDs (Item I021/161) was re-started." Parked. **This bit is cited as evidence in the CAT062 row set's settlement 3**: ASTERIX itself found the recycling of track numbers worth a dedicated status bit, which is why a track number is never an `entity_id` basis. It is a different number space in a different category, and it is cited for the *class* of identifier |
-| `I023/100` First Extension `GSSP` | `Event.payload` | `not yet` | Ground Station Status Reporting Period, **seven** bits at 1 s, stated `1 <= GSSP <= 127s`. Parked as seconds and as the raw field. **A zero is out of range and is refused**, because §4.5.1.1 makes the periodic send an obligation — settlement 6 |
-| `I023/100` First Extension `FX` set | *(refusal)* | `not yet` | refused. The extension's own bit 1 says "Extension into Second Extension" and §5.2.5 defines no Second Extension. Settlement 5 |
+| `I023/100` first part | `Entity.attributes` | `cat023 1.0.0 · parked` | `NOGO`, `ODP`, `OXT`, `MSC`, `TSV`, `SPO`, `RN`, `FX`. Parked whole |
+| `I023/100` `NOGO` | `Entity.attributes` | `cat023 1.0.0 · parked` | "Operational Release Status of the Data": 0 released for operational use, 1 **"Data must not be used operationally"**, with NOTE 2 restating it. **The operationally loudest bit in the category, and it is parked rather than raised into severity** — it governs what a consumer does with the station's *target reports*, which this adapter never sees. `asterix_cat034.py`'s reasoning for `I034/050`'s `NOGO`, reached again |
+| `I023/100` `ODP`, `OXT` | `Entity.attributes` | `cat023 1.0.0 · parked` | Data Processor Overload and Ground Interface Data Communications Overload. Two independent overload indications — one in processing, one in transmission — parked separately, because a merged "overloaded" key would lose which subsystem it was |
+| `I023/100` `MSC` | `Entity.attributes` | `cat023 1.0.0 · parked` | Monitoring System Connected Status, and the wording matters: `0` is "Monitoring system **not connected or unknown**" — a two-in-one value, so a clear bit is not a statement that nothing is connected. Carried verbatim |
+| `I023/100` `TSV` | `Entity.attributes` | `cat023 1.0.0 · parked` | Time Source Validity, valid / invalid, with NOTE 1 defining valid: "either externally synchronised or running on a local oscillator within the required accuracy of UTC". **Parked, and it does not change how `I023/070` is read**: an invalid time source with a present time of day is a record whose own clock the station distrusts, and both facts are carried. Suppressing `observed_at` on it would discard the only time the record states |
+| `I023/100` `SPO` | `Event.severity`, `Entity.attributes` | `cat023 1.0.0 · parked` | "Indication of spoofing attack": 0 no spoofing detected, 1 **potential spoofing attack**. Raises `Event.severity` to `WARNING` — the one bit in this category that does, and it is a decision: the station is reporting a detected attack on itself, which is neither routine (`INFO`) nor an emergency in progress (`CRITICAL`). **Not `EventType.GNSS_INTERFERENCE`**: that member is paired with `GnssInterferencePayload`, whose fields exist for the PNTMAP adapter, and a spoofing indication on an ADS-B ground station is not a GNSS event — gap 29's argument reached a third time |
+| `I023/100` `RN` | `Entity.attributes` | `cat023 1.0.0 · parked` | Renumbering Indication for Track ID, with NOTE 3: "Bit 2 indicates that the allocation of Track-IDs (Item I021/161) was re-started." Parked. **This bit is cited as evidence in the CAT062 row set's settlement 3**: ASTERIX itself found the recycling of track numbers worth a dedicated status bit, which is why a track number is never an `entity_id` basis. It is a different number space in a different category, and it is cited for the *class* of identifier |
+| `I023/100` First Extension `GSSP` | `Event.payload` | `cat023 1.0.0 · parked` | Ground Station Status Reporting Period, **seven** bits at 1 s, stated `1 <= GSSP <= 127s`. Parked as seconds and as the raw field. **A zero is out of range and is refused**, because §4.5.1.1 makes the periodic send an obligation — settlement 6 |
+| `I023/100` First Extension `FX` set | *(refusal)* | `cat023 1.0.0` | refused. The extension's own bit 1 says "Extension into Second Extension" and §5.2.5 defines no Second Extension. Settlement 5 |
 
 ### Row set — `I023/101` Service Configuration
 
@@ -10644,12 +10648,12 @@ on the extension is refused — settlement 5.
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/101` `RP` | `Event.payload` | `not yet` | "Report Period for Category 021 Reports", eight bits at **0.5 seconds**. Parked as seconds. **`0` is a named mode, not a period** — "= 0: Data driven mode" — and reaching a consumer as 0.0 s would be the AIS sentinel defect. And the field is about **another category's feed**, so it is parked as a statement about CAT021 and never applied as a staleness horizon here. Settlement 6 |
-| `I023/101` `SC` | `Entity.attributes` | `not yet` | Service Class, bits 8/6 of octet 2: `0` no information, `1` NRA class, `2`–`7` "reserved for future use". Parked as the integer and the wording; a reserved value goes to `unresolved_raw`. **`0` is a stated non-statement** ("No information"), which is different from an absent item |
-| `I023/101` octet 2 spares | `Entity.attributes` | `not yet` | bits 5/2, "Spare bits set to 0". Read and re-emitted as sent, per §4.3 |
-| `I023/101` First Extension `SSRP` | `Event.payload` | `not yet` | Service Status Reporting Period, **seven** bits at 1 s, stated `1 <= SSRP <= 127s`. Identical shape and bounds to `GSSP` in a different item for a different obligation (§4.5.1.2). A zero is refused |
-| `I023/101` First Extension `FX` set | *(refusal)* | `not yet` | refused, same as `I023/100`'s. Settlement 5 |
-| `I023/101` | `Entity.attributes` | `not yet` | `attributes.two_octet_first_part_basis` — that this is the only `2+` item in either ASTERIX category this repository pins whose first part is two octets with the `FX` in the *second*, so its length rule cannot be shared with `I023/100`'s or `I023/110`'s. Ambiguity 4 |
+| `I023/101` `RP` | `Event.payload` | `cat023 1.0.0 · parked` | "Report Period for Category 021 Reports", eight bits at **0.5 seconds**. Parked as seconds. **`0` is a named mode, not a period** — "= 0: Data driven mode" — and reaching a consumer as 0.0 s would be the AIS sentinel defect. And the field is about **another category's feed**, so it is parked as a statement about CAT021 and never applied as a staleness horizon here. Settlement 6 |
+| `I023/101` `SC` | `Entity.attributes` | `cat023 1.0.0 · parked` | Service Class, bits 8/6 of octet 2: `0` no information, `1` NRA class, `2`–`7` "reserved for future use". Parked as the integer and the wording; a reserved value goes to `unresolved_raw`. **`0` is a stated non-statement** ("No information"), which is different from an absent item |
+| `I023/101` octet 2 spares | `Entity.attributes` | `cat023 1.0.0 · parked` | bits 5/2, "Spare bits set to 0". Read and re-emitted as sent, per §4.3 |
+| `I023/101` First Extension `SSRP` | `Event.payload` | `cat023 1.0.0 · parked` | Service Status Reporting Period, **seven** bits at 1 s, stated `1 <= SSRP <= 127s`. Identical shape and bounds to `GSSP` in a different item for a different obligation (§4.5.1.2). A zero is refused |
+| `I023/101` First Extension `FX` set | *(refusal)* | `cat023 1.0.0` | refused, same as `I023/100`'s. Settlement 5 |
+| `I023/101` | `Entity.attributes` | `cat023 1.0.0 · parked` | `attributes.two_octet_first_part_basis` — that this is the only `2+` item in either ASTERIX category this repository pins whose first part is two octets with the `FX` in the *second*, so its length rule cannot be shared with `I023/100`'s or `I023/110`'s. Ambiguity 4 |
 
 ### Row set — `I023/110` Service Status
 
@@ -10657,11 +10661,11 @@ on the extension is refused — settlement 5.
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/110` `STAT` | `Event.severity` | `not yet` | §5.2.7 bits 4/2, Status of the Service, six values. `1` **Failed** → `CRITICAL`; `3` **Degraded** → `WARNING`; `2` Disabled → `WARNING`, because a disabled service is a service a consumer is not receiving and the record does not say whether that was intended; `4` Normal and `5` Initialisation → `INFO`; `0` Unknown → `ADVISORY`, which is the CDM's middle value and the only one that leaves the record visible to a consumer filtering on severity while claiming nothing |
-| `I023/110` `STAT` | `Event.payload` | `not yet` | the raw value **and** its wording, because the collapse onto four severities must stay recoverable and egress re-emits from here |
-| `I023/110` `STAT` above 5 | `Entity.attributes` | `not yet` | three bits reach 7 and six values are defined. A `6` or `7` goes to `unresolved_raw` and takes `ADVISORY`, for the CAT034 undefined-message-type reason: `INFO` would say the status is understood and ordinary, `WARNING` would invent an alarm out of an unknown |
-| `I023/110` spare bits | `Entity.attributes` | `not yet` | bits 8/5, legended "Spare **bit** set to 0" — four bits described with a singular noun (ambiguity 10). All four are read and re-emitted as sent regardless, because §4.3 is normative that a decoder may not rely on their setting |
-| `I023/110` `FX` set | *(refusal)* | `not yet` | refused, and this is the strongest of the three cases: the item's `FX` says "Extension" and **no extension exists in any edition in hand, including 0.14.** Settlement 5 |
+| `I023/110` `STAT` | `Event.severity` | `cat023 1.0.0` | §5.2.7 bits 4/2, Status of the Service, six values. `1` **Failed** → `CRITICAL`; `3` **Degraded** → `WARNING`; `2` Disabled → `WARNING`, because a disabled service is a service a consumer is not receiving and the record does not say whether that was intended; `4` Normal and `5` Initialisation → `INFO`; `0` Unknown → `ADVISORY`, which is the CDM's middle value and the only one that leaves the record visible to a consumer filtering on severity while claiming nothing |
+| `I023/110` `STAT` | `Event.payload` | `cat023 1.0.0 · parked` | the raw value **and** its wording, because the collapse onto four severities must stay recoverable and egress re-emits from here |
+| `I023/110` `STAT` above 5 | `Entity.attributes` | `cat023 1.0.0 · parked` | three bits reach 7 and six values are defined. A `6` or `7` goes to `unresolved_raw` and takes `ADVISORY`, for the CAT034 undefined-message-type reason: `INFO` would say the status is understood and ordinary, `WARNING` would invent an alarm out of an unknown |
+| `I023/110` spare bits | `Entity.attributes` | `cat023 1.0.0 · parked` | bits 8/5, legended "Spare **bit** set to 0" — four bits described with a singular noun (ambiguity 10). All four are read and re-emitted as sent regardless, because §4.3 is normative that a decoder may not rely on their setting |
+| `I023/110` `FX` set | *(refusal)* | `cat023 1.0.0` | refused, and this is the strongest of the three cases: the item's `FX` says "Extension" and **no extension exists in any edition in hand, including 0.14.** Settlement 5 |
 
 ### Row set — `I023/120` Service Statistics
 
@@ -10669,30 +10673,30 @@ on the extension is refused — settlement 5.
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/120` `REP` | `Event.payload` | `not yet` | §5.2.8, "Number of counters following". The item's Format says "followed by **at least one** block of 6 octets", so a `REP` of 0 is excluded by the item's own words and is **refused** — an item whose presence bit is set and whose content is empty is a record whose FSPEC and body disagree. The `I034/070` disposition |
-| `I023/120` counters | `Event.payload` | `not yet` | parked as an **ordered list with duplicates preserved**. The document does not say the `TYPE` values are unique, order is data, and egress is byte-exact only if the counters go back out as they came in — the `I048/030` and `I034/070` rule reached a third time |
-| `I023/120` `TYPE` | `Event.payload` | `not yet` | one octet, eighteen defined values: `0`–`4` generic (unknown messages, 'too old' messages, failed conversions, total received, total transmitted) and `20`–`32` per-message-kind. Parked as the integer **and** the wording |
-| `I023/120` `TYPE` in 5–19 | `Entity.attributes` | `not yet` | a **documented reservation**, not an unknown: the item's NOTE says "the range from 0 to 19 is intended to cover generic messages which may be applicable to many types of service". So a `7` is a generic counter this edition has not allocated, and a `40` is outside the table entirely. Both go to `unresolved_raw` and the reason recorded with each says **which band** it is in |
-| `I023/120` `REF` | `Event.payload` | `not yet` | "Reference from which the messages are countered": `0` from midnight, `1` from the last report. Parked **per counter**, because the bit is inside each six-octet block and not once for the item — so one record may legitimately carry counters with two different references |
-| `I023/120` `REF` versus the Definition | `Entity.attributes` | `not yet` | the item's Definition says the counts are "since the report was last sent" **unconditionally**, while the `REF` bit offers "From midnight" as well. **The field is preferred over the Definition** — the field is what the wire carries — and the disagreement is recorded at `attributes.counter_reference_basis`. Ambiguity 7 |
-| `I023/120` `COUNTER VALUE` | `Event.payload` | `not yet` | 32 bits, unsigned. Parked as the integer. **A count is not a detection**: none of the eighteen `TYPE` values produces an `Event` per counted message, which would invent target reports this document does not carry. And no rate is computed from a counter and a reporting period — settlement 7 item 4 |
-| `I023/120` block spares | `Entity.attributes` | `not yet` | bits 39/33, seven spare bits per block, read and re-emitted as sent |
+| `I023/120` `REP` | `Event.payload` | `cat023 1.0.0 · parked` | §5.2.8, "Number of counters following". The item's Format says "followed by **at least one** block of 6 octets", so a `REP` of 0 is excluded by the item's own words and is **refused** — an item whose presence bit is set and whose content is empty is a record whose FSPEC and body disagree. The `I034/070` disposition |
+| `I023/120` counters | `Event.payload` | `cat023 1.0.0 · parked` | parked as an **ordered list with duplicates preserved**. The document does not say the `TYPE` values are unique, order is data, and egress is byte-exact only if the counters go back out as they came in — the `I048/030` and `I034/070` rule reached a third time |
+| `I023/120` `TYPE` | `Event.payload` | `cat023 1.0.0 · parked` | one octet, eighteen defined values: `0`–`4` generic (unknown messages, 'too old' messages, failed conversions, total received, total transmitted) and `20`–`32` per-message-kind. Parked as the integer **and** the wording |
+| `I023/120` `TYPE` in 5–19 | `Entity.attributes` | `cat023 1.0.0 · parked` | a **documented reservation**, not an unknown: the item's NOTE says "the range from 0 to 19 is intended to cover generic messages which may be applicable to many types of service". So a `7` is a generic counter this edition has not allocated, and a `40` is outside the table entirely. Both go to `unresolved_raw` and the reason recorded with each says **which band** it is in |
+| `I023/120` `REF` | `Event.payload` | `cat023 1.0.0 · parked` | "Reference from which the messages are countered": `0` from midnight, `1` from the last report. Parked **per counter**, because the bit is inside each six-octet block and not once for the item — so one record may legitimately carry counters with two different references |
+| `I023/120` `REF` versus the Definition | `Entity.attributes` | `cat023 1.0.0 · parked` | the item's Definition says the counts are "since the report was last sent" **unconditionally**, while the `REF` bit offers "From midnight" as well. **The field is preferred over the Definition** — the field is what the wire carries — and the disagreement is recorded at `attributes.counter_reference_basis`. Ambiguity 7 |
+| `I023/120` `COUNTER VALUE` | `Event.payload` | `cat023 1.0.0 · parked` | 32 bits, unsigned. Parked as the integer. **A count is not a detection**: none of the eighteen `TYPE` values produces an `Event` per counted message, which would invent target reports this document does not carry. And no rate is computed from a counter and a reporting period — settlement 7 item 4 |
+| `I023/120` block spares | `Entity.attributes` | `cat023 1.0.0 · parked` | bits 39/33, seven spare bits per block, read and re-emitted as sent |
 
 ### Row set — `I023/200` Operational Range
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `I023/200` | `Event.payload` | `not yet` | §5.2.9, one octet at 1 NM, "Currently active operational range of the GS". `O` for report types 001 and 002 and `X` for 003 — **the only optional item in the category**. Parked as nautical miles and as the raw octet |
-| `I023/200` | `Event.geometry` | `not yet` | **`None`. No `Geometry` is ever derived**, and the reason is the one settlement 1 gives: a range is a radius and this category carries no centre. A circle needs a station position and nothing in Part 16 states one, so the derivation cannot arise from a conformant record at all — which is CAT034's settlement 7 shape reached by a shorter route, there because two items are mutually exclusive and here because one of the two does not exist |
-| `I023/200` NOTE | `Entity.attributes` | `not yet` | "Maximum value indicates 'maximum value or above'." A range of 255 NM is a **floor**, not a measurement, so it is carried as the number and flagged — the AIS 102.2 kt discipline, reached again |
+| `I023/200` | `Event.payload` | `cat023 1.0.0 · parked` | §5.2.9, one octet at 1 NM, "Currently active operational range of the GS". `O` for report types 001 and 002 and `X` for 003 — **the only optional item in the category**. Parked as nautical miles and as the raw octet |
+| `I023/200` | `Event.geometry` | `cat023 1.0.0` | **`None`. No `Geometry` is ever derived**, and the reason is the one settlement 1 gives: a range is a radius and this category carries no centre. A circle needs a station position and nothing in Part 16 states one, so the derivation cannot arise from a conformant record at all — which is CAT034's settlement 7 shape reached by a shorter route, there because two items are mutually exclusive and here because one of the two does not exist |
+| `I023/200` NOTE | `Entity.attributes` | `cat023 1.0.0 · parked` | "Maximum value indicates 'maximum value or above'." A range of 255 NM is a **floor**, not a measurement, so it is carried as the number and flagged — the AIS 102.2 kt discipline, reached again |
 
 ### Row set — RE and SP
 
 | CAT023 | CDM field | Status | Notes |
 |---|---|---|---|
-| `RE-Data Item`, FRN 13 | `Entity.attributes` | `not yet` | Reserved Expansion Field, `1+1+`. **Parked verbatim, octet for octet, restored unchanged on egress, never decoded.** This document defines no part of it: FRN 13 has no §5.2 entry, no appendix exists for Part 16, and no edition in hand mentions the field outside the UAP. The procedural reason is `asterix_cat034.py`'s and one step stronger again — there the change record at least recorded the slot's arrival; here there is no change-record line for it either |
-| `SP-Data Item`, FRN 14 | `Entity.attributes` | `not yet` | Special Purpose Field, `1+1+`. Opaque by construction, parked verbatim as hex and **never written to** on egress: a Special Purpose Field's contents are settled bilaterally, so a byte invented here is a byte some deployment already means something by |
-| the `1+1+` length convention | *(no field)* | `not yet` | a one-octet length counting itself, then opaque contents. **Inherited from the shipped ASTERIX siblings, and the inheritance is named**: ASTERIX Part 1 defines these fields, this document cites it as SUR.ET1.ST05.2000-STD-01-01 Edition 1.29 of **February 2002** — the pre-migration number at a nineteen-year-old edition — and it is not pinned in this repository. So even acquiring Part 1 at its current edition would not obviously be acquiring the document this specification cites. Ambiguity 3 |
+| `RE-Data Item`, FRN 13 | `Entity.attributes` | `cat023 1.0.0 · parked` | Reserved Expansion Field, `1+1+`. **Parked verbatim, octet for octet, restored unchanged on egress, never decoded.** This document defines no part of it: FRN 13 has no §5.2 entry, no appendix exists for Part 16, and no edition in hand mentions the field outside the UAP. The procedural reason is `asterix_cat034.py`'s and one step stronger again — there the change record at least recorded the slot's arrival; here there is no change-record line for it either |
+| `SP-Data Item`, FRN 14 | `Entity.attributes` | `cat023 1.0.0 · parked` | Special Purpose Field, `1+1+`. Opaque by construction, parked verbatim as hex and **never written to** on egress: a Special Purpose Field's contents are settled bilaterally, so a byte invented here is a byte some deployment already means something by |
+| the `1+1+` length convention | *(no field)* | `cat023 1.0.0` | a one-octet length counting itself, then opaque contents. **Inherited from the shipped ASTERIX siblings, and the inheritance is named**: ASTERIX Part 1 defines these fields, this document cites it as SUR.ET1.ST05.2000-STD-01-01 Edition 1.29 of **February 2002** — the pre-migration number at a nineteen-year-old edition — and it is not pinned in this repository. So even acquiring Part 1 at its current edition would not obviously be acquiring the document this specification cites. Ambiguity 3 |
 
 ### Row set — egress, CDM back to a CAT023 data block
 
@@ -10700,21 +10704,21 @@ Written now for the reason every other egress row set here was written at Phase 
 specification designed after an ingest implementation is shaped by what the implementation happened
 to keep.
 
-**The byte-for-byte claim is made and is expected to hold**, and this category is the easiest case in
-the family: **there is not one scaled value that becomes a canonical numeric field.** Every derived
+**The byte-for-byte claim HOLDS, on all 17 fixtures.** This category is the easiest case in the
+family: **there is not one scaled value that becomes a canonical numeric field.** Every derived
 figure — the seconds behind `I023/070`, `GSSP`, `SSRP`, `RP` and `I023/200` — is a one-way view, and
-every emitted octet comes from a parked raw field. So there is no arithmetic to invert anywhere.
+every emitted octet comes from a parked raw field. So there was no arithmetic to invert anywhere.
 
 | CDM field | CAT023 | Status | Notes |
 |---|---|---|---|
-| `Entity.source_ids` | `I023/010` | `not yet` | the SAC/SIC the station entity was keyed on, back into FRN 1 |
-| `Entity.source_ids` | `I023/015` | `not yet` | the `SID` the service entity was keyed on, and the parked `STYP` beside it. A record whose Table 2 column says `X` for `I023/015` emits neither |
-| `Event.payload` | `I023/000` | `not yet` | the parked raw Report Type, **not** a value re-derived from `Event.event_type` — all three types collapse to `STATUS_CHANGE` and only the park is invertible |
-| `Event.observed_at` | `I023/070` | `not yet` | re-encoded from the **parked raw 24-bit count**, not from the resolved instant. Re-deriving the count would run the rollover arithmetic in both directions and hide an error in it |
-| `Event.severity` | `I023/110` | `not yet` | **not** the source of any octet. The `STAT` value is re-emitted from the park, because six statuses collapse to four severities |
-| `Event.payload`, `Entity.attributes` | every other item | `not yet` | from the park, verbatim, including every spare bit and both opaque fields |
-| `record.fspec` | the FSPEC | `not yet` | **re-emitted as parked, not recomputed**, so a source's non-minimal FSPEC survives. A record assembled from CDM with no parked FSPEC gets the shortest covering one, and that is the only case where this adapter chooses |
-| `block.length` | `LEN` | `not yet` | **recomputed**, never copied |
+| `Entity.source_ids` | `I023/010` | `cat023 1.0.0 · egress` | the SAC/SIC the station entity was keyed on, back into FRN 1 |
+| `Entity.source_ids` | `I023/015` | `cat023 1.0.0 · egress` | the `SID` the service entity was keyed on, and the parked `STYP` beside it. A record whose Table 2 column says `X` for `I023/015` emits neither |
+| `Event.payload` | `I023/000` | `cat023 1.0.0 · egress` | the parked raw Report Type, **not** a value re-derived from `Event.event_type` — all three types collapse to `STATUS_CHANGE` and only the park is invertible |
+| `Event.observed_at` | `I023/070` | `cat023 1.0.0 · egress` | re-encoded from the **parked raw 24-bit count**, not from the resolved instant. Re-deriving the count would run the rollover arithmetic in both directions and hide an error in it |
+| `Event.severity` | `I023/110` | `cat023 1.0.0 · egress` | **not** the source of any octet. The `STAT` value is re-emitted from the park, because six statuses collapse to four severities |
+| `Event.payload`, `Entity.attributes` | every other item | `cat023 1.0.0 · egress` | from the park, verbatim, including every spare bit and both opaque fields |
+| `record.fspec` | the FSPEC | `cat023 1.0.0 · egress` | **re-emitted as parked, not recomputed**, so a source's non-minimal FSPEC survives. A record assembled from CDM with no parked FSPEC gets the shortest covering one, and that is the only case where this adapter chooses |
+| `block.length` | `LEN` | `cat023 1.0.0 · egress` | **recomputed**, never copied |
 
 #### What egress is NOT lossy for
 
@@ -10771,13 +10775,26 @@ Ten entries, numbered from 1 within this row set. `fixtures/cat023/spec/cat023_p
 | **Categories 019, 020 and 025** | The CNS/ATM domain contains several categories and this one is bounded by its `CAT` octet. Deferred, not rejected; a category is an adapter |
 | **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048`, `cat034`, `cat062` and now `cat023` are five of them, and each reads only its own `CAT` octet |
 
-### The fixtures — planned here, before they exist
+### The fixtures — twenty-seven of them, built by a generator
 
-Synthetic only. `SAC = 0x29`, pinned by citation through `fixtures/cat021/spec/sac_pin.json` as
+**Seventeen translatable and ten refusals**, planned in this table before they existed and built
+against it. Synthetic only. `SAC = 0x29`, pinned by citation through `fixtures/cat021/spec/sac_pin.json` as
 §5.2.2's NOTE points at the same published list. Version-8 `f1c7` UUIDs where one is needed; the
 clock is injected. Built by a generator at `fixtures/cat023/spec/build_fixtures.py`, each fixture
 shipping as `<name>.cat023` for the octets and `<name>.parsed.json` for exactly what the parser
-produces.
+produces — so the harness replays **thirty-four** payloads, not seventeen.
+
+**And there are no coordinates here to be synthetic about**, which is worth one line because every
+other fixture set in this repository has to say where its synthetic positions are. Part 16 carries
+no position of any kind.
+
+**What Phase 2 changed: two fixtures, and the generator is what caught it.** The plan gave
+`service_status_degraded` and `service_status_unknown` an `I023/110` and no `I023/101`, and Table 2
+makes **both** mandatory for report type 002. `build_fixtures.py` runs `parse_block` over every
+fixture as it writes it, so settlement 4's mandatory half refused them at BUILD time rather than at
+review time — which is the generator earning its place: a hand-written byte file would have shipped
+two records the adapter must reject, in the translatable set, and the harness would have reported
+two failures with no indication that the FIXTURES were wrong rather than the code.
 
 **Deliberately small — this category is nine items and the fixture set is sized for it**, not for
 symmetry with CAT062's.

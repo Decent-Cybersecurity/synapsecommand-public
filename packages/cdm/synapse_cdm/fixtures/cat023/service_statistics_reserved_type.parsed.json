@@ -1,0 +1,54 @@
+{
+  "block": {
+    "category": 23,
+    "length": 25,
+    "record_count": 1
+  },
+  "records": [
+    {
+      "fspec": "f140",
+      "index": 0,
+      "item_octets": {
+        "I023/000": "03",
+        "I023/010": "2929",
+        "I023/015": "32",
+        "I023/070": "2a3000",
+        "I023/120": "02078000000005288000000009"
+      },
+      "items": {
+        "I023/000": {
+          "report_type": 3
+        },
+        "I023/010": {
+          "sac": 41,
+          "sic": 41
+        },
+        "I023/015": {
+          "sid": 3,
+          "styp": 2
+        },
+        "I023/070": {
+          "time_of_day_raw": 2764800
+        },
+        "I023/120": {
+          "counters": [
+            {
+              "counter": 5,
+              "ref": 1,
+              "spare_bits_39_33": 0,
+              "type": 7
+            },
+            {
+              "counter": 9,
+              "ref": 1,
+              "spare_bits_39_33": 0,
+              "type": 40
+            }
+          ],
+          "rep": 2
+        }
+      },
+      "record_count": 1
+    }
+  ]
+}

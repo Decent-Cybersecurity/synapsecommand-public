@@ -1,0 +1,320 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and here it is not even a decision. A ground station service report states configuration and health and never allegiance, and this repository does not infer one from a SAC",
+      "cat023_block": {
+        "category": 23,
+        "length": 37,
+        "record_count": 1
+      },
+      "cat023_fspec": "f140",
+      "cat023_items": {
+        "I023/000": "03",
+        "I023/010": "2929",
+        "I023/015": "32",
+        "I023/070": "2a3000",
+        "I023/120": "0403800012d68715800000037a15800000000c0400ffffffff"
+      },
+      "data_source": {
+        "basis": "I023/010, 'Identification of the Ground Station from which the data is received' (\u00a75.2.2), M in every column of Table 2. A SourceId here and parked at attributes.data_source in asterix_cat048.py and asterix_cat062.py \u2014 the same two octets of the same standard, filed two different ways, and the difference is the whole reason both dispositions exist: there the SAC/SIC identifies the SENSOR or the PROCESSOR and the object is a target, so filing it under the object's identifiers is how a fused picture ends up with an entity per receiver; here the station IS the object and the pair is its own identifier",
+        "external_id": "2929",
+        "note": "The up-to-date list of SACs is published on the EUROCONTROL Web Site (https://www.eurocontrol.int/asterix) \u2014 note HTTPS here and HTTP in Part 2b's equivalent NOTE, which is the same list at two spellings of one URL",
+        "sac": 41,
+        "sic": 41
+      },
+      "entity_type_basis": "SENSOR, from the category rather than from any item. Every record in Part 16 is about a CNS/ATM ground station or a service it provides (\u00a71.1: 'the structure for the transmission of service reports from a CNS/ATM Ground station'), so there is nothing to read: the object's type is a property of the format",
+      "geometry_basis": "Event.geometry is None on every object, PERMANENTLY. I023/200 is a radius and there is no centre in the category, so a circle cannot be derived from a conformant record at all \u2014 which is asterix_cat034.py's settlement 7 shape reached by a shorter route: there because Table 2 makes two items mutually exclusive, here because one of the two does not exist",
+      "identity_basis": "uuid5 over (ASTERIX_SAC_SIC, '2929'). The system name is NOT this adapter's own: a SAC/SIC is allocated across the whole ASTERIX family from one list, so filing it under a category name would say that one station seen through Part 16 is a different station from the same pair seen through any other part. The SAME string asterix_cat034.py uses, so one station seen through both parts is ONE entity without the two adapters coordinating. AND HERE A CLAUSE SUPPORTS IT RATHER THAN AN INFERENCE: \u00a74.4.1 is a normative section of its own \u2014 'By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Ground Station' \u2014 where Part 2b has only \u00a75.2.2's definition and a NOTE pointing at the published list",
+      "integrity_basis": "CAT023 defines NO checksum at any level \u2014 neither \u00a74.5.2 nor \u00a74.6 nor any \u00a75.2 item specifies a CRC, checksum or parity field at block, record or item level. What passed is the structural gate: LEN matched the buffer, the records tiled it exactly, every FSPEC bit named a defined and non-spare FRN, no FX led to an extension the document does not define, every REP was non-zero, and the items Table 2 makes mandatory for this record's own report type were present. This is weaker than a CRC and the difference is named rather than smoothed over: a single bit flipped inside a fixed-length field satisfies every check above and reaches the CDM as a station status",
+      "object_is": "the GROUND STATION",
+      "position_basis": "None, ON EVERY OBJECT, and this category is why rather than this adapter. NINE ITEMS AND NOT ONE COORDINATE: I023/200 is an operational range in nautical miles with no centre, and \u00a74.4.1 asserts that a SAC/SIC is dedicated and unambiguous per ground station without saying where any station is. So a consumer holding CAT023 alone cannot place a station on a map, and this adapter does not help it: reading a station position out of a CAT034 record to locate a CAT023 station is cross-payload state, which is the refusal asterix_cat034.py's settlement 2 already made in the other direction. An absent Position is the honest statement, never a Position holding zeros",
+      "service_reported": {
+        "basis": "the SERVICE this record is about, which is a SECOND Entity \u2014 settlement 2. Recorded on the station too, so a consumer holding only the station object can see which service the record described",
+        "entity_id": "ad358100-c4d8-5b86-adf7-7c9178a01c3a",
+        "sid": 3,
+        "styp": 2,
+        "styp_text": "ADS-B Ext Squitter"
+      },
+      "service_statistics": {
+        "basis": "\u00a75.2.8, an ORDERED list with duplicates preserved \u2014 the I048/030 and I034/070 rule reached a third time: order is data, the document does not say the TYPE values are unique, and egress is byte-exact only if the counters go back out as they came in. A COUNT IS NOT A DETECTION: none of the eighteen defined TYPE values produces an Event per counted message, which would invent target reports this document does not carry. And no rate is computed from a counter and a reporting period, which would be a figure the source did not state",
+        "counters": [
+          {
+            "counter": 1234567,
+            "reference": "From the last report",
+            "reference_raw": 1,
+            "spare_bits_39_33": 0,
+            "text": "Total Number of messages received",
+            "type": 3
+          },
+          {
+            "counter": 890,
+            "reference": "From the last report",
+            "reference_raw": 1,
+            "spare_bits_39_33": 0,
+            "text": "Number of \u2018Basic\u2019 messages received",
+            "type": 21
+          },
+          {
+            "counter": 12,
+            "reference": "From the last report",
+            "reference_raw": 1,
+            "spare_bits_39_33": 0,
+            "text": "Number of \u2018Basic\u2019 messages received",
+            "type": 21
+          },
+          {
+            "counter": 4294967295,
+            "reference": "From midnight",
+            "reference_raw": 0,
+            "spare_bits_39_33": 0,
+            "text": "Total number of messages transmitted",
+            "type": 4
+          }
+        ],
+        "reference_basis": "PER COUNTER and never once for the item: the REF bit is inside each six-octet block, so one record may legitimately carry counters with two different references. AND THE ITEM'S OWN DEFINITION DISAGREES WITH ITS OWN FIELD: the Definition says the counts are 'since the report was last sent' UNCONDITIONALLY, while REF offers 'From midnight' as well. THE FIELD IS PREFERRED over the Definition, because the field is what the wire carries. FORMAT_COVERAGE.md ambiguity 7",
+        "rep": 4
+      },
+      "source_extras": {
+        "items": {
+          "I023/000": {
+            "report_type": 3
+          },
+          "I023/010": {
+            "sac": 41,
+            "sic": 41
+          },
+          "I023/015": {
+            "sid": 3,
+            "styp": 2
+          },
+          "I023/070": {
+            "time_of_day_raw": 2764800
+          },
+          "I023/120": {
+            "counters": [
+              {
+                "counter": 1234567,
+                "ref": 1,
+                "spare_bits_39_33": 0,
+                "type": 3
+              },
+              {
+                "counter": 890,
+                "ref": 1,
+                "spare_bits_39_33": 0,
+                "type": 21
+              },
+              {
+                "counter": 12,
+                "ref": 1,
+                "spare_bits_39_33": 0,
+                "type": 21
+              },
+              {
+                "counter": 4294967295,
+                "ref": 0,
+                "spare_bits_39_33": 0,
+                "type": 4
+              }
+            ],
+            "rep": 4
+          }
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every CAT023 station and service is an UNKNOWN glyph. CAT023 carries no symbology of any kind",
+      "table_2_disposition": {
+        "basis": "PARKED, never dropped and never an error. Table 2's X means 'never present' for that report type, so an item under an X is a conformance fault in the ENCODER \u2014 and every octet of it is still decodable, its length is still stated, and refusing would discard data the FSPEC correctly announced. \u00a74.3's discipline for a bit that means nothing, applied one level up to an item that means nothing here. A missing M is the opposite case and IS refused, in _check_table_2",
+        "column": {
+          "I023/000": "M",
+          "I023/010": "M",
+          "I023/015": "M",
+          "I023/070": "M",
+          "I023/100": "X",
+          "I023/101": "X",
+          "I023/110": "X",
+          "I023/120": "M",
+          "I023/200": "X"
+        },
+        "items_present_where_the_table_says_X": [],
+        "report_type": 3,
+        "what_the_table_makes_impossible": "I023/100 is M for type 001 and X for the other two; I023/101, I023/110 and I023/120 are each M for exactly one type and X elsewhere. So a conformant record carries EITHER the station's status OR one service's configuration and status OR one service's statistics, never two of the three \u2014 and a consumer wanting a station's full picture needs three records, which is accumulation across payloads and a consumer's act"
+      },
+      "unavailable_fields": [],
+      "unresolved_raw": {}
+    },
+    "confidence": null,
+    "entity_id": "62650095-2e7e-522b-9e65-1a0aa64fc315",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat023",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT023"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "cat023_fspec": "f140",
+      "object_is": "the SERVICE, not the ground station that provides it",
+      "position_basis": "None. NINE ITEMS AND NOT ONE COORDINATE in this category \u2014 I023/200 is an operational range in nautical miles with no centre, and \u00a74.4.1 asserts that a SAC/SIC is dedicated and unambiguous per ground station without saying where any station is. Reading a position out of a CAT034 record to locate this station is cross-payload state, which is the refusal asterix_cat034.py's settlement 2 already made in the other direction",
+      "provided_by": {
+        "basis": "the station's own entity_id, recorded so a consumer can see the relationship WITHOUT this adapter having joined anything: both ids are pure functions of fields in the SAME RECORD, and the Event carries both in related_entities with the station first. What is not done is resolving the station's id against any other payload",
+        "station_entity_id": "62650095-2e7e-522b-9e65-1a0aa64fc315",
+        "station_external_id": "2929"
+      },
+      "service": {
+        "cross_category_join_declined": "\u00a75.2.3's NOTE 2: 'The service identification is also available in item I021/015.' Correlating a CAT023 service status with the CAT021 target reports that service emits is the single most useful thing a consumer could do with this category, and it needs TWO PAYLOADS \u2014 which is the cross-payload state every adapter here refuses. The CAT021 row set predicted this relationship from the other side: its declines table says I021/015 and I021/016 exist 'precisely because not every service user receives CAT023'",
+        "entity_type_basis": "SENSOR, recorded as the LEAST-WRONG OF EIGHT rather than as a fit. A service is not a UNIT, a PLATFORM, a FACILITY, an EVACUEE_GROUP, an INTERFERENCE_SOURCE or an OVERLAY_OBJECT, and UNKNOWN would discard the one thing the record does say about it. SENSOR fits it no worse than it fits the station",
+        "external_id": "2929|3",
+        "identity_basis": "uuid5 over (ASTERIX_CNS_SERVICE, '2929|3') \u2014 THE PAIR (SAC/SIC, Service Identification) AND NEVER THE SID ALONE. \u00a75.2.3's NOTE 1 says 'the service identification is allocated by the system', so four bits identify a service WITHIN a ground station and carry no meaning across stations, exactly as an SDPS track number is scoped to its SDPS. Four bits give sixteen services per station, which is the whole space. The system name is not this adapter's own for the reason the station's is not: another category could legitimately name the same service, and NOTE 2 says one does",
+        "second_object_basis": "A SERVICE IS A SECOND OBJECT, on report types 002 and 003 only. Three reasons. It is a thing that exists and has a state \u2014 \u00a75.2.7's STAT has six values, which is a lifecycle and not an attribute of the station, and a station whose ADS-B service is failed and whose TIS-B service is normal has two states. Parking it inside the station's attributes would make two consecutive records about two different services produce two objects with the SAME entity_id and different attributes, which reads downstream as one object changing its mind rather than as two services. And \u00a74.5.1.2 requires the independence: 'Each ground station may provide several services, and the status of each shall be reported independently in each service status report.' FORMAT_COVERAGE.md settlement 2",
+        "sid": 3,
+        "styp": 2,
+        "styp_text": "ADS-B Ext Squitter",
+        "system": "ASTERIX_CNS_SERVICE"
+      }
+    },
+    "confidence": null,
+    "entity_id": "ad358100-c4d8-5b86-adf7-7c9178a01c3a",
+    "entity_type": "SENSOR",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "cat023",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT023"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929|3",
+        "system": "ASTERIX_CNS_SERVICE"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ff251f5e-5f36-5a58-b93c-fb8c0c862a5e",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:00:00.000Z",
+    "payload": {
+      "observed_at_basis": {
+        "date_from": "the receipt date, which was the nearest of the three candidate days",
+        "definition": "Absolute time stamping expressed as UTC time",
+        "item": "I023/070",
+        "lsb_seconds": 0.0078125,
+        "time_of_day_raw": 2764800,
+        "time_of_day_s": 21600.0
+      },
+      "record_count": 1,
+      "record_index": 0,
+      "report_type": {
+        "all_values_reserved": "\u00a75.2.1 NOTE 2: 'All Report Type values are reserved for common standard use.' The same sentence Part 2b's I034/000 NOTE 2 carries about Message Types. So a value outside 001-003 is NOT a private extension point \u2014 it is a value this edition does not define \u2014 and it lands in unresolved_raw rather than in source_extras",
+        "basis": "the raw value AND its name, parked, because the collapse onto event_type is 3 -> 1 and egress re-emits FROM HERE rather than re-deriving a type from an EventType all three share",
+        "defined_at": "\u00a75.2.1 NOTE 3 gives the three values and points at \u00a74.5.1.1, \u00a74.5.1.2 and \u00a74.5.1.3 for what each one MEANS \u2014 and those three subsections are where the reporting-period obligations live, so the item that carries the period is I023/100 or I023/101 and the obligation that gives it meaning is in chapter 4",
+        "handling_note": "NOTE 1: 'In applications where transactions of various types are exchanged, the Report Type Data Item facilitates the proper report handling at the receiver side.' The item's own statement of what it is for, and the sentence that makes Table 2 the encoding rule for the other eight items",
+        "name": "Service Statistics report",
+        "raw": 3
+      },
+      "service": {
+        "nibble_basis": "the item is named 'Service Type and Identification' and the octet is SID in bits 8/5 and STYP in bits 4/1 \u2014 THE NAME IS IN THE OTHER ORDER FROM THE BITS. A transposition yields a plausible wrong service rather than an error, because SID 2 / STYP 9 and SID 9 / STYP 2 are both legal, so the two nibbles are parked under explicit names and never as one integer",
+        "scope_note": "\u00a71.1's scope sentence names FIVE service kinds \u2014 'ADS-B, TIS-B, FIS-B, GRAS, and MLT' \u2014 and \u00a75.2.3's table gives NINE values, because four of the five are qualified by a data link. The two agree and count differently, which is worth stating because a reader checking one against the other sees five against nine",
+        "sid": 3,
+        "styp": 2,
+        "styp_text": "ADS-B Ext Squitter"
+      },
+      "service_statistics": {
+        "basis": "\u00a75.2.8, an ORDERED list with duplicates preserved \u2014 the I048/030 and I034/070 rule reached a third time: order is data, the document does not say the TYPE values are unique, and egress is byte-exact only if the counters go back out as they came in. A COUNT IS NOT A DETECTION: none of the eighteen defined TYPE values produces an Event per counted message, which would invent target reports this document does not carry. And no rate is computed from a counter and a reporting period, which would be a figure the source did not state",
+        "counters": [
+          {
+            "counter": 1234567,
+            "reference": "From the last report",
+            "reference_raw": 1,
+            "spare_bits_39_33": 0,
+            "text": "Total Number of messages received",
+            "type": 3
+          },
+          {
+            "counter": 890,
+            "reference": "From the last report",
+            "reference_raw": 1,
+            "spare_bits_39_33": 0,
+            "text": "Number of \u2018Basic\u2019 messages received",
+            "type": 21
+          },
+          {
+            "counter": 12,
+            "reference": "From the last report",
+            "reference_raw": 1,
+            "spare_bits_39_33": 0,
+            "text": "Number of \u2018Basic\u2019 messages received",
+            "type": 21
+          },
+          {
+            "counter": 4294967295,
+            "reference": "From midnight",
+            "reference_raw": 0,
+            "spare_bits_39_33": 0,
+            "text": "Total number of messages transmitted",
+            "type": 4
+          }
+        ],
+        "reference_basis": "PER COUNTER and never once for the item: the REF bit is inside each six-octet block, so one record may legitimately carry counters with two different references. AND THE ITEM'S OWN DEFINITION DISAGREES WITH ITS OWN FIELD: the Definition says the counts are 'since the report was last sent' UNCONDITIONALLY, while REF offers 'From midnight' as well. THE FIELD IS PREFERRED over the Definition, because the field is what the wire carries. FORMAT_COVERAGE.md ambiguity 7",
+        "rep": 4
+      },
+      "severity_basis": {
+        "default": "INFO for all three defined report types. A ground station or a service stating what it is doing is routine; the type itself is not an alarm, and Event.event_type is STATUS_CHANGE for all three \u2014 no report type produces ALERT",
+        "raised_by": [],
+        "report_type": 3,
+        "report_type_text": "Service Statistics report"
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "62650095-2e7e-522b-9e65-1a0aa64fc315",
+      "ad358100-c4d8-5b86-adf7-7c9178a01c3a"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "cat023",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "ASTERIX_CAT023"
+    },
+    "source_ids": [
+      {
+        "external_id": "2929",
+        "system": "ASTERIX_SAC_SIC"
+      },
+      {
+        "external_id": "2929|3",
+        "system": "ASTERIX_CNS_SERVICE"
+      }
+    ]
+  }
+]
