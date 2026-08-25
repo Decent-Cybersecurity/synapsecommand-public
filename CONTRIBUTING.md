@@ -60,8 +60,10 @@ The [DCO GitHub App](https://github.com/apps/dco) is installed on this repositor
 - one or more commits without a valid `Signed-off-by:` trailer → the **`DCO` check fails**,
   naming the commit and its author in the check's own output;
 - **that check is not currently a required status**, so it does not by itself block a merge.
-  Whether it should become one is an open decision, recorded with its consequences in
-  [`PUBLICATION.md`](PUBLICATION.md).
+  That is a **settled decision and not an oversight**: making it required would gate pushes to
+  `main` on a check the DCO app only ever produces for pull requests, so it would refuse the
+  maintainer's direct pushes with nothing able to make them pass. The ruling and its three grounds
+  are in [`PUBLICATION.md`](PUBLICATION.md), ledger entry 1.
 
 Do not read the second point as slack. A pull request carrying an unsigned commit will not be
 merged; the only difference is that today it is a maintainer who refuses it rather than the
@@ -164,12 +166,15 @@ one that is allowed to be ugly.
 ## Running everything before you open a pull request
 
 ```bash
-pip install -e packages/cdm                          # editable install
+pip install -e "packages/cdm[test]"                  # editable install, plus pytest
 pytest -q                                            # the whole suite
 python -m synapse_cdm.schemas --check --out schemas   # published schemas match the models
 
 cd docs && npm install && npm run ci                 # docs: drift gate, typecheck, build
 ```
+
+The `[test]` extra carries `pytest`; the quotes are for `zsh`, which would otherwise glob the
+brackets. `README.md` documents the same first two lines and a test requires the two to agree.
 
 `synapse_cdm` depends on `pydantic` and `jsonschema` and nothing else. It imports nothing from
 the SynapseCommand product repository and contains no crypto — both enforced by AST in

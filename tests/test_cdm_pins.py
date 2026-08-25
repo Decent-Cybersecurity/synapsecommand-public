@@ -142,6 +142,55 @@ column (0). **And the sweep found a SECOND instance of the same false claim**, i
 without its premise being re-checked. The audit found one; the hand sweep found the other. That is
 the argument for the manual act being real work rather than a concession.
 
+THE FRESH-CLONE BOUNDARY: WHICH PDF-TOUCHING CHECK SKIPS AND WHICH ONE MUST STILL FAIL
+----------------------------------------------------------------------------------------
+No pinned document is tracked, so **the ordinary state of this repository for everybody who is not
+its maintainer is: records present, bytes absent.** Thirteen checks here touch a PDF and eleven of
+them already skipped on a fresh clone; two did not, and an outsider's first run was
+`2 failed`. Both were repaired, and they were repaired DIFFERENTLY — which is the useful part, and
+the reason this section exists instead of two more skip lines.
+
+**The rule. A check skips iff its subject is BYTES; it must fail iff its subject is a RECORD, the
+INDEX, or the IGNORE RULES.** All three of the latter are in every clone in full, so a clone can
+decide them, and a check that went quiet about them would be reporting a pass over a document
+nobody looked at. Bytes are the only thing a clone legitimately cannot produce.
+
+Read as a table, and the middle column is the question to ask of the next check that lands here:
+
+===========================================  ==========================  ====================
+check                                        subject                     fresh clone
+===========================================  ==========================  ====================
+size and hash of a held document             the bytes                   **SKIP**, per pin
+every history PDF against its lineage        the bytes                   **SKIP**, per lineage
+the derived pin set equals what is on disk   the bytes                   **SKIP** — but see below
+`.gitignore` refuses to stage a document     the ignore RULES            **runs, must fail**
+no PDF is tracked anywhere                   the INDEX                   **runs, must fail**
+a pin record's fields, roster, page method   the RECORD                  **runs, must fail**
+every prose site states the same count       the RECORD                  **runs, must fail**
+===========================================  ==========================  ====================
+
+The two repairs, because neither is "add a skip and move on":
+
+* `test_the_derived_pin_set_equals_the_pdfs_in_spec_directories` compares the record against the
+  disk, so half of it is genuinely about bytes. It now skips **only when the tree holds no
+  specification document at all** — not per missing pin. A tree holding SOME is a maintainer's
+  tree, and "recorded and not on disk" is exactly the 80b38d1 defect (a file moved out from under
+  its record) that this check exists to catch; degrading it to per-pin skips would retire that
+  property to catch nothing. Holding none is a fresh clone, and completeness is not a claim a
+  fresh clone is making.
+* `test_gitignore_refuses_a_specification_document_before_the_gate_has_to` **does not skip at all
+  any more**, and by the rule above it must not: the ignore rules are the subject and they are in
+  the clone. What was missing was not the rules but the paths to try them on, and it was asking
+  the disk for those. It now asks the RECORD as well — `git check-ignore --no-index` answers about
+  a path, not about a file, and returns the same verdict for a document nobody holds. So the check
+  runs everywhere, over the union of the recorded pin paths and whatever is on disk: eleven paths
+  on a fresh clone, thirty-six here. It got STRONGER by being made to work for an outsider, which
+  is the outcome to prefer over a skip whenever the subject allows it.
+
+And the skip messages are held to a shape, because a skip nobody can read is a silent pass: **name
+what is absent, and say the clone has the record and not the PDF.** Eleven siblings already say it
+that way and the twelfth now matches them.
+
 WHAT IS NOT A PIN
 -----------------
 **Two** `spec/history/` directories now hold edition lineages, and neither holds a pin.
@@ -550,7 +599,16 @@ def test_the_derived_pin_set_equals_the_pdfs_in_spec_directories():
     The push gate that named eight pins while the tree held nine failed in exactly one direction: a
     PDF present and unlisted. An enumeration cannot catch that, because it is the enumeration that
     is wrong. Comparing the derived set against the disk catches it without anybody counting.
+
+    SKIPS ON A TREE HOLDING NO DOCUMENTS AT ALL, and only then — see the fresh-clone boundary in
+    this module's docstring. Both halves are about bytes, so a clone has nothing to compare; a tree
+    holding SOME documents is a maintainer's and both directions apply to it in full, because
+    "recorded and not on disk" is the moved-file defect and a per-pin skip would retire it.
     """
+    if not DISK:
+        pytest.skip(f"no specification document is in this working tree at all, so the {len(PINS)} "
+                    "recorded pins cannot be compared against a disk (a fresh clone has the "
+                    "record, not the PDF). The equality runs as soon as one document is held")
     missing_from_disk = sorted(set(PINS) - DISK)
     unrecorded_on_disk = sorted(DISK - set(PINS))
     assert not missing_from_disk, (
@@ -1027,6 +1085,11 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
     present and shadowed by a later negation. The positive control matters as much: the pin
     RECORDS and the generators live in the same directories and must still stage, so this asserts
     both directions and a `spec/`-wide rule would fail it.
+
+    THIS CHECK DOES NOT SKIP, on any tree, and the fresh-clone boundary in this module's docstring
+    says why: its subject is the ignore rules, and a clone has those in full. It used to demand
+    documents on disk and fail an outsider for not having any — asking the disk for paths when the
+    pin records state eleven of them, none of which has to exist for `--no-index` to rule on it.
     """
     import subprocess
     def ignored(rel: str) -> bool:
@@ -1038,10 +1101,43 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
         return subprocess.run(["git", "check-ignore", "-q", "--no-index", rel],
                               cwd=REPO).returncode == 0
 
-    # Every held document, by its real path — not a synthetic one, so the rule is checked
-    # against the tree it exists for.
-    documents = sorted(str(p.relative_to(REPO)) for p in FIXTURES.rglob("*.pdf"))
-    assert documents, "no specification documents in the working tree; this check is vacuous here"
+    # Every document this repository RECORDS, plus every one it happens to hold. Real paths in
+    # both cases — nothing synthetic — but the record is the half that makes this check work for
+    # a reader who has no PDFs, and that is the ordinary case: `--no-index` asks the PATTERNS
+    # about a path, so it answers identically whether or not the file is there. Eleven paths on a
+    # fresh clone, thirty-six here, and the held half is what covers the `spec/history/` lineages
+    # that no pin record names.
+    # PINS is keyed relative to the PACKAGE and `check-ignore` wants repo-relative, so the prefix
+    # is DERIVED. Typing it got it wrong first time — `packages/cdm/` instead of
+    # `packages/cdm/synapse_cdm/` — and every assertion still passed, because `*.pdf` is ignored
+    # at any depth and a wrong path is ignored just as convincingly as a right one. The
+    # spec-directory check below is what makes a wrong prefix fail instead of pass.
+    package = PKG.relative_to(REPO)
+    recorded = {str(package / path) for path in PINS}
+    held = {str(p.relative_to(REPO)) for p in FIXTURES.rglob("*.pdf")}
+    documents = sorted(recorded | held)
+    assert documents, (
+        "neither a pin record nor the disk yields a single specification document, so this check "
+        "is vacuous. The pin records are tracked and a clone has all eleven, so an empty set here "
+        "means discovery is broken rather than that the tree is clean — see "
+        "test_the_pin_set_was_actually_discovered"
+    )
+    assert len(recorded) >= 11, (
+        f"only {len(recorded)} recorded pin path(s) reached this check. It is keyed on the record "
+        "precisely so that a fresh clone checks eleven paths instead of none"
+    )
+    # THE PREFIX IS CHECKED, on a tracked directory, because an unignored PDF and a nonexistent
+    # one are indistinguishable to `check-ignore` — both come back ignored. Every pin sits beside
+    # its `*_pin.json` in a `spec/` directory, and those directories ARE tracked, so their
+    # presence is decidable on a fresh clone and a mis-derived prefix fails here rather than
+    # sailing through as a green check over eleven paths that do not exist.
+    homeless = sorted(d for d in recorded if not (REPO / d).parent.is_dir())
+    assert not homeless, (
+        f"{len(homeless)} recorded pin path(s) name a directory that is not in this tree: "
+        f"{homeless[:3]}. Every pin lives in a `spec/` directory that also holds its pin record, "
+        "and those are tracked — so this is a mis-derived prefix, and every check-ignore verdict "
+        "above it was answered about a path nothing will ever be written to"
+    )
     not_ignored = [d for d in documents if not ignored(d)]
     assert not not_ignored, (
         f"{len(not_ignored)} specification document(s) are NOT ignored by git: {not_ignored[:3]}. "

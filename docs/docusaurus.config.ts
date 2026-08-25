@@ -57,7 +57,7 @@ const config: Config = {
           // a reader who spots a wrong field lands on the file that says DO NOT EDIT and
           // reads why.
           editUrl:
-            'https://github.com/decentcybersecurity/synapsecommand-public/tree/main/docs/',
+            'https://github.com/Decent-Cybersecurity/synapsecommand-public/tree/main/docs/',
           showLastUpdateTime: true,
         },
         blog: false,
@@ -89,7 +89,7 @@ const config: Config = {
       items: [
         {type: 'docSidebar', sidebarId: 'cdmSidebar', position: 'left', label: 'Documentation'},
         {
-          href: 'https://github.com/decentcybersecurity/synapsecommand-public',
+          href: 'https://github.com/Decent-Cybersecurity/synapsecommand-public',
           label: 'Repository',
           position: 'right',
         },
@@ -112,7 +112,7 @@ const config: Config = {
             {label: 'Writing an Adapter', to: '/writing-an-adapter'},
             {
               label: 'Repository',
-              href: 'https://github.com/decentcybersecurity/synapsecommand-public',
+              href: 'https://github.com/Decent-Cybersecurity/synapsecommand-public',
             },
           ],
         },

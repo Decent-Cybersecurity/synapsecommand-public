@@ -8,10 +8,10 @@ This repository became public on **2026-08-25**. It is
 Everything below was, until this file, recorded only in commit messages. A commit message is the
 right place for *what a round did* and the wrong place for *what is true now*: it is addressed to
 whoever reads that diff, it is not indexed by anything, and a reader looking for the publication
-story has to know which of forty-nine commits to read. Three separate facts here — the unsigned
-history, the five unread front matters, the un-wired status check — are open ledger entries that a
-future round has to act on, and an open entry that lives in a closed commit message is an entry
-nobody will find.
+story has to know which commit to read. Facts here — the unsigned history, the
+five unread front matters, the ruling that leaves `DCO` advisory — are ledger entries a future
+round or a human has to act on or has now settled, and an entry of either kind that lives in a
+closed commit message is an entry nobody will find.
 
 So the publication story is in the tree. The mechanism-level facts stay where their mechanism is —
 the deploy in [`docs/README.md`](docs/README.md), the sign-off procedure in
@@ -67,7 +67,7 @@ Two consequences, both worth stating plainly:
 - **The post-flip edit narrowed the ruleset rather than creating it.** The `pull_request` rule was
   **removed** at 09:32:10. That is what keeps this repository's actual workflow — commit locally,
   push to `main` — legal. It also means the shape recorded above is a deliberate choice against
-  requiring pull requests, which is the fact the pending status-check decision below turns on.
+  requiring pull requests, which is the fact the status-check ruling below turns on.
 
 **The probe: a non-fast-forward push to `main` is refused.**
 
@@ -132,49 +132,65 @@ it stays**: it is the only durable public evidence that the failing state was ob
 deleting it to make the pull-request list read zero would be tidying away the proof. `main` never
 carried the probe commit, and `DCO_PROBE.md` exists in no commit reachable from `main`.
 
-That `action_required` rather than `failure` is worth recording, because it is the value the wiring
-below has to be correct about: a required check treats `action_required` as not-passing, so it
-blocks — but a reader who wired an automation to look for `failure` would find the check green.
+That `action_required` rather than `failure` is worth recording, and it outlives the ruling below
+that declines to require the check: a required check treats `action_required` as not-passing, so it
+would block — but any automation wired to look for `failure` finds this check green on a commit it
+just refused. The value is what a reopening would need to be correct about, and it is what anybody
+reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Four entries. None blocks anything; all four are things a future round or a human has to act on,
-and all four were previously recorded only in commit messages.
+Four entries, and the set does not move — entries change **state**, they are not deleted. Entry 1
+is now **ruled on** and stays here as the ruling; entries 2, 3 and 4 are open, and all four were
+previously recorded only in commit messages. None blocks anything.
 
-### 1. The DCO check is not yet a required status — one manual UI action, and a warning
+### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
-`main-protection` carries no `required_status_checks` rule, so **a failing `DCO` check does not
-currently prevent a merge**. `CONTRIBUTING.md` says so in those terms; it must keep saying so until
-the wiring changes, and `tests/test_cdm_publication.py` requires the two files to agree about it.
+**The ruling.** `main-protection` carries **no `required_status_checks` rule** and will not
+acquire one; the `pull_request` rule stays removed; direct pushes to `main` continue. The `DCO`
+check runs, reports, and does not gate. This closes the decision the pre-flip round left open, and
+it is recorded here — beside the state it describes — rather than in the commit message that made
+it, which is the mistake this whole file exists to stop repeating.
 
-**The warning, before anyone performs the action.** Adding `DCO` under "Require status checks to
-pass" on a ruleset that does **not** require pull requests is very likely to deadlock `main`. A
-required status check in a branch ruleset gates **pushes to the branch**, not merges alone; the DCO
-app produces check runs on **pull-request** events only. A commit pushed directly to `main` would
-therefore never acquire a `DCO` check run, would never have a passing one, and the push would be
-refused with nothing able to make it pass. The `pull_request` rule was removed at 09:32:10 —
-deliberately, to keep direct pushes legal — so the two settings pull in opposite directions and
-adopting the second without restoring the first is the failure mode to expect.
+`CONTRIBUTING.md` says so in the contributor's terms; it must keep saying so, and
+`tests/test_cdm_publication.py` requires the two files to agree about it and now also requires both
+to state that this is settled rather than pending.
 
-**Half of that is no longer a prediction.** The commit that added this file was pushed directly
-to `main`, and `GET /commits/{sha}/check-runs` for it returns `total_count: 0` — the DCO app
-produced no check run at all, because there was no pull request. So the "never acquires a check"
-half is observed. What remains inferred is the other half: that a `required_status_checks` rule
-would then refuse the push. Testing that means changing the ruleset, which is the action being
-weighed, so it is left as the reason to weigh it rather than as a claim.
+**Ground 1: requiring the check would refuse every push this repository makes, and that half is
+measured.** A required status check in a branch ruleset gates **pushes to the branch**, not merges
+alone; the DCO app produces check runs on **pull-request** events only. The commit that added this
+file, `f916ba2`, was pushed directly to `main`, and `GET /commits/f916ba2/check-runs` returns
+`total_count: 0` — no check run at all, because there was no pull request. A commit that can never
+acquire a `DCO` check can never acquire a passing one. The `pull_request` rule was removed at
+09:32:10 deliberately, to keep direct pushes legal, so requiring the check without restoring that
+rule is a deadlock and requiring it *with* that rule is a different repository — one where every
+contribution including the maintainer's goes through a pull request. Both were on the table; the
+second was declined because nothing about this project's actual working shape wants it.
 
-So this entry is a **decision**, not a chore. Either:
+What is *still* inferred, and is stated as inferred: that the ruleset would then refuse the push.
+Testing it means making the change being declined, so it stays a reason rather than a claim.
+Nothing in this ruling rests on it — ground 1 stands on the measured zero.
 
-- **Restore the `pull_request` rule and require `DCO`.** `main` becomes pull-request-only,
-  `CONTRIBUTING.md`'s procedure becomes the literal truth, and every contribution — including the
-  maintainer's — goes through a pull request. This is the shape the contribution guide was written
-  for.
-- **Or leave `DCO` advisory and keep direct pushes.** The check still runs on every pull request
-  and still reports; it simply is not a gate, and `CONTRIBUTING.md` must not claim it is.
+**Ground 2: sign-off is already enforced, earlier, by something that cannot be bypassed by not
+opening a pull request.** `tests/test_cdm_publication.py` recomputes the unsigned-commit set from
+the actual history on every suite run and requires it to equal the three named in entry 2. A fourth
+unsigned commit fails the build before the push, not after it. It reads trailers through git's own
+`%(trailers:key=Signed-off-by,valueonly)` — **the same notion of a trailer the DCO app applies**,
+so a line that looks like a sign-off in the middle of a paragraph is not one to either of them.
+The platform check and the local gate therefore agree about what they are checking, and the local
+one runs first and covers the direct-push path the platform check cannot see.
 
-Either is defensible. Guessing which was intended is not this record's job, and the current state
-is honestly described in the meantime. Whoever chooses should probe the result the way the
-protections above were probed, rather than trusting the settings page.
+**Ground 3: the check keeps its whole value for the people it was installed for.** It runs on any
+outside pull request whether or not it is required, and reports there — `action_required` on an
+unsigned commit, as witnessed above. Making it required would add nothing for an outside
+contributor; it would only take something away from the maintainer's workflow. And the guide is
+explicit that a pull request carrying an unsigned commit will not be merged: what changed is who
+refuses it, not whether it is refused.
+
+**Reopening this is allowed and is an act, not a drift.** If direct pushes to `main` ever stop
+being the working shape, the honest sequence is: restore `pull_request`, then require `DCO`, then
+probe the result the way the protections above were probed — and update both sites in the same
+commit, which the gate will insist on.
 
 ### 2. Unsigned history: three commits, known and accepted
 

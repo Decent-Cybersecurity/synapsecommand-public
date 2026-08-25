@@ -74,6 +74,7 @@ whatever somebody remembered to add to the list.
 """
 import ast
 import io
+import os
 import pathlib
 import re
 import subprocess
@@ -88,16 +89,64 @@ PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
 PYPROJECT = REPO / "packages" / "cdm" / "pyproject.toml"
 
-#: Directories a repo-wide Python sweep must not descend into. Each is a third party's tree or a
-#: build artefact, and none of them is this package's code.
+#: Directories a repo-wide Python sweep must not descend into, BY NAME. Each is a third party's
+#: tree or a build artefact, and none of them is this package's code.
+#:
+#: A virtualenv is deliberately NOT in this set any more; see `is_virtualenv` below.
 #:
 #: PINNED BY A TEST, because this one set is applied to BOTH halves of the closure — discovery and
 #: the repo-wide sweep — so adding a real directory to it hides those files from the check AND
 #: from the check that the check is complete. Mutation found exactly that: adding `"adapters"`
 #: here removed nine files from the gate and the closure test could not see them go, because it
 #: was filtering by the same set. Widening it is now a deliberate act that fails until stated.
-NOT_OURS = {".venv", "venv", "node_modules", "__pycache__", ".git", "build", "dist",
+NOT_OURS = {"node_modules", "__pycache__", ".git", "build", "dist",
             ".pytest_cache", ".wrangler", ".docusaurus"}
+
+
+def is_virtualenv(directory: pathlib.Path) -> bool:
+    """A virtualenv, identified by what it CONTAINS rather than by what it is called.
+
+    THE DEFECT THIS REPLACES, and it was invisible from inside this working tree. `NOT_OURS` used
+    to carry the literal names `.venv` and `venv`, so the gate was clean here — the local
+    environment happens to be called `.venv` — and red for anyone whose is not. A fresh clone with
+    an environment named `.ovenv` failed
+    `test_no_python_file_in_this_repository_escapes_the_gate` with several thousand strays, every
+    one of them a third party's file in somebody's interpreter. The reader's first encounter with
+    this repository was a red suite caused by the name they gave a directory.
+
+    Lengthening the list — `env`, `.env`, `venv3`, `.virtualenvs` — moves the failure rather than
+    removing it, because the set of names people give environments is not enumerable. **PEP 405
+    made it a property instead**: `python -m venv` writes `pyvenv.cfg` into the environment root
+    and nothing else writes that file, so a directory holding one IS an environment whatever it is
+    called. `virtualenv` writes it too, for exactly this reason.
+
+    The property cuts both ways, and the second direction is the one a name list cannot express: a
+    real source directory named `venv` has no `pyvenv.cfg`, so it stays inside the gate. Under the
+    old set it was silently exempt, and a contributor could have hidden nine modules from the floor
+    check by choosing a directory name.
+    """
+    return (directory / "pyvenv.cfg").is_file()
+
+
+def python_files_under(root: pathlib.Path) -> list[pathlib.Path]:
+    """Every ``*.py`` under `root`, pruning third-party trees and virtualenvs as it descends.
+
+    One walker for BOTH halves of the closure, which is the same reason `NOT_OURS` is one set: a
+    discovery and a completeness sweep that filter differently cannot check each other. Pruning
+    during the walk rather than filtering afterwards is not only speed — an environment holds
+    thousands of files and `rglob` would read every one of their paths before discarding them —
+    it is also what makes the virtualenv test cheap, since `pyvenv.cfg` is looked for once per
+    directory instead of once per file.
+    """
+    out: list[pathlib.Path] = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        here = pathlib.Path(dirpath)
+        if is_virtualenv(here):
+            dirnames[:] = []              # an environment's contents are nobody's code but its own
+            continue
+        dirnames[:] = sorted(d for d in dirnames if d not in NOT_OURS)
+        out.extend(here / name for name in sorted(filenames) if name.endswith(".py"))
+    return out
 
 
 # --------------------------------------------------------------------- the floor, read not typed
@@ -156,13 +205,18 @@ def test_the_exclusion_set_has_not_been_widened_to_hide_a_real_directory():
     So the set is pinned. Every member is a third party's tree or a build artefact and none is a
     directory this repository writes Python into; anything else belongs in a per-file exemption
     with a reason beside it, not in a directory name that silently takes its neighbours with it.
+
+    `.venv` and `venv` LEFT this set and did not become exemptions: they became `is_virtualenv`,
+    which asks for `pyvenv.cfg`. Putting either name back would re-exempt a real source directory
+    that happens to carry the name, which is the half of the old defect nobody could see.
     """
-    assert NOT_OURS == {".venv", "venv", "node_modules", "__pycache__", ".git", "build", "dist",
+    assert NOT_OURS == {"node_modules", "__pycache__", ".git", "build", "dist",
                         ".pytest_cache", ".wrangler", ".docusaurus"}, (
         f"the Python-file exclusion set changed to {sorted(NOT_OURS)}. It is applied to both "
         "halves of the closure, so widening it hides files from the gate and from the check that "
         "the gate is complete. If a directory genuinely must be exempt, say which and why in the "
-        "same commit that updates this assertion"
+        "same commit that updates this assertion. A virtualenv is NOT the answer here — it is "
+        "excluded by `is_virtualenv`, on the property, whatever anyone named it"
     )
 
 
@@ -195,11 +249,8 @@ def discover() -> list[pathlib.Path]:
     """Every Python file this gate parses: the package and the test suite."""
     out = []
     for root in (PKG, REPO / "tests"):
-        for path in sorted(root.rglob("*.py")):
-            if NOT_OURS & set(path.parts):
-                continue
-            out.append(path)
-    return out
+        out.extend(python_files_under(root))
+    return sorted(out)
 
 
 FILES = discover()
@@ -222,17 +273,85 @@ def test_no_python_file_in_this_repository_escapes_the_gate():
     """
     reachable = {p.resolve() for p in FILES}
     stray = []
-    for path in REPO.rglob("*.py"):
-        if NOT_OURS & set(path.parts):
-            continue
+    for path in python_files_under(REPO):
         if path.resolve() not in reachable:
             stray.append(str(path.relative_to(REPO)))
     assert not stray, (
         f"these Python files exist and this gate does not parse them: {sorted(stray)}. Either add "
         "their root to `discover()` — and say why they are in scope for the floor — or add their "
         "directory to NOT_OURS with the reason. A gate over a list is a gate over whatever "
-        "somebody remembered to add to the list"
+        "somebody remembered to add to the list.\n"
+        "If these are a virtualenv's files, it is missing its `pyvenv.cfg` — the gate identifies "
+        "an environment by that file and not by the directory's name, so a hand-assembled tree of "
+        "third-party packages is not one"
     )
+
+
+def test_a_virtualenv_is_excluded_whatever_it_is_called(tmp_path):
+    """THE HALF THAT WAS BROKEN. An environment is excluded by its `pyvenv.cfg`, not by its name.
+
+    Built here rather than asserted against the local one, because the local environment is called
+    `.venv` and would have passed under the old name list too — a test that only ever sees the
+    name that already worked is a test that would not have caught this.
+    """
+    for name in (".ovenv", "env", "my-sandbox", ".virtualenvs/proj"):
+        root = tmp_path / name
+        (root / "lib").mkdir(parents=True)
+        (root / "pyvenv.cfg").write_text("home = /usr/bin\nversion = 3.11.9\n")
+        (root / "lib" / "third_party.py").write_text("x = 1\n")
+    assert python_files_under(tmp_path) == [], (
+        f"an environment escaped the walk: {[str(f) for f in python_files_under(tmp_path)]}. "
+        "Every one of these directories holds a `pyvenv.cfg` and none of them is called `.venv`, "
+        "which is exactly the shape that reddened a fresh clone"
+    )
+
+
+def test_a_real_directory_named_venv_is_not_excluded(tmp_path):
+    """THE OTHER DIRECTION, which the name list could not express at all.
+
+    Under `NOT_OURS = {".venv", "venv", ...}` a contributor could take a package out of the floor
+    gate — out of the closure check as well, since both halves filtered by the same set — by
+    naming its directory `venv`. Nothing would have failed. The property has no such move: source
+    is source, and a directory is an environment only if it says so.
+    """
+    for name in ("venv", ".venv"):
+        pkg = tmp_path / name
+        pkg.mkdir()
+        (pkg / "real_module.py").write_text("def f():\n    return 1\n")
+    found = {f.name for f in python_files_under(tmp_path)}
+    assert found == {"real_module.py"}, (
+        f"a real source directory named `venv` or `.venv` was excluded from the gate (found "
+        f"{sorted(found)}). It carries no `pyvenv.cfg`, so it is this repository's code and the "
+        "floor applies to it"
+    )
+    assert not is_virtualenv(tmp_path / "venv"), "a directory without `pyvenv.cfg` is not an environment"
+
+
+def test_the_environment_exclusion_is_not_vacuous_in_this_tree():
+    """A predicate nothing in this tree exercises would be a rule nobody had ever run.
+
+    The two tests above are synthetic on purpose. This one asks whether the property is doing any
+    work HERE — and skips rather than fails where it is not, because an outsider running the suite
+    against a system interpreter has no environment inside the clone and that is a legal way to
+    run it.
+    """
+    environments = []
+    for dirpath, dirnames, _ in os.walk(REPO):
+        here = pathlib.Path(dirpath)
+        if is_virtualenv(here):
+            environments.append(here)
+            dirnames[:] = []              # an environment does not nest another one
+            continue
+        dirnames[:] = [d for d in dirnames if d not in NOT_OURS]
+    if not environments:
+        pytest.skip("no virtualenv inside this clone (the suite is running against an interpreter "
+                    "outside the tree), so the exclusion has nothing to exclude here")
+    reachable = {p.resolve() for p in FILES}
+    for env in environments:
+        inside = [q for q in env.rglob("*.py")]
+        assert inside, f"{env} holds a pyvenv.cfg and no Python at all, which is not an environment"
+        leaked = [str(q) for q in inside if q.resolve() in reachable]
+        assert not leaked, f"{len(leaked)} file(s) from the environment {env} reached the gate: {leaked[:3]}"
 
 
 # ----------------------------------------------------------- PEP 701, which feature_version misses

@@ -5,17 +5,16 @@ and the adapter SDK and validation harness that go with it. Apache 2.0 — see [
 and [`NOTICE`](NOTICE), the latter for the attribution and for what the licence does *not* cover:
 the specification documents this repository pins are recorded by hash and remain under their own
 publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this repository became public,
-which protections are enforced on it and how each was verified, and the four ledger entries that
-are still open.
+which protections are enforced on it and how each was verified, and its ledger of what publication
+left open and what has since been ruled on.
 
 This is the contract layer, and it is public because that is what a contract is for. **Ten
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `cat048` and `cat034` — the last five
 byte-exact on the wire where the format is binary. More are landing next: the other ASTERIX
-categories (062 system tracks, 023 service status) and the simulation feed. Without a canonical
-model in the middle, N adapters means N(N−1)/2 translations and N private notions of "a
-contact" — forty-five and ten as of today; with one, an adapter is a thin translator and
-nothing else.
+categories (062 system tracks, 023 service status). Without a canonical model in the middle,
+N adapters means N(N−1)/2 translations and N private notions of "a contact" — forty-five and
+ten as of today; with one, an adapter is a thin translator and nothing else.
 
 ```
 external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ consumer
@@ -38,9 +37,14 @@ It is generated, and a test fails the build if it drifts from the models.
 ## Getting started
 
 ```bash
-pip install -e packages/cdm     # editable, for working on the CDM itself
-pytest -q                       # the whole suite; needs no install (see pytest.ini)
+pip install -e "packages/cdm[test]"   # the package, its two dependencies, and pytest
+pytest -q                             # the whole suite
 ```
+
+The `[test]` extra is what makes the second line work: `pytest.ini` puts `packages/cdm` on
+`sys.path`, so the suite runs against the source tree and never against an installed copy — but
+`pytest` itself, and `pydantic` and `jsonschema`, still have to be there. **Keep the quotes**;
+`zsh` reads a bare `packages/cdm[test]` as a glob and fails before `pip` sees it.
 
 Run the reference adapter through the harness — the gate every adapter has to pass:
 

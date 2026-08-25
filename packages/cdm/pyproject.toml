@@ -39,8 +39,8 @@ dependencies = [
 test = ["pytest>=8.0"]
 
 [project.urls]
-Homepage = "https://github.com/decentcybersecurity/synapsecommand-public"
-Documentation = "https://github.com/decentcybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/README.md"
+Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
+Documentation = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/README.md"
 
 [project.scripts]
 # The two entry points the README documents as `python -m ...`; both stay importable that way.

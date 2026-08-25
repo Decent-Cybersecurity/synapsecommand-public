@@ -3,9 +3,9 @@
 WHY THIS MODULE EXISTS
 ----------------------
 `PUBLICATION.md` records what became true when this repository went public: the protections, the
-probes that witnessed them, and four open ledger entries. Most of it is a *witness statement* —
-a force-push was refused, a check ran and failed and then passed — and a witness statement is not
-gateable. The suite cannot reach GitHub, must not hold a token, and a test that needed one would
+probes that witnessed them, and four ledger entries — one ruled on, three still open. Most of it
+is a *witness statement* — a force-push was refused, a check ran and failed and then passed — and
+a witness statement is not gateable. The suite cannot reach GitHub, must not hold a token, and a test that needed one would
 fail for every outsider and turn green only for whoever holds it.
 
 But three of the claims are decidable **from the tree**, and each of the three is a claim that
@@ -346,6 +346,17 @@ STATUS_SITES = (RECORD, GUIDE)
 #: The phrase that means "wired". Present at a site → that site claims the check gates merges.
 CLAIMS_REQUIRED = "is a **required status**"
 
+#: The phrase at each site that means "and this is a RULING, not a to-do". The pre-flip round left
+#: the wiring as an open decision and both sites described it that way; the outsider round closed
+#: it — `DCO` stays advisory, `main` keeps direct pushes — and closing it at one site only would
+#: leave a contributor reading `CONTRIBUTING.md` waiting for a gate that is never coming, or a
+#: maintainer reading `PUBLICATION.md` re-deciding something already decided. Different words
+#: again, for the reason `DENIES_REQUIRED` uses different words: this is agreement about a fact.
+SETTLED = {
+    RECORD: "stays advisory",
+    GUIDE: "settled decision and not an oversight",
+}
+
 #: The phrase at each site that means "not wired". Deliberately DIFFERENT words at the two sites,
 #: and keyed by site rather than zipped so the pairing cannot silently swap: this is a check for
 #: AGREEMENT ABOUT A FACT and not for a copied sentence. A copied sentence would satisfy a
@@ -563,3 +574,154 @@ def test_the_record_states_what_it_cannot_check():
             "statement and a gated invariant read identically on the page and decay completely "
             "differently, which is why the table exists"
         )
+
+
+# --------------------------------------------- 4. the repository's own URL, read and not retyped
+
+#: Any reference to this repository on GitHub, whatever owner segment it carries. The owner is
+#: captured rather than matched, because the defect is a WRONG owner and a pattern that spelled
+#: the right one would only ever find the occurrences that are already correct.
+REPO_URL = re.compile(r"github\.com/(?P<owner>[A-Za-z0-9._-]+)/synapsecommand-public")
+
+
+def canonical_owner() -> str:
+    """The owner segment, READ from the record's own statement of where this repository is.
+
+    The same discipline `tests/test_cdm_version_floor.py` applies to the Python floor: the value
+    is read from the one place that declares it, so a move re-points every check at once instead
+    of leaving a constant somebody has to remember to retype. `PUBLICATION.md`'s first sentence
+    is that declaration.
+    """
+    first = _flat(_read(RECORD))[:400]
+    found = REPO_URL.search(first)
+    assert found, (
+        f"{RECORD} no longer opens by stating where this repository is, so there is nothing to "
+        "read the canonical owner from. That sentence is the declaration this gate is built on; "
+        "restore it rather than typing the owner into this module"
+    )
+    return found.group("owner")
+
+
+def test_every_reference_to_this_repository_uses_the_canonical_owner():
+    """The organisation renamed and GitHub kept redirecting, which is why nothing failed.
+
+    `origin` and `packages/cdm/pyproject.toml` both carried `decentcybersecurity/…`. Every fetch
+    and every push worked and printed `This repository moved to …` — a warning that is invisible
+    in the docs site's rendered links, invisible in PyPI metadata, and invisible to anyone who
+    only ever reads the page the redirect lands on. A redirect is a courtesy that can be
+    withdrawn: the day the old organisation name is claimed by someone else, `Homepage` in this
+    package's metadata points at a stranger's repository.
+
+    Case matters and is asserted as such. GitHub resolves owners case-insensitively, so
+    `decent-cybersecurity` would work today and would still not be the name the organisation has.
+    """
+    _require_git_history()
+    canonical = canonical_owner()
+    wrong: list[str] = []
+    for rel in tracked_files():
+        if rel == SELF:
+            continue
+        text = _readable_text(rel)
+        if not text:
+            continue
+        for found in REPO_URL.finditer(text):
+            if found.group("owner") != canonical:
+                wrong.append(f"{rel}: {found.group(0)}")
+    assert not wrong, (
+        f"{len(wrong)} reference(s) to this repository use an owner other than {canonical!r}:\n  "
+        + "\n  ".join(sorted(wrong)[:8])
+        + f"\nGitHub redirects them, so nothing breaks and nothing warns except `git push`. The "
+        f"canonical path is read from {RECORD}; fix the reference rather than this gate"
+    )
+
+
+def test_the_canonical_owner_sweep_is_not_vacuous():
+    """A regex that matched nothing would report a clean tree with every URL wrong.
+
+    Two independent halves, because either alone can pass while the check is dead: the pattern
+    must find this repository's URL in more than one file, and it must be able to see a wrong
+    owner when there is one — asserted against a synthetic string, since the tree is expected to
+    hold none.
+    """
+    _require_git_history()
+    carriers = sorted({rel for rel in tracked_files()
+                       if rel != SELF and (text := _readable_text(rel)) and REPO_URL.search(text)})
+    assert len(carriers) >= 3, (
+        f"the repository-URL pattern matched in only {carriers}. It is stated in the record, in "
+        "the package metadata and in the docs site's configuration, so a count this low means "
+        "the pattern has stopped matching and the sweep above is passing over nothing"
+    )
+    mutant = REPO_URL.search("see https://github.com/decentcybersecurity/synapsecommand-public")
+    assert mutant and mutant.group("owner") == "decentcybersecurity", (
+        "the pattern cannot capture a wrong owner, so the sweep would report every reference "
+        "canonical whatever it said"
+    )
+    assert canonical_owner() == "Decent-Cybersecurity", (
+        f"the canonical owner read from {RECORD} is {canonical_owner()!r}. Renaming the "
+        "organisation is allowed and must be deliberate: update this assertion in the same "
+        "commit that updates the record, so a rename cannot happen by a typo in one file"
+    )
+
+
+def test_both_sites_state_that_the_advisory_check_is_a_RULING_and_not_a_pending_decision():
+    """The half the outsider round added, and it is the same shape as the one above it.
+
+    Being honest about the state was enough while the state was "nobody has decided". Once a round
+    decides, honesty needs the second sentence: a reader who is told only that the check does not
+    gate cannot tell a deliberate design from a job somebody has not got round to — and the two
+    lead to opposite actions. One says leave it; the other says wire it, which would deadlock
+    `main` for the reason the warning below spells out.
+
+    Both sites, because the audiences differ and each will act on its own document: the maintainer
+    reading the record must not re-open a closed question, and the contributor reading the guide
+    must not read the absence of a gate as slack.
+    """
+    assert set(SETTLED) == set(STATUS_SITES), (
+        f"the site list {STATUS_SITES} and the ruling map {sorted(SETTLED)} disagree, so one site "
+        "is unchecked. Both constants move together or neither does"
+    )
+    for site in STATUS_SITES:
+        phrase = SETTLED[site]
+        assert phrase in _flat(_read(site)), (
+            f"{site} no longer says the advisory `DCO` check is a settled ruling (looked for "
+            f"{phrase!r}). It states the STATE and not the DECISION, which is what both files said "
+            "before the ruling — and a state without a decision beside it reads as an unfinished "
+            "chore to the next person who finds it"
+        )
+
+
+def test_the_ruling_carries_its_grounds_and_the_measurement_behind_the_first_one():
+    """A ruling without grounds is an assertion, and the next round would relitigate it.
+
+    Three grounds were given and each is checkable in the record's own words. The first is the one
+    that matters most and it is the one that could most easily decay into a plausible-sounding
+    inference: it rests on `total_count: 0` for a real commit, measured, and not on a reading of
+    how the DCO app probably behaves.
+    """
+    section = _flat(_record_section("### 1. `DCO` stays advisory"))
+    assert "total_count: 0" in section and "f916ba2" in section, (
+        f"the ruling in {RECORD} no longer names the commit and the measured zero its first "
+        "ground rests on. Without them the ground is 'the app probably only runs on pull "
+        "requests', which is exactly the kind of confident inference this file separates from "
+        "what was observed"
+    )
+    assert "trailers:key=Signed-off-by" in section, (
+        f"the ruling in {RECORD} no longer names how the local gate reads a sign-off. The second "
+        "ground is that the pre-push gate and the platform check agree about what a trailer IS, "
+        "and that claim is only as good as the mechanism it names"
+    )
+    assert "still inferred" in section.lower() or "stated as inferred" in section.lower(), (
+        f"the ruling in {RECORD} no longer separates what was measured from what is inferred. "
+        "Half of the deadlock warning is observed and half is not, and a ruling that presented "
+        "both as observed would be over-claiming in the file that invented the three-tier table"
+    )
+    for ground in ("Ground 1", "Ground 2", "Ground 3"):
+        assert ground in section, (
+            f"the ruling in {RECORD} no longer states {ground}. A decision recorded without its "
+            "reasons is one the next round has to make again from scratch"
+        )
+    assert "Reopening this is allowed" in section, (
+        f"the ruling in {RECORD} no longer says how to reopen it. A closed decision with no "
+        "stated way back is indistinguishable from a rule nobody may question, and the sequence "
+        "matters here — restore `pull_request` FIRST, or requiring the check deadlocks `main`"
+    )
