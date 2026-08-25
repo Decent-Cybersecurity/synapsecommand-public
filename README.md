@@ -4,7 +4,9 @@ SynapseCommand's integration layer: the **Canonical Data Model**, its published 
 and the adapter SDK and validation harness that go with it. Apache 2.0 — see [`LICENSE`](LICENSE)
 and [`NOTICE`](NOTICE), the latter for the attribution and for what the licence does *not* cover:
 the specification documents this repository pins are recorded by hash and remain under their own
-publishers' terms.
+publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this repository became public,
+which protections are enforced on it and how each was verified, and the four ledger entries that
+are still open.
 
 This is the contract layer, and it is public because that is what a contract is for. **Ten
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,

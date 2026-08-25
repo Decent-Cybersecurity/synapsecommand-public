@@ -52,17 +52,23 @@ git config --global user.email "ada@example.org"
 GitHub's `noreply` addresses are acceptable if that is genuinely how you receive mail; anonymous
 or invented addresses are not.
 
-## Unsigned commits cannot be merged
+## Every commit in a pull request is checked
 
 The [DCO GitHub App](https://github.com/apps/dco) is installed on this repository. It checks
-**every commit in a pull request**, not just the tip:
+**every commit in a pull request**, not just the tip, and reports as a check named `DCO`:
 
-- one or more commits without a valid `Signed-off-by:` trailer → the **DCO check fails**;
-- a failing DCO check is a **required status**, so the pull request **cannot be merged** until
-  it passes.
+- one or more commits without a valid `Signed-off-by:` trailer → the **`DCO` check fails**,
+  naming the commit and its author in the check's own output;
+- **that check is not currently a required status**, so it does not by itself block a merge.
+  Whether it should become one is an open decision, recorded with its consequences in
+  [`PUBLICATION.md`](PUBLICATION.md).
 
-This is not a formality that a maintainer can wave through. Please sign off as you go — it is
-one flag, and fixing it afterwards means rewriting history.
+Do not read the second point as slack. A pull request carrying an unsigned commit will not be
+merged; the only difference is that today it is a maintainer who refuses it rather than the
+platform. That sentence used to claim the opposite — that the check was a required status and
+the merge was impossible — and it was published to the world for one day while being false; the
+first run of the check, on a deliberately unsigned commit, is what exposed it. Please sign off
+as you go: it is one flag, and fixing it afterwards means rewriting history.
 
 ### Forgot to sign off?
 

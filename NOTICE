@@ -12,11 +12,20 @@ WHY THIS FILE AND NOT THE APPENDIX IN LICENSE
 
 Apache-2.0's APPENDIX is a TEMPLATE FOR PER-FILE HEADERS — "attach the following
 boilerplate notice, with the fields enclosed by brackets replaced with your own
-identifying information". This repository has no per-file headers: none of its
-769 tracked files carries an SPDX tag or a copyright block, and the licence
-policy is stated at the repository level instead, in README.md and
-CONTRIBUTING.md. Filling in a template for headers that will never exist is
-completing the wrong form.
+identifying information". This repository has no per-file headers: NO tracked
+file carries an SPDX tag, and the only copyright notices in the tree are the
+three repository-level licence files — LICENSE, this file, and DCO, whose
+notice is the Linux Foundation's and not ours. The licence policy is stated at
+the repository level instead, in README.md and CONTRIBUTING.md. Filling in a
+template for headers that will never exist is completing the wrong form.
+
+That sentence used to read "none of its 769 tracked files", and by the day this
+repository went public the tree held 770. A count of every file in the
+repository is a number that goes stale on the next commit that adds one, so it
+is a stale-count generator rather than a fact — and the count was never the
+claim. The claim is the ABSENCE. So the absence is what is stated, and it is
+what tests/test_cdm_publication.py enforces over every tracked file, in both
+halves: no SPDX tag anywhere, and no copyright notice outside those three files.
 
 NOTICE is the file Apache-2.0 actually defines for this. Section 4(d) requires a
 redistributor of a Work that includes a NOTICE file to carry its attribution
