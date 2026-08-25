@@ -156,6 +156,13 @@ refused with nothing able to make it pass. The `pull_request` rule was removed a
 deliberately, to keep direct pushes legal — so the two settings pull in opposite directions and
 adopting the second without restoring the first is the failure mode to expect.
 
+**Half of that is no longer a prediction.** The commit that added this file was pushed directly
+to `main`, and `GET /commits/{sha}/check-runs` for it returns `total_count: 0` — the DCO app
+produced no check run at all, because there was no pull request. So the "never acquires a check"
+half is observed. What remains inferred is the other half: that a `required_status_checks` rule
+would then refuse the push. Testing that means changing the ruleset, which is the action being
+weighed, so it is left as the reason to weigh it rather than as a claim.
+
 So this entry is a **decision**, not a chore. Either:
 
 - **Restore the `pull_request` rule and require `DCO`.** `main` becomes pull-request-only,
