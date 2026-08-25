@@ -1,0 +1,363 @@
+{
+  "what_this_is": "The pinned identity of the document the CAT023 row set in FORMAT_COVERAGE.md was read from, plus what a later reader needs and cannot get from the row set. House style: fixtures/cat034/spec/cat034_pin.json and its sibling fixtures/cat062/spec/cat062_pin.json, written in the same round as this one. This is the SMALLEST specification pinned in this repository - nine data items on 21 printed pages - and the record is short in proportion except where the document is defective, which is three places.",
+  "adapter": {
+    "name": "cat023",
+    "ordinal": 14,
+    "phase": "1 - specification. FORMAT_COVERAGE.md carries the row set with `not yet` in every status cell and no code exists behind it. Phase 2 ships adapters/asterix_cat023.py on a codec in adapters/cat023_codec.py and flips the cells.",
+    "fixture_directory": "cat023",
+    "name_ruling": {
+      "ruled": "cat023",
+      "confidence": "settled",
+      "deciding_source": "PRECEDENT, now unanimous across four adapters, and the document agrees on its own cover.",
+      "why": "Every ASTERIX adapter in the roster is `cat` plus the three-digit category number with the fixture directory the same string - cat021, cat048, cat034 and, in this same round, cat062. This is the fifth instance and the first for which the precedent was already unanimous before the question was asked.",
+      "the_document_agrees": "The cover reads 'ASTERIX Part 16 Category 023' and section 4.5.2 reads 'Data Category (CAT) = 023, is a one-octet field indicating that the Data Block contains Ground Station and Service Status reports.' Three digits in both places."
+    },
+    "rejected_candidates": [
+      {
+        "candidate": "cnsatm",
+        "why_not": "The document's own subject line is 'CNS/ATM Ground Station and Service Status Reports' and section 1.1 says the term 'is used to cover a multitude of ground stations, that may provide differing types of service'. So CNS/ATM names a DOMAIN, not a format, and the domain contains categories 019, 020, 021, 023 and 025 among others. A name that does not distinguish them cannot survive the second one."
+      },
+      {
+        "candidate": "groundstation",
+        "why_not": "It names the OBJECT the records describe, which is what the row set says and what entity_type says. Two of the three report types are about a SERVICE rather than about the station, so the name would be wrong for two thirds of the category."
+      },
+      {
+        "candidate": "cat23",
+        "why_not": "The document writes the category three digits wide on its cover, in section 4.5.2 and in the UAP, and the four existing members of the convention are all three digits."
+      }
+    ],
+    "why_this_adapter_is_the_CAT034_analogue_and_not_the_CAT062_one": "It reports the status of the thing that produces surveillance data rather than the surveillance data. So its primary object is the ground station - EntityType.SENSOR, the shape asterix_cat034.py established - and its Event is a STATUS_CHANGE. What it adds that Part 2b does not have is a SECOND object of interest, the SERVICE, which two of its three report types are about and which the station provides several of. That is the one structural difference and FORMAT_COVERAGE.md's Settlement 2 is where it is ruled."
+  },
+  "source": {
+    "document": "EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 16 Category 023: CNS/ATM Ground Station and Service Status Reports",
+    "publications_reference": "SPEC-0149-16",
+    "document_identifier": "EUROCONTROL-SPEC-0149-16",
+    "isbn": "978-2-87497-028-3",
+    "edition": "1.3",
+    "edition_date_as_the_document_states_it": "27/09/2021",
+    "edition_date_on_the_outer_cover": "27 September 2021",
+    "status_on_the_identification_block": "Released Edition",
+    "status_in_the_page_ii_checkbox_table": "Released Issue",
+    "status_in_the_running_headers": "Released Edition",
+    "why_the_status_words_are_recorded_here_too": "Three ASTERIX specifications are now pinned in this repository and all three disagree with themselves about which of 'Released Edition' and 'Released Issue' belongs where. Part 2b: cover and headers say Edition, checkbox says Issue. Part 9: cover and checkbox say Issue, headers say Edition. Part 16: identification block and headers say Edition, checkbox says Issue - the Part 2b arrangement. So the checkbox table says 'Released Issue' in all three and the running headers say 'Released Edition' in all three, and the only thing that varies is the cover. That is a sharper finding than any one document supports on its own, which is the reason all three records state it.",
+    "intended_for": "General Public",
+    "accessible_via": "Internet (www.EUROCONTROL.int), ticked",
+    "approved_by": "the ASTERIX Maintenance Group (AMG). Page iii: 'This document has been approved by the ASTERIX Maintenance Group (AMG).' and 'For management approval of the complete set of ASTERIX documentation refer to Part 1.'",
+    "contact_person_as_the_document_states_it": "Alexander Engel, +32-2-729 3355, DECMA/PCS/SCS/STAN",
+    "abstract_quoted": "This document specifies the contents of ASTERIX Category 023 messages used for the transmission of CNS/ATM Ground Station and Service Status Reports.",
+    "keywords_as_the_document_lists_them": [
+      "Ground stations",
+      "ASTERIX",
+      "Service Reports",
+      "CNS/ATM",
+      "Data Item",
+      "Category 23",
+      "UAP",
+      "ADS-B",
+      "TIS-B",
+      "MLT",
+      "GRAS",
+      "FIS-B"
+    ],
+    "the_keyword_list_writes_the_category_two_digits_wide": "'Category 23', while the cover, section 4.5.2 and the UAP all write 023. Recorded because the publication page's own link text also says 'Part 16: Category 23'. The two-digit form occurs in metadata and prose; the three-digit form occurs everywhere a value is defined.",
+    "retrieved_at": "2026-08-25",
+    "retrieved_from": "https://www.eurocontrol.int/sites/default/files/2021-09/cat023-asterix-cns-atm-ground-station-service-messages-part-16-1-3.pdf, linked from https://www.eurocontrol.int/publication/cat023-eurocontrol-specification-surveillance-data-exchange-part-16-category-23 under the link text 'CNS/ATM Ground Station Service Messages (Part 16) - Edition 1.3'",
+    "bytes": 960353,
+    "sha256": "f3be571aa7ff1d1888115e3e668318932b17bc5ac440989aad9c64503520b4f5",
+    "pages": 31,
+    "pdf_version": "1.7",
+    "local_path": "fixtures/cat023/spec/eurocontrol-asterix-cat023-pt16-ed13.pdf",
+    "verification_performed": [
+      "SHA-256 and byte count computed from the file on disk at the path above.",
+      "Page count by the ruled method - the page objects reachable from the catalog's /Pages tree, walked in /Kids order. 31, and the file's own /Pages /Count agrees.",
+      "Printed folios reconciled against the tree count: PDF page 1 is the outer cover, page 2 the identification block, pages 3 to 9 print ii to viii, pages 10 to 30 print 1 to 21, and page 31 is the back cover. 1 + 1 + 7 + 21 + 1 = 31.",
+      "Every section of the document read from this copy - all nine data items, Table 1, Table 2, Table 3 and sections 1 through 4 - which at 21 printed pages means the whole of it."
+    ]
+  },
+  "page_count_method": {
+    "how": "The page objects REACHABLE FROM THE CATALOG'S /Pages TREE, walked in /Kids order.",
+    "why_this_record_states_it_at_all": "It is the fifth statement of one ruling and it exists to be compared against the other four. tests/test_cdm_pins.py derives the list of records that state it from the tree, so a record that grows the node joins the closure and one that drops it leaves deliberately.",
+    "the_disagreement_measured": {
+      "edition_1_3": "tree 31, declared /Count 31, raw-object scan of `/Type /Page` 60. The raw scan reports 29 pages that are not in the document. The file carries two `%%EOF` markers, so it has been incrementally updated once, and no object streams - so unlike Part 9 Edition 1.21 the extra objects are plainly visible in the raw bytes.",
+      "edition_1_2": "tree 29, declared /Count 29, raw-object scan 29. Agree; one %%EOF.",
+      "edition_1_1": "tree 28, declared /Count 28, raw-object scan 28. Agree.",
+      "edition_0_14": "tree 25, declared /Count 25, raw-object scan 25. Agree.",
+      "what_this_adds": "A second file, in a second part, where the retired method is nearly double. Together with Part 9 Edition 1.21's 146-against-423 it establishes the pattern the ruling predicted: the two methods agree on every file that has never been incrementally updated and disagree on every file that has. Four of the five documents pinned or held in this round confirm it in one direction and two confirm it in the other."
+    },
+    "the_stronger_check_does_not_depend_on_either_tool": "Edition 1.3's own printed folios, reconciled in `source.verification_performed` above: 1 + 1 + 7 + 21 + 1 = 31, which is the page-tree count and the declared /Count and is not 60.",
+    "ruling": "Ruled in FORMAT_COVERAGE.md, 'The page count, ruled from what a reader does with the number'. A page count's job is to let someone holding a copy check they hold the same document, and what they do is open it."
+  },
+  "the_pin_IS_the_current_edition": {
+    "availability_check": {
+      "edition": "1.3",
+      "offered": true,
+      "checked_on": "2026-08-25",
+      "what_was_checked": "EUROCONTROL's publication page for ASTERIX Part 16 Category 23, https://www.eurocontrol.int/publication/cat023-eurocontrol-specification-surveillance-data-exchange-part-16-category-23, which lists eight files, editions 0.10 to 1.3.",
+      "result": "Edition 1.3 is offered and is the newest file on the page. It is the edition pinned here, so no edition is cited-but-unpublished for this document.",
+      "why_the_date_is_recorded": "'is the current edition' and 'was the current edition when somebody looked' are indistinguishable in a repository six months later, and the second is all a check can establish.",
+      "what_is_NOT_claimed": "That no later edition exists unpublished. Edition 1.3 is dated 2021 and is the newest offered in 2026, which is a five-year gap - longer than any other ASTERIX part pinned here - and that is a fact about the page, not about the AMG.",
+      "how_the_reopen_fires": "`edition` and `offered` are the only machine-readable fields here. A later round that records a citation to a Part 16 edition above 1.3 without a dated check for it makes tests/test_cdm_pins.py's candidate set non-empty and the build fails."
+    }
+  },
+  "edition_history": {
+    "what_this_is": "The lineage, NOT pins. The governing text for this row set is Edition 1.3 alone. Three predecessors are in hand because Edition 1.3's change record claims a template migration and four content changes, and the only way to tell a template migration from a content change is to hold the predecessor.",
+    "home": "fixtures/cat023/spec/history/",
+    "count": 3,
+    "editions_in_hand": "0.14, 1.1 and 1.2",
+    "these_are_not_pins": "spec/history/ is one level below the directory tests/test_cdm_pins.py sweeps, which is what keeps a lineage from being mistaken for a pin.",
+    "committed": false,
+    "why_not_committed": "Same rule as every pin here: no PDF is tracked anywhere in this repository, .gitignore refuses `*.pdf` at staging time, and the wheel excludes fixtures/*/spec/*.pdf and fixtures/*/spec/history/*.pdf positively.",
+    "files": [
+      {
+        "edition": "1.2",
+        "date_the_publication_page_gives": "1 March 2009",
+        "filename": "cat023-part16-ed12.pdf",
+        "bytes": 102968,
+        "pages": 29,
+        "sha256": "0667dccf1910176fb65b12da8681e2b56a7f8f057578a83fb58d27fad2296a06",
+        "why_in_hand": "The immediate predecessor, and the only witness to what Edition 1.3's 'Migration to new Template' changed. It is also the edition whose Table 1 carried the wrong name for I023/101 - Edition 1.3's change record says 'Name of I023/101 in Table 1 corrected'."
+      },
+      {
+        "edition": "1.1",
+        "date_the_publication_page_gives": "1 September 2008",
+        "filename": "asterix-cat023-cns-atm-ground-station-service-messages-part-16-v1.1-092008.pdf",
+        "bytes": 86669,
+        "pages": 28,
+        "sha256": "46b054772ea3b983876d4653cdb99664e9b141e8be4870515fbb986f470de935",
+        "why_in_hand": "Edition 1.1's own change record says 'Report composition (Table 2) updated', and Table 2 is this category's per-report-type item matrix - the structure the adapter's presence gate is built from. It is the only edition in hand from before the two reporting-period fields were added."
+      },
+      {
+        "edition": "0.14",
+        "date_the_publication_page_gives": "30 May 2007",
+        "filename": "cat023pt16ed014.pdf",
+        "bytes": 114782,
+        "pages": 25,
+        "sha256": "47045966407257baa06334bdbeaf4f967880e6ceefb97db37eb02db4a69e001c",
+        "why_in_hand": "The oldest edition the page offers above 0.13, and the one whose change record shows the category's shape arriving from outside EUROCONTROL: 'Results of EUROCAE WG51 SG4 integrated' against four separate items. It places the authorship of the ground-station status vocabulary."
+      }
+    ],
+    "the_five_year_gap_between_1_2_and_1_3": "1 March 2009 to 27 September 2021, with nothing in between, and Edition 1.3's change record attributes the whole of it to a template migration plus four editorial or naming corrections. Twelve years, one edition, and no content change to any structure. Recorded because it bounds how much of this category's design is 2009 thinking: all of it.",
+    "verification_performed": "SHA-256 and byte counts computed from the files on disk; page counts by the ruled method, with the raw-object scan run alongside and agreeing for all three."
+  },
+  "the_back_cover_is_an_UNFINISHED_TEMPLATE_and_this_is_the_strongest_finding_in_the_record": {
+    "where": "PDF page 31, the last page, unnumbered.",
+    "what_it_says_in_full": [
+      "Edition: 1. 3",
+      "Edition date: 11 May 2020",
+      "Reference nr: EUROCONTROL-SPEC-0149-8",
+      "EUROCONTROL Specifications",
+      "Subtitle Roboto Light 24pt",
+      "Second line",
+      "Date, period or phase Roboto Regular 14pt"
+    ],
+    "three_separate_defects_on_one_page": [
+      "THE REFERENCE NUMBER IS ANOTHER PART'S. EUROCONTROL-SPEC-0149-8 is Part 8. This document is EUROCONTROL-SPEC-0149-16, stated on the cover, on the identification block and in every one of the 31 running headers. So the last page of Part 16 Edition 1.3 identifies itself as Part 8.",
+      "THE DATE IS SIXTEEN MONTHS WRONG. 11 May 2020 against 27/09/2021 on the identification block and 27 September 2021 on the cover. It is not a month's disagreement of the kind Part 9's change record has - it is a different year.",
+      "THE TEMPLATE PLACEHOLDERS WERE NEVER REPLACED. 'Subtitle Roboto Light 24pt', 'Second line' and 'Date, period or phase Roboto Regular 14pt' are the typesetting template's own instructions to whoever fills it in, left in the published document. They name a typeface and two point sizes."
+    ],
+    "why_this_is_recorded_at_length_rather_than_as_an_ambiguity_line": "Every other defect in every pinned document in this repository is an inconsistency between two statements that were both meant. This one is a page that was never finished, published as a Released Edition, approved by the AMG, and still served from the publication page five years later. It is the clearest available evidence for the practice this repository's pin records exist to support: an edition number names a document and a SHA-256 names the copy that was read, and 'the same edition' is not a guarantee of the same bytes or of a well-formed document. Edition 1.3's change record says 'Migration to new Template' with SECTIONS AFFECTED 'All', and the back cover is what the migration left behind.",
+    "what_is_NOT_claimed": "That the substantive content is unreliable. The nine item definitions, Table 2 and the UAP are internally consistent and were read in full; nothing in the back cover touches them. Also not claimed: that Part 8 exists, what it covers, or that any other Part 16 edition has the same page - 1.2, 1.1 and 0.14 are all in hand and none of them has a back cover at all.",
+    "verified_not_an_extraction_artefact": "The strings were read from the page's raw text and the reference number is a contiguous 'EUROCONTROL-SPEC-0149-8' with no digit following the 8 and no line break inside it."
+  },
+  "the_reference_list_cites_ASTERIX_Part_1_at_a_2002_edition": {
+    "section_2_2_in_full": "'1. EUROCONTROL Standard SUR.ET1.ST05.2000-STD-01-01. All Purpose Structured EUROCONTROL Surveillance Information Exchange - ASTERIX. Edition 1.29, Released Issue, February 2002.'",
+    "finding": "One reference, and it is Part 1 at Edition 1.29 of February 2002 under the PRE-MIGRATION document number SUR.ET1.ST05.2000-STD-01-01. cat034_pin.json records that the ASTERIX reference-number migration to EUROCONTROL-SPEC-0149-* happened between Part 2b editions 1.27 and 1.28, i.e. by 2 March 2021. Part 16 Edition 1.3 is dated 27 September 2021 - after that migration - and still cites the old number and a nineteen-year-old edition. Part 9 Edition 1.21, by contrast, cites 'EUROCONTROL Specification SPEC-0149, edition 3.1, 23 November 2021'.",
+    "why_this_matters_to_the_adapter_and_not_only_to_the_record": "Part 1 is where the ASTERIX family defines the mechanics this document does not: the FSPEC's general form, and the Reserved Expansion Field and Special Purpose Field that Table 3 gives FRNs 13 and 14 with the notation `1+1+` and no section 5.2 entry. Part 1 is NOT PINNED in this repository - the finding cat048_codec.py records for the FSPEC and cat034_codec.py records for RE and SP - so the convention comes from the shipped siblings. Here the citation is additionally to an edition two decades old, which means that even acquiring Part 1 at its current edition would not obviously be acquiring the document this specification cites.",
+    "consequence": "The RE and SP length rule is inherited: a one-octet length counting itself, opaque contents, never decoded, restored unchanged. Three ASTERIX adapters in this repository now use that convention and none of them has the document that defines it. Stated, not smoothed over."
+  },
+  "section_4_1_has_a_heading_and_no_text": {
+    "where": "Printed page 8: '4. GENERAL PRINCIPLES' then '4.1 General' then '4.2 Time Management'.",
+    "finding": "Section 4.1 is a numbered heading with no body. Part 9's section 4.1 has one sentence and Part 2b's has a paragraph; Part 16's has nothing at all.",
+    "consequence_for_the_row_set": "It is the section that would have said what the category is FOR in normative terms, so the scope statement has to be read from section 1.1 - which is prose in an INTRODUCTION - and from section 4.5.1's three report types. Both are quoted in the row set. Recorded because a reader looking for the normative scope clause will find an empty heading and should not conclude a page is missing."
+  },
+  "what_the_document_defines": {
+    "data_items": [
+      "I023/000",
+      "I023/010",
+      "I023/015",
+      "I023/070",
+      "I023/100",
+      "I023/101",
+      "I023/110",
+      "I023/120",
+      "I023/200"
+    ],
+    "count": 9,
+    "note_on_the_range": "The items run I023/000 to I023/200 and the series is not contiguous - there is no I023/030 (the number Part 2b uses for Time of Day; here Time of Day is I023/070, which is the number Part 4 uses for Mode 3/A) and no I023/105, I023/130 or I023/140. No note explains any of the gaps. The Time-of-Day numbering is worth stating on its own: three ASTERIX categories in this repository carry a 1/128 s time of day and they number it I034/030, I048/140 and I023/070.",
+    "two_item_rosters_exist_and_they_DO_hold_the_same_thing": "Section 5.1's Table 1 'Standard Data Items of Category 023' lists the nine items with a System Units column, and section 5.3.1's Table 3 'Standard UAP' lists the same nine plus RE and SP. Checked item by item: the nine names agree between the two tables and with each item's own section 5.2 heading. This is the OPPOSITE of cat034_pin.json's finding, where Part 2b's two rosters disagree, and the agreement is not free - Edition 1.3's change record says 'Name of I023/101 in Table 1 corrected', so the two tables disagreed until this edition and one of the two published names was wrong for twelve years.",
+    "the_units_column_states_only_two_units": "Table 1's System Units column reads 'N.A.' for seven items and gives 1/128 s for I023/070 and 1 NM for I023/200. The two reporting-period fields inside I023/100 and I023/101 have units - 1 s and 0.5 s - and are not in the column, because the column is per ITEM and they are subfields. Recorded so the column is not read as the full list of scaled values.",
+    "report_types_standardised_in_this_edition": {
+      "001": "Ground Station Status report",
+      "002": "Service Status report",
+      "003": "Service Statistics report"
+    },
+    "report_types_locus": "Section 5.2.1 NOTE 3, printed page 11; the per-type item matrix is Table 2, printed page 12, with the legend 'M stands for mandatory, O for optional, X for never present.'",
+    "all_report_type_values_are_reserved": "Section 5.2.1 NOTE 2, quoted: 'All Report Type values are reserved for common standard use.' The same sentence Part 2b's I034/000 NOTE 2 carries about Message Types. So a value outside 001-003 is not a private extension point - it is a value this edition does not define - and it lands in unresolved_raw rather than in source_extras.",
+    "the_three_report_types_are_defined_in_section_4_5_1_and_not_in_section_5_2_1": "Section 5.2.1's NOTE 3 gives the three values and points at 4.5.1.1, 4.5.1.2 and 4.5.1.3 for what each one MEANS, and those three subsections are where the reporting-period obligations live: 'the Ground Station Status Report shall be sent periodically (every GSSP seconds ...) and whenever a change occurs' and the same for SSRP. So the item that carries the period is I023/100 or I023/101 and the obligation that gives it meaning is in chapter 4."
+  },
+  "the_uap": {
+    "locus": "Section 5.3.1, Table 3 - 'Standard UAP', printed page 21.",
+    "single": "Section 4.5.2, printed page 9: 'A single UAP has been standardised and shall be used to transmit service reports from a CNS/ATM Ground Station to user systems.'",
+    "frn_count_defined": 11,
+    "frn_count_total_slots": 14,
+    "fspec_octets_maximum": 2,
+    "how_the_maximum_is_derived": "Table 3 interleaves two FX rows, after FRN 7 and after FRN 14, so the FSPEC is two groups of seven presence bits each followed by an FX: 14 + 2 = 16 bits = 2 octets. The SAME shape as Part 2b's Table 3, and the coincidence is worth stating rather than relied on: Part 2b defines 12 items in 14 FRNs and this defines 9 in 14, so the two UAPs have the same octet count and different contents, and a codec that imported the other one's FRN table would decode I023/070 as I034/020 with no length error anywhere in the record.",
+    "the_spare_frns": {
+      "which": [
+        10,
+        11,
+        12
+      ],
+      "the_document_says_nothing_about_them": "Three consecutive rows reading '- spare -' between I023/120 at FRN 9 and RE at FRN 13, with no note. Unlike Part 9's FRN 2 there is no backwards-compatibility explanation, and unlike Part 2b there is no such gap at all.",
+      "consequence_for_the_adapter": "A set FSPEC bit naming FRN 10, 11 or 12 names a slot the UAP defines as empty: there is nothing to decode, so it cannot be skipped, and guessing a length would desynchronise every following item. Refused, with the refusal naming which of the two cases it is - a spare slot inside the table, or an FRN above 14 that the table has never defined."
+    },
+    "the_order_is_NOT_item_number_order_and_that_is_the_trap": "FRN 1 is I023/010, FRN 2 is I023/000, FRN 3 is I023/015, FRN 4 is I023/070, FRN 5 is I023/100, FRN 6 is I023/101, FRN 7 is I023/200, FRN 8 is I023/110, FRN 9 is I023/120. So I023/200 sits BETWEEN I023/101 and I023/110 in wire order, three items out of numeric sequence, and Edition 0.13's change record says why it moved: 'Sequence of items in UAP updated'. A parser that walked items in item-number order rather than in FRN order would read the Operational Range octet as the first octet of Service Status and lose its place with no length error.",
+    "the_length_column": {
+      "as_the_table_gives_it": {
+        "I023/010": "2",
+        "I023/000": "1",
+        "I023/015": "1",
+        "I023/070": "3",
+        "I023/100": "1+",
+        "I023/101": "2+",
+        "I023/200": "1",
+        "I023/110": "1+",
+        "I023/120": "1+",
+        "RE-Data Item": "1+1+",
+        "SP-Data Item": "1+1+"
+      },
+      "what_the_legend_explains": "'a stand-alone figure indicates the octet-count of a fixed-length Data Item, 1+ indicates a variable-length Data Item comprising a first part of 1 octet followed by n-octets extents as necessary.'",
+      "what_it_does_not_explain": "`2+` and `1+1+`. `2+` is I023/101, whose section 5.2.6 first part is TWO octets with the FX in the second octet's bit 1 and whose extension is ONE octet - so the notation means 'a first part of 2 octets followed by 1-octet extents', which the legend's wording does not generalise to. `1+1+` is RE and SP and is Part 2b's ambiguity 11 unchanged: the notation is unexplained there too and the convention comes from the siblings. Ambiguity 4.",
+      "and_1_plus_covers_two_different_mechanics_here": "I023/100 and I023/110 are FX-chained extensible items; I023/120 is a REPETITIVE item, a one-octet REP followed by REP six-octet blocks. Both get `1+`. The notation cannot distinguish them, so every length rule is derived from section 5.2 and never from this column."
+    }
+  },
+  "the_three_items_whose_FX_names_an_undefined_continuation": {
+    "finding": "Three of the nine items are extensible and none of them defines the extension its own FX bit announces. This is the single most consequential structural finding in the document and it is a refusal in all three cases.",
+    "instances": [
+      {
+        "item": "I023/100 Ground Station Status",
+        "what_is_defined": "A one-octet first part (NOGO, ODP, OXT, MSC, TSV, SPO, RN, FX) and a First Extension (GSSP over bits 8/2, FX at bit 1).",
+        "what_the_first_extension_s_FX_says": "'bit-1 (FX) = 0 End of item, = 1 Extension into Second Extension'",
+        "what_is_not_defined": "Any Second Extension. The item's section 5.2.5 ends after the First Extension."
+      },
+      {
+        "item": "I023/101 Service Configuration",
+        "what_is_defined": "A two-octet first part (RP in octet 1; SC over bits 8/6, four spare bits and FX in octet 2) and a First Extension (SSRP over bits 8/2, FX at bit 1).",
+        "what_the_first_extension_s_FX_says": "'bit-1 (FX) = 0 End of item, = 1 Extension into Second Extension'",
+        "what_is_not_defined": "Any Second Extension. Section 5.2.6 ends after the First Extension."
+      },
+      {
+        "item": "I023/110 Service Status",
+        "what_is_defined": "One octet: four spare bits, a three-bit STAT, and FX.",
+        "what_the_FX_says": "'bit-1 (FX) = 0 No extension, = 1 Extension'",
+        "what_is_not_defined": "Anything at all. There is no First Extension for this item - the FX names a continuation that has never existed in any edition in hand, including 0.14."
+      }
+    ],
+    "the_ruling": "A set FX with no defined continuation is a REFUSAL, and it is the disposition asterix_cat034.py's `_len_compound` reaches for I034/050's primary FX and asterix_cat048.py reaches for I048/120: the bit announces something the document does not define, so there is nothing to decode, it cannot be skipped, and guessing a length would desynchronise every following item in the record. The refusal quotes the item, the octet and the sentence that names the undefined extension.",
+    "why_this_is_not_the_general_ASTERIX_FX_semantics_and_the_difference_matters": "In the general case an FX chain continues with more octets OF THE SAME SHAPE, and Part 9's I062/510 is exactly that - 'Structure of next Extents' is defined and identical, so the chain is genuinely unbounded and a set FX on the last extent read is legal. Here the document does the opposite: it NAMES a specific 'Second Extension' twice and defines neither. So the refusal rests on the document's own words rather than on a general rule, which is the same footing Part 2b's refusal rests on. Ambiguity 5."
+  },
+  "the_two_reporting_period_fields": {
+    "why_they_are_recorded_together": "They are the only two scaled numeric fields in the category besides the time of day and the operational range, they sit in different items, and they disagree about both LSB and zero.",
+    "GSSP": {
+      "where": "I023/100 First Extension, bits 8/2 - SEVEN bits.",
+      "definition": "Ground Station Status Reporting Period",
+      "lsb": "1 s",
+      "stated_range": "1 <= GSSP <= 127s",
+      "the_field_and_the_range_agree_exactly_at_the_top_and_not_at_the_bottom": "Seven bits reach 127, which is the stated maximum. The stated MINIMUM is 1, so a raw zero is outside the range the document states. It is refused rather than read as 'no periodic reporting': section 4.5.1.1 makes the periodic send an obligation - 'the Ground Station Status Report shall be sent periodically (every GSSP seconds ... ) and whenever a change occurs' - so a period of zero is not a way of turning it off, it is a value the item excludes."
+    },
+    "RP": {
+      "where": "I023/101 first part, octet 1, all eight bits.",
+      "definition": "Report Period for Category 021 Reports",
+      "lsb": "0.5 seconds",
+      "zero_is_a_SENTINEL_and_not_a_period": "'= 0: Data driven mode'. So zero means the service emits on data rather than on a clock, which is the AIS sentinel lesson in a new format: 0.0 s is not a period and must not reach a consumer as one. It is carried as a named mode, never as a number.",
+      "and_the_field_it_describes_is_in_ANOTHER_CATEGORY": "'Report Period for Category 021 Reports'. The period this item states governs how often the SERVICE emits CAT021 target reports, which this adapter never sees. So the value is a statement about a different feed, parked as such, and it is emphatically not a staleness horizon this adapter may apply to anything - deriving one would be reasoning about payloads it has not been given, which is the fusion refusal."
+    },
+    "SSRP": {
+      "where": "I023/101 First Extension, bits 8/2 - SEVEN bits.",
+      "definition": "Service Status Reporting Period",
+      "lsb": "1 s",
+      "stated_range": "1 <= SSRP <= 127s",
+      "note": "Identical shape and identical bounds to GSSP, in a different item, for a different obligation (section 4.5.1.2)."
+    },
+    "the_asymmetry_is_the_finding": "One item's period is an eight-bit field at 0.5 s whose zero is a mode; two others are seven-bit fields at 1 s whose zero is out of range. Three periods, two LSBs, two incompatible readings of zero, in one nine-item specification. Recorded because a shared decoder for 'a reporting period' would be wrong for one of the three whichever reading it took. Ambiguity 6."
+  },
+  "the_addressing_convention_is_normative_here_and_that_decides_identity": {
+    "quoted": "Section 4.4.1, 'Addressing Concepts: Assigning SAC/SIC Codes': 'By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Ground Station.'",
+    "why_this_is_stronger_than_Part_2b_s_equivalent": "Part 2b's I034/010 says only 'Identification of the radar station from which the data are received' with a NOTE pointing at the published SAC list. Part 16 has a normative section of its own asserting that the pair is DEDICATED and UNAMBIGUOUS per station. So the station Entity's identity basis rests on a clause rather than on an inference, and it is the same identity basis asterix_cat034.py already derives - uuid5 over ('ASTERIX_SAC_SIC', 'SACSIC') - filed under the same family-wide system name for the same reason: a SAC/SIC is allocated across the whole ASTERIX family from one list, so one station seen through Part 16 must not be a different entity from the same station seen through Part 2b.",
+    "and_the_SERVICE_is_a_different_object_with_a_different_key": "I023/015's four-bit Service Identification is 'allocated by the system' per its own NOTE 1 - so it is unique WITHIN a ground station and not across stations. The service's identity is therefore the pair (SAC/SIC, SID) and never SID alone, and FORMAT_COVERAGE.md's Settlement 2 is where that is ruled. Four bits give sixteen services per station, which is the whole space."
+  },
+  "the_bit_that_exists_because_track_numbers_are_recycled": {
+    "quoted": "I023/100 bit 2: 'RN Renumbering Indication for Track ID = 0 default, = 1 track numbering has restarted'. NOTE 3: 'Bit 2 indicates that the allocation of Track-IDs (Item I021/161) was re-started.'",
+    "why_this_is_recorded_in_a_pin_record_rather_than_only_on_a_row": "It is external evidence for a ruling made in the SAME ROUND in a different section. FORMAT_COVERAGE.md's CAT062 Settlement 3 rules that a system track number is never the basis of an entity_id, because the number is scoped to the emitting system and recycled, so keying identity on it merges two different objects into one entity. This document is a different ASTERIX part, written by a different working group, and it carries a dedicated status bit whose entire purpose is to announce that a track-number space has been reused. The two are independent: nothing in Part 16 is about Part 9, and the bit exists because the problem is real.",
+    "what_is_NOT_claimed": "That I021/161 and I062/040 are the same number space - they are not; one is a ground station's track ID and the other an SDPS system track number - or that CAT023's RN bit says anything about a CAT062 record. The evidence is about the CLASS of identifier, and it is cited as such."
+  },
+  "the_counter_type_table_has_a_documented_hole": {
+    "where": "I023/120, section 5.2.8, the TYPE field's own table.",
+    "defined": {
+      "0": "Number of unknown messages received",
+      "1": "Number of 'too old' messages received",
+      "2": "Number of failed message conversions",
+      "3": "Total Number of messages received",
+      "4": "Total number of messages transmitted",
+      "20": "Number of TIS-B management messages received",
+      "21": "Number of 'Basic' messages received",
+      "22": "Number of 'High Dynamic' messages received",
+      "23": "Number of 'Full Position' messages received",
+      "24": "Number of 'Basic Ground' messages received",
+      "25": "Number of 'TCP' messages received",
+      "26": "Number of 'UTC time' messages received",
+      "27": "Number of 'Data' messages received",
+      "28": "Number of 'High Resolution' messages received",
+      "29": "Number of 'Aircraft Target Airborne' messages received.",
+      "30": "Number of 'Aircraft Target Ground' messages received.",
+      "31": "Number of 'Ground Vehicle Target' messages received.",
+      "32": "Number of '2 slots TCP' messages received."
+    },
+    "the_hole_is_5_to_19_and_the_document_explains_it": "NOTE: 'There is no special significance attributed to the numbering of the TYPE field. However the range from 0 to 19 is intended to cover generic messages which may be applicable to many types of service.' So 5 to 19 is a RESERVED BAND with a stated purpose, and a value in it is a different kind of unknown from a value above 32: the first is a generic counter this edition has not allocated, the second is outside the table entirely. Both park in unresolved_raw and the reason recorded with each says which band it is in.",
+    "the_counter_is_32_bits_and_the_reference_bit_changes_what_it_counts_from": "'bit-40 (REF) Reference from which the messages are countered: = 0 From midnight, = 1 From the last report'. And the item's own Definition says 'Provides counts of various ADS-B message types that have been received since the report was last sent.' The Definition states the REF=1 reading unconditionally while the field offers both, so the two disagree and the FIELD is preferred - it is the one the wire carries. Ambiguity 7.",
+    "the_block_length_arithmetic": "'Repetitive Data Item, starting with a one-octet Field Repetition Indicator (REP) followed by at least one block of 6 octets.' The structure diagram confirms it: TYPE (8 bits), REF (1), seven spare bits, COUNTER VALUE (32) = 48 bits = 6 octets. So the item is 1 + 6*REP octets and REP = 0 is excluded by the item's own words, exactly as Part 2b's I034/070 REP = 0 is."
+  },
+  "the_service_type_vocabulary": {
+    "where": "I023/015, section 5.2.3, bits 4/1 (STYP).",
+    "defined": {
+      "1": "ADS-B VDL4",
+      "2": "ADS-B Ext Squitter",
+      "3": "ADS-B UAT",
+      "4": "TIS-B VDL4",
+      "5": "TIS-B Ext Squitter",
+      "6": "TIS-B UAT",
+      "7": "FIS-B VDL4",
+      "8": "GRAS VDL4",
+      "9": "MLT"
+    },
+    "zero_and_ten_to_fifteen_are_undefined": "Four bits give sixteen values and nine are defined. There is no 'unknown' or 'other' value, so an undefined STYP is a value this edition does not define rather than a stated unknown, and it parks in unresolved_raw. Note that section 1.1's scope sentence names five service kinds - 'ADS-B, TIS-B, FIS-B, GRAS, and MLT' - and the table gives nine values because four of the five are qualified by a data link. So the scope sentence and the table agree and count differently, which is worth stating because a reader checking one against the other will see five against nine.",
+    "the_item_name_carries_both_halves": "'Service Type and Identification', and the octet is SID in bits 8/5 and STYP in bits 4/1 - identification first in bit order, type second, and the name in the other order. Recorded because the two nibbles are easy to transpose and a transposition yields a plausible wrong service rather than an error: SID 2 / STYP 9 and SID 9 / STYP 2 are both legal.",
+    "the_cross_reference_that_is_load_bearing_for_nothing_here": "NOTE 2: 'The service identification is also available in item I021/015.' That is why CAT021 carries I021/015 at all, and cat034's and cat021's row sets already record the relationship from the other side. It is a JOIN a consumer may perform and this adapter may not: correlating a CAT023 service status with the CAT021 reports it governs is exactly the cross-payload state every adapter here refuses."
+  },
+  "the_time_of_day_exception_reached_a_second_time": {
+    "quoted": "I023/070's Encoding Rule: 'This data item shall be present in every ASTERIX record, except in case of failure of all sources of time-stamping.' And its NOTE: 'The time of day value is reset to zero each day at midnight.'",
+    "why_it_is_recorded": "It is Part 2b's I034/030 exception in almost the same words - 'For the message types where this data item is mandatory, it shall be sent, except in case of failure of all sources of time stamping' - and it has the same consequence: an absent time of day is a STATED absence and not a defect, so it lands in unavailable_fields and observed_at falls back to the injected clock, while Table 2 still marks the item M for all three report types. The item-level rule overrides the table, and this is the second ASTERIX category in this repository where it does.",
+    "and_the_range_question_lands_the_same_way_it_did_for_Part_2b": "Section 5.2.4 states an LSB of 1/128 s over three octets and states NO acceptable range. Part 4's I048/140 prints a normative structure block reading 'Acceptable Range of values: 0<= Time-of-Day<=24 hrs'; Part 2b's I034/030 prints no range, and neither does this item. So the bound comes from the Definition ('Absolute time stamping expressed as UTC time') plus the NOTE ('The time of day value is reset to zero each day at midnight'), which together make 86400 s unreachable - the cat034_codec.py disposition, reached a second time, and it differs from the Part 4 bound by exactly one value because Part 4's inequality is inclusive. Ambiguity 8."
+  },
+  "not_committed": {
+    "the_pdfs_are_not_in_git": true,
+    "precedent": "Every other spec directory here.",
+    "consequence_for_this_directory": "Four files sit in the working tree because they had to be read - Edition 1.3 and Editions 1.2, 1.1 and 0.14 under history/. They are excluded from the commit by .gitignore's `*.pdf` rule, from the wheel by two positive exclude-package-data patterns, and from a fresh clone entirely. What a clone gets is this record.",
+    "why": "The document is redistributable only on EUROCONTROL's own terms and this edition, unlike Part 9 Edition 1.21, carries NO copyright or terms notice anywhere - its back cover is the unfinished template recorded above. So there is no stated permission to rely on, which makes carrying it a worse idea rather than a better one. A pin plus an edition plus a hash identifies the document without redistributing it."
+  },
+  "ambiguity_register": {
+    "convention": "Numbered from 1 within this row set. A number here is not the same number in another section's register.",
+    "entries": {
+      "1": "The back cover carries another Part's reference number (EUROCONTROL-SPEC-0149-8), a date sixteen months before the edition date, and three unreplaced typesetting placeholders naming a typeface and two point sizes. The identification block and the 31 running headers are preferred; they agree with each other and with the cover.",
+      "2": "Section 4.1 'General' is a numbered heading with no body. The normative scope has to be read from section 1.1, which is in the INTRODUCTION, and from section 4.5.1's three report types.",
+      "3": "The only reference this document cites is ASTERIX Part 1 at Edition 1.29 of February 2002, under the pre-migration number SUR.ET1.ST05.2000-STD-01-01, in a document dated September 2021 - after the family's migration to EUROCONTROL-SPEC-0149-*. Part 1 is not pinned here, so the RE and SP length convention is inherited from the shipped siblings and the citation would not resolve to a current document even if it were.",
+      "4": "The UAP's length-column legend explains `1+` and does not explain `2+` or `1+1+`. `2+` is I023/101, whose first part is two octets and whose extents are one, which the legend's wording does not generalise to. `1+` is additionally given to both an FX-chained item and a REP-prefixed repetitive one, so the column cannot be used to derive a length rule.",
+      "5": "Three of nine items are extensible and none defines the extension its FX announces. I023/100's and I023/101's First Extensions each say 'Extension into Second Extension' and no Second Extension exists; I023/110's single octet says 'Extension' and no extension exists in any edition in hand. A set FX is refused in all three cases, on the document's own words.",
+      "6": "Three reporting periods, two LSBs and two incompatible readings of zero. GSSP and SSRP are seven-bit fields at 1 s with a stated range of 1 to 127, so zero is out of range; RP is an eight-bit field at 0.5 s whose zero is the named mode 'Data driven'. A shared decoder for 'a reporting period' would be wrong for one of the three.",
+      "7": "I023/120's Definition says the counts are 'since the report was last sent' unconditionally, while the item's own REF bit offers 'From midnight' as well. The field is preferred over the Definition, because the field is what the wire carries.",
+      "8": "I023/070 states an LSB and no acceptable range, so the day bound comes from the Definition and the NOTE rather than from a printed inequality - and therefore excludes 86400 s where Part 4's printed inequality includes it. Same width, same LSB, a boundary that differs by one value, and this is the second category in this repository where it does.",
+      "9": "Table 1's keyword list and the publication page both write the category two digits wide ('Category 23') while the cover, section 4.5.2 and the UAP write 023. Metadata against definitions; the definitions are preferred.",
+      "10": "I023/110's spare field is legended 'bits-8/5 (Spare) Spare bit set to 0' - four bits described with a singular noun. Section 4.3 is normative that a decoder shall never rely on a spare bit's setting, so all four are read and re-emitted as sent regardless of the legend."
+    }
+  }
+}

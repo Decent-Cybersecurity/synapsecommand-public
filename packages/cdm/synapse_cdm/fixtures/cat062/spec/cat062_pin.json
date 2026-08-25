@@ -1,0 +1,621 @@
+{
+  "what_this_is": "The pinned identity of the document the CAT062 row set in FORMAT_COVERAGE.md was read from, plus everything about that document a later reader needs and cannot get from the row set: the edition it is, the editions it is not, what its own change record claims and what the pages contradict, and the places where the text disagrees with itself. House style: fixtures/cat034/spec/cat034_pin.json, which this record follows and departs from in three places, each noted where it happens.",
+  "adapter": {
+    "name": "cat062",
+    "ordinal": 13,
+    "phase": "1 - specification. FORMAT_COVERAGE.md carries the row set with `not yet` in every status cell and no code exists behind it. Phase 2 ships adapters/asterix_cat062.py on a codec in adapters/cat062_codec.py and flips the cells.",
+    "fixture_directory": "cat062",
+    "name_ruling": {
+      "ruled": "cat062",
+      "confidence": "settled",
+      "deciding_source": "PRECEDENT ALONE, and unlike cat034 the document adds nothing.",
+      "what_precedent_decides": "The roster carries two conventions. An adapter named after a STANDARD takes the standard's name and its fixture directory takes the payload's - `stanag4676` with fixtures in `nits`, `stanag4609` with `klv`, `stanag5527` with `fft`. An adapter named after an ASTERIX CATEGORY takes `cat` plus the three-digit category number and the directory is the same string - `cat021`, `cat048`, `cat034`. Category 062 is the fourth instance of the second convention and the third to be settled by it.",
+      "why_the_document_adds_nothing_here_where_it_added_something_for_cat034": "cat034_pin.json records that Part 2b's own title carries the category number, so the document confirmed that the thing being named IS a numbered category. Part 9's title does the same - 'ASTERIX Part 9 Category 062' on the cover and 'Category 062: SDPS Track Messages' on the identification sheet - so the confirmation is available and is not load-bearing: the precedent was already unanimous across three adapters before this one. Recorded so that a reader does not mistake an unused confirmation for a missing one.",
+      "the_directory_is_the_same_string_and_that_is_the_rule_not_an_exception": "A directory holds payloads and a payload is not a standard. That split is what separates `stanag4676` from `nits`; it bites only when the adapter is named after a covering document. Here the adapter is named after the category whose blocks the directory holds, so the two strings coincide and nothing is being relaxed."
+    },
+    "rejected_candidates": [
+      {
+        "candidate": "sdps",
+        "why_not": "The document's own short title is 'SDPS Track Messages' and the abbreviation list glosses SDPS as 'Surveillance Data Processing System'. It names the PRODUCER of the data, not the format, and there is more than one ASTERIX category an SDPS emits - 063 (Sensor Status), 065 (SDPS Service Status) and 062 are all SDPS output. A name that does not distinguish the categories of one producer is a name that cannot survive the second one."
+      },
+      {
+        "candidate": "asterix062",
+        "why_not": "No adapter in the roster carries the family name in its registry name; `cat021`, `cat048` and `cat034` all drop it, and the family is already stated in SourceRef.system = ASTERIX_CAT062. Adding it here would make one of four inconsistent."
+      },
+      {
+        "candidate": "systemtrack",
+        "why_not": "It names the CONTENT, which is what the fixture-directory-versus-adapter-name split already handles for the STANAGs, and here it would name the content of a category whose number is the thing every interface control document cites. An engineer holding a CAT062 ICD looks for 062."
+      },
+      {
+        "candidate": "cat62",
+        "why_not": "The document writes the category three digits wide throughout - 'CAT = 062' in the section 4.6 data-block layout - and the roster's three existing members are all three digits. `cat62` would be the only two-digit member and would sort away from its siblings."
+      }
+    ]
+  },
+  "source": {
+    "document": "EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 9 Category 062: SDPS Track Messages",
+    "publications_reference": "SPEC-0149-9",
+    "document_identifier": "EUROCONTROL-SPEC-0149-9",
+    "isbn": "978-2-87497-028-3",
+    "edition": "1.21",
+    "edition_date_as_the_document_states_it": "05/06/2025",
+    "status_on_the_cover": "Released Issue",
+    "status_in_the_running_headers": "Released Edition",
+    "status_in_the_page_ii_checkbox_table": "Released Issue",
+    "why_three_status_words_and_why_this_is_the_MIRROR_of_the_CAT034_finding": "cat034_pin.json records Part 2b Edition 1.29 saying 'Released Edition' on its cover and in all 41 running headers while the page-iii checkbox table ticks 'Released Issue'. Part 9 Edition 1.21 has the SAME disagreement with the two halves SWAPPED: the cover's DOCUMENT IDENTIFIER block reads 'Status : Released Issue', the page-ii checkbox table ticks 'Released Issue', and all 146 running headers read 'Released Edition'. So the two specifications disagree about which of the two phrases belongs on a cover, and neither is consistent within itself. Recorded because a reader matching a citation against a copy matches on the words printed, and there is no single set of words to match.",
+    "intended_for": "General Public",
+    "accessible_via": "Internet (www.eurocontrol.int/asterix), ticked; Intranet and Extranet not ticked",
+    "approved_by": "the ASTERIX Maintenance Group (AMG). Page iv: 'This document has been approved by the ASTERIX Maintenance Group (AMG).' and 'For management approval of the complete set of ASTERIX documentation refer to Part 1.'",
+    "contact_person_as_the_document_states_it": "Alexander Engel, +32-2-729 3355, ATD/APD/STAN",
+    "abstract_quoted": "This document describes the application of ASTERIX to the transmission of System Track Data. This Specification contains a partial implementation of ADS-B Version 3. Most modifications for the implementation of ADS-B Version 3 have been performed in the Reserved Expansion Field (I062/REF). To make use of these modifications it is recommended also to implement the I062/REF (Edition 1.3 or later).",
+    "keywords_as_the_document_lists_them": [
+      "Data Exchange",
+      "Messages",
+      "SAC",
+      "SIC",
+      "Data Category",
+      "Data Field",
+      "Data Item",
+      "ARTAS",
+      "ASTERIX",
+      "UAP",
+      "Track Data",
+      "Category 062"
+    ],
+    "retrieved_at": "2026-08-25",
+    "retrieved_from": "https://www.eurocontrol.int/sites/default/files/2025-06/asterix-cat062-system-track-data-p9-ed1-21.pdf, linked from https://www.eurocontrol.int/publication/cat062-eurocontrol-specification-surveillance-data-exchange-asterix-part-9-category-062 under the link text 'System Track Data - Edition 1.21'",
+    "bytes": 2104927,
+    "sha256": "37c3898824323e915c3bd83fdf20419939f3276d802733bae690a1875d29db96",
+    "pages": 146,
+    "pdf_version": "1.7",
+    "local_path": "fixtures/cat062/spec/eurocontrol-asterix-cat062-p9-ed121.pdf",
+    "verification_performed": [
+      "SHA-256 and byte count computed from the file on disk at the path above.",
+      "Page count by the ruled method - the page objects reachable from the catalog's /Pages tree, walked in /Kids order. 146, and the file's own /Pages /Count agrees.",
+      "Printed folios reconciled against the tree count, which is the check that does not depend on a tool: PDF page 1 is the cover, PDF pages 2 to 13 print i to xii, PDF pages 14 to 145 print 1 to 132, and PDF page 146 is the back cover. 1 + 12 + 132 + 1 = 146.",
+      "Every section quoted in this record and in FORMAT_COVERAGE.md's CAT062 row set read from this copy, section by section, including all 27 data items, all of their subfields and the UAP in section 5.3."
+    ]
+  },
+  "appendix_a": {
+    "what_it_is": "The Reserved Expansion Field's contents, in a separate document, and IN SCOPE - see FORMAT_COVERAGE.md, 'Settlement 2'. The core specification's own abstract recommends implementing it and its own notes relocate a load-bearing value into it, which is the CAT021 argument reaching a second ASTERIX category.",
+    "document": "EUROCONTROL Specification for Surveillance Data Exchange - ASTERIX Part 9 Appendix A, Category 062: SDPS Track Reports - REF",
+    "publications_reference": "SPEC-0149-9A",
+    "document_identifier_as_the_document_states_it": "EUROCONTROL-SPEC-0149-9A",
+    "isbn": "978-2-87497-028-3",
+    "edition": "1.3",
+    "edition_date_as_the_document_states_it": "13/02/2023",
+    "status": "Released Issue on the identification sheet; 'Released Edition' in all 25 running headers",
+    "classification_line_on_the_cover": "Classification: White",
+    "why_that_line_is_recorded": "It is the only classification marking on any EUROCONTROL document in this repository. The core specification carries no classification line at all and neither does Part 2b or Part 4. It says White, which is the least restrictive of EUROCONTROL's own bands, and it is recorded because a reader comparing the two documents will notice one has a marking and the other does not and should not have to wonder whether a copy was altered.",
+    "contact_person_as_the_document_states_it": "Alexander Engel, +32-2-729 3355, EGSD/PCS/SCS/STAN",
+    "retrieved_at": "2026-08-25",
+    "retrieved_from": "https://www.eurocontrol.int/sites/default/files/2023-02/asterix-cat062-coding-rules-reserved-expansion-field-p9-appendix-a-edition1-3.pdf",
+    "bytes": 1080582,
+    "sha256": "fe7a0deb972dfa87dc0bd2e3c308a6a4fd83f7a9867d334a50daff26cfa3df0e",
+    "pages": 25,
+    "pdf_version": "1.6",
+    "local_path": "fixtures/cat062/spec/eurocontrol-asterix-cat062-p9-appendix-a-ed13.pdf",
+    "what_it_defines": [
+      "2.1 Length Indicator - one octet, the total REF length INCLUDING itself. Present in every REF.",
+      "2.2 Items indicator - one octet: CST, CSN, TVS, STS, V3 presence bits and three spare bits. Present in every REF.",
+      "2.3 Contributing Sensors With Local Tracknumbers (CST) - REP then five-octet entries: SAC, SIC, four spare bits, four-bit TYP, sixteen-bit local track number.",
+      "2.4 Contributing Sensors No Local Tracknumbers (CSN) - REP then three-octet entries: SAC, SIC, four spare bits, four-bit TYP.",
+      "2.5 Calculated Track Velocity Relative to System Reference Point (TVS) - four octets, Vx and Vy at 0.25 m/s two's complement.",
+      "2.6 Supplementary Track Status (STS) - one-octet extensible: FDR, LNAV#EP, LNAV#VAL, four spare bits, FX.",
+      "2.7 ADS-B Version 3 Data (V3) - compound, one-octet primary with PS3, AS, UAS, CASS presence bits, three spares and FX, then four subfields."
+    ],
+    "the_items_indicator_has_no_FX_and_that_is_a_finding": "Section 2.2's structure is one octet with bits 3/1 'Spare bits set to 0'. Bit 1 is a SPARE, not a Field Extension Indicator, so the items indicator cannot extend and the REF can never carry a sixth item without a new edition. Its NOTE says so from the other side: 'The allocation of additional items is the responsibility of the AMG and shall be coordinated in advance!'. That is the opposite arrangement from every compound item in the core specification, all of which put an FX in bit 1, and it means a set bit 1 here is a spare bit and not a refusal.",
+    "appendix_availability": {
+      "page_checked_on": "2026-08-25",
+      "what_was_checked": "EUROCONTROL's publication page for ASTERIX Part 9 Category 062 Appendix A, https://www.eurocontrol.int/publication/cat062-asterix-part-9-category-062-appendix",
+      "result": "Edition 1.3 is the newest offered, and it is the edition pinned here.",
+      "why_this_node_is_not_shaped_like_an_availability_check": "tests/test_cdm_pins.py binds an availability check to the `document_identifier` of the record it lives in, and this record's identifier is EUROCONTROL-SPEC-0149-9. A node carrying `checked_on` here would therefore claim a check on the CORE specification at the APPENDIX's edition number, which is a false statement in machine-readable form. So the finding is recorded as prose under a different key, and the appendix's edition is not quoted anywhere in this record in the parenthesised identifier-and-edition form the citation reader matches on. Same finding, no wrong binding."
+    }
+  },
+  "page_count_method": {
+    "how": "The page objects REACHABLE FROM THE CATALOG'S /Pages TREE, walked in /Kids order.",
+    "why_this_record_states_it_at_all": "It is the fourth statement of one ruling and it exists to be compared against the other three. tests/test_cdm_pins.py derives the list of records that state it from the tree, so a record that grows the node joins the closure and a record that drops it leaves deliberately.",
+    "the_disagreement_measured_and_it_is_the_largest_in_the_repository_by_far": {
+      "edition_1_21": "tree 146, declared /Count 146, raw-object scan of `/Type /Page` 423. The raw scan is wrong by 277 pages - it reports 2.9 times the document's own length. The file carries four `%%EOF` markers, so it has been INCREMENTALLY UPDATED three times, and 86 of its objects are object streams. Every generation's page objects are still in the file and the raw scan counts all of them.",
+      "appendix_a_edition_1_3": "tree 25, declared /Count 25, raw-object scan 25. The two methods agree.",
+      "edition_1_20": "tree 143, declared /Count 143, raw-object scan 143. Agree.",
+      "edition_1_19": "tree 141, declared /Count 141, raw-object scan 141. Agree.",
+      "what_this_adds_to_the_ruling": "cat034_pin.json's largest measured disagreement was 41 against 43, two pages, on a file updated twice. This one is 146 against 423 on a file updated three times, and it is the first case where the retired method's answer is not merely wrong but not even the right order of magnitude - a reader handed 423 would conclude they held a different document. The ruling was made on reasoning rather than on a large number, and the large number has now turned up; recorded as corroboration, not as the reason."
+    },
+    "the_stronger_check_does_not_depend_on_either_tool": "Edition 1.21's own printed folios. PDF page 1 is an unnumbered cover; PDF pages 2 to 13 print i to xii in the running header; PDF pages 14 to 145 print 1 to 132; PDF page 146 is an unnumbered back cover carrying the copyright notice. 1 + 12 + 132 + 1 = 146, which is the page-tree count and the file's declared /Count and is not 423.",
+    "ruling": "Ruled in FORMAT_COVERAGE.md, 'The page count, ruled from what a reader does with the number'. A page count's job is to let someone holding a copy check they hold the same document, and what they do is open it."
+  },
+  "the_pin_IS_the_current_edition_and_that_is_stated_first": {
+    "finding": "Edition 1.21, 5 June 2025, is the newest edition EUROCONTROL offers for ASTERIX Part 9 Category 062, and it is the edition pinned here. This is the OPPOSITE of the CAT034 situation and it is stated in the same position in the record on purpose: cat034_pin.json opens with 'the pin is not the latest edition', so a reader who has read that record and comes to this one needs the difference in the same place rather than as an absence.",
+    "availability_check": {
+      "edition": "1.21",
+      "offered": true,
+      "checked_on": "2026-08-25",
+      "what_was_checked": "EUROCONTROL's publication page for ASTERIX Part 9 Category 062, https://www.eurocontrol.int/publication/cat062-eurocontrol-specification-surveillance-data-exchange-asterix-part-9-category-062, which lists twelve files, editions 1.10 to 1.21.",
+      "result": "Edition 1.21 is offered and is the newest file on the page. It is the edition pinned here, so no edition is cited-but-unpublished for this document.",
+      "why_the_date_is_recorded": "'is the current edition' and 'was the current edition when somebody looked' are indistinguishable in a repository six months later, and the second is all a check can ever establish. The date is what makes the claim falsifiable.",
+      "what_is_NOT_claimed": "That Edition 1.22 does not exist unpublished, that the AMG has no draft in progress, or that the page will still offer 1.21 tomorrow. A page that offers a document tells you what it offers and nothing about what it does not.",
+      "how_the_reopen_fires": "`edition` and `offered` are the only machine-readable fields here. If a later round records a citation to a Part 9 edition above 1.21 without also recording a dated check for it, tests/test_cdm_pins.py's candidate set stops being empty and the build fails - which is the mechanism, and it fires on the citation rather than on this node."
+    },
+    "the_symmetry_with_part_2b_is_worth_one_sentence": "Part 2b's pinned edition is one behind an edition that is cited by two siblings and published nowhere; Part 9's pinned edition is the published one. Both records were written by reading the publisher's page on a dated day, and the two findings differ because the documents differ, not because the method did."
+  },
+  "edition_history": {
+    "what_this_is": "The lineage, NOT pins. The governing text for this row set is Edition 1.21 alone and no row is read from any other edition. These two are in hand because two of Edition 1.21's own change-record claims are checkable only by diffing it against its predecessor, and because a lineage is how an interface control document citing an older edition gets placed.",
+    "home": "fixtures/cat062/spec/history/",
+    "count": 2,
+    "editions_in_hand": "1.19 and 1.20",
+    "these_are_not_pins": "tests/test_cdm_pins.py derives the pin set from the *_pin.json records' `local_path` nodes and from FORMAT_COVERAGE.md's pin rows, and compares it against the PDFs sitting DIRECTLY in a fixtures/*/spec/ directory. spec/history/ is deliberately one level down and is not swept, which is what keeps a lineage from being mistaken for a pin.",
+    "committed": false,
+    "why_not_committed": "Same rule as every pin here: `git ls-files | grep -c '.pdf$'` is 0 across the whole repository, .gitignore refuses `*.pdf` at staging time, and the wheel excludes fixtures/*/spec/*.pdf and fixtures/*/spec/history/*.pdf positively. EUROCONTROL's own notice on Edition 1.21's back cover states the terms: 'It may be copied in whole or in part, provided that EUROCONTROL is mentioned as the source and it is not used for commercial purposes'. A pin plus an edition plus a hash identifies the document without redistributing it.",
+    "files": [
+      {
+        "edition": "1.20",
+        "date_as_the_document_states_it": "13/02/2023",
+        "filename": "asterix-cat062-system-track-data-p9-ed1-20.pdf",
+        "bytes": 1764974,
+        "pages": 143,
+        "sha256": "97885339c2850f1fa674653b7b490b88b7f6489527198b22eae32d9630b5332a",
+        "why_in_hand": "Edition 1.21's change record makes twelve claims about what changed. Two of them - 'Numerous editorial corrections' and 'Bit 2 in I062/080/SI#5 corrected' - are checkable only against 1.20, and 'Numerous' is not a claim that can be verified at all without the predecessor in hand."
+      },
+      {
+        "edition": "1.19",
+        "date_as_the_document_states_it": "11/12/2020",
+        "filename": "eurocontrol-asterix-cat062-p9-ed1-19.pdf",
+        "bytes": 1171914,
+        "pages": 141,
+        "sha256": "01f63318451a39220a0bb5e51225dd5f91278862afec86fa42c269600a35cdfc",
+        "why_in_hand": "Edition 1.20's change record says 'Table 1 \"Data Items of Category 062\" removed', which is the single structural change in the lineage that affects how the item inventory is derived. 1.19 is the last edition that HAS the table, so it is the only witness to what was removed."
+      }
+    ],
+    "verification_performed": "SHA-256 and byte counts computed from the files on disk; page counts by the ruled method, with the raw-object scan run alongside and agreeing for both."
+  },
+  "the_item_roster_has_ONE_statement_in_this_edition_and_that_is_a_departure": {
+    "fact": "Edition 1.20's change record reads 'Table 1 \"Data Items of Category 062\" removed', SECTIONS AFFECTED 5.1. So from Edition 1.20 onward section 5.1 is one sentence - 'The standardised Data Items which shall be used for the transmission of System Track Data are described in Chapter 5.2.' - and there is no item table.",
+    "why_this_matters_to_the_row_set": "cat034_pin.json records a finding in the opposite direction: Part 2b has TWO item rosters, section 5.1's Table 1 and section 5.3's Table 3, and they do not hold the same thing. Part 9 has ONE, the UAP in section 5.3, and every item's existence is established by its own section 5.2 entry. That removes a whole class of disagreement and creates a different exposure: there is no cross-check on the UAP, so a FRN whose section 5.2 entry is missing would be invisible. It was checked by hand instead - all 27 items in the UAP have a section 5.2 entry and all 27 section 5.2 entries appear in the UAP.",
+    "the_count": 27,
+    "the_items": [
+      "I062/010",
+      "I062/015",
+      "I062/040",
+      "I062/060",
+      "I062/070",
+      "I062/080",
+      "I062/100",
+      "I062/105",
+      "I062/110",
+      "I062/120",
+      "I062/130",
+      "I062/135",
+      "I062/136",
+      "I062/185",
+      "I062/200",
+      "I062/210",
+      "I062/220",
+      "I062/245",
+      "I062/270",
+      "I062/290",
+      "I062/295",
+      "I062/300",
+      "I062/340",
+      "I062/380",
+      "I062/390",
+      "I062/500",
+      "I062/510"
+    ],
+    "plus_two_uap_slots_that_are_not_section_5_2_items": [
+      "RE",
+      "SP"
+    ],
+    "the_series_is_not_contiguous_and_no_note_explains_it": "I062/000, I062/101 and I062/106 all EXISTED and were deleted - the change record says so for each: 'Deletion of items : I062/000, I062/600, I062/605, I062/610' at 0.25, 'Removal of the low resolution position items (101 and 106)' at 0.29. So three of the gaps in the number series have a documented cause in the change record and the rest - 020, 030, 050, 090, 140 and so on - have none. Recorded because a reader looking for I062/000 in a category where every other part has one will find no note saying it was removed except in the change record."
+  },
+  "the_uap": {
+    "locus": "Section 5.3, Table 1 - 'System Track Data UAP', printed pages 131 and 132.",
+    "the_table_is_called_Table_1_and_there_is_no_other_table_in_the_document": "Which is a consequence of the removal recorded above: section 5.1's Table 1 was deleted and section 5.3's table kept its own number, so the document's only table is numbered 1 and is the UAP. Part 2b numbers the equivalent table 3. A row set citing 'Table 1' means different things in the two parts, which is why every citation in FORMAT_COVERAGE.md's CAT062 section gives the section number as well.",
+    "single_and_fixed": "Section 4.6, printed page 7: 'A single User Application Profile (UAP) is defined and shall be used for System Track Data messages.'",
+    "frn_count_defined": 27,
+    "frn_count_total_slots": 35,
+    "fspec_octets_maximum": 5,
+    "how_the_maximum_is_derived": "Table 1 interleaves five FX rows - after FRN 7, 14, 21, 28 and 35 - so the FSPEC is five groups of seven presence bits each followed by an FX bit: 35 + 5 = 40 bits = 5 octets. This is derived from Part 9's own table and NOT from Part 2b's (14 FRNs, 2 octets) or Part 4's (28 FRNs, 4 octets). A codec that imported either sibling's constant would refuse a legal five-octet FSPEC or accept a sixth octet that names nothing.",
+    "the_spare_frns": {
+      "which": [
+        2,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "frn_2_has_a_stated_reason": "The NOTE under Table 1: 'The Field Reference Number #2 is kept free in order to prevent a full incompatibility with previous releases of ASTERIX Cat. 062 already implemented.' The change record explains what happened - 0.25 deleted I062/000 and 0.26 and 0.27 shuffled I062/100/101 and I062/105/106 - so FRN 2 is a hole left by a deletion rather than a slot held for something.",
+      "frns_29_to_33_have_no_stated_reason": "Five consecutive Spare rows between I062/340 at FRN 28 and RE at FRN 34, with no note. The document says nothing about why the RE and SP fields sit at 34 and 35 rather than at 29 and 30. Ambiguity 4.",
+      "consequence_for_the_adapter": "A set FSPEC bit naming a Spare FRN is a refusal, and it is a DIFFERENT refusal from a set bit above FRN 35. Above 35 the bit names nothing the UAP has ever defined; at 2 or at 29 to 33 the bit names a slot the UAP defines AS EMPTY, which for FRN 2 means it may name something a pre-0.25 encoder meant by it. Both are undecodable and both desynchronise the record, so both refuse - and the refusal message says which case it is, because a reader debugging a legacy encoder needs the FRN 2 sentence and not the FRN 36 one."
+    },
+    "the_length_column_notation": {
+      "quoted": "'the fourth column gives the format and the length of each item, a stand-alone figure indicates the octet-count of a fixed-length Data Item, 1+ indicates a variable-length Data Item comprising a first part of 1 octet followed by n-octets extents as necessary.'",
+      "what_the_legend_does_not_explain": "`3+`, which is I062/510's entry, and `2` for FRN 25 against a two-octet item - the second is consistent. `3+` is not in the legend at all: section 5.2.27 defines it as a three-octet first part followed by three-octet extents, so the notation means 'first part of 3 octets followed by 3-octet extents', which the legend's wording for `1+` does not generalise to. Ambiguity 5, and it is Part 2b's ambiguity 11 in a different costume - there the unexplained notations were `(1+2*N)` and `1+1+`.",
+      "and_1_plus_covers_three_different_mechanics_here": "Table 1 gives `1+` to I062/080 (an FX-chained extent list), to I062/380 (a compound item with a four-octet primary subfield), to I062/270 (an FX-chained extent list of three differently-meaning octets) and to RE (a length-prefixed opaque field). The notation cannot distinguish them and the section 5.2 entries can, which is why every length rule in the codec is derived from section 5.2 and never from the UAP's fourth column."
+    }
+  },
+  "the_change_record_and_what_it_over_claims": {
+    "what_edition_1_21_s_record_says_it_changed": [
+      "Numerous editorial corrections",
+      "Bit 2 in I062/080/SI#5 corrected",
+      "Added note to I062/080/SUC",
+      "Added Mode 5 Interrogation to I062/080",
+      "Editorial update of I062/135",
+      "Added note to I062/135",
+      "Editorial update of I062/136",
+      "Note added to I062/185",
+      "Added notes to I062/290",
+      "Length of I062/290/SI#5 corrected",
+      "References in I062/295 corrected",
+      "Note added in I062/295",
+      "Update text of I062/295/SI#1"
+    ],
+    "the_one_claim_that_is_structurally_load_bearing": "'Added Mode 5 Interrogation to I062/080'. Edition 1.21 adds a SIXTH EXTENT to I062/080 carrying one flag, M5I, and six spare bits. An adapter written against Edition 1.20 has five extents and would refuse a record whose fifth extent sets FX - which is a refusal, not a silent misread, and is therefore the good direction to fail in. The reverse is worse: an Edition 1.21 decoder reading a 1.20 record loses nothing, so the incompatibility runs one way only.",
+    "the_second_structural_claim": "'Length of I062/290/SI#5 corrected'. I062/290 Subfield #5, ADS-C Age, is TWO octets in Edition 1.21 at 1/4 s reaching 16383.75 s, while every other subfield of the item is one octet reaching 63.75 s. A decoder that treated all ten subfields uniformly would desynchronise the item by one octet the first time an ADS-C age arrived, and everything after it in the record would be garbage that still satisfied the record length. This is the single most dangerous uniformity assumption in the category and the change record says the length was wrong in an earlier edition.",
+    "verdict_on_the_editorial_claims": "NOT DIFFED, and the reason is recorded rather than the diff being asserted. cat034_pin.json diffed Edition 1.28 against 1.29 section by section and found two of three claims contradicted by the pages. Doing the same here would mean diffing 132 printed pages against 143 to adjudicate the phrase 'Numerous editorial corrections', which is not a claim with a truth value: no diff can show that a count of unspecified corrections is wrong. The STRUCTURAL claims above were checked against Edition 1.20 in hand and both hold - 1.20's I062/080 has five extents and its I062/290 SI#5 is two octets already, so 'corrected' refers to an edition earlier than 1.20 and 1.19 confirms it: 1.19's SI#5 is also two octets, so the correction predates both copies in hand and is not verifiable from them.",
+    "what_this_does_NOT_impugn": "Any claim in the 1.20 or 1.19 records, none of which were diffed, and no claim about the content of Edition 1.21 itself - every section quoted in the row set was read from the pinned copy directly and not inferred from a change record."
+  },
+  "the_editions_that_are_not_in_the_change_record": {
+    "editions_the_record_lists": [
+      "0.10",
+      "0.11",
+      "0.12",
+      "0.13",
+      "0.14",
+      "0.15",
+      "0.17",
+      "0.18",
+      "0.19",
+      "0.20",
+      "0.21",
+      "0.22",
+      "0.23",
+      "0.24",
+      "0.25",
+      "0.26",
+      "0.27",
+      "0.28",
+      "0.29",
+      "0.30",
+      "1.0P",
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "1.5",
+      "1.6",
+      "1.7",
+      "1.8",
+      "1.9",
+      "1.10",
+      "1.11",
+      "1.12",
+      "1.13",
+      "1.14",
+      "1.15",
+      "1.16",
+      "1.17",
+      "1.18",
+      "1.19",
+      "1.20",
+      "1.21"
+    ],
+    "edition_0_16_is_absent_from_the_record_entirely": "The table runs 0.15 (June 2000) straight to 0.17 (November 2000), with no 0.16 row and no note that one is missing, in a table introduced as recording 'the complete history of the successive editions of the present document'. This is Part 2b's missing Edition 1.25 in the same document family: two specifications, two change records that call themselves complete, one absent edition each. Ambiguity 3.",
+    "the_publication_page_offers_fewer_editions_than_the_record_lists": "The change record lists 42 editions. The publication page offers 12, editions 1.10 to 1.21. Every edition below 1.10 exists only in the change record. That is not a contradiction - a publisher is not obliged to serve superseded drafts - and it is recorded because it bounds what any future lineage work on this category can reach.",
+    "the_1_0P_suffix": "One row reads '1.0P March 2004' and the next '1.1 October 2004'. 'P' is not glossed anywhere in the document and does not appear in the abbreviation list. Part 2b's lineage has no equivalent. Read against the status vocabulary on page ii it is most likely 'Proposed', which would make 1.0P a proposed issue of 1.0 - but the record also has no 1.0 row, so on that reading the released 1.0 is the edition missing rather than 0.16. Recorded as unresolved. Ambiguity 3 carries both halves."
+  },
+  "the_two_documents_do_not_exclude_each_other_and_that_is_the_departure": {
+    "cat034_and_cat048_exclude_each_other_in_one_sentence": "cat034_pin.json records Part 2b section 4.1 and Part 4 section 4.1 as the same sentence with a parenthetical moved, each naming the other's content as the other's business. That is what bounds adapter #11's and adapter #12's inputs to one category each.",
+    "part_9_section_4_1_quoted": "'The transmission of System Track Data shall require the transmission of one type of message, i.e. target reports and flight plan data'",
+    "what_that_sentence_does_and_does_not_do": "It bounds the category to ONE message type, which is a stronger statement than Part 2b's seven and Part 4's two, and it is the sentence that decides there is no Table 2 in this specification: with one message type there is no per-type item matrix, so every item's Encoding Rule states its own presence individually - 'This Item shall be present in every ASTERIX record' or 'This Item is optional' - and section 4.4 says so explicitly: 'The Encoding Rules are contained in each Data Item.' What the sentence does NOT do is exclude another category by name. Part 9 does not mention Part 2b or Part 4 in section 4.1 at all.",
+    "consequence_for_the_scope_of_adapter_13": "Adapter #13's input is a CAT062 data block and nothing else, and the bound comes from the CAT octet and from section 4.6's data-block layout rather than from a mutual-exclusion sentence. The result is the same and the evidence is weaker, which is worth stating: the boundary here rests on 'CAT = 062, is a one-octet field indicating that the Data Block contains System Track Data' and on the fact that no other category's UAP is in this document.",
+    "the_five_mandatory_items_are_the_replacement_for_a_table_2": "I062/010, I062/015, I062/040, I062/070 and I062/080 - of which four say 'This Item shall be present in every ASTERIX record' (010, 040, 070, 080) and I062/015 says 'This Item is optional'. So FOUR items are mandatory in every record, unconditionally, with no message type to qualify them. Part 2b's two-always-mandatory plus a seven-column matrix collapses here into four-always and everything else optional, which is a much simpler gate and a much weaker one: there is no per-type expectation for a missing item to violate."
+  },
+  "the_isbn_now_identifies_five_documents_across_four_parts": {
+    "finding": "This document's ISBN is 978-2-87497-028-3. cat034_pin.json records the same ISBN on Part 2b Edition 1.29 and on Part 4 Edition 1.32, and states the finding as 'shared across at least two ASTERIX parts at two different editions eleven years apart'. Part 9 Edition 1.21 (2025), Part 9 Appendix A Edition 1.3 (2023) and Part 16 Edition 1.3 (2021) all carry it too.",
+    "so": "Five documents, four different publications reference numbers - SPEC-0149-2b, -4, -9, -9A, -16 - one ISBN, spanning 2021 to 2025. The ISBN identifies neither the part, nor the edition, nor even whether a document is a specification or an appendix to one. It is recorded in every pin because it is printed on every identification sheet, and it is load-bearing for nothing.",
+    "what_is_NOT_claimed": "Which publication the ISBN was originally issued for, whether EUROCONTROL assigns one per specification family or one per programme, or that no ASTERIX part carries a different one. Only that these five carry this one.",
+    "why_this_strengthens_rather_than_repeats_the_earlier_finding": "Two documents sharing an ISBN is consistent with a clerical slip on one of them. Five across four reference numbers and four years is a practice, and a practice is what a reader needs to know about before using an ISBN to identify an ASTERIX document."
+  },
+  "the_back_cover_copyright_year_is_truncated": {
+    "quoted": "'© EUROCONTROL - June 202'",
+    "where": "PDF page 146, the unnumbered back cover, immediately under the SUPPORTING EUROPEAN AVIATION mark.",
+    "finding": "The year is three digits. The identification sheet dates the edition 05/06/2025 and the change record's last row says 'May 2025', so the intended year is 2025 and the final digit is missing from the rendered text.",
+    "why_it_is_recorded": "It is the only place in the document where a date is malformed rather than merely inconsistent, and it sits on the page a reader photographs to cite the copyright terms. The terms themselves are complete and are quoted in full in `edition_history.why_not_committed`.",
+    "not_an_extraction_artefact": "Checked against the raw text of the page rather than inferred: the string is 'June 202' followed by whitespace and a newline, with no digit and no ligature between the '2' and the line break. Ambiguity 2."
+  },
+  "the_change_record_date_disagrees_with_the_identification_sheet_by_a_month": {
+    "identification_sheet": "Edition Date: 05/06/2025",
+    "cover": "Edition Date : 05/06/2025",
+    "change_record_last_row": "1.21  May 2025",
+    "finding": "June against May, for the same edition, inside one document. Part 2b's change record dates editions 1.28 and 1.29 only to the month and cat034_pin.json records that as 'consistent, not contradictory' because March 2021 contains both 02/03/2021 and 15/03/2021. Here the month itself differs, so the same tolerance does not apply.",
+    "which_is_preferred_and_why": "The identification sheet, on two grounds. It is the more specific statement - a day and a month against a month - and it is stated twice, on the cover and on page ii, in agreement. The change record's date column is the same column Part 2b's record uses to call Edition 1.26 'Proposed' while the document's own title page says 'Released Issue', so the column has a demonstrated record of being the wrong one in this document family.",
+    "consequence": "`source.edition_date_as_the_document_states_it` is 05/06/2025. Ambiguity 1."
+  },
+  "the_contact_unit_is_a_different_string_in_every_document_in_this_repository": {
+    "part_9_edition_1_21": "ATD/APD/STAN",
+    "part_9_appendix_a_edition_1_3": "EGSD/PCS/SCS/STAN",
+    "part_16_edition_1_3": "DECMA/PCS/SCS/STAN",
+    "part_2b_edition_1_29": "DECMA/PCS/SCS/STAN",
+    "finding": "One contact person, Alexander Engel, on one telephone number, +32-2-729 3355, in four documents, under three different organisational unit designations. The two 2021 documents agree; the 2023 appendix and the 2025 core specification each differ.",
+    "why_it_is_recorded_rather_than_reconciled": "It is the cleanest available dating signal inside these documents that does not come from a date field. A EUROCONTROL reorganisation between 2021 and 2023 and again by 2025 is the obvious reading, and it is an inference: the documents state the strings and explain nothing. Recorded so that a reader comparing two ASTERIX identification sheets does not conclude one is a forgery.",
+    "what_is_NOT_claimed": "That any reorganisation occurred, or when, or what any acronym expands to."
+  },
+  "the_reference_list_cites_three_documents_for_things_they_do_not_contain": {
+    "finding": "Three cross-references in section 5.2 name a reference-list entry that does not contain the material cited. All three were checked against section 2.2's own numbered list, which is the only place this document says what [Ref. N] means.",
+    "section_2_2_as_the_document_numbers_it": {
+      "1": "EUROCONTROL Specification SPEC-0149, edition 3.1, 23 November 2021, ASTERIX Part 1",
+      "2": "ICAO Annex 10, Vol. IV",
+      "3": "ICAO Document 4444",
+      "4": "ICAO Annex 14",
+      "5": "EUROCAE ED-102B, published January 2021, including Change 1 (January 2022)",
+      "6": "RTCA DO-260C, published December 2020, including Change 1 (January 2022)",
+      "7": "EUROCONTROL Specification SPEC-0149-12, Edition 2.6 or later, 21 December 2021, Part 12 Category 021",
+      "8": "EUROCONTROL Specification SPEC-0149-12-A, Edition 1.5 or later, Part 12 Appendix A: Reserved Expansion Field"
+    },
+    "the_three": [
+      {
+        "where": "section 5.2.18, I062/245 Target Identification, NOTE 1",
+        "quoted": "'For coding, see section 3.1.2.9 of [Ref. 3]'",
+        "what_ref_3_is": "ICAO Document 4444 - Air Traffic Management, the PANS-ATM procedures document.",
+        "what_the_coding_actually_is": "The six-bit character alphabet used by every ASTERIX identification item and by 1090ES. asterix_cat021.py already carries it, sourced to ICAO Annex 10 Vol. IV Table 3-8 - which is [Ref. 2] in this very list, not [Ref. 3].",
+        "consequence": "The alphabet is taken from the sibling adapter's table, and the citation defect is recorded rather than followed."
+      },
+      {
+        "where": "section 5.2.24, I062/380 Subfield #2, Target Identification",
+        "quoted": "'Coding rules are provided in [3] Section 3.1.2.9.1.2 and Table 3-9'",
+        "finding": "The SAME alphabet, cited to the same wrong reference at a DIFFERENT section number and a different table number from the citation eleven items earlier. So the document cites one coding table two ways, and neither way points at the document that holds it.",
+        "consequence": "Ambiguity 6."
+      },
+      {
+        "where": "section 5.2.25, I062/390 Subfield #5, Type of Aircraft, NOTE 2",
+        "quoted": "'The types of aircraft are defined in [Ref.4]'",
+        "what_ref_4_is": "ICAO Annex 14 - Aerodromes.",
+        "finding": "Aircraft type designators are ICAO Document 8643, which is not in this reference list at all. Annex 14 is about aerodrome design. The four-character field is decoded as four ASCII characters and the designators are never resolved to anything, so the defect costs the adapter nothing and would cost an implementer trying to validate the field a day.",
+        "consequence": "Ambiguity 6."
+      }
+    ],
+    "a_fourth_that_is_a_number_rather_than_a_bracket": {
+      "where": "section 5.2.25, I062/390 Subfield #9, Runway Designation, NOTE 2",
+      "quoted": "'For details refer to.[5] Section 5'",
+      "finding": "[5] is EUROCAE ED-102B, the 1090 MHz ADS-B MOPS, which has no runway-designation section. The stray full stop before the bracket is in the document. Runway designators are ICAO Annex 14 - which is [Ref. 4], the reference the aircraft-type note wrongly used - so the two notes look like they have been transposed.",
+      "what_is_NOT_claimed": "That they were transposed. Two wrong citations that would be right if swapped is a pattern, not a proof."
+    },
+    "what_this_does_to_the_row_set": "Nothing that can be seen in the output and one thing that can be seen in this record. Every affected field is a character string or an integer the adapter parks verbatim, so no decoding depends on the cited documents. What changes is the EVIDENCE column: three rows in FORMAT_COVERAGE.md's CAT062 section cite the pinned document for a structure and cite this record for the fact that the document's own onward citation is wrong."
+  },
+  "the_two_findings_inside_section_5_2_that_a_decoder_can_get_wrong": [
+    {
+      "finding": "I062/380's primary-subfield NOTE names a bit that does not exist.",
+      "quoted": "'Despite there are now two subfields (#26 and #27) reporting, respectively, the Indicated Airspeed track data and the Mach Number track data, the former subfield #4 (and its presence bit, bit-37) is kept in order to prevent a full incompatibility with previous releases of ASTERIX Cat. 062 already implemented.'",
+      "why_it_is_wrong": "I062/380's primary subfield is four octets and section 5.2.24 numbers its bits 32 down to 1. There is no bit 37. Subfield #4's presence bit is bit-29, which the same section states correctly nine lines earlier: 'bit-29 (IAS) Subfield #4: Indicated Airspeed/ Mach Number'.",
+      "the_same_note_in_I062_295_gets_it_right": "Section 5.2.21's equivalent note says 'the subfield #8 (and so its presence bit, bit-32) is kept free', and bit-32 IS subfield #8's presence bit in that item's five-octet primary. So the document states the same kind of fact twice, correctly once.",
+      "consequence": "None for a decoder that reads the structure rather than the note - the presence-bit map is unambiguous in the diagram and in the per-bit list. It is recorded because a reader reconciling the note against the diagram will conclude one of them is wrong and needs to be told which. Ambiguity 7."
+    },
+    {
+      "finding": "I062/110's primary subfield labels one presence bit with no subfield number.",
+      "quoted": "'bit-2 (XP) Subfield #: X Pulse Presence.'",
+      "why_it_matters_slightly": "Every other presence bit in the item reads 'Subfield #N:'. This one reads 'Subfield #:' with the number missing, and the two value lines beneath it say 'Absence of Subfield #7' and 'Presence of Subfield #7', so the number is recoverable from the same paragraph. Recorded as an editorial defect with no decoding consequence. Ambiguity 7."
+    }
+  ],
+  "the_time_offset_cites_an_item_of_a_DIFFERENT_CATEGORY_and_this_one_has_a_consequence": {
+    "where": "Section 5.2.9, I062/110 Subfield #6, Time Offset for POS and GA",
+    "quoted": "'TOS Time Offset coded as a twos complement number with an LSB of 1/128 s. The time at which the Mode 5 Reported Position (Subfield #3) and Mode 5 GNSS-derived Altitude (Subfield #4) are valid is given by Time of Day (I048/140) plus Time Offset.'",
+    "finding": "I048/140 is Part 4's Time of Day - CATEGORY 048. Category 062 has no I048/140 and no item numbered 140 at all. Its own time of day is I062/070, Time Of Track Information, and section 5.2.5 defines it with the same LSB of 1/128 s. The sentence has been carried over from the CAT048 specification, where I048/140 is correct, without renumbering.",
+    "why_this_one_is_not_merely_editorial": "It is the only sentence in the category that tells an implementer how to combine two items into a time, and it names an item the implementer does not have. Following it literally is impossible; the only reading that produces a value is I062/070 plus TOS. That is a SUBSTITUTION the adapter makes, so it is a ruling and not a transcription, and it is recorded here and in FORMAT_COVERAGE.md's ambiguity register rather than being applied quietly.",
+    "the_ruling": "TOS is added to the instant derived from I062/070, and the result is used for the Mode 5 reported position and GNSS-derived altitude ONLY - never for the track's own time. The substitution is stated in Event.payload next to the value, so a consumer reading the object can see that the specification named a different item and what was done about it. The alternative - refusing Subfield #6 because its instruction is unfollowable - would discard a value whose meaning is not actually in doubt.",
+    "and_the_absence_note_is_honoured_as_written": "'TOS shall be assumed to be zero if Subfield #6 is not present.' So an absent Subfield #6 is not an unknown offset, it is a stated zero, and that is the one place in this category where an absent field has a defined value rather than meaning 'not reported'."
+  },
+  "the_fields_whose_width_exceeds_their_stated_range": {
+    "why_this_node_exists": "It is the disposition cat034_codec.py records for `rho` and `latitude` and cat048_codec.py records for `cartesian`, and Part 9 has more instances of it than both siblings together. The rule is stated once and applied per form: where the document prints a range, the DOCUMENT'S range is the bound and a pattern outside it is refused at the item level; where the document prints no range, the field WIDTH is the bound. Never a clamp, never a mask, never a wrap.",
+    "instances": [
+      {
+        "item": "I062/105 latitude",
+        "stated": "-90 <= latitude <= 90 deg",
+        "width_reaches": "+/-180 at 180/2^25 over 32 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/105 longitude",
+        "stated": "-180 <= longitude < 180 deg",
+        "width_reaches": "exactly that",
+        "bound_used": "either; they agree"
+      },
+      {
+        "item": "I062/130",
+        "stated": "Vmin -1500 ft, Vmax 150000 ft",
+        "width_reaches": "-204800 to 204793.75 at 6.25 ft over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/135 CTBA",
+        "stated": "-15 FL <= CTBA <= 1500 FL",
+        "width_reaches": "-4096 to 4095.75 FL at 1/4 FL over 15 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/136",
+        "stated": "Vmin -15 FL, Vmax 1500 FL",
+        "width_reaches": "-8192 to 8191.75 FL at 1/4 FL over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/185 Vx, Vy",
+        "stated": "-8192 to 8191.75 m/s",
+        "width_reaches": "exactly that",
+        "bound_used": "either; they agree"
+      },
+      {
+        "item": "I062/210 Ax, Ay",
+        "stated": "no range; NOTE 2 says 'Maximum value means maximum value or above'",
+        "width_reaches": "-32 to 31.75 m/s^2 at 0.25 over 8 bits",
+        "bound_used": "the width"
+      },
+      {
+        "item": "I062/340 SF#2 RHO",
+        "stated": "Maximum value = 256 NM",
+        "width_reaches": "255.99609375 at 1/256 NM over 16 bits",
+        "bound_used": "the WIDTH - the printed figure is one LSB above anything the field can carry, exactly as Part 2b's I034/100 is, and a bound the encoder cannot honour is not a bound"
+      },
+      {
+        "item": "I062/340 SF#4 Mode C",
+        "stated": "Vmin -12 FL, Vmax 1270 FL",
+        "width_reaches": "-4096 to 4095.75 FL over 14 bits at 1/4 FL",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#5 True Airspeed",
+        "stated": "0 <= TAS <= 2046 knots",
+        "width_reaches": "0 to 65535 at 1 kt over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#6 and SF#7 Altitude",
+        "stated": "-1300 ft <= Altitude <= 100000 ft",
+        "width_reaches": "-102400 to 102375 at 25 ft over 13 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#9 Altitude",
+        "stated": "-1500 ft <= altitude <= 150000 ft",
+        "width_reaches": "-327680 to 327670 at 10 ft over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#9 TTR",
+        "stated": "0 <= TTR <= 655.35 Nm",
+        "width_reaches": "exactly that at 0.01 NM over 16 bits",
+        "bound_used": "either; they agree"
+      },
+      {
+        "item": "I062/380 SF#15 Roll Angle",
+        "stated": "-180 <= Roll Angle <= 180 deg",
+        "width_reaches": "-327.68 to 327.67 at 0.01 deg over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#16 Rate of Turn",
+        "stated": "-15 deg/s <= Rate of Turn <= 15 deg/s, NOTE 2 'Value 15 means 15 deg/s or above'",
+        "width_reaches": "-16 to 15.75 at 1/4 deg/s over 7 bits",
+        "bound_used": "the stated range, and the AT-OR-ABOVE reading of the maximum is parked as a flag rather than folded into the number"
+      },
+      {
+        "item": "I062/380 SF#18 Ground Speed",
+        "stated": "-2 NM/s <= Ground Speed < 2 NM/s",
+        "width_reaches": "exactly that at 2^-14 NM/s over 16 bits",
+        "bound_used": "either; they agree"
+      },
+      {
+        "item": "I062/380 SF#20 Wind Speed",
+        "stated": "0 <= Wind Speed <= 300 kt",
+        "width_reaches": "0 to 65535 at 1 kt over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#20 Wind Direction",
+        "stated": "1 <= Wind Direction <= 360 deg",
+        "width_reaches": "0 to 65535 at 1 deg over 16 bits",
+        "bound_used": "the stated range - and note the LOW bound is 1, not 0, so a zero is out of range and is refused rather than read as north"
+      },
+      {
+        "item": "I062/380 SF#20 Temperature",
+        "stated": "-100 C <= Temperature <= 100 C",
+        "width_reaches": "-8192 to 8191.75 at 0.25 C over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#20 Turbulence",
+        "stated": "Integer between 0 and 15 inclusive",
+        "width_reaches": "0 to 255 over 8 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#26 Indicated Airspeed",
+        "stated": "0 Kt <= IAS <= 1100 Kt",
+        "width_reaches": "0 to 65535 at 1 kt over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#27 Mach Number",
+        "stated": "0 <= Mach <= 4.096",
+        "width_reaches": "0 to 524.28 at 0.008 over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/380 SF#28 BPS",
+        "stated": "-0mb <= BPS <= 409.5 mb",
+        "width_reaches": "exactly that at 0.1 mb over 12 bits",
+        "bound_used": "either; the printed '-0mb' is a typographic minus on a zero and is read as 0"
+      },
+      {
+        "item": "I062/390 SF#10 CFL",
+        "stated": "0 <= CFL <= 1500 FL",
+        "width_reaches": "0 to 16383.75 FL at 1/4 FL over 16 bits",
+        "bound_used": "the stated range"
+      },
+      {
+        "item": "I062/500 SF#2 COV",
+        "stated": "NOTE 2: 'The maximum value for the (unsigned) XY covariance component is 16.383 km'",
+        "width_reaches": "-16384 to 16383.5 m at 0.5 m over 16 bits",
+        "bound_used": "the width, and the NOTE's figure is recorded beside it - 16.383 km is 32766 half-metres and the field reaches 32767, so the printed figure is the field's positive extreme minus one LSB and is not a range the encoder could honour as stated"
+      },
+      {
+        "item": "I062/290 SF#1 to #4, #6 to #10",
+        "stated": "Maximum value = 63.75 s",
+        "width_reaches": "exactly that at 1/4 s over 8 bits",
+        "bound_used": "either; they agree, and NOTE 6 'Maximum value means maximum value or above' makes 63.75 a FLOOR that is parked as a flag"
+      },
+      {
+        "item": "I062/290 SF#5 ADS-C Age",
+        "stated": "Max. value = 16383.75s (> 4 hours)",
+        "width_reaches": "exactly that at 1/4 s over 16 bits",
+        "bound_used": "either; they agree"
+      }
+    ],
+    "the_at_or_above_maximum_is_a_separate_discipline_and_it_recurs_nine_times": "Nine places in this specification say 'Maximum value means maximum value or above' or its equivalent: I062/210 NOTE 2, I062/290 NOTE 6, I062/380 SF#16 NOTE 2, and all six subfields of I062/500. A value at the maximum is therefore a FLOOR and not a measurement, which is the AIS 102.2 kt lesson and asterix_cat021.py's AGE_AT_OR_ABOVE_MAXIMUM. The number is carried as the number and the fact that it is a floor is carried beside it, because a consumer differentiating two consecutive maxima would compute a zero rate of change from two saturated readings."
+  },
+  "the_item_the_specification_forbids_using": {
+    "item": "I062/245, Target Identification",
+    "quoted": "NOTE 2: 'As the Callsign of the target can already be transmitted (in I062/380 Subfield #2 if downlinked from the aircraft or in I062/390 Subfield #2 if the target is correlated to a flight plan), and in order to avoid confusion at end user's side, this item SHALL not be used.'",
+    "the_state_this_creates": "The item has a UAP slot (FRN 10), a full section 5.2.18 structure, a seven-octet length, an STI field with four defined values including '11 Invalid', and an Encoding Rule reading 'This Item is optional'. And a NOTE in the same section, in capitals on the operative word, forbidding its use. So the document simultaneously defines it, permits it and prohibits it.",
+    "the_ruling": "DECODED AND PARKED, never refused. Three reasons, in order of weight. First, 'SHALL not be used' binds an ENCODER and this adapter is a decoder: a record carrying the item is non-conformant, and refusing it would discard data the FSPEC correctly announced, which is the Part 2b Table-2-`X` disposition reached again. Second, the item is fully specified, so there is no ambiguity about what its octets mean. Third, the prohibition is itself worth carrying to a consumer - a record that uses I062/245 tells you something about the system that emitted it - and it can only be carried if the item is read. `attributes.encoder_conformance` names it.",
+    "and_the_two_items_it_defers_to_are_not_merged_with_it": "I062/380 SF#2 and I062/390 SF#2 are a downlinked identification and a flight-plan callsign respectively, and NOTE 2 says which is which. All three park separately. Choosing one as 'the' callsign would be the arbitration the fusion refusal declines, and doing it on the authority of a note that forbids one of the three would be worse."
+  },
+  "the_implementation_dependent_items": {
+    "locus": "Section 4.8, printed page 7, a section Edition 1.18's change record says it added.",
+    "quoted": "'To prevent ambiguities in interpretation, content and encoding of data items is defined as accurately as possible. There are, however, conditions which do not allow such strict definition and where there may be differences in the implementation depending on the system. Such a data item will be marked as \"implementation dependent\" in a note. The exact meaning of the data item shall then be described in the Interface Control Document (ICD) of the respective system. In such a case the provisions of the ICD will reflect the actual implementation of the data item.'",
+    "the_two_it_names": [
+      "I062/080 Track Status, Fifth Extension, Bit-5 (SFC)",
+      "I062/340 (Measured Information)"
+    ],
+    "why_this_is_the_most_important_paragraph_in_the_document_for_this_repository": "It is a normative delegation of MEANING to a document this repository does not have and cannot have - an ICD is per-deployment. So for I062/340 as a whole, and for one bit of I062/080, the pinned specification states the STRUCTURE and explicitly declines to state the semantics. Every other park in this row set is a park because the CDM has no home for the value; these two are parks because THE DOCUMENT SAYS the value's meaning is not standardised. The distinction is recorded on the rows and in `attributes.implementation_dependent`, because a consumer who does not know that I062/340's 'last report' might mean 'latest used' or 'latest measured' will compare it across two systems and get a number.",
+    "the_second_delegation_in_the_same_item": "Section 5.2.23's own NOTE repeats it in narrower terms: 'The term \"last report\" may refer to the \"latest used\" or \"latest measured\". The actual meaning is implementation dependent and needs to be described in the ICD of the SDPS'. And a third: 'The availability of the various data items differs depending on the surveillance technology used and is implementation dependent.' Three sentences, one item, and none of them is about a bit pattern."
+  },
+  "the_fused_content_ruling_is_the_row_sets_and_is_summarised_here_only": {
+    "pointer": "FORMAT_COVERAGE.md, 'Settlement 1 - CAT062 carries FUSED content, and this adapter translates it and fuses nothing'. The ruling belongs in the row set because it decides dispositions; this node exists so a reader of the pin is not left to infer it.",
+    "one_sentence": "Category 062 is the output of a multi-sensor tracker, so the items describing the fusion - the per-technology update ages in I062/290, the per-DAP ages in I062/295, the measured-versus-calculated split, the contributing-sensor lists in the REF, the amalgamation and coasting flags in I062/080, the estimated accuracies in I062/500 - are the UPSTREAM SYSTEM'S STATEMENTS about its own processing. They are translated as statements and nothing in this adapter joins, correlates, arbitrates or accumulates."
+  },
+  "not_committed": {
+    "the_pdfs_are_not_in_git": true,
+    "precedent": "Every other spec directory here. fixtures/cat034/spec/ holds cat034_pin.json and build_fixtures.py and its four PDFs are untracked; fixtures/cat048/spec/ holds twenty-two the same way.",
+    "consequence_for_this_directory": "Four files sit in the working tree because they had to be read - Edition 1.21, Appendix A Edition 1.3, and Editions 1.20 and 1.19 under history/. They are excluded from the commit by .gitignore's `*.pdf` rule, from the wheel by two positive exclude-package-data patterns, and from a fresh clone entirely. What a clone gets is this record.",
+    "why": "Edition 1.21's own back cover states the terms: 'This document is published by EUROCONTROL for information purposes. It may be copied in whole or in part, provided that EUROCONTROL is mentioned as the source and it is not used for commercial purposes (i.e. for financial gain). The information in this document may not be modified without prior written permission from EUROCONTROL.' Redistribution inside an Apache-2.0 wheel is a different act from a citation, and NOTICE's practice is to cite."
+  },
+  "ambiguity_register": {
+    "convention": "Numbered from 1 within this row set, the convention each format section uses for its own register. A number here is not the same number in another section's register.",
+    "entries": {
+      "1": "The edition date is 05/06/2025 on the cover and on the identification sheet and 'May 2025' in the change record's own last row. A month's disagreement inside one document about that document's own date. The identification sheet is preferred, on specificity and on the change-record column's demonstrated unreliability in this family.",
+      "2": "The back cover's copyright line reads '(c) EUROCONTROL - June 202' - a three-digit year. Checked against the raw page text, not an extraction artefact.",
+      "3": "The change record calls itself 'the complete history of the successive editions' and has no row for Edition 0.16, running 0.15 (June 2000) to 0.17 (November 2000). It also has a row for '1.0P' with no row for 1.0 and no gloss for the P suffix, so either 0.16 or 1.0 is the absent edition depending on how P is read. Both halves unresolved.",
+      "4": "FRN 2's Spare row has a NOTE explaining it; FRNs 29 to 33's five consecutive Spare rows have none, and the document does not say why RE and SP sit at 34 and 35.",
+      "5": "The UAP's length-column legend explains `1+` and does not explain `3+`, which is I062/510's entry. It also gives `1+` to four items with four structurally different extension mechanics, so the column cannot be used to derive a length rule. Part 2b's ambiguity 11 in a different costume.",
+      "6": "Four onward citations name a reference-list entry that does not contain what is cited: the six-bit character alphabet cited to ICAO Doc 4444 twice, at two different section numbers; aircraft type designators cited to ICAO Annex 14; runway designators cited to EUROCAE ED-102B. None affects a decode; all four affect anyone trying to validate a field against its source.",
+      "7": "Two editorial defects inside item definitions: I062/380's backwards-compatibility NOTE names 'bit-37' in a four-octet primary subfield numbered 32 to 1, and I062/110's primary lists 'bit-2 (XP) Subfield #:' with the subfield number missing. Both are recoverable from the same paragraph.",
+      "8": "I062/390 Subfield #17's prose says 'bits-16/13 Spare bits set to 0' and then 'bit-13 (VA) Validity' - bit 13 assigned twice in four lines. The structure diagram shows three zeros then VA, i.e. bits 16/14 spare and bit 13 = VA, and the diagram is preferred: it is the only one of the two statements that is internally consistent, and it agrees with the twelve-bit Mode 3/A field below it.",
+      "9": "I062/110 Subfield #6 instructs the reader to add TOS to 'Time of Day (I048/140)', an item of Category 048 that does not exist in Category 062. The only reading that produces a value substitutes I062/070, which has the same LSB. The substitution is a ruling and is stated in the object.",
+      "10": "Section 5.2.19's I062/270 makes one field's MEANING depend on whether a later field is present. NOTE 2: 'When the length only is sent, the largest dimension is provided.' So the first part's seven-bit LENGTH is a length when the second extent carries a WIDTH and is the target's LARGEST DIMENSION when it does not - two different measurements in one field, selected by an FX bit two octets later. The arithmetic is unambiguous (LENGTH and WIDTH at LSB 1 m over bits 8/2, ORIENTATION at 360/2^7 over bits 8/2, all three with FX at bit 1); what is ambiguous is what the number means, and the adapter parks BOTH readings by parking the raw field with a flag saying whether a width followed. Calling it a length unconditionally would be wrong for every length-only record.",
+      "11": "Section 5.2.6's Sixth Extent, added by Edition 1.21, has bit 8 M5I, bits 7/2 spare and bit 1 FX reading 'Extension into next extent'. No seventh extent is defined. The same shape as Part 2b's I034/050 FX and refused the same way, and it is worth noting that this is a NEW instance created by the newest edition rather than an old one nobody cleaned up: every extent this document adds re-opens the same hole at the end of the chain.",
+      "12": "Section 4.5's 'Unused Bits in Data Items' is normative that a decoder 'shall never assume and rely on specific settings of spare or unused bits' and merely recommends zeroing them, while dozens of structure diagrams legend their spares 'set to zero'. Part 2b's ambiguity 12 in this document, and it is what makes a spare-bits fixture mandatory rather than thorough."
+    }
+  }
+}

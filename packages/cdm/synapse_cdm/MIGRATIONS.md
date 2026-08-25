@@ -110,6 +110,54 @@ it is nothing.
   `adapter.roster()` is now the single source both the listing and the refusal read.
   **Package MINOR when released** — an added CLI surface, nothing removed, no schema touched.
 
+- **ASTERIX Category 062 and Category 023 — the specification pass, `cat062` and `cat023` at
+  Phase 1.** Two row sets in `FORMAT_COVERAGE.md`, written and reviewed as specifications with
+  `not yet` in every status cell and no code behind them, plus two pin records and three pinned
+  documents: Part 9 Edition 1.21, its Appendix A (Reserved Expansion Field) Edition 1.3, and
+  Part 16 Edition 1.3. **No adapter ships in this entry** — the ordinals #13 and #14 are recorded
+  as Phase 1 and the roster is unchanged at ten.
+
+  Two rulings the pass had to make explicitly, both in the row sets and both carried in the pin
+  records:
+
+  - **CAT062 carries FUSED content**, being the output of a multi-sensor tracker, and the adapter
+    will TRANSLATE that output and fuse nothing of its own. The items describing the fusion — the
+    per-technology update ages, the per-DAP ages, the amalgamation and coasting flags, the
+    contributing-sensor lists in the REF, the estimated accuracies, the measured-versus-calculated
+    split — are the upstream system's statements and park or map as such. Settlement 1 of the
+    CAT062 section states the six things the adapter therefore does not do.
+  - **`entity_id` basis.** The Mode S address in `I062/380` SF#1 is the identity basis where a
+    record states one, filed under `ICAO24` as three adapters already do; the system track number
+    in `I062/040` is **never** the basis and parks, because sixteen bits allocated by the emitting
+    system and recycled would merge two airframes into one entity. Where no address is stated the
+    id is record-scoped and says so. `asterix_cat048.py`'s sibling-category enumeration is
+    **not** copied forward — it omits `cat034` and would go stale again on the next category — and
+    the CAT062/CAT023 modules will state the property instead of a list.
+
+  **Package MINOR when released** — two documented row sets, no schema touched, no adapter added.
+
+- **Three gate repairs found by writing the two row sets**, each recorded because each was a gate
+  that would have gone on reporting clean:
+  - `tests/test_cdm_format_coverage.py`'s egress-table collector knew seven format names and now
+    knows nine. Both new egress tables are written at Phase 1, so their CDM paths would have been
+    resolved against the models **never** — the state five of the first seven tables were in until
+    the header ruling.
+  - `tests/test_cdm_format_coverage.py`'s Branch R sweep excluded no virtualenv at all and had
+    been failing on a clean tree since the consumer-path round installed this package into `.venv`
+    inside the clone: it found four extra "sites" that were site-packages copies of the four it
+    already reads. `tests/test_cdm_prose_counts.py`'s check-count sweep excluded the literal name
+    `.venv` and so was clean here and red for anyone whose environment is called anything else.
+    Both now import `is_virtualenv` from `tests/test_cdm_version_floor.py`, which identifies an
+    environment by PEP 405's `pyvenv.cfg` rather than by its name — the fourth and last sweep to
+    adopt the property.
+  - `tests/test_cdm_pins.py`'s pin floor moved 11 → 14 and its home floor 6 → 8, and its
+    page-count-method roster gained the two new records. The round is the first to add three pins
+    and two homes at once and the first to pin an **appendix** alongside the specification it
+    belongs to; the two new records are also the first whose measurements make the page-count
+    ruling look obvious rather than merely correct — the retired raw-object scan reports 423 pages
+    for a 146-page document and 60 for a 31-page one, where the largest disagreement on record was
+    41 against 43.
+
 ### 1.0.0 — initial contract
 
 The four objects (`Entity`, `Event`, `Track`, `PlanObject`), `Position`, `Kinematics`,

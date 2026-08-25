@@ -578,7 +578,7 @@ def test_the_pin_set_was_actually_discovered():
         "two parsers has stopped matching"
     )
     homes = {p.rsplit("/", 1)[0] for p in PINS}
-    assert len(homes) >= 6, f"pins found in only {sorted(homes)}"
+    assert len(homes) >= 8, f"pins found in only {sorted(homes)}"
     # And both sources are load-bearing, which is why neither can be dropped.
     from_doc = {p for p, v in PINS.items() if "FORMAT_COVERAGE.md" in v["sources"]}
     from_json = {p for p, v in PINS.items() if any(s.endswith("_pin.json") for s in v["sources"])}
@@ -923,8 +923,15 @@ def test_the_citation_parser_is_not_vacuous():
 
 
 #: The pin records that state how a page count was produced. Derived rather than typed by the
-#: closure test below, which is what stops a fourth record growing one nothing reads.
-PAGE_COUNT_METHOD_RECORDS = ("fixtures/cat034/spec/cat034_pin.json",
+#: closure test below, which is what stops a fifth record growing one nothing reads.
+#:
+#: `cat062_pin.json` and `cat023_pin.json` joined in the CAT062/CAT023 specification round, and
+#: they are the first two records whose measurements make the ruling look obvious rather than
+#: merely correct: the retired raw-object scan reports 423 pages for a 146-page document and 60
+#: for a 31-page one. `cat034_pin.json`'s largest previous disagreement was 41 against 43.
+PAGE_COUNT_METHOD_RECORDS = ("fixtures/cat023/spec/cat023_pin.json",
+                             "fixtures/cat034/spec/cat034_pin.json",
+                             "fixtures/cat062/spec/cat062_pin.json",
                              "fixtures/fft/spec/fft_pin.json",
                              "fixtures/klv/spec/klv_pin.json")
 

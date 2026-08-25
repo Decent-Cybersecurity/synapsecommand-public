@@ -10,6 +10,7 @@ is checked all the way down to the float.
 """
 import hashlib
 import json
+import os
 import pathlib
 import uuid
 import re
@@ -142,14 +143,22 @@ PATHS = _cdm_paths()
 #: point. A collector that only recognised the correct form would report a mis-headed table as
 #: absent, and absence is what this closure exists to make impossible.
 EGRESS_HEADER = re.compile(
-    r"^\|\s*(?P<cdm>CDM|CDM field)\s*\|\s*(?P<format>AIS|ADS-B|CAT021|CAT034|CAT048|GMTIF|NITS)"
+    r"^\|\s*(?P<cdm>CDM|CDM field)\s*\|\s*"
+    r"(?P<format>AIS|ADS-B|CAT021|CAT023|CAT034|CAT048|CAT062|GMTIF|NITS)"
     r"\s*\|\s*Status\s*\|\s*Notes\s*\|$")
 
-#: The seven formats with an egress row set of their own. `tak` is absent deliberately and it is
+#: The nine formats with an egress row set of their own. `tak` is absent deliberately and it is
 #: not an omission: its egress rows live INSIDE the ingress table, marked `· egress` in the status
 #: column, because CoT egress emits the same element shape it ingests. `legion` and `pntmap` are
 #: ingest-only. `stanag4609` and `stanag5527` are Phase 1 and specify no egress table yet.
-EGRESS_FORMATS = ("AIS", "ADS-B", "CAT021", "CAT034", "CAT048", "GMTIF", "NITS")
+#:
+#: CAT062 and CAT023 joined at PHASE 1, which is the case this roster had not met: their egress
+#: tables are written before any code exists, so every row says `not yet`. That is exactly why
+#: they have to be collected NOW rather than when the adapters land — an egress table nothing
+#: reads is a row set whose CDM paths are never resolved against the models, which is the state
+#: five of the first seven were in until the header ruling.
+EGRESS_FORMATS = ("AIS", "ADS-B", "CAT021", "CAT023", "CAT034", "CAT048", "CAT062",
+                  "GMTIF", "NITS")
 
 
 def _egress_headers() -> dict[str, list[tuple[int, str]]]:
@@ -189,7 +198,7 @@ def test_every_egress_table_heads_its_cdm_column_the_ruled_way():
 
 
 def test_the_egress_header_closure_holds_in_both_directions():
-    """A collector that reads six of seven row sets agrees with itself about the seventh.
+    """A collector that reads eight of nine row sets agrees with itself about the ninth.
 
     Both directions, and the two failures are different. A format on the list with no table is a
     stale list — the shape `test_cdm_prose_counts.py` guards for its allowlist. A table the
@@ -205,7 +214,9 @@ def test_the_egress_header_closure_holds_in_both_directions():
         f"{sorted(set(EGRESS_FORMATS) - set(headers))}, only in the document "
         f"{sorted(set(headers) - set(EGRESS_FORMATS))}"
     )
-    assert len(headers) == 7, f"{len(headers)} egress tables collected, expected 7"
+    assert len(headers) == len(EGRESS_FORMATS), (
+        f"{len(headers)} egress tables collected, expected {len(EGRESS_FORMATS)}"
+    )
 
     # THE DIRECTION WITH TEETH: find the egress SECTIONS independently of the header regex, and
     # require each to contain a table the collector read. A new egress row set whose header the
@@ -236,12 +247,13 @@ def test_the_egress_header_closure_holds_in_both_directions():
 def test_the_egress_collector_is_not_vacuous():
     """A regex that matches nothing passes every agreement check above.
 
-    Asserted two ways: the collector finds seven, and it PROVABLY recognises the wrong form —
+    Asserted two ways: the collector finds one table per listed format, and it PROVABLY
+    recognises the wrong form —
     because a collector anchored on the correct spelling would report a mis-headed table as
     absent, and the closure would then read a real defect as a stale roster entry.
     """
     headers = _egress_headers()
-    assert sum(len(sites) for sites in headers.values()) == 7
+    assert sum(len(sites) for sites in headers.values()) == len(EGRESS_FORMATS)
     assert EGRESS_HEADER.match("| CDM | CAT048 | Status | Notes |"), (
         "the collector no longer recognises the RETIRED header form, so a table that regressed to "
         "it would read as a missing table rather than as a wrong one"
@@ -4307,18 +4319,31 @@ def test_the_classification_contingency_is_stated_in_the_SAME_two_branch_form_at
     # which is the eight-versus-nine pin drift in a different costume. So the closure is asserted
     # the way `tests/test_cdm_pins.py` asserts the pin set: every file in the repository that names
     # a branch must be one this test actually reads. Found by mutation; the list had been a literal.
+    # `is_virtualenv` is IMPORTED rather than reimplemented, and this sweep is the LAST of the four
+    # to adopt it. It carried a literal directory list that never contained `.venv` at all, so it
+    # was clean only while nobody had installed this package into an environment inside the clone —
+    # and the consumer-path round did exactly that, at which point the sweep found FOUR extra
+    # "sites" that were site-packages copies of the four it already reads. A sweep whose site list
+    # can be inflated by an interpreter is not a sweep over this repository. PEP 405's `pyvenv.cfg`
+    # is the property, for the reason `tests/test_cdm_version_floor.py` records at length.
+    from tests.test_cdm_version_floor import NOT_OURS, is_virtualenv
+
     repo = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
     naming = set()
-    for path in repo.rglob("*"):
-        if path.suffix not in {".md", ".mdx", ".py", ".json"} or not path.is_file():
+    for dirpath, dirnames, filenames in os.walk(repo):
+        here = pathlib.Path(dirpath)
+        if is_virtualenv(here):
+            dirnames[:] = []
             continue
-        if any(part in {".git", "node_modules", "build", ".docusaurus", "__pycache__"}
-               for part in path.parts):
-            continue
-        if path.name == pathlib.Path(__file__).name:
-            continue                       # this module states the branches to check for them
-        if "Branch R" in path.read_text(errors="ignore"):
-            naming.add(str(path.relative_to(repo)))
+        dirnames[:] = sorted(d for d in dirnames if d not in NOT_OURS)
+        for name in sorted(filenames):
+            path = here / name
+            if path.suffix not in {".md", ".mdx", ".py", ".json"} or not path.is_file():
+                continue
+            if path.name == pathlib.Path(__file__).name:
+                continue                   # this module states the branches to check for them
+            if "Branch R" in path.read_text(errors="ignore"):
+                naming.add(str(path.relative_to(repo)))
     swept = {"packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
              "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json",
              "packages/cdm/synapse_cdm/fixtures/fft/README.md",

@@ -400,7 +400,15 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021", "cat03
 #: bytes, and an ASTERIX category IS the payload. Recorded here even after the move so that nobody
 #: generalises `stanag5527`'s "these two must differ" rule across the whole map: it is true of the
 #: three STANAG adapters and false of all three ASTERIX ones.
-PLANNED_FIXTURE_DIRS = {"stanag4609": "klv", "stanag5527": "fft"}
+#: `cat062` and `cat023` joined on the day `fixtures/cat062/spec/` and `fixtures/cat023/spec/`
+#: were created, which is what this half of the map is for. Both directories are the same
+#: string as the adapter name, per the ruling in the paragraph above: the split bites only when
+#: an adapter is named after a standard, and an ASTERIX category IS the payload. They are the
+#: first two Phase 1 entries whose row sets are complete rather than partial — 27 items and 9
+#: items respectively, every one dispositioned — so the window in which the relation could be
+#: folklore is the window between this commit and the two that ship the adapters.
+PLANNED_FIXTURE_DIRS = {"cat023": "cat023", "cat062": "cat062",
+                        "stanag4609": "klv", "stanag5527": "fft"}
 
 
 def test_the_ten_shipped_adapters_all_have_a_real_fixture_directory():

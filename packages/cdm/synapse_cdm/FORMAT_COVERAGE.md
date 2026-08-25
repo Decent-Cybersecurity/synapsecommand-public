@@ -244,10 +244,15 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 10 | `stanag4609` | specification, Phase 1 | this document's STANAG 4609 / MISP-2019.1 section, `fixtures/klv/spec/klv_pin.json` and `MIGRATIONS.md` |
 | 11 | `cat048` | shipped | `fixtures/cat048/README.md`, the module README's harness section, and this document's CAT048 section. **`adapters/asterix_cat048.py` states no ordinal of its own** — the only shipped adapter besides `pntmap` that does not, which is recorded rather than repaired here |
 | 12 | `cat034` | shipped | `adapters/asterix_cat034.py`, "Adapter #12", this document's CAT034 section, `fixtures/cat034/spec/cat034_pin.json`, `fixtures/cat034/README.md` and `MIGRATIONS.md`. **The forecast made good, then made real.** The row read *(forecast)* until Phase 1 and cited the CAT048 declines table — "if it lands, it lands as adapter #12 with its own pin" — and it landed at that number with that pin; Phase 2 shipped the adapter against the row set Phase 1 wrote, and every row of it now says `cat034 1.0.0` |
+| 13 | `cat062` | specification, Phase 1 | this document's CAT062 section, `fixtures/cat062/spec/cat062_pin.json` and `MIGRATIONS.md`. **The widest Phase 1 in this repository**: 27 data items, a two-document pin and a full egress row set, with `not yet` in every status cell and no module yet claiming the ordinal. It is the first row set written against a source that is itself the output of a fusion process, which is what settlement 1 exists for |
+| 14 | `cat023` | specification, Phase 1 | this document's CAT023 section, `fixtures/cat023/spec/cat023_pin.json` and `MIGRATIONS.md`. **The narrowest Phase 1 with a complete row set**: nine data items on 21 printed pages, every one of them dispositioned. Ruled in the same round as #13 and deliberately not merged with it — a category is an adapter, and these are two categories in two Parts with two UAPs |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
-shipped adapter but never a conflicting claimant. It is the disjunction treatment applied to an
+shipped adapter but never a conflicting claimant. **Four rows are at Phase 1 as of this round** —
+#9, #10, #13 and #14 — and the two new ones are the first Phase 1 rows whose row sets are complete
+rather than partial, which is a state the table did not previously have to distinguish and which the
+third column now states. It is the disjunction treatment applied to an
 ordinal — the same reason `test_cdm_prose_counts.py` exists for the adapter *count*, and the same
 reason the STANAG 4609 pin rows are asserted as one composite string rather than three substrings.
 
@@ -9067,6 +9072,1714 @@ the harness compares structures. The round trip is asserted instead in
 | `wrong_category` | A block whose CAT octet is 48 | Refused, not decoded against the wrong UAP — the failure CAT048's declines table names, from the other side |
 | `length_disagrees_with_buffer` | `LEN` longer than the octets supplied | Refused with the two numbers quoted |
 | `missing_mandatory_data_source` | No `I034/010` | Refused: it is M in every column of Table 2 |
+
+## ASTERIX Category 062 — System Track Messages (SDPS Track Data), ingest and egress
+
+Adapter #13, and **the first adapter in this repository whose input is already the output of a
+fusion process.** Every other source here is a sensor, a ground station, a transponder or an API
+serving one system's own view. Category 062 is what a Surveillance Data Processing System emits
+after it has correlated plots and local tracks from radars, Mode S interrogators, multilateration,
+ADS-B and ADS-C into one system track, and after it has correlated that track with a flight plan.
+
+Ingest translates one ASTERIX **data block** into an `Entity` + an `Event` **per record**; egress
+turns Entities that came from CAT062 back into one data block. The left column names data items as
+§5.2 numbers them, with the subfield or bit where one matters; the parsed form the adapter's own
+parser produces is what each `.parsed.json` fixture holds and what the never-drop check is measured
+against.
+
+**Every row below is written and reviewed as a specification BEFORE any code exists**, with
+`not yet` in the status column, exactly as the Legion, CAT021, NITS, GMTIF, CAT048 and CAT034 row
+sets were. That is not a formality here: this is the largest ASTERIX category in the family this
+repository has touched — 27 data items, of which six are compound items with between seven and
+thirty-one subfields each, and one of which is a six-extent FX chain — and the disposition of
+several hundred wire fields is a specification decision that must not be made by whichever
+`if` an implementer wrote first.
+
+The closest relatives are `adapters/asterix_cat048.py` and `adapters/asterix_cat034.py`, and the
+relationship to each is worth stating precisely because it is not "a third radar adapter".
+
+- **Against CAT048.** CAT048 is one radar's statement about what it detected. CAT062 is a system's
+  statement about what it has concluded from several radars. Almost every quantity CAT048 states as
+  a measurement, CAT062 states twice: once as a calculated track value and once, in `I062/340`, as
+  the last measured value that updated it. The pair is the whole of settlement 1.
+- **Against CAT034.** CAT034 is a station describing itself. CAT062 is a system describing a
+  target. The `SourceId` treatment inverts accordingly: CAT034's SAC/SIC *is* the object's
+  identity, and CAT062's `I062/010` is the identity of the system that formed the opinion — which
+  is provenance, not identity, and is parked exactly where CAT048 parks it.
+
+### The names, and the fixture directory
+
+**The adapter is `cat062` and the fixture directory is `cat062`.** Ruled by precedent, and the
+precedent is now unanimous: every ASTERIX adapter in the roster is `cat` plus the three-digit
+category number, with the fixture directory the same string. `fixtures/cat062/spec/cat062_pin.json`
+carries the ruling, the four candidates that were rejected (`sdps`, `asterix062`, `systemtrack`,
+`cat62`) and the reason each was.
+
+The directory-versus-adapter split that puts `stanag4676`'s fixtures in `fixtures/nits` does not
+bite here, and that is the rule reaching a case rather than a relaxation of it: a directory holds
+payloads and a payload is not a standard, so the split applies when the adapter is named after a
+*covering document*. Here the adapter is named after the category whose blocks the directory holds.
+
+### The pin
+
+Two documents, and **both are in scope** — see settlement 2 for why the appendix is not deferred.
+
+| | |
+|---|---|
+| Category | **062** — SDPS Track Messages (System Track Data) |
+| Core specification | EUROCONTROL-SPEC-0149-9, ASTERIX Part 9 Category 062, **Edition 1.21**, 05/06/2025, Released |
+| SHA-256 (core) | `37c3898824323e915c3bd83fdf20419939f3276d802733bae690a1875d29db96`, 2 104 927 bytes, 146 pages, `fixtures/cat062/spec/eurocontrol-asterix-cat062-p9-ed121.pdf` |
+| Reserved Expansion Field | EUROCONTROL-SPEC-0149-9A, ASTERIX Part 9 Appendix A, **Edition 1.3**, 13/02/2023, Released |
+| SHA-256 (REF) | `fe7a0deb972dfa87dc0bd2e3c308a6a4fd83f7a9867d334a50daff26cfa3df0e`, 1 080 582 bytes, 25 pages, `fixtures/cat062/spec/eurocontrol-asterix-cat062-p9-appendix-a-ed13.pdf` |
+| ASTERIX Part 1 | cited as SPEC-0149 edition 3.1, 23 November 2021 — **not pinned here**, which is the finding `cat048_codec.py` records for the FSPEC and `cat034_codec.py` for RE and SP |
+| ADS-B MOPS covered | Version 3 **partially**, and mostly in the REF — the core specification's own abstract says so |
+
+**The pin IS the current edition**, and that is the opposite of the CAT034 situation and is stated
+in the same position for that reason. EUROCONTROL's Part 9 publication page was checked on
+2026-08-25 and offers twelve files, editions 1.10 to 1.21; Edition 1.21 is the newest and is the
+edition pinned. No Part 9 edition is cited-but-unpublished, so this category contributes no member
+to the class `tests/test_cdm_pins.py` computes — see `cat062_pin.json`'s
+`availability_check`, whose two machine-readable fields are what a later citation would be
+measured against.
+
+**One structural incompatibility runs one way, and it is Edition 1.21's own.** Its change record
+reads "Added Mode 5 Interrogation to I062/080", and what it added is a **sixth extent** to
+`I062/080` carrying one flag and six spare bits. An adapter written against Edition 1.20 has five
+extents, so it *refuses* a record whose fifth extent sets `FX` — a refusal, not a silent misread,
+which is the good direction to fail in. The reverse costs nothing. The edition is therefore part of
+the mapping and not a footnote.
+
+**And one uniformity assumption in this category is fatal.** `I062/290` has ten subfields; nine of
+them are one octet and **Subfield #5, ADS-C Age, is two**. A decoder that treated the item
+uniformly would desynchronise by one octet the first time an ADS-C age arrived, and every item
+after it in the record would decode into plausible garbage that still satisfied the block's `LEN`.
+Edition 1.21's change record says "Length of I062/290/SI#5 corrected", so an earlier edition had it
+wrong; both editions in hand already have it at two octets, so the correction predates them.
+
+### The edition history — two editions in hand, and neither of them a pin
+
+`fixtures/cat062/spec/history/` holds Editions 1.20 (13/02/2023, 143 pages) and 1.19 (11/12/2020,
+141 pages), with SHA-256 and byte counts in the pin record. **They are not pins**: the governing
+text for every row below is Edition 1.21 alone, and `tests/test_cdm_pins.py` sweeps
+`fixtures/*/spec/` non-recursively for exactly this reason.
+
+Each is in hand for one checkable reason. **1.20** is the only witness to what Edition 1.21's two
+structural claims changed. **1.19** is the last edition that HAS an item table: Edition 1.20's
+change record reads `Table 1 "Data Items of Category 062" removed`, so from 1.20 onward §5.1 is one
+sentence and the **item inventory has exactly one statement in the document — the UAP in §5.3.**
+
+That is the inverse of CAT034's finding, where two item rosters exist and disagree, and the
+inversion has a cost: with one roster there is no cross-check, so a FRN whose §5.2 entry was
+missing would be invisible. It was checked by hand instead, both ways: all 27 items in the UAP have
+a §5.2 entry and all 27 §5.2 entries appear in the UAP.
+
+The change record lists 42 editions, the publication page offers 12, and **Edition 0.16 has no row
+at all** in a table introduced as "the complete history of the successive editions" — running 0.15
+(June 2000) straight to 0.17 (November 2000). It also has a `1.0P` row with no `1.0` row and no
+gloss for the `P`, so either 0.16 or 1.0 is the missing edition depending on how `P` is read. This
+is CAT034's absent Edition 1.25 in a second part of the same family; ambiguity 3 carries both halves.
+
+### Settlement 1 — CAT062 carries FUSED content, and this adapter translates it and fuses nothing
+
+**This is the settlement the whole row set turns on, and it has to be stated before any row is
+read, because a reader who meets `I062/290` first will otherwise reasonably conclude that this
+adapter fuses.**
+
+Category 062 is the output of a multi-sensor tracker. §3.1.11 defines a track as a "Time sequence of
+state vectors of an object estimated by some real time filtering technique using surveillance data
+as input"; §3.1.1 defines amalgamation as "the process by which tracks from co-operating systems
+are merged"; §3.1.2 defines a calculated item as one "derived from raw information through an
+intermediate processing such as transformation of co-ordinates, tracking, code conversion". So the
+document is explicit that what it carries has been through a fusion process, and it carries a large
+amount of metadata *about* that process:
+
+| What the item describes about the fusion | Where |
+|---|---|
+| which sensor technologies updated the track, and how long ago each did | `I062/290`, ten subfields, one per technology |
+| how long ago each downlinked aircraft parameter was measured | `I062/295`, thirty-one subfields |
+| whether the track is mono- or multi-sensor, whether it resulted from amalgamation, whether it is coasting, and per technology whether that technology's update is stale | `I062/080` bits `MON`, `AMA`, `CST`, `PSR`, `SSR`, `MDS`, `ADS`, `MLAT`, `M5I` |
+| which of two altitude sources the tracker considers more reliable, and where the geometric one came from | `I062/080` `MRH` and `SRC` |
+| the tracker's own estimated standard deviations for position, velocity, acceleration, both altitudes and rate of climb, plus an XY covariance | `I062/500`, eight subfields |
+| which sensors contributed in this update cycle, with their SAC/SIC, their detection type and their local track numbers | `I062/REF` `CST` and `CSN` |
+| the last MEASURED values, as opposed to the calculated ones | `I062/340`, six subfields |
+| whether the track was correlated with a flight plan, whether that correlation is duplicated or manual, and everything the flight plan said | `I062/080` `FPC`, `DUPT`, `DUPF`, `DUPM`, `IDD`, `FPLT`; `I062/390`, eighteen subfields |
+
+**The ruling: this adapter TRANSLATES the tracker's output faithfully and performs no fusion of its
+own.** Every item in that table is the **upstream system's statement about its own processing**, and
+it is translated as such — parked or mapped as a statement, attributed to `I062/010`'s SAC/SIC,
+never acted on. Concretely, and each of these is a thing the adapter does not do:
+
+1. **It does not combine records.** One record becomes one `Entity` and one `Event`. Two records
+   with the same `I062/040` are two statements about one track at two instants, not one accumulated
+   state, and no `Track` object is ever emitted — see settlement 3.
+2. **It does not arbitrate between the altitudes.** `MRH` says which the *tracker* finds more
+   reliable and §5.2.6's fourth NOTE says all three altitude items "may be transmitted in parallel
+   ... independent from the value transmitted on I062/080 (MRH)". So `MRH` is carried as the
+   tracker's opinion and no altitude is promoted to `Position.alt_m` on the strength of it.
+   Settlement 5.
+3. **It does not resolve `I062/340` against the calculated items.** A measured Mode 3/A that differs
+   from `I062/060`, or a measured position that differs from `I062/105`, is two statements and stays
+   two statements. Deciding which is right is the arbitration a fusion layer exists to do visibly.
+4. **It does not turn the contributing-sensor lists into anything.** `CST` and `CSN` name other
+   systems by SAC/SIC and give their local track numbers. Emitting an `Entity` per contributing
+   sensor, or joining a local track number to another adapter's output, is cross-payload state.
+5. **It does not compute the ages.** `I062/290`'s NOTE 3 gives the tracker's own formula —
+   "Age = Time of track information - Time of last detection used to update the track" — so the
+   ages are *derivable* into absolute instants using `I062/070`. The adapter carries the age as the
+   age, and states the formula beside it, and does not perform the subtraction: an absolute instant
+   computed here would be indistinguishable in the output from one the source stated.
+6. **It does not read the flight plan as identity.** `I062/390`'s callsign, `I062/380` SF#2's
+   downlinked identification and `I062/245`'s target identification are three separate strings that
+   §5.2.18's own NOTE 2 says are alternatives. Picking one as "the" callsign is arbitration.
+
+**Why this matters enough to say at this length.** The no-fusion constraint is stated eight times
+elsewhere in this document and has never before had to distinguish *translating a fused product*
+from *fusing*. The distinction is not subtle but it is easy to lose: an adapter that read `MRH` and
+set one altitude, or that consumed `I062/290` and stamped absolute times, would be indistinguishable
+from a correct one on every check in the harness — the values would all be present, the schema
+would validate, the round trip would hold. What would have happened is that a decision made by an
+SDPS in Vienna and a decision made by this translator would arrive at a consumer wearing the same
+clothes. `attributes.fusion_provenance` is where the tracker's statements are collected, under that
+name, so a consumer can see whose opinion each one is.
+
+**Nothing here says the upstream fusion is wrong or that its output is second-class.** A system
+track is usually the best available statement about an aircraft and is exactly what an air picture
+should be built from. The ruling is about *authorship*: the CDM records who concluded what, and a
+translator that quietly joins the record of authorship is the one thing that cannot be undone
+downstream.
+
+### Settlement 2 — The Reserved Expansion Field is IN SCOPE, and the core specification decides it
+
+The question is real: the REF is optional, it is a second document, and CAT034's REF is *parked
+whole and never decoded*. The answer is the CAT021 answer for the CAT021 reason — **the core
+specification relocates load-bearing content into it** — and here the core specification says so in
+its own abstract:
+
+> This Specification contains a partial implementation of ADS-B Version 3. Most modifications for
+> the implementation of ADS-B Version 3 have been performed in the Reserved Expansion Field
+> (I062/REF). To make use of these modifications it is recommended also to implement the I062/REF
+> (Edition 1.3 or later).
+
+Three things are in the REF that a CAT062 adapter cannot be correct without, and each is pointed at
+from the core text rather than inferred:
+
+1. **A Version 3 aircraft's emergency lives in the REF.** §5.2.6's NOTE on `EMS` and §5.2.24's NOTE
+   on SF#11 `STAT` both say "I062/REF/PS3 is to be used exclusively for Version 3 ADS-B systems as
+   defined in I062/380/SF#11/VN. For ADS-B systems with a version number below 3, the PS shall be
+   encoded in Data Item I062/380 SF#11/STAT." Both notes then print a **mapping table** collapsing
+   eight Version 3 values onto six older ones, in which `2 (UAS/RPAS Lost Link)` becomes
+   `4 (No communication)` and both `6` and `7` (aircraft in distress, automatic and manual) become
+   `1 (General emergency)`. So on Version 3 equipment the core item carries a *lossy back-mapping*
+   and the REF carries the actual value. An adapter that skipped the REF would report an aircraft
+   in manual distress as a general emergency, and would have no way to know it had.
+2. **Extended coasting, the special-used-code text, the Mode 5 interrogation age, the QNH variant of
+   the barometric altitude, the QNH-corrected measured flight level, the high-resolution velocity,
+   the extended Mode 3/A, the multi-register BDS ages and the LNAV mode are all relocated by name.**
+   §5.2.6 NOTE 4 → `I062/REF/STS/CSX`; NOTE 5/6 → `MOI/SCT`; §5.2.6's sixth extent NOTE →
+   `MOI/AM5I`; §5.2.12 NOTE → `MOI/CTBA`; §5.2.13 NOTE 5 → `MOI/ALTQCMFL`; §5.2.14 NOTE →
+   `MOI/FPVHR`; §5.2.21 SF#4 → `MTI/EXM3A`; §5.2.21 SF#28 NOTE → `MOI/SI#10`; §5.2.24 SF#7 NOTE →
+   `STS/LNAV`; §5.2.20 NOTES 1 and 2 → `MOI/AM5I` and `MOI/AM5L2S`.
+3. **The contributing-sensor lists are the fusion's own provenance** and exist nowhere else in the
+   category. Settlement 1's whole argument is about carrying the tracker's statements; `CST` and
+   `CSN` are the most direct of them.
+
+**A finding about that second list, recorded rather than smoothed over.** Of the ten relocations the
+core text names, **Appendix A Edition 1.3 defines only two of the referenced containers** — `STS`
+(which holds `LNAV`) and the ADS-B Version 3 item (which holds `PS3`). There is no `MOI` item, no
+`MTI` item and no `CSX` bit anywhere in Appendix A Edition 1.3: its items indicator has exactly
+five bits — `CST`, `CSN`, `TVS`, `STS`, `V3` — and its §2.2 NOTE says "The allocation of additional
+items is the responsibility of the AMG and shall be coordinated in advance!". So the core
+specification at Edition 1.21 points at eight REF subfields that the newest published REF edition
+does not contain. Either a later REF edition exists unpublished, or the core specification is ahead
+of its own appendix. **What is in scope is what Appendix A Edition 1.3 defines**, in full; the eight
+dangling pointers are recorded here, in the pin record and in the declines table, and each is a
+value this adapter therefore cannot carry and does not pretend to.
+
+**What is in scope is the whole of Appendix A Edition 1.3**: the length indicator, the items
+indicator including its three spare bits, `CST`, `CSN`, `TVS`, `STS` and the ADS-B Version 3 item
+with all four of its subfields and every Element-Populated bit. Nothing is skipped, so the
+never-drop rule is satisfied by presence rather than by an exemption.
+
+**And the items indicator has no `FX`.** §2.2's bit 1 is a *spare*, not a field extension indicator
+— the only presence map in either document that cannot extend. So a set bit 1 here is a spare bit
+parked as sent, and **not** a refusal, which is the opposite treatment from every compound item in
+the core specification. Getting that backwards would refuse a legal REF.
+
+### Settlement 3 — Identity: the Mode S address is the basis, the system track number never is
+
+**The question.** `adapters/asterix_cat048.py` files an entity under `ICAO24` when `I048/220`
+carries a 24-bit Mode S address, and under a report-scoped key when it does not. CAT062 carries
+*both* a Mode S address (`I062/380` SF#1, Target Address) and a system track number (`I062/040`),
+and the track number is **mandatory in every record** while the address is optional inside an
+optional item. So which is the entity identity basis?
+
+**The ruling: `I062/380` SF#1 is the entity identity basis where the record states one. `I062/040`
+is NEVER the identity basis; it parks. Where no address is stated, the id is scoped to the RECORD
+and says so.** Two steps, and the track number is not step two — which is settlement 9 of the CAT048
+row set reached again, on the same reasoning and with a stronger case.
+
+**Why the address wins even though it is optional and the track number is mandatory.** An
+`entity_id` promises "the same real-world object across updates". A 24-bit Mode S address is an
+airframe's address and delivers exactly that; filing it under the string `ICAO24` — the same string
+`adsb.py`, `asterix_cat021.py` and `asterix_cat048.py` use — means one airframe seen by a radar, by
+an ADS-B ground station and by an SDPS derives the **same** `entity_id` without the four adapters
+coordinating. That is a pure function of the address and not a join.
+
+**Why the track number cannot be the basis, in the terms the document itself supplies.**
+
+- It is **allocated by the emitting system**, not by the target. §5.2.3 defines it as
+  "Identification of a track", sixteen bits, and nothing scopes it beyond the record's `I062/010`.
+- It is **recycled**. Sixteen bits is 65 536 numbers and a busy SDPS runs for years; the number is
+  reissued when a track ends. `I062/080`'s `TSB` and `TSE` bits mark the first and last message
+  transmitted for a track, so the *boundary* is on the wire — and being able to see the boundary
+  does not stop the number on the other side of it belonging to a different aircraft. Keying
+  `entity_id` on it merges two airframes into one entity, which is a false statement, and it is
+  false in the direction that cannot be detected downstream.
+- **The family has a dedicated status bit for exactly this hazard, in another part, and it landed in
+  this same round.** CAT023's `I023/100` bit 2 is `RN`, "Renumbering Indication for Track ID", whose
+  NOTE 3 reads "Bit 2 indicates that the allocation of Track-IDs (Item I021/161) was re-started."
+  That is a different number space in a different category — nothing in Part 16 is about Part 9 —
+  and it is evidence about the *class* of identifier: ASTERIX itself found the recycling of track
+  numbers worth a dedicated bit. Cited as such in `cat023_pin.json`.
+- `I062/510`, Composed Track Number, makes the scoping explicit from the other direction: it exists
+  because a bare track number is ambiguous between co-operating units, and it carries a
+  **system unit identification** alongside each track number precisely so that the pair is unique.
+  A repository that keyed identity on the bare number would be keying on the half the standard
+  itself considered insufficient.
+
+**Why the fallback is record-scoped rather than track-scoped, which is the one place this could
+have gone differently.** A `(SAC/SIC, track number)` pair *is* unique within one SDPS at one moment,
+and using it would preserve the continuity the format states. It is declined, and the reason is that
+the pair's uniqueness is bounded in time and the CDM's is not: `entity_id` has no expiry, so a key
+that is unique for the lifetime of a track and reused afterwards produces one entity spanning two
+aircraft, and there is no field on `Entity` in which that can be disclosed. A record-scoped id makes
+the weaker, true statement — "this is one observation and I cannot promise continuity" — and the
+continuity the format *does* state is carried where a consumer can act on it: the raw track number,
+`TSB`, `TSE`, the composed track number and `I062/290`'s track age are all in the object.
+
+**Step 2's key, and it is not a positional guess.** `(SAC/SIC, raw time of track information, track
+number, record index)`, filed under `CAT062_TRACK_REPORT`. The track number is *in* the key —
+which is not the same as being the basis: inside a record-scoped id it distinguishes two tracks in
+one block, and it makes no promise of continuity because the time of day is in the key beside it.
+Gap 27's truncation is recorded again: consecutive updates of one PSR-only, address-less system
+track get different `entity_id` values, and that is the honest statement.
+
+**The caveat that has to travel with the address.** `I062/080`'s `AAC` bit is "Assigned Mode A Code
+Conflict", `DUPT` is "Duplicate Mode 3/A Code" and `IDD` is "Duplicate Flight-ID". None of them is
+about the Mode S address, so unlike CAT048's `I048/030` code 16 there is **no bit in this category
+that warns of a duplicated Mode S address.** `attributes.identity_caveat` says so explicitly rather
+than being absent, because an absent caveat field reads as "no conflict" and what is true is "this
+category cannot tell you".
+
+**And the `I048/030`-style enumeration note in `asterix_cat048.py` is NOT copied forward.** That
+module's `CATEGORY` comment reads "A CAT021 or CAT062 block decoded against the CAT048 UAP yields a
+plausible wrong aircraft rather than an error", and the enumeration is **incomplete**: CAT034 ships
+and is missing from it, as the CAT048 declines table already notes when it says "034 has left this
+list". A comment that enumerates siblings goes stale every time a sibling lands, so the CAT062 and
+CAT023 modules state the *property* and name the siblings from the roster rather than from a
+hand-written list — and the CAT048 comment is corrected in the same round rather than left as the
+model for two more copies of itself.
+
+### Settlement 4 — Time: one item, no stated range, and an offset that cites another category
+
+`I062/070`, Time Of Track Information, three octets at 1/128 s, and its Encoding Rule is "This Item
+shall be present in every ASTERIX record". Its Definition is "Absolute time stamping of the
+information provided in the track message, in the form of elapsed time since last midnight,
+expressed as UTC", NOTE 1 is "This is the time of the track state vector" and NOTE 2 is "The time is
+reset to zero at every midnight".
+
+**The date comes from the injected clock, and the rollover rule is the one three siblings already
+reached.** A time of day with no date is resolved against the receipt date, the day before and the
+day after, and the nearest candidate wins. Same rule as `asterix_cat021.py`, `asterix_cat048.py` and
+`asterix_cat034.py`, reached a fourth time.
+
+**The bound is not a stated range, and this is the CAT034 disposition rather than the CAT048 one.**
+§5.2.5 prints no acceptable range at all, so twenty-four bits at 1/128 s reach 131 071.992 187 5 s
+— counts no time of day can mean. The bound comes from the Definition ("elapsed time since last
+midnight") and NOTE 2 ("reset to zero at every midnight"), which together make 86 400 s itself
+unreachable; CAT048's §5.2.17 prints "Acceptable Range of values: 0<= Time-of-Day<=24 hrs" and
+therefore *accepts* 86 400 s on that inclusive inequality. **Same width, same LSB, three categories,
+two boundaries, differing by exactly one value.** Refused rather than taken modulo a day: a modulo
+would move the record by hours and leave every other check passing.
+
+**`I062/070` is also the anchor for every age in the category**, by the document's own formula:
+`I062/290`'s NOTE 3 says "the ages are counted from Data Item I062/070, Time Of Track Information,
+using the following formula: Age = Time of track information - Time of last detection used to update
+the track". The formula is *recorded* and not *applied* — settlement 1, item 5.
+
+**And there is a second time in the category whose instruction cannot be followed as written.**
+`I062/110` Subfield #6 is a Time Offset at 1/128 s two's complement, and §5.2.9 says: "The time at
+which the Mode 5 Reported Position (Subfield #3) and Mode 5 GNSS-derived Altitude (Subfield #4) are
+valid is given by **Time of Day (I048/140)** plus Time Offset." `I048/140` is Part 4's item.
+**Category 062 has no `I048/140` and no item numbered 140 at all.** The sentence was carried over
+from the CAT048 specification without renumbering.
+
+The only reading that produces a value substitutes `I062/070`, which has the same LSB and is the
+category's only time of day. That substitution is a **ruling, not a transcription**, so it is stated
+here, in the pin record's ambiguity 9, and in `Event.payload` beside the value — a consumer reading
+the object can see that the specification named a different item and what was done about it.
+Refusing Subfield #6 because its instruction is unfollowable was considered and declined: it would
+discard a value whose meaning is not actually in doubt. The offset applies **only** to the Mode 5
+reported position and GNSS-derived altitude, never to the track's own time. §5.2.9's NOTE is
+honoured as written — "TOS shall be assumed to be zero if Subfield #6 is not present" — which makes
+this the one place in the category where an absent field has a *defined value* rather than meaning
+"not reported".
+
+### Settlement 5 — Three altitudes, a fourth in a measured item, and no arbitration anywhere
+
+Four altitude quantities, four different meanings, and the document is explicit that they coexist:
+
+| Item | What it is | LSB |
+|---|---|---|
+| `I062/130` | Calculated Track **Geometric** Altitude — "Vertical distance between the target and the projection of its position on the earth's ellipsoid, as defined by WGS84" | 6.25 ft |
+| `I062/135` | Calculated Track **Barometric** Altitude, with a `QNH` bit saying whether a QNH correction was applied | 1/4 FL = 25 ft |
+| `I062/136` | **Measured** Flight Level — "Last valid and credible flight level used to update the track", and NOTE 4 says it "includes the barometric altitude received from ADS-B" | 1/4 FL |
+| `I062/340` SF#3 | Measured **3-D Height**, whose NOTE says "The reference level for this height information is the same as the reference level applied by the sensor system providing this information" — i.e. a datum the record does not state | 25 ft |
+
+Plus `I062/340` SF#4, the last measured Mode C code, and `I062/380` SF#23, a geometric altitude
+*reported by the aircraft* rather than calculated by the tracker. **Six altitude-shaped numbers, no
+two of them the same quantity.**
+
+**`Position.alt_m` is set from `I062/130` and from nothing else, and only when `I062/130` is
+present.** The reason is the CDM's own field definition: `alt_m` is documented as "Metres HAE" —
+height above the WGS 84 ellipsoid — and `I062/130` is the only one of the six that is defined as
+exactly that. A flight level is a pressure altitude and is not a height above anything; a measured
+3-D height's datum is whatever the contributing sensor used and is not stated; the aircraft-reported
+geometric altitude is a different observer's opinion.
+
+**`MRH` does not arbitrate, and §5.2.6's own NOTE is why.** The `MRH` bit says which of barometric
+and geometric the *tracker* considers more reliable, and §4.3.2 makes it load-bearing for the
+tracker's own slant-range correction. But the fourth NOTE under `I062/080` says: "Data Items
+I062/130, I062/135, and I062/136 may be transmitted in parallel whenever the respective information
+is available. This is independent from the value transmitted on I062/080 (MRH)." So `MRH` is not a
+selector between the items — it is the tracker's assessment, carried as such — and promoting
+`I062/135` to `alt_m` when `MRH` says barometric would put a pressure altitude in a field
+documented as an ellipsoidal height. This is CAT048 settlement 5 reached a second time with the
+document supplying the argument rather than the adapter.
+
+**`SRC` is carried and does not set `Position.position_source`.** §5.2.6's `SRC` names the source of
+the *calculated altitude* for `I062/130` — no source, GNSS, 3D radar, triangulation, height from
+coverage, speed look-up table, default height, multilateration — and its first NOTE says it "may be
+sent whether data item I062/130 is present or not". `PositionSource` is about the *horizontal* fix,
+`SRC` is about the vertical one, and two of `SRC`'s eight values (`speed look-up table`,
+`default height`) describe an altitude that was not measured at all. Parked at
+`attributes.altitude_source` with the document's own wording; `Position.position_source` is ruled in
+settlement 6.
+
+### Settlement 6 — Position: a WGS-84 item, a Cartesian item, and no projection is ever inverted
+
+Three position-shaped items, and only one of them becomes a `Position`.
+
+- **`I062/105`, Calculated Position In WGS-84 Co-ordinates**, eight octets, two 32-bit
+  two's-complement fields at **180/2²⁵ degrees** — the finest coordinate quantum in this repository,
+  and its own NOTE says "The LSB provides a resolution at least better than 0.6m". Range stated as
+  `-90 <= latitude <= 90` and `-180 <= longitude < 180`. **This is the item that produces
+  `Position`.**
+- **`I062/100`, Calculated Track Position (Cartesian)**, six octets, X and Y at 0.5 m two's
+  complement. **Parked, never converted.** §4.3.2 states the projection: "a projection is performed
+  on a plane tangential to the WGS-84 Ellipsoid at the location of **the reference point**", Y to
+  geographical north, X east, "calculated using a suitable projection technique for the final 3D to
+  2D conversion (e.g. a stereographical projection)". Inverting that needs (a) the reference point,
+  which **no item in Category 062 carries** — the REF's §2.5 NOTE says the system reference point is
+  "available in the Reserved Expansion Field of category 065", a different category — and (b) the
+  projection, which the specification names only by example ("e.g. a stereographical projection").
+  Two unknowns, either of them fatal. So the X/Y pair is parked as metres with the projection
+  quoted, and `attributes.cartesian_basis` says why it is not a coordinate. **This is a stronger
+  decline than CAT048 settlement 3's**: there the geodesy was absent from the document but the
+  inputs were on the wire and a caller could inject the missing one; here the *projection itself* is
+  optional to the standard, so two conforming SDPSs can emit different X for one aircraft and
+  nothing in the record distinguishes them.
+- **`I062/340` SF#2, Measured Position**, RHO at 1/256 NM and THETA at 360/2¹⁶ from the
+  **contributing sensor**, whose own position is not in the record either. Parked, for CAT048
+  settlement 3's reason with the sensor position now doubly absent: `I062/340` SF#1 names the sensor
+  by SAC/SIC and nothing states where it is.
+- **`I062/380` SF#22, Position**, and **`I062/110` SF#3, Mode 5 Reported Position**, are both
+  WGS-84 lat/lon pairs at 180/2²³ degrees — the *aircraft's own* statements, one via ADS-B and one
+  via a Mode 5 reply. Parked, both, and **neither becomes `Entity.position`**: they are a different
+  observer's fix at a possibly different instant (the Mode 5 one explicitly so — settlement 4's time
+  offset applies to it), and choosing between them and the tracker's calculated position is
+  arbitration.
+
+**`Position.position_source` is `ESTIMATED`, always, and it is a ruling rather than a fit.**
+`I062/105` is a *calculated* position: §3.1.2's own definition of a calculated item is one "derived
+from raw information through an intermediate processing such as transformation of co-ordinates,
+tracking, code conversion". A tracker's filtered output is an estimate by construction, whatever the
+sensors underneath it were. `GNSS` would claim the fix came from a satellite receiver, which is
+sometimes *upstream* of it and never what the item states; `INERTIAL` and `MANUAL` are plainly
+wrong. `ESTIMATED` is the only one of the four that is true of every `I062/105`, and
+`attributes.position_basis` records that the underlying technologies are named separately in
+`I062/290` and in the REF's contributing-sensor lists — so a consumer can see that a track was
+ADS-B-only without this adapter having relabelled the estimate as a GNSS fix.
+
+**`Position.accuracy_m` is set from `I062/500` SF#3 when it is present, and this is the FIRST
+adapter in this repository where a source states a positional standard deviation in the CDM's own
+terms.** §5.2.26 SF#3 is "Estimated accuracy (i.e. standard deviation) of the calculated position of
+a target expressed in WGS-84", two 16-bit components at 180/2²⁵ degrees. Two decisions follow, and
+both are recorded because both could have gone otherwise:
+
+1. **The two components are combined, and the combination is stated.** `accuracy_m` is one scalar
+   and the item gives a latitude component and a longitude component. Each is converted to metres —
+   the latitude component through a fixed 1° = 60 NM = 111 120 m, the longitude component through
+   the same figure times cos(latitude) using `I062/105`'s own latitude — and the two are combined as
+   `sqrt(a² + b²)`, which is the standard deviation of the position error in the plane when the
+   components are treated as independent. The independence assumption is **the specification's
+   silence**: the item states two component standard deviations and a *separate* subfield, SF#2,
+   states an XY covariance in the **Cartesian** frame, so there is no stated WGS-84 covariance to
+   use. `attributes.accuracy_basis` carries the arithmetic, the constant, the independence
+   assumption and the fact that SF#2 exists and is in a different frame. This is the only place in
+   this row set where the adapter computes a canonical value from two wire fields, and it is
+   declared in `TRANSFORMS`.
+2. **A value at the maximum is a floor, not a measurement.** §5.2.26 says "Maximum value means
+   maximum value or above" under all eight of its subfields. So a saturated accuracy is carried as
+   the number *and* flagged, because a consumer differentiating two saturated readings would compute
+   a zero rate of change.
+
+When `I062/500` SF#3 is absent, `accuracy_m` is `None` — unknown accuracy, never zero, never derived
+from SF#1's Cartesian components, which are in the frame settlement 6 declines to invert.
+
+### Settlement 7 — There is no Table 2 here, so presence is per-item, and this is what the gate loses
+
+CAT034 has seven message types and a Table 2 giving each item an `M`, `O` or `X` per type, and
+`asterix_cat034.py` refuses a missing `M` and parks a present `X`. **Category 062 has neither.**
+§4.1 says "The transmission of System Track Data shall require the transmission of **one type of
+message**", §4.4 says "The Encoding Rules are contained in each Data Item", and every §5.2 entry
+ends with either "This Item shall be present in every ASTERIX record" or "This Item is optional".
+
+So the presence gate is: **four items are mandatory, unconditionally, and everything else is
+optional.**
+
+| Item | Encoding Rule, verbatim |
+|---|---|
+| `I062/010` | "This Item shall be present in every ASTERIX record" |
+| `I062/040` | "This Item shall be present in every ASTERIX record" |
+| `I062/070` | "This Item shall be present in every ASTERIX record" |
+| `I062/080` | "This Item shall be present in every ASTERIX record." |
+
+`I062/015` — Service Identification, which a reader might expect to be mandatory alongside them
+because CAT023 makes its equivalent mandatory for two of three report types — says "This Item is
+optional".
+
+**What the gate loses, stated rather than glossed.** CAT034's Table 2 lets an adapter detect a
+record that is *internally inconsistent with what it claims to be*: a Sector Crossing with no sector
+number is caught. Here there is no claim to be inconsistent with. A record carrying only the four
+mandatory items is a legal, minimal, complete system track message; a record carrying an
+implausible combination — a flight-plan callsign with `FPC` clear, say — violates nothing this
+document states. So the structural gate that replaces the absent CRC is thinner here than in
+CAT034, and `attributes.integrity_basis` says exactly what passed: the block satisfied `LEN`, the
+records tiled it exactly, every FSPEC bit named a defined FRN, every compound item's presence bits
+named a subfield that exists, every `FX` led somewhere defined, every repetitive item's `REP` was
+non-zero, and the four unconditionally mandatory items were present. **A single bit flipped inside a
+fixed-length field satisfies all of that and reaches the CDM as a track position.**
+
+### Settlement 8 — A translator owes no fusion. Stated once, and for the ninth time
+
+Every settlement above is an instance and this is the rule: **no joins, no accumulation, no
+arbitration, no enrichment, no inference across payloads.** One record in, one `Entity` and one
+`Event` out. Nine adapters have now made this refusal and this is the first one where the *input*
+is a fused product, which is why settlement 1 exists as well as this paragraph: the rule is
+unchanged and the thing it had to be distinguished from is new.
+
+### Settlement 9 — The item the specification defines, permits, and forbids
+
+`I062/245`, Target Identification, has a UAP slot at FRN 10, a seven-octet fixed length, a full
+§5.2.18 structure with a two-bit `STI` and eight six-bit characters, and an Encoding Rule reading
+"This Item is optional". It also has this, in the same section:
+
+> NOTE 2: As the Callsign of the target can already be transmitted (in I062/380 Subfield #2 if
+> downlinked from the aircraft or in I062/390 Subfield #2 if the target is correlated to a flight
+> plan), and in order to avoid confusion at end user's side, this item **SHALL not be used**.
+
+**The ruling: decoded and parked, never refused.** Three reasons, in order of weight. First,
+"SHALL not be used" binds an *encoder* and this adapter is a decoder — a record carrying the item is
+non-conformant, and refusing it would discard data the FSPEC correctly announced, which is CAT034
+settlement 8's parked-`X` disposition reached again. Second, the item is fully specified, so there is
+no ambiguity about what its octets mean. Third, **the prohibition is itself worth carrying**: a
+record that uses `I062/245` tells a consumer something about the system that emitted it, and that
+can only be carried if the item is read. `attributes.encoder_conformance` names it, alongside any
+`I062/245` `STI` value of `11`, which the item's own table spells "Invalid".
+
+The two items it defers to are **not merged with it**. `I062/380` SF#2 is a downlinked
+identification or registration, `I062/390` SF#2 is a flight-plan callsign, `I062/245` is a third
+string with its own `STI` saying which kind it is. All three park separately. Choosing one as "the"
+callsign is the arbitration settlement 8 refuses, and doing it on the authority of a note that
+forbids one of the three would be worse.
+
+### Settlement 10 — Two items whose MEANING the specification declines to state
+
+§4.8, a section Edition 1.18 added, is a normative delegation:
+
+> Such a data item will be marked as "implementation dependent" in a note. The exact meaning of the
+> data item shall then be described in the Interface Control Document (ICD) of the respective
+> system. In such a case the provisions of the ICD will reflect the actual implementation of the
+> data item.
+>
+> In this specification the following data items are marked as "implementation dependent":
+> I062/080 (Track Status), Fifth Extension, Bit-5 (SFC); I062/340 (Measured Information)
+
+**This is the most consequential paragraph in the document for a translator.** Every other park in
+this row set is a park because the CDM has no home for the value. These two are parks because **the
+document says the value's meaning is not standardised** — and an ICD is per-deployment, so it is not
+a document this repository could acquire. §5.2.23 repeats it twice more for `I062/340`: "The term
+'last report' may refer to the 'latest used' or 'latest measured'. The actual meaning is
+implementation dependent and needs to be described in the ICD of the SDPS", and "The availability of
+the various data items differs depending on the surveillance technology used and is implementation
+dependent."
+
+The distinction is recorded on the rows and in `attributes.implementation_dependent`, which names
+the two items and quotes §4.8. It matters to a consumer in one specific way: a consumer who does not
+know that `I062/340`'s "last report" might mean two different things will compare the item across
+two SDPSs and get a number.
+
+### What the adapter's input IS — one data block, and nothing else
+
+`to_cdm()` takes **one ASTERIX data block**: the octets from the `CAT` byte through the last record,
+and nothing else. The boundary is drawn where it is drawn for CAT021, CAT048 and CAT034. The adapter
+does not own, and must never acquire, a socket, a UDP reassembly buffer, a multicast group, a stream
+framer, a system reference point it discovered from a CAT065 block, or a sensor position it
+discovered from a CAT034 one.
+
+The accepted forms are the raw octets, or the already-parsed dict a fixture twin holds — the
+raw/parsed-twin convention the other three ASTERIX adapters use, and it exists because
+`lossless.unrepresented()` has no leaf structure to harvest from bytes.
+
+**No `sensor_position` argument, and no `reference_point` argument.** CAT048 takes an injected sensor
+position because it must to produce a coordinate at all. CAT062 needs neither: `I062/105` is already
+WGS-84, and the one item that would need a reference point — `I062/100` — is declined for the two
+reasons settlement 6 gives. Accepting a reference point anyway would create a silent authority for a
+projection the specification does not pin.
+
+### The wire form
+
+`CAT | LEN | (FSPEC + items) × N`, per §4.6. `CAT` is one octet and is 062; `LEN` is two octets and
+counts itself and `CAT`; there is no per-record length, so records are delimited only by the fact
+that each item's length is derivable. A record's items appear in **FRN order**, per §4.7 — "Messages
+shall be composed of Data Items assembled in the order defined by the Field Reference Number (FRN)
+in the associated UAP" — which is **not** item-number order:
+
+| FRN | Item | Length |
+|---|---|---|
+| 1 | `I062/010` | 2 |
+| 2 | — Spare — | — |
+| 3 | `I062/015` | 1 |
+| 4 | `I062/070` | 3 |
+| 5 | `I062/105` | 8 |
+| 6 | `I062/100` | 6 |
+| 7 | `I062/185` | 4 |
+| 8 | `I062/210` | 2 |
+| 9 | `I062/060` | 2 |
+| 10 | `I062/245` | 7 |
+| 11 | `I062/380` | `1+` |
+| 12 | `I062/040` | 2 |
+| 13 | `I062/080` | `1+` |
+| 14 | `I062/290` | `1+` |
+| 15 | `I062/200` | 1 |
+| 16 | `I062/295` | `1+` |
+| 17 | `I062/136` | 2 |
+| 18 | `I062/130` | 2 |
+| 19 | `I062/135` | 2 |
+| 20 | `I062/220` | 2 |
+| 21 | `I062/390` | `1+` |
+| 22 | `I062/270` | `1+` |
+| 23 | `I062/300` | 1 |
+| 24 | `I062/110` | `1+` |
+| 25 | `I062/120` | 2 |
+| 26 | `I062/510` | `3+` |
+| 27 | `I062/500` | `1+` |
+| 28 | `I062/340` | `1+` |
+| 29–33 | — Spare — | — |
+| 34 | `RE` | `1+` |
+| 35 | `SP` | `1+` |
+
+**Five FSPEC octets maximum**, derived from this table's own interleaving of five `FX` rows — after
+FRN 7, 14, 21, 28 and 35 — so 35 presence bits plus 5 `FX` bits is 40 bits. **Derived from Part 9's
+table and from neither sibling's**: Part 2b defines 14 FRNs in 2 octets and Part 4 defines 28 in 4.
+A codec that imported `cat048_codec.read_fspec` would give this category a four-octet ceiling and
+refuse every record whose FSPEC reaches FRN 29 or above — which includes every record carrying a
+`RE` or an `SP`.
+
+**Six FRNs are Spare and a set bit for one of them is a refusal.** FRN 2 has a stated reason — the
+NOTE under the UAP reads "The Field Reference Number #2 is kept free in order to prevent a full
+incompatibility with previous releases of ASTERIX Cat. 062 already implemented" — and FRNs 29 to 33
+have none. The refusal message distinguishes the two cases, because a reader debugging a legacy
+encoder needs the FRN 2 sentence and not the FRN 36 one.
+
+**The length column cannot be used to derive a length rule.** Its legend explains only `1+`; `3+` is
+unexplained (ambiguity 5); and `1+` is given to four structurally different mechanics — an FX chain
+(`I062/080`), a compound item with a four-octet primary subfield (`I062/380`), an FX chain of
+octets that mean different things at each position (`I062/270`) and a length-prefixed opaque field
+(`RE`). Every length rule in the codec comes from §5.2.
+
+### There is no CRC here, and what replaces it
+
+Neither §4.6 nor §4.7 nor any §5.2 item defines a CRC, checksum or parity field at block, record or
+item level. The structural gate is listed in settlement 7 and recorded on every object in
+`attributes.integrity_basis`, with the limitation named rather than smoothed over.
+
+### How to read the row sets
+
+Left column names data items as §5.2 numbers them, with the subfield or bit where one matters.
+`Status` reads `not yet` on every row: the row set is a specification and no code implements it. The
+marker changes to `cat062 1.0.0` when Phase 2 lands — `· parked` where the value goes to
+`attributes` or `payload`, `· egress` in the outbound table — and the inverted test the CAT021,
+NITS, GMTIF, CAT048 and CAT034 sections all grew applies here too, in both directions: it fails if a
+row says `not yet` while the code implements it, and it fails now if a row does *not*.
+
+### Row set — the block and record envelope
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `block.category` | `Entity.attributes` | `not yet` | the CAT octet as read. §4.6: "Data Category (CAT) = 062, is a one-octet field indicating that the Data Block contains System Track Data". A block whose category is not 62 is refused rather than decoded |
+| `block.length` | `Entity.attributes` | `not yet` | §4.6's `LEN`, "a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields". Parked, and **recomputed on egress rather than copied** |
+| `block.record_index`, `block.record_count` | `Event.payload` | `not yet` | which record of how many. There is no per-record length in the layout, so without this two objects from one block are indistinguishable from two objects from two blocks |
+| `record.fspec` | `Entity.attributes` | `not yet` | the FSPEC octets verbatim, up to five. §4.7 requires only that a present item's bit is set, so a longer-than-minimal FSPEC is legal and the round trip is byte-exact only if what was read is what is re-emitted |
+| `record.spare_bits` | `Entity.attributes` | `not yet` | every spare and unused bit as sent, per §4.5. Normative: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits" |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis` — that CAT062 defines no checksum at any level, what the structural gate checked, and that settlement 7's gate is thinner than CAT034's because there is no Table 2 to violate |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.fusion_provenance` — settlement 1's collection point: every item that is the upstream tracker's statement about its own processing, gathered under one key with the SAC/SIC of the system that stated it |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.implementation_dependent` — §4.8's two items, quoted, so a consumer knows which values have no standardised meaning |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.encoder_conformance` — non-conformances read and carried rather than refused: an `I062/245` present at all, an `STI` of `11` ("Invalid"), an out-of-range value the item's own range excludes |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — fields the source marked absent, and the two `I062/380` presence bits kept deliberately free (SF#4 and, in `I062/295`, SF#8) |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — values read and not usable: a reserved `ECAT`, an undefined `VFI`, an `I062/110` `MD5`/`MD4` combination the document does not name, a `Point Type` above 11, a `TYP` in the REF's reserved 1010–1111 range |
+| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+
+### Row set — identity, the track number, and the system that formed the opinion
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/380` SF#1 | `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `not yet` | §5.2.24 SF#1, "24 bits Target Address, A23 to A0", filed under the system name `ICAO24` — the same string `adsb.py`, `asterix_cat021.py` and `asterix_cat048.py` use, so one airframe seen by four adapters derives one `entity_id` without them coordinating. **Settlement 3's step 1** |
+| `I062/380` SF#1 | `Entity.entity_id` | `not yet` | `uuid5(NAMESPACE, "entity\|ICAO24\|<6 hex>")`. A pure function of the address, not a join |
+| `I062/040` | `Event.payload` | `not yet` | §5.2.3 Track Number, two octets, **mandatory in every record**, and **NEVER the identity basis** — settlement 3. Sixteen bits, allocated by the emitting system and recycled; keying `entity_id` on it merges two airframes into one entity |
+| `I062/040` + `I062/010` + `I062/070` + record index | `Entity.source_ids`, `Entity.entity_id` | `not yet` | **settlement 3's step 2**, used only when no Mode S address is stated. Filed under `CAT062_TRACK_REPORT` and saying so: the track number is *in* the key and is not the basis of it, because the time of day beside it means the key makes no promise of continuity |
+| `I062/010` SAC, SIC | `Entity.attributes` | `not yet` | §5.2.1, "Identification of the system sending the data", `M` in every record. **Parked, not a `SourceId`** — the CAT048 disposition and the inverse of CAT034's, and the difference is the whole reason both rows exist: here the SAC/SIC identifies the SDPS that formed the opinion, and filing a system under the target's identifiers is how a fused picture ends up with an entity per processor |
+| `I062/010` NOTE | *(no field)* | `not yet` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (http://www.eurocontrol.int/asterix)" — the same URL `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation** |
+| `I062/015` | `Entity.attributes` | `not yet` | §5.2.2 Service Identification, one octet, optional, "allocated by the system". Parked. The item CAT023's `I023/015` NOTE 2 says is "also available in item I021/015" — a **join a consumer may perform and this adapter may not** |
+| `I062/510` | `Event.payload` | `not yet` | §5.2.27 Composed Track Number, `3+`: a three-octet Master Track Number (8-bit System Unit Identification, 15-bit System Track Number, `FX`) followed by three-octet extents for the slave tracks. Parked as an **ordered list**, master first — its NOTE says "The first unit identification identifies the unit that is responsible for the track amalgamation", so the order is data. **This is the item that proves settlement 3's point**: it exists because a bare track number is ambiguous between co-operating units |
+| `I062/510` | *(no field)* | `not yet` | and no slave track number is joined to anything. Each names another unit's track in that unit's own space; resolving one is cross-payload state |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.identity_caveat` — present on **every** object, stating that this category carries no duplicate-Mode-S-address warning at all. `AAC`, `DUPT` and `IDD` are about Mode 3/A codes and Flight IDs, not addresses, so unlike CAT048's `I048/030` code 16 there is nothing to raise. An absent field would read as "no conflict"; what is true is "this category cannot tell you" |
+| *(derived)* | `Entity.entity_type` | `not yet` | `PLATFORM` by default and `UNKNOWN` where the record states nothing that supports even that — see the emitter-category and vehicle-fleet rows, which are the only two items that could refine it and neither of which is read as an affiliation |
+| *(derived)* | `Entity.affiliation` | `not yet` | `UNKNOWN`, always. §5.2.6's `MD4` and `MD5` carry "Friendly target" as a *value*, and reading it as `FRIENDLY` is declined — see the Mode 5 row set, where the refusal is argued |
+| *(derived)* | `Entity.symbol` | `not yet` | derived from the affiliation through `symbology.sidc_from_affiliation`, so every CAT062 track is an `UNKNOWN` glyph in the reality or exercise context its `SourceRef.synthetic` states. CAT062 carries no symbology of any kind |
+| *(derived)* | `Entity.confidence` | `not yet` | `None`, always. `I062/500`'s standard deviations are metric accuracies, not a 0..1 assessment of identity, and `I062/080`'s `CNF` is a two-valued confirmed/tentative flag. Mapping either to a float would invent a number |
+
+### Row set — time
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/070` | `Event.observed_at`, `Entity.valid_from` | `not yet` | §5.2.5, three octets at 1/128 s, **mandatory in every record**. "Absolute time stamping of the information provided in the track message, in the form of elapsed time since last midnight, expressed as UTC"; NOTE 1: "This is the time of the track state vector" |
+| `I062/070` | `Event.payload` | `not yet` | the raw 24-bit count, the LSB and the resolved date's basis. The date comes from the injected clock and the nearest of three candidate days wins — settlement 4, the fourth adapter to reach this rule |
+| `I062/070` ≥ 86 400 s | *(refusal)* | `not yet` | refused, not taken modulo a day. §5.2.5 prints **no** acceptable range, so the bound comes from the Definition and NOTE 2 and 86 400 s itself is unreachable — one value tighter than CAT048's printed inclusive inequality. Settlement 4 |
+| `I062/290` SF#1 `TRK` | `Event.payload` | `not yet` | §5.2.20 SF#1 Track Age, one octet at 1/4 s, max 63.75 s: "Actual track age since first occurrence". The one age in the item that is **not** measured from `I062/070` — NOTE 3 says "Except for Track Age, the ages are counted from Data Item I062/070" |
+| *(derived)* | `Event.received_at` | `not yet` | the injected clock. The one field the adapter invents rather than reads |
+| *(derived)* | `Entity.valid_to` | `not yet` | `None` on every record, **including one where `TSE` is set.** `I062/080`'s `TSE` is "last message transmitted to the user for the track", which ends the *track*; `valid_to` on an entity whose `entity_id` is a 24-bit airframe address would say the aircraft ceased to exist. The CAT048 disposition, and the flag is carried in `Event.payload` where a consumer can act on it |
+
+### Row set — position, and the Cartesian items that are never converted
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/105` | `Entity.position`, `Position.lat`, `Position.lon` | `not yet` | §5.2.8, eight octets, two 32-bit two's-complement fields at **180/2²⁵ degrees** — the finest coordinate quantum in this document. Stated range `-90 <= latitude <= 90`, `-180 <= longitude < 180`; a pattern outside it is refused rather than clamped. **The only item that produces a `Position`** |
+| `I062/105` NOTE | `Entity.attributes` | `not yet` | "The LSB provides a resolution at least better than 0.6m" — a **quantisation step**, parked at `attributes.position_quantisation_m` and deliberately not written to `Position.accuracy_m`, which would claim the tracker knows where the target is to 0.6 m |
+| *(derived)* | `Position.position_source` | `not yet` | `ESTIMATED`, always, and it is a ruling: §3.1.2 defines a calculated item as one derived "through an intermediate processing such as ... tracking", so a tracker's filtered output is an estimate whatever fed it. `GNSS` would relabel a filter's opinion as a satellite fix. Settlement 6 |
+| `I062/500` SF#3 | `Position.accuracy_m` | `not yet` | §5.2.26 SF#3, "Estimated accuracy (i.e. standard deviation) of the calculated position of a target expressed in WGS-84", two 16-bit components at 180/2²⁵ degrees. **The first source in this repository to state a positional standard deviation in the CDM's own terms.** Combined into one scalar as `sqrt(lat² + lon²)` in metres, with the independence assumption, the 1° = 111 120 m constant and the existence of a Cartesian-frame covariance in SF#2 all recorded at `attributes.accuracy_basis`. Declared in `TRANSFORMS` |
+| `I062/500` SF#3 at maximum | `Entity.attributes` | `not yet` | §5.2.26's "Maximum value means maximum value or above" makes a saturated accuracy a **floor**. Carried as the number and flagged, the AIS 102.2 kt discipline |
+| `I062/100` | `Entity.attributes` | `not yet` | §5.2.7 Calculated Track Position (Cartesian), six octets, X and Y at 0.5 m two's complement. **Parked as metres, never converted to a coordinate.** §4.3.2's projection is relative to a "reference point" no item in this category carries — the REF's §2.5 NOTE says it lives in Category 065's REF — and the projection is named only by example ("e.g. a stereographical projection"). Two unknowns, either fatal. Settlement 6 |
+| `I062/100` | `Entity.attributes` | `not yet` | `attributes.cartesian_basis` — §4.3.2 quoted in full, including "It is slant range corrected, the source of altitude being indicated in I062/080 Track Status, Octet 1, bit 6 (MRH)", so a consumer holding a CAT065 reference point can invert it visibly |
+| `I062/380` SF#22 | `Event.payload` | `not yet` | §5.2.24 SF#22 Position, two 24-bit fields at 180/2²³ degrees, "This corresponds to a resolution of at least 2.4 meters". The **aircraft's own** fix via ADS-B. Parked; never `Entity.position`, because choosing between the aircraft's fix and the tracker's is arbitration |
+| `I062/110` SF#3 | `Event.payload` | `not yet` | §5.2.9 SF#3 Mode 5 Reported Position, two 24-bit fields at 180/2²³ degrees. Parked, with the time offset from SF#6 applied to its **validity instant** and not to the track's — settlement 4. Its NOTE is carried: "The resolution implied by the LSB is better than the resolution with which Mode 5 position reports are transmitted from aircraft transponders using currently defined formats" |
+| `I062/340` SF#2 | `Event.payload` | `not yet` | §5.2.23 SF#2 Measured Position, RHO at 1/256 NM and THETA at 360/2¹⁶, from the sensor `I062/340` SF#1 names. Parked; **no geodesy**, and the sensor position is not in the record. RHO's bound is the field WIDTH (255.996 093 75 NM), because the printed "Maximum value = 256 NM" is one LSB above anything the field can carry — the CAT034 `rho` disposition |
+| `I062/340` SF#2 NOTE | `Entity.attributes` | `not yet` | the three cases the measured position can be, quoted: a plot's bias-corrected polar co-ordinates, a local track's associated plot's, or "in case of a local track without detection, the extrapolated bias-corrected polar co-ordinates". So one of the three is an **extrapolation**, and the item does not say which case it is in. Settlement 10's implementation-dependence, in the item's own words |
+
+### Row set — the four altitudes, the two vertical rates, and the mode of movement
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/130` | `Position.alt_m` | `not yet` | §5.2.11 Calculated Track Geometric Altitude, two octets at 6.25 ft two's complement, "Vertical distance between the target and the projection of its position on the earth's ellipsoid, as defined by WGS84". **The only altitude that reaches `alt_m`**, because it is the only one defined as a height above the ellipsoid, which is what `alt_m` documents itself as. Stated `Vmin -1500 ft`, `Vmax 150000 ft`; the field reaches ±204 800 ft and the stated range is the bound |
+| `I062/130` NOTE 1 | *(no field)* | `not yet` | "LSB is required to be less than 10 ft by ICAO" — a constraint on the encoding, not an accuracy. Recorded, not converted |
+| `I062/135` | `Event.payload` | `not yet` | §5.2.12 Calculated Track Barometric Altitude, `QNH` bit plus 15-bit two's complement at 1/4 FL, `-15 FL <= CTBA <= 1500 FL`. **Parked, never `alt_m`** — a pressure altitude is not a height above anything. Its NOTE is load-bearing: "This item enables the provision of either QNH or non-QNH corrected Calculated Track Barometric Altitude, **but not both**. If needed, the other variant can be provided in I062/REF/MOI/CTBA" — a container Appendix A Edition 1.3 does not define, so the other variant is unreachable here and settlement 2 records it |
+| `I062/136` | `Event.payload` | `not yet` | §5.2.13 Measured Flight Level, two octets at 1/4 FL, "Last valid and credible flight level used to update the track". Parked. Its NOTE 1 and 2 are the point: "The criteria to determine the credibility of the flight level are Tracker dependent" and "Credible means: within reasonable range of change with respect to the previous detection" — so the item's own filter is unspecified, which is settlement 10's shape without the §4.8 marking |
+| `I062/136` NOTE 4 | `Entity.attributes` | `not yet` | "This item includes the barometric altitude received from ADS-B." So a *measured flight level* in this category may not have come from a Mode C reply at all, and nothing in the item says which it was. Recorded, because a consumer treating it as a transponder altitude would be wrong some of the time and could not tell when |
+| `I062/340` SF#3 | `Event.payload` | `not yet` | §5.2.23 SF#3 Measured 3-D Height, two octets at 25 ft two's complement, and its NOTE says the reference level "is the same as the reference level applied by the sensor system providing this information" — **a datum the record does not state**. Parked, and never `alt_m`, for exactly that reason. Edition 1.19's change record says "clarification added on structure (Two's Complement)", so an earlier edition left even the signedness open |
+| `I062/340` SF#4 | `Event.payload` | `not yet` | §5.2.23 SF#4 Last Measured Mode C Code, `V` and `G` validity/garble bits plus 14-bit two's complement at 1/4 FL, `Vmin -12 FL`, `Vmax 1270 FL`. Parked with both flags. A `V` of 1 means "Code not validated" and the value is carried anyway, flagged — dropping an unvalidated code would hide that the sensor reported one |
+| `I062/380` SF#23 | `Event.payload` | `not yet` | §5.2.24 SF#23 Geometric Altitude, two octets at 6.25 ft, `-1500 ft <= Altitude <= 150000 ft`. The **aircraft's own** geometric altitude. Parked; never `alt_m`, because it is a different observer's opinion from `I062/130`'s and settlement 1 declines to arbitrate |
+| `I062/110` SF#4 | `Event.payload` | `not yet` | §5.2.9 SF#4 Mode 5 GNSS-derived Altitude: a spare bit, a `RES` resolution bit and a 14-bit two's-complement `GA`. **The `RES` bit does not change the arithmetic** — NOTE 1: "GA is coded as a 14-bit two's complement binary number with an LSB of 25 ft **irrespective of the setting of RES**" — so `RES` says what the *reporting granularity* was and the LSB is always 25 ft. Getting that backwards would scale every 100-ft-granularity altitude by four. NOTE 2's "The minimum value of GA that can be reported is -1000 ft" is carried as a floor |
+| `I062/220` | `Kinematics.climb_mps` | `not yet` | §5.2.17 Calculated Rate Of Climb/Descent, two octets at 6.25 ft/min two's complement, "A positive value indicates a climb, whereas a negative value indicates a descent". Converted to metres per second — 6.25 ft/min = 0.03175 m/s exactly — and declared in `TRANSFORMS`. **The only item in this category that sets a `Kinematics` field from a scalar** |
+| `I062/380` SF#13, SF#14 | `Event.payload` | `not yet` | §5.2.24 Barometric and Geometric Vertical Rate, two octets each at 6.25 ft/min two's complement. The **aircraft's own** two vertical rates. Parked, both, and neither reaches `climb_mps`: `I062/220` is the tracker's and these are the transponder's, and there are two of them, so any promotion would be an arbitration between three numbers |
+| `I062/500` SF#4, SF#5, SF#8 | `Event.payload` | `not yet` | estimated accuracies of the calculated geometric altitude (6.25 ft), the calculated barometric altitude (1/4 FL) and the rate of climb/descent (6.25 ft/min). Parked — the CDM has no vertical-accuracy field, which is **gap 6**, and this is the third source to state one |
+| `I062/200` | `Event.payload` | `not yet` | §5.2.15 Mode of Movement, one octet: `TRANS` (constant course / right turn / left turn / undetermined), `LONG` (constant / increasing / decreasing groundspeed / undetermined), `VERT` (level / climb / descent / undetermined), `ADF` and a spare. **The tracker's own classification of the motion**, parked as four fields with the document's wording. Never used to sign or modify `climb_mps` or `course_deg`, which are numbers the same record states |
+| `I062/200` `ADF` | `Entity.attributes` | `not yet` | Altitude Discrepancy Flag, and its NOTE says what it means: "a difference has been detected in the altitude information derived from radar as compared to other technologies (such as ADS-B)". So it is the tracker telling you two of the altitude items disagree — settlement 1's fused-content statement in one bit, and it is carried and not acted on |
+
+### Row set — velocity, acceleration, and the one vector that becomes scalars
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/185` | `Kinematics.speed_mps`, `Kinematics.course_deg` | `not yet` | §5.2.14 Calculated Track Velocity (Cartesian), four octets, `Vx` and `Vy` at 0.25 m/s two's complement, `-8192 <= V <= 8191.75 m/s`. **The one place a vector becomes the CDM's scalars in this row set**, and the arithmetic is stated: `speed_mps = hypot(Vx, Vy)`, `course_deg = degrees(atan2(Vx, Vy)) mod 360`. `atan2(Vx, Vy)` and not `atan2(Vy, Vx)`, because the item's NOTE fixes the frame — "The y-axis points to the Geographical North at the location of the target" — so the bearing is measured from `Vy` toward `Vx`. Both declared in `TRANSFORMS` |
+| `I062/185` | `Event.payload` | `not yet` | the raw `Vx` and `Vy` and the LSB, always, so the conversion is checkable and the components survive. A course derived from a near-zero vector is meaningless and the components are how a consumer sees that |
+| `I062/185` NOTE 2 | `Entity.attributes` | `not yet` | "For gate-to-gate tracking the velocity resolution of I062/185 ... of 0.25 m/s is not sufficient for all applications addressing the ground segment especially for slow moving targets. Therefore a High Resolution Calculated Track Velocity can be provided in I062/REF/MOI/FPVHR." A container Appendix A Edition 1.3 does not define — settlement 2's dangling pointers — so on a surface target this category's velocity resolution is the resolution available |
+| `I062/210` | `Event.payload` | `not yet` | §5.2.16 Calculated Acceleration (Cartesian), two octets, `Ax` and `Ay` at 0.25 m/s² two's complement, same north-oriented frame. **Parked; the CDM has no acceleration field** and adding one in passing would be widening the model for one source. NOTE 2's "Maximum value means maximum value or above" makes a saturated component a floor |
+| `I062/500` SF#1, SF#2, SF#6, SF#7 | `Event.payload` | `not yet` | estimated accuracies of the Cartesian position (0.5 m per component), the **XY covariance** (0.5 m, two's complement, with the item's own formula `sign{Cov(X,Y)} * sqrt(abs[Cov(X,Y)])`), the track velocity (0.25 m/s per component) and the acceleration (0.25 m/s² per component). All parked. The covariance is in the **Cartesian** frame, which settlement 6 declines to invert, so it cannot be combined with SF#3's WGS-84 components — recorded at `attributes.accuracy_basis` |
+| `I062/500` SF#2 NOTE 2 | `Entity.attributes` | `not yet` | "The maximum value for the (unsigned) XY covariance component is 16.383 km." Sixteen bits at 0.5 m reach 16 383.5 m, so the printed figure is the field's positive extreme minus one LSB and is not a bound the encoder could honour as stated. The **width** is the bound, the printed figure is recorded beside it — the CAT034 `rho` disposition again |
+| `I062/380` SF#18 | `Event.payload` | `not yet` | §5.2.24 SF#18 Ground Speed, two octets at 2⁻¹⁴ NM/s two's complement "referenced to WGS84", `-2 NM/s <= GS < 2 NM/s`. The **aircraft's own** ground speed. Parked; never `speed_mps`, because `I062/185` is the tracker's and they are two observers |
+| `I062/380` SF#17 | `Event.payload` | `not yet` | §5.2.24 SF#17 Track Angle, two octets at 360/2¹⁶. The aircraft's own track angle. Parked; never `course_deg`, same reason |
+| `I062/380` SF#3 | `Event.payload` | `not yet` | §5.2.24 SF#3 Magnetic Heading, two octets at 360/2¹⁶. **A magnetic heading, not a true one**, and the CDM has no heading field at all — **gap 7**, which this row is the fourth source to open against. Parked with the datum stated, because a bare `heading_deg` would hold two different measurements |
+| `I062/380` SF#16 | `Event.payload` | `not yet` | §5.2.24 SF#16 Track Angle Rate: a two-bit `TI` turn indicator (not available / left / right / straight), six spare bits, a **seven-bit** two's-complement Rate of Turn at 1/4 °/s in bits 8/2, and a spare bit 1. `-15 °/s <= RoT <= 15 °/s` stated while the field reaches ±16; the stated range is the bound and NOTE 2's "Value 15 means 15°/s or above" makes the maximum a floor. **No `turn_rate_dpm` on `Kinematics`** — gap 7's second half |
+| `I062/380` SF#19 | `Event.payload` | `not yet` | §5.2.24 SF#19 Velocity Uncertainty, one octet, "Velocity uncertainty category of the least accurate velocity component". A **category**, not a metric value, and the document defines no scale for it anywhere — so it is parked as the integer and nothing is derived from it |
+
+### Row set — `I062/080` Track Status, six extents and forty-two flags
+
+The primary octet is mandatory in every record; each `FX` extends into the next extent. **Six extents
+are defined and the sixth's `FX` names a seventh that does not exist** — refused, and it is a *new*
+instance created by Edition 1.21 rather than an old one nobody cleaned up (ambiguity 11).
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/080` primary | `Entity.attributes` | `not yet` | `MON`, `SPI`, `MRH`, `SRC` (three bits), `CNF`, `FX`. Parked whole |
+| `I062/080` `MON` | `Entity.attributes` | `not yet` | monosensor / multisensor track. **Settlement 1's most direct single bit**: the tracker saying whether it fused anything for this track. Parked at `attributes.fusion_provenance` |
+| `I062/080` `SPI` | `Event.payload` | `not yet` | "SPI present in the last report received from a sensor capable of decoding this data". A pilot-actuated special position identification, so it is a *statement about a past report* rather than a current state — the wording is carried verbatim for that reason. **Does not raise `Event.severity`**: SPI is an identification aid, not an emergency, and the emergency vocabulary is `EMS` and SF#11 `STAT` |
+| `I062/080` `MRH` | `Entity.attributes` | `not yet` | Most Reliable Height, barometric or geometric. **Carried as the tracker's opinion and arbitrating nothing** — §5.2.6's fourth NOTE says the three altitude items may be sent in parallel "independent from the value transmitted on I062/080 (MRH)". Settlement 5 |
+| `I062/080` `SRC` | `Entity.attributes` | `not yet` | source of the calculated altitude for `I062/130`: no source, GNSS, 3D radar, triangulation, height from coverage, speed look-up table, default height, multilateration. Parked at `attributes.altitude_source` with the document's own wording; **never `Position.position_source`**, which is about the horizontal fix, and two of the eight values describe an altitude that was not measured |
+| `I062/080` `CNF` | `Event.payload` | `not yet` | confirmed / tentative track. **Not mapped to `Entity.confidence`**: two values are not a 0..1 assessment, and picking two floats for them would invent a scale |
+| `I062/080` first extent | `Entity.attributes` | `not yet` | `SIM`, `TSE`, `TSB`, `FPC`, `AFF`, `STP`, `KOS`, `FX` |
+| `I062/080` `SIM` | `Entity.attributes` | `not yet` | actual / simulated track. **Parked and does NOT set `SourceRef.synthetic`**, which is the GMTIF settlement 4 ruling and the CAT048 one: `synthetic` states whether the object came from a real source *as this platform is deployed*, and a payload field cannot decide that — a live SDPS can emit a simulated track and an exercise replay can emit an actual one. `attributes.simulated_flag` carries it |
+| `I062/080` `TSB`, `TSE` | `Event.payload` | `not yet` | first and last message transmitted to the user for the track. **The track lifecycle, on the wire**, and settlement 3 is why it does not become identity and settlement 4's last row is why `TSE` does not set `Entity.valid_to` |
+| `I062/080` `FPC` | `Event.payload` | `not yet` | flight-plan correlated. The bit that says whether everything in `I062/390` is about this target — parked, and a consumer reading `I062/390` without reading this bit is reading an uncorrelated flight plan |
+| `I062/080` `AFF` | `Entity.attributes` | `not yet` | "ADS-B data inconsistent with other surveillance information". The tracker reporting a disagreement between its own inputs. Settlement 1: carried, never acted on |
+| `I062/080` `STP`, `KOS` | `Entity.attributes` | `not yet` | Slave Track Promotion; complementary / background service used. Both about the tracker's own service arrangement. Parked |
+| `I062/080` second extent | `Entity.attributes` | `not yet` | `AMA`, `MD4` (two bits), `ME`, `MI`, `MD5` (two bits), `FX` |
+| `I062/080` `AMA` | `Entity.attributes` | `not yet` | "track resulting from amalgamation process", and §3.1.1 defines amalgamation as merging tracks from co-operating systems. **The clearest single statement in the category that the input is fused.** Parked at `attributes.fusion_provenance` |
+| `I062/080` `MD4`, `MD5` | `Entity.attributes` | `not yet` | Mode 4 and Mode 5 interrogation results: no interrogation / **friendly target** / unknown target / no reply. **NOT read as `Affiliation.FRIENDLY`** — the CAT021 Mode 5 refusal, reached again and for the same reason: an authenticated military-mode reply says a cryptographic exchange succeeded, and reading it as an affiliation is an *identification decision*, which is a fusion judgement and not a fact on a wire. Parked with the document's own wording so a fusion layer can make the call visibly |
+| `I062/080` `ME`, `MI` | `Entity.attributes` | `not yet` | Military Emergency and Military Identification "present in the last report received from a sensor capable of decoding this data". `ME` **does not raise `Event.severity`**, and that is a decision: it is a statement about a past report from an unnamed sensor, the emergency vocabularies in this category are `EMS` and SF#11 `STAT`, and raising severity from two independent sources would make the field's meaning depend on which one the record happened to carry. Parked and named in `attributes.military_emergency` |
+| `I062/080` third extent | `Entity.attributes` | `not yet` | `CST`, `PSR`, `SSR`, `MDS`, `ADS`, `SUC`, `AAC`, `FX` |
+| `I062/080` `CST` and the four technology bits | `Entity.attributes` | `not yet` | coasting, and per technology "Age of the last received ... track update is higher than system dependent threshold". **The threshold is system-dependent and unstated**, so these are the tracker's staleness verdicts and not derivable figures. NOTES 2 and 3 are load-bearing and are carried verbatim: "If the system supports the technology, default value (0) means that the technology was used to produce the report" and "**If the system does not support the technology, default value is meaningless**" — so a clear bit means two different things and the record does not say which. Parked at `attributes.fusion_provenance`, never inverted into "this technology contributed" |
+| `I062/080` `CST` NOTE 4 | *(no field)* | `not yet` | "An extended coasting indication can be provided in I062/REF/STS/CSX." Appendix A Edition 1.3's `STS` defines `FDR` and `LNAV` and no `CSX` — settlement 2's dangling pointers |
+| `I062/080` `SUC` | `Entity.attributes` | `not yet` | Special Used Code, "Mode A codes to be defined in the system to mark a track with special interest". Parked; the codes are per-system. NOTES 5 and 6 point the text at `I062/REF/MOI/SCT`, undefined in Appendix A Edition 1.3 |
+| `I062/080` `AAC` | `Entity.attributes` | `not yet` | Assigned Mode A Code Conflict — "same discrete Mode A Code assigned to another track". A conflict about a **Mode A code**, not about the Mode S address, which is why `attributes.identity_caveat` says this category warns of no address duplication |
+| `I062/080` fourth extent | `Entity.attributes` | `not yet` | `SDS` (two bits), `EMS` (three bits), `PFT`, `FPLT`, `FX` |
+| `I062/080` `SDS` | `Entity.attributes` | `not yet` | Surveillance Data Status: combined / co-operative only / non-cooperative only / not defined. The tracker's summary of what kind of surveillance produced the track. Parked |
+| `I062/080` `EMS` | `Event.severity`, `Event.event_type` | `not yet` | Emergency Status Indication, eight values: no emergency, general emergency, lifeguard/medical, minimum fuel, no communications, unlawful interference, "Downed" aircraft, undefined. **This is one of the two items that raise severity.** `5` unlawful interference and `6` downed aircraft → `CRITICAL` and `ALERT`; `1` general emergency → `CRITICAL`; `2`, `3`, `4` → `WARNING` and `ALERT`; `0` → the record's default; `7` undefined → `ADVISORY` with the raw value in `unresolved_raw`, because "undefined" is a stated non-statement and neither `INFO` nor `WARNING` is true of it |
+| `I062/080` `EMS` NOTE 1 | `Entity.attributes` | `not yet` | "other than subfield #11 of data item I062/380, these bits allow the SDPS to set the emergency indication as derived from **other sources than ADS-B** (e.g. based on the Mode 3/A code)". So `EMS` and SF#11 `STAT` are two independent emergency statements with different provenance and they can disagree. Both are read; the severity taken is the **more severe of the two**, and the disagreement is recorded at `attributes.emergency_disagreement` rather than being resolved silently |
+| `I062/080` `EMS` NOTE 2 | `Entity.attributes` | `not yet` | the ADS-B Version 3 back-mapping table, in full: `2 (UAS/RPAS Lost Link) → 4`, `6` and `7` (aircraft in distress, automatic and manual) `→ 1 (General emergency)`. **So on Version 3 equipment `EMS` is lossy by construction** and `I062/REF/PS3` carries the real value — settlement 2's first reason for taking the REF. When both are present, `PS3` is preferred for severity and `EMS` is carried beside it with the mapping quoted |
+| `I062/080` `PFT` | `Entity.attributes` | `not yet` | Potential False Track Indication, and its NOTE is why this is parked rather than raised: "If any of these validation functions show a potentially spoofed target, the PFT bit will be used to convey this information to the CWP. If and how this information is processed and displayed on the CWP is a **local matter and not subject to the category 062 specification**." The document declines to standardise what to do with it, so this adapter does not decide either. **Not read as `InterferenceType.SPOOFING`**: that enum is paired with `GnssInterferencePayload` and a possibly-false radar track is not a GNSS interference event — gap 29's argument, reached a second time |
+| `I062/080` `FPLT` | `Entity.attributes` | `not yet` | "Track created / updated with FPL data", and its NOTE: the target report "has been updated by flight plan related data **because no surveillance data was available** for the target, or was created based on flight plan related data in areas with no surveillance". So a set `FPLT` means part of this track is a flight plan rather than an observation. Parked at `attributes.fusion_provenance`, prominently: it is the one bit that says the position may not be a measurement of anything |
+| `I062/080` fifth extent | `Entity.attributes` | `not yet` | `DUPT`, `DUPF`, `DUPM`, `SFC`, `IDD`, `IEC`, `MLAT`, `FX` |
+| `I062/080` `DUPT`, `DUPF`, `DUPM`, `IDD` | `Entity.attributes` | `not yet` | duplicate Mode 3/A code, duplicate flight plan, duplicate flight plan due to manual correlation, duplicate Flight-ID. Four correlation-failure statements, each with its own NOTE quoted. All parked, and **none of them is about the Mode S address** |
+| `I062/080` `SFC` | `Entity.attributes` | `not yet` | "Surface target", and §4.8 marks **this bit specifically** as implementation dependent: NOTE 5 says it "is set to 1 when the SDPS considers the target to be on the Surface (the actual meaning is implementation dependent — please refer to chapter 4.8 above)". Parked and named in `attributes.implementation_dependent`. **Does not change `entity_type`**: a surface target may be an aircraft or a vehicle and the bit does not say which |
+| `I062/080` `IEC` | `Entity.attributes` | `not yet` | Inconsistent Emergency Code — "the comparison between various sources has revealed an inconsistency in the information contained about emergency codes". The tracker reporting that its own emergency inputs disagree, which is what `attributes.emergency_disagreement` is beside |
+| `I062/080` `MLAT` | `Entity.attributes` | `not yet` | multilateration update staleness, added by Edition 1.20 ("Added MLAT technology to I062/080"). Same treatment as the other four technology bits |
+| `I062/080` sixth extent | `Entity.attributes` | `not yet` | `M5I` plus **six spare bits** and `FX`. Added by Edition 1.21 ("Added Mode 5 Interrogation to I062/080"). Its NOTE points at `I062/REF/MOI/AM5I` for the age, undefined in Appendix A Edition 1.3 |
+| `I062/080` sixth extent `FX` set | *(refusal)* | `not yet` | refused. §5.2.6 defines six extents and no seventh, so a set `FX` on the sixth announces something the document does not define: there is nothing to decode, it cannot be skipped, and guessing a length would desynchronise every following item. The `asterix_cat034.py` `_len_compound` disposition |
+
+### Row set — the Mode codes, and `I062/110` Mode 5
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/060` | `Event.payload` | `not yet` | §5.2.4 Track Mode 3/A Code: `V` (validated), `G` (garbled), `CH` (changed), a spare bit, and twelve bits of octal Mode 3/A. Parked as the four-digit octal string **and** the raw twelve bits and all three flags. `CH` is the tracker saying the code changed, which is a statement about a previous record |
+| `I062/120` | `Event.payload` | `not yet` | §5.2.10 Track Mode 2 Code: four spare bits and twelve bits of octal Mode 2. Parked. **No validity or garble bits at all**, unlike `I062/060` and unlike `I062/340` SF#5 — so a Mode 2 code in this category carries no quality statement and the absence is recorded rather than filled in |
+| `I062/340` SF#5 | `Event.payload` | `not yet` | §5.2.23 SF#5 Last Measured Mode 3/A Code: `V`, `G`, **`L`** (derived from the transponder reply / "Smoothed MODE 3/A code as provided by a sensor local tracker"), a spare, and twelve octal bits. Parked with all three flags. `L` is a third value's provenance and its NOTE says when it is used — "in case of absence of MODE 3/A code information in the plot or in case of difference between plot and sensor local track MODE 3/A code information" — i.e. a smoothed code is itself the output of a disagreement the sensor resolved |
+| `I062/390` SF#17 | `Event.payload` | `not yet` | §5.2.25 SF#17 Pre-Emergency Mode 3/A: three spare bits, a `VA` validity bit and twelve octal bits, "used only when the aircraft is transmitting an emergency Mode 3/A code". Parked. **`VA` = 0 means the twelve bits are meaningless** by the item's own NOTE 2, so a `VA` of 0 sends the raw bits to `unresolved_raw` and no code is rendered |
+| `I062/110` primary | `Entity.attributes` | `not yet` | §5.2.9 Mode 5 Data reports & Extended Mode 1 Code, a compound item: `SUM`, `PMN`, `POS`, `GA`, `EM1`, `TOS`, `XP` presence bits and `FX`. A set `FX` is **refused** — seven subfields are defined and a second primary octet has nothing behind it |
+| `I062/110` SF#1 | `Entity.attributes` | `not yet` | Mode 5 Summary: `M5` (interrogation), `ID` and `DA` (authenticated ID reply / authenticated Data reply), `M1`, `M2`, `M3`, `MC` (which of the other codes came from a Mode 5 reply) and `X`. **Parked; no affiliation is read from an authenticated reply** — the CAT021 refusal. NOTES 1–3 are carried: the flags refer to `I062/120`, `I062/060` and `I062/135` respectively, and an authenticated reply with the emergency or identification-of-position bit set is what sets `I062/080`'s `ME` and `SPI` |
+| `I062/110` SF#2 | `Entity.attributes` | `not yet` | Mode 5 PIN / National Origin / Mission Code: two spare bits, a 14-bit `PIN`, three spares, a five-bit `NAT`, two spares, a six-bit `MIS`. Parked as three integers. **No national origin is resolved to a nation** — the table is not in this document and reading one would be an identification decision. Its NOTE says NATO changed the layout in 2011 and that the new one is in `I062/REF/M5N`, which **Appendix A Edition 1.3 does not define**: settlement 2's dangling pointers again, and here the consequence is sharper because the item says equipment certified to the new layout uses the REF version, so a modern reply's national origin is unreachable in this category |
+| `I062/110` SF#5 | `Event.payload` | `not yet` | Extended Mode 1 Code in Octal Representation: four spare bits and twelve octal bits. Parked, with SF#1's `M1` bit stating whether it came from a Mode 5 or a Mode 1 reply — and the item's NOTE says that if SF#1 is absent, "the Extended Mode 1 Code is from a Mode 1 reply", which is a **stated default rather than an unknown** |
+| `I062/110` SF#6 | `Event.payload` | `not yet` | Time Offset, one octet two's complement at 1/128 s. Applied to the **Mode 5 position and GNSS-derived altitude's validity instant only**, using `I062/070` in place of the `I048/140` §5.2.9 names — **settlement 4's ruling, stated in the object** at `payload.mode5_time_basis`. An absent SF#6 is a stated zero, not an unknown |
+| `I062/110` SF#7 | `Event.payload` | `not yet` | X Pulse Presence: three spare bits then `X5`, `XC`, `X3`, `X2`, `X1` — the X pulse from the Mode 5, Mode C, Mode 3/A, Mode 2 and Mode 1 replies. Parked as five flags. Note the **duplication**: SF#1's bit 1 is also an X pulse "from Mode 5 Data reply or Report", in the same words as SF#7's `X5`. Two fields, one measurement, and the document does not say they must agree — so both are parked and a disagreement is recorded, never resolved |
+
+### Row set — `I062/290` System Track Update Ages
+
+Ten subfields, one per contributing technology, and **settlement 1 item 5 is why none of them is
+converted into an instant.** The primary subfield is up to two octets; a set `FX` on the second is
+refused, and a set spare presence bit (octet 2 bits 5/2) is refused for the CAT034 reason — it
+announces a subfield that does not exist.
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/290` primary | `Entity.attributes` | `not yet` | `TRK`, `PSR`, `SSR`, `MDS`, `ADS`, `ES`, `VDL`, `FX` in octet 1; `UAT`, `LOP`, `MLT`, four spare bits, `FX` in octet 2. Parked whole, spares included |
+| `I062/290` SF#1 `TRK` | `Event.payload` | `not yet` | Track Age, one octet at 1/4 s, "Actual track age since first occurrence". **The one age not measured from `I062/070`** — NOTE 3 excepts it by name |
+| `I062/290` SF#2–#4, #6–#10 | `Event.payload` | `not yet` | PSR, SSR, Mode S, ADS-B Extended Squitter, ADS-B VDL Mode 4, ADS-B UAT, magnetic **loop**, and multilateration ages. One octet each at 1/4 s, maximum 63.75 s. Parked as seconds and as raw octets, each with the technology it belongs to. `LOP` is a magnetic induction loop, which is a surface sensor and the only non-radio technology in the list |
+| `I062/290` SF#5 `ADS` | `Event.payload` | `not yet` | **ADS-C Age, TWO octets** at 1/4 s, maximum 16 383.75 s ("> 4 hours"). The one non-uniform subfield in the item, and the pin record records why it is the most dangerous uniformity assumption in the category: a decoder that read it as one octet would desynchronise the record with no length error anywhere |
+| `I062/290` NOTE 3 | `Entity.attributes` | `not yet` | the tracker's own formula, quoted: "Age = Time of track information - Time of last detection used to update the track". **Recorded and not applied** — settlement 1 item 5. An absolute instant computed here would be indistinguishable in the output from one the source stated |
+| `I062/290` NOTE 4 | `Entity.attributes` | `not yet` | "The time of last detection is derived from monosensor category time of day" — so the ages are anchored in *another category's* clock, which is a second reason not to resolve them here |
+| `I062/290` NOTE 5 | `Entity.attributes` | `not yet` | "If the data has never been received, then the corresponding subfield is not sent." **So an absent subfield is a stated never, not an unknown**, and it lands in `attributes.unavailable_fields` with that wording. This is the strongest absence semantics in the category and it is the opposite of `I062/080`'s technology bits, whose clear value is "meaningless" if the technology is unsupported |
+| `I062/290` NOTE 6 | `Entity.attributes` | `not yet` | "Maximum value means maximum value or above." A saturated age is a floor, flagged |
+| `I062/290` NOTES 1, 2 | *(no field)* | `not yet` | "Mode-5 radar interrogation age is provided in I062/REF/MOI/AM5I" and "Mode-5 Level 2 Squitter age is provided in I062/REF/MOI/AM5L2S" — two more of settlement 2's dangling pointers |
+
+### Row set — `I062/295` Track Data Ages
+
+Thirty-one subfields, every one of them one octet at 1/4 s with a maximum of 63.75 s, each naming
+the `I062/380` subfield whose value it dates. The primary subfield is up to **five** octets; a set
+`FX` on the fifth is refused, and a set spare presence bit (octet 5 bits 5/2) is refused.
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/295` primary | `Entity.attributes` | `not yet` | five octets of presence bits: `MFL`, `MD1`, `MD2`, `MDA`, `MD4`, `MD5`, `MHG`; `IAS`, `TAS`, `SAL`, `FSS`, `TID`, `COM`, `SAB`; `ACS`, `BVR`, `GVR`, `RAN`, `TAR`, `TAN`, `GSP`; `VUN`, `MET`, `EMC`, `POS`, `GAL`, `PUN`, `MB`; `IAR`, `MAC`, `BPS`, four spares. Parked whole |
+| `I062/295` SF#1–#31 | `Event.payload` | `not yet` | one octet each at 1/4 s. Parked as an **age per named field**, so the object carries "the magnetic heading was measured 3.25 s ago" and not a bare number. The pairing is from each subfield's own text, which names the `I062/380` subfield it dates — that is the only thing that makes these thirty-one integers readable |
+| `I062/295` SF#1 `MFL` | `Event.payload` | `not yet` | Measured Flight Level Age, and it dates **two** items: "the last valid and credible Mode C code or barometric altitude from ADS-B used to update the track (I062/136 and I062/REF/MOI/ALTQCMFL)". So one age covers a value that may have come from either of two technologies, which is `I062/136` NOTE 4's ambiguity carried into the age |
+| `I062/295` SF#4 `MDA` | `Event.payload` | `not yet` | Mode 3/A Age, dating "I062/060 or I062/REF/MTI/EXM3A" — another dangling REF pointer, and Edition 1.21's change record says "References in I062/295 corrected", so these cross-references were wrong in an earlier edition |
+| `I062/295` SF#8 `IAS` | `Event.payload` | `not yet` | Indicated Airspeed / Mach Nb age, dating the **superseded** `I062/380` SF#4. Its own NOTE says the subfield "is kept free in order to prevent a full incompatibility with previous releases", and SF#29 and SF#30 date the two replacements separately. Parked; a record may legally carry all three |
+| `I062/295` SF#28 `MB` | `Event.payload` | `not yet` | BDS Register Data Age, one age for the whole repetitive `I062/380` SF#25 — so a record carrying five BDS registers carries **one** age for all five. Its NOTE points at `I062/REF/MOI/SI#10` for a per-register version, undefined in Appendix A Edition 1.3 |
+| `I062/295` final NOTE | `Entity.attributes` | `not yet` | "In all the subfields, the age is the time delay since the value was measured." Recorded, and it is what makes the ages relative rather than absolute — settlement 1 item 5 again |
+
+### Row set — `I062/340` Measured Information
+
+**The item §4.8 marks as implementation dependent in its entirety.** A compound item with a
+one-octet primary; a set `FX` is refused, and so is a set spare presence bit (bit 2).
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/340` primary | `Entity.attributes` | `not yet` | `SID`, `POS`, `HEI`, `MDC`, `MDA`, `TYP` presence bits, one spare, `FX`. Parked whole |
+| `I062/340` | `Entity.attributes` | `not yet` | `attributes.implementation_dependent` names this item and quotes §4.8 and both of §5.2.23's own notes. **The one item in this row set whose park is because the document declines to state a meaning**, not because the CDM has no home for it |
+| `I062/340` SF#1 | `Event.payload` | `not yet` | Sensor Identification, SAC and SIC of the contributing sensor. Parked as the pair and the `SACSIC` string. **Not a `SourceId`** and **not joined to anything**: it names another system, and resolving it against a CAT034 station Entity or a CAT048 report is cross-payload state |
+| `I062/340` SF#6 | `Event.payload` | `not yet` | Report Type: a three-bit `TYP` (no detection / single PSR / single SSR / SSR+PSR / single Mode S All-Call / single Mode S Roll-Call / Mode S All-Call+PSR / Mode S Roll-Call+PSR), `SIM`, `RAB`, `TST` and two spares. Parked with the document's wording. **`SIM` does not set `SourceRef.synthetic`** and **`TST` does not either** — the same ruling as `I062/080`'s `SIM`, and here there are two such bits in one item |
+| `I062/340` SF#6 `RAB` | `Event.payload` | `not yet` | "Report from field monitor (fixed transponder)" — a calibration transponder rather than an aircraft. Parked; **does not change `entity_type`**, because the object is still whatever the SDPS is tracking and the bit describes the last report's provenance |
+
+### Row set — `I062/380` Aircraft Derived Data
+
+Twenty-eight subfields, a four-octet primary, and **the largest single item in the ASTERIX family
+this repository has touched.** Everything here is the *aircraft's* statement, downlinked, as opposed
+to the tracker's calculation — so nothing in it becomes a canonical field except through
+`I062/380` SF#1, which is settlement 3's identity basis. A set `FX` on the fourth primary octet is
+refused; a set spare presence bit is refused.
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/380` primary | `Entity.attributes` | `not yet` | four octets of presence bits, `ADR` through `BPS`, with `FX` after each seventh. Parked whole |
+| `I062/380` SF#1 | `Entity.source_ids`, `Entity.entity_id` | `not yet` | see the identity row set. **The only subfield of this item that reaches a canonical field** |
+| `I062/380` SF#2 | `Event.payload` | `not yet` | Target Identification, eight six-bit characters, "a target identification when flight plan is available or the registration marking when no flight plan is available". Decoded through the ICAO Annex 10 Vol. IV Table 3-8 six-bit alphabet, with `#` for a code the alphabet does not define — the `asterix_cat021.py` and `adsb.py` convention. **The document cites the alphabet to the wrong reference twice** and at two different section numbers; ambiguity 6, and the alphabet is taken from the sibling's table |
+| `I062/380` SF#4 | `Event.payload` | `not yet` | the **superseded** Indicated Airspeed / Mach No: an `IM` bit selecting between IAS at 2⁻¹⁴ NM/s and Mach at 0.001, then fifteen bits. Parked. Its NOTE says the subfield is kept for backwards compatibility and names **"bit-37"** as its presence bit — a bit that does not exist in a four-octet primary numbered 32 to 1; ambiguity 7, and the diagram is preferred |
+| `I062/380` SF#5 | `Event.payload` | `not yet` | True Airspeed, two octets at 1 knot, `0 <= TAS <= 2046 knots`. Parked |
+| `I062/380` SF#6 | `Event.payload` | `not yet` | Selected Altitude: `SAS` (whether a source is stated), a two-bit `Source` (unknown / aircraft altitude / FCU-MCP selected / FMS selected) and thirteen bits at 25 ft two's complement. Parked. **`SAS` = 0 means the `Source` field is not a statement**, so a `Source` of `00` under `SAS` = 0 is "no source information provided" and not "unknown" — two different things and the item distinguishes them |
+| `I062/380` SF#7 | `Event.payload` | `not yet` | Final State Selected Altitude: `MV` (managed vertical mode), `AH` (altitude hold), `AM` (approach mode) and thirteen bits at 25 ft. Parked. Its NOTE points at `I062/REF/STS/LNAV` for the lateral navigation mode — **the one dangling pointer settlement 2 can actually follow**, because Appendix A Edition 1.3's `STS` does define `LNAV` |
+| `I062/380` SF#8 | `Event.payload` | `not yet` | Trajectory Intent Status: `NAV` and `NVB` (data available / valid), five spares and `FX`. **A set `FX` is refused** — no extent is defined for this subfield |
+| `I062/380` SF#9 | `Event.payload` | `not yet` | Trajectory Intent Data, repetitive: a one-octet `REP` then `REP` **fifteen-octet** Trajectory Change Points, each with `TCA`, `NC`, a six-bit TCP number, a 16-bit altitude at 10 ft, 24-bit latitude and longitude at 180/2²³, a four-bit Point Type (twelve values, `0`–`11`, lateral and vertical types), `TD`, `TRA`, `TOA`, a 24-bit `TOV` at 1 s and a 16-bit `TTR` at 0.01 NM. Parked as an **ordered list**, duplicates preserved. **The one repetitive structure in the category whose element is a position**, and no `Track` is emitted from it: a trajectory intent is a prediction, not a history, and `Track.samples` are observations |
+| `I062/380` SF#9 `REP` = 0 | *(refusal)* | `not yet` | refused. The Format says "followed by at least one Trajectory Intent Point", so a zero repetition is excluded by the item's own words — the `I034/070` disposition |
+| `I062/380` SF#9 `TOV` | `Event.payload` | `not yet` | Time Over Point, 24 bits at 1 s, and NOTE 5 says it "is defined as the absolute time from midnight" while NOTE 6 says it "is meaningful only if TOA is set to 0". So a *second* time-of-day-shaped field in the category, at a different LSB from `I062/070`, valid conditionally. Resolved to an instant against the same three-candidate-day rule when `TOA` = 0, and parked raw when `TOA` = 1 |
+| `I062/380` SF#10 | `Event.payload` | `not yet` | Communications/ACAS Capability and Flight Status reported by Mode-S: a three-bit `COM` (five defined values, 5–7 "Not assigned"), a three-bit `STAT` (eight values including `6` "Not defined" and `7` "Unknown or not yet extracted"), two spares, `SSC`, `ARC`, `AIC`, `B1A`, `B1B`. Parked. **`STAT`'s alert values do not raise severity**: the item is the *transponder's* flight status, its `4` and `5` conflate airborne and on-ground, and the emergency vocabularies in this category are `EMS` and SF#11 |
+| `I062/380` SF#11 | `Event.severity`, `Event.event_type` | `not yet` | Status reported by ADS-B: `AC`, `MN`, `DC` (two bits each, unknown / not operational / operational / **invalid**), `GBS`, six spares and a three-bit `STAT` carrying the ADS-B emergency. **The second of the two items that raise severity**, and the mapping is `EMS`'s. Where `I062/REF/PS3` is present it is preferred and this field is carried beside it with the back-mapping quoted — settlement 2 |
+| `I062/380` SF#11 `VN` | `Entity.attributes` | `not yet` | **the ADS-B version number, which the notes in §5.2.6 and §5.2.24 both cite as `I062/380/SF#11/VN` and which does not appear in SF#11's structure at all.** SF#11's sixteen bits are `AC`, `MN`, `DC`, `GBS`, six spares and `STAT`; there is no `VN` field. So the item that decides whether `PS3` or `STAT` applies is named twice by the core specification and defined nowhere in it. Recorded as ambiguity 13 and handled the only way it can be: **if `I062/REF/PS3` is present it is a Version 3 statement by Appendix A §2.7's own definition, and that presence is what selects it** — an inference from the REF rather than from an item that does not exist |
+| `I062/380` SF#12 | `Event.payload` | `not yet` | ACAS Resolution Advisory Report, seven octets, "56-bit message conveying Mode S Comm B message data of BDS Register 3,0 and ADS-B". **Parked whole as hex, never decoded** — the only decode authority the item cites is "Refer to ICAO Draft SARPs for ACAS for detailed explanations", a draft unnamed by edition and absent from §2.2. The `I048/260` disposition, reached again |
+| `I062/380` SF#15 | `Event.payload` | `not yet` | Roll Angle, two octets at 0.01 degree two's complement, `-180 <= Roll Angle <= 180`. Parked; the CDM has no attitude field and adding one for one source would be widening the model |
+| `I062/380` SF#20 | `Event.payload` | `not yet` | Met Data, eight octets: `WS`, `WD`, `TMP`, `TRB` validity bits, four spares, then wind speed (1 kt, `0..300`), wind direction (1 degree, **`1..360`**), temperature (0.25 °C, `-100..100`) and a four-bit-valued turbulence integer `0..15` in an eight-bit field. Parked as four flagged measurements. **Wind direction's low bound is 1, not 0**, so a zero is out of the stated range and is refused rather than read as north — the one place in this category where zero is excluded from an angle |
+| `I062/380` SF#20 validity bits | `Entity.attributes` | `not yet` | each of the four measurements has its own "Not valid / Valid" bit, so an invalid measurement is **present and marked** rather than absent. Carried as the value plus the flag; a consumer that ignored the flag would read a placeholder as a measurement |
+| `I062/380` SF#21 | `Entity.entity_type` | `not yet` | Emitter Category, one octet, 24 defined values with `2`, `4`, `7`–`9`, `17`–`19`, `23`–`24` "reserved". **The one item that refines `entity_type`**, and the refinement is coarse on purpose: `20` surface emergency vehicle, `21` surface service vehicle and `22` fixed ground or tethered obstruction → `PLATFORM`, `FACILITY` and `FACILITY` respectively; everything airborne → `PLATFORM`. Never an affiliation: "highly manoeuvrable (5g acceleration capability) and high speed (>400 knots cruise)" describes a fighter and reading it as `HOSTILE` would be an identification decision from a performance class — the CAT021 refusal |
+| `I062/380` SF#25 | `Event.payload` | `not yet` | BDS Register Data, repetitive: a one-octet `REP` then `REP` **eight-octet** entries, each a 56-bit `BDSDATA` and two four-bit register addresses `BDS1` and `BDS2`. **Parked whole as hex per register, never decoded** — the register semantics are in ICAO Annex 10, and its NOTE says the subfield is for DAPs "that cannot be encoded into other subfields of this item", so what is in it is by definition not what the item's other subfields cover. The `I048/250` disposition |
+| `I062/380` SF#25 `REP` = 0 | *(refusal)* | `not yet` | refused, per "followed by at least one BDS report" |
+| `I062/380` SF#24 | `Event.payload` | `not yet` | Position Uncertainty, four spare bits and a four-bit `PUN`. Parked as the integer; **the document defines no scale for it**, so nothing is derived and it never reaches `Position.accuracy_m` |
+| `I062/380` SF#3, #13, #14, #16, #17, #18, #19, #22, #23, #26, #27, #28 | `Event.payload` | `not yet` | magnetic heading, barometric and geometric vertical rate, track angle rate, track angle, ground speed, velocity uncertainty, position, geometric altitude, indicated airspeed, Mach number and barometric pressure setting. All parked, each with its LSB, its stated range and its raw field, and each covered by a row above where it competes with a tracker-calculated value. `BPS`'s NOTE is carried: "BPS is the barometric pressure setting of the aircraft **minus 800 mb**", so the number is an offset and not a pressure |
+
+### Row set — `I062/390` Flight Plan Related Data
+
+Eighteen subfields, a three-octet primary, and **`I062/080`'s `FPC` bit is what says whether any of
+it is about this target.** A set `FX` on the third primary octet is refused; a set spare presence bit
+is refused. Everything here is a ground system's statement, so everything parks — with two
+exceptions noted.
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/390` primary | `Entity.attributes` | `not yet` | three octets: `TAG`, `CSN`, `IFI`, `FCT`, `TAC`, `WTC`, `DEP`; `DST`, `RDS`, `CFL`, `CTL`, `TOD`, `AST`, `STS`; `STD`, `STA`, `PEM`, `PEC`, three spares. Parked whole |
+| `I062/390` SF#1 | `Event.payload` | `not yet` | FPPS Identification Tag, SAC and SIC of the flight plan processing system. Parked; a **third** system named in one record, after `I062/010` and `I062/340` SF#1, and joined to nothing |
+| `I062/390` SF#2 | `Event.payload` | `not yet` | Callsign, seven **ASCII** octets, left-adjusted, space-padded. Parked as the trimmed string and the raw octets. **ASCII here and six-bit in `I062/380` SF#2** — two callsign encodings in one record, which is why neither is promoted to a canonical name; and there is no canonical name to promote to, which is **gap 1** |
+| `I062/390` SF#3 | `Event.payload` | `not yet` | IFPS_FLIGHT_ID: a two-bit `TYP` (plan number / unit 1, 2, 3 internal flight number), three spares and a 27-bit `NBR` "Number from 0 to 99 999 999". Parked. Note the field width and the stated maximum disagree in the useful direction — 27 bits reach 134 217 727 — so the stated range is the bound |
+| `I062/390` SF#4 | `Event.payload` | `not yet` | Flight Category: `GAT/OAT` (unknown / general air traffic / operational air traffic / not applicable), `FR1/FR2` (IFR / VFR / not applicable / controlled VFR), `RVSM` (unknown / approved / exempt / not approved), `HPR` (normal / high priority flight) and a spare. **Parked, and `OAT` is NOT read as an affiliation**: operational air traffic means military or state flight rules, not allegiance, and `HPR` is a handling priority, not a threat. Reading either as `FRIENDLY` or as a severity would be the identification decision this repository refuses |
+| `I062/390` SF#5, SF#7, SF#8 | `Event.payload` | `not yet` | Type of Aircraft (four ASCII characters), Departure Airport and Destination Airport (four ASCII each). Parked as trimmed strings. **Never resolved**: the type designators are ICAO Doc 8643 and the airports are the ICAO Location Indicators book, and neither is in hand — and §5.2.25 cites the aircraft types to ICAO Annex 14, which is about aerodromes (ambiguity 6) |
+| `I062/390` SF#6 | `Event.payload` | `not yet` | Wake Turbulence Category, one ASCII character, "should be one of the following values: L = Light, M = Medium, H = Heavy, J = 'Super'". Parked as the character **and** the expansion where it is one of the four; a fifth character goes to `unresolved_raw`, because "should be" is not "shall be" and the field is a whole octet |
+| `I062/390` SF#9 | `Event.payload` | `not yet` | Runway Designation: `NU1`, `NU2`, `LTR`, three ASCII characters. Parked as the three characters and as the concatenation. Cited to EUROCAE ED-102B, which has no runway section (ambiguity 6) |
+| `I062/390` SF#10 | `Event.payload` | `not yet` | Current Cleared Flight Level, two octets at 1/4 FL, `0 <= CFL <= 1500 FL`. Parked. **A clearance is not a measurement** and it does not reach any altitude field: it is what the controller told the aircraft to do, and Edition 1.19's change record says "clarification added on range" for exactly this subfield |
+| `I062/390` SF#11 | `Event.payload` | `not yet` | Current Control Position, an 8-bit Centre and an 8-bit Position identification code, and its NOTE says both "have to be defined between communication partners". So the two octets are meaningless without a bilateral agreement — parked as integers, never resolved |
+| `I062/390` SF#12 | `Event.payload` | `not yet` | Time of Departure / Arrival, repetitive: a one-octet `REP` then `REP` **four-octet** entries, each a five-bit `TYP` (fourteen values, scheduled off-block through actual on-block), a two-bit `DAY` (today / yesterday / tomorrow / **invalid**), spares, `HOR` 0–23, `MIN` 0–59, an `AVS` "seconds not available" bit and `SEC` 0–59. Parked as an ordered list of typed times, each with its `DAY` and its `AVS`. **No absolute instant is derived**: `DAY` is relative to a date the item does not state, `AVS` can mark the seconds absent, and `DAY` = 3 is "invalid" — three independent reasons an instant would be an invention |
+| `I062/390` SF#12 NOTE | `Entity.attributes` | `not yet` | "Estimated times are derived from flight plan systems. **Predicted times are derived by the fusion system, based on surveillance data.**" So five of the fourteen `TYP` values are the tracker's own predictions and nine are the flight plan's — settlement 1's authorship distinction inside one subfield, and the `TYP` is what tells them apart |
+| `I062/390` SF#13, SF#14 | `Event.payload` | `not yet` | Aircraft Stand (six ASCII characters) and Stand Status (`EMP` empty/occupied/unknown/invalid, `AVL` available/not available/unknown/invalid, four spares). Parked. **A stand status is about a piece of ground, not about the aircraft**, and it does not become a second `Entity`: inventing a `FACILITY` per stand from a track message would be creating objects the source did not send |
+| `I062/390` SF#15, SF#16 | `Event.payload` | `not yet` | Standard Instrument Departure and Standard Instrument Arrival, seven ASCII characters each. Parked as trimmed strings |
+| `I062/390` SF#18 | `Event.payload` | `not yet` | Pre-Emergency Callsign, seven ASCII characters, "used only when an emergency Mode 3/A is associated with the track". Parked beside SF#17. **The pair is the only place in the category that says what the target was called before it started squawking an emergency code**, which is exactly the value an operator needs and exactly the value a translator must not overwrite the current callsign with |
+
+### Row set — the small items
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I062/270` | `Event.payload` | `not yet` | §5.2.19 Target Size & Orientation, an FX chain of three differently-meaning octets: `LENGTH` at 1 m in bits 8/2, then `ORIENTATION` at 360/2⁷ ≈ 2.81° in bits 8/2, then `WIDTH` at 1 m in bits 8/2. Parked as up to three fields. **NOTE 2 makes the first field's MEANING depend on the third's presence**: "When the length only is sent, the largest dimension is provided." So a length-only record states a largest dimension and a length-and-width record states a length — two different measurements in one field, selected by an `FX` bit two octets later. Both readings are carried by carrying the raw field with a flag saying whether a width followed; ambiguity 10 |
+| `I062/270` third `FX` set | *(refusal)* | `not yet` | refused. §5.2.19 defines a first part and two extents and no third, so a set `FX` on the second extent announces nothing |
+| `I062/300` | `Entity.entity_type`, `Event.payload` | `not yet` | §5.2.22 Vehicle Fleet Identification, one octet, seventeen defined values `0`–`16`: unknown type of vehicle, ATC equipment maintenance, airport maintenance, fire, bird scarer, snow plough, runway sweeper, emergency, police, bus, tug, grass cutter, fuel, baggage, catering, aircraft maintenance, flyco. **Refines `entity_type` to `PLATFORM`** — every one of the seventeen is a ground vehicle — and refines nothing else: `7` emergency and `8` police are **not** read as an affiliation or a severity, which is the GMTIF platform-type refusal reached again. A value above 16 goes to `unresolved_raw` |
+| `I062/300` | `Entity.attributes` | `not yet` | and the raw value with the fleet's own wording, because seventeen values collapsing to one `entity_type` must stay recoverable |
+
+### Row set — the Reserved Expansion Field
+
+**In scope and decoded in full** — settlement 2. `RE` is FRN 34 in the core UAP with the notation
+`1+`; Appendix A §2.1 defines its first octet as a length "including the Length Indicator itself",
+and §2.2 defines the second as the items indicator.
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `RE` length indicator | `Entity.attributes` | `not yet` | Appendix A §2.1, one octet, "Length of REF in octets, including the Length Indicator itself". Present in every REF. **Recomputed on egress rather than copied**, the `LEN` rule one level down |
+| `RE` items indicator | `Entity.attributes` | `not yet` | Appendix A §2.2: `CST`, `CSN`, `TVS`, `STS`, `V3` presence bits and **three spare bits, the last of which is a spare and not an `FX`**. Parked whole. A set bit 1 is a spare bit as sent, **not** a refusal — the opposite of every compound item in the core specification, and getting it backwards would refuse a legal REF |
+| `RE` items indicator NOTE | `Entity.attributes` | `not yet` | "The allocation of additional items is the responsibility of the AMG and shall be coordinated in advance!" — which is why there is no `FX`: the item set cannot grow without a new edition |
+| `RE` `CST` | `Event.payload` | `not yet` | Contributing Sensors With Local Tracknumbers, repetitive: `REP` then five-octet entries of SAC, SIC, four spares, a four-bit `TYP` (ten defined values including `1000` ADS-B and `1001` WAM, `1010`–`1111` "Reserved for future use") and a 16-bit local track number. Parked as an **ordered list**. **Settlement 1's most direct fusion provenance**, and no local track number is joined to anything |
+| `RE` `CSN` | `Event.payload` | `not yet` | Contributing Sensors No Local Tracknumbers, repetitive: `REP` then three-octet entries of SAC, SIC, four spares and the same four-bit `TYP`. Parked as an ordered list. Two lists, one meaning, and the difference is whether the sensor supplied a local track number — so a sensor's absence from `CST` and presence in `CSN` is information |
+| `RE` `CST`/`CSN` `REP` = 0 | *(refusal)* | `not yet` | refused, per "followed by at least one" in both formats |
+| `RE` `TVS` | `Event.payload` | `not yet` | Calculated Track Velocity Relative to System Reference Point, four octets, `Vx` and `Vy` at 0.25 m/s two's complement. Parked; **never converted to speed and course**, because it is in the reference-point frame and `I062/185` is in the target-local frame — its NOTE says "The y-axis points to the Geographical North at the **system reference point**", so the two vectors have different axes and only `I062/185`'s are stated at the target |
+| `RE` `STS` | `Entity.attributes` | `not yet` | Supplementary Track Status, one-octet extensible: `FDR` (flight plan data retained from a no-longer-active FDPS), `LNAV#EP` and `LNAV#VAL`, four spares, `FX`. Parked. **A set `FX` is refused** — Appendix A defines one octet and no extent |
+| `RE` `STS` `LNAV` | `Entity.attributes` | `not yet` | the Element-Populated convention arrives: `LNAV#EP` says whether `LNAV#VAL` is a statement, and `LNAV#VAL` = 0 is "LNAV Mode **Engaged**" — the sense is inverted relative to every other flag in the document, so the wording is carried verbatim rather than paraphrased. This is the one relocation the core specification names that Appendix A Edition 1.3 actually defines |
+| `RE` `V3` primary | `Entity.attributes` | `not yet` | ADS-B Version 3 Data, compound: `PS3`, `AS`, `UAS`, `CASS` presence bits, three spares and `FX`. **A set `FX` is refused** — four subfields are defined and a second primary octet has nothing behind it |
+| `RE` `V3` SF#1 `PS3` | `Event.severity`, `Event.event_type` | `not yet` | Priority Status for Version 3 ADS-B systems: `PS3#EP` then three bits of `PS3#VAL` with eight values — no emergency, general emergency, **UAS/RPAS lost link**, minimum fuel, no communications, unlawful interference, **aircraft in distress automatic activation**, **aircraft in distress manual activation**. **This is the value settlement 2 exists for**, and the three highlighted values have no representation in `I062/080` `EMS` or `I062/380` SF#11 `STAT` at all. `5`, `6`, `7` → `CRITICAL`/`ALERT`; `1` → `CRITICAL`; `2`, `3`, `4` → `WARNING`/`ALERT`. Where it disagrees with the core items, `PS3` wins and the disagreement is recorded |
+| `RE` `V3` SF#1 NOTE 2 | `Entity.attributes` | `not yet` | "Since in this edition of the REF I062/REF/PS3 is the only Element in this Item, the Element Populated Bit strictly would not be necessary. However, if in a future edition use is made of the Spare Bits, the Element Populated Bit becomes important." So `PS3#EP` = 0 is "not populated" and the three value bits are then not a statement — carried, and a `PS3#VAL` under `PS3#EP` = 0 does not raise severity |
+| `RE` `V3` SF#2 `AS` | `Event.payload` | `not yet` | Aircraft Status, three octets: `RCE` (reduced capability equipment — not RCE / **TABS** / reserved / other), `RRL` (reply rate limiting), `TPW` (transmit power — unavailable-or-under-70 W / 70 W / 125 W / 200 W), `TSI` (transponder side — unknown / #1 left-pilot-or-single / #2 right-co-pilot / #3 auxiliary), `TAO` (transponder antenna offset) with a `RE` **Range Exceeded** bit, and five spares. Every field has its own Element-Populated bit. Parked, all of it |
+| `RE` `V3` SF#2 `TAO` `RE` bit | `Entity.attributes` | `not yet` | NOTE 3: "Bit-12 shall be set to 1 when the aircraft transmits the maximum encodable value (i.e. 31 representing a TAO greater than 58m). In this case TAO#VAL shall be set to the maximum encodable TAO (i.e. 58m)." A **stated saturation flag**, which is the at-or-above-maximum discipline made explicit in the wire format rather than in a note about a maximum |
+| `RE` `V3` SF#3 `UAS` | `Event.payload` | `not yet` | UAS/RPAS Status: `MUO` (manned / unmanned operation), `DAA` (detect-and-avoid capability — no RWC / RWC-RA-OCM / RWC-OCM / **"Invalid ASTERIX Value"**), `RWC` (remain-well-clear corrective alert active), each with an Element-Populated bit, and one spare. Parked. **`MUO` does not change `entity_type`**: an unmanned aircraft is still a `PLATFORM`, and the CDM has no crewed/uncrewed distinction — recorded as a gap-shaped absence rather than forced into `attributes` alone |
+| `RE` `V3` SF#4 `CASS` | `Event.payload` | `not yet` | Collision Avoidance System Status: `SVH` (sense — vertical only / horizontal only / blended / per-intruder) and `CATC` (CAS type and capability, eight values including two "Reserved for future use"), each with an Element-Populated bit, and one spare. Parked |
+| `RE` unknown item bit set | *(refusal)* | `not yet` | a set `CST`, `CSN`, `TVS`, `STS` or `V3` bit whose subfield does not fit in the stated length is a refusal, and so is a length indicator that disagrees with the octets consumed — the REF's own `LEN` is a second length statement and the two must tile exactly |
+
+### Row set — SP
+
+| CAT062 | CDM field | Status | Notes |
+|---|---|---|---|
+| `SP`, FRN 35 | `Entity.attributes` | `not yet` | Special Purpose Field, `1+`. **Parked verbatim as hex, never decoded, and NEVER WRITTEN TO on egress.** A Special Purpose Field's contents are settled by bilateral agreement between one sender and one receiver, so a byte invented here is a byte some deployment already means something by. The core specification has no §5.2 entry for it; the length convention — a one-octet length counting itself — is inherited from the shipped ASTERIX siblings, because ASTERIX Part 1 is not pinned in this repository and this document cites it at edition 3.1 without reproducing it |
+
+### Row set — egress, CDM back to a CAT062 data block
+
+Written now for the reason the CAT021, GMTIF, CAT048 and CAT034 egress row sets were written at
+Phase 1: an egress specification designed after an ingest implementation is a specification shaped
+by what the implementation happened to keep.
+
+**The byte-for-byte claim is made and is expected to hold.** The evidence is the same as the other
+four ASTERIX categories': the UAP is single and fixed, every item's length is derivable from its own
+§5.2 entry, every spare bit is parked as sent, the FSPEC is re-emitted as parked rather than
+recomputed, and `build_block` re-encodes each item from its parsed fields and compares against the
+octets parked on ingest — so byte-exactness is a *proven property of the decoder/encoder pair*
+rather than a consequence of copying the input back out. **If any item defeats it, Phase 2 rules and
+records why rather than forcing it**, and the two candidates are named in advance: the `I062/500`
+SF#3 combination that produces `Position.accuracy_m` and the `I062/185` vector that produces
+`speed_mps` and `course_deg` are the only two derived values in the row set, and both are one-way
+views re-emitted from the parked raw fields rather than recomputed from the CDM.
+
+| CDM field | CAT062 | Status | Notes |
+|---|---|---|---|
+| `Entity.source_ids` | `I062/380` SF#1 | `not yet` | the Mode S address the entity was keyed on, back into the compound item. An entity keyed under `CAT062_TRACK_REPORT` has no address to write and the refusal says so rather than inventing one |
+| `Entity.attributes` | `I062/010` | `not yet` | the parked SAC/SIC. **Not derived from anything** — the emitting system is not this platform |
+| `Event.payload` | `I062/040` | `not yet` | the parked raw track number, mandatory in every record |
+| `Event.observed_at` | `I062/070` | `not yet` | re-encoded from the **parked raw 24-bit count**, not from the resolved instant. Re-deriving the count from `observed_at` would run the rollover arithmetic in both directions and hide an error in it |
+| `Entity.position`, `Position.lat`, `Position.lon` | `I062/105` | `not yet` | re-encoded at 180/2²⁵ degrees from the parked raw fields where they exist. A `Position` edited downstream re-encodes to the nearest representable value and the round trip is then **not** byte-exact, which is stated rather than hidden |
+| `Position.alt_m` | `I062/130` | `not yet` | from the parked raw field. The conversion to metres is a one-way view |
+| `Kinematics.speed_mps`, `Kinematics.course_deg` | `I062/185` | `not yet` | from the parked raw `Vx` and `Vy`, **never recomputed from the scalars**: the vector-to-scalar map is not injective and inverting it would put a fabricated component on the wire |
+| `Kinematics.climb_mps` | `I062/220` | `not yet` | from the parked raw field, for the same reason |
+| `Position.accuracy_m` | `I062/500` SF#3 | `not yet` | from the parked raw components, **never from the combined scalar**: `sqrt(a²+b²)` has no unique inverse and any choice of components would be an invention |
+| `Event.payload`, `Entity.attributes` | every other item | `not yet` | from the park, verbatim, including every spare bit |
+| `Entity.attributes` | the `RE` field | `not yet` | re-encoded from the parsed REF, with the length indicator **recomputed**; the `SP` field is restored verbatim and never written to |
+| `record.fspec` | the FSPEC | `not yet` | **re-emitted as parked, not recomputed**, so a source's non-minimal FSPEC survives. A record assembled from CDM with no parked FSPEC gets the shortest covering one, and that is the only case where this adapter chooses |
+| `block.length` | `LEN` | `not yet` | **recomputed**, never copied. A `LEN` that disagrees with the octets is discarded by every ASTERIX decoder |
+
+#### What egress is NOT lossy for
+
+Nothing this row set maps. A block whose records the CDM carries as separate objects re-assembles in
+`block.record_index` order, so a block that arrived as three records leaves as three records in the
+same order. **What egress cannot restore** is a record whose parked `source_extras` were edited by a
+consumer that did not preserve structure — the limit every adapter here has — and a `Position`,
+`Kinematics` or `accuracy_m` that a consumer edited, which re-encodes to the nearest representable
+value from the *derived* side and is therefore the one path where the round trip is value-exact
+rather than byte-exact.
+
+### What the adapter will fill that CAT062 does not state
+
+| Field | Where the value comes from |
+|---|---|
+| `Event.received_at` | the injected clock. The one field the adapter invents rather than reads |
+| `SourceRef.synthetic` | the constructor, defaulting to `True`. **Not `I062/080`'s `SIM` and not `I062/340` SF#6's `SIM` or `TST`** — three payload flags that describe the *track*, where `synthetic` describes the deployment |
+| `Entity.symbol` | `symbology.sidc_from_affiliation(UNKNOWN, synthetic=...)`. CAT062 carries no symbology |
+| the date behind `I062/070` | the injected clock, resolved to the nearest of three candidate days |
+| `Position.position_source` | `ESTIMATED`, from §3.1.2's definition of a calculated item — settlement 6 |
+| `Entity.entity_type` | `PLATFORM` by default, refined only by `I062/380` SF#21 and `I062/300` |
+| `Position.accuracy_m`'s combination | `sqrt(lat² + lon²)` in metres with 1° = 111 120 m, under a stated independence assumption. The one computed canonical value in the row set, and it is declared in `TRANSFORMS` |
+| `I062/110` SF#6's base instant | `I062/070`, in place of the `I048/140` §5.2.9 names — settlement 4's substitution, stated in the object |
+
+### Where the specification is ambiguous or contradicts itself
+
+Thirteen entries, numbered from 1 within this row set. `fixtures/cat062/spec/cat062_pin.json`'s
+`ambiguity_register` carries the same numbering with the evidence.
+
+| # | What is ambiguous | How this row set resolves it |
+|---|---|---|
+| 1 | The edition date is 05/06/2025 on the cover and the identification sheet, and "May 2025" in the change record's own last row | the identification sheet, on specificity and on the change-record column's demonstrated unreliability in this family |
+| 2 | The back cover's copyright line reads "© EUROCONTROL - June 202" — a three-digit year | recorded; nothing depends on it. Checked against the raw page text, not an extraction artefact |
+| 3 | The change record calls itself "the complete history" and has no row for Edition 0.16, running 0.15 to 0.17; it also has a `1.0P` row with no `1.0` row and no gloss for `P` | recorded unresolved, both halves. Either 0.16 or 1.0 is the missing edition depending on how `P` is read |
+| 4 | FRN 2's Spare row has a NOTE explaining it; FRNs 29–33's five Spare rows have none | both refuse a set FSPEC bit, and the refusal message distinguishes the two cases |
+| 5 | The UAP's length legend explains `1+` and not `3+`, and gives `1+` to four different extension mechanics | every length rule comes from §5.2; the UAP's fourth column is never read |
+| 6 | Four onward citations name a reference-list entry that does not contain what is cited: the six-bit alphabet to ICAO Doc 4444 twice at two different section numbers, aircraft types to ICAO Annex 14, runway designators to EUROCAE ED-102B | the alphabet is taken from `asterix_cat021.py`'s table, sourced to ICAO Annex 10 Vol. IV Table 3-8; the other three fields are parked as characters and never resolved |
+| 7 | `I062/380`'s note names "bit-37" in a four-octet primary numbered 32 to 1; `I062/110`'s primary lists "bit-2 (XP) Subfield #:" with the number missing | the structure diagrams are preferred in both cases, and both are recoverable from the same paragraph |
+| 8 | `I062/390` SF#17's prose says "bits-16/13 Spare bits set to 0" and then "bit-13 (VA) Validity" — bit 13 assigned twice in four lines | the diagram, which shows three zeros then `VA`, i.e. bits 16/14 spare and bit 13 = `VA`. It is the only one of the two statements that is internally consistent and it agrees with the twelve-bit Mode 3/A field below it |
+| 9 | `I062/110` SF#6 says to add `TOS` to "Time of Day (I048/140)", an item of Category 048 that does not exist here | `I062/070` is substituted, it has the same LSB, and the substitution is stated in `Event.payload`. Settlement 4 |
+| 10 | `I062/270` NOTE 2 makes the `LENGTH` field's meaning depend on whether a `WIDTH` extent follows | the raw field is parked with a flag saying whether a width followed, so both readings survive. Calling it a length unconditionally would be wrong for every length-only record |
+| 11 | `I062/080`'s sixth extent — added by Edition 1.21 — has an `FX` reading "Extension into next extent" and no seventh extent is defined | refused, the `asterix_cat034.py` `_len_compound` disposition. Every extent this document adds re-opens the same hole at the end of the chain |
+| 12 | §4.5 is normative that a decoder "shall never assume and rely on specific settings of spare or unused bits" while dozens of diagrams legend their spares "set to zero" | every spare bit is read and re-emitted as sent, and a fixture sets every reachable one — which is what makes the round trip the one §4.5 asks for |
+| 13 | `I062/380/SF#11/VN` is cited by name in §5.2.6 and §5.2.24 as the ADS-B version number and **appears nowhere in SF#11's structure** | the presence of `I062/REF/PS3` is what selects the Version 3 reading, by Appendix A §2.7's own definition of the item. An inference from the REF, stated as one, because the cited field does not exist to be read |
+
+Plus one finding that is not an internal contradiction and belongs beside them: **the core
+specification at Edition 1.21 names eight REF containers that Appendix A Edition 1.3 does not
+define** — `MOI/SCT`, `MOI/AM5I`, `MOI/AM5L2S`, `MOI/CTBA`, `MOI/ALTQCMFL`, `MOI/FPVHR`,
+`MOI/SI#10`, `MTI/EXM3A` and `STS/CSX`. Either a later REF edition exists unpublished or the core
+specification is ahead of its own appendix; either way each is a value this adapter cannot carry, and
+the declines table names them individually.
+
+### Deliberately out of scope, and why — each named individually
+
+| Out of scope | Why |
+|---|---|
+| **The eight REF containers the core text names and Appendix A Edition 1.3 does not define** — `STS/CSX`, `MOI/SCT`, `MOI/AM5I`, `MOI/AM5L2S`, `MOI/CTBA`, `MOI/ALTQCMFL`, `MOI/FPVHR`, `MOI/SI#10`, `MTI/EXM3A` | Not deferred by preference: they are **unreachable**. The newest published REF edition has a five-bit items indicator with no `FX`, so there is no encoding for them and no structure to decode. Each costs something specific and the row sets say what: the non-QNH barometric variant, the QNH-corrected measured flight level, the high-resolution surface velocity, the extended Mode 3/A, per-register BDS ages, the Mode 5 interrogation and Level 2 squitter ages, the extended coasting indication and the special-used-code text. **Reopen condition:** a REF edition above 1.3 that defines them |
+| **Inverting `I062/100`'s Cartesian projection** | Ruled out by settlement 6, and not merely deferred. Two independent unknowns: the reference point is in **Category 065's** REF and no CAT062 item carries it, and the projection is named only by example ("e.g. a stereographical projection") so two conforming SDPSs can emit different X for one aircraft. A caller holding both may do it visibly |
+| **Deriving absolute instants from `I062/290` and `I062/295`** | Settlement 1 item 5. The formula is the tracker's and is recorded; performing the subtraction here would make a computed instant indistinguishable in the output from a stated one |
+| **Emitting a CDM `Track`** | One record is one state vector at one instant. A `Track` needs samples across time, which is accumulation across records — the fusion refusal. `I062/380` SF#9's trajectory intent points are *predictions*, not observations, so they are not samples either. Gap 27's truncation is recorded instead |
+| **Emitting an `Entity` per contributing sensor** | The REF's `CST` and `CSN` name other systems by SAC/SIC and give their local track numbers. Creating objects for them, or joining a local track number to another adapter's output, is cross-payload state — and a fused picture that grew an entity per receiver is the failure the CAT034 row set names from the other side |
+| **Reading `MD4`, `MD5`, `OAT` or an emitter category as an affiliation** | The CAT021 Mode 5 refusal and the GMTIF platform-type refusal, reached again three ways. An authenticated military-mode reply, an operational-air-traffic flight rule and a 5g-capable performance class are each an *input* to an identification decision, and the decision belongs to a fusion layer where it is attributable |
+| **Raising `Event.severity` from `ME`, `SPI`, `PFT`, `STAT` or `AAC`** | Five candidate bits, each declined for a stated reason on its row. Severity in this category comes from `EMS`, from `I062/380` SF#11 `STAT` and from `I062/REF/PS3`, which are the three fields the document defines as emergency indications |
+| **`EventType.GNSS_INTERFERENCE` from `PFT`** | Gap 29's argument reached a second time. That enum is paired with `GnssInterferencePayload`, whose fields exist for the PNTMAP adapter; a possibly-spoofed radar track is not a GNSS interference event, and putting it in the field a consumer filters on to find GNSS threats is a wrong answer that reads as a right one |
+| **ADS-B Version 3 beyond what the REF defines** | ED-102B and DO-260C are §2.2 references 5 and 6 and neither is in hand. What is implemented is what Appendix A Edition 1.3 states, which is what the core specification says it relocated there. The MOPS themselves define far more |
+| **ASTERIX Part 1** | Not pinned, and this document cites it at edition 3.1 without reproducing it. The RE and SP length convention is inherited from the shipped siblings and the inheritance is named at its site |
+| **Categories 063 and 065** | An SDPS emits all three and 065's REF is where `I062/100`'s reference point lives. Deferred, not rejected; a category is an adapter, and this one is bounded by its `CAT` octet |
+| **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048`, `cat034` and now `cat062` are four of them, and each reads only its own `CAT` octet. The property is stated rather than the siblings enumerated — settlement 3's last paragraph is why |
+
+### The fixtures — planned here, before they exist
+
+Synthetic only. No recorded ASTERIX traffic and no real SDPS. `SAC = 0x29` is the value pinned in
+`fixtures/cat021/spec/sac_pin.json` as listed-but-blank in the EUROCONTROL allocation tables, and
+the evidence transfers to Part 9 **by citation** because §5.2.1's NOTE points at the same published
+list. Positions are in the Gulf of Riga, matching the other six ASTERIX and GMTI sets. Every
+identifier that needs a UUID uses the version-8 `f1c7` convention. The clock is injected.
+
+Built by a generator at `fixtures/cat062/spec/build_fixtures.py`, which is the source of truth for
+both artefacts: each fixture ships as `<name>.cat062` for the octets and `<name>.parsed.json` for
+exactly what the parser produces, because `lossless.unrepresented()` has no leaf structure to
+harvest from bytes.
+
+| Fixture | What it is for |
+|---|---|
+| `minimum_fspec_track` | the shortest legal record: `I062/010`, `I062/040`, `I062/070`, `I062/080` primary only, one FSPEC octet. A parser that assumed FRN order equalled item-number order reads `I062/070` where `I062/010` is |
+| `full_mask_track` | **every one of the 27 items present**, five FSPEC octets, every compound item's every subfield, both REF items indicators' every bit. The fixture that proves the FSPEC ceiling is five and not four |
+| `track_begin` | `I062/080` first extent with `TSB` set: the first message for a track. Lifecycle, and `Entity.valid_from` is the record's own time |
+| `track_end` | `I062/080` first extent with `TSE` set: the last message for a track. **`Entity.valid_to` stays `None`** and the test asserts it — the flag is in the payload |
+| `both_altitudes_disagreeing` | `I062/130` and `I062/135` both present and stating **different** altitudes, with `MRH` set to "geometric more reliable". Settlement 5: `alt_m` comes from `I062/130` because it is the ellipsoidal one, **not** because `MRH` said so, and flipping `MRH` in a second record must not move `alt_m` |
+| `three_altitudes_and_a_measured_height` | `I062/130`, `I062/135`, `I062/136` and `I062/340` SF#3 all present and all different, with `ADF` set. Four numbers, one `alt_m`, and the other three in the payload with their datums |
+| `mode_s_address_present` | `I062/380` SF#1 carrying an ICAO24. Settlement 3 step 1: `entity_id` is `uuid5` over `("ICAO24", "<hex>")` and the test asserts it equals what `asterix_cat021.py` derives for the same address |
+| `track_number_only` | no `I062/380` at all. Settlement 3 step 2: the id is record-scoped, `attributes.identity_basis` says so, and the test asserts the entity_id is **not** derived from the track number alone — two records with the same track number and different times get different ids |
+| `reserved_and_extension_fields` | `RE` with all five items and `SP` with opaque contents, both recorded and restored. The `SP` is never written to |
+| `spare_bits_nonzero` | every reachable spare bit set to 1 — in `I062/060`, `I062/080`'s six extents, `I062/110`'s subfields, `I062/120`, `I062/200`, `I062/290`'s and `I062/295`'s and `I062/380`'s and `I062/390`'s and `I062/500`'s primaries, `I062/340` SF#6, and the REF's items indicator. §4.5 is normative about exactly this and the CAT034 round found that a set with all-zero spares tests nothing: zeroing a spare inside a decoder re-encodes as a zero and passes |
+| `ads_c_age_two_octets` | `I062/290` with SF#5 present **and** later subfields present, so a decoder that read SF#5 as one octet desynchronises and the following subfield's value is visibly wrong |
+| `adsb_version_3_emergency` | `I062/380` SF#11 `STAT` = 1 ("General emergency") **and** `RE` `V3` `PS3#VAL` = 7 ("Aircraft in Distress – Manual Activation"). The back-mapping's worst case: the core item is legally correct and lossy, the REF has the real value, severity comes from the REF, and the disagreement is recorded |
+| `emergency_disagreement` | `I062/080` `EMS` = 3 and `I062/380` SF#11 `STAT` = 5, with `IEC` set. The more severe wins, both are carried, and `attributes.emergency_disagreement` names them |
+| `mode5_time_offset` | `I062/110` with SF#3, SF#4 and SF#6, a **negative** `TOS`. Settlement 4's substitution end to end, and a second record with SF#6 absent asserting the stated zero |
+| `trajectory_intent_three_points` | `I062/380` SF#9 with `REP` = 3, one point with `TOA` = 0 and a resolvable `TOV`, one with `TOA` = 1, one with `TRA` = 0. No `Track` is emitted and the test asserts it |
+| `flight_plan_correlated` | `I062/390` with all eighteen subfields and `I062/080` `FPC` set, including SF#12 with `REP` = 2 and one `DAY` = "yesterday" and one `AVS` = "seconds not available". No absolute instant is derived |
+| `pre_emergency_pair` | `I062/390` SF#17 with `VA` = 1 and SF#18, plus a second record with `VA` = 0 whose twelve bits go to `unresolved_raw` |
+| `contributing_sensors` | `RE` with `CST` `REP` = 2 and `CSN` `REP` = 1, three different SAC/SIC pairs and one `TYP` in the reserved `1010`–`1111` range. Settlement 1's provenance, parked and joined to nothing |
+| `estimated_accuracies_full` | `I062/500` with all eight subfields, SF#3 giving a computable `accuracy_m`, SF#2's covariance in the Cartesian frame, and one subfield **at its maximum** so the floor flag fires |
+| `cartesian_position_parked` | `I062/100` and `I062/105` both present. The test asserts `Position` comes from `I062/105` and that no coordinate is derived from `I062/100` — and that `attributes.cartesian_basis` quotes §4.3.2 |
+| `target_identification_forbidden` | `I062/245` present, with an `STI` of `11` ("Invalid"). Settlement 9: decoded, parked, and named in `attributes.encoder_conformance`, alongside `I062/380` SF#2 and `I062/390` SF#2 so all three callsign-shaped strings are in one object and none is promoted |
+| `emitter_category_and_fleet` | `I062/380` SF#21 = 21 ("surface service vehicle") and `I062/300` = 5 ("Snow plough") in one record, plus a second record with SF#21 = 2 (reserved) and `I062/300` = 200 (undefined), both to `unresolved_raw` |
+| `composed_track_number_three_units` | `I062/510` with a master and two slave extents. Ordered, parked, and no slave number joined to anything |
+| `target_size_length_only` | `I062/270` with the first part only — ambiguity 10's length-only case, where the field is a largest dimension — and a second record with all three octets, where it is a length |
+| `midnight_rollover_nearest` | two records, `23:59:59` and `00:00:01`, so the wrap happens under the harness's own frozen clock rather than only under one a test injects. The CAT048 failure the module README records is that two rollover fixtures tested no rollover at all |
+| `two_records_one_block` | two records, one block, different track numbers |
+| `non_minimal_fspec` | an FSPEC longer than the highest set FRN needs. §4.7 requires only that a present item's bit is set, so this is legal and the round trip is byte-exact only because the octets are re-emitted as parked |
+| **Refusals** | |
+| `wrong_category` | a block whose `CAT` octet is 48. Decoded against the CAT062 UAP it yields a plausible wrong aircraft |
+| `length_disagrees_with_buffer` | `LEN` longer than the octets supplied |
+| `missing_mandatory_track_number` | no `I062/040`. Settlement 7: one of the four unconditionally mandatory items |
+| `fspec_names_a_spare_frn` | a set bit for FRN 30. The refusal names it as a Spare slot rather than as an undefined FRN |
+| `fspec_sixth_octet` | a fifth FSPEC octet with `FX` set. There is no FRN 36 |
+| `track_status_seventh_extent` | `I062/080`'s sixth extent with `FX` set. Ambiguity 11 |
+| `compound_spare_presence_bit` | `I062/290`'s primary with a spare presence bit set. It announces a subfield that does not exist |
+| `repetitive_rep_zero` | `I062/380` SF#25 with `REP` = 0, excluded by the item's own words |
+| `ref_length_disagrees` | a `RE` whose length indicator does not match the octets its items indicator implies |
+
+## ASTERIX Category 023 — CNS/ATM Ground Station and Service Status Reports, ingest and egress
+
+Adapter #14, **the smallest specification pinned in this repository** — nine data items on 21
+printed pages — and the second whose primary object is the thing that produces surveillance data
+rather than the surveillance data itself.
+
+Ingest translates one ASTERIX **data block** into an `Entity` + an `Event` **per record**; egress
+turns Entities that came from CAT023 back into one data block. The left column names data items as
+§5.2 numbers them; the parsed form the adapter's own parser produces is what each `.parsed.json`
+fixture holds.
+
+**Every row below is written and reviewed as a specification BEFORE any code exists**, with
+`not yet` in the status column.
+
+**This is the CAT034 analogue and the resemblance is close enough to be worth bounding.** Both are
+service-message categories whose object is a station; both have a report-or-message-type item
+driving a per-type presence matrix; both have a time of day whose absence the item's own encoding
+rule permits; both have a 14-FRN UAP in two FSPEC octets. What CAT023 adds is a **second object of
+interest**: two of its three report types are about a *service* rather than about the station, and
+one station provides several services. That is the one structural difference and settlement 2 is
+where it is ruled.
+
+`I023/015`'s own NOTE 2 also makes this the CAT021 counterpart that the CAT021 row set predicted:
+that section's declines table says "**CAT023 is the highest-value neighbour**: it is the ground
+station's own service status, and I021/015 and I021/016 exist in CAT021 precisely because not every
+service user receives CAT023." The prediction is made good here, and the join it implies is
+declined — settlement 7.
+
+### The names
+
+**The adapter is `cat023` and the fixture directory is `cat023`.** Precedent, now unanimous across
+five ASTERIX adapters, and the document agrees on its own cover ("ASTERIX Part 16 Category 023") and
+in §4.5.2 ("Data Category (CAT) = 023"). `fixtures/cat023/spec/cat023_pin.json` carries the ruling
+and the three rejected candidates (`cnsatm`, `groundstation`, `cat23`).
+
+### The pin
+
+| | |
+|---|---|
+| Category | **023** — CNS/ATM Ground Station and Service Status Reports |
+| Specification | EUROCONTROL-SPEC-0149-16, ASTERIX Part 16 Category 023, **Edition 1.3**, 27/09/2021, Released |
+| SHA-256 | `f3be571aa7ff1d1888115e3e668318932b17bc5ac440989aad9c64503520b4f5`, 960 353 bytes, 31 pages, `fixtures/cat023/spec/eurocontrol-asterix-cat023-pt16-ed13.pdf` |
+| ASTERIX Part 1 | cited as **SUR.ET1.ST05.2000-STD-01-01, Edition 1.29, February 2002** — the pre-migration number, at a nineteen-year-old edition, in a 2021 document. **Not pinned here** |
+| Services covered | ADS-B, TIS-B, FIS-B, GRAS and MLT, per §1.1 |
+
+**The pin IS the current edition.** EUROCONTROL's Part 16 publication page was checked on 2026-08-25
+and offers eight files, editions 0.10 to 1.3; Edition 1.3 is the newest. **The gap is five years and
+the design is twelve years old**: Edition 1.2 is dated 1 March 2009, Edition 1.3 is dated 27
+September 2021, and Edition 1.3's change record attributes the whole interval to "Migration to new
+Template" plus four editorial or naming corrections. So no structure in this category has changed
+since 2009, and the row set says so where it matters.
+
+**The back cover of this edition is an unfinished template, and it is the strongest single argument
+in this repository for pinning a hash rather than an edition number.** PDF page 31 reads:
+
+> Edition: 1. 3 · Edition date: **11 May 2020** · Reference nr: **EUROCONTROL-SPEC-0149-8**
+> EUROCONTROL Specifications · *Subtitle Roboto Light 24pt* · *Second line* ·
+> *Date, period or phase Roboto Regular 14pt*
+
+Three defects on one page: the reference number is **another Part's** (`-8`, where this document is
+`-16` on its cover, on its identification block and in all 31 running headers); the date is
+**sixteen months** before the edition date; and the typesetting template's own instructions to
+whoever fills it in were never replaced. Published as a Released Edition, approved by the AMG, and
+still served five years later. `cat023_pin.json` records it at length. **What is not claimed** is
+that the substantive content is unreliable: the nine item definitions, Table 2 and the UAP are
+internally consistent and were read in full, and none of the three defects touches them.
+
+### The edition history — three editions in hand, and none of them a pin
+
+`fixtures/cat023/spec/history/` holds Editions 1.2 (29 pages), 1.1 (28 pages) and 0.14 (25 pages),
+with SHA-256 and byte counts in the pin record. **They are not pins.**
+
+Each is in hand for one reason. **1.2** is the only witness to what the template migration changed,
+and is the edition whose Table 1 carried the wrong name for `I023/101` — Edition 1.3's change record
+reads "Name of I023/101 in Table 1 corrected", so this category's two item rosters *disagreed* for
+twelve years and one of the two published names was wrong. **1.1** is the last edition before the
+two reporting-period fields arrived and the edition whose own record says "Report composition (Table
+2) updated", Table 2 being the presence matrix the adapter's gate is built from. **0.14** is where
+the category's shape arrives from outside EUROCONTROL: its change record reads "Results of EUROCAE
+WG51 SG4 integrated" against four separate items.
+
+### Settlement 1 — The station is the object, and the CAT034 shape is reached a second time
+
+Every record describes a ground station or a service that station provides, so the primary `Entity`
+is the station: `entity_type` is `SENSOR`, `affiliation` is `UNKNOWN`, there is no `Kinematics` at
+any point, and `Entity.position` is **`None` on every object** — because unlike CAT034's `I034/120`,
+**this category carries no position for the station at all.** Nine items and not one coordinate.
+
+That absence is worth stating rather than passing over. `I023/200`, Operational Range, is a radius
+in nautical miles with no centre; §4.4.1 asserts that a SAC/SIC is "dedicated and unambiguous" per
+ground station without saying where any station is. So a consumer holding CAT023 alone cannot place
+a station on a map, and this adapter does not help it: reading a station position out of a CAT034
+record to locate a CAT023 station is cross-payload state, which is the refusal
+`asterix_cat034.py`'s settlement 2 already made in the other direction.
+`attributes.position_basis` says so in the object rather than in a comment.
+
+**The identity basis is `I023/010`'s SAC/SIC, and here a clause supports it rather than an
+inference.** §4.4.1 is a normative section of its own: "By convention a dedicated and unambiguous
+SAC/SIC code shall be assigned to every Ground Station." CAT034 has only §5.2.2's "Identification of
+the radar station from which the data are received" and a NOTE pointing at the published SAC list.
+So the station Entity is keyed as `uuid5(NAMESPACE, "entity|ASTERIX_SAC_SIC|<SACSIC>")` — the **same
+system name and the same derivation `asterix_cat034.py` uses**, so one station seen through Part 2b
+and through Part 16 is one entity, without the two adapters coordinating. A SAC/SIC is allocated
+across the whole ASTERIX family from one list; filing it under a category name would say that
+station `0x29/0x29` seen through Part 16 is a different station from the same pair seen through any
+other part, which is false.
+
+### Settlement 2 — A SERVICE is a second object, and its identity is the pair
+
+**The question.** Report types 002 (Service Status) and 003 (Service Statistics) are about a
+*service*, not about the station: `I023/015` identifies it, `I023/101` configures it, `I023/110`
+states its health and `I023/120` counts its messages. §4.5.1.2 is explicit that there are several
+per station — "Each ground station may provide several services, and the status of each shall be
+reported independently in each service status report." So does a service become an object?
+
+**The ruling: yes, and it is a second `Entity` on report types 002 and 003 only.** Three reasons.
+
+1. **It is a thing that exists and has a state.** `I023/110`'s `STAT` has six values — unknown,
+   failed, disabled, degraded, normal, initialisation — which is a lifecycle, not an attribute of the
+   station. A station whose ADS-B service is failed and whose TIS-B service is normal has two states,
+   and folding them onto one object would make one of them unreadable.
+2. **The alternative loses the independence the document requires.** Parking the service inside the
+   station's `attributes` would mean two consecutive records about two different services of one
+   station produce two objects with the **same** `entity_id` and different attributes — which reads
+   downstream as one object changing its mind, not as two services.
+3. **`EntityType.SENSOR` fits it no worse than it fits the station**, and there is no better member:
+   a service is not a `UNIT`, a `PLATFORM`, a `FACILITY` or an `OVERLAY_OBJECT`. It is recorded as
+   the least-wrong of eight rather than as a fit, at `attributes.entity_type_basis`.
+
+**Its identity is the pair `(SAC/SIC, Service Identification)` and never the SID alone.** `I023/015`
+is four bits — sixteen services, the whole space — and its own NOTE 1 says "The service
+identification is allocated by the system". So the SID is unique *within* a ground station and
+carries no meaning across stations, exactly as a track number is scoped to its SDPS. Keyed as
+`uuid5(NAMESPACE, "entity|ASTERIX_CNS_SERVICE|<SACSIC>|<SID>")`, under a system name that is
+**not** this adapter's own for the same reason the station's is not: another category could
+legitimately name the same service, and `I023/015`'s NOTE 2 says one does — "The service
+identification is also available in item I021/015."
+
+**And the two objects are related without being joined.** The `Event` for a type 002 or 003 record
+carries **both** `entity_id` values in `related_entities`, station first. That is not a join: both
+ids are pure functions of fields in the *same record*, and putting them on one event is what lets a
+consumer see that this service belongs to that station without this adapter having looked anything
+up. On report type 001 there is no service in the record and the event names the station alone.
+
+### Settlement 3 — Time: the exception reached a second time, and the bound a third
+
+`I023/070`, Time of Day, three octets at 1/128 s, and its Encoding Rule carries its own exception to
+Table 2:
+
+> This data item shall be present in every ASTERIX record, **except in case of failure of all
+> sources of time-stamping.**
+
+Table 2 marks it `M` for all three report types. So an absent time of day is a **stated absence**,
+not a defect: it lands in `attributes.unavailable_fields` with the encoding rule quoted, and
+`observed_at` falls back to the injected clock. This is `I034/030`'s exception in almost the same
+words and it is the second ASTERIX category in this repository where an item-level rule overrides
+the presence matrix.
+
+**The bound is the CAT034 bound and not the CAT048 one, for the third time.** §5.2.4 states an LSB
+and **no acceptable range**, so twenty-four bits reach 131 071.992 187 5 s. The bound comes from the
+Definition ("Absolute time stamping expressed as UTC time") and the NOTE ("The time of day value is
+reset to zero each day at midnight"), which together make 86 400 s unreachable — one value tighter
+than CAT048's printed inclusive inequality. Refused, never taken modulo a day.
+
+The date comes from the injected clock, resolved to the nearest of the receipt date, the day before
+and the day after. Same rule as CAT021, CAT048, CAT034 and CAT062, reached a fifth time.
+
+### Settlement 4 — Table 2, and the presence gate this category does have
+
+Unlike CAT062, this category **does** have a per-type matrix: §5.2.1 NOTE 4 and Table 2, with the
+legend "M stands for mandatory, O for optional, X for never present."
+
+| Item | 001 Ground Station Status | 002 Service Status | 003 Service Statistics |
+|---|---|---|---|
+| `I023/000` Report Type | M | M | M |
+| `I023/010` Data Source Identifier | M | M | M |
+| `I023/015` Service Type and Identification | X | M | M |
+| `I023/070` Time of Day | M | M | M |
+| `I023/100` Ground Station Status | M | X | X |
+| `I023/101` Service Configuration | X | M | X |
+| `I023/110` Service Status | X | M | X |
+| `I023/120` Service Statistics | X | X | M |
+| `I023/200` Operational Range | O | O | X |
+
+**A missing `M` refuses and a present `X` is parked**, and the asymmetry is CAT034's settlement 8
+reached again on a smaller table. They are different faults: a Service Status report with no
+`I023/110` states no status and there is no checksum behind it to have caught the truncation,
+whereas an item present under an `X` is a record that says *more* than its type admits — every octet
+of it is decodable, its length is stated, and refusing would discard data the FSPEC correctly
+announced. It is parked and named in `attributes.table_2_disposition`, present on every record,
+empty list and all, because "no item is out of place" and "this adapter did not look" are different
+facts.
+
+`I023/070` is excluded from the mandatory half by its own encoding rule — settlement 3 — and it is
+the only item in the category whose text overrides the table. A report type outside 001–003 has no
+column, so neither half runs and the record's only requirement is `I023/000` and `I023/010`, which
+are `M` in every column. §5.2.1 NOTE 2 is why an unknown type is translated rather than refused:
+"All Report Type values are reserved for common standard use", so it is not a private extension
+point — it is a value this edition does not define. `STATUS_CHANGE` / `ADVISORY`, with the raw value
+in `unresolved_raw`, which is the CAT034 disposition for exactly the same reason.
+
+**Note what Table 2 makes impossible.** `I023/100` is `M` for type 001 and `X` for the other two;
+`I023/101`, `I023/110` and `I023/120` are each `M` for exactly one type and `X` elsewhere. So a
+conformant record carries **either** the station's status **or** one service's configuration and
+status **or** one service's statistics, never two of the three. A consumer wanting a station's full
+picture needs three records, and assembling them is accumulation across payloads — settlement 7.
+
+### Settlement 5 — Three `FX` bits that name nothing, and all three refuse
+
+Three of the nine items are extensible and **none of them defines the extension its own `FX`
+announces.** This is the most consequential structural finding in the document.
+
+| Item | What is defined | What its `FX` says | What is not defined |
+|---|---|---|---|
+| `I023/100` | a one-octet first part and a **First Extension** carrying `GSSP` | the First Extension's bit 1: "= 1 Extension into **Second Extension**" | any Second Extension. §5.2.5 ends after the First |
+| `I023/101` | a **two-octet** first part and a First Extension carrying `SSRP` | the First Extension's bit 1: "= 1 Extension into **Second Extension**" | any Second Extension. §5.2.6 ends after the First |
+| `I023/110` | one octet: four spares, a three-bit `STAT`, `FX` | "= 1 Extension" | **anything at all.** There is no First Extension for this item in any edition in hand, including 0.14 |
+
+**A set `FX` with no defined continuation is a refusal**, and it is the disposition
+`asterix_cat034.py`'s `_len_compound` reaches for `I034/050`'s primary and `asterix_cat048.py`
+reaches for `I048/120`: the bit announces something the document does not define, so there is
+nothing to decode, it cannot be skipped, and guessing a length would desynchronise every following
+item in the record. The refusal quotes the item, the octet and the sentence naming the undefined
+extension.
+
+**This is not the general ASTERIX `FX` semantics being refused, and the difference decides the
+ruling.** In the general case an `FX` chain continues with more octets *of the same shape* —
+CAT062's `I062/510` is exactly that, its "Structure of next Extents" defined and identical, so its
+chain is genuinely unbounded and a set `FX` on the last extent read is legal. Here the document does
+the opposite: it **names** a specific "Second Extension" twice and defines neither. The refusal rests
+on the document's own words.
+
+### Settlement 6 — Reporting periods: three fields, two LSBs, and two readings of zero
+
+| Field | Where | Width | LSB | Zero |
+|---|---|---|---|---|
+| `GSSP` | `I023/100` First Extension, bits 8/2 | 7 bits | 1 s | **out of range.** Stated `1 <= GSSP <= 127s` |
+| `SSRP` | `I023/101` First Extension, bits 8/2 | 7 bits | 1 s | **out of range.** Stated `1 <= SSRP <= 127s` |
+| `RP` | `I023/101` first part, octet 1 | 8 bits | 0.5 s | **a named mode.** "= 0: Data driven mode" |
+
+**A shared decoder for "a reporting period" would be wrong for one of the three whichever reading it
+took**, so there is no shared decoder: each field has its own form with its own bound and its own
+zero semantics.
+
+`RP`'s zero is the AIS sentinel lesson in a new format. Zero is not a period of zero seconds and
+must never reach a consumer as one; it is carried as the named mode. And **`RP` is about another
+category's feed**: its definition is "Report Period for Category 021 Reports", so the number governs
+how often the service emits CAT021 target reports, which this adapter never sees. It is parked as a
+statement about a different feed and is emphatically **not** applied as a staleness horizon to
+anything — deriving one would be reasoning about payloads this adapter has not been given.
+
+`GSSP`'s and `SSRP`'s zeros are refused rather than read as "no periodic reporting", and §4.5.1.1
+and §4.5.1.2 are why: both make the periodic send an obligation — "shall be sent periodically (every
+GSSP seconds ...) and whenever a change occurs" — so a period of zero is not a way of turning it
+off, it is a value the item excludes.
+
+### Settlement 7 — A translator owes no fusion. Stated once, and for the tenth time
+
+**No joins, no accumulation, no arbitration, no enrichment, no inference across payloads.** One
+record in, one station `Entity`, one service `Entity` where the report type has one, one `Event`.
+This category makes the refusal concrete in four specific ways, each of which is a thing a reasonable
+implementer might do:
+
+1. **The three report types are not assembled into one picture.** Table 2 makes them mutually
+   exclusive (settlement 4), so a station's status, its services' statuses and its services'
+   statistics arrive in different records — and merging them is exactly the accumulation refused.
+2. **`I023/015`'s NOTE 2 names the join and it is declined.** "The service identification is also
+   available in item I021/015." Correlating a CAT023 service status with the CAT021 reports that
+   service emits is the single most useful thing a consumer could do with this category, and it is a
+   consumer's act: it needs two payloads.
+3. **`I023/100`'s `NOGO` bit is not acted on.** "Data must not be used operationally" is the
+   operationally loudest bit in the category and it governs what a consumer does with the station's
+   *target reports*, which this adapter never sees. Parked, prominently, and the reasoning is
+   `asterix_cat034.py`'s for `I034/050`'s `NOGO`: raising an alert here would be this translator
+   judging data it has never been shown.
+4. **The counters are not turned into detections or rates.** `I023/120` counts messages; a count is
+   not a detection, and dividing two counters by a reporting period would be computing a rate the
+   source did not state.
+
+### What the adapter's input IS — one data block, and nothing else
+
+`to_cdm()` takes **one ASTERIX data block**: the octets from the `CAT` byte through the last record.
+The accepted forms are the raw octets or the already-parsed dict a fixture twin holds. No socket, no
+reassembly buffer, no station position from another category, and **no injected position** — unlike
+CAT048, which needs one to produce a coordinate at all, this adapter produces no coordinate under
+any circumstances and accepting a position argument would create an authority for a fact the format
+does not carry.
+
+### The wire form
+
+`CAT | LEN | (FSPEC + items) × N`, per §4.5.2. `CAT` is one octet and is 023; `LEN` is two octets and
+counts itself and `CAT`. Items appear in **FRN order** per §4.6.1, which is **not item-number
+order** — and here that is a trap with teeth:
+
+| FRN | Item | Length |
+|---|---|---|
+| 1 | `I023/010` | 2 |
+| 2 | `I023/000` | 1 |
+| 3 | `I023/015` | 1 |
+| 4 | `I023/070` | 3 |
+| 5 | `I023/100` | `1+` |
+| 6 | `I023/101` | `2+` |
+| 7 | `I023/200` | 1 |
+| FX | — | — |
+| 8 | `I023/110` | `1+` |
+| 9 | `I023/120` | `1+` |
+| 10–12 | — spare — | — |
+| 13 | `RE-Data Item` | `1+1+` |
+| 14 | `SP-Data Item` | `1+1+` |
+| FX | — | — |
+
+**`I023/200` sits between `I023/101` and `I023/110`**, three items out of numeric sequence, and
+Edition 0.13's change record says why: "Sequence of items in UAP updated". A parser walking items in
+item-number order would read the Operational Range octet as the first octet of Service Status and
+lose its place **with no length error anywhere in the record**.
+
+**Two FSPEC octets maximum**, from this table's own two `FX` rows: 14 presence bits plus 2 `FX` bits
+is 16 bits. **The same octet count as CAT034's UAP and a different table** — Part 2b defines 12 items
+in its 14 FRNs and this defines 9 — so a codec that imported `cat034_codec.read_fspec` would get the
+right ceiling by luck and a refusal message quoting the wrong FRN count, and a codec that imported
+its *UAP* would decode `I023/070` as `I034/020` with no length error. Two modules, no sharing, and
+the reason is stated at the top of each.
+
+**Three FRNs are spare and a set bit for one is a refusal.** FRNs 10, 11 and 12, with no note
+explaining them — unlike CAT062's FRN 2, which has one. The refusal names it as a spare slot inside
+the table rather than as an FRN the table has never defined, because the two cases mean different
+things to somebody debugging an encoder.
+
+**The length column cannot be used to derive a length rule.** Its legend explains only `1+`; `2+`
+(`I023/101`, a two-octet first part with one-octet extents) and `1+1+` (`RE`, `SP`) are unexplained,
+and `1+` is given to both an FX-chained item (`I023/100`, `I023/110`) and a `REP`-prefixed repetitive
+one (`I023/120`). Every length rule comes from §5.2. Ambiguity 4.
+
+### There is no CRC here, and what replaces it
+
+Neither §4.5.2 nor §4.6 nor any §5.2 item defines a CRC, checksum or parity field at any level. The
+structural gate: the block satisfies `LEN`, the records tile it exactly, every FSPEC bit names a
+defined FRN, no `FX` leads to an undefined extension, every `REP` is non-zero, and the items Table 2
+makes mandatory for the record's own report type are present. `attributes.integrity_basis` records
+that this is what passed, and that a single bit flipped inside a fixed-length field satisfies all of
+it and reaches the CDM as a station status.
+
+### How to read the row sets
+
+Left column names data items as §5.2 numbers them. `Status` reads `not yet` on every row: the row
+set is a specification and no code implements it. The marker changes to `cat023 1.0.0` when Phase 2
+lands — `· parked` where the value goes to `attributes` or `payload`, `· egress` in the outbound
+table — and the inverted test applies in both directions.
+
+### Row set — the block and record envelope
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `block.category` | `Entity.attributes` | `not yet` | the CAT octet as read. §4.5.2: "Data Category (CAT) = 023, is a one-octet field indicating that the Data Block contains Ground Station and Service Status reports". A block whose category is not 23 is refused rather than decoded |
+| `block.length` | `Entity.attributes` | `not yet` | §4.5.2's `LEN`, "a two-octet field indicating the total length in octets of the Data Block, including the CAT and LEN fields". Parked, **recomputed on egress rather than copied** |
+| `block.record_index`, `block.record_count` | `Event.payload` | `not yet` | which record of how many. No per-record length exists in the layout |
+| `record.fspec` | `Entity.attributes` | `not yet` | the FSPEC octets verbatim. §4.6.2 requires only that a present item's bit is set, so a longer-than-minimal FSPEC is legal and the round trip is byte-exact only if what was read is re-emitted |
+| `record.spare_bits` | `Entity.attributes` | `not yet` | every spare and unused bit as sent. §4.3 is normative: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits" |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.integrity_basis` — that CAT023 defines no checksum at any level, and what the structural gate checked |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.table_2_disposition` — the record's Table 2 column and any item present where the column says `X`. Present on every record, empty list and all |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unavailable_fields` — including a Time of Day the encoding rule permits to be missing |
+| *(measured)* | `Entity.attributes` | `not yet` | `attributes.unresolved_raw` — values read and not usable: a Report Type outside 001–003, an `I023/015` `STYP` of 0 or above 9, an `I023/110` `STAT` above 5, an `I023/101` `SC` in 2–7 ("reserved for future use"), an `I023/120` `TYPE` in the reserved 5–19 band or above 32 |
+| everything unmapped | `Entity.attributes` | `not yet` | `attributes.source_extras`, structure intact |
+
+### Row set — the station, and the service that is a second object
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/010` SAC, SIC | `Entity.source_ids`, `SourceId.system`, `SourceId.external_id` | `not yet` | §5.2.2, "Identification of the Ground Station from which the data is received", two octets, `M` in every column. Filed under `ASTERIX_SAC_SIC` — **the same system name `asterix_cat034.py` uses**, so one station seen through two ASTERIX parts is one entity without the adapters coordinating |
+| `I023/010` | `Entity.entity_id` | `not yet` | `uuid5(NAMESPACE, "entity\|ASTERIX_SAC_SIC\|<SACSIC>")`. **Supported by a clause rather than an inference**: §4.4.1, "By convention a dedicated and unambiguous SAC/SIC code shall be assigned to every Ground Station." Settlement 1 |
+| `I023/010` | `Entity.entity_type` | `not yet` | `SENSOR`, from the category rather than from any item: every record in Part 16 is about a CNS/ATM ground station or a service it provides |
+| `I023/010` | `Entity.affiliation` | `not yet` | `UNKNOWN`, always. A service status report states configuration and health and never allegiance, and this repository does not infer one from a SAC |
+| `I023/010` NOTE | *(no field)* | `not yet` | "The up-to-date list of SACs is published on the EUROCONTROL Web Site (https://www.eurocontrol.int/asterix)" — the same list `fixtures/cat021/spec/sac_pin.json` pinned, so the fixture SAC evidence transfers **by citation**. Note the URL is **https** here and **http** in Part 2b's equivalent NOTE |
+| `I023/015` `SID` | `Entity.source_ids`, `Entity.entity_id` | `not yet` | §5.2.3 bits 8/5, Service Identification, four bits. **The second object's key, as the pair `(SAC/SIC, SID)`** — filed under `ASTERIX_CNS_SERVICE` because NOTE 1 says the SID is "allocated by the system" and so means nothing across stations. Settlement 2 |
+| `I023/015` `STYP` | `Entity.attributes` | `not yet` | §5.2.3 bits 4/1, Type of Service, nine defined values: ADS-B VDL4, ADS-B Ext Squitter, ADS-B UAT, TIS-B VDL4, TIS-B Ext Squitter, TIS-B UAT, FIS-B VDL4, GRAS VDL4, MLT. Parked as the integer **and** the wording. **`0` and `10`–`15` are undefined** and there is no "unknown" or "other" value, so an undefined `STYP` goes to `unresolved_raw` |
+| `I023/015` | `Entity.attributes` | `not yet` | `attributes.service_nibble_basis` — that the item is named "Service Type and Identification" while the octet is `SID` in bits 8/5 and `STYP` in bits 4/1, i.e. **the name is in the other order from the bits**. A transposition yields a plausible wrong service rather than an error, so the two nibbles are parked under explicit names |
+| `I023/015` NOTE 2 | *(no field)* | `not yet` | "The service identification is also available in item I021/015." **A join a consumer may perform and this adapter may not** — settlement 7 item 2, and the CAT021 declines table's prediction made good |
+| *(derived)* | `Entity.position` | `not yet` | **`None` on every object, and this category is why.** Nine items and no coordinate: `I023/200` is a radius with no centre and §4.4.1 asserts uniqueness without stating location. `attributes.position_basis` says so explicitly, and says that reading a position out of a CAT034 record would be cross-payload state |
+| *(derived)* | `Entity.kinematics` | `not yet` | `None`, always. A ground station does not move and this category carries no bearing of any kind — not even an antenna's, unlike CAT034 |
+| *(derived)* | `Entity.symbol` | `not yet` | derived from the affiliation through `symbology.sidc_from_affiliation`, so every CAT023 station and service is an `UNKNOWN` glyph. CAT023 carries no symbology |
+| *(derived)* | `Entity.confidence` | `not yet` | `None`, always. Every quality statement in this category is a switch position, an enumerated status or a counter; none is a 0..1 assessment of identity |
+| *(derived)* | `Entity.valid_to` | `not yet` | `None`, always. §4.5.1.1 and §4.5.1.2 give the *reporting period*, from which a consumer could make a staleness horizon; deriving an expiry here would be this adapter reasoning about reports it has not seen |
+| *(derived)* | `Event.related_entities` | `not yet` | the station's `entity_id`, and on report types 002 and 003 the service's as well, station first. **Not a join**: both ids are pure functions of fields in the same record — settlement 2 |
+
+### Row set — report type
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/000` | `Event.event_type` | `not yet` | §5.2.1, one octet, `M` in every column of Table 2. All three defined types → `STATUS_CHANGE`: a ground station or service stating what it is doing is a status change and not a detection. **No type produces `ALERT`**, and that is a decision — see the `NOGO` and `SPO` rows |
+| `I023/000` | `Event.severity` | `not yet` | `INFO` for all three defined types by default, raised to `WARNING` by `I023/110`'s `STAT` and by `I023/100`'s `SPO` — see those rows. The type itself is not an alarm |
+| `I023/000` | `Event.payload` | `not yet` | the raw value **and** its name, parked, because the collapse onto `event_type` is 3 → 1 and egress re-emits **from here** rather than re-deriving a type from an `EventType` all three share |
+| `I023/000` NOTE 2 | *(no field)* | `not yet` | "All Report Type values are reserved for common standard use." So a value outside 001–003 is **not** a private extension point — it is a value this edition does not define. `STATUS_CHANGE` / `ADVISORY`, raw value in `unresolved_raw`, and the record is translated rather than refused: an undefined type is not a malformed record |
+| `I023/000` NOTE 1 | `Entity.attributes` | `not yet` | "In applications where transactions of various types are exchanged, the Report Type Data Item facilitates the proper report handling at the receiver side." The item's own statement of what it is for — recorded, because it is the sentence that makes Table 2 the encoding rule for the other eight items |
+| `I023/000` Table 2 | `Entity.attributes` | `not yet` | the `M`/`O`/`X` matrix, which is the **encoding rule for eight of the nine items** — every other item's Encoding Rule reads "See Table 2". A missing `M` refuses; a present `X` is parked and recorded. Settlement 4 |
+
+### Row set — time
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/070` | `Event.observed_at`, `Entity.valid_from` | `not yet` | §5.2.4, three octets at 1/128 s, "Absolute time stamping expressed as UTC time" |
+| `I023/070` | `Event.payload` | `not yet` | the raw 24-bit count, the LSB and the resolved date's basis. The nearest of three candidate days wins — settlement 3, the fifth adapter to reach this rule |
+| `I023/070` absent | `Entity.attributes` | `not yet` | a **stated absence**, not a defect: the encoding rule permits it "in case of failure of all sources of time-stamping" while Table 2 marks the item `M` for all three types. Lands in `attributes.unavailable_fields` with the rule quoted; `observed_at` falls back to the injected clock. The second ASTERIX category here where an item-level rule overrides the presence matrix |
+| `I023/070` ≥ 86 400 s | *(refusal)* | `not yet` | refused, not taken modulo a day. §5.2.4 prints no acceptable range, so the bound comes from the Definition and the NOTE and 86 400 s itself is unreachable — one value tighter than CAT048's printed inclusive inequality. Ambiguity 8 |
+| *(derived)* | `Event.received_at` | `not yet` | the injected clock. The one field the adapter invents rather than reads |
+
+### Row set — `I023/100` Ground Station Status
+
+`M` for report type 001 and `X` for the other two. One octet plus one defined extension; a set `FX`
+on the extension is refused — settlement 5.
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/100` first part | `Entity.attributes` | `not yet` | `NOGO`, `ODP`, `OXT`, `MSC`, `TSV`, `SPO`, `RN`, `FX`. Parked whole |
+| `I023/100` `NOGO` | `Entity.attributes` | `not yet` | "Operational Release Status of the Data": 0 released for operational use, 1 **"Data must not be used operationally"**, with NOTE 2 restating it. **The operationally loudest bit in the category, and it is parked rather than raised into severity** — it governs what a consumer does with the station's *target reports*, which this adapter never sees. `asterix_cat034.py`'s reasoning for `I034/050`'s `NOGO`, reached again |
+| `I023/100` `ODP`, `OXT` | `Entity.attributes` | `not yet` | Data Processor Overload and Ground Interface Data Communications Overload. Two independent overload indications — one in processing, one in transmission — parked separately, because a merged "overloaded" key would lose which subsystem it was |
+| `I023/100` `MSC` | `Entity.attributes` | `not yet` | Monitoring System Connected Status, and the wording matters: `0` is "Monitoring system **not connected or unknown**" — a two-in-one value, so a clear bit is not a statement that nothing is connected. Carried verbatim |
+| `I023/100` `TSV` | `Entity.attributes` | `not yet` | Time Source Validity, valid / invalid, with NOTE 1 defining valid: "either externally synchronised or running on a local oscillator within the required accuracy of UTC". **Parked, and it does not change how `I023/070` is read**: an invalid time source with a present time of day is a record whose own clock the station distrusts, and both facts are carried. Suppressing `observed_at` on it would discard the only time the record states |
+| `I023/100` `SPO` | `Event.severity`, `Entity.attributes` | `not yet` | "Indication of spoofing attack": 0 no spoofing detected, 1 **potential spoofing attack**. Raises `Event.severity` to `WARNING` — the one bit in this category that does, and it is a decision: the station is reporting a detected attack on itself, which is neither routine (`INFO`) nor an emergency in progress (`CRITICAL`). **Not `EventType.GNSS_INTERFERENCE`**: that member is paired with `GnssInterferencePayload`, whose fields exist for the PNTMAP adapter, and a spoofing indication on an ADS-B ground station is not a GNSS event — gap 29's argument reached a third time |
+| `I023/100` `RN` | `Entity.attributes` | `not yet` | Renumbering Indication for Track ID, with NOTE 3: "Bit 2 indicates that the allocation of Track-IDs (Item I021/161) was re-started." Parked. **This bit is cited as evidence in the CAT062 row set's settlement 3**: ASTERIX itself found the recycling of track numbers worth a dedicated status bit, which is why a track number is never an `entity_id` basis. It is a different number space in a different category, and it is cited for the *class* of identifier |
+| `I023/100` First Extension `GSSP` | `Event.payload` | `not yet` | Ground Station Status Reporting Period, **seven** bits at 1 s, stated `1 <= GSSP <= 127s`. Parked as seconds and as the raw field. **A zero is out of range and is refused**, because §4.5.1.1 makes the periodic send an obligation — settlement 6 |
+| `I023/100` First Extension `FX` set | *(refusal)* | `not yet` | refused. The extension's own bit 1 says "Extension into Second Extension" and §5.2.5 defines no Second Extension. Settlement 5 |
+
+### Row set — `I023/101` Service Configuration
+
+`M` for report type 002 and `X` for the other two. A **two-octet** first part with the `FX` in octet
+2, plus one defined extension.
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/101` `RP` | `Event.payload` | `not yet` | "Report Period for Category 021 Reports", eight bits at **0.5 seconds**. Parked as seconds. **`0` is a named mode, not a period** — "= 0: Data driven mode" — and reaching a consumer as 0.0 s would be the AIS sentinel defect. And the field is about **another category's feed**, so it is parked as a statement about CAT021 and never applied as a staleness horizon here. Settlement 6 |
+| `I023/101` `SC` | `Entity.attributes` | `not yet` | Service Class, bits 8/6 of octet 2: `0` no information, `1` NRA class, `2`–`7` "reserved for future use". Parked as the integer and the wording; a reserved value goes to `unresolved_raw`. **`0` is a stated non-statement** ("No information"), which is different from an absent item |
+| `I023/101` octet 2 spares | `Entity.attributes` | `not yet` | bits 5/2, "Spare bits set to 0". Read and re-emitted as sent, per §4.3 |
+| `I023/101` First Extension `SSRP` | `Event.payload` | `not yet` | Service Status Reporting Period, **seven** bits at 1 s, stated `1 <= SSRP <= 127s`. Identical shape and bounds to `GSSP` in a different item for a different obligation (§4.5.1.2). A zero is refused |
+| `I023/101` First Extension `FX` set | *(refusal)* | `not yet` | refused, same as `I023/100`'s. Settlement 5 |
+| `I023/101` | `Entity.attributes` | `not yet` | `attributes.two_octet_first_part_basis` — that this is the only `2+` item in either ASTERIX category this repository pins whose first part is two octets with the `FX` in the *second*, so its length rule cannot be shared with `I023/100`'s or `I023/110`'s. Ambiguity 4 |
+
+### Row set — `I023/110` Service Status
+
+`M` for report type 002 and `X` for the other two. One octet, no extension defined anywhere.
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/110` `STAT` | `Event.severity` | `not yet` | §5.2.7 bits 4/2, Status of the Service, six values. `1` **Failed** → `CRITICAL`; `3` **Degraded** → `WARNING`; `2` Disabled → `WARNING`, because a disabled service is a service a consumer is not receiving and the record does not say whether that was intended; `4` Normal and `5` Initialisation → `INFO`; `0` Unknown → `ADVISORY`, which is the CDM's middle value and the only one that leaves the record visible to a consumer filtering on severity while claiming nothing |
+| `I023/110` `STAT` | `Event.payload` | `not yet` | the raw value **and** its wording, because the collapse onto four severities must stay recoverable and egress re-emits from here |
+| `I023/110` `STAT` above 5 | `Entity.attributes` | `not yet` | three bits reach 7 and six values are defined. A `6` or `7` goes to `unresolved_raw` and takes `ADVISORY`, for the CAT034 undefined-message-type reason: `INFO` would say the status is understood and ordinary, `WARNING` would invent an alarm out of an unknown |
+| `I023/110` spare bits | `Entity.attributes` | `not yet` | bits 8/5, legended "Spare **bit** set to 0" — four bits described with a singular noun (ambiguity 10). All four are read and re-emitted as sent regardless, because §4.3 is normative that a decoder may not rely on their setting |
+| `I023/110` `FX` set | *(refusal)* | `not yet` | refused, and this is the strongest of the three cases: the item's `FX` says "Extension" and **no extension exists in any edition in hand, including 0.14.** Settlement 5 |
+
+### Row set — `I023/120` Service Statistics
+
+`M` for report type 003 and `X` for the other two. A one-octet `REP` then `REP` **six-octet** blocks.
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/120` `REP` | `Event.payload` | `not yet` | §5.2.8, "Number of counters following". The item's Format says "followed by **at least one** block of 6 octets", so a `REP` of 0 is excluded by the item's own words and is **refused** — an item whose presence bit is set and whose content is empty is a record whose FSPEC and body disagree. The `I034/070` disposition |
+| `I023/120` counters | `Event.payload` | `not yet` | parked as an **ordered list with duplicates preserved**. The document does not say the `TYPE` values are unique, order is data, and egress is byte-exact only if the counters go back out as they came in — the `I048/030` and `I034/070` rule reached a third time |
+| `I023/120` `TYPE` | `Event.payload` | `not yet` | one octet, eighteen defined values: `0`–`4` generic (unknown messages, 'too old' messages, failed conversions, total received, total transmitted) and `20`–`32` per-message-kind. Parked as the integer **and** the wording |
+| `I023/120` `TYPE` in 5–19 | `Entity.attributes` | `not yet` | a **documented reservation**, not an unknown: the item's NOTE says "the range from 0 to 19 is intended to cover generic messages which may be applicable to many types of service". So a `7` is a generic counter this edition has not allocated, and a `40` is outside the table entirely. Both go to `unresolved_raw` and the reason recorded with each says **which band** it is in |
+| `I023/120` `REF` | `Event.payload` | `not yet` | "Reference from which the messages are countered": `0` from midnight, `1` from the last report. Parked **per counter**, because the bit is inside each six-octet block and not once for the item — so one record may legitimately carry counters with two different references |
+| `I023/120` `REF` versus the Definition | `Entity.attributes` | `not yet` | the item's Definition says the counts are "since the report was last sent" **unconditionally**, while the `REF` bit offers "From midnight" as well. **The field is preferred over the Definition** — the field is what the wire carries — and the disagreement is recorded at `attributes.counter_reference_basis`. Ambiguity 7 |
+| `I023/120` `COUNTER VALUE` | `Event.payload` | `not yet` | 32 bits, unsigned. Parked as the integer. **A count is not a detection**: none of the eighteen `TYPE` values produces an `Event` per counted message, which would invent target reports this document does not carry. And no rate is computed from a counter and a reporting period — settlement 7 item 4 |
+| `I023/120` block spares | `Entity.attributes` | `not yet` | bits 39/33, seven spare bits per block, read and re-emitted as sent |
+
+### Row set — `I023/200` Operational Range
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `I023/200` | `Event.payload` | `not yet` | §5.2.9, one octet at 1 NM, "Currently active operational range of the GS". `O` for report types 001 and 002 and `X` for 003 — **the only optional item in the category**. Parked as nautical miles and as the raw octet |
+| `I023/200` | `Event.geometry` | `not yet` | **`None`. No `Geometry` is ever derived**, and the reason is the one settlement 1 gives: a range is a radius and this category carries no centre. A circle needs a station position and nothing in Part 16 states one, so the derivation cannot arise from a conformant record at all — which is CAT034's settlement 7 shape reached by a shorter route, there because two items are mutually exclusive and here because one of the two does not exist |
+| `I023/200` NOTE | `Entity.attributes` | `not yet` | "Maximum value indicates 'maximum value or above'." A range of 255 NM is a **floor**, not a measurement, so it is carried as the number and flagged — the AIS 102.2 kt discipline, reached again |
+
+### Row set — RE and SP
+
+| CAT023 | CDM field | Status | Notes |
+|---|---|---|---|
+| `RE-Data Item`, FRN 13 | `Entity.attributes` | `not yet` | Reserved Expansion Field, `1+1+`. **Parked verbatim, octet for octet, restored unchanged on egress, never decoded.** This document defines no part of it: FRN 13 has no §5.2 entry, no appendix exists for Part 16, and no edition in hand mentions the field outside the UAP. The procedural reason is `asterix_cat034.py`'s and one step stronger again — there the change record at least recorded the slot's arrival; here there is no change-record line for it either |
+| `SP-Data Item`, FRN 14 | `Entity.attributes` | `not yet` | Special Purpose Field, `1+1+`. Opaque by construction, parked verbatim as hex and **never written to** on egress: a Special Purpose Field's contents are settled bilaterally, so a byte invented here is a byte some deployment already means something by |
+| the `1+1+` length convention | *(no field)* | `not yet` | a one-octet length counting itself, then opaque contents. **Inherited from the shipped ASTERIX siblings, and the inheritance is named**: ASTERIX Part 1 defines these fields, this document cites it as SUR.ET1.ST05.2000-STD-01-01 Edition 1.29 of **February 2002** — the pre-migration number at a nineteen-year-old edition — and it is not pinned in this repository. So even acquiring Part 1 at its current edition would not obviously be acquiring the document this specification cites. Ambiguity 3 |
+
+### Row set — egress, CDM back to a CAT023 data block
+
+Written now for the reason every other egress row set here was written at Phase 1: an egress
+specification designed after an ingest implementation is shaped by what the implementation happened
+to keep.
+
+**The byte-for-byte claim is made and is expected to hold**, and this category is the easiest case in
+the family: **there is not one scaled value that becomes a canonical numeric field.** Every derived
+figure — the seconds behind `I023/070`, `GSSP`, `SSRP`, `RP` and `I023/200` — is a one-way view, and
+every emitted octet comes from a parked raw field. So there is no arithmetic to invert anywhere.
+
+| CDM field | CAT023 | Status | Notes |
+|---|---|---|---|
+| `Entity.source_ids` | `I023/010` | `not yet` | the SAC/SIC the station entity was keyed on, back into FRN 1 |
+| `Entity.source_ids` | `I023/015` | `not yet` | the `SID` the service entity was keyed on, and the parked `STYP` beside it. A record whose Table 2 column says `X` for `I023/015` emits neither |
+| `Event.payload` | `I023/000` | `not yet` | the parked raw Report Type, **not** a value re-derived from `Event.event_type` — all three types collapse to `STATUS_CHANGE` and only the park is invertible |
+| `Event.observed_at` | `I023/070` | `not yet` | re-encoded from the **parked raw 24-bit count**, not from the resolved instant. Re-deriving the count would run the rollover arithmetic in both directions and hide an error in it |
+| `Event.severity` | `I023/110` | `not yet` | **not** the source of any octet. The `STAT` value is re-emitted from the park, because six statuses collapse to four severities |
+| `Event.payload`, `Entity.attributes` | every other item | `not yet` | from the park, verbatim, including every spare bit and both opaque fields |
+| `record.fspec` | the FSPEC | `not yet` | **re-emitted as parked, not recomputed**, so a source's non-minimal FSPEC survives. A record assembled from CDM with no parked FSPEC gets the shortest covering one, and that is the only case where this adapter chooses |
+| `block.length` | `LEN` | `not yet` | **recomputed**, never copied |
+
+#### What egress is NOT lossy for
+
+Nothing this row set maps. **The two-`Entity` shape needs one rule and it is stated here**: a record
+that produced a station Entity and a service Entity is re-assembled from the **station** Entity,
+which carries the parked FSPEC and item octets; the service Entity carries the same parked block by
+reference and contributes no octet of its own. So `from_cdm()` groups Entities by their parked
+`cat023_fspec` and record index and emits one record per group, and a caller passing only the
+service Entity gets a refusal naming what is missing rather than a record with an invented FSPEC.
+
+### What the adapter will fill that CAT023 does not state
+
+| Field | Where the value comes from |
+|---|---|
+| `Event.received_at` | the injected clock. The one field the adapter invents rather than reads |
+| `SourceRef.synthetic` | the constructor, defaulting to `True`. **This category has no simulation flag at all** — no `SIM` bit anywhere — so there is not even a candidate to decline |
+| `Entity.symbol` | `symbology.sidc_from_affiliation(UNKNOWN, synthetic=...)`. CAT023 carries no symbology |
+| the date behind `I023/070` | the injected clock, resolved to the nearest of three candidate days |
+| `Entity.entity_type` | `SENSOR`, from the category for the station and as the least-wrong of eight for the service — settlement 2 |
+| `Event.severity` | `INFO` by default, `WARNING` from `SPO` and from `STAT` = 2 or 3, `CRITICAL` from `STAT` = 1, `ADVISORY` from `STAT` = 0 or an undefined report type |
+| the service's `entity_id` | `uuid5` over `("ASTERIX_CNS_SERVICE", "<SACSIC>|<SID>")`. The pair, never the SID alone — settlement 2 |
+
+### Where the specification is ambiguous or contradicts itself
+
+Ten entries, numbered from 1 within this row set. `fixtures/cat023/spec/cat023_pin.json`'s
+`ambiguity_register` carries the same numbering with the evidence.
+
+| # | What is ambiguous | How this row set resolves it |
+|---|---|---|
+| 1 | The back cover carries another Part's reference number (`-8`), a date sixteen months before the edition date, and three unreplaced typesetting placeholders | the identification block and the 31 running headers are preferred; they agree with each other and with the cover. Recorded at length in the pin record because it is a page that was never finished and was published anyway |
+| 2 | §4.1 "General" is a numbered heading with **no body** | the normative scope is read from §1.1, which is in the INTRODUCTION, and from §4.5.1's three report types. Both are quoted above |
+| 3 | The only reference cited is ASTERIX Part 1 at Edition 1.29 of February 2002 under the pre-migration number, in a document dated September 2021 | Part 1 is not pinned here; the RE and SP length convention is inherited from the shipped siblings and the inheritance is named at its site |
+| 4 | The UAP's length legend explains `1+` and not `2+` or `1+1+`, and gives `1+` to both an FX-chained item and a `REP`-prefixed one | every length rule comes from §5.2; the UAP's fourth column is never read |
+| 5 | Three of nine items are extensible and **none** defines the extension its `FX` announces | refused in all three cases, on the document's own words. Settlement 5 |
+| 6 | Three reporting periods, two LSBs, two incompatible readings of zero | no shared decoder: each field has its own bound and its own zero semantics. Settlement 6 |
+| 7 | `I023/120`'s Definition says the counts are "since the report was last sent" unconditionally, while its own `REF` bit offers "From midnight" as well | the field is preferred over the Definition, and the disagreement is recorded in the object |
+| 8 | `I023/070` states an LSB and no acceptable range, so the day bound comes from the Definition and the NOTE rather than a printed inequality — and therefore excludes 86 400 s where CAT048's printed inequality includes it | the Definition and NOTE. Same width, same LSB, a boundary that differs by one value, and this is the third category here where it does |
+| 9 | The keyword list and the publication page write the category two digits wide ("Category 23") while the cover, §4.5.2 and the UAP write 023 | the definitions are preferred over the metadata |
+| 10 | `I023/110`'s spare field is legended "bits-8/5 (Spare) Spare **bit** set to 0" — four bits, singular noun | all four are read and re-emitted as sent; §4.3 is normative that a decoder may not rely on their setting |
+
+### Deliberately out of scope, and why — each named individually
+
+| Out of scope | Why |
+|---|---|
+| **The Reserved Expansion Field's contents** | This document defines none of it, lists no appendix that does, and does not mention the field outside the UAP in any edition in hand. Parked whole, restored unchanged — CAT034's disposition with the procedural reason one step stronger again |
+| **ASTERIX Part 1** | Not pinned, and cited here at a 2002 edition under a superseded reference number. The RE/SP length convention is inherited from the siblings and the inheritance is stated |
+| **Correlating a service status with the CAT021 reports it governs** | `I023/015`'s NOTE 2 names the join — "The service identification is also available in item I021/015" — and it needs two payloads. A consumer's act, and the most useful thing anyone will do with this category. Settlement 7 |
+| **Assembling a station's full picture from three records** | Table 2 makes the three report types mutually exclusive, so the station's status, its services' statuses and its services' statistics arrive separately. Merging them is accumulation across payloads |
+| **Locating a station** | No item in this category carries a position, and reading one out of a CAT034 record is cross-payload state — the refusal `asterix_cat034.py`'s settlement 2 already made in the other direction. `Entity.position` is `None` on every object this adapter emits, and `attributes.position_basis` says why |
+| **Deriving a `Geometry` from `I023/200`** | Ruled out permanently, not deferred: a range is a radius and there is no centre in the category. `Event.geometry` is `None` on every object |
+| **Acting on `NOGO`** | It governs what a consumer does with the station's target reports, which this adapter never sees. Parked prominently; raising an alert would be this translator judging data it has never been shown |
+| **`EventType.GNSS_INTERFERENCE` from `SPO`** | Gap 29's argument reached a third time. That member is paired with `GnssInterferencePayload`, whose fields exist for the PNTMAP adapter; a spoofing indication on an ADS-B ground station is not a GNSS event, and putting it in the field a consumer filters on to find GNSS threats is a wrong answer that reads as a right one. `SPO` raises `severity` and does not touch `event_type` |
+| **Computing rates from the counters** | `I023/120` counts messages and `I023/101` states a reporting period. Dividing one by the other would compute a figure the source did not state |
+| **Categories 019, 020 and 025** | The CNS/ATM domain contains several categories and this one is bounded by its `CAT` octet. Deferred, not rejected; a category is an adapter |
+| **Any other ASTERIX category** | A category is an adapter. `cat021`, `cat048`, `cat034`, `cat062` and now `cat023` are five of them, and each reads only its own `CAT` octet |
+
+### The fixtures — planned here, before they exist
+
+Synthetic only. `SAC = 0x29`, pinned by citation through `fixtures/cat021/spec/sac_pin.json` as
+§5.2.2's NOTE points at the same published list. Version-8 `f1c7` UUIDs where one is needed; the
+clock is injected. Built by a generator at `fixtures/cat023/spec/build_fixtures.py`, each fixture
+shipping as `<name>.cat023` for the octets and `<name>.parsed.json` for exactly what the parser
+produces.
+
+**Deliberately small — this category is nine items and the fixture set is sized for it**, not for
+symmetry with CAT062's.
+
+| Fixture | What it is for |
+|---|---|
+| `ground_station_status_minimal` | report type 001 with only its `M` items: `I023/010`, `I023/000`, `I023/070`, `I023/100` first part. One FSPEC octet, and a parser that assumed FRN order equalled item-number order reads `I023/000` where `I023/010` is |
+| `ground_station_status_full` | type 001 with `I023/100`'s first part **and** extension, plus the optional `I023/200`. Every station flag set, `GSSP` = 60 |
+| `service_status_report` | type 002 with `I023/015`, `I023/101` first part and extension, and `I023/110`. **Two Entities**, and the test asserts both `entity_id` values are on the event with the station first, and that the service's id is the pair and not the SID alone |
+| `service_status_degraded` | type 002 with `STAT` = 3. `WARNING`, and a second record with `STAT` = 1 asserting `CRITICAL` |
+| `service_status_unknown` | type 002 with `STAT` = 0 ("Unknown"). `ADVISORY`, and a third record with `STAT` = 6 asserting `ADVISORY` **and** an `unresolved_raw` entry — so the two paths to `ADVISORY` are distinguishable in the object |
+| `service_statistics_report` | type 003 with `I023/120` `REP` = 4: one counter in the generic band, one in the per-message band, one duplicate `TYPE`, and one with `REF` = 0 against the others' `REF` = 1. Ordered, duplicates preserved, per-counter reference |
+| `service_statistics_reserved_type` | type 003 with a `TYPE` of 7 (the reserved 5–19 band) and one of 40 (outside the table). Both to `unresolved_raw`, with the reason naming **which band** |
+| `data_driven_report_period` | type 002 with `I023/101` `RP` = 0. Settlement 6: the named mode, and the test asserts no `0.0` seconds appears anywhere in the object |
+| `all_three_service_types` | three records in one block, one per report type, for the same station — with two different `SID` values on the 002 and 003 records, so the block produces one station Entity per record and two distinct service Entities, and nothing is merged |
+| `time_of_day_absent` | type 001 with no `I023/070`. The stated absence: `unavailable_fields` names it, `observed_at` is the injected clock |
+| `operational_range_at_maximum` | `I023/200` = 255. The floor flag fires, and the test asserts no `Event.geometry` is produced |
+| `table_2_x_item_present` | type 001 carrying `I023/110`, which Table 2 marks `X` for that type. Parked and named in `attributes.table_2_disposition`, **not** refused — settlement 4's asymmetry |
+| `report_type_004` | a report type this edition does not define. Translated, `STATUS_CHANGE`/`ADVISORY`, raw value in `unresolved_raw`, and **not** refused. The tripwire for a future edition |
+| `reserved_and_special_purpose` | `RE` and `SP` both present with opaque contents, both recorded and restored, the `SP` never written to |
+| `spare_bits_nonzero` | every reachable spare bit set to 1 — `I023/101` octet 2 bits 5/2, `I023/110` bits 8/5, and `I023/120`'s seven spare bits per block. §4.3 is normative about exactly this, and the CAT034 round found that a set with all-zero spares tests nothing |
+| `non_minimal_fspec` | an FSPEC longer than the highest set FRN needs. Legal per §4.6.2, and the round trip is byte-exact only because the octets are re-emitted as parked |
+| `midnight_rollover_nearest` | two records, `23:59:59` and `00:00:01`, so the wrap happens under the harness's own frozen clock rather than only under one a test injects |
+| **Refusals** | |
+| `wrong_category` | a block whose `CAT` octet is 34. Decoded against the CAT023 UAP it yields a plausible wrong station status |
+| `length_disagrees_with_buffer` | `LEN` longer than the octets supplied |
+| `missing_mandatory_report_type` | no `I023/000`, `M` in every column of Table 2 |
+| `missing_mandatory_for_type` | type 002 with no `I023/110`. Settlement 4's mandatory half |
+| `fspec_names_a_spare_frn` | a set bit for FRN 11. The refusal names it as a spare slot inside the table |
+| `fspec_third_octet` | a second FSPEC octet with `FX` set. There is no FRN 15 |
+| `ground_station_status_second_extension` | `I023/100`'s First Extension with `FX` set. Settlement 5 |
+| `service_status_extension` | `I023/110` with `FX` set — the case where no extension exists in any edition in hand |
+| `service_statistics_rep_zero` | `I023/120` with `REP` = 0, excluded by the item's own "at least one block of 6 octets" |
+| `reporting_period_zero` | `I023/100`'s extension with `GSSP` = 0, outside the stated `1..127` range |
 
 ## GeoJSON (RFC 7946)
 

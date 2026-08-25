@@ -31,6 +31,7 @@ cannot grow ten slightly different opinions" — and that is exactly the shape t
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
+import os
 import pathlib
 import re
 
@@ -363,19 +364,29 @@ def test_no_document_states_the_check_count_at_a_site_this_allowlist_does_not_kn
     `CONTRIBUTING.md` carries the six-row table and states no count, which is why it is absent
     above; a count appearing there would have to be a decision rather than a copy.
     """
+    # `.venv` used to be in a literal exclusion list here. It worked, and it worked for the reason
+    # `tests/test_cdm_version_floor.py` retired the same list one module along: the local
+    # environment happens to be called `.venv`. A reader whose is called anything else got every
+    # site-packages copy of this package's README reported as a stray. The property, not the name.
+    from tests.test_cdm_version_floor import NOT_OURS, is_virtualenv
+
     known = {path for path, _ in CHECK_SITES}
     strays = []
-    for path in sorted(REPO.rglob("*")):
-        if path.suffix not in {".md", ".mdx", ".py"} or not path.is_file():
+    for dirpath, dirnames, filenames in os.walk(REPO):
+        here = pathlib.Path(dirpath)
+        if is_virtualenv(here):
+            dirnames[:] = []
             continue
-        if any(part in {".git", ".venv", "node_modules", ".docusaurus", "build", "__pycache__"}
-               for part in path.parts):
-            continue
-        rel = str(path.relative_to(REPO))
-        if rel == "tests/test_cdm_prose_counts.py":
-            continue                     # this module quotes the phrase in order to sweep for it
-        if CHECK_PHRASE in path.read_text() and rel not in known:
-            strays.append(rel)
+        dirnames[:] = sorted(d for d in dirnames if d not in NOT_OURS)
+        for name in sorted(filenames):
+            path = here / name
+            if path.suffix not in {".md", ".mdx", ".py"} or not path.is_file():
+                continue
+            rel = str(path.relative_to(REPO))
+            if rel == "tests/test_cdm_prose_counts.py":
+                continue                 # this module quotes the phrase in order to sweep for it
+            if CHECK_PHRASE in path.read_text() and rel not in known:
+                strays.append(rel)
     assert not strays, (
         f"these documents state the harness check count and this allowlist does not know them: "
         f"{strays}. Add each with an anchor to its own sentence — a site nobody checks is how "
