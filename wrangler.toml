@@ -1,18 +1,45 @@
 # Cloudflare Pages configuration for the documentation site.
 #
-# Only the OUTPUT directory belongs in this file. Pages takes the build command from the
-# project's settings (or from CI), so the two halves of the deployment are recorded together
-# here to stop them drifting apart:
+# WHAT THIS FILE ACTUALLY GOVERNS, AND IT IS NARROWER THAN IT LOOKS
+# ------------------------------------------------------------------
+# One thing: `pages_build_output_dir` is the directory the **wrangler CLI** uploads when
+# `wrangler pages deploy` is run with no directory argument. That was measured rather than
+# assumed — a no-argument deploy uploads exactly the 46 files `docs/build` holds — and it is
+# worth stating because an earlier version of this comment claimed more.
 #
-#     Build command          cd docs && npm install && npm run build
-#     Build output directory docs/build          <- pages_build_output_dir below
-#     Root directory         /                   (this file's directory)
+# WHAT IT DOES NOT GOVERN
+# -----------------------
+# The build. **This Pages project has no Git integration** — `wrangler pages project list`
+# reports `Git Provider: No` — so Cloudflare never clones this repository and never runs a
+# build command. Every deployment in the project's history is a DIRECT UPLOAD of an
+# already-built `docs/build`, stamped with the commit SHA wrangler reads from git at upload
+# time. A push to `main` deploys nothing.
+#
+# The previous version of this comment said "Pages takes the build command from the project's
+# settings (or from CI), so the two halves of the deployment are recorded together here". That
+# describes a Git-integration workflow this project does not have, and there is no CI: the
+# repository contains no `.github/workflows`. The sentence was not wrong about where a build
+# command WOULD live; it was wrong that one runs at all.
+#
+# THE DEPLOY, IN FULL
+# -------------------
+#     cd docs && npm run ci                       # build + the three gates, from the repo root
+#     npx wrangler pages deploy docs/build \      # or no directory: this file supplies it
+#         --project-name synapsecommand-docs --branch main
 #
 # `npm run build` runs `prebuild` first, which regenerates the JSON Schema reference pages from
-# /schemas. So a deploy always renders the schemas as they are in the commit being deployed,
-# and a contributor who forgot to regenerate gets correct pages rather than a stale deploy.
-# The reverse gate — a stale page COMMITTED — is `npm run check:schemas`, which belongs in CI
-# rather than here, because the fix for it is a commit and not a redeploy.
+# /schemas. There is no way to build and skip it, so a deploy renders the schemas as they are in
+# the commit being deployed. The reverse gate — a stale page COMMITTED — is
+# `npm run check:schemas`, which belongs in the suite rather than here, because the fix for it is
+# a commit and not a redeploy.
+#
+# Wrangler will warn that the working tree is dirty. It always will here: every pinned
+# specification PDF is deliberately untracked, so the tree is never clean and `--commit-dirty=true`
+# is the normal case rather than a signal.
+#
+# `docs/README.md` states this same mechanism, and `tests/test_cdm_deploy_workflow.py` requires
+# the two sites to agree — the disjunction treatment, applied to the one fact in this repository
+# that nothing else could check.
 
 name = "synapsecommand-docs"
 pages_build_output_dir = "docs/build"

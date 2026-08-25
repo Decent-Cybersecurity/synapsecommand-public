@@ -420,6 +420,133 @@ def test_the_citation_parser_is_not_vacuous():
             list(citations_in(dict(good, must_not_appear_at=bad), "synthetic"))
 
 
+#: The pin records that state how a page count was produced. Derived rather than typed by the
+#: closure test below, which is what stops a fourth record growing one nothing reads.
+PAGE_COUNT_METHOD_RECORDS = ("fixtures/cat034/spec/cat034_pin.json",
+                             "fixtures/fft/spec/fft_pin.json",
+                             "fixtures/klv/spec/klv_pin.json")
+
+#: The ruled method, verbatim. Stated once here and required of every record — see
+#: FORMAT_COVERAGE.md, "The page count, ruled from what a reader does with the number".
+RULED_METHOD = ("The page objects REACHABLE FROM THE CATALOG'S /Pages TREE, walked in /Kids order.")
+
+#: The phrase the RETIRED method is defined by. No record's `how` may contain it any more; every
+#: record that changed must still MENTION it, in the field that says what it used to say — those
+#: are opposite requirements on purpose, and together they are what preserves the history without
+#: leaving a false description standing.
+RETIRED_METHOD_PHRASE = "occurrences of /Type /Page across raw objects"
+
+
+def _method_nodes() -> dict[str, dict]:
+    return {rel: json.loads((PKG / rel).read_text())["page_count_method"]
+            for rel in PAGE_COUNT_METHOD_RECORDS}
+
+
+def test_every_page_count_method_record_states_the_ruled_method():
+    """THE DISJUNCTION, on a fact stated three times, and it disagreed with itself for nine
+    documents.
+
+    `klv_pin.json` and `fft_pin.json` each used to open "Counted from the PDF's own page tree" and
+    then define a raw-object scan of `/Type /Page` — the page tree and a raw-object scan are two
+    different methods, so the sentence was self-contradictory from the day it was written. Nothing
+    noticed, because the two agree on any file with no orphaned page objects and no incremental
+    update, and no such file was pinned until CAT034.
+    """
+    for rel, node in _method_nodes().items():
+        assert node["how"] == RULED_METHOD, (
+            f"{rel}'s page_count_method.how is not the ruled method.\n  is:     {node['how']}\n"
+            f"  ruled:  {RULED_METHOD}\n"
+            "A page count's job is to let someone holding a copy check they hold the same "
+            "document, and what they do is open it — so the count is the number of pages the "
+            "document HAS, which is the page tree."
+        )
+        assert RETIRED_METHOD_PHRASE not in node["how"], (
+            f"{rel} defines the retired raw-object method in its `how` field again"
+        )
+        assert "FORMAT_COVERAGE.md" in node.get("ruling", ""), (
+            f"{rel}'s method record does not cite the ruling. A method stated three times with "
+            "the reasoning nowhere is three assertions rather than one decision"
+        )
+
+
+def test_the_two_records_that_changed_still_say_what_they_used_to_say():
+    """A correction that erases what it corrected is a correction nobody can audit.
+
+    The two records whose METHOD changed must still name the retired one — not in `how`, which is
+    the live description, but in the field that records the change. `cat034_pin.json` is exempt
+    from this one: it was written under the ruled method and had nothing to retract.
+    """
+    for rel in ("fixtures/fft/spec/fft_pin.json", "fixtures/klv/spec/klv_pin.json"):
+        node = _method_nodes()[rel]
+        history = node.get("what_this_record_used_to_say_and_why_it_changed", "")
+        assert RETIRED_METHOD_PHRASE in history, (
+            f"{rel} no longer records the method it used to state. The values did not move, so "
+            "this field is the only evidence that anything about them changed"
+        )
+        assert "did not move" in history.lower() or "DID NOT MOVE" in history, (
+            f"{rel} does not say whether its COUNTS moved. They did not, and a correction that "
+            "leaves that ambiguous reads as a re-measurement"
+        )
+
+
+def test_the_three_corrected_cat048_history_counts_are_recorded_as_corrections():
+    """The one place the ruling changed a number, and it has to say so rather than just differ.
+
+    Editions 1.28 and 1.29 move 58 → 56 and edition 1.30 moves 59 → 57. Each entry carries the
+    old value, the new one and the CAUSE, and the summary node carries the corroboration — because
+    "the number is different now" is not a record of anything.
+    """
+    pin = json.loads((PKG / "fixtures/cat048/spec/cat048_pin.json").read_text())
+    history = pin["edition_history"]
+    corrected = {"1.28": 56, "1.29": 56, "1.30": 57}
+    by_edition = {e["edition"]: e for e in history["files"]}
+    for edition, pages in corrected.items():
+        entry = by_edition[edition]
+        assert entry["pages"] == pages, (
+            f"CAT048 edition {edition} records {entry['pages']} pages; the ruled method gives "
+            f"{pages}"
+        )
+        note = entry.get("pages_corrected_2026_08_25", "")
+        assert note.startswith("CORRECTION:"), (
+            f"edition {edition}'s new page count is not marked as a correction"
+        )
+        assert "/Count" in note, (
+            f"edition {edition}'s correction does not cite the file's own declared /Count, which "
+            "is the witness that makes it a correction rather than a preference"
+        )
+    summary = history["page_count_correction_2026_08_25"]
+    assert "METHOD RULING" in summary["why"], summary["why"]
+    assert "%%EOF" in summary["how_the_new_numbers_were_corroborated"]
+    # THE ABSENCE: the pin itself did not move, and nineteen of the twenty-two did not either.
+    assert pin["source"]["pages"] == 64, "the CAT048 PIN moved; only the lineage was corrected"
+    unchanged = [e for e in history["files"] if e["edition"] not in corrected]
+    assert len(unchanged) == 19, f"{len(unchanged)} unchanged entries, expected 19"
+    assert all("pages_corrected_2026_08_25" not in e for e in unchanged), (
+        "an entry that did not move is marked as corrected"
+    )
+
+
+def test_the_page_count_method_closure_holds_in_both_directions():
+    """A pin record that grows a method node nothing reads is the failure this catches.
+
+    Derived rather than trusted: every `*_pin.json` under `fixtures/` is opened, and any that
+    carries a `page_count_method` and is not on the list fails. The pin gate's own property,
+    applied to a node inside the records rather than to the records themselves.
+    """
+    carriers = sorted(str(p.relative_to(PKG)) for p in FIXTURES.rglob("*_pin.json")
+                      if "page_count_method" in json.loads(p.read_text()))
+    assert carriers == sorted(PAGE_COUNT_METHOD_RECORDS), (
+        f"the page-count-method record list and the tree disagree:\n"
+        f"  only in the list: {sorted(set(PAGE_COUNT_METHOD_RECORDS) - set(carriers))}\n"
+        f"  only in the tree: {sorted(set(carriers) - set(PAGE_COUNT_METHOD_RECORDS))}\n"
+        "A new pin that records how it counted pages joins the list and passes the agreement "
+        "check; one that stops recording it leaves deliberately."
+    )
+    assert len(carriers) >= 3, (
+        "fewer than three records state the method, so there is no disjunction left to check"
+    )
+
+
 @pytest.mark.parametrize("path", sorted(PINS), ids=lambda p: p.rsplit("/", 1)[-1])
 def test_every_pin_is_present_intact_and_untracked(path):
     """Present, hashing to what the record says, and out of the index. All three, per pin."""

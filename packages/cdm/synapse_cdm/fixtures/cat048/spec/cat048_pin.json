@@ -1355,7 +1355,8 @@
         "document_identifier": "EUROCONTROL-SPEC-0149-4",
         "sha256": "715797fa45bb5011d7e3c3bf11f1bf63ebc0b9eddd73987487114131f164746a",
         "bytes": 786311,
-        "pages": 58
+        "pages": 56,
+        "pages_corrected_2026_08_25": "CORRECTION: 58 -> 56. Not a re-measurement of the same quantity - the METHOD changed and this is what the ruled method gives. See page_count_method: the count is the page objects reachable from the catalog's /Pages tree, and the raw-object scan that produced 58 counted two page objects this file contains and does not display. Cause: the file has been INCREMENTALLY UPDATED twice - three %%EOF markers - and two page objects survive from an earlier generation, unreferenced by the tree. The file's own page-tree root declares /Count 56, which is the document stating its own page count and agreeing with the ruled method against the retired one."
       },
       {
         "filename": "eurocontrol-cat048-pt4-ed129.pdf",
@@ -1365,7 +1366,8 @@
         "document_identifier": "EUROCONTROL-SPEC-0149-4",
         "sha256": "565f377490373397379161dd49e7badeaee8dd117cb6cc541011299f5fc03228",
         "bytes": 789847,
-        "pages": 58
+        "pages": 56,
+        "pages_corrected_2026_08_25": "CORRECTION: 58 -> 56. Not a re-measurement of the same quantity - the METHOD changed and this is what the ruled method gives. See page_count_method: the count is the page objects reachable from the catalog's /Pages tree, and the raw-object scan that produced 58 counted two page objects this file contains and does not display. Cause: the file has been INCREMENTALLY UPDATED twice - three %%EOF markers - and two page objects survive from an earlier generation, unreferenced by the tree. The file's own page-tree root declares /Count 56, which is the document stating its own page count and agreeing with the ruled method against the retired one."
       },
       {
         "filename": "eurocontrol-cat048-pt4-ed130.pdf",
@@ -1375,7 +1377,8 @@
         "document_identifier": "EUROCONTROL-SPEC-0149-4",
         "sha256": "a8e8acb36c9775d2dd04ba570ba66ecf0f860ab20b94971f2f09e8717bfeb4a7",
         "bytes": 802466,
-        "pages": 59
+        "pages": 57,
+        "pages_corrected_2026_08_25": "CORRECTION: 59 -> 57. Not a re-measurement of the same quantity - the METHOD changed and this is what the ruled method gives. See page_count_method: the count is the page objects reachable from the catalog's /Pages tree, and the raw-object scan that produced 59 counted two page objects this file contains and does not display. Cause: the file has been INCREMENTALLY UPDATED twice - three %%EOF markers - and two page objects survive from an earlier generation, unreferenced by the tree. The file's own page-tree root declares /Count 57, which is the document stating its own page count and agreeing with the ruled method against the retired one."
       },
       {
         "filename": "eurocontrol-cat048-pt4-ed131.pdf",
@@ -1463,6 +1466,12 @@
         "Edition 1.31's BODY extracts cleanly - readability 0.818 across 70524 characters - so the cover-font problem named in 844e336 is confined to its cover and its change-record pages, and even those extract when read page by page rather than by regex over a truncated slice. The SS 5.2.12 diff therefore rests on readable text on both sides, not on unreadable bytes.",
         "Editions 1.28 and 1.29 do not restate the 1.27 row on the page their change record starts; their 1.27 entries were read from the preceding page of the same record. Both say May 2020."
       ]
+    },
+    "page_count_correction_2026_08_25": {
+      "what": "Three of the twenty-two page counts in this history moved: editions 1.28 and 1.29 from 58 to 56, and edition 1.30 from 59 to 57. The other nineteen are unchanged and so is the PIN, edition 1.32 at 64.",
+      "why": "A METHOD RULING, not a re-measurement. The repository carried two page-count methods - a raw-object scan of /Type /Page across the file and its inflated streams, and a walk of the catalog's /Pages tree - and they were harmonised onto the page tree. See page_count_method here and the ruling in FORMAT_COVERAGE.md.",
+      "how_the_new_numbers_were_corroborated": "Three ways, and the second does not depend on the tool at all. (1) The page-tree walk. (2) THE FILE'S OWN /Count on its page-tree root, which PDF requires to equal the number of leaf pages: 56, 56 and 57, matching the tree and not the scan - the document stating its own page count. (3) The orphan diff: each file holds exactly two page objects the tree does not reach, and each has three %%EOF markers, which is the incremental-update signature cat034_pin.json records for Edition 1.28 of Part 2b.",
+      "what_did_not_change": "Every sha256 and every byte count in this history, and every value of the pin. The correction is confined to a quantity that was being measured the wrong way."
     }
   }
 }

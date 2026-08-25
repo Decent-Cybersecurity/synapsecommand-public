@@ -66,7 +66,37 @@ to re-implement the parser's opinion about what a valid directive is, and being 
 was the defect. `<pre>` blocks are stripped before the scan, so a page that documents directive
 syntax in a code block does not trip it.
 
-## Cloudflare Pages
+## Cloudflare Pages — and a push does not deploy
+
+**The Pages project has no Git integration.** `wrangler pages project list` reports
+`Git Provider: No`, so Cloudflare never clones this repository and never runs a build. Every
+deployment in the project's history is a **direct upload** of an already-built `docs/build`,
+stamped with the commit SHA wrangler reads from git at upload time. **A push to `main` changes
+nothing on the live site.**
+
+That is worth stating flatly because the opposite was asserted once, in a commit message, and
+stood for one round. It could not be caught by the five rounds between the claim and this one:
+none of them touched a page under `docs/`, so there was nothing for a deploy to have changed and
+nothing to notice.
+
+### The deploy
+
+Two commands, from the repository root, in this order:
+
+```bash
+cd docs && npm run ci        # gen:schemas → check:schemas → typecheck → build → check:admonitions
+npx wrangler pages deploy docs/build --project-name synapsecommand-docs --branch main
+```
+
+The directory argument is optional — `pages_build_output_dir` in `wrangler.toml` supplies it, and
+a no-argument deploy uploads the same file set. Wrangler will warn that the working tree is
+dirty; it always will, because every pinned specification PDF is deliberately untracked, so
+`--commit-dirty=true` is the normal case here rather than a signal.
+
+`npm run build` runs the generator via npm's `prebuild` hook. There is no way to build and skip
+it, which is the point: a deploy renders the schemas as they are in the commit being deployed.
+
+### The settings, which are inert while there is no Git integration
 
 | Setting | Value |
 | --- | --- |
@@ -75,11 +105,18 @@ syntax in a code block does not trip it.
 | Root directory | `/` |
 | Node version | `22` (pinned by `.node-version` at the repository root) |
 
-The output directory is also recorded in `wrangler.toml` at the repository root, so the two
-halves of the deployment sit in one place.
+Recorded rather than deleted: this is what the project would need if the Git integration were
+ever connected, and the build-output row is the one that is load-bearing today, because it is the
+value `wrangler.toml` also carries. `tests/test_cdm_deploy_workflow.py` requires this file and
+`wrangler.toml` to agree about the mechanism and about that directory.
 
-`npm run build` runs the generator via npm's `prebuild` hook. There is no way to build and skip
-it, which is the point: a deploy renders the schemas as they are in the commit being deployed.
+### The workflow, written down for the first time
+
+**Commit first; deploy second, explicitly, and only when a rendered page changed.** The order
+matters — wrangler stamps the deployment with the commit SHA, so deploying before committing
+records a SHA that is not what was uploaded. "Only when a rendered page changed" is why the
+mistaken claim survived a round: a commit that touches no file under `docs/` needs no deploy, and
+five of them in a row make a wrong belief about deployment unfalsifiable.
 
 ## Structure
 

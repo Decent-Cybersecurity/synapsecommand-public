@@ -107,6 +107,108 @@ way the NITS ones are, because every
 offset is checkable against a table in the pinned document and `check_layouts()` sums them against
 the standard's own byte counts on every suite run.
 
+### The page count, ruled from what a reader does with the number
+
+Every pin row states a page count, and this repository carried **two methods** for producing one.
+They agreed on every document until CAT034 Phase 1 found a file where they do not, and the
+divergence was recorded and deferred. This is that deferral resolved.
+
+| | The method | Recorded in |
+|---|---|---|
+| **A**, retired | occurrences of `/Type /Page` across raw objects and across every inflated object stream | `klv_pin.json`, `fft_pin.json` |
+| **B**, ruled | the page objects **reachable from the catalog's `/Pages` tree**, walked in `/Kids` order | `cat034_pin.json` |
+
+**Both records described A while calling it B.** `klv_pin.json` and `fft_pin.json` each open "Counted
+from the PDF's own **page tree**" and then define the raw-object scan in the same sentence. So the
+intent was always the tree; the implementation was not; and because the two agree on any file with
+no orphaned page objects and no incremental update, nothing surfaced the difference for nine
+documents running.
+
+**The ruling comes from what the number is FOR.** A page count is one term of the pin's composite
+identity row — `SHA-256, N bytes, N pages, path` — and its job is to let someone holding a copy
+check that it is the same document. What they do is **open it and see how many pages it has**, or
+count the printed folios. Nobody scans a PDF's raw objects. So the count must be *the number of
+pages the document has when opened*, which is the page tree by construction: an orphaned page
+object is in the file and is not a page of the document, and a page object surviving in two
+generations of an incremental update is one page, not two. Method A counts **file objects**, which
+is a different quantity that happens to coincide most of the time.
+
+**And the two cross-checks the records already prefer are both measurements of B.** `fft_pin.json`
+calls the printed-folio check "the stronger of the two checks because it does not depend on the
+tool"; the CAT034 record makes the same check against Edition 1.29's folios — cover, `ii`–`viii`,
+`1`–`33`, which is 41. Neither would ever have agreed with a raw-object scan on a file with
+orphans. The ruling adopts the method those checks were already checking against.
+
+#### Recomputed under the ruling, and three recorded numbers moved
+
+Every document in this repository with a recorded page count was recomputed under both methods:
+the **11 pins**, the **3 CAT034 lineage editions** and the **22 CAT048 lineage editions**.
+
+- **No pin moves.** All eleven reproduce under B, including CAT034 Edition 1.29 at 41 — which is
+  the value already recorded, because that pin was the first written under B.
+- **The CAT034 lineage does not move**: 38, 38 and 43, already recorded under B.
+- **Three CAT048 lineage entries move, and each is a CORRECTION rather than a new measurement.**
+  Editions **1.28 and 1.29 from 58 to 56**, and edition **1.30 from 59 to 57**. Their records in
+  `cat048_pin.json` say so at the entry and in one summary node, citing the method ruling rather
+  than only the new value.
+
+**The cause is one signature, and the new numbers have a witness inside the file.** Each of the
+three has **three `%%EOF` markers** — incrementally updated twice — and each holds **exactly two
+page objects the page tree does not reach**. That is the same cause `cat034_pin.json` records for
+Part 2b Edition 1.28. And each file's own page-tree root declares `/Count` **56**, **56** and
+**57**: the document stating its own page count, agreeing with the ruled method and disagreeing
+with the retired one. A correction with the document itself as a witness is not a judgement call.
+
+**What did not change**: every SHA-256 and every byte count everywhere, and every value of every
+pin. The correction is confined to a quantity that was being measured the wrong way, in three
+entries of a lineage that is explicitly **not** a pin.
+
+**Afterwards the method is a fact stated three times**, in the three pin records that carry a
+`page_count_method` node, and
+`tests/test_cdm_pins.py::test_every_page_count_method_record_states_the_ruled_method` collects
+them and requires them to agree — with the closure, so a pin record that grows a method node the
+collector does not read fails too.
+
+### The egress header, ruled from what the rows state
+
+Every mapping table in this document has a column of CDM paths, and until this round the
+**ingress** tables headed it `CDM field` while five of the seven **egress** tables headed it `CDM`.
+GMTIF's was repaired when that row set was written; CAT034's was written repaired; AIS, ADS-B,
+CAT021, NITS and CAT048 were left as they were, with the divergence recorded and deferred. This is
+the deferral resolved, and the ruling is **align the five to `CDM field`** — CAT034 is not an
+exception and never was one.
+
+**The ruling comes from what the cells contain, not from which form is commoner.** Read the five
+columns: `Entity.source_ids[].external_id`, `Position.lat`, `Kinematics.speed_mps`,
+`Track.samples[].observed_at`, `Entity.attributes`. Those are CDM **field paths**, which is what
+`CDM field` names and what `CDM` does not — every column in this document is "CDM" in the sense
+that the whole document maps the CDM to formats, so `CDM` distinguishes that column from the Notes
+column no better than a blank heading would. And the mixture of non-path cells the egress tables
+also carry — `*(derived)*`, `*(constant)*`, `*(the injected clock)*` — is not an argument for the
+shorter form, because the **ingress** tables carry exactly the same mixture under `CDM field`
+already and `NOT_A_PATH` and `MODEL_PATH` in `tests/test_cdm_format_coverage.py` exist to
+accommodate it.
+
+**And the header is not a label, it is a SELECTOR — which is what makes the accurate form also the
+load-bearing one.** `_cdm_paths()` reads the CDM column out of the index its table's header points
+at, and a table whose header does not name the column contributes **nothing**. So for as long as
+those five tables said `CDM`, every path in them was resolved against the Pydantic models **never**:
+a renamed field would not have failed the build.
+
+**What that cost, measured rather than asserted.** Aligning the five put 26 distinct paths through
+the resolver for the first time. Twenty-four of them were already checked because an ingress row
+elsewhere names the same field. **Two were not checked anywhere at all** —
+`Track.entity_id` and `Track.source_ids[].external_id`, both named only on egress rows in tables
+the resolver could not read. Both resolve correctly, so nothing in the document was wrong; what was
+wrong is that nothing would have said so. That is the whole of the damage and it is stated as a
+number rather than as a worry.
+
+**Afterwards this is a fact stated seven times**, once per egress table, and
+`tests/test_cdm_format_coverage.py::test_every_egress_table_heads_its_cdm_column_the_ruled_way`
+collects all seven by regex and requires them to agree — with the closure in both directions, so a
+row set dropped from the collector fails and a new egress table the collector does not read fails
+too.
+
 ### The adapter ordinals, and the reserved-ordinal rule
 
 Adapters are numbered, the number is cited in prose at three dozen sites across this document, the
@@ -309,7 +411,7 @@ that treated it like a position report would have to invent both.
 
 ### Egress — CDM back to AIVDM
 
-| CDM | AIS | Status | Notes |
+| CDM field | AIS | Status | Notes |
 |---|---|---|---|
 | `Entity.source_ids[].external_id` | `message.mmsi` | `ais 1.0.0 · egress` | the AIS entry, so a re-emitted report updates the same station rather than duplicating it |
 | `Position.lat` | `message.lat` | `ais 1.0.0 · egress` | `position: None` emits the 91/181 sentinels — AIS has no way to omit a coordinate, so the format's own "unknown" is the only honest encoding |
@@ -531,7 +633,7 @@ rather than a footnote. The control field is the only thing that says so.
 
 ### Egress — CDM back to DF17 frames
 
-| CDM | ADS-B | Status | Notes |
+| CDM field | ADS-B | Status | Notes |
 |---|---|---|---|
 | `Entity.source_ids[].external_id` | `message.icao` | `adsb 1.0.0 · egress` | the `ICAO24` entry, so a re-emitted frame updates the same airframe rather than duplicating it. An object with no such entry is REFUSED: deriving an address would put an aircraft on 1090 MHz under a number nobody allocated |
 | `Position.lat` / `Position.lon` | `message.cpr_lat`, `.cpr_lon` | `adsb 1.0.0 · egress` | CPR-encoded, which needs no reference position in this direction. `position: None` emits the type code's own no-position form and never the equator |
@@ -1756,7 +1858,7 @@ parked, and egress rebuilds the block from it.
 
 ### Row set — egress, CDM back to a CAT021 data block
 
-| CDM | CAT021 | Status | Notes |
+| CDM field | CAT021 | Status | Notes |
 |---|---|---|---|
 | `Entity.source_ids[].external_id` | `I021/080` | `cat021 1.0.0 · egress` | the `ICAO24` entry, or the `ADSB_NONICAO` one with the parked `ATP` restored. An object with neither is **REFUSED**: deriving a target address would put an aircraft into a surveillance picture under a number nobody allocated, which is `adsb.py`'s refusal word for word |
 | *(configuration)* | `I021/010` SAC, SIC | `cat021 1.0.0 · egress` | mandatory in every record, and it names a **ground station** whose codes EUROCONTROL allocates. For an object this adapter ingested, the parked SAC/SIC is restored. For an object that never came from CAT021, `Cat021Adapter(station=(sac, sic))` supplies it — a constant of the deployment, given at construction exactly like `adsb.py`'s reference position and the injected clock. **With no station configured, such an object is REFUSED**, because a SAC/SIC we invent claims an identity that is centrally issued |
@@ -3874,7 +3976,7 @@ Bidirectional where the protocol allows, and here the protocol allows a great de
 model is richer than the CDM: almost everything egress needs is either a canonical field or a
 parked value it wrote itself on the way in.
 
-| CDM | NITS | Status | Notes |
+| CDM field | NITS | Status | Notes |
 |---|---|---|---|
 | `Track.samples[].observed_at` | `TrackPoint.relTime` | `nits 1.0.0 · egress · provisional` | **re-emitted from `attributes.nits_times`** for a round trip, never recomputed. For a CDM object of other origin, `relTimeIncrement` is set to `0.001` s so that the CDM's own three-decimal `Timestamp` is exactly representable as an integer count, and `relTime` is whole milliseconds since `baseTime` — exact, with no rounding anywhere |
 | `Track.samples[].observed_at` | `TrackMessage.baseTime` | `nits 1.0.0 · egress · provisional` | the earliest sample instant in the message, which is what the standard asks for: "this should be the earliest time among all the time stamps in the constituent parts" |
@@ -7110,7 +7212,7 @@ A compound item of seven one-octet subfields, all parked. It is the radar's own 
 asymmetry is a real departure from CAT021, which can build a block from a `Track`, and it follows
 directly from settlement 3.
 
-| CDM | CAT048 | Status | Notes |
+| CDM field | CAT048 | Status | Notes |
 |---|---|---|---|
 | `Entity.attributes` (the park) | the whole record | `cat048 1.0.0 · egress` | every item re-encoded from the **raw wire integers** parked on ingest, in FRN order, under the FSPEC as read. A float that had been through a conversion could not prove it had not moved a contact |
 | `Entity.attributes` | `LEN` | `cat048 1.0.0 · egress` | recomputed from the octets, never copied |
@@ -8794,13 +8896,13 @@ Written now for the reason the CAT021, GMTIF and CAT048 egress row sets were wri
 an egress specification designed after an ingest implementation is a specification shaped by what
 the implementation happened to keep.
 
-**This table's header says `CDM field` where its CAT021 and CAT048 counterparts say `CDM`**, and
-the difference is deliberate rather than a slip. `tests/test_cdm_format_coverage.py` resolves CDM
-paths only out of a column whose header names it, so the five egress tables headed `CDM` contribute
-**nothing** to that check — a fact that module's own docstring records as the defect it was
-rewritten to fix, and which was repaired for GMTIF and left standing elsewhere. A new table has no
-reason to inherit it. Bringing the other five into line is a separate edit on five row sets that
-already ship, and it is not made here.
+**This table's header says `CDM field`, and so does every other egress table now.** It said so
+first — deliberately, not by accident — while five siblings still said `CDM`, and the deferral that
+recorded the divergence has since been resolved in favour of this form. The ruling is in
+"The egress header, ruled from what the rows state" near the top of this document; the short form
+is that the header is not a label but a SELECTOR: `tests/test_cdm_format_coverage.py` resolves CDM
+paths only out of a column whose header names it, so a table headed `CDM` contributes **nothing**
+to that check and its rows are never resolved against the Pydantic models.
 
 | CDM field | CAT034 | Status | Notes |
 |---|---|---|---|
@@ -8853,8 +8955,8 @@ that was not zero.
 | 8 | Editions 1.28 and 1.29 carry a decorative cover banner whose font has no usable `ToUnicode` map and whose digits do not extract; Edition 1.29 additionally retains **two orphaned template page objects**, one naming `EUROCONTROL-SPEC-0149-8` Edition 1.3 dated 11 May 2020 beside unreplaced typography placeholders | No identity value comes from either. See the page-count note below |
 | 9 | **The same item, the same width, the same LSB, and a range in one part and not the other.** `I034/030` is three octets at 1/128 s and §5.2.4 prints **no** acceptable-range block; CAT048's `I048/140` is three octets at 1/128 s and §5.2.17 prints "Acceptable Range of values: 0<= Time-of-Day<=24 hrs" | **The two adapters draw the boundary one value apart, and neither was harmonised to the other.** `asterix_cat048.py` accepts exactly 86 400 s on §5.2.17's *inclusive* inequality and refuses one LSB past it. `asterix_cat034.py` has no stated range to lean on, so its bound comes from §5.2.4's Definition ("a number of 1/128 s elapsed since last midnight") and NOTE 1 ("reset to zero each day at midnight"), which together make 86 400 s itself unreachable — so it refuses at 86 400. Same shape, different authority, different edge, both written down. The direct analogue of ambiguity 14 in the CAT048 register |
 | 10 | **§5.2.10 prints "Max. Range = 256 NM" twice and the field cannot reach it.** Sixteen bits at 1/256 NM reach 255.996 093 75 NM | The bound in `cat034_codec.FORMS` is the **width**, not the printed figure — `cat048_codec`'s `cartesian` disposition applied unchanged. Preferring the printed figure would make `snap("rho", 256.0)` return a value with no representable raw, and a bound the encoder cannot honour is not a bound |
-| 12 | **§4.4 forbids relying on a spare bit's setting and eleven bit-diagrams legend theirs "set to zero".** §4.4: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits. However … it is recommended to set all spare bits to zero." §5.2.6's and §5.2.7's subfield diagrams then print "Spare bit set to zero" and "Spare bits set to 0" against every spare | **§4.4 governs, because it is the one that binds a DECODER** — the diagrams describe what a conforming encoder does and §4.4 describes what a decoder may assume, and those are different obligations. Every spare bit is read and re-emitted verbatim, and `spare_bits_nonzero` is the fixture that makes the difference observable. A reader who took the diagrams as normative would write a decoder §4.4 forbids |
 | 11 | **Table 3's own legend explains one of its three length notations.** It defines `1+` ("a first part of 1 octet followed by n-octets extents as necessary") and leaves `(1+2*N)` for `I034/070` and `1+1+` for the RE and SP fields unexplained | `(1+2*N)` is recovered from §5.2.8's own Format sentence and costs nothing. `1+1+` is the one that bites, because **no §5.2 section describes either field** and ASTERIX Part 1, which does, is not pinned here. The convention used is the shipped sibling's — a one-octet length counting itself — and it is named at its site rather than qualified in the status column, because the contents are never decoded either way and the exposure is a length rather than a meaning. The exact shape of CAT048's ambiguity 7, reached in a category with one fewer place to look |
+| 12 | **§4.4 forbids relying on a spare bit's setting and eleven bit-diagrams legend theirs "set to zero".** §4.4: "Decoders of ASTERIX data shall never assume and rely on specific settings of spare or unused bits. However … it is recommended to set all spare bits to zero." §5.2.6's and §5.2.7's subfield diagrams then print "Spare bit set to zero" and "Spare bits set to 0" against every spare | **§4.4 governs, because it is the one that binds a DECODER** — the diagrams describe what a conforming encoder does and §4.4 describes what a decoder may assume, and those are different obligations. Every spare bit is read and re-emitted verbatim, and `spare_bits_nonzero` is the fixture that makes the difference observable. A reader who took the diagrams as normative would write a decoder §4.4 forbids |
 
 **The page count needed a method change, and the method was validated before it was preferred.**
 `klv_pin.json` records the page-count method as "occurrences of `/Type /Page` across raw objects and
@@ -8866,12 +8968,21 @@ updated twice* — three `%%EOF` markers — so one page object exists in two ge
 and 1.27 agree at 38 either way.
 
 The page-tree walk was run against **all ten documents this repository already pins** and reproduced
-every recorded count — 64, 5, 73, 5, 212, 104, 6, 192, 150, 5 — so **no existing pin moves** and
-nothing recorded before this round is called into question. And the strongest check does not depend
-on either tool: Edition 1.29's own printed folios run cover, `ii`–`viii`, then `1`–`33`, which is
-1 + 7 + 33 = **41**. `klv_pin.json`'s method string is left exactly as it is, because it describes
-what was done for those documents, it was correct for them, and rewriting a past record to match a
-later method would erase the fact that the method changed.
+every recorded count — 64, 5, 73, 5, 212, 104, 6, 192, 150, 5 — so **no existing pin moves**. And
+the strongest check does not depend on either tool: Edition 1.29's own printed folios run cover,
+`ii`–`viii`, then `1`–`33`, which is 1 + 7 + 33 = **41**.
+
+**Two sentences that stood here have since been overtaken, and both are recorded rather than
+edited away.** This paragraph said that "nothing recorded before this round is called into
+question" and that `klv_pin.json`'s method string was "left exactly as it is". The harmonisation
+round ruled for the page tree and recomputed **every** recorded count rather than only the pinned
+ones — see "The page count, ruled from what a reader does with the number" near the top of this
+document — and found **three CAT048 lineage entries over by two**, editions 1.28, 1.29 and 1.30.
+So something recorded before this round *was* called into question, in the one place this
+paragraph did not look: the edition histories, which are not pins. And `klv_pin.json` now states
+the ruled method, with a field recording what it used to say — which preserves the fact that the
+method changed without leaving a description of the retired method standing as though it were
+current.
 
 ### Deliberately out of scope, and why — each named individually
 

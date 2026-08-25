@@ -99,10 +99,14 @@ def _cdm_paths() -> list[str]:
     HEADER-AWARE, and it has to be. The first version read column 1 of every table in the file,
     which was wrong in both directions:
 
-    - **It missed the egress tables entirely.** Those are headed `| CDM | AIS | Status | Notes |`
-      — the CDM path is in column ZERO — so every `Position.lat`, `Kinematics.speed_mps` and
-      `Track.samples[].position.lat` on an egress row went unresolved for as long as those rows
-      have existed. A renamed field would not have failed the build.
+    - **It missed the egress tables entirely.** Those put the CDM path in column ZERO, so every
+      `Position.lat`, `Kinematics.speed_mps` and `Track.samples[].position.lat` on an egress row
+      went unresolved for as long as those rows had existed. A renamed field would not have failed
+      the build. **Header-awareness made the fix POSSIBLE and did not by itself complete it**, and
+      that distinction cost two more rounds: five egress tables went on being headed `CDM`, which
+      names no column, so they went on contributing nothing. The egress-header ruling aligned all
+      seven and `test_every_egress_table_heads_its_cdm_column_the_ruled_way` is what holds them
+      there.
     - **It read prose as paths.** A two- or three-column table of decisions has explanatory text
       in column 1, and any `Model.field` mentioned there was resolved as if it were a mapping.
       That passes by luck when the path happens to exist and fails confusingly when it does not.
@@ -130,6 +134,122 @@ def _cdm_paths() -> list[str]:
 
 
 PATHS = _cdm_paths()
+
+
+#: An EGRESS table's header: the CDM column first, the format second. Anchored on the format
+#: column being a known format name rather than on the CDM column's spelling, so a table headed
+#: the WRONG way still matches the collector and fails the agreement check — which is the whole
+#: point. A collector that only recognised the correct form would report a mis-headed table as
+#: absent, and absence is what this closure exists to make impossible.
+EGRESS_HEADER = re.compile(
+    r"^\|\s*(?P<cdm>CDM|CDM field)\s*\|\s*(?P<format>AIS|ADS-B|CAT021|CAT034|CAT048|GMTIF|NITS)"
+    r"\s*\|\s*Status\s*\|\s*Notes\s*\|$")
+
+#: The seven formats with an egress row set of their own. `tak` is absent deliberately and it is
+#: not an omission: its egress rows live INSIDE the ingress table, marked `· egress` in the status
+#: column, because CoT egress emits the same element shape it ingests. `legion` and `pntmap` are
+#: ingest-only. `stanag4609` and `stanag5527` are Phase 1 and specify no egress table yet.
+EGRESS_FORMATS = ("AIS", "ADS-B", "CAT021", "CAT034", "CAT048", "GMTIF", "NITS")
+
+
+def _egress_headers() -> dict[str, list[tuple[int, str]]]:
+    """`{format: [(line number, the CDM column's heading)]}`, collected from the document."""
+    found: dict[str, list[tuple[int, str]]] = {}
+    for number, line in enumerate(DOC.read_text().splitlines(), 1):
+        match = EGRESS_HEADER.match(line.strip())
+        if match:
+            found.setdefault(match.group("format"), []).append(
+                (number, match.group("cdm")))
+    return found
+
+
+def test_every_egress_table_heads_its_cdm_column_the_ruled_way():
+    """THE DISJUNCTION, on a fact stated seven times — see "The egress header, ruled from what
+    the rows state".
+
+    The header is a SELECTOR and not a label: `_cdm_paths` reads the CDM column out of the index
+    its table's header points at, so a table headed `CDM` contributes nothing and its rows are
+    resolved against the models never. Five of the seven were in that state until the ruling, and
+    two paths — `Track.entity_id` and `Track.source_ids[].external_id` — were consequently checked
+    nowhere in the document at all.
+    """
+    headers = _egress_headers()
+    wrong = {fmt: sites for fmt, sites in headers.items()
+             if any(heading != CDM_COLUMN for _line, heading in sites)}
+    assert not wrong, (
+        f"these egress tables do not head their CDM column {CDM_COLUMN!r}: "
+        + "; ".join(f"{fmt} at line(s) "
+                    + ", ".join(str(line) for line, heading in sites if heading != CDM_COLUMN)
+                    for fmt, sites in sorted(wrong.items()))
+        + f".\nA column headed anything else contributes ZERO paths to _cdm_paths(), so its rows "
+        "stop being resolved against the Pydantic models and a renamed field no longer fails the "
+        "build. The ruling is in FORMAT_COVERAGE.md and it comes from the cells: they hold CDM "
+        "field paths, which is what 'CDM field' names."
+    )
+
+
+def test_the_egress_header_closure_holds_in_both_directions():
+    """A collector that reads six of seven row sets agrees with itself about the seventh.
+
+    Both directions, and the two failures are different. A format on the list with no table is a
+    stale list — the shape `test_cdm_prose_counts.py` guards for its allowlist. A table the
+    collector does not read is a row set nothing checks, which is the state all five aligned ones
+    were in, so it is the direction that catches the real mistake.
+
+    The second direction is derived rather than trusted: every `### Row set — egress` and
+    `### Egress —` heading in the document must be followed by a table the collector matched.
+    """
+    headers = _egress_headers()
+    assert set(headers) == set(EGRESS_FORMATS), (
+        f"the egress-table roster and the document disagree: only in the roster "
+        f"{sorted(set(EGRESS_FORMATS) - set(headers))}, only in the document "
+        f"{sorted(set(headers) - set(EGRESS_FORMATS))}"
+    )
+    assert len(headers) == 7, f"{len(headers)} egress tables collected, expected 7"
+
+    # THE DIRECTION WITH TEETH: find the egress SECTIONS independently of the header regex, and
+    # require each to contain a table the collector read. A new egress row set whose header the
+    # collector cannot parse fails here rather than being silently skipped.
+    lines = DOC.read_text().splitlines()
+    matched_lines = {line for sites in headers.values() for line, _heading in sites}
+    unread = []
+    for number, line in enumerate(lines, 1):
+        if not re.match(r"^#{3,4} (Row set — egress|Egress —)", line):
+            continue
+        # THE SECTION, and it ends at the NEXT heading rather than after a fixed number of
+        # lines. A fixed window was tried and MUTATION KILLED IT: an egress section with an
+        # unreadable header passed, because the window ran on into the next section and found
+        # that one's header instead. A check whose evidence can come from a neighbour is not a
+        # check on this section at all.
+        end = next((n for n in range(number + 1, len(lines) + 1)
+                    if lines[n - 1].startswith("#")), len(lines) + 1)
+        if not any(number < n < end for n in matched_lines):
+            unread.append(f"line {number}: {line.strip()[:80]}")
+    assert not unread, (
+        "these egress row-set headings are not followed by a table this collector can read:\n  "
+        + "\n  ".join(unread) +
+        "\nEither the header form changed and EGRESS_HEADER has to be re-anchored deliberately, "
+        "or a new egress table was written with a header nothing checks."
+    )
+
+
+def test_the_egress_collector_is_not_vacuous():
+    """A regex that matches nothing passes every agreement check above.
+
+    Asserted two ways: the collector finds seven, and it PROVABLY recognises the wrong form —
+    because a collector anchored on the correct spelling would report a mis-headed table as
+    absent, and the closure would then read a real defect as a stale roster entry.
+    """
+    headers = _egress_headers()
+    assert sum(len(sites) for sites in headers.values()) == 7
+    assert EGRESS_HEADER.match("| CDM | CAT048 | Status | Notes |"), (
+        "the collector no longer recognises the RETIRED header form, so a table that regressed to "
+        "it would read as a missing table rather than as a wrong one"
+    )
+    assert EGRESS_HEADER.match("| CDM field | CAT048 | Status | Notes |")
+    assert not EGRESS_HEADER.match("| CAT048 | CDM field | Status | Notes |"), (
+        "the collector matches an INGRESS header, so it is no longer selecting egress tables"
+    )
 
 
 def test_the_table_was_actually_parsed():
@@ -5184,10 +5304,11 @@ def test_the_cat034_rows_are_actually_resolved_against_the_models():
     cases, and a silent zero looks exactly like a clean pass.
 
     The GMTIF block makes the same check for the same reason. What is different here is the egress
-    table: five of the six egress row sets in this document are headed `| CDM | <format> | ... |`
-    and therefore contribute nothing to the resolver at all — the defect `_cdm_paths`'s docstring
-    records. GMTIF's was repaired; CAT034's is written repaired. So this test asserts that the
-    egress paths ARE among the resolved set, which is the half no other ASTERIX section can claim.
+    table. CAT034's was written headed `CDM field` while five siblings were still headed `CDM` and
+    therefore contributed nothing to the resolver at all — the defect `_cdm_paths`'s docstring
+    records. All seven are aligned now, so this test's claim is no longer unique to this section;
+    it is kept because the CAT034 egress paths are the ones this section is answerable for, and a
+    per-section check fails with the section named where the document-wide one does not.
     """
     section = _section(CAT034_HEADING)
     paths, column = [], None
@@ -5242,7 +5363,8 @@ def test_the_cat034_rows_are_actually_resolved_against_the_models():
     egress = section[section.index("### Row set — egress"):]
     assert "| CDM field | CAT034 | Status | Notes |" in egress, (
         "the CAT034 egress table's header no longer names the CDM column, so its rows have stopped "
-        "being resolved against the models — the state the other five egress tables are still in, "
+        "being resolved against the models — the state five of the seven egress tables were in "
+        "until the egress-header ruling, "
         "and the one this table was written out of"
     )
     assert set(paths) <= set(PATHS), (

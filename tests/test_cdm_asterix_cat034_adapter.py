@@ -1117,12 +1117,14 @@ def test_every_row_of_every_named_table_claims_this_adapter():
 
 
 def test_the_egress_table_states_cdm_field_so_its_paths_are_actually_resolved():
-    """The defect five of the six egress row sets in this document still carry, repaired here.
+    """The defect CAT034's table was written without, and which all seven now avoid.
 
     `tests/test_cdm_format_coverage.py` resolves CDM paths only out of a column whose header names
-    it, so a table headed `| CDM | ... |` contributes NOTHING to that check. GMTIF's was repaired
-    and CAT034's was written repaired; bringing the other five into line is a separate edit on five
-    row sets that already ship, and it is deliberately not made here.
+    it, so a table headed `| CDM | ... |` contributes NOTHING to that check. GMTIF's was repaired,
+    CAT034's was written repaired, and the five siblings were aligned when the deferral was
+    resolved — the ruling is in FORMAT_COVERAGE.md under "The egress header, ruled from what the
+    rows state". This assertion is kept and scoped to this section anyway: the document-wide
+    collector fails with a list of formats, and this one fails with CAT034 named.
     """
     section = _section()
     assert section.count("| CDM field | CAT034 | Status | Notes |") == 1
