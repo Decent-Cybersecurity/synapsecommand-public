@@ -7,8 +7,8 @@
 # `schema_version` is the WIRE CONTRACT's version, governed by MIGRATIONS.md and carried in every
 # serialised object; the package version is what `pip install synapse-cdm==…` resolves. They are
 # different facts about different things, and MIGRATIONS.md already proves they must be allowed
-# to diverge — its "Adapters that landed with no schema change" section holds eleven entries:
-# eleven releases' worth of shipped behaviour at one unchanged `schema_version`. The full ruling
+# to diverge — its "Adapters that landed with no schema change" section holds twelve entries:
+# twelve releases' worth of shipped behaviour at one unchanged `schema_version`. The full ruling
 # is in `synapse_cdm/version.py`, stated once, and nothing restates it here.
 #
 # Both read statically by setuptools, so nothing in the package is imported at build time.

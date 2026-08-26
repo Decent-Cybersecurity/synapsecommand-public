@@ -273,7 +273,7 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
 
     * `MIGRATIONS.md`'s release condition 2 said "all ten harnesses" while twelve adapters shipped.
       The by-name patterns could not match it because the sentence says *harnesses*, not *adapters*;
-    * `docs/docs/changelog.mdx`'s "eleven adapters have shipped so far" — which turned out to be
+    * `docs/docs/changelog.mdx`'s "twelve adapters have shipped so far" — which turned out to be
       CORRECT, being the count of adapters that landed with no schema change, a different set that
       happens to be spelled the same way. It is derived and gated now, but nothing had read it for
       three releases and the fact that it was right was luck rather than process.
@@ -605,7 +605,7 @@ def test_the_historical_statement_of_the_count_is_still_inside_the_history():
 NO_SCHEMA_CHANGE_HEADING = "### Adapters that landed with no schema change"
 
 #: Where the count is stated, and the pattern that finds it. `docs/docs/changelog.mdx` is included
-#: even though the page lists only nine of the eleven: `tests/test_cdm_changelog_claim.py` rules
+#: even though the page lists only nine of the twelve: `tests/test_cdm_changelog_claim.py` rules
 #: that the page is a curated summary and that page-omits-an-entry is designed NOT to fail, so the
 #: page's SENTENCE is a claim about the file's count and is checked against the file's count.
 #:
@@ -691,7 +691,7 @@ def test_every_stated_no_schema_change_count_is_the_number_of_entries(path, patt
     """Each stated count, against the bullets.
 
     These are not decorative. The number is the argument for two version numbers existing at all:
-    eleven adapters' worth of shipped behaviour arriving at one unchanged `schema_version` is the
+    twelve adapters' worth of shipped behaviour arriving at one unchanged `schema_version` is the
     evidence that the wire contract and the Python surface move independently. A wrong number here
     weakens the one claim `version.py` is written to make.
     """
@@ -1468,4 +1468,79 @@ def test_this_module_does_not_spell_the_phrase_it_counts():
     assert PINNED_PHRASE not in readme, (
         "the module README's sweep rule 8 now spells out the phrase it describes, which changes "
         "the count that rule exists to pin. It refers to it as a regex for exactly that reason"
+    )
+
+
+# ------------------------------------------------- the package README's roster TABLE, as a set
+#
+# ADDED BY THE 1.2.0 RELEASE AUDIT, AND IT WAS ADDED BECAUSE IT WAS ALREADY WRONG.
+#
+# `packages/cdm/synapse_cdm/README.md` carries a "Shipped so far" table with one row per adapter,
+# and adapter #10 shipped on 2026-08-26 without a row. Nothing failed. Every count in that file was
+# guarded — the module has said "thirteen integration adapters are shipped" since that round — and
+# the TABLE two lines below the sentence still listed twelve. That is this module's own subject
+# arriving one level down: a count is a fact stated in prose and checked, and a table is a fact
+# stated in prose and not.
+#
+# The release audit found it by enumerating registry names per file rather than by reading, which
+# is the only way it could have been found — the row is absent, and an absence has nothing for a
+# `grep` of the previous count to match. Recorded here so the next roster change moves it.
+#
+# WHY THIS IS A SET COMPARISON AND NOT A COUNT. A count would pass on a table that lists twelve
+# adapters and names one of them twice, and it would give no clue which name is missing. Both
+# directions, both named in the message.
+
+PKG_README_PATH = "packages/cdm/synapse_cdm/README.md"
+
+#: A roster row: `| [`name`](adapters/module.py) 1.0.0 | direction | prose |`.
+ROSTER_ROW = re.compile(r"^\|\s*\[`([a-z0-9_]+)`\]\(adapters/[a-z0-9_]+\.py\)", re.MULTILINE)
+
+
+def test_the_package_readmes_roster_table_is_the_registry():
+    """Every shipped adapter has a row, and every row is a shipped adapter.
+
+    The table is the first thing a reader of the installed package sees, and it ships INSIDE the
+    wheel — so a missing row is not a documentation slip, it is the distribution under-reporting
+    what it contains to the person who just installed it.
+    """
+    text = (REPO / PKG_README_PATH).read_text()
+    tabled = set(ROSTER_ROW.findall(text))
+    assert tabled, (
+        f"no roster rows matched in {PKG_README_PATH}. If the table's shape changed, re-anchor "
+        "ROSTER_ROW deliberately — a sweep that matches nothing reports clean, which is the "
+        "failure this whole module is about"
+    )
+    shipped = set(shipped_adapters())
+    missing = sorted(shipped - tabled)
+    unknown = sorted(tabled - shipped)
+    assert not missing and not unknown, (
+        f"{PKG_README_PATH}'s roster table and the registry disagree.\n"
+        f"  shipped but not in the table: {missing}\n"
+        f"  in the table but not shipped: {unknown}\n"
+        "This table ships inside the wheel, so a missing row under-reports the distribution to "
+        "the reader most likely to trust it. `stanag4609` was missing for one release and the "
+        "adapter COUNT beside the table was correct throughout, which is why the check is on the "
+        "rows and not on their number"
+    )
+
+
+def test_the_roster_table_and_the_shipped_adapter_sentence_agree():
+    """The sentence and the table are two statements of one fact, three lines apart.
+
+    That proximity is exactly what made the drift invisible: a reader checking the count reads the
+    sentence, and a reader checking the roster reads the table, and for one release they said
+    different things. The count has its own row in `SITES` above; this asserts the two agree with
+    each other as well as each with the registry.
+    """
+    text = (REPO / PKG_README_PATH).read_text()
+    tabled = ROSTER_ROW.findall(text)
+    assert len(tabled) == len(set(tabled)), (
+        f"the roster table lists a name twice: "
+        f"{sorted(n for n in set(tabled) if tabled.count(n) > 1)}"
+    )
+    match = re.search(r"(?P<n>[A-Za-z]+) integration adapters are shipped:", flat(text))
+    assert match, "the shipped-adapter sentence has moved; SITES has the anchored form"
+    assert spelled(match.group("n")) == len(tabled), (
+        f"{PKG_README_PATH} says {match.group('n')!r} integration adapters are shipped and its "
+        f"own table three lines later has {len(tabled)} rows"
     )

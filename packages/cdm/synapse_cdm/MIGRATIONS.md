@@ -7,11 +7,11 @@ means adding it at the moment two incompatible producers are already in the fiel
 **`schema_version` is not the package's version.** This document governs the first: the wire
 contract, carried in every object, bumped by the table below. The distribution on PyPI carries
 the second — ordinary semver over the Python surface — and the two are allowed to diverge,
-because the section "Adapters that landed with no schema change" is eleven entries long and
+because the section "Adapters that landed with no schema change" is twelve entries long and
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `1.1.0` and `SCHEMA_VERSION` is `1.0.0`.
+`PACKAGE_VERSION` is `1.2.0` and `SCHEMA_VERSION` is `1.0.0`.
 
 ## What each bump means
 
@@ -93,7 +93,7 @@ says so rather than pretending otherwise.
 ### The sequence
 
 ```bash
-git tag -a v1.1.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.2.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -170,10 +170,14 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased — on `main`, in no release yet
+### 1.2.0 — adapter #10, a codec ruling, and a schema version that did not move
 
-Nothing below is in **1.1.0**, the version PyPI serves. Recorded as it lands, which is condition 4
-of "What a release requires" — notes derived rather than remembered.
+**A package MINOR, and the release where the two-number arrangement was tested rather than
+relied on.** Everything below was written into the Unreleased section as it landed — condition 4 of
+"What a release requires", notes derived rather than remembered — and the release absorbed the
+section rather than restating it. `PACKAGE_VERSION` moves `1.1.0` → `1.2.0`; `SCHEMA_VERSION`
+stays `1.0.0`, and the paragraph beginning **THE SCHEMA QUESTION** below is why, with the file
+and line of each piece of evidence.
 
 - **Adapter #10 SHIPPED — `stanag4609`, STANAG 4609 / MISP-2019.1, the UAS Datalink Local Set,
   bidirectional and byte-exact — against 26 of its row set's 141 rows.** The witnessed-set round of
@@ -275,8 +279,38 @@ of "What a release requires" — notes derived rather than remembered.
   inside their Values, none is witnessed, and "the codec handles 26 items" and "the codec handles one
   level of structure" are different claims of which only the first is true.
 
-  **Package MINOR when released** — an added adapter and two added modules, nothing removed, no
-  schema touched.
+
+  **THE SCHEMA QUESTION, ASKED BECAUSE THE ANSWER WAS NOT OBVIOUS, AND ANSWERED FROM BYTES.** The
+  length-divergence annotation is **new output surface**: objects from adapter #10 carry keys no
+  object in 1.1.0 carried. "New output surface" is the shape that ought to move `SCHEMA_VERSION`,
+  so the question was put before the version moved, and the answer is **no — `SCHEMA_VERSION`
+  stays `1.0.0`** — on four pieces of evidence rather than on judgement:
+
+  | Evidence | Where | What it shows |
+  |---|---|---|
+  | `"additionalProperties": false` | `schemas/entity.schema.json:29`, `schemas/event.schema.json:17` | The OBJECTS are closed. A new top-level field would have to be declared, and would be a schema change |
+  | `"additionalProperties": true` | `schemas/entity.schema.json:248`, `schemas/event.schema.json:267` | The two never-drop bags — `attributes` and `payload` — are open by declaration. A key inside one is already valid against the published schema |
+  | `attributes.length_divergence_policy`, `payload.klv_defects`, `payload.klv_advisories` | `fixtures/klv/golden/length_divergence_at_a_required_length.cdm.json:86, 220, 219` | Every part of the annotation is INSIDE those bags. Neither object gained a top-level key: the entity's fifteen and the event's thirteen are exactly the schemas' |
+  | `git diff c5cf212..8e020eb -- schemas/` is **empty**, and all six schemas regenerate byte-identical from the models | `tests/test_cdm_schemas.py`, and the wheel gate's `schemas` check | The adapter that produced the annotation changed no schema file at all |
+
+  **And the general form, which is why this is a ruling and not a one-off.** 361 distinct
+  adapter-private keys already live inside `attributes` and `payload` across the thirteen adapters'
+  golden files — 65 from `cat048`, 58 from `gmti`, 36 from this one. **If a new key in a never-drop
+  bag moved `SCHEMA_VERSION`, every adapter this repository has ever shipped would have moved it**,
+  and the bag would not be a bag. `attributes` is documented as "the never-drop bag: park data here
+  rather than discarding it"; parking is what it is for.
+
+  **Measured against "What each bump means" at the top of this file rather than against intuition.**
+  A schema MINOR is "an optional field added; an enum member added; a payload model registered;
+  validation relaxed". The annotation is none of the four: no field was added to any model, no enum
+  member exists that did not, `PAYLOAD_MODELS` gained no registration, and nothing was relaxed —
+  the bags were already open. **The consumer migration story is therefore empty, and that is the
+  claim being made**: a 1.0.0 reader validates a 1.2.0 object from adapter #10 unchanged, because
+  the bytes it does not recognise are in the place the contract has always said it may ignore.
+  Nothing to migrate is a stronger statement than a migration nobody needs, and it is recorded here
+  so the question is not re-opened at the next release that adds an annotation.
+
+  **Package MINOR** — an added adapter and two added modules, nothing removed, no schema touched.
 
 - **Two corrections to this file's own prose, made true by an act that happened after 1.1.0
   shipped.** `PUBLICATION.md` ledger entry 6 closed on 2026-08-26 when the 1.0.0 API token was
@@ -1132,6 +1166,29 @@ is worth stating.
   service, or a parent field on `Entity`, were both available and both declined: the first would
   widen a closed vocabulary for one source, and the second would put a relationship in the model
   that the CDM deliberately leaves to a fusion layer.
+
+- **`adapters/stanag4609.py` 1.0.0 (STANAG 4609 / MISP-2019.1 UAS Datalink Local Set, bidirectional,
+  byte-exact)** — adapter #10, at **schema_version 1.0.0**, with no field added, removed or retyped.
+  26 of ST 0601.14a's 141 items, which is the witnessed set the one pinned KLV stream attests; the
+  other 115 rows still read `not yet`.
+
+  **The entry that made this section's rule an argument rather than a formality.** Every bullet above
+  adds a source whose values land in fields the CDM already had; this one adds a new KIND of output —
+  a structured defect annotation, written when an item's octet count contradicts its own standard's
+  Required Length — and "new output surface" is the shape that ought to move `SCHEMA_VERSION`. It did
+  not, and the ruling is in the 1.2.0 section above with the file and line of every piece of evidence:
+  the annotation lives inside `Entity.attributes` and `Event.payload`, which the published schemas
+  declare `additionalProperties: true` while the objects carrying them are `additionalProperties:
+  false`. **361 adapter-private keys already live in those two bags across the thirteen adapters'
+  goldens**; a new one is what the bag is for.
+
+  Two model members were available and both declined, on this section's usual grounds. `Integrity`
+  was the obvious home for a checksum verdict — this is the first adapter here whose format defines
+  one — and it is designed for a PQC signature block, so a 16-bit summation would have widened a
+  field for one source; the verdict rides at `attributes.integrity_basis` instead. And
+  `EventType.DETECTION` was available for a motion-imagery packet and is not used, because nothing in
+  the witnessed set detects anything: the item that would is ST 0601's VMTI Local Set, which is a
+  park.
 
 ### Row sets written as specifications, with no adapter code yet
 

@@ -259,7 +259,7 @@ def test_the_packaging_version_is_the_packages_own_and_not_the_schemas():
     assert attr == "synapse_cdm.version.PACKAGE_VERSION", (
         f"the packaging version is read from {attr!r}. It must be PACKAGE_VERSION: reading "
         "SCHEMA_VERSION ties every release of this distribution to a change in the WIRE "
-        "CONTRACT, and MIGRATIONS.md already lists eleven adapters that shipped without one"
+        "CONTRACT, and MIGRATIONS.md already lists twelve adapters that shipped without one"
     )
 
 
@@ -272,11 +272,20 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     get wrong and impossible to notice: any expression that derived one from the other would
     produce the right answer on every run until the first release that moved them apart."
 
-    1.1.0 is that release. `PACKAGE_VERSION` is `1.1.0` and `SCHEMA_VERSION` is `1.0.0`, because
-    every entry in that release added a surface and touched no schema. So the sweep below has
-    teeth it did not have when it was written: a derivation of either number from the other now
+    1.1.0 is that release. `PACKAGE_VERSION` is now `1.2.0` and `SCHEMA_VERSION` is `1.0.0`,
+    because every entry in both releases added a surface and touched no schema. So the sweep below
+    has teeth it did not have when it was written: a derivation of either number from the other now
     produces a WRONG answer at runtime rather than a right one by coincidence, and would be caught
     by the schema tests, the packaging metadata and this sweep at once.
+
+    **1.2.0 is the release that put the arrangement to a real test**, which is worth a line because
+    the first parting was almost free — 1.1.0 added two adapters and nobody thought a schema had
+    moved. 1.2.0 ships a new KIND of output, a structured defect annotation, and the question was
+    put explicitly and answered from the schema files themselves: the annotation lives inside
+    `Entity.attributes` and `Event.payload`, which the published schemas declare
+    `additionalProperties: true` while the objects carrying them are `additionalProperties: false`.
+    `MIGRATIONS.md`'s 1.2.0 section holds the evidence with file and line. Two numbers were what
+    made "new output, same contract" expressible at all.
 
     The sweep is kept anyway, and not as ceremony. It is cheaper than the failure it prevents, it
     names the reason in its message, and the window it was written for reopens on the day a schema
@@ -301,9 +310,9 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("1.1.0", "1.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("1.2.0", "1.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "1.1.0 and 1.0.0. They are no longer equal and have not been since 1.1.0, which is the "
+        "1.2.0 and 1.0.0. They are no longer equal and have not been since 1.1.0, which is the "
         "release that made their independence a measured fact rather than an argument. If you are "
         "reading this because you bumped one of them: that is the expected event, and the fix is "
         "to update this assertion to the two numbers you now mean, not to re-link them"

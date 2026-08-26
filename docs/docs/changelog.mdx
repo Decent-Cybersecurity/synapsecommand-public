@@ -14,11 +14,26 @@ means adding it at the moment two incompatible producers are already in the fiel
 :::note[`schema_version` is not the package's version]
 This page is about the **wire contract** — the number in every object, bumped by the table below.
 The `synapse-cdm` distribution carries its own version, ordinary semver over the Python surface,
-and the two are allowed to diverge: eleven adapters have shipped so far without a single
+and the two are allowed to diverge: twelve adapters have shipped so far without a single
 change to `schema_version`, and each of them would have been a release of the package. They were
 both `1.0.0` at first release, by coincidence of two first releases, and they parted at 1.1.0: the
-package is at `1.1.0` and the schema stays at `1.0.0`. `version.py` in the package is where the
+package is at `1.2.0` and the schema stays at `1.0.0`. `version.py` in the package is where the
 distinction is argued.
+:::
+
+:::note[1.2.0 added output and did not move this number, deliberately]
+The 1.2.0 release ships a new **kind** of output — a structured defect annotation, written by the
+`stanag4609` adapter when a KLV item's octet count contradicts its own standard's stated Required
+Length. New output surface is the shape that ought to move a contract version, so the question was
+put explicitly and answered from the published schemas rather than from judgement.
+
+**Nothing changes for a reader of CDM objects, and there is no migration.** The annotation lives
+entirely inside `Entity.attributes` and `Event.payload`, which the schemas declare
+`additionalProperties: true`, while the objects that carry them are `additionalProperties: false`.
+No object gained a top-level field; all six published schemas regenerate byte-identical. A 1.0.0
+reader validates a 1.2.0 object unchanged, because the keys it does not recognise are in the place
+this contract has always said it may ignore. `MIGRATIONS.md`'s 1.2.0 section carries the evidence
+with file and line.
 :::
 
 :::note[Source of truth]

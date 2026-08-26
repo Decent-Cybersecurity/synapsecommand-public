@@ -640,3 +640,33 @@ def test_the_release_notes_keep_an_artefacts_section_that_says_where_the_digests
         "their generated metadata. A digest in the tagged tree is either a local rebuild's — which "
         "is not what PyPI serves — or a value that can only be written after the tag, which no "
         "tagged tree can contain. They belong in PUBLICATION.md and in the release body")
+
+
+def test_every_documented_tag_command_names_this_trees_package_version():
+    """A copy-pasteable `git tag -a vX.Y.Z` has to name the tag a reader should actually push.
+
+    THE DEFECT THIS CLOSES, FOUND BY THE 1.2.0 RELEASE AUDIT. `README.md` and `MIGRATIONS.md` both
+    print the release procedure as two shell lines, and both still read `git tag -a v1.1.0` after
+    1.1.0 had shipped. A reader following the procedure would have pushed a tag that already exists:
+    git refuses it locally, and had they forced it the workflow's own tag-names-the-version check
+    would have refused the upload. So the failure was recoverable — and it is exactly the class this
+    repository guards everywhere else, a fact restated in prose and checked nowhere.
+
+    Deliberately anchored on the COMMAND rather than on every `v1.1.0` in the tree. The documents
+    are full of correct historical references to released tags — `PUBLICATION.md` records the v1.1.0
+    run, `test_cdm_trusted_publishing.py` names it as the release it published — and a sweep over
+    the bare string would have to exempt all of them. What must be current is the instruction.
+    """
+    offenders = []
+    for path in sorted(REPO.glob("*.md")) + sorted((REPO / "packages/cdm/synapse_cdm").glob("*.md")):
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            for match in re.finditer(r"git tag -a v(\d+\.\d+\.\d+)", line):
+                if match.group(1) != PACKAGE_VERSION:
+                    offenders.append(
+                        f"{path.relative_to(REPO)}:{number} says v{match.group(1)}")
+    assert not offenders, (
+        f"these documented tag commands do not name {PACKAGE_VERSION}, which is the version this "
+        f"tree IS:\n  " + "\n  ".join(offenders) + "\n"
+        "A reader copying one would push a tag that already exists. The command is an instruction, "
+        "not a record — historical references to a released tag are fine and are not swept here"
+    )

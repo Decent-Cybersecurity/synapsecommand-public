@@ -17,11 +17,23 @@ CLI and its exit codes, the fixture set. It follows the general rule and not MIG
 
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
-**They have diverged.** ``PACKAGE_VERSION`` is ``1.1.0`` and ``SCHEMA_VERSION`` is ``1.0.0``,
-and this paragraph is the first version of itself that does not have to reason about a
-hypothetical. Every entry in ``MIGRATIONS.md``'s 1.1.0 section says the same two things — an
-added surface, no schema touched — so the release moved one number and not the other, which is
-exactly what two numbers are FOR.
+**They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
+``PACKAGE_VERSION`` is ``1.2.0`` and ``SCHEMA_VERSION`` is ``1.0.0``, and this paragraph is the
+second version of itself that does not have to reason about a hypothetical. Every entry in
+``MIGRATIONS.md``'s 1.1.0 and 1.2.0 sections says the same two things — an added surface, no
+schema touched — so each release moved one number and not the other, which is exactly what two
+numbers are FOR.
+
+**1.2.0 is the release where that arrangement was TESTED rather than merely relied on.** It
+ships a new kind of output — a structured defect annotation, which the ``stanag4609`` adapter
+writes when a KLV item's octet count contradicts its own standard's Required Length — and
+"new output surface"
+is exactly the shape that ought to move a schema version. It did not, and the ruling is recorded
+in ``MIGRATIONS.md``'s 1.2.0 section with the file and line of the evidence rather than as a
+judgement: the annotation lives inside ``Entity.attributes`` and ``Event.payload``, both of which
+the published schemas declare ``additionalProperties: true`` while the objects that carry them
+are ``additionalProperties: false``. A question that gets asked once and answered from bytes does
+not have to be asked again.
 
 Until 1.1.0 they were both ``1.0.0``, and a reader who saw two equal numbers reasonably
 concluded one of them was redundant. That was the weakest moment for this file's whole case: the
@@ -32,17 +44,17 @@ than right by luck.
 
 The supporting measurement stands and is worth keeping, because it says how far apart they
 WOULD already be: ``MIGRATIONS.md`` has a section titled "Adapters that landed with no schema
-change" and it holds **eleven** entries — eleven adapters, each of which added thousands of
+change" and it holds **twelve** entries — twelve adapters, each of which added thousands of
 lines of shipped behaviour to this distribution at ``schema_version`` 1.0.0, with no field
 added, removed or retyped. That count is derived from the section's own bullets by
 ``tests/test_cdm_prose_counts.py`` rather than stated here on trust.
 
 Had this package been released before any of them, each would have been a package MINOR and
-none of them a schema bump. The two numbers would already be eleven minors apart. Deriving one
+none of them a schema bump. The two numbers would already be twelve minors apart. Deriving one
 from the other — which is what this file used to do, with the packaging metadata reading
 ``SCHEMA_VERSION`` directly — would have produced a distribution that could not express "the
 same contract, more adapters", and the only ways out are both wrong: bump the contract for a
-change no consumer's parser cares about, or ship twelve different distributions all labelled
+change no consumer's parser cares about, or ship thirteen different distributions all labelled
 1.0.0 — that first release and one per adapter in the section — and let the index refuse the
 second one.
 
@@ -97,7 +109,7 @@ SCHEMA_VERSION = "1.0.0"
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
 #: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
-PACKAGE_VERSION = "1.1.0"
+PACKAGE_VERSION = "1.2.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:
