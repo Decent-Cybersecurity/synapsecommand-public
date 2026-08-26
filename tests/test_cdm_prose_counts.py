@@ -235,6 +235,27 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
     at all eleven sites across these seven files, and `CONTRIBUTING.md` was one of them — a site
     that would have gone stale silently on the very next round after it was added, which is what
     adding a correct-but-unguarded site to an allowlist is for.
+
+    THE KNOWN GAP IN THIS ARRANGEMENT — RECORDED DEBT, STILL OPEN AS OF 1.1.0
+    ------------------------------------------------------------------------
+    This closure stops the allowlist SHRINKING. It cannot notice a NINTH file that starts stating an
+    adapter count, because there is nothing here that reads the tree looking for one — the list is
+    the input, so a site outside it is invisible by construction. Two counts have already escaped
+    through that gap and both were found by a person reading rather than by a gate:
+
+    * `MIGRATIONS.md`'s release condition 2 said "all ten harnesses" while twelve adapters shipped.
+      The by-name patterns could not match it because the sentence says *harnesses*, not *adapters*;
+    * `docs/docs/changelog.mdx`'s "eleven adapters have shipped so far" — which turned out to be
+      CORRECT, being the count of adapters that landed with no schema change, a different set that
+      happens to be spelled the same way. It is derived and gated now, but nothing had read it for
+      three releases and the fact that it was right was luck rather than process.
+
+    A discovery sweep would close this: scan the tree for a spelled number adjacent to "adapter",
+    and require each hit to be in the allowlist, to name its subset, or to equal the registry. It is
+    not written. The reason it is recorded here rather than in a commit message — where this debt
+    spent its first round, and where nobody looking at this module would ever find it — is that this
+    docstring is what the next person to extend the allowlist will read, and "add your site to the
+    list" is exactly the moment to learn that the list cannot find sites for you.
     """
     covered = {site.path for site in SITES}
     assert covered == {

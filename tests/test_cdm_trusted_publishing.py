@@ -305,21 +305,46 @@ def test_the_environment_is_described_as_a_confirmation_and_not_as_review(workfl
         "PUBLICATION.md entry 6, which names a second maintainer as the trigger for doing it")
 
 
-def test_the_header_says_which_half_has_been_proven(workflow):
-    """The file has to be honest about the publish job never having run.
+def test_the_header_records_the_run_that_first_exercised_the_publish_job(workflow):
+    """INVERTED. This required the header to say the publish job had NEVER RUN.
 
-    A green dispatch run is proof about the artefact and proof about nothing else. Somebody will
-    read one and conclude the upload works; the header exists so that conclusion has to be reached
-    against the file rather than with it.
+    Its old form looked for the literal `NEVER RUN` and carried its own instruction: "Once the
+    publish job HAS run, this is the paragraph that changes." 1.1.0 ran it, the paragraph changed —
+    and the test still passed, because the rewritten paragraph opens by QUOTING the phrase it
+    retires ("used to say the publish job had NEVER RUN"). A required-substring check cannot tell a
+    claim from a quotation of one, so it had become vacuous in the worst way: green on a header
+    asserting the opposite of what it was written to enforce.
+
+    That is the same trap this repository has now hit three times, and the other two were in the
+    FORBIDDEN direction — prose explaining a rule, matched as a breach of it. This is its mirror:
+    prose retiring a claim, matched as the claim. Neither is fixable by a cleverer regex, because
+    both readings are legitimate English. What fixes it is noticing that the gate's PREMISE expired
+    and inverting it, which is what this is.
+
+    The premise now is the opposite one and it is equally worth defending: the header must name the
+    run that first published, so nobody can claim the lane is unproven, and nobody can claim it
+    proved more than it did. `NEVER RUN` is no longer required and no longer forbidden — quoting
+    history is fine; what is checked is the positive statement.
     """
     header = workflow[:workflow.index("\nname:")]
-    for fragment, why in (("NEVER RUN", "that the publish job has not been exercised"),
-                          ("workflow_dispatch", "which trigger proves the build half"),
-                          ("1.1.0", "which release will exercise the publish half")):
+    for fragment, why in (
+            ("32944124955", "the run id that first exercised the publish job"),
+            ("1.1.0", "the release it published"),
+            ("workflow_dispatch", "which trigger proved the build half first"),
+            ("OIDC", "how the upload was authenticated")):
+        # `id-token` is deliberately NOT required here. It is the subject of
+        # `test_the_oidc_permission_is_not_granted_to_the_whole_workflow`, which strips comments
+        # before looking — so requiring the string in the commented header while another test
+        # forbids it in the executable header is two checks reading one string two ways, and the
+        # first draft of this test failed on exactly that.
         assert fragment in header, (
-            f"the workflow header no longer states {why} (looked for {fragment!r}). Once the "
-            "publish job HAS run, this is the paragraph that changes — and PUBLICATION.md entry 6 "
-            "changes with it, since that is the event that closes it")
+            f"the workflow header no longer states {why} (looked for {fragment!r}). The header is "
+            "where a reader learns what this file has actually been shown to do; a run id is the "
+            "only form of that claim anybody can check")
+    assert "not to paste a token in here" in header or "NOT to paste a token" in header, (
+        "the header no longer says what to do when an upload is REFUSED. That path is still "
+        "unexercised — the configuration was right the first time — and the tempting fix during a "
+        "failed release is a token, which would retire the whole mechanism to save one upload")
 
 
 # ------------------------------------------------- the two procedures, collected so they cannot fight

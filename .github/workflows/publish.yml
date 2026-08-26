@@ -9,22 +9,29 @@
 # PyPI trades it for an upload good for that one run. There is no password, no token and no
 # `secrets.*` reference anywhere in this file, and there is not meant to be one.
 #
-# WHICH HALF OF THIS IS PROVEN, AND WHICH IS NOT
-# ----------------------------------------------
-# Read this before treating a green run as proof of anything:
+# BOTH HALVES HAVE NOW RUN
+# ------------------------
+# This paragraph used to say the `publish` job had NEVER RUN, and it was the most important
+# sentence in the file: a green `workflow_dispatch` run proves the artefact is sound and says
+# nothing whatever about whether an upload works.
 #
-#   * the `build` job is PROVEN. It runs on `workflow_dispatch`, it has been run against `main`,
-#     and its outcome is recorded in ledger entry 6 — three runs, the first two of which FAILED on
-#     defects in this file that no amount of reading it would have found. It builds, gates and
-#     uploads an artefact;
-#   * the `publish` job has NEVER RUN. It is skipped on every dispatch, by construction, because
-#     `if:` requires a tag ref. Its first execution is the 1.1.0 release.
+#   * the `build` job was proven first, by `workflow_dispatch` against `main` — three runs, the
+#     first two of which FAILED on defects in this file that no amount of reading it would have
+#     found (a missing editable install, and a schema check run in the wrong directory);
+#   * the `publish` job first ran on **2026-08-26**, publishing `synapse-cdm` 1.1.0 in
+#     [run 32944124955](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/32944124955).
+#     It had never run before that, so 1.1.0 was its first live test, and it worked: the upload was
+#     accepted over OIDC with no credential anywhere in this file, and PyPI's SHA-256 digests equal
+#     the ones `--export-dist` handed the publish job.
 #
-# A green dispatch run therefore says the artefact is sound and says NOTHING about whether the
-# upload works. The two failure modes it cannot see are a trusted publisher that was never
-# registered on PyPI and an environment name that does not match the one on the PyPI form; both
-# surface as a refused upload the first time a tag is pushed. Entry 6 carries the four values that
-# have to agree and where each comes from.
+# What that run did NOT prove, and what still has no test: the failure modes. A refused upload — a
+# trusted publisher that was never registered, or an environment name that does not match PyPI's
+# form — has not been observed, because the configuration was correct the first time. So the
+# recovery path is still unexercised, and the thing to do if a future upload is refused is to fix
+# the four values on pypi.org per ledger entry 6, NOT to paste a token in here.
+#
+# Ledger entry 6 carries the four values that have to agree, the run id, the digests, and the one
+# step of it still open.
 #
 # THE ENVIRONMENT, AND THE REVIEWERS ON IT
 # ----------------------------------------

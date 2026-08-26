@@ -390,7 +390,7 @@ mode the open form of it named.
 | 5 | `build`, `twine upload`, verify from a clean venv | ran; the verification is the table above |
 | 6 | Update `README.md`, `docs/docs/intro.mdx` and this entry | this commit and the one after it |
 
-### 6. Trusted Publishing is specified here and configured nowhere — OPEN
+### 6. Trusted Publishing works, and one step of retiring the old way is still human — OPEN
 
 `.github/workflows/publish.yml` publishes `synapse-cdm` to PyPI over OIDC, with no password, no
 token and no secret in the file. That workflow is on `main` and it **cannot upload anything yet**:
@@ -495,10 +495,11 @@ than reasoning about its blast radius.
 
 #### What this entry does not claim
 
-* **Not that the publish lane works.** It has never run. `workflow_dispatch` proves the build and
-  gate half against `main` today; the upload half is exercised for the first time by the 1.1.0 tag,
-  and the workflow's own header comment says which half is which so a green dispatch run is not
-  read as proof of an upload that has not happened.
+* ~~**Not that the publish lane works.** It has never run.~~ **It has now.** `synapse-cdm` 1.1.0
+  was published by the workflow on **2026-08-26**, and the details are in "The publish, measured"
+  below. The sentence is struck rather than deleted because the entry was written to be read in
+  order, and "this had never run when it was written" is the fact that makes the rest of it
+  legible.
 
   The build half **has** been run, three times, and the first two failed. That is the record:
 
@@ -520,21 +521,75 @@ than reasoning about its blast radius.
   so. It is recorded because the same shape is what a real defect looks like: a test that quietly
   stops running reports as a pass. The workflow now runs the suite with `-rs` so the list is in the
   log rather than inside a single number.
-* **Not that step A has been done.** Nothing in this tree can observe it. The PyPI project's
-  publishing settings are not public, so unlike entry 5 — which could be checked against the index
-  by any stranger — the only evidence that A and C happened will be a successful 1.1.0 publish and
-  a maintainer's word. That asymmetry is why the instructions above are written to be followed
-  without this conversation, by someone who was not in it.
+* **Step A is now observable, indirectly, which is the best this could ever have been.** The PyPI
+  project's publishing settings are not public, so no stranger can read the trusted publisher off
+  the index. But an OIDC upload that SUCCEEDED is evidence that one exists: there is no other way
+  those files reached the index, because no API token was used and none was present to use. The
+  forecast in this bullet — "the only evidence that A happened will be a successful 1.1.0 publish"
+  — is what actually happened, and it is now the evidence.
 * **Not that the old token is gone.** It is live as this is written. Until step C, `synapse-cdm`
-  has two upload paths.
+  has two upload paths, and one of them is now provably unnecessary.
 
-**Where this stands.** Step B is **done** and is the only one of the three that anybody can verify
-without a maintainer's word. Steps A and C are not done. The workflow is on `main` and the upload
-it would perform is currently refused by PyPI, which is the correct behaviour for a repository that
-has declared an intent to publish and has not been granted permission to.
+#### The publish, measured
 
-**Closes when:** step A is registered on pypi.org, a tag has published through the workflow, and
-step C has removed the token. Any one of the three left undone leaves this entry open.
+`synapse-cdm` **1.1.0** was published on **2026-08-26** by
+[run 32944124955](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/32944124955),
+triggered by the `v1.1.0` tag. Both jobs succeeded. This was the publish lane's first execution
+ever — the release was the test.
+
+| | |
+| --- | --- |
+| Trigger | `push` of the annotated tag `v1.1.0` |
+| Job 1, on the tagged tree | suite 2872 passed / 33 skipped; `tag=v1.1.0 PACKAGE_VERSION=1.1.0`; the tag confirmed annotated with its tagger; the wheel gate **13 checks, 0 failed**; mutation refused by five checks; `twine check --strict` PASSED on both artefacts |
+| The reviewer gate | Job 2 held at the `pypi` environment and approved by `decentcybersecurity`, 14 minutes after Job 1 finished. The pause is the design, not a fault |
+| Credential | none. `id-token: write` on the publish job, a minted OIDC token, no `password:` and no `secrets.*` anywhere in the workflow |
+| Attestations | generated and uploaded alongside the artefacts |
+
+SHA-256, as the workflow's `--export-dist` handed them to the publish job:
+
+```
+745e8b641d715fd5988f1e5f219c8f8f83f38925c20408376c95e813d7a22d98  synapse_cdm-1.1.0-py3-none-any.whl
+7987b4f40186ca313dfa11ba73505e8a9aeca7e48396e6655c7e74d6ed374579  synapse_cdm-1.1.0.tar.gz
+```
+
+**Both equal what PyPI serves**, read back from `https://pypi.org/pypi/synapse-cdm/1.1.0/json`
+after publication, and equal again in files downloaded from the index. That closes the chain the
+`--export-dist` argument was made for: ONE build, gated as that build, uploaded as those bytes,
+served as those bytes. The point is not abstract — the same tree built locally during this round's
+verification produced `8bb3d8e1…` for the sdist, different bytes for identical content, so a
+workflow that rebuilt instead of handing over what it gated would have shipped a file the 13 checks
+never saw.
+
+**Verified from the index, as 1.0.0 was.** `pip install synapse-cdm==1.1.0` into a fresh
+virtualenv with no part of this repository on its path: version `1.1.0`, `schema_version` `1.0.0`,
+imported from `site-packages`, all **twelve adapters replayed from the packaged fixtures — 388
+verdicts, 0 failed**, all six schemas regenerated byte-identical to the published set, and both
+console scripts working. The GitHub release for `v1.1.0` carries the notes and both artefacts.
+
+**Where this stands.** Two of the three closing conditions are met:
+
+| Step | State | Who can verify it |
+| --- | --- | --- |
+| A — trusted publisher registered on pypi.org | **done** | not readable from the index, but proven indirectly: an OIDC upload succeeded and no token was used |
+| B — the `pypi` environment with reviewers | **done** 2026-08-26T06:46:16Z | anyone; it is public API on a public repository |
+| — a tag published through the workflow | **done** | run 32944124955, digests above |
+| C — the 1.0.0 API token revoked | **NOT DONE** | only the maintainer |
+
+#### Step C is the only thing left, and it is not done
+
+The token used for the 1.0.0 upload is still live. It is now demonstrably unnecessary — 1.1.0
+reached the index without it — which removes the one reason to keep it: there is no longer a
+release path that needs it.
+
+**`pypi.org` → Account settings → API tokens → the token used for the 1.0.0 upload → Remove token**
+
+This is not claimed here and will not be until the maintainer says it is done. An unused token is a
+credential that still works, held by whoever holds it, with no expiry and no record of where it has
+been copied; "we do not use it any more" is a statement about intent and revocation is a statement
+about capability. The whole point of this round was that no credential exists to leak, and that is
+true of the *workflow* today and not yet true of the *project*.
+
+**Closes when:** step C has removed the token. Nothing else is outstanding.
 
 ## The deployment was not affected
 
