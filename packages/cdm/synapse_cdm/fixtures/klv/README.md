@@ -26,19 +26,27 @@ the three rejected alternatives (`misp`, `misb`, `fmv`), are in `spec/klv_pin.js
 
 What is here:
 
-- **`spec/klv_pin.json`** — the pinned identity of both documents and every value extracted from
+- **`spec/klv_pin.json`** — the pinned identity of all four documents and every value extracted from
   them that a ruling cites, each with its locus. Written first, for the reason the Legion, CAT021
   and CAT048 pins were: a quotation with no pin behind it is a recollection.
 - **`spec/nato-stanag-4609-edition-5.pdf`** and **`spec/misb-misp-2019-1.pdf`** — in the working
   tree because they had to be read, and **not committed**, matching every other adapter here.
   `git ls-files | grep -c '\.pdf$'` is 0 across the whole repository.
+- **`spec/ST0601.19.pdf`** and **`spec/ST0102.12.pdf`** — two of the fourteen delegated documents,
+  obtained 2026-08-26, in the working tree and **not committed** on the same rule. Only one of them
+  is the edition MISP-2019.1 pins: **ST 0102.12 is** (Appendix B ref [55]) and **ST 0601.19 is
+  not** — the profile pins **0601.14** (ref [53]). `spec/klv_pin.json`'s `reconciliation_ruling`
+  records both readings verbatim and rules on each; the consequence is that no tag table was
+  transcribed from either document, so this directory is still at Phase 1.
 
 | Document | SHA-256 | Bytes | Pages |
 |---|---|---|---|
 | `spec/nato-stanag-4609-edition-5.pdf` | `f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8` | 273 801 | 5 |
 | `spec/misb-misp-2019-1.pdf` | `3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea` | 1 372 771 | 73 |
+| `spec/ST0601.19.pdf` | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1` | 4 700 978 | 226 |
+| `spec/ST0102.12.pdf` | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267` | 514 842 | 18 |
 
-Those two rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVERAGE.md`, and
+Those four rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVERAGE.md`, and
 `tests/test_cdm_format_coverage.py` checks **every** occurrence rather than any one of them — the
 80b38d1 finding, which was that an `in` check is satisfied by one site while a fact stated at three
 sites can drift at two.

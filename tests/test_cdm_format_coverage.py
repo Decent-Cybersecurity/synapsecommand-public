@@ -2997,20 +2997,59 @@ KLV_FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" 
 KLV_PIN = KLV_FIXTURES / "spec" / "klv_pin.json"
 KLV_README = KLV_FIXTURES / "README.md"
 
-#: Both pinned documents: filename, SHA-256, byte count, page count. Every one of the four values
-#: is asserted at every site, and the byte counts are asserted in BOTH spellings — the digit form
-#: the JSON uses and the space-grouped form the prose uses — because the two are the same fact and
-#: a half-edit that fixed one would otherwise pass.
+#: Every pinned document: filename, SHA-256, byte count, page count, and the key path to its own
+#: node in `klv_pin.json`. Every one of the four values is asserted at every site, and the byte
+#: counts are asserted in BOTH spellings — the digit form the JSON uses and the space-grouped form
+#: the prose uses — because the two are the same fact and a half-edit that fixed one would
+#: otherwise pass.
+#:
+#: TWO WHEN IT WAS WRITTEN AND FOUR SINCE 2026-08-26, and the two that arrived are not the same
+#: kind of thing as the two that were here. The wrapper and the profile are the documents the row
+#: set is written FROM; ST 0601.19 and ST 0102.12 are two of the fourteen documents the profile
+#: DELEGATES to, and only ST 0102.12 is the edition it delegates to. The roster does not encode
+#: that distinction — `reconciliation_ruling` in the pin record does — because this gate's job is
+#: that the numbers agree everywhere, and a wrong-edition document's numbers have to agree too.
+#:
+#: The node path is carried here rather than derived from the filename. It used to be derived, by
+#: `"wrapper" if filename.startswith("nato-") else "target"`, and that expression silently maps
+#: BOTH new documents onto `target` — so the two new pins would have been asserted against the
+#: profile's numbers and the parametrisation would have failed for the right reason by luck rather
+#: than checked what it names.
 KLV_PINNED_DOCUMENTS = (
     ("nato-stanag-4609-edition-5.pdf",
-     "f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8", 273801, 5),
+     "f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8", 273801, 5,
+     ("wrapper",)),
     ("misb-misp-2019-1.pdf",
-     "3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea", 1372771, 73),
+     "3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea", 1372771, 73,
+     ("target",)),
+    ("ST0601.19.pdf",
+     "e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1", 4700978, 226,
+     ("delegated_specifications_held", "st_0601_19")),
+    ("ST0102.12.pdf",
+     "20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267", 514842, 18,
+     ("delegated_specifications_held", "st_0102_12")),
 )
 
 #: The delegation map, exactly as the profile pins it. `document` is how the row names it,
 #: `version` is the revision string the profile gives, and `locus` is a phrase the row must carry
 #: so the citation stays checkable against the pinned PDF.
+#: Revisions a delegated document may be stated at IN THIS SECTION beyond the one the profile
+#: pins, and what the section must say wherever the extra one appears.
+#:
+#: THE GATE BELOW USED TO REQUIRE EXACTLY ONE REVISION PER DOCUMENT and that was right for as long
+#: as this repository held none of the delegated documents: any second revision string was drift,
+#: because there was no legitimate reason to name one. On 2026-08-26 ST 0601.19 was obtained while
+#: the profile still pins 0601.14, so the section now names two revisions of ST 0601 on purpose —
+#: the pinned one, and the held one that may not stand in for it.
+#:
+#: WIDENING IT WOULD HAVE LOST THE TEETH, so it is not widened: an extra revision is admitted only
+#: by being named here, and only if the section also carries the phrase that says what the extra
+#: revision is NOT. A round that obtains ST 0601.14 deletes this entry rather than editing it, and
+#: the gate goes back to demanding one revision.
+KLV_HELD_NOT_PINNED = {
+    "MISB ST 0601": ({"19"}, "may not substitute"),
+}
+
 KLV_DELEGATION = (
     ("SMPTE ST 336", "ST 336:2017", "MISP-2015.1-07"),
     ("MISB ST 0107", "0107.3", "MISP-2015.1-08"),
@@ -3073,8 +3112,9 @@ def test_the_klv_row_set_exists_and_every_row_of_it_says_not_yet():
         )
 
 
-@pytest.mark.parametrize("filename,digest,size,pages", KLV_PINNED_DOCUMENTS)
-def test_both_klv_pins_agree_at_every_site_that_states_them(filename, digest, size, pages):
+@pytest.mark.parametrize("filename,digest,size,pages,node", KLV_PINNED_DOCUMENTS,
+                         ids=lambda q: q if isinstance(q, str) else "")
+def test_every_klv_pin_agrees_at_every_site_that_states_them(filename, digest, size, pages, node):
     """Every occurrence, not any occurrence — and each one asserted as ONE composite fact.
 
     Two lessons from earlier rounds, and the second was found here by mutation. 80b38d1 found the
@@ -3091,10 +3131,16 @@ def test_both_klv_pins_agree_at_every_site_that_states_them(filename, digest, si
     """
     spaced = _spaced(size)
 
-    # 1. The JSON, read as data. Two documents, four values each, no substrings.
+    # 1. The JSON, read as data. Four documents, four values each, no substrings.
     pin = json.loads(KLV_PIN.read_text())
-    key = "wrapper" if filename.startswith("nato-") else "target"
-    record = pin[key]
+    key = ".".join(node)
+    record = pin
+    for step in node:
+        assert step in record, (
+            f"klv_pin.json has no node at {key} — the roster names it, so either the record was "
+            "restructured or a pin was dropped"
+        )
+        record = record[step]
     assert record["sha256"] == digest, f"klv_pin.json {key}.sha256 is {record['sha256']}"
     assert record["bytes"] == size, f"klv_pin.json {key}.bytes is {record['bytes']}"
     assert record["pages"] == pages, f"klv_pin.json {key}.pages is {record['pages']}"
@@ -3140,7 +3186,7 @@ def _spaced(size: int) -> str:
     return " ".join(_group(str(size)))
 
 
-def test_the_pin_records_that_neither_pdf_is_committed_and_none_is():
+def test_the_pin_records_that_no_pdf_is_committed_and_none_is():
     """The claim and the fact, checked together rather than only the claim.
 
     Every adapter here pins rather than vendors, and the statement of that is in three documents.
@@ -3153,9 +3199,9 @@ def test_the_pin_records_that_neither_pdf_is_committed_and_none_is():
         assert "not committed" in text.lower() or "is 0" in text, (
             f"{label} no longer records that the pinned PDFs stay out of the index"
         )
-    # And the two files really are present in the working tree, because a pin nobody can
-    # re-verify is a recollection — which is what the pin's own preamble says it is not.
-    for filename, _digest, _size, _pages in KLV_PINNED_DOCUMENTS:
+    # And the files really are present in the working tree, because a pin nobody can re-verify is
+    # a recollection — which is what the pin's own preamble says it is not.
+    for filename, _digest, _size, _pages, _node in KLV_PINNED_DOCUMENTS:
         path = KLV_FIXTURES / "spec" / filename
         if path.exists():                      # a fresh clone will not have them
             assert path.stat().st_size == _size, f"{filename} at the pinned path is the wrong size"
@@ -3208,11 +3254,23 @@ def test_the_delegation_table_states_the_exact_version_the_profile_pins(document
     family, _, suffix = version.replace("ST ", "").partition("." if "." in version else ":")
     separator = "." if "." in version.replace("ST ", "") else ":"
     stated = set(re.findall(rf"\b{re.escape(family)}{re.escape(separator)}(\d+)", section))
-    assert stated == {suffix}, (
+    extra, ruling_phrase = KLV_HELD_NOT_PINNED.get(document, (set(), None))
+    assert stated == {suffix} | extra, (
         f"{document} is stated at more than one revision in this section: "
-        f"{sorted(family + separator + x for x in stated)}. The delegation table, the parks table "
-        f"and register entry KLV 5 all name it, and they have to name the same text"
+        f"{sorted(family + separator + x for x in stated)}, expected "
+        f"{sorted(family + separator + x for x in {suffix} | extra)}. The delegation table, the "
+        f"parks table and register entry KLV 5 all name it, and they have to name the same text. A "
+        f"revision this repository HOLDS but the profile does not pin is admitted only by "
+        f"KLV_HELD_NOT_PINNED, because the whole value of this table is that the suffix is the pin"
     )
+    if extra:
+        assert ruling_phrase in section, (
+            f"{document} is stated at {sorted(family + separator + x for x in extra)} as well as "
+            f"at the pinned {version}, and the section does not carry {ruling_phrase!r}. Holding a "
+            "later revision is only safe while the section says out loud that it does not stand in "
+            "for the pinned one — otherwise the two numbers sit side by side and a reader picks "
+            "whichever they saw last"
+        )
     assert document in flat, f"the delegation table no longer names {document}"
 
 

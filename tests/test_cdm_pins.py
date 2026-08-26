@@ -571,8 +571,13 @@ def test_the_pin_set_was_actually_discovered():
     CAT034 Edition 1.29 landed in `fixtures/cat034/spec/` — and moving it is the deliberate act,
     because a floor left behind is a gate reporting a clean run over a smaller tree than the one in
     front of it. That is the same failure this module was written for, one level up.
+
+    11 to 13 on 2026-08-26, when MISB ST 0601.19 and ST 0102.12 landed in `fixtures/klv/spec/`. The
+    homes floor did NOT move with it: `fixtures/klv/spec/` was already a home, holding the wrapper
+    and the profile, so two pins arrived into an eighth home rather than a ninth. A floor raised on
+    both numbers because two files appeared would have been a guess that happened to be half right.
     """
-    assert len(PINS) >= 11, (
+    assert len(PINS) >= 13, (
         f"discovered only {len(PINS)} pins: {sorted(PINS)}. Both statements of a pin are parsed — "
         "the *_pin.json records and FORMAT_COVERAGE.md's pin rows — so a low count means one of the "
         "two parsers has stopped matching"

@@ -1047,10 +1047,16 @@ too — so the first is now stated.
   mapping row in `FORMAT_COVERAGE.md`
   says `not yet`, and **no gap is opened and no field proposed** — which is the entry.
 
-  Pinned to two documents by SHA-256: **STANAG 4609 Edition 5, 30 July 2020**
+  Pinned to four documents by SHA-256: **STANAG 4609 Edition 5, 30 July 2020**
   (`f2f9ae1a…b2dbf8d8`, 273 801 bytes, 5 pages) and the profile its AGREEMENT clause names,
-  **MISP-2019.1, title page November 2018** (`3167362a…b102d5ea`, 1 372 771 bytes, 73 pages).
-  Neither PDF is committed. The fixture directory is `fixtures/klv` rather than
+  **MISP-2019.1, title page November 2018** (`3167362a…b102d5ea`, 1 372 771 bytes, 73 pages), plus
+  two of the delegated field dictionaries obtained on 2026-08-26 — **MISB ST 0601.19, cover dated
+  02 March 2023** (`e53c1e7b…0cfb92b1`, 4 700 978 bytes, 226 pages) and **MISB ST 0102.12, 22 June
+  2017** (`20d40b52…85eca267`, 514 842 bytes, 18 pages). **Only the second is the edition the
+  profile pins**: Appendix B ref [55] pins 0102.12, while ref [53] pins **0601.14** and not the
+  .19 obtained — so the round that obtained them transcribed no tag table and the phase did not
+  advance. `spec/klv_pin.json`'s `reconciliation_ruling` carries both citations verbatim and the
+  ruling on each. No PDF is committed. The fixture directory is `fixtures/klv` rather than
   `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
   `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry
   beside the shipped ones — nine of them when this entry was written, ten since `cat034` landed.
