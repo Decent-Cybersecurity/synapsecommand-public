@@ -140,10 +140,12 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Five entries, and the set does not move — entries change **state**, they are not deleted. Two are
+Six entries, and the set does not move — entries change **state**, they are not deleted. Two are
 **settled**: entry 1 is a ruling, and entry 5 is closed by an act — the distribution the SDK round
 built and stopped short of publishing was uploaded, and the entry now records what was done, what
-was measured afterwards and which step of its own sequence was skipped. Entries 2, 3 and 4 are
+was measured afterwards and which step of its own sequence was skipped. Entry 6 is the newest and
+is **open by construction**: it is the human half of Trusted Publishing, written before the machine
+half the way entry 5 was written before the upload it describes. Entries 2, 3 and 4 are
 open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
@@ -362,6 +364,14 @@ Publishing: the next release is another human act, and MIGRATIONS.md's release p
 the whole of the mechanism. Nothing here was automated to close the entry, which was the failure
 mode the open form of it named.
 
+> **Superseded by entry 6, and left standing.** The paragraph above was true when this entry
+> closed and is false now: `.github/workflows/publish.yml` exists, and the mechanism is no longer
+> only a sequence a person runs. It is not edited, because a closed entry is a record of what was
+> known at the time it closed and a ledger that quietly updates its history is a ledger nobody can
+> date. The pointer is the correction. What entry 6 does *not* yet supersede is the last clause:
+> until the configuration entry 6 specifies exists on pypi.org, the next release is still a human
+> act, because a workflow with no trusted publisher on the other side cannot upload anything.
+
 **The sequence as written, and what happened to each step.**
 
 | # | Step | Outcome |
@@ -372,6 +382,101 @@ mode the open form of it named.
 | 4 | Project-scoped API token | not observable from the index |
 | 5 | `build`, `twine upload`, verify from a clean venv | ran; the verification is the table above |
 | 6 | Update `README.md`, `docs/docs/intro.mdx` and this entry | this commit and the one after it |
+
+### 6. Trusted Publishing is specified here and configured nowhere — OPEN
+
+`.github/workflows/publish.yml` publishes `synapse-cdm` to PyPI over OIDC, with no password, no
+token and no secret in the file. That workflow is on `main` and it **cannot upload anything yet**:
+OIDC publishing needs a trusted publisher registered on the PyPI project, and nothing in this
+repository can create one. A file in a repository cannot grant itself an identity on an index.
+
+So this entry is the human half, and it is written **before** the machine half rather than after —
+the arrangement entry 5 got right and then failed to benefit from, because entry 5 named a
+six-step sequence and step 3 was discovered to have been skipped only when an anonymous reader
+went looking for it on TestPyPI afterwards. A step that exists only in somebody's memory of the
+plan is a step that can be skipped without leaving a mark. These have marks.
+
+**Two things must happen, and this entry closes when both have.** They are not the same act and
+the second is not implied by the first: registering the publisher makes an OIDC upload *possible*,
+and revoking the token is what makes it the *only* way in. A repository with both a working trusted
+publisher and a live long-lived token has not retired anything — it has two doors and one of them
+is still the one that was used for 1.0.0.
+
+#### Step A — register the trusted publisher on PyPI
+
+Nobody but a maintainer of the `synapse-cdm` project can do this. Signed in on `pypi.org`:
+
+**Your projects → `synapse-cdm` → Manage → Publishing → GitHub → Add**
+
+Four values. They are not guesses and they are not defaults — each one is a fact about this
+repository, and PyPI matches the OIDC token's claims against all four, so a single wrong character
+is a refused upload rather than a warning:
+
+| Field on the PyPI form | Value | Where the value comes from |
+| --- | --- | --- |
+| Owner | `Decent-Cybersecurity` | the first sentence of this file, which `tests/test_cdm_publication.py::canonical_owner` derives and sweeps the tree against |
+| Repository name | `synapsecommand-public` | same sentence |
+| Workflow name | `publish.yml` | the **filename** under `.github/workflows/`, not the `name:` inside it — PyPI matches the path, and `Publish to PyPI` would be refused |
+| Environment name | `pypi` | the `environment:` of the workflow's publish job, and step B below |
+
+The Environment name field is optional on the form and is **required here**. Leaving it blank
+would let any workflow run in this repository that reaches the publish job assume the publisher's
+identity; filling it in means PyPI refuses a token whose `environment` claim is not `pypi`, and
+`pypi` is a protected environment whose only job is that upload. An optional field left blank is
+how the narrowest possible grant becomes a broad one silently.
+
+#### Step B — the environment, and the reviewers on it
+
+`pypi` exists as a GitHub environment on this repository with **required reviewers set**, created
+this round. That is the ruling, and the reasons are stated because the opposite ruling is
+defensible and someone will reconsider it:
+
+* an upload to PyPI **cannot be undone**. A yanked release still occupies its filename forever, and
+  `synapse_cdm-1.1.0-py3-none-any.whl` can never be re-uploaded once any bytes have held that name.
+  Every other act in a release is revocable — a tag can be moved, a GitHub release deleted, a
+  commit reverted. This one is not, and it is the one that was about to become automatic;
+* the tag is a human act, but it is not the *same* human act. `git push --follow-tags` also pushes
+  commits, so a tag can reach the remote as a side effect of pushing a branch. The reviewer prompt
+  is the first point at which a person is asked specifically about the upload;
+* the cost is one click on a release, and the benefit is that a workflow defect — a bad `if:`, a
+  trigger that matches more than `v*` — cannot reach the index before a person sees it.
+
+The ruling **against** it, recorded so it is not re-argued from scratch: a required reviewer who
+approves every time approves without reading, and a gate that is always approved teaches people to
+approve. That is real, and it loses to irreversibility. Revisit it if the approval ever becomes
+routine enough to be automatic, and if it is revisited, the ruling changes here rather than in
+somebody's settings page.
+
+#### Step C — retire the token, which is the point of the round
+
+After the **first successful OIDC publish** — the 1.1.0 release, not before, because a token
+revoked while it is still the only working path is a release nobody can cut:
+
+**`pypi.org` → Account settings → API tokens → the token used for the 1.0.0 upload → Remove token**
+
+**Revoked, not merely unused.** An unused token is a credential that still works, held by whoever
+holds it, with no expiry and no record of where it has been copied. "We do not use it any more" is
+a statement about intent; a revoked token is a statement about capability, and only the second one
+survives the laptop it was pasted into. Entry 5 could not observe whether that token was
+project-scoped and this entry cannot either — which is itself an argument for removing it rather
+than reasoning about its blast radius.
+
+#### What this entry does not claim
+
+* **Not that the publish lane works.** It has never run. `workflow_dispatch` proves the build and
+  gate half against `main` today; the upload half is exercised for the first time by the 1.1.0 tag,
+  and the workflow's own header comment says which half is which so a green dispatch run is not
+  read as proof of an upload that has not happened.
+* **Not that step A has been done.** Nothing in this tree can observe it. The PyPI project's
+  publishing settings are not public, so unlike entry 5 — which could be checked against the index
+  by any stranger — the only evidence that A and C happened will be a successful 1.1.0 publish and
+  a maintainer's word. That asymmetry is why the instructions above are written to be followed
+  without this conversation, by someone who was not in it.
+* **Not that the old token is gone.** It is live as this is written. Until step C, `synapse-cdm`
+  has two upload paths.
+
+**Closes when:** step A is registered on pypi.org, a tag has published through the workflow, and
+step C has removed the token. Any one of the three left undone leaves this entry open.
 
 ## The deployment was not affected
 
