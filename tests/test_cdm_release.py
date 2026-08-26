@@ -41,7 +41,8 @@ import subprocess
 import pytest
 
 import synapse_cdm
-from synapse_cdm.version import PACKAGE_VERSION
+from synapse_cdm.adapter import roster as adapter_roster
+from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION
 
 PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
@@ -500,3 +501,113 @@ def test_the_proposed_section_does_not_name_a_release_it_could_miss():
         "release that then shipped without any of its contents. Name no version: 'Proposed for the "
         "next MINOR' cannot go stale, and which release they land in is a decision that does not "
         "belong in a heading shipped inside a wheel")
+
+
+# ------------------------------------------------------------------- the release notes, as a claim
+#
+# `RELEASE_NOTES.md` is new in 1.1.0. 1.0.0's notes existed only as the body of a GitHub release,
+# which means nothing could ever compare them to the tree they claimed to describe — and condition 4
+# of the release procedure is precisely that every claim in them is readable off the tree at the tag.
+# A notes file in the repository makes that condition checkable instead of aspirational.
+
+NOTES = REPO / "RELEASE_NOTES.md"
+
+
+def test_the_release_notes_describe_this_version():
+    """The notes' two version numbers are the tree's two version numbers.
+
+    The failure this catches is the ordinary one: notes copied forward from the previous release
+    and edited in the places somebody remembered. Both numbers are stated in the notes' own second
+    paragraph, and both are derivable here.
+    """
+    text = NOTES.read_text()
+    assert f"# synapse-cdm {PACKAGE_VERSION}" in text, (
+        f"RELEASE_NOTES.md does not open with `# synapse-cdm {PACKAGE_VERSION}`. It describes "
+        "whatever release it was last written for, and the version bump did not reach it")
+    assert f"Package version {PACKAGE_VERSION}" in text, (
+        f"the notes do not state package version {PACKAGE_VERSION}")
+    assert f"`schema_version` {SCHEMA_VERSION}" in text, (
+        f"the notes do not state schema_version {SCHEMA_VERSION}. These are two different facts "
+        "and the notes are one of the few documents that states both, so it is one of the few "
+        "places they can be made to disagree")
+
+
+def test_the_release_notes_roster_table_is_the_registry():
+    """Every adapter in the notes' table is registered, and every registered adapter is in it.
+
+    Both directions. A table missing an adapter under-sells a release and, worse, tells a reader
+    the roster is smaller than it is — which is the thing `--list-adapters` was added to stop. A
+    table naming an adapter that does not exist is a release note for software nobody received.
+    """
+    text = NOTES.read_text()
+    registered = {name for name, cls in adapter_roster().items()
+                  if cls.__module__.startswith("synapse_cdm.adapters.")}
+    # The table's first column, as ``| `name` |``.
+    tabled = set(re.findall(r"^\|\s*\*{0,2}`([a-z0-9_]+)`\*{0,2}\s*\|", text, re.MULTILINE))
+    assert tabled, (
+        "no adapter rows were found in RELEASE_NOTES.md. If the table's shape changed, re-anchor "
+        "this pattern — a sweep that matches nothing reports clean")
+    missing = sorted(registered - tabled)
+    unknown = sorted(tabled - registered)
+    assert not missing and not unknown, (
+        f"the notes' roster table and the registry disagree — in the registry but not the table: "
+        f"{missing}; in the table but not the registry: {unknown}. The table is the release's "
+        "public statement of what a consumer gets")
+
+
+def test_the_release_notes_name_the_mechanism_that_published_them():
+    """The notes claim OIDC and name the workflow; the workflow has to exist and carry no secret.
+
+    This is the same closure `tests/test_cdm_trusted_publishing.py` applies to the other documents,
+    applied to the one document a consumer is most likely to read: a release note is where a
+    supply-chain claim is actually made to the public, so it is the worst place for one that is no
+    longer true.
+    """
+    text = NOTES.read_text()
+    named = re.findall(r"`(\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml)`", text)
+    assert named, (
+        "RELEASE_NOTES.md describes how the release was published but names no workflow file. "
+        "'published by CI' is not a checkable claim")
+    for path in named:
+        assert (REPO / path).exists(), (
+            f"the notes name {path}, which does not exist. The notes would be telling a reader "
+            "their artefact was built by a file that is not in the repository")
+        body = (REPO / path).read_text()
+        live = "\n".join(l for l in body.splitlines() if not l.lstrip().startswith("#"))
+        assert "secrets." not in live and not re.search(r"^\s*password:", live, re.MULTILINE), (
+            f"{path} now carries a credential, and RELEASE_NOTES.md claims this release was "
+            "published with none. One of the two has to change, and it should not be the workflow")
+
+
+def test_the_release_notes_carry_their_digests_once_the_release_exists():
+    """Both directions, on the same hinge the Unreleased check uses: does the tag exist yet?
+
+    WHY THE PLACEHOLDER IS LEGITIMATE BEFORE THE TAG AND NOT AFTER
+    -------------------------------------------------------------
+    The notes cannot carry their artefacts' hashes before the artefacts exist, and they must not
+    carry a LOCAL build's hashes: two builds of one tree are not the same bytes — identical
+    payloads, but the build-generated metadata carries timestamps at a two-second zip resolution —
+    so a hash computed here would not be the hash of the file PyPI serves. The workflow builds
+    once, gates that build and uploads it, and its digests are the only ones worth publishing.
+
+    So the order is: commit the notes with `<!-- DIGESTS -->`, tag, let the workflow publish, then
+    write the workflow's digests back into this file. Before the tag the placeholder is the correct
+    state. After the tag it is a published Artefacts section listing nothing, which reads as "there
+    is nothing to verify".
+    """
+    _require_git()
+    text = NOTES.read_text()
+    digests = re.findall(r"\b[0-9a-f]{64}\b", text)
+    if _released_tag_for_this_version() is None:
+        assert "<!-- DIGESTS -->" in text or len(digests) >= 2, (
+            f"there is no v{PACKAGE_VERSION} tag yet, so RELEASE_NOTES.md should carry either the "
+            "`<!-- DIGESTS -->` placeholder or real digests. It carries neither, which means the "
+            "Artefacts section has silently lost its contents")
+        return
+    assert "<!-- DIGESTS -->" not in text, (
+        f"v{PACKAGE_VERSION} is tagged and RELEASE_NOTES.md still contains the `<!-- DIGESTS -->` "
+        "placeholder. Fill it with the SHA-256 of the sdist and wheel THE WORKFLOW exported — not "
+        "a local rebuild's, which would be different bytes for the same tree")
+    assert len(digests) >= 2, (
+        f"the notes carry {len(digests)} SHA-256 digest(s) and a release has two artefacts, an "
+        "sdist and a wheel. Both are verifiable by anyone against what PyPI serves")
