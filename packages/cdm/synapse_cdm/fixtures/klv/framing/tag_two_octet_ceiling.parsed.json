@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000008",
+  "name": "tag_two_octet_ceiling",
+  "kind": "ber_oid_tag",
+  "octets_hex": "FF7F",
+  "octet_count": 2,
+  "decodes_to": 16383,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf",
+  "citation": "Figure 67 (PDF page 212) and the paragraph beneath it: 'a 14-bit value remains'",
+  "note": "The largest value the established two-octet form can carry. Figure 67 draws the MSB byte with a leading 1 and seven payload bits and the LSB byte with a leading 0 and seven more; 14 payload bits is 16383. Above this the document says only '(or more)' \u2014 see the omitted fixtures in this generator's docstring."
+}

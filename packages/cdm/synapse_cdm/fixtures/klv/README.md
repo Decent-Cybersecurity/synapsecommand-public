@@ -1,9 +1,12 @@
 # STANAG 4609 / MISP-2019.1 KLV fixtures
 
 **There are none yet, and that is the state this directory is in rather than a step somebody
-forgot.** Adapter `stanag4609` is at Phase 1: the row set in `../../FORMAT_COVERAGE.md` is written
-with `not yet` in every status column and there is no adapter code, no codec and no payload. This
-directory holds `spec/` and nothing else.
+forgot.** The sentence means what it has always meant and the qualifier is now load-bearing: there is
+no **adapter** fixture. Adapter `stanag4609` is at Phase 1, the row set in
+`../../FORMAT_COVERAGE.md` is written with `not yet` in all 141 tag rows, and there is no adapter
+code and no `.klv` payload. This directory holds `spec/` and — since the framing round of
+2026-08-26 — `framing/`, and `framing/` is not a payload directory. See "What `framing/` is, and
+what it is not" below.
 
 **That did not change on 2026-08-26, and the thing that did change is worth stating precisely.** ST
 0601.14 — the field dictionary MISP-2019.1 delegates the whole airborne collection to — was obtained,
@@ -12,6 +15,17 @@ pinned and transcribed: 141 items, in `../../FORMAT_COVERAGE.md`'s ST 0601 row s
 did not produce a fixture and could not have: a `.klv` payload is a sequence of key/length/value
 triplets, and the documents that say how a key and a length are written are still parks 4 and 8.
 **Holding the dictionary made the stream nameable, not readable.**
+
+**A later round the same day asked how much of that is actually true of ST 0601.14, and two thirds of
+it is not.** ST 0601.14a **states** the 16-byte Universal Label (§6.2), the BER-OID tag form and its
+127/128 width transition (§7.1), the two-octet bit pattern and its 14-bit ceiling (Figure 67), the
+checksum algorithm with a worked vector (§6.6 and §8.1.1.2) and the Zero-Length Item (§6.5). It
+**delegates the BER length grammar and nothing else**: `ST 0601.8-07` states the constraint and is
+marked *(Deprecated)*, the live route `ST 0601.8-03` sends it to ST 0107.3, and no worked example in
+218 pages carries a length octet above `0x24`. So **parks 4 and 8 both stay OPEN** — no document was
+obtained — and what changed is their size: park 8 owned "key forms, the 16-byte Universal Label, the
+length forms" and now owns the length grammar and the third BER-OID octet. All 141 tag rows stay
+`not yet`; a framing rule says where an item begins and never what it means.
 
 ```bash
 # Today this FAILS, deliberately, and it fails TWICE over — which is worth knowing before you
@@ -69,10 +83,29 @@ Those five rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVE
 80b38d1 finding, which was that an `in` check is satisfied by one site while a fact stated at three
 sites can drift at two.
 
-## Why no fixture can be written yet
+## What `framing/` is, and what it is not
+
+**Thirteen byte-level fixtures for the framing rules ST 0601.14a states on its own account**, written
+only by `spec/build_fixtures.py` — the Universal Label and two ways of getting it wrong, BER-OID tags
+at every width boundary the document establishes, three refusals at the edges of those rules, and the
+document's own checksum vector. Each is a `.klvframe` of raw octets beside a `.parsed.json` twin
+carrying the section that authorises it.
+
+**They are not adapter fixtures and the harness cannot replay one.** No CDM object comes out of any
+of them. They sit in a subdirectory rather than here so that the claim at the top of this file stays
+true and stays checked: the harness selects "immediate children of the directory that are files", so
+a run pointed at this directory still finds nothing and still fails.
+
+**Three classes of fixture were omitted rather than guessed**, because each needs the rule this round
+could not establish: every length fixture, including the truncated-length malformation; every
+key/length/value triple, which needs a length one rule up; and the 16383 → 16384 tag transition,
+which needs a third BER-OID octet. They are named in `../../FORMAT_COVERAGE.md` and in
+`spec/klv_pin.json`'s `framing_ruling_st_0601_14` rather than being absent.
+
+## Why no `.klv` payload can be written yet
 
 Not scheduling. A `.klv` payload is a sequence of key/length/value triplets, and **this phase does
-not hold the document that says how a key or a length is written**: `MISP-2015.1-07` delegates the
+not hold the document that says how a length is written**: `MISP-2015.1-07` delegates the
 encoding to SMPTE ST 336:2017, which is behind a paywall, and `MISP-2015.1-08` delegates the
 formatting to MISB ST 0107.3, which is a public download that was not obtained. Writing bytes
 anyway would produce a file that *looks* like KLV, a golden file recording what our own guess
@@ -83,5 +116,6 @@ without an external anchor.
 The twelve planned fixtures and the park that gates each one are tabulated in
 `../../FORMAT_COVERAGE.md` under "The fixtures — planned here, before they exist". When the parks
 close, each will ship as a twin — a `.klv` payload and a `.parsed.json` holding the parsed form the
-never-drop check measures against — on the pattern `adsb`, `cat021` and `cat048` already use, and a
-`spec/build_fixtures.py` will be their single source of truth.
+never-drop check measures against — on the pattern `adsb`, `cat021` and `cat048` already use, and
+`spec/build_fixtures.py` is their single source of truth: it exists now, builds `framing/`, and grows
+a second half when a length can be written.

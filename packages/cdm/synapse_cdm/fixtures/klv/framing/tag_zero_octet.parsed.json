@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000009",
+  "name": "tag_zero_octet",
+  "kind": "ber_oid_tag",
+  "octets_hex": "00",
+  "octet_count": 1,
+  "decodes_to": 0,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf",
+  "citation": "\u00a77.1 states the representable range as 1 through 127 and assigns no tag 0",
+  "note": "Framing-valid and semantically unassigned, and the split is deliberate: this layer decodes the octet and does not rule on whether a local set may carry tag 0, which is a tag-semantics question and out of this round's scope."
+}

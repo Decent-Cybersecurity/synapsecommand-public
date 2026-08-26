@@ -3065,6 +3065,14 @@ KLV_PINNED_DOCUMENTS = (
 #: follow is worth more than one it obeys.
 KLV_HELD_NOT_PINNED = {
     "MISB ST 0601": ({"19"}, "context only"),
+    # AMENDED 2026-08-26 BY THE FRAMING ROUND, and this entry is a different KIND from the one
+    # above it. ST 0601.19 is a revision this repository HOLDS and the profile does not pin; ST
+    # 336:2007 is a revision this repository does not hold and ANOTHER HELD DOCUMENT PINS — ST
+    # 0102.12's reference [3], where `ST 0102.12-65` and `-66` require conformance to it. So the
+    # section now states two editions of ST 336 for a reason that is neither drift nor a second
+    # copy, and the admitting phrase says what that reason is rather than merely licensing the
+    # number. Register entry KLV 11.
+    "SMPTE ST 336": ({"2007"}, "a divergence between two delegations of one profile"),
 }
 
 KLV_DELEGATION = (
@@ -3724,7 +3732,7 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
 
 
 def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
-    """Ten entries, `KLV n`, no eleventh without a deliberate edit — and every CITATION defined.
+    """Eleven entries, `KLV n`, no twelfth without a deliberate edit — and every CITATION defined.
 
     Numbered per the new adapter's own convention rather than continuing the GMTIF or NITS series,
     because a register is scoped to the document it reads. The upper guard matters as much as the
@@ -3740,10 +3748,14 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     check on a two-directional invariant reads as protection and is not. Both directions now.
     """
     section = _section(KLV_HEADING)
-    for n in range(1, 11):
+    # THE BOUND MOVED FROM 10 TO 11 ON 2026-08-26, by the framing round, and the edit is the
+    # mechanism working rather than an inconvenience: KLV 11 records that ST 0102.12 pins SMPTE
+    # ST 336:2007 where the profile and ST 0601.14a pin 2017. Moving it is the deliberate act the
+    # upper guard exists to force.
+    for n in range(1, 12):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 11 —" not in section, (
-        "the register has grown past KLV 10 without this test being updated"
+    assert "**KLV 12 —" not in section, (
+        "the register has grown past KLV 11 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a

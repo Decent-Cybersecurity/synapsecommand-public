@@ -98,6 +98,16 @@ PACKAGE_ONLY_TESTS = (
     "test_cdm_harness.py", "test_cdm_legion_adapter.py", "test_cdm_list_adapters.py",
     "test_cdm_lossless.py", "test_cdm_models.py", "test_cdm_pntmap_adapter.py",
     "test_cdm_schemas.py", "test_cdm_stanag4676_adapter.py", "test_cdm_tak_adapter.py",
+    # `test_cdm_klv_framing.py` is package-only although it reads three prose documents and a pin
+    # record, and the reason is worth a line because the obvious reading sends it the other way.
+    # Every path it touches —
+    # `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `fixtures/klv/README.md`, `klv_pin.json`,
+    # `adapters/klv_codec.py` and `fixtures/klv/{framing,spec}/` — is INSIDE the package and ships
+    # in the wheel, and all six are anchored on `synapse_cdm.__file__`. It reaches for the
+    # repository root nowhere. `test_cdm_format_coverage.py` sits in the other list because it
+    # compares that document against the repository's fixture tree; this one compares a ruling
+    # against the artefacts the ruling produced, and those travel together.
+    "test_cdm_klv_framing.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason

@@ -1061,10 +1061,10 @@ too — so the first is now stated.
   committed.
 
   **The round that obtained ST 0601.14 transcribed its Table 1 in full — 141 items, tags 1 through
-  141, every row `not yet` — and closed park 1**, the largest of the twelve. The phase did not
-  otherwise advance: there is still no adapter, no codec and no fixture, because parks 4 and 8
-  (ST 0107.3 and SMPTE ST 336:2017) own how a key and a length are written and holding the
-  dictionary does not make the octets readable. **Still no gap opened and no field proposed.** Two
+  141, every row `not yet` — and closed park 1**, the largest of the twelve. It did not otherwise
+  advance: parks 4 and 8 (ST 0107.3 and SMPTE ST 336:2017) own how a key and a length are written,
+  and holding the dictionary does not make the octets readable. **Still no gap opened and no field
+  proposed.** Two
   findings are worth carrying here rather than leaving in the pin. First, ST 0601.14 §6.4 and §8.2
   **state the Precision Time Stamp's epoch** — SI seconds since `1970-01-01T00:00:00Z`, in
   microseconds, leap seconds excluded and therefore not UTC — which corrects the *reach* of this
@@ -1074,6 +1074,25 @@ too — so the first is now stated.
   packet and declares which revision of ST 0601 the producer encoded against**, so park 1's
   wrong-edition hazard is detectable on the wire — but it is a `uint8` and cannot express the
   minor-version letter, which is the same blind spot the citation has. Register entries **KLV 9**
+  **A later round the same day asked how much of the framing the pinned copy settles by itself, and
+  the answer was two rules of three.** ST 0601.14a **states** the 16-byte Universal Label (§6.2), the
+  packet shape (§6.3 and Figure 1), the BER-OID tag form and its 127/128 width transition (§7.1),
+  the two-octet bit pattern and its 14-bit ceiling (Figure 67, PDF page 212), the checksum algorithm
+  with a worked vector (§6.6, §8.1.1.1–2) and the Zero-Length Item (§6.5). It **delegates** the BER
+  length grammar entirely: `ST 0601.8-07` states the constraint and is **(Deprecated)**, the live
+  route `ST 0601.8-03` sends it to ST 0107.3, and no worked example in 218 pages carries a length
+  octet above `0x24`. So `adapters/klv_codec.py` and thirteen fixtures in `fixtures/klv/framing/`
+  exist — a **codec and not an adapter**, no registry entry and no ordinal — and its
+  `decode_ber_length`, `encode_ber_length` and `walk_local_set` exist, are importable and **raise**,
+  naming the park. **Parks 4 and 8 both stay OPEN**: no document was obtained, so no park state
+  moved, and all 141 rows stay `not yet` because a framing rule says where an item begins and never
+  what it means. What did move is the size of park 8, which owned "key forms, the 16-byte Universal
+  Label, the length forms" and now owns the length grammar and the third BER-OID octet. Register
+  entry **KLV 11** records a new divergence found in passing: ST 0601.14a's reference [2] and
+  MISP-2019.1's ref [13] both pin **ST 336:2017** while ST 0102.12's reference [3] pins
+  **ST 336:2007**, so two delegated documents this repository holds disagree about which edition of
+  the encoding standard governs.
+
   and **KLV 10**. The fixture directory is `fixtures/klv` rather than
   `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
   `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry

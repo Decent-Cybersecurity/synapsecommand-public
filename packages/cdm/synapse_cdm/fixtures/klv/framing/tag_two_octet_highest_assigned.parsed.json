@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000007",
+  "name": "tag_two_octet_highest_assigned",
+  "kind": "ber_oid_tag",
+  "octets_hex": "810D",
+  "octet_count": 2,
+  "decodes_to": 141,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf",
+  "citation": "\u00a78.141's example row `Tag Len Value / 810D - N/A`",
+  "note": "Tag 141, Waypoint List \u2014 the highest tag Table 1 assigns, and the top of the range the document's own examples cover. Table 1 has 141 items and this is the last of them."
+}

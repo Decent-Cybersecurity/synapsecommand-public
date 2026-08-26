@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000005",
+  "name": "tag_single_octet_highest",
+  "kind": "ber_oid_tag",
+  "octets_hex": "7F",
+  "octet_count": 1,
+  "decodes_to": 127,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf",
+  "citation": "\u00a77.1: 'Single-byte tags can represent tag numbers from 1 through 127'",
+  "note": "The low side of the only width transition the document states. 0x7F is 127 with the continuation bit clear."
+}
