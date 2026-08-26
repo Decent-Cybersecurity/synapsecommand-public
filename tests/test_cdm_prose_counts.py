@@ -112,6 +112,21 @@ def flat(text: str) -> str:
     return " ".join(text.split())
 
 
+def unwrapped(path: str, text: str) -> str:
+    """`flat()`, plus the `#` markers stripped when the sentence lives in a comment BLOCK.
+
+    `packages/cdm/pyproject.toml` states this count inside a hard-wrapped `#` block, so collapsing
+    whitespace alone leaves a `#` sitting in the middle of the sentence at every wrap point — and a
+    pattern written around that `#` is anchored to where the paragraph happens to wrap rather than
+    to what it says. Re-flowing the comment by one word would then break the row for no reason,
+    which is the opposite of what `flat()` is for. Applied by suffix rather than by path so a
+    second `.toml` site needs no second decision.
+    """
+    if path.endswith(".toml"):
+        text = re.sub(r"(?m)^\s*#\s?", "", text)
+    return flat(text)
+
+
 # ------------------------------------------------------------------------ the allowlist
 
 
@@ -543,23 +558,33 @@ def test_the_historical_statement_of_the_count_is_still_inside_the_history():
 
 # --------------------------------------- the OTHER roster: adapters that landed with no schema change
 #
-# Twelve adapters ship and ELEVEN of them landed without a schema change — `pntmap` came with the
-# schema, so it is not in that set. Three documents state the eleven, and the number is the whole
-# argument for `PACKAGE_VERSION` and `SCHEMA_VERSION` being two numbers rather than one:
+# Every shipped adapter but `pntmap` landed without a schema change — `pntmap` came with the schema,
+# so it is not in that set. How many that is gets stated in prose, and the number is the whole
+# argument for `PACKAGE_VERSION` and `SCHEMA_VERSION` being two numbers rather than one.
 #
-#   packages/cdm/synapse_cdm/version.py   "it holds **eleven** entries — eleven adapters"
-#   packages/cdm/synapse_cdm/MIGRATIONS.md  "is eleven entries long"
-#   docs/docs/changelog.mdx               "eleven adapters have shipped so far"
+# WHERE it is stated is `NO_SCHEMA_CHANGE_SITES` below, and that tuple is the enumeration: nothing
+# in this comment counts its rows or lists them a second time. The paragraph replaced here did
+# both — it opened "Three documents state the eleven" over a list of exactly three — and it went
+# false the moment the tuple widened, which is this module's own defect, committed in this module's
+# own header, one roster along from the defect it was written to describe. A comment that counts the
+# rows beneath it is a restated count like any other, and rule 7 of the sweep protocol applies to it
+# too: cite the thing, do not re-state it.
 #
-# Nothing derived it. All three were correct when this was written — checked by counting the
-# section's bullets rather than assumed, which is why they were left alone instead of "fixed" — and
-# all three would go stale together, silently, on the next adapter that lands with no schema change.
+# The rows do NOT go stale together, and that is what earned the widening. The four rows this tuple
+# carried before that were all correct when it was written — checked by counting the section's
+# bullets rather than assumed, which is why they were left alone instead of "fixed". The rest were
+# added by one later sweep, in three different states at once: `packages/cdm/pyproject.toml`
+# twice and `tests/test_cdm_packaging.py` once said NINE, `tests/test_cdm_changelog_claim.py` said
+# EIGHT — three adapters behind — and `version.py`'s "would already be N minors apart" was RIGHT,
+# one paragraph below a sentence this tuple already guarded, with nothing reading it. Same fact,
+# same section, three wrong numbers and one correct-by-luck, none of them noticed by a green suite.
+#
 # That is the shape the sweep in this module exists for, one roster along: the adapter-count sweep
 # above covers the count of SHIPPED adapters and could never see this one, because it is a count of
 # a different set that happens to be spelled the same way.
 #
-# The section's bullets are the derivation. It is the same section all three sentences point at, so
-# there is no fourth statement of the fact introduced here — only a reading of the one that is
+# The section's bullets are the derivation. It is the same section every one of those sentences
+# points at, so no new statement of the fact is introduced here — only a reading of the one that is
 # already load-bearing.
 
 #: The heading in `MIGRATIONS.md` whose bullets ARE this count.
@@ -569,15 +594,37 @@ NO_SCHEMA_CHANGE_HEADING = "### Adapters that landed with no schema change"
 #: even though the page lists only nine of the eleven: `tests/test_cdm_changelog_claim.py` rules
 #: that the page is a curated summary and that page-omits-an-entry is designed NOT to fail, so the
 #: page's SENTENCE is a claim about the file's count and is checked against the file's count.
+#:
+#: Some of these sites are TEST modules and one is packaging metadata, which is not a category
+#: error: an assertion message and a `pyproject.toml` comment are read by exactly the person the
+#: number has to be right for, and neither is any less prose for living in a file the harness
+#: executes. The assertion messages are the sharper case — one arguing the ruling from a number
+#: three adapters stale weakens the ruling at the only moment anybody reads it.
 NO_SCHEMA_CHANGE_SITES: tuple[tuple[str, str], ...] = (
     ("packages/cdm/synapse_cdm/version.py",
      r"it holds \*\*(?P<n>[a-z]+)\*\* entries"),
     ("packages/cdm/synapse_cdm/version.py",
      r"entries — (?P<n>[a-z]+) adapters, each of which"),
+    # The counterfactual two paragraphs on: had the package been released before any of them, the
+    # two numbers would already be this far apart. Correct when this row was added and unwatched,
+    # which is the only reason it is a row rather than a repair.
+    ("packages/cdm/synapse_cdm/version.py",
+     r"The two numbers would already be (?P<n>[a-z]+) minors apart"),
     ("packages/cdm/synapse_cdm/MIGRATIONS.md",
      r"\"Adapters that landed with no schema change\" is (?P<n>[a-z]+) entries long"),
     ("docs/docs/changelog.mdx",
      r"the two are allowed to diverge: (?P<n>[a-z]+) adapters have shipped so far"),
+    # The packaging metadata states it twice in one sentence — the 94c000a half-edit shape, in a
+    # file nothing here covered until this round. Read through `unwrapped()`, so these patterns are
+    # anchored to the sentence and not to where the `#` block wraps.
+    ("packages/cdm/pyproject.toml",
+     r"section holds (?P<n>[a-z]+) entries"),
+    ("packages/cdm/pyproject.toml",
+     r"(?P<n>[a-z]+) releases' worth of shipped behaviour"),
+    ("tests/test_cdm_packaging.py",
+     r"MIGRATIONS\.md already lists (?P<n>[a-z]+) adapters that shipped without one"),
+    ("tests/test_cdm_changelog_claim.py",
+     r"(?P<n>[A-Z][a-z]+) adapters landed with no schema change"),
 )
 
 
@@ -627,7 +674,7 @@ def test_the_no_schema_change_section_is_not_empty_and_is_a_subset_of_the_roster
 @pytest.mark.parametrize("path,pattern", NO_SCHEMA_CHANGE_SITES,
                          ids=[f"{p}::{i}" for i, (p, _) in enumerate(NO_SCHEMA_CHANGE_SITES)])
 def test_every_stated_no_schema_change_count_is_the_number_of_entries(path, pattern):
-    """Each of the three documents, against the bullets.
+    """Each stated count, against the bullets.
 
     These are not decorative. The number is the argument for two version numbers existing at all:
     eleven adapters' worth of shipped behaviour arriving at one unchanged `schema_version` is the
@@ -635,7 +682,7 @@ def test_every_stated_no_schema_change_count_is_the_number_of_entries(path, patt
     weakens the one claim `version.py` is written to make.
     """
     expected = len(adapters_that_landed_with_no_schema_change())
-    text = flat((REPO / path).read_text())
+    text = unwrapped(path, (REPO / path).read_text())
     found = re.search(pattern, text)
     assert found, (
         f"{path} no longer states this count where it did (looked for {pattern!r}). If the sentence "
@@ -650,20 +697,29 @@ def test_every_stated_no_schema_change_count_is_the_number_of_entries(path, patt
 
 
 def test_the_no_schema_change_claim_is_stated_at_every_site_that_carries_it():
-    """The closure, so the trio cannot become a pair by deletion.
+    """The closure, so the collection cannot shrink by deletion.
 
     The failure this catches is not a wrong number — the parametrised test above catches those. It
     is a site quietly leaving the collection: someone rewords `version.py`'s sentence, the pattern
     stops matching, and the parametrised case for it fails loudly. Good. But someone REMOVING this
-    module's entry for it, to make that failure go away, leaves two guarded sites and one free one.
+    module's entry for it, to make that failure go away, leaves the other sites guarded and that one
+    free — and free is the state all of the documents added this round were already in.
+
+    Written as a set of PATHS rather than a row count on purpose: rows get added, and a test that
+    pinned their number would fail on every widening, which trains people to edit the expectation
+    instead of reading it.
     """
     covered = {path for path, _ in NO_SCHEMA_CHANGE_SITES}
     assert covered == {
         "packages/cdm/synapse_cdm/version.py",
         "packages/cdm/synapse_cdm/MIGRATIONS.md",
         "docs/docs/changelog.mdx",
+        "packages/cdm/pyproject.toml",
+        "tests/test_cdm_packaging.py",
+        "tests/test_cdm_changelog_claim.py",
     }, (
-        f"the no-schema-change count is checked at {sorted(covered)}. Those three documents each "
-        "state it for a different reader — the package's own argument for two version numbers, the "
-        "changelog's, and the public page's. Adding a site is fine; losing one is how this sweep's "
-        "work gets undone")
+        f"the no-schema-change count is checked at {sorted(covered)}. Each of those documents "
+        "states it for a different reader — the package's own argument for two version numbers, "
+        "the changelog's, the public page's, the distribution metadata's, and the failure messages "
+        "that argue the ruling to whoever broke it. Adding a site is fine; losing one is how this "
+        "sweep's work gets undone")

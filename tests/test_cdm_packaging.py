@@ -259,7 +259,7 @@ def test_the_packaging_version_is_the_packages_own_and_not_the_schemas():
     assert attr == "synapse_cdm.version.PACKAGE_VERSION", (
         f"the packaging version is read from {attr!r}. It must be PACKAGE_VERSION: reading "
         "SCHEMA_VERSION ties every release of this distribution to a change in the WIRE "
-        "CONTRACT, and MIGRATIONS.md already lists nine adapters that shipped without one"
+        "CONTRACT, and MIGRATIONS.md already lists eleven adapters that shipped without one"
     )
 
 

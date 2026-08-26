@@ -152,9 +152,11 @@ def test_every_adapter_the_page_names_is_named_by_the_migrations_file():
     page = set(ADAPTER.findall(_section(CHANGELOG.read_text(), PAGE_HISTORY, r"^## ")))
     file_all = set(ADAPTER.findall(MIGRATIONS.read_text()))
     assert len(page) >= 8, (
-        f"the page's history section names {len(page)} adapters: {sorted(page)}. Eight landed "
-        "with no schema change, so a lower count means the extractor has stopped matching and "
-        "the subset check below is passing on almost nothing"
+        f"the page's history section names {len(page)} adapters: {sorted(page)}. "
+        "Eleven adapters landed with no schema change and this page is a curated summary that "
+        "may name fewer of them, so the floor is a check on the EXTRACTOR and not a count of "
+        "them: a number below it means the pattern has stopped matching and the subset check "
+        "below is passing on almost nothing"
     )
     invented = sorted(page - file_all)
     assert not invented, (
