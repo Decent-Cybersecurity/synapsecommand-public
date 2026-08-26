@@ -113,9 +113,16 @@ work, and what remains open.
 
 ## Artefacts
 
-SHA-256, as built by the workflow and as served by PyPI:
+An sdist and a wheel, built once by the workflow, gated as that build, and uploaded as those same
+files. Their **SHA-256 digests are recorded in `PUBLICATION.md` ledger entry 6** together with the
+workflow run that produced them, and they are repeated at the foot of this release — the same place
+entry 5 records 1.0.0's.
 
-<!-- DIGESTS -->
+They are deliberately not committed to `RELEASE_NOTES.md` in the repository. A digest is a property
+of one build rather than of the tree: two builds of one tree have identical payloads but differ in
+their generated metadata, so a digest written here before the tag would not be the digest of the
+file PyPI serves, and one written after the tag could never be inside the tree the tag names.
+Everything else in this document is readable off that tree, which is what condition 4 asks for.
 
 ```bash
 pip install synapse-cdm==1.1.0

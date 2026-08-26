@@ -579,35 +579,42 @@ def test_the_release_notes_name_the_mechanism_that_published_them():
             "published with none. One of the two has to change, and it should not be the workflow")
 
 
-def test_the_release_notes_carry_their_digests_once_the_release_exists():
-    """Both directions, on the same hinge the Unreleased check uses: does the tag exist yet?
+def test_the_release_notes_keep_an_artefacts_section_that_says_where_the_digests_are():
+    """The notes must NOT carry digests, and must say where they are instead.
 
-    WHY THE PLACEHOLDER IS LEGITIMATE BEFORE THE TAG AND NOT AFTER
-    -------------------------------------------------------------
-    The notes cannot carry their artefacts' hashes before the artefacts exist, and they must not
-    carry a LOCAL build's hashes: two builds of one tree are not the same bytes — identical
-    payloads, but the build-generated metadata carries timestamps at a two-second zip resolution —
-    so a hash computed here would not be the hash of the file PyPI serves. The workflow builds
-    once, gates that build and uploads it, and its digests are the only ones worth publishing.
+    A CORRECTION TO THIS TEST'S FIRST FORM, WHICH WOULD HAVE BLOCKED THE RELEASE
+    ---------------------------------------------------------------------------
+    It first required the digests to be filled in once a `v{PACKAGE_VERSION}` tag existed, on the
+    reasoning that a published Artefacts section listing nothing reads as "there is nothing to
+    verify". The hinge was wrong, and wrong in the direction that stops a release: the tag exists
+    BEFORE the workflow builds anything, so on the tagged tree the digests cannot exist — and the
+    workflow runs `pytest -q` on exactly that tree. The test failed at the tag, which would have
+    failed condition 1 and published nothing.
 
-    So the order is: commit the notes with `<!-- DIGESTS -->`, tag, let the workflow publish, then
-    write the workflow's digests back into this file. Before the tag the placeholder is the correct
-    state. After the tag it is a published Artefacts section listing nothing, which reads as "there
-    is nothing to verify".
+    The deeper error was putting them in the tree at all. Condition 4 requires every claim in the
+    notes to be **readable off the tree at the tag**, and a digest is not: it is a property of one
+    build, and two builds of one tree are not the same bytes. A digest committed here would either
+    be a local build's — different bytes from what PyPI serves, so a false claim — or it would have
+    to be written back after publication, which makes the tagged tree's notes permanently unable to
+    satisfy their own gate.
+
+    So digests live where measured facts about published artefacts already live in this repository:
+    `PUBLICATION.md`'s ledger, which carries 1.0.0's in entry 5. The notes point there and to the
+    release body. What this test defends is that the pointer survives — an Artefacts section
+    quietly deleted is how a release stops being verifiable.
     """
-    _require_git()
     text = NOTES.read_text()
-    digests = re.findall(r"\b[0-9a-f]{64}\b", text)
-    if _released_tag_for_this_version() is None:
-        assert "<!-- DIGESTS -->" in text or len(digests) >= 2, (
-            f"there is no v{PACKAGE_VERSION} tag yet, so RELEASE_NOTES.md should carry either the "
-            "`<!-- DIGESTS -->` placeholder or real digests. It carries neither, which means the "
-            "Artefacts section has silently lost its contents")
-        return
-    assert "<!-- DIGESTS -->" not in text, (
-        f"v{PACKAGE_VERSION} is tagged and RELEASE_NOTES.md still contains the `<!-- DIGESTS -->` "
-        "placeholder. Fill it with the SHA-256 of the sdist and wheel THE WORKFLOW exported — not "
-        "a local rebuild's, which would be different bytes for the same tree")
-    assert len(digests) >= 2, (
-        f"the notes carry {len(digests)} SHA-256 digest(s) and a release has two artefacts, an "
-        "sdist and a wheel. Both are verifiable by anyone against what PyPI serves")
+    assert "## Artefacts" in text, (
+        "RELEASE_NOTES.md has no `## Artefacts` section. It is where a reader is told how to check "
+        "that what they installed is what was published, and its absence reads as nothing to check")
+    section = text[text.index("## Artefacts"):]
+    assert "PUBLICATION.md" in section, (
+        "the Artefacts section does not point at PUBLICATION.md, where this repository records the "
+        "SHA-256 of every published artefact — entry 5 does it for 1.0.0")
+    local = re.findall(r"\b[0-9a-f]{64}\b", text)
+    assert not local, (
+        f"RELEASE_NOTES.md carries {len(local)} SHA-256 digest(s) inline. Do not commit them here: "
+        "a digest is a property of one BUILD, not of the tree, and two builds of one tree differ in "
+        "their generated metadata. A digest in the tagged tree is either a local rebuild's — which "
+        "is not what PyPI serves — or a value that can only be written after the tag, which no "
+        "tagged tree can contain. They belong in PUBLICATION.md and in the release body")
