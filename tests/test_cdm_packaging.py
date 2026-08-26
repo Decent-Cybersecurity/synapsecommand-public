@@ -266,9 +266,22 @@ def test_the_packaging_version_is_the_packages_own_and_not_the_schemas():
 def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other():
     """The sweep. Neither number may be computed from the other, anywhere in the package.
 
-    They are both `1.0.0` today, which is precisely when this is cheap to get wrong and impossible
-    to notice: any expression that derived one from the other would produce the right answer on
-    every run until the first release that moved them apart.
+    THEY HAVE NOW PARTED, AND THAT CHANGES WHAT THIS TEST IS WORTH
+    -------------------------------------------------------------
+    This docstring used to say they were both `1.0.0`, "which is precisely when this is cheap to
+    get wrong and impossible to notice: any expression that derived one from the other would
+    produce the right answer on every run until the first release that moved them apart."
+
+    1.1.0 is that release. `PACKAGE_VERSION` is `1.1.0` and `SCHEMA_VERSION` is `1.0.0`, because
+    every entry in that release added a surface and touched no schema. So the sweep below has
+    teeth it did not have when it was written: a derivation of either number from the other now
+    produces a WRONG answer at runtime rather than a right one by coincidence, and would be caught
+    by the schema tests, the packaging metadata and this sweep at once.
+
+    The sweep is kept anyway, and not as ceremony. It is cheaper than the failure it prevents, it
+    names the reason in its message, and the window it was written for reopens on the day a schema
+    change makes the two numbers equal again — which will happen, because a `SCHEMA_VERSION` bump
+    is always at least a package MINOR.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -284,10 +297,22 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
         "MIGRATIONS.md governs schema_version, ordinary semver governs the package — and an "
         "assignment linking them reads as correct for exactly as long as they happen to be equal"
     )
-    assert PACKAGE_VERSION == "1.0.0" and SCHEMA_VERSION == "1.0.0", (
-        "both are 1.0.0 at the first release, by coincidence of two first releases. If you are "
+    # Both pinned as literals, so every bump is a deliberate edit here as well as in version.py.
+    # The instruction the previous form of this assertion carried — "that is the expected event,
+    # and the fix is to update this assertion to the two numbers you now mean, not to re-link
+    # them" — is what was followed to get these values, and it still applies to the next bump.
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("1.1.0", "1.0.0"), (
+        f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
+        "1.1.0 and 1.0.0. They are no longer equal and have not been since 1.1.0, which is the "
+        "release that made their independence a measured fact rather than an argument. If you are "
         "reading this because you bumped one of them: that is the expected event, and the fix is "
         "to update this assertion to the two numbers you now mean, not to re-link them"
+    )
+    assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
+        "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "
+        "and cannot happen by a package bump alone. If a schema change brought them back level, "
+        "say so in MIGRATIONS.md and re-pin above — the sweep above is load-bearing again, "
+        "because a derivation of one from the other would once more produce the right answer"
     )
 
 

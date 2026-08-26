@@ -165,12 +165,23 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased — on `main`, in no release yet
+### 1.1.0 — two adapters, a discoverable roster, and the first release nobody uploaded
 
-Recorded here so that the next release's notes are **derived rather than remembered**, which is
-condition 4 of "What a release requires". Nothing below is in 1.0.0, and 1.0.0 is not re-cut for
-it: a released filename on PyPI can never be reused, so a re-release is a new version number or
-it is nothing.
+**A package MINOR, and the release where the two version numbers part company for the first
+time.** Every entry below says the same two things — an added surface, nothing removed, no schema
+touched — so `PACKAGE_VERSION` is `1.1.0` and `SCHEMA_VERSION` stays `1.0.0`. `version.py` has
+argued since before publication that the two are independent numbers rather than one number
+written twice; until this release that argument rested on a counterfactual, because the two were
+equal and a reader could reasonably think one redundant. It no longer does.
+
+**This is also the first release this repository did not upload.** `.github/workflows/publish.yml`
+built the artefacts, ran the gates against what it built, and published over OIDC with no
+credential in the process. `PUBLICATION.md` ledger entries 5 and 6 carry the two halves of that
+story — what a release by hand looked like, and what had to be true for one to stop being.
+
+Everything below was written while it landed, entry by entry, on the argument that condition 4 of
+"What a release requires" — notes derived rather than remembered — is not satisfiable in arrears.
+The v1.1.0 release notes are read off this section.
 
 - **`harness --list-adapters`** — prints the registered adapters (name, version, direction,
   fixture directory, system) and exits `0`, with `--json` honoured. The roster used to be
@@ -373,6 +384,26 @@ it is nothing.
   edits source and re-runs without clearing `__pycache__`. Recorded rather than dropped because the
   first mutation run's output was wrong in the direction that looks like a finding: seven "MISSED"
   verdicts, every one of them false.
+
+- **The release procedure in this file changed, and this file ships.** Everything else in this
+  entry is code or fixtures; this one is prose a consumer receives, which is why it is recorded
+  rather than treated as repository housekeeping. "Releasing the package" no longer describes a
+  sequence a person runs: conditions 1, 2 and 3 gained an actor column naming the workflow,
+  condition 4 kept a person and says why a workflow cannot take it, and the manual `twine` path is
+  now written down under "The manual fallback — NOT the procedure" with what it costs. A reader who
+  installs 1.1.0 and opens the packaged `MIGRATIONS.md` gets that text; a reader of 1.0.0's gets
+  the earlier version, which denied that any automation existed and was right when it shipped. The
+  denial is not quoted here — the gate over this prose forbids the old wording as a substring and
+  cannot tell an assertion from a quotation of one, which is the correct way round.
+
+  Two gates moved with it, in the direction that keeps prose checkable rather than the direction
+  that stops checking. `tests/test_cdm_release.py`'s mechanism test was **inverted** — it asserted
+  the ABSENCE of `.github/workflows` and carried its own instruction for the day that stopped being
+  true, so it now requires the workflow the prose names to exist and forbids the retired claim.
+  And the two documented procedures are collected: a `twine upload` in any document must be marked
+  a fallback, and any document describing publishing must name `publish.yml`.
+
+  **Package MINOR when released** — shipped documentation changed, no code, no schema touched.
 
 ### 1.0.0 — initial contract
 

@@ -82,7 +82,7 @@ SCHEMA_VERSION = "1.0.0"
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
 #: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
-PACKAGE_VERSION = "1.0.0"
+PACKAGE_VERSION = "1.1.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:

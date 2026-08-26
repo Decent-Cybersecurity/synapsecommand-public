@@ -6,6 +6,16 @@ venv/
 build/
 dist/
 *.egg-info/
+# A built wheel, anywhere. `dist/` already covers the ordinary case — `python -m build` writes
+# there — but a `pip wheel .` or a `--outdir .` puts one at the repository ROOT, outside every
+# rule above, and one sat there untracked across five rounds: `synapse_cdm-1.0.0-py3-none-any.whl`,
+# one `git add -A` from being committed. Committing a wheel would break
+# `tests/test_cdm_packaging.py` and `gates/wheel_install.py`, which compare a BUILT wheel's
+# manifest against `git ls-files` in both directions — a tracked wheel makes the artefact part of
+# its own input. The rule is the extension and not the one filename, for the reason the archive
+# block below gives about itself: a `.whl` is never an artefact this repository tracks, so the rule
+# costs nothing and the next stray one does not get to be the test case.
+*.whl
 .DS_Store
 
 # Documentation site (Docusaurus)
