@@ -296,8 +296,12 @@ So audit the model separately, against something outside the implementation —
   against the document without running anything.
 
 **The roster sweep is a manual protocol act, and prose counts are what it is for.** When an
-adapter joins the shipped roster, eight documents restate how many adapters there are and four of
-them do the pair arithmetic as well — and nothing in the harness reads prose. The sweep is:
+adapter joins the shipped roster, every document that restates how many adapters there are has to
+move with it, and the ones that also do the pair arithmetic have to move twice — and nothing in
+the harness reads prose. This paragraph states no total, on the same reasoning as the last of the
+rules below: a restated count re-drifts and a citation cannot. The allowlist named at the end of
+this section is the enumeration, and it is a floor rather than a census, because an allowlist
+cannot find a site nobody has added to it. The sweep is:
 
 1. **`grep` every spelled-out number within 120 characters of the word "adapter"**, across
    `*.md`, `*.mdx` and `*.py`. The narrower form — grepping for the *previous* count word, "eight"
@@ -308,7 +312,7 @@ them do the pair arithmetic as well — and nothing in the harness reads prose. 
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At ten it is 90 against 45.
+   contradiction. At today's twelve adapters it is 132 against 66.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
    `docs/docs/cdm/entity.mdx` both carry "so that twelve adapters cannot grow twelve slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
@@ -345,11 +349,15 @@ them do the pair arithmetic as well — and nothing in the harness reads prose. 
 the two prose sentences in the same section that still described the row set as unimplemented.
 Anything that parses tables will report clean while the paragraphs around them contradict them.
 
-`tests/test_cdm_prose_counts.py` now pins the eight sites the sweep has already had to fix, so a
-half-edit at a KNOWN site fails a build. It is deliberately an allowlist and not a scanner — a
-general prose-number check would flag "two altitudes that are two different measurements" and
-need an exemption list larger than the sweep it replaced — so **finding a NEW site is still the
-sweep's job**, and adding it to that allowlist is how the sweep's work stops being undone.
+`tests/test_cdm_prose_counts.py` now pins the sites in eight documents — the ones the sweep had to
+repair, and the ones it found correct and unguarded, which is the state every one of the others
+was in before it drifted — so a half-edit at a KNOWN site fails a build. It is deliberately an
+allowlist and not a scanner — a general prose-number check would flag "two altitudes that are two
+different measurements" and need an exemption list larger than the sweep it replaced — so
+**finding a NEW site is still the sweep's job**, and adding it to that allowlist is how the
+sweep's work stops being undone. This file is the one exception, and only inside one fact-class:
+every number here that qualifies an adapter, a document or a site is swept file-locally, and each
+is either pinned to a derivation or exempt on a ground recorded beside it.
 
 None of the three is something the six checks can produce, and that is the point of writing them
 down here: a green harness run is a floor.

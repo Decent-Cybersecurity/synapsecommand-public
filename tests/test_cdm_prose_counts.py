@@ -846,14 +846,33 @@ def test_the_counterfactual_release_count_is_the_entries_plus_the_first_release(
 # failure `test_the_historical_statement_of_the_count_is_still_inside_the_history` catches in the
 # other direction.
 #
-# THE GAP THAT STAYS OPEN, STATED RATHER THAN IMPLIED
-# ---------------------------------------------------
+# THE GAP THAT STAYS OPEN, AND WHAT NOW STANDS WHERE IT WOULD BE CLOSED FROM
+# --------------------------------------------------------------------------
 # `SELF_SITES` is an allowlist and it has an allowlist's blind spot — the one recorded as debt in
-# `test_the_allowlist_covers_every_site_the_sweep_had_to_fix`, and this round does not close it. A
-# count added to this module's prose LATER is invisible to it, exactly as a document outside `SITES`
-# stating the adapter count is invisible to that. The file-local form of the discovery sweep — every
-# spelled number in this file's comments and docstrings required to be pinned, derived, or exempt on
-# a named ground — would close it, and it is not written. Nothing below covers it.
+# `test_the_allowlist_covers_every_site_the_sweep_had_to_fix`. A count added to this module's prose
+# LATER is invisible to it, exactly as a document outside `SITES` stating the adapter count is
+# invisible to that.
+#
+# The file-local form of the discovery sweep — every number in one file required to be pinned,
+# derived, or exempt on a named ground — is what closes a gap of this shape, and it is no longer
+# hypothetical. The last section of this module writes it, for `packages/cdm/synapse_cdm/README.md`,
+# narrowed to numbers that grammatically qualify an adapter, a document or a site. It earned its
+# place immediately: it found a stale count in the very document the sweep protocol is written down
+# in, and two correctly-exempt sites that a hand sweep of the same file had walked straight past.
+#
+# It is still NOT written for THIS file, and the reason is a measurement rather than an
+# unwillingness. The same shape finds several times as many hits here as it does in that README, and
+# almost none of them would be pins. This module is the RECORD of every drift the sweep has ever
+# repaired, so nearly every number in it is past-tense narrative, a pre-repair exhibit, or a
+# quotation of a changelog entry — each needing its own exempt row carrying its own ground. That is
+# the module header's objection to a general scanner arriving one file in: an exemption list that is
+# almost the whole file does not gate the file, it restates it, and a restatement is the thing this
+# module exists to refuse.
+#
+# So the gap stays open, and what it needs is now legible: a cheaper discriminator than grammar.
+# Most likely the exempt GROUNDS themselves becoming structural — "inside a past-tense sentence",
+# "inside a quoted span" — so the sweep decides them instead of a person asserting them row by row.
+# Until something like that exists, this is debt and not an oversight. Nothing below covers it.
 
 THIS_MODULE = pathlib.Path(__file__).resolve()
 
@@ -1048,3 +1067,263 @@ def test_the_pre_repair_quotations_are_still_quotations_of_repaired_bytes(quotat
             "written for a historical one — the same spread "
             "`test_the_historical_statement_of_the_count_is_still_inside_the_history` refuses"
         )
+
+
+# ================== the package README's own count-bearing prose, swept FILE-LOCALLY
+#
+# Every section above is an allowlist, and each one records the same blind spot: it cannot find a
+# site nobody has added to it. `SELF_SITES` states the file-local form of the closure that would
+# fix that — every number in one file required to be pinned, derived, or exempt on a named ground —
+# and states that it is not written. This section writes it, for ONE file and inside ONE
+# fact-class, which is what makes the exemption list finite instead of larger than the sweep it
+# replaces.
+#
+# The file is `packages/cdm/synapse_cdm/README.md`, which is where the roster sweep protocol is
+# WRITTEN DOWN. That is the reason it goes first: the document instructing the next person to check
+# every site that states a number was itself carrying a stale one. Step 2 worked the divergence
+# between the two pair formulas at a roster of TEN — "At ten it is 90 against 45" — two adapters
+# after the roster left ten, in the step whose whole subject is that a restated count decays. Both
+# of its numbers were wrong, and so was the roster word it hung them on.
+#
+# THE SHAPE, AND WHY IT IS NARROW
+# -------------------------------
+# A number word DIRECTLY qualifying `adapter`, `document` or `site`. That is the roster fact-class
+# and almost nothing else: it does not match "two altitudes that are two different measurements",
+# "the six known gaps", or "ten such sentinels", which is the objection the module header raises to
+# a general scanner and which stands. It is step 1 of the sweep protocol — grep every spelled
+# number near the word "adapter" — narrowed from the tree to one file and from proximity to
+# grammar, so that the result is small enough to adjudicate one hit at a time.
+#
+# It found two sites a hand sweep of this file had already missed — "Two documents disagreed" and
+# "Two sites this round" — both correctly exempt, and both invisible to a reader who was looking
+# for the word "adapters".
+#
+# WHAT THE SHAPE STILL CANNOT SEE, STATED RATHER THAN IMPLIED
+# -----------------------------------------------------------
+# A count that states the roster without naming it. Step 2's repaired sentence is caught at all
+# only because it was rewritten to say "adapters"; the two DIGITS in it are matched by nothing here
+# and are pinned by a row instead. Grammar is a proxy for subject matter and a proxy has a gap. The
+# row is the belt; this sweep is the braces. Neither is quoted back here — a quotation of a guarded
+# site is an unguarded restatement of it, which is the defect `SELF_SITES` above exists for.
+
+PKG_README = "packages/cdm/synapse_cdm/README.md"
+
+#: The number words this repository spells counts with, longest first so a hyphenated compound is
+#: preferred over its own first half.
+_NUMBER_WORD = "|".join(sorted([*_UNITS, *_TENS], key=len, reverse=True))
+
+#: A number DIRECTLY qualifying one of the three nouns the roster fact-class is stated in.
+COUNTED_NOUN = re.compile(
+    rf"(?<![\w-])(?:{_NUMBER_WORD})(?:-(?:{_NUMBER_WORD}))?[ -](?:adapters?|documents?|sites?)"
+    r"(?![\w])",
+    re.I,
+)
+
+
+def stated(word: str) -> int:
+    """A count as this repository writes it: spelled, or in digits.
+
+    `spelled()` alone is not enough here. The pair arithmetic is written in DIGITS at every site
+    that works it — "72 against 36" is how the sweep protocol states the divergence it found —
+    because those numbers are arithmetic rather than prose, while the roster they are derived from
+    is spelled. One sentence, both conventions.
+    """
+    return int(word) if word.isdigit() else spelled(word)
+
+
+class ReadmeSite:
+    """One count-bearing sentence in the package README, and a derivation per number it states."""
+
+    def __init__(self, label: str, pattern: str, derivations: dict):
+        self.label = label
+        self.pattern = pattern
+        self.derivations = derivations
+
+
+def _roster() -> int:
+    return len(shipped_adapters())
+
+
+#: The counts this file states as live claims, each pinned to the structure that decides it.
+PKG_README_SITES: tuple[ReadmeSite, ...] = (
+    # Step 2 works the divergence between the two pair conventions at TODAY'S roster, and states
+    # all three numbers. It is pinned to the roster rather than re-hardcoded, so the next adapter
+    # moves it or fails the build — which is what the step it lives in tells the reader to do.
+    #
+    # `N×(N−1)` is derived here even though `pairs()` is the convention this repository harmonised
+    # on. The sentence's whole subject is that the two formulas disagree, so the rejected one is
+    # load-bearing prose and has to be as right as the accepted one.
+    ReadmeSite(
+        "step 2's worked divergence between the two pair conventions",
+        r"At today's (?P<n>[a-z]+) adapters it is (?P<ordered>\d+) against (?P<unordered>\d+)\.",
+        {
+            "n": _roster,
+            "ordered": lambda: _roster() * (_roster() - 1),
+            "unordered": lambda: pairs(_roster()),
+        },
+    ),
+    # How many documents the allowlist above covers, stated in the paragraph that introduces it.
+    # Derived from `SITES` itself, so widening the allowlist moves the prose or fails.
+    ReadmeSite(
+        "the allowlist's own document count",
+        r"now pins the sites in (?P<n>[a-z]+) documents",
+        {"n": lambda: len({site.path for site in SITES})},
+    ),
+)
+
+#: Numbers in this file that qualify one of those nouns and are NOT live claims about today's
+#: roster, each quoted as it stands with the ground it is exempt on. The grounds are the ones the
+#: sweep protocol itself names in its step 6, plus the two the module header rules on above:
+#: past-tense narrative, the "of the day" marker, a changelog entry, a pre-repair quotation — and
+#: the one grammar alone cannot separate, a singular referent that is not a count at all.
+PKG_README_EXEMPT: tuple[tuple[str, str], ...] = (
+    ("it is the one adapter whose egress format has nowhere to park a field it cannot map",
+     "singular referent, not a count — 'the one adapter' names AIS, it does not tally adapters"),
+    ("they are here rather than in one adapter's notes",
+     "singular referent, not a count"),
+    ("it had been undercounting itself by one adapter since adapter #6",
+     "past-tense narrative about a named drift, and 'one adapter' is its unit rather than a total"),
+    ("folklore that produced a nine-adapter sweep reporting nine greens with one of them vacuous",
+     "past-tense narrative about a specific past run — step 6's first exempt class"),
+    ("which still said \"five adapters means ten translations\"",
+     "verbatim quotation of pre-repair bytes in `synapse_cdm/__init__.py`; see "
+     "PKG_README_PRE_REPAIR, which requires it to be absent from that file"),
+    ("four adapters later",
+     "past-tense narrative about how far that site had drifted by the adapter #11 sweep"),
+    ("Two documents disagreed on whether it is",
+     "past-tense narrative about the disagreement the sweep found and harmonised"),
+    ("which for the nine adapters of the day was 72 against 36",
+     "the 'of the day' marker — the convention step 6 names for a past count in the present tense"),
+    ("half-updated — \"seven adapters cannot grow six\"",
+     "verbatim quotation of the bytes 94c000a repaired; see PKG_README_PRE_REPAIR"),
+    ("argued the 1.0.0-not-0.x ruling from \"ten adapters are shipped",
+     "verbatim quotation of the bytes the SDK close-out sweep repaired in `version.py`; see "
+     "PKG_README_PRE_REPAIR"),
+    ("and `stanag4676.py` said three adapters share the `ICAO24` source-id namespace",
+     "past-tense narrative about what that file said before the SDK close-out sweep"),
+    ("both describe \"a gate sweep over all nine adapters\"",
+     "quotation of a past-tense narrative in `harness.py` and `adapter.py` — the example step 6 "
+     "gives for its own first exempt class"),
+    ("where \"now serves three adapters\" means at that release",
+     "quotation of a changelog entry — step 6's second exempt class, and the one "
+     "`HISTORICAL_SITE` above rules on in the file it lives in"),
+    ("Two sites this round said what gap 1's table already said",
+     "past-tense narrative about what that round found"),
+    ("`ais.py` at \"four keys across two adapters\"",
+     "verbatim quotation of pre-repair bytes in `ais.py`; see PKG_README_PRE_REPAIR"),
+)
+
+#: Sentences this file quotes as they stood BEFORE a named repair, and the file each was repaired
+#: in. Same discipline as `PRE_REPAIR_QUOTATIONS` above, applied to the README's exhibits rather
+#: than to this module's: an exhibit is exempt only while it is genuinely overtaken.
+PKG_README_PRE_REPAIR: tuple[tuple[str, str], ...] = (
+    ("five adapters means ten translations", "packages/cdm/synapse_cdm/__init__.py"),
+    ("seven adapters cannot grow six", "packages/cdm/synapse_cdm/symbology.py"),
+    ("seven adapters cannot grow six", "docs/docs/cdm/entity.mdx"),
+    ("ten adapters are shipped", "packages/cdm/synapse_cdm/version.py"),
+    ("four keys across two adapters", "packages/cdm/synapse_cdm/adapters/ais.py"),
+)
+
+
+def pkg_readme() -> str:
+    return flat((REPO / PKG_README).read_text())
+
+
+@pytest.mark.parametrize("site", PKG_README_SITES, ids=lambda s: s.label)
+def test_every_live_count_in_the_package_readme_is_derived_from_the_tree(site):
+    """Each live count in the sweep protocol's own document, against what decides it.
+
+    The failure this earned: step 2 stated the divergence at a roster of ten while twelve shipped,
+    inside the step that tells the reader to check the arithmetic at every site that states a
+    number. A pattern that stops matching is a FAILURE, for the reason the header gives.
+    """
+    text = pkg_readme()
+    found = list(re.finditer(site.pattern, text))
+    assert len(found) == 1, (
+        f"{site.label}: the sentence this is anchored to matched {len(found)} times, expected 1.\n"
+        f"  pattern: {site.pattern}\n"
+        "Re-anchor it deliberately if the sentence was rewritten; do not delete the row"
+    )
+    for group, derive in site.derivations.items():
+        word = found[0].group(group)
+        expected = derive()
+        assert stated(word) == expected, (
+            f"{site.label}: {PKG_README} states {word!r} ({stated(word)}) for {group!r} and the "
+            f"tree gives {expected}.\n  matched: {found[0].group(0)!r}\n"
+            "This is the document the roster sweep is written down in. A stale number here is the "
+            "instructions being wrong about the thing they instruct"
+        )
+
+
+def test_the_package_readme_states_no_adapter_count_this_module_neither_pins_nor_exempts():
+    """The file-local discovery sweep, in the direction an allowlist cannot give itself.
+
+    Every other closure here can only stop its list SHRINKING. This one reads the file and requires
+    each hit to be accounted for, so a count ADDED to this README later fails a build until someone
+    rules it — which is the debt `test_the_allowlist_covers_every_site_the_sweep_had_to_fix` records
+    and `SELF_SITES` restates, closed for one file inside one fact-class.
+
+    Accounted for means one of three things, and the third is why this is affordable: pinned by a
+    row above, pinned by an existing `SITES` row for this path, or exempt on a ground stated beside
+    the quotation. An exemption whose quotation has left the file fails too — an exemption covering
+    no site reads as a live ruling, which is what
+    `test_the_historical_statement_of_the_count_is_still_inside_the_history` refuses one section up.
+    """
+    text = pkg_readme()
+    covered: list[tuple[int, int]] = []
+
+    for site in PKG_README_SITES:
+        found = list(re.finditer(site.pattern, text))
+        assert len(found) == 1, f"{site.label}: matched {len(found)} times, expected 1"
+        covered.append(found[0].span())
+
+    for site in SITES:
+        if site.path == PKG_README:
+            covered.append(site.match().span())
+
+    for quotation, ground in PKG_README_EXEMPT:
+        assert ground.strip(), f"{quotation!r} is exempt on no stated ground, which is not an exemption"
+        spans = [m.span() for m in re.finditer(re.escape(quotation), text)]
+        assert spans, (
+            f"{PKG_README} no longer contains {quotation!r}, which this list exempts on the ground "
+            f"{ground!r}. Drop the row with the prose; an exemption pointing at nothing reads as a "
+            "live ruling on a site that is gone"
+        )
+        covered.extend(spans)
+
+    strays = []
+    for m in COUNTED_NOUN.finditer(text):
+        if not any(lo <= m.start() and m.end() <= hi for lo, hi in covered):
+            strays.append(f"{m.group(0)!r} in …{text[max(0, m.start() - 90):m.end() + 90]}…")
+    assert not strays, (
+        f"{PKG_README} states {len(strays)} count(s) that nothing here pins and nothing here "
+        "exempts:\n  " + "\n  ".join(strays) + "\n"
+        "Rule each one: pin it to a derivation in PKG_README_SITES if it is a live claim about "
+        "today's tree, or add it to PKG_README_EXEMPT with the ground it is exempt on. Leaving it "
+        "unruled is the state every site in this module was in before it drifted"
+    )
+
+
+@pytest.mark.parametrize("quotation,path", PKG_README_PRE_REPAIR,
+                         ids=[f"{q.split()[0]}-{p.rsplit('/', 1)[-1]}"
+                              for q, p in PKG_README_PRE_REPAIR])
+def test_the_readmes_pre_repair_quotations_are_still_quotations_of_repaired_bytes(quotation, path):
+    """The README's exhibits, held to the discipline `PRE_REPAIR_QUOTATIONS` holds this module's.
+
+    The README quotes sentences as they stood before a repair, and each carries a number today's
+    roster has overtaken. They are exempt from every count check for the reason an exhibit always
+    is — an exhibit that gets updated stops being one — and that ruling holds only while the repair
+    does. If the source file ever says again what the README says it used to say, the exhibit has
+    become a live count wearing a dead exemption.
+    """
+    assert quotation in pkg_readme(), (
+        f"{PKG_README} no longer quotes {quotation!r}. Drop the row with the prose rather than "
+        "leaving it pointing at nothing"
+    )
+    file = REPO / path
+    assert file.exists(), f"{path} does not exist; this exemption is stale"
+    assert quotation not in flat(file.read_text()), (
+        f"{path} says {quotation!r} again, which {PKG_README} quotes as PRE-repair bytes. Either "
+        "the repair was reverted, or the exhibit is now a live claim carrying an exemption written "
+        "for a historical one"
+    )
