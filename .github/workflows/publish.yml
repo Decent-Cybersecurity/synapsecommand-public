@@ -213,8 +213,12 @@ jobs:
           python -m twine check --strict dist/*
 
       - name: The published schemas are CURRENT
+        # From the repository ROOT, which is where MIGRATIONS.md's sequence runs it and where the
+        # published `schemas/` directory actually is. The first draft set
+        # `working-directory: packages/cdm` on the assumption that a package's schemas live under
+        # the package, and got six `missing` lines — the same wrong assumption also had the
+        # derivations step below listing `packages/cdm/schemas`.
         run: python -m synapse_cdm.schemas --check --out schemas
-        working-directory: packages/cdm
 
       - name: Condition 4 — the derivations, for notes that are derived and not remembered
         run: |
@@ -241,7 +245,7 @@ jobs:
             echo '### The schemas'
             echo
             echo '```'
-            ls -1 packages/cdm/schemas
+            ls -1 schemas
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
 
