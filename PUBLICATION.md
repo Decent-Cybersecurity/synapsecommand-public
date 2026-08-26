@@ -140,13 +140,14 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Six entries, and the set does not move — entries change **state**, they are not deleted. Two are
-**settled**: entry 1 is a ruling, and entry 5 is closed by an act — the distribution the SDK round
-built and stopped short of publishing was uploaded, and the entry now records what was done, what
-was measured afterwards and which step of its own sequence was skipped. Entry 6 is the newest and
-is **open by construction**: it is the human half of Trusted Publishing, written before the machine
-half the way entry 5 was written before the upload it describes. Entries 2, 3 and 4 are
-open. None blocks anything.
+Six entries, and the set does not move — entries change **state**, they are not deleted. Three are
+**settled**: entry 1 is a ruling, and entries 5 and 6 are closed by acts. Entry 5 records the 1.0.0
+upload a human performed, what was measured off the index afterwards, and which step of its own
+sequence was skipped. Entry 6 is the one that retired the way entry 5 worked: it was written open,
+before the configuration it specified existed, and it closed in three acts — a trusted publisher
+registered on PyPI, 1.1.0 published through the workflow over OIDC, and the 1.0.0 API token revoked.
+Reading the two in order is the whole story of how publishing this package stopped needing a
+credential. Entries 2, 3 and 4 are open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
@@ -390,7 +391,7 @@ mode the open form of it named.
 | 5 | `build`, `twine upload`, verify from a clean venv | ran; the verification is the table above |
 | 6 | Update `README.md`, `docs/docs/intro.mdx` and this entry | this commit and the one after it |
 
-### 6. Trusted Publishing works, and one step of retiring the old way is still human — OPEN
+### 6. Trusted Publishing is the only way in — CLOSED, and the old door is revoked rather than unused
 
 `.github/workflows/publish.yml` publishes `synapse-cdm` to PyPI over OIDC, with no password, no
 token and no secret in the file. That workflow is on `main` and it **cannot upload anything yet**:
@@ -408,6 +409,10 @@ the second is not implied by the first: registering the publisher makes an OIDC 
 and revoking the token is what makes it the *only* way in. A repository with both a working trusted
 publisher and a live long-lived token has not retired anything — it has two doors and one of them
 is still the one that was used for 1.0.0.
+
+> **Both have happened.** Written when neither had. The publisher was registered, 1.1.0 published
+> through it on 2026-08-26, and the token was revoked the same day — in that order, which the step
+> C section explains was the only safe one. There is one door.
 
 #### Step A — register the trusted publisher on PyPI
 
@@ -527,8 +532,10 @@ than reasoning about its blast radius.
   those files reached the index, because no API token was used and none was present to use. The
   forecast in this bullet — "the only evidence that A happened will be a successful 1.1.0 publish"
   — is what actually happened, and it is now the evidence.
-* **Not that the old token is gone.** It is live as this is written. Until step C, `synapse-cdm`
-  has two upload paths, and one of them is now provably unnecessary.
+* ~~**Not that the old token is gone.** It is live as this is written.~~ **It is gone.** Revoked
+  2026-08-26; see step C. The sentence is struck rather than deleted for the same reason as the one
+  above it — this entry was written forwards, and the state it was written in is what makes it
+  readable.
 
 #### The publish, measured
 
@@ -575,21 +582,43 @@ console scripts working. The GitHub release for `v1.1.0` carries the notes and b
 | — a tag published through the workflow | **done** | run 32944124955, digests above |
 | C — the 1.0.0 API token revoked | **NOT DONE** | only the maintainer |
 
-#### Step C is the only thing left, and it is not done
+#### Step C — done. The token is revoked, not merely unused
 
-The token used for the 1.0.0 upload is still live. It is now demonstrably unnecessary — 1.1.0
-reached the index without it — which removes the one reason to keep it: there is no longer a
-release path that needs it.
+**Revoked on 2026-08-26**, at `pypi.org` → Account settings → API tokens, by the maintainer, after
+1.1.0 had already published without it. OIDC is now the only way to upload to this project.
 
-**`pypi.org` → Account settings → API tokens → the token used for the 1.0.0 upload → Remove token**
+The order mattered and is worth recording as the reason this step waited: a token revoked while it
+is still the only working path is a release nobody can cut. So the sequence was register the
+publisher, publish once through it, and only then revoke — each step leaving a working path behind
+it. The reverse order would have been a self-inflicted outage with no way back except issuing
+another token, which is the thing being retired.
 
-This is not claimed here and will not be until the maintainer says it is done. An unused token is a
-credential that still works, held by whoever holds it, with no expiry and no record of where it has
-been copied; "we do not use it any more" is a statement about intent and revocation is a statement
-about capability. The whole point of this round was that no credential exists to leak, and that is
-true of the *workflow* today and not yet true of the *project*.
+**Revoked and not merely unused, which was the whole point.** An unused token is a credential that
+still works: no expiry, held by whoever holds it, with no record of where it has been copied. "We
+do not use it any more" is a statement about intent; revocation is a statement about capability, and
+only the second one survives the laptop it was pasted into. Entry 5 could not observe whether that
+token was project-scoped and neither could this entry — which was an argument for removing it rather
+than reasoning about its blast radius, and is now moot.
 
-**Closes when:** step C has removed the token. Nothing else is outstanding.
+**What is verifiable, and by whom.** Nothing in this tree can see a revoked token, and neither can
+a stranger: PyPI does not publish account token state. This rests on the maintainer's word, as step
+A did before an upload proved it. What a stranger CAN check is the half that matters more — that
+1.0.0 and 1.1.0 are both on the index, that 1.1.0's digests match a public Actions run, and that
+the workflow which produced it contains no credential. The claim being made here is narrower than
+"this project cannot be uploaded to by anyone else"; it is that the one long-lived credential this
+repository knows about has been withdrawn.
+
+**CLOSED 2026-08-26.** All three steps are done: the publisher is registered, a tag has published
+through the workflow, and the token is revoked. What this entry set out to change is changed — the
+next release needs a tag and a reviewer, and no credential at all.
+
+**What closing this does not close.** The failure path has still never run. A refused upload — a
+publisher that stops matching, a renamed workflow file, an environment renamed on one side only —
+has not been observed, because the configuration was correct the first time, so the recovery
+procedure is written down and unexercised. If an upload is ever refused, the fix is the four values
+on this page; there is no longer a token to fall back to, and that is the intended state rather than
+a gap. `.github/workflows/publish.yml`'s header carries the same warning at the point somebody
+would be tempted.
 
 ## The deployment was not affected
 

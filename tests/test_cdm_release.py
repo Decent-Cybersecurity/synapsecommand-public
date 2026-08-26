@@ -283,16 +283,38 @@ def _released_tag_for_this_version() -> str | None:
 
 
 def _package_tree_moved_since(tag: str) -> list[str]:
-    """Package files that differ between the tagged commit and `HEAD`.
+    """Package files that differ from the tagged commit — committed OR still in the working tree.
 
     Scoped to `packages/cdm` because that is the distribution: a documentation-only commit at the
     repository root changes nothing a release ships, and requiring a release note for it would
-    make the gate noise. `HEAD` and not the working tree — the unit a release is cut from is a
-    commit, and an uncommitted edit is not yet anything.
+    make the gate noise.
+
+    WHY THE WORKING TREE IS INCLUDED, HAVING ONCE BEEN DELIBERATELY EXCLUDED
+    -----------------------------------------------------------------------
+    This compared `tag..HEAD` only, on the reasoning that "the unit a release is cut from is a
+    commit, and an uncommitted edit is not yet anything". The reasoning is sound and the
+    consequence was not: the prose half of this check reads the WORKING TREE, so the two halves
+    looked at different trees, and there was a window in which the gate was unsatisfiable.
+
+    Edit a package file after a release, add the `### Unreleased` entry the gate demands, run the
+    suite before committing — and it fails, because `tag..HEAD` is still empty while the section is
+    already on disk. Its message then says the section "describes changes that are not there" and
+    invites deleting it, which is precisely the wrong move and the one a contributor in a hurry
+    would make. It happened on the commit that closed ledger entry 6.
+
+    Both sources are now consulted, so the check is evaluable at every moment rather than only at
+    the two ends of a commit. An uncommitted edit still is not a release — nothing here says it is —
+    but it IS a change to the distribution, and a change to the distribution is what this gate is
+    about.
     """
-    out = _git("diff", "--name-only", tag, "HEAD", "--", "packages/cdm")
-    assert out.returncode == 0, out.stderr
-    return sorted(line.strip() for line in out.stdout.splitlines() if line.strip())
+    committed = _git("diff", "--name-only", tag, "HEAD", "--", "packages/cdm")
+    assert committed.returncode == 0, committed.stderr
+    # `git diff <tag> -- <path>` with no second revision compares the tag to the working tree,
+    # which covers staged and unstaged edits in one call.
+    working = _git("diff", "--name-only", tag, "--", "packages/cdm")
+    assert working.returncode == 0, working.stderr
+    both = set(committed.stdout.splitlines()) | set(working.stdout.splitlines())
+    return sorted(line.strip() for line in both if line.strip())
 
 
 UNRELEASED = "### Unreleased"

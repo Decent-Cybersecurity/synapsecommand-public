@@ -126,20 +126,24 @@ Two things are lost by taking this path, and both are the reason it is a fallbac
   upload. `PUBLICATION.md` entry 5 is what that looks like a month later — it is the record of the
   1.0.0 upload done this way, and of the step in its own sequence that nobody noticed had been
   skipped until a stranger looked the package up on TestPyPI and got a 404;
-* **it needs a credential that is meant to be gone.** Ledger entry 6 retires the API token used
-  for 1.0.0, deliberately and by revocation rather than by disuse. Using this path after that
-  means issuing a new token, and issuing a token to work around a broken workflow is how the
-  workflow stays broken. Fix the workflow.
+* **the credential it needs does not exist.** The API token used for 1.0.0 was **revoked** on
+  2026-08-26 — by revocation rather than by disuse, because an unused token is one that still
+  works. `PUBLICATION.md` entry 6 records it. So this path cannot simply be taken: it requires
+  issuing a NEW token first, and issuing a token to work around a broken workflow is how the
+  workflow stays broken. Fix the workflow. That the fallback now costs something is deliberate —
+  it is written down so nobody improvises it, not so it stays convenient.
 
 ### What the workflow does, and what it still cannot
 
 Publishing to PyPI is automated. `.github/workflows/publish.yml` runs on a pushed tag matching
 `v*`: it builds the sdist and wheel, runs conditions 1, 2 and 3 above against what it built, and
 then — only after those pass, only for a tag, and only once a required reviewer approves the `pypi`
-environment — uploads over OIDC with no token, password or secret anywhere in the file. The
-long-lived API token used for 1.0.0 is retired by `PUBLICATION.md` ledger entry 6, which also
-carries the four values that must be registered on pypi.org before any of this can upload
-anything. Until that registration exists, the workflow runs and the upload is refused.
+environment — uploads over OIDC with no token, password or secret anywhere in the file. It first
+did so for 1.1.0 on 2026-08-26, and the long-lived API token used for 1.0.0 was revoked the same
+day, so **OIDC is now the only way to upload to this project.** `PUBLICATION.md` entry 6 carries
+the run, the artefact digests, and the four values registered on pypi.org that the upload is matched
+against — if any of them stops matching the upload is refused, and there is deliberately no
+credential to fall back to.
 
 Until this round the section said the opposite, on the grounds that automating an upload before
 there was anything to run it on would be inventing a mechanism. There is something to run it on
@@ -164,6 +168,24 @@ Three things are still deliberately a person's:
 measured off the index afterwards, and which step of it did not run.
 
 ## History
+
+### Unreleased — on `main`, in no release yet
+
+Nothing below is in **1.1.0**, the version PyPI serves. Recorded as it lands, which is condition 4
+of "What a release requires" — notes derived rather than remembered.
+
+- **Two corrections to this file's own prose, made true by an act that happened after 1.1.0
+  shipped.** `PUBLICATION.md` ledger entry 6 closed on 2026-08-26 when the 1.0.0 API token was
+  revoked, and closing it falsified two sentences here. "What the workflow does" said the upload
+  would be refused *until* a trusted publisher was registered on pypi.org — it is registered, and
+  1.1.0 went through it. "The manual fallback" said the credential that path needs was *meant to
+  be* gone; it is gone. Both now read in the past tense, and the fallback section says plainly that
+  taking it would require issuing a new token first.
+
+  Recorded rather than folded in silently because this file ships inside the wheel: a reader who
+  installs 1.1.0 gets the earlier wording, which was accurate on the day that artefact was built.
+
+  **Package PATCH when released** — shipped documentation corrected, no code, no schema touched.
 
 ### 1.1.0 — two adapters, a discoverable roster, and the first release nobody uploaded
 
