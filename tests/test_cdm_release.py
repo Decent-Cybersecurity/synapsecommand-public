@@ -193,31 +193,68 @@ def test_the_release_procedure_is_written_down_and_states_its_four_conditions():
         )
 
 
-def test_the_procedure_does_not_promise_a_publishing_mechanism_that_does_not_exist():
-    """No CI here, so no step may read as though something runs by itself.
+def test_the_procedure_describes_the_publishing_mechanism_that_now_exists():
+    """INVERTED. This test used to assert the ABSENCE of `.github/workflows`.
 
-    The same failure `tests/test_cdm_deploy_workflow.py` was written for: a claim that a push
-    deploys, made in the one window where nothing could falsify it. A release procedure that says
-    "the tag triggers the upload" would be that claim again, one artefact along.
+    Its earlier form required the procedure to say "there is no CI in this repository", and it
+    carried its own instruction for the day that stopped being true: "a workflows directory now
+    exists, so this test is asserting the absence of something that is present. Re-decide the
+    procedure's 'What is deliberately not automated' section rather than deleting this check."
+    `.github/workflows/publish.yml` landed, the check failed, and this is that re-decision.
+
+    The reason it is inverted rather than removed is that the failure it guards is unchanged. It
+    was written for the mistake `tests/test_cdm_deploy_workflow.py` found — a claim that a push
+    deployed the documentation site, made in the one window where nothing could falsify it, left
+    standing for a round. Deleting the check would restore exactly that window: prose describing an
+    upload mechanism, with nothing comparing the prose to the mechanism. So the direction flips and
+    the closure stays. Both halves are now required to hold:
+
+    * the mechanism the procedure describes must EXIST — a named workflow file, on disk;
+    * the procedure must not claim what the mechanism does not do, which is where "there is no CI"
+      now lives: it is false, so it must be gone.
+
+    `tests/test_cdm_trusted_publishing.py` holds the workflow's own properties — the SHA pins, the
+    absent credential, the tag guard on the publish job. This test is only about the PROSE being
+    true of it.
     """
     text = MIGRATIONS.read_text()
     section = text[text.index("## Releasing the package"):text.index("\n## History")]
-    assert not (REPO / ".github" / "workflows").exists(), (
-        "a workflows directory now exists, so this test is asserting the absence of something "
-        "that is present. Re-decide the procedure's 'What is deliberately not automated' section "
-        "rather than deleting this check"
+    workflows = REPO / ".github" / "workflows"
+
+    assert workflows.exists(), (
+        "the .github/workflows directory is gone, so the procedure below describes a publishing "
+        "mechanism that no longer exists. If automation was deliberately removed, this test goes "
+        "back to its previous form — asserting the absence and requiring the procedure to say "
+        "'there is no CI in this repository' — rather than being deleted"
     )
-    for forbidden in ("triggers the upload", "on push", "automatically publishes"):
-        assert forbidden not in section.lower(), (
-            f"the release procedure says {forbidden!r}. There is no CI in this repository — no "
-            ".github/workflows — so a push runs nothing at all, and a procedure claiming "
-            "otherwise repeats the mistake tests/test_cdm_deploy_workflow.py was written for, "
-            "one artefact along"
+
+    named = re.findall(r"`(\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml)`", section)
+    assert named, (
+        "the release procedure describes publishing but names no workflow file. A procedure that "
+        "says 'CI publishes it' without saying WHICH file is a procedure nobody can check, and "
+        "the file's name is load-bearing: PyPI matches the OIDC token against the workflow path"
+    )
+    missing = sorted({n for n in named if not (REPO / n).exists()})
+    assert not missing, (
+        f"the release procedure names workflow file(s) that do not exist: {missing}. This is the "
+        "deploy-mechanism failure one artefact along — prose describing a trigger that no file "
+        "provides"
+    )
+
+    assert "no CI in this repository" not in section, (
+        "the release procedure still says there is no CI in this repository. There is: "
+        f"{sorted(p.name for p in workflows.glob('*.y*ml'))}. The sentence was true and is now the "
+        "most misleading line in the document, because it tells a reader not to look for the thing "
+        "that will do the upload"
+    )
+
+    for forbidden, why in (
+            ("no `.github/workflows`", "the same claim in its other wording"),
+            ("a release is a sequence a person runs",
+             "the whole sequence is no longer a person's; the upload is the workflow's")):
+        assert forbidden not in section, (
+            f"the release procedure still states {forbidden!r} — {why}"
         )
-    assert "no CI in this repository" in section, (
-        "the procedure has to SAY that nothing is automated. Silence on the point is what let "
-        "the deploy mechanism be wrong for a whole round"
-    )
 
 
 # ------------------------------------------------ what rides on `main` between two releases

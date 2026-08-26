@@ -84,13 +84,37 @@ The tag is **annotated** because a release is a statement by a person: an annota
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody.
 
-### What is deliberately not automated
+### What the workflow does, and what it still cannot
 
-Publishing to PyPI. There is no CI in this repository — no `.github/workflows`, and the
-documentation site is deployed by direct upload rather than by a push — so a release is a
-sequence a person runs. Automating an upload before there is anything to run it on would be
-inventing a mechanism. `PUBLICATION.md` ledger entry 5 carries the sequence that was followed for
-1.0.0, what was measured off the index afterwards, and which step of it did not run.
+Publishing to PyPI is automated. `.github/workflows/publish.yml` runs on a pushed tag matching
+`v*`: it builds the sdist and wheel, runs conditions 1, 2 and 3 above against what it built, and
+then — only after those pass, only for a tag, and only once a required reviewer approves the `pypi`
+environment — uploads over OIDC with no token, password or secret anywhere in the file. The
+long-lived API token used for 1.0.0 is retired by `PUBLICATION.md` ledger entry 6, which also
+carries the four values that must be registered on pypi.org before any of this can upload
+anything. Until that registration exists, the workflow runs and the upload is refused.
+
+Until this round the section said the opposite, on the grounds that automating an upload before
+there was anything to run it on would be inventing a mechanism. There is something to run it on
+now, so the claim is retired rather than qualified — and it is not quoted back here, because the
+test that holds this prose to the tree forbids the old wording as a *substring* and cannot tell an
+assertion from a quotation of a retired one. That is the right way round: a gate that accepted the
+false sentence inside quotation marks would accept it anywhere. The superseded text is in git and
+in `PUBLICATION.md` entry 5, which is where a record of what was believed when belongs.
+
+Three things are still deliberately a person's:
+
+* **the tag.** Nothing creates it. The workflow is triggered by one and refuses a lightweight tag
+  outright, on the grounds this document already gives — a lightweight tag records nobody;
+* **the approval.** The `pypi` environment carries required reviewers, so the upload waits for a
+  human. A PyPI upload cannot be undone and its filename can never be reused, which makes it the
+  only irreversible step in a release; the ruling, and the case against it, are in ledger entry 6;
+* **condition 4, the notes.** A workflow cannot satisfy "derived, not remembered" by generating a
+  document — the condition is about what the person writing the notes read. What the workflow does
+  instead is print the derivations into its run summary, so the notes can be copied off a run.
+
+`PUBLICATION.md` ledger entry 5 carries the sequence that was followed for 1.0.0 by hand, what was
+measured off the index afterwards, and which step of it did not run.
 
 ## History
 

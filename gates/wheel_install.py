@@ -61,6 +61,7 @@ same standing as the pin sweep. The half of it that IS decidable offline lives i
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import pathlib
@@ -117,6 +118,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_prose_counts.py": "the adapter count in README, docs and CONTRIBUTING",
     "test_cdm_publication.py": "git history and the publication ledger",
     "test_cdm_release.py": "release tags against PACKAGE_VERSION",
+    "test_cdm_trusted_publishing.py": ".github/workflows against PUBLICATION.md entry 6",
     "test_cdm_version_floor.py": "every Python file in the repository, gates included",
 }
 
@@ -523,14 +525,19 @@ def check_test_slice(python: pathlib.Path, outside: pathlib.Path) -> str:
 
 
 def gate(source: pathlib.Path, workdir: pathlib.Path, *, label: str,
-         slice_tests: bool = True) -> Gate:
+         slice_tests: bool = True, built: dict | None = None) -> Gate:
+    """`built` is filled in with the artefacts this run judged, for `--export-dist`.
+
+    Handed in rather than returned, because the caller needs the paths even when a later check
+    fails: an export must be able to say "these are the bytes that were refused".
+    """
     result = Gate(label)
     builder_scripts = make_venv(workdir / "builder")
     must(run([str(builder_scripts / "python"), "-m", "pip", "install", "-q",
               "--disable-pip-version-check", "build"]), "pip install build")
 
     dist = workdir / "dist"
-    built: dict[str, pathlib.Path] = {}
+    built = built if built is not None else {}
     if not result.check("build", lambda: _build_into(built, source, dist, builder_scripts)):
         for name in ("closure", "manifest", "licences", "prose", "install", "metadata",
                      "import", "resources", "schemas", "harness", "scripts", "slice"):
@@ -614,6 +621,56 @@ def mutated_source(workdir: pathlib.Path) -> pathlib.Path:
     return target
 
 
+def export_dist(built: dict, destination: pathlib.Path) -> str:
+    """Copy the artefacts this gate JUDGED to `destination`, and print their digests.
+
+    WHY THIS EXISTS, AND WHY THE WORKFLOW DOES NOT BUILD ITS OWN
+    -----------------------------------------------------------
+    `.github/workflows/publish.yml` has to publish the bytes these 13 checks passed, and the
+    obvious arrangement — the workflow runs `python -m build`, then runs this gate — does not
+    achieve that. This gate builds its own distribution, so that arrangement produces TWO builds,
+    and two builds of one tree are not the same file:
+
+        build 1  synapse_cdm-1.0.0-py3-none-any.whl  7fced22ebf9de490...
+        build 2  synapse_cdm-1.0.0-py3-none-any.whl  5e0a8ecf02adf550...
+
+    The payloads are byte-identical — unzipped, the two trees `diff -r` clean. What differs is the
+    embedded timestamps on the entries the build itself generates (`.dist-info/METADATA`, `WHEEL`,
+    `RECORD`, and the gzip header of the sdist), and a zip stores those to a two-second resolution,
+    so two builds seconds apart differ. Nothing is wrong; wheels are simply not reproducible here.
+
+    That is enough to break the claim. A gate that passes build 1 while build 2 is uploaded has
+    checked a file that nobody will ever install, and the difference between the two is exactly the
+    metadata a consumer verifies. So there is ONE build: this one, and the workflow publishes what
+    it hands over.
+
+    THE GUARD
+    ---------
+    `--mutation-check` deliberately builds a second, broken distribution with `package-data`
+    emptied — a 559 KiB wheel with no fixtures in it. Exporting THAT would hand the publish job a
+    distribution this gate exists to refuse. Structurally it cannot happen: the export reads the
+    dict the non-mutant run filled. Structure is not a check, so the fixture assertion below is,
+    because "the export is wired to the right dict" is precisely the kind of thing that stays true
+    until someone refactors the runner.
+    """
+    destination.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(built["wheel"]) as archive:
+        fixtures = [n for n in archive.namelist() if "/fixtures/" in n and not n.endswith("/")]
+    if not fixtures:
+        raise Failed(
+            f"refusing to export {built['wheel'].name}: it carries no fixture files at all. That "
+            "is the shape of the wheel --mutation-check builds ON PURPOSE, so either the export is "
+            "reading the mutant's artefacts or the real build has developed the defect this gate "
+            "was written for. Either way it must not reach an index")
+    lines = []
+    for path in (built["sdist"], built["wheel"]):
+        shutil.copy2(path, destination / path.name)
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        lines.append(f"  {digest}  {path.name}")
+    return (f"exported to {destination} — {len(fixtures)} fixture files in the wheel\n"
+            + "\n".join(lines))
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--mutation-check", action="store_true",
@@ -621,14 +678,34 @@ def main(argv: list[str] | None = None) -> int:
                              "to refuse it")
     parser.add_argument("--keep", action="store_true",
                         help="do not delete the working directory (for inspection)")
+    parser.add_argument("--export-dist", metavar="DIR", default=None,
+                        help="copy the sdist and wheel THIS RUN judged into DIR, and print their "
+                             "SHA-256 digests. Only on a run with no failures — see export_dist()")
     args = parser.parse_args(argv)
 
     workdir = pathlib.Path(tempfile.mkdtemp(prefix="cdm-wheel-gate-"))
     status = 0
     try:
-        real = gate(DIST_SRC, workdir / "real", label="the wheel built from packages/cdm")
+        built: dict[str, pathlib.Path] = {}
+        real = gate(DIST_SRC, workdir / "real", label="the wheel built from packages/cdm",
+                    built=built)
         print(real.render())
         status = 1 if real.failed else 0
+
+        if args.export_dist:
+            # Refused on a failing run, and refused LOUDLY. An export that quietly produced
+            # nothing would leave the publish job with an empty artefact directory and a message
+            # about that instead of about the checks that failed here.
+            if real.failed:
+                print(f"\nnot exporting: {real.failed} of this run's checks failed, and the "
+                      "artefact a gate refused must not be the artefact a workflow uploads")
+                status = 1
+            else:
+                try:
+                    print("\n" + export_dist(built, pathlib.Path(args.export_dist)))
+                except Failed as refusal:
+                    print(f"\nexport refused: {refusal}")
+                    status = 1
 
         if args.mutation_check:
             print()
