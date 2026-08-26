@@ -518,3 +518,131 @@ def test_the_historical_statement_of_the_count_is_still_inside_the_history():
         "has been overtaken; if the two numbers ever meet, the exemption is doing nothing and "
         "the site should simply be checked like the others"
     )
+
+
+# --------------------------------------- the OTHER roster: adapters that landed with no schema change
+#
+# Twelve adapters ship and ELEVEN of them landed without a schema change — `pntmap` came with the
+# schema, so it is not in that set. Three documents state the eleven, and the number is the whole
+# argument for `PACKAGE_VERSION` and `SCHEMA_VERSION` being two numbers rather than one:
+#
+#   packages/cdm/synapse_cdm/version.py   "it holds **eleven** entries — eleven adapters"
+#   packages/cdm/synapse_cdm/MIGRATIONS.md  "is eleven entries long"
+#   docs/docs/changelog.mdx               "eleven adapters have shipped so far"
+#
+# Nothing derived it. All three were correct when this was written — checked by counting the
+# section's bullets rather than assumed, which is why they were left alone instead of "fixed" — and
+# all three would go stale together, silently, on the next adapter that lands with no schema change.
+# That is the shape the sweep in this module exists for, one roster along: the adapter-count sweep
+# above covers the count of SHIPPED adapters and could never see this one, because it is a count of
+# a different set that happens to be spelled the same way.
+#
+# The section's bullets are the derivation. It is the same section all three sentences point at, so
+# there is no fourth statement of the fact introduced here — only a reading of the one that is
+# already load-bearing.
+
+#: The heading in `MIGRATIONS.md` whose bullets ARE this count.
+NO_SCHEMA_CHANGE_HEADING = "### Adapters that landed with no schema change"
+
+#: Where the count is stated, and the pattern that finds it. `docs/docs/changelog.mdx` is included
+#: even though the page lists only nine of the eleven: `tests/test_cdm_changelog_claim.py` rules
+#: that the page is a curated summary and that page-omits-an-entry is designed NOT to fail, so the
+#: page's SENTENCE is a claim about the file's count and is checked against the file's count.
+NO_SCHEMA_CHANGE_SITES: tuple[tuple[str, str], ...] = (
+    ("packages/cdm/synapse_cdm/version.py",
+     r"it holds \*\*(?P<n>[a-z]+)\*\* entries"),
+    ("packages/cdm/synapse_cdm/version.py",
+     r"entries — (?P<n>[a-z]+) adapters, each of which"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     r"\"Adapters that landed with no schema change\" is (?P<n>[a-z]+) entries long"),
+    ("docs/docs/changelog.mdx",
+     r"the two are allowed to diverge: (?P<n>[a-z]+) adapters have shipped so far"),
+)
+
+
+def adapters_that_landed_with_no_schema_change() -> list[str]:
+    """The bullets under the heading, which is what every one of those sentences means.
+
+    Scoped to the section by finding the next heading of any level, not by a fixed length: the
+    entries are long, they grow, and a byte window would silently start reading the section after
+    it.
+    """
+    text = (REPO / "packages/cdm/synapse_cdm/MIGRATIONS.md").read_text()
+    start = text.index(NO_SCHEMA_CHANGE_HEADING)
+    after = text[start + len(NO_SCHEMA_CHANGE_HEADING):]
+    following = re.search(r"\n#{1,3} ", after)
+    section = after[:following.start()] if following else after
+    return re.findall(r"\n- \*\*`adapters/(\w+)\.py`", section)
+
+
+def test_the_no_schema_change_section_is_not_empty_and_is_a_subset_of_the_roster():
+    """The derivation itself, before anything is compared against it.
+
+    A section whose bullet pattern stopped matching would return an empty list, and then every
+    site below would be compared against zero — which each of them would fail, but for the wrong
+    reason and with a message pointing at the prose rather than at the parser. And the set must be
+    a subset of the registry: a bullet naming an adapter that does not exist is a stale entry, and
+    one adapter is legitimately absent, because `pntmap` shipped WITH the schema.
+    """
+    landed = adapters_that_landed_with_no_schema_change()
+    assert landed, (
+        f"no bullets matched under {NO_SCHEMA_CHANGE_HEADING!r} in MIGRATIONS.md. The entries are "
+        "written as `- **`adapters/<name>.py` ...`; if that form changed, re-anchor the pattern "
+        "deliberately — an empty derivation would fail every site below for the wrong reason")
+    modules = {cls.__module__.rsplit(".", 1)[-1] for cls in shipped_adapters().values()}
+    unknown = sorted(set(landed) - modules)
+    assert not unknown, (
+        f"the section names adapter modules that are not in the registry: {unknown}. Either the "
+        "adapter was renamed and the entry was not, or the entry describes something that never "
+        "shipped")
+    assert len(landed) < len(modules), (
+        f"the section lists {len(landed)} adapters and the registry has {len(modules)}. At least "
+        "one adapter shipped WITH the schema — `pntmap`, the founding one — so these two numbers "
+        "meeting means either a new adapter's entry was filed in the wrong section, or pntmap "
+        "acquired an entry claiming it changed no schema, which is true only in the sense that "
+        "there was no schema to change")
+
+
+@pytest.mark.parametrize("path,pattern", NO_SCHEMA_CHANGE_SITES,
+                         ids=[f"{p}::{i}" for i, (p, _) in enumerate(NO_SCHEMA_CHANGE_SITES)])
+def test_every_stated_no_schema_change_count_is_the_number_of_entries(path, pattern):
+    """Each of the three documents, against the bullets.
+
+    These are not decorative. The number is the argument for two version numbers existing at all:
+    eleven adapters' worth of shipped behaviour arriving at one unchanged `schema_version` is the
+    evidence that the wire contract and the Python surface move independently. A wrong number here
+    weakens the one claim `version.py` is written to make.
+    """
+    expected = len(adapters_that_landed_with_no_schema_change())
+    text = flat((REPO / path).read_text())
+    found = re.search(pattern, text)
+    assert found, (
+        f"{path} no longer states this count where it did (looked for {pattern!r}). If the sentence "
+        "was rewritten, re-anchor it here in the same commit — a site that drops out of this list "
+        "silently is a site that goes stale next round")
+    stated = spelled(found.group("n"))
+    assert stated == expected, (
+        f"{path} says {found.group('n')!r} ({stated}) adapters landed with no schema change; "
+        f"MIGRATIONS.md's section holds {expected} entries: "
+        f"{adapters_that_landed_with_no_schema_change()}. The section is the fact; this sentence "
+        "is a restatement of it")
+
+
+def test_the_no_schema_change_claim_is_stated_at_every_site_that_carries_it():
+    """The closure, so the trio cannot become a pair by deletion.
+
+    The failure this catches is not a wrong number — the parametrised test above catches those. It
+    is a site quietly leaving the collection: someone rewords `version.py`'s sentence, the pattern
+    stops matching, and the parametrised case for it fails loudly. Good. But someone REMOVING this
+    module's entry for it, to make that failure go away, leaves two guarded sites and one free one.
+    """
+    covered = {path for path, _ in NO_SCHEMA_CHANGE_SITES}
+    assert covered == {
+        "packages/cdm/synapse_cdm/version.py",
+        "packages/cdm/synapse_cdm/MIGRATIONS.md",
+        "docs/docs/changelog.mdx",
+    }, (
+        f"the no-schema-change count is checked at {sorted(covered)}. Those three documents each "
+        "state it for a different reader — the package's own argument for two version numbers, the "
+        "changelog's, and the public page's. Adding a site is fine; losing one is how this sweep's "
+        "work gets undone")

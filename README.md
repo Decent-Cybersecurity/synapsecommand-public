@@ -158,6 +158,32 @@ It needs a network, which is why it is a protocol act rather than a suite member
 `--mutation-check` half rebuilds the wheel with its fixtures stripped out and requires the gate
 to refuse it — a gate nobody has seen fail is a gate nobody has seen.
 
+## Releasing
+
+**A release is a pushed tag.** `.github/workflows/publish.yml` does the rest:
+
+```bash
+git tag -a v1.1.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
+git push origin main --follow-tags
+```
+
+The workflow builds the sdist and wheel, runs the suite, runs `gates/wheel_install.py
+--mutation-check` against what it built, runs `twine check --strict`, checks that the tag names
+the tree's `PACKAGE_VERSION`, and then waits. The upload happens in the `pypi` environment, which
+carries a required reviewer, and it uses **Trusted Publishing** — a short-lived OIDC token minted
+for that one run. There is no API token in the workflow, in this repository's secrets, or anywhere
+else it could be copied from.
+
+`packages/cdm/synapse_cdm/MIGRATIONS.md`, "Releasing the package", is the authority: it states the
+four conditions a release has to meet, which of them the workflow checks, and the one it cannot.
+
+**The manual `twine` path is a documented fallback and is not the procedure.** It is written down
+in MIGRATIONS.md under "The manual fallback" for the case where the workflow itself is broken, and
+using it means an upload with no gate run against the artefact and no record in the Actions log.
+`PUBLICATION.md` ledger entry 5 is what that looks like afterwards: it is the record of the 1.0.0
+upload, done by hand, and of the step in its own sequence that nobody noticed had been skipped
+until a stranger looked for the package on TestPyPI and found a 404.
+
 ## Where the documentation lives
 
 The rendered site is built from `docs/` — see [`docs/README.md`](docs/README.md) for the
@@ -168,7 +194,8 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 |---|---|
 | [`packages/cdm/synapse_cdm/README.md`](packages/cdm/synapse_cdm/README.md) | the four objects, the seven rules and where each is enforced, and how to write the next adapter |
 | [`packages/cdm/synapse_cdm/FORMAT_COVERAGE.md`](packages/cdm/synapse_cdm/FORMAT_COVERAGE.md) | field-by-field CoT / STANAG 4676 / GeoJSON mappings and the named gaps |
-| [`packages/cdm/synapse_cdm/MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md) | what MAJOR/MINOR/PATCH mean for `schema_version`, and the procedure for changing the schema |
+| [`packages/cdm/synapse_cdm/MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md) | what MAJOR/MINOR/PATCH mean for `schema_version`, the procedure for changing the schema, and what a release requires |
+| [`PUBLICATION.md`](PUBLICATION.md) | what became true when this repository went public, and the open ledger — including what still has to be configured on PyPI before the publish workflow can upload anything |
 
 ## Dependencies, and what is deliberately absent
 

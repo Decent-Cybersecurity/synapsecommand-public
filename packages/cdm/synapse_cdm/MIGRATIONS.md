@@ -53,36 +53,83 @@ reverse does not hold, and most releases will change no schema at all.
 
 ### What a release requires
 
-Four conditions, none of them satisfiable by assertion:
+Four conditions, none of them satisfiable by assertion. The **Actor** column is who or what checks
+each one, and it changed this round: three of the four now have a machine in it, and the fourth
+says so rather than pretending otherwise.
+
+| # | Condition | Actor |
+| --- | --- | --- |
+| 1 | the suite is green | the workflow, on every dispatch and every tag |
+| 2 | the harnesses are green, one against the installed wheel | the workflow |
+| 3 | the tag names its tree's `PACKAGE_VERSION` | the workflow, and it knows the tag |
+| 4 | the notes are derived, not remembered | **a person.** The workflow prints the derivations |
 
 1. **The suite is green**, from the repository root, with the count recorded in the commit.
-2. **All ten harnesses are green**, and at least one of them run against the INSTALLED wheel
+   `.github/workflows/publish.yml` runs it. Note that a CI green is not identical to a
+   maintainer's: the pinned specification documents are gitignored, so a fresh clone skips the
+   tests that read them, and the workflow prints the skip list with `-rs` rather than reporting
+   one number.
+2. **All twelve harnesses are green**, and at least one of them run against the INSTALLED wheel
    rather than the source tree — `gates/wheel_install.py` does both halves and is the gate this
-   condition means.
+   condition means. The workflow runs it with `--mutation-check`, so the release build also proves
+   the gate can still fail. Neither the count nor the roster is written down anywhere that a
+   thirteenth adapter would not update: the gate derives it, after a written-down ten replayed ten
+   of twelve adapters and reported the ten as a pass.
 3. **The tag names the package version of the tree it points at.** `v1.0.0` on a tree whose
    `PACKAGE_VERSION` is `1.0.1` is a release nobody can reproduce, and
    `tests/test_cdm_release.py` re-derives this for every tag in history rather than for the one
-   being made.
+   being made. The workflow checks the tag being made, which is the one case history cannot cover,
+   and it is stricter there than a person is: it reads the ref it was triggered by instead of
+   trusting what was typed.
 4. **The notes are derived, not remembered.** Every claim in a release's notes has to be
    readable off the tree at the tag: the adapter roster from `adapter.discover()`, the fixture
    count from the harness, the schema list from `python -m synapse_cdm.schemas`. Notes written
-   from memory are how a release claims a capability that slipped.
+   from memory are how a release claims a capability that slipped. **This one stays a person's**,
+   and the workflow cannot take it: "derived" is a claim about what the writer read, and a
+   generated file does not satisfy it. What the workflow does is print all three derivations into
+   the run summary, so the notes are copied off a run rather than recalled.
 
 ### The sequence
 
 ```bash
-pytest -q                                            # condition 1
-python gates/wheel_install.py --mutation-check       # conditions 2 and the artefact
-python -m synapse_cdm.schemas --check --out schemas  # CURRENT
-
-git tag -a v1.0.0 -m "..."                           # annotated, never lightweight
-git push origin main --follow-tags
-gh release create v1.0.0 --notes-file <derived>      # notes from the tree, not from memory
+git tag -a v1.1.0 -m "..."                           # annotated, never lightweight
+git push origin main --follow-tags                   # this is the whole of it
 ```
+
+The tag is the release. `.github/workflows/publish.yml` takes it from there: conditions 1, 2 and 3,
+`twine check --strict`, then a wait for a reviewer on the `pypi` environment, then an upload over
+OIDC with no token anywhere in the process. Condition 4's derivations are in the run summary; the
+GitHub release itself is still made by a person, with `gh release create`, from those.
 
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
-that does not move, and it records nobody.
+that does not move, and it records nobody — and the workflow now refuses one outright rather than
+leaving that to whoever reads this paragraph.
+
+### The manual fallback — NOT the procedure
+
+For the case where the workflow itself is broken. It is written down because an undocumented
+fallback gets improvised under pressure, which is worse; it is marked because the previous version
+of this document presented it as *the* procedure and it is not one any more.
+
+```bash
+pytest -q                                            # condition 1
+python gates/wheel_install.py --mutation-check       # condition 2 and the artefact
+python -m synapse_cdm.schemas --check --out schemas  # CURRENT
+python -m twine check --strict packages/cdm/dist/*
+python -m twine upload packages/cdm/dist/*           # needs a token this repository has retired
+```
+
+Two things are lost by taking this path, and both are the reason it is a fallback:
+
+* **there is no record.** No Actions run, no artefact, no log of which gate output preceded the
+  upload. `PUBLICATION.md` entry 5 is what that looks like a month later — it is the record of the
+  1.0.0 upload done this way, and of the step in its own sequence that nobody noticed had been
+  skipped until a stranger looked the package up on TestPyPI and got a 404;
+* **it needs a credential that is meant to be gone.** Ledger entry 6 retires the API token used
+  for 1.0.0, deliberately and by revocation rather than by disuse. Using this path after that
+  means issuing a new token, and issuing a token to work around a broken workflow is how the
+  workflow stays broken. Fix the workflow.
 
 ### What the workflow does, and what it still cannot
 

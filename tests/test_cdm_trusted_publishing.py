@@ -320,3 +320,174 @@ def test_the_header_says_which_half_has_been_proven(workflow):
             f"the workflow header no longer states {why} (looked for {fragment!r}). Once the "
             "publish job HAS run, this is the paragraph that changes — and PUBLICATION.md entry 6 "
             "changes with it, since that is the event that closes it")
+
+
+# ------------------------------------------------- the two procedures, collected so they cannot fight
+#
+# There are now two documented ways to get a distribution onto PyPI: the workflow, and `twine
+# upload` by hand. That is a deliberate pair — an undocumented fallback gets improvised under
+# pressure, which is worse than a written one — and a deliberate pair is exactly what drifts. The
+# failure to fear is not that one of them is wrong. It is that a reader lands on the wrong one and
+# cannot tell, because whichever document they opened presented its own path as the procedure.
+#
+# So every site that states a publishing mechanism is collected here, and each is required to say
+# the same two things: the workflow is how a release publishes, and the manual path is a fallback.
+
+#: Documents that describe how publishing happens, and are read by different people. README is the
+#: first thing a stranger opens; MIGRATIONS is what a maintainer opens to cut a release;
+#: PUBLICATION is the record. A mechanism claim in any of them is a claim to a real audience.
+PUBLISHING_SITES = (
+    "README.md",
+    "packages/cdm/synapse_cdm/MIGRATIONS.md",
+    "PUBLICATION.md",
+)
+
+#: The wordings that mean "run twine yourself". Matched case-insensitively.
+MANUAL_MARKERS = ("twine upload", "twine.upload")
+
+#: The wordings that mark a passage as the fallback rather than the procedure. Any one is enough.
+FALLBACK_MARKERS = ("fallback", "not the procedure", "by hand", "manual")
+
+
+def _sites():
+    for name in PUBLISHING_SITES:
+        path = REPO / name
+        assert path.exists(), f"{name} is gone; this collection is asserting over nothing"
+        yield name, path.read_text()
+
+
+def _inside_a_closed_ledger_entry(text: str, position: int) -> bool:
+    """Is `position` inside a `### N. ... — CLOSED` entry of PUBLICATION.md's ledger?
+
+    THE EXEMPTION, AND WHY IT IS STRUCTURAL RATHER THAN A KEYWORD
+    ------------------------------------------------------------
+    Entry 5 records the 1.0.0 upload: "`twine check --strict` on both artefacts, then `twine upload
+    packages/cdm/dist/*`", and its sequence table has a `twine upload` row. Those are the sweeps
+    below finding real text — and they are not instructions. They are a dated account of an act
+    that happened, in an entry whose heading says CLOSED, and the ledger's own discipline is that a
+    closed entry is never edited: it records what was known when it closed and carries a
+    superseding pointer when that stops being true.
+
+    The exemption is therefore the closed heading and not a word in the paragraph. A keyword
+    exemption — "allow it near the word 'record'" — would let any passage anywhere opt out of these
+    checks by mentioning a record. This one can only be claimed by text a human deliberately marked
+    CLOSED in a numbered ledger, which is a much smaller door and one the ledger's other gates
+    already watch.
+
+    An OPEN entry gets no exemption. An open entry is live text about what should happen next, and
+    that is exactly where a stale instruction does damage.
+    """
+    heading = None
+    for match in re.finditer(r"\n### (\d+)\. (.+)", text):
+        if match.start() > position:
+            break
+        heading = match.group(2)
+    return heading is not None and "CLOSED" in heading
+
+
+def test_every_document_that_mentions_twine_upload_marks_it_as_the_fallback():
+    """`twine upload` may appear anywhere, provided the passage says what it is.
+
+    Not a ban: the fallback is documented on purpose. The requirement is that a reader who lands on
+    it learns, in the same breath, that it is not how releases happen — because the version of this
+    document that presented it as the procedure was correct when written, and a reader cannot date
+    a paragraph.
+    """
+    offenders = []
+    for name, text in _sites():
+        low = text.lower()
+        for marker in MANUAL_MARKERS:
+            start = 0
+            while (found := low.find(marker, start)) != -1:
+                start = found + len(marker)
+                # The claim's neighbourhood, not the whole document: a "fallback" heading four
+                # sections away does not qualify a command a reader is looking at right now.
+                window = low[max(0, found - 1200):found + 600]
+                if any(flag in window for flag in FALLBACK_MARKERS):
+                    continue
+                if _inside_a_closed_ledger_entry(text, found):
+                    continue  # a dated record, not an instruction — see _inside_a_closed_ledger_entry
+                line = text[:found].count("\n") + 1
+                offenders.append(f"{name}:{line}")
+    assert not offenders, (
+        f"these mention a manual upload without marking it as a fallback: {offenders}. Releases "
+        "publish through .github/workflows/publish.yml; a `twine upload` that reads as the "
+        "procedure sends a reader to an upload with no gate run against the artefact, no record in "
+        "the Actions log, and a need for the API token PUBLICATION.md entry 6 retires. Say "
+        f"'fallback' — or one of {FALLBACK_MARKERS} — near the command")
+
+
+def test_every_document_that_describes_releasing_names_the_workflow():
+    """Whoever states how a release publishes must name the file that does it.
+
+    The two-site failure this guards is not hypothetical here. MIGRATIONS said "a release is a
+    sequence a person runs" and was right for a round after it stopped being right, and README
+    said nothing at all about releasing, so there was no second site to disagree with it. Silence
+    is the version of drift that no comparison catches, which is why this requires a positive
+    statement rather than forbidding a wrong one.
+    """
+    missing = []
+    for name, text in _sites():
+        low = text.lower()
+        if not any(m in low for m in MANUAL_MARKERS) and "publish" not in low:
+            continue
+        if "publish.yml" not in text:
+            missing.append(name)
+    assert not missing, (
+        f"these describe publishing without naming the workflow that does it: {missing}. The "
+        "filename is load-bearing — PyPI matches the OIDC token against the workflow path — so a "
+        "document that says 'CI publishes it' is a document nobody can check against the tree")
+
+
+def test_no_document_still_says_publishing_is_unautomated():
+    """The retired claim, swept across every site rather than the one that had it.
+
+    MIGRATIONS carried this and `tests/test_cdm_release.py` now forbids it there. It is swept here
+    too, because the sentence was copyable and the next place it would appear is a document that
+    was written while it was true — README's release section, or a docs page, added later from an
+    older mental model.
+    """
+    banned = (
+        "no ci in this repository",
+        "there is no ci",
+        "publishing to pypi is not automated",
+        "a release is a sequence a person runs",
+    )
+    offenders = []
+    for name, text in _sites():
+        low = text.lower()
+        for phrase in banned:
+            found = low.find(phrase)
+            if found == -1:
+                continue
+            # PUBLICATION.md's closed entry 5 is a dated record and keeps its wording; it carries a
+            # superseding pointer instead. A record of what was believed is not a claim.
+            window = low[max(0, found - 1500):found + 800]
+            if "superseded" in window:
+                continue
+            offenders.append(f"{name}:{low[:found].count(chr(10)) + 1}: {phrase!r}")
+    assert not offenders, (
+        f"these still say publishing is unautomated: {offenders}. It is automated. If a passage is "
+        "a dated RECORD of what was believed rather than a present claim, mark it superseded the "
+        "way PUBLICATION.md entry 5 is — otherwise a reader takes it as current")
+
+
+def test_the_fallback_is_documented_somewhere_rather_than_only_forbidden():
+    """The pair must actually be a pair.
+
+    A gate that only ever refuses the manual path would push it out of the documents and into
+    somebody's shell history, which is the outcome all of this is trying to avoid. So a fallback
+    has to EXIST in writing, with its costs stated.
+    """
+    text = (REPO / "packages/cdm/synapse_cdm/MIGRATIONS.md").read_text()
+    assert "The manual fallback" in text, (
+        "MIGRATIONS.md documents no manual fallback. If the workflow is broken during an incident, "
+        "somebody will upload by hand regardless; the choice is whether they do it from a written "
+        "procedure that names what is lost, or from memory")
+    section = text[text.index("The manual fallback"):]
+    section = section[:section.find("\n## ") if "\n## " in section else len(section)]
+    for cost, why in (("no record", "that nothing logs the upload"),
+                      ("entry 6", "that it needs the credential being retired")):
+        assert cost in section.lower() or cost in section, (
+            f"the manual fallback does not state {why}. A fallback whose costs are not written is "
+            "a second procedure, not a fallback")
