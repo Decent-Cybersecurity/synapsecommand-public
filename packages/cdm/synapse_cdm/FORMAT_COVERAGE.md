@@ -8006,7 +8006,7 @@ tag alone silently collapses two values into one. Structure is preserved verbati
 | `99` | Composite Imaging Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1602 Composite Imaging Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 1602.1**'s, onward, not held. |
 | `100` | Segment Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1607 Segment Local Set metadata items, used to enable metadata sharing. **Multiples Allowed, and its children may duplicate their parent's items** (`ST 0601.14-35`). A reader keyed by tag alone flattens the two into one value. A nested Local Set or Pack — the items inside it are **MISB ST 1607**'s, onward, not held. |
 | `101` | Amend Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1607 Amend Local Set metadata items, used to provide metadata corrections. **Multiples Allowed, and its children may duplicate their parent's items** (`ST 0601.14-35`) — as item 100. A nested Local Set or Pack — the items inside it are **MISB ST 1607**'s, onward, not held. |
-| `102` | SDCC-FLP | None | `flp` | `V` | `Entity.attributes` | `not yet` | MISB ST 1010 Floating Length Pack (FLP) metadata item, providing Standard Deviation and Cross Correlation (SDCC) metadata. The uncertainty carrier for every SDCC-eligible item in this table. **Its own layout is MISB ST 1010.3's, which this repository does not hold** — onward delegation, not a park in the twelve. **Multiples Allowed** — more than one instance of this item may appear in one Local Set instance, so a keyed-by-tag reader loses data. |
+| `102` | SDCC-FLP | None | `flp` | `V` | `Entity.attributes` | `not yet` | MISB ST 1010 Floating Length Pack (FLP) metadata item, providing Standard Deviation and Cross Correlation (SDCC) metadata. The uncertainty carrier for every SDCC-eligible item in this table. **Its own layout is MISB ST 1010.3's, which this repository does not hold** — onward delegation, not a park in the thirteen. **Multiples Allowed** — more than one instance of this item may appear in one Local Set instance, so a keyed-by-tag reader loses data. |
 | `103` | Density Altitude Extended | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Density altitude above MSL at aircraft location. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
 | `104` | Sensor Ellipsoid Height Extended | m | `IMAPB` | `V` | `Entity.position.alt_m` | `not yet` | Sensor ellipsoid height extended as measured from the reference WGS84 ellipsoid. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
 | `105` | Alternate Platform Ellipsoid Height Extended | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Alternate platform ellipsoid height extended as measured from the reference WGS84 ellipsoid. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
@@ -8225,10 +8225,204 @@ which needs tag semantics — park 3 for the epoch, park 5 for the IMAPB ranges 
 adapter. The packets in `framing/` are the octets such a payload would be made of, and they are
 deliberately not where the harness would find them.
 
+### The walk over a real stream — what held bytes decided, what they did not, and the premise that was withdrawn
+
+**This is the first time anything in this section met octets it did not write.** Everything above it
+was read out of documents or built out of the documents' own worked examples; `framing/`'s
+twenty-six fixtures are this repository's bytes, encoding this repository's reading. A real stream is
+the other kind of evidence, and it is the kind that can disagree. The round below walked one, and the
+useful result is a **park** rather than a ruling — which is stated first, because a round that ends in
+a park and reports itself as a round that ends in a finding is the failure this section exists to
+prevent.
+
+**The briefing defect, recorded first because it is this round's own error and not the stream's.**
+The round was briefed to walk an **"ST 0601.8-era"** clip. That era claim is **WITHDRAWN**, and the
+withdrawal is a briefing defect rather than a revision: the phrase was carried in from the
+`droneklv` README, and what that README states is **the edition the library supports** — a fact about
+a *decoder* — read here as a fact about the *emitter* that produced the clip. The two are unrelated
+claims about two different pieces of software, and no octet in either pinned input carries the
+second one. Recorded rather than deleted, on the same rule as settlement 3's corrected epoch premise:
+a premise that turned out false is evidence about how this section reaches conclusions, and deleting
+it would remove the evidence and keep the habit. **The only provenance claim in the bytes is item 65,
+and whether it is reliable became the round's question** — to be decided in either direction, not
+assumed in either.
+
+#### The two pins, and the extraction reproduced rather than recalled
+
+| What | Identity | Provenance |
+|---|---|---|
+| **The transport stream** | SHA-256 `a491ceff524b0008e3076d9eb30782badac2d53053731accc0a4e1226177260e`, **102 004 664 bytes** | An MPEG-2 transport stream carrying an H.264 elementary stream on PID `0x1e1` and a `KLVA` data stream on PID `0x1f1`, 3 min 14.88 s |
+| **The extraction** | SHA-256 `a810e4b60ff33b1bdc1831594201d8158655c0808bdef1b22d84a9eb26e22e51`, **977 bytes** | `ffmpeg -i day_flight.mpg -map 0:1 -c copy -f data day_flight.klv`, **ffmpeg 9.0.1** |
+
+**The extraction command is stated because it was re-run, not because it was remembered.** Re-running
+it against the pinned transport stream reproduces the 977 octets **byte for byte** — the second hash
+above is the hash of the re-run's output — so the command in the table is the command that produced
+the input, checked rather than reconstructed. **Neither file is in the index**: `.gitignore` carries
+`fixtures/klv/streams/`, on the rule the PDFs already follow — a real stream is pinned by hash and
+never vendored.
+
+#### What the walk found, and every count below came out of its output
+
+`walk_local_set` was pointed at the 977 octets and the numbers below are its yield. **None was typed
+and none was carried from a previous round.**
+
+| Measured | Value |
+|---|---|
+| Packets | **6**, each opening with the ST 0601.14a §6.2 Universal Label |
+| Octets left over after the sixth packet's declared Value | **0** — the extraction tiles exactly |
+| Items per packet | **26**, the same in all six |
+| Items in total | **156** |
+| Distinct tag *sequences* across the six packets | **1** — the same 26 tags in the same order every time |
+| Distinct tags | **26** — 1, 2, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 40, 41, 42, 56, 57, 65 |
+| Declared packet Value lengths | **144 and 145**, both in long form, both **two octets** wide |
+| Distinct first length octets, packet level | **one**: `0x81`. **Never `0x80`** |
+| Length fields that are not minimal — packet or item, all 162 of them | **0**, against `ST 0107.3-05` |
+| Item 2 first in every packet, item 1 last in every packet | **yes**, against `ST 0601.8-09` and `ST 0601.8-11` |
+| Item 65 present in every packet, `uint8`, one octet | **yes**, against `ST 0601.8-12`, and its value is **`0x01`** at all six sites |
+| **Checksums that validate** | **6 of 6**, by ST 0601.14a §6.6's `bcc_16` over the range §6.6 defines |
+
+**The checksum result is the load-bearing one and it is worth saying why.** It is not a decoration on
+a walk that already worked. Six independent 16-bit summations, each over its whole packet from the
+first octet of the Universal Label to the length octet of the checksum item, each agreeing with the
+value the emitter stored — that is an arithmetic that fails if *any* octet in the packet is not what
+the emitter wrote, and it therefore does two things at once. It confirms the walk's offsets from
+outside the walk: a mis-parsed length would have put the checksum item's own length octet somewhere
+else and the range would have been wrong. And it **rules out corruption** as an explanation for
+anything the walk found — in particular for the four octets under item 22 below, which are what the
+emitter meant to write.
+
+#### The one thing that does not fit, located to the octet
+
+**Item 22, Target Width, carries four octets where ST 0601.14a §8.22 states a Required Length of 2.**
+It does so at all six sites, and the top two octets are `0x0000` at all six — so the value fits the
+`uint16` the document specifies and the excess is two leading zero octets.
+
+| Packet at | Tag offset | Value offset | Length | Value |
+|---|---|---|---|---|
+| 0 | 112 | 114 | 4 | `000001c9` |
+| 163 | 275 | 277 | 4 | `0000016c` |
+| 326 | 438 | 440 | 4 | `00000168` |
+| 489 | 601 | 603 | 4 | `00000163` |
+| 652 | 764 | 766 | 4 | `0000015d` |
+| 815 | 926 | 928 | 4 | `00001ce2` |
+
+Item 11 is the only other item whose length varies across the six packets — 3 octets in five of them
+and 2 in the sixth — and it is a `utf8` item with a Max Length rather than a Required Length, so
+its variation is the document's own allowance and not a finding.
+
+#### Act 1 — the self-refutation test, and it returned NOT REFUTED
+
+The test is a narrow one and it was chosen because it needs no document this repository does not
+hold: **an emitter that stamps edition 1 while using items that postdate edition 1 refutes its own
+stamp.** If the held bytes date any of the stream's 26 tags later than edition 1, item 65's `0x01` is
+an emitter stamp rather than a provenance claim, the declared-edition reading collapses, and item 22
+is a stream defect against `ST 0601.13-29` with the offsets already in hand. The held documents were
+interrogated for exactly that, and **they do not date the introduction of any item at all.** Each
+line below is an absence, and each was looked for:
+
+* **ST 0601.14a's revision history, §4, has three rows** — `ST 0601.14` dated 11/1/2018, `ST 0601.14a`
+  dated 05/1/2020, and the undeclared 08/19/2021 row that **KLV 10** already records. It reaches back
+  no further than edition 14. Nothing in it names an item's first appearance.
+* **ST 0601.19's revision history has three rows too** — `ST 0601.19` dated 03/02/2023, then 05/10/2024
+  and 06/11/2025 — and reaches back no further than *its* own edition. It is consulted here only as a
+  second sample of the same drafting habit, never as a source of tag semantics, which the
+  `reconciliation_ruling` forbids.
+* **There are no item-introduction annotations.** A search of the 218-page text for "was added",
+  "added in ST", "introduced", "since ST 0601", "new in ST", "prior to ST" and "starting with ST"
+  returns **nothing** in any item section.
+* **Table 1 has no edition column.** §7.1 lists its columns itself — Tag, Name, Units, Format, Len,
+  SDCC, MUL, Description — and none of them dates anything.
+* **The one dating device the document does carry cannot reach edition 1.** ST 0601 stamps a
+  requirement with the edition that introduced it, and ST 0601.14a demonstrates the convention in
+  both directions on its own pages: §4 says "Added requirement ST 0601.14-31" and "Added Requirement
+  ST 0601.14-35" of identifiers carrying `.14`, and "Deprecated Requirements ST 0601.8-02, -04, -05,
+  -06, and -07" of identifiers that keep edition 8's number through their deprecation. The document
+  contains **33 distinct requirement identifiers** and they span exactly **five editions — 8, 9, 10,
+  13 and 14**. **Not one is stamped edition 1 through 7.** The requirement numbering begins after the
+  fact and cannot testify about the beginning.
+* **§8.65 dates nothing about itself.** Its bullets say what the value means — "0 is pre-release,
+  initial release (0601.0), or test data", "1..255 corresponds to document revisions MISB ST 0601.1
+  thru MISB ST 0601.255" — and say nothing about when the item that carries it entered the standard.
+
+**So the stamp is not refuted, and this is a confirmation of a bound an earlier round already drew
+rather than a new one.** `klv_pin.json` records, of the .14-to-.19 delta, that the requirement delta
+is enumerable from the stamps "**but it does not bound the ITEM delta, and the item delta is the one
+a tag table would need**". That was written looking forward from .14; this round looked backward from
+.14 to .1 and met the same wall from the other side. The item delta is not enumerable in **either**
+direction from anything held.
+
+#### Act 2 — the ruling that is owed regardless, recorded unconditioned so neither branch reopens it
+
+**The framing layer's handling of item 22 is CORRECT AS SHIPPED, and nothing is owed there.** The
+four octets are introduced by a valid, minimal, short-form BER length; `walk_local_set` reads the
+length the stream states, yields four opaque octets, and moves the cursor by four. That is
+`ST 0107.3-04` — "skip unknown Local Set values" — satisfied the way this codec satisfies it, which
+is structurally: **the walk knows no tags at all**, so item 22 is exactly as unknown to it as item 2,
+and a walk that flagged a Required Length would be a walk consulting the tag table, which is the one
+thing the framing layer is built not to do. There is no defect in `klv_codec` to fix, and there is no
+fixture to write: a synthetic fixture asserting a codec defect that does not exist would encode this
+round's confusion as a golden file.
+
+**The flag is owed by the value-decoding layer, which does not exist and is blocked on parks 3, 5, 11
+and 12.** That layer is the one that reads the tag table, and Required Length is a tag-table fact.
+This ruling is recorded now and **unconditioned on the edition question** precisely so that neither of
+Act 1's two possible outcomes reopens it: whether item 65's `0x01` is trustworthy changes what item
+22's four octets **mean**, and changes nothing about which layer owes the check.
+
+#### The disposition — park 13, with three candidate classifications and one ruled out
+
+Because the stamp stands unrefuted, item 22's four octets are **parked with the classification
+undecided**, and the honest thing is that there are **three** candidates rather than two:
+
+| | Classification | What it requires to be true |
+|---|---|---|
+| **(a)** | **A stream defect against `ST 0601.13-29`** — "the KLV encoded value for the item shall use exactly the number of bytes specified by the Required Length" | That the current standard's Required Length binds this emitter. **And note what the identifier itself says**: `ST 0601.13-29` is stamped **edition 13**, so by the convention above it entered the standard twelve revisions *after* the edition this stream declares. Under the declared-edition reading the requirement did not exist when this emitter was written — which is not a refutation of (a), because a stream can be defective against the standard as it now stands, but is exactly why (a) cannot simply be asserted |
+| **(b)** | **Edition skew against ST 0601.1's own item-22 entry**, if that edition has one and states a different length | That ST 0601.1 defines item 22 with a Required Length of 4, or with none |
+| **(c)** | **An unknown tag under the declared edition**, if item 22 postdates edition 1 | That ST 0601.1's tag table has no item 22 at all — in which case the four octets are simply opaque, a decoder conforming to the declared edition skips them by `ST 0107.3-04`, and **the length question never arises** |
+
+**And one candidate is ruled OUT on held bytes rather than left open: transmission corruption.** All
+six checksums validate over their whole packets, so the four octets are what the emitter wrote. That
+is the one classification this round could close, and it closed it.
+
+**All three surviving candidates turn on one document and the same page of it, so the deciding fact
+is nameable: ST 0601.1's tag table.** That is **park 13**, and its reopen route is the route park 4
+already proved — a public fetch of a superseded revision from the NSG Registry, under the pin
+discipline the ST 0107.3 fetch established: obtain the revision the question names rather than the
+current one, and pin the copy by SHA-256, byte count and page count with its title page read. It is a
+real route and not a wish, because the registry serves superseded editions and this repository has
+already fetched one that way.
+
+#### What this round did NOT reach, stated so the absence is not read as coverage
+
+* **Park 8 was not reached, and could not have been by this stream.** The two absences park 8 still
+  owns are `0x80` as a first length octet and any ceiling on the count of length octets. The walk
+  measured the first directly: every packet-level length field in the extraction begins `0x81`, and
+  **`0x80` does not occur as a first length octet anywhere in the 977 octets**. The second is a
+  question about widths beyond two and nothing here exceeds two. So the stream is silent on both,
+  which is what "neither is reachable from a conforming stream" predicted, and park 8's state is
+  unchanged.
+* **The transport layer stays declined, and park 9 stays untouched.** Reading the transport stream
+  to get the extraction produced one observation and it is recorded here rather than acted on: PID
+  `0x1f1` carries **204 transport packets**, each of which begins a PES unit, so there are **204 PES
+  units — of which 198 carry a PES header and no payload at all**, and **6 carry payload**, of 162
+  and 163 octets, totalling exactly the **977** octets the extraction holds. That is a fact about
+  **the multiplex** and not about KLV: what a header-only PES unit on a metadata PID means is
+  ST 1402.2's to say, and ST 1402.2 is **park 9**, which this round did not open, did not close and
+  did not narrow. Settlement 1's decline stands — the transport stream is named as the transport and
+  declined as an input — and the observation is filed so that whoever opens park 9 has a measured
+  case waiting rather than a suspicion.
+* **No tag row moved.** All 141 rows of the ST 0601 row set still read `not yet`. A walk that finds
+  every item in six real packets and validates every checksum still decodes **no value**, and the
+  distance between finding and understanding is the whole of parks 3, 5, 11 and 12.
+
 ### The parks, each with a named reopen condition
 
-**Twelve parks over fourteen documents, TWO of them now closed, and the honest thing to say first is
-that of the ten still open, nine are public downloads and one is not.** **Parks 1 and 4 both closed on
+**Thirteen parks over fifteen documents, TWO of them closed, and the honest thing to say first is
+that of the eleven still open, ten are public downloads and one is not.** **Park 13 was opened on
+2026-08-26 by the walk round** and is the first park in this table that a *stream* asked for rather
+than a document: it is a superseded revision of a document this repository already holds at a later
+edition, which under this repository's own rule — a later revision is a different document — makes it
+a fifteenth document and not a re-read of the third. It is **not** a fifteenth *delegated* document, and the two counts are kept apart on purpose: the profile delegates to ST 0601.14 and that count stays at **fourteen**. A park's document and a profile's delegation are different things, and this is the first row where they come apart. **Parks 1 and 4 both closed on
 2026-08-26** and each keeps its number and its row: the parks are cited by number from the row sets,
 from the fixture plan and from the register, so renumbering rows to close a gap would silently
 re-point every one of those citations. A closed park says it is closed.
@@ -8252,7 +8446,7 @@ developed by the MISB are available under MISB Public Web Site: `http://www.gwg.
 Registry Web Site: `https://nsgreg.nga.mil/misb.jsp`". **No NSO gate, no national representative, no
 account** — which is a real difference from the NITS XSD row and is why these say "obtain" and that
 one says "obtain, through one of two channels, and hash both". So the exit condition for parks 1–7
-and 9–12 is the same three steps, stated once here rather than twelve times — and parks 1 and 4 have
+and 9–13 is the same three steps, stated once here rather than thirteen times — and parks 1 and 4 have
 now been through all three, which is why it is worth reading them as a test that can be passed rather
 than a wish: obtain **the exact
 version the delegation table pins** — not "the current one", because the profile pins a revision and
@@ -8283,9 +8477,10 @@ treated two ways in the other direction.
 | **10** | **MISP-2019.1: Motion Imagery Handbook** | the 2019.1 edition, Nov 2018 | STANAG 4609 Ed 5 lists it as its only OTHER RELATED DOCUMENT and MISP §1.3 calls it a companion "providing definitions of terms used with more background and technical detail". But §3.6.7 says of the same document that it "defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets ... **and defines the required data items**" — register entry **KLV 8** | Public download, the same two URLs. Its billing and its stated function disagree, so whoever obtains it answers that first: a document that defines required data items is normative in fact, whatever the wrapper's headings say |
 | **11** | **MISB ST 1204 and ST 1301 — MIIS Core Identifier, Augmentation Identifiers** | **1204.1**, **1301.2** | `MISP-2015.1-68` and `-69`. §4.4.2.1: "a mandatory consistent unique identifier for all sensors and platforms" | Public download. Blocks `Entity.source_ids`, and therefore blocks keying an `Entity` on anything the stream states. The NITS MIIS decline deferred the *decoding*; here the identifier is the only identity the format guarantees, so the same document is a heavier dependency for this adapter than for that one |
 | **12** | **MISB ST 0902 — Motion Imagery Sensor Minimum Metadata Set** | **0902.8** | `MISP-2015.1-75`, and §4.4.4 calls it "a prerequisite for MISP conformance" | Public download. The minimum conformant content of an airborne feed, which makes it the smallest possible Phase 2: **parks 4, 5 and 8 are enough to READ a stream at all, and parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one** |
+| **13** | **MISB ST 0601.1 — the UAS Datalink Local Set as edition 1 defined it** | **0601.1**, the edition item 65 declares on the wire | **Opened 2026-08-26 by the walk round, and it is the only park here that a STREAM opened.** A held stream stamps item 65 = `0x01`, and the self-refutation test found nothing in either held ST 0601 copy that dates any item's introduction — so the stamp stands unrefuted and the declared-edition reading is live. What that leaves undecidable is item 22's four octets against a Required Length of 2: they are a stream defect against `ST 0601.13-29`, an edition skew against ST 0601.1's own item-22 entry, or an unknown tag under the declared edition — and **all three turn on the same page**. See the walk section above | Public download, and **the route park 4 already proved**: the NSG Registry serves superseded revisions, which is how ST 0107.3 was fetched at the pinned revision rather than the current one. Same pin discipline — obtain the revision the question names, pin the copy by SHA-256, byte count and page count with its title page read. **The narrowest park in the table**: it is one document, read for one table, to answer one question, and unlike parks 2 and 6 nothing about the adapter's output depends on the answer |
 
 **What this table is NOT.** It is not a claim that the documents are unobtainable, and it is not a
-licence to defer indefinitely. Eleven of the twelve can be closed by one person with a browser, and
+licence to defer indefinitely. Twelve of the thirteen can be closed by one person with a browser, and
 the reason they are open is that this phase pinned what it read rather than reading what it intended
 to. That is the same admission CAT048's Reserved Expansion Field row makes, and it is weaker than a
 blocker on purpose.
@@ -8480,6 +8675,27 @@ length-of-length, and any ceiling on length octets — sit in X.690 rather than 
 the one park that costs money is a free download. **Recorded, not acted on:** the reference needs
 adjudicating first, and rewriting a park's reopen route on a reference list read in passing is the
 roster change the park 1 round declined to smuggle in. A round that wants park 8 cheaper starts here.
+
+**KLV 14 — the format carries a mandatory edition stamp on the wire and no held edition says which
+items each edition admits.** MISB ST 0601 requires item 65 in every packet (`ST 0601.8-12`) and §8.65
+defines its value as the document's own major revision, "1..255 corresponds to document revisions
+MISB ST 0601.1 thru MISB ST 0601.255". So every conforming packet declares the edition it was written
+against, and a reader that wanted to honour that declaration would need to know **which items that
+edition defines**. **Neither held copy provides it, in either direction.** ST 0601.14a's revision
+history begins at edition 14 and ST 0601.19's at edition 19; no item section in either carries an
+introduction annotation; Table 1's own column list — Tag, Name, Units, Format, Len, SDCC, MUL,
+Description — has no edition column; and the one dating device the series does carry, the
+requirement-identifier prefix, is stamped only from edition **8** onward, so ST 0601.14a's **33**
+distinct identifiers span editions 8, 9, 10, 13 and 14 and **none of them reaches editions 1 through
+7**. **What it bounds, and it bounds something specific rather than being a general complaint about
+drafting:** `klv_pin.json` had already recorded, looking *forward* from .14, that the requirement
+delta to .19 is enumerable from the stamps but "does not bound the ITEM delta, and the item delta is
+the one a tag table would need". The walk round looked *backward* from .14 to .1 and met the same wall
+from the other side. So the item delta is not enumerable in **either** direction from anything held,
+and the stamp a conforming emitter is *required* to send cannot be acted on by a reader holding these
+documents. **Not a contradiction** — no held sentence disagrees with another — and **not resolvable
+here**: it is resolved by holding the editions themselves, which for edition 1 is **park 13**. It is
+the reason that park exists and the reason the walk round ended in a park rather than a ruling.
 
 ### Deliberately out of scope, and why
 
@@ -8793,7 +9009,7 @@ form that can be checked against the pinned copy:
 One park over one document, stated once here and nowhere else in this section.
 
 **Obtain ADatP-36, Edition B.** That edition specifically, not "the current ADatP-36" — the same
-exit condition the twelve KLV parks carry and for the same reason, which is that a later revision
+exit condition the thirteen KLV parks carry and for the same reason, which is that a later revision
 decoded against an earlier citation is a plausible answer to the wrong question. And because an
 edition letter alone does not identify a text, a copy in hand must also settle **which version of
 Edition B** it is.
@@ -8804,10 +9020,10 @@ standardization documents: "They can be retrieved from the NATO Standardization 
 about NATO standardization documents generally rather than about ADatP-36 by name, so it is recorded
 as the document's stated route and not as a confirmed availability.
 
-**Honest strength, which is different in kind from the KLV parks'.** Eleven of those twelve are
-public downloads and the twelfth, SMPTE ST 336:2017, needs a purchase decision. This one is neither.
+**Honest strength, which is different in kind from the KLV parks'.** Twelve of those thirteen are
+public downloads and the thirteenth, SMPTE ST 336:2017, needs a purchase decision. This one is neither.
 NSDD access runs through a national standardization authority, so the park closes on an **access**
-decision — weaker than eleven of the twelve and stronger than the one that needs a budget.
+decision — weaker than twelve of the thirteen and stronger than the one that needs a budget.
 
 **Searched and not found, with the method validated before its negative was trusted.** `~/Downloads`
 was searched for ADatP-36 itself, in two passes: filename patterns (`adatp`, `36`, `5527`, `nffi`,
@@ -8905,7 +9121,7 @@ so it is readable in the history — the treatment CAT021's, NITS's, GMTIF's and
 It was a **wider** Phase 1 than the two sections above it. STANAG 5527 pins a covering document
 that states no field at all, so its section has no row set; STANAG 4609 pins a profile that
 delegates every field dictionary it relies on, so its rows say `not yet` and its fixture plan is
-gated on twelve absent documents. This document states **twelve data items** and a **fourteen-FRN
+gated on ten absent documents across thirteen parks. This document states **twelve data items** and a **fourteen-FRN
 standard UAP**, each item with a Definition, a Format, a Structure and an Encoding Rule, in a
 category whose sibling this repository already ships. So the row set was written from the document,
 not around it, and what is parked is parked for a reason the document itself supplies.
@@ -9036,7 +9252,7 @@ quoting this repository.
   was wrong. The pin is not a covering edition standing in for a current one; it is the current one
   as far as the publisher's own page goes;
 - **Edition 1.30 is cited-but-unpublished**, which is a third state this repository had no name for.
-  It is not a park like KLV's twelve absent documents, which are obtainable and were not obtained;
+  It is not a park like KLV's ten absent documents, which are obtainable and were not obtained;
   it is not #9's classification contingency, where a document exists behind an access decision. It
   is a document two specifications reference and no page offers. **It is now a CLASS rather than a
   sentence**, computed by `tests/test_cdm_pins.py` from two halves it finds in the data — a

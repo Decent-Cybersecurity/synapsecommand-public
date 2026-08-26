@@ -11,7 +11,7 @@ what it is not" below.
 **That did not change on 2026-08-26, and the thing that did change is worth stating precisely.** ST
 0601.14 — the field dictionary MISP-2019.1 delegates the whole airborne collection to — was obtained,
 pinned and transcribed: 141 items, in `../../FORMAT_COVERAGE.md`'s ST 0601 row set and in
-`spec/klv_pin.json`'s `tag_table_st_0601_14`. That closed **park 1**, the largest of the twelve. It
+`spec/klv_pin.json`'s `tag_table_st_0601_14`. That closed **park 1**, the largest of the thirteen. It
 did not produce a fixture and could not have: a `.klv` payload is a sequence of key/length/value
 triplets, and the documents that say how a key and a length are written are still parks 4 and 8.
 **Holding the dictionary made the stream nameable, not readable.**
@@ -35,6 +35,33 @@ prints four encodings of two lengths while explaining which two are wasteful, `S
 `0x80` as a first length octet, which ST 0107.3 never mentions, and any ceiling on the count of
 length octets, which it does not state. Neither is reachable from a conforming stream, which is why
 `klv_codec` walks a local set end to end with park 8 open.
+
+**A fourth round the same day pointed the codec at a REAL STREAM, and it ended in a park.** The
+first three rounds read documents; this one read octets nobody here wrote. `streams/` now holds an
+MPEG-2 transport stream (SHA-256 `a491ceff…260e`, **102 004 664 bytes**) and the **977-octet** KLV
+extraction taken from it (`a810e4b6…2e51`) with
+`ffmpeg -i day_flight.mpg -map 0:1 -c copy -f data day_flight.klv`, **ffmpeg 9.0.1** — a command
+that was **re-run rather than recalled**, and reproduces those 977 octets byte for byte.
+`walk_local_set` reads it end to end: **6 packets, 26 items each, 156 items, 0 octets left over,
+every length field minimal, and all 6 checksums validate.** One thing does not fit — item 22 carries
+**four** octets where §8.22 states a Required Length of **2** — and the round could not decide what
+kind of thing that is, because item 65 declares edition **1** and **no held document dates any
+item's introduction**: ST 0601.14a's revision history begins at edition 14, no item section carries
+an introduction annotation, and its 33 requirement identifiers span editions 8, 9, 10, 13 and 14 and
+reach edition 1 in none of them. So the stamp stands **unrefuted**, the classification parks as
+**park 13** (MISB ST 0601.1), and register entry **KLV 14** records why. **What the round did rule,
+unconditionally: the framing layer is correct as shipped** — a valid minimal BER length, four opaque
+octets, and a walk that knows no tags cannot owe a Required Length check. That is the
+value-decoding layer's, and it does not exist.
+
+**Neither stream file is committed, and the rule is a different one from the PDFs'.** `.gitignore`
+excludes `fixtures/klv/streams/` as a **directory**, where the PDFs are excluded by **extension**.
+An extension rule works for `spec/` because every file there is one of three known extensions; a
+stream has no such discipline — the container arrived as `.mpg`, the extraction is `.klv`, and a
+later round could hold `.ts` or a raw PID dump — so an extension rule would be a list somebody has
+to remember to extend, and forgetting puts a hundred-megabyte binary in the index. Both files are
+pinned by SHA-256 in `spec/klv_pin.json`, so a reader who obtains the transport stream can
+reproduce and check both.
 
 All 141 tag rows still stay `not yet`; a framing rule says where an item begins and never what it
 means. What changed is that this repository can now **find** every item in a UAS Datalink LS packet

@@ -3063,8 +3063,31 @@ KLV_PINNED_DOCUMENTS = (
 #: the old phrase would have been a gate demanding the section describe a ruling it no longer
 #: makes. Recorded rather than quietly swapped, because a prediction a later round declines to
 #: follow is worth more than one it obeys.
+#: Document family -> {revision suffix: the phrase in the section that admits it}. ONE PHRASE PER
+#: REVISION, and that shape is new as of 2026-08-26. It used to be one phrase per DOCUMENT licensing
+#: a whole set, which was adequate while every extra revision of a family was extra for the same
+#: reason. The walk round broke that: it opened park 13 on **ST 0601.1** — a revision the profile
+#: does not pin and this repository does not hold, named as a park's deciding document, which is a
+#: THIRD kind after "held but not pinned" and "pinned by another delegation" — and it quotes §8.65's
+#: value range verbatim, which puts `0601.0` and `0601.255` in the section as parts of a QUOTED RANGE
+#: rather than as statements that any such edition governs anything. A single phrase would have
+#: licensed all three on one reason, and three of those reasons are different. So each number now
+#: names the sentence that admits it, and admitting a number means finding that sentence.
 KLV_HELD_NOT_PINNED = {
-    "MISB ST 0601": ({"19"}, "context only"),
+    "MISB ST 0601": {
+        "19": "context only",
+        # PARK 13, opened by the walk round. A held stream stamps item 65 = 0x01 and nothing in
+        # either held copy dates any item's introduction, so the edition the wire declares became a
+        # park rather than a reading. This is the one revision in the table that is named because a
+        # STREAM asked for it.
+        "1": "the edition item 65 declares on the wire",
+        # Both of these occur ONLY inside §8.65's own value range, quoted verbatim. `0601.0` is the
+        # pre-release the item defines and `0601.255` is the top of a range, and neither is an
+        # edition this section pins, holds or parks — so the sentence that admits them is the
+        # quotation itself, which is the narrowest admitting phrase in this table.
+        "0": "1..255 corresponds to document revisions MISB ST 0601.1 thru MISB ST 0601.255",
+        "255": "1..255 corresponds to document revisions MISB ST 0601.1 thru MISB ST 0601.255",
+    },
     # AMENDED 2026-08-26 BY THE FRAMING ROUND, and this entry is a different KIND from the one
     # above it. ST 0601.19 is a revision this repository HOLDS and the profile does not pin; ST
     # 336:2007 is a revision this repository does not hold and ANOTHER HELD DOCUMENT PINS — ST
@@ -3072,7 +3095,7 @@ KLV_HELD_NOT_PINNED = {
     # section now states two editions of ST 336 for a reason that is neither drift nor a second
     # copy, and the admitting phrase says what that reason is rather than merely licensing the
     # number. Register entry KLV 11.
-    "SMPTE ST 336": ({"2007"}, "a divergence between two delegations of one profile"),
+    "SMPTE ST 336": {"2007": "a divergence between two delegations of one profile"},
 }
 
 KLV_DELEGATION = (
@@ -3416,7 +3439,8 @@ def test_the_delegation_table_states_the_exact_version_the_profile_pins(document
     # retreat to. Checked against the section before and after: the set is unchanged on every
     # document family the roster names, so this narrows what the gate reads and not what it rules.
     stated = set(re.findall(rf"\b{re.escape(family)}{re.escape(separator)}(\d+)(?![\d-])", section))
-    extra, ruling_phrase = KLV_HELD_NOT_PINNED.get(document, (set(), None))
+    admitted = KLV_HELD_NOT_PINNED.get(document, {})
+    extra = set(admitted)
     assert stated == {suffix} | extra, (
         f"{document} is stated at more than one revision in this section: "
         f"{sorted(family + separator + x for x in stated)}, expected "
@@ -3425,13 +3449,19 @@ def test_the_delegation_table_states_the_exact_version_the_profile_pins(document
         f"revision this repository HOLDS but the profile does not pin is admitted only by "
         f"KLV_HELD_NOT_PINNED, because the whole value of this table is that the suffix is the pin"
     )
-    if extra:
-        assert ruling_phrase in section, (
-            f"{document} is stated at {sorted(family + separator + x for x in extra)} as well as "
-            f"at the pinned {version}, and the section does not carry {ruling_phrase!r}. Holding a "
-            "later revision is only safe while the section says out loud that it does not stand in "
-            "for the pinned one — otherwise the two numbers sit side by side and a reader picks "
-            "whichever they saw last"
+    for extra_suffix, ruling_phrase in sorted(admitted.items()):
+        # AGAINST THE FLATTENED TEXT, not the raw section. An admitting phrase long enough to be
+        # worth reading is long enough to wrap, and a substring check against wrapped markdown
+        # fails on a phrase that is present — which would push the next editor to shorten the
+        # phrase until it fits on one line, i.e. to make the reason less specific to satisfy the
+        # gate. `_flat` collapses the wrapping and leaves the sentence.
+        assert ruling_phrase in flat, (
+            f"{document} is stated at {family + separator + extra_suffix} as well as at the pinned "
+            f"{version}, and the section does not carry {ruling_phrase!r}. A revision that is not "
+            "the pinned one is only safe while the section says OUT LOUD why it is there — "
+            "otherwise the two numbers sit side by side and a reader picks whichever they saw "
+            "last. One phrase per revision, because the reasons differ: .19 is held and not "
+            "pinned, .1 is a park's deciding document, and .0 and .255 are parts of a quoted range"
         )
     assert document in flat, f"the delegation table no longer names {document}"
 
@@ -3650,7 +3680,7 @@ def test_the_scope_split_declines_the_essence_and_the_container_together():
 
 
 def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
-    """Twelve numbered parks, one of them CLOSED, and the honest difference between the rest.
+    """Thirteen numbered parks, TWO of them CLOSED, and the honest difference between the rest.
 
     The reason this is a test and not a convention: the MISB parks and the one SMPTE park have the
     same SHAPE — "obtain the document and pin it" — and collapsing the paywalled one into that
@@ -3661,21 +3691,43 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     directions. Parks are cited by number from the row sets, from the fixture plan and from the
     register, so renumbering eleven rows to close a gap would silently re-point every one of those
     citations at a different document — the failure mode is not that a reader sees a gap, it is
-    that they do not. So the table still has twelve numbered rows, row 1 says CLOSED, and the
-    public-download count drops from eleven to ten because a closed park no longer offers a reopen
-    route. That count is the honest-strength paragraph's own claim, which is why it is asserted
-    rather than left to the prose.
+    that they do not. So a closed park keeps its row, row 1 says CLOSED, and the public-download
+    count drops when a park closes because a closed park no longer offers a reopen route. That count
+    is the honest-strength paragraph's own claim, which is why it is asserted rather than left to
+    the prose.
+
+    PARK 13 WAS OPENED ON 2026-08-26 BY THE WALK ROUND, and the upper bound moved 12 -> 13 as the
+    deliberate act this test exists to force. It is the first park in the table a STREAM opened
+    rather than a document: a held stream declares edition 1 in item 65, nothing in either held
+    ST 0601 copy dates any item's introduction, and item 22's four octets against a Required Length
+    of 2 cannot be classified without ST 0601.1's tag table. Opening it moved the download count the
+    other way for the first time - 9 -> 10 - which is the same claim read in reverse and is why the
+    count is asserted rather than described.
     """
     section = _section(KLV_HEADING)
     flat = _flat(section)
-    for n in range(1, 13):
+    for n in range(1, 14):
         assert f"| **{n}** |" in section, (
             f"park {n} is missing from the table. The numbers are cited from the row sets — a hole "
             "in the numbering is a row pointing at nothing"
         )
-    assert "| **13** |" not in section, (
-        "the park table has grown past twelve without this test being updated. A new park has to "
+    assert "| **14** |" not in section, (
+        "the park table has grown past thirteen without this test being updated. A new park has to "
         "extend the numbering deliberately, because every row set cites parks by number"
+    )
+    # Park 13 is the one a STREAM opened, and its reopen route is the one park 4 already walked —
+    # a superseded revision from the registry, not "the current ST 0601". A row that lost that
+    # distinction would send the next reader to fetch .19 and answer a different question.
+    park_13 = [ln for ln in section.splitlines() if ln.startswith("| **13** |")]
+    assert len(park_13) == 1, f"expected exactly one park row numbered 13, found {len(park_13)}"
+    assert "0601.1" in park_13[0], (
+        "park 13's document is MISB ST 0601.1 — the edition item 65 declares on the wire. Without "
+        "the version the row is a park on 'ST 0601', which this repository already holds twice"
+    )
+    assert "superseded" in park_13[0].lower(), (
+        "park 13 closes by fetching a SUPERSEDED revision, which is the route park 4 proved. A row "
+        "that does not say so reads as an instruction to fetch the current edition, and the current "
+        "edition is the one that cannot answer the question"
     )
     # The closed park keeps its number and says so, and nothing has quietly taken its place.
     park_1 = [ln for ln in section.splitlines() if ln.startswith("| **1** |")]
@@ -3723,18 +3775,19 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     # And the other eleven DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
-    assert len(downloads) == 9, (
-        f"{len(downloads)} park rows state a public-download reopen condition, expected 9 — "
-        "ten open parks, of which nine are downloads and one is the purchase. The count IS the "
-        "honest-strength claim in the paragraph above the table, and it has now moved twice: from "
-        "11 to 10 when park 1 closed, and from 10 to 9 when park 4 closed. A closed park has no "
-        "reopen route to state, so this number falls every time somebody does the cheap thing — "
-        "which is the claim the paragraph makes and the only way it can be checked"
+    assert len(downloads) == 10, (
+        f"{len(downloads)} park rows state a public-download reopen condition, expected 10 — "
+        "eleven open parks, of which ten are downloads and one is the purchase. The count IS the "
+        "honest-strength claim in the paragraph above the table, and it has now moved three times: "
+        "from 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, and from 9 to 10 when "
+        "the walk round opened park 13. It falls every time somebody does the cheap thing and rises "
+        "when a round finds a question it cannot answer from what is held — which is the claim the "
+        "paragraph makes and the only way it can be checked"
     )
 
 
 def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
-    """Thirteen entries, `KLV n`, no fourteenth without a deliberate edit — and every CITATION defined.
+    """Fourteen entries, `KLV n`, no fifteenth without a deliberate edit — and every CITATION defined.
 
     Numbered per the new adapter's own convention rather than continuing the GMTIF or NITS series,
     because a register is scoped to the document it reads. The upper guard matters as much as the
@@ -3757,10 +3810,15 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     # requirement identifiers carry the previous edition's number, and KLV 13, that it sources the BER
     # rules to ITU X.680 where BER is X.690. Moving the bound is the deliberate act the upper guard
     # exists to force, and it has now been forced three times by three rounds that each read a document.
-    for n in range(1, 14):
+    # THE BOUND MOVED 13 -> 14 ON 2026-08-26 for the first time on evidence that is not a document.
+    # The walk round read a real stream and found KLV 14: ST 0601 requires an edition stamp in every
+    # packet (ST 0601.8-12, item 65) and no held edition says which items each edition admits, so a
+    # reader cannot act on the declaration a conforming emitter is required to send. That is why the
+    # round parked instead of ruling, and why park 13 exists.
+    for n in range(1, 15):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 14 —" not in section, (
-        "the register has grown past KLV 13 without this test being updated"
+    assert "**KLV 15 —" not in section, (
+        "the register has grown past KLV 14 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a
@@ -3813,6 +3871,221 @@ def test_the_name_ruling_states_both_names_and_rejects_the_alternatives_on_groun
             "communities") in flat, (
         "`fmv` is rejected BY THE PINNED TEXT, which is the strongest rejection available here. "
         "Dropping the quotation turns it back into a matter of taste"
+    )
+
+
+# ------------------------------- the walk round: a real stream, and the park it opened -----------
+#
+# THE FIRST NUMBERS IN THIS SECTION THAT CAME OUT OF OCTETS RATHER THAN OUT OF A PDF. Every other
+# KLV guard below asserts that the prose agrees with a document; these assert that the prose agrees
+# with a STREAM, and the stream is not in the index — `.gitignore` carries `fixtures/klv/streams/`
+# because a hundred-megabyte transport container is pinned by hash and never vendored. So the
+# derivation test skips when the bytes are absent, on the same rule the PDF-hash check uses, and
+# the claims that can be checked without them are checked unconditionally.
+
+#: The two pins the walk round recorded, stated here so the section, the pin record and this file
+#: are three sites that must agree rather than one site nobody checks.
+KLV_STREAM_PINS = (
+    ("day_flight.mpg", "a491ceff524b0008e3076d9eb30782badac2d53053731accc0a4e1226177260e", 102004664),
+    ("day_flight.klv", "a810e4b60ff33b1bdc1831594201d8158655c0808bdef1b22d84a9eb26e22e51", 977),
+)
+
+KLV_WALK_HEADING = "### The walk over a real stream"
+
+
+def _klv_streams_dir() -> pathlib.Path:
+    root = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
+    return root / "fixtures" / "klv" / "streams"
+
+
+def test_the_walk_sections_numbers_are_the_bytes_own_numbers():
+    """Re-walk the pinned extraction and check the prose against what comes back.
+
+    THE POINT OF THIS TEST IS THAT THE SECTION SAYS ITS COUNTS ARE DERIVED. A section that claims
+    "every count below came out of the walk's output" and is in fact typed is the exact class of
+    defect `klv_pin.json`'s `a_derived_count_in_gitignore_had_gone_stale_and_is_corrected` records
+    — a number describing itself as derived while nothing re-derives it. So the walk is run again
+    here, and the section is asked to agree with it.
+
+    SKIPPED WHEN THE STREAM IS ABSENT, and that is not a hole. The stream is excluded from the
+    index by a DIRECTORY rule, so a fresh clone has the prose and not the octets; the pin's hash is
+    what a reader re-verifies with, and this test is what the working tree re-verifies with. The
+    hashes are asserted first, so a test that runs at all runs against the pinned bytes and never
+    against some other clip that happens to share a filename.
+    """
+    from synapse_cdm.adapters.klv_codec import (
+        decode_ber_length, decode_ber_oid, encode_ber_length, is_local_set_key,
+        read_local_set_key, walk_local_set, bcc_16,
+    )
+    streams = _klv_streams_dir()
+    for name, digest, size in KLV_STREAM_PINS:
+        path = streams / name
+        if not path.exists():
+            pytest.skip(f"{path} is not in the working tree — the stream is pinned, not vendored")
+        assert path.stat().st_size == size, f"{name} is the wrong size for the pin"
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, (
+            f"{name} does not hash to the pinned value — this is a different clip"
+        )
+
+    buf = (streams / "day_flight.klv").read_bytes()
+
+    packets, offset = [], 0
+    while offset < len(buf):
+        assert is_local_set_key(buf, offset), f"offset {offset} is not a UAS Datalink LS key"
+        after_key = read_local_set_key(buf, offset)
+        declared, after_len = decode_ber_length(buf, after_key)
+        packets.append((offset, after_key, declared, after_len, list(walk_local_set(buf, offset))))
+        offset = after_len + declared
+
+    section = DOC.read_text().split(KLV_WALK_HEADING)[1].split("\n### ")[0]
+
+    # --- the counts the section prints, each re-derived ---
+    assert len(packets) == 6, f"the extraction holds {len(packets)} packets"
+    assert offset == len(buf), f"{len(buf) - offset} octets left over after the last packet"
+    items = [it for _, _, _, _, its in packets for it in its]
+    assert {len(its) for _, _, _, _, its in packets} == {26}
+    assert len(items) == 156
+    assert len({tuple(it.tag for it in its) for _, _, _, _, its in packets}) == 1
+    assert len({it.tag for it in items}) == 26
+    assert {d for _, _, d, _, _ in packets} == {144, 145}
+    assert {a - k for _, k, _, a, _ in packets} == {2}, "packet length fields are not all 2 octets"
+
+    for claim in ("| Packets | **6**", "| Items per packet | **26**", "| Items in total | **156**",
+                  "| Distinct tags | **26**"):
+        assert claim in section, f"the section no longer states {claim!r}, or states it differently"
+
+    # Minimality, over EVERY length field — the section says 162 and that number is the sum of the
+    # six packet-level fields and the 156 item-level ones, so it is checked as that sum.
+    checked = 0
+    for start, after_key, declared, after_len, its in packets:
+        assert buf[after_key:after_len] == encode_ber_length(declared)
+        checked += 1
+        for it in its:
+            _, after_tag = decode_ber_oid(buf, it.tag_offset)
+            assert buf[after_tag:it.value_offset] == encode_ber_length(it.length)
+            checked += 1
+    assert checked == 162, f"{checked} length fields were checked, the section says 162"
+    assert "| Length fields that are not minimal — packet or item, all 162 of them | **0**" in section
+
+    # `0x80` never appears as a first length octet — the measurement that shows park 8 was not
+    # reached rather than merely not mentioned.
+    assert {buf[k] for _, k, _, _, _ in packets} == {0x81}
+    assert "**one**: `0x81`. **Never `0x80`**" in section
+
+    # Item 2 first, item 1 last, item 65 present and 0x01 everywhere.
+    assert all(its[0].tag == 2 and its[-1].tag == 1 for _, _, _, _, its in packets)
+    assert {it.value.hex() for it in items if it.tag == 65} == {"01"}
+    assert {it.length for it in items if it.tag == 65} == {1}
+    assert all(any(it.tag == 65 for it in its) for _, _, _, _, its in packets)
+
+    # THE CHECKSUMS. Six of six, and the section calls this the load-bearing result because it is
+    # what rules out corruption for item 22 — so a silent regression here would leave the section
+    # asserting a classification it can no longer support.
+    for start, _, _, _, its in packets:
+        last = its[-1]
+        assert bcc_16(buf[start:last.value_offset]) == int.from_bytes(last.value, "big"), (
+            f"the packet at {start} does not checksum — ST 0601.14a §6.6"
+        )
+    assert "| **Checksums that validate** | **6 of 6**" in section
+
+    # ITEM 22: four octets at six sites, top two zero, and the offsets the section tabulates.
+    sites = [(start, it.tag_offset, it.value_offset, it.length, it.value.hex())
+             for start, _, _, _, its in packets for it in its if it.tag == 22]
+    assert len(sites) == 6
+    assert {s[3] for s in sites} == {4}
+    assert all(s[4].startswith("0000") for s in sites)
+    for start, tag_off, val_off, length, value in sites:
+        row = f"| {start} | {tag_off} | {val_off} | {length} | `{value}` |"
+        assert row in section, f"the item-22 table's row for the packet at {start} is not\n  {row}"
+
+
+def test_the_walk_section_withdraws_the_era_premise_and_names_where_it_came_from():
+    """A briefing defect recorded with its SOURCE, on the settlement-3 precedent.
+
+    The round was briefed to walk an "ST 0601.8-era" clip and the claim came from the `droneklv`
+    README, which states the edition that LIBRARY supports — a fact about a decoder read as a fact
+    about an emitter. The withdrawal is worth a test for the reason settlement 3's corrected epoch
+    premise is: a false premise that is quietly deleted leaves the habit that produced it, and the
+    next round has no way to see that this section has been wrong this way before. So the entry has
+    to keep BOTH halves — that the claim is withdrawn, and where it came from.
+    """
+    flat = _flat(DOC.read_text().split(KLV_WALK_HEADING)[1].split("\n### ")[0])
+    assert "ST 0601.8-era" in flat, "the withdrawn claim is no longer quoted, so nothing says what was withdrawn"
+    assert "WITHDRAWN" in flat, "the era premise no longer says it is withdrawn"
+    assert "droneklv" in flat, (
+        "the withdrawn premise no longer names its source. A defect recorded without its source is "
+        "a confession rather than a finding — the useful half is that a decoder's supported edition "
+        "was read as an emitter's"
+    )
+    assert "the edition the library supports" in flat.lower(), (
+        "the distinction that makes this a defect — a decoder's supported edition against an "
+        "emitter's — is gone, and without it the withdrawal reads as a change of mind"
+    )
+
+
+def test_the_walk_rounds_ruling_and_its_park_do_not_depend_on_each_other():
+    """Act 2 is recorded UNCONDITIONED, and the park keeps three candidates rather than two.
+
+    These are one test because they are one discipline. The ruling — the framing layer is correct
+    as shipped and the flag is the value-decoding layer's — must not be phrased as conditional on
+    whether item 65's stamp is trustworthy, or the next round reopens it while re-deciding the
+    edition question. And the park must keep the third candidate: if item 22 postdates edition 1
+    then it is an UNKNOWN TAG under the declared edition, the four octets are opaque, and the
+    length question never arises at all. A two-candidate park has silently assumed the item exists
+    in edition 1, which is the assumption the whole round refused to make.
+    """
+    section = DOC.read_text().split(KLV_WALK_HEADING)[1].split("\n### ")[0]
+    flat = _flat(section)
+    assert "correct as shipped" in flat.lower(), "Act 2's ruling on the framing layer is gone"
+    assert "unconditioned on the edition question" in flat, (
+        "the ruling no longer says it is unconditioned. That word is what stops the next round "
+        "reopening it: whether the stamp is trustworthy changes what the four octets MEAN and "
+        "changes nothing about which layer owes the check"
+    )
+    assert "value-decoding layer" in flat, "the layer that owes the flag is no longer named"
+    for candidate in ("**(a)**", "**(b)**", "**(c)**"):
+        assert candidate in section, (
+            f"candidate {candidate} is gone from the disposition. Three is the honest count — "
+            "dropping (c) assumes item 22 exists in edition 1, which is the assumption the round "
+            "declined to make"
+        )
+    assert "the length question never arises" in flat, (
+        "candidate (c)'s consequence is the one that makes it a different KIND of answer rather "
+        "than a variant of (a), and it is what makes the third candidate worth carrying"
+    )
+    assert "transmission corruption" in flat.lower(), (
+        "the ruled-out candidate is gone. The checksums decided it, and a park that does not say "
+        "what it eliminated reads as a park that eliminated nothing"
+    )
+    assert "ST 0601.1's tag table" in section or "ST 0601.1's TAG TABLE" in section, (
+        "the deciding fact is no longer named. A park whose deciding fact is unnamed cannot be "
+        "closed by anyone but its author"
+    )
+
+
+def test_the_walk_round_did_not_touch_parks_8_or_9_and_says_so_with_the_measurement():
+    """Two absences, each stated as a measurement rather than as a disclaimer.
+
+    "Park 8 was not reached" and "park 9 is untouched" are cheap to write and impossible to check.
+    What makes them checkable is that the stream was MEASURED for both: `0x80` does not occur as a
+    first length octet in 977 octets, and the PES observation that might have looked like park 9
+    work is filed with its numbers and explicitly not acted on. The failure mode this guards is a
+    later editor reading the PES paragraph as transport-layer coverage.
+    """
+    flat = _flat(DOC.read_text().split(KLV_WALK_HEADING)[1].split("\n### ")[0])
+    assert "204 transport packets" in flat and "198 carry a PES header and no payload" in flat, (
+        "the PES observation lost its numbers. Filed WITH them it is a measured case waiting for "
+        "whoever opens park 9; filed without them it is a suspicion"
+    )
+    assert "park 9" in flat.lower(), "the PES observation no longer names the park that owns it"
+    assert "did not open, did not close and did not narrow" in flat, (
+        "the PES paragraph no longer says what it did NOT do to park 9, which is the whole reason "
+        "a transport-layer observation is allowed to be recorded in a KLV section at all"
+    )
+    assert "park 8" in flat.lower() and "does not occur as a first length octet" in flat, (
+        "park 8's non-reach is no longer stated as a measurement over the stream. Stated as a "
+        "disclaimer it is unfalsifiable; stated as a measurement it is the prediction 'neither is "
+        "reachable from a conforming stream' being confirmed"
     )
 
 
@@ -4567,7 +4840,7 @@ def test_the_covering_documents_absences_are_stated_as_counts_and_nothing_is_inv
 def test_the_single_park_is_stated_once_and_agrees_at_every_site():
     """One park, three sites, and the count is the claim.
 
-    The KLV phase had twelve parks over fourteen documents and needed a table. This one has one,
+    The KLV phase has thirteen parks over fifteen documents and needed a table. This one has one,
     and the risk runs the other way: a second park drifting in — the two related documents are the
     obvious candidates — would change what #9 is waiting for from a single access decision into a
     programme. So the count is asserted, and so is the identity of the one.

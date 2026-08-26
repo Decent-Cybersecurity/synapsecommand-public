@@ -1062,7 +1062,7 @@ too — so the first is now stated.
   committed.
 
   **The round that obtained ST 0601.14 transcribed its Table 1 in full — 141 items, tags 1 through
-  141, every row `not yet` — and closed park 1**, the largest of the twelve. It did not otherwise
+  141, every row `not yet` — and closed park 1**, the largest of the thirteen. It did not otherwise
   advance: parks 4 and 8 (ST 0107.3 and SMPTE ST 336:2017) own how a key and a length are written,
   and holding the dictionary does not make the octets readable. **Still no gap opened and no field
   proposed.** Two
@@ -1150,15 +1150,73 @@ too — so the first is now stated.
   document is held, and rewriting a park's reopen route on a reference list read in passing is the
   roster change the park 1 round refused to make.
 
+  **A fourth round the same day pointed the codec at a real stream, and it ended in a PARK rather
+  than a ruling.** The three rounds above read documents; this one read octets nobody here wrote —
+  an MPEG-2 transport stream (SHA-256 `a491ceff…260e`, **102 004 664 bytes**) and the **977-octet**
+  KLV extraction taken from it (`a810e4b6…2e51`) with
+  `ffmpeg -i day_flight.mpg -map 0:1 -c copy -f data day_flight.klv`, **ffmpeg 9.0.1**, a command
+  **re-run rather than recalled** and reproducing those octets byte for byte. **Neither file is
+  tracked**, on a *directory* rule (`fixtures/klv/streams/`) rather than the extension rule the
+  PDFs use, because a stream has no extension discipline to derive one from. `walk_local_set` reads
+  it end to end: **6 packets, 26 items each, 156 items, 0 octets left over, every one of the 162
+  length fields minimal, and all 6 checksums validate** — which is what rules out corruption for
+  the one thing that does not fit.
+
+  **What does not fit is item 22, Target Width: four octets at all six sites where §8.22 states a
+  Required Length of 2**, with the top two octets `0x0000` every time. The round could not classify
+  it, and the reason is a finding in its own right. Item 65 declares edition **1**, and the test for
+  whether that stamp is trustworthy — does the stream use any item that *postdates* edition 1? —
+  **could not be run against anything held**: ST 0601.14a's revision history begins at edition 14
+  and ST 0601.19's at edition 19, no item section in either carries an introduction annotation,
+  Table 1 has no edition column, and the one dating device the series carries is the
+  requirement-identifier prefix, whose **33** instances in ST 0601.14a span editions 8, 9, 10, 13
+  and 14 and reach editions 1 through 7 in none of them. So the stamp stands **UNREFUTED**, the
+  classification parks with **three** live candidates — a stream defect against `ST 0601.13-29`,
+  an edition skew against ST 0601.1's own item-22 entry, or an unknown tag under the declared
+  edition — and the deciding fact is one page: **ST 0601.1's tag table**. That is **PARK 13**, the
+  first park in this section a *stream* opened rather than a document, reopened by a public NSG
+  Registry fetch of a superseded revision on the route park 4 already proved. Register entry
+  **KLV 14** records the general form: the format requires an edition stamp on the wire and no held
+  edition says which items each edition admits, so the item delta is unbounded in **both**
+  directions from what is held.
+
+  **One thing WAS ruled, unconditionally, and it is recorded that way so neither branch reopens
+  it.** The framing layer is **correct as shipped**: the four octets arrive behind a valid, minimal,
+  short-form BER length, and `walk_local_set` knows no tags at all — a walk that flagged a Required
+  Length would be a walk consulting the tag table, which is the one thing it is built not to do. The
+  flag is owed by the **value-decoding layer**, which does not exist and is blocked on parks 3, 5,
+  11 and 12. **No fixture was written**, and that is part of the ruling rather than an omission:
+  there is no codec defect to reproduce, and a synthetic fixture asserting one would encode a
+  confusion as a golden file. **Still no gap opened and no field proposed**, and all 141 tag rows
+  still read `not yet` — a walk that finds every item in six real packets and validates every
+  checksum decodes **no value**.
+
+  **The round's own briefing carried a false premise and it is recorded rather than dropped.** The
+  walk was briefed as being over an "ST 0601.8-era" clip. That claim came from the `droneklv`
+  README, which states the edition **that library supports** — a fact about a *decoder* — read here
+  as a fact about the *emitter*. Withdrawn as a briefing defect, on the same rule that keeps
+  settlement 3's corrected epoch premise: a premise that turned out false is evidence about how this
+  section reaches conclusions.
+
+  **Park 9 was not touched, and the observation that might have touched it is filed instead.** PID
+  `0x1f1` carries **204** transport packets, each beginning a PES unit, of which **198 carry a PES
+  header and no payload at all** and 6 carry payload totalling exactly the 977 octets extracted.
+  What a header-only PES unit on a metadata PID means is MISB ST 1402.2's to say, and ST 1402.2 is
+  park 9 — not opened, not closed, not narrowed. **Park 8 was not reached either**: `0x80` never
+  appears as a first length octet in the 977 octets and no length field exceeds two, so the stream
+  is silent on both absences that park owns, which is what "neither is reachable from a conforming
+  stream" predicted.
+
   and **KLV 10**. The fixture directory is `fixtures/klv` rather than
   `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
   `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry
   beside the shipped ones — nine of them when this entry was written, ten since `cat034` landed.
 
   **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
-  row set is a *document this repository does not hold* — twelve parks over fourteen documents, **two
-  now closed**, nine of the ten still open being public downloads and one behind SMPTE's paywall —
-  and not a CDM shortfall.
+  row set is a *document this repository does not hold* — thirteen parks over fifteen documents, **two
+  closed**, ten of the eleven still open being public downloads and one behind SMPTE's paywall —
+  and not a CDM shortfall. The fifteenth document is park 13's ST 0601.1 and is **not** a fifteenth
+  *delegated* document: the profile delegates to ST 0601.14 and that count stays at fourteen.
   The profile delegates every field dictionary it relies on: `MISP-2015.1-07` sends the KLV
   encoding to SMPTE ST 336:2017, `MISP-2015.1-08` sends the formatting to MISB ST 0107.3, and
   §4.4.4.1 sends the airborne field dictionary to MISB ST 0601.14. A schema proposal derived from
