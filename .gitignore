@@ -80,3 +80,4 @@ docs/.cache-loader/
 *.tar
 *.tar.gz
 *.tgz
+fixtures/klv/streams/
