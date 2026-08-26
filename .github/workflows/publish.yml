@@ -42,6 +42,15 @@
 # the UPLOAD specifically. The ruling and the case against it are in ledger entry 6, which is where
 # it changes if it is revisited.
 #
+# The environment also carries a deployment branch policy of `v*` (tags only), which is a SECOND
+# lock on the same door and on purpose. The `if:` on the publish job below is the first; it lives in
+# this file, so a mistaken edit to this file removes it. The environment's policy lives outside this
+# file and would still refuse a branch deployment. The one thing the environment is NOT is a second
+# pair of eyes: `prevent_self_review` is off, because with one maintainer the only person who can
+# push a tag is the only person who could approve it, and the stronger setting would be a deadlock
+# rather than a review. This is a confirmation prompt. Entry 6 records that, and records that the
+# setting should change the moment there is a second maintainer.
+#
 # THE RELEASE CONDITIONS, AND THE ONE THAT CANNOT RUN HERE
 # -------------------------------------------------------
 # `MIGRATIONS.md`'s "What a release requires" governs a CI build exactly as it governs a person at

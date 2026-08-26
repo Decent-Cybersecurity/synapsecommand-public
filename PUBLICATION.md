@@ -427,8 +427,33 @@ how the narrowest possible grant becomes a broad one silently.
 
 #### Step B — the environment, and the reviewers on it
 
-`pypi` exists as a GitHub environment on this repository with **required reviewers set**, created
-this round. That is the ruling, and the reasons are stated because the opposite ruling is
+`pypi` exists as a GitHub environment on this repository, created this round at
+`2026-08-26T06:46:16Z`. Unlike steps A and C, this one is **done**, and it is observable — the
+environment and its rules are public API on a public repository:
+
+| Rule | Value | Why |
+| --- | --- | --- |
+| required reviewers | `decentcybersecurity` | the human confirmation step, below |
+| deployment branch policy | tag pattern `v*` only | a second lock, described below |
+| `prevent_self_review` | `false` | there is one maintainer; see the note |
+| `wait_timer` | `0` | a delay is not a decision, and this gate wants a decision |
+
+**The branch policy is deliberate belt-and-braces.** The workflow's publish job already refuses to
+run on anything but a tag, by its `if:`. The environment refuses *independently*, at a layer the
+workflow cannot edit: even a `publish.yml` whose tag guard was deleted could not deploy to `pypi`
+from a branch, because the environment would decline the deployment. Two locks on the irreversible
+act, and the outer one is not in the file that a mistaken edit would be in.
+
+**`prevent_self_review: false`, named because it is the weak point.** GitHub can forbid the person
+who triggered a deployment from approving it. That is the stronger setting and it is *off*, because
+this repository has one maintainer: with it on, the only person who can push a tag is the only
+person who could approve it, and the gate would be a deadlock rather than a review. So the honest
+description of this gate is **a confirmation prompt, not a second pair of eyes** — it defends
+against a mistaken or automatic tag, not against a determined maintainer. It should be turned on
+the moment a second maintainer exists, and that is the trigger to watch for rather than a periodic
+review.
+
+The reviewer requirement is the ruling, and the reasons are stated because the opposite ruling is
 defensible and someone will reconsider it:
 
 * an upload to PyPI **cannot be undone**. A yanked release still occupies its filename forever, and
@@ -474,6 +499,11 @@ than reasoning about its blast radius.
   without this conversation, by someone who was not in it.
 * **Not that the old token is gone.** It is live as this is written. Until step C, `synapse-cdm`
   has two upload paths.
+
+**Where this stands.** Step B is **done** and is the only one of the three that anybody can verify
+without a maintainer's word. Steps A and C are not done. The workflow is on `main` and the upload
+it would perform is currently refused by PyPI, which is the correct behaviour for a repository that
+has declared an intent to publish and has not been granted permission to.
 
 **Closes when:** step A is registered on pypi.org, a tag has published through the workflow, and
 step C has removed the token. Any one of the three left undone leaves this entry open.

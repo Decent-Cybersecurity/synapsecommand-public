@@ -282,6 +282,29 @@ def test_the_build_half_is_runnable_without_publishing(workflow):
         "debugged during a release")
 
 
+def test_the_environment_is_described_as_a_confirmation_and_not_as_review(workflow):
+    """The header must not overstate what the reviewer gate is.
+
+    `prevent_self_review` is off, because with one maintainer the only person who can push a tag is
+    the only person who could approve it. So the gate stops a mistaken or automatic tag and does
+    not stop a determined maintainer, and prose calling it "review" or "a second pair of eyes"
+    would be describing a control that is not there. Entry 6 carries the same statement and the
+    trigger for changing it — a second maintainer.
+
+    This is the `tests/test_cdm_deploy_workflow.py` failure in its subtler form: not a mechanism
+    that does not exist, but a mechanism weaker than the sentence describing it.
+    """
+    header = workflow[:workflow.index("\nname:")]
+    assert "prevent_self_review" in header, (
+        "the header does not mention `prevent_self_review`. Whether the approver may be the person "
+        "who triggered the deployment is the difference between a confirmation prompt and a "
+        "review, and the file should not let a reader assume the stronger one")
+    assert "confirmation" in header.lower(), (
+        "the header does not say the reviewer gate is a confirmation step. If "
+        "`prevent_self_review` has since been turned ON, this test is what should change — and "
+        "PUBLICATION.md entry 6, which names a second maintainer as the trigger for doing it")
+
+
 def test_the_header_says_which_half_has_been_proven(workflow):
     """The file has to be honest about the publish job never having run.
 
