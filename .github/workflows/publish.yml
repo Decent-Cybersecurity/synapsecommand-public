@@ -14,7 +14,9 @@
 # Read this before treating a green run as proof of anything:
 #
 #   * the `build` job is PROVEN. It runs on `workflow_dispatch`, it has been run against `main`,
-#     and its outcome is recorded in ledger entry 6. It builds, gates and uploads an artefact;
+#     and its outcome is recorded in ledger entry 6 — three runs, the first two of which FAILED on
+#     defects in this file that no amount of reading it would have found. It builds, gates and
+#     uploads an artefact;
 #   * the `publish` job has NEVER RUN. It is skipped on every dispatch, by construction, because
 #     `if:` requires a tag ref. Its first execution is the 1.1.0 release.
 #
@@ -171,7 +173,20 @@ jobs:
           python -m pip install twine
 
       - name: Condition 1 — the suite is green
-        run: python -m pytest -q
+        # `-rs` because a CI green is NOT the same green a maintainer sees, and the difference has
+        # to be legible rather than hidden in one number. On a developer machine this suite reports
+        # 2886 passed, 2 skipped; here it reported 2857 passed, 31 skipped. Same total. The 29
+        # extra skips are by design: the pinned specification PDFs are gitignored and never
+        # committed — 44 on a maintainer's disk, 0 tracked — so a fresh clone has the pin RECORDS
+        # and not the documents, and `tests/test_cdm_pins.py` skips with a message saying exactly
+        # that. Two more come from there being no in-clone virtualenv and no floor interpreter on
+        # the runner.
+        #
+        # Nothing here is wrong, and the reason for `-rs` is that this is the shape of a real
+        # defect too: a test that silently stops running in CI reports as a pass. The counts are
+        # deliberately NOT asserted — a pinned number would fail on every added test, which is how
+        # a gate gets deleted — so the skip list is printed and belongs to whoever reads the run.
+        run: python -m pytest -q -rs
 
       - name: Condition 3 — the tag names this tree's PACKAGE_VERSION
         if: startsWith(github.ref, 'refs/tags/v')
@@ -246,6 +261,16 @@ jobs:
             echo
             echo '```'
             ls -1 schemas
+            echo '```'
+            echo
+            echo '### The suite, as this runner saw it'
+            echo
+            echo 'A CI green is not a maintainer'"'"'s green: the pinned specification PDFs are'
+            echo 'gitignored, so a fresh clone skips the tests that read them. The skip list is in'
+            echo 'the "Condition 1" step'"'"'s log, printed with `-rs`.'
+            echo
+            echo '```'
+            python -m pytest -q -rs 2>&1 | tail -1
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
 

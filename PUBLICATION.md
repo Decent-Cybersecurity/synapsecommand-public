@@ -492,6 +492,27 @@ than reasoning about its blast radius.
   gate half against `main` today; the upload half is exercised for the first time by the 1.1.0 tag,
   and the workflow's own header comment says which half is which so a green dispatch run is not
   read as proof of an upload that has not happened.
+
+  The build half **has** been run, three times, and the first two failed. That is the record:
+
+  | Run | Outcome | What it found |
+  | --- | --- | --- |
+  | [32939921536](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/32939921536) | FAILED in 25s | all 35 test modules failed collection on `No module named 'pydantic'`. The install step installed `pytest twine` and never installed the package — the workflow had been written from what the suite needs to run, not from what a clean machine needs to run it |
+  | [32940039945](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/32940039945) | FAILED in 1m20s | suite, gate and `twine check --strict` green; the schema check failed with six `missing` lines because the step ran in `packages/cdm` and the published `schemas/` are at the repository root. The same wrong assumption had the derivations step listing a path that does not exist — which would not have failed the build, only put an error into a release-notes summary |
+  | [32940226037](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/32940226037) | **SUCCESS in 1m21s** | `13 checks, 0 failed`; 12 adapters, 776 fixture verdicts; mutation caught by five checks; `twine check --strict` PASSED on both artefacts; the publish job **skipped**, and the two tag-only steps skipped |
+
+  Both failures were defects in the workflow rather than in the tree, and neither was reachable by
+  reading the file. A workflow whose build half had never been executed would have carried them to
+  the 1.1.0 release, where the first thing to discover them would have been the release itself.
+  This is the whole argument for `workflow_dispatch` existing.
+
+* **Not that a CI green equals a maintainer's green.** The successful run reports `2857 passed, 31
+  skipped`; a maintainer's machine reports `2886 passed, 2 skipped`. The total is identical and the
+  29 extra skips are by design — the pinned specification documents are gitignored and never
+  committed, so a fresh clone holds the pin records and not the PDFs, and those tests skip saying
+  so. It is recorded because the same shape is what a real defect looks like: a test that quietly
+  stops running reports as a pass. The workflow now runs the suite with `-rs` so the list is in the
+  log rather than inside a single number.
 * **Not that step A has been done.** Nothing in this tree can observe it. The PyPI project's
   publishing settings are not public, so unlike entry 5 — which could be checked against the index
   by any stranger — the only evidence that A and C happened will be a successful 1.1.0 publish and
