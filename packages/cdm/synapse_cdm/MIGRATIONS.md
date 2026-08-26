@@ -9,8 +9,9 @@ contract, carried in every object, bumped by the table below. The distribution o
 the second — ordinary semver over the Python surface — and the two are allowed to diverge,
 because the section "Adapters that landed with no schema change" is eleven entries long and
 every one of them would have been a package release. Both are declared in `version.py`, which is the
-one place the distinction is argued; nothing here restates it. They are both `1.0.0` today, by
-coincidence of two first releases.
+one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
+release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
+`PACKAGE_VERSION` is `1.1.0` and `SCHEMA_VERSION` is `1.0.0`.
 
 ## What each bump means
 
