@@ -66,6 +66,22 @@ candidates that needed edition 1 to differ. `EG0601.1.pdf` is pinned in `spec/`;
 framing ruling above is unchanged** — nothing in `klv_codec` moved, and the flag is still owed by the
 value-decoding layer.
 
+**THE STREAM'S ORIGIN IS NOW PINNED, and the lead about it did NOT verify.** A sixth round hunted
+one question: is the held clip one of the "supplementary test files" EG 0601.1 §3 says replaced its
+Appendix A? Three routes — the Wayback CDX index of the MISB's own host, four MISB-adjacent hosts,
+and the sample collection's own provenance — produced **no MISB-served bytes, no same-named file
+with different bytes, and no MISB listing naming the file**, so the lead is **closed as unverifiable
+from the routes this repository can reach** rather than refuted. What verified instead is where the
+held bytes came from: `https://samples.ffmpeg.org/MPEG2/mpegts-klv/Day%20Flight.mpg`, served as
+`Day Flight.mpg`, and the evidence is **byte identity** — the re-fetched copy `cmp`s identical to
+the pinned one. That closed a gap in this repository's own pinning: the stream pin had recorded a
+hash and no **origin** for two rounds, where every PDF here records the URL that served it.
+**Park 13's ruling is unaffected and would have been unaffected had the lead verified** — the
+publisher of a file is an input to neither of the ruling's two bases, so four octets against a
+stated length of two stand either way. `spec/klv_pin.json` carries the routes, the failure mode of
+each, and MISB's own FAQ sentence explaining why routes 1 and 2 could not succeed: its test files
+were behind an account on the MISB **protected** website.
+
 **Neither stream file is committed, and the rule is a different one from the PDFs'.** `.gitignore`
 excludes `fixtures/klv/streams/` as a **directory**, where the PDFs are excluded by **extension**.
 An extension rule works for `spec/` because every file there is one of three known extensions; a
@@ -73,7 +89,9 @@ stream has no such discipline — the container arrived as `.mpg`, the extractio
 later round could hold `.ts` or a raw PID dump — so an extension rule would be a list somebody has
 to remember to extend, and forgetting puts a hundred-megabyte binary in the index. Both files are
 pinned by SHA-256 in `spec/klv_pin.json`, so a reader who obtains the transport stream can
-reproduce and check both.
+reproduce and check both — and since the provenance round, the pin says **where to obtain it**.
+`fixtures/klv/provenance/` is a **third** not-committed rule on the same directory pattern, holding
+the nineteen fetched files that provenance round's sentences are derived from.
 
 All 141 tag rows still stay `not yet`; a framing rule says where an item begins and never what it
 means. What changed is that this repository can now **find** every item in a UAS Datalink LS packet

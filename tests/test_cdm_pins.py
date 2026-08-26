@@ -1527,3 +1527,154 @@ def test_the_one_edition_not_obtained_is_named_at_every_site_that_mentions_the_g
         for wrong in ("all 23 editions", "every edition of the lineage is",
                       "the complete lineage is in hand"):
             assert wrong not in text, f"{label} claims a completeness the bundle does not have"
+
+
+# --------------------------------------------- the fetched provenance evidence (the third rule) ---
+#
+# THE THIRD NOT-COMMITTED RULE IN THIS REPOSITORY, and the first one whose subject is somebody
+# else's website. `*.pdf` is an EXTENSION rule over specification documents; `fixtures/klv/streams/`
+# is a DIRECTORY rule over real streams; `fixtures/klv/provenance/` is a DIRECTORY rule over
+# FETCHED EVIDENCE — CDX index dumps, archived pages, site catalogues, directory listings — held
+# because the standing rule is that every asserted fact comes from bytes held and pinned, and a
+# quotation from a page that was read and thrown away is a recollection.
+#
+# WHAT THESE CHECKS OWN, and it is deliberately narrow: that the rule ignores the directory, that
+# nothing under it is tracked, and that the pin record's roster agrees with the disk wherever the
+# disk has the file. The READING of those files — the counts, the quotation, the failure modes —
+# belongs to `tests/test_cdm_format_coverage.py`, which is where every other reading lives.
+
+PROVENANCE_DIR = "fixtures/klv/provenance"
+
+#: The pin record's own roster of what the provenance round fetched. Read rather than enumerated,
+#: for the reason this module's docstring gives about the pin set: a hand-kept list of nineteen
+#: files is a list that goes stale on the twentieth.
+def _provenance_roster() -> dict:
+    record = json.loads((PKG / "fixtures/klv/spec/klv_pin.json").read_text())
+    node = record["day_flight_provenance_2026_08_26"]
+    return node["the_held_evidence_nineteen_files_each_pinned"]["files"]
+
+
+def test_the_provenance_rule_ignores_the_directory_and_nothing_under_it_is_tracked():
+    """The rule has to bite, and the index has to be empty of it — two different claims.
+
+    `.gitignore` carrying a line and git ignoring a path are not the same fact: a rule can be
+    present and shadowed by a later negation, which is why this asks `check-ignore` rather than
+    grepping. And an ignore rule says nothing about what is ALREADY tracked, so the index is asked
+    separately. A round that fetched 63 356 URLs' worth of index dumps and then committed them
+    would have put somebody else's website in this repository's history permanently.
+
+    DOES NOT SKIP ON A FRESH CLONE. `--no-index` rules on the PATTERN, so the answer is the same
+    whether or not the directory exists — and the tracked-files half is decided by the index, which
+    a clone has in full.
+    """
+    ignored = subprocess.run(
+        ["git", "check-ignore", "-q", "--no-index", f"{PROVENANCE_DIR}/cdx_gwg_nga_mil_host.txt"],
+        cwd=REPO).returncode == 0
+    assert ignored, (
+        f"{PROVENANCE_DIR}/ is no longer ignored. Nineteen fetched files sit there when the "
+        "provenance round's working tree is present, and `git add -A` would stage every one"
+    )
+    leaked = sorted(p for p in TRACKED if p.startswith(PROVENANCE_DIR + "/"))
+    assert not leaked, (
+        f"fetched provenance evidence is TRACKED: {leaked}. These are other people's pages and "
+        "index dumps, held as evidence and never shipped"
+    )
+
+
+def test_the_provenance_roster_is_nineteen_files_each_with_a_hash_a_size_and_an_origin():
+    """A roster entry without an origin URL is the exact defect this round was sent to fix.
+
+    The round's whole finding about this repository is that the transport-stream pin recorded a hash
+    and no origin, so a reader could not re-obtain it. A roster of the evidence that repeated the
+    omission would be the same defect one level down — so every entry is required to carry all
+    three fields, and the count is asserted against the sentence the pin record's own key states.
+    """
+    roster = _provenance_roster()
+    assert len(roster) == 19, (
+        f"the roster holds {len(roster)} files and its own key says nineteen. Both the key and the "
+        "prose in FORMAT_COVERAGE.md state that number, so a file added without updating them "
+        "leaves three sites disagreeing"
+    )
+    for name, entry in roster.items():
+        assert set(entry) == {"sha256", "bytes", "origin_url"}, f"{name} has fields {sorted(entry)}"
+        assert len(entry["sha256"]) == 64 and int(entry["sha256"], 16) >= 0, name
+        assert entry["bytes"] > 0, name
+        assert entry["origin_url"].startswith("https://"), (
+            f"{name} records no fetchable origin. A pinned page whose URL is missing is a "
+            "recollection with a hash on it"
+        )
+
+
+def test_every_held_provenance_file_matches_its_pin():
+    """Re-hash what is on disk, for the same reason the pinned PDFs are re-hashed.
+
+    SKIPS PER FILE when the bytes are absent, on the rule the stream guards use: the directory is
+    excluded by a directory rule, so a fresh clone has the roster and not the evidence. A file that
+    IS present must match — a truncated CDX dump would otherwise quietly change every count the
+    provenance section derives from it.
+    """
+    roster = _provenance_roster()
+    checked = 0
+    for name, entry in roster.items():
+        path = REPO / PROVENANCE_DIR / name
+        if not path.exists():
+            continue
+        blob = path.read_bytes()
+        assert len(blob) == entry["bytes"], f"{name} is {len(blob)} bytes, the pin says {entry['bytes']}"
+        assert hashlib.sha256(blob).hexdigest() == entry["sha256"], (
+            f"{name} does not hash to its pin — this is different evidence than was read"
+        )
+        checked += 1
+    if not checked:
+        pytest.skip("no provenance evidence in this working tree — it is pinned, not vendored")
+
+
+def test_the_disk_holds_no_provenance_file_the_roster_does_not_name():
+    """The closure property, in the direction an enumeration can never give.
+
+    The pin gate above exists because a list of pins went stale in the direction nobody checks — a
+    PDF on disk that no record named. The same failure is available here and is cheaper to make: a
+    round that fetches one more page, quotes it, and forgets the roster leaves a sentence in
+    `FORMAT_COVERAGE.md` whose evidence is unpinned. Skips when the directory is absent, which is
+    every fresh clone.
+    """
+    directory = REPO / PROVENANCE_DIR
+    if not directory.is_dir():
+        pytest.skip("no provenance directory in this working tree")
+    on_disk = {p.name for p in directory.iterdir() if p.is_file() and p.name != ".DS_Store"}
+    unnamed = sorted(on_disk - set(_provenance_roster()))
+    assert not unnamed, (
+        f"held but pinned nowhere: {unnamed}. Fetched evidence that no roster names is evidence "
+        "nobody can re-obtain, which is the state this round found the transport-stream pin in"
+    )
+
+
+def test_the_cited_gitignore_line_for_the_provenance_rule_is_the_line_it_cites():
+    """A citation to a LINE is only worth having if the line holds still.
+
+    `klv_pin.json` cites `.gitignore:42` five times and now cites `.gitignore:121` too, and
+    `FORMAT_COVERAGE.md` cites 121 as well. The `.gitignore` comment block says in its own words why
+    that is fragile: a rule inserted ABOVE an existing one silently re-points every citation at a
+    different line. So this asserts the two facts a citation promises — that the line holds the rule
+    named, and that `check-ignore` attributes the ignore to THAT line and not to some other rule
+    that happens to cover the same path.
+
+    Line 42 is asserted alongside it, unasked, because this round appended below it and the cheapest
+    proof that the append did not disturb it is to check.
+    """
+    lines = (REPO / ".gitignore").read_text().splitlines()
+    assert lines[41] == "*.pdf", (
+        f".gitignore line 42 is {lines[41]!r}. Five citations in klv_pin.json point at it by number"
+    )
+    assert lines[120] == "fixtures/klv/provenance/", (
+        f".gitignore line 121 is {lines[120]!r}. `klv_pin.json` and `FORMAT_COVERAGE.md` both cite "
+        "121 by number for the provenance rule"
+    )
+    reported = subprocess.run(
+        ["git", "check-ignore", "-v", "--no-index", f"{PROVENANCE_DIR}/cdx_gwg_nga_mil_host.txt"],
+        cwd=REPO, capture_output=True, text=True).stdout.strip()
+    assert reported.startswith(".gitignore:121:fixtures/klv/provenance/"), (
+        f"check-ignore attributes the ignore to {reported!r}. Both prose sites state that this path "
+        "is refused by line 121, and an ignore that comes from a different rule makes those "
+        "sentences false even though the file still is not staged"
+    )

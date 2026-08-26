@@ -8592,6 +8592,14 @@ not retrieved. It is filed on the same footing as the walk round's PES observati
 waiting for whoever takes it. **The ruling does not depend on it**: a test file's octets are still
 four octets against a stated length of two.
 
+> **DISPOSITIONED 2026-08-26 by the provenance round, and it did not verify.** The lead is
+> **closed as unverifiable from the routes this repository can reach**, and a different fact was
+> verified in its place: the held stream's **origin** is `samples.ffmpeg.org`, established by byte
+> identity, and it is not MISB. The route list and each route's failure mode are in
+> *The Day Flight provenance round* below, so nobody re-runs the hunt. The paragraph above is left
+> as written because it is the lead as it stood, and a lead edited into its own answer leaves no
+> record of what was suspected on what grounds.
+
 #### What this round did NOT reach
 
 * **Park 8 is untouched and was unreachable.** Its two absences are `0x80` as a first length octet and
@@ -8603,6 +8611,168 @@ four octets against a stated length of two.
   forbids taking tag semantics from a non-pinned edition, and edition 1 is not the pinned one.
 * **No registry page was obtained for any of the four documents**, which is the standing caveat on all
   of them and the reason the pin table carries a mirror row.
+
+### The Day Flight provenance round — the origin verifies by byte identity, the MISB lead does not
+
+**The result first, because a round that verifies an adjacent fact and reports itself as a round
+that verified the lead is the failure this section exists to prevent.** The adjudication round left
+exactly one unverified lead: that `fixtures/klv/streams/day_flight.mpg` might be one of the
+"supplementary test files" EG 0601.1 §3 says replaced its Appendix A. Three named routes were run
+and the lead **stays unverified** — closed as **unverifiable from the routes this repository can
+reach**, with each route and its failure mode enumerated below so nobody re-runs the hunt. What
+*did* verify is a different question, the one nobody had asked: **where the held bytes came from.**
+They came from `samples.ffmpeg.org`, and the evidence is byte identity rather than a filename.
+
+**That is worth a section and not a footnote, because the stream pin had no origin at all.** Every
+PDF in `fixtures/klv/spec/` records the URL that served it — `provenance_ruling.page_as_source`
+requires it, and EG 0601.1's pin carries a whole field explaining that its origin is a *mirror*
+rather than the registry. The walk round's two stream pins recorded a hash, a byte count, a local
+path and an extraction command, and **no origin**. It was the one pin in this record that a reader
+could not re-obtain, and it went two rounds without anybody noticing. This round closes it.
+
+#### The origin, pinned the way a document is pinned
+
+| Field | Value |
+|---|---|
+| **Origin URL** | `https://samples.ffmpeg.org/MPEG2/mpegts-klv/Day%20Flight.mpg` — served under the name **`Day Flight.mpg`**, with a space in it; the held copy was renamed `day_flight.mpg` |
+| **Fetched** | 2026-08-26, `HTTP/2 200`, `server: Apache/2.4.63 (Red Hat Enterprise Linux)` |
+| **`content-length`** | **102 004 664** — the pinned byte count, asserted by the server's own header |
+| **SHA-256 of what arrived** | `a491ceff524b0008e3076d9eb30782badac2d53053731accc0a4e1226177260e` — **the pinned digest** |
+| **`cmp` against the held copy** | **identical**, byte for byte. Not "the hashes agree" — the two files were compared |
+| **`last-modified`** | `Sat, 06 Oct 2012 00:38:17 GMT` |
+| **`etag`** | `"61477b8-4cb59344f9040"`, whose size field `0x61477b8` is **102 004 664** — the byte count stated a third time by a mechanism that is neither of the other two |
+| **`content-type`** | `video/mpeg` |
+
+**The whole route was RUN, not assembled from its parts.** The walk round's rule was that the
+extraction command is stated because it was *re-run*; this round extends that rule to the fetch. In
+one pass on 2026-08-26: fetch from the origin URL, hash to the transport stream's pinned digest,
+`cmp` against the held copy — **identical** — then re-run
+`ffmpeg -i day_flight.mpg -map 0:1 -c copy -f data day_flight.klv` on those bytes with **ffmpeg
+9.0.1**, giving **977** octets that `cmp` identical to `day_flight.klv` and hash to
+`a810e4b6…2e51`. **Every link a reader is asked to follow was followed by the round that wrote it
+down**, so the pin is now a route and not a description of one.
+
+**The bytes have not moved since at least January 2014.** The earliest Wayback capture of that
+directory listing (`20140116012639`) prints `Day Flight.mpg   06-Oct-2012 02:38   97M`; the live
+listing prints `2012-10-06 03:38   97M`. The hour differs because Apache renders a listing in
+server-local time and the offset changed; the `last-modified` header is the fact and it is the same
+instant. **The directory holds one sibling**, `Night Flight IR.mpg` at 162M — and a *pair* is
+exactly what a published *set* of test files looks like, which is why the lead was worth running
+routes against rather than dismissing.
+
+**What the origin does NOT establish, stated plainly, because it is the whole point.**
+`samples.ffmpeg.org` is the MPlayer/FFmpeg sample collection: a **third party**. That the held bytes
+were served from there is a fact about **this repository's copy** and not about who *produced* or
+*published* the clip. It neither verifies nor refutes the lead, and it cannot: a collection
+re-hosting a MISB test file and a collection holding somebody's private capture are
+indistinguishable from the served bytes alone.
+
+#### The three routes, and the named failure mode of each
+
+**The standard was byte identity against a copy MISB served.** A same-named file with different
+bytes would have been a *different* finding — it would show MISB published a Day Flight and not this
+one — and a listing naming the file without serving bytes would have been corroboration recorded
+*below* verification. **No route produced any of the three.**
+
+| Route | What was swept, and the numbers are the dumps' own | Failure mode |
+|---|---|---|
+| **1 — Wayback CDX of `gwg.nga.mil/misb/*`**, the index that turned EG 0601.1 from a hope into a fetch | Prefix query: **720** rows. Host query: **2 961** unique URLs, **770** of them under `/misb`. `video/*` MIME types under `/misb/`: **0**. URLs on the whole host matching `flight` or `night`: **0**. URLs ending `.mpg`, `.mpeg` or `.m2t`: **0**. The single `video/*` on the host is a `.wmv` animation under `/ntb/`. The `/misb/` subtree has exactly five content areas — `docs/` (336), `data/` (138), `images/` (56), `style/` (17), `scripts/` (8) — and no test-file area among them | **The public MISB site never served motion imagery at all.** This is *not* "the crawler missed it": MISB says so itself, in the corroboration below |
+| **1b — that site's own machine-readable catalogues**, `misb/data/*.xml`, which are what its pages render from | `zip_pubs.xml` lists **five** entries and every one is a `…CompositeDocuments.zip` — *document* bundles. `eg_pubs.xml` and `trm_pubs.xml` name no media of any kind. The one archive the public host ever served, `AllMISBDocs.zip`, is **20 081 234 bytes**, which is **smaller than the 102 004 664-byte stream** and therefore cannot contain it | **The catalogue that would have named a test file names none**, and byte arithmetic closes the one bundle that could have hidden one |
+| **1c — the live host, re-checked rather than recalled** | `https://gwg.nga.mil/misb/` and `…/docs/standards/ST0601.19.pdf`, each with a browser User-Agent and a same-origin Referer | **`403` from CloudFront, both.** The refusal the adjudication round recorded still holds |
+| **2 — MISB-adjacent hosts.** The set is derived rather than guessed: the hosts the archived MISB pages themselves link out to, plus the registry this record already names | `nsgreg.nga.mil` **17 806** URLs; `www.nga.mil` **26 837**; `jitc.fhu.disa.mil` **14 310**; `aafassociation.org` **1 442**. Motion-imagery test streams on any of them: **none**. `www.nga.mil` holds the only `.mpg` files in the sweep — **five**, all under `/ngakids/` or `/kids/`, children's educational clips. With `gwg.nga.mil` that is **63 356** unique URLs across five hosts | **No MISB-adjacent host in the index hosts sample streams.** The one that the MISB's own pages say does is the account-gated protected site, and see below for what the archive holds of it |
+| **3 — `samples.ffmpeg.org`'s own provenance for `MPEG2/mpegts-klv/`** | No `README` in the directory, in `MPEG2/`, or at the server root — `README` and `README.txt` both `404`. The root `00-README` (**728** bytes) describes the collection and states nothing per file. The collection's *own convention* for recording what a sample is, is a sibling `.txt`: **2 308** of the **16 949** entries in `allsamples.txt` carry one — and neither `Day Flight.mpg` nor `Night Flight IR.mpg` does. `allsamples.txt` matches `misb` or `nga.mil` **0** times | **The server states no origin for this file.** The one convention it has for saying where a sample came from was not used here, so route 3 ends in an *absence that was checked* rather than an absence assumed |
+
+#### Corroboration, recorded below verification — and it is the reason routes 1 and 2 could not succeed
+
+**MISB's own website says its test files were behind a login.** The archived FAQ (capture
+`20091221094307`), under the question "Where is the MISB website, and what can I find there?", says
+the public site holds the MISP and the current Standards, RPs and EGs, and then:
+
+> "**If you need access to draft documents, test files, and other support documentation follow the
+> instructions on the website to apply for an account to access the MISB protected website.**"
+
+**That converts route 1's zero from a gap into an explanation.** The public host holds no test files
+because MISB did not put them there. And the protected site is not reachable either: of the **21**
+`/protected/` captures in the host dump, **17 report HTTP 401**, **3** are redirects and **1** is a
+`404` — including the MISB protected index itself, `https://www.gwg.nga.mil/protected/misb/index.html`,
+captured at `20130215184001` as **401**. The archive holds the refusal, not the content.
+
+**The changelog sentence that motivated the lead is corroborated, not contradicted, and the round
+therefore does not stop.** EG 0601.1 §3 says supplementary test files were to be provided on the
+MISB website; the FAQ, written a year or two later, says test files were on the MISB website behind
+an account. Those agree. **What no held byte says is that any of them was named `Day Flight`** —
+and that is precisely the join the lead needed and did not get.
+
+#### The consequence for the park 13 ruling: none, and the reason is not that nothing was found
+
+**Item 22's classification is unaffected, and it would have been unaffected had the lead verified.**
+The ruling's two bases are a *factual* one — EG 0601.1's own tag table states a Len of **2** at three
+sites inside itself, and every edition after it agrees — and a *normative* one, `ST 0601.13-29`. The
+**publisher of the file is an input to neither.** Four octets against a stated length of two is four
+octets against a stated length of two whether MISB served the clip, FFmpeg's sample collection served
+it, or a sensor wrote it into a hangar; the ruling already says as much ("a test file's octets are
+still four octets against a stated length of two") and this round tested that sentence rather than
+relying on it. **KLV 15 and KLV 16 do not move either**: they are findings about edition 1's
+*identity* — the name that was never published, and the date stated three ways — and neither takes
+evidence from a stream.
+
+**What the failure to verify DOES cost is the one thing the lead was raised to buy.** The lead
+existed because a defect in a **fielded emitter** and a defect in a **published test file** are
+different findings about the same octets, and the origin now known cannot separate them: a
+third-party sample collection with no provenance note says nothing about which of the two produced
+these six packets. **So that question is not closed by this round — it is closed to this round's
+routes.** The reopen condition is exact and narrow: **a copy of a MISB-published test file whose
+SHA-256 is `a491ceff…260e`**, or a MISB listing that names `Day Flight` in text. The account-gated
+protected site is where either would be, and this repository cannot reach it.
+
+#### The briefing correction the adjudication round owed, filed alongside the withdrawn premise
+
+**This section has now recorded two briefing defects, and the second one is a definition rather than
+a premise.** The first is the walk round's withdrawn `"ST 0601.8-era"` claim, which came from the
+`droneklv` README and read a *decoder's* supported edition as an *emitter's*. The second is the
+adjudication round's own briefing: **its Act 3 defined candidate (a) in a way its Act 2(iii)
+refuted.** The briefing framed (a) as requiring that `ST 0601.13-29` be normative *at the edition the
+stream declares* — but Act 2(iii) confirmed, from ST 0601.4 §3's own words, that edition 1 is an
+**Engineering Guideline** and that the `.2` conversion was made "in order to enforce requirements
+upon developers implementing this document" with "Wording changed to make requirements enforceable".
+An EG does not carry the normativity the briefing's definition demanded, so a candidate defined that
+way could never have been assertable and the round would have had to park on its own terms.
+
+**The ruling's factual/normative split supersedes that definition, and it is the split that is
+load-bearing.** (a) rests on edition 1's own table for **what the length is** and on
+`ST 0601.13-29` for **what a divergence from it means today** — two bases, two documents, kept apart
+precisely so that neither has to do the other's work. **The correction is filed and not swallowed**,
+on the same rule that keeps the era premise and settlement 3's corrected epoch premise: a definition
+that turned out incoherent is evidence about how this section reaches conclusions, and deleting it
+keeps the habit while removing the evidence. Filed with it, and **carried rather than shed**:
+`ST 0601.13-29`'s **retroactivity is still unestablished** — the identifier is stamped edition 13,
+nothing held says a requirement introduced at 13 reaches an emitter written against edition 1, and
+that is (a)'s **standing annotation** rather than a loose end that closure tidied away.
+
+#### What this round did NOT reach
+
+* **No park moved, opened, closed, narrowed or was renumbered.** Park 13 stays closed on the ruling
+  the adjudication round recorded; parks 8 and 9 are untouched and were not reachable, since a
+  provenance hunt fetches no specification; **KLV 14 stays open as scoped**. The download count is
+  unchanged at **9 of 10**.
+* **The ambiguity register did not grow, and the guard on it caught this section drafting a
+  citation to an entry that does not exist.** The register holds **16** entries and gains no
+  seventeenth. The origin gap this round closed is a defect in *this repository's* pinning, not an
+  ambiguity in a specification, and the register's subject is the documents — so it is recorded here
+  and in `klv_pin.json` and nowhere in the register. The first draft of this bullet said the gap was
+  "deliberately not" a seventeenth entry *by number*, and
+  `test_the_klv_ambiguity_register_is_numbered_by_its_own_convention` failed it: that test reads
+  every `KLV n` in this section as a **promise that an entry exists**, and a sentence denying an
+  entry by citing it is still a citation. Recorded because it is the mechanism working on the round
+  that wrote the defect, which is the discipline `.gitignore`'s derived-count note asks for.
+* **No tag row moved.** All **141** rows of the ST 0601 row set still read `not yet`, and no octet
+  was re-walked: both stream hashes are unchanged and the walk round's counts stand as recorded.
+* **No specification was fetched and none was pinned.** Ten documents remain in
+  `fixtures/klv/spec/`, seven of them pins. What landed instead is **19** fetched evidence files in
+  `fixtures/klv/provenance/`, each pinned by SHA-256 and byte count with the URL that served it, all
+  **19** ignored by `.gitignore:121` and checked one file at a time with `git check-ignore -v`.
+* **The protected site was not accessed, and no attempt was made to access it.** Applying for an NGA
+  account is not a fetch; it is a relationship, and it is outside what a round like this can do.
 
 ### The parks, each with a named reopen condition
 

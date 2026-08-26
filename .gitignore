@@ -95,3 +95,27 @@ docs/.cache-loader/
 *.tar.gz
 *.tgz
 fixtures/klv/streams/
+
+# Fetched provenance evidence, because that is how a HELD file's origin gets established.
+#
+# `fixtures/klv/provenance/` holds what the Day Flight provenance round of 2026-08-26 fetched to
+# answer one question about a file this repository already had: where did the pinned transport
+# stream come from. The answer is byte identity against a served copy, and reaching it took Wayback
+# CDX index dumps, archived pages of the MISB's own website, that site's machine-readable
+# publication catalogues, and the sample collection's directory listings and index. All of it is
+# EVIDENCE for sentences in FORMAT_COVERAGE.md and none of it is an artefact this repository ships.
+#
+# A DIRECTORY RULE AND NOT AN EXTENSION RULE, for the reason the `fixtures/klv/streams/` block
+# above gives about itself and more so. The PDF rule works because a `spec/` directory holds three
+# known extensions and a new document is the ordinary case. Fetched evidence has no extension
+# discipline at all: this round alone landed `.txt` CDX dumps, `.html` archived pages, `.xml` site
+# catalogues and one extensionless `00-README`, and the next round could just as well hold `.json`,
+# `.warc` or a bare header dump. An extension rule would be a list somebody has to remember to
+# extend, and the failure mode of forgetting is that somebody else's website enters the index.
+#
+# WHY NOT JUST LEAVE IT IN A TEMPORARY DIRECTORY. Because the standing rule is that every asserted
+# fact comes from bytes HELD and PINNED, and a quotation from a page that was read and thrown away
+# is a recollection. Each file here is pinned by SHA-256 and byte count in `klv_pin.json` under
+# `day_flight_provenance_2026_08_26`, with the origin URL it was served from, exactly as the PDFs
+# are. `git check-ignore -v` was run on every file that landed and each reports this rule.
+fixtures/klv/provenance/

@@ -1214,6 +1214,19 @@ too — so the first is now stated.
   settlement 3's corrected epoch premise: a premise that turned out false is evidence about how this
   section reaches conclusions.
 
+  **A second briefing defect is filed beside it, and it is a definition rather than a premise.** The
+  adjudication round's briefing defined candidate **(a)** as requiring `ST 0601.13-29` to be normative
+  *at the edition the stream declares* — and that round's own Act 2(iii) refuted it, confirming from
+  ST 0601.4 §3 that edition 1 is an **Engineering Guideline** whose lengths were direction rather than
+  enforceable requirement. A candidate defined that way could never have been assertable. **The
+  ruling's factual/normative split supersedes it** — edition 1's table for what the length *is*,
+  `ST 0601.13-29` for what a divergence from it *means today* — and `ST 0601.13-29`'s **retroactivity
+  stays unestablished**, carried as (a)'s standing annotation rather than shed at closure. **And the
+  one unverified lead that round left did not verify.** The held clip's origin is
+  `samples.ffmpeg.org`, established by byte identity, and it is **not** MISB; the test-file lead is
+  closed as unverifiable from the routes this repository can reach. **Nothing here moves**: no gap
+  opened, no field proposed, and the classification never depended on who published the file.
+
   **Park 9 was not touched, and the observation that might have touched it is filed instead.** PID
   `0x1f1` carries **204** transport packets, each beginning a PES unit, of which **198 carry a PES
   header and no payload at all** and 6 carry payload totalling exactly the 977 octets extracted.

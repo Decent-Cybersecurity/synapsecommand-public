@@ -4155,6 +4155,287 @@ def test_the_walk_round_did_not_touch_parks_8_or_9_and_says_so_with_the_measurem
     )
 
 
+# ------------------- the provenance round: an origin verified, and a lead that did not -----------
+#
+# THE ROUND WHOSE USEFUL RESULT IS A NEGATIVE, which is the case these guards exist for. It was sent
+# to verify one lead — that the held clip might be one of MISB's own supplementary test files — and
+# the lead did not verify. Three things can go wrong with a section like that and each has a test:
+# the negative can quietly drift into a REFUTATION it never earned; the adjacent fact that DID
+# verify (where the bytes came from) can be reported as though it were the lead; and the route list
+# can lose the failure modes, at which point the next round re-runs the hunt.
+
+PROVENANCE_HEADING = "### The Day Flight provenance round"
+
+#: The origin the round established, stated here so the section, the pin record, the fixture README
+#: and this file are FOUR sites that must agree. `KLV_STREAM_PINS` above is the precedent: a hash
+#: asserted at one site is a hash nobody checks.
+DAY_FLIGHT_ORIGIN = "https://samples.ffmpeg.org/MPEG2/mpegts-klv/Day%20Flight.mpg"
+
+
+def _provenance_section() -> str:
+    return DOC.read_text().split(PROVENANCE_HEADING)[1].split("\n### ")[0]
+
+
+def test_the_stream_origin_is_stated_identically_at_every_site_that_states_it():
+    """Four sites, one URL — and the pin record is the one that has to carry it.
+
+    The round's finding about this repository is that the transport-stream pin recorded a hash, a
+    byte count, a local path and an extraction command and NO ORIGIN, while every PDF beside it
+    records the URL that served it. A fix that wrote the URL into the prose and not into the pin
+    would leave the pin exactly as unreproducible as it was, so the pin record is asserted first.
+    """
+    record = json.loads((DOC.parent / "fixtures/klv/spec/klv_pin.json").read_text())
+    pin = record["walk_ruling_real_stream_2026_08_26"]["the_two_pins"]["transport_stream"]
+    assert pin.get("origin_url") == DAY_FLIGHT_ORIGIN, (
+        "the transport-stream pin has no `origin_url`, or it has drifted. This field is the whole "
+        "repair the provenance round made to this record"
+    )
+    assert pin["sha256"] == KLV_STREAM_PINS[0][1] and pin["bytes"] == KLV_STREAM_PINS[0][2], (
+        "the origin was added to a pin whose hash or byte count moved, which would mean the origin "
+        "describes a different file than the one this suite walks"
+    )
+    for site, text in (
+        ("FORMAT_COVERAGE.md", _provenance_section()),
+        ("fixtures/klv/README.md", (DOC.parent / "fixtures/klv/README.md").read_text()),
+    ):
+        assert DAY_FLIGHT_ORIGIN in text, f"{site} no longer states the origin URL"
+    section = _flat(_provenance_section())
+    assert "102 004 664" in _provenance_section() and "content-length" in section, (
+        "the origin is stated without the server's own byte count beside it. That header is what "
+        "makes the claim checkable by somebody who has not got the file"
+    )
+    assert "cmp" in section and "identical" in section.lower(), (
+        "the section no longer says the two files were COMPARED. Agreeing digests and identical "
+        "bytes are different claims and the stronger one was available"
+    )
+
+
+def test_the_lead_is_closed_as_unverifiable_and_never_as_refuted():
+    """The distinction the whole round turns on, and the one an editor would flatten.
+
+    MISB's test-file area was account-gated and is not in the index, so absence there is not
+    evidence of absence: the lead is UNVERIFIED and unverifiable from held routes, which is weaker
+    and more accurate than refuted. A section that said "refuted" would be asserting something no
+    held byte supports — and it would close a question that is still open.
+    """
+    section = _provenance_section()
+    flat = _flat(section)
+    assert "unverifiable from the routes this repository can reach" in flat, (
+        "the disposition no longer says WHAT KIND of not-verified this is. 'Unverified' alone reads "
+        "as 'nobody looked'"
+    )
+    assert "neither verifies nor refutes" in flat, (
+        "the section no longer says the origin cannot settle the lead in either direction, which is "
+        "the sentence that stops a later reader treating samples.ffmpeg.org as a refutation"
+    )
+    assert "a491ceff" in section and "MISB listing that names" in flat, (
+        "the reopen condition no longer states both of the two things that would verify it — bytes "
+        "hashing to the pin, or a listing naming the file in text"
+    )
+    # AND THE LEAD ITSELF SURVIVES VERBATIM in the adjudication round's section. A lead edited into
+    # its own answer leaves no record of what was suspected on what grounds.
+    adjudication = _flat(DOC.read_text().split("### Park 13 adjudicated and CLOSED")[1].split("\n### ")[0])
+    assert "A lead, not a finding: the held stream may be one of MISB's own test files." in adjudication, (
+        "the original lead sentence is gone from the adjudication section. It is the record of what "
+        "was suspected before the routes were run, and the round that ran them does not get to "
+        "rewrite it"
+    )
+    assert "DISPOSITIONED 2026-08-26" in adjudication, (
+        "the lead paragraph no longer points at its disposition, so a reader meeting the lead first "
+        "has no way to know it was chased"
+    )
+    # AND THE POINTER SAYS THE SAME KIND OF NOT-VERIFIED as the section it points at. A pointer
+    # reading "refuted" beside a section reading "unverifiable" is worse than no pointer: the
+    # adjudication section is where a reader meets the lead first, so it is where the overstatement
+    # would be believed.
+    assert "closed as unverifiable from the routes this repository can reach" in adjudication, (
+        "the disposition pointer in the adjudication section no longer states the disposition in "
+        "the same terms the provenance section rules it. MISB's test-file area was account-gated "
+        "and is not in the index, so 'refuted' is a claim no held byte supports"
+    )
+
+
+def test_every_route_is_named_with_its_own_failure_mode():
+    """A route list without failure modes is an invitation to re-run the hunt.
+
+    That is the stated purpose of the list: "so nobody re-runs the hunt". A row saying a route was
+    tried buys nothing — the next round tries it again. A row saying WHY it could not succeed is
+    what retires it, and route 1's failure mode is the load-bearing one because it is not "the
+    crawler missed it" but "the public site never served motion imagery, and MISB says so".
+    """
+    section = _provenance_section()
+    flat = _flat(section)
+    # Checked STRUCTURALLY rather than by counting a phrase. The failure mode lives in the table's
+    # third column, so what has to hold is that every route row HAS a third cell and that the cell
+    # says something — a row whose failure mode is an empty cell or a dash is the exact defect, and
+    # a substring count over the section cannot see it.
+    # SCOPED TO THE ROUTE TABLE and not to the section, because the origin table above it has rows
+    # that begin `| **` too — `| **Origin URL** | … |` — and a section-wide parse folds them in.
+    # That is the disjunction failure this file keeps finding: a check that reads the right rows by
+    # accident passes for the wrong reason and stops passing when a row moves.
+    table = section.split("#### The three routes")[1].split("\n####")[0]
+    rows = {}
+    for line in table.splitlines():
+        if line.startswith("| **") and "—" in line:
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            rows[cells[0].split("—")[0].strip("* ")] = cells
+    assert len(rows) == 5, (
+        f"the route table parsed to {sorted(rows)}. Five routes were run and each owns one row; a "
+        "parse that finds four has lost one, and a parse that finds six is reading another table"
+    )
+    for route in ("1", "1b", "1c", "2", "3"):
+        assert route in rows, f"route row {route!r} is gone from the route table"
+        cells = rows[route]
+        assert len(cells) == 3, f"route {route} has {len(cells)} cells, not route | swept | failure mode"
+        assert len(cells[2]) >= 60, (
+            f"route {route}'s failure mode is {cells[2]!r}. A route recorded without one is a route "
+            "the next round repeats, which is the stated purpose of this table"
+        )
+        assert len(cells[1]) >= 60, (
+            f"route {route} does not say what was swept. 'We looked' is not a sweep; a stated set "
+            "of URLs over a stated host is"
+        )
+    # The counts that make the negatives checkable rather than assertable. Each is derived from a
+    # dump held in `fixtures/klv/provenance/` and pinned in `klv_pin.json`.
+    for count in ("2 961", "770", "17 806", "26 837", "14 310", "1 442", "63 356",
+                  "16 949", "2 308", "20 081 234"):
+        assert count in section, (
+            f"the derived count {count!r} is gone. These are what turn 'we looked and found "
+            "nothing' into a sweep of stated size over a stated set of hosts"
+        )
+    assert "smaller than the 102 004 664-byte stream" in section, (
+        "the one archive the public MISB host ever served is no longer excluded by arithmetic. "
+        "AllMISBDocs.zip is the single candidate that could have HIDDEN a stream, and the byte "
+        "count is what rules it out rather than an assumption about what a zip named for documents "
+        "contains"
+    )
+    assert "children's educational clips" in section, (
+        "the five `.mpg` files the sweep did find are no longer characterised. Reported as a bare "
+        "count they look like leads; named as what they are, they are the sweep working"
+    )
+
+
+def test_the_corroboration_is_quoted_and_filed_below_verification():
+    """MISB's own sentence, verbatim, because it is what makes route 1's zero mean something.
+
+    The FAQ is the round's best evidence and it is NOT verification: it says MISB had test files
+    behind an account and names no filename. So two things are asserted — that the sentence is
+    quoted rather than paraphrased, and that the section says which of the two claims it
+    corroborates. It corroborates the CHANGELOG SENTENCE, not the lead.
+    """
+    section = _provenance_section()
+    flat = _flat(section)
+    # The quotation sits in a blockquote and carries bold markers, so `_flat` alone leaves `> ` and
+    # `**` inside it. Stripping both is what lets the asserted phrase be the SENTENCE rather than
+    # whichever fragment happens to survive the wrapping.
+    quoted = " ".join(section.replace("**", "").replace("\n>", " ").split())
+    assert ("If you need access to draft documents, test files, and other support documentation "
+            "follow the instructions on the website to apply for an account to access the MISB "
+            "protected website.") in quoted, (
+        "the FAQ sentence is no longer quoted verbatim. Paraphrased, 'MISB kept test files behind a "
+        "login' is an assertion about a website; quoted, it is the website's own statement and it "
+        "is what converts route 1's zero from a gap into an explanation"
+    )
+    assert "401" in section and "protected" in flat, (
+        "the protected site's HTTP status is gone. That the archive holds the REFUSAL and not the "
+        "content is the difference between a route that was tried and one that was blocked"
+    )
+    assert "corroborated, not contradicted" in flat, (
+        "the section no longer states that the changelog sentence which motivated the lead survives "
+        "the fetch. The standing rule is that a fetch contradicting it STOPS the round, so whether "
+        "it was contradicted is a fact the section owes"
+    )
+
+
+def test_the_origin_does_not_reach_the_park_13_classification_and_says_why():
+    """The strongest form of the claim: it would not have moved had the lead VERIFIED.
+
+    A section that said "the lead did not verify, so nothing changes" would leave the reader unable
+    to tell whether the classification survived on its merits or on the failure of the hunt. The
+    ruling's two bases are a document's table and a current requirement, and a publisher is an input
+    to neither — so the counterfactual is the honest statement and it is the one asserted here.
+    """
+    flat = _flat(_provenance_section())
+    assert "would have been unaffected had the lead verified" in flat, (
+        "the section no longer states the counterfactual, so 'unaffected' reads as a consequence of "
+        "finding nothing rather than as a property of the ruling"
+    )
+    assert "factual" in flat and "normative" in flat and "ST 0601.13-29" in flat, (
+        "the two bases are no longer both named. Saying only the factual one overstates what an "
+        "Engineering Guideline can require; saying only the normative one leaves the retroactivity "
+        "objection unanswered"
+    )
+    assert "publisher of the file is an input to neither" in flat, (
+        "the reason the origin cannot reach the classification is gone, and it is one sentence"
+    )
+    assert "fielded emitter" in flat and "published test file" in flat, (
+        "the section no longer says what the failed verification COSTS. The lead existed to separate "
+        "those two, and a round that reports only what it kept has not said what it lost"
+    )
+
+
+def test_the_briefing_definition_of_candidate_a_is_withdrawn_with_what_supersedes_it():
+    """The second briefing defect, filed the way the first one was.
+
+    `test_the_walk_section_withdraws_the_era_premise_and_names_where_it_came_from` guards the first:
+    a withdrawal has to keep BOTH halves, the claim and its source, or it reads as a change of mind.
+    The same shape applies to a DEFINITION: the adjudication round's briefing defined candidate (a)
+    as requiring declared-edition normativity, and its own Act 2(iii) refuted that. So the entry
+    must name what was withdrawn, what refuted it, and what stands in its place — and it must carry
+    the annotation that closure did NOT discharge.
+    """
+    flat = _flat(_provenance_section())
+    assert "Act 2(iii)" in flat, (
+        "the withdrawal no longer names the act that refuted the definition. Without it, this is an "
+        "editor disagreeing with a briefing rather than a briefing refuting itself"
+    )
+    assert "Engineering Guideline" in flat and (
+        "in order to enforce requirements upon developers implementing this document" in flat), (
+        "the quotation that does the refuting is gone. That an EG is not enforceable is the series' "
+        "own account of why it converted to a Standard, and paraphrased it becomes an opinion"
+    )
+    assert "factual/normative split supersedes" in flat, (
+        "the entry says what was withdrawn and not what replaced it, which leaves candidate (a) "
+        "with no definition at all"
+    )
+    assert "retroactivity is still unestablished" in flat and "standing annotation" in flat, (
+        "ST 0601.13-29's unestablished retroactivity has been shed. Park 13 closed on edition 1's "
+        "own table — the FACTUAL basis — which is a different move from establishing that a "
+        "requirement stamped edition 13 reaches an emitter written against edition 1. An annotation "
+        "dropped at closure is a question that stops being asked without being answered"
+    )
+
+
+def test_the_provenance_round_states_what_it_did_not_touch():
+    """The absences, each one a thing a reader would otherwise have to verify by reading everything.
+
+    Same discipline as the walk round's and the adjudication round's closing lists. The two that
+    matter most here are that no park moved — a round about provenance has no business moving one —
+    and that the ambiguity register did not grow, because this round's finding is about THIS
+    repository's pinning and the register's subject is the documents.
+    """
+    flat = _flat(_provenance_section())
+    assert "No park moved" in flat, "the section no longer states that no park moved"
+    assert "KLV 14 stays open as scoped" in flat, (
+        "KLV 14's state is unstated. Park 13 closing answered its question for edition 1 only, and "
+        "a provenance round is not the round that retires it"
+    )
+    assert "parks 8 and 9 are untouched" in flat.lower(), "parks 8 and 9 are no longer named"
+    assert "141" in flat and "not yet" in flat, (
+        "the tag row set's state is gone. A round that fetched a hundred megabytes and moved no row "
+        "should say so"
+    )
+    assert "No specification was fetched" in flat, (
+        "the section no longer says it pinned no document, which is what keeps the pin counts in "
+        "`klv_pin.json` from needing a reader to re-derive them"
+    )
+    assert "protected site was not accessed" in flat.lower() and "not a fetch" in flat, (
+        "the one route this repository declined is no longer recorded as declined. Applying for an "
+        "NGA account is a relationship rather than a fetch, and a route left unmentioned reads as a "
+        "route nobody thought of"
+    )
+
+
 def test_the_klv_fixture_directory_holds_no_fixtures_and_says_why():
     """Phase 1 ships no payload, and the reason is a park rather than a schedule.
 
@@ -6044,4 +6325,35 @@ def test_the_cat034_rows_are_actually_resolved_against_the_models():
     assert set(paths) <= set(PATHS), (
         f"the section resolves paths the document-wide sweep does not: "
         f"{sorted(set(paths) - set(PATHS))}"
+    )
+
+
+def test_the_provenance_round_says_it_RAN_the_route_rather_than_describing_it():
+    """The walk round's rule, extended one link back — and it has to say so or it is a description.
+
+    `the_command_was_re_run_not_recalled` is the precedent: an extraction command stated because it
+    was re-run is worth more than one stated because it was remembered. The same distinction applies
+    to a fetch. A pin that says "fetch this URL, then run this command" and was never followed
+    end to end is a plausible route, and a plausible route is what this repository has twice found
+    to be wrong about itself. So both halves are asserted here — the fetch AND the re-extraction —
+    and the pin record's own field is checked, because the prose can be edited without it.
+    """
+    flat = _flat(_provenance_section())
+    assert "was RUN, not assembled from its parts" in flat, (
+        "the section no longer says the route was exercised. Stated as a route it is a claim about "
+        "what a reader can do; stated as an exercised route it is a report of doing it"
+    )
+    assert "977" in flat and "ffmpeg\n9.0.1".replace("\n", " ") in flat, (
+        "the re-extraction's result or its tool version is gone. A byte count without the version "
+        "that produced it is not reproducible — the walk round's pin records the version for that "
+        "reason"
+    )
+    record = json.loads((DOC.parent / "fixtures/klv/spec/klv_pin.json").read_text())
+    extraction = record["walk_ruling_real_stream_2026_08_26"]["the_two_pins"]["extraction"]
+    ran = extraction.get("the_complete_route_was_RUN_this_round_and_not_only_described", "")
+    assert extraction["sha256"] in ran and "IDENTICAL" in ran, (
+        "the pin record no longer states that the fetch-to-extraction chain was followed, or states "
+        "it without the digest it arrived at. The extraction pin has no URL of its own — its "
+        "provenance IS the command applied to the transport stream — so this field is the only place "
+        "that says the chain closes"
     )
