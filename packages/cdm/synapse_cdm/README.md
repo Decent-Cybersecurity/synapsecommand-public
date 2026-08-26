@@ -310,7 +310,7 @@ them do the pair arithmetic as well — and nothing in the harness reads prose. 
    the day was 72 against 36; neither was wrong on its own page and together they were a
    contradiction. At ten it is 90 against 45.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that ten adapters cannot grow ten slightly
+   `docs/docs/cdm/entity.mdx` both carry "so that twelve adapters cannot grow twelve slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park

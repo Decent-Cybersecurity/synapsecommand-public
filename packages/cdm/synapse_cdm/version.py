@@ -42,8 +42,9 @@ none of them a schema bump. The two numbers would already be eleven minors apart
 from the other — which is what this file used to do, with the packaging metadata reading
 ``SCHEMA_VERSION`` directly — would have produced a distribution that could not express "the
 same contract, more adapters", and the only ways out are both wrong: bump the contract for a
-change no consumer's parser cares about, or ship ten different distributions all labelled
-1.0.0 and let the index refuse the second one.
+change no consumer's parser cares about, or ship twelve different distributions all labelled
+1.0.0 — that first release and one per adapter in the section — and let the index refuse the
+second one.
 
 The failure the old arrangement was defending against is real and is still defended against,
 just not by conflation: the risk was a wheel labelled 1.0.0 shipping objects that say 1.1.0.

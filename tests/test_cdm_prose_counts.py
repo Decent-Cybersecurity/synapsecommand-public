@@ -2,8 +2,9 @@
 
 WHY THIS EXISTS, AND WHY IT IS AN ALLOWLIST AND NOT A SCANNER
 ------------------------------------------------------------
-Eight documents state how many adapters are shipped, and four of them do the pair arithmetic as
-well. Nothing failed a build when those numbers drifted, so they drifted: the roster sweep for
+The documents in `SITES` state how many adapters are shipped, and the rows carrying a
+`translations_group` do the pair arithmetic as well. Nothing failed a build when those numbers
+drifted, so they drifted: the roster sweep for
 adapter #11 found `README.md` stale by six adapters, `synapse_cdm/__init__.py` stale by four,
 two documents disagreeing about whether the translation count is `N×(N−1)` or `N(N−1)/2`, and
 `FORMAT_COVERAGE.md`'s gap 1 undercounting its own tally by one adapter since adapter #6. Every
@@ -26,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that ten adapters
-cannot grow ten slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twelve adapters
+cannot grow twelve slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -197,6 +198,16 @@ SITES: tuple[Site, ...] = (
          r"so that (?P<n>[a-z]+) adapters cannot grow (?P<n2>[a-z]+) slightly different "
          r"opinions",
          count_groups=("n", "n2")),
+    # And the sweep protocol's QUOTATION of that sentence, which was two adapters behind the
+    # sentence it quotes. Found by this round's disjunction sweep, in the document that tells the
+    # next person how to run the sweep: step 3 is "read every sentence that states the count twice"
+    # and it quoted its own example wrong. A quotation of a guarded site is an unguarded
+    # restatement of the same fact — the defect this round found in `SELF_SITES`'s first row, in a
+    # second file, on the same sentence.
+    Site("packages/cdm/synapse_cdm/README.md", "the protocol's quotation of that sentence",
+         r"both carry \"so that (?P<n>[a-z]+) adapters cannot grow (?P<n2>[a-z]+) slightly "
+         r"different opinions\"",
+         count_groups=("n", "n2")),
     # A SEVENTH site, added by the CAT034 round's stale-count sweep rather than by a repair.
     # It had never drifted; it had simply never been guarded, and it is the first thing a
     # contributor reads. See the note above `test_the_allowlist_covers_every_site_the_sweep_...`.
@@ -253,9 +264,10 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
 
     THE KNOWN GAP IN THIS ARRANGEMENT — RECORDED DEBT, STILL OPEN AS OF 1.1.0
     ------------------------------------------------------------------------
-    This closure stops the allowlist SHRINKING. It cannot notice a NINTH file that starts stating an
-    adapter count, because there is nothing here that reads the tree looking for one — the list is
-    the input, so a site outside it is invisible by construction. Two counts have already escaped
+    This closure stops the allowlist SHRINKING. It cannot notice a file OUTSIDE the list that starts
+    stating an adapter count, because there is nothing here that reads the tree looking for one —
+    the list is the input, so a site outside it is invisible by construction. Two counts have
+    already escaped
     through that gap and both were found by a person reading rather than by a gate:
 
     * `MIGRATIONS.md`'s release condition 2 said "all ten harnesses" while twelve adapters shipped.
@@ -273,7 +285,7 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
     list" is exactly the moment to learn that the list cannot find sites for you.
     """
     covered = {site.path for site in SITES}
-    assert covered == {
+    swept = {
         "CONTRIBUTING.md",
         "README.md",
         "docs/docs/intro.mdx",
@@ -282,8 +294,9 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
         "packages/cdm/synapse_cdm/__init__.py",
         "packages/cdm/synapse_cdm/symbology.py",
         "packages/cdm/synapse_cdm/version.py",
-    }, (
-        "the allowlist no longer matches the eight files the roster sweeps have covered. "
+    }
+    assert covered == swept, (
+        f"the allowlist no longer matches the {len(swept)} files the roster sweeps have covered. "
         "Adding a site is fine; losing one silently is how the sweep's work gets undone"
     )
 
@@ -650,7 +663,7 @@ def test_the_no_schema_change_section_is_not_empty_and_is_a_subset_of_the_roster
     site below would be compared against zero — which each of them would fail, but for the wrong
     reason and with a message pointing at the prose rather than at the parser. And the set must be
     a subset of the registry: a bullet naming an adapter that does not exist is a stale entry, and
-    one adapter is legitimately absent, because `pntmap` shipped WITH the schema.
+    at least one adapter is legitimately absent, because `pntmap` shipped WITH the schema.
     """
     landed = adapters_that_landed_with_no_schema_change()
     assert landed, (
@@ -723,3 +736,315 @@ def test_the_no_schema_change_claim_is_stated_at_every_site_that_carries_it():
         "the changelog's, the public page's, the distribution metadata's, and the failure messages "
         "that argue the ruling to whoever broke it. Adding a site is fine; losing one is how this "
         "sweep's work gets undone")
+
+
+# ------------------------------------- the same section, plus the release that came before it
+#
+# `version.py` runs the counterfactual one step past the count itself: had the package been released
+# before any of those adapters, each would have been a package MINOR, and a scheme that derived one
+# version number from the other could not have said so — every one of those releases would have gone
+# out under the same label. That is a count of DISTRIBUTIONS rather than of adapters, and it is the
+# section's bullets plus one, the release the counterfactual posits before any of them.
+#
+# It was right when it was written and it is not now, and the arithmetic is legible in the sentence
+# it was written beside: the section held NINE bullets then, the same paragraph said "nine minors
+# apart", and ten distributions is nine minors plus that first release. The bullets moved on. The
+# statements of the count that this module already pins moved with the bullets; this one, sitting in
+# the same paragraph as one of them, did not, because nothing read it. Same paragraph, same fact,
+# one more statement of it — which is the disjunction protocol's whole argument for collecting
+# rather than spot-fixing.
+
+#: Where it is stated. Its own tuple rather than a row in `NO_SCHEMA_CHANGE_SITES`, because the
+#: expected value is not that tuple's expected value and a row carrying a silent offset is worse
+#: than a second row.
+RELEASE_COUNT_SITES: tuple[tuple[str, str], ...] = (
+    ("packages/cdm/synapse_cdm/version.py",
+     r"ship (?P<n>[a-z]+) different distributions all labelled"),
+)
+
+
+def distributions_the_counterfactual_would_ship() -> int:
+    """The section's bullets, plus the release the counterfactual puts before all of them.
+
+    A named function rather than a `+ 1` at the assertion, because the plus-one IS the reading. The
+    paragraph opens "Had this package been released before any of them", so that first release is
+    one of the distributions a derived scheme would have had to label 1.0.0, and the adapters in the
+    section are the others. Ruling the sentence to the bullet count alone would have made it say
+    something the paragraph does not: that the first release is not one of the distributions.
+    """
+    return len(adapters_that_landed_with_no_schema_change()) + 1
+
+
+@pytest.mark.parametrize("path,pattern", RELEASE_COUNT_SITES,
+                         ids=[f"{p}::{i}" for i, (p, _) in enumerate(RELEASE_COUNT_SITES)])
+def test_the_counterfactual_release_count_is_the_entries_plus_the_first_release(path, pattern):
+    """The distribution count, against the section it is derived from.
+
+    A pattern that stops matching is a FAILURE, for the reason the header gives — and here with one
+    more reason: this site spent its whole life unread, so a row that silently stopped matching
+    would put it back exactly where it started.
+    """
+    file = REPO / path
+    assert file.exists(), f"{path} does not exist; this allowlist is stale"
+    found = list(re.finditer(pattern, flat(file.read_text())))
+    assert len(found) == 1, (
+        f"{path}: the sentence this is anchored to matched {len(found)} times, expected 1.\n"
+        f"  pattern: {pattern}\nRe-anchor it deliberately; do not delete the row"
+    )
+    stated = spelled(found[0].group("n"))
+    expected = distributions_the_counterfactual_would_ship()
+    assert stated == expected, (
+        f"{path} says {found[0].group('n')!r} ({stated}) distributions and the counterfactual "
+        f"would ship {expected}: {len(adapters_that_landed_with_no_schema_change())} adapters in "
+        f"MIGRATIONS.md's no-schema-change section, each a package MINOR, plus the release the "
+        f"sentence puts before all of them.\n  matched: {found[0].group(0)!r}\n"
+        "This is the paragraph's third statement of one fact and the only one nothing read"
+    )
+
+
+# ============================================================== and now this module's own prose
+#
+# Every section above pins a count that lives in some other file. This module states counts too —
+# the header quotes the double-count sentence verbatim, the check-count comment states how long
+# `_COLUMNS` is, the `#:` note above `NO_SCHEMA_CHANGE_SITES` states both halves of what the curated
+# page carries against what the file holds — and nothing read any of them. That is the same defect
+# as every other one in this file, one file further in, and it is the structural one: the module that
+# fails a build over a stale number elsewhere was the last place a stale number could sit and stay
+# green.
+#
+# It had one. The header quotes `symbology.py`'s double-count sentence, and the quotation was two
+# adapters behind the sentence it quotes — in the paragraph that names that sentence as THE shape
+# this module exists to catch, and invisible to the row that pins the sentence itself, because a
+# quotation of a site is not the site.
+#
+# The cheaper disposition first. Where the count sits somewhere Python can compute it — an assertion
+# message, an f-string — it is now DERIVED and there is nothing left to guard: the closure above
+# restated its own row count beside the literal set that decides it and now reads `len(swept)`, and
+# the header counted the documents in `SITES` and now names `SITES`. What is left are
+# counts in comments and docstrings, which cannot interpolate, so they are pinned the way every
+# external site here is pinned: anchored to their own sentence, compared against a derivation.
+#
+# WHAT IS DELIBERATELY NOT PINNED, AND ON WHAT GROUND
+# ---------------------------------------------------
+# Most numbers in this file are history, and pinning them would falsify the record — the same ruling
+# `HISTORICAL_SITE` carries for a changelog entry, applied to narrative instead. The
+# classes below are exempt by structural location rather than by being unimportant:
+#
+# * **past-tense narrative about a named round, commit or release** — "stale by six adapters" about
+#   the adapter #11 sweep; "21 for seven adapters, 28 for eight" about what `README.md` used to
+#   state; "the count moved nine to ten at all eleven sites" about CAT034 Phase 2; and "`cat048`
+#   had made it four" about the ICAO24 count before the SDK close-out sweep. Each was right at the
+#   event it names, and ruling it to today's value would describe an event that did not happen;
+# * **verbatim quotation of bytes as they stood before a named repair** — 94c000a's "seven adapters
+#   cannot grow six slightly different opinions", and the sentence the SDK close-out sweep found in
+#   `version.py`. These are exhibits, and an exhibit that gets updated stops being one.
+#
+# The second class gets a check rather than a promise, because an exhibit is exempt only while it is
+# genuinely overtaken. `test_the_pre_repair_quotations_are_still_quotations_of_repaired_bytes`
+# requires each quoted sentence to be ABSENT from the file it is quoted from: a quotation that
+# matches the tree again is a live claim wearing an exemption written for a dead one, which is the
+# failure `test_the_historical_statement_of_the_count_is_still_inside_the_history` catches in the
+# other direction.
+#
+# THE GAP THAT STAYS OPEN, STATED RATHER THAN IMPLIED
+# ---------------------------------------------------
+# `SELF_SITES` is an allowlist and it has an allowlist's blind spot — the one recorded as debt in
+# `test_the_allowlist_covers_every_site_the_sweep_had_to_fix`, and this round does not close it. A
+# count added to this module's prose LATER is invisible to it, exactly as a document outside `SITES`
+# stating the adapter count is invisible to that. The file-local form of the discovery sweep — every
+# spelled number in this file's comments and docstrings required to be pinned, derived, or exempt on
+# a named ground — would close it, and it is not written. Nothing below covers it.
+
+THIS_MODULE = pathlib.Path(__file__).resolve()
+
+
+def own_prose() -> str:
+    """This module's own source, comment markers stripped and whitespace collapsed.
+
+    `flat()` alone is not enough here for the reason `unwrapped()` gives for `packages/cdm/
+    pyproject.toml`, and with more force: most of this module's prose is a hard-wrapped `#` block, so
+    collapsing whitespace alone leaves a `#` sitting mid-sentence at every wrap point, and a pattern
+    written around it is anchored to where the comment happens to wrap rather than to what it says.
+    Re-flowing a paragraph by one word would then break a row for no reason at all.
+    """
+    return flat(re.sub(r"(?m)^\s*#:?\s?", "", THIS_MODULE.read_text()))
+
+
+class SelfSite:
+    """One count stated in THIS module's prose, and the derivation that decides it.
+
+    `derive` is a callable rather than a value because these are read at collection time and the
+    derivations read the tree; a value captured at import would pin the number to whatever the tree
+    looked like when pytest imported this file, which is the mistake `shipped_adapters()` documents.
+    """
+
+    def __init__(self, label: str, pattern: str, derive, *, groups: tuple[str, ...] = ("n",)):
+        self.label = label
+        self.pattern = pattern
+        self.derive = derive
+        self.groups = groups
+
+
+#: This module's own count-bearing prose. Every pattern captures its number rather than spelling it,
+#: which is what keeps a row from matching itself: the row's own pattern literal has `(?P<n>` where
+#: the prose has a number word, so a search for the pattern finds the sentence and not the row.
+SELF_SITES: tuple[SelfSite, ...] = (
+    # The stale one, and the reason this section exists.
+    SelfSite("the header's quotation of the double-count sentence",
+             r"both carry the count TWICE in one clause — \"so that (?P<n>[a-z]+) adapters cannot "
+             r"grow (?P<n2>[a-z]+) slightly different opinions\"",
+             lambda: len(shipped_adapters()), groups=("n", "n2")),
+    SelfSite("the check-count section's statement of how long _COLUMNS is",
+             r"`harness\._COLUMNS` has (?P<n>[A-Z]+) entries",
+             lambda: len(harness._COLUMNS)),
+    SelfSite("the check-count closure's note on CONTRIBUTING.md's table",
+             r"carries the (?P<n>[a-z]+)-row table",
+             lambda: len(harness._COLUMNS)),
+    SelfSite("what the curated page lists, on the page's side",
+             r"the page lists only (?P<n>[a-z]+) of the",
+             lambda: len(adapters_the_curated_page_lists())),
+    SelfSite("what the curated page lists, on the file's side",
+             r"the page lists only [a-z]+ of the (?P<n>[a-z]+):",
+             lambda: len(adapters_that_landed_with_no_schema_change())),
+    SelfSite("the no-schema-change count in the parametrised test's own docstring",
+             r"(?P<n>[a-z]+) adapters' worth of shipped behaviour",
+             lambda: len(adapters_that_landed_with_no_schema_change())),
+    SelfSite("the changelog page's sentence, quoted in the recorded-debt note",
+             r"\"(?P<n>[a-z]+) adapters have shipped so far\" — which turned out to be CORRECT",
+             lambda: len(adapters_that_landed_with_no_schema_change())),
+)
+
+#: Sentences quoted here as they stood BEFORE a named repair, and the file each was repaired in.
+#: Exempt from every count check above; the test below is what they pay for it.
+PRE_REPAIR_QUOTATIONS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("seven adapters cannot grow six slightly different opinions",
+     ("packages/cdm/synapse_cdm/symbology.py", "docs/docs/cdm/entity.mdx")),
+    ("ten adapters are shipped and harness-verified",
+     ("packages/cdm/synapse_cdm/version.py",)),
+)
+
+
+def adapters_the_curated_page_lists() -> set[str]:
+    """What `docs/docs/changelog.mdx` actually names, by the extractor that rules the page.
+
+    Imported from `tests/test_cdm_changelog_claim.py` rather than reimplemented: that module owns
+    the page's section heading and its adapter pattern, and a second extractor for the same set is a
+    second thing to keep true. This module already borrows `tests/test_cdm_version_floor.py`'s
+    virtualenv predicate in the check-count closure above on the same reasoning.
+
+    It is also how "nine" was established rather than assumed. The `#:` note that states it is a
+    claim about what a curated page carries, and reading a page by eye is how a curated page comes
+    to be described by a number that was true of an earlier version of it.
+    """
+    from tests import test_cdm_changelog_claim as claim
+    return set(claim.ADAPTER.findall(
+        claim._section(claim.CHANGELOG.read_text(), claim.PAGE_HISTORY, r"^## ")))
+
+
+def test_the_page_extraction_agrees_that_the_page_is_a_curated_subset():
+    """The derivation, before anything is compared against it.
+
+    An extractor that had stopped matching would return the empty set and the `#:` note's "nine"
+    would fail against zero — a real failure with a message pointing at prose that is fine. And the
+    relation the note asserts is a strict subset: a page that named everything the section holds
+    would make "only" the wrong word, and `tests/test_cdm_changelog_claim.py` fails in that
+    direction too, deliberately and with the instruction to re-rule rather than to trim the page.
+    """
+    listed = adapters_the_curated_page_lists()
+    section = set(adapters_that_landed_with_no_schema_change())
+    assert listed, (
+        "the changelog page's adapter extraction found nothing. The `#:` note above "
+        "NO_SCHEMA_CHANGE_SITES states how many of the section's entries that page carries, so an "
+        "empty derivation fails that note for the wrong reason — check the page's heading first"
+    )
+    assert listed < section, (
+        f"the page names {sorted(listed)} and the section holds {sorted(section)}. The note says "
+        "the page lists SOME of them; if the page has caught up, the word 'only' is wrong and the "
+        "note needs re-ruling rather than a new number"
+    )
+
+
+@pytest.mark.parametrize("site", SELF_SITES, ids=lambda s: s.label)
+def test_every_count_this_module_states_about_the_tree_is_derived_from_the_tree(site):
+    """This module's own prose, against the same derivations it holds other files to.
+
+    The failure that earned this: the header's quotation of `symbology.py` said one number while the
+    sentence it quotes said another, two adapters apart, and the row pinning that sentence could not
+    see it. A quotation of a guarded site is an unguarded restatement of the same fact.
+    """
+    text = own_prose()
+    found = list(re.finditer(site.pattern, text))
+    assert len(found) == 1, (
+        f"{site.label}: this module's own sentence matched {len(found)} times, expected 1.\n"
+        f"  pattern: {site.pattern}\n"
+        "A pattern that stops matching is a FAILURE here for the same reason it is everywhere else "
+        "above — re-anchor it deliberately if the prose was rewritten; do not delete the row"
+    )
+    expected = site.derive()
+    words = [found[0].group(g) for g in site.groups]
+    assert len(set(w.lower() for w in words)) == 1, (
+        f"{site.label}: this module states the count more than once in one sentence and the "
+        f"statements disagree — {words}. That is the 94c000a shape, in the file that exists to "
+        "catch it"
+    )
+    for word in words:
+        assert spelled(word) == expected, (
+            f"{site.label}: this module says {word!r} ({spelled(word)}) and the tree says "
+            f"{expected}.\n  matched: {found[0].group(0)!r}\n"
+            "This module's prose is prose like any other. It states counts about the tree, and "
+            "until this row existed nothing read them"
+        )
+
+
+def test_the_self_guard_covers_every_count_this_module_states_about_the_tree():
+    """The closure, in the one direction an allowlist can give itself: it cannot shrink.
+
+    Same failure as every other closure here — a row deleted to make its failure go away leaves the
+    site free, and free is the state every row here was in. It cannot notice a count added to this
+    module later; that is the gap the section header states rather than implies.
+    """
+    covered = {site.label for site in SELF_SITES}
+    assert covered == {
+        "the header's quotation of the double-count sentence",
+        "the check-count section's statement of how long _COLUMNS is",
+        "the check-count closure's note on CONTRIBUTING.md's table",
+        "what the curated page lists, on the page's side",
+        "what the curated page lists, on the file's side",
+        "the no-schema-change count in the parametrised test's own docstring",
+        "the changelog page's sentence, quoted in the recorded-debt note",
+    }, (
+        f"the self-guard now covers {sorted(covered)}. Each of those is a count this module states "
+        "about the tree — a quotation of a guarded sentence, a length, what a curated page carries, "
+        "and the number the whole no-schema-change section exists to make. Adding a row is fine; "
+        "losing one puts this module back where every file it guards started"
+    )
+
+
+@pytest.mark.parametrize("quotation,paths", PRE_REPAIR_QUOTATIONS,
+                         ids=[q.split()[0] + "-" + q.split()[-1] for q, _ in PRE_REPAIR_QUOTATIONS])
+def test_the_pre_repair_quotations_are_still_quotations_of_repaired_bytes(quotation, paths):
+    """The exemption for exhibits, checked so that it cannot come to cover a live claim.
+
+    An exhibit keeps its stale number because it is evidence of a repair, which is the ruling
+    `HISTORICAL_SITE` carries for a changelog entry. That ruling holds only while the
+    repair holds: if a file ever says again what its exhibit says it used to say, the exhibit has
+    stopped being one and the sentence is a live count wearing a dead exemption.
+
+    Occurrence count rather than membership, because the string is in the tuple above: a row whose
+    prose had been deleted would otherwise satisfy this test against itself.
+    """
+    mine = own_prose()
+    assert mine.count(quotation) >= 2, (
+        f"{quotation!r} appears {mine.count(quotation)} time(s) in this module — the row above and "
+        "nothing else, so the prose that quoted it is gone. Drop the row with it; an exemption "
+        "covering no site reads as a live ruling"
+    )
+    for path in paths:
+        file = REPO / path
+        assert file.exists(), f"{path} does not exist; this exemption is stale"
+        assert quotation not in flat(file.read_text()), (
+            f"{path} says {quotation!r} again, which this module quotes as PRE-repair bytes. Either "
+            "the repair was reverted, or the exhibit is now a live claim carrying an exemption "
+            "written for a historical one — the same spread "
+            "`test_the_historical_statement_of_the_count_is_still_inside_the_history` refuses"
+        )
