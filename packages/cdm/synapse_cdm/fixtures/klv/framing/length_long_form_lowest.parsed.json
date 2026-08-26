@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000016",
+  "name": "length_long_form_lowest",
+  "kind": "ber_length",
+  "octets_hex": "8180",
+  "octet_count": 2,
+  "decodes_to": 128,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "MISB ST 0107.3 \u00a76.3.2: 'the optimized value with two bytes (0x8180)'",
+  "note": "THE DOCUMENT'S OWN LONG-FORM OCTETS, and the high side of the same transition. 0x81 declares one following octet and 0x80 is 128 big-endian per ST 0107.2-02. The document calls this 'two bytes', which is how the first octet is known to be counted in the total."
+}

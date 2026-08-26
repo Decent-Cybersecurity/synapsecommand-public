@@ -1,0 +1,32 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000024",
+  "name": "packet_short_form_value_length",
+  "kind": "local_set_packet",
+  "octets_hex": "060E2B34020B01010E010301010000001201028CED02080001020304050607810101FF",
+  "octet_count": 35,
+  "decodes_to": {
+    "value_length": 18,
+    "value_length_octets": "12",
+    "items": [
+      {
+        "tag": 1,
+        "length": 2,
+        "value_hex": "8CED"
+      },
+      {
+        "tag": 2,
+        "length": 8,
+        "value_hex": "0001020304050607"
+      },
+      {
+        "tag": 129,
+        "length": 1,
+        "value_hex": "FF"
+      }
+    ]
+  },
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "ST 0601.14a \u00a76.3 for the packet shape; MISB ST 0107.3 \u00a76.3.2 for both length forms",
+  "note": "A WHOLE PACKET, SHORT FORM: the 16-octet UL, one length octet for a Value under 128, then three triplets \u2014 a one-octet tag, another one-octet tag, and a two-octet tag. THE TAGS ARE THE DOCUMENT'S AND THE VALUES ARE SYNTHETIC, which is the honest split: tag 1's value is \u00a78.1's 8CED, and the other two payloads are arbitrary octets chosen to make the framing legible. Nothing here decodes a value, so no value needs to mean anything."
+}

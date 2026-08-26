@@ -1,0 +1,16 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000022",
+  "name": "item_document_checksum_triple",
+  "kind": "local_set_item",
+  "octets_hex": "01028CED",
+  "octet_count": 4,
+  "decodes_to": {
+    "tag": 1,
+    "length": 2,
+    "value_hex": "8CED"
+  },
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "ST 0601.14a \u00a78.1's own example row, 'Tag Len Value / 01 02 8CED'",
+  "note": "THE ONE TRIPLET THIS REPOSITORY DID NOT HAVE TO BUILD. Tag 1 is Checksum, the item ST 0601.8-11 requires last in every instance, and the document prints the whole triplet. Its three fields exercise three separate rules \u2014 BER-OID tag, BER short-form length, opaque value \u2014 and the octets are the standard's, not this repository's."
+}

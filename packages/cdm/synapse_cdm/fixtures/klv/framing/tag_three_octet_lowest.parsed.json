@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000011",
+  "name": "tag_three_octet_lowest",
+  "kind": "ber_oid_tag",
+  "octets_hex": "818000",
+  "octet_count": 3,
+  "decodes_to": 16384,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "MISB ST 0107.3 \u00a76.3.1: 'This pattern continues until the msb of a final byte in the chain is zero' \u2014 and ST 0601.14a \u00a77.1's undefined '(or more)'",
+  "note": "THE 16383 \u2192 16384 TRANSITION, which the framing round named as an omitted fixture and park 4 supplied the rule for. It shipped as a REFUSAL (`tag_third_continuation_octet`, octets 818100) while the only text in hand was \u00a77.1's '(or more)'; ST 0107.3 \u00a76.3.1 states the chain rule for any width, so a third octet is now decoded rather than refused. 818000 is 16384: two continuation octets carrying 1 and 0, then a terminating octet carrying 0."
+}

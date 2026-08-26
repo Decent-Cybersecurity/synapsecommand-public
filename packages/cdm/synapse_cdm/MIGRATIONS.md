@@ -1093,14 +1093,70 @@ too — so the first is now stated.
   **ST 336:2007**, so two delegated documents this repository holds disagree about which edition of
   the encoding standard governs.
 
+  **A third round the same day followed `ST 0601.8-03` where it points, and it points at six
+  pages.** "All UAS Datalink LS metadata shall be expressed in accordance with MISB ST 0107 [5]" —
+  so **MISB ST 0107.3, KLV Metadata in Motion Imagery** was obtained from NSG Registry document
+  4738, pinned at `fixtures/klv/spec/ST0107.3.pdf` (SHA-256 `500d6752…98b69794`, 656 949 bytes, **6
+  pages**), and read in full. **PARK 4 IS CLOSED** — the second park to close and the cheapest in
+  the table — and `klv_codec` now walks a UAS Datalink LS packet end to end.
+
+  What ST 0107.3 states, each with its section: the **short form** (§6.3.2, "the short form
+  one-byte (0x02) length"); the **long form and its length-of-length octet**, derived from the four
+  encodings §6.3.2 prints — `0x02`→2, `0x8102`→2, `0x8180`→128, `0x8300 0080`→128 — where `0x81`
+  introduces one following octet and `0x83` introduces three, so the first octet's low seven bits
+  are a **count**, big-endian by `ST 0107.2-02`; **minimality as a live requirement**,
+  `ST 0107.3-05`, "shall be BER Short form or BER Long form encoded using the fewest possible
+  bytes", which is `ST 0601.8-07` with the onward delegation *removed* and the scope *widened*; a
+  **zero length** as legal with the Value "not a part of the item" (§6.3); the **BER-OID chain rule
+  for any width** (§6.3.1), which is the "(or more)" §7.1 never defined; and the **`0x80`
+  prohibition on tags** (§6.3.1, "ASN.1 forbids the use of 0x80 in the first byte of a BER-OID
+  value"), which promotes a refusal that had rested on the deprecated `ST 0601.8-06` to live
+  authority without changing its behaviour.
+
+  **`ST 0107.3-05` is what decided the shape of the API.** Because minimality is required rather
+  than optional, every length has exactly one conforming encoding — so `encode_ber_length` takes no
+  `form=` parameter and the ruling is enforced by the signature. That was the question park 4 was
+  sent to answer, and "not free choice" is the answer.
+
+  **PARK 8 STAYS OPEN and is narrower again**, and both things it still owns are **absences** rather
+  than delegations. ST 0107.3 never mentions `0x80` as a first *length* octet — a long form declaring
+  zero following octets, BER's indefinite length — and it states **no ceiling** on the count of
+  length octets, its only maxima (§6.3.3, `ST 0107.3-07`) governing a Value's size. Neither is
+  reachable from a conforming stream, which is why the length codec is complete and total with the
+  park open; both raise `UnderivableFromPinnedCopy` carrying park 8 and `ST 0107.3-03`. The codec's
+  bound of 127 length octets is the first octet's seven bits — **structural, not cited** — and says so.
+
+  **All 141 rows still say `not yet`**, for the third round running and for the same reason: a
+  framing rule says where an item begins and never what it means. This adapter went from *can name
+  every field and read none* to *can find every item and decode no value*. The three functions that
+  raised — `decode_ber_length`, `encode_ber_length`, `walk_local_set` — stopped raising; `LocalSetItem`
+  is new; `fixtures/klv/framing/` grew from thirteen fixtures to **twenty-six**, discharging all three
+  classes the framing round had named as omitted, with four of the nine new length fixtures being the
+  document's **own octets**. `BER_OID_MAX_OCTETS` was **deleted** — a cap beside a codec that no longer
+  honours it is a constant nothing reads — while `BER_OID_MAX` is kept at 16383 and re-documented as a
+  waypoint rather than a limit.
+
+  Three register entries. **KLV 11** is updated: ST 0107.3's reference [1] pins **ST 336:2017**, so
+  the divergence is now three held documents against ST 0102.12's one — a stronger majority and no
+  resolution, because ST 0102.12 is the document whose own items are *required* to conform to its
+  edition. **KLV 12** is new: two of ST 0107.3's thirteen requirements are prefixed **`ST 0107.2`**,
+  not `ST 0107.3`, because MISB stamps a requirement with the edition that introduced it — and one of
+  them is the sole octet-order rule in the entire delegation chain, so it is load-bearing and easy to
+  miscite. **KLV 13** is new and bounds park 8's cost: §6.3.3.1 names *ASN.1* rather than ST 336 as
+  the source of the BER length rules and pins ITU Rec **X.680**, which specifies notation — BER is
+  **X.690**. ITU recommendations are free, so part of the one park that costs money may be a
+  download. Registered rather than acted on: the reference needs adjudicating and neither ITU
+  document is held, and rewriting a park's reopen route on a reference list read in passing is the
+  roster change the park 1 round refused to make.
+
   and **KLV 10**. The fixture directory is `fixtures/klv` rather than
   `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
   `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry
   beside the shipped ones — nine of them when this entry was written, ten since `cat034` landed.
 
   **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
-  row set is a *document this repository does not hold* — twelve parks over fourteen documents, one
-  now closed, ten of the eleven still open being public downloads and one behind SMPTE's paywall —
+  row set is a *document this repository does not hold* — twelve parks over fourteen documents, **two
+  now closed**, nine of the ten still open being public downloads and one behind SMPTE's paywall —
   and not a CDM shortfall.
   The profile delegates every field dictionary it relies on: `MISP-2015.1-07` sends the KLV
   encoding to SMPTE ST 336:2017, `MISP-2015.1-08` sends the formatting to MISB ST 0107.3, and

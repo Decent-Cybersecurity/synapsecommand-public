@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000019",
+  "name": "length_non_minimal_padded_zeros",
+  "kind": "ber_length_refusal",
+  "octets_hex": "83000080",
+  "octet_count": 4,
+  "decodes_to": null,
+  "refused": true,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "MISB ST 0107.3 \u00a76.3.2 and ST 0107.3-05",
+  "note": "THE DOCUMENT'S SECOND NAMED INEFFICIENCY, verbatim: 'encoding the value 128 with padded zeros (0x8300 0080) instead of the optimized value with two bytes (0x8180)'. This is the fixture that fixes the length-of-length rule: 0x83 introduces THREE octets where 0x81 introduces one, so the first octet's low seven bits are a count."
+}

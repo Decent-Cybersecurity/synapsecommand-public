@@ -7474,11 +7474,12 @@ STANAG contains no technical requirement of any kind, and the MISP contains no N
 | **The normative act** | The wrapper's AGREEMENT clause reads "**Participating nations agree to implement the following standard**" and its STANDARD clause names exactly one: "**U.S. Motion Imagery Standards Board (MISB) Motion Imagery Standards Profile-2019.1 (MISP-2019.1)**". Its IMPLEMENTATION OF THE AGREEMENT clause restates the scope: "MISP-2019.1 defines the technical requirements for motion imagery formats, compression, metadata and transmission protocols for ISR systems and systems that manage and/or exploit motion imagery data." NATO Effective Date: "Not applicable" |
 | **The target** | **MISP-2019.1, Motion Imagery Standards Profile, Motion Imagery Standards Board — title page dated November 2018**, which is also the footer of all 73 pages. Every requirement mapped or parked below cites this document |
 | SHA-256 (target) | `3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea`, 1 372 771 bytes, 73 pages, `fixtures/klv/spec/misb-misp-2019-1.pdf` |
-| **The delegated dictionaries obtained** | **Three** of the fourteen delegated documents were obtained on 2026-08-26 and are pinned below. **ST 0102.12 and ST 0601.14 are the editions the profile pins** (Appendix B refs [55] and [53]); **ST 0601.19 is not** — it is five major revisions past the 0601.14 ref [53] cites. What follows is ruled in `fixtures/klv/spec/klv_pin.json`'s `reconciliation_ruling`: **ST 0601.14 — this copy, this hash — is the authoritative tag table for the row set, and ST 0601.19 remains pinned as context only**, never a source of tag semantics here. It is retained for the item-42 divergence note and for the measured .14-to-.19 delta. So **park 1 is closed** and park 2 is not: park 2's document is held and its row set is still unwritten |
+| **The delegated documents obtained** | **Four** of the fourteen delegated documents were obtained on 2026-08-26 and are pinned below. The heading says *documents* rather than *dictionaries* because the fourth is not one: **MISB ST 0107.3** is six pages of KLV-wide baseline requirements, and it closed **park 4**. **ST 0102.12 and ST 0601.14 are the editions the profile pins** (Appendix B refs [55] and [53]); **ST 0601.19 is not** — it is five major revisions past the 0601.14 ref [53] cites. What follows is ruled in `fixtures/klv/spec/klv_pin.json`'s `reconciliation_ruling`: **ST 0601.14 — this copy, this hash — is the authoritative tag table for the row set, and ST 0601.19 remains pinned as context only**, never a source of tag semantics here. It is retained for the item-42 divergence note and for the measured .14-to-.19 delta. So **parks 1 and 4 are closed** and park 2 is not: park 2's document is held and its row set is still unwritten — which is the precedent that forced park 4's closure to be argued rather than assumed, since ST 0107.3 supports no row set at all. See the parks preamble |
 | SHA-256 (ST 0601.14) | `3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4`, 3 969 201 bytes, 218 pages, `fixtures/klv/spec/ST0601.14a.pdf` |
 | SHA-256 (ST 0601.19) | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1`, 4 700 978 bytes, 226 pages, `fixtures/klv/spec/ST0601.19.pdf` |
 | SHA-256 (ST 0102.12) | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267`, 514 842 bytes, 18 pages, `fixtures/klv/spec/ST0102.12.pdf` |
-| **The edition tension inside a pin, twice** | ST 0601.19's cover reads **02 March 2023** and the copy pinned above carries revision-history rows dated **10 May 2024** and **11 June 2025**, under the same edition number and with no minor-version letter — register entry **KLV 9**. ST 0601.14 then met the same hazard *at fetch time*: the registry serves the edition cited as "ST 0601.14" under the filename **`ST0601.14a.pdf`**, the cover reads **`MISB ST 0601.14a`** and **1 May 2020** while the edition itself is dated **1 November 2018**, and the copy carries a **third revision-history row dated 19 August 2021 whose Revision cell is empty** — register entry **KLV 10**. Together they are the reason a pin's SHA-256 identifies a *copy* rather than an edition, and the reason the filename keeps the letter the registry served |
+| SHA-256 (ST 0107.3) | `500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794`, 656 949 bytes, 6 pages, `fixtures/klv/spec/ST0107.3.pdf` |
+| **The edition tension inside a pin, twice** | ST 0601.19's cover reads **02 March 2023** and the copy pinned above carries revision-history rows dated **10 May 2024** and **11 June 2025**, under the same edition number and with no minor-version letter — register entry **KLV 9**. ST 0601.14 then met the same hazard *at fetch time*: the registry serves the edition cited as "ST 0601.14" under the filename **`ST0601.14a.pdf`**, the cover reads **`MISB ST 0601.14a`** and **1 May 2020** while the edition itself is dated **1 November 2018**, and the copy carries a **third revision-history row dated 19 August 2021 whose Revision cell is empty** — register entry **KLV 10**. Together they are the reason a pin's SHA-256 identifies a *copy* rather than an edition, and the reason the filename keeps the letter the registry served. **ST 0107.3 was checked for the same hazard and does not have it**: no letter in the filename, no letter on the cover, a single revision-history row, and a cover date of **1 November 2018** agreeing with the registry's and with the footer of all six pages. That it was adjudicated anyway is the point — the ST 0601.14 finding was not looked for either |
 | **The date tension** | The wrapper promulgates in **July 2020** a profile whose own title page says **November 2018** — twenty months, unexplained in either document, and register entry **KLV 1** |
 | **Named by the wrapper and NOT held** | "MISP-2019.1: Motion Imagery Handbook", the wrapper's only OTHER RELATED DOCUMENT. **Park 10**, and a heavier park than its billing suggests: MISP §3.6.7 says the Handbook "defines the required data items" for Class 1 metadata |
 | **Named by the target and deliberately NOT in scope** | "MISP-2019.1: U.S. Governance" (ref [2]) and "MISP-2019.1: U.S. Specific" (ref [3]). MISP §1.1 sends *U.S.*-specific requirements there and *NATO*-specific ones to STANAG 4609, and the wrapper promulgates neither. So the NATO-implementable set is the profile plus its Handbook, and the two U.S. documents sit outside it by both documents' own construction — an exclusion, not an omission |
@@ -7784,7 +7785,7 @@ never-drop check will be measured against, on the pattern `adsb.py`, `asterix_ca
 | MISP / STANAG 4609 | CDM field | Status | Notes |
 |---|---|---|---|
 | `klv.item.key` | `Entity.attributes` | `not yet` | the item's Key as read. **Narrowed by the framing ruling and still `not yet`.** The byte form is no longer wholly ST 336's: **this** Local Set's 16-byte Universal Label is stated in ST 0601.14 §6.2 and its BER-OID tag form in §7.1 and Figure 67, both implemented in `adapters/klv_codec.py`. What keeps the row blocked is that an *item's* key cannot be reached without walking to it, and the walk needs the length grammar — so this row is *(blocked)* on parks 4 and 8 through the LENGTH rule rather than through the key rule. What the profile does fix is that the unit is a Key/Length/Value **item**, the word its own change log adopted: «Changed "element" to "item" in referencing KLV triplets, consistent with SMPTE usage» |
-| `klv.item.length` | `Entity.attributes` | `not yet` | the declared length as read, and parked rather than trusted: a length that disagrees with the octets is CAT048's `block.length` problem in a second format. The length *encodings* are ST 336's and **the framing ruling confirmed it from the delegating document's own mouth**: ST 0601.14a names "BER short or long form" and defines neither, its one constraining sentence `ST 0601.8-07` is **(Deprecated)**, and no worked example in 218 pages carries a length octet above `0x24`. This is **the** residue — *(blocked)* on park 8, and on park 4 through `ST 0601.8-03` |
+| `klv.item.length` | `Entity.attributes` | `not yet` | the declared length as read, and parked rather than trusted: a length that disagrees with the octets is CAT048's `block.length` problem in a second format. **This row used to be *the* residue and is no longer blocked.** The framing ruling confirmed the delegation from the delegating document's own mouth — ST 0601.14a names "BER short or long form" and defines neither, its one constraining sentence `ST 0601.8-07` is **(Deprecated)**, and no worked example in 218 pages carries a length octet above `0x24` — and the length ruling followed `ST 0601.8-03` to **MISB ST 0107.3**, whose §6.3.2 states the grammar and whose `ST 0107.3-05` requires the fewest possible bytes. `klv_codec.decode_ber_length` reads it. **Still `not yet` for a reason that is no longer a park**: this row is a MAPPING, and a mapping needs an adapter emitting an `Entity` — which needs tag semantics, parks 3 and 5. The length is now *readable* and not yet *carried* |
 | `klv.item.value` | `Entity.attributes` | `not yet` | **parked whole and never interpreted in this phase.** `MISP-2015.1-07` and `-08` name where the interpretation lives and neither document is held, so a value read here is a value whose type is unknown |
 | `klv.item_index`, `klv.item_count` | `Event.payload` | `not yet` | which item of how many, in wire order. Without it, two objects from one stream are indistinguishable from two objects from two streams — the CAT048 `block.record_index` precedent |
 | nested sets | `Entity.attributes` | `not yet` | a Local Set's items live inside a parent item's value. §4.4.1 calls ST 0601 "a Collection of Metadata from several Domains"; §3.6.7 says the Handbook "describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets". So the hierarchy is *(blocked)* on parks 1 and 10, and structure is preserved verbatim rather than flattened |
@@ -8078,40 +8079,43 @@ to "Galileo", "takeoff" to "take-off", "Tag" to "Item" at items 137 and 139, sho
 Precision Time Stamp (Tag 2) to UTC" becomes ".19: Number of leap seconds since MISP Epoch to use
 when converting Precision Time Stamp (Item 2) to UTC".
 
-### The framing layer — how a key, a tag and a length are written, and the one of the three that is not here
+### The framing layer — how a key, a tag and a length are written, and the document that finally said
 
-**Holding the dictionary made the stream nameable. This round asked what it would take to make it
-readable, and got two thirds of an answer out of the pinned copy itself.** A KLV stream is a
-sequence of key/length/value triplets, so reading one needs three rules: how the set's key is
-written, how an item's tag is written, and how an item's length is written. ST 0601.14a — this copy,
-SHA-256 `3d5f1ca1…ab212ce4` — **states the first two and delegates the third**, and both halves of
-that sentence are load-bearing. The ruling below records each rule as *established from the pinned
-copy* with its section, or as *underivable* with the sentence that delegates it. It is transcribed
-in machine-readable form at `spec/klv_pin.json`'s `framing_ruling_st_0601_14`, and the two are
-required to agree by `tests/test_cdm_klv_framing.py`.
+**A KLV stream is a sequence of key/length/value triplets, so reading one needs three rules: how the
+set's key is written, how an item's tag is written, and how an item's length is written.** Two rounds
+on 2026-08-26 got all three, and the shape of how they got them is the finding.
 
-**Parks 4 and 8 both stay OPEN and neither closes even partially in the sense of a park state.**
-What is partial is the framing layer, not a park: a park closes when its document is obtained and a
-row set is written from it, and this round obtained nothing. What it did was measure the parks
-precisely enough that the next round knows what it is buying.
+The first went to ST 0601.14a — SHA-256 `3d5f1ca1…ab212ce4`, 218 pages — and asked for all three. **It
+states the first two and delegates the third.** The second followed the delegation to **MISB ST
+0107.3, KLV Metadata in Motion Imagery** — SHA-256 `500d6752…98b69794`, **six pages** — and that
+document states the length grammar on its own account. **Park 4 is CLOSED. Park 8 stays OPEN**, and
+what it still owns is two sentences ST 0107.3 does not contain.
 
-#### Established from the pinned copy
+Both rulings are transcribed in machine-readable form at `spec/klv_pin.json` —
+`framing_ruling_st_0601_14` for the first and `length_ruling_st_0107_3` for the second — and the
+prose and the pin are required to agree by `tests/test_cdm_klv_framing.py`.
+
+**The 141 tag rows did not move and none was eligible to.** A framing rule says where an item begins;
+it never says what the item means. This adapter went from *can name every field and read none* to
+*can find every item and decode no value*.
+
+#### Established from ST 0601.14a, the delegating document
 
 | Rule | Where ST 0601.14a states it | What it gives |
 |---|---|---|
 | **The 16-byte Universal Label of this Local Set** | **§6.2**, verbatim: "The UAS Local Set 16-Byte UL "Key" is registered in MISB ST 0807 [3] as: 06.0E.2B.34.02.0B.01.01.0E.01.03.01.01.00.00.00 (CRC 56773)". The deprecated `ST 0601.8-18` on PDF page 217 states the same sixteen octets, which is the document agreeing with itself | The key form of **this** set, in full, needing no ST 336. The CRC is carried and **not recomputed**: the document prints a CRC beside every UL it states and never states the polynomial, and a check that invents its own algorithm checks the invention |
-| **The packet shape** | **§6.3** and **Figure 1**: "A packet is a combination of a UL Key, the Length of the Value, and the Value. UAS Datalink LS items are encapsulated within the Value portion of the packet." Figure 1's own labels read "UL Key … 16 Bytes Identifier", "Length of Value … BER Encoded", "BER-OID encoded Tag's", "BER encoded Length's" | The envelope, and the exact point at which the document stops: it **names** the length field as BER encoded and never says what that is |
+| **The packet shape** | **§6.3** and **Figure 1**: "A packet is a combination of a UL Key, the Length of the Value, and the Value. UAS Datalink LS items are encapsulated within the Value portion of the packet." Figure 1's own labels read "UL Key … 16 Bytes Identifier", "Length of Value … BER Encoded", "BER-OID encoded Tag's", "BER encoded Length's" | The envelope, and the exact point at which this document stopped: it **names** the length field as BER encoded and never says what that is |
 | **BER-OID tags, and where the width changes** | **§7.1**, first bullet, verbatim: "The tag is an integer but encoded as a BER-OID value when used. Single-byte tags can represent tag numbers from 1 through 127. Tag numbers greater than 127 use two-bytes (or more)." | The transition, exactly, at **127/128** |
-| **The BER-OID bit pattern, and its ceiling** | **Figure 67** (PDF page 212) draws a two-octet value as an "MSB Byte" with a leading **1** and "(7 bits)" followed by an "LSB Byte" with a leading **0** and "(7 bits)", payload bits numbered 6…0 under each. The paragraph beneath: "After decoding the Weapons Status BER-OID value, a **14-bit** value remains" | The continuation bit and the capacity, **read rather than remembered**. §7.1 says where the width changes and never says how a multi-octet value is assembled; Figure 67 is the only place in 218 pages that draws it. 14 payload bits is why the codec's ceiling is **16383** |
+| **The BER-OID bit pattern, and its ceiling** | **Figure 67** (PDF page 212) draws a two-octet value as an "MSB Byte" with a leading **1** and "(7 bits)" followed by an "LSB Byte" with a leading **0** and "(7 bits)", payload bits numbered 6…0 under each. The paragraph beneath: "After decoding the Weapons Status BER-OID value, a **14-bit** value remains" | The continuation bit and the capacity, **read rather than remembered**. §7.1 says where the width changes and never says how a multi-octet value is assembled; Figure 67 is the only place in 218 pages that draws it. 14 payload bits is why **16383** is the ceiling this document could prove alone |
 | **141 worked tag encodings** | The "Example KLV Item (All Hex)" row of every item section in §8 | The positive control, not the rule. The tag field takes exactly `01`–`7F` for tags 1–127 and `8100`–`810D` for tags 128–141 — no gap, no duplicate, and every one is what §7.1's boundary and Figure 67's bit pattern predict. A misreading of the continuation bit would have disagreed with the document in fourteen places |
 | **The packet checksum** | **§6.6**: "a running 16-bit summation through the entire packet beginning with the 16-byte Local Set Key and ending with the length field of the checksum LS item". The algorithm as C at §6.6 and §8.1.1.1; `ST 0601.8-08` discards a packet whose checksum disagrees; `ST 0601.8-11` puts Tag 1 last | The algorithm, transcribed loop for loop — **and a vector to check it against**. §8.1.1.2 works one: "64 bits to checksum: 060E 2B34 0200 81BB", then `060E + 2B34 = 3142`, `+ 0200 = 3342`, `+ 81BB = B4FD` |
-| **The Zero-Length Item** | **§6.5** and `ST 0601.14-32`/`-33`/`-34`: a ZLI "is a Local Set item with no value (i.e. tag followed by a length of zero, with no value)" | The one item shape whose value is **absent** rather than opaque, so a walk assuming every item has at least one value octet would desynchronise on it. Recorded now so the walk is written knowing it |
+| **The Zero-Length Item** | **§6.5** and `ST 0601.14-32`/`-33`/`-34`: a ZLI "is a Local Set item with no value (i.e. tag followed by a length of zero, with no value)" | The one item shape whose value is **absent** rather than opaque, so a walk assuming every item has at least one value octet would desynchronise on it. `walk_local_set` was written knowing it |
 
-#### Underivable from the bytes in hand — the residue, and it is the length
+#### What ST 0601.14a delegated, and where the delegation went
 
 **Everybody who has met KLV can recite the length rule: below 128 it is one octet, otherwise the
-first octet is `0x80 | n` and `n` octets follow. That recitation is not in the pinned copy, and this
-round was not permitted to supply it.** What ST 0601.14a contains is:
+first octet is `0x80 | n` and `n` octets follow. That recitation was not in ST 0601.14a, and the
+framing round was not permitted to supply it.** What that document contains is:
 
 - **§6.3.2**, and the same phrase at §8.115, §8.122, §8.138 and §8.140: "Lengths in BER short or long
   form precede each item's value". The two forms **named**, neither **defined**.
@@ -8126,64 +8130,115 @@ round was not permitted to supply it.** What ST 0601.14a contains is:
 - **No worked example that reaches long form.** Every example row's length octet was collected: the
   distinct values are `01`–`09`, `0B`, `0E`, `13`, `14` and `24`. **The largest is `0x24`**, which is
   36 — not one example exercises long form, and not one even reaches the 127 a short form is usually
-  said to stop at. So the examples are *consistent with* the familiar rule and cannot establish it.
+  said to stop at. A codec built from them would accept 36 and have nothing to say about 200: a
+  lookup table, not a grammar.
 
-**Why 141 worked examples are not enough here when they were enough for tags.** For tags they
-corroborate a rule the document states in prose and draws in a figure; for lengths there is no prose
-and no figure to corroborate. A codec built from the length examples alone would accept 1–9, 11, 14,
-19, 20 and 36 and have nothing to say about 10 or 200. That is a lookup table, not a grammar, and
-shipping it as a length codec would be the forbidden reconstruction wearing an empirical costume.
+**`ST 0601.8-03` is a five-word instruction and following it took six pages.** That is the whole
+distance between the two rounds.
 
-Two smaller residues sit beside it, named so that a later round does not assume they were settled:
+#### Established from MISB ST 0107.3 — the ruling that closed park 4
 
-| Residue | Why it is not established | What it costs today |
+**The trap inverted, and it is worth naming before the table.** The framing round's hazard was
+somebody supplying the familiar BER rule from memory. ST 0107.3's rule **is** the familiar rule — so a
+codec written from memory passes every test in the suite. What separates the two is that every clause
+below is derived from octets the document prints, and the derivation is written out so a reader can
+check it against six pages rather than take it on trust.
+
+| Rule | Where ST 0107.3 states it | What it gives |
 |---|---|---|
-| **BER-OID at three octets and beyond** | §7.1 says "two-bytes (or more)" and §8.128 says "The BER-OID format is self-describing providing the rules for obtaining the number of bytes for the value" — the document **asserts** self-description and never describes it past Figure 67's two octets. Extending the pattern is arithmetic anybody can do, which is exactly what makes it the tempting reconstruction | Nothing, for this set: Table 1's highest tag is 141 and two octets reach 16383. It costs a future nested set whose tags run higher |
-| **Whether a non-minimal BER-OID encoding must be REFUSED** | The requirement exists — `ST 0601.8-06`, "shall be BER-OID encoded using the fewest possible bytes" — and is **(Deprecated)**, having moved to ST 0107.3 with the other four | Decided rather than derived, and the two are not blurred: the codec **refuses** a leading `0x80`, because accepting it would make two byte strings denote one tag and a round trip over an ambiguous encoding is a statement about the codec rather than about the wire. It runs with all 141 examples. What is *not* claimed is that refusal is normatively required |
+| **The short form** | **§6.3.2**, verbatim: "encoding the length of two (2), a value less than 128, with long form uses two bytes (0x8102) instead of the short form one-byte (0x02) length" | Lengths 0–127 in one octet, and **the octet IS the length** — no flag bit to strip. The document prints `0x02` for 2 and names "values less than 128" as the range |
+| **The long form, and the length-of-length octet** | **§6.3.2**, the same passage, which prints **four** encodings of **two** lengths: `0x02` → 2; `0x81 0x02` → 2; `0x81 0x80` → 128, "the optimized value with two bytes"; `0x83 0x00 0x00 0x80` → 128 "with padded zeros" | **The derivation, and this is the clause a recollection would have supplied.** `0x81` introduces **one** following octet and `0x83` introduces **three**, so the first octet's low seven bits are a **count**. The document also states how it counts — it calls `0x8180` "two bytes", so the introducer is in the total. Octet order is big-endian by **`ST 0107.2-02`**. Two data points plus an octet-order requirement fix the shape uniquely, and nothing is imported from outside the document |
+| **Minimal encoding is REQUIRED** | **`ST 0107.3-05`**, §6.3.2, verbatim and **live**: "All instances of item Length fields within a MISB defined KLV Universal or Local Set shall be BER Short form or BER Long form encoded using the fewest possible bytes." | **The answer to park 4's question: not free choice.** It is `ST 0601.8-07` with the onward delegation to ST 336 *removed* and the scope *widened* — so the constraint is ST 0107.3's own and does not route on to park 8. It makes the encoder **total**: one conforming encoding per length, so `encode_ber_length` takes no `form=` parameter and the ruling is enforced by the signature |
+| **The two non-minimal forms, named and refused** | **§6.3.2**: "by either using the long form for values less than 128, or by prepending a long form value with zero-byte values, BER becomes less efficient" | **Exactly two, because the document names exactly two** and works an example against each. A codec refusing non-minimal encodings *in general* would enforce a rule nobody wrote. That the two happen to be exhaustive over the long form is stated rather than relied on |
+| **A zero length is legal** | **§6.3**: "Lengths are usually positive numbers; however, a zero length is possible in unique cases … In the case of a zero Length, the Value is not a part of the item" | The Value is **absent**, not empty — the same fact ST 0601.14a §6.5 gives as the Zero-Length Item, from the baseline's side |
+| **The BER-OID chain, at any width** | **§6.3.1**: "BER-OID tags are one or more bytes linked together in chain fashion … This pattern continues until the msb of a final byte in the chain is zero", and "Together the seven Least Signification Bits (lsb) of each byte in the chain form the tag number" | **The "(or more)" §7.1 named and never defined**, plus the reason it is unbounded: "enables efficient tag encoding and unlimited future growth". The third-octet refusal is gone; **16383** is kept as a named waypoint rather than a limit |
+| **Non-minimal tags are forbidden — on live authority** | **§6.3.1**, last sentence: "To prevent BER-OID from including leading zeros, ASN.1 forbids the use of 0x80 in the first byte of a BER-OID value" | **A promotion, not a behaviour change.** The codec already refused a leading `0x80`; the only authority was `ST 0601.8-06`, marked **(Deprecated)**, so the framing round recorded it as a *decision* and predicted "if ST 0107.3 turns out to require acceptance, this is the decision that changes". It did not |
+| **Big-endian, KLV-wide and retroactively** | **§6.1** — and **note the prefix**: `ST 0107.2-01` "Bit order shall be big-endian or msb" and `ST 0107.2-02` "Byte order shall be big-endian or MSB" | The only octet-order rule in the whole chain; ST 0601.14a never states one, so the length codec's endianness rests here. **Both identifiers carry the PREVIOUS edition's number**, not this one's, because MISB stamps a requirement with the edition that introduced it — and this edition "Added requirements -03 through -13". Citing the byte-order rule as `ST 0107.3-02` would cite a string the document does not contain. Register entry **KLV 12** |
+| **Skip what you do not know** | **`ST 0107.3-04`**, §6.3: "Applications which decode MISB KLV Local Sets shall skip unknown Local Set values so as to not impact the decoding of known Local Set items within the same Local Set instance" | Satisfied **structurally**: `walk_local_set` knows no tags at all, so every item is equally unknown to it and the caller decides what it recognises |
+| **ST 0107.3 *restricts* ST 336 rather than deferring to it** | **§6.2**: "The MISB standards define requirements which incur limits on the full SMPTE 336, making the MISB standards a profile of the SMPTE standards", with `ST 0107.3-03` as the delegating requirement | **The answer to "does 0107.3 add a constraint of its own on top of the delegation": yes**, and `ST 0107.3-05`'s minimality is it. Which is why the length codec is complete and total **with park 8 still open** — the delegation widens what ST 336 would allow and the profile narrows it |
 
-#### What was built, and the three classes of fixture that were not
+The seven remaining requirements — `ST 0107.3-06` through `-13` — govern **Values**: IEEE 754 for
+`float` types, ST 1201 for `IMAPA`/`IMAPB`, leading-zero removal for variable `int`/`uint`, and two on
+`utf8` strings. They are transcribed at the pin's `length_ruling_st_0107_3.value_encoding_requirements`
+because §1 makes ST 0107.3 retroactive and the round that writes a value decoder will need them.
+**Nothing in `klv_codec` decodes a value, so nothing implements them.**
 
-`adapters/klv_codec.py` — **a codec and not an adapter**: no `Adapter` subclass, so no registry
-entry, no ordinal and no roster row, because a module that registers as an adapter claims it can read
-a local set and this one cannot. It implements the established column above and nothing else, and the
-delegated half is present as three functions that **exist, are importable, and raise**
-`UnderivableFromPinnedCopy` carrying the park number and the delegating sentence:
-`decode_ber_length`, `encode_ber_length`, `walk_local_set`. A reader who reaches for a length decoder
-gets the reopen condition; a missing name would have given an `AttributeError` and an invitation to
-guess. Bidirectionality is claimed for what exists and checked **by exhaustion rather than sampling**
-— `decode_ber_oid(encode_ber_oid(n)) == n` for all 16 384 values of the established range, because
-the whole range fits in a test.
+#### What park 8 still owns, and both of them are absences
 
-**The injected clock seam is NAMED AND NOT BUILT, and that is a deviation from this round's own
-protocol, recorded as one.** In this package the clock is a parameter of `Adapter.__init__` and
-codecs never take one — `gmtif_codec` and `cat048_codec` are the precedent. Creating an `Adapter`
-subclass to hold an unused seam would have claimed an ordinal and a roster row for something that
-cannot parse a length. The seam is built when there is an adapter to build it on.
+| Residue | Why ST 0107.3 does not settle it | What it costs today |
+|---|---|---|
+| **`0x80` as a first length octet** — a long form declaring **zero** following octets | **Silence, and the silence is the finding.** §6.3.2 defines both forms and never mentions a count of zero. In BER this is the indefinite-length form, and BER is SMPTE ST 336. `ST 0107.3-05`'s minimality cannot reach it either: `0x80` encodes no length, so "fewest possible bytes" has nothing to compare. **The one place in the grammar where the profile's restriction does not cover the delegation's surface** | Nothing, from a conforming stream — `ST 0107.3-05` makes every length's encoding unique and none is `0x80`. Reachable only from a *non*-conforming stream, which is why the decoder raises `UnderivableFromPinnedCopy` rather than deciding |
+| **Any ceiling on the *number* of length octets** | **Not stated, and searched for.** §6.3.2 gives no maximum. The document's only maxima govern a Value's size — §6.3.3 and `ST 0107.3-07` — and all six pages were searched for "maximum", "limit", "ceiling", 127 and 128 | The codec's bound of **127** is the first octet's seven bits: **structural, not cited**, and the constant says so. Any lower ceiling ST 336 imposes is park 8's |
 
-**Thirteen framing fixtures** live in `fixtures/klv/framing/`, written only by
-`fixtures/klv/spec/build_fixtures.py`, each with a `.parsed.json` twin carrying its citation. They
-are **not adapter fixtures** — no CDM object comes out of any of them and the harness cannot replay
-one — and they sit in a subdirectory so that a harness run pointed at `fixtures/klv` still finds
-nothing and still fails, which is the state below and which this round did not change. Their
-identities are UUID-v8 in the `f1c7` namespace and they identify the **fixture**, because a framing
-fixture's payload carries no identifiers at all.
+**Park 8's economics may have moved, and that is registered rather than acted on.** §6.3.3.1 names a
+different source for the length rules than the parks table does: "Items using "ber" types in the MISB
+standards use the ASN.1 [4] Basic Encoding Rules for Lengths rules", where `[4]` is *ITU Rec X.680*.
+ITU recommendations are free downloads, and park 8's reopen condition reads "A PURCHASE DECISION, NOT
+A DOWNLOAD". But BER's encoding rules are **X.690**, not X.680, so the reference itself needs
+adjudicating before anything rests on it — and neither is held. Register entry **KLV 13**. A round
+that wants park 8 cheaper starts there.
 
-**Three classes of fixture were omitted rather than guessed**, per the rule that a fixture needing a
-rule this round could not establish is named in the residue and not invented: **every length
-fixture**, including the truncated-length malformation this round asked for; **every key/length/value
-triple**, which needs a length one rule up; and **the 16383 → 16384 tag transition**, which needs the
-third BER-OID octet. Writing any of them would have meant writing the rule first, from memory, and
-then testing this repository's memory against itself.
+#### What was built
+
+`adapters/klv_codec.py` — **still a codec and not an adapter**: no `Adapter` subclass, so no registry
+entry, no ordinal and no roster row, because it can now find every item in a local set and cannot
+decode a single value. The three functions the framing round shipped as refusals —
+`decode_ber_length`, `encode_ber_length`, `walk_local_set` — **stopped raising**, and two more gained
+behaviour rather than losing a refusal: `decode_ber_oid` and `encode_ber_oid` now follow §6.3.1's
+chain to any width. `LocalSetItem` is new, carrying `tag`, `length`, `value`, `tag_offset` and
+`value_offset` — the offsets because `bcc_16` takes a checksum range it cannot find, and a caller
+holding them can compute §6.6's range. **This module still does not compute it**; that is a function
+nobody asked for, and it is named here rather than added.
+
+**The injected clock seam is still NAMED AND NOT BUILT**, and the reason is unchanged: in this package
+the clock is a parameter of `Adapter.__init__` and codecs never take one — `gmtif_codec` and
+`cat048_codec` are the precedent. Closing park 4 did not create an adapter to hang a seam on.
+
+Bidirectionality is claimed for what exists and checked **by exhaustion where the domain permits,
+which for lengths it does not**: `decode_ber_length(encode_ber_length(n)) == n` exhaustively over
+0…131 071 and by boundary vector at every octet-width transition out to 2⁵⁰⁰;
+`decode_ber_oid(encode_ber_oid(n)) == n` exhaustively over 0…16383 and by boundary vector either side
+of each 7-bit transition out to five octets. The exhaustive ranges are the ones that fit in a test.
+
+**Twenty-six framing fixtures** live in `fixtures/klv/framing/`, written only by
+`fixtures/klv/spec/build_fixtures.py`, each with a `.parsed.json` twin carrying its citation and both
+pinned digests. They are **not adapter fixtures** — no CDM object comes out of any of them and the
+harness cannot replay one — and they sit in a subdirectory so that a harness run pointed at
+`fixtures/klv` still finds nothing and still fails. Their identities are UUID-v8 in the `f1c7`
+namespace and they identify the **fixture**, because a framing fixture's payload carries no
+identifiers at all.
+
+**All three classes the framing round omitted rather than guessed are now here, and ST 0107.3 is what
+discharged them:** every **length** fixture including the truncated-length malformation (nine, of
+which **four are the document's own octets** — `0x02`, `0x8180`, `0x8102` and `0x8300 0080`, the four
+encodings §6.3.2 prints while explaining which two are wasteful); every **key/length/value triple**
+(two triplets and two whole packets, built from the codec rather than typed); and the **16383 → 16384
+tag transition** (`tag_three_octet_lowest`, replacing the refusal `tag_third_continuation_octet`).
+
+**One fixture is still a park, and it is the only one.** `length_indefinite_first_octet` — the octet
+`0x80` — raises `UnderivableFromPinnedCopy`, and the generator asserts the exception **type**, so a
+later round that decides what an indefinite length means without buying ST 336 fails there.
+
+**There is still no `.klv` payload in `fixtures/klv/`, and the reason changed.** It is no longer the
+length grammar. It is that a payload for adapter `stanag4609` would have to decode to a CDM `Entity`,
+which needs tag semantics — park 3 for the epoch, park 5 for the IMAPB ranges — and there is no
+adapter. The packets in `framing/` are the octets such a payload would be made of, and they are
+deliberately not where the harness would find them.
 
 ### The parks, each with a named reopen condition
 
-**Twelve parks over fourteen documents, one of them now closed, and the honest thing to say first is
-that of the eleven still open, ten are public downloads and one is not.** **Park 1 closed on
-2026-08-26** and it keeps its number and its row: the parks are cited by number from the row sets,
-from the fixture plan and from the register, so renumbering eleven rows to close a gap would silently
-re-point every one of those citations. A closed park says it is closed. That the largest park in this
-table was closed by one person with a browser is not an exception to the paragraph below — it is the
-evidence for it.
+**Twelve parks over fourteen documents, TWO of them now closed, and the honest thing to say first is
+that of the ten still open, nine are public downloads and one is not.** **Parks 1 and 4 both closed on
+2026-08-26** and each keeps its number and its row: the parks are cited by number from the row sets,
+from the fixture plan and from the register, so renumbering rows to close a gap would silently
+re-point every one of those citations. A closed park says it is closed.
+
+**That the largest park in this table and the cheapest were both closed by one person with a browser
+is not an exception to the paragraph below — it is the evidence for it.** Park 4 is the sharper of the
+two: MISB ST 0107.3 is **six pages**, it has been a free download since November 2018, and it held the
+rule that stopped this repository reading a KLV stream at all. The park estimate that "park 4 is the
+cheaper of the two and is the one a next round should take" was written by the framing round and was
+right, by a wider margin than it claimed.
 
 That is a materially weaker blocker than the two this
 document already carries — GMTIF's Annex L, which reads "(TO BE PROVIDED)" in the promulgated text,
@@ -8197,24 +8252,33 @@ developed by the MISB are available under MISB Public Web Site: `http://www.gwg.
 Registry Web Site: `https://nsgreg.nga.mil/misb.jsp`". **No NSO gate, no national representative, no
 account** — which is a real difference from the NITS XSD row and is why these say "obtain" and that
 one says "obtain, through one of two channels, and hash both". So the exit condition for parks 1–7
-and 9–12 is the same three steps, stated once here rather than twelve times — and park 1 is the one
-that has now been through all three, which is why it is worth reading them as a test that can be
-passed rather than a wish: obtain **the exact
+and 9–12 is the same three steps, stated once here rather than twelve times — and parks 1 and 4 have
+now been through all three, which is why it is worth reading them as a test that can be passed rather
+than a wish: obtain **the exact
 version the delegation table pins** — not "the current one", because the profile pins a revision and
 a later revision is a different document; pin it in `fixtures/klv/spec/` by SHA-256, byte count and
 page count, with its title-page identity read; and write the row set that document supports, which
 for parks 1, 2, 6 and 7 means real mapping rows and for the others means a mechanism.
+
+**How the third step reads for a document with no rows, because park 4 is the first one to test it.**
+MISB ST 0107.3 defines no tag table, so there was no row set it could support and the step had to be
+read rather than applied. It is read as *the artefact this document makes writable* — a row set for a
+field dictionary, and a **codec** for a framing standard. The reading was forced rather than chosen:
+park 2 has held ST 0102.12 since 2026-08-26 and stays **open** on the stated ground that no row set is
+written from it, so closing park 4 on the document alone would have been the same table treated two
+ways, and holding it open for a row set the document cannot support would have been the same table
+treated two ways in the other direction.
 
 | # | Parked | Version required | Reason, grounded in the delegation table | Reopen condition |
 |---|---|---|---|---|
 | **1** | ~~**MISB ST 0601 — UAS Datalink Local Set**~~ **CLOSED 2026-08-26** | **0601.14**, held | It was the largest park, and the one that decided whether this adapter can emit an `Entity` at all: the profile named the fields' *existence* — a platform position, a sensor orientation, a tail number, a wind speed — and not one of their tags, lengths or scale factors. **Closed by discharging both halves of the exit condition**: the exact version the delegation table pins was obtained from NSG Registry document 4739 and pinned by hash, byte count and page count with its cover read, **and** the row set it supports is written — 141 rows, below. The second half was not waived, because park 2 was not given that discount three days earlier | **Closed.** What it does *not* discharge: parks 4 and 8 still own how an item is found in the octets, park 3 owns the epoch's normative definition, park 5 owns the `IMAPB` ranges. Closing park 1 moved this adapter from *cannot name a field* to **can name every field and read none** |
 | **2** | **MISB ST 0102 — Security Metadata Universal and Local Sets** | **0102.12** | `MISP-2015.1-73` makes it mandatory and §4.4.2.9 calls the practices "mandatory for all Motion Imagery Data". The layout is 0102.12's | Public download. Blocks the confidentiality ruling, which by the NITS precedent must be **carried and never invented** — so until it lands, nothing this adapter emits can be claimed conformant |
 | **3** | **MISB ST 0603 — MISP Time System and Timestamps** | **0603.5** | Settlement 3. The profile requires a timestamp's *form* to comply with ST 0603 and states no epoch, no resolution and no timescale; `epoch`, `1970`, `microsecond` and `leap` occur zero times in 73 pages | Public download. Blocks `Event.observed_at` — the one CDM field this format's own users would consider mandatory. **Also decides TAI against UTC**, and if it is TAI the adapter inherits a leap-second dependency no other adapter here has |
-| **4** | **MISB ST 0107 — KLV Metadata in Motion Imagery** | **0107.3** | `MISP-2015.1-08`: KLV "shall be **formatted** in accordance with MISB ST 0107". Distinct from park 8, and the distinction is the profile's: ST 336 says how a triplet is *encoded* and ST 0107.3 says how KLV is formatted *in motion imagery* — packet construction, which sets are permitted, how items are ordered | Public download, and **still OPEN after the framing round of 2026-08-26**. That round measured it rather than closing it, and the measurement moved what this park is *for*: ST 0601.14 deprecated five of its own requirements INTO ST 0107.3 — `ST 0601.8-02`, `-04`, `-05`, `-06` and `-07` — and two of those five, the tag-minimality rule and the length-encoding rule, are exactly the framing constraints a reader goes looking for. So park 4 is no longer only "formatting in motion imagery": it holds the framing constraints ST 0601 used to state itself. It is **the cheaper of the two** — park 8 is a purchase — and is the one a next round should take. Its pinned version is now corroborated by a second document: ST 0601.14a's own reference [5] reads "MISB ST 0107.3 KLV Metadata in Motion Imagery, Nov 2018", matching Appendix B ref [14]. Pairs with park 8: neither alone is enough to read a stream, which is why the two are listed apart rather than merged |
+| **4** | ~~**MISB ST 0107 — KLV Metadata in Motion Imagery**~~ **CLOSED 2026-08-26** | **0107.3** | `MISP-2015.1-08`: KLV "shall be **formatted** in accordance with MISB ST 0107". The Reason cell used to end here, distinguishing this park from park 8 on the profile's own split — ST 336 says how a triplet is *encoded* and ST 0107.3 says how KLV is formatted *in motion imagery*. **Reading the document showed that split UNDERSTATES it:** ST 0107.3 states the BER length grammar and the BER-OID chain rule, which are encoding rules by any reading. The distinction is the profile's own and is not wrong; the useful content simply was not where it put it | **CLOSED 2026-08-26.** Obtained from NSG Registry document 4738 at the pinned revision rather than the current one — the registry marks this edition superseded, and a later revision is a different document — pinned by SHA-256 `500d6752…98b69794`, 656 949 bytes, **6 pages**, and read in full. Both halves of the exit condition are discharged: the document is pinned, and the artefact it makes writable is written — for a framing standard that is a **codec**, not a row set, which is the reading the preamble above sets out. `klv_codec` now walks a UAS Datalink LS packet end to end. **What it did NOT discharge:** park 8's state, and nothing about meaning — all 141 tag rows still read `not yet`. See the framing section above and `spec/klv_pin.json`'s `length_ruling_st_0107_3` |
 | **5** | **MISB ST 1201 and ST 1303 — float↔integer mapping, multi-dimensional arrays** | **1201.3**, **1303.1** | `MISP-2015.1-09` and `-10`. Every scaled numeric value inside a KLV item is mapped by ST 1201.3 and every array formatted by ST 1303.1 | Public download. The park where a wrong answer is least visible: a float mapping applied with the wrong range yields a number rather than an exception — the class of defect `cat048_codec`'s ellipsoid audit exists for |
 | **6** | **MISB ST 0903 — VMTI and Track Metadata** | **0903.4** | §4.4.2.4. The detections and derived tracks live here, which is the content the CDM is shaped for | Public download. The highest-value park after 1: it is what would make this adapter emit `Event`s of type `DETECTION` rather than only parked bytes |
 | **7** | **MISB ST 0806 — Remote Video Terminal Metadata Set** | **0806.4** | §4.4.2.4 | Public download |
-| **8** | **SMPTE ST 336 — Data Encoding Protocol Using Key-Length-Value** | **ST 336:2017** | `MISP-2015.1-07`. The KLV encoding itself: key forms, the 16-byte Universal Label, the length forms. **The one park in this table that is not a download** — SMPTE is a commercial standards body and ST 336 sits behind a paywall, which the profile concedes in its own register: "Commercial references cited in this document are available from industry organizations" (FORWARD) | **A purchase decision, not a download**, and **still OPEN after the framing round of 2026-08-26** — which shrank it by two thirds without lifting it. The Reason cell's "key forms, the 16-byte Universal Label, the length forms" was written before anybody read ST 0601.14: **the 16-byte UL of this Local Set is in §6.2** and needs no ST 336, and **the BER-OID tag form is in §7.1 and Figure 67** and needs none for one and two octets. What is left to this park is the **length grammar** and the **third BER-OID octet**. Recording that a blocker shrank is not recording that it lifted. Named as a purchase deliberately: the other eleven need somebody to spend an afternoon and this one needs somebody to spend money, and a table reporting both as "obtain the document" would hide the only entry in it that has to go to a person with a budget. **And it now carries a question of its own** — register entry **KLV 11**: ST 0102.12's reference [3] pins ST 336:**2007** where the profile and ST 0601.14a pin **2017**, so "the exact version the delegation table pins" names one edition and two held documents name two |
+| **8** | **SMPTE ST 336 — Data Encoding Protocol Using Key-Length-Value** | **ST 336:2017** | `MISP-2015.1-07`. The KLV encoding itself. **The one park in this table that is not a download** — SMPTE is a commercial standards body and ST 336 sits behind a paywall, which the profile concedes in its own register: "Commercial references cited in this document are available from industry organizations" (FORWARD) | **A purchase decision, not a download**, and **still OPEN — shrunk twice in one day and lifted neither time.** The Reason cell used to read "key forms, the 16-byte Universal Label, the length forms", written before anybody read ST 0601.14. The framing round took two thirds: **the 16-byte UL of this Local Set is in §6.2** and **the BER-OID tag form is in §7.1 and Figure 67**, neither needing ST 336. The length round took the rest: **ST 0107.3 §6.3.2 states the length grammar and §6.3.1 the BER-OID chain rule for any width.** What is left to this park is **two absences in ST 0107.3** — `0x80` as a first length octet, which it never mentions, and any **ceiling** on the count of length octets, which it does not state — and **neither is reachable from a conforming stream**, which is why the length codec is complete and total with this park open. Recording that a blocker shrank is not recording that it lifted. Named as a purchase deliberately: the other nine open parks need somebody to spend an afternoon and this one needs somebody to spend money. **Two questions of its own.** Register entry **KLV 11**: ST 0102.12's reference [3] pins ST 336:**2007** where the profile, ST 0601.14a and now ST 0107.3 all pin **2017** — three against one, and still unresolved because ST 0102.12 is the document whose own items must conform to *its* edition. Register entry **KLV 13**: ST 0107.3 §6.3.3.1 sources the BER length rules to **ASN.1**, an ITU recommendation and therefore free, so part of this park may not cost money at all — but its reference is X.680, which specifies notation, where BER is X.690. **A round that wants this park cheaper starts at KLV 13** |
 | **9** | **MISB ST 1402 — MPEG-2 Transport Stream for Class 1/Class 2** | **1402.2** | `MISP-2015.1-48` and `-49`, §3.6.9.1 and §5.3.1. Names how KLV is carried in the multiplex, and the two multiplex methods | Public download. **Only needed if the input widens** to a transport stream — settlement 1's asymmetry. Listed so the dependency is visible before somebody widens the input casually |
 | **10** | **MISP-2019.1: Motion Imagery Handbook** | the 2019.1 edition, Nov 2018 | STANAG 4609 Ed 5 lists it as its only OTHER RELATED DOCUMENT and MISP §1.3 calls it a companion "providing definitions of terms used with more background and technical detail". But §3.6.7 says of the same document that it "defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets ... **and defines the required data items**" — register entry **KLV 8** | Public download, the same two URLs. Its billing and its stated function disagree, so whoever obtains it answers that first: a document that defines required data items is normative in fact, whatever the wrapper's headings say |
 | **11** | **MISB ST 1204 and ST 1301 — MIIS Core Identifier, Augmentation Identifiers** | **1204.1**, **1301.2** | `MISP-2015.1-68` and `-69`. §4.4.2.1: "a mandatory consistent unique identifier for all sensors and platforms" | Public download. Blocks `Entity.source_ids`, and therefore blocks keying an `Entity` on anything the stream states. The NITS MIIS decline deferred the *decoding*; here the identifier is the only identity the format guarantees, so the same document is a heavier dependency for this adapter than for that one |
@@ -8376,6 +8440,47 @@ park 8's exit condition, which now carries a question that "obtain the exact ver
 table pins" does not answer. Recorded, not acted on — changing a park's exit condition on a reference
 list read in passing is the roster change the park 1 round declined to smuggle in.
 
+**Updated 2026-08-26 by the length round, and the count moved from two-against-one to
+three-against-one.** MISB ST 0107.3's reference [1] reads "SMPTE ST 336:2017 Data Encoding Protocol
+Using Key-Length-Value", agreeing with the profile and with ST 0601.14a. **The stronger majority does
+not resolve it**, and the reason is worth stating: ST 0102.12 is the document whose *own* items are
+required to conform to *its* edition, so a majority of other documents naming a different one does not
+relieve a reader of `ST 0102.12-65`. What did change is that the edition park 8 should buy is now named
+by three of the four held documents rather than two — an easier purchase decision and no easier
+ST 0102 question.
+
+**KLV 12 — a held document's requirement identifiers do not all carry its own edition number.** MISB
+ST 0107.3 states thirteen requirements. Eleven are prefixed `ST 0107.3` — `-03` through `-13` — and
+**two are prefixed with the edition before it**: the bit-order and byte-order rules in §6.1, which
+print as `ST 0107.2-01` and `ST 0107.2-02` in the document's own left column. **Not an error in the
+document.** MISB stamps a requirement with the edition that introduced it, and this edition's revision
+history confirms it from the other side: it "Added requirements -03 through -13". So the numbering runs
+continuously across editions and the prefix is *provenance* rather than a typo — which is also why
+`nsgreg` shows this document superseding registry document 4149. **Why it is registered rather than
+noted in passing:** `klv_codec.decode_ber_length` reads its long-form payload big-endian on
+`ST 0107.2-02`'s authority, and that is the **only** octet-order requirement in the entire delegation
+chain — ST 0601.14a never states one. A citation that load-bearing, and that easy to normalise to
+`ST 0107.3-02`, is exactly the miscitation that gets made once and then propagates to five sites.
+
+**KLV 13 — a held document names ASN.1 as the source of the BER rules and pins the part of ASN.1 that
+does not contain them.** MISB ST 0107.3 §6.3.3.1, verbatim: "Items using "ber" types in the MISB
+standards use the ASN.1 [4] Basic Encoding Rules for Lengths rules." §6.3.1 says of tags: "The Basic
+Encoding Rules (BER) for an Object Identifier (BER-OID) as defined in ASN.1 [4] is the method selected
+for encoding a Local Set tag", and later "ASN.1 forbids the use of 0x80 in the first byte of a BER-OID
+value". Its reference [4] reads "ITU Rec X.680 (08/15) Abstract Syntax Notation One (ASN.1):
+Specification of basic notation". **X.680 specifies notation; the Basic Encoding Rules are X.690.** So
+the document attributes an encoding rule to the ASN.1 recommendation that defines syntax rather than
+encoding. **Not a contradiction in ST 0107.3** — it is internally consistent and says the same thing in
+both places — and **not resolvable here**, because neither X.680 nor X.690 is held, so this repository
+cannot say whether X.680 (08/15) contains anything bearing on BER lengths or whether the citation is a
+slip or a convention of the series. **What it bounds, and this is why it matters:** park 8's reopen
+condition reads "A PURCHASE DECISION, NOT A DOWNLOAD" because SMPTE paywalls ST 336. ITU
+recommendations are free. If the rules the two remaining residues need — the meaning of a zero
+length-of-length, and any ceiling on length octets — sit in X.690 rather than in ST 336, then part of
+the one park that costs money is a free download. **Recorded, not acted on:** the reference needs
+adjudicating first, and rewriting a park's reopen route on a reference list read in passing is the
+roster change the park 1 round declined to smuggle in. A round that wants park 8 cheaper starts here.
+
 ### Deliberately out of scope, and why
 
 An unimplemented thing is a decision, so each one is named, and each says whether it is deferred or
@@ -8407,8 +8512,10 @@ field and opens no gap, deliberately.
 ### The fixtures — planned here, before they exist
 
 **No ADAPTER fixture is built in this phase, and the qualifier is new.** `fixtures/klv/` holds
-`spec/` and, since the framing round of 2026-08-26, `framing/` — thirteen byte-level fixtures for the
-rules ST 0601.14a states itself, described in the framing section above. They are not adapter
+`spec/` and, since the framing round of 2026-08-26, `framing/` — **twenty-six** byte-level fixtures
+for the rules the two held documents state, described in the framing section above. It was thirteen
+until the length round obtained MISB ST 0107.3 and could write the lengths, the triplets and the
+packets the framing round had named as omitted. They are not adapter
 fixtures: no CDM object comes out of any of them, the harness cannot replay one, and they live in a
 subdirectory precisely so that the claim below stays true and stays *checked*. A harness run against
 a directory whose only content is subdirectories raises `NoFixturesFound` and exits 2 — the selection

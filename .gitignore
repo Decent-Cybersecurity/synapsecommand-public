@@ -30,13 +30,13 @@ docs/.cache-loader/
 #
 # THE FAILURE THIS CLOSES. `tests/test_cdm_pins.py::test_no_pdf_is_tracked_anywhere_in_the_
 # repository` asserts `git ls-files` returns no `.pdf` anywhere. It is a good gate and it fires
-# after the fact: `git add -A` from the repository root stages all 47 held documents, and only a
+# after the fact: `git add -A` from the repository root stages all 48 held documents, and only a
 # suite run or a reading of `git status` catches it before the commit. That near-miss has happened
 # twice. The rule below makes the staging itself refuse, so the gate and the mechanism now fail in
 # the same direction and neither is load-bearing alone.
 #
 # THE EXTENSION SET IS DERIVED, NOT GUESSED. Every file under a `fixtures/*/spec/` directory is a
-# `.pdf` (47), a `.json` pin record (8) or a `.py` generator (8), and the last two are exactly the
+# `.pdf` (48), a `.json` pin record (8) or a `.py` generator (8), and the last two are exactly the
 # committed artefacts — which is why this ignores an EXTENSION and not the `spec/` directory. A
 # `spec/` rule would hide the pin records, and the pin record is the whole point of pinning.
 *.pdf
@@ -56,6 +56,13 @@ docs/.cache-loader/
 # count went stale the moment the file landed and was corrected in the same commit — which is the
 # discipline the paragraph above asks for, applied by the round that created the drift instead of by
 # a later sweep that found it. The extension SET did not change and the rule did not move.
+#
+# THE PDF COUNT MOVED FROM 47 TO 48 on 2026-08-26, by the KLV length round, which obtained MISB
+# ST 0107.3 and pinned it at `fixtures/klv/spec/ST0107.3.pdf`. Corrected in the same commit that
+# created the drift, which is what the paragraph above asks for and is the second time it has been
+# done that way rather than left to a later sweep. The extension SET did not change and the rule did
+# not move. Worth noting that this is the count the rule EXISTS for: the 48th document is a six-page
+# free download that closed a park, so the number grows every time somebody does the cheap thing.
 #
 # THIS NOTE SITS BELOW THE RULE AND NOT ABOVE IT, deliberately. `*.pdf` is cited as `.gitignore:42`
 # in `klv_pin.json` and in commit messages, and a citation to a LINE is only worth having if the

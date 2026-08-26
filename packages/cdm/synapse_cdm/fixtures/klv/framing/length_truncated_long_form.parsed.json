@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000020",
+  "name": "length_truncated_long_form",
+  "kind": "ber_length_refusal",
+  "octets_hex": "82FF",
+  "octet_count": 2,
+  "decodes_to": null,
+  "refused": true,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "MISB ST 0107.3 \u00a76.3.2; the overrun case",
+  "note": "THE TRUNCATED-LENGTH MALFORMATION the framing round could not write. 0x82 declares two following octets and one remains. A malformed stream and not a park: the rule is held, and these bytes break it."
+}

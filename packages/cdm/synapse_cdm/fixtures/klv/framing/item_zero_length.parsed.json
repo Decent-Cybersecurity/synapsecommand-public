@@ -1,0 +1,16 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000023",
+  "name": "item_zero_length",
+  "kind": "local_set_item",
+  "octets_hex": "810D00",
+  "octet_count": 3,
+  "decodes_to": {
+    "tag": 141,
+    "length": 0,
+    "value_hex": ""
+  },
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "MISB ST 0107.3 \u00a76.3 for the zero length; ST 0601.14a \u00a78.141's row 'Tag Len Value / 810D - N/A' for the tag",
+  "note": "Tag 141, Waypoint List \u2014 the highest tag Table 1 assigns \u2014 with a zero length and no value octets. The triplet is two octets long. Confirms that a walk advances past an item whose Value 'is not a part of the item' without consuming anything for it."
+}

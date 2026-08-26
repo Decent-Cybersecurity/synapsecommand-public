@@ -3723,16 +3723,18 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     # And the other eleven DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
-    assert len(downloads) == 10, (
-        f"{len(downloads)} park rows state a public-download reopen condition, expected 10 — "
-        "eleven open parks, of which ten are downloads and one is the purchase. The count IS the "
-        "honest-strength claim in the paragraph above the table, and it moved from 11 when park 1 "
-        "closed: a closed park has no reopen route to state"
+    assert len(downloads) == 9, (
+        f"{len(downloads)} park rows state a public-download reopen condition, expected 9 — "
+        "ten open parks, of which nine are downloads and one is the purchase. The count IS the "
+        "honest-strength claim in the paragraph above the table, and it has now moved twice: from "
+        "11 to 10 when park 1 closed, and from 10 to 9 when park 4 closed. A closed park has no "
+        "reopen route to state, so this number falls every time somebody does the cheap thing — "
+        "which is the claim the paragraph makes and the only way it can be checked"
     )
 
 
 def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
-    """Eleven entries, `KLV n`, no twelfth without a deliberate edit — and every CITATION defined.
+    """Thirteen entries, `KLV n`, no fourteenth without a deliberate edit — and every CITATION defined.
 
     Numbered per the new adapter's own convention rather than continuing the GMTIF or NITS series,
     because a register is scoped to the document it reads. The upper guard matters as much as the
@@ -3748,14 +3750,17 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     check on a two-directional invariant reads as protection and is not. Both directions now.
     """
     section = _section(KLV_HEADING)
-    # THE BOUND MOVED FROM 10 TO 11 ON 2026-08-26, by the framing round, and the edit is the
-    # mechanism working rather than an inconvenience: KLV 11 records that ST 0102.12 pins SMPTE
-    # ST 336:2007 where the profile and ST 0601.14a pin 2017. Moving it is the deliberate act the
-    # upper guard exists to force.
-    for n in range(1, 12):
+    # THE BOUND MOVED 10 -> 11 -> 13 ON 2026-08-26, twice in one day, and each edit is the mechanism
+    # working rather than an inconvenience. The framing round added KLV 11: ST 0102.12 pins SMPTE
+    # ST 336:2007 where the profile and ST 0601.14a pin 2017. The length round added two, both found
+    # in a six-page document nobody had read before that day — KLV 12, that two of ST 0107.3's
+    # requirement identifiers carry the previous edition's number, and KLV 13, that it sources the BER
+    # rules to ITU X.680 where BER is X.690. Moving the bound is the deliberate act the upper guard
+    # exists to force, and it has now been forced three times by three rounds that each read a document.
+    for n in range(1, 14):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 12 —" not in section, (
-        "the register has grown past KLV 11 without this test being updated"
+    assert "**KLV 14 —" not in section, (
+        "the register has grown past KLV 13 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a

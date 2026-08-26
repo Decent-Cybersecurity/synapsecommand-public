@@ -1,0 +1,12 @@
+{
+  "fixture_id": "f1c70601-14a0-8000-8000-000000000013",
+  "name": "length_short_form_zero",
+  "kind": "ber_length",
+  "octets_hex": "00",
+  "octet_count": 1,
+  "decodes_to": 0,
+  "refused": false,
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
+  "citation": "MISB ST 0107.3 \u00a76.3: 'Lengths are usually positive numbers; however, a zero length is possible in unique cases'",
+  "note": "Length 0. The document admits it explicitly and says what it means \u2014 'In the case of a zero Length, the Value is not a part of the item' \u2014 so this is framing-valid and carries no value octets. ST 0601.14a \u00a76.5's Zero-Length Item is the same fact from the delegating document's side."
+}
