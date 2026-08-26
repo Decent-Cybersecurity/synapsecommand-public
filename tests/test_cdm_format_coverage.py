@@ -5214,7 +5214,7 @@ def test_gap_29_is_opened_for_the_interference_vocabulary_and_no_field_is_propos
     )
     # AN ABSENCE: nothing was added to the 1.1.0 proposal list.
     proposed = MIGRATIONS.read_text()
-    proposed = proposed[proposed.index("## Proposed for 1.1.0"):]
+    proposed = proposed[proposed.index("## Proposed for the next MINOR"):]
     for token in ("RF_INTERFERENCE", "InterferencePayload", "GNSS_INTERFERENCE"):
         assert token not in proposed, (
             f"{token} has appeared in MIGRATIONS.md's 1.1.0 proposal list. One format raised this; "
@@ -5237,7 +5237,7 @@ def test_migrations_records_the_cat034_landing_and_the_entry_moved_out_of_the_ph
     """
     text = MIGRATIONS.read_text()
     spec_start = text.index("### Row sets written as specifications, with no adapter code yet")
-    spec_end = text.index("## Proposed for 1.1.0")
+    spec_end = text.index("## Proposed for the next MINOR")
     spec_block = text[spec_start:spec_end]
     spec_section = _flat(spec_block)
     # Anchored to the ENTRY form — a bullet that opens with the name — and not to any mention of

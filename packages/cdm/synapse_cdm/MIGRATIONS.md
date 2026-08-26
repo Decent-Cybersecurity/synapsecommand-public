@@ -1124,7 +1124,17 @@ too — so the first is now stated.
   occurs four times in it and not one of the four governs a data element. A schema proposal derived
   from that would not be a field named after a guess — it would be a field named after nothing.
 
-## Proposed for 1.1.0 (MINOR — not yet implemented)
+## Proposed for the next MINOR (not yet implemented)
+
+**This heading named 1.1.0 until 1.1.0 shipped without any of it.** The number is dropped rather
+than moved to 1.2.0, for the reason this file already records about three pin records that stated
+one practice as three different numbers: the durable statement is the property, and "the next
+MINOR" is what these items have always meant. A version number here is a promise about scheduling
+that nothing in the tree can keep, and it goes stale on exactly the event — a release — that makes
+anyone look at this section.
+
+Which release they land in is an open decision and not recorded here. What is recorded is that
+1.1.0 is not it.
 
 Both come from `FORMAT_COVERAGE.md`'s gap list, and both are deliberately deferred rather than
 added in passing. **Both are now confirmed by a shipped adapter** rather than anticipated — the

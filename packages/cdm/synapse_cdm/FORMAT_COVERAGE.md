@@ -11405,7 +11405,7 @@ symmetry with CAT062's.
    `"HUMAN"` for another. It is also not `entity_type`, which is a closed CDM vocabulary about
    what the object IS to the model rather than a sensor's verdict about what it looks like. So a
    classifier's output currently arrives as a confidence with no subject — the number 0.95 with
-   nothing to say what is 95 % likely — which is the worst of the options. *Proposed for 1.1.0
+   nothing to say what is 95 % likely — which is the worst of the options. *Proposed for the next MINOR
    only once gap 1 is settled*, because the two must be designed together or the CDM ends up with
    two nearly-identical string fields and no rule for choosing between them.
    **NITS raises this from a vendor field to a NATO requirement, and it is the gap's strongest
@@ -11950,7 +11950,7 @@ symmetry with CAT062's.
      validates it, nothing requires it, and a consumer that does not know to look sees a normal
      `observed_at` and takes it for a source time.
 
-   *Proposed for 1.1.0, and it is two changes rather than one.* Make `observed_at` **optional**
+   *Proposed for the next MINOR, and it is two changes rather than one.* Make `observed_at` **optional**
    (MINOR — a nullable field), so "the source stated no instant" is expressible as an absence
    rather than as a substitution; **or** add a canonical basis field beside it so the substitution
    is at least typed and mandatory. The first is cleaner and pushes the problem onto consumers that

@@ -75,8 +75,12 @@ CHANGELOG = REPO / "docs" / "docs" / "changelog.mdx"
 #: heading that stops matching is a FAILURE here, not a silently empty section.
 PAGE_HISTORY = "## Adapters that landed with no schema change"
 FILE_HISTORY = "### Adapters that landed with no schema change"
-PAGE_PROPOSED = "## Proposed for 1.1.0 — MINOR, not yet implemented"
-FILE_PROPOSED = "## Proposed for 1.1.0 (MINOR — not yet implemented)"
+#: Both headings named `1.1.0` until 1.1.0 shipped without any of their contents. They now name no
+#: version at all — see `tests/test_cdm_release.py`'s check that the proposed section names no
+#: release number, and MIGRATIONS.md's own note under the heading for why the number was dropped
+#: rather than moved to 1.2.0.
+PAGE_PROPOSED = "## Proposed for the next MINOR — not yet implemented"
+FILE_PROPOSED = "## Proposed for the next MINOR (not yet implemented)"
 
 ADAPTER = re.compile(r"adapters/([a-z0-9_]+)\.py")
 #: A dotted CDM path, e.g. `Entity.label`. Collected only from a bullet's own line, so a path

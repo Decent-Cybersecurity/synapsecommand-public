@@ -39,19 +39,18 @@ pip install synapse-cdm
 python -m synapse_cdm.harness --adapter pntmap        # replays the fixtures that came with it
 python -m synapse_cdm.schemas --out ./schemas         # writes the six JSON Schemas, anywhere
 
-python -m synapse_cdm.harness --list-adapters         # the names --adapter takes — NEXT RELEASE
+python -m synapse_cdm.harness --list-adapters         # the names --adapter takes
 ```
 
 `--fixtures` is optional for an adapter this package ships: omitted, the harness asks the import
 system where its own fixtures are and replays those, wherever the package is installed. Pass it
 to replay your own set. Both commands also install as `cdm-harness` and `cdm-schemas`.
 
-**`--list-adapters` is on `main` and is not in 1.0.0**, which is what PyPI serves today, so the
-third command above fails on an installed 1.0.0 with argparse's `unrecognized arguments`. It is
-marked rather than hidden because the roster is what a new reader wants first, and the flag it
-will be answered by is worth knowing about a release early. On 1.0.0 the roster is the table at
-the top of this file, or the clause inside `--adapter <anything wrong>`. See MIGRATIONS.md,
-"Unreleased".
+**`--list-adapters` shipped in 1.1.0.** It was on `main` and absent from 1.0.0 for one release,
+and this paragraph carried that warning; on an installed 1.0.0 the third command above still fails
+with argparse's `unrecognized arguments`, which is worth knowing only if that is the version you
+have. From 1.1.0 the roster is a command rather than a table to trust. See MIGRATIONS.md,
+"1.1.0".
 
 The wheel deliberately carries no copy of the published schemas — a third copy of a generated
 artefact is a third thing that can go stale — so `python -m synapse_cdm.schemas --out <dir>`
@@ -221,8 +220,8 @@ and that relation was folklore until `Adapter.fixture_dir` made it a declaration
 produced a nine-adapter sweep reporting nine greens with one of them vacuous. Before this flag the
 roster was reachable only by getting something wrong: `--adapter typo` returns it inside a
 `LookupError`, and a bare invocation returns argparse's usage line, which names `--adapter` and
-not one value it takes. **It is on `main` and is not in 1.0.0**, the version PyPI serves today;
-until the next release it needs a clone or an editable install.
+not one value it takes. **It shipped in 1.1.0**; on 1.0.0 — the one release without it —
+the roster needed a clone or an editable install.
 
 Six checks per fixture, and an unrun check reports `SKIP` — never `PASS`:
 

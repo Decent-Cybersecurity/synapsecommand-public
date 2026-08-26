@@ -364,3 +364,139 @@ def test_the_unreleased_section_states_that_it_is_in_no_release():
         "who ran `pip install synapse-cdm` actually has. Saying which release does NOT contain "
         "this is the entire point of the section"
     )
+
+
+# ------------------------------------------- prose that names a version, or names a section of this file
+#
+# Two classes of staleness went into 1.1.0 that nothing in this suite could see, and both were
+# found by reading rather than by a gate. They are different failures with the same cause — prose
+# stating a fact about a RELEASE, which changes underneath it — so they get one collection each.
+
+
+#: Documents a consumer or a contributor reads, which state release-scoped facts. `README.md` is
+#: the repository's front door; the package README ships INSIDE the wheel, so its claims about
+#: which version has what are read by exactly the people who can be misled by them.
+VERSION_CLAIM_SITES = ("README.md", "packages/cdm/synapse_cdm/README.md")
+
+
+def test_no_document_says_a_shipped_feature_is_still_unreleased():
+    """`--list-adapters` shipped in 1.1.0. Three documents said it had not.
+
+    Before this release, `README.md` and the package README both carried "**It is on `main` and is
+    not in 1.0.0**", and the package README's command block marked the flag `NEXT RELEASE`. All
+    three were true for exactly one release and all three were written by hand, so nothing was
+    going to notice when they stopped being.
+
+    The check is not "does the prose mention 1.1.0" — that would pass on a document that mentions
+    it anywhere. It is the specific shape these three had: a claim that the CURRENT
+    `PACKAGE_VERSION` lacks something. That sentence is a contradiction the moment the version bump
+    lands, because `PACKAGE_VERSION` is by definition the version this tree IS.
+    """
+    offenders = []
+    for name in VERSION_CLAIM_SITES:
+        text = (REPO / name).read_text()
+        flat = " ".join(text.split())
+        for phrase in (f"is not in {PACKAGE_VERSION}",
+                       f"not in {PACKAGE_VERSION}",
+                       f"absent from {PACKAGE_VERSION}",
+                       "NEXT RELEASE"):
+            found = flat.find(phrase)
+            if found != -1:
+                offenders.append(f"{name}: {phrase!r} — ...{flat[max(0, found - 90):found + 60]}...")
+    assert not offenders, (
+        f"these documents say something is missing from {PACKAGE_VERSION}, which is the version "
+        f"this tree IS:\n  " + "\n  ".join(offenders) + "\n"
+        f"A feature absent from the CURRENT version cannot be on `main` — `main` is what "
+        f"{PACKAGE_VERSION} was cut from. If the sentence is about an OLDER release, name that "
+        "release: 'shipped in 1.1.0; on 1.0.0 it needed a clone' is durable, 'not in the current "
+        "version' goes stale on the next bump and reads as authoritative while it does")
+
+
+def test_every_prose_reference_to_a_section_of_this_file_resolves_to_a_real_heading():
+    """A quoted MIGRATIONS.md section name must be a heading MIGRATIONS.md has.
+
+    THE DEFECT THIS CLOSES
+    ----------------------
+    Four documents pointed a reader at `MIGRATIONS.md`, "Unreleased". The release renamed that
+    section to `### 1.1.0` — which the release-condition test above REQUIRES it to do, so the
+    rename is not a mistake and the dangling pointers were the guaranteed consequence of doing the
+    right thing. Nobody had to get anything wrong for four cross-references to break at once.
+
+    That is the whole argument for the check: the section names in this file are not stable, by
+    design. `### Unreleased` exists between releases and is absorbed by each one, so any prose
+    citing it has a shelf life of one release. A reference by name is fine — it is much more useful
+    than "see MIGRATIONS.md" — provided something notices when the name goes.
+
+    Scoped to citations of THIS file, by requiring `MIGRATIONS` within 120 characters of the quoted
+    name. A bare quoted phrase anywhere in the tree is not a citation, and sweeping those would
+    match every ordinary use of quotation marks.
+    """
+    headings = {m.group(1).strip()
+                for m in re.finditer(r"\n#{2,3} (.+)", MIGRATIONS.read_text())}
+    # A citation may name the heading's leading phrase rather than the whole of it: the 1.1.0
+    # heading carries a subtitle after an em dash, and "1.1.0" is the useful way to cite it.
+    leading = {h.split(" — ")[0].strip() for h in headings}
+    known = headings | leading
+
+    # A WINDOW, not one regex. The first form of this check was
+    # `MIGRATIONS[^.]{0,120}?[",]\s*"([^"]+)"` and it matched nothing at all — `[^.]` cannot cross
+    # the dot in `MIGRATIONS.md`, which is present in every real citation in the tree. It passed,
+    # and it would have passed on the four dangling pointers this test exists for. Two mutations
+    # caught it: restoring the "Unreleased" citation, and renaming the 1.1.0 heading. A sweep whose
+    # pattern matches nothing reports clean, which is the failure this whole repository is about.
+    offenders = []
+    for path in sorted(REPO.glob("*.md")) + sorted((REPO / "packages/cdm/synapse_cdm").glob("*.md")):
+        flat = " ".join(path.read_text().split())
+        for match in re.finditer(r'"([^"]{1,60})"', flat):
+            before = flat[max(0, match.start() - 120):match.start()]
+            if "MIGRATIONS" not in before:
+                continue
+            cited = match.group(1).strip().rstrip(".")
+            if cited not in known:
+                offenders.append(f"{path.relative_to(REPO)}: cites \"{cited}\"")
+    assert not offenders, (
+        "these cite a MIGRATIONS.md section that does not exist:\n  " + "\n  ".join(offenders)
+        + f"\nHeadings it has: {sorted(known)}.\nThe section names in that file are deliberately "
+        "unstable — `### Unreleased` is absorbed by every release — so a citation by name has a "
+        "shelf life of one release and this is what notices when it expires")
+
+
+def test_the_proposed_section_does_not_name_a_release_it_could_miss():
+    """"Proposed for <version>" is a scheduling promise nothing in the tree can keep.
+
+    THE DEFECT THIS CLOSES
+    ----------------------
+    `MIGRATIONS.md` and `docs/docs/changelog.mdx` both carried `## Proposed for 1.1.0 (MINOR — not
+    yet implemented)`, and 1.1.0 shipped without a line of it. The heading was not wrong when it
+    was written and nobody had to make a mistake: it went false at the release, which is precisely
+    the moment a reader opens the section to find out what is coming.
+
+    Both now name no version. The number is dropped rather than advanced to 1.2.0, on the same
+    reasoning this file records about three pin records that stated one practice as three different
+    numbers — the durable statement is the property, and "the next MINOR" is what these items have
+    always meant. Advancing it would only re-arm the same failure for one release.
+
+    So this test forbids a version number in either heading. It deliberately does NOT accept "a
+    version greater than PACKAGE_VERSION", which was the obvious alternative: that form is true on
+    the commit that writes it and false one release later, and a gate that permits a claim with a
+    one-release shelf life is a gate that has to be re-satisfied by hand every time. Which release
+    these land in is a decision, and a decision belongs in a commit message or an issue, not in a
+    heading that ships inside a wheel.
+    """
+    sites = (("packages/cdm/synapse_cdm/MIGRATIONS.md", "## Proposed for"),
+             ("docs/docs/changelog.mdx", "## Proposed for"))
+    offenders = []
+    for name, prefix in sites:
+        text = (REPO / name).read_text()
+        for line in text.splitlines():
+            if not line.startswith(prefix):
+                continue
+            if re.search(r"\d+\.\d+\.\d+", line):
+                offenders.append(f"{name}: {line.strip()}")
+    assert offenders == [], (
+        "these headings name a release for work that is not implemented:\n  "
+        + "\n  ".join(offenders) + "\n"
+        f"`PACKAGE_VERSION` is {PACKAGE_VERSION}, and the last heading of this shape named the "
+        "release that then shipped without any of its contents. Name no version: 'Proposed for the "
+        "next MINOR' cannot go stale, and which release they land in is a decision that does not "
+        "belong in a heading shipped inside a wheel")

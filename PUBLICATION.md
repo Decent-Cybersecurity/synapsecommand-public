@@ -371,6 +371,13 @@ mode the open form of it named.
 > date. The pointer is the correction. What entry 6 does *not* yet supersede is the last clause:
 > until the configuration entry 6 specifies exists on pypi.org, the next release is still a human
 > act, because a workflow with no trusted publisher on the other side cannot upload anything.
+>
+> **And one pointer in this entry no longer resolves.** The paragraph above about the 1.0.0 roster
+> sends a reader to `MIGRATIONS.md`'s `### Unreleased` section; that section was renamed to
+> `### 1.1.0` when the release absorbed it, which is what the release-condition test requires it to
+> do. The measurement it accompanies — ten adapters, 298 fixture verdicts, the roster OF 1.0.0 — is
+> unchanged and is still what a `pip install synapse-cdm==1.0.0` gets. Corrected here rather than
+> in the sentence, for the reason this whole block exists.
 
 **The sequence as written, and what happened to each step.**
 

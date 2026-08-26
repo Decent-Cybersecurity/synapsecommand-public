@@ -15,13 +15,27 @@ resolves and what ``importlib.metadata.version("synapse-cdm")`` returns. It is o
 semver over the Python surface: the importable names, the ``Adapter`` contract, the harness
 CLI and its exit codes, the fixture set. It follows the general rule and not MIGRATIONS.md.
 
-WHY THEY MUST BE ALLOWED TO DIVERGE, WHICH IS MEASURED AND NOT ARGUED
----------------------------------------------------------------------
-They are BOTH ``1.0.0`` today, and a reader who sees two equal numbers reasonably concludes
-one of them is redundant. It is not, and the tree already proves it: ``MIGRATIONS.md`` has a
-section titled "Adapters that landed with no schema change" and it holds **eleven** entries —
-eleven adapters, each of which added thousands of lines of shipped behaviour to this
-distribution at ``schema_version`` 1.0.0, with no field added, removed or retyped.
+WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
+-----------------------------------------------------------------------------------------
+**They have diverged.** ``PACKAGE_VERSION`` is ``1.1.0`` and ``SCHEMA_VERSION`` is ``1.0.0``,
+and this paragraph is the first version of itself that does not have to reason about a
+hypothetical. Every entry in ``MIGRATIONS.md``'s 1.1.0 section says the same two things — an
+added surface, no schema touched — so the release moved one number and not the other, which is
+exactly what two numbers are FOR.
+
+Until 1.1.0 they were both ``1.0.0``, and a reader who saw two equal numbers reasonably
+concluded one of them was redundant. That was the weakest moment for this file's whole case: the
+claim rested on a counterfactual, and any code that derived one number from the other would have
+produced the right answer on every run. ``tests/test_cdm_packaging.py`` says so in as many words
+and records that 1.1.0 closed the window — a derivation would now be wrong at runtime rather
+than right by luck.
+
+The supporting measurement stands and is worth keeping, because it says how far apart they
+WOULD already be: ``MIGRATIONS.md`` has a section titled "Adapters that landed with no schema
+change" and it holds **eleven** entries — eleven adapters, each of which added thousands of
+lines of shipped behaviour to this distribution at ``schema_version`` 1.0.0, with no field
+added, removed or retyped. That count is derived from the section's own bullets by
+``tests/test_cdm_prose_counts.py`` rather than stated here on trust.
 
 Had this package been released before any of them, each would have been a package MINOR and
 none of them a schema bump. The two numbers would already be eleven minors apart. Deriving one

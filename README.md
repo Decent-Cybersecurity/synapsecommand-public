@@ -91,9 +91,9 @@ schema, provenance, lossless, roundtrip, golden — and an unrun check reports `
 `python -m synapse_cdm.harness --list-adapters` prints the names `--adapter` takes, with each
 one's version, direction and fixture directory. Until it existed the roster was reachable only
 through a failure — a `LookupError` from a wrong name, or argparse's usage line, which names the
-flag and not one value it takes. **It is on `main` and not in 1.0.0**, so it needs a clone until
-the next release; see
-[`MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md), "Unreleased".
+flag and not one value it takes. **It shipped in 1.1.0**, so `pip install synapse-cdm` is enough
+and no clone is needed; see
+[`MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md), "1.1.0".
 
 ## Writing your first adapter
 
