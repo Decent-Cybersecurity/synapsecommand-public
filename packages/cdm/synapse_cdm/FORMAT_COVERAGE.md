@@ -7474,10 +7474,11 @@ STANAG contains no technical requirement of any kind, and the MISP contains no N
 | **The normative act** | The wrapper's AGREEMENT clause reads "**Participating nations agree to implement the following standard**" and its STANDARD clause names exactly one: "**U.S. Motion Imagery Standards Board (MISB) Motion Imagery Standards Profile-2019.1 (MISP-2019.1)**". Its IMPLEMENTATION OF THE AGREEMENT clause restates the scope: "MISP-2019.1 defines the technical requirements for motion imagery formats, compression, metadata and transmission protocols for ISR systems and systems that manage and/or exploit motion imagery data." NATO Effective Date: "Not applicable" |
 | **The target** | **MISP-2019.1, Motion Imagery Standards Profile, Motion Imagery Standards Board — title page dated November 2018**, which is also the footer of all 73 pages. Every requirement mapped or parked below cites this document |
 | SHA-256 (target) | `3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea`, 1 372 771 bytes, 73 pages, `fixtures/klv/spec/misb-misp-2019-1.pdf` |
-| **The delegated dictionaries obtained** | Two of the fourteen delegated documents were obtained on 2026-08-26 and are pinned below. **ST 0102.12 is the edition the profile pins** (Appendix B ref [55]) and **ST 0601.19 is not** — the profile pins 0601.14 (ref [53]), five revisions earlier. What follows from that is ruled in `fixtures/klv/spec/klv_pin.json`'s `reconciliation_ruling`: **ST 0601.19 is held and may not substitute** for the 0601.14 the profile pins, so park 2 gained its document and park 1 did not. No tag table is transcribed from either |
+| **The delegated dictionaries obtained** | **Three** of the fourteen delegated documents were obtained on 2026-08-26 and are pinned below. **ST 0102.12 and ST 0601.14 are the editions the profile pins** (Appendix B refs [55] and [53]); **ST 0601.19 is not** — it is five major revisions past the 0601.14 ref [53] cites. What follows is ruled in `fixtures/klv/spec/klv_pin.json`'s `reconciliation_ruling`: **ST 0601.14 — this copy, this hash — is the authoritative tag table for the row set, and ST 0601.19 remains pinned as context only**, never a source of tag semantics here. It is retained for the item-42 divergence note and for the measured .14-to-.19 delta. So **park 1 is closed** and park 2 is not: park 2's document is held and its row set is still unwritten |
+| SHA-256 (ST 0601.14) | `3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4`, 3 969 201 bytes, 218 pages, `fixtures/klv/spec/ST0601.14a.pdf` |
 | SHA-256 (ST 0601.19) | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1`, 4 700 978 bytes, 226 pages, `fixtures/klv/spec/ST0601.19.pdf` |
 | SHA-256 (ST 0102.12) | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267`, 514 842 bytes, 18 pages, `fixtures/klv/spec/ST0102.12.pdf` |
-| **The edition tension inside a pin** | ST 0601.19's cover reads **02 March 2023** and the copy pinned above carries revision-history rows dated **10 May 2024** and **11 June 2025**, under the same edition number and with no minor-version letter. Register entry **KLV 9**, and the reason a pin's SHA-256 identifies a *copy* rather than an edition |
+| **The edition tension inside a pin, twice** | ST 0601.19's cover reads **02 March 2023** and the copy pinned above carries revision-history rows dated **10 May 2024** and **11 June 2025**, under the same edition number and with no minor-version letter — register entry **KLV 9**. ST 0601.14 then met the same hazard *at fetch time*: the registry serves the edition cited as "ST 0601.14" under the filename **`ST0601.14a.pdf`**, the cover reads **`MISB ST 0601.14a`** and **1 May 2020** while the edition itself is dated **1 November 2018**, and the copy carries a **third revision-history row dated 19 August 2021 whose Revision cell is empty** — register entry **KLV 10**. Together they are the reason a pin's SHA-256 identifies a *copy* rather than an edition, and the reason the filename keeps the letter the registry served |
 | **The date tension** | The wrapper promulgates in **July 2020** a profile whose own title page says **November 2018** — twenty months, unexplained in either document, and register entry **KLV 1** |
 | **Named by the wrapper and NOT held** | "MISP-2019.1: Motion Imagery Handbook", the wrapper's only OTHER RELATED DOCUMENT. **Park 10**, and a heavier park than its billing suggests: MISP §3.6.7 says the Handbook "defines the required data items" for Class 1 metadata |
 | **Named by the target and deliberately NOT in scope** | "MISP-2019.1: U.S. Governance" (ref [2]) and "MISP-2019.1: U.S. Specific" (ref [3]). MISP §1.1 sends *U.S.*-specific requirements there and *NATO*-specific ones to STANAG 4609, and the wrapper promulgates neither. So the NATO-implementable set is the profile plus its Handbook, and the two U.S. documents sit outside it by both documents' own construction — an exclusion, not an omission |
@@ -7495,6 +7496,20 @@ document's own page tree: 5 and 73. Title pages read: the wrapper's reads "STAND
 The page-counting method was validated before it was trusted, against the seven documents whose page
 counts this file already records — 64, 212, 104, 6, 192, 150 and 5 — and reproduced all seven
 exactly.
+
+**Re-validated on 2026-08-26, more widely, because the walker had to be rebuilt.** The one that
+produced the earlier counts was written into a scratch directory and did not survive it, which is
+worth saying out loud: a method whose only durable record is a prose description in a pin file is a
+method that gets rebuilt from that description, so the description is load-bearing. The rebuilt
+walker was run against **all seventeen specification PDFs on disk in this repository** and reproduced
+**sixteen** recorded counts exactly — 31, 41, 64, 146, 5, 212, 104, 6, 18, 226, 73, 5, 192, 150 and
+5, taken from the pin records and, for the `gmti` and `nits` documents, from this file's own rows,
+which are the only place those counts are stated. The seventeenth is the known CAT062 disagreement
+`klv_pin.json` and `fft_pin.json` both record — 25 stated, 23 under the ruled method — and it
+reproduced as a disagreement of exactly that size, which is the strongest available check that the
+rebuild is the same method and not a new one. **ST 0601.14a at 218 pages is method-independent**: the
+retired raw-object scan returns 218 on that file too, and its own top `/Pages` node states
+`/Count 218`.
 
 **Every site must agree.** Both hashes, both byte counts, both page counts and both paths are stated
 here, in `klv_pin.json` and in `fixtures/klv/README.md`, and `tests/test_cdm_format_coverage.py`
@@ -7603,7 +7618,7 @@ and every version string below was read off the pinned copy rather than carried 
 |---|---|---|---|
 | **SMPTE ST 336** | **ST 336:2017**, "Data Encoding Protocol Using Key-Length-Value" | **version:** ref [13], Appendix B, PDF page 63. **Required by:** `MISP-2015.1-07`, §3.2.2, which cites it as "SMPTE ST 336 [13]" — unsuffixed | the KLV encoding itself — key form, length form, the triplet |
 | **MISB ST 0107** | **0107.3**, "KLV Metadata in Motion Imagery", **Nov 2018** | **version:** ref [14], Appendix B, and again in the 2019.1 change log. **Required by:** `MISP-2015.1-08`, §3.2.2, which cites it as "MISB ST 0107 [14]" — unsuffixed | how KLV is *formatted* in motion imagery, as distinct from how it is encoded |
-| **MISB ST 0601** | **0601.14**, "UAS Datalink Local Set", **Nov 2018** | **version:** ref [53], Appendix B, and again in the 2019.1 change log. **Required by:** §4.4.4.1 ("The Airborne - UAS Collection is defined in MISB ST 0601 [53]"), plus §§4.4.2.2, 4.4.2.3, 4.4.2.5, 4.4.2.7, 4.4.2.10 and Figure 12 — every one of them unsuffixed | the field dictionary of the airborne UAS collection — the local set an airborne feed actually carries |
+| **MISB ST 0601** | **0601.14**, "UAS Datalink Local Set", **Nov 2018** | **version:** ref [53], Appendix B, and again in the 2019.1 change log. **Required by:** §4.4.4.1 ("The Airborne - UAS Collection is defined in MISB ST 0601 [53]"), plus §§4.4.2.2, 4.4.2.3, 4.4.2.5, 4.4.2.7, 4.4.2.10 and Figure 12 — every one of them unsuffixed | the field dictionary of the airborne UAS collection — the local set an airborne feed actually carries. **Held since 2026-08-26**, and transcribed: 141 items, in the row set below |
 | **MISB ST 0102** | **0102.12**, "Security Metadata Universal and Local Sets for Motion Imagery Data", **Jun 2017** | **version:** ref [55], Appendix B. **Required by:** `MISP-2015.1-73`, §4.4.2.9 — unsuffixed | the security / classification local set, which §4.4.2.9 calls mandatory |
 | **MISB ST 0603** | **0603.5**, "MISP Time System and Timestamps", **Oct 2017** | **version:** ref [12], Appendix B. **Required by:** §2.1.5 and `MISP-2018.3-116`, `MISP-2018.1-97`, `MISP-2018.1-98`; again in §3.6.6 and §4.4.2.12 — every one unsuffixed | the Precision Time Stamp and the Nano Precision Time Stamp — epoch, resolution, timescale |
 | **MISB ST 0903** | **0903.4**, "Video Moving Target Indicator and Track Metadata", **Oct 2014** | **version:** ref [57], Appendix B. **Required by:** §4.4.2.4, the Exploitation Domain — unsuffixed | VMTI detections and motion-imagery-derived track metadata — the part of this format closest to what the CDM is for |
@@ -7687,6 +7702,26 @@ difference between TAI and UTC is a leap-second table, a second document plus a 
 inside an adapter contracted to be a pure function of one payload. This is the NITS `ECI_J2K` shape
 rather than the CAT021 rollover shape, and it is **park 3**.
 
+**The epoch, corrected in its reach on 2026-08-26: the profile does not state it and the dictionary
+the profile delegates to does.** The absence above is unaltered — those four words still occur zero
+times in the profile's 73 pages, and the premise that the *profile* fixes the epoch was and remains
+false. What changes is the consequence that was drawn from it. ST 0601.14 §6.4 reads: "Every UAS
+Datalink LS packet is required to include a Precision Time Stamp representing absolute time as
+defined in MISB ST 0603 [4]. The Precision Time Stamp (Tag 2) is an eight-byte unsigned integer
+counter of the number of SI Seconds (in microseconds) which have elapsed since midnight (00:00:00),
+January 1, 1970 (1970-01-01T00:00:00Z). Note: this time does not include leap seconds and therefore
+the Precision Time Stamp does not represent UTC." §8.2 states it again. **The rule was never "do not
+write down an epoch" — it was "do not write one from memory", and that is exactly what now permits
+this one**, because it is quoted from a document pinned in `fixtures/klv/spec/` by hash. **Park 3
+does not close on it**, for three stated reasons: ST 0603.5 remains the normative definition and ST
+0601.14 is restating it, so a conflict between the two is resolved by a document not held; items 136
+and 137 exist to convert this scale to UTC and their semantics are ST 0603's; and what to *call* a
+count of SI seconds since 1970-01-01T00:00:00Z that excludes leap seconds is the TAI-versus-UTC
+question park 3's row says it decides, of which ST 0601.14 answers only the negative half. One
+corroboration worth recording: ST 0601.14's own reference [4] reads "MISB ST 0603.5 MISP Time System
+and Timestamps, Oct 2017" — the same revision and the same date the profile's Appendix B pins, which
+is the first time a delegation-table version has been confirmable from both sides.
+
 **The requirement that it be present: mandatory for frames, conditional and circular for metadata.**
 This is the finding that matters most to an adapter whose input is a metadata stream. The three
 requirements in §2.1.5 read:
@@ -7706,7 +7741,11 @@ And the prose introducing them is circular as written: "The presence of a timest
 Time is mandatory for all Motion Imagery; it is also mandatory for Metadata packets which include a
 Metadata item for a timestamp based on Absolute Time." A timestamp is mandatory for packets that
 contain one. **So nothing in the pinned profile requires a standalone KLV metadata stream to carry an
-absolute time at all** — register entry **KLV 6** — and the two less equivocal predecessors,
+absolute time at all** — register entry **KLV 6**, whose *general* claim stands and whose reach is
+narrowed by the same 2026-08-26 reading: ST 0601.14 §6.4 requires a Precision Time Stamp in every UAS
+Datalink LS packet and marks items 2 and 65 Mandatory, so a conformant instance of *this* local set
+always carries an absolute time. That is a fact about ST 0601.14's local set and not about KLV streams
+in general, which is why KLV 6 stays — and the two less equivocal predecessors,
 `MISP-2015.1-03` ("All Motion Imagery shall include a Precision Time Stamp") and `MISP-2015.1-04`
 ("Any Metadata that contains a timestamp item shall include a Precision Time Stamp"), are listed in
 Appendix A.2 as **deprecated**, replaced by the two above. The relaxation is documented; it is not a
@@ -7792,7 +7831,7 @@ reference*. None can be mapped and none can be declined, which is what a park is
 | §4.4.2.4, MISB ST 0903.4 | `Event.payload` | `not yet` | *(blocked)* on park 6. "MISB ST 0903 [57] defines KLV metadata used to deliver Video Moving Target Indicator (VMTI) and Motion Imagery derived track metadata". **This is the part of the format the CDM is actually shaped for** — detections and tracks — and the NITS row set already cites ST 0903.4 twice, for `Image.color` and for the 1-based pixel convention. A Phase 2 holding ST 0903.4 would produce `Event`s of type `DETECTION` and possibly a `Track`; without it, nothing |
 | §4.4.2.4, MISB ST 0806.4 | `Event.payload` | `not yet` | *(blocked)* on park 7. "MISB ST 0806 [59] defines KLV Metadata that supports a Remote Video Terminal (RVT)" |
 | §4.4.2.4, MISB ST 0602.4 / ST 0808.2 | `Event.payload` | `not yet` | *(blocked)*. Annotation metadata (ref [42], `MISP-2015.1-42`) and ancillary text (ref [58]). Both are Exploitation Domain sets and both are operator-authored, which makes them the closest thing this format has to **gap 1**'s canonical name |
-| §4.4.2.5, §4.4.2.7, §4.4.2.10, MISB ST 0601.14 | `Entity.position`, `Entity.kinematics` | `not yet` | *(blocked)* on park 1, and the row a reader will look for first. The Platform Domain "provides the position, kinematics and orientation Metadata of the platform", the Sensor Domain the same for the sensor, and §4.4.2.2's Aeronautical Domain adds "Tail Number, Wind Speed, Crabbing Angle". Every one of those is an ST 0601.14 item, so the profile guarantees the *existence* of a platform position and states not one of its bits. **No row here invents a scale factor for it** |
+| §4.4.2.5, §4.4.2.7, §4.4.2.10, MISB ST 0601.14 | `Entity.position`, `Entity.kinematics` | `not yet` | **Park 1 is closed and the dictionary is transcribed** — the 141 items are in the row set below, and this row now says which of the profile's promises they answer rather than that nothing answers them. The Platform Domain "provides the position, kinematics and orientation Metadata of the platform", the Sensor Domain the same for the sensor, and §4.4.2.2's Aeronautical Domain adds "Tail Number, Wind Speed, Crabbing Angle". Every one of those is an ST 0601.14 item, and each can now be named: the platform position is items 13/14 with 15 or 75 for height, the kinematics are 51/56/112, the Tail Number is item 4 and the Wind Speed item 36. **No row here invented a scale factor for any of them** — the scale factors are the dictionary's, read from it |
 | §4.4.2.5, MISB ST 0801.6 / ST 1107.3 / ST 1202.2 / ST 1010.3 | `Entity.attributes` | `not yet` | *(blocked)*. Photogrammetric image-space metadata, its threshold and objective profiles, the two-dimensional transformation parameters `MISP-2015.1-71` mandates, and `MISP-2015.1-72`'s standard deviations and correlation coefficients — **gap 17**'s covariance question again |
 | §4.4.2.11, MISB ST 1206.1 / ST 1403.2 | `Entity.attributes` | `not yet` | *(blocked)*. The SAR Domain, and `MISP-2015.1-74`'s threshold profiles |
 | §4.4.2.13, MISB ST 1504.1 | `Entity.position` | `not yet` | *(blocked)*. The Orbital Location Domain carries "the state vector necessary to determine the position of an orbiting Motion Imagery collector" — which, if it ever lands, is the NITS `ECI_J2K` problem arriving from a second direction: an orbital state vector is not a geodetic position, and converting one needs Earth-orientation parameters |
@@ -7800,10 +7839,254 @@ reference*. None can be mapped and none can be declined, which is what a park is
 | §4.4.9, Table 8 | *(no field)* | `not yet` | the registries that define keys and data types: SMPTE RP 210v13 (ref [77]), MISB ST 0607.4 (ref [78]) and MISB ST 0807.22 (ref [79]). None held. Recorded because it answers "could a Phase 2 decode an unknown key?" — it could, given the registry, and a registry is a fourth kind of park: a dictionary rather than a standard |
 | §6.1, MISB ST 0805.1 | *(no field)* | `not yet` | **rejected rather than parked**, and it earns its own row. `MISP-2015.1-80`: "KLV to Cursor-on-Target (CoT) encoding shall be in accordance with MISB ST 0805 [86]." A ST 0601 → CoT mapping exists as a standard and this repository already has a CoT adapter, so the tempting path is `stanag4609` → CoT → `tak.py`. Declined: chaining two translations makes this adapter's output depend on a third party's mapping decisions, and the CDM exists so that N adapters need N translations rather than a graph of them. In the declines table |
 
+### Row set — the ST 0601.14 UAS Datalink Local Set, transcribed
+
+**This is what park 1 was blocking, and it is the only row set in this section read from a field
+dictionary rather than from a profile that names one.** MISP-2019.1 §4.4.4.1 says "The Airborne - UAS
+Collection is defined in MISB ST 0601 [53]" and then describes not one tag, length or scale factor.
+Appendix B ref [53] pins the edition. That edition was obtained on 2026-08-26 as NSG Registry
+document 4739, pinned above by hash, and its Table 1 is transcribed below in full: **141 items,
+tags 1 through 141, no gap and no duplicate.**
+
+**The edition ruling, restated here because this is the site that would suffer most from getting it
+wrong.** ST 0601.14 — this copy, this hash — is the authoritative tag table for this row set. **ST
+0601.19 remains pinned as context only and is never a source of tag semantics here**; it is retained
+for the item-42 divergence note below and for the measured delta below that. Not one value in the
+table below is read from it.
+
+**How it was transcribed, because the obvious way is wrong and produced a wrong answer first.** Table
+1's Description cells wrap to two and three lines and are vertically *centred* in their row, so a
+description line routinely sits above the line carrying its own Tag number and below the previous
+row's. Read in reader order — which is what any text extraction gives you — the tail of item 1's
+description attaches to item 2, silently and plausibly. The transcription instead reads the page's
+own drawn grid: the column boundaries are the table's vertical rules, at x = 75.4, 98.4, 217.3,
+243.2, 274.2, 292.2, 317.4, 339.0 and 536.4 on each of the five pages, the row boundaries are the
+horizontal cell borders drawn in the Tag column, and each text item is assigned to the cell its own
+(x, y) falls in. A cell is what the document draws.
+
+**And the document states the same mapping twice, so the transcription is checkable against the
+document rather than against itself.** Table 2, "Tags Sorted by Name" (PDF pages 17–18), is the same
+141 items in alphabetical order across three name/tag column pairs — a different grid, extracted
+independently by the same method. **The two agree on all 141 tag-to-name pairs**: no tag in one and
+not the other, and no name disagreement.
+
+**Every row below is `not yet`, and every row below is additionally *(blocked)* on parks 4 and 8** —
+stated once here rather than 141 times. ST 0107.3 and SMPTE ST 336:2017 govern how a key and a length
+are written, so nothing here can be located in an octet stream yet. **Holding the dictionary did not
+make the stream readable; it made the stream nameable.** Per-row Notes name the *further* blockers
+where there are any: park 3 for the instants, park 5 for the `IMAPB` ranges, and the owning document
+for each nested Local Set. `Len` is the document's own column: `V` means variable, and the document
+defines it as "the nominal length of the value. This may be a required length or variable length".
+
+**The one note the document attaches to the table, quoted because it is a trap and the document says
+so itself.** "Several Local Set items have the same UL Key but differ in its Type. For example, Tag
+22-Target Width, uses a Type of uint16, and Tag 96-Target Width Extended, uses a Type of IMAPB. The
+Key for both, which is the same, has a MISB ST 0807 dictionary data type of 'float'. This is an
+allowed practice, where this document specifies (or overrides) the metadata item's format within the
+dictionary." So a decoder keyed on the 16-byte Universal Label alone **cannot tell item 22 from item
+96**, and the Local Set tag is the discriminator. It is a property of the table rather than of a row,
+which is why it is here.
+
+**Protocol, stated because a row set is a specification and a specification that omits its own
+constraints is a wish.** Fixtures remain unwritten and the reason has not changed — a `.klv` payload
+is a sequence of key/length/value triplets and parks 4 and 8 own how a key and a length are written,
+so no UUID-v8/`f1c7` namespace is allocated and no clock is injected, because there is nothing yet to
+feed either. **Bidirectionality is available for more of this table than for any other row set here
+and is still not claimed**: ST 0601.14 gives each scaled numeric item *both* conversions explicitly —
+item 42's section, for instance, states `KLVval = (65535/19900) × (Softval + 900)` alongside its
+inverse — so encode is derivable from the same page as decode for those items, and a Phase 2 should
+write both. It is `not yet` because there is no adapter, not because the document is short of it.
+**No fusion and no joins**: items 100 and 101 nest child items that may *duplicate* their parent's
+(`ST 0601.14-35`), and items 100, 101, 102 and 115 are marked Multiples Allowed, so a reader keyed by
+tag alone silently collapses two values into one. Structure is preserved verbatim.
+
+| Tag | Name | Units | Format | Len | CDM field | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `1` | Checksum | None | `uint16` | `2` | `Entity.attributes` | `not yet` | Checksum used to detect errors within a UAS Datalink LS packet. The one item that makes a packet self-checking, and **the profile said such a thing might exist without saying where** (§5.3.2.2, `attributes.integrity_basis`). Here it is, at item 1, and ST 0601.14 requires it last in the Local Set (`ST 0601.13-23`). |
+| `2` | Precision Time Stamp | µs | `uint64` | `8` | `Event.observed_at`, `Entity.valid_from` | `not yet` | Timestamp for all metadata in this Local Set; used to coordinate with Motion Imagery. **MANDATORY IN EVERY PACKET, AND THIS DOCUMENT STATES THE EPOCH THE PROFILE DOES NOT.** ST 0601.14 §6.4: “Every UAS Datalink LS packet is required to include a Precision Time Stamp representing absolute time as defined in MISB ST 0603 [4]. The Precision Time Stamp (Tag 2) is an eight-byte unsigned integer counter of the number of SI Seconds (in microseconds) which have elapsed since midnight (00:00:00), January 1, 1970 (1970-01-01T00:00:00Z). Note: this time does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.” §8.2 says it again. So epoch, resolution and leap-second treatment are all **read from a document in hand** — see the settlement note below the table, which is where settlement 3 and register entry KLV 6 are corrected in their reach. **Park 3 is not closed by this**: ST 0603.5 still owns the MISP Time System, items 136 and 137, and the one thing ST 0601.14 does not say — what to CALL a scale of SI seconds since 1970 that is not UTC. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. |
+| `3` | Mission ID | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Descriptive mission identifier to distinguish event or sortie |
+| `4` | Platform Tail Number | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Identifier of platform as posted |
+| `5` | Platform Heading Angle | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Aircraft heading angle. A **heading**, not a course. `Kinematics.course_deg` is documented as a course, and item 112 is the course angle — so this parks and 112 fills the CDM field. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `6` | Platform Pitch Angle | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Aircraft pitch angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `7` | Platform Roll Angle | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Platform roll angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `8` | Platform True Airspeed | m/s | `uint8` | `1` | `Entity.attributes` | `not yet` | True airspeed (TAS) of platform. An **airspeed**, not a speed over ground. `Kinematics.speed_mps` takes item 56; this parks with its units named. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `9` | Platform Indicated Airspeed | m/s | `uint8` | `1` | `Entity.attributes` | `not yet` | Indicated airspeed (IAS) of platform. An **airspeed**, not a speed over ground — as item 8, and indicated rather than true. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `10` | Platform Designation | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Model name for the platform |
+| `11` | Image Source Sensor | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of currently active sensor |
+| `12` | Image Coordinate System | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of the image coordinate system used |
+| `13` | Sensor Latitude | ° | `int32` | `4` | `Entity.position.lat` | `not yet` | Sensor latitude. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `14` | Sensor Longitude | ° | `int32` | `4` | `Entity.position.lon` | `not yet` | Sensor longitude. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `15` | Sensor True Altitude | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Altitude of sensor as measured from Mean Sea Level (MSL). **MSL, and the CDM's `Position.alt_m` is documented as “Metres HAE”** — so this item cannot fill it and parks instead. Item 75 is the HAE twin and does fill it, and `ST 0601.8-17` settles the collision in the same direction: a decoder that understands HAE “shall use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS Datalink LS packet”. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `16` | Sensor Horizontal Field of View | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Horizontal field of view of selected imaging sensor. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `17` | Sensor Vertical Field of View | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Vertical field of view of selected imaging sensor. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `18` | Sensor Relative Azimuth Angle | ° | `uint32` | `4` | `Entity.attributes` | `not yet` | Relative rotation angle of sensor to platform longitudinal axis. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `19` | Sensor Relative Elevation Angle | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Relative elevation angle of sensor to platform longitudinal-transverse plane. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `20` | Sensor Relative Roll Angle | ° | `uint32` | `4` | `Entity.attributes` | `not yet` | Relative roll angle of sensor to aircraft platform. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `21` | Slant Range | m | `uint32` | `4` | `Entity.attributes` | `not yet` | Slant range in meters. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `22` | Target Width | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Target width within sensor field of view. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `23` | Frame Center Latitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Terrain latitude of frame center |
+| `24` | Frame Center Longitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Terrain longitude of frame center |
+| `25` | Frame Center Elevation | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Terrain elevation at frame center relative to Mean Sea Level (MSL) |
+| `26` | Offset Corner Latitude Point 1 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame latitude offset for upper left corner |
+| `27` | Offset Corner Longitude Point 1 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame longitude offset for upper left corner |
+| `28` | Offset Corner Latitude Point 2 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame latitude offset for upper right corner |
+| `29` | Offset Corner Longitude Point 2 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame longitude offset for upper right corner |
+| `30` | Offset Corner Latitude Point 3 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame latitude offset for lower right corner |
+| `31` | Offset Corner Longitude Point 3 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame longitude offset for lower right corner |
+| `32` | Offset Corner Latitude Point 4 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame latitude offset for lower left corner |
+| `33` | Offset Corner Longitude Point 4 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame longitude offset for lower left corner |
+| `34` | Icing Detected | code | `uint8` | `1` | `Entity.attributes` | `not yet` | Flag for icing detected at aircraft location |
+| `35` | Wind Direction | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Wind direction at aircraft location |
+| `36` | Wind Speed | m/s | `uint8` | `1` | `Entity.attributes` | `not yet` | Wind speed at aircraft location |
+| `37` | Static Pressure | mbar | `uint16` | `2` | `Entity.attributes` | `not yet` | Static pressure at aircraft location |
+| `38` | Density Altitude | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Density altitude at aircraft location |
+| `39` | Outside Air Temperature | °C | `int8` | `1` | `Entity.attributes` | `not yet` | Temperature outside of aircraft |
+| `40` | Target Location Latitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Calculated target latitude |
+| `41` | Target Location Longitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Calculated target longitude |
+| `42` | Target Location Elevation | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Calculated target elevation. **The item the .14/.19 divergence lands on, and .14 states no datum for it at all.** Its §8.42 gives “Calculated target elevation” and nothing more; .19 later resolved the same item to “conditionally either MSL or HAE”. **.14's silence is normative here** — see the divergence note below the table. The value parks with the datum recorded as unstated rather than filled from the later revision. |
+| `43` | Target Track Gate Width | Pixels | `uint8` | `1` | `Entity.attributes` | `not yet` | Tracking gate width (x value) of tracked target within field of view |
+| `44` | Target Track Gate Height | Pixels | `uint8` | `1` | `Entity.attributes` | `not yet` | Tracking gate height (y value) of tracked target within field of view |
+| `45` | Target Error Estimate - CE90 | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Circular error 90 (CE90) is the estimated error distance in the horizontal direction |
+| `46` | Target Error Estimate - LE90 | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Lateral error 90 (LE90) is the estimated error distance in the vertical (or lateral) direction |
+| `47` | Generic Flag Data | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Generic metadata flags |
+| `48` | Security Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 0102 local let Security Metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 0102.12**'s, park 2, **held**. |
+| `49` | Differential Pressure | mbar | `uint16` | `2` | `Entity.attributes` | `not yet` | Differential pressure at aircraft location |
+| `50` | Platform Angle of Attack | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Platform attack angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `51` | Platform Vertical Speed | m/s | `int16` | `2` | `Entity.kinematics.climb_mps` | `not yet` | Vertical speed of the aircraft relative to zenith. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `52` | Platform Sideslip Angle | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Angle between the platform longitudinal axis and relative wind. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `53` | Airfield Barometric Pressure | mbar | `uint16` | `2` | `Entity.attributes` | `not yet` | Local pressure at airfield of known height |
+| `54` | Airfield Elevation | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Elevation of airfield corresponding to Airfield Barometric Pressure |
+| `55` | Relative Humidity | % | `uint8` | `1` | `Entity.attributes` | `not yet` | Relative humidity at aircraft location |
+| `56` | Platform Ground Speed | m/s | `uint8` | `1` | `Entity.kinematics.speed_mps` | `not yet` | Speed projected to the ground of an airborne platform passing overhead |
+| `57` | Ground Range | m | `uint32` | `4` | `Entity.attributes` | `not yet` | Horizontal distance from ground position of aircraft relative to nadir, and target of interest |
+| `58` | Platform Fuel Remaining | kg | `uint16` | `2` | `Entity.attributes` | `not yet` | Remaining fuel on airborne platform |
+| `59` | Platform Call Sign | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Call sign of platform or operating unit. **Gap 1** — the CDM has no canonical name field, and this is a fourth format arriving at the same absence. Parks at `attributes.callsign`, the key `adsb.py` and `tak.py` already use, and the gap note is the reason that agreement is recorded rather than celebrated. |
+| `60` | Weapon Load | None | `uint16` | `2` | `Entity.attributes` | `not yet` | Current weapons stored on aircraft |
+| `61` | Weapon Fired | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Indication when a particular weapon is released |
+| `62` | Laser PRF Code | None | `uint16` | `2` | `Entity.attributes` | `not yet` | A laser's Pulse Repetition Frequency (PRF) code used to mark a target |
+| `63` | Sensor Field of View Name | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Sensor field of view names |
+| `64` | Platform Magnetic Heading | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Aircraft magnetic heading angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `65` | UAS Datalink LS Version Number | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Version number of the UAS Datalink LS document used to generate KLV metadata. **MANDATORY IN EVERY PACKET, and it declares which revision of this very document the producer encoded against**: the value is this document's MAJOR revision number, “1..255 corresponds to document revisions” one for one, and 0 means pre-release or test data. So park 1's hazard — a later revision's tag decoded against an earlier one — is **detectable on the wire**: a stream declaring 19 is not this table's stream. **But it is a `uint8` and cannot express a Minor Version letter**, so 14 and 14a are indistinguishable in it — the same blind spot a citation by edition number has, register entry **KLV 10**. |
+| `66` | Deprecated | N/A | `N/A` | `N/A` | `Entity.attributes` | `not yet` | This item has been deprecated. **Deprecated by this edition**, and the table says so in the Name column rather than omitting the tag — which is why the transcription keeps the row. Its revision history: “Deprecated Local Set item 66 because it has been TBD since its inception and replaced with the SDCC-FLP (item 102)”. |
+| `67` | Alternate Platform Latitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Alternate platform latitude |
+| `68` | Alternate Platform Longitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Alternate platform longitude |
+| `69` | Alternate Platform Altitude | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Altitude of alternate platform as measured from Mean Sea Level (MSL) |
+| `70` | Alternate Platform Name | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of alternate platform connected to UAS |
+| `71` | Alternate Platform Heading | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Heading angle of alternate platform connected to UAS |
+| `72` | Event Start Time - UTC | µs | `uint64` | `8` | `Entity.attributes` | `not yet` | Start time of scene, project, event, mission, editing event, license, publication, etc. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. |
+| `73` | RVT Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 0806 RVT Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 0806.4**'s, park 7, not held. |
+| `74` | VMTI Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 0903 VMTI Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 0903.4**'s, park 6, not held. |
+| `75` | Sensor Ellipsoid Height | m | `uint16` | `2` | `Entity.position.alt_m` | `not yet` | Sensor ellipsoid height as measured from the reference WGS84 ellipsoid. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `76` | Alternate Platform Ellipsoid Height | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Alternate platform ellipsoid height as measured from the reference WGS84 Ellipsoid |
+| `77` | Operational Mode | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Indicates the mode of operations of the event portrayed in Motion Imagery |
+| `78` | Frame Center Height Above Ellipsoid | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Frame center ellipsoid height as measured from the reference WGS84 ellipsoid |
+| `79` | Sensor North Velocity | m/s | `int16` | `2` | `Entity.attributes` | `not yet` | Northing velocity of the sensor or platform. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `80` | Sensor East Velocity | m/s | `int16` | `2` | `Entity.attributes` | `not yet` | Easting velocity of the sensor or platform. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `81` | Image Horizon Pixel Pack | None | `dlp` | `V` | `Entity.attributes` | `not yet` | Location of earth-sky horizon in the Imagery |
+| `82` | Corner Latitude Point 1 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame latitude for upper left corner |
+| `83` | Corner Longitude Point 1 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame longitude for upper left corner |
+| `84` | Corner Latitude Point 2 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame latitude for upper right corner |
+| `85` | Corner Longitude Point 2 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame longitude for upper right corner |
+| `86` | Corner Latitude Point 3 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame latitude for lower right corner |
+| `87` | Corner Longitude Point 3 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame longitude for lower right corner |
+| `88` | Corner Latitude Point 4 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame latitude for lower left corner |
+| `89` | Corner Longitude Point 4 (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Frame longitude for lower left corner |
+| `90` | Platform Pitch Angle (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Aircraft pitch angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `91` | Platform Roll Angle (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Platform roll angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `92` | Platform Angle of Attack (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Platform attack angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `93` | Platform Sideslip Angle (Full) | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Angle between the platform longitudinal axis and relative wind. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `94` | MIIS Core Identifier | None | `byte` | `V` | `Entity.source_ids` | `not yet` | MISB ST 1204 MIIS Core Identifier binary value |
+| `95` | SAR Motion Imagery Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1206 SAR Motion Imagery Metadata Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 1206.1**'s, onward, not held. |
+| `96` | Target Width Extended | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Target width within sensor field of view. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `97` | Range Image Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1002 Range Imaging Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 1002.2**'s, onward, not held. |
+| `98` | Geo-Registration Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1601 Geo-Registration Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 1601.1**'s, onward, not held. |
+| `99` | Composite Imaging Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1602 Composite Imaging Local Set metadata items. A nested Local Set or Pack — the items inside it are **MISB ST 1602.1**'s, onward, not held. |
+| `100` | Segment Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1607 Segment Local Set metadata items, used to enable metadata sharing. **Multiples Allowed, and its children may duplicate their parent's items** (`ST 0601.14-35`). A reader keyed by tag alone flattens the two into one value. A nested Local Set or Pack — the items inside it are **MISB ST 1607**'s, onward, not held. |
+| `101` | Amend Local Set | None | `set` | `V` | `Entity.attributes` | `not yet` | MISB ST 1607 Amend Local Set metadata items, used to provide metadata corrections. **Multiples Allowed, and its children may duplicate their parent's items** (`ST 0601.14-35`) — as item 100. A nested Local Set or Pack — the items inside it are **MISB ST 1607**'s, onward, not held. |
+| `102` | SDCC-FLP | None | `flp` | `V` | `Entity.attributes` | `not yet` | MISB ST 1010 Floating Length Pack (FLP) metadata item, providing Standard Deviation and Cross Correlation (SDCC) metadata. The uncertainty carrier for every SDCC-eligible item in this table. **Its own layout is MISB ST 1010.3's, which this repository does not hold** — onward delegation, not a park in the twelve. **Multiples Allowed** — more than one instance of this item may appear in one Local Set instance, so a keyed-by-tag reader loses data. |
+| `103` | Density Altitude Extended | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Density altitude above MSL at aircraft location. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `104` | Sensor Ellipsoid Height Extended | m | `IMAPB` | `V` | `Entity.position.alt_m` | `not yet` | Sensor ellipsoid height extended as measured from the reference WGS84 ellipsoid. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `105` | Alternate Platform Ellipsoid Height Extended | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Alternate platform ellipsoid height extended as measured from the reference WGS84 ellipsoid. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `106` | Stream Designator | None | `utf8` | `V` | `Entity.attributes` | `not yet` | A second designation given to a sortie |
+| `107` | Operational Base | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of the operational base hosting the platform |
+| `108` | Broadcast Source | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of the source, where the Motion Imagery is first broadcast |
+| `109` | Range To Recovery Location | km | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Distance from current position to airframe recovery position. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `110` | Time Airborne | s | `uint` | `V` | `Entity.attributes` | `not yet` | Number of seconds aircraft has been airborne |
+| `111` | Propulsion Unit Speed | RPM | `uint` | `V` | `Entity.attributes` | `not yet` | The speed the engine (or electric motor) is rotating at |
+| `112` | Platform Course Angle | ° | `IMAPB` | `V` | `Entity.kinematics.course_deg` | `not yet` | Direction the aircraft is moving relative to True North. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `113` | Altitude AGL | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Above Ground Level (AGL) height above the ground/water. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `114` | Radar Altimeter | m | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Height above the ground/water as reported by a RADAR altimeter. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `115` | Control Command | None | `dlp` | `V` | `Entity.attributes` | `not yet` | Record of command from GCS to Aircraft. **Multiples Allowed** — more than one instance of this item may appear in one Local Set instance, so a keyed-by-tag reader loses data. |
+| `116` | Control Command Verification List | None | `dlp` | `V` | `Entity.attributes` | `not yet` | Acknowledgement of one or more control commands were received by the platform |
+| `117` | Sensor Azimuth Rate | dps | `IMAPB` | `V` | `Entity.attributes` | `not yet` | The rate the sensors azimuth angle is changing. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `118` | Sensor Elevation Rate | dps | `IMAPB` | `V` | `Entity.attributes` | `not yet` | The rate the sensors elevation angle is changing. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `119` | Sensor Roll Rate | dps | `IMAPB` | `V` | `Entity.attributes` | `not yet` | The rate the sensors roll angle is changing. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `120` | On-board MI Storage Percent Full | % | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Amount of on-board Motion Imagery storage used as a percentage of the total storage. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `121` | Active Wavelength List | None | `dlp` | `V` | `Entity.attributes` | `not yet` | List of wavelengths in Motion Imagery |
+| `122` | Country Codes | None | `vlp` | `N/A` | `Entity.attributes` | `not yet` | Country codes which are associated with the platform and its operation |
+| `123` | Number of NAVSATs in View | count | `uint` | `1` | `Entity.attributes` | `not yet` | Count of navigation satellites in view of platform |
+| `124` | Positioning Method Source | None | `uint` | `1` | `Entity.attributes` | `not yet` | Source of the navigation positioning information. (e.g. NAVSAT-GPS, NAVSAT-Galaleo, INS) |
+| `125` | Platform Status | None | `uint` | `1` | `Entity.attributes` | `not yet` | Enumeration of operational modes of the platform (e.g. in-route, RTB) |
+| `126` | Sensor Control Mode | None | `uint` | `1` | `Entity.attributes` | `not yet` | Enumerated value for the current sensor control operational status |
+| `127` | Sensor Frame Rate Pack | None | `dlp` | `V` | `Entity.attributes` | `not yet` | Values used to compute the frame rate of the Motion Imagery at the sensor |
+| `128` | Wavelengths List | None | `vlp` | `V` | `Entity.attributes` | `not yet` | List of wavelength bands provided by sensor(s) |
+| `129` | Target ID | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Alpha-numeric identification of a target |
+| `130` | Airbase Locations | None | `vlp` | `V` | `Entity.attributes` | `not yet` | Geographic location of the takeoff site and recovery site |
+| `131` | Take-off Time | µs | `uint` | `V` | `Entity.attributes` | `not yet` | Time when aircraft became airborne. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. |
+| `132` | Transmission Frequency | MHz | `IMAPB` | `V` | `Entity.attributes` | `not yet` | Radio frequency used to transmit the Motion Imagery. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `133` | On-board MI Storage Capacity | GB | `uint` | `V` | `Entity.attributes` | `not yet` | The total capacity of on-board Motion Imagery storage |
+| `134` | Zoom Percentage | % | `IMAPB` | `V` | `Entity.attributes` | `not yet` | For a variable zoom system, the percentage of zoom. `IMAPB`, so the value's range and precision come from **park 5** (ST 1201.3). |
+| `135` | Communications Method | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Type of communications used with platform |
+| `136` | Leap Seconds | s | `int` | `V` | `Entity.attributes` | `not yet` | Number of leap seconds to adjust Precision Time Stamp (Tag 2) to UTC. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. |
+| `137` | Correction Offset | µs | `int` | `V` | `Entity.attributes` | `not yet` | Post-flight time adjustment to correct Precision Time Stamp (Tag 2) as needed. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. |
+| `138` | Payload List | None | `vlp` | `V` | `Entity.attributes` | `not yet` | List of payloads available on the Platform |
+| `139` | Active Payloads | None | `byte` | `V` | `Entity.attributes` | `not yet` | List of currently active payloads from the payload list (Tag 138) |
+| `140` | Weapons Stores | None | `vlp` | `V` | `Entity.attributes` | `not yet` | List of weapon stores and status |
+| `141` | Waypoint List | None | `vlp` | `V` | `Entity.attributes` | `not yet` | List of waypoints and their status. |
+
+**The item-42 divergence, recorded as a note and never imported.** ST 0601.19's revision history
+announces "Resolved item 42 ambiguity (i.e., MSL or HAE)" on 11 June 2025. **ST 0601.14 states no
+datum for item 42 at all** — its §8.42 gives "Calculated target elevation", a range, a mapping, a
+resolution and a recommendation not to report the value for target locations above the horizon, and
+nothing about the measurement base. That silence is what this row set carries as normative, because
+the profile pins .14 and a later revision is a different document. What .19 later added, for the
+reader who wants to know what the silence was hiding: a description line reading "conditionally
+either MSL or HAE", a bullet "Depending on items 25 and/or 78, the measurement base is either MSL or
+HAE", and three rules keyed on which of items 25 and 78 are present in the stream. **None of that is
+in the table above and none of it is applied.**
+
+**The measured delta between the two editions — the note the park was opened on, now a measurement
+rather than a fear.** Park 1's reopen condition warned that "a tag added in a later revision decoded
+against an earlier one is a plausible number in the wrong field". With both documents in hand that
+is now quantified. **Two items were added in .19** — 142 View Domain and 143 Metadata Substream ID
+Pack — and **none was removed**: all 141 items above survive at the same tag numbers. **One was
+renamed**, item 72, "Event Start Time - UTC" becoming "Event Start Time". And the structural columns
+— Units, Format, Len, SDCC, MUL — are **identical on all 141 shared items**, so a .19 stream decoded
+against this table would not produce a wrong-*length* read on any of them.
+
+**And the change that matters is not in that list, which is the finding.** *Item 42's summary row is
+byte-for-byte identical in both editions.* Both read "Calculated target elevation". The entire
+MSL/HAE resolution lives in the per-item section §8.42 and leaves no trace in Table 1. **A tag table
+transcribed from the summary table alone is blind to the single documented semantic change in the
+whole five-revision window** — which is an argument for reading the per-item sections before any
+Phase 2 trusts a row above, and a reason the eight *other* Table 1 description changes between the
+editions are worth naming as the editorial noise they are: a comma after "e.g.", "Galaleo" corrected
+to "Galileo", "takeoff" to "take-off", "Tag" to "Item" at items 137 and 139, shortened phrasings at
+45 and 126, and one real clarification at item 136, where ".14: Number of leap seconds to adjust
+Precision Time Stamp (Tag 2) to UTC" becomes ".19: Number of leap seconds since MISP Epoch to use
+when converting Precision Time Stamp (Item 2) to UTC".
+
 ### The parks, each with a named reopen condition
 
-**Twelve parks over fourteen documents, and the honest thing to say first is that eleven of the
-twelve are public downloads and one is not.** That is a materially weaker blocker than the two this
+**Twelve parks over fourteen documents, one of them now closed, and the honest thing to say first is
+that of the eleven still open, ten are public downloads and one is not.** **Park 1 closed on
+2026-08-26** and it keeps its number and its row: the parks are cited by number from the row sets,
+from the fixture plan and from the register, so renumbering eleven rows to close a gap would silently
+re-point every one of those citations. A closed park says it is closed. That the largest park in this
+table was closed by one person with a browser is not an exception to the paragraph below — it is the
+evidence for it.
+
+That is a materially weaker blocker than the two this
 document already carries — GMTIF's Annex L, which reads "(TO BE PROVIDED)" in the promulgated text,
 and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through
 national representatives. It is closer to CAT048's Reserved Expansion Field, which was "obtainable,
@@ -7815,7 +8098,9 @@ developed by the MISB are available under MISB Public Web Site: `http://www.gwg.
 Registry Web Site: `https://nsgreg.nga.mil/misb.jsp`". **No NSO gate, no national representative, no
 account** — which is a real difference from the NITS XSD row and is why these say "obtain" and that
 one says "obtain, through one of two channels, and hash both". So the exit condition for parks 1–7
-and 9–12 is the same three steps, stated once here rather than twelve times: obtain **the exact
+and 9–12 is the same three steps, stated once here rather than twelve times — and park 1 is the one
+that has now been through all three, which is why it is worth reading them as a test that can be
+passed rather than a wish: obtain **the exact
 version the delegation table pins** — not "the current one", because the profile pins a revision and
 a later revision is a different document; pin it in `fixtures/klv/spec/` by SHA-256, byte count and
 page count, with its title-page identity read; and write the row set that document supports, which
@@ -7823,7 +8108,7 @@ for parks 1, 2, 6 and 7 means real mapping rows and for the others means a mecha
 
 | # | Parked | Version required | Reason, grounded in the delegation table | Reopen condition |
 |---|---|---|---|---|
-| **1** | **MISB ST 0601 — UAS Datalink Local Set** | **0601.14** | The field dictionary of the airborne collection is ST 0601.14, and it is not held. The profile names the fields' *existence* — a platform position, a sensor orientation, a tail number, a wind speed — and not one of their tags, lengths or scale factors. The largest park, and the one that decides whether this adapter can emit an `Entity` at all | Public download from the MISB/NGA registry. **Version .14 specifically**: ST 0601 has revisions on both sides of it, and a tag added in a later revision decoded against an earlier one is a plausible number in the wrong field |
+| **1** | ~~**MISB ST 0601 — UAS Datalink Local Set**~~ **CLOSED 2026-08-26** | **0601.14**, held | It was the largest park, and the one that decided whether this adapter can emit an `Entity` at all: the profile named the fields' *existence* — a platform position, a sensor orientation, a tail number, a wind speed — and not one of their tags, lengths or scale factors. **Closed by discharging both halves of the exit condition**: the exact version the delegation table pins was obtained from NSG Registry document 4739 and pinned by hash, byte count and page count with its cover read, **and** the row set it supports is written — 141 rows, below. The second half was not waived, because park 2 was not given that discount three days earlier | **Closed.** What it does *not* discharge: parks 4 and 8 still own how an item is found in the octets, park 3 owns the epoch's normative definition, park 5 owns the `IMAPB` ranges. Closing park 1 moved this adapter from *cannot name a field* to **can name every field and read none** |
 | **2** | **MISB ST 0102 — Security Metadata Universal and Local Sets** | **0102.12** | `MISP-2015.1-73` makes it mandatory and §4.4.2.9 calls the practices "mandatory for all Motion Imagery Data". The layout is 0102.12's | Public download. Blocks the confidentiality ruling, which by the NITS precedent must be **carried and never invented** — so until it lands, nothing this adapter emits can be claimed conformant |
 | **3** | **MISB ST 0603 — MISP Time System and Timestamps** | **0603.5** | Settlement 3. The profile requires a timestamp's *form* to comply with ST 0603 and states no epoch, no resolution and no timescale; `epoch`, `1970`, `microsecond` and `leap` occur zero times in 73 pages | Public download. Blocks `Event.observed_at` — the one CDM field this format's own users would consider mandatory. **Also decides TAI against UTC**, and if it is TAI the adapter inherits a leap-second dependency no other adapter here has |
 | **4** | **MISB ST 0107 — KLV Metadata in Motion Imagery** | **0107.3** | `MISP-2015.1-08`: KLV "shall be **formatted** in accordance with MISB ST 0107". Distinct from park 8, and the distinction is the profile's: ST 336 says how a triplet is *encoded* and ST 0107.3 says how KLV is formatted *in motion imagery* — packet construction, which sets are permitted, how items are ordered | Public download. Pairs with park 8: neither alone is enough to read a stream, which is why the two are listed apart rather than merged |
@@ -7936,6 +8221,44 @@ KLV Packs and Local Sets that reduces the bandwidth needed to transmit the data,
 required data items**." A document that defines required data items is normative in fact. Neither
 pinned text resolves which reading governs, and park 10 records that whoever obtains the Handbook has
 to answer it before quoting it.
+
+**KLV 9 — a pinned copy whose cover does not describe its contents, and a dangling citation this
+round had to close.** *The entry existed in `klv_pin.json` and was cited from the pin table above,
+and it was never written here — so this document has been pointing at a register entry it does not
+contain since 2026-08-26. The test that guards the register's numbering checked only that it had not
+grown past the last entry, which is one direction of a two-directional fact; it now checks both.*
+ST 0601.19's cover reads "MISB ST 0601.19" and "02 March 2023"; its revision history carries two rows
+dated **after** that cover date — 10 May 2024, changing Figure 17's corner 4 tag values, and
+11 June 2025, resolving "item 42 ambiguity (i.e., MSL or HAE)" — and the file's `/CreationDate` is
+2 July 2025. The document's own §2 states the convention it is not following: a corrected document
+"will have a single letter Minor Version appended to the Major Version number", as ST 0001.2 becomes
+ST 0001.2a, and the MISB "will not update the referring document with the Minor Version number
+change". So there exist at least three distinct documents all correctly cited as "ST 0601.19", and a
+citation by edition number cannot distinguish them. **What it bounds:** not the ruling that stopped
+the earlier round, which turned on .14-versus-.19 and would have stopped identically whichever .19
+copy were held. What it bounds is the claim a pin can make — which is why the SHA-256 identifies a
+*copy*. ST 0102.12 was checked the same way and does not have the problem: one revision-history row,
+and it is the cover date.
+
+**KLV 10 — the same coming-apart, met at fetch time instead of found later, and one turn worse in
+each of two ways.** MISP-2019.1 cites "MISB ST 0601.14"; the NSG Registry serves that edition as
+**`ST0601.14a.pdf`**; the cover reads "MISB ST 0601.14a" and **1 May 2020**, while the edition the
+citation names is dated **1 November 2018** by the document's own revision history. That much is the
+convention working exactly as §2 describes it, and it is why the filename here keeps the letter and
+the `edition` field does not. **Worse the first way:** the copy carries a *third* revision-history
+row, dated 19 August 2021, with four editorial bullets, and **its Revision cell is empty** — checked
+from the page's own drawn column geometry rather than from a text dump, because a text dump cannot
+tell an empty cell from a missing one. The file's `/CreationDate` is 17 December 2021. ST 0601.19's
+undeclared amendments at least sat under a stable edition number that *some* citation could name;
+this one has no string at all. **Worse the second way:** this local set carries its own version
+number on the wire. Item 65, UAS Datalink LS Version Number, is **mandatory in every packet** and
+states which revision of ST 0601 the producer encoded against — and it is a `uint8`, one value per
+*major* revision, so it cannot express a Minor Version letter either. The format's own answer to
+"which edition made this?" has precisely the same blind spot as the citation. **What it bounds:**
+nothing in the row set, and that is checkable rather than hopeful — the "a" changed one thing,
+"Corrected table headers in Item 47 – Generic Flags", and the 19 August 2021 row changed four things
+all described as editorial, none of which touches a tag, a length or a format. What it bounds is what
+a pin may *claim*. See **KLV 9**, the same hazard in the document this one supersedes-by-five.
 
 ### Deliberately out of scope, and why
 

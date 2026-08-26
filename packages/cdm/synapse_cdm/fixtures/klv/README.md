@@ -5,6 +5,14 @@ forgot.** Adapter `stanag4609` is at Phase 1: the row set in `../../FORMAT_COVER
 with `not yet` in every status column and there is no adapter code, no codec and no payload. This
 directory holds `spec/` and nothing else.
 
+**That did not change on 2026-08-26, and the thing that did change is worth stating precisely.** ST
+0601.14 — the field dictionary MISP-2019.1 delegates the whole airborne collection to — was obtained,
+pinned and transcribed: 141 items, in `../../FORMAT_COVERAGE.md`'s ST 0601 row set and in
+`spec/klv_pin.json`'s `tag_table_st_0601_14`. That closed **park 1**, the largest of the twelve. It
+did not produce a fixture and could not have: a `.klv` payload is a sequence of key/length/value
+triplets, and the documents that say how a key and a length are written are still parks 4 and 8.
+**Holding the dictionary made the stream nameable, not readable.**
+
 ```bash
 # Today this FAILS, deliberately, and it fails TWICE over — which is worth knowing before you
 # debug it. The adapter name does not resolve yet, so `--adapter stanag4609` raises
@@ -26,27 +34,37 @@ the three rejected alternatives (`misp`, `misb`, `fmv`), are in `spec/klv_pin.js
 
 What is here:
 
-- **`spec/klv_pin.json`** — the pinned identity of all four documents and every value extracted from
+- **`spec/klv_pin.json`** — the pinned identity of all five documents and every value extracted from
   them that a ruling cites, each with its locus. Written first, for the reason the Legion, CAT021
   and CAT048 pins were: a quotation with no pin behind it is a recollection.
 - **`spec/nato-stanag-4609-edition-5.pdf`** and **`spec/misb-misp-2019-1.pdf`** — in the working
   tree because they had to be read, and **not committed**, matching every other adapter here.
   `git ls-files | grep -c '\.pdf$'` is 0 across the whole repository.
-- **`spec/ST0601.19.pdf`** and **`spec/ST0102.12.pdf`** — two of the fourteen delegated documents,
-  obtained 2026-08-26, in the working tree and **not committed** on the same rule. Only one of them
-  is the edition MISP-2019.1 pins: **ST 0102.12 is** (Appendix B ref [55]) and **ST 0601.19 is
-  not** — the profile pins **0601.14** (ref [53]). `spec/klv_pin.json`'s `reconciliation_ruling`
-  records both readings verbatim and rules on each; the consequence is that no tag table was
-  transcribed from either document, so this directory is still at Phase 1.
+- **`spec/ST0601.14a.pdf`**, **`spec/ST0102.12.pdf`** and **`spec/ST0601.19.pdf`** — three of the
+  fourteen delegated documents, all obtained 2026-08-26, in the working tree and **not committed**
+  on the same rule. Two of the three are editions MISP-2019.1 pins: **ST 0601.14** (Appendix B
+  ref [53]) and **ST 0102.12** (ref [55]). **ST 0601.19 is not** — it is five major revisions later
+  — and it is kept as **context only**, never as a source of tag semantics, for the item-42
+  divergence note and for the measured delta between the two editions. `spec/klv_pin.json`'s
+  `reconciliation_ruling` records every reading verbatim and rules on each.
+
+  **The `a` in `ST0601.14a.pdf` is not a typo and the filename is not normalised.** The NSG Registry
+  serves the edition cited as "ST 0601.14" under that name, and its cover reads `MISB ST 0601.14a`:
+  a single-letter *Minor Version*, which the standard's own §2 says is a correction to the major
+  version and which "the MISB will not update the referring document" to reflect. So the **filename
+  states the copy**, the pin record's `edition` field states the **edition the profile cites**, and
+  the **SHA-256 states the identity**. Renaming the file to match the citation would make four
+  sites agree about a file that does not exist. Register entry **KLV 10**.
 
 | Document | SHA-256 | Bytes | Pages |
 |---|---|---|---|
 | `spec/nato-stanag-4609-edition-5.pdf` | `f2f9ae1a5a74528664a8751c3c105161f4597b1041928b7cedba1a57b2dbf8d8` | 273 801 | 5 |
 | `spec/misb-misp-2019-1.pdf` | `3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea` | 1 372 771 | 73 |
+| `spec/ST0601.14a.pdf` | `3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4` | 3 969 201 | 218 |
 | `spec/ST0601.19.pdf` | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1` | 4 700 978 | 226 |
 | `spec/ST0102.12.pdf` | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267` | 514 842 | 18 |
 
-Those four rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVERAGE.md`, and
+Those five rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVERAGE.md`, and
 `tests/test_cdm_format_coverage.py` checks **every** occurrence rather than any one of them — the
 80b38d1 finding, which was that an `in` check is satisfied by one site while a fact stated at three
 sites can drift at two.

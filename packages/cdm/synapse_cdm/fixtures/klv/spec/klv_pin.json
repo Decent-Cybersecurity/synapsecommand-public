@@ -1,5 +1,5 @@
 {
-  "what_this_is": "The pinned identity of the four documents the STANAG 4609 / MISP-2019.1 row set in FORMAT_COVERAGE.md was read from - the wrapper, the profile it promulgates, and the two delegated field dictionaries this round obtained - plus every value extracted from them that a ruling rests on, each with the locus inside the document. House style follows fixtures/cat048/spec/cat048_pin.json, fixtures/cat021/spec/sac_pin.json and fixtures/legion/spec/openapi_pin.json: an edition number names a DOCUMENT and a SHA-256 names the COPY THAT WAS READ, and those are different claims. No PDF is committed - see not_committed below.",
+  "what_this_is": "The pinned identity of the five documents the STANAG 4609 / MISP-2019.1 row set in FORMAT_COVERAGE.md was read from - the wrapper, the profile it promulgates, and the three delegated field dictionaries this repository has obtained - plus every value extracted from them that a ruling rests on, each with the locus inside the document. House style follows fixtures/cat048/spec/cat048_pin.json, fixtures/cat021/spec/sac_pin.json and fixtures/legion/spec/openapi_pin.json: an edition number names a DOCUMENT and a SHA-256 names the COPY THAT WAS READ, and those are different claims. This record is the first in the repository where those two come apart TWICE in one directory and in two different ways - see ambiguity_register KLV 9 and KLV 10. No PDF is committed - see not_committed below.",
   "adapter": {
     "name": "stanag4609",
     "fixture_directory": "klv",
@@ -80,7 +80,7 @@
     ]
   },
   "delegated_specifications_held": {
-    "what_this_is": "The two delegated field dictionaries this round obtained. Both were named by the delegation table below long before either was held; both are now in the working tree, untracked, and pinned here. A pinned document carries THREE facts and this section exists because the pin rows above carried only two: the registry PAGE that is the citable source, the SHA-256 that identifies the COPY that was read, and the EDITION DATE the document states on its own cover.",
+    "what_this_is": "The delegated field dictionaries this repository holds on disk. MISP-2019.1 delegates every field dictionary it relies on to a document published by somebody else; fourteen are named in delegation_table below and THREE are here. ST 0102.12 and ST 0601.14 are the exact editions the profile pins. ST 0601.19 is NOT - it is five major revisions later than the 0601.14 ref [53] cites - and it is retained as CONTEXT ONLY under reconciliation_ruling.ruling_st_0601: useful for the item-42 divergence note and for knowing where the standard went, and never a source of tag semantics for this row set.",
     "provenance_ruling": {
       "page_as_source": "The source of record for a MISB standard is its NSG Registry document page - https://nsgreg.nga.mil/doc/view?i=<n> - and not the URL the bytes arrived over. The page is stable, dereferenceable and states the registry's own view of the document's identity: its version, its registration status and what it supersedes.",
       "hash_as_copy": "The SHA-256 identifies the COPY THAT WAS READ, which is a different claim from the edition number. This is house style in every pin record here and this round is the first to prove why it is not pedantry: ST 0601.19's cover says 02 March 2023 and the copy on disk carries two amendment rows dated after that, under the same edition number and with no minor-version letter on the cover. The edition number cannot distinguish those two documents. The hash can.",
@@ -88,28 +88,36 @@
       "what_the_edition_date_field_means": "The date the DOCUMENT states for itself, read off its own cover or front matter, and authoritative for this field where the document states one. Where the registry page states a date too, both are recorded and required to agree - see st_0102_12 below, where three independent statements of 22 June 2017 agree.",
       "the_registry_pages_were_not_machine_verified_and_why": "HONEST LIMIT ON THE SOURCE FIELD. Both doc/view URLs are recorded as the citable source and neither was retrieved by this round: nsgreg.nga.mil answers an automated GET with a CAPTCHA interstitial, so the page's stated version, registration status and supersession line could not be read mechanically. They are recorded as reported. Every fact this round ASSERTS about either document - hash, byte count, page count, edition date, title-page identity - was taken from the bytes on disk instead, which is the stronger source for those five and the reason the ruling below does not rest on the registry at all. The parks' reopen route is unaffected: a CAPTCHA is a bot gate, not an account gate, and a person with a browser is not blocked."
     },
-    "st_0601_19": {
-      "document": "MISB ST 0601.19, UAS Datalink Local Set",
-      "edition": "0601.19",
-      "source": "https://nsgreg.nga.mil/doc/view?i=5471",
-      "edition_date": "02 March 2023",
-      "edition_date_read_from": "The document's own cover, which prints 'MISB ST 0601.19' and '02 March 2023'. The revision history on PDF page 3 gives the same date as '03/02/2023' in MM/DD/YYYY. The PDF states one, so the PDF governs this field.",
-      "title_page_identity_verbatim": "'STANDARD', 'UAS Datalink Local Set', 'MISB ST 0601.19', '02 March 2023', 'Motion Imagery Standards Board'",
-      "local_path": "fixtures/klv/spec/ST0601.19.pdf",
-      "bytes": 4700978,
-      "sha256": "e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1",
-      "pages": 226,
+    "st_0601_14": {
+      "document": "MISB ST 0601.14, UAS Datalink Local Set",
+      "edition": "0601.14",
+      "edition_as_the_profile_cites_it": "'MISB ST 0601.14 UAS Datalink Local Set, Nov 2018' - MISP-2019.1 Appendix B reference [53], verbatim, and the 2019.1 Change Log agrees. The citation carries NO minor-version letter, which is the whole subject of the_copy_is_the_a_minor_revision below.",
+      "source": "https://nsgreg.nga.mil/doc/view?i=4739",
+      "registry_document_number": 4739,
+      "registry_page_as_reported": "Read from the document's page by the operator and recorded as reported, on the same footing as the two registry pages already in this record - see provenance_ruling.the_registry_pages_were_not_machine_verified_and_why, which still holds: nsgreg.nga.mil answers an automated GET with a CAPTCHA interstitial. Document ID 4739. Edition 'Version 1.14'. Edition date 01 November 2018. Status SUPERSEDED, 6 Jun 2019. Superseded by document 4803 (ST 0601.15). Supersedes document 4679 (ST 0601.13). Every fact this round ASSERTS about the copy - hash, byte count, page count, cover identity, cover date, revision history, tag table - was taken from the bytes on disk instead.",
+      "superseded_is_not_withdrawn": "EXPECTED AND ACCEPTABLE, and recorded so that nobody re-opens it as a defect. The profile froze its references in November 2018 and the registry moved on: ST 0601.14 was superseded on 6 June 2019 by 0601.15 and has been superseded four more times since. A profile that pins a revision pins the document that revision names, and that document does not stop being the pinned one when a later revision is registered - it stops being the CURRENT one. This is why parks.shared_exit_condition says 'obtain the EXACT version the delegation table pins (not the current one)'. Superseded entries stay registered and stay downloadable, which is what made this round possible; a WITHDRAWN entry would be a different fact and this one is not withdrawn.",
+      "the_copy_is_the_a_minor_revision": "THE KLV 9 HAZARD ARRIVING AT FETCH TIME RATHER THAN BEING FOUND LATER, and the reason this field exists before any tag was read. The registry serves this edition as ST0601.14a.pdf - a single-letter Minor Version that the citation 'MISB ST 0601.14' does not carry and cannot carry. THE FILENAME IS KEPT AS THE REGISTRY SERVES IT, deliberately and not as an oversight: the FILENAME states the copy, the `edition` field states the edition the profile cites ('0601.14'), and the SHA-256 states the identity. Renaming the file to ST0601.14.pdf would make the directory listing agree with the citation by destroying the one piece of evidence that they differ. Cross-reference ambiguity_register KLV 9, which is the same coming-apart discovered in ST 0601.19 by a check nobody asked for, and KLV 10, which is this one.",
+      "what_the_document_itself_says_about_the_a": "READ FROM THE PDF's OWN COVER AND REVISION HISTORY rather than inferred from the filename. (1) The cover prints 'MISB ST 0601.14a' - the letter is on the document, not only on the file. (2) Section 2 states the convention: 'In the event of a MISB document correction, the corrected document will have a single letter Minor Version appended to the Major Version number per the MISB Document Development Process [1]. For example, corrections to ST 0001.2, which has a Major Version of 2, result in a new version titled ST 0001.2a, which includes a Minor Version of \"a\". The MISB will not update the referring document (this document) with the Minor Version number change. When acquiring any MISB reference listed below from an NGA repository the latest version may be either a Major or Minor Version.' So the profile's failure to cite the 'a' is not an error in the profile - it is the convention working as written. (3) The revision history table on PDF page 3 says what the 'a' CHANGED, in one line: 'ST 0601.14a | 05/1/2020 | Corrected table headers in Item 47 - Generic Flags.' One corrected table header, in one item, in a 218-page document.",
+      "edition_date": "1 May 2020",
+      "edition_date_read_from": "The document's own cover, which prints 'MISB ST 0601.14a' and '1 May 2020', and the footer of all 218 pages, which repeats '1 May 2020'. Per provenance_ruling.what_the_edition_date_field_means - the date the DOCUMENT states for itself, authoritative for this field where the document states one - this field is 1 May 2020. IT IS THE DATE OF THE 'a' MINOR REVISION AND NOT OF EDITION .14, and the next field is why that is a distinction and not a contradiction.",
+      "the_two_dates_are_two_different_facts_and_both_are_recorded": "NOT A CONTRADICTION, and it was checked as one before it was recorded as a distinction. The registry reports edition date 01 November 2018 for Version 1.14; the cover of this copy says 1 May 2020. Those date different things, and THE DOCUMENT ITSELF SAYS SO: its revision history table opens with the row 'ST 0601.14 | 11/1/2018' - 1 November 2018, in the MM/D/YYYY form this publisher uses throughout - and then adds 'ST 0601.14a | 05/1/2020'. So the document, the registry page and MISP-2019.1 Appendix B reference [53]'s 'Nov 2018' all agree on when edition .14 was issued, and the cover date belongs to the correction. Had the document's own revision history NOT carried the 11/1/2018 row, this round would have stopped and reported a contradiction between the fetched document and the registry facts it was briefed with; it carries it, so this is a distinction.",
+      "title_page_identity_verbatim": "'MISB ST 0601.14a', 'STANDARD', '1 May 2020', 'UAS Datalink Local Set'",
+      "local_path": "fixtures/klv/spec/ST0601.14a.pdf",
+      "bytes": 3969201,
+      "sha256": "3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4",
+      "pages": 218,
       "retrieved_at": "2026-08-26",
-      "why_it_is_held_and_still_does_not_close_park_1": "This is NOT the edition MISP-2019.1 pins. The profile pins 0601.14 and this is 0601.19, five major revisions later. Held, pinned, and ruled unusable for the row set - see reconciliation_ruling.ruling_st_0601 below.",
-      "the_copy_is_not_the_pristine_02_march_2023_edition": "THE FINDING THAT VINDICATES HASH-AS-COPY, and it was not looked for. The revision history table on PDF page 3 carries three rows: 'ST 0601.19 03/02/2023' with the .19 changes, then two further rows dated 05/10/2024 ('Changed Figure 17 corner 4 to show the correct tag values') and 06/11/2025 ('Resolved item 42 ambiguity (i.e., MSL or HAE)'). The cover still reads 'MISB ST 0601.19' and '02 March 2023' with no minor-version letter, and the file's own /CreationDate is D:20250702122555-05'00'. So this copy is ST 0601.19 as amended through 11 June 2025, generated 2 July 2025, wearing a 2023 cover. The document's own section 2 states the rule this copy does not follow: a corrected document 'will have a single letter Minor Version appended to the Major Version number', as in ST 0001.2a. Recorded as ambiguity KLV 9.",
+      "this_is_the_edition_the_profile_pins": "YES, and it is what re-opened Act 3. MISP-2019.1 Appendix B reference [53] reads 'MISB ST 0601.14 UAS Datalink Local Set, Nov 2018'; this document's revision history dates edition .14 to 11/1/2018 and its cover carries the .14 major version. The minor-version letter does not change which edition this is - section 2 says a Minor Version is a CORRECTION to the Major Version and that referring documents are not updated for it - so this copy is the 0601.14 the profile pins, corrected once. See reconciliation_ruling.ruling_st_0601.",
+      "the_copy_is_not_the_pristine_1_may_2020_edition": "THE SAME FINDING AS ST 0601.19's, ONE TURN WORSE, and again it was not looked for. The revision history table on PDF page 3 carries a THIRD row, dated 08/19/2021, with four editorial bullets - normalising the item 12 example, clarifying Offset Corner items 26 thru 33, fixing the item 131 example to use 7 bytes, and 'Miscellaneous editorial changes'. ITS REVISION CELL IS EMPTY. That was checked positionally and not read off a text dump: in the page's own drawn grid the Revision column runs from x=75.4 to x=98.4, the '.14a' row places 'ST 0601.1'/'4'/'a' at x=75.9-129.2, and the 08/19/2021 row places nothing in that column at all - its leftmost item is the date at x=146.2. The file's own /CreationDate is D:20211217145743-05'00', 17 December 2021, after that row. So this copy is ST 0601.14a as further amended through 19 August 2021, generated 17 December 2021, wearing a 1 May 2020 cover and a version number that names neither amendment. ST 0601.19's cover at least kept a stable edition number over its two undeclared amendments; here the amendment is not even given a letter, so there is no string ANY citation could use to name it. The SHA-256 is. Recorded as ambiguity KLV 10.",
       "verification_performed": [
-        "SHA-256 computed from the copy at the local path above rather than taken as given: e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1.",
-        "Byte count computed from the local copy: 4700978.",
-        "Page count counted under the ruled method - page objects reachable from the catalog's /Pages tree, walked in /Kids order: 226. The retired raw-object scan agrees on this file, so the count is method-independent here.",
-        "Cover read and confirmed to state 'MISB ST 0601.19', 'UAS Datalink Local Set', 'STANDARD' and '02 March 2023'.",
-        "Revision history read in full: three rows, the last two postdating the cover date.",
-        "Requirement IDs enumerated across all 226 pages and grouped by the version each names: 0601.8 (19), 0601.9 (2), 0601.10 (1), 0601.13 (39), 0601.14 (5), 0601.15 (1), 0601.17 (4), 0601.19 (7). This is the method the delta ruling rests on and it is reproducible from the document alone.",
-        "Searched for a minor-version self-identification ('ST 0601.19a' and the like): zero occurrences in 226 pages."
+        "SHA-256 computed from the copy at the local path above rather than taken as given: 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4.",
+        "Byte count computed from the local copy: 3969201.",
+        "Page count counted under the ruled method - page objects reachable from the catalog's /Pages tree, walked in /Kids order: 218. The retired raw-object scan returns 218 on this file too, and the file's own top /Pages node states /Count 218, so the count is method-independent here and does not rest on the ruling being right.",
+        "Cover read and confirmed to state 'MISB ST 0601.14a', 'STANDARD', 'UAS Datalink Local Set' and '1 May 2020'.",
+        "Revision history read in full: three rows - 'ST 0601.14 11/1/2018', 'ST 0601.14a 05/1/2020', and one dated 08/19/2021 whose Revision cell is empty. The empty cell was confirmed from the page's drawn column geometry, not from a text dump.",
+        "Requirement IDs enumerated across all 218 pages and grouped by the version each names: 0601.8 (19 distinct), 0601.9 (2), 0601.10 (1), 0601.13 (8), 0601.14 (5). The 35 distinct IDs run 01 through 35 with NO gaps, which is the positive control on the census: a requirement the extraction had dropped would show as a hole in the numbering. This corroborates the prior round's bound from the other side - ruling_st_0601.what_the_document_does_let_us_bound read .19's requirement census and concluded the post-.14 delta begins at 36, and .14's own census stops at 35.",
+        "Searched for a further minor-version self-identification ('ST 0601.14b' and the like): zero occurrences in 218 pages. 'ST 0601.14a' occurs 219 times - once on the cover and once in the running header of each of the other 217 pages plus the revision-history row.",
+        "The same walker and the same text extractor were re-run against ST 0601.19 and reproduced the requirement census the prior round recorded for it exactly - 0601.8 (19), .9 (2), .10 (1), .13 (39), .14 (5), .15 (1), .17 (4), .19 (7), as occurrence counts. A tool that agrees with an independent earlier reading of a different document is a tool whose output here can be relied on."
       ]
     },
     "st_0102_12": {
@@ -137,6 +145,31 @@
         "Its own reference list read: it cites 'MISB ST 0107.2 Bit and Byte Order for Metadata in Motion Imagery Files and Streams, Feb 2014', which is NOT the 0107.3 MISP-2019.1 pins - recorded because it is a delegation of this document's own and it points at a park (4) at a different revision than the profile does."
       ]
     },
+    "st_0601_19": {
+      "document": "MISB ST 0601.19, UAS Datalink Local Set",
+      "edition": "0601.19",
+      "source": "https://nsgreg.nga.mil/doc/view?i=5471",
+      "edition_date": "02 March 2023",
+      "edition_date_read_from": "The document's own cover, which prints 'MISB ST 0601.19' and '02 March 2023'. The revision history on PDF page 3 gives the same date as '03/02/2023' in MM/DD/YYYY. The PDF states one, so the PDF governs this field.",
+      "title_page_identity_verbatim": "'STANDARD', 'UAS Datalink Local Set', 'MISB ST 0601.19', '02 March 2023', 'Motion Imagery Standards Board'",
+      "local_path": "fixtures/klv/spec/ST0601.19.pdf",
+      "bytes": 4700978,
+      "sha256": "e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1",
+      "pages": 226,
+      "retrieved_at": "2026-08-26",
+      "why_it_is_held_and_still_does_not_close_park_1": "SUPERSEDED BY THE 2026-08-26 RESOLUTION, and kept here as the field's own history rather than overwritten. It used to read that this is not the edition MISP-2019.1 pins and that the round stopped on it. Both halves are still true. What changed is that ST 0601.14 was then obtained and pinned at st_0601_14 above, so the stop is over and park 1 is closed. See why_it_is_still_held_now_that_0601_14_is_in_hand.",
+      "the_copy_is_not_the_pristine_02_march_2023_edition": "THE FINDING THAT VINDICATES HASH-AS-COPY, and it was not looked for. The revision history table on PDF page 3 carries three rows: 'ST 0601.19 03/02/2023' with the .19 changes, then two further rows dated 05/10/2024 ('Changed Figure 17 corner 4 to show the correct tag values') and 06/11/2025 ('Resolved item 42 ambiguity (i.e., MSL or HAE)'). The cover still reads 'MISB ST 0601.19' and '02 March 2023' with no minor-version letter, and the file's own /CreationDate is D:20250702122555-05'00'. So this copy is ST 0601.19 as amended through 11 June 2025, generated 2 July 2025, wearing a 2023 cover. The document's own section 2 states the rule this copy does not follow: a corrected document 'will have a single letter Minor Version appended to the Major Version number', as in ST 0001.2a. Recorded as ambiguity KLV 9.",
+      "verification_performed": [
+        "SHA-256 computed from the copy at the local path above rather than taken as given: e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1.",
+        "Byte count computed from the local copy: 4700978.",
+        "Page count counted under the ruled method - page objects reachable from the catalog's /Pages tree, walked in /Kids order: 226. The retired raw-object scan agrees on this file, so the count is method-independent here.",
+        "Cover read and confirmed to state 'MISB ST 0601.19', 'UAS Datalink Local Set', 'STANDARD' and '02 March 2023'.",
+        "Revision history read in full: three rows, the last two postdating the cover date.",
+        "Requirement IDs enumerated across all 226 pages and grouped by the version each names: 0601.8 (19), 0601.9 (2), 0601.10 (1), 0601.13 (39), 0601.14 (5), 0601.15 (1), 0601.17 (4), 0601.19 (7). This is the method the delta ruling rests on and it is reproducible from the document alone.",
+        "Searched for a minor-version self-identification ('ST 0601.19a' and the like): zero occurrences in 226 pages."
+      ],
+      "why_it_is_still_held_now_that_0601_14_is_in_hand": "RULED: ST 0601.14 - THIS COPY, THIS HASH - IS THE AUTHORITATIVE TAG TABLE FOR THE ROW SET. ST 0601.19 REMAINS PINNED AS CONTEXT ONLY and is never a source of tag semantics for this row set: it is useful for the item-42 divergence note and for knowing where the standard went, and for nothing else. It is retained rather than deleted for two reasons that are worth more than the disk it costs. FIRST, it is the evidence for the divergence note: item 42's meaning was resolved in .19 and is unstated in .14, and a reader who wants to check that this row set did NOT import the later resolution needs both documents to check it against. SECOND, it is what makes the post-.14 delta computable at all, and that delta is now measured rather than estimated - see tag_table_st_0601_14.what_changed_between_14_and_19. Neither use is a use of .19 as a dictionary, which is the line this ruling draws."
+    },
     "how_the_page_counts_were_produced": "Under the ruled method, cited in page_count_method below and in FORMAT_COVERAGE.md's 'The page count, ruled from what a reader does with the number'. The walker used here was validated before either number was trusted: run against the eight pins in this repository that are on disk and carry a recorded page count, it reproduced seven exactly. The eighth is recorded elsewhere in this repository and is NOT a defect in the walker - see page_count_method.a_disagreement_found_outside_this_row_set."
   },
   "reconciliation_ruling": {
@@ -155,14 +188,14 @@
       "ruling": "MATCH. The question is closed for this document.",
       "grounds": "MISP-2019.1 Appendix B reference [55] pins 0102.12; the copy obtained is 0102.12, its cover states 22 June 2017 and its revision history's single row states the same date. The profile pins this document and this is the document it pins.",
       "what_that_closes": "The first half of park 2's exit condition: the EXACT version is obtained and pinned by SHA-256, byte count and page count with its title-page identity read.",
-      "what_it_does_not_close": "The second half: 'then write the row set that document supports'. That is Act 3, and Act 3 did not run. Park 2 therefore stays in the park table at twelve, and the mapping rows that cite it stay `not yet`. The park is not retired by this commit and the reason is not bookkeeping: the row set is the deliverable and it does not exist yet.",
+      "what_it_does_not_close": "The second half: 'then write the row set that document supports'. That is Act 3, and Act 3 did not run. Park 2 therefore stays in the park table at twelve, and the mapping rows that cite it stay `not yet`. The park is not retired by this commit and the reason is not bookkeeping: the row set is the deliverable and it does not exist yet. UNCHANGED BY THE 2026-08-26 RESOLUTION: obtaining ST 0601.14 closed park 1 and did nothing for park 2. ST 0102.12 is held and its own row set is still unwritten, so park 2 stays open on the second half of shared_exit_condition exactly as before - which is the precedent this round applied to itself when deciding that park 1 needed the row set and not just the document.",
       "and_it_cannot_be_written_alone_anyway": "Even with 0102.12 in hand, a security local set cannot be READ. Its octets are KLV, and KLV encoding is SMPTE ST 336:2017 (park 8, the paywalled one) and KLV formatting in motion imagery is ST 0107.3 (park 4). This record's own smallest_useful_phase_2 states it: 'Parks 4, 5 and 8 are enough to READ a stream at all.' None of those three is held. So the ST 0102 match is real progress on identity and not yet progress on capability."
     },
     "ruling_st_0601": {
       "cited_edition": "0601.14, Nov 2018",
       "edition_on_disk": "0601.19, 02 March 2023, amended through 11 June 2025",
       "gap": "Five major revisions and roughly four years and four months.",
-      "ruling": "MISMATCH, and option (b): THE CITED EDITION IS REQUIRED. The round stops here for this document. No tag table is transcribed from 0601.19.",
+      "ruling": "MISMATCH, and option (b): THE CITED EDITION IS REQUIRED. RESOLVED 2026-08-26 - the cited edition was fetched. See resolution_2026_08_26 below, which is the operative ruling now; the fields above it are the stop that produced the fetch and are kept because a ruling whose grounds are deleted once it is discharged cannot be audited.",
       "grounds": [
         "THE REPOSITORY HAS ALREADY RULED THIS, and consistency is not optional. This record's parks.shared_exit_condition, written in an earlier round and covering parks 1-7 and 9-12, reads: 'obtain the EXACT version the delegation table pins (not \"the current one\" - the profile pins a revision and a later revision is a different document)'. ST 0601 is park 1. Reading 0601.19 against the profile would overturn a standing ruling in passing, which is the failure mode this record's correction_2026_08_25 field exists to record an instance of.",
         "FORMAT_COVERAGE.md's park 1 row already states the hazard in its own words: 'Version .14 specifically: ST 0601 has revisions on both sides of it, and a tag added in a later revision decoded against an earlier one is a plausible number in the wrong field.' That is not a new argument produced to justify a stop; it is the argument the park was opened with.",
@@ -177,7 +210,16 @@
         "the_correction_that_matters_here": "This round was briefed that the edition to fetch would be ST 0601.18, document 5453, on the expectation that MISP-2019.1 cites .18. IT DOES NOT. Appendix B reference [53] reads 'MISB ST 0601.14 UAS Datalink Local Set, Nov 2018', verbatim, and the Change Log agrees. So 5453 is the document number of an edition this profile does not cite, and fetching it would leave park 1 open while looking closed - the worst available outcome. The number for .14 must be looked up on the registry rather than inferred, and it is not recorded here because this round could not read the registry.",
         "route": "Superseded editions stay registered, so .14 is expected to be obtainable. The route is this record's parks.shared_reopen_route, quoted from the profile's own FORWARD: https://nsgreg.nga.mil/misb.jsp. A person with a browser is not blocked by the CAPTCHA that stopped this round's automated read."
       },
-      "what_happens_to_the_copy_on_disk": "It stays. It is pinned above, it is untracked, and it is the evidence for this ruling - the requirement-ID census, the revision history and the absent version column are all read from it. A later round holding .14 will also want .19 to diff against."
+      "what_happens_to_the_copy_on_disk": "It stays, and its job has changed. It was the evidence for the stop; it is now the evidence for the divergence note and the source of the measured .14-to-.19 delta. ST 0601.14 - THIS COPY, THIS HASH - IS THE AUTHORITATIVE TAG TABLE FOR THE ROW SET. ST 0601.19 REMAINS PINNED AS CONTEXT ONLY and is never a source of tag semantics for this row set: it is useful for the item-42 divergence note and for knowing where the standard went, and for nothing else.",
+      "resolution_2026_08_26": {
+        "what_was_fetched": "MISB ST 0601.14, served by the NSG Registry as ST0601.14a.pdf from document 4739, pinned in full at delegated_specifications_held.st_0601_14. SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, 3 969 201 bytes, 218 pages.",
+        "the_registry_number_the_prior_round_refused_to_guess": "It is 4739. what_must_be_fetched_to_reopen.registry_document_number said 'NOT KNOWN TO THIS ROUND, and deliberately not guessed' and recorded that the round had been briefed with 5453 for ST 0601.18, an edition the profile does not cite. The refusal to guess was correct: 4739 is not 5453, and a guessed number would have fetched the wrong document while looking like it had closed the park.",
+        "ruling": "ST 0601.14 - THIS COPY, THIS HASH - IS THE AUTHORITATIVE TAG TABLE FOR THE ROW SET. ST 0601.19 REMAINS PINNED AS CONTEXT ONLY and is never a source of tag semantics for this row set: it is useful for the item-42 divergence note and for knowing where the standard went, and for nothing else.",
+        "why_the_a_does_not_reopen_the_mismatch": "Because a Minor Version is a correction to a Major Version and not a different edition, on the document's own statement of the rule quoted at delegated_specifications_held.st_0601_14.what_the_document_itself_says_about_the_a, and because the one thing the 'a' changed is recorded in one line of the revision history: 'Corrected table headers in Item 47 - Generic Flags.' A reader who wants the pristine November 2018 .14 has a real and stated difference to go and find; a reader who wants the tag table has it, corrected.",
+        "what_this_closes": "Park 1. Both halves of parks.shared_exit_condition are discharged: the exact version the delegation table pins is obtained and pinned by SHA-256, byte count and page count with its title-page identity read, AND the row set that document supports is written - 141 rows, at tag_table_st_0601_14 here and in FORMAT_COVERAGE.md. See parks.what_this_round_changed.",
+        "what_this_does_NOT_close": "Everything the row set is still blocked on, and the list is not short. Parks 4 and 8 (ST 0107.3 and SMPTE ST 336:2017) still govern how an item is FOUND in the octets, so not one of the 141 rows can be read from a stream yet. Park 3 (ST 0603.5) still owns the epoch, so item 2 is an integer and not an instant. Park 5 (ST 1201.3) still owns the IMAPB ranges. The tag table says what each item MEANS and what its length and format are; it does not say where the item begins.",
+        "the_prior_ruling_is_not_overturned": "It is DISCHARGED, which is a different thing and the distinction matters here. The prior round ruled that .19 may not substitute for .14 and stopped. Nothing about that ruling was wrong and this round did not read around it - it did the thing the ruling named as the way out. correction_2026_08_25 records what happens when a standing ruling is overturned in passing; this is the other case, and the two should not look alike in the record."
+      }
     },
     "ruling_stanag_4609_edition_5": {
       "question": "What does the wrapper itself cite for ST 0601 and ST 0102, and does it agree with MISP-2019.1?",
@@ -188,15 +230,1597 @@
       "the_one_edition_disagreement_the_wrapper_does_have": "Not about ST 0601 or ST 0102, and already recorded as ambiguity KLV 3: the wrapper is Edition 5 and MISP-2019.1's Appendix B reference [1] cites 'NATO STANAG 4609: NATO Digital Motion Imagery Standard, Edition 4, 19 Dec 2016' - the profile refers to the edition before the one that promulgates it. Re-read and confirmed verbatim this round."
     },
     "outcome": {
-      "act_3_did_not_run": true,
-      "what_that_means": "No tag table was transcribed, for either document. Every mapping row in FORMAT_COVERAGE.md's STANAG 4609 / MISP-2019.1 section still says `not yet`, no adapter code exists, no fixture was generated and no UUID-v8/f1c7 namespace was used. The status gate held.",
-      "why_the_stop_is_the_correct_outcome_and_not_a_failure": "The round's first act was provenance and reconciliation precisely so that this could be decided before any tag was written down. It decided against proceeding on one document of two, on a rule this repository had already adopted, with the blocking condition documented and the reopen route named. A round that had transcribed 0601.19's tag table would have produced a table that looks authoritative, cites a real document, and is not the table the profile points at.",
-      "what_this_round_did_advance": [
-        "ST 0102.12 - the exact edition MISP-2019.1 pins - is obtained, pinned and identity-checked. Park 2's first half is discharged.",
-        "ST 0601's blocker is now specific: not 'ST 0601 is not held' but 'ST 0601.14 is not held, .19 is, and .19 may not substitute'.",
-        "The briefed premise that MISP-2019.1 cites 0601.18 is corrected against the document.",
-        "Ambiguity KLV 9 is opened: a copy whose cover edition and cover date do not describe its contents, found by a check nobody asked for."
+      "act_3_did_not_run": false,
+      "act_3_ran_on": "2026-08-26, in the round that fetched ST 0601.14.",
+      "what_that_means": "The reconciliation table is closed on both documents. ST 0102 was MATCH; ST 0601 was MISMATCH -> option (b) -> fetched -> resolved. The tag table is transcribed from ST 0601.14a and nothing in it is read from ST 0601.19.",
+      "the_stop_was_the_correct_outcome_and_the_fetch_is_what_vindicates_it": "The prior round's stop is now checkable rather than merely defensible, and it checks out. It ruled that option (a) - bounding the item delta from .19 alone - was not completable, because .19 has no column stating which revision introduced an item and no revision-history rows for .15 through .18. With both documents in hand the delta is now MEASURED: two items added, one renamed, one item's meaning changed in a way that is invisible in the summary table. Three of those four could not have been derived from .19 alone, and the fourth - the item-42 change - was the one .19's revision history did announce, which is exactly the asymmetry the stop was reasoning from. See tag_table_st_0601_14.what_changed_between_14_and_19.",
+      "what_this_round_advanced": [
+        "ST 0601.14 obtained, pinned and read: 218 pages, cover identity, revision history, requirement census, and Table 1 transcribed in full.",
+        "Park 1 closed - the first park in this section to close, and the largest.",
+        "The row set gained 141 rows, every one of them `not yet`.",
+        "Two new ambiguity register entries: KLV 10, and KLV 9's entry finally written into FORMAT_COVERAGE.md where it was already being cited."
       ]
+    }
+  },
+  "tag_table_st_0601_14": {
+    "what_this_is": "MISB ST 0601.14's Table 1, 'UAS Datalink Local Set', transcribed in full. This is the field dictionary of the airborne UAS collection - the thing MISP-2019.1 SS 4.4.4.1 delegates and names without describing, and the reason park 1 was the largest park in this section. The Tag, Name, Units, Format, Len and CDM-field columns of FORMAT_COVERAGE.md's ST 0601 row set are generated from `items` below, so those cannot disagree; that row set's Notes column additionally carries this round's per-item findings, which are prose and live there.",
+    "source": "ST 0601.14a, Table 1, PDF pages 13-17. The copy pinned at delegated_specifications_held.st_0601_14.",
+    "the_edition_this_is_read_from": "ST 0601.14 and NOT ST 0601.19. ST 0601.14 - this copy, this hash - is the authoritative tag table for this row set; ST 0601.19 remains pinned as context only and is never a source of tag semantics here. Ruled at reconciliation_ruling.ruling_st_0601.resolution_2026_08_26.",
+    "item_count": 141,
+    "how_it_was_transcribed": "BY THE TABLE'S OWN DRAWN GRID, not by reading lines off a text dump, and the difference is not cosmetic. Table 1's Description cells wrap to two and three lines and are vertically CENTRED in their row, so a description line frequently sits above the line carrying its own Tag number and below the previous row's. A reader-order text extraction therefore attaches the tail of item 1's description to item 2 - which it did, on the first attempt, silently and plausibly. The transcription instead reads the page's vector rectangles: the column boundaries are the table's own vertical rules, at x = 75.4, 98.4, 217.3, 243.2, 274.2, 292.2, 317.4, 339.0 and 536.4 on every one of the five pages, and the row boundaries are the horizontal cell borders drawn in the Tag column. Each text item is then assigned to the cell its own (x, y) falls in. A cell is what the document draws, so that is what is read.",
+    "cross_check_that_makes_the_transcription_checkable": "THE DOCUMENT STATES THE SAME MAPPING TWICE AND BOTH WERE READ. Table 2, 'Tags Sorted by Name' (PDF pages 17-18), is the same 141 items in alphabetical order across three name/tag column pairs - a completely different grid, extracted by the same method and independently. The two agree on all 141 tag-to-name pairs: no tag in one and not the other, and no name disagreement. Additionally the tag numbers run 1 through 141 with no gap and no duplicate, which is the positive control a summary table can offer about itself.",
+    "columns_as_the_document_defines_them": "Tag, Name, Units, Format, Len, SDCC, MUL, Description - and the document defines four of them in prose immediately above the table. Units: 'None' means the value is not a measurement, 'Set' or 'Pack' means the value is a collection, 'All other Units are SI enumerations'. Format: 'the item's KLV format for the Value'. Length: 'the nominal length of the value. This may be a required length or variable length' - which is what 'V' means in the length column here. SDCC: whether the item may appear in a Standard Deviation Correlation Coefficient Floating Length Pack, whose own layout is MISB ST 1010.3's. MUL: whether the item may have multiple instances in one Local Set instance.",
+    "the_one_note_the_document_attaches_to_the_table": "Quoted because it is a trap and the document says so itself: 'Several Local Set items have the same UL Key but differ in its Type. For example, Tag 22-Target Width, uses a Type of uint16, and Tag 96-Target Width Extended, uses a Type of IMAPB. The Key for both, which is the same, has a MISB ST 0807 dictionary data type of \"float\". This is an allowed practice, where this document specifies (or overrides) the metadata item's format within the dictionary.' So a decoder keyed on the 16-byte Universal Label alone cannot tell tag 22 from tag 96, and the LOCAL SET TAG is the discriminator. Recorded here rather than in a row, because it is a property of the table.",
+    "what_changed_between_14_and_19": {
+      "what_this_is": "MEASURED, from both documents, now that both are in hand - and recorded as a NOTE and never as a source. Not one value in the 141 rows above comes from .19. This node exists so that a reader can see exactly how large the hazard park 1 was opened on turned out to be, and so that the next round to move to a later edition knows what it is moving.",
+      "items_added_in_19": "Two: 142 View Domain, and 143 Metadata Substream ID Pack.",
+      "items_removed_in_19": "None. All 141 items of .14 survive into .19 at the same tag numbers.",
+      "items_renamed": "One: tag 72, 'Event Start Time - UTC' in .14, 'Event Start Time' in .19.",
+      "structural_columns": "IDENTICAL on all 141 shared items - Units, Format, Len, SDCC and MUL agree everywhere. This is the reassuring half and it should be read carefully: it means the wire FORM of every .14 item is unchanged in .19, so a .19 stream decoded against this table would not produce a wrong-length read on any shared item. It does not mean the meanings are unchanged.",
+      "descriptions_changed_in_table_1": "Eight of 141, and seven are editorial - a comma after 'e.g.', 'Galaleo' corrected to 'Galileo', 'takeoff' to 'take-off', 'Tag' to 'Item' in the cross-references at 137 and 139, and two shortened phrasings at 45 and 126. The eighth, item 136 Leap Seconds, is a real clarification: '.14: Number of leap seconds to adjust Precision Time Stamp (Tag 2) to UTC' against '.19: Number of leap seconds since MISP Epoch to use when converting Precision Time Stamp (Item 2) to UTC'.",
+      "AND THE ONE THAT MATTERS IS NOT IN THAT LIST": "ITEM 42's SUMMARY ROW IS BYTE-FOR-BYTE IDENTICAL IN .14 AND .19. Both read 'Calculated target elevation'. The MSL-versus-HAE resolution that .19's revision history announces - 'Resolved item 42 ambiguity (i.e., MSL or HAE)', 06/11/2025 - lives ENTIRELY in the per-item detail section SS 8.42, where .19 adds 'conditionally either MSL or HAE' to the description line, a bullet reading 'Depending on items 25 and/or 78, the measurement base is either MSL or HAE', and three paragraphs of rules keyed on whether items 25 and 78 are present. THIS IS THE FINDING OF THE COMPARISON: a tag table transcribed from Table 1 alone is blind to the single documented semantic change in the whole window. Table 1 is a summary and the per-item sections are the specification, and this round can only say that because it read both.",
+      "what_the_row_set_does_with_it": "Records .14's semantics as normative and the divergence as a note, which is what item 42's row does. .14's SS 8.42 states a range, a mapping, a resolution and a recommendation, and states NO datum. So the .14 semantics ARE 'elevation, datum unstated', and that is what the row carries. Importing .19's resolution would be reading the row set against a document this ruling excludes, and it would be doing so at the one item where the two documents actually differ."
+    },
+    "items": [
+      {
+        "tag": 1,
+        "name": "Checksum",
+        "units": "None",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Checksum used to detect errors within a UAS Datalink LS packet",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 2,
+        "name": "Precision Time Stamp",
+        "units": "µs",
+        "format": "uint64",
+        "length": "8",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Timestamp for all metadata in this Local Set; used to coordinate with Motion Imagery",
+        "cdm_field": "Event.observed_at, Entity.valid_from"
+      },
+      {
+        "tag": 3,
+        "name": "Mission ID",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Descriptive mission identifier to distinguish event or sortie",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 4,
+        "name": "Platform Tail Number",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Identifier of platform as posted",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 5,
+        "name": "Platform Heading Angle",
+        "units": "°",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Aircraft heading angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 6,
+        "name": "Platform Pitch Angle",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Aircraft pitch angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 7,
+        "name": "Platform Roll Angle",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Platform roll angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 8,
+        "name": "Platform True Airspeed",
+        "units": "m/s",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "True airspeed (TAS) of platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 9,
+        "name": "Platform Indicated Airspeed",
+        "units": "m/s",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Indicated airspeed (IAS) of platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 10,
+        "name": "Platform Designation",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Model name for the platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 11,
+        "name": "Image Source Sensor",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Name of currently active sensor",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 12,
+        "name": "Image Coordinate System",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Name of the image coordinate system used",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 13,
+        "name": "Sensor Latitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Sensor latitude",
+        "cdm_field": "Entity.position.lat"
+      },
+      {
+        "tag": 14,
+        "name": "Sensor Longitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Sensor longitude",
+        "cdm_field": "Entity.position.lon"
+      },
+      {
+        "tag": 15,
+        "name": "Sensor True Altitude",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Altitude of sensor as measured from Mean Sea Level (MSL)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 16,
+        "name": "Sensor Horizontal Field of View",
+        "units": "°",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Horizontal field of view of selected imaging sensor",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 17,
+        "name": "Sensor Vertical Field of View",
+        "units": "°",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Vertical field of view of selected imaging sensor",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 18,
+        "name": "Sensor Relative Azimuth Angle",
+        "units": "°",
+        "format": "uint32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Relative rotation angle of sensor to platform longitudinal axis",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 19,
+        "name": "Sensor Relative Elevation Angle",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Relative elevation angle of sensor to platform longitudinal-transverse plane",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 20,
+        "name": "Sensor Relative Roll Angle",
+        "units": "°",
+        "format": "uint32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Relative roll angle of sensor to aircraft platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 21,
+        "name": "Slant Range",
+        "units": "m",
+        "format": "uint32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Slant range in meters",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 22,
+        "name": "Target Width",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Target width within sensor field of view",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 23,
+        "name": "Frame Center Latitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Terrain latitude of frame center",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 24,
+        "name": "Frame Center Longitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Terrain longitude of frame center",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 25,
+        "name": "Frame Center Elevation",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Terrain elevation at frame center relative to Mean Sea Level (MSL)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 26,
+        "name": "Offset Corner Latitude Point 1",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude offset for upper left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 27,
+        "name": "Offset Corner Longitude Point 1",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude offset for upper left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 28,
+        "name": "Offset Corner Latitude Point 2",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude offset for upper right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 29,
+        "name": "Offset Corner Longitude Point 2",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude offset for upper right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 30,
+        "name": "Offset Corner Latitude Point 3",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude offset for lower right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 31,
+        "name": "Offset Corner Longitude Point 3",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude offset for lower right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 32,
+        "name": "Offset Corner Latitude Point 4",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude offset for lower left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 33,
+        "name": "Offset Corner Longitude Point 4",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude offset for lower left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 34,
+        "name": "Icing Detected",
+        "units": "code",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Flag for icing detected at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 35,
+        "name": "Wind Direction",
+        "units": "°",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Wind direction at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 36,
+        "name": "Wind Speed",
+        "units": "m/s",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Wind speed at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 37,
+        "name": "Static Pressure",
+        "units": "mbar",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Static pressure at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 38,
+        "name": "Density Altitude",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Density altitude at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 39,
+        "name": "Outside Air Temperature",
+        "units": "°C",
+        "format": "int8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Temperature outside of aircraft",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 40,
+        "name": "Target Location Latitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Calculated target latitude",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 41,
+        "name": "Target Location Longitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Calculated target longitude",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 42,
+        "name": "Target Location Elevation",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Calculated target elevation",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 43,
+        "name": "Target Track Gate Width",
+        "units": "Pixels",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Tracking gate width (x value) of tracked target within field of view",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 44,
+        "name": "Target Track Gate Height",
+        "units": "Pixels",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Tracking gate height (y value) of tracked target within field of view",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 45,
+        "name": "Target Error Estimate - CE90",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Circular error 90 (CE90) is the estimated error distance in the horizontal direction",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 46,
+        "name": "Target Error Estimate - LE90",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Lateral error 90 (LE90) is the estimated error distance in the vertical (or lateral) direction",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 47,
+        "name": "Generic Flag Data",
+        "units": "None",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Generic metadata flags",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 48,
+        "name": "Security Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 0102 local let Security Metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 49,
+        "name": "Differential Pressure",
+        "units": "mbar",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Differential pressure at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 50,
+        "name": "Platform Angle of Attack",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Platform attack angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 51,
+        "name": "Platform Vertical Speed",
+        "units": "m/s",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Vertical speed of the aircraft relative to zenith",
+        "cdm_field": "Entity.kinematics.climb_mps"
+      },
+      {
+        "tag": 52,
+        "name": "Platform Sideslip Angle",
+        "units": "°",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Angle between the platform longitudinal axis and relative wind",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 53,
+        "name": "Airfield Barometric Pressure",
+        "units": "mbar",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Local pressure at airfield of known height",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 54,
+        "name": "Airfield Elevation",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Elevation of airfield corresponding to Airfield Barometric Pressure",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 55,
+        "name": "Relative Humidity",
+        "units": "%",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Relative humidity at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 56,
+        "name": "Platform Ground Speed",
+        "units": "m/s",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Speed projected to the ground of an airborne platform passing overhead",
+        "cdm_field": "Entity.kinematics.speed_mps"
+      },
+      {
+        "tag": 57,
+        "name": "Ground Range",
+        "units": "m",
+        "format": "uint32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Horizontal distance from ground position of aircraft relative to nadir, and target of interest",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 58,
+        "name": "Platform Fuel Remaining",
+        "units": "kg",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Remaining fuel on airborne platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 59,
+        "name": "Platform Call Sign",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Call sign of platform or operating unit",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 60,
+        "name": "Weapon Load",
+        "units": "None",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Current weapons stored on aircraft",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 61,
+        "name": "Weapon Fired",
+        "units": "None",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Indication when a particular weapon is released",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 62,
+        "name": "Laser PRF Code",
+        "units": "None",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "A laser's Pulse Repetition Frequency (PRF) code used to mark a target",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 63,
+        "name": "Sensor Field of View Name",
+        "units": "None",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Sensor field of view names",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 64,
+        "name": "Platform Magnetic Heading",
+        "units": "°",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Aircraft magnetic heading angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 65,
+        "name": "UAS Datalink LS Version Number",
+        "units": "None",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Version number of the UAS Datalink LS document used to generate KLV metadata",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 66,
+        "name": "Deprecated",
+        "units": "N/A",
+        "format": "N/A",
+        "length": "N/A",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "This item has been deprecated.",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 67,
+        "name": "Alternate Platform Latitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Alternate platform latitude",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 68,
+        "name": "Alternate Platform Longitude",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Alternate platform longitude",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 69,
+        "name": "Alternate Platform Altitude",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Altitude of alternate platform as measured from Mean Sea Level (MSL)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 70,
+        "name": "Alternate Platform Name",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Name of alternate platform connected to UAS",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 71,
+        "name": "Alternate Platform Heading",
+        "units": "°",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Heading angle of alternate platform connected to UAS",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 72,
+        "name": "Event Start Time - UTC",
+        "units": "µs",
+        "format": "uint64",
+        "length": "8",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Start time of scene, project, event, mission, editing event, license, publication, etc.",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 73,
+        "name": "RVT Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 0806 RVT Local Set metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 74,
+        "name": "VMTI Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 0903 VMTI Local Set metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 75,
+        "name": "Sensor Ellipsoid Height",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Sensor ellipsoid height as measured from the reference WGS84 ellipsoid",
+        "cdm_field": "Entity.position.alt_m"
+      },
+      {
+        "tag": 76,
+        "name": "Alternate Platform Ellipsoid Height",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Alternate platform ellipsoid height as measured from the reference WGS84 Ellipsoid",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 77,
+        "name": "Operational Mode",
+        "units": "None",
+        "format": "uint8",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Indicates the mode of operations of the event portrayed in Motion Imagery",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 78,
+        "name": "Frame Center Height Above Ellipsoid",
+        "units": "m",
+        "format": "uint16",
+        "length": "2",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame center ellipsoid height as measured from the reference WGS84 ellipsoid",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 79,
+        "name": "Sensor North Velocity",
+        "units": "m/s",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Northing velocity of the sensor or platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 80,
+        "name": "Sensor East Velocity",
+        "units": "m/s",
+        "format": "int16",
+        "length": "2",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Easting velocity of the sensor or platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 81,
+        "name": "Image Horizon Pixel Pack",
+        "units": "None",
+        "format": "dlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Location of earth-sky horizon in the Imagery",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 82,
+        "name": "Corner Latitude Point 1 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude for upper left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 83,
+        "name": "Corner Longitude Point 1 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude for upper left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 84,
+        "name": "Corner Latitude Point 2 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude for upper right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 85,
+        "name": "Corner Longitude Point 2 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude for upper right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 86,
+        "name": "Corner Latitude Point 3 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude for lower right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 87,
+        "name": "Corner Longitude Point 3 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude for lower right corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 88,
+        "name": "Corner Latitude Point 4 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame latitude for lower left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 89,
+        "name": "Corner Longitude Point 4 (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Frame longitude for lower left corner",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 90,
+        "name": "Platform Pitch Angle (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Aircraft pitch angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 91,
+        "name": "Platform Roll Angle (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Platform roll angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 92,
+        "name": "Platform Angle of Attack (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Platform attack angle",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 93,
+        "name": "Platform Sideslip Angle (Full)",
+        "units": "°",
+        "format": "int32",
+        "length": "4",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Angle between the platform longitudinal axis and relative wind",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 94,
+        "name": "MIIS Core Identifier",
+        "units": "None",
+        "format": "byte",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 1204 MIIS Core Identifier binary value",
+        "cdm_field": "Entity.source_ids"
+      },
+      {
+        "tag": 95,
+        "name": "SAR Motion Imagery Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 1206 SAR Motion Imagery Metadata Local Set metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 96,
+        "name": "Target Width Extended",
+        "units": "m",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Target width within sensor field of view",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 97,
+        "name": "Range Image Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 1002 Range Imaging Local Set metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 98,
+        "name": "Geo-Registration Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 1601 Geo-Registration Local Set metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 99,
+        "name": "Composite Imaging Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "MISB ST 1602 Composite Imaging Local Set metadata items",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 100,
+        "name": "Segment Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "Y",
+        "description_verbatim": "MISB ST 1607 Segment Local Set metadata items, used to enable metadata sharing",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 101,
+        "name": "Amend Local Set",
+        "units": "None",
+        "format": "set",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "Y",
+        "description_verbatim": "MISB ST 1607 Amend Local Set metadata items, used to provide metadata corrections",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 102,
+        "name": "SDCC-FLP",
+        "units": "None",
+        "format": "flp",
+        "length": "V",
+        "sdcc": "N/A",
+        "multiples_allowed": "Y",
+        "description_verbatim": "MISB ST 1010 Floating Length Pack (FLP) metadata item, providing Standard Deviation and Cross Correlation (SDCC) metadata",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 103,
+        "name": "Density Altitude Extended",
+        "units": "m",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Density altitude above MSL at aircraft location",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 104,
+        "name": "Sensor Ellipsoid Height Extended",
+        "units": "m",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Sensor ellipsoid height extended as measured from the reference WGS84 ellipsoid",
+        "cdm_field": "Entity.position.alt_m"
+      },
+      {
+        "tag": 105,
+        "name": "Alternate Platform Ellipsoid Height Extended",
+        "units": "m",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Alternate platform ellipsoid height extended as measured from the reference WGS84 ellipsoid",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 106,
+        "name": "Stream Designator",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "A second designation given to a sortie",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 107,
+        "name": "Operational Base",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Name of the operational base hosting the platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 108,
+        "name": "Broadcast Source",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Name of the source, where the Motion Imagery is first broadcast",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 109,
+        "name": "Range To Recovery Location",
+        "units": "km",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Distance from current position to airframe recovery position",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 110,
+        "name": "Time Airborne",
+        "units": "s",
+        "format": "uint",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Number of seconds aircraft has been airborne",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 111,
+        "name": "Propulsion Unit Speed",
+        "units": "RPM",
+        "format": "uint",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "The speed the engine (or electric motor) is rotating at",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 112,
+        "name": "Platform Course Angle",
+        "units": "°",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Direction the aircraft is moving relative to True North",
+        "cdm_field": "Entity.kinematics.course_deg"
+      },
+      {
+        "tag": 113,
+        "name": "Altitude AGL",
+        "units": "m",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Above Ground Level (AGL) height above the ground/water",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 114,
+        "name": "Radar Altimeter",
+        "units": "m",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "Height above the ground/water as reported by a RADAR altimeter",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 115,
+        "name": "Control Command",
+        "units": "None",
+        "format": "dlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "Y",
+        "description_verbatim": "Record of command from GCS to Aircraft",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 116,
+        "name": "Control Command Verification List",
+        "units": "None",
+        "format": "dlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Acknowledgement of one or more control commands were received by the platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 117,
+        "name": "Sensor Azimuth Rate",
+        "units": "dps",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "The rate the sensors azimuth angle is changing",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 118,
+        "name": "Sensor Elevation Rate",
+        "units": "dps",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "The rate the sensors elevation angle is changing",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 119,
+        "name": "Sensor Roll Rate",
+        "units": "dps",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "Y",
+        "multiples_allowed": "N",
+        "description_verbatim": "The rate the sensors roll angle is changing",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 120,
+        "name": "On-board MI Storage Percent Full",
+        "units": "%",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Amount of on-board Motion Imagery storage used as a percentage of the total storage",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 121,
+        "name": "Active Wavelength List",
+        "units": "None",
+        "format": "dlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "List of wavelengths in Motion Imagery",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 122,
+        "name": "Country Codes",
+        "units": "None",
+        "format": "vlp",
+        "length": "N/A",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Country codes which are associated with the platform and its operation",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 123,
+        "name": "Number of NAVSATs in View",
+        "units": "count",
+        "format": "uint",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Count of navigation satellites in view of platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 124,
+        "name": "Positioning Method Source",
+        "units": "None",
+        "format": "uint",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Source of the navigation positioning information. (e.g. NAVSAT-GPS, NAVSAT-Galaleo, INS)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 125,
+        "name": "Platform Status",
+        "units": "None",
+        "format": "uint",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Enumeration of operational modes of the platform (e.g. in-route, RTB)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 126,
+        "name": "Sensor Control Mode",
+        "units": "None",
+        "format": "uint",
+        "length": "1",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Enumerated value for the current sensor control operational status",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 127,
+        "name": "Sensor Frame Rate Pack",
+        "units": "None",
+        "format": "dlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Values used to compute the frame rate of the Motion Imagery at the sensor",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 128,
+        "name": "Wavelengths List",
+        "units": "None",
+        "format": "vlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "List of wavelength bands provided by sensor(s)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 129,
+        "name": "Target ID",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Alpha-numeric identification of a target",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 130,
+        "name": "Airbase Locations",
+        "units": "None",
+        "format": "vlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Geographic location of the takeoff site and recovery site",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 131,
+        "name": "Take-off Time",
+        "units": "µs",
+        "format": "uint",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Time when aircraft became airborne",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 132,
+        "name": "Transmission Frequency",
+        "units": "MHz",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Radio frequency used to transmit the Motion Imagery",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 133,
+        "name": "On-board MI Storage Capacity",
+        "units": "GB",
+        "format": "uint",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "The total capacity of on-board Motion Imagery storage",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 134,
+        "name": "Zoom Percentage",
+        "units": "%",
+        "format": "IMAPB",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "For a variable zoom system, the percentage of zoom",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 135,
+        "name": "Communications Method",
+        "units": "None",
+        "format": "utf8",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Type of communications used with platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 136,
+        "name": "Leap Seconds",
+        "units": "s",
+        "format": "int",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Number of leap seconds to adjust Precision Time Stamp (Tag 2) to UTC",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 137,
+        "name": "Correction Offset",
+        "units": "µs",
+        "format": "int",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "Post-flight time adjustment to correct Precision Time Stamp (Tag 2) as needed",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 138,
+        "name": "Payload List",
+        "units": "None",
+        "format": "vlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "List of payloads available on the Platform",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 139,
+        "name": "Active Payloads",
+        "units": "None",
+        "format": "byte",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "List of currently active payloads from the payload list (Tag 138)",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 140,
+        "name": "Weapons Stores",
+        "units": "None",
+        "format": "vlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "List of weapon stores and status",
+        "cdm_field": "Entity.attributes"
+      },
+      {
+        "tag": 141,
+        "name": "Waypoint List",
+        "units": "None",
+        "format": "vlp",
+        "length": "V",
+        "sdcc": "N",
+        "multiples_allowed": "N",
+        "description_verbatim": "List of waypoints and their status.",
+        "cdm_field": "Entity.attributes"
+      }
+    ],
+    "what_ST_0601_14_settles_that_the_profile_left_open": {
+      "why_this_node_exists": "A CORRECTION TO THE REACH OF TWO EARLIER FINDINGS, and it was found by reading item 2's own section rather than by being looked for. Settlement 3 and register entry KLV 6 are both about what MISP-2019.1 does NOT state, and both are still exactly true about MISP-2019.1. What this round can now add is that the delegated dictionary states it, and the whole discipline of this section is the difference between 'the pinned documents do not say' and 'nobody has read the document that says'.",
+      "the_epoch_IS_stated_here_and_it_is_stated_twice": "SS 6.4, verbatim: 'Every UAS Datalink LS packet is required to include a Precision Time Stamp representing absolute time as defined in MISB ST 0603 [4]. The Precision Time Stamp (Tag 2) is an eight-byte unsigned integer counter of the number of SI Seconds (in microseconds) which have elapsed since midnight (00:00:00), January 1, 1970 (1970-01-01T00:00:00Z). Note: this time does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.' SS 8.2 states it again in its own bullet and again in its Details paragraph. So epoch, unit, resolution and leap-second treatment are all read from a pinned document.",
+      "what_this_corrects_in_settlement_3": "NOT THE FINDING - THE REACH. Settlement 3's evidence stands unaltered: `epoch`, `1970`, `microsecond` and `leap` occur zero times in MISP-2019.1's 73 pages, and the premise that the PROFILE fixes the epoch was and is false. What changes is the consequence drawn from it. The old consequence was that this repository could not state the epoch at all without writing down something it had not read. It has now read it, in the document the profile delegates to, and the value is stated with both loci. The rule was never 'do not write an epoch'; it was 'do not write one from memory', and that rule is what allows this.",
+      "what_this_corrects_in_KLV_6": "KLV 6 says nothing in the profile requires a standalone metadata stream to carry an absolute time, resting on the circularity of a requirement that is 'mandatory for Metadata packets which include a Metadata item for a timestamp'. Still true of the profile. ST 0601.14 closes it from the other side for THIS local set and only for this one: SS 6.4 requires the Precision Time Stamp in every UAS Datalink LS packet, Table 1 and SS 8.2 mark item 2 Mandatory, and item 65 is Mandatory with it. A conformant UAS Datalink LS packet therefore always carries an absolute time. That is a fact about ST 0601.14's local set, not about KLV streams in general, and KLV 6 stays in the register because the general claim is the one it makes.",
+      "what_it_does_NOT_settle_and_why_park_3_stays_open": "Three things. FIRST, ST 0603.5 remains the normative definition - SS 6.4 says the Precision Time Stamp represents absolute time 'as defined in MISB ST 0603 [4]' and ST 0601.14 is restating it, so a conflict between the two is resolved by a document not held. SECOND, items 136 (Leap Seconds) and 137 (Correction Offset) exist precisely to convert this scale to UTC and their own semantics are ST 0603's - and .19 later rewrote item 136's summary line to name a 'MISP Epoch', a term ST 0601.14 does not use. THIRD, what to CALL a count of SI seconds since 1970-01-01T00:00:00Z that excludes leap seconds is exactly the TAI-versus-UTC question park 3's row says it decides, and ST 0601.14 answers only the negative half: not UTC. So the row for item 2 can now state its epoch, and park 3 stays open.",
+      "the_reference_agrees_with_the_profile_which_is_worth_recording": "ST 0601.14's own reference [4] reads 'MISB ST 0603.5 MISP Time System and Timestamps, Oct 2017' - the same revision MISP-2019.1's Appendix B pins for park 3, and the same date. Two independently-pinned documents naming the same revision of a third is the corroboration delegation_table.entries was built to make checkable, and this is the first time it has been available from both sides."
     }
   },
   "page_count_method": {
@@ -206,8 +1830,9 @@
     "ruling": "Ruled in FORMAT_COVERAGE.md, 'The page count, ruled from what a reader does with the number'. A page count is one term of a pin's identity row and its job is to let someone holding a copy check they hold the same document - which they do by opening it and seeing how many pages it has. So the count is the number of pages the document HAS, which is the page tree; a raw-object scan counts FILE OBJECTS, a different quantity that coincides only when a file has no orphaned page objects and no incremental update.",
     "what_this_record_used_to_say_and_why_it_changed": "It used to read: 'Counted from each PDF's own page tree - occurrences of /Type /Page across raw objects and across every inflated object stream.' That sentence names the PAGE TREE and then defines a RAW-OBJECT SCAN, which are two different methods; it was self-contradictory from the day it was written and nothing noticed, because the two agree on any file with no orphaned page objects and no incremental update. CAT034 Phase 1 found the first file where they disagree and recorded the divergence; the harmonisation round ruled for the page tree and rewrote this field. THE COUNTS IN THIS RECORD DID NOT MOVE - both methods give them - so this is a correction to the description of how they were obtained and not to the values.",
     "recomputed_under_the_ruling": "Every document in this repository with a recorded page count was recomputed under both methods: 11 pins, 3 CAT034 lineage editions, 22 CAT048 lineage editions. No pin moved. Three CAT048 LINEAGE entries moved - editions 1.28 and 1.29 from 58 to 56, edition 1.30 from 59 to 57 - and cat048_pin.json records each as a correction with the ruling cited.",
-    "how_this_rounds_two_counts_were_produced": "The ruled method, by a walker written for this round and validated before either number was trusted: run against the eight pins in this repository that are on disk and carry a recorded page count, it reproduced seven exactly - 31, 41, 64, 146, 5, 5 and 73. The eighth is the subject of the next field. Both new counts - ST 0601.19 at 226 and ST 0102.12 at 18 - are additionally method-INDEPENDENT: the retired raw-object scan returns the same numbers on both files, so neither rests on the ruling being right.",
-    "a_disagreement_found_outside_this_row_set": "AND THE FIELD BELOW IS FALSE, at one document. recomputed_under_the_ruling says '11 pins ... No pin moved'. Validating this round's walker turned up a pin that does move: fixtures/cat062/spec/eurocontrol-asterix-cat062-p9-appendix-a-ed13.pdf is recorded as 25 pages and the ruled method gives 23. It is characterised, not guessed - the file holds 25 objects whose /Type is /Page, of which 23 are reachable from the catalog's /Pages tree; the two that are not, objects 1760 and 1782, each name a /Parent that IS reachable (1724 and 1727) whose /Kids array does not list them. That is exactly the orphaned-page-object case the ruling names, and 25 is the retired method's answer. The file's own top /Pages node states /Count 23. NOT CORRECTED HERE, deliberately: 25 is stated in cat062_pin.json and again in FORMAT_COVERAGE.md's REF pin row, the two agree with each other, and moving a pin identity value for a format this round is not otherwise touching would be a re-measurement smuggled into a KLV commit. It is recorded at both sites that carry the false claim - here and in fft_pin.json - so that the claim and its known exception travel together, and the correction is a CAT062 decision."
+    "how_this_rounds_two_counts_were_produced": "SUPERSEDED BY THE FIELD BELOW and kept because the numbers it reports are still this record's. It read: run against the eight pins in this repository that are on disk and carry a recorded page count, the walker reproduced seven exactly - 31, 41, 64, 146, 5, 5 and 73 - and both new counts, ST 0601.19 at 226 and ST 0102.12 at 18, are additionally method-independent.",
+    "a_disagreement_found_outside_this_row_set": "AND THE FIELD BELOW IS FALSE, at one document. recomputed_under_the_ruling says '11 pins ... No pin moved'. Validating this round's walker turned up a pin that does move: fixtures/cat062/spec/eurocontrol-asterix-cat062-p9-appendix-a-ed13.pdf is recorded as 25 pages and the ruled method gives 23. It is characterised, not guessed - the file holds 25 objects whose /Type is /Page, of which 23 are reachable from the catalog's /Pages tree; the two that are not, objects 1760 and 1782, each name a /Parent that IS reachable (1724 and 1727) whose /Kids array does not list them. That is exactly the orphaned-page-object case the ruling names, and 25 is the retired method's answer. The file's own top /Pages node states /Count 23. NOT CORRECTED HERE, deliberately: 25 is stated in cat062_pin.json and again in FORMAT_COVERAGE.md's REF pin row, the two agree with each other, and moving a pin identity value for a format this round is not otherwise touching would be a re-measurement smuggled into a KLV commit. It is recorded at both sites that carry the false claim - here and in fft_pin.json - so that the claim and its known exception travel together, and the correction is a CAT062 decision.",
+    "how_the_2026_08_26_ST_0601_14_count_was_produced": "THE RULED METHOD, by a walker rebuilt for this round because the previous one was written into a scratch directory and did not survive it - which is itself worth recording, since a method that has to be rebuilt is a method whose description in this file is the only thing carrying it forward. It was validated before its answer was trusted, and validated more widely than the last one: run against ALL SEVENTEEN specification PDFs on disk in this repository, it reproduced SIXTEEN recorded counts exactly - 31, 41, 64, 146, 5, 212, 104, 6, 18, 226, 73, 5, 192, 150 and 5, taken from pin records and from FORMAT_COVERAGE.md's rows for the gmti and nits documents, which state their counts nowhere else. The seventeenth is the known cat062 disagreement recorded in the next field, which it reproduced as a disagreement of exactly the size that field describes. ST 0601.14a at 218 pages is additionally method-INDEPENDENT: the retired raw-object scan returns 218 on this file too, and the file's own top /Pages node states /Count 218."
   },
   "not_committed": {
     "the_pdfs_are_not_in_git": true,
@@ -215,7 +1840,8 @@
     "consequence_for_this_directory": "The four files sit in the working tree because they had to be read - the wrapper and the profile from the first round, ST 0601.19 and ST 0102.12 from this one. They are excluded from the commit by .gitignore's `*.pdf` rule, and additionally by naming the committed paths explicitly rather than relying on `git add -A`. tests/test_cdm_pins.py asserts that `git ls-files` returns no .pdf anywhere in the repository, so the mechanism and the gate now fail in the same direction.",
     "why": "STANAG 4609 Edition 5 carries NATO's own restriction: 'No part of this publication may be reproduced, stored in a retrieval system, used commercially, adapted, or transmitted in any form or by any means, electronic, mechanical, photocopying, recording or otherwise, without the prior permission of the publisher.' A pin plus a hash plus a public retrieval route reproduces the artefact for any reader without this repository redistributing it, which is why EVERY adapter effort here pins rather than vendors. Stated without a count - see cat034_pin.json's note on why three records stating this one practice as three different numbers is a disjunction rather than three facts.",
     "correction_2026_08_25": "CORRECTION, AND THE SECOND INSTANCE OF ONE DEFECT. This field used to carry the same false clause cat048_pin.json carried: 'no .gitignore exists anywhere in this repository, and introducing one to solve a two-file problem would be a new convention adopted in passing.' .gitignore was added in commit 965e939 on 2026-08-22 and this sentence was written in commit 1b0316b on 2026-08-23 - false when written, like the other one, and for the same reason: the sentence was copied between records without its premise being re-checked. HOW IT WAS FOUND IS THE POINT. The pre-publication audit found the cat048 instance only. This one was found by the hand sweep the singleton-tree-fact ruling requires - see that ruling in tests/test_cdm_pins.py - which is the evidence that the sweep earns its place even though it was ruled manual rather than mechanical.",
-    "correction_2026_08_26": "THE COUNT IN THE FIELD ABOVE MOVED, and it is recorded because the last time a sentence in this record went stale without being re-checked it took a hand sweep to find - see correction_2026_08_25. This directory held two PDFs when that field was written and holds four now. `git check-ignore -v` was re-run against all four and every one is refused by .gitignore:42's `*.pdf` rule; `git ls-files` for this directory returns the README and the pin record and nothing else. The rule was not weakened to admit the two new documents and it did not need to be, which is the point of ignoring an EXTENSION rather than a directory."
+    "correction_2026_08_26": "THE COUNT IN THE FIELD ABOVE MOVED TWICE IN ONE DAY, and it is recorded because the last time a sentence in this record went stale without being re-checked it took a hand sweep to find - see correction_2026_08_25. This directory held two PDFs when that field was written, four after ST 0601.19 and ST 0102.12 landed, and FIVE since ST 0601.14a landed. `git check-ignore -v` was re-run against ST0601.14a.pdf and it is refused by .gitignore:42's `*.pdf` rule, reported as `.gitignore:42:*.pdf`; `git status --porcelain --ignored` for this directory lists all five PDFs as ignored and `git ls-files` returns the README and the pin record and nothing else. THE RULE WAS NOT WEAKENED and did not need to be, which is the point of ignoring an EXTENSION rather than a directory - a fifth document arriving in a pinned directory is the ordinary case this rule was written for, and the ordinary case should require no edit.",
+    "a_derived_count_in_gitignore_had_gone_stale_and_is_corrected": "FOUND BY THIS ROUND'S STALE-COUNT SWEEP, in the one file whose comment insists its numbers are derived. .gitignore's block above the `*.pdf` rule reads 'THE EXTENSION SET IS DERIVED, NOT GUESSED. Every file under a `fixtures/*/spec/` directory is a `.pdf` (36), a `.json` pin record (6) or a `.py` generator (5)', and it says elsewhere that `git add -A` 'stages all 36 held documents'. The tree holds 47 PDFs, 8 pin records and 7 generators. THE CLAIM THE COMMENT MAKES IS STILL TRUE - the extension set is still exactly those three, which is the load-bearing half - and only the counts had drifted, as the CAT023, CAT034, CAT048 and CAT062 lineages landed and nothing sent anybody back to a comment in .gitignore. Corrected in place. Recorded here rather than fixed silently because a number that describes itself as derived and is in fact typed is exactly the class of claim this repository's disjunction protocol exists to catch, and the correction is worth less than the finding that nothing was checking it."
   },
   "delegation_table": {
     "what_this_is": "The MISP is a profile, so much of its normative content is a set of pointers. Every version string below was read off the pinned copy's Appendix B and cross-checked against the section that cites it. The six the task named are all confirmed exactly as reported; ST 1402 is an addition this reading found necessary.",
@@ -251,9 +1877,9 @@
         "reference_number": 53,
         "locus": "Appendix B; SS 4.4.4.1 'The Airborne - UAS Collection is defined in MISB ST 0601 [53]'; also SS 4.4.2.2, SS 4.4.2.3, SS 4.4.2.5, SS 4.4.2.7, SS 4.4.2.10 and Figure 12; also named in the 2019.1 Change Log",
         "governs": "the field dictionary of the airborne UAS collection - the local set an airborne feed actually carries",
-        "held": false,
-        "park": 1,
-        "a_later_revision_is_on_disk_and_does_not_substitute": "ST 0601.19 (02 March 2023, amended through 11 June 2025) was obtained 2026-08-26 and is pinned at delegated_specifications_held.st_0601_19. It is NOT the 0601.14 this row pins and it may not be read in its place - ruled at reconciliation_ruling.ruling_st_0601. `held` stays false because this field means 'the pinned revision is held', and it is not.",
+        "held": true,
+        "park": "1, closed 2026-08-26",
+        "a_later_revision_is_on_disk_and_does_not_substitute": "RESOLVED 2026-08-26. ST 0601.14 - the revision this row pins - was obtained and is pinned at delegated_specifications_held.st_0601_14, so `held` is now true and park 1 is closed. ST 0601.19 remains on disk and remains pinned as CONTEXT ONLY: it is never a source of tag semantics for this row set, and is retained for the item-42 divergence note and for the measured .14-to-.19 delta. Ruled at reconciliation_ruling.ruling_st_0601.resolution_2026_08_26.",
         "requirement_text_verbatim": "'When timestamp information is available in Class 3 Motion Imagery and after conversion to a timestamp based on Absolute Time in accordance with MISB ST 0603, it shall be inserted as Metadata in accordance with MISB ST 0601.' - MISP-2018.1-112. CORRECTED BEFORE IT WAS COMMITTED, and the first draft of this field said the opposite: that no requirement mandates ST 0601 with a `shall`. It does not survive a search. What is true is narrower and is why this entry originally quoted nothing - the only `shall`s naming ST 0601 are CONDITIONAL and about Class 3 conversion (MISP-2018.1-112, and MISP-2015.1-61 which the profile marks '(Deprecated)'), while the sentence that actually puts the airborne collection in this document - SS 4.4.4.1's 'The Airborne - UAS Collection is defined in MISB ST 0601 [53]' - is prose and not a requirement. So the document is unconditionally RELIED ON and only conditionally MANDATED, which is a weaker footing than ST 0102's MISP-2015.1-73 and is worth having in the record."
       },
       {
@@ -401,11 +2027,12 @@
     "KLV 6": "Nothing in the profile requires a standalone metadata stream to carry an absolute time. The unconditional mandate MISP-2018.3-116 attaches to a Motion Imagery FRAME; the metadata mandate MISP-2018.1-97 is conditional on a timestamp being present; the prose in SS 2.1.5 introducing both is circular - 'it is also mandatory for Metadata packets which include a Metadata item for a timestamp based on Absolute Time'. The two unequivocal predecessors MISP-2015.1-03 and MISP-2015.1-04 are in Appendix A.2 as DEPRECATED. SS 5.5 then contemplates the case that falls through: 'There are situations where Metadata needs to be transmitted separately from the Motion Imagery.' Consequence: Event.observed_at for this format is not merely blocked on park 3, it may be absent from the source - which is gap 23.",
     "KLV 7": "The security mandate's paragraph and its requirement do not use the same term, and Appendix E defines both. SS 4.4.2.9 says 'It is mandatory that Motion Imagery Data be marked correctly and consistently with security classification' and 'The approved practices in this standard are mandatory for all Motion Imagery Data'; the requirement it introduces, MISP-2015.1-73, says 'Motion Imagery shall include Security Metadata'. Appendix E defines 'Motion Imagery Data' as 'Three components: Motion Imagery (see definition below), Metadata and/or Audio' and 'Motion Imagery' as a sequence of pictures. So the paragraph's scope includes a metadata stream and the requirement's scope is the imagery, which decides whether this adapter's input must be labelled at all.",
     "KLV 8": "The document classified as 'related' is the one that 'defines the required data items'. STANAG 4609 Ed 5 puts the Motion Imagery Handbook under OTHER RELATED DOCUMENTS while its AGREEMENT clause names only MISP-2019.1, and MISP SS 1.3 calls the Handbook a companion 'providing definitions of terms used with more background and technical detail'. But SS 3.6.7 says of the same document that it 'defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets that reduces the bandwidth needed to transmit the data, and defines the required data items'. A document that defines required data items is normative in fact. Park 10 records that whoever obtains it answers this first.",
-    "KLV 9": "A pinned copy whose cover does not describe its contents, and the first ambiguity in this record found by a check nobody asked for. ST 0601.19's cover reads 'MISB ST 0601.19' and '02 March 2023'; its revision history table carries two rows dated AFTER that cover date - 05/10/2024, changing Figure 17's corner 4 tag values, and 06/11/2025, resolving 'item 42 ambiguity (i.e., MSL or HAE)' - and the file's /CreationDate is 2 July 2025. The document's own section 2 states the convention it is not following: a corrected document 'will have a single letter Minor Version appended to the Major Version number', as ST 0001.2 becomes ST 0001.2a, and the MISB 'will not update the referring document with the Minor Version number change'. So there exist at least three distinct documents all correctly cited as 'ST 0601.19', a citation by edition number cannot distinguish them, and the same section warns that 'when acquiring any MISB reference listed below from an NGA repository the latest version may be either a Major or Minor Version'. WHAT IT BOUNDS: it does not affect this round's ruling, which stops on .14-versus-.19 and would stop identically whichever .19 copy were held. What it bounds is the claim a pin makes - which is why this record's SHA-256 is the identity of a COPY and not of an edition, and this is the first document in this repository where those two come apart. ST 0102.12 was checked the same way and does not have the problem: one revision-history row, and it is the cover date."
+    "KLV 9": "A pinned copy whose cover does not describe its contents, and the first ambiguity in this record found by a check nobody asked for. ST 0601.19's cover reads 'MISB ST 0601.19' and '02 March 2023'; its revision history table carries two rows dated AFTER that cover date - 05/10/2024, changing Figure 17's corner 4 tag values, and 06/11/2025, resolving 'item 42 ambiguity (i.e., MSL or HAE)' - and the file's /CreationDate is 2 July 2025. The document's own section 2 states the convention it is not following: a corrected document 'will have a single letter Minor Version appended to the Major Version number', as ST 0001.2 becomes ST 0001.2a, and the MISB 'will not update the referring document with the Minor Version number change'. So there exist at least three distinct documents all correctly cited as 'ST 0601.19', a citation by edition number cannot distinguish them, and the same section warns that 'when acquiring any MISB reference listed below from an NGA repository the latest version may be either a Major or Minor Version'. WHAT IT BOUNDS: it does not affect this round's ruling, which stops on .14-versus-.19 and would stop identically whichever .19 copy were held. What it bounds is the claim a pin makes - which is why this record's SHA-256 is the identity of a COPY and not of an edition, and this is the first document in this repository where those two come apart. ST 0102.12 was checked the same way and does not have the problem: one revision-history row, and it is the cover date.",
+    "KLV 10": "THE SAME COMING-APART AS KLV 9, MET AT FETCH TIME INSTEAD OF BEING DISCOVERED LATER, and one turn worse in each of two ways. MISP-2019.1 cites 'MISB ST 0601.14'; the NSG Registry serves that edition as ST0601.14a.pdf; the file's cover reads 'MISB ST 0601.14a' and '1 May 2020' while the edition the citation names is dated 1 November 2018 by the document's own revision history. WORSE THE FIRST WAY: the copy carries a THIRD revision-history row, dated 08/19/2021, whose Revision cell is EMPTY - checked from the page's drawn column geometry, not from a text dump - and the file's /CreationDate is 17 December 2021. ST 0601.19's two undeclared amendments at least sat under a stable edition number that a citation could name; this one has no string at all, so there is no citation any document could make that would distinguish it. WORSE THE SECOND WAY: this local set carries its own version number on the wire. Item 65, UAS Datalink LS Version Number, is MANDATORY in every packet and states the revision of ST 0601 the producer encoded against - and it is a uint8, one value per MAJOR revision, so it cannot express a Minor Version letter either. The format's own answer to 'which edition made this?' has exactly the same blind spot as the citation. WHAT IT BOUNDS: nothing in the row set, and that is checkable rather than hopeful - the 'a' changed one thing, 'Corrected table headers in Item 47 - Generic Flags', and the 08/19/2021 row changed four things all described as editorial, none of which touches a tag, a length or a format. What it bounds is what a pin can CLAIM, which is why the SHA-256 is the identity of a copy and the filename keeps the letter the registry served. See KLV 9, which is the same hazard in the document this one supersedes-by-five."
   },
   "parks": {
-    "how_many": "Twelve parks over fourteen documents.",
-    "honest_strength": "Eleven of the twelve are public downloads and one is not. That is materially weaker than the two blockers this repository already carries - GMTIF's Annex L, which reads '(TO BE PROVIDED)' in the promulgated text, and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through national representatives. It is closer to CAT048's Reserved Expansion Field: obtainable, and simply not obtained.",
+    "how_many": "Twelve parks over fourteen documents, and park 1 is now CLOSED. Eleven remain open. THE NUMBERING DOES NOT MOVE: the parks are cited by number from the row sets, from the fixture plan and from the register, so a closed park keeps its number and its row and says it is closed. Renumbering eleven parks to avoid a gap would silently re-point every citation, which is a larger lie than a table with a closed row in it.",
+    "honest_strength": "Of the eleven that remain open, ten are public downloads and one is not. That is materially weaker than the two blockers this repository already carries - GMTIF's Annex L, which reads '(TO BE PROVIDED)' in the promulgated text, and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through national representatives. It is closer to CAT048's Reserved Expansion Field: obtainable, and simply not obtained. PARK 1 IS THE PROOF OF THAT CLAIM RATHER THAN AN EXCEPTION TO IT - the largest park in the table was closed by one person with a browser, which is what 'obtainable, and simply not obtained' predicts.",
     "shared_reopen_route": "The profile's FORWARD prints it: 'References developed by the MISB are available under MISB Public Web Site: http://www.gwg.nga.mil/misb or NSG Registry Web Site: https://nsgreg.nga.mil/misb.jsp'. No NSO gate, no national representative, no account.",
     "shared_exit_condition": "For parks 1-7 and 9-12: obtain the EXACT version the delegation table pins (not 'the current one' - the profile pins a revision and a later revision is a different document); pin it in fixtures/klv/spec/ by SHA-256, byte count and page count with its title-page identity read; then write the row set that document supports.",
     "the_one_that_is_not_a_download": {
@@ -413,8 +2040,16 @@
       "document": "SMPTE ST 336:2017",
       "reopen_condition": "A PURCHASE DECISION, NOT A DOWNLOAD. SMPTE is a commercial standards body and ST 336 sits behind a paywall, which the profile concedes in its own register: 'Commercial references cited in this document are available from industry organizations.' The other eleven parks need somebody to spend an afternoon; this one needs somebody to spend money, and a table reporting both as 'obtain the document' would hide the only entry that has to go to a person with a budget."
     },
-    "smallest_useful_phase_2": "Parks 4, 5 and 8 are enough to READ a stream at all. Parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one.",
-    "what_this_round_changed": "Twelve parks still, and no row retired. Park 2's document is now HELD - ST 0102.12, the exact edition the profile pins - which discharges the first half of shared_exit_condition and none of the second: no row set is written, so the park stays in the table and its mapping rows stay `not yet`. Park 1 is unchanged in status and much more specific in content: the blocker is no longer 'ST 0601 is not held' but 'ST 0601.14 is not held, ST 0601.19 is held, and .19 may not substitute' - ruled at reconciliation_ruling.ruling_st_0601. honest_strength is unchanged: the reopen routes did not move, and the CAPTCHA that stopped this round from READING the registry pages does not gate a person with a browser."
+    "smallest_useful_phase_2": "Parks 4, 5 and 8 are enough to READ a stream at all. Parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one - and park 1 of those four is now closed, so the translating half is parks 3, 11 and 12.",
+    "what_this_round_changed": "PARK 1 CLOSED - the first park in this section to close, and the one the table called 'the largest park, and the one that decides whether this adapter can emit an Entity at all'. ST 0601.14 was obtained from NSG Registry document 4739, pinned, read, and its Table 1 transcribed into 141 rows. Eleven parks remain open, ten of them public downloads and one a purchase. Nothing else in the table moved: no park was opened, none was renumbered, and no reopen route changed. The onward delegations ST 0601.14 makes on its OWN account - ST 1010.3 for the SDCC pack, ST 1607 for the Amend and Segment sets, ST 1206.1, ST 1002.2, ST 1601.1 and ST 1602.1 for four nested local sets - are recorded at tag_table_st_0601_14.items and named in the rows that need them, and they are NOT opened as parks 13 and up. That is a deliberate restraint and not an oversight: this round was asked to transcribe a tag table, and growing the park roster by six on the strength of a reference list read in passing would be a roster change smuggled into a transcription commit. The next round to want those sets opens them.",
+    "the_one_that_closed": {
+      "park": 1,
+      "document": "MISB ST 0601.14, UAS Datalink Local Set",
+      "closed_on": "2026-08-26",
+      "what_discharged_it": "Both halves of shared_exit_condition, and it needed both. FIRST HALF: the exact version the delegation table pins was obtained - not 'the current one' - and pinned by SHA-256, byte count and page count with its title-page identity read, at delegated_specifications_held.st_0601_14. SECOND HALF: the row set that document supports is written - Table 1 transcribed in full, 141 items, at tag_table_st_0601_14 and in FORMAT_COVERAGE.md's ST 0601 row set.",
+      "why_the_second_half_was_not_waived": "Because park 2 was not given that discount three days earlier. ST 0102.12 has been HELD since 2026-08-26 and park 2 is still open, on the stated ground that no row set is written from it. A park 1 closed on the document alone would have been the same park treated two ways in one table.",
+      "what_it_does_not_discharge": "Any other park, and in particular not the ones the ST 0601 rows are still blocked on: 4 and 8 govern how an item is found in the octets, 3 owns the epoch, 5 owns the IMAPB ranges. The tag table says what each item means; it does not say where the item begins. Closing park 1 moved this adapter from 'cannot name a field' to 'can name every field and read none'."
+    }
   },
   "searched_and_not_found": {
     "what_was_searched": "~/Downloads, for the MISB STs themselves.",
@@ -424,10 +2059,12 @@
     "one_neighbour_worth_naming": "4609EFed05.pdf, MISP-2019.1file.pdf, 5527EFed02.pdf, 4607EFed04.pdf and the two AEDP-4607 files were downloaded in one batch on 2026-08-23. 5527EFed02.pdf is a STANAG 5527 wrapper and is unrelated to this adapter; it is named here only so a later reader does not wonder whether it was missed."
   },
   "what_this_phase_did_not_do": [
-    "No adapter code, no codec, no fixtures, no golden files. Every mapping row in FORMAT_COVERAGE.md says `not yet`.",
-    "No mapping row was invented for any field whose layout lives in a document not held. That is the whole discipline of this phase and it is why the row set is short.",
-    "No gap was opened and no schema field proposed. Every absence is a DOCUMENT this repository does not hold rather than a CDM shortfall, and the two places where the CDM genuinely has nowhere to put something are already recorded as gap 18 and gap 23.",
-    "The premise that the MISP fixes the Precision Time Stamp's EPOCH was carried into this phase and is FALSE against the pinned copy: `epoch`, `1970`, `microsecond` and `leap` occur zero times in 73 pages, and the only timescale named is an example ('such as International Atomic Time (TAI)'). Recorded as a correction rather than quietly dropped.",
-    "Act 3 of the 2026-08-26 round did not run. The reconciliation ruling stopped the round on ST 0601 before any tag table was transcribed, so no tag table was written for EITHER document - including ST 0102.12, whose edition matches and which cannot be read anyway without parks 4, 5 and 8. No adapter code, no codec, no fixture, no UUID-v8/f1c7 namespace, no clock. See reconciliation_ruling.outcome."
+    "No adapter code, no codec, no fixtures, no golden files. Every mapping row in FORMAT_COVERAGE.md says `not yet`, including all 141 ST 0601 rows this round added.",
+    "No mapping row was invented for any field whose layout lives in a document not held. That is the whole discipline of this phase, and this round is where it paid: the 141 rows are transcribed from a document in hand, and the nested local sets among them - items 48, 73, 74, 95, 97, 98, 99, 100, 101 and 102 - carry their contents' owner's name instead of their contents.",
+    "No gap was opened and no schema field proposed. Item 59, Platform Call Sign, arrives at gap 1 - the CDM's missing canonical name field - as a fourth format, and item 15 arrives at the MSL-versus-HAE distinction `Position.alt_m` already fixes; neither is a new gap.",
+    "No fixture was written, and the reason has not changed: a `.klv` payload is a sequence of key/length/value triplets and parks 4 and 8 own how a key and a length are written. Holding the tag table does not make the octets writable. No UUID-v8/f1c7 namespace was allocated and no clock was injected, because there is nothing yet to feed either.",
+    "No value in the 141 rows was read from ST 0601.19, and the one item where the two documents differ in meaning - item 42 - carries .14's silence as normative with the divergence recorded as a note beside it.",
+    "The parks table was not renumbered and no new park was opened, though ST 0601.14's own reference list names six further documents this repository does not hold. See parks.what_this_round_changed.",
+    "The premise that the MISP fixes the Precision Time Stamp's EPOCH was carried into this phase and is FALSE against the pinned profile: `epoch`, `1970`, `microsecond` and `leap` occur zero times in its 73 pages, and the only timescale it names is an example ('such as International Atomic Time (TAI)'). THAT FINDING STANDS AND ITS REACH IS NOW CORRECTED: ST 0601.14, which the profile delegates to and which this round obtained, DOES state the epoch - SS 6.4 and SS 8.2, '1970-01-01T00:00:00Z', SI seconds in microseconds, leap seconds excluded and therefore not UTC. A first draft of this record asserted the opposite, that item 2's section defers the epoch to ST 0603; that was written before SS 8.2 was read and it is wrong. See tag_table_st_0601_14.what_ST_0601_14_settles_that_the_profile_left_open. Park 3 stays open for the reasons recorded there."
   ]
 }

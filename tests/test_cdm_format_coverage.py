@@ -3003,12 +3003,16 @@ KLV_README = KLV_FIXTURES / "README.md"
 #: the prose uses — because the two are the same fact and a half-edit that fixed one would
 #: otherwise pass.
 #:
-#: TWO WHEN IT WAS WRITTEN AND FOUR SINCE 2026-08-26, and the two that arrived are not the same
+#: TWO WHEN IT WAS WRITTEN AND FIVE SINCE 2026-08-26, and the three that arrived are not the same
 #: kind of thing as the two that were here. The wrapper and the profile are the documents the row
-#: set is written FROM; ST 0601.19 and ST 0102.12 are two of the fourteen documents the profile
-#: DELEGATES to, and only ST 0102.12 is the edition it delegates to. The roster does not encode
-#: that distinction — `reconciliation_ruling` in the pin record does — because this gate's job is
-#: that the numbers agree everywhere, and a wrong-edition document's numbers have to agree too.
+#: set is written FROM; ST 0601.14, ST 0102.12 and ST 0601.19 are three of the fourteen documents
+#: the profile DELEGATES to, and only the first two are editions it delegates to. The roster does
+#: not encode that distinction — `reconciliation_ruling` in the pin record does — because this
+#: gate's job is that the numbers agree everywhere, and a wrong-edition document's numbers have to
+#: agree too. ST0601.14a.pdf is listed under the filename the REGISTRY SERVES, letter and all,
+#: which is the same discipline: this gate checks that the five files are identified identically
+#: at every site, and renaming one to match the citation would make four sites agree about a file
+#: that does not exist.
 #:
 #: The node path is carried here rather than derived from the filename. It used to be derived, by
 #: `"wrapper" if filename.startswith("nato-") else "target"`, and that expression silently maps
@@ -3022,6 +3026,9 @@ KLV_PINNED_DOCUMENTS = (
     ("misb-misp-2019-1.pdf",
      "3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea", 1372771, 73,
      ("target",)),
+    ("ST0601.14a.pdf",
+     "3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4", 3969201, 218,
+     ("delegated_specifications_held", "st_0601_14")),
     ("ST0601.19.pdf",
      "e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1", 4700978, 226,
      ("delegated_specifications_held", "st_0601_19")),
@@ -3044,10 +3051,20 @@ KLV_PINNED_DOCUMENTS = (
 #:
 #: WIDENING IT WOULD HAVE LOST THE TEETH, so it is not widened: an extra revision is admitted only
 #: by being named here, and only if the section also carries the phrase that says what the extra
-#: revision is NOT. A round that obtains ST 0601.14 deletes this entry rather than editing it, and
-#: the gate goes back to demanding one revision.
+#: revision is NOT.
+#:
+#: THE COMMENT HERE USED TO PREDICT ITS OWN DELETION — "a round that obtains ST 0601.14 deletes
+#: this entry rather than editing it, and the gate goes back to demanding one revision" — and the
+#: round that obtained ST 0601.14 did NOT delete it, because the prediction assumed .19 would leave
+#: with the stop it caused. It did not: .19 stays pinned as CONTEXT ONLY, so the section still
+#: names two revisions and still needs to say what the second one is not. What changed is the
+#: PHRASE, and it had to change: "may not substitute" was the language of a stop, and the stop is
+#: over. "context only" is the language of the ruling that replaced it, and a gate still asserting
+#: the old phrase would have been a gate demanding the section describe a ruling it no longer
+#: makes. Recorded rather than quietly swapped, because a prediction a later round declines to
+#: follow is worth more than one it obeys.
 KLV_HELD_NOT_PINNED = {
-    "MISB ST 0601": ({"19"}, "may not substitute"),
+    "MISB ST 0601": ({"19"}, "context only"),
 }
 
 KLV_DELEGATION = (
@@ -3171,6 +3188,129 @@ def test_every_klv_pin_agrees_at_every_site_that_states_them(filename, digest, s
     )
 
 
+KLV_TAG_TABLE_HEADING = "### Row set — the ST 0601.14 UAS Datalink Local Set, transcribed"
+
+#: A row of that table: `| `42` | Target Location Elevation | m | `uint16` | `2` | … | `not yet` | …`
+KLV_TAG_ROW = re.compile(
+    r"^\| `(?P<tag>\d+)` \| (?P<name>[^|]+?) \| (?P<units>[^|]*?) \| `(?P<format>[^|`]+)` \| "
+    r"`(?P<length>[^|`]+)` \| (?P<field>[^|]+?) \| `(?P<status>[^|`]+)` \| (?P<notes>.*) \|$")
+
+
+def _klv_tag_rows() -> list[dict]:
+    section = _section(KLV_HEADING)
+    start = section.index(KLV_TAG_TABLE_HEADING)
+    body = section[start:section.index("\n### ", start + 10)]
+    return [m.groupdict() for m in
+            (KLV_TAG_ROW.match(ln) for ln in body.splitlines()) if m]
+
+
+def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
+    """THE DISJUNCTION, on the fact this round added: 141 items stated at two sites.
+
+    `klv_pin.json`'s `tag_table_st_0601_14.items` is the transcription; the row set in
+    `FORMAT_COVERAGE.md` is the same transcription with a CDM target and a status column bolted
+    on. Two statements of one reading of one table, which is the shape 80b38d1's finding is about
+    — and the shape a 141-row table makes worst, because nobody proofreads 141 rows twice and a
+    single transposed `uint16`/`int16` or `2`/`4` is invisible to a reader and catastrophic to a
+    decoder. So the two are compared field by field rather than trusted to have been generated
+    together, and the comparison covers the columns a decoder would ACT on: name, units, format,
+    length and CDM target.
+
+    The Notes column is deliberately NOT compared. It carries this round's per-item findings and
+    lives only in the document — prose belongs where prose is read, and asserting it here would
+    pin editorial wording as though it were a transcribed value.
+    """
+    pin = json.loads(KLV_PIN.read_text())
+    node = pin["tag_table_st_0601_14"]
+    items = {int(i["tag"]): i for i in node["items"]}
+    rows = {int(r["tag"]): r for r in _klv_tag_rows()}
+
+    assert node["item_count"] == 141 and len(items) == 141, (
+        f"the pin record states {node['item_count']} items and carries {len(items)}"
+    )
+    assert len(rows) == 141, (
+        f"FORMAT_COVERAGE.md's ST 0601 row set parsed to {len(rows)} rows, expected 141. Either "
+        "the table changed shape or the row pattern has stopped matching — and a pattern that "
+        "matches nothing makes every assertion below vacuous, which is what "
+        "test_the_table_was_actually_parsed exists for one level up"
+    )
+    assert set(items) == set(range(1, 142)) == set(rows), (
+        "the tag numbers are not 1..141 at both sites. ST 0601.14's Table 1 has no gap and no "
+        "duplicate, which is the one positive control a summary table offers about itself"
+    )
+    for tag in sorted(items):
+        a, b = items[tag], rows[tag]
+        assert a["name"] == b["name"].strip(), f"item {tag} name: {a['name']!r} vs {b['name']!r}"
+        assert a["units"] == b["units"].strip(), f"item {tag} units: {a['units']!r} vs {b['units']!r}"
+        assert a["format"] == b["format"], f"item {tag} format: {a['format']!r} vs {b['format']!r}"
+        assert a["length"] == b["length"], f"item {tag} length: {a['length']!r} vs {b['length']!r}"
+        assert a["cdm_field"] == b["field"].replace("`", "").strip(), (
+            f"item {tag} CDM field: {a['cdm_field']!r} vs {b['field']!r}"
+        )
+        assert b["status"] == "not yet", f"item {tag} is not `not yet`"
+
+
+def test_the_tag_table_is_read_from_0601_14_and_says_so_where_it_could_be_misread():
+    """The edition ruling, asserted at the one site where getting it wrong is worst.
+
+    A 141-row table of tag semantics sitting in the same document as a pin for a LATER revision of
+    the same standard is the most misreadable artefact this section has ever held. The ruling that
+    keeps them apart is not decorative, so it is asserted here as well as in the delegation gate:
+    the table says which edition it is read from, and it says what the other one is for.
+    """
+    section = _section(KLV_HEADING)
+    start = section.index(KLV_TAG_TABLE_HEADING)
+    block = _flat(section[start:section.index("\n### ", start + 10)])
+    assert "ST 0601.14 — this copy, this hash — is the authoritative tag table" in block, (
+        "the row set no longer states which edition it is read from, in the one place a reader "
+        "arrives at the numbers"
+    )
+    assert "context only" in block, (
+        "the row set no longer says what ST 0601.19 is for. Two revisions of one dictionary in one "
+        "document, with only one of them labelled, is the KLV 9 hazard reproduced editorially"
+    )
+    # The item-42 divergence: recorded, and NOT applied.
+    assert "states no datum for item 42 at all" in block, (
+        "item 42's divergence note is gone. It is the one item where .14 and .19 disagree in "
+        "MEANING, and .14's silence is what this row set carries"
+    )
+    assert "conditionally either MSL or HAE" in block, (
+        "the note no longer says what .19 later resolved item 42 to. Recording the divergence "
+        "means recording both sides; recording only ours makes it an assertion"
+    )
+    assert "None of that is in the table above and none of it is applied" in block, (
+        "the note quotes .19's resolution without saying it was not applied, which is exactly how "
+        "a note becomes an import"
+    )
+    row_42 = [r for r in _klv_tag_rows() if r["tag"] == "42"]
+    assert len(row_42) == 1 and "MSL or HAE" not in row_42[0]["units"], "item 42's row is malformed"
+    assert "unstated" in row_42[0]["notes"] or "no datum" in row_42[0]["notes"], (
+        "item 42's own row does not record that .14 leaves the datum unstated. The divergence note "
+        "below the table is context; the ROW is what a Phase 2 reads"
+    )
+
+
+def test_the_row_set_states_what_every_one_of_its_rows_is_still_blocked_on():
+    """Closing park 1 is the edit most likely to be read as `this adapter can now decode`.
+
+    It cannot. The tag table says what each item MEANS and what its length and format are; parks 4
+    and 8 still own how an item is FOUND in an octet stream, so not one of the 141 rows can be
+    read from a stream. Stated once above the table rather than 141 times, which means one
+    sentence carries the whole qualification — and a qualification carried by one sentence is a
+    qualification a test should hold in place.
+    """
+    section = _section(KLV_HEADING)
+    start = section.index(KLV_TAG_TABLE_HEADING)
+    block = _flat(section[start:section.index("\n### ", start + 10)])
+    assert "every row below is additionally *(blocked)* on parks 4 and 8" in block, (
+        "the blanket blocker is gone from the row set's preamble. Per-row Notes name the FURTHER "
+        "blockers only, so without this sentence 141 rows read as unblocked"
+    )
+    assert "made the stream nameable" in block, (
+        "the sentence that stops park 1's closure being read as a decoder is gone"
+    )
+
+
 def _group(digits: str) -> list[str]:
     """`'1372771'` -> `['1', '372', '771']`, the grouping the prose uses."""
     out, rest = [], digits
@@ -3253,7 +3393,21 @@ def test_the_delegation_table_states_the_exact_version_the_profile_pins(document
     # the bare number (`0601`, `336`); the pattern is whatever follows it in the pinned form.
     family, _, suffix = version.replace("ST ", "").partition("." if "." in version else ":")
     separator = "." if "." in version.replace("ST ", "") else ":"
-    stated = set(re.findall(rf"\b{re.escape(family)}{re.escape(separator)}(\d+)", section))
+    # `(?![\d-])` IS LOAD-BEARING AND WAS ADDED ON 2026-08-26, when the ST 0601 row set landed.
+    # ST 0601 numbers its requirements `ST 0601.<revision>-<n>` — `ST 0601.8-17`, `ST 0601.13-23`,
+    # `ST 0601.14-35` — so a bare `\b0601\.(\d+)` reads the revision half of a REQUIREMENT ID as a
+    # statement that the section pins that edition, and the row set quotes three of them. Those are
+    # citations of the revision that INTRODUCED a requirement, which is a different claim from
+    # naming an edition, and the gate's subject is the second.
+    #
+    # THE OBVIOUS NEGATIVE LOOKAHEAD IS WRONG AND PASSED ANYWAY. `(?!\s*-\s*\d)` looks correct and
+    # is defeated by backtracking: on `0601.13-23` the greedy `\d+` takes `13`, the lookahead sees
+    # `-` and fails, and the engine then backtracks to `\d+` = `1`, where the lookahead sees `3`,
+    # is satisfied, and the gate is handed a phantom revision `0601.1`. Excluding a following
+    # DIGIT as well as a dash is what actually closes it, because it leaves no shorter match to
+    # retreat to. Checked against the section before and after: the set is unchanged on every
+    # document family the roster names, so this narrows what the gate reads and not what it rules.
+    stated = set(re.findall(rf"\b{re.escape(family)}{re.escape(separator)}(\d+)(?![\d-])", section))
     extra, ruling_phrase = KLV_HELD_NOT_PINNED.get(document, (set(), None))
     assert stated == {suffix} | extra, (
         f"{document} is stated at more than one revision in this section: "
@@ -3378,13 +3532,26 @@ def test_no_requirement_id_in_the_section_names_this_profile_version():
 
 
 def test_no_epoch_is_stated_anywhere_in_the_section():
-    """AN ABSENCE, and the one this phase's central correction depends on.
+    """AN ABSENCE — and since 2026-08-26 an absence with exactly one licensed exception.
 
     The premise carried into Phase 1 was that the MISP fixes the Precision Time Stamp's epoch. It
     does not: `epoch`, `1970`, `microsecond` and `leap` occur zero times in its 73 pages. Anyone
     who knows the format knows the epoch from ST 0603 and will be tempted to write it down — and
     writing it down would state, in a document whose whole discipline is that it pins what it
-    read, a value that came from memory. So the numeral is banned outright.
+    read, a value that came from memory.
+
+    THE RULE WAS NEVER "DO NOT WRITE AN EPOCH". It was "do not write one from memory", and that
+    distinction is what this test has to encode now that the distinction has teeth. ST 0601.14 —
+    the dictionary the profile delegates to, obtained and pinned on 2026-08-26 — states the epoch
+    outright in §6.4 and again in §8.2: SI seconds since 1970-01-01T00:00:00Z, in microseconds,
+    leap seconds excluded and therefore not UTC. That value is quoted from a document this
+    repository holds by hash, which is the opposite of the failure this test exists to catch.
+
+    So `1970` is admitted in two contexts and no others: beside the statement that the words do
+    NOT occur in the profile, which is the original allowance; and beside a citation of ST
+    0601.14, which is the new one. A bare epoch with neither anchor is still a value from memory,
+    and the profile-absence claim is still asserted positively below so that widening the gate
+    cannot quietly retire the finding it was built around.
     """
     section = _section(KLV_HEADING)
     # `1970` is permitted in exactly one context: the sentence listing the words that do NOT
@@ -3392,12 +3559,22 @@ def test_no_epoch_is_stated_anywhere_in_the_section():
     # the format rather than from either pinned document. So each occurrence is checked for its
     # context rather than the numeral being banned outright — banning it would force settlement 3
     # to state its own evidence in a paraphrase, which is the weaker of the two failures.
+    # THE WINDOW IS WIDER FOR THE SECOND ANCHOR AND NARROW FOR THE FIRST, deliberately. The
+    # profile-absence sentence sits right beside its numeral; ST 0601.14's epoch arrives inside a
+    # 400-character block quotation of §6.4, so a 220-character window lands in the middle of the
+    # quotation and sees neither end of it. 600 still binds — it is a paragraph, not the section —
+    # and the alternative was to chop the quotation, which would make a normative sentence from a
+    # pinned document into a paraphrase to satisfy a test.
     for match in re.finditer("1970", section):
         window = _flat(section[max(0, match.start() - 220):match.end() + 220])
-        assert "do not occur anywhere" in window or "occur zero times" in window, (
-            "the section states an epoch. MISB ST 0603.5 is park 3 precisely because the pinned "
-            "profile states none — see settlement 3 — so this value came from somewhere other "
-            f"than the documents this phase read: ...{window[:160]}..."
+        wide = _flat(section[max(0, match.start() - 600):match.end() + 600])
+        licensed = ("do not occur anywhere" in window or "occur zero times" in window
+                    or "ST 0601.14" in wide)
+        assert licensed, (
+            "the section states an epoch with neither of its two anchors nearby. An epoch is "
+            "admitted beside the statement that the profile does NOT contain one, or beside a "
+            "citation of ST 0601.14, which does — see settlement 3. With neither, this value came "
+            f"from somewhere other than the documents this phase read: ...{window[:160]}..."
         )
     flat = _flat(section)
     assert "do not occur anywhere in the 73 pages" in flat, (
@@ -3407,6 +3584,23 @@ def test_no_epoch_is_stated_anywhere_in_the_section():
     assert "such as International Atomic Time (TAI)" in flat, (
         "the only timescale the profile names, it names as an EXAMPLE. Quoting the 'such as' is "
         "what stops the sentence being read as the profile choosing TAI"
+    )
+    # AND THE CORRECTION IS ASSERTED TOO, in both halves. Widening the allowance above without
+    # this would let the section keep the numeral and lose the reason it is entitled to it.
+    assert "1970-01-01T00:00:00Z" in flat, (
+        "the section no longer states the epoch ST 0601.14 gives it. The absence in the PROFILE "
+        "is a finding; refusing to state what the DICTIONARY says once the dictionary is in hand "
+        "would be the discipline eating its own purpose"
+    )
+    assert "does not represent UTC" in flat, (
+        "ST 0601.14's epoch statement is only usable with its negative half: a count of SI "
+        "seconds since 1970 that EXCLUDES leap seconds is not UTC, and an adapter that dropped "
+        "that clause would emit a UTC instant that is wrong by the leap-second offset"
+    )
+    assert "does not close on it" in flat, (
+        "stating the epoch from ST 0601.14 is exactly the edit that would tempt a later reader to "
+        "close park 3, and the section has to say why it does not — ST 0603.5 is still the "
+        "normative definition and items 136 and 137 are still its"
     )
 
 
@@ -3448,12 +3642,21 @@ def test_the_scope_split_declines_the_essence_and_the_container_together():
 
 
 def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
-    """Twelve parks, and the honest difference between eleven downloads and one purchase.
+    """Twelve numbered parks, one of them CLOSED, and the honest difference between the rest.
 
-    The reason this is a test and not a convention: the eleven MISB parks and the one SMPTE park
-    have the same SHAPE — "obtain the document and pin it" — and collapsing the twelfth into that
+    The reason this is a test and not a convention: the MISB parks and the one SMPTE park have the
+    same SHAPE — "obtain the document and pin it" — and collapsing the paywalled one into that
     phrasing would hide the only entry in the table that cannot be closed by someone with a
     browser. A park table that reads uniformly is a park table that has lost information.
+
+    PARK 1 CLOSED ON 2026-08-26 AND THE NUMBERING DID NOT MOVE, which this test now pins in both
+    directions. Parks are cited by number from the row sets, from the fixture plan and from the
+    register, so renumbering eleven rows to close a gap would silently re-point every one of those
+    citations at a different document — the failure mode is not that a reader sees a gap, it is
+    that they do not. So the table still has twelve numbered rows, row 1 says CLOSED, and the
+    public-download count drops from eleven to ten because a closed park no longer offers a reopen
+    route. That count is the honest-strength paragraph's own claim, which is why it is asserted
+    rather than left to the prose.
     """
     section = _section(KLV_HEADING)
     flat = _flat(section)
@@ -3465,6 +3668,18 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     assert "| **13** |" not in section, (
         "the park table has grown past twelve without this test being updated. A new park has to "
         "extend the numbering deliberately, because every row set cites parks by number"
+    )
+    # The closed park keeps its number and says so, and nothing has quietly taken its place.
+    park_1 = [ln for ln in section.splitlines() if ln.startswith("| **1** |")]
+    assert len(park_1) == 1, f"expected exactly one park row numbered 1, found {len(park_1)}"
+    assert "CLOSED" in park_1[0], (
+        "park 1's row no longer says it is closed. It was closed on 2026-08-26 by obtaining ST "
+        "0601.14 and writing the row set it supports; a row that stops saying so reads as an open "
+        "park whose document happens to be on disk, which is what park 2 actually is"
+    )
+    assert "closed 2026-08-26" in flat.lower(), (
+        "the date park 1 closed is gone. A park that closes without a date cannot be checked "
+        "against the commit that closed it"
     )
     assert "A purchase decision, not a download" in flat, (
         "park 8 (SMPTE ST 336) is the one park that is not a download, and saying so is the point "
@@ -3500,25 +3715,45 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     # And the other eleven DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
-    assert len(downloads) == 11, (
-        f"{len(downloads)} of the twelve park rows state a public-download reopen condition, "
-        "expected 11. The count IS the honest-strength claim in the paragraph above the table"
+    assert len(downloads) == 10, (
+        f"{len(downloads)} park rows state a public-download reopen condition, expected 10 — "
+        "eleven open parks, of which ten are downloads and one is the purchase. The count IS the "
+        "honest-strength claim in the paragraph above the table, and it moved from 11 when park 1 "
+        "closed: a closed park has no reopen route to state"
     )
 
 
 def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
-    """Eight entries, `KLV n`, and no ninth without a deliberate edit.
+    """Ten entries, `KLV n`, no eleventh without a deliberate edit — and every CITATION defined.
 
     Numbered per the new adapter's own convention rather than continuing the GMTIF or NITS series,
     because a register is scoped to the document it reads. The upper guard matters as much as the
     lower one: these numbers are cited from the row sets and from the fixture plan, so a register
     that grew without the citations moving is a set of dangling references.
+
+    AND THE OTHER DIRECTION, WHICH THIS TEST DID NOT CHECK AND SHOULD HAVE. It guarded growth
+    only, and a citation can outrun the register just as easily as the register can outrun the
+    citations. It did: on 2026-08-26 the pin table gained the sentence "Register entry **KLV 9**"
+    while KLV 9's entry was written into `klv_pin.json` and never into this document, so for the
+    life of that commit this file pointed at a register entry it did not contain — and the guard
+    that would have caught it was instead ASSERTING that KLV 9 must not appear. A one-directional
+    check on a two-directional invariant reads as protection and is not. Both directions now.
     """
     section = _section(KLV_HEADING)
-    for n in range(1, 9):
+    for n in range(1, 11):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 9 —" not in section, (
-        "the register has grown past KLV 8 without this test being updated"
+    assert "**KLV 11 —" not in section, (
+        "the register has grown past KLV 10 without this test being updated"
+    )
+    # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
+    # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a
+    # roster of what is legal to cite.
+    cited = {int(m) for m in re.findall(r"KLV (\d+)", section)}
+    defined = {int(m) for m in re.findall(r"\*\*KLV (\d+) —", section)}
+    assert cited <= defined, (
+        f"the section cites register entries it does not define: {sorted(cited - defined)}. That "
+        "is the failure this test missed once already — a citation is a promise that an entry "
+        "exists, and `klv_pin.json` holding the entry does not discharge it here"
     )
     flat = _flat(section)
     # The two entries whose value is entirely in a precise quotation.

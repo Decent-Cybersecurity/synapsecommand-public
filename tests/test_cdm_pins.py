@@ -7,8 +7,10 @@ stale: the last one named **eight** pinned PDFs while the tree at that moment he
 Nothing was wrong with any of the nine — the list had simply not been extended when CAT048's
 EUROCONTROL pin landed, and a gate that under-counts what it is checking reports a clean run over a
 smaller tree than the one in front of it. (Those two numbers are the historical ones and they are
-left as they were. The tree holds **eleven** pins across **six** homes today, and nothing below
-restates that: the gate derives it, which is the point.)
+left as they were. The tree holds **fourteen** pins across **eight** homes today, and nothing below
+restates that: the gate derives it, which is the point. Those two numbers moved on 2026-08-26, when
+ST 0601.19, ST 0102.12 and then ST 0601.14 landed in `fixtures/klv/spec/` — a directory that was
+already a home, which is why the pin count moved by three and the home count did not move at all.)
 
 So the enumeration is gone. This module *discovers* the pin set from the two places the repository
 already states it, and then compares that set against the disk:
@@ -183,8 +185,8 @@ The two repairs, because neither is "add a skip and move on":
   the clone. What was missing was not the rules but the paths to try them on, and it was asking
   the disk for those. It now asks the RECORD as well — `git check-ignore --no-index` answers about
   a path, not about a file, and returns the same verdict for a document nobody holds. So the check
-  runs everywhere, over the union of the recorded pin paths and whatever is on disk: eleven paths
-  on a fresh clone, thirty-six here. It got STRONGER by being made to work for an outsider, which
+  runs everywhere, over the union of the recorded pin paths and whatever is on disk: fourteen paths
+  on a fresh clone, forty-seven here. It got STRONGER by being made to work for an outsider, which
   is the outcome to prefer over a skip whenever the subject allows it.
 
 And the skip messages are held to a shape, because a skip nobody can read is a silent pass: **name
@@ -576,8 +578,12 @@ def test_the_pin_set_was_actually_discovered():
     homes floor did NOT move with it: `fixtures/klv/spec/` was already a home, holding the wrapper
     and the profile, so two pins arrived into an eighth home rather than a ninth. A floor raised on
     both numbers because two files appeared would have been a guess that happened to be half right.
+
+    13 to 14 later the same day, when MISB ST 0601.14 landed in the same directory and closed the
+    KLV section's park 1. The homes floor stays at eight for the same reason it did not move for
+    the previous two: it is the ninth pin to arrive into an existing home.
     """
-    assert len(PINS) >= 13, (
+    assert len(PINS) >= 14, (
         f"discovered only {len(PINS)} pins: {sorted(PINS)}. Both statements of a pin are parsed — "
         "the *_pin.json records and FORMAT_COVERAGE.md's pin rows — so a low count means one of the "
         "two parsers has stopped matching"
@@ -1087,7 +1093,7 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
     """The MECHANISM behind the gate below, and the two now fail in the same direction.
 
     `test_no_pdf_is_tracked_anywhere_in_the_repository` is a good check that fires LATE: it runs
-    at suite time, after `git add -A` has already staged 36 held documents, and only a suite run
+    at suite time, after `git add -A` has already staged 47 held documents, and only a suite run
     or a careful reading of `git status` stands between that and a commit. The pre-publication
     audit found the invariant resting on exactly that, and recorded that the near-miss had
     happened twice. So `.gitignore` now refuses the staging itself.
@@ -1101,7 +1107,7 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
     THIS CHECK DOES NOT SKIP, on any tree, and the fresh-clone boundary in this module's docstring
     says why: its subject is the ignore rules, and a clone has those in full. It used to demand
     documents on disk and fail an outsider for not having any — asking the disk for paths when the
-    pin records state eleven of them, none of which has to exist for `--no-index` to rule on it.
+    pin records state fourteen of them, none of which has to exist for `--no-index` to rule on it.
     """
     import subprocess
     def ignored(rel: str) -> bool:
@@ -1116,33 +1122,41 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
     # Every document this repository RECORDS, plus every one it happens to hold. Real paths in
     # both cases — nothing synthetic — but the record is the half that makes this check work for
     # a reader who has no PDFs, and that is the ordinary case: `--no-index` asks the PATTERNS
-    # about a path, so it answers identically whether or not the file is there. Eleven paths on a
-    # fresh clone, thirty-six here, and the held half is what covers the `spec/history/` lineages
+    # about a path, so it answers identically whether or not the file is there. Fourteen paths on
+    # a fresh clone, forty-seven here, and the held half is what covers the `spec/history/` lineages
     # that no pin record names.
     # PINS is keyed relative to the PACKAGE and `check-ignore` wants repo-relative, so the prefix
     # is DERIVED. Typing it got it wrong first time — `packages/cdm/` instead of
     # `packages/cdm/synapse_cdm/` — and every assertion still passed, because `*.pdf` is ignored
     # at any depth and a wrong path is ignored just as convincingly as a right one. The
     # spec-directory check below is what makes a wrong prefix fail instead of pass.
+    #
+    # THE TWO COUNTS IN THE PARAGRAPH ABOVE ARE NARRATIVE AND THEY HAVE MOVED, which is worth a
+    # line rather than a silent edit: the recorded set is 14 on a fresh clone and the held set is
+    # 47 in this tree, not eleven and thirty-six. Neither number is asserted here — the floor
+    # below is — and both drifted because pins land in this repository without anybody being sent
+    # back to a docstring. The same drift, in a file that insists its numbers are DERIVED, is
+    # recorded as a finding in `fixtures/klv/spec/klv_pin.json` under
+    # `not_committed.a_derived_count_in_gitignore_had_gone_stale_and_is_corrected`.
     package = PKG.relative_to(REPO)
     recorded = {str(package / path) for path in PINS}
     held = {str(p.relative_to(REPO)) for p in FIXTURES.rglob("*.pdf")}
     documents = sorted(recorded | held)
     assert documents, (
         "neither a pin record nor the disk yields a single specification document, so this check "
-        "is vacuous. The pin records are tracked and a clone has all eleven, so an empty set here "
+        "is vacuous. The pin records are tracked and a clone has all fourteen, so an empty set here "
         "means discovery is broken rather than that the tree is clean — see "
         "test_the_pin_set_was_actually_discovered"
     )
-    assert len(recorded) >= 11, (
+    assert len(recorded) >= 14, (
         f"only {len(recorded)} recorded pin path(s) reached this check. It is keyed on the record "
-        "precisely so that a fresh clone checks eleven paths instead of none"
+        "precisely so that a fresh clone checks fourteen paths instead of none"
     )
     # THE PREFIX IS CHECKED, on a tracked directory, because an unignored PDF and a nonexistent
     # one are indistinguishable to `check-ignore` — both come back ignored. Every pin sits beside
     # its `*_pin.json` in a `spec/` directory, and those directories ARE tracked, so their
     # presence is decidable on a fresh clone and a mis-derived prefix fails here rather than
-    # sailing through as a green check over eleven paths that do not exist.
+    # sailing through as a green check over fourteen paths that do not exist.
     homeless = sorted(d for d in recorded if not (REPO / d).parent.is_dir())
     assert not homeless, (
         f"{len(homeless)} recorded pin path(s) name a directory that is not in this tree: "

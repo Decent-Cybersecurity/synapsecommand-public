@@ -1047,23 +1047,42 @@ too — so the first is now stated.
   mapping row in `FORMAT_COVERAGE.md`
   says `not yet`, and **no gap is opened and no field proposed** — which is the entry.
 
-  Pinned to four documents by SHA-256: **STANAG 4609 Edition 5, 30 July 2020**
+  Pinned to five documents by SHA-256: **STANAG 4609 Edition 5, 30 July 2020**
   (`f2f9ae1a…b2dbf8d8`, 273 801 bytes, 5 pages) and the profile its AGREEMENT clause names,
   **MISP-2019.1, title page November 2018** (`3167362a…b102d5ea`, 1 372 771 bytes, 73 pages), plus
-  two of the delegated field dictionaries obtained on 2026-08-26 — **MISB ST 0601.19, cover dated
-  02 March 2023** (`e53c1e7b…0cfb92b1`, 4 700 978 bytes, 226 pages) and **MISB ST 0102.12, 22 June
-  2017** (`20d40b52…85eca267`, 514 842 bytes, 18 pages). **Only the second is the edition the
-  profile pins**: Appendix B ref [55] pins 0102.12, while ref [53] pins **0601.14** and not the
-  .19 obtained — so the round that obtained them transcribed no tag table and the phase did not
-  advance. `spec/klv_pin.json`'s `reconciliation_ruling` carries both citations verbatim and the
-  ruling on each. No PDF is committed. The fixture directory is `fixtures/klv` rather than
+  three of the delegated field dictionaries obtained on 2026-08-26 — **MISB ST 0601.14, served as
+  `ST0601.14a.pdf`, cover dated 1 May 2020** (`3d5f1ca1…ab212ce4`, 3 969 201 bytes, 218 pages),
+  **MISB ST 0102.12, 22 June 2017** (`20d40b52…85eca267`, 514 842 bytes, 18 pages) and **MISB ST
+  0601.19, cover dated 02 March 2023** (`e53c1e7b…0cfb92b1`, 4 700 978 bytes, 226 pages). **The
+  first two are the editions the profile pins** — Appendix B ref [53] pins 0601.14 and ref [55]
+  pins 0102.12 — and **the third is not**, being five major revisions later; it is retained as
+  **context only** and is never a source of tag semantics. `spec/klv_pin.json`'s
+  `reconciliation_ruling` carries every citation verbatim and the ruling on each. No PDF is
+  committed.
+
+  **The round that obtained ST 0601.14 transcribed its Table 1 in full — 141 items, tags 1 through
+  141, every row `not yet` — and closed park 1**, the largest of the twelve. The phase did not
+  otherwise advance: there is still no adapter, no codec and no fixture, because parks 4 and 8
+  (ST 0107.3 and SMPTE ST 336:2017) own how a key and a length are written and holding the
+  dictionary does not make the octets readable. **Still no gap opened and no field proposed.** Two
+  findings are worth carrying here rather than leaving in the pin. First, ST 0601.14 §6.4 and §8.2
+  **state the Precision Time Stamp's epoch** — SI seconds since `1970-01-01T00:00:00Z`, in
+  microseconds, leap seconds excluded and therefore not UTC — which corrects the *reach* of this
+  entry's own epoch note below without touching its finding: the profile still states none, and the
+  rule was always "do not write one from memory" rather than "do not write one". Park 3 stays open
+  because ST 0603.5 remains the normative definition. Second, item 65 is **mandatory in every
+  packet and declares which revision of ST 0601 the producer encoded against**, so park 1's
+  wrong-edition hazard is detectable on the wire — but it is a `uint8` and cannot express the
+  minor-version letter, which is the same blind spot the citation has. Register entries **KLV 9**
+  and **KLV 10**. The fixture directory is `fixtures/klv` rather than
   `fixtures/stanag4609`, the same split that gives adapter `stanag4676` its fixtures in
   `fixtures/nits`, and `tests/test_cdm_harness.py` now carries that as a **planned** map entry
   beside the shipped ones — nine of them when this entry was written, ten since `cat034` landed.
 
   **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
-  row set is a *document this repository does not hold* — twelve parks over fourteen documents,
-  eleven of them public downloads and one of them behind SMPTE's paywall — and not a CDM shortfall.
+  row set is a *document this repository does not hold* — twelve parks over fourteen documents, one
+  now closed, ten of the eleven still open being public downloads and one behind SMPTE's paywall —
+  and not a CDM shortfall.
   The profile delegates every field dictionary it relies on: `MISP-2015.1-07` sends the KLV
   encoding to SMPTE ST 336:2017, `MISP-2015.1-08` sends the formatting to MISB ST 0107.3, and
   §4.4.4.1 sends the airborne field dictionary to MISB ST 0601.14. A schema proposal derived from
