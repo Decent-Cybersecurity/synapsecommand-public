@@ -153,13 +153,22 @@ jobs:
           # 3.12 was verified green (2886 passed, 2 skipped) before being written here.
           python-version: '3.12'
 
-      - name: Install what the suite and the gate need
+      - name: Install what the suite and the gate need, by the documented path
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
-          python -m pip install pytest twine
-          # `build` is NOT installed here. The gate provisions it into a venv of its own, on
-          # purpose, and installing a second copy alongside would leave which one built the
-          # published artefact depending on PATH.
+          # This is CONTRIBUTING.md's setup command, verbatim, and using anything else here would
+          # be a mistake with history: the first dispatch run of this workflow installed only
+          # `pytest twine` and all 35 test modules failed collection on `No module named
+          # 'pydantic'`. The suite needs the package's dependencies, and the documented way to get
+          # them is the editable install with its `[test]` extra. Running the documented command
+          # also means a CI failure here is a report that the documented path is broken — which is
+          # a thing worth learning from a workflow rather than from a new contributor.
+          python -m pip install -e "packages/cdm[test]"
+          # `twine` for the --strict metadata check below. `build` is deliberately NOT installed:
+          # the gate provisions it into a venv of its own, and a second copy alongside would leave
+          # which one built the published artefact depending on PATH.
+          python -m pip install twine
 
       - name: Condition 1 — the suite is green
         run: python -m pytest -q
