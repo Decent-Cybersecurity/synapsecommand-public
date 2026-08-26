@@ -375,7 +375,8 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021",
                         "cat023": "cat023", "cat034": "cat034", "cat048": "cat048",
                         "cat062": "cat062", "gmti": "gmti", "legion": "legion",
-                        "pntmap": "pntmap", "stanag4676": "nits", "tak": "tak"}
+                        "pntmap": "pntmap", "stanag4609": "klv", "stanag4676": "nits",
+                        "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
 #:
@@ -408,10 +409,10 @@ SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021",
 #: first two Phase 1 entries whose row sets are complete rather than partial — 27 items and 9
 #: items respectively, every one dispositioned — so the window in which the relation could be
 #: folklore is the window between this commit and the two that ship the adapters.
-PLANNED_FIXTURE_DIRS = {"stanag4609": "klv", "stanag5527": "fft"}
+PLANNED_FIXTURE_DIRS = {"stanag5527": "fft"}
 
 
-def test_the_twelve_shipped_adapters_all_have_a_real_fixture_directory():
+def test_the_thirteen_shipped_adapters_all_have_a_real_fixture_directory():
     """The sweep the gate runs, as a test, so the directory names stop being folklore.
 
     This is the other half of the fix. Making a vacuous run fail loudly stops a wrong path from
@@ -550,23 +551,31 @@ def test_the_adapters_declare_the_same_fixture_directories_this_module_pins():
     )
 
 
-def test_only_the_adapter_named_for_a_standard_declares_a_different_directory():
-    """Nine of ten leave `fixture_dir` unset, and that is the property worth asserting.
+def test_only_the_adapters_named_for_a_standard_declare_a_different_directory():
+    """Eleven of thirteen leave `fixture_dir` unset, and that is the property worth asserting.
 
     `fixture_dir = None` means "the same string as `name`". If a future adapter sets it to its own
     name, the declaration is noise that reads as a meaningful exception; if the exception spreads
     beyond the adapters named after covering documents, the convention has stopped being a
     convention. Both are cheap to catch here and expensive to notice later.
+
+    **The exception is now TWO, and it is the same exception twice rather than a widening.** Both
+    overriding adapters are named for a covering document and neither directory is the adapter's
+    own name: `stanag4676` holds its payloads in `nits` and `stanag4609` holds its in `klv`. The
+    rule the pair establishes is the one the singleton could only illustrate — an adapter named
+    after a STANDARD is named for a document, and the fixture directory is named for the bytes —
+    and `klv_pin.json` recorded both of this one's names five rounds before its code existed.
     """
     from synapse_cdm.adapter import discover
     overridden = {name: cls.fixture_dir for name, cls in discover().items()
                   if cls.__module__.startswith("synapse_cdm.adapters.")
                   and cls.fixture_dir is not None}
-    assert overridden == {"stanag4676": "nits"}, (
-        f"the set of adapters overriding fixture_dir is {overridden}. Exactly one does, and it "
-        "does because STANAG 4676 is a covering document — the adapter is named for the standard "
-        "and the directory for the payload. An override equal to the adapter's own name is a "
-        "no-op that reads as an exception; a new genuine one needs its reason in the class"
+    assert overridden == {"stanag4609": "klv", "stanag4676": "nits"}, (
+        f"the set of adapters overriding fixture_dir is {overridden}. Exactly two do, and both do "
+        "because they are named for COVERING DOCUMENTS — STANAG 4676's payloads are NITS and "
+        "STANAG 4609's are KLV, so in each case the adapter is named for the standard and the "
+        "directory for the bytes. An override equal to the adapter's own name is a no-op that "
+        "reads as an exception; a new genuine one needs its reason in the class"
     )
 
 

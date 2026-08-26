@@ -1,0 +1,53 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 41103,
+        "stored": 41103,
+        "valid": true
+      },
+      "defects": [
+        {
+          "class": "required_length",
+          "factual_basis": "edition 1's own item table states this item's Len at three sites inside itself, and every edition this repository can sample states the same one \u2014 the initial release (12 January 2006), EG 0601.1, STD 0601.4, ST 0601.8, ST 0601.14a and ST 0601.19. See FORMAT_COVERAGE.md, 'Park 13 adjudicated and CLOSED', for the reading, and MISB EG 0601.1, SHA-256 1714322c25e00e00ccabd5d861318f1448055cbf2000dc2e5099fb30dec0b730, fixtures/klv/spec/EG0601.1.pdf for the copy",
+          "max_length": 2,
+          "name": "Target Width",
+          "normative_basis": "ST 0601.13-29, \u00a77: 'When a metadata item has a Required Length numerically specified in this standard, the KLV encoded value for the item shall use exactly the number of bytes specified by the Required Length.' STANDING ANNOTATION, carried rather than shed at closure: the identifier is stamped edition 13, nothing held establishes that a requirement introduced at edition 13 reaches an emitter written against an earlier edition, and that retroactivity is still unestablished. It is why this basis is stated BESIDE the factual one and never instead of it",
+          "observed_length": 4,
+          "octets": "00000fa0",
+          "policy": "skip_the_item_and_record_a_structured_defect_annotation",
+          "required_length": 2,
+          "section": "ST 0601.14a \u00a78.22",
+          "tag": 22,
+          "tag_offset": 30,
+          "value_offset": 32
+        }
+      ],
+      "index": 0,
+      "item_octets": {
+        "1": "a08f",
+        "2": "000459f4a6aa4aa8",
+        "22": "00000fa0",
+        "56": "8c",
+        "65": "0d"
+      },
+      "tag_order": [
+        2,
+        65,
+        22,
+        56,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 26,
+      "value_length_octets": "1a"
+    }
+  ],
+  "payload": {
+    "octets": 43,
+    "packet_count": 1
+  }
+}

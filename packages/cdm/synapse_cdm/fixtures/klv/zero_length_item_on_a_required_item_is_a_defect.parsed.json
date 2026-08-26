@@ -1,0 +1,51 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 44962,
+        "stored": 44962,
+        "valid": true
+      },
+      "defects": [
+        {
+          "class": "zero_length_on_a_required_item",
+          "factual_basis": "ST 0601.14-32, \u00a76.5: 'Required items of a UAS Datalink LS (Tag 1 - Checksum, Tag 2 - Precision Time Stamp, and Tag 65 - UAS Datalink LS Version Number) instance shall always be reported with positive lengths (i.e. Zero-Length Items (ZLI) are not allowed for these items).' A ZLI on one of those three is the one zero-length case the document itself makes a defect",
+          "max_length": 1,
+          "name": "UAS Datalink LS Version Number",
+          "normative_basis": "ST 0601.14-32, \u00a76.5: 'Required items of a UAS Datalink LS (Tag 1 - Checksum, Tag 2 - Precision Time Stamp, and Tag 65 - UAS Datalink LS Version Number) instance shall always be reported with positive lengths (i.e. Zero-Length Items (ZLI) are not allowed for these items).' A ZLI on one of those three is the one zero-length case the document itself makes a defect",
+          "observed_length": 0,
+          "octets": "",
+          "policy": "skip_the_item_and_record_a_structured_defect_annotation",
+          "required_length": 1,
+          "section": "ST 0601.14a \u00a78.65",
+          "tag": 65,
+          "tag_offset": 27,
+          "value_offset": 29
+        }
+      ],
+      "index": 0,
+      "item_octets": {
+        "1": "afa2",
+        "2": "000459f4a6aa4aa8",
+        "56": "8c",
+        "65": ""
+      },
+      "tag_order": [
+        2,
+        65,
+        56,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 19,
+      "value_length_octets": "13"
+    }
+  ],
+  "payload": {
+    "octets": 36,
+    "packet_count": 1
+  }
+}

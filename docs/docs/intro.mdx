@@ -8,7 +8,7 @@ description: What the SynapseCommand Canonical Data Model is, why it exists, and
 
 # The Canonical Data Model
 
-Twelve integration adapters are shipped and harness-verified — PNTMAP
+Thirteen integration adapters are shipped and harness-verified — PNTMAP
 GNSS alerts, TAK / Cursor-on-Target (bidirectional), AIS / NMEA 0183
 AIVDM (bidirectional), ADS-B 1090ES extended squitter (bidirectional),
 Picogrid Legion Platform API v3, ASTERIX category 021 ADS-B target
@@ -18,12 +18,14 @@ detections (bidirectional, byte-exact), ASTERIX category 048
 monoradar target reports (bidirectional, byte-exact), and ASTERIX
 category 034 monoradar service messages (bidirectional, byte-exact),
 ASTERIX category 062 SDPS system track messages (bidirectional,
-byte-exact), and ASTERIX category 023 CNS/ATM ground station and
-service status reports (bidirectional, byte-exact).
+byte-exact), ASTERIX category 023 CNS/ATM ground station and
+service status reports (bidirectional, byte-exact), and STANAG 4609 /
+MISP-2019.1 UAS Datalink Local Set KLV metadata (bidirectional,
+byte-exact).
 
 Without a canonical model in the middle, N adapters means N(N−1)/2
-translations and N private notions of what "a contact" is — sixty-six
-and twelve as of today — and the integration layer becomes the place
+translations and N private notions of what "a contact" is — seventy-eight
+and thirteen as of today — and the integration layer becomes the place
 where meaning is quietly lost. With one, an adapter is a thin
 translator and nothing else.
 

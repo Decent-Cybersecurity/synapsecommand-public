@@ -239,10 +239,15 @@ ADAPTER_ARG = re.compile(r"--adapter\s+(\S+)")
 
 #: Fixture directories at Phase 1, whose READMEs document a command that FAILS on purpose — an
 #: unregistered adapter name against a directory holding only `spec/`. See this module's header.
+#: TWO SITES, AND IT WAS THREE UNTIL ADAPTER #10 SHIPPED. The allowlist is checked in the direction
+#: that makes it expire — see `test_each_deliberate_failure_site_still_names_an_unregistered_adapter`
+#: — and on 2026-08-26 it expired for `fixtures/klv/README.md` and for `FORMAT_COVERAGE.md`, both of
+#: which printed `--adapter stanag4609` as a demonstration of a LookupError. The adapter shipped, the
+#: command runs, and both sites were rewritten to say so rather than inheriting an exemption that had
+#: become a wrong instruction. That is the allowlist working: it is the only row in this module that
+#: has ever been REMOVED on evidence rather than added.
 DELIBERATE_FAILURE_SITES = {
-    "packages/cdm/synapse_cdm/fixtures/klv/README.md",
     "packages/cdm/synapse_cdm/fixtures/fft/README.md",
-    "packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
 }
 
 

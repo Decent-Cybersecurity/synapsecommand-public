@@ -175,6 +175,109 @@ measured off the index afterwards, and which step of it did not run.
 Nothing below is in **1.1.0**, the version PyPI serves. Recorded as it lands, which is condition 4
 of "What a release requires" — notes derived rather than remembered.
 
+- **Adapter #10 SHIPPED — `stanag4609`, STANAG 4609 / MISP-2019.1, the UAS Datalink Local Set,
+  bidirectional and byte-exact — against 26 of its row set's 141 rows.** The witnessed-set round of
+  2026-08-26, and the seventh round on this format. **No field added, removed or retyped, and no
+  schema touched**, which is the entry: `SCHEMA_VERSION` stays `1.0.0` and this is a package
+  **MINOR** when released.
+
+  **What "26 of 141" means, because a partial promotion is new in this repository.** The pinned
+  stream `fixtures/klv/streams/day_flight.klv` — SHA-256 `a810e4b6…e51`, 977 octets, re-verified —
+  carries six packets of 26 items each, the same 26 tags in the same order every time: 1, 2, 5, 6,
+  7, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 40, 41, 42, 56, 57 and 65. Those
+  26 rows moved. **The other 115 still read `not yet`**, and the blocker on almost all of them is
+  neither a park nor a schedule but a rule: *an item nobody here has met on a wire is an item whose
+  decoder could only ever be checked against a fixture written from the same reading of the same
+  table.* `klv_uas_codec.WITNESSED_TAGS` is that scope contract as data, and
+  `test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document` now asserts the
+  partition tag by tag in both directions — a row promoted without a decoder fails, and a decoder
+  without its row promoted fails too.
+
+  **Two codecs, not one, and the split is the property being protected.** `adapters/klv_codec.py`
+  stays the framing layer and stays **tag-blind** — that is how `ST 0107.3-04`'s "skip unknown Local
+  Set values" is satisfied structurally rather than by a skip list — and
+  `adapters/klv_uas_codec.py` is new and holds the tag table. A test asserts the framing layer does
+  not import the tag table, because a table imported there would destroy the claim silently: the
+  walk would still work.
+
+  **Every number in the item table is the document's, and the check is the document's too.** Each
+  §8.x block in ST 0601.14a states eleven facts in three drawn tables and prints one Software Value
+  beside the KLV octets that encode it, and §7's Programmer's Notes say why: "the 'Example Value'
+  for a tag is shown in full precision, beyond a tag's resolution, so programmers can verify they
+  are using the right formulas." So `check_against_the_documents_own_examples()` runs all 26 on
+  every suite run — **26 of 26 agree** — and `check_against_edition_1s_examples()` runs the 23 that
+  **MISB EG 0601.1** independently prints, which all decode under the same maps. That is what makes
+  the anchor external: a transcription checked against a fixture written from the same reading proves
+  only that the reading is self-consistent.
+
+  **A codec ruling: the length-divergence policy.** Park 13 ruled item 22's four octets a stream
+  defect and said explicitly that the flag was "owed by the value-decoding layer, which does not
+  exist". It exists now, so the rule is written: **the ITEM is skipped and a structured defect
+  annotation is recorded** — never the packet rejected (candidate a), never the octets reinterpreted
+  (candidate c). Rejecting the packet would discard 25 conformant items whose checksum validates and
+  would contradict `ST 0107.3-04`; reinterpreting them requires choosing between three truncation
+  rules no held document states, which agree on this stream and disagree the moment a top octet is
+  non-zero. **The class has four branches and the document draws three of them**: `ST 0601.13-29`'s
+  `shall` for a Required Length, §7's word "**recommended**" for a Max Length (so an over-long
+  variable item is decoded and carries an advisory), and `ST 0601.14-33`'s "consumers shall interpret
+  the value of the item as 'unknown'" for a length of zero — except on the three items
+  `ST 0601.14-32` forbids a Zero-Length Item for, where a zero IS a defect. `ST 0601.14-34`'s
+  ordering rule is read and deliberately **not enforced**: it constrains a producer across packets,
+  and checking it would carry state across a packet boundary.
+
+  **Park 5 is NARROWED and not lifted, by enumeration.** `MISP-2015.1-09` says every scaled value is
+  mapped by ST 1201.3 and that is the profile's claim; **not one of the 26 witnessed items' §8.x
+  sections names IMAPB**, because each states its own affine map twice over. The 16 that do are tags
+  96, 103, 104, 105, 109, 112, 113, 114, 117, 118, 119, 120, 128, 130, 132 and 134. Recording that a
+  blocker shrank is not recording that it lifted. **Park 11 changed standing without anything being
+  fetched**: it has said since Phase 1 that it "blocks keying an `Entity` on anything the stream
+  states", which was a forecast and is now a measurement — the stream carries none of the five items
+  that could identify an airframe, and item 11, the only witnessed item that looks like a name, reads
+  `'EON'` in five packets and `'IR'` in the sixth. So the `entity_id` is **packet-scoped** on the
+  CAT048 settlement-9 precedent, and the cost is **gap 30**.
+
+  **The register gains one entry — KLV 17**, the `ISO7`-against-`utf8` divergence on items 11 and 12,
+  which is the only column of the only two of the 26 items where edition 1 and the pinned edition
+  differ at all. It costs nothing on any octet either edition admits.
+
+  **Ten synthetic payload fixtures and their ten parsed twins**, in `fixtures/klv/` where the harness
+  finds them, built only by `fixtures/klv/spec/build_fixtures.py`, plus goldens. **Not one contains a
+  run from the pinned stream**: the value-carrying fixture uses each item's own §8.x Example KLV
+  Value, and the defect fixture reproduces the *class* — four octets under a Required Length of 2 —
+  with a value the stream does not carry. Two of them earned their place by failing on the first run:
+  `special_values_are_signals_and_not_measurements` caught the sentinel being compared against the
+  *signed* reading of its own octets, which made `0x80000000` decode to a latitude of
+  −90.00000004190952; and `a_checksum_that_does_not_validate_is_flagged_not_refused` caught egress
+  **recomputing** the checksum instead of replaying it, which silently repaired a packet it had been
+  asked to carry.
+
+  **The clock seam is built.** `FORMAT_COVERAGE.md` called it "NAMED AND NOT BUILT" for two rounds
+  because "closing park 4 did not create an adapter to hang a seam on". `received_at` comes from the
+  injected clock and `observed_at` from item 2, whose epoch §8.2.1 states on its own account — so
+  that field was never blocked on park 3. What park 3 still owns is the **name** of a timescale
+  §8.2.1 says "does not represent UTC", and `attributes.time_basis` carries the caveat on every
+  object rather than resolving it.
+
+  **Why this is NOT yet in "Adapters that landed with no schema change", and it is a precedent
+  rather than an oversight.** That section's heading says *landed*, every one of its eleven entries
+  shipped in a release, and the nine sites that state its count all say eleven — including
+  `RELEASE_NOTES.md`'s "eleven of the twelve", which is 1.1.0's own sentence and true of 1.1.0.
+  `stanag4609` has landed on `main` and in no release, so it joins that section and moves that count
+  **in the commit that releases it**, which is the first time this file has had to distinguish the
+  two. Recorded here because "no entry" and "nobody wrote an entry" look identical from the section
+  itself, which is the reason the section exists.
+
+  **What did NOT move.** No park closed. Parks 8 and 9 are untouched and were unreachable — a value
+  decoder fetches no transport standard and none of the held documents is SMPTE ST 336 — so the
+  download count stays at **9 of 10**. No specification was fetched and none pinned; both
+  transcriptions were read from copies already held. KLV 14, 15 and 16 stay open as scoped. And
+  `klv_uas_codec` reads **no nested set at all** — items 48, 73, 74, 100 and 101 carry Local Sets
+  inside their Values, none is witnessed, and "the codec handles 26 items" and "the codec handles one
+  level of structure" are different claims of which only the first is true.
+
+  **Package MINOR when released** — an added adapter and two added modules, nothing removed, no
+  schema touched.
+
 - **Two corrections to this file's own prose, made true by an act that happened after 1.1.0
   shipped.** `PUBLICATION.md` ledger entry 6 closed on 2026-08-26 when the 1.0.0 API token was
   revoked, and closing it falsified two sentences here. "What the workflow does" said the upload

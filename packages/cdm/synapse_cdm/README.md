@@ -1,12 +1,13 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Twelve integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Thirteen integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
+STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
 ASTERIX category 048 monoradar target reports, ASTERIX category 034 monoradar service
 messages, ASTERIX category 062 SDPS system track messages, and ASTERIX category 023 CNS/ATM
-ground station and service status reports. Without a canonical model in the middle, twelve adapters
-means sixty-six translations and twelve private notions of "a contact".
+ground station and service status reports. Without a canonical model in the middle, thirteen
+adapters means seventy-eight translations and thirteen private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -312,9 +313,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's twelve adapters it is 132 against 66.
+   contradiction. At today's thirteen adapters it is 156 against 78.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that twelve adapters cannot grow twelve slightly
+   `docs/docs/cdm/entity.mdx` both carry "so that thirteen adapters cannot grow thirteen slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park
@@ -343,6 +344,31 @@ cannot find a site nobody has added to it. The sweep is:
    NITS section at "four private keys… no seventh key" while the table read eight and seven.
    Neither was re-synced; both now cite gap 1 and state no number, because a second statement
    re-drifts and a citation cannot.
+8. **PIN THE DERIVATION, not just the number — and this rule exists because a count was
+   mis-derived twice, identically, by two rounds that had each just diagnosed the same class of
+   defect.** The number in question is how many times one phrase occurs across this repository —
+   the phrase written `1\.1\.0 candidate` throughout this rule, **as the regex rather than as
+   itself, because a paragraph that spelled it out would change the count it describes** — which
+   two consecutive commits asserted as an untouchable at **35** while the derivation each round
+   actually typed was a `grep` over a hand-written list
+   of extensions — `*.md`, `*.py`, `*.json` — which **excludes `docs/docs/changelog.mdx` and yields
+   34**. The assertion was right and the derivation behind it was wrong, which is the worst
+   arrangement of the two: nothing failed, and the next round inherited a method that disagrees
+   with the answer it produces.
+
+   **The repair is that the file set is `git ls-files` and there is no extension list anywhere.**
+   Stated once, as one command a human can run:
+
+   ```bash
+   git ls-files -z | xargs -0 grep -Ioh '1\.1\.0 candidate' | wc -l    # 35
+   ```
+
+   and implemented once, in `tests/test_cdm_prose_counts.py`'s
+   `occurrences_over_tracked_files()`, which **the guard itself calls** — so the check and the
+   checker cannot disagree, because there is only one of them. Any extension a future round adds
+   to the tree is inside the derivation the moment `git` tracks it, which is the property a
+   remembered list of suffixes cannot have. The general rule: **a count whose derivation is a
+   command somebody retypes each round is a count that will be re-derived differently.**
 
 **A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
 `Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see
@@ -351,7 +377,9 @@ Anything that parses tables will report clean while the paragraphs around them c
 
 `tests/test_cdm_prose_counts.py` now pins the sites in eight documents — the ones the sweep had to
 repair, and the ones it found correct and unguarded, which is the state every one of the others
-was in before it drifted — so a half-edit at a KNOWN site fails a build. It is deliberately an
+was in before it drifted — so a half-edit at a KNOWN site fails a build. **It also pins one
+phrase-occurrence count over the whole tracked tree**, which is rule 8's repair and the only check
+in that module whose file set is `git ls-files` rather than an allowlisted path. It is deliberately an
 allowlist and not a scanner — a general prose-number check would flag "two altitudes that are two
 different measurements" and need an exemption list larger than the sweep it replaced — so
 **finding a NEW site is still the sweep's job**, and adding it to that allowlist is how the

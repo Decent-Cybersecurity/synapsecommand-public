@@ -109,8 +109,13 @@ SWEPT = (
     "packages/cdm/synapse_cdm/fixtures/fft/README.md",
     "packages/cdm/synapse_cdm/fixtures/fft/spec/fft_pin.json",
     "packages/cdm/synapse_cdm/fixtures/klv/README.md",
+    "packages/cdm/synapse_cdm/fixtures/klv/spec/build_fixtures.py",
     "packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json",
     "docs/docs/writing-an-adapter.mdx",
+    # RELEASE_NOTES.md joined the sweep when adapter #10 landed on `main` after 1.1.0 and the notes
+    # grew a section saying so. A release note is the one document a consumer is most likely to
+    # read, which makes it the worst place for an ordinal nothing checks.
+    "RELEASE_NOTES.md",
 )
 
 CLAIM = re.compile(r"[Aa]dapters?\s+#(\d+)")

@@ -27,14 +27,15 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that twelve adapters
-cannot grow twelve slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirteen adapters
+cannot grow thirteen slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
 import os
 import pathlib
 import re
+import subprocess
 
 import pytest
 
@@ -1326,4 +1327,145 @@ def test_the_readmes_pre_repair_quotations_are_still_quotations_of_repaired_byte
         f"{path} says {quotation!r} again, which {PKG_README} quotes as PRE-repair bytes. Either "
         "the repair was reverted, or the exhibit is now a live claim carrying an exemption written "
         "for a historical one"
+    )
+
+
+# ------------------------------------------- a count whose file set is the INDEX, not an allowlist
+#
+# RULE 8 OF THE SWEEP PROTOCOL, AND THE ONLY CHECK IN THIS MODULE WHOSE FILE SET IS `git ls-files`.
+#
+# WHY IT IS HERE, WHICH IS A REPEAT RATHER THAN A DRIFT. Two consecutive commits asserted an
+# untouchable — "35" occurrences of one phrase across the repository — and each round's actual
+# derivation was a `grep` over a hand-written list of extensions (`*.md`, `*.py`, `*.json`), which
+# EXCLUDES `docs/docs/changelog.mdx` and yields 34. **The assertion was right and the derivation was
+# wrong**, twice, identically, in two rounds that had each just diagnosed the same class of defect
+# one layer over. That arrangement is worse than a stale number: nothing failed, so the wrong method
+# was inherited rather than repaired, and the next person to re-derive it would have got 34 and
+# "corrected" a correct claim.
+#
+# WHAT THE REPAIR IS. The file set is the git index and there is no extension list anywhere. One
+# command, for a human:
+#
+#     git ls-files -z | xargs -0 grep -Ioh '1\.1\.0 candidate' | wc -l    # 35
+#
+# and one implementation, `occurrences_over_tracked_files()` below, which the guard CALLS. There is
+# no second derivation for the check to disagree with, which is the whole point: a count whose
+# derivation is a command somebody retypes each round is a count that will be re-derived
+# differently.
+#
+# THE PHRASE IS BUILT RATHER THAN WRITTEN, and that is not a flourish. A module that spelled it out
+# in a docstring or an assertion message would be counted by its own derivation and would move the
+# number it exists to pin — the same reason `packages/cdm/synapse_cdm/README.md`'s rule 8 refers to
+# it only as a regex. `PINNED_PHRASE` is assembled from parts, and
+# `test_this_module_does_not_spell_the_phrase_it_counts` asserts the module's own source contains no
+# literal occurrence, so the trap is closed rather than avoided by care.
+
+#: Assembled, never written out. See the note above.
+PINNED_PHRASE = "1.1.0" + " " + "candidate"
+
+#: What the derivation yields today. THE ONE NUMBER, and it is here rather than in prose because
+#: prose that spelled the phrase would break its own count — which is the constraint that made this
+#: fact awkward to state anywhere at all, and is worth recording as the reason it lives in a guard.
+PINNED_PHRASE_OCCURRENCES = 35
+
+
+def tracked_text_files() -> list[pathlib.Path]:
+    """Every file `git` tracks that is text. The file set, with no extension list in it.
+
+    A file with a NUL in its first 8 KiB is skipped as binary, which is `grep -I`'s own rule and is
+    the only filtering here — and it is a property of the bytes rather than of a suffix, so it
+    cannot go stale the way a remembered list of extensions does.
+    """
+    listed = subprocess.run(["git", "ls-files", "-z"], cwd=REPO,
+                            capture_output=True, text=True, check=True).stdout
+    out = []
+    for name in listed.split("\0"):
+        if not name:
+            continue
+        path = REPO / name
+        try:
+            head = path.open("rb").read(8192)
+        except OSError:
+            continue
+        if b"\0" in head:
+            continue
+        out.append(path)
+    return out
+
+
+def occurrences_over_tracked_files(phrase: str) -> dict[str, int]:
+    """`{path: count}` for every tracked text file containing `phrase`. THE derivation."""
+    found: dict[str, int] = {}
+    for path in tracked_text_files():
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        count = text.count(phrase)
+        if count:
+            found[str(path.relative_to(REPO))] = count
+    return found
+
+
+def test_the_pinned_phrase_count_is_what_the_derivation_yields_over_the_index():
+    """The check RUNS the derivation, so the two cannot disagree — there is only one of them.
+
+    A failure here is not necessarily a defect: adding a genuine new occurrence of the phrase is
+    ordinary work, and the fix is to move `PINNED_PHRASE_OCCURRENCES` in the same commit. What the
+    guard prevents is the state that actually occurred twice — a number asserted from memory while
+    the method that would have produced it produces a different one.
+    """
+    per_file = occurrences_over_tracked_files(PINNED_PHRASE)
+    total = sum(per_file.values())
+    assert total == PINNED_PHRASE_OCCURRENCES, (
+        f"the derivation over `git ls-files` yields {total} and this module pins "
+        f"{PINNED_PHRASE_OCCURRENCES}. Per file: {per_file}. If an occurrence was added or removed "
+        "on purpose, move the constant in the same commit; if not, this is the drift the constant "
+        "exists to catch"
+    )
+
+
+def test_the_derivations_file_set_is_the_index_and_not_a_list_of_extensions():
+    """The property the two mis-derivations lacked, asserted rather than described.
+
+    Both of them scoped a `grep` to `*.md`, `*.py` and `*.json`, and the one occurrence they missed
+    is in an `.mdx` file. So the assertion is that the derivation's file set REACHES a suffix such a
+    list would not, and that it reaches it because `git` tracks it rather than because anybody
+    remembered it.
+    """
+    per_file = occurrences_over_tracked_files(PINNED_PHRASE)
+    suffixes = {pathlib.Path(p).suffix for p in per_file}
+    assert ".mdx" in suffixes, (
+        f"no `.mdx` file carries the phrase any more; the suffixes are {sorted(suffixes)}. This "
+        "test's subject is that the derivation is not extension-scoped, and the evidence for that "
+        "was an occurrence in docs/docs/changelog.mdx that two extension-scoped greps missed. If "
+        "the occurrence moved, re-anchor this on whichever suffix an extension list would omit — "
+        "and if there is no longer such a suffix, say so here rather than deleting the check"
+    )
+    extension_scoped = sum(n for p, n in per_file.items()
+                           if pathlib.Path(p).suffix in {".md", ".py", ".json"})
+    assert extension_scoped < PINNED_PHRASE_OCCURRENCES, (
+        "an `*.md`/`*.py`/`*.json` grep now yields the same total as the index does, so this "
+        "check has stopped being able to tell the two apart. That is not a pass — re-anchor it"
+    )
+
+
+def test_this_module_does_not_spell_the_phrase_it_counts():
+    """The trap closed rather than avoided by care.
+
+    This module is tracked, so a literal occurrence of the phrase in its own source — in a
+    docstring, a comment or an assertion message — would be counted by its own derivation and would
+    move the number it exists to pin. `PINNED_PHRASE` is assembled from parts for that reason, and
+    this asserts nobody has since written it out while explaining it.
+    """
+    source = pathlib.Path(__file__).read_text()
+    assert PINNED_PHRASE not in source, (
+        "this module's source now contains a literal occurrence of the phrase it counts, so the "
+        "derivation counts this file too and the pinned total is one higher than the tree's real "
+        "one. Refer to it as a regex or assemble it from parts, as PINNED_PHRASE does"
+    )
+    readme = (PKG / "README.md").read_text()
+    assert PINNED_PHRASE not in readme, (
+        "the module README's sweep rule 8 now spells out the phrase it describes, which changes "
+        "the count that rule exists to pin. It refers to it as a regex for exactly that reason"
     )

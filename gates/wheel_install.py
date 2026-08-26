@@ -97,7 +97,8 @@ PACKAGE_ONLY_TESTS = (
     "test_cdm_asterix_cat062_adapter.py", "test_cdm_gmtif_adapter.py", "test_cdm_gmtif_codec.py",
     "test_cdm_harness.py", "test_cdm_legion_adapter.py", "test_cdm_list_adapters.py",
     "test_cdm_lossless.py", "test_cdm_models.py", "test_cdm_pntmap_adapter.py",
-    "test_cdm_schemas.py", "test_cdm_stanag4676_adapter.py", "test_cdm_tak_adapter.py",
+    "test_cdm_schemas.py", "test_cdm_stanag4609_adapter.py", "test_cdm_stanag4676_adapter.py",
+    "test_cdm_tak_adapter.py",
     # `test_cdm_klv_framing.py` is package-only although it reads three prose documents and a pin
     # record, and the reason is worth a line because the obvious reading sends it the other way.
     # Every path it touches —

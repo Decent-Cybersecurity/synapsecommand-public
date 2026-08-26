@@ -1,0 +1,70 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 25612,
+        "stored": 25612,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "640c",
+        "13": "5595b66d",
+        "14": "5b5360c4",
+        "2": "000459f4a6aa4aa8",
+        "56": "8c",
+        "65": "0d"
+      },
+      "tag_order": [
+        2,
+        65,
+        13,
+        14,
+        56,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 32,
+      "value_length_octets": "20"
+    },
+    {
+      "advisories": [],
+      "at": 49,
+      "checksum": {
+        "computed": 27916,
+        "stored": 27916,
+        "valid": true
+      },
+      "defects": [],
+      "index": 1,
+      "item_octets": {
+        "1": "6d0c",
+        "13": "5595b66d",
+        "14": "5b5360c4",
+        "2": "000459f4a6b24aa8",
+        "56": "8d",
+        "65": "0d"
+      },
+      "tag_order": [
+        2,
+        65,
+        13,
+        14,
+        56,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 32,
+      "value_length_octets": "20"
+    }
+  ],
+  "payload": {
+    "octets": 98,
+    "packet_count": 2
+  }
+}

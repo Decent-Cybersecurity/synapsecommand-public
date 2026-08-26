@@ -61,6 +61,10 @@ LOADERS = {
     "test_cdm_asterix_cat048_adapter": "_build_fixtures_module",
     "test_cdm_asterix_cat062_adapter": "_build_fixtures_module",
     "test_cdm_gmtif_adapter": "_spec",
+    # Adapter #10's harness loads it for two reasons the others have one of each: to assert the ten
+    # payloads on disk are what the generator produces, and to assert each parsed twin is the parsed
+    # form of its own payload.
+    "test_cdm_stanag4609_adapter": "_build_fixtures_module",
 }
 
 #: The adapter test modules. The ones absent from `LOADERS` are the other half of the closure:

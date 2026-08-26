@@ -636,24 +636,49 @@ def test_the_underivable_exception_is_not_the_malformed_one():
     assert not issubclass(codec.KLVFramingError, codec.UnderivableFromPinnedCopy)
 
 
-def test_the_codec_registers_no_adapter():
-    """A codec, not an adapter — asserted, because the difference is a roster claim.
+def test_the_framing_codec_still_registers_no_adapter_and_still_knows_no_tags():
+    """A codec, not an adapter — and now that an adapter EXISTS, this is the load-bearing half.
 
-    An `Adapter` subclass registers itself on definition, so a module that grew one would take an
-    ordinal and a roster row for something that cannot read a local set. Checked by AST rather than
-    by importing and counting the registry, so it fails on the SOURCE that would do it.
+    THE PROPERTY, RESTATED FOR THE ROUND THAT SHIPPED ADAPTER #10. Until the witnessed-set round
+    this test asserted that no adapter existed anywhere; `adapters/stanag4609.py` now registers one,
+    so what is worth asserting has changed and the test says which:
+
+    * **`klv_codec` still defines no `Adapter` subclass.** Checked by AST rather than by counting
+      the registry, so it fails on the SOURCE that would do it.
+    * **`klv_codec` still names no tag.** This is the property the whole two-layer split exists to
+      protect: `walk_local_set`'s docstring claims "the walk knows no tags at all, so every item is
+      equally unknown to it", which is how `ST 0107.3-04`'s skip-unknown requirement is satisfied
+      structurally rather than by a skip list. A tag table imported into the framing layer would
+      destroy that claim silently — the walk would still work — so the import is what is checked.
+
+    The tag table lives one layer up, in `klv_uas_codec`, on the `cat048_codec` / `asterix_cat048`
+    precedent.
     """
     tree = ast.parse((PKG / "adapters" / "klv_codec.py").read_text())
     bases = [b for node in ast.walk(tree) if isinstance(node, ast.ClassDef) for b in node.bases]
     names = {b.id if isinstance(b, ast.Name) else getattr(b, "attr", "") for b in bases}
     assert "Adapter" not in names, (
-        "klv_codec defines an Adapter subclass. The framing layer cannot read a local set, and a "
-        "module that registers as an adapter claims it can — see the pin's "
+        "klv_codec defines an Adapter subclass. The framing layer cannot read a local set's "
+        "VALUES, and a module that registers as an adapter claims it can — see the pin's "
         "framing_ruling_st_0601_14.what_was_implemented_and_what_deliberately_was_not"
     )
+    imported = {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
+    imported |= {alias.name for n in ast.walk(tree) if isinstance(n, ast.Import)
+                 for alias in n.names}
+    assert not any("klv_uas_codec" in name for name in imported), (
+        "klv_codec imports the tag table. The framing layer is deliberately tag-blind — that is "
+        "how ST 0107.3-04's 'skip unknown Local Set values' is satisfied structurally, since a "
+        "walk that knows no tags treats every item as equally unknown. Whatever needs the table "
+        "belongs in klv_uas_codec or in the adapter"
+    )
     from synapse_cdm import adapter as adapter_module
-    assert "klv" not in adapter_module.discover()
-    assert "stanag4609" not in adapter_module.discover()
+    registry = adapter_module.discover()
+    assert "klv" not in registry, (
+        "an adapter named `klv` is registered. The registered name is `stanag4609` — the adapter "
+        "is named for the covering document and `klv` is the fixture DIRECTORY, named for the "
+        "bytes. See klv_pin.json's adapter.why_the_two_names_differ"
+    )
+    assert registry["stanag4609"].fixture_dir == "klv"
 
 
 # ---------------------------------------------------------------------------- the fixtures
@@ -736,22 +761,40 @@ def test_every_framing_fixture_kind_is_a_rule_one_of_the_two_documents_states():
         assert "ST 0107.3" in flat, f"{name} does not name the document that discharged the omissions"
 
 
-def test_the_framing_fixtures_are_not_reachable_as_adapter_fixtures():
-    """The subdirectory is the mechanism, not the manners.
+def test_the_framing_fixtures_are_still_not_reachable_as_adapter_fixtures():
+    """The subdirectory is the mechanism, not the manners — and now it has something to separate.
 
-    `fixtures/klv/README.md` claims a harness run pointed at `fixtures/klv` still finds nothing, and
-    `test_cdm_format_coverage.py::test_the_klv_fixture_directory_holds_no_fixtures_and_says_why`
-    asserts it. That claim survives only while `framing/` stays a DIRECTORY: the harness selects
+    Until the witnessed-set round `fixtures/klv` held no files at all, so this test asserted an
+    empty directory and the separation was free. Adapter #10's ten payload fixtures now live there,
+    which is what makes the subdirectory load-bearing rather than tidy: the harness selects
     "immediate children of the directory that are files", so one `.klvframe` copied up a level would
-    silently turn twenty-six citations into twenty-six adapter fixtures for an adapter that does not
-    exist.
+    silently become an eleventh adapter fixture — and the harness would try to translate a bare BER
+    length as a UAS Datalink LS payload and report a FAIL that blames the adapter for a file that
+    was never a payload.
+
+    So what is asserted is the PARTITION rather than an emptiness: `framing/` stays a directory,
+    every immediate file child is one of the adapter fixtures the generator writes, and no framing
+    fixture's extension appears at the top level.
     """
     from synapse_cdm import harness
     assert "immediate children" in harness.FIXTURE_PATTERN
-    strays = [p.name for p in FIXTURES.iterdir()
-              if p.is_file() and p.name != "README.md" and not p.name.startswith(".")]
-    assert strays == [], f"fixtures/klv holds files: {strays}"
+    module = _build_fixtures_module()
+    expected = set()
+    for spec in module.ADAPTER_FIXTURES:
+        expected |= {f"{spec['name']}.klv", f"{spec['name']}.parsed.json"}
+    present = {p.name for p in FIXTURES.iterdir()
+               if p.is_file() and p.name != "README.md" and not p.name.startswith(".")}
+    assert present == expected, (
+        f"fixtures/klv's immediate files are {sorted(present)} and the generator writes "
+        f"{sorted(expected)}. Every payload there is replayed by the harness as adapter #10's, so "
+        "a file the generator does not write is a fixture nothing cites"
+    )
+    assert not any(name.endswith(".klvframe") for name in present), (
+        "a framing fixture has been copied to the top level, where the harness will try to "
+        "translate a bare tag or length as a whole UAS Datalink LS payload"
+    )
     assert FRAMING.is_dir()
+    assert len(list(FRAMING.glob("*.klvframe"))) == len(module.FIXTURES_SPEC)
 
 
 # ------------------------------------------------------------------ the disjunction protocol

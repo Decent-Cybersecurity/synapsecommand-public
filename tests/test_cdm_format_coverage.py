@@ -144,13 +144,19 @@ PATHS = _cdm_paths()
 #: absent, and absence is what this closure exists to make impossible.
 EGRESS_HEADER = re.compile(
     r"^\|\s*(?P<cdm>CDM|CDM field)\s*\|\s*"
-    r"(?P<format>AIS|ADS-B|CAT021|CAT023|CAT034|CAT048|CAT062|GMTIF|NITS)"
+    r"(?P<format>AIS|ADS-B|CAT021|CAT023|CAT034|CAT048|CAT062|GMTIF|KLV|NITS)"
     r"\s*\|\s*Status\s*\|\s*Notes\s*\|$")
 
-#: The nine formats with an egress row set of their own. `tak` is absent deliberately and it is
+#: The ten formats with an egress row set of their own. `tak` is absent deliberately and it is
 #: not an omission: its egress rows live INSIDE the ingress table, marked `· egress` in the status
 #: column, because CoT egress emits the same element shape it ingests. `legion` and `pntmap` are
-#: ingest-only. `stanag4609` and `stanag5527` are Phase 1 and specify no egress table yet.
+#: ingest-only. `stanag5527` is Phase 1 and specifies no egress table yet.
+#:
+#: `KLV` joined when adapter #10 shipped, and its format column says KLV rather than STANAG4609 for
+#: the reason the fixture directory is `klv`: the format column names the BYTES and STANAG 4609 is a
+#: five-page covering document. It is also the first egress table here written AFTER its adapter
+#: rather than before, and the difference shows in the rows — every one of them describes octet
+#: replay, which is a mechanism a specification written first would not have arrived at.
 #:
 #: CAT062 and CAT023 joined at PHASE 1, which is the case this roster had not met: their egress
 #: tables are written before any code exists, so every row says `not yet`. That is exactly why
@@ -158,7 +164,7 @@ EGRESS_HEADER = re.compile(
 #: reads is a row set whose CDM paths are never resolved against the models, which is the state
 #: five of the first seven were in until the header ruling.
 EGRESS_FORMATS = ("AIS", "ADS-B", "CAT021", "CAT023", "CAT034", "CAT048", "CAT062",
-                  "GMTIF", "NITS")
+                  "GMTIF", "KLV", "NITS")
 
 
 def _egress_headers() -> dict[str, list[tuple[int, str]]]:
@@ -3156,32 +3162,57 @@ def _abbreviated(digest: str) -> str:
     return f"{digest[:8]}…{digest[-8:]}"
 
 
-def test_the_klv_row_set_exists_and_every_row_of_it_says_not_yet():
-    """Phase 1's whole claim: the row set is a specification and nothing in it is implemented.
+def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_set():
+    """The INVERTED form, which is what this test becomes once the adapter it gated has shipped.
 
-    Asserted in both directions. A section with no `not yet` rows would mean the status column had
-    been flipped without an adapter; a section with no rows at all would mean this test and every
-    one below it is checking an empty string, which is the failure mode `test_the_table_was_
-    actually_parsed` exists for at the document level.
+    Until the witnessed-set round this asserted that every row said `not yet` and that no
+    `stanag4609 1.0.0` marker existed anywhere — Phase 1's whole claim, that the row set is a
+    specification and nothing in it is implemented. `adapters/stanag4609.py` has now landed against
+    26 of the 141 rows, so the assertion inverts on the pattern Legion, NITS, GMTIF, CAT048, CAT034,
+    CAT062 and CAT023 each established: it fails if a row still says `not yet` while the code
+    implements it.
+
+    WHAT MAKES THIS ONE DIFFERENT FROM THE SEVEN BEFORE IT: the promotion is **partial**, and this
+    is the first row set in the document where that is true. So both halves are asserted and the
+    lower bound on `not yet` rows matters as much as the upper — a round that quietly promoted the
+    remaining 115 would pass a test that only checked for the presence of markers, and 115 decoders
+    checkable against nothing but themselves is the exact failure this section has spent six rounds
+    avoiding. `klv_uas_codec.WITNESSED_TAGS` is the authority for which side of the line a row is
+    on, and `test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document` checks the
+    partition tag by tag.
     """
+    from synapse_cdm.adapters import klv_uas_codec as uas_codec
+
     section = _section(KLV_HEADING)
     rows = [ln for ln in section.splitlines()
             if ln.startswith("|") and not ln.startswith("|---")]
-    mapping_rows = [ln for ln in rows if "`not yet`" in ln]
-    assert len(mapping_rows) >= 30, (
-        f"only {len(mapping_rows)} `not yet` rows in the KLV section — the row set is either "
-        "missing or has been flipped without an adapter"
+    # SCOPED TO THE TAG TABLE's rows, which is what `WITNESSED_TAGS` is a set of. The section also
+    # holds an egress table whose eight rows carry the same marker, and counting those against a
+    # tag count would make this assertion fail for a reason that has nothing to do with the scope
+    # contract — the shape `_klv_tag_rows()` exists to avoid one level up.
+    tag_rows = [ln for ln in rows if re.match(r"^\| `\d+` \| ", ln)]
+    not_yet = [ln for ln in tag_rows if "| `not yet` |" in ln]
+    promoted = [ln for ln in tag_rows if "| `stanag4609 1.0.0" in ln]
+    assert len(promoted) == len(uas_codec.WITNESSED_TAGS), (
+        f"{len(promoted)} rows carry a stanag4609 marker and the codec covers "
+        f"{len(uas_codec.WITNESSED_TAGS)} tags. The witnessed set is the scope contract and the "
+        "two sites have to state one set"
+    )
+    assert len(not_yet) >= 115, (
+        f"only {len(not_yet)} `not yet` rows left in the KLV section. 115 of the 141 ST 0601 rows "
+        "are outside the witnessed set and each is blocked on it; a round that promoted them "
+        "wrote decoders nothing can check, which is the trap this section exists to avoid"
     )
     before = DOC.read_text().split(KLV_HEADING)[0]
-    for marker in ("`stanag4609 1.0.0`", "`klv 1.0.0`"):
-        assert marker not in section, (
-            f"{marker} appears in a Phase 1 section. There is no adapter, so a terminal status "
-            "marker here is a claim nothing implements"
-        )
-        assert marker not in before, (
-            f"the status-column table at the top of the document states {marker} for an adapter "
-            "that does not exist"
-        )
+    assert "`stanag4609 1.0.0`" in before, (
+        "the status-column table at the top of the document does not define the marker the KLV row "
+        "set now uses. A status nobody defined is a status a reader has to guess at"
+    )
+    assert "`klv 1.0.0`" not in section and "`klv 1.0.0`" not in before, (
+        "a `klv 1.0.0` marker has appeared. The registered adapter name is `stanag4609`; `klv` is "
+        "the fixture directory, and a status marker naming a directory claims an adapter that is "
+        "not in the registry"
+    )
 
 
 @pytest.mark.parametrize("filename,digest,size,pages,node", KLV_PINNED_DOCUMENTS,
@@ -3251,6 +3282,22 @@ KLV_TAG_ROW = re.compile(
     r"`(?P<length>[^|`]+)` \| (?P<field>[^|]+?) \| `(?P<status>[^|`]+)` \| (?P<notes>.*) \|$")
 
 
+def _klv_build_fixtures():
+    """Compile `fixtures/klv/spec/build_fixtures.py` IN MEMORY, never through the source loader.
+
+    The same reason `tests/test_cdm_klv_framing.py` does it this way and
+    `tests/test_cdm_generator_loading.py` asserts it: `spec_from_file_location` + `exec_module`
+    reads and writes `__pycache__`, a `.pyc` is revalidated on the source's mtime in whole seconds
+    and its size, and this test's subject is what the SOURCE on disk produces today.
+    """
+    import types
+    path = KLV_FIXTURES / "spec" / "build_fixtures.py"
+    module = types.ModuleType("klv_build_fixtures")
+    module.__file__ = str(path)
+    exec(compile(path.read_text(), str(path), "exec"), module.__dict__)
+    return module
+
+
 def _klv_tag_rows() -> list[dict]:
     section = _section(KLV_HEADING)
     start = section.index(KLV_TAG_TABLE_HEADING)
@@ -3274,7 +3321,17 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
     The Notes column is deliberately NOT compared. It carries this round's per-item findings and
     lives only in the document — prose belongs where prose is read, and asserting it here would
     pin editorial wording as though it were a transcribed value.
+
+    THE STATUS COLUMN IS NOW A THIRD DISJUNCTION, AND IT IS THE ONE THE WITNESSED-SET ROUND ADDED.
+    Until adapter #10 shipped, every row read `not yet` and this test asserted exactly that. It now
+    asserts the property that replaced it: a row carries a `stanag4609 1.0.0…` marker **if and only
+    if** its tag is in `klv_uas_codec.WITNESSED_TAGS`, which is the code's own scope contract. That
+    is stronger than the sentence it replaces in both directions — a row promoted without a decoder
+    fails, and a decoder written without its row being promoted fails too — and it is the check that
+    keeps "the witnessed set" one set rather than a phrase two files each interpret.
     """
+    from synapse_cdm.adapters import klv_uas_codec as uas_codec
+
     pin = json.loads(KLV_PIN.read_text())
     node = pin["tag_table_st_0601_14"]
     items = {int(i["tag"]): i for i in node["items"]}
@@ -3302,7 +3359,20 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
         assert a["cdm_field"] == b["field"].replace("`", "").strip(), (
             f"item {tag} CDM field: {a['cdm_field']!r} vs {b['field']!r}"
         )
-        assert b["status"] == "not yet", f"item {tag} is not `not yet`"
+        witnessed = tag in uas_codec.WITNESSED_TAGS
+        if witnessed:
+            assert b["status"].startswith("stanag4609 1.0.0"), (
+                f"item {tag} is in klv_uas_codec.WITNESSED_TAGS — the pinned stream attests it and "
+                f"the codec decodes it — and its row still reads {b['status']!r}. A decoded item "
+                "whose row says `not yet` makes the status column a claim nobody can rely on"
+            )
+        else:
+            assert b["status"] == "not yet", (
+                f"item {tag} reads {b['status']!r} and is NOT in klv_uas_codec.WITNESSED_TAGS. The "
+                "witnessed set is the scope contract: a row promoted past the set the pinned "
+                "stream attests is a decoder checkable only against a fixture written from the "
+                "same reading of the same table"
+            )
 
 
 def test_the_tag_table_is_read_from_0601_14_and_says_so_where_it_could_be_misread():
@@ -3881,10 +3951,17 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     # Note what did NOT happen: KLV 14 was not deleted. Park 13 closing answers its question for
     # edition 1 only, and the entry now carries that as an amendment, because an entry retired on
     # one edition's evidence would overstate a closure that bought exactly one row.
-    for n in range(1, 17):
+    # THE BOUND MOVED 16 -> 17 IN THE WITNESSED-SET ROUND, and this is the first entry the register
+    # has gained from reading TWO editions against each other item by item rather than from reading
+    # one. KLV 17: ST 0601.14a states items 11 and 12 as `utf8` and EG 0601.1 states them as `ISO7`,
+    # and that is the ONLY column of the only two of the 26 witnessed items where the two editions
+    # differ at all. It costs nothing on any octet either edition admits — ISO 646 is a UTF-8
+    # subset — which is precisely why an entry is the right home for it: a divergence that costs
+    # nothing today is a divergence nobody would remember when it stops costing nothing.
+    for n in range(1, 18):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 17 —" not in section, (
-        "the register has grown past KLV 16 without this test being updated"
+    assert "**KLV 18 —" not in section, (
+        "the register has grown past KLV 17 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a
@@ -4436,50 +4513,71 @@ def test_the_provenance_round_states_what_it_did_not_touch():
     )
 
 
-def test_the_klv_fixture_directory_holds_no_fixtures_and_says_why():
-    """Phase 1 ships no payload, and the reason is a park rather than a schedule.
+def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_each_catches():
+    """The INVERTED form of a Phase 1 test, and the one whose old claim was an EMPTY DIRECTORY.
 
-    A fixture directory that is empty because nobody got to it and one that is empty because the
-    encoding document is behind a paywall look identical on disk. The README is what distinguishes
-    them, so the README has to name the blocker — and the directory is checked as well, because a
-    stray `.klv` would mean somebody guessed at bytes SMPTE ST 336 defines.
+    Until the witnessed-set round this test asserted `fixtures/klv` held no payload at all, and
+    read the README for the two sentences that made the emptiness a park rather than an oversight:
+    "There are none yet" and the two failure modes of the harness command it printed. Adapter #10
+    has shipped, so all three of those claims are false and the test asserts what replaced them.
+
+    WHAT IS WORTH ASSERTING NOW, AND WHY EACH HALF IS HERE:
+
+    * **the payloads on disk are exactly the ones the generator writes** — a hand-written `.klv`
+      would be a payload nothing cites, which is the rule every fixture set in this repository
+      follows and the one this directory spent six rounds unable to break;
+    * **every payload has a parsed twin and a golden** — a binary fixture with no twin is a
+      lossless check reported SKIP, which is how a never-drop claim goes unmeasured;
+    * **the README still explains itself**, and specifically still quotes the sentence it used to
+      open with. A directory that fills up and loses the record of having been empty loses the only
+      part a later reader could check the parks against.
     """
-    payloads = [p.name for p in KLV_FIXTURES.iterdir()
-                if p.is_file() and p.name not in {"README.md"} and not p.name.startswith(".")]
-    assert payloads == [], (
-        f"fixtures/klv holds payloads: {payloads}. Phase 1 has no adapter to replay them through, "
-        "and a .klv written before park 8 closes is a guess at an encoding this repository has "
-        "not read — see the README's own explanation"
+    from synapse_cdm.adapters import stanag4609            # noqa: F401 - registers the adapter
+    module = _klv_build_fixtures()
+
+    expected = {spec["name"] for spec in module.ADAPTER_FIXTURES}
+    payloads = {p.stem for p in KLV_FIXTURES.glob("*.klv")}
+    assert payloads == expected, (
+        f"fixtures/klv holds payloads {sorted(payloads)} and the generator writes "
+        f"{sorted(expected)}. Every fixture here is built by fixtures/klv/spec/build_fixtures.py; "
+        "a hand-written one is a byte nobody cites, which is the rule this directory could not "
+        "break for six rounds and must not break now that it can"
     )
+    assert len(expected) == 10, f"{len(expected)} adapter fixtures, expected ten"
+    for name in sorted(expected):
+        assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (
+            f"{name}.klv has no parsed twin. A bytes-only fixture has no leaf structure for the "
+            "harness to harvest, so its lossless check is reported SKIP — and an unrun check that "
+            "reads as a pass is how a never-drop claim goes unmeasured"
+        )
+        for golden in (f"{name}.cdm.json", f"{name}.parsed.cdm.json"):
+            assert (KLV_FIXTURES / "golden" / golden).is_file(), f"missing golden {golden}"
     assert (KLV_FIXTURES / "spec").is_dir(), "fixtures/klv/spec is where the pin lives"
+    assert (KLV_FIXTURES / "framing").is_dir(), "fixtures/klv/framing holds the framing fixtures"
+
     readme = KLV_README.read_text()
     assert "There are none yet" in readme, (
-        "the README's first job is to say that the absence is the state and not an oversight"
+        "the README no longer quotes the sentence it opened with for six rounds. It is kept as a "
+        "quotation rather than deleted for the reason every withdrawn premise in this section is "
+        "kept: a directory that fills up and loses the record of having been empty loses the "
+        "evidence a reader could check the parks against"
     )
-    # BOTH failure modes, because the command in the README hits the first one and the claim it
-    # is making is about the second. `--adapter stanag4609` does not resolve at all yet, so the
-    # error a reader actually sees is `LookupError: unknown adapter` and exit 1; `NoFixturesFound`
-    # and exit 2 are what the DIRECTORY produces, once there is an adapter to name. A README that
-    # promised only the second would send its reader debugging the wrong thing.
-    assert "NoFixturesFound" in readme, (
-        "the harness command in the README fails today, deliberately, and a reader who runs it "
-        "needs to have been told so before they debug it"
-    )
-    assert "unknown adapter" in readme, (
-        "the README promises a failure the command does not actually produce yet: the adapter name "
-        "is unregistered, so the first error is a LookupError and not NoFixturesFound"
+    assert "There are TEN" in readme, "the README does not state the new count"
+    assert "NoFixturesFound" not in readme and "unknown adapter" not in readme, (
+        "the README still promises the two failures the harness command used to produce. It "
+        "produces neither now, and a demonstration of a failure that no longer fails is a wrong "
+        "instruction — which is exactly why tests/test_cdm_consumer_path.py took this site off "
+        "its deliberate-failure allowlist"
     )
     flat = _flat(_section(KLV_HEADING))
-    assert "unknown adapter" in flat and "exits **1**" in flat, (
-        "FORMAT_COVERAGE.md makes the same claim and has to be as precise about it — the two "
-        "failures have different exit codes and only one of them is about this directory"
-    )
-    assert "cannot be written until park 8 closes" in flat, (
-        "the fixture plan's gate is a park, and naming which one is what makes the plan actionable"
-    )
     assert "self-consistency without an external anchor" in flat, (
-        "the reason not to write bytes anyway is the round-trip trap the module README names. "
-        "Without it, 'we could not write fixtures' reads as an excuse rather than a finding"
+        "the round-trip trap is gone from the fixture section. It has NOT been solved by shipping "
+        "fixtures — what discharges it is that every value in the value-carrying fixture is the "
+        "document's own printed example, and saying so requires still naming the trap"
+    )
+    assert "check_against_the_documents_own_examples" in flat, (
+        "the fixture section claims an external anchor and does not name the check that provides "
+        "it. An anchor nobody runs is a claim"
     )
 
 

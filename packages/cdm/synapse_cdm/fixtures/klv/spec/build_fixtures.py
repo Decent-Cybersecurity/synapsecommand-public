@@ -68,10 +68,18 @@ FRAMING = FIXTURES / "framing"
 sys.path.insert(0, str(FIXTURES.parent.parent.parent))
 
 from synapse_cdm.adapters import klv_codec as codec                # noqa: E402
+from synapse_cdm.adapters import klv_uas_codec as uas               # noqa: E402
 
 #: UUID-v8, `f1c7` namespace, with the document this round read written into the second and third
 #: groups. Version nibble `8` and RFC 9562 variant bits, so nothing issuing v4 or v7 can collide.
 FIXTURE_ID = "f1c70601-14a0-8000-8000-{:012d}"
+
+#: The adapter fixtures share the namespace and take a distinct third group, so a framing fixture
+#: and a payload fixture can never collide on an index. Recorded in `fixtures/klv/README.md` rather
+#: than inside a payload, for the reason the framing note gives and more so: a UAS Datalink LS
+#: packet carries NO identifier of any kind — which is this round's identity finding — so there is
+#: nothing in one of these payloads for a synthetic identity to stand in for.
+ADAPTER_FIXTURE_ID = "f1c70601-14a0-8001-8000-{:012d}"
 
 #: The pinned copy every citation below is read from. Stated here as well as in `klv_pin.json`
 #: because a generator that cites sections without saying which copy is citing a memory.
@@ -454,8 +462,251 @@ def build() -> list[pathlib.Path]:
     return written
 
 
+# ======================================================================================
+# THE ADAPTER FIXTURES — whole payloads for `adapters/stanag4609.py`, adapter #10
+# ======================================================================================
+#
+# A DIFFERENT CLASS FROM THE TWENTY-SIX ABOVE, AND THE DIRECTORY SAYS SO. The framing fixtures in
+# `framing/` are tags, lengths and keys; no CDM object comes out of one and the harness cannot
+# replay them. These are UAS Datalink LS PAYLOADS in `fixtures/klv/` itself, where the harness looks
+# — which is the sentence FORMAT_COVERAGE.md carried for two rounds ("There is still no `.klv`
+# payload in `fixtures/klv/`") coming due.
+#
+# EVERY OCTET IS SYNTHETIC, AND THE ONE THING BORROWED IS BORROWED FROM THE STANDARD. Not one of
+# these payloads contains a run from `fixtures/klv/streams/day_flight.klv`. What the value-carrying
+# fixture uses instead is each item's OWN worked example from its §8.x block — the same borrowing
+# `framing/`'s checksum vector makes, and for the same reason: a fixture whose values come from the
+# document checks this repository's maps against the document rather than against themselves. The
+# held stream decided WHICH tags to cover; it supplied no octets.
+#
+# WHY THE DEFECT FIXTURE IS NOT THE STREAM'S BYTES. The length-divergence fixture reproduces the
+# CLASS — four octets under a Required Length of 2 — with a value the stream does not carry, because
+# a golden file built from a real emitter's defective octets would make this repository's test suite
+# a place where somebody else's stream lives. The class is what the policy rules on; the particular
+# four octets are park 13's evidence and stay in the report.
+
+#: One entry per adapter fixture: the packet's items in wire order, and what the fixture is FOR.
+#: `ST 0601.8-09` and `-11` put item 2 first and item 1 last, and `encode_packet` enforces it.
+_EXAMPLE = {tag: item.example_octets for tag, item in uas.ITEMS.items()}
+
+
+def _payload(*packets) -> bytes:
+    """Concatenate whole packets. A payload may hold several and the pinned stream holds six."""
+    return b"".join(packets)
+
+
+def _packet(items, *, checksum_override=None) -> bytes:
+    """One packet from `[(tag, value_hex), ...]`, built by the codec and never typed.
+
+    `checksum_override` writes a stated checksum that is NOT the computed one, which is the only
+    way to build the fixture that asks what happens when §6.6's summation disagrees.
+    """
+    order = tuple(tag for tag, _ in items)
+    # Tag 1 is deliberately NOT handed to `raw_overrides`: `encode_packet` REPLAYS a checksum it is
+    # given and COMPUTES one it is not, so passing the §8.1 example octets `8CED` would build every
+    # fixture with a stored checksum that does not validate over its own packet. The one fixture
+    # that WANTS that carries `checksum_override` instead, which is the only way to state it on
+    # purpose rather than by accident.
+    overrides = {tag: bytes.fromhex(value) for tag, value in items if tag != 1}
+    octets = uas.encode_packet({}, order=order, raw_overrides=overrides)
+    if checksum_override is not None:
+        octets = octets[:-2] + checksum_override.to_bytes(2, "big")
+    return octets
+
+
+ADAPTER_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="witnessed_set_from_the_documents_own_examples",
+        octets=_payload(_packet(
+            [(2, _EXAMPLE[2])]
+            + [(tag, _EXAMPLE[tag]) for tag in uas.WITNESSED_TAGS if tag not in (1, 2)]
+            + [(1, _EXAMPLE[1])])),
+        what_it_is_for=(
+            "all 26 witnessed items in one packet, each carrying the Example KLV Value its own "
+            "§8.x block prints. Every affine map, every string and every identity conversion in "
+            "`klv_uas_codec` runs once here, against values transcribed from the document rather "
+            "than chosen by this repository. Tag 1's value is REPLACED on the way out — "
+            "`encode_packet` computes §6.6's checksum over the packet it actually built, so the "
+            "example checksum octets `8CED` are what the fixture asked for and the computed sum "
+            "is what it carries"),
+        citation="ST 0601.14a §8.1 through §8.65, each item's Example KLV Value row",
+    ),
+    dict(
+        name="length_divergence_at_a_required_length",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (22, "00000FA0"),                    # four octets where §8.22 requires two
+            (56, _EXAMPLE[56]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "THE POLICY FIXTURE. Tag 22 Target Width at FOUR octets where §8.22's Required Length "
+            "cell says 2 — the divergence class park 13 adjudicated, reproduced with octets the "
+            "held stream does not carry. What must happen: the ITEM is skipped, its octets are "
+            "parked verbatim, a structured `LengthDivergence` names both bases of the ruling, and "
+            "the other four items translate normally. What must NOT happen: the packet refused "
+            "(candidate a), or `0x00000FA0` read as 4000 by a truncation rule no document states "
+            "(candidate c)"),
+        citation=("ST 0601.14a §8.22 Required Length 2; ST 0601.13-29 in §7; "
+                  "FORMAT_COVERAGE.md, 'Park 13 adjudicated and CLOSED'"),
+    ),
+    dict(
+        name="zero_length_item_is_an_explicit_unknown",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (56, ""),                            # a ZLI on an item where one is allowed
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "a Zero-Length Item on tag 56, which is NOT a defect: `ST 0601.14-33` says 'Where a "
+            "UAS Data-link LS item has a length of zero, consumers shall interpret the value of "
+            "the item as \"unknown\"'. So it decodes to an explicit unknown, `Kinematics` is None "
+            "rather than a speed of zero, and no defect is recorded. The distinction this catches "
+            "is the one that matters most in a never-drop model: a producer SAYING a value is now "
+            "unknown, versus a producer not mentioning the item"),
+        citation="ST 0601.14a §6.5 and ST 0601.14-33",
+    ),
+    dict(
+        name="zero_length_item_on_a_required_item_is_a_defect",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (65, ""),                            # ST 0601.14-32 forbids a ZLI here
+            (56, _EXAMPLE[56]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "the one zero-length case the document itself makes a defect. `ST 0601.14-32`: the "
+            "required items '(Tag 1 - Checksum, Tag 2 - Precision Time Stamp, and Tag 65 - UAS "
+            "Datalink LS Version Number) shall always be reported with positive lengths (i.e. "
+            "Zero-Length Items (ZLI) are not allowed for these items)'. So a ZLI on tag 65 is "
+            "reported as `zero_length_on_a_required_item` while the same octets on tag 56 above "
+            "are an explicit unknown — which is the policy reading the document rather than "
+            "applying one rule to a length of zero"),
+        citation="ST 0601.14a §6.5 and ST 0601.14-32",
+    ),
+    dict(
+        name="special_values_are_signals_and_not_measurements",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (6, "8000"),                         # §8.6: "Out of Range" indicator
+            (13, "80000000"),                    # §8.13: "Reserved"
+            (14, _EXAMPLE[14]),
+            (23, "80000000"),                    # §8.23: "N/A (Off-Earth)" indicator
+            (24, _EXAMPLE[24]),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "the three Special Values the witnessed set declares, each in an item that declares "
+            "it. What must happen: none of them is run through its item's affine map, so no "
+            "`Position` is built from a 'Reserved' latitude and no `Event.geometry` from an "
+            "'N/A (Off-Earth)' frame centre — even though tag 14 and tag 24 are present and "
+            "valid, which is the case where a half-built point is tempting. Run the map anyway "
+            "and 0x80000000 becomes a latitude of -90.0000000419: a plausible-looking lie, which "
+            "is the class of defect this repository's ellipsoid audit exists for"),
+        citation="ST 0601.14a §8.6, §8.13 and §8.23, Special Values cells; §7's definition of the "
+                 "Special Values column",
+    ),
+    dict(
+        name="over_recommended_max_length_is_an_advisory",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (11, ("41" * 128)),                  # 128 octets where Max Length is 127
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "a variable-length item one octet past its Max Length. This is NOT the length-"
+            "divergence class and the document is why: §7 defines Max Length as 'the recommended "
+            "maximum length' and names a network guard as its consumer, so nothing here breaks a "
+            "'shall'. The item is DECODED and carries an advisory. Treating it like a "
+            "ST 0601.13-29 violation would enforce a requirement the document did not write, "
+            "which is the mirror image of the mistake candidate (c) would have made"),
+        citation="ST 0601.14a §7, the Max Length column definition; §8.11",
+    ),
+    dict(
+        name="an_unwitnessed_tag_is_skipped_and_the_packet_translates",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (3, "4D5F3335"),                     # tag 3 Mission ID, outside the witnessed set
+            (56, _EXAMPLE[56]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "`ST 0107.3-04` in the one place it can be tested from above the framing layer: "
+            "'Applications which decode MISB KLV Local Sets shall skip unknown Local Set values "
+            "so as to not impact the decoding of known Local Set items within the same Local Set "
+            "instance'. Tag 3 is a real ST 0601 item that this round did not cover because the "
+            "pinned stream does not carry it, so it is UNKNOWN to `klv_uas_codec` and its octets "
+            "are parked at attributes.klv_unknown_items. The packet translates and no defect is "
+            "recorded — an uncovered item is not a malformed one. It is also the fixture that "
+            "would break if a later round widened the witnessed set without updating the scope "
+            "contract, which is deliberate"),
+        citation="MISB ST 0107.3 ST 0107.3-04; ST 0601.14a §8.3",
+    ),
+    dict(
+        name="mandatory_items_only",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "the smallest conformant packet the standard admits: the three items ST 0601.14a "
+            "makes Mandatory and nothing else. It is the fixture that proves the absences are "
+            "absences — no Position, no Kinematics, no Event.geometry, and "
+            "attributes.unavailable_fields saying so in words rather than the object simply "
+            "having fewer keys"),
+        citation="ST 0601.14a §6.4, §8.1, §8.65 and ST 0601.14-32",
+    ),
+    dict(
+        name="two_packets_one_payload_are_two_statements",
+        octets=_payload(
+            _packet([(2, "000459F4A6AA4AA8"), (65, _EXAMPLE[65]),
+                     (13, _EXAMPLE[13]), (14, _EXAMPLE[14]), (56, "8C"), (1, _EXAMPLE[1])]),
+            _packet([(2, "000459F4A6B24AA8"), (65, _EXAMPLE[65]),
+                     (13, _EXAMPLE[13]), (14, _EXAMPLE[14]), (56, "8D"), (1, _EXAMPLE[1])]),
+        ),
+        what_it_is_for=(
+            "two packets in one payload, half a second apart, at the same position and one metre "
+            "per second different in ground speed. Four objects come out, not two, and the two "
+            "Entities have DIFFERENT entity_id values — which is the packet-scoped identity's "
+            "cost made visible in a golden file rather than described in a docstring. Nothing is "
+            "accumulated across the boundary: no velocity is differenced, no state is carried"),
+        citation="ST 0601.14a §6.3; FORMAT_COVERAGE.md, the fusion refusal",
+    ),
+    dict(
+        name="a_checksum_that_does_not_validate_is_flagged_not_refused",
+        octets=_payload(_packet(
+            [(2, _EXAMPLE[2]), (65, _EXAMPLE[65]), (56, _EXAMPLE[56]), (1, _EXAMPLE[1])],
+            checksum_override=0x0000)),
+        what_it_is_for=(
+            "a packet whose stored tag 1 disagrees with §6.6's summation over its own octets. It "
+            "TRANSLATES, and attributes.integrity_basis carries `valid: false`. The reasoning is "
+            "the length policy's: the stored checksum is one item among the packet's items, and "
+            "discarding the others because a 16-bit sum disagrees destroys the evidence a "
+            "consumer needs. `valid: false` on an object is a statement; a missing object is not"),
+        citation="ST 0601.14a §6.6 and §8.1",
+    ),
+)
+
+
+def build_adapter_fixtures() -> list[pathlib.Path]:
+    """Write the payloads, their parsed twins and nothing else. Goldens are the harness's job."""
+    from synapse_cdm.adapters import stanag4609                        # noqa: PLC0415
+    written = []
+    for index, spec in enumerate(ADAPTER_FIXTURES, start=1):
+        payload = FIXTURES / f"{spec['name']}.klv"
+        payload.write_bytes(spec["octets"])
+        # PURE SOURCE DATA, and the fixture's own documentation is deliberately NOT in it. The
+        # four sibling binary adapters' parsed twins carry the payload and nothing else — `block`
+        # and `records`, `header` and `segments` — because the harness's lossless check harvests
+        # every leaf of a JSON fixture and requires each to appear in the CDM output, so a
+        # `what_it_is_for` string in the twin would have to be echoed into an object to pass. Each
+        # fixture's purpose, citation and UUID-v8 identity are in `fixtures/klv/README.md` instead.
+        parsed = stanag4609.parse_payload(spec["octets"])
+        twin = FIXTURES / f"{spec['name']}.parsed.json"
+        twin.write_text(json.dumps(parsed, indent=2, sort_keys=True) + "\n")
+        written.extend((payload, twin))
+    return written
+
+
 if __name__ == "__main__":
-    paths = build()
+    paths = build() + build_adapter_fixtures()
     for path in paths:
         print(path.relative_to(FIXTURES.parent.parent.parent))
-    print(f"{len(FIXTURES_SPEC)} framing fixtures, {len(paths)} files")
+    print(f"{len(FIXTURES_SPEC)} framing fixtures, {len(ADAPTER_FIXTURES)} adapter fixtures, "
+          f"{len(paths)} files")

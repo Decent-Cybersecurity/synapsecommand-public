@@ -1,12 +1,14 @@
 # STANAG 4609 / MISP-2019.1 KLV fixtures
 
-**There are none yet, and that is the state this directory is in rather than a step somebody
-forgot.** The sentence means what it has always meant and the qualifier is now load-bearing: there is
-no **adapter** fixture. Adapter `stanag4609` is at Phase 1, the row set in
-`../../FORMAT_COVERAGE.md` is written with `not yet` in all 141 tag rows, and there is no adapter
-code and no `.klv` payload. This directory holds `spec/` and — since the framing round of
-2026-08-26 — `framing/`, and `framing/` is not a payload directory. See "What `framing/` is, and
-what it is not" below.
+**There are TEN, and for six rounds there were none.** This file opened with the sentence
+"There are none yet, and that is the state this directory is in rather than a step somebody
+forgot" from the day the directory was created until the witnessed-set round of 2026-08-26, and
+that sentence is quoted here rather than deleted because what replaced it is the interesting part: **adapter `stanag4609` has
+shipped**, and it covers **26 of ST 0601.14a's 141 items** — the distinct tags the one real stream
+this repository holds actually carries. The other **115** rows still read `not yet` in
+`../../FORMAT_COVERAGE.md`, and that is a scope contract rather than a backlog. See "The ten payload
+fixtures, and the plan they replaced" below. This directory also holds `spec/` and — since the
+framing round of the same day — `framing/`, and `framing/` is still not a payload directory.
 
 **That did not change on 2026-08-26, and the thing that did change is worth stating precisely.** ST
 0601.14 — the field dictionary MISP-2019.1 delegates the whole airborne collection to — was obtained,
@@ -93,17 +95,22 @@ reproduce and check both — and since the provenance round, the pin says **wher
 `fixtures/klv/provenance/` is a **third** not-committed rule on the same directory pattern, holding
 the nineteen fetched files that provenance round's sentences are derived from.
 
-All 141 tag rows still stay `not yet`; a framing rule says where an item begins and never what it
-means. What changed is that this repository can now **find** every item in a UAS Datalink LS packet
-and still **decode** no value in one.
+**A SEVENTH ROUND ENUMERATED THE WITNESSED SET AND SHIPPED THE ADAPTER.** The first three rounds
+read documents, the fourth read octets, the fifth and sixth adjudicated what those octets meant. This
+one asked which distinct tags the six packets carry — **26** — read every one of their §8.x blocks
+out of `spec/ST0601.14a.pdf`, cross-read all 26 against `spec/EG0601.1.pdf`'s §7.N, ruled the
+**length-divergence policy** item 22 forces, and shipped `adapters/stanag4609.py` against the 26.
+**Every map was checked against the document that states it**: each §8.x block prints one Software
+Value beside the KLV octets that encode it, and all 26 agree, as do the 23 examples edition 1
+independently prints. `26 of 141` rows moved; **115 still read `not yet`**, blocked on the scope
+contract rather than on a park.
 
 ```bash
-# Today this FAILS, deliberately, and it fails TWICE over — which is worth knowing before you
-# debug it. The adapter name does not resolve yet, so `--adapter stanag4609` raises
-# `LookupError: unknown adapter 'stanag4609'` and exits 1. Substitute any registered adapter and
-# it fails again, this time on the directory: exit code 2, `NoFixturesFound`, because the only
-# thing in here is spec/ and a run that exercises nothing must not report a green.
-python -m synapse_cdm.harness --adapter stanag4609 --fixtures .   # from THIS directory
+# This now RUNS, and for six rounds it did not. Twenty fixtures — ten payloads and their ten
+# parsed twins — replay against adapter #10, with goldens in golden/. No --fixtures: the adapter
+# declares its own directory and the harness resolves it through importlib.resources, so the
+# command is identical from a clone and from a `pip install`.
+python -m synapse_cdm.harness --adapter stanag4609
 ```
 
 **The directory is `klv` and the adapter is `stanag4609`, and the two names differ on purpose.**
@@ -174,9 +181,14 @@ packets, the refusals at the edges of all of it, and the document's own checksum
 **both** pinned digests.
 
 **They are not adapter fixtures and the harness cannot replay one.** No CDM object comes out of any
-of them. They sit in a subdirectory rather than here so that the claim at the top of this file stays
-true and stays checked: the harness selects "immediate children of the directory that are files", so
-a run pointed at this directory still finds nothing and still fails.
+of them. They sit in a subdirectory rather than here, and since the witnessed-set round that
+separation has stopped being tidiness and become load-bearing: the harness selects "immediate
+children of the directory that are files", and this directory now HAS ten payloads it replays. One
+`.klvframe` copied up a level would become an eleventh, and the harness would try to translate a bare
+BER length as a whole UAS Datalink LS packet and report a failure that blames the adapter for a file
+that was never a payload.
+`tests/test_cdm_klv_framing.py::test_the_framing_fixtures_are_still_not_reachable_as_adapter_fixtures`
+asserts the partition in both directions.
 
 **Three classes of fixture were omitted rather than guessed by the framing round, and all three are
 now here.** Each needed a rule that round could not establish — every length fixture including the
@@ -193,28 +205,73 @@ ST 0107.3 never mentions that form and BER's indefinite length is **SMPTE ST 336
 purchase. `spec/build_fixtures.py` asserts the exception **type** for it, so a later round that decides
 what `0x80` means without buying the document fails in the generator.
 
-## Why no `.klv` payload can be written yet — and the reason CHANGED
+## The ten payload fixtures, and the plan they replaced
 
-**It is no longer the length grammar.** That was the reason for two rounds: a `.klv` payload is a
-sequence of key/length/value triplets, and this phase did not hold the document that says how a length
-is written. `MISP-2015.1-08` delegated the formatting to MISB ST 0107.3, **which is now held**, and
-`framing/` contains two whole packets built from its grammar.
+**Every octet is synthetic, and the one thing borrowed is borrowed from the standard.** Not one of
+these payloads contains a run from `streams/day_flight.klv`. What the value-carrying fixture uses
+instead is each item's **own worked example** from its §8.x block — the same borrowing `framing/`'s
+checksum vector makes, and for the same reason: a fixture whose values come from the document checks
+this repository's maps against the document rather than against themselves. **The held stream decided
+WHICH tags to cover; it supplied no octets.**
 
-**The reason now is tag semantics.** A `.klv` fixture for adapter `stanag4609` is a payload beside a
-`.parsed.json` holding the **parsed form** the never-drop check measures against — and a parsed form
-is a CDM `Entity`, which means every value octet has to become a field. That needs park 3 for the
-epoch and park 5 for the IMAPB ranges, and there is no adapter to produce an `Entity` at all. The
-packets in `framing/` are exactly the octets such a payload would be made of, and they are
-deliberately **not** in this directory, where the harness would find them.
+**Why the defect fixture is not the stream's bytes.** `length_divergence_at_a_required_length.klv`
+reproduces the *class* — four octets under a Required Length of 2 — with a value the stream does not
+carry: `0x00000FA0`, not `0x000001c9`. A golden file built from a real emitter's defective octets
+would make this repository's test suite a place where somebody else's stream lives. The class is what
+the policy rules on; the particular four octets are park 13's evidence and stay in the report.
 
-Writing a payload anyway would produce a golden file recording what our own guess decodes to and a
-green harness run asserting that the two agree — the round-trip trap `../../README.md` names under
-"Three things the harness cannot check for you": self-consistency without an external anchor. That
-trap has not moved; only the rule that was missing has.
+Each ships as a twin — a `.klv` payload and a `.parsed.json` holding the parsed form the never-drop
+check measures against — on the pattern `adsb`, `cat021`, `cat048` and the three ASTERIX adapters
+after them already use. `spec/build_fixtures.py` is the single source of truth for both halves and
+for `framing/`'s twenty-six as well. The **parsed twin carries the payload and nothing else**: no
+`what_it_is_for`, no citation, no fixture id, because the lossless check harvests every leaf of a
+JSON fixture and requires each to appear in the CDM output, so a purpose string in the twin would
+have to be echoed into an object to pass. That is what this table is for.
 
-The twelve planned fixtures and the park that gates each one are tabulated in
-`../../FORMAT_COVERAGE.md` under "The fixtures — planned here, before they exist". When the parks
-close, each will ship as a twin — a `.klv` payload and a `.parsed.json` holding the parsed form the
-never-drop check measures against — on the pattern `adsb`, `cat021` and `cat048` already use, and
-`spec/build_fixtures.py` is their single source of truth: it exists now, builds all twenty-six of
-`framing/`, and grows a second half when an `Entity` can be produced.
+| Fixture | What it is there to catch | Cited from | UUID-v8 identity |
+|---|---|---|---|
+| `witnessed_set_from_the_documents_own_examples.klv` | all 26 witnessed items in one packet, each carrying the Example KLV Value its own §8.x block prints. Every affine map, every string and every identity conversion in `klv_uas_codec` runs once here, against values transcribed from the document rather than chosen by this repository. Tag 1's value is REPLACED on the way out — `encode_packet` computes §6.6's checksum over the packet it actually built, so the example checksum octets `8CED` are what the fixture asked for and the computed sum is what it carries | ST 0601.14a §8.1 through §8.65, each item's Example KLV Value row | `f1c70601-14a0-8001-8000-000000000001` |
+| `length_divergence_at_a_required_length.klv` | THE POLICY FIXTURE. Tag 22 Target Width at FOUR octets where §8.22's Required Length cell says 2 — the divergence class park 13 adjudicated, reproduced with octets the held stream does not carry. What must happen: the ITEM is skipped, its octets are parked verbatim, a structured `LengthDivergence` names both bases of the ruling, and the other four items translate normally. What must NOT happen: the packet refused (candidate a), or `0x00000FA0` read as 4000 by a truncation rule no document states (candidate c) | ST 0601.14a §8.22 Required Length 2; ST 0601.13-29 in §7; FORMAT_COVERAGE.md, 'Park 13 adjudicated and CLOSED' | `f1c70601-14a0-8001-8000-000000000002` |
+| `zero_length_item_is_an_explicit_unknown.klv` | a Zero-Length Item on tag 56, which is NOT a defect: `ST 0601.14-33` says 'Where a UAS Data-link LS item has a length of zero, consumers shall interpret the value of the item as "unknown"'. So it decodes to an explicit unknown, `Kinematics` is None rather than a speed of zero, and no defect is recorded. The distinction this catches is the one that matters most in a never-drop model: a producer SAYING a value is now unknown, versus a producer not mentioning the item | ST 0601.14a §6.5 and ST 0601.14-33 | `f1c70601-14a0-8001-8000-000000000003` |
+| `zero_length_item_on_a_required_item_is_a_defect.klv` | the one zero-length case the document itself makes a defect. `ST 0601.14-32`: the required items '(Tag 1 - Checksum, Tag 2 - Precision Time Stamp, and Tag 65 - UAS Datalink LS Version Number) shall always be reported with positive lengths (i.e. Zero-Length Items (ZLI) are not allowed for these items)'. So a ZLI on tag 65 is reported as `zero_length_on_a_required_item` while the same octets on tag 56 above are an explicit unknown — which is the policy reading the document rather than applying one rule to a length of zero | ST 0601.14a §6.5 and ST 0601.14-32 | `f1c70601-14a0-8001-8000-000000000004` |
+| `special_values_are_signals_and_not_measurements.klv` | the three Special Values the witnessed set declares, each in an item that declares it. What must happen: none of them is run through its item's affine map, so no `Position` is built from a 'Reserved' latitude and no `Event.geometry` from an 'N/A (Off-Earth)' frame centre — even though tag 14 and tag 24 are present and valid, which is the case where a half-built point is tempting. Run the map anyway and 0x80000000 becomes a latitude of -90.0000000419: a plausible-looking lie, which is the class of defect this repository's ellipsoid audit exists for | ST 0601.14a §8.6, §8.13 and §8.23, Special Values cells; §7's definition of the Special Values column | `f1c70601-14a0-8001-8000-000000000005` |
+| `over_recommended_max_length_is_an_advisory.klv` | a variable-length item one octet past its Max Length. This is NOT the length-divergence class and the document is why: §7 defines Max Length as 'the recommended maximum length' and names a network guard as its consumer, so nothing here breaks a 'shall'. The item is DECODED and carries an advisory. Treating it like a ST 0601.13-29 violation would enforce a requirement the document did not write, which is the mirror image of the mistake candidate (c) would have made | ST 0601.14a §7, the Max Length column definition; §8.11 | `f1c70601-14a0-8001-8000-000000000006` |
+| `an_unwitnessed_tag_is_skipped_and_the_packet_translates.klv` | `ST 0107.3-04` in the one place it can be tested from above the framing layer: 'Applications which decode MISB KLV Local Sets shall skip unknown Local Set values so as to not impact the decoding of known Local Set items within the same Local Set instance'. Tag 3 is a real ST 0601 item that this round did not cover because the pinned stream does not carry it, so it is UNKNOWN to `klv_uas_codec` and its octets are parked at attributes.klv_unknown_items. The packet translates and no defect is recorded — an uncovered item is not a malformed one. It is also the fixture that would break if a later round widened the witnessed set without updating the scope contract, which is deliberate | MISB ST 0107.3 ST 0107.3-04; ST 0601.14a §8.3 | `f1c70601-14a0-8001-8000-000000000007` |
+| `mandatory_items_only.klv` | the smallest conformant packet the standard admits: the three items ST 0601.14a makes Mandatory and nothing else. It is the fixture that proves the absences are absences — no Position, no Kinematics, no Event.geometry, and attributes.unavailable_fields saying so in words rather than the object simply having fewer keys | ST 0601.14a §6.4, §8.1, §8.65 and ST 0601.14-32 | `f1c70601-14a0-8001-8000-000000000008` |
+| `two_packets_one_payload_are_two_statements.klv` | two packets in one payload, half a second apart, at the same position and one metre per second different in ground speed. Four objects come out, not two, and the two Entities have DIFFERENT entity_id values — which is the packet-scoped identity's cost made visible in a golden file rather than described in a docstring. Nothing is accumulated across the boundary: no velocity is differenced, no state is carried | ST 0601.14a §6.3; FORMAT_COVERAGE.md, the fusion refusal | `f1c70601-14a0-8001-8000-000000000009` |
+| `a_checksum_that_does_not_validate_is_flagged_not_refused.klv` | a packet whose stored tag 1 disagrees with §6.6's summation over its own octets. It TRANSLATES, and attributes.integrity_basis carries `valid: false`. The reasoning is the length policy's: the stored checksum is one item among the packet's items, and discarding the others because a 16-bit sum disagrees destroys the evidence a consumer needs. `valid: false` on an object is a statement; a missing object is not | ST 0601.14a §6.6 and §8.1 | `f1c70601-14a0-8001-8000-000000000010` |
+
+**The UUID-v8 identities are in the table above and NOT inside any payload.** `framing/`'s twins
+carry theirs in the twin, because a framing fixture "has no identifiers at all to carry one". Here
+the reason is sharper and it is this round's own finding: **a UAS Datalink LS packet carries no
+identifier of any kind.** Items 3, 4, 10, 59 and 94 are the five that could identify an airframe and
+the pinned stream carries none of them, which is why adapter #10's `entity_id` is packet-scoped. So
+there is nothing in one of these payloads for a synthetic identity to stand in for, and inventing a
+field to hold one would be putting an identifier on the wire that the wire does not have.
+
+## The plan this replaced, and what is left of it
+
+The section above used to be "Why no `.klv` payload can be written yet — and the reason CHANGED", and
+it named tag semantics — park 3 for the epoch, park 5 for the IMAPB ranges — as the blocker. **Both
+of those readings turned out to be narrower than they looked, and reading the pinned edition is what
+narrowed them:**
+
+* **The epoch is in a held document.** ST 0601.14a §8.2.1 states it on its own account —
+  "the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z)" — so
+  `Event.observed_at` was never blocked on park 3. What park 3 still owns is the **name** of a
+  timescale that §8.2.1 says "does not represent UTC", and `attributes.time_basis` carries that
+  caveat on every object rather than resolving it.
+* **`IMAPB` does not reach the witnessed set at all.** `MISP-2015.1-09` says every scaled value is
+  mapped by ST 1201.3, and that is the PROFILE's claim; **not one of the 26 witnessed items' §8.x
+  sections names IMAPB**, because each states its own affine map twice over. The 16 sections that do
+  name it are tags 96, 103, 104, 105, 109, 112, 113, 114, 117, 118, 119, 120, 128, 130, 132 and 134,
+  and none of them is witnessed. **Park 5 is narrowed and not lifted** — recording that a blocker
+  shrank is not recording that it lifted.
+
+**The twelve planned fixtures the old plan tabulated are not all superseded**, and the ones that are
+not are still tabulated in `../../FORMAT_COVERAGE.md`: `security_local_set_present.klv` needs park 2,
+`vmti_detections.klv` needs park 6, `mismms_minimum_set.klv` needs park 12. What the ten above
+discharge is the envelope, the witnessed items, the defect classes and the refusals — and the
+round-trip trap `../../README.md` names under "Three things the harness cannot check for you",
+self-consistency without an external anchor, is answered here by the documents' own worked examples
+rather than by a promise.

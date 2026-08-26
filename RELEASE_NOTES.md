@@ -128,3 +128,37 @@ Everything else in this document is readable off that tree, which is what condit
 pip install synapse-cdm==1.1.0
 python -m synapse_cdm.harness --list-adapters
 ```
+
+## Landed on `main` after 1.1.0, and NOT in any release yet
+
+This section exists because `tests/test_cdm_release.py` reads this document's roster tables against
+the live registry in both directions, and it is right to: a reader who runs `--list-adapters` against
+a checkout gets what the tree ships, and a notes file that lists fewer adapters than the tree tells
+them the roster is smaller than it is.
+Everything above describes **1.1.0 as it was published**, and nothing in it has been edited to
+mention what follows — the twelve-adapter table, the 388 verdicts and the eleven no-schema-change
+entries are 1.1.0's numbers and stay 1.1.0's.
+
+| Adapter | Direction | Fixture verdicts | State |
+|---|---|---|---|
+| **`stanag4609`** | bidirectional | **20** | on `main`, unreleased |
+
+- **`stanag4609` — STANAG 4609 / MISP-2019.1, the UAS Datalink Local Set, bidirectional,
+  byte-exact.** Adapter #10, whose ordinal had been reserved since Phase 1. It covers **26 of
+  ST 0601.14a's 141 items** — the distinct tags the one real KLV stream this repository holds
+  actually carries — and the other **115 rows still read `not yet`** in `FORMAT_COVERAGE.md`. That
+  partial coverage is the point rather than an unfinished edge: an item nobody here has met on a
+  wire is an item whose decoder could only be checked against a fixture written from the same
+  reading of the same table, so the witnessed set is a scope contract with a test behind it.
+
+  Three things about it are unlike the twelve above. It is the **first adapter here with a real
+  integrity gate** — ST 0601.14a §8.1 defines a checksum, `ST 0601.14-32` makes it mandatory in
+  every packet, and all six packets of the held stream validate, where CAT021, CAT048, CAT034,
+  CAT023 and GMTIF each had to record that their format defines none. It ships a **codec ruling**,
+  the length-divergence policy, because the one real stream carries an item at a length its own
+  standard forbids and no held document says what a decoder should then do. And its `entity_id` is
+  **packet-scoped**, because the witnessed set contains no identifier at all — which is a
+  measurement rather than a design preference, and its cost is recorded in gap 30.
+
+  It added, removed and retyped **no field**, so `MIGRATIONS.md`'s "Adapters that landed with no
+  schema change" section grows by one when this ships.

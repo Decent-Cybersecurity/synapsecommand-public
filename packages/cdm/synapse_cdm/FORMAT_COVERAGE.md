@@ -47,6 +47,10 @@ run is a guess with a table around it.
 | `cat034 1.0.0` | implemented by `adapters/asterix_cat034.py` on the codec in `adapters/cat034_codec.py`, with a binary fixture twin and a golden file |
 | `cat034 1.0.0 · parked` | implemented, but the value lands in `attributes`/`payload` because of a named gap below |
 | `cat034 1.0.0 · egress` | implemented in the `from_cdm()` direction |
+| `stanag4609 1.0.0` | implemented by `adapters/stanag4609.py` on the two codecs in `adapters/klv_codec.py` (framing) and `adapters/klv_uas_codec.py` (the tag table), with a binary fixture twin and a golden file |
+| `stanag4609 1.0.0 · parked` | implemented, but the value lands in `attributes`/`payload` because of a named gap below |
+| `stanag4609 1.0.0 · defect` | implemented, **and the one real stream this repository holds carries this item at a length its own Required Length forbids** — so in THAT stream the value reaches no field at all and the octets are parked with a structured defect annotation. A conformant packet's value parks like any other. The marker exists because "this row is implemented" and "the only bytes anyone here has met of it are defective" are different facts and a reader pointing a feed at this adapter needs both. See *The length-divergence policy* below |
+| `stanag4609 1.0.0 · egress` | implemented in the `from_cdm()` direction |
 
 **What `· provisional` qualifies, precisely.** It is a statement about the **XML element name**,
 not about the mapping. The normative XSD is distributed through NATO national representatives
@@ -241,7 +245,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 7 | `stanag4676` | shipped | `adapters/stanag4676.py`, "Adapter #7", and `tests/test_cdm_stanag4676_adapter.py`'s first line |
 | 8 | `gmti` | shipped | `adapters/gmtif.py`, "Adapter #8" |
 | 9 | `stanag5527` | specification, Phase 1 | this document's STANAG 5527 section, `fixtures/fft/spec/fft_pin.json`, `fixtures/fft/README.md` and `MIGRATIONS.md`. **A narrower Phase 1 than the row above**: there is a pinned covering document and no row set at all, because the one standard its AGREEMENT clause names is not in hand. Until this round the row read "RESERVED" and named `nffi` — a name with no source in any document and none in this repository, which is what retired it |
-| 10 | `stanag4609` | specification, Phase 1 | this document's STANAG 4609 / MISP-2019.1 section, `fixtures/klv/spec/klv_pin.json` and `MIGRATIONS.md` |
+| 10 | `stanag4609` | shipped | `adapters/stanag4609.py`, "Adapter #10", this document's STANAG 4609 / MISP-2019.1 section, `fixtures/klv/spec/klv_pin.json`, `fixtures/klv/README.md` and `MIGRATIONS.md`. **The longest Phase 1 in this repository, and the reserved-ordinal rule's own test case.** The row sat at Phase 1 across six rounds — a row set, then a framing codec, then a walk over real bytes, then two adjudications, then a provenance hunt — and it is the row that gave the rule its reason: #10 rather than #12, because #9 was being held for a document that had not arrived. Phase 2 shipped against the row set Phase 1 wrote and **26 of its 141 rows moved**, which is the first PARTIAL promotion in this table: the witnessed set is what the one pinned stream attests and the other 115 rows still read `not yet` |
 | 11 | `cat048` | shipped | `fixtures/cat048/README.md`, the module README's harness section, and this document's CAT048 section. **`adapters/asterix_cat048.py` states no ordinal of its own** — the only shipped adapter besides `pntmap` that does not, which is recorded rather than repaired here |
 | 12 | `cat034` | shipped | `adapters/asterix_cat034.py`, "Adapter #12", this document's CAT034 section, `fixtures/cat034/spec/cat034_pin.json`, `fixtures/cat034/README.md` and `MIGRATIONS.md`. **The forecast made good, then made real.** The row read *(forecast)* until Phase 1 and cited the CAT048 declines table — "if it lands, it lands as adapter #12 with its own pin" — and it landed at that number with that pin; Phase 2 shipped the adapter against the row set Phase 1 wrote, and every row of it now says `cat034 1.0.0` |
 | 13 | `cat062` | shipped | `adapters/asterix_cat062.py`, "Adapter #13", this document's CAT062 section, `fixtures/cat062/spec/cat062_pin.json`, `fixtures/cat062/README.md` and `MIGRATIONS.md`. **The widest Phase 1 in this repository, and Phase 2 landed against it with one row changed.** 27 data items, a two-document pin and a full egress row set; the row set was the first written against a source that is itself the output of a fusion process, which is what settlement 1 exists for |
@@ -249,10 +253,12 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
-shipped adapter but never a conflicting claimant. **Four rows are at Phase 1 as of this round** —
-#9, #10, #13 and #14 — and the two new ones are the first Phase 1 rows whose row sets are complete
-rather than partial, which is a state the table did not previously have to distinguish and which the
-third column now states. It is the disjunction treatment applied to an
+shipped adapter but never a conflicting claimant. **ONE row is at Phase 1 as of this round** — #9,
+`stanag5527`, and it is the narrowest of them all: a pinned covering document and no row set at all.
+The count has fallen from four to one in three rounds as #13, #14 and now #10 shipped against the row
+sets their Phase 1 wrote, and #10 is the one whose promotion is PARTIAL — 26 rows of 141 — which is a
+state this table's third column did not previously have to distinguish either. It is the disjunction
+treatment applied to an
 ordinal — the same reason `test_cdm_prose_counts.py` exists for the adapter *count*, and the same
 reason the STANAG 4609 pin rows are asserted as one composite string rather than three substrings.
 
@@ -7902,38 +7908,41 @@ feed either. **Bidirectionality is available for more of this table than for any
 and is still not claimed**: ST 0601.14 gives each scaled numeric item *both* conversions explicitly —
 item 42's section, for instance, states `KLVval = (65535/19900) × (Softval + 900)` alongside its
 inverse — so encode is derivable from the same page as decode for those items, and a Phase 2 should
-write both. It is `not yet` because there is no adapter, not because the document is short of it.
+write both. It was `not yet` because there was no adapter, not because the document is short of it — and for 26
+of the 141 items it no longer is: the witnessed-set round wrote both directions for them, and egress
+is byte-exact by replaying the octets rather than by re-encoding the decoded value, for the
+quantisation reason §7's Programmer's Notes state.
 **No fusion and no joins**: items 100 and 101 nest child items that may *duplicate* their parent's
 (`ST 0601.14-35`), and items 100, 101, 102 and 115 are marked Multiples Allowed, so a reader keyed by
 tag alone silently collapses two values into one. Structure is preserved verbatim.
 
 | Tag | Name | Units | Format | Len | CDM field | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| `1` | Checksum | None | `uint16` | `2` | `Entity.attributes` | `not yet` | Checksum used to detect errors within a UAS Datalink LS packet. The one item that makes a packet self-checking, and **the profile said such a thing might exist without saying where** (§5.3.2.2, `attributes.integrity_basis`). Here it is, at item 1, and ST 0601.14 requires it last in the Local Set (`ST 0601.13-23`). |
-| `2` | Precision Time Stamp | µs | `uint64` | `8` | `Event.observed_at`, `Entity.valid_from` | `not yet` | Timestamp for all metadata in this Local Set; used to coordinate with Motion Imagery. **MANDATORY IN EVERY PACKET, AND THIS DOCUMENT STATES THE EPOCH THE PROFILE DOES NOT.** ST 0601.14 §6.4: “Every UAS Datalink LS packet is required to include a Precision Time Stamp representing absolute time as defined in MISB ST 0603 [4]. The Precision Time Stamp (Tag 2) is an eight-byte unsigned integer counter of the number of SI Seconds (in microseconds) which have elapsed since midnight (00:00:00), January 1, 1970 (1970-01-01T00:00:00Z). Note: this time does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.” §8.2 says it again. So epoch, resolution and leap-second treatment are all **read from a document in hand** — see the settlement note below the table, which is where settlement 3 and register entry KLV 6 are corrected in their reach. **Park 3 is not closed by this**: ST 0603.5 still owns the MISP Time System, items 136 and 137, and the one thing ST 0601.14 does not say — what to CALL a scale of SI seconds since 1970 that is not UTC. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. |
+| `1` | Checksum | None | `uint16` | `2` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Checksum used to detect errors within a UAS Datalink LS packet. The one item that makes a packet self-checking, and **the profile said such a thing might exist without saying where** (§5.3.2.2, `attributes.integrity_basis`). Here it is, at item 1, and ST 0601.14 requires it last in the Local Set (`ST 0601.13-23`). **Promoted by the witnessed-set round.** `klv_codec.bcc_16` computes §6.6's range and the verdict rides at `attributes.integrity_basis` on every object — stored, computed and valid. It parks rather than mapping because the CDM has no integrity field for it: `Integrity` is designed for a PQC signature and a 16-bit summation is not one. **A packet whose checksum fails is translated and flagged, not refused**, for the length policy's reason — the stored sum is one item among 26. |
+| `2` | Precision Time Stamp | µs | `uint64` | `8` | `Event.observed_at`, `Entity.valid_from` | `stanag4609 1.0.0` | Timestamp for all metadata in this Local Set; used to coordinate with Motion Imagery. **MANDATORY IN EVERY PACKET, AND THIS DOCUMENT STATES THE EPOCH THE PROFILE DOES NOT.** ST 0601.14 §6.4: “Every UAS Datalink LS packet is required to include a Precision Time Stamp representing absolute time as defined in MISB ST 0603 [4]. The Precision Time Stamp (Tag 2) is an eight-byte unsigned integer counter of the number of SI Seconds (in microseconds) which have elapsed since midnight (00:00:00), January 1, 1970 (1970-01-01T00:00:00Z). Note: this time does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.” §8.2 says it again. So epoch, resolution and leap-second treatment are all **read from a document in hand** — see the settlement note below the table, which is where settlement 3 and register entry KLV 6 are corrected in their reach. **Park 3 is not closed by this**: ST 0603.5 still owns the MISP Time System, items 136 and 137, and the one thing ST 0601.14 does not say — what to CALL a scale of SI seconds since 1970 that is not UTC. An instant, and the epoch it counts from is **park 3**'s (ST 0603.5) — settlement 3. **Promoted.** The epoch is §8.2.1's own and the conversion is the POSIX rule; the exact microsecond integer parks at `attributes.precision_time_stamp_us` because `times.render` emits milliseconds. `attributes.time_basis` carries the timescale caveat verbatim on every object, and **park 3 is not closed by this**: ST 0603.5 still owns what to call a scale of SI seconds since 1970 that is not UTC. |
 | `3` | Mission ID | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Descriptive mission identifier to distinguish event or sortie |
 | `4` | Platform Tail Number | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Identifier of platform as posted |
-| `5` | Platform Heading Angle | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Aircraft heading angle. A **heading**, not a course. `Kinematics.course_deg` is documented as a course, and item 112 is the course angle — so this parks and 112 fills the CDM field. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `6` | Platform Pitch Angle | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Aircraft pitch angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `7` | Platform Roll Angle | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Platform roll angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
+| `5` | Platform Heading Angle | ° | `uint16` | `2` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Aircraft heading angle. A **heading**, not a course. `Kinematics.course_deg` is documented as a course, and item 112 is the course angle — so this parks and 112 fills the CDM field. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted, and it parks exactly where this row predicted it would.** Item 112 is the course angle and is not in the witnessed set, so `Kinematics.course_deg` stays `None` and the heading lands at `attributes.platform_heading_deg`. |
+| `6` | Platform Pitch Angle | ° | `int16` | `2` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Aircraft pitch angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** Decoded by the ±20° map §8.6 states and parked: the CDM models a contact's motion, not an airframe's attitude. `0x8000` is §8.6's "Out of Range" indicator and is returned as that signal rather than run through the map. |
+| `7` | Platform Roll Angle | ° | `int16` | `2` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Platform roll angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** As item 6, on the ±50° map, with the same `0x8000` signal. |
 | `8` | Platform True Airspeed | m/s | `uint8` | `1` | `Entity.attributes` | `not yet` | True airspeed (TAS) of platform. An **airspeed**, not a speed over ground. `Kinematics.speed_mps` takes item 56; this parks with its units named. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
 | `9` | Platform Indicated Airspeed | m/s | `uint8` | `1` | `Entity.attributes` | `not yet` | Indicated airspeed (IAS) of platform. An **airspeed**, not a speed over ground — as item 8, and indicated rather than true. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
 | `10` | Platform Designation | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Model name for the platform |
-| `11` | Image Source Sensor | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of currently active sensor |
-| `12` | Image Coordinate System | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Name of the image coordinate system used |
-| `13` | Sensor Latitude | ° | `int32` | `4` | `Entity.position.lat` | `not yet` | Sensor latitude. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `14` | Sensor Longitude | ° | `int32` | `4` | `Entity.position.lon` | `not yet` | Sensor longitude. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `15` | Sensor True Altitude | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Altitude of sensor as measured from Mean Sea Level (MSL). **MSL, and the CDM's `Position.alt_m` is documented as “Metres HAE”** — so this item cannot fill it and parks instead. Item 75 is the HAE twin and does fill it, and `ST 0601.8-17` settles the collision in the same direction: a decoder that understands HAE “shall use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS Datalink LS packet”. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `16` | Sensor Horizontal Field of View | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Horizontal field of view of selected imaging sensor. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `17` | Sensor Vertical Field of View | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Vertical field of view of selected imaging sensor. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `18` | Sensor Relative Azimuth Angle | ° | `uint32` | `4` | `Entity.attributes` | `not yet` | Relative rotation angle of sensor to platform longitudinal axis. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `19` | Sensor Relative Elevation Angle | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Relative elevation angle of sensor to platform longitudinal-transverse plane. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `20` | Sensor Relative Roll Angle | ° | `uint32` | `4` | `Entity.attributes` | `not yet` | Relative roll angle of sensor to aircraft platform. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `21` | Slant Range | m | `uint32` | `4` | `Entity.attributes` | `not yet` | Slant range in meters. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `22` | Target Width | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Target width within sensor field of view. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `23` | Frame Center Latitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Terrain latitude of frame center |
-| `24` | Frame Center Longitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Terrain longitude of frame center |
-| `25` | Frame Center Elevation | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Terrain elevation at frame center relative to Mean Sea Level (MSL) |
+| `11` | Image Source Sensor | None | `utf8` | `V` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Name of currently active sensor. **Promoted, and it is the row that decided this adapter's identity.** Its value in the pinned stream is `'EON'` in five packets and `'IR'` in the sixth, so it CANNOT key an `Entity` — see *What the adapter fills* below. Edition 1 writes this item's Format as `ISO7` where .14a writes `utf8`, which is register entry **KLV 17**; both are decoded as UTF-8, which reads every ISO 646 octet identically. |
+| `12` | Image Coordinate System | None | `utf8` | `V` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Name of the image coordinate system used. **Promoted.** The pinned stream's value is `'Geodetic WGS84'` at all six sites, byte-identical to §8.12's own Example KLV Value — the datum the CDM's `Position` already is, so nothing is transformed. §8.12.1 lists the items it governs and 13, 14, 23, 24, 40 and 41 are all in the witnessed set. |
+| `13` | Sensor Latitude | ° | `int32` | `4` | `Entity.position.lat` | `stanag4609 1.0.0` | Sensor latitude. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** The ±90° map is §8.13's own, checked against §8.13's own worked example. `0x80000000` is its "Reserved" signal and no `Position` is built over it — the fixture `special_values_are_signals_and_not_measurements` exists because running the map anyway yields a latitude of −90.00000004. |
+| `14` | Sensor Longitude | ° | `int32` | `4` | `Entity.position.lon` | `stanag4609 1.0.0` | Sensor longitude. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** As item 13, on the ±180° map. |
+| `15` | Sensor True Altitude | m | `uint16` | `2` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Altitude of sensor as measured from Mean Sea Level (MSL). **MSL, and the CDM's `Position.alt_m` is documented as “Metres HAE”** — so this item cannot fill it and parks instead. Item 75 is the HAE twin and does fill it, and `ST 0601.8-17` settles the collision in the same direction: a decoder that understands HAE “shall use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS Datalink LS packet”. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted, and it parks for the reason this row gave before any code existed**: MSL against `Position.alt_m`'s "Metres HAE". Items 75 and 104 are the HAE twins §8.15 itself points at and neither is in the witnessed set, so `alt_m` is `None` on every object and the MSL figure is at `attributes.sensor_true_altitude_msl_m`, converting nothing. |
+| `16` | Sensor Horizontal Field of View | ° | `uint16` | `2` | `Event.payload` | `stanag4609 1.0.0 · parked` | Horizontal field of view of selected imaging sensor. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** Decoded on §8.16's 0..180° map and parked at `payload.sensor`: the CDM has no field for a sensor's field of view. |
+| `17` | Sensor Vertical Field of View | ° | `uint16` | `2` | `Event.payload` | `stanag4609 1.0.0 · parked` | Vertical field of view of selected imaging sensor. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** As item 16. |
+| `18` | Sensor Relative Azimuth Angle | ° | `uint32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Relative rotation angle of sensor to platform longitudinal axis. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** Decoded on §8.18's 0..360° map over `uint32` and parked: the CDM has no field for a gimbal's orientation, and computing where the sensor is LOOKING from this plus items 5/6/7 is the photogrammetry §8.13.1 delegates to ST 0801, which is not held. |
+| `19` | Sensor Relative Elevation Angle | ° | `int32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Relative elevation angle of sensor to platform longitudinal-transverse plane. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** As item 18, on the ±180° map, with §8.19's `0x80000000` "Reserved" signal. |
+| `20` | Sensor Relative Roll Angle | ° | `uint32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Relative roll angle of sensor to aircraft platform. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** As item 18. |
+| `21` | Slant Range | m | `uint32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Slant range in meters. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted.** Decoded on §8.21's 0..5 000 000 m map and parked at `payload.sensor`. |
+| `22` | Target Width | m | `uint16` | `2` | `Entity.attributes` | `stanag4609 1.0.0 · defect` | Target width within sensor field of view. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. **Promoted, and it is the witnessed-set round's motivating case.** A conformant 2-octet value decodes on §8.22's 0..10 000 m map and parks. **In the pinned stream this item carries FOUR octets at all six sites**, which park 13 ruled a stream defect, so there the value reaches no field: the item is skipped and the octets are parked with a structured `LengthDivergence`. See *The length-divergence policy* below for the ruling that governs the class. |
+| `23` | Frame Center Latitude | ° | `int32` | `4` | `Event.geometry` | `stanag4609 1.0.0` | Terrain latitude of frame center. **Promoted, and this is the row that became a `Geometry`.** Items 23 and 24 build the `Point` on `Event.geometry` — the frame centre, chosen over items 40/41 because §8.40 makes the target location conditional ("if different from frame center") and the frame centre is unconditional. §8.23's `0x80000000` is "N/A (Off-Earth)" and no `Point` is built over it. |
+| `24` | Frame Center Longitude | ° | `int32` | `4` | `Event.geometry` | `stanag4609 1.0.0` | Terrain longitude of frame center. **Promoted.** As item 23. |
+| `25` | Frame Center Elevation | m | `uint16` | `2` | `Event.payload` | `stanag4609 1.0.0 · parked` | Terrain elevation at frame center relative to Mean Sea Level (MSL). **Promoted.** MSL again, so it cannot be the `Point`'s third coordinate any more than it could be `Position.alt_m`. Parked at `payload.frame_centre.elevation_msl_m`. |
 | `26` | Offset Corner Latitude Point 1 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame latitude offset for upper left corner |
 | `27` | Offset Corner Longitude Point 1 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame longitude offset for upper left corner |
 | `28` | Offset Corner Latitude Point 2 | ° | `int16` | `2` | `Entity.attributes` | `not yet` | Frame latitude offset for upper right corner |
@@ -7948,9 +7957,9 @@ tag alone silently collapses two values into one. Structure is preserved verbati
 | `37` | Static Pressure | mbar | `uint16` | `2` | `Entity.attributes` | `not yet` | Static pressure at aircraft location |
 | `38` | Density Altitude | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Density altitude at aircraft location |
 | `39` | Outside Air Temperature | °C | `int8` | `1` | `Entity.attributes` | `not yet` | Temperature outside of aircraft |
-| `40` | Target Location Latitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Calculated target latitude |
-| `41` | Target Location Longitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Calculated target longitude |
-| `42` | Target Location Elevation | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Calculated target elevation. **The item the .14/.19 divergence lands on, and .14 states no datum for it at all.** Its §8.42 gives “Calculated target elevation” and nothing more; .19 later resolved the same item to “conditionally either MSL or HAE”. **.14's silence is normative here** — see the divergence note below the table. The value parks with the datum recorded as unstated rather than filled from the later revision. |
+| `40` | Target Location Latitude | ° | `int32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Calculated target latitude. **Promoted.** Parked beside the frame centre and never reconciled with it — in the pinned stream items 40/41/42 are BYTE-IDENTICAL to 23/24/25 at all six sites, which is the case where a merge would look free and would still be a merge. |
+| `41` | Target Location Longitude | ° | `int32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Calculated target longitude. **Promoted.** As item 40. |
+| `42` | Target Location Elevation | m | `uint16` | `2` | `Event.payload` | `stanag4609 1.0.0 · parked` | Calculated target elevation. **The item the .14/.19 divergence lands on, and .14 states no datum for it at all.** Its §8.42 gives “Calculated target elevation” and nothing more; .19 later resolved the same item to “conditionally either MSL or HAE”. **.14's silence is normative here** — see the divergence note below the table. The value parks with the datum recorded as unstated rather than filled from the later revision. **Promoted.** As item 40, and MSL as item 25. |
 | `43` | Target Track Gate Width | Pixels | `uint8` | `1` | `Entity.attributes` | `not yet` | Tracking gate width (x value) of tracked target within field of view |
 | `44` | Target Track Gate Height | Pixels | `uint8` | `1` | `Entity.attributes` | `not yet` | Tracking gate height (y value) of tracked target within field of view |
 | `45` | Target Error Estimate - CE90 | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Circular error 90 (CE90) is the estimated error distance in the horizontal direction |
@@ -7964,8 +7973,8 @@ tag alone silently collapses two values into one. Structure is preserved verbati
 | `53` | Airfield Barometric Pressure | mbar | `uint16` | `2` | `Entity.attributes` | `not yet` | Local pressure at airfield of known height |
 | `54` | Airfield Elevation | m | `uint16` | `2` | `Entity.attributes` | `not yet` | Elevation of airfield corresponding to Airfield Barometric Pressure |
 | `55` | Relative Humidity | % | `uint8` | `1` | `Entity.attributes` | `not yet` | Relative humidity at aircraft location |
-| `56` | Platform Ground Speed | m/s | `uint8` | `1` | `Entity.kinematics.speed_mps` | `not yet` | Speed projected to the ground of an airborne platform passing overhead |
-| `57` | Ground Range | m | `uint32` | `4` | `Entity.attributes` | `not yet` | Horizontal distance from ground position of aircraft relative to nadir, and target of interest |
+| `56` | Platform Ground Speed | m/s | `uint8` | `1` | `Entity.kinematics.speed_mps` | `stanag4609 1.0.0` | Speed projected to the ground of an airborne platform passing overhead. **Promoted, and it is the only kinematic figure in the witnessed set that lands without an argument.** §8.56 states Software format `uint8` and KLV format `uint8` over the same 0..255, so the document's own formula is the identity and there is no conversion to get wrong — and it is a speed over GROUND, which is what `Kinematics.speed_mps` documents itself as. |
+| `57` | Ground Range | m | `uint32` | `4` | `Event.payload` | `stanag4609 1.0.0 · parked` | Horizontal distance from ground position of aircraft relative to nadir, and target of interest. **Promoted.** Decoded on §8.57's 0..5 000 000 m map and parked at `payload.sensor`. |
 | `58` | Platform Fuel Remaining | kg | `uint16` | `2` | `Entity.attributes` | `not yet` | Remaining fuel on airborne platform |
 | `59` | Platform Call Sign | None | `utf8` | `V` | `Entity.attributes` | `not yet` | Call sign of platform or operating unit. **Gap 1** — the CDM has no canonical name field, and this is a fourth format arriving at the same absence. Parks at `attributes.callsign`, the key `adsb.py` and `tak.py` already use, and the gap note is the reason that agreement is recorded rather than celebrated. |
 | `60` | Weapon Load | None | `uint16` | `2` | `Entity.attributes` | `not yet` | Current weapons stored on aircraft |
@@ -7973,7 +7982,7 @@ tag alone silently collapses two values into one. Structure is preserved verbati
 | `62` | Laser PRF Code | None | `uint16` | `2` | `Entity.attributes` | `not yet` | A laser's Pulse Repetition Frequency (PRF) code used to mark a target |
 | `63` | Sensor Field of View Name | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Sensor field of view names |
 | `64` | Platform Magnetic Heading | ° | `uint16` | `2` | `Entity.attributes` | `not yet` | Aircraft magnetic heading angle. SDCC-eligible: an uncertainty for this item may arrive in item 102, whose layout is ST 1010.3 and is not held. |
-| `65` | UAS Datalink LS Version Number | None | `uint8` | `1` | `Entity.attributes` | `not yet` | Version number of the UAS Datalink LS document used to generate KLV metadata. **MANDATORY IN EVERY PACKET, and it declares which revision of this very document the producer encoded against**: the value is this document's MAJOR revision number, “1..255 corresponds to document revisions” one for one, and 0 means pre-release or test data. So park 1's hazard — a later revision's tag decoded against an earlier one — is **detectable on the wire**: a stream declaring 19 is not this table's stream. **But it is a `uint8` and cannot express a Minor Version letter**, so 14 and 14a are indistinguishable in it — the same blind spot a citation by edition number has, register entry **KLV 10**. |
+| `65` | UAS Datalink LS Version Number | None | `uint8` | `1` | `Entity.attributes` | `stanag4609 1.0.0 · parked` | Version number of the UAS Datalink LS document used to generate KLV metadata. **MANDATORY IN EVERY PACKET, and it declares which revision of this very document the producer encoded against**: the value is this document's MAJOR revision number, “1..255 corresponds to document revisions” one for one, and 0 means pre-release or test data. So park 1's hazard — a later revision's tag decoded against an earlier one — is **detectable on the wire**: a stream declaring 19 is not this table's stream. **But it is a `uint8` and cannot express a Minor Version letter**, so 14 and 14a are indistinguishable in it — the same blind spot a citation by edition number has, register entry **KLV 10**. **Promoted, and carried rather than trusted.** Its value is `0x01` at all six sites of the pinned stream, and `attributes.uas_ls_version_number.basis` records register entry **KLV 15** on the object: there is no *MISB ST 0601.1* for §8.65 to be pointing at. Edition 1's own §7.65.1 adds that the item "is not required in every packet of metadata", so at the edition this value declares the stamp was optional. |
 | `66` | Deprecated | N/A | `N/A` | `N/A` | `Entity.attributes` | `not yet` | This item has been deprecated. **Deprecated by this edition**, and the table says so in the Name column rather than omitting the tag — which is why the transcription keeps the row. Its revision history: “Deprecated Local Set item 66 because it has been TBD since its inception and replaced with the SDCC-FLP (item 102)”. |
 | `67` | Alternate Platform Latitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Alternate platform latitude |
 | `68` | Alternate Platform Longitude | ° | `int32` | `4` | `Entity.attributes` | `not yet` | Alternate platform longitude |
@@ -8186,7 +8195,12 @@ that wants park 8 cheaper starts there.
 
 `adapters/klv_codec.py` — **still a codec and not an adapter**: no `Adapter` subclass, so no registry
 entry, no ordinal and no roster row, because it can now find every item in a local set and cannot
-decode a single value. The three functions the framing round shipped as refusals —
+decode a single value. **That is still true of this module and is no longer true of the format**: the
+witnessed-set round added `adapters/klv_uas_codec.py` above it and `adapters/stanag4609.py` above
+that, and the split is now load-bearing rather than descriptive —
+`test_the_framing_codec_still_registers_no_adapter_and_still_knows_no_tags` asserts that this file
+does not import the tag table, because a table imported here would destroy `ST 0107.3-04`'s
+structural satisfaction silently: the walk would still work. The three functions the framing round shipped as refusals —
 `decode_ber_length`, `encode_ber_length`, `walk_local_set` — **stopped raising**, and two more gained
 behaviour rather than losing a refusal: `decode_ber_oid` and `encode_ber_oid` now follow §6.3.1's
 chain to any width. `LocalSetItem` is new, carrying `tag`, `length`, `value`, `tag_offset` and
@@ -8197,6 +8211,13 @@ nobody asked for, and it is named here rather than added.
 **The injected clock seam is still NAMED AND NOT BUILT**, and the reason is unchanged: in this package
 the clock is a parameter of `Adapter.__init__` and codecs never take one — `gmtif_codec` and
 `cat048_codec` are the precedent. Closing park 4 did not create an adapter to hang a seam on.
+
+> **BUILT BY THE WITNESSED-SET ROUND, and the paragraph above is left as the framing round wrote
+> it.** `adapters/stanag4609.py` is the adapter that seam needed: `received_at` comes from the
+> injected clock on every object and `observed_at` from item 2, whose epoch §8.2.1 states on its own
+> account. The two codecs still take no clock and neither does `klv_uas_codec` — the sentence above
+> is a rule about codecs and it did not change; what changed is that there is now something for it to
+> be a rule *about*.
 
 Bidirectionality is claimed for what exists and checked **by exhaustion where the domain permits,
 which for lengths it does not**: `decode_ber_length(encode_ber_length(n)) == n` exhaustively over
@@ -8222,6 +8243,15 @@ tag transition** (`tag_three_octet_lowest`, replacing the refusal `tag_third_con
 **One fixture is still a park, and it is the only one.** `length_indefinite_first_octet` — the octet
 `0x80` — raises `UnderivableFromPinnedCopy`, and the generator asserts the exception **type**, so a
 later round that decides what an indefinite length means without buying ST 336 fails there.
+
+> **TEN PAYLOADS NOW LIVE THERE, and BOTH of the following paragraph's stated blockers turned out to
+> be narrower than it read them.** Park 3 was never the blocker for the epoch: §8.2.1 states it on
+> the pinned edition's own account, and what park 3 owns is the *name* of a timescale that section
+> says "does not represent UTC". Park 5 reaches none of the 26 witnessed items — no §8.x section
+> among them names IMAPB, and the 16 that do are enumerated in the parks table. So the paragraph was
+> right that tag semantics were the blocker and wrong about which documents held them, which is what
+> reading the pinned edition item by item is for. See *The fixtures — ten payloads, and the plan they
+> replaced*. The paragraph is left as written.
 
 **There is still no `.klv` payload in `fixtures/klv/`, and the reason changed.** It is no longer the
 length grammar. It is that a payload for adapter `stanag4609` would have to decode to a CDM `Entity`,
@@ -8774,6 +8804,297 @@ that is (a)'s **standing annotation** rather than a loose end that closure tidie
 * **The protected site was not accessed, and no attempt was made to access it.** Applying for an NGA
   account is not a fetch; it is a relationship, and it is outside what a round like this can do.
 
+### The witnessed-set coverage round — 26 rows promoted, the defect policy ruled, adapter #10 shipped
+
+**What this round did, in one paragraph, because the four before it each ended in a park and this
+one does not.** The walk round found six packets and 156 items in a real stream and decoded no
+value. The adjudication round read edition 1 and ruled item 22's four octets a stream defect. The
+provenance round closed the origin question and verified nothing about the bytes' meaning. This
+round **enumerated the distinct tags those packets carry — 26 of ST 0601.14a's 141 — read every one
+of their §8.x blocks, ruled the codec policy the defect forces, and shipped `adapters/stanag4609.py`
+against the 26.** The other **115** rows still read `not yet`, and the reason is a rule rather than
+a schedule: *the witnessed set is the scope contract*. An item this repository has never met on a
+wire is an item whose decoder could only ever be checked against a fixture written from the same
+reading of the same table, which is the self-consistency trap this section has been avoiding since
+its first round.
+
+#### Act 1 — the witnessed set, enumerated from the octets
+
+**The pin was re-verified before anything was read.** `fixtures/klv/streams/day_flight.klv`,
+SHA-256 `a810e4b60ff33b1bdc1831594201d8158655c0808bdef1b22d84a9eb26e22e51`, **977 bytes**, ignored by
+`.gitignore:97` and checked with `git check-ignore -v`. Every number below is `klv_uas_codec`'s
+output over those octets and **none was carried from the walk round's record** — which is the point
+of re-deriving them: they agree, item for item, with what that round wrote down, and an agreement
+between two independent derivations is worth more than a quotation of one.
+
+| Measured, again | Value |
+|---|---|
+| Packets | **6**, each opening with the §6.2 Universal Label |
+| Octets left over after the sixth packet's declared Value | **0** |
+| Items per packet | **26**, the same in all six |
+| Items in total | **156** |
+| Distinct tag *sequences* | **1** — the same 26 tags in the same order every time |
+| Distinct tags | **26** |
+| Checksums that validate, by §6.6's range | **6 of 6** |
+| Items whose observed length diverges from their Required Length | **1** — item 22, at all six sites |
+| Tags carried that this round's table does not cover | **0** |
+
+**The enumeration itself, which is this round's scope contract.** No tag outside this table changed
+status. The `Agrees` column compares the observed length with the Required Length **ST 0601.14a's own
+§8.x block** states, and the last two columns carry **edition 1's** reading of the same item from
+`fixtures/klv/spec/EG0601.1.pdf` — the three-site method that ruled item 22, applied to all 26.
+
+| Tag | Name | Occ. | Observed length(s) | `.14a` Length / Max / Required | Agrees | Edition 1 §7.N: Units, Range, Format | Ed. 1 `[0dL]` |
+|---|---|---|---|---|---|---|---|
+| `1` | Checksum | 6 | `2` | 2 / 2 / **2** | yes | *§7.1 states no such block* | 2 |
+| `2` | Precision Time Stamp | 6 | `8` | 8 / 8 / **8** | yes | Microseconds 0..(2^64-1) uint64 | 8 |
+| `5` | Platform Heading Angle | 6 | `2` | 2 / 2 / **2** | yes | Degrees 0..360 uint16 | 2 |
+| `6` | Platform Pitch Angle | 6 | `2` | 2 / 2 / **2** | yes | Degrees +/- 20 int16 | 2 |
+| `7` | Platform Roll Angle | 6 | `2` | 2 / 2 / **2** | yes | Degrees +/- 50 int16 | 2 |
+| `11` | Image Source Sensor | 6 | `2` ×1, `3` ×5 | variable / 127 / *n/a* | *n/a*, and not a defect — Max Length is 127 | String 1..127 ISO7 | 7 |
+| `12` | Image Coordinate System | 6 | `14` | variable / 127 / *n/a* | *n/a*, and not a defect — Max Length is 127 | String 1..127 ISO7 | 5 |
+| `13` | Sensor Latitude | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/- 90 int32 | 4 |
+| `14` | Sensor Longitude | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/- 180 int32 | 4 |
+| `15` | Sensor True Altitude | 6 | `2` | 2 / 2 / **2** | yes | Meters -900..19000 uint16 | 2 |
+| `16` | Sensor Horizontal Field of View | 6 | `2` | 2 / 2 / **2** | yes | Degrees 0..180 uint16 | 2 |
+| `17` | Sensor Vertical Field of View | 6 | `2` | 2 / 2 / **2** | yes | Degrees 0..180 uint16 | 2 |
+| `18` | Sensor Relative Azimuth Angle | 6 | `4` | 4 / 4 / **4** | yes | Degrees 0..360 uint32 | 4 |
+| `19` | Sensor Relative Elevation Angle | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/- 180 int32 | 4 |
+| `20` | Sensor Relative Roll Angle | 6 | `4` | 4 / 4 / **4** | yes | Degrees 0..360 uint32 | 4 |
+| `21` | Slant Range | 6 | `4` | 4 / 4 / **4** | yes | Meters 0..5,000,000 uint32 | 4 |
+| `22` | Target Width | 6 | `4` | 2 / 2 / **2** | **NO** | Meters 0..10,000 uint16 | 2 |
+| `23` | Frame Center Latitude | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/- 90 int32 | 4 |
+| `24` | Frame Center Longitude | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/- 180 int32 | 4 |
+| `25` | Frame Center Elevation | 6 | `2` | 2 / 2 / **2** | yes | Meters -900..19000 uint16 | 2 |
+| `40` | Target Location Latitude | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/- 90 int32 | *no worked example* |
+| `41` | Target Location Longitude | 6 | `4` | 4 / 4 / **4** | yes | Degrees +/-180 int32 | *no worked example* |
+| `42` | Target Location Elevation | 6 | `2` | 2 / 2 / **2** | yes | Meters -900..19000 uint16 | *no worked example* |
+| `56` | Platform Ground Speed | 6 | `1` | 1 / 1 / **1** | yes | Meters/Second 0..255 uint8 | 1 |
+| `57` | Ground Range | 6 | `4` | 4 / 4 / **4** | yes | Meters 0..5,000,000 uint32 | 4 |
+| `65` | UAS Datalink LS Version Number | 6 | `1` | 1 / 1 / **1** | yes | Number 0..255 uint8 | 1 |
+
+**Three findings come out of that table and each is worth stating separately.**
+
+1. **Item 22 is the only length divergence in the whole stream**, and it is the one park 13 already
+   adjudicated. 155 of the 156 items carry exactly the octet count their own §8.x block requires.
+2. **Items 11 and 12 are NOT divergent, and the table says so in the column that decides it.** Both
+   state `Length: Variable`, `Max Length: 127`, `Required Length: N/A`, so item 11 varying between
+   2 and 3 octets across the six packets is the document's own allowance. The walk round said this
+   in prose; the length policy below now says it in code, and the two have to agree.
+3. **Edition 1 states the same Units, Range and Format as the pinned edition for every one of the
+   26.** That is the item-22 finding generalised: the length never changed, and neither did the map.
+   Twelve years and thirteen revisions, sampled at both ends, and the only column that moved is the
+   Format name on the two string items — edition 1 writes `ISO7` where .14a writes `utf8`, which is
+   **register entry KLV 17** and which costs nothing on any octet either edition admits, since every
+   ISO 646 octet is valid UTF-8.
+
+**And the maps were checked against the documents that state them, not against this repository.**
+Every §8.x block prints one Software Value beside the KLV octets that encode it, and §7's
+Programmer's Notes say why: "the 'Example Value' for a tag is shown in full precision, beyond a
+tag's resolution, so programmers can verify they are using the right formulas." So the transcription
+is run over all 26 of those examples and over the 23 that **edition 1** independently prints:
+
+* `klv_uas_codec.check_against_the_documents_own_examples()` — **26 of 26 agree**, each within the
+  printed precision of the Software format its own block states, and thirteen of them exactly.
+* `klv_uas_codec.check_against_edition_1s_examples()` — **23 of 23 decode**, each landing within a
+  single quantisation step of the value edition 1's own §7.N prints. Items 40, 41 and 42 have a §7.N
+  section and no worked example, which is why the count is 23 and not 26, and the absence is
+  reported by the checker rather than skipped.
+
+Both run on every suite run. **A transcription checked against the document that produced it is a
+different thing from a transcription checked against a fixture written from the same reading.**
+
+#### What the observed VALUES say, and the one thing that is an observation rather than a finding
+
+The standing rule for this section is that a witnessed tag whose observed values contradict the held
+documents' declared semantics stops the round for adjudication before any mapping. **It did not
+fire, and it was applied rather than assumed**: every one of the 156 decoded values is inside the
+Min/Max its own §8.x block states, no item carries any of the four Special Values the witnessed set
+declares, and the one length divergence was already ruled. The round proceeded.
+
+**Two measured facts are recorded here as observations, and neither is a defect.**
+
+* **Items 40, 41 and 42 are byte-identical to items 23, 24 and 25 at all six sites.** The emitter is
+  reporting the Target Location as the Frame Center, which is §8.40's own conditional — "This is the
+  crosshair location if different from frame center" — being answered *not different*. The adapter
+  carries both and reconciles neither, and this is precisely the case where a merge would look free.
+* **The frame-centre elevation does not agree with the geometry the other items imply, and saying so
+  requires crossing the fusion line.** Item 25 decodes to about **−4.5 m** MSL at 54.75°N, 110.05°W;
+  the sensor is at about **1532 m** MSL with a relative elevation of about **−4.4°** and a slant
+  range of about **10.9 km**, which puts the frame centre near **690 m**. That is a ~700 m
+  disagreement. **It is not a finding of this round and it is deliberately not acted on**: reaching
+  it means combining five items into a derived quantity neither document asks a translator to
+  compute, every one of the five is inside its own stated range, and no held document states a
+  consistency requirement between them. Filed on the same footing as the walk round's PES
+  observation — a measured case waiting for whoever wants it, and *not* a licence for this adapter
+  to arbitrate between two stated numbers.
+
+#### Act 2 — the length-divergence policy, ruled before any mapping was written
+
+**What was owed, and by whom.** Park 13 decided what item 22's four octets MEAN and said explicitly
+what it did not reach: the framing layer is "correct as shipped" because it reads the length the
+stream states and advances by it, and "**the flag is owed by the value-decoding layer, which does not
+exist**". That layer now exists — `adapters/klv_uas_codec.py` — so the flag is owed here. A layer
+that reads the tag table with no stated rule for a length contradicting it would be deciding case by
+case, which is how a codec acquires behaviour nobody wrote down.
+
+**THE RULING IS (b): the ITEM is skipped and a structured defect annotation is recorded.** Stated
+once, in `klv_uas_codec.LENGTH_DIVERGENCE_POLICY`, and applied to the class rather than to tag 22.
+
+| | Candidate | Disposition |
+|---|---|---|
+| **(a)** | Reject the packet | **Rejected.** All six checksums validate, so the packet is exactly what the emitter wrote and 25 of its 26 items carry conformant lengths; discarding them on account of one item destroys verified data. It also contradicts `ST 0107.3-04` — "shall skip unknown Local Set values so as to not impact the decoding of known Local Set items within the same Local Set instance" — whose entire subject is that one item must not take the others down. **A length a decoder cannot use makes the ITEM unusable, not the packet** |
+| **(b)** | Skip the item, record a structured defect annotation | **THE RULING.** The value reaches no CDM field. The octets are parked verbatim at `attributes.klv_item_octets`, so nothing is lost and egress reproduces them. A `LengthDivergence` carries the tag, the observed and required lengths, both offsets, the octets, the divergence class and both bases of the ruling — so the defect is machine-visible in the output rather than a line in a log |
+| **(c)** | Decode anyway and annotate | **Rejected, and this is the candidate that looks harmless.** Four octets carrying `0x000001c9` "obviously" mean 457, and reaching that number requires CHOOSING a rule — strip leading octets down to the Required Length, read the whole field as the wider unsigned integer, or take the low Required-Length octets — and **no held document states any of them.** The three agree on `0x000001c9` and disagree the moment a top octet is non-zero, so their agreeing here is a property of this stream rather than of the rule. That is a guess that would pass every fixture written from the same guess |
+
+**The two bases are kept apart, exactly as park 13 keeps them apart, and the annotation carries
+both on every object.**
+
+* **FACTUAL** — edition 1's own item table states the Len at three sites inside itself, and every
+  edition this repository can sample states the same one. Generalised by Act 1 from item 22's single
+  Len cell to all 26 items.
+* **NORMATIVE** — `ST 0601.13-29`, quoted from §7's Requirement block: "When a metadata item has a
+  Required Length numerically specified in this standard, the KLV encoded value for the item shall
+  use exactly the number of bytes specified by the Required Length." **Carried with its standing
+  annotation and not shed**: the identifier is stamped edition 13, nothing held establishes that a
+  requirement introduced at edition 13 reaches an emitter written against an earlier edition, and
+  that retroactivity is still unestablished.
+
+**The class boundaries, and the document draws three of the four.** This is what makes it a codec
+ruling rather than a special case for one tag.
+
+| Case | Handling | The sentence that decides it |
+|---|---|---|
+| Observed length ≠ a numerically stated **Required Length** | **defect**, class `required_length`: item skipped, octets parked, annotation recorded | `ST 0601.13-29`, above |
+| A **variable-length** item shorter than its Max Length | **not in the class at all** | §7: "Length … A length of 'Variable' means the length is determined at run-time"; Required Length is `N/A`, so there is nothing to diverge from |
+| A variable-length item **longer** than its Max Length | **advisory**, class `over_recommended_max_length`: the item is DECODED and an advisory is recorded | §7 defines Max Length as "the **recommended** maximum length" and names its consumer — "Network guards may use this value as a check to prevent data leaks". A recommendation is not a `shall`, and applying `ST 0601.13-29` to one would enforce a rule the document did not write |
+| **Length zero** on any item but 1, 2 or 65 | **not a defect**: an explicit unknown | `ST 0601.14-33`: "Where a UAS Data-link LS item has a length of zero, consumers shall interpret the value of the item as 'unknown'." §6.5 states the mechanism — a producer "sends a Zero-Length Item (ZLI) … The receiver interprets a ZLI as the value becoming immediately Unknown". So it decodes to a distinct `ZeroLength`, never to `None` and never to a zero |
+| **Length zero** on item 1, 2 or 65 | **defect**, class `zero_length_on_a_required_item` | `ST 0601.14-32`: the required items "(Tag 1 - Checksum, Tag 2 - Precision Time Stamp, and Tag 65 - UAS Datalink LS Version Number) shall always be reported with positive lengths (i.e. Zero-Length Items (ZLI) are not allowed for these items)" |
+
+**`ST 0601.14-34` is read and deliberately NOT enforced, which is the fusion line rather than an
+omission.** "A Zero-Length Item (ZLI) shall only be used in packets after a non-ZLI is reported" is a
+constraint on a **producer across packets**; checking it would mean carrying state from one packet
+into the next, which is the accumulation this section has refused in every settlement it has written.
+The ZLI is recorded per packet and a consumer holding the sequence can apply the rule.
+
+**Tested with synthetic fixtures that reproduce the class and not the stream.**
+`length_divergence_at_a_required_length.klv` carries four octets under item 22's Required Length of
+2 with a value the held stream does not carry — `0x00000FA0`, not `0x000001c9` — because a golden
+file built from a real emitter's defective octets would make this repository's suite a place where
+somebody else's stream lives. Four more fixtures cover the other four rows of the table above.
+
+#### Act 3 — what promoted, and the blocker named on everything that did not
+
+**26 rows moved and 115 did not.** Every promotion cites the §8.x block it was read from and every
+one of the 26 is exercised by a fixture built from that block's own worked example. The four CDM
+fields the witnessed set reaches are `Entity.position` (items 13, 14), `Entity.kinematics.speed_mps`
+(item 56), `Event.observed_at` / `Entity.valid_from` (item 2) and `Event.geometry` (items 23, 24);
+the other twenty items park, each with the reason in its row.
+
+**What blocks the 115, stated as classes rather than as 115 sentences.**
+
+| Blocker | Rows | Why it is a blocker and not a to-do |
+|---|---|---|
+| **Not witnessed** | all 115 | The scope contract. The pinned stream does not carry them, so a decoder for one could be checked only against a fixture written from the same reading of the same table. **Reopen condition: a second pinned stream, or a document-side check as strong as a worked example** — and ST 0601.14a prints one per item, so the second is cheap for anyone who wants it. This is the only blocker on the majority of them |
+| **Park 5** — ST 1201.3 `IMAPB` | **16 items, enumerated**: tags 96, 103, 104, 105, 109, 112, 113, 114, 117, 118, 119, 120, 128, 130, 132 and 134 | **Narrowed, and by enumeration rather than by argument.** The parks table has said since Phase 1 that "every scaled numeric value inside a KLV item is mapped by ST 1201.3". That is the PROFILE's claim — `MISP-2015.1-09` — and reading the pinned edition shows it does not reach the witnessed set: **not one of the 26 items' §8.x sections names IMAPB**, because each states its own affine map twice over, as two formulas and as a `Map A..B to C..D` bullet. The 16 sections that DO name it are listed in this cell, none of them is witnessed, and the lowest is tag 96 — so park 5 blocks 16 rows and blocked none of these. **One of the 16 matters to a row that DID promote**: tag 112 is the Platform Course Angle, which is the item `Kinematics.course_deg` is waiting for, so that field is blocked on park 5 as well as on the scope contract |
+| **Park 2** — ST 0102.12 | item 48 | Security Local Set. Held but with no row set written, on the stated ground |
+| **Park 6** — ST 0903.4 | item 74 | The VMTI Local Set, and the row that would make this adapter emit `EventType.DETECTION` |
+| **Park 7** — ST 0806.4 | item 73 | The RVT Local Set |
+| **Park 11** — ST 1204.1 | items 94, 95 | The MIIS Core Identifier — **and this round turned that park from a prediction into a measurement**; see below |
+| **Deprecated** | item 66 | ST 0601.14a §4 deprecated it; no row promotes into a deprecation |
+
+**Park 11 is the one this round changed the standing of, and it did so without fetching anything.**
+The parks table has said since Phase 1 that park 11 "blocks `Entity.source_ids`, and therefore blocks
+keying an `Entity` on anything the stream states". That was written as a forecast. It is now a
+measurement: the pinned stream carries **none of the five items that could identify an airframe** —
+item 3 Mission ID, item 4 Platform Tail Number, item 10 Platform Designation, item 59 Platform Call
+Sign, item 94's MIIS Core Identifier — and the one witnessed item that looks like a name, item 11,
+**disqualifies itself in the bytes**: it reads `'EON'` in five of the six packets and `'IR'` in the
+sixth, so an `entity_id` keyed on it would split one aircraft into two entities inside a
+three-minute clip. So the adapter's identity is packet-scoped and says so, on the CAT048 settlement 9
+precedent, and the cost is named in **gap 30** rather than hidden.
+
+#### What this round did NOT reach, stated so the absence is not read as coverage
+
+* **Parks 8 and 9 are untouched and were unreachable.** Park 8's two absences are `0x80` as a first
+  length octet and a ceiling on the count of length octets; nothing in this round's ten fixtures or
+  in the pinned stream exhibits either, and none of the held documents is SMPTE ST 336. Park 9 is
+  ST 1402.2 and a value decoder fetches no transport standard. **The download count is unchanged at
+  9 of 10.**
+* **No park closed, and park 5 was NARROWED rather than lifted.** Recording that a blocker shrank is
+  not recording that it lifted — park 8's own row says so about itself twice, and the same discipline
+  applies here.
+* **No specification was fetched and none was pinned.** Ten documents remain in
+  `fixtures/klv/spec/`, seven of them pins. Both of this round's transcriptions were read from copies
+  this repository already held.
+* **115 of the 141 tag rows still read `not yet`**, and the promotion is partial on purpose. A
+  complete row set padded with 115 decoders nobody could check would be worth less than this one.
+* **KLV 14, 15 and 16 stay open as scoped**, and the register gains **one** entry — KLV 17, the
+  `ISO7`-against-`utf8` divergence on items 11 and 12 — because a Format column that two editions
+  fill differently is exactly what that register is for.
+* **The value decoder reads no nested set.** Items 48, 73, 74, 100 and 101 carry Local Sets inside
+  their Values, none is witnessed, and `klv_uas_codec` therefore has no nesting at all. Naming it
+  here because "the codec handles 26 items" and "the codec handles one level of structure" are
+  different claims and only the first is true.
+
+### What the adapter fills that ST 0601.14 does not state
+
+Six values on every object come from this adapter rather than from the wire, and each is a decision
+somebody could disagree with. They are listed here and each is also recorded **on the object**, in
+an `attributes.*_basis` key, so a consumer meets the reasoning in the data rather than in a document
+they may not have.
+
+| Filled | Value | Basis, and where it rides |
+|---|---|---|
+| `Entity.entity_id` / `source_ids` | a **packet-scoped** id over the Precision Time Stamp and the packet's index | Nothing in the witnessed set identifies anything. `attributes.identity_basis`, and **gap 30** |
+| `Entity.entity_type` | `PLATFORM` | From the standard's own subject rather than from an item. §1: "MISB ST 0601 defines the Unmanned Air System (UAS) Datalink Local Set (LS) for UAS platforms. The UAS Datalink LS is typically produced on-board a UAS airborne platform". Item 10 Platform Designation would say WHICH platform and is not witnessed, so the type is the format's and the model is nobody's — the CAT034 reading, where the object's type is a property of the format. `attributes.entity_type_basis` |
+| `Entity.affiliation` | `UNKNOWN` | And here it is barely a decision: **ST 0601.14a carries no item stating an allegiance at all.** A UAS Datalink LS describes one's own aircraft to one's own ground station, a context in which the question does not arise on the wire — and inferring `FRIENDLY` from that context would be this adapter reasoning about who deployed the sensor. `attributes.affiliation_basis` |
+| `Entity.symbol` | an `UNKNOWN` 2525D glyph | Through `symbology.sidc_from_affiliation`, so it follows the affiliation and adds nothing. ST 0601.14a carries no symbology of any kind; item 63 Sensor Field of View Name is the nearest thing and it names a lens. `attributes.symbol_basis` |
+| `Event.received_at` | the injected clock | The one field an adapter invents. `attributes.time_basis.received_at` |
+| `Event.event_type` / `severity` | `STATUS_CHANGE` / `INFO` | The witnessed set is a periodic report of a platform and its sensor's own state, which is the CAT034 shape. **`DETECTION` is deliberately not used** — nothing in these 26 items detects anything, and the item that would is item 74, the VMTI Local Set, which is park 6. **Nothing raises severity**: item 47 Generic Flag Data carries the standard's own condition bits and is not witnessed |
+
+**And one thing is deliberately NOT filled, which is where this adapter differs from its two
+siblings.** `Position.alt_m` is `None` on every object even though the witnessed set carries an
+altitude, because item 15 is measured "from Mean Sea Level (MSL)" (§8.15) and the field is documented
+as "Metres HAE". `cat048` derives a position from an injected sensor location and `cat034` reads the
+station's own; here the position is on the wire and the *altitude* is the one component that cannot
+be, so the decline is inside a field that is otherwise filled. Converting would need a geoid
+separation, which is a model this repository does not hold, and §8.15 itself points at items 75 and
+104 as the HAE twins — neither witnessed.
+
+### Row set — egress, CDM back to a UAS Datalink LS payload
+
+**Byte-exact, and the mechanism is octet replay rather than re-encoding.** Every item's Value octets
+are parked at `attributes.klv_item_octets` on ingest and `from_cdm` replays them in the order
+`attributes.klv_tag_order` records. Asserted on all ten fixtures and, when the file is in the working
+tree, on the **977 octets of the pinned stream** — tag 22's four non-conformant ones included.
+
+**This table's header says `CDM field`**, per the ruling in "The egress header, ruled from what the
+rows state" near the top of this document. The short form is that the header is a SELECTOR rather
+than a label: CDM paths are resolved against the Pydantic models only out of a column whose header
+names it, so a table headed `CDM` contributes nothing to that check.
+
+| CDM field | KLV | Status | Notes |
+|---|---|---|---|
+| `Entity.attributes` | the Universal Label | `stanag4609 1.0.0 · egress` | §6.2's 16 octets, emitted from `klv_codec.UAS_LOCAL_SET_KEY` rather than from the parked copy at `attributes.klv_packet.universal_label`, so a corrupted label cannot be replayed. The parked copy is what a reader compares against |
+| *(derived)* | the packet's Value length | `stanag4609 1.0.0 · egress` | Recomputed over the items actually emitted. `ST 0107.3-05` requires the fewest possible bytes, so the encoding of a given length is unique — which is why a re-emitted packet's length octets are the source's whenever its items are |
+| *(derived)* | every item's Tag and Length octets | `stanag4609 1.0.0 · egress` | Rebuilt from the tag number and the octet count, never replayed: both are derivable, and a replayed length octet that disagreed with its own value would be a malformation this adapter had introduced and could not detect |
+| `Entity.attributes` | every item's Value octets | `stanag4609 1.0.0 · egress` | **Replayed verbatim from `attributes.klv_item_octets`.** Re-encoding the decoded Software Value would be lossy in a way §7's Programmer's Notes predict — the printed examples run "beyond a tag's resolution", so a value that arrived quantised comes back rounded to its item's Resolution and the low octets differ |
+| `Entity.attributes` | a length-divergent item's Value | `stanag4609 1.0.0 · egress` | **Replayed too, and this is the case that decides the mechanism.** The length policy refused to invent a Software Value for it, so there is nothing to re-encode; re-emitting it at the conformant length would be this adapter silently correcting a stream it was asked to translate, and the source's own checksum would then disagree |
+| `Entity.attributes` | item 1 Checksum | `stanag4609 1.0.0 · egress` | **Replayed when one was parked, computed only when it was not.** The first draft recomputed it unconditionally, on the reasoning that a self-consistent packet is the better artefact — and that silently REPAIRED a packet whose stored sum did not validate. The fixture `a_checksum_that_does_not_validate_is_flagged_not_refused` failed its round trip and said so |
+| `Entity.attributes` | the order of items | `stanag4609 1.0.0 · egress` | Replayed from `attributes.klv_tag_order`, so `ST 0601.8-09` and `-11` are honoured by reproduction rather than re-derivation. When `encode_packet` builds from values instead it puts item 2 first and item 1 last, which is what those two requirements state |
+| `Entity.attributes` | several packets in one payload | `stanag4609 1.0.0 · egress` | Wire order, from the index ingest recorded at `attributes.klv_packet.index` — never the `entity_id`'s ordering, which is a hash and would reorder a payload arbitrarily |
+
+**What egress refuses.** An `Entity` that did not come from this adapter, and the refusal is a ruling
+rather than a limitation: 26 items reach four CDM fields, so a packet rebuilt from the canonical
+fields alone would be a packet this adapter invented. The message says so and names the attribute it
+needed.
+
+**What egress is NOT lossy for.** Every octet of every item, the order they arrived in, the packet
+boundaries, and the checksum as stored — including where the stored value is wrong. What it cannot
+reproduce is a payload assembled from objects this adapter did not produce, which it refuses rather
+than approximates.
+
 ### The parks, each with a named reopen condition
 
 **Thirteen parks over fifteen documents, THREE of them closed, and the honest thing to say first is
@@ -9102,7 +9423,24 @@ internally coherent are the ones edition 1 does not state.** Deliberately unreso
 decides which year is the typo, the pin records the cover date because the provenance ruling says the
 document's own cover governs, and **no ruling in this repository rests on the date** — park 13 turned
 on a Len column, not on a calendar. Recorded because the pin states one date and the document contains
-three, so a reader checking the pin against the PDF will meet the other two.
+**KLV 17 — two editions fill the Format column of items 11 and 12 differently, and the difference is
+a character encoding.** ST 0601.14a's §8.11 and §8.12 both state a KLV Format of `utf8` with a
+Max Length of 127. **MISB EG 0601.1's §7.11 and §7.12 both state `ISO7`, with a stated range of
+`1..127`** — and edition 1's Table 1 writes the same two items as `String ISO7`. Every other column
+of every other witnessed item agrees between the two editions, which is what makes this one worth an
+entry: the witnessed-set round checked all 26 items at both ends of a twelve-year span and found
+exactly one column that moved. **What it costs, precisely: nothing on any octet either edition
+admits.** ISO 646 / ISO 7-bit is a strict subset of UTF-8 by construction, so `klv_uas_codec` decodes
+both as UTF-8 — the PINNED edition's statement, which the `reconciliation_ruling` requires — and
+every value edition 1 would have admitted decodes identically. **What it would cost if it were
+ignored, which is why it is recorded rather than dismissed:** an emitter written against edition 1
+and sending a high-bit octet meant as some 8-bit code page produces a value that is not valid UTF-8,
+and `decode_value` refuses it with this entry named in the message. That refusal is a real
+possibility rather than a hypothetical — the pinned stream's own item 11 and item 12 are pure ASCII
+and so say nothing either way. **Neither edition is wrong and there is no contradiction between held
+sentences**: the series changed its own encoding somewhere in the twelve revisions between them, and
+which revision is a question no held changelog answers — the `.5`, `.6`, `.7` and `.9`-through-`.13`
+gap the adjudication round already named.
 
 ### Deliberately out of scope, and why
 
@@ -9132,65 +9470,100 @@ which **KLV 6** shows this format can produce). The sub-millisecond question tha
 Time Stamp raises is settled by CAT021's ruling that it is not a defect. So this phase proposes no
 field and opens no gap, deliberately.
 
-### The fixtures — planned here, before they exist
+### The fixtures — ten payloads, and the plan they replaced
 
-**No ADAPTER fixture is built in this phase, and the qualifier is new.** `fixtures/klv/` holds
-`spec/` and, since the framing round of 2026-08-26, `framing/` — **twenty-six** byte-level fixtures
-for the rules the two held documents state, described in the framing section above. It was thirteen
-until the length round obtained MISB ST 0107.3 and could write the lengths, the triplets and the
-packets the framing round had named as omitted. They are not adapter
-fixtures: no CDM object comes out of any of them, the harness cannot replay one, and they live in a
-subdirectory precisely so that the claim below stays true and stays *checked*. A harness run against
-a directory whose only content is subdirectories raises `NoFixturesFound` and exits 2 — the selection
-rule is "immediate children of the directory that are files" — so
+**This heading read "planned here, before they exist" for six rounds and the plan is now partly
+discharged.** `fixtures/klv/` holds **ten `.klv` payloads and their ten `.parsed.json` twins**, built
+only by `fixtures/klv/spec/build_fixtures.py`, with goldens in `fixtures/klv/golden/`. Beside them
+`framing/` still holds the **twenty-six** byte-level framing fixtures and `spec/` still holds the
+pins. So
 
 ```bash
-python -m synapse_cdm.harness --adapter stanag4609 --fixtures .   # from fixtures/klv
+python -m synapse_cdm.harness --adapter stanag4609
 ```
 
-fails loudly today instead of reporting a vacuous green. **It fails twice over, and the order is
-worth stating** because a reader who runs it will meet the first failure and not the second: the
-adapter name does not resolve yet, so this exact command raises `LookupError: unknown adapter
-'stanag4609'` and exits **1**; point the same directory at any registered adapter and it raises
-`NoFixturesFound` and exits **2**. A test does exactly that — it runs the directory through a
-registered adapter and asserts the raise — because the claim being made here is about the
-*directory*, and an assertion that stopped at the unknown-adapter error would be checking the
-registry instead.
+now runs, replays twenty fixtures and reports twenty passes. **For six rounds it failed twice over
+and this section said so precisely** — `LookupError: unknown adapter 'stanag4609'` and exit 1 from
+the registry, then `NoFixturesFound` and exit 2 from the directory — and the paragraph that said it
+is gone rather than amended, because a demonstration of a failure that no longer fails is a wrong
+instruction and this document's own consumer-path guard treats it as one. **`--fixtures` is gone from
+the command too**, and for a shipped adapter that is the rule rather than a shortening: the adapter
+declares its own directory and the harness resolves it through `importlib.resources`, so the command
+is identical from a clone and from a `pip install`.
 
-**Everything will be synthetic**, and the honest constraint is sharper here than for any previous
-format — **corrected by the framing round, and the correction is narrower than it looks.** The
-sentence here used to read "a fixture cannot be written until park 8 closes". What is true is that a
-`.klv` PAYLOAD cannot: a payload is a sequence of key/length/value triplets and this phase does not
-hold the document that says how a **length** is written. What *can* be written, and now is, is a
-fixture for a rule ST 0601.14 states on its own account — the Universal Label, a BER-OID tag, the
-checksum algorithm. So the rule is not "wait for park 8" but **"write no octet you cannot cite"**,
-and the three fixture classes the framing round omitted are named there rather than guessed at.
-Writing bytes without a citation would produce a file that *looks* like KLV, a golden file recording
-what our own guess decodes to, and a green harness run asserting that the two agree — exactly the
-round-trip trap this package's `README.md` names: self-consistency without an external anchor. The
-plan below is still a plan and not a schedule, and each entry names the parks that gate it.
+**The separation from `framing/` has stopped being tidiness and become load-bearing.** The harness
+selects "immediate children of the directory that are files", and until this round that made
+`fixtures/klv` an empty selection. It is now a selection of ten payloads, so one `.klvframe` copied
+up a level would become an eleventh and the harness would try to translate a bare BER length as a
+whole UAS Datalink LS packet — reporting a failure that blames the adapter for a file that was never
+a payload. `test_the_framing_fixtures_are_still_not_reachable_as_adapter_fixtures` asserts the
+partition in both directions.
+
+**Everything is synthetic, and the one thing borrowed is borrowed from the standard.** Not one of the
+ten payloads contains a run from `fixtures/klv/streams/day_flight.klv`. What the value-carrying
+fixture uses instead is each item's **own Example KLV Value** from its §8.x block — the same
+borrowing `framing/`'s checksum vector makes, and for the same reason. **The held stream decided
+WHICH tags to cover; it supplied no octets.** And the defect fixture reproduces the *class* rather
+than the instance: four octets under item 22's Required Length of 2, carrying `0x00000FA0` where the
+stream carries `0x000001c9`, because a golden file built from a real emitter's defective octets would
+make this repository's suite a place where somebody else's stream lives.
+
+**The round-trip trap is answered rather than promised.** This section used to say that writing bytes
+without a citation "would produce a file that *looks* like KLV, a golden file recording what our own
+guess decodes to, and a green harness run asserting that the two agree — exactly the round-trip trap
+this package's `README.md` names: self-consistency without an external anchor." **That trap has not
+moved.** What discharges it here is that every value in the value-carrying fixture is the document's
+own printed example, and `klv_uas_codec.check_against_the_documents_own_examples()` re-derives all 26
+of them on every suite run. The anchor is external because the document is external.
+
+| Fixture | What it is there to catch | Cited from | UUID-v8 identity |
+|---|---|---|---|
+| `witnessed_set_from_the_documents_own_examples.klv` | all 26 witnessed items in one packet, each carrying the Example KLV Value its own §8.x block prints. Every affine map, every string and every identity conversion in `klv_uas_codec` runs once here, against values transcribed from the document rather than chosen by this repository. Tag 1's value is REPLACED on the way out — `encode_packet` computes §6.6's checksum over the packet it actually built, so the example checksum octets `8CED` are what the fixture asked for and the computed sum is what it carries | ST 0601.14a §8.1 through §8.65, each item's Example KLV Value row | `f1c70601-14a0-8001-8000-000000000001` |
+| `length_divergence_at_a_required_length.klv` | THE POLICY FIXTURE. Tag 22 Target Width at FOUR octets where §8.22's Required Length cell says 2 — the divergence class park 13 adjudicated, reproduced with octets the held stream does not carry. What must happen: the ITEM is skipped, its octets are parked verbatim, a structured `LengthDivergence` names both bases of the ruling, and the other four items translate normally. What must NOT happen: the packet refused (candidate a), or `0x00000FA0` read as 4000 by a truncation rule no document states (candidate c) | ST 0601.14a §8.22 Required Length 2; ST 0601.13-29 in §7; FORMAT_COVERAGE.md, 'Park 13 adjudicated and CLOSED' | `f1c70601-14a0-8001-8000-000000000002` |
+| `zero_length_item_is_an_explicit_unknown.klv` | a Zero-Length Item on tag 56, which is NOT a defect: `ST 0601.14-33` says 'Where a UAS Data-link LS item has a length of zero, consumers shall interpret the value of the item as "unknown"'. So it decodes to an explicit unknown, `Kinematics` is None rather than a speed of zero, and no defect is recorded. The distinction this catches is the one that matters most in a never-drop model: a producer SAYING a value is now unknown, versus a producer not mentioning the item | ST 0601.14a §6.5 and ST 0601.14-33 | `f1c70601-14a0-8001-8000-000000000003` |
+| `zero_length_item_on_a_required_item_is_a_defect.klv` | the one zero-length case the document itself makes a defect. `ST 0601.14-32`: the required items '(Tag 1 - Checksum, Tag 2 - Precision Time Stamp, and Tag 65 - UAS Datalink LS Version Number) shall always be reported with positive lengths (i.e. Zero-Length Items (ZLI) are not allowed for these items)'. So a ZLI on tag 65 is reported as `zero_length_on_a_required_item` while the same octets on tag 56 above are an explicit unknown — which is the policy reading the document rather than applying one rule to a length of zero | ST 0601.14a §6.5 and ST 0601.14-32 | `f1c70601-14a0-8001-8000-000000000004` |
+| `special_values_are_signals_and_not_measurements.klv` | the three Special Values the witnessed set declares, each in an item that declares it. What must happen: none of them is run through its item's affine map, so no `Position` is built from a 'Reserved' latitude and no `Event.geometry` from an 'N/A (Off-Earth)' frame centre — even though tag 14 and tag 24 are present and valid, which is the case where a half-built point is tempting. Run the map anyway and 0x80000000 becomes a latitude of -90.0000000419: a plausible-looking lie, which is the class of defect this repository's ellipsoid audit exists for | ST 0601.14a §8.6, §8.13 and §8.23, Special Values cells; §7's definition of the Special Values column | `f1c70601-14a0-8001-8000-000000000005` |
+| `over_recommended_max_length_is_an_advisory.klv` | a variable-length item one octet past its Max Length. This is NOT the length-divergence class and the document is why: §7 defines Max Length as 'the recommended maximum length' and names a network guard as its consumer, so nothing here breaks a 'shall'. The item is DECODED and carries an advisory. Treating it like a ST 0601.13-29 violation would enforce a requirement the document did not write, which is the mirror image of the mistake candidate (c) would have made | ST 0601.14a §7, the Max Length column definition; §8.11 | `f1c70601-14a0-8001-8000-000000000006` |
+| `an_unwitnessed_tag_is_skipped_and_the_packet_translates.klv` | `ST 0107.3-04` in the one place it can be tested from above the framing layer: 'Applications which decode MISB KLV Local Sets shall skip unknown Local Set values so as to not impact the decoding of known Local Set items within the same Local Set instance'. Tag 3 is a real ST 0601 item that this round did not cover because the pinned stream does not carry it, so it is UNKNOWN to `klv_uas_codec` and its octets are parked at attributes.klv_unknown_items. The packet translates and no defect is recorded — an uncovered item is not a malformed one. It is also the fixture that would break if a later round widened the witnessed set without updating the scope contract, which is deliberate | MISB ST 0107.3 ST 0107.3-04; ST 0601.14a §8.3 | `f1c70601-14a0-8001-8000-000000000007` |
+| `mandatory_items_only.klv` | the smallest conformant packet the standard admits: the three items ST 0601.14a makes Mandatory and nothing else. It is the fixture that proves the absences are absences — no Position, no Kinematics, no Event.geometry, and attributes.unavailable_fields saying so in words rather than the object simply having fewer keys | ST 0601.14a §6.4, §8.1, §8.65 and ST 0601.14-32 | `f1c70601-14a0-8001-8000-000000000008` |
+| `two_packets_one_payload_are_two_statements.klv` | two packets in one payload, half a second apart, at the same position and one metre per second different in ground speed. Four objects come out, not two, and the two Entities have DIFFERENT entity_id values — which is the packet-scoped identity's cost made visible in a golden file rather than described in a docstring. Nothing is accumulated across the boundary: no velocity is differenced, no state is carried | ST 0601.14a §6.3; FORMAT_COVERAGE.md, the fusion refusal | `f1c70601-14a0-8001-8000-000000000009` |
+| `a_checksum_that_does_not_validate_is_flagged_not_refused.klv` | a packet whose stored tag 1 disagrees with §6.6's summation over its own octets. It TRANSLATES, and attributes.integrity_basis carries `valid: false`. The reasoning is the length policy's: the stored checksum is one item among the packet's items, and discarding the others because a 16-bit sum disagrees destroys the evidence a consumer needs. `valid: false` on an object is a statement; a missing object is not | ST 0601.14a §6.6 and §8.1 | `f1c70601-14a0-8001-8000-000000000010` |
+
+**The UUID-v8 identities are in the table above and NOT inside any payload**, and the reason is
+sharper here than it was for `framing/`. There the twins carry theirs because "a framing fixture's
+payload carries no identifiers at all". Here it is this round's own finding: **a UAS Datalink LS
+packet carries no identifier of any kind.** Items 3, 4, 10, 59 and 94 are the five that could
+identify an airframe, the pinned stream carries none of them, and that is why adapter #10's
+`entity_id` is packet-scoped. So there is nothing in one of these payloads for a synthetic identity
+to stand in for, and adding a field to hold one would put an identifier on the wire that the wire
+does not have.
+
+**The parsed twin carries the payload and nothing else** — no purpose string, no citation, no fixture
+id — because the lossless check harvests every leaf of a JSON fixture and requires each to appear in
+the CDM output, so a `what_it_is_for` in the twin would have to be echoed into an object to pass.
+That is what the table above is for, and it is the shape the four sibling binary adapters' twins
+already have.
+
+**What is still planned, and each entry still names the park that gates it.** Four of the twelve rows
+the old plan tabulated survive untouched, because their blockers did:
 
 | Fixture | What it is there to catch | Gated on |
 |---|---|---|
-| `minimal_local_set.klv` | one Local Set, a handful of items, no nesting — the smallest thing that exercises the envelope at all | 4, 8 |
-| `nested_amend_local_set.klv` | ST 1607's Amend LS inside an instantiating set, so the nesting rule and `MISP-2017.1-95` are both exercised | 4, 8, and the revision question in **KLV 5** |
+| `nested_amend_local_set.klv` | ST 1607's Amend LS inside an instantiating set, so the nesting rule and `MISP-2017.1-95` are both exercised. **`klv_uas_codec` reads no nested set at all** — items 48, 73, 74, 100 and 101 carry Local Sets inside their Values and none is witnessed — so this one is gated on the revision question AND on the scope contract | the revision question in **KLV 5** |
 | `security_local_set_present.klv` | ST 0102.12 security metadata carried and re-emitted unchanged, per the carry-never-invent rule | 2 |
 | `security_local_set_absent.klv` | **KLV 7**'s case: a conformant-looking stream with no security metadata, which must translate rather than refuse while the term question is open | 2 |
-| `precision_time_stamp.klv` | an absolute time that resolves, with the raw integer parked and egress re-emitting from it | 3 |
-| `nano_precision_time_stamp.klv` | the finer representation, so the three-decimal rendering rule is exercised rather than assumed | 3 |
-| `no_absolute_time_at_all.klv` | **KLV 6**'s case: a stream carrying no timestamp, which the profile permits. `Event.observed_at` from the injected clock, the basis recorded, gap 23 cited | 3 |
-| `two_time_representations.klv` | `MISP-2018.1-98`'s violation — both representations in one instantiation — which must be **refused**, and is the only stream-level consistency check the profile states | 3 |
-| `vmti_detections.klv` | ST 0903.4 detections becoming `Event`s of type `DETECTION` — the first fixture in this set that would produce a CDM object describing the world | 6 |
-| `mismms_minimum_set.klv` | ST 0902.8's minimum set, the smallest conformant airborne feed | 12, plus 1 and 11 |
-| `unknown_key_parked.klv` | a key in no held registry, parked whole under `unresolved_raw` and never guessed | 8 |
-| `truncated_final_item.klv` | a declared length that runs past the buffer — CAT048's `records_do_not_tile_len` refusal in a second format | 8 |
+| `vmti_detections.klv` | ST 0903.4 detections becoming `Event`s of type `DETECTION` — the first fixture in this set that would produce a CDM object describing the world. `stanag4609` emits `STATUS_CHANGE` on every packet precisely because nothing in the witnessed set detects anything | 6 |
 
-Each will ship as a twin: a `.klv` payload and a `.parsed.json` holding the parsed form the
-never-drop check measures against, the pattern the three binary adapters already use — and the
-pattern `framing/` already follows one layer down, where each `.klvframe` has a `.parsed.json`
-carrying its section citation instead of a CDM object. Identifiers
-will follow the Legion rule wherever any are needed, and park 11's Core Identifier question is what
-decides whether they are needed at all.
+**Two of the old twelve are superseded, and two turned out to be UNBUILDABLE — which is a finding
+rather than a deferral.** `minimal_local_set.klv` is `mandatory_items_only.klv` above and
+`precision_time_stamp.klv` is exercised by all ten, since item 2 is mandatory in every packet. But
+`no_absolute_time_at_all.klv` and `two_time_representations.klv` cannot be written at all:
+`ST 0601.14-32` makes tag 2 mandatory **with a positive length** in every packet, so *a conformant
+UAS Datalink LS packet carrying no timestamp does not exist*, and this adapter refuses one rather
+than falling back to the injected clock. Register entry **KLV 6**'s general claim about KLV streams
+stands; what that requirement closes is its reach into **this** Local Set — which is the same
+correction settlement 3 already made to KLV 6 from the other direction, reached a second time by a
+requirement rather than by an item.
 
 ## STANAG 5527 — NATO Friendly Force Tracking Systems (FFTS) interoperability
 
@@ -13323,3 +13696,43 @@ symmetry with CAT062's.
    third honest answer is that an interference report is a statement about a *sensor's* condition
    and belongs with gap 18's quality-provenance question rather than with the event taxonomy. A
    second format raising it is what will decide which, and until then the park carries it.
+
+30. **No way to carry a state report whose source states no identity at all.** Every gap above about
+   identity is about an identifier that is present and unsuitable — a recycled track number, a
+   station-scoped label, a name with no precedence rules. **STANAG 4609 raises the opposite case:
+   the pinned stream carries no identifier of any kind, and this is a measurement rather than an
+   inference.** ST 0601.14a offers five items that could key an airframe — item 3 Mission ID, item 4
+   Platform Tail Number, item 10 Platform Designation, item 59 Platform Call Sign and item 94's MIIS
+   Core Identifier — and the six packets of
+   `fixtures/klv/streams/day_flight.klv` carry **none of the five**. The one witnessed item that
+   looks like a name, item 11 Image Source Sensor, disqualifies itself in the octets: it reads
+   `'EON'` in five packets and `'IR'` in the sixth, because it names the *active sensor* rather than
+   the platform, so an `entity_id` keyed on it would split one aircraft into two entities inside a
+   three-minute clip.
+
+   `source_ids` is required with `min_length=1` on every kind, and `CDMBase`'s docstring says why:
+   "an adapter whose source genuinely has no identifier must say what it keyed on instead
+   (`ids.derive_with_basis` makes that explicit), and 'I could not trace this' is a sentence the
+   format should force someone to write rather than allow by omission." So the sentence is written.
+   `stanag4609` keys each `Entity` on the Precision Time Stamp and the packet's index in its payload
+   — **packet-scoped**, claiming exactly *this observation* — which is CAT048 settlement 9's step 2
+   reached a second time by an unrelated format for the same reason.
+
+   **The cost, stated rather than implied: consecutive packets from one platform get different
+   `entity_id` values.** A UAS metadata feed emits one of these packets several times a second for
+   the length of a sortie, all of them about one aircraft, and the CDM cannot say so from this format.
+   Nothing is lost — every item's decoded value and its octets ride on every object — but the
+   continuity a consumer would reassemble is continuity the *source* never asserted either, which is
+   what distinguishes this from gap 27: there the radar states a continuity the CDM declines to
+   express, here nobody states one at all.
+
+   *Not proposed as a field.* Two reasons, and the first is that the fix is a document rather than a
+   schema change. **Park 11 — MISB ST 1204.1, the MIIS Core Identifier — is a public download**, it
+   is what ST 0601 item 94 carries, and §4.4.2.1 of the profile calls it "a mandatory consistent
+   unique identifier for all sensors and platforms". An adapter holding it would key on a stated
+   identity and this gap would close without the CDM gaining anything. The second reason is that the
+   general form — "an object whose source states no identity" — is `derive_with_basis`'s existing
+   answer, and it works: the basis is on the object, in `attributes.identity_basis`, naming all five
+   absent items and the disqualified sixth. What this row records is that the answer has now been
+   exercised at its limit, by a format where the fall-through is not an edge case but the only path.
+
