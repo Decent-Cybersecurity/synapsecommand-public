@@ -540,9 +540,17 @@ MEMBERS = CLASSIFIED["member"]
 def spec_pdfs_on_disk() -> set[str]:
     """PDFs sitting DIRECTLY in a `fixtures/*/spec/` directory — not in a subdirectory of one.
 
-    Non-recursive on purpose: the two `spec/history/` directories hold 25 edition PDFs between
+    Non-recursive on purpose: the FIVE `spec/history/` directories hold 33 edition PDFs between
     them and none is a pin, so a recursive glob would sweep them into the set this module says must
     equal the pins.
+
+    THAT SENTENCE READ "the two ... hold 25" UNTIL 2026-08-26 AND WAS STALE BY THREE DIRECTORIES,
+    corrected by the KLV park 13 round, which added the fifth. It had drifted as cat023's and
+    cat062's lineages landed and nothing sent anybody back to a docstring. The load-bearing half -
+    that the glob is non-recursive and that nothing under `history/` is a pin - was true throughout,
+    so the FUNCTION never stopped working; only the arithmetic describing it went wrong. Derived by:
+      ls -d packages/cdm/synapse_cdm/fixtures/*/spec/history | wc -l
+      ls packages/cdm/synapse_cdm/fixtures/*/spec/history/*.pdf | wc -l
     """
     out = set()
     for spec in sorted(FIXTURES.glob("*/spec")):
@@ -582,8 +590,21 @@ def test_the_pin_set_was_actually_discovered():
     13 to 14 later the same day, when MISB ST 0601.14 landed in the same directory and closed the
     KLV section's park 1. The homes floor stays at eight for the same reason it did not move for
     the previous two: it is the ninth pin to arrive into an existing home.
+
+    14 to 19 on 2026-08-26, and FOUR OF THOSE FIVE WERE A LAG RATHER THAN AN ARRIVAL — which is the
+    failure this docstring predicts about itself and had not, until now, been made to admit. Only
+    one pin landed in the round that moved this number: MISB EG 0601.1, which closed park 13. The
+    other four had been on disk and in the records for one or more rounds with the floor left at 14,
+    so this gate has been "reporting a clean run over a smaller tree than the one in front of it"
+    by four documents. It was not caught by this assertion, because a floor cannot catch its own
+    slack; it was caught by re-deriving the number while moving it. THE REASON IT COST NOTHING is
+    that the floor is the weaker of two gates on the same fact -
+    `test_the_derived_pin_set_equals_the_pdfs_in_spec_directories` asserts EQUALITY in both
+    directions and would have failed the moment a pin went unrecorded, which is precisely what it
+    did when EG 0601.1 landed before its record did. The floor is kept anyway, and kept exact,
+    because the closure test skips on a tree holding no documents and this one does not.
     """
-    assert len(PINS) >= 14, (
+    assert len(PINS) >= 19, (
         f"discovered only {len(PINS)} pins: {sorted(PINS)}. Both statements of a pin are parsed — "
         "the *_pin.json records and FORMAT_COVERAGE.md's pin rows — so a low count means one of the "
         "two parsers has stopped matching"
@@ -1265,6 +1286,81 @@ def test_the_cat034_edition_history_is_covered_but_is_not_a_pin():
         "Edition 1.29 is in fixtures/cat034/spec/history/. It is the pin and it lives in spec/ "
         "itself; a second copy under history/ would be an unrecorded PDF and the closure check "
         "would be right to say so"
+    )
+
+
+def test_the_klv_0601_edition_history_is_covered_but_is_not_a_pin():
+    """The same absence, for the THIRD lineage, and again not a parametrised copy of the first two.
+
+    The reason for declining to parametrise is the reason the CAT034 test gives and it has not got
+    weaker with a third instance: a parametrised form takes its expected count from a table, and a
+    table is one more place to update in the same edit that made it wrong. Three tests naming three
+    counts in three sentences fail with the format's name in the message.
+
+    WHAT IS DIFFERENT HERE, AND IT IS THE POINT OF WRITING IT OUT. In the other two lineages the
+    pinned edition is the LATEST and the history is what came before it. Here the history straddles
+    the pin in BOTH directions: the governing text is ST 0601.14, the lineage holds .0, .4 and .8
+    which precede it, and the `spec/` directory also holds .19 which follows it and is pinned as
+    context only. So "lineage" here means "not the governing text" rather than "older than the
+    governing text", and the assertion that none of the three is in the derived pin set is doing
+    more work than its equivalents: it is the only thing keeping a reader from taking ST 0601.4's
+    tag table - which states item 22 at a Len of 2, exactly as .14a does - for a row set source.
+
+    AND ONE OF THESE THREE IS WHY PARK 13 COULD BE RULED AT ALL. ST 0601.4 carries the full §3
+    revision history back to the initial release; ST 0601.8's carries one row. A round holding only
+    the later document would have had no chain to enumerate. That is recorded in the pin record
+    rather than asserted here, because it is a fact about the documents and not about the layout.
+    """
+    history = sorted((PKG / "fixtures" / "klv" / "spec" / "history").glob("*.pdf"))
+    if not history:
+        pytest.skip("the edition history is not in this working tree; the record of it is")
+    rels = {str(p.relative_to(PKG)) for p in history}
+    assert len(rels) == 3, f"the KLV 0601 edition history holds {len(rels)} PDFs, expected 3"
+    overlap = sorted(rels & set(PINS))
+    assert not overlap, (
+        f"a KLV 0601 history PDF is recorded as a pin: {overlap}. The governing text is ST 0601.14 "
+        "alone; the initial release, .4 and .8 are the lineage, and a lineage entry promoted to a "
+        "pin would make this document say a row was read against an edition it was not"
+    )
+    for rel in sorted(rels):
+        assert _repo_rel(rel) not in TRACKED, f"{rel} is tracked"
+    pin = json.loads((PKG / "fixtures" / "klv" / "spec" / "klv_pin.json").read_text())
+    hist = pin["edition_history"]
+    assert hist["count"] == len(rels), (
+        f"klv_pin.json says the history holds {hist['count']} files and the disk holds {len(rels)}"
+    )
+    assert hist["home"] == "fixtures/klv/spec/history/", hist["home"]
+    assert hist["committed"] is False
+    # Every lineage file is recorded INDIVIDUALLY, by name, with the hash that identifies the copy —
+    # the shape cat048's record set. A count alone would let a file be swapped for another.
+    declared = {f["filename"] for f in hist["files"]}
+    assert declared == {p.name for p in history}, (
+        f"klv_pin.json declares {sorted(declared)} and the disk holds "
+        f"{sorted(p.name for p in history)}"
+    )
+    for entry in hist["files"]:
+        assert re.fullmatch(r"[0-9a-f]{64}", entry["sha256"]), entry["filename"]
+        assert isinstance(entry["bytes"], int) and entry["bytes"] > 0, entry["filename"]
+        assert isinstance(entry["pages"], int) and entry["pages"] > 0, entry["filename"]
+        # And each one states where its bytes came from, which for this lineage is load-bearing in
+        # a way it is not for the EUROCONTROL ones: these arrived from MIRRORS rather than from the
+        # publisher, and the records differ per file — two Wayback snapshots of the publisher's own
+        # host and one Wikimedia copy that names no origin at all.
+        assert entry["source"].startswith("http"), entry["filename"]
+    # The pinned editions are NOT among them, in both directions: .14a is the governing text and
+    # .19 is pinned as context, and both live in `spec/` itself.
+    assert not any("0601.14" in r or "0601.19" in r for r in rels), (
+        "a pinned ST 0601 edition is in fixtures/klv/spec/history/. The pins live in spec/ itself; "
+        "a second copy under history/ would be an unrecorded PDF and the closure check would be "
+        "right to say so"
+    )
+    # AND THE PARK 13 PIN IS NOT A LINEAGE FILE EITHER, which is the inverse mistake and the easier
+    # one to make: EG 0601.1 is older than every governing text here, so "oldest" would have sorted
+    # it into `history/`. It is a PIN because a park closed on it.
+    assert not any("EG0601.1" in r for r in rels), (
+        "EG0601.1.pdf is in fixtures/klv/spec/history/. It is park 13's deciding document and a "
+        "pin; filing it as lineage would make the park's closure rest on a file this module "
+        "asserts no ruling is read against"
     )
 
 

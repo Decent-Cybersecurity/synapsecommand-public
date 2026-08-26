@@ -48,11 +48,23 @@ every length field minimal, and all 6 checksums validate.** One thing does not f
 kind of thing that is, because item 65 declares edition **1** and **no held document dates any
 item's introduction**: ST 0601.14a's revision history begins at edition 14, no item section carries
 an introduction annotation, and its 33 requirement identifiers span editions 8, 9, 10, 13 and 14 and
-reach edition 1 in none of them. So the stamp stands **unrefuted**, the classification parks as
-**park 13** (MISB ST 0601.1), and register entry **KLV 14** records why. **What the round did rule,
+reach edition 1 in none of them. So the stamp stood **unrefuted**, the classification parked as
+**park 13**, and register entry **KLV 14** records why. **What the round did rule,
 unconditionally: the framing layer is correct as shipped** — a valid minimal BER length, four opaque
 octets, and a walk that knows no tags cannot owe a Required Length check. That is the
 value-decoding layer's, and it does not exist.
+
+**PARK 13 IS NOW CLOSED, and item 22's four octets are a STREAM DEFECT — candidate (a).** The
+adjudication round obtained edition 1 and it is **not** named what the park called it: there is no
+*MISB ST 0601.1*, edition 1 is **MISB EG 0601.1**, an Engineering Guideline, and the series became a
+Standard at 0601.2 — register entry **KLV 15**. Its tag table states item 22 at a Len of **2**, three
+times inside itself, including the worked example `[0d22][0d2][0x1F 9B]`. **The length never changed**
+across every edition this repository can sample — the initial release, edition 1, .4, .8, .14a and
+.19 — so the four octets diverge from the emitter's **own declared edition**, which killed both
+candidates that needed edition 1 to differ. `EG0601.1.pdf` is pinned in `spec/`; the initial release,
+`ST0601.4` and `ST0601.8` are the **0601 lineage** in `spec/history/` and are **not pins**. **The
+framing ruling above is unchanged** — nothing in `klv_codec` moved, and the flag is still owed by the
+value-decoding layer.
 
 **Neither stream file is committed, and the rule is a different one from the PDFs'.** `.gitignore`
 excludes `fixtures/klv/streams/` as a **directory**, where the PDFs are excluded by **extension**.

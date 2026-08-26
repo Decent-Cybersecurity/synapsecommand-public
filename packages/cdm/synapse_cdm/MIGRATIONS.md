@@ -1175,7 +1175,23 @@ too — so the first is now stated.
   an edition skew against ST 0601.1's own item-22 entry, or an unknown tag under the declared
   edition — and the deciding fact is one page: **ST 0601.1's tag table**. That is **PARK 13**, the
   first park in this section a *stream* opened rather than a document, reopened by a public NSG
-  Registry fetch of a superseded revision on the route park 4 already proved. Register entry
+  Registry fetch of a superseded revision on the route park 4 already proved.
+
+  **PARK 13 WAS ADJUDICATED AND CLOSED THE SAME DAY, and the classification is (a), a stream
+  defect.** The deciding document was obtained — **MISB EG 0601.1**, because there is no *ST 0601.1*:
+  edition 1 is an Engineering Guideline and the series became a Standard at 0601.2, which is register
+  entry **KLV 15**. Its tag table states item 22 at a Len of **2**, and states it three times inside
+  itself — the Len column, §7.22's format header, and §7.22's worked example `[0d22][0d2][0x1F 9B]`.
+  So the two candidates that required edition 1 to *differ* from later editions are dead: **(c)** is
+  dead because item 22 is present, in edition 1 and in the initial release before it, and **(b)** is
+  dead because edition 1 states 2 rather than 4 or none. **The length never changed** — `uint16`/2 at
+  the initial release, edition 1, .4, .8, .14a and .19 — so the emitter's four octets diverge from the
+  length its **own declared edition** states, and both readings of the stamp now reach the same
+  classification, which is what made (a) assertable. The qualifier is kept rather than buried: at
+  edition 1 the divergence is from a *guideline*, so the defect's **factual** basis is edition 1's own
+  table and its **normative** basis is `ST 0601.13-29`, the current standard's. Register entry
+  **KLV 16** records that edition 1 disagrees with itself and with ST 0601.4 about its own date.
+  Register entry
   **KLV 14** records the general form: the format requires an edition stamp on the wire and no held
   edition says which items each edition admits, so the item delta is unbounded in **both**
   directions from what is held.
@@ -1213,10 +1229,12 @@ too — so the first is now stated.
   beside the shipped ones — nine of them when this entry was written, ten since `cat034` landed.
 
   **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
-  row set is a *document this repository does not hold* — thirteen parks over fifteen documents, **two
-  closed**, ten of the eleven still open being public downloads and one behind SMPTE's paywall —
-  and not a CDM shortfall. The fifteenth document is park 13's ST 0601.1 and is **not** a fifteenth
-  *delegated* document: the profile delegates to ST 0601.14 and that count stays at fourteen.
+  row set is a *document this repository does not hold* — thirteen parks over fifteen documents,
+  **three closed**, nine of the ten still open being public downloads and one behind SMPTE's paywall —
+  and not a CDM shortfall. The fifteenth document is park 13's edition 1, now **held** as
+  `EG0601.1.pdf`, and it is **not** a fifteenth *delegated* document: the profile delegates to
+  ST 0601.14, that count stays at fourteen, and closing park 13 on a fifteenth document did not move
+  it.
   The profile delegates every field dictionary it relies on: `MISP-2015.1-07` sends the KLV
   encoding to SMPTE ST 336:2017, `MISP-2015.1-08` sends the formatting to MISB ST 0107.3, and
   §4.4.4.1 sends the airborne field dictionary to MISB ST 0601.14. A schema proposal derived from

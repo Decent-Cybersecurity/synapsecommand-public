@@ -7479,6 +7479,10 @@ STANAG contains no technical requirement of any kind, and the MISP contains no N
 | SHA-256 (ST 0601.19) | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1`, 4 700 978 bytes, 226 pages, `fixtures/klv/spec/ST0601.19.pdf` |
 | SHA-256 (ST 0102.12) | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267`, 514 842 bytes, 18 pages, `fixtures/klv/spec/ST0102.12.pdf` |
 | SHA-256 (ST 0107.3) | `500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794`, 656 949 bytes, 6 pages, `fixtures/klv/spec/ST0107.3.pdf` |
+| **A park's document, obtained, and NOT a fifteenth delegation** | **MISB EG 0601.1, UAS Datalink Local Metadata Set, 15 May 2008** — obtained 2026-08-26 by the adjudication round and pinned below. It is the first pin in this row set that the profile does not delegate to: the count of delegated documents obtained stays at **Four of the fourteen**, because a park's deciding document and a profile's delegation are different things and this is the first row where they come apart. **It closed park 13.** It is also the document that showed park 13's own name to be wrong — there is no *MISB ST 0601.1* — register entry **KLV 15** |
+| SHA-256 (EG 0601.1) | `1714322c25e00e00ccabd5d861318f1448055cbf2000dc2e5099fb30dec0b730`, 918 722 bytes, 98 pages, `fixtures/klv/spec/EG0601.1.pdf` |
+| **The first pin here whose source is a MIRROR** | **Recorded as a provenance caveat rather than softened, because it is a weaker provenance than every other pin above.** `provenance_ruling.page_as_source` makes a MISB document's NSG Registry page its source of record, and **this pin has none** — both official routes refuse an automated GET. `gwg.nga.mil`, the MISB's own document host, answers **HTTP 403** from CloudFront at every `ST0601.N.pdf` and `EG0601.N.pdf` pattern tried, with and without a browser User-Agent and Referer; `nsgreg.nga.mil` answers with an **F5 JavaScript interstitial**, which is the same wall the pin record already records against the registry *pages*, now met on the document route. The bytes came from the **Internet Archive's snapshot of `gwg.nga.mil`'s own copy**, dated 2020-01-11. **What the mirror costs and does not cost:** it costs the third leg of the disjunction — ST 0107.3 could check its edition date against a registry page's agreement and this cannot — and it does not touch the hash, which identifies *the copy that was read* and never claimed more. What the snapshot carries that a bare mirror could not: the URL it archives is `gwg.nga.mil`'s own, so the record names which origin served these bytes and when |
+| **The 0601 lineage — three editions, NOT pins** | **EG 0601 (initial release, 12 Jan 2006), STD 0601.4 (4 March 2010) and MISB ST 0601.8 (23 October 2014)**, in `fixtures/klv/spec/history/`, on the precedent CAT048's 22-edition lineage set. The governing text is still **ST 0601.14 alone** and no row below is read against any of them. Each carries something the others do not: the initial release makes *tag 22 is in the initial-release item set* a **direct read** rather than an inference; ST 0601.4 carries the **full §3 revision history back to the initial release**, which no later edition does, and with it the sentence that makes edition 1 non-normative; ST 0601.8 makes `ST 0601.8-09`, `-11` and `-12` **first-hand**, having been quoted from ST 0601.14a's restatement until now. Hashes, byte counts, page counts and per-file origins are in `spec/klv_pin.json`'s `edition_history` |
 | **The edition tension inside a pin, twice** | ST 0601.19's cover reads **02 March 2023** and the copy pinned above carries revision-history rows dated **10 May 2024** and **11 June 2025**, under the same edition number and with no minor-version letter — register entry **KLV 9**. ST 0601.14 then met the same hazard *at fetch time*: the registry serves the edition cited as "ST 0601.14" under the filename **`ST0601.14a.pdf`**, the cover reads **`MISB ST 0601.14a`** and **1 May 2020** while the edition itself is dated **1 November 2018**, and the copy carries a **third revision-history row dated 19 August 2021 whose Revision cell is empty** — register entry **KLV 10**. Together they are the reason a pin's SHA-256 identifies a *copy* rather than an edition, and the reason the filename keeps the letter the registry served. **ST 0107.3 was checked for the same hazard and does not have it**: no letter in the filename, no letter on the cover, a single revision-history row, and a cover date of **1 November 2018** agreeing with the registry's and with the footer of all six pages. That it was adjudicated anyway is the point — the ST 0601.14 finding was not looked for either |
 | **The date tension** | The wrapper promulgates in **July 2020** a profile whose own title page says **November 2018** — twenty months, unexplained in either document, and register entry **KLV 1** |
 | **Named by the wrapper and NOT held** | "MISP-2019.1: Motion Imagery Handbook", the wrapper's only OTHER RELATED DOCUMENT. **Park 10**, and a heavier park than its billing suggests: MISP §3.6.7 says the Handbook "defines the required data items" for Class 1 metadata |
@@ -8392,6 +8396,13 @@ current one, and pin the copy by SHA-256, byte count and page count with its tit
 real route and not a wish, because the registry serves superseded editions and this repository has
 already fetched one that way.
 
+**PARK 13 WAS CLOSED THE SAME DAY, AND THE PARAGRAPH ABOVE IS KEPT AS THE WALK ROUND WROTE IT** —
+because the route it predicted is worth reading against what happened, and it was **wrong in both
+particulars and right in its claim**. Wrong twice: the registry did not serve the document, and there
+is no *ST 0601.1* to serve — edition 1 was published as **MISB EG 0601.1**, an Engineering Guideline.
+Right in its claim: it was a real route and not a wish, and the document was in hand within the day.
+The ruling is the next section, and the candidate it selected is **(a)**.
+
 #### What this round did NOT reach, stated so the absence is not read as coverage
 
 * **Park 8 was not reached, and could not have been by this stream.** The two absences park 8 still
@@ -8415,17 +8426,202 @@ already fetched one that way.
   every item in six real packets and validates every checksum still decodes **no value**, and the
   distance between finding and understanding is the whole of parks 3, 5, 11 and 12.
 
+### Park 13 adjudicated and CLOSED — edition 1 says two, at three sites inside itself
+
+**MISB EG 0601.1 was obtained on 2026-08-26, pinned above, and read for the one table park 13 named.
+Item 22's four octets are ruled a STREAM DEFECT — candidate (a) — and the two candidates that
+required edition 1 to differ from later editions are both dead, because it does not differ.** The
+round is the narrowest in this document's history and it is recorded at length for one reason: two of
+its three findings are about the *identity* of the document rather than its content, and both were
+found only by going to get it.
+
+#### The fetch, and the two official routes that refused
+
+**Neither official route served the document, and that is recorded as a refusal rather than as
+something not tried.** `gwg.nga.mil` — the MISB's own document host — answers **HTTP 403** from
+CloudFront at every `ST0601.N.pdf` and `EG0601.N.pdf` pattern, with and without a browser
+User-Agent and Referer. `nsgreg.nga.mil` answers an automated GET with an **F5 JavaScript
+interstitial** ("Please enable JavaScript to view the page content"), which is the same wall
+`klv_pin.json` already records against the registry *pages* — met here on the document route.
+
+**What worked was the Internet Archive, and the part that mattered was querying its index rather than
+guessing at filenames.** The Wayback CDX index holds `gwg.nga.mil`'s own copies: ST 0601.2 through
+ST 0601.17 under `/misb/docs/standards/`, and — decisively — **`EG0601.1.pdf` and `EG0601.pdf` under
+`/misb/docs/eg/`**. That second path is one a search for `ST0601.1.pdf` cannot reach, because that
+filename never existed. **The park's own name nearly cost the round its document**, which is the
+first of the two identity findings.
+
+#### The three dating claims, verified against the bytes and not against the summary that motivated them
+
+Each was re-checked against the fetched documents' own sentences, and a failure at any one would have
+reopened the corresponding candidate instead of letting the round proceed. **All three confirmed.**
+
+| | The claim | Verified against | Verdict |
+|---|---|---|---|
+| **(i)** | EG 0601.1 "added metadata items 40 through 72", so **tag 65 exists at edition 1** and the stamp is *dated* rather than merely unrefuted | EG 0601.1 §3, verbatim: "**Added metadata items 40 through 72 with registered UDS keys, and ESD digraphs as appropriate.**" Item 65 is inside that range, and edition 1 carries it in both places a tag must appear — the §6.1 table row `65 \| UAS LDS Version Number \| … \| Number \| uint8 \| 1`, and §7.65 defining its value | **CONFIRMED** |
+| **(ii)** | **Tag 22 is in the initial-release item set**, so candidate (c) is dead | EG 0601 (initial release, 12 Jan 2006), tag table page 14: `22 \| Target Width \| TBD \| Tw \| Target Width \| … \| Meters \| uint16 \| 2`. A **direct read**, not the available inference from (i) | **CONFIRMED** |
+| **(iii)** | The EG→Standard conversion at 0601.2 was made "in order to enforce requirements", so **edition 1 is non-normative by the series' own account** | ST 0601.4 §3, the row `STD 0601.2 — UAS Datalink Local Data Set.  October 29, 2008`, verbatim: "**Change the status from Engineering Guideline to Standard in order to enforce requirements upon developers implementing this document**", and the next line, "**Wording changed to make requirements enforceable.**" | **CONFIRMED** |
+
+**And (i) came with something nobody asked for, which sharpens the stamp rather than weakening it.**
+EG 0601.1 §7.65.1 reads: "*This item is not required in every packet of metadata, but is useful when
+included periodically.*" **At the edition this stream declares, item 65 was OPTIONAL.** It is
+`ST 0601.8-12` — "All instances of the UAS Datalink LS shall contain Tag 65, UAS LS Version Number" —
+that makes it mandatory, and ST 0601.8 is now held, so that requirement is first-hand rather than
+quoted from ST 0601.14a's restatement. The consequence for the six packets: an emitter at edition 1
+that sends item 65 in *every* packet is doing **more** than edition 1 asks, which is consistent with
+the declared-edition reading and is not evidence against it.
+
+#### The ruling — item 22, read from edition 1's own table
+
+**EG 0601.1 §6.1's item 22 row**, against its own stated column list (`KEY | LDS Name | Mapped UDS |
+ESD | ESD Name | UDS | UDS Name | Units | Format | Len | Notes`):
+
+| KEY | LDS Name | Units | Format | **Len** |
+|---|---|---|---|---|
+| 22 | Target Width | Meters | `uint16` | **2** |
+
+**And edition 1 states that length THREE TIMES INSIDE ITSELF**, which is the disjunction sweep run on
+the one value the whole park turned on:
+
+1. The tag table's **Len** column: `2`.
+2. §7.22's header block: `LDS Key 22 | … | Meters | 0..10,000 | uint16`.
+3. §7.22's **worked example** — the strongest of the three, because here the document *encodes* the
+   item rather than describing it: "1234.56789 Meters `[K][L][V] = [0d22][0d2][0x1F 9B]`" — a length
+   octet of `0d2` and two value octets.
+
+| | Candidate | Ruling |
+|---|---|---|
+| **(a)** | Stream defect | **THE RULING.** See below |
+| **(b)** | Edition skew against edition 1's own item-22 entry | **DEAD.** (b) required that edition 1 "defines item 22 with a Required Length of 4, or with none". It defines it with a Len of **2** — the same as ST 0601.14a §8.22 — so there is no skew to find |
+| **(c)** | An unknown tag under the declared edition | **DEAD.** (c) required that edition 1's "tag table has no item 22 at all". It has one, and so does the initial release before it. The `ST 0107.3-04` skip is therefore not the applicable reading, and the length question *does* arise |
+
+**The length never changed, and that is what closes the park.** Item 22 is `uint16` and `2` at every
+point this repository can sample: **the initial release (12 January 2006), edition 1, .4, .8, .14a and
+.19** — six sample points spanning 12 January 2006 to 11 June 2025. So the four octets diverge from
+the length **the emitter's own declared edition states**, not merely from a later one.
+
+**The disposition table's objection to (a) is answered from a direction the table did not
+anticipate.** That objection was that `ST 0601.13-29` is stamped **edition 13**, twelve revisions
+after the edition this stream declares, so under the declared-edition reading the requirement did not
+exist when the emitter was written. It is answered **not by dismissing the stamp but by reading
+edition 1**: both readings of the stamp now reach the same classification. There is no edition of this
+series in which four octets was correct, and the emitter is not sheltered by its own stamp under any
+reading. **(a) was unassertable before because the two readings disagreed; they no longer do.**
+
+**The qualifier Act 2(iii) supplies, and it is not a hedge.** At edition 1 the divergence is from an
+**Engineering Guideline** — and ST 0601.4 §3 says the .2 conversion was made "in order to enforce
+requirements upon developers", with "wording changed to make requirements enforceable". So by the
+series' own account edition 1 stated lengths as *direction* and not as enforceable requirements. The
+defect's two bases are therefore different and are kept apart: its **factual** basis is edition 1's
+own table and every edition after it, and its **normative** basis is `ST 0601.13-29`, which is the
+current standard's. Stating only the first would overstate what an EG can require; stating only the
+second would leave the disposition table's objection unanswered.
+
+**What the ruling does NOT say.** It does not say the stream is worthless, and it does not say the
+emitter is non-conformant in any sense edition 1 could itself enforce. It says the four octets are a
+defect against the standard as it now stands and a divergence from every edition including the
+declared one. **The corruption candidate stays closed**: all six checksums still validate, so the four
+octets are what the emitter wrote — established by the walk round and not revisited here.
+
+#### The changelog chain, run anyway, and the gap in it named
+
+**Park 13's exit condition named the chain as the FALLBACK — the route to take if edition 1 could not
+be obtained — and edition 1 was obtained, so the chain decides nothing.** It was run because it is
+cheap and because it *could have contradicted* the direct read, which is the only way a corroboration
+earns its place. **It did not contradict it.** Every entry from the initial release to .8: the initial
+release has **no §3 at all** (edition 1 added it — "Added section 3 for modifications and changes");
+edition 1's two rows; ST 0601.4's restatement of those two plus `STD 0601.2`, `STD 0601.3` and
+`STD 0601.4`; and ST 0601.8's single row, "EARS requirements format and other general formatting".
+**Not one entry touches item 22's length or format.** The entries that name a tag at all name tags 10,
+12, 15, 19, 21, 35, 43, 44, 45, 46, 47, 48, 49, 72 and 76 — **never 22**.
+
+**The gap, named so it is not read as coverage: editions .5, .6, .7 and .9 through .13 are not held
+and their changelogs were not read.** The CDX index lists them at `gwg.nga.mil`, so they are
+obtainable and were simply not obtained — the round stopped when the question was answered. The gap
+does not weaken the ruling, because the ruling reads edition 1 **directly**; it would have been fatal
+to the fallback. **And ST 0601.8 could never have carried the chain**: its revision history is one
+row, so whatever the `.8` reformatting did, it dropped the accumulated history. The full §3 back to
+the initial release survives in **ST 0601.4**, which is why the preference order that put `.4` ahead
+of `.8` was right.
+
+#### Two findings about edition 1's identity, both registered
+
+**`MISB ST 0601.1` does not exist, and ST 0601.14a §8.65 sends readers to it anyway — register entry
+KLV 15.** §8.65 defines item 65's value as "1..255 corresponds to document revisions **MISB ST
+0601.1** thru MISB ST 0601.255", so a reader honouring an on-the-wire stamp of `0x01` is directed to a
+document that was never published: edition 1 is **MISB EG 0601.1**, an Engineering Guideline, and the
+series became a Standard at 0601.2. **Edition 1 says so from the other side** — its own §7.65 states
+the identical range as "`EG0601.1` thru `EG0601.255`". The standard has renamed its own history. What
+it cost here: park 13 was opened, described, cited from three files and guarded by a test under the
+wrong name, adopted from §8.65 without checking that the document existed. **It is not a contradiction
+between held sentences** — the series really did change status — and it is resolved for this
+repository's purposes by closing park 13 on the document §8.65's "0601.1" *denotes*, and saying so
+rather than quietly correcting the name.
+
+**Edition 1 disagrees with itself, and with ST 0601.4, about its own date — register entry KLV 16.**
+Its cover prints **15 May 2008** and no page header or footer in 98 pages carries a date, so the cover
+is its sole self-statement and governs the pin's edition-date field. But its §3 carries **two** rows
+for EG0601.1 — **13 December 2007** and **15 May 2007** — putting the row described as "Editorial
+changes only" seven months *before* the substantive one and a year before the cover; and ST 0601.4's
+§3 restates the first of those as **13 December 2006**, which makes the sequence coherent and
+disagrees with edition 1's own text by a year. **Of the three readings available, the two that are
+internally coherent are the ones edition 1 does not state.** Deliberately unresolved: nothing held
+decides which year is the typo, and **no ruling here rests on the date** — park 13 turned on a Len
+column, not on a calendar.
+
+#### The codec-side ruling is unchanged, and the test-file lead is recorded as unverified
+
+**Nothing in `klv_codec` moved, and nothing was owed.** The walk round recorded its Act 2 ruling
+*unconditioned* precisely so neither branch of the edition question could disturb it, and the branch
+resolved: the framing layer's handling of item 22 is **correct as shipped** — a valid, minimal,
+short-form BER length introduces four opaque octets, `walk_local_set` reads the length the stream
+states and advances four, which is `ST 0107.3-04` satisfied *structurally*, since the walk knows no
+tags and item 22 is exactly as unknown to it as item 2. **The flag is still owed by the value-decoding
+layer, which does not exist and is blocked on parks 3, 5, 11 and 12.** Required Length is a tag-table
+fact. What this round changed is only what the four octets *mean*, which is what it was asked to
+decide.
+
+**A lead, not a finding: the held stream may be one of MISB's own test files.** EG 0601.1 §3 reads:
+"**Removed Appendix A 'Examples of UAS Local Data Set Packets' in favor of providing supplementary
+test files on the MISB website.**" That sentence is a reason to suspect `fixtures/klv/streams/day_flight.klv`
+is one of those supplementary files rather than an arbitrary capture — and it would matter, because it
+bears on whether item 22's four octets are a defect in a **fielded emitter** or in a **test file**,
+which are different findings about the same octets. **Nothing verifies it.** The sentence names no
+filename, nothing fetched this round mentions `day_flight`, and the MISB website's test-file area was
+not retrieved. It is filed on the same footing as the walk round's PES observation — a measured case
+waiting for whoever takes it. **The ruling does not depend on it**: a test file's octets are still
+four octets against a stated length of two.
+
+#### What this round did NOT reach
+
+* **Park 8 is untouched and was unreachable.** Its two absences are `0x80` as a first length octet and
+  a ceiling on the count of length octets, and none of the four fetched documents is SMPTE ST 336.
+* **No other park moved.** Parks 2, 3, 5, 6, 7, 9, 10, 11 and 12 are exactly as the walk round left
+  them. No park was renumbered.
+* **No tag row moved.** All **141** rows of the ST 0601 row set still read `not yet`. Edition 1 was
+  read for one row's length and **no row set was written from it**: the `reconciliation_ruling`
+  forbids taking tag semantics from a non-pinned edition, and edition 1 is not the pinned one.
+* **No registry page was obtained for any of the four documents**, which is the standing caveat on all
+  of them and the reason the pin table carries a mirror row.
+
 ### The parks, each with a named reopen condition
 
-**Thirteen parks over fifteen documents, TWO of them closed, and the honest thing to say first is
-that of the eleven still open, ten are public downloads and one is not.** **Park 13 was opened on
-2026-08-26 by the walk round** and is the first park in this table that a *stream* asked for rather
-than a document: it is a superseded revision of a document this repository already holds at a later
-edition, which under this repository's own rule — a later revision is a different document — makes it
-a fifteenth document and not a re-read of the third. It is **not** a fifteenth *delegated* document, and the two counts are kept apart on purpose: the profile delegates to ST 0601.14 and that count stays at **fourteen**. A park's document and a profile's delegation are different things, and this is the first row where they come apart. **Parks 1 and 4 both closed on
+**Thirteen parks over fifteen documents, THREE of them closed, and the honest thing to say first is
+that of the ten still open, nine are public downloads and one is not.** **Park 13 was opened and
+closed on 2026-08-26** — opened by the walk round, closed by the adjudication round, the only row here
+with that history — and it is the only park in this table that a *stream* asked for rather than a
+document: it is a superseded revision of a document this repository already holds at a later edition,
+which under this repository's own rule — a later revision is a different document — makes it
+a fifteenth document and not a re-read of the third. It is **not** a fifteenth *delegated* document, and the two counts are kept apart on purpose: the profile delegates to ST 0601.14 and that count stays at **fourteen**, and closing park 13 on a fifteenth document did not move it. A park's document and a profile's delegation are different things, and this is the first row where they come apart. **Parks 1, 4 and 13 all closed on
 2026-08-26** and each keeps its number and its row: the parks are cited by number from the row sets,
 from the fixture plan and from the register, so renumbering rows to close a gap would silently
 re-point every one of those citations. A closed park says it is closed.
+
+**And the download count has now moved four times, which is the point of asserting it rather than
+describing it.** From 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, from 9 to 10 when
+the walk round opened park 13, and from 10 back to 9 when the adjudication round closed it. **It falls
+every time somebody does the cheap thing and rises when a round finds a question it cannot answer from
+what is held** — and park 13 is the one case where it did both inside a single day.
 
 **That the largest park in this table and the cheapest were both closed by one person with a browser
 is not an exception to the paragraph below — it is the evidence for it.** Park 4 is the sharper of the
@@ -8477,7 +8673,7 @@ treated two ways in the other direction.
 | **10** | **MISP-2019.1: Motion Imagery Handbook** | the 2019.1 edition, Nov 2018 | STANAG 4609 Ed 5 lists it as its only OTHER RELATED DOCUMENT and MISP §1.3 calls it a companion "providing definitions of terms used with more background and technical detail". But §3.6.7 says of the same document that it "defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets ... **and defines the required data items**" — register entry **KLV 8** | Public download, the same two URLs. Its billing and its stated function disagree, so whoever obtains it answers that first: a document that defines required data items is normative in fact, whatever the wrapper's headings say |
 | **11** | **MISB ST 1204 and ST 1301 — MIIS Core Identifier, Augmentation Identifiers** | **1204.1**, **1301.2** | `MISP-2015.1-68` and `-69`. §4.4.2.1: "a mandatory consistent unique identifier for all sensors and platforms" | Public download. Blocks `Entity.source_ids`, and therefore blocks keying an `Entity` on anything the stream states. The NITS MIIS decline deferred the *decoding*; here the identifier is the only identity the format guarantees, so the same document is a heavier dependency for this adapter than for that one |
 | **12** | **MISB ST 0902 — Motion Imagery Sensor Minimum Metadata Set** | **0902.8** | `MISP-2015.1-75`, and §4.4.4 calls it "a prerequisite for MISP conformance" | Public download. The minimum conformant content of an airborne feed, which makes it the smallest possible Phase 2: **parks 4, 5 and 8 are enough to READ a stream at all, and parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one** |
-| **13** | **MISB ST 0601.1 — the UAS Datalink Local Set as edition 1 defined it** | **0601.1**, the edition item 65 declares on the wire | **Opened 2026-08-26 by the walk round, and it is the only park here that a STREAM opened.** A held stream stamps item 65 = `0x01`, and the self-refutation test found nothing in either held ST 0601 copy that dates any item's introduction — so the stamp stands unrefuted and the declared-edition reading is live. What that leaves undecidable is item 22's four octets against a Required Length of 2: they are a stream defect against `ST 0601.13-29`, an edition skew against ST 0601.1's own item-22 entry, or an unknown tag under the declared edition — and **all three turn on the same page**. See the walk section above | Public download, and **the route park 4 already proved**: the NSG Registry serves superseded revisions, which is how ST 0107.3 was fetched at the pinned revision rather than the current one. Same pin discipline — obtain the revision the question names, pin the copy by SHA-256, byte count and page count with its title page read. **The narrowest park in the table**: it is one document, read for one table, to answer one question, and unlike parks 2 and 6 nothing about the adapter's output depends on the answer |
+| **13** | ~~**MISB ST 0601.1 — the UAS Datalink Local Set as edition 1 defined it**~~ **CLOSED 2026-08-26** | **0601.1**, the edition item 65 declares on the wire — and the document that answers to it is **MISB EG 0601.1**, held. **The park's own name was wrong**: there is no *ST 0601.1*, edition 1 is an Engineering Guideline, and the name was adopted from ST 0601.14a §8.65's own value range without checking that the document existed — register entry **KLV 15** | **Opened and closed on the same day**, the only row here with that history, and the only park a *STREAM* asked for rather than a document. A held stream stamps item 65 = `0x01`; the walk round's self-refutation test found nothing in either held ST 0601 copy that dates any item's introduction, so the stamp stood unrefuted and item 22's four octets against a Required Length of 2 were left undecidable between three candidates. **Edition 1 decided them**: it states item 22 at a Len of **2** at three sites inside itself, so **(b)** and **(c)** — both of which required edition 1 to differ from later editions — are dead, and the ruling is **(a), a stream defect**. See the adjudication section above | **CLOSED 2026-08-26.** Obtained at the revision the *question* named rather than the current one — a **superseded** revision, the *first* of the series, which is the route park 4 proved and the only route that could have answered this: the current edition is the one that cannot — pinned by SHA-256 `1714322c…dec0b730`, 918 722 bytes, **98 pages**, cover read. **Not by the route this row predicted**: the NSG Registry served nothing — it answers an automated GET with a JavaScript interstitial, and `gwg.nga.mil` answers 403 — so the bytes came from an **Internet Archive snapshot of `gwg.nga.mil`'s own copy**, which is a weaker provenance and is recorded as a caveat on the pin. Both halves of the exit condition are discharged: the document is pinned, and the artefact it makes writable is written — for a park whose whole scope was one classification, that artefact **is** the ruling. **What it did NOT discharge:** park 8, any other park, and any tag row — all 141 still read `not yet`. It bought one classification of one finding, which is exactly what it promised |
 
 **What this table is NOT.** It is not a claim that the documents are unobtainable, and it is not a
 licence to defer indefinitely. Twelve of the thirteen can be closed by one person with a browser, and
@@ -8696,6 +8892,47 @@ and the stamp a conforming emitter is *required* to send cannot be acted on by a
 documents. **Not a contradiction** — no held sentence disagrees with another — and **not resolvable
 here**: it is resolved by holding the editions themselves, which for edition 1 is **park 13**. It is
 the reason that park exists and the reason the walk round ended in a park rather than a ruling.
+
+**RESOLVED FOR EDITION 1 ONLY, on 2026-08-26, and the entry stands for every other edition.** Park 13
+closed: EG 0601.1 is held, and it *does* date the introduction of the items it added — "Added metadata
+items 40 through 72" — so for edition 1 the question this entry poses now has an answer. **The general
+form is untouched.** Editions 2 through 13 and 15 through 18 remain undated from anything held, the
+requirement-identifier prefix still reaches no further back than edition 8, and a reader honouring a
+stamp of, say, `0x0B` still has nothing to consult. What the closure proves is that the wall is made
+of *unobtained documents* rather than of undocumented history — the editions state their own deltas
+perfectly well, in a §3 that ST 0601.8's reformatting later dropped — which makes this entry a park
+list rather than a defect in the standard.
+
+**KLV 15 — the document the standard tells a reader to consult for edition 1 does not exist under that
+name.** ST 0601.14a §8.65 defines item 65's value as "1..255 corresponds to document revisions **MISB
+ST 0601.1** thru MISB ST 0601.255", so a reader honouring an on-the-wire stamp of `0x01` is directed
+to a document that was **never published**: edition 1 of the series is **MISB EG 0601.1**, an
+*Engineering Guideline* dated 15 May 2008 on its cover, and the series became a Standard at 0601.2 —
+ST 0601.4's §3 states the conversion outright ("Change the status from Engineering Guideline to
+Standard in order to enforce requirements upon developers implementing this document"). **The standard
+has renamed its own history**, and §8.65's range projects the ST name back across twelve editions that
+did not carry it. **Edition 1 says so from the other side**: its own §7.65 states the identical range
+as "`EG0601.1` thru `EG0601.255`". **What it cost here** — park 13 was opened, described, cited from
+three files and guarded by a test under a name that names nothing, adopted from §8.65 without checking
+that the document existed; and it nearly cost the fetch, because no `ST0601.1.pdf` exists at
+`gwg.nga.mil` for an archive index to hold, and the document was found under `/misb/docs/eg/` only
+after the search was widened past the name the park gave it. **Not a contradiction between held
+sentences** — the series really did change status — and **resolved** for this repository: park 13 is
+closed on the document §8.65's "0601.1" *denotes*, and the closure says so rather than quietly
+correcting the name.
+
+**KLV 16 — edition 1 disagrees with itself, and with ST 0601.4, about its own date.** EG 0601.1's
+cover prints **15 May 2008** and no page header or footer in its 98 pages carries a date, so the cover
+is its sole self-statement and governs the pin's edition-date field. But its §3 carries **two** rows
+for EG0601.1 — **13 December 2007** and **15 May 2007** — which puts the row described as "Editorial
+changes only" seven months *before* the substantive one and a year before the cover; and ST 0601.4's
+§3 restates the first of those as **13 December 2006**, which makes the sequence coherent and
+disagrees with edition 1's own text by a year. **Of the three readings available, the two that are
+internally coherent are the ones edition 1 does not state.** Deliberately unresolved: nothing held
+decides which year is the typo, the pin records the cover date because the provenance ruling says the
+document's own cover governs, and **no ruling in this repository rests on the date** — park 13 turned
+on a Len column, not on a calendar. Recorded because the pin states one date and the document contains
+three, so a reader checking the pin against the PDF will meet the other two.
 
 ### Deliberately out of scope, and why
 
@@ -9121,7 +9358,7 @@ so it is readable in the history — the treatment CAT021's, NITS's, GMTIF's and
 It was a **wider** Phase 1 than the two sections above it. STANAG 5527 pins a covering document
 that states no field at all, so its section has no row set; STANAG 4609 pins a profile that
 delegates every field dictionary it relies on, so its rows say `not yet` and its fixture plan is
-gated on ten absent documents across thirteen parks. This document states **twelve data items** and a **fourteen-FRN
+gated on nine absent documents across thirteen parks. This document states **twelve data items** and a **fourteen-FRN
 standard UAP**, each item with a Definition, a Format, a Structure and an Encoding Rule, in a
 category whose sibling this repository already ships. So the row set was written from the document,
 not around it, and what is parked is parked for a reason the document itself supplies.
@@ -9252,7 +9489,7 @@ quoting this repository.
   was wrong. The pin is not a covering edition standing in for a current one; it is the current one
   as far as the publisher's own page goes;
 - **Edition 1.30 is cited-but-unpublished**, which is a third state this repository had no name for.
-  It is not a park like KLV's ten absent documents, which are obtainable and were not obtained;
+  It is not a park like KLV's nine absent documents, which are obtainable and were not obtained;
   it is not #9's classification contingency, where a document exists behind an access decision. It
   is a document two specifications reference and no page offers. **It is now a CLASS rather than a
   sentence**, computed by `tests/test_cdm_pins.py` from two halves it finds in the data — a

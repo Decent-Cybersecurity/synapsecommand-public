@@ -3076,10 +3076,14 @@ KLV_PINNED_DOCUMENTS = (
 KLV_HELD_NOT_PINNED = {
     "MISB ST 0601": {
         "19": "context only",
-        # PARK 13, opened by the walk round. A held stream stamps item 65 = 0x01 and nothing in
-        # either held copy dates any item's introduction, so the edition the wire declares became a
-        # park rather than a reading. This is the one revision in the table that is named because a
-        # STREAM asked for it.
+        # PARK 13, opened by the walk round and CLOSED THE SAME DAY by the adjudication round. The
+        # phrase is unchanged and its REASON is not: when this entry was written .1 was a park's
+        # deciding document that nobody held, and it is now PINNED, at
+        # `fixtures/klv/spec/EG0601.1.pdf`. It stays in this table because the table's subject is
+        # "stated in this section and not the pinned DELEGATION" — the profile pins .14 and always
+        # did — and because the sentence that admits it is still the sentence that says why the
+        # section names it at all. Kept rather than promoted to a fifth kind, because the gate's
+        # question is which revisions the section may state, not which ones are on disk.
         "1": "the edition item 65 declares on the wire",
         # Both of these occur ONLY inside §8.65's own value range, quoted verbatim. `0601.0` is the
         # pre-release the item defines and `0601.255` is the top of a range, and neither is an
@@ -3087,6 +3091,26 @@ KLV_HELD_NOT_PINNED = {
         # quotation itself, which is the narrowest admitting phrase in this table.
         "0": "1..255 corresponds to document revisions MISB ST 0601.1 thru MISB ST 0601.255",
         "255": "1..255 corresponds to document revisions MISB ST 0601.1 thru MISB ST 0601.255",
+        # FIVE MORE, ADDED 2026-08-26 BY THE ADJUDICATION ROUND, and they are a FOURTH kind after
+        # "held but not pinned", "a park's deciding document" and "part of a quoted range": a
+        # revision named because the SERIES' OWN CHANGELOG names it, or because an archive index
+        # does. Two of them this repository now holds as LINEAGE — .4 and .8, in
+        # `fixtures/klv/spec/history/`, which are deliberately not pins — and three it does not hold
+        # at all. The distinction the gate exists to protect is untouched: the profile pins .14, and
+        # none of these five is offered as a text any row is read against.
+        #
+        # WHY THEY COULD NOT BE ONE ENTRY. .2 is the edition the series stopped being an
+        # Engineering Guideline at, which is the fact that makes edition 1 non-normative and is
+        # therefore load-bearing on park 13's ruling. .3 appears only inside the enumeration of the
+        # changelog chain. .4 carries the full §3 history the later editions dropped. .8 is where
+        # that history was dropped. .17 is the top of what the Wayback index holds, which is the
+        # evidence for "obtainable and simply not obtained". One phrase licensing all five would
+        # have licensed the load-bearing one on the incidental one's reason.
+        "2": "the series became a Standard at 0601.2",
+        "3": "STD 0601.2`, `STD 0601.3` and",
+        "4": "revision history back to the initial release",
+        "8": "ST 0601.8's reformatting",
+        "17": "ST 0601.2 through ST 0601.17 under",
     },
     # AMENDED 2026-08-26 BY THE FRAMING ROUND, and this entry is a different KIND from the one
     # above it. ST 0601.19 is a revision this repository HOLDS and the profile does not pin; ST
@@ -3461,7 +3485,9 @@ def test_the_delegation_table_states_the_exact_version_the_profile_pins(document
             "the pinned one is only safe while the section says OUT LOUD why it is there — "
             "otherwise the two numbers sit side by side and a reader picks whichever they saw "
             "last. One phrase per revision, because the reasons differ: .19 is held and not "
-            "pinned, .1 is a park's deciding document, and .0 and .255 are parts of a quoted range"
+            "pinned, .1 is a park's deciding document and is now pinned, .0 and .255 are parts of "
+            "a quoted range, and .2/.3/.4/.8/.17 are revisions the series' own changelog or an "
+            "archive index names — of which .4 and .8 are held as LINEAGE and are not pins"
         )
     assert document in flat, f"the delegation table no longer names {document}"
 
@@ -3703,6 +3729,25 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     of 2 cannot be classified without ST 0601.1's tag table. Opening it moved the download count the
     other way for the first time - 9 -> 10 - which is the same claim read in reverse and is why the
     count is asserted rather than described.
+
+    AND PARK 13 CLOSED ON 2026-08-26 TOO, hours later, which is the first time this table has had a
+    row open and close on one day and the first time the download count has moved TWICE in one - 9
+    to 10 on the opening, 10 back to 9 on the closing. THE UPPER BOUND DID NOT MOVE: a closed park
+    keeps its number, so the table still has thirteen rows and still refuses a fourteenth.
+
+    THE `superseded` ASSERTION SURVIVED THE CLOSURE AND IS NOW A DIFFERENT CLAIM, which is why it
+    was kept rather than deleted. It used to guard a ROUTE - a row that did not say "superseded"
+    read as an instruction to fetch the current edition, and the current edition is the one that
+    cannot answer the question. The route has been walked, so what the word now records is what was
+    actually obtained: edition 1, a superseded revision, rather than the .19 a careless reading
+    would have fetched. The assertion is unchanged and its reason is rewritten, because a gate whose
+    stated reason has expired is a gate nobody can maintain.
+
+    WHAT THE CLOSURE DID *NOT* LICENSE: dropping `0601.1` from the row. The row now names TWO
+    documents - the edition the stream declares and MISB EG 0601.1, which is the document that
+    answers to it, there being no "ST 0601.1" at all (register entry KLV 15) - and the version
+    string is asserted exactly as before, because a park 13 row that lost it would be a row about
+    "ST 0601", which this repository holds three times over.
     """
     section = _section(KLV_HEADING)
     flat = _flat(section)
@@ -3725,9 +3770,20 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
         "the version the row is a park on 'ST 0601', which this repository already holds twice"
     )
     assert "superseded" in park_13[0].lower(), (
-        "park 13 closes by fetching a SUPERSEDED revision, which is the route park 4 proved. A row "
-        "that does not say so reads as an instruction to fetch the current edition, and the current "
-        "edition is the one that cannot answer the question"
+        "park 13 CLOSED by fetching a SUPERSEDED revision, which is the route park 4 proved. The "
+        "word used to guard the route and now records what was obtained - edition 1 rather than the "
+        "current edition, which is the one that cannot answer the question. A row that stops saying "
+        "so loses the only part of the closure a later reader could check the pin against"
+    )
+    assert "CLOSED" in park_13[0], (
+        "park 13's row no longer says it is closed. It closed on 2026-08-26 by obtaining MISB "
+        "EG 0601.1 and ruling item 22's four octets a stream defect; a row that stops saying so "
+        "reads as an open park, and this one is the narrowest in the table rather than a live one"
+    )
+    assert "EG 0601.1" in park_13[0], (
+        "park 13's row no longer names MISB EG 0601.1, the document it actually closed on. There is "
+        "no 'ST 0601.1' - edition 1 is an Engineering Guideline - so a row naming only the version "
+        "string sends the next reader after a document that does not exist. Register entry KLV 15"
     )
     # The closed park keeps its number and says so, and nothing has quietly taken its place.
     park_1 = [ln for ln in section.splitlines() if ln.startswith("| **1** |")]
@@ -3775,14 +3831,15 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     # And the other eleven DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
-    assert len(downloads) == 10, (
-        f"{len(downloads)} park rows state a public-download reopen condition, expected 10 — "
-        "eleven open parks, of which ten are downloads and one is the purchase. The count IS the "
-        "honest-strength claim in the paragraph above the table, and it has now moved three times: "
-        "from 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, and from 9 to 10 when "
-        "the walk round opened park 13. It falls every time somebody does the cheap thing and rises "
-        "when a round finds a question it cannot answer from what is held — which is the claim the "
-        "paragraph makes and the only way it can be checked"
+    assert len(downloads) == 9, (
+        f"{len(downloads)} park rows state a public-download reopen condition, expected 9 — "
+        "ten open parks, of which nine are downloads and one is the purchase. The count IS the "
+        "honest-strength claim in the paragraph above the table, and it has now moved FOUR times: "
+        "from 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, from 9 to 10 when "
+        "the walk round opened park 13, and from 10 back to 9 when the adjudication round closed "
+        "it hours later. It falls every time somebody does the cheap thing and rises when a round "
+        "finds a question it cannot answer from what is held — which is the claim the paragraph "
+        "makes and the only way it can be checked. Park 13 is the one row that has done both"
     )
 
 
@@ -3815,10 +3872,19 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     # packet (ST 0601.8-12, item 65) and no held edition says which items each edition admits, so a
     # reader cannot act on the declaration a conforming emitter is required to send. That is why the
     # round parked instead of ruling, and why park 13 exists.
-    for n in range(1, 15):
+    # THE BOUND MOVED 14 -> 16 ON 2026-08-26, the same day, and both new entries are about a
+    # document's IDENTITY rather than its content - which is a first for this register and is what
+    # going to FETCH a document turns up that reading the ones you have cannot. KLV 15: the document
+    # ST 0601.14a §8.65 sends a reader to for edition 1, "MISB ST 0601.1", was never published -
+    # edition 1 is an Engineering Guideline, EG 0601.1, and the standard has renamed its own
+    # history. KLV 16: that document disagrees with itself and with ST 0601.4 about its own date.
+    # Note what did NOT happen: KLV 14 was not deleted. Park 13 closing answers its question for
+    # edition 1 only, and the entry now carries that as an amendment, because an entry retired on
+    # one edition's evidence would overstate a closure that bought exactly one row.
+    for n in range(1, 17):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 15 —" not in section, (
-        "the register has grown past KLV 14 without this test being updated"
+    assert "**KLV 17 —" not in section, (
+        "the register has grown past KLV 16 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a

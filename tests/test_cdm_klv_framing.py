@@ -998,15 +998,44 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
         "as an unexamined one"
     )
 
-    # 7. The park arithmetic, which moved this round: twelve total, two closed, ten open, nine of
-    #    them downloads and one a purchase. Derived from the register, checked against the prose.
+    # 7. The park arithmetic, DERIVED from the record's own closure entries rather than typed here,
+    #    and then required at the prose sites. Thirteen parks, THREE closed (1, 4 and 13), ten open,
+    #    nine of them downloads and one a purchase.
+    #
+    #    THE SUBSTRING FORM THIS REPLACED WAS NOT A CHECK. It read `"two" in text and "ten" in text`
+    #    over the whole flattened node, which passes on any prose containing the word "two"
+    #    anywhere — and it DID pass, for the whole interval in which `parks.honest_strength` said
+    #    "ten that remain open" while `parks.how_many` said "Eleven remain open". Two fields of one
+    #    node disagreed by one and this assertion reported agreement. The count is now derived and
+    #    the two fields are required to agree with the derivation, so the same drift fails.
     parks = pin["parks"]
-    assert len(parks["the_ones_that_closed"]) == 3      # two parks plus the note on the rename
-    for text, where in ((_flat(json.dumps(parks)), "the pin's parks node"),
-                        (_flat(MIGRATIONS.read_text()), "MIGRATIONS.md")):
-        assert "two" in text.lower() and "ten" in text.lower(), (
-            f"{where} does not state the park arithmetic after this round's closure"
+    closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
+    assert closed == ["park_1", "park_13", "park_4"], closed
+    n_closed, n_total = len(closed), 13
+    n_open = n_total - n_closed
+    n_downloads = n_open - 1                 # park 8 is the purchase, and the only one
+    assert (n_closed, n_open, n_downloads) == (3, 10, 9)
+    words = {3: "three", 10: "ten", 9: "nine"}
+    how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
+    assert words[n_closed] in how_many and "closed" in how_many, (
+        f"parks.how_many does not state {words[n_closed]!r} closures"
+    )
+    for field, text in (("how_many", how_many), ("honest_strength", honest)):
+        assert words[n_open] in text, (
+            f"parks.{field} does not state {words[n_open]!r} open parks. This is the exact field "
+            "pair that drifted apart once: both state the arithmetic, so both are checked"
         )
+    assert words[n_downloads] in honest, (
+        f"parks.honest_strength does not state {words[n_downloads]!r} public downloads"
+    )
+    for text, where in ((_flat(json.dumps(parks)), "the pin's parks node"),
+                        (_flat(MIGRATIONS.read_text()), "MIGRATIONS.md"),
+                        (_flat(README.read_text()), "the KLV README")):
+        assert "park 13" in text.lower(), f"{where} no longer mentions park 13"
+    mig = _flat(MIGRATIONS.read_text()).lower()
+    assert f"{words[n_closed]} closed" in mig and f"the {words[n_open]} still open" in mig, (
+        "MIGRATIONS.md does not state the park arithmetic after this round's closure"
+    )
 
 
 def test_the_ruling_is_stated_at_every_site_and_says_the_same_thing_about_what_is_missing():
