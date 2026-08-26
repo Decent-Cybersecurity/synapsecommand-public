@@ -35,7 +35,8 @@ repository. Every check below is a property of the installed artefact:
     import     synapse_cdm imports, from site-packages and not from the tree
     resources  every shipped adapter's fixtures resolve through importlib.resources
     schemas    the published schemas can be regenerated and re-checked from anywhere
-    harness    all twelve adapters replay green with no --fixtures argument at all
+    harness    every adapter the tree registers replays green with no --fixtures argument
+               at all — the roster derived, never a count typed here
     scripts    the cdm-harness and cdm-schemas console entry points work
     prose      no shipped file hands the reader a repo-relative path
     slice      the package-only half of the suite passes against the INSTALLED package
@@ -90,11 +91,12 @@ DIST_SRC = REPO / "packages" / "cdm"
 #: one now does too, and the harness refuses an empty `--schemas` directory outright.
 PACKAGE_ONLY_TESTS = (
     "test_cdm_adapter_contract.py", "test_cdm_adsb_adapter.py", "test_cdm_ais_adapter.py",
-    "test_cdm_asterix_cat021_adapter.py", "test_cdm_asterix_cat034_adapter.py",
-    "test_cdm_asterix_cat048_adapter.py", "test_cdm_gmtif_adapter.py", "test_cdm_gmtif_codec.py",
-    "test_cdm_harness.py", "test_cdm_legion_adapter.py", "test_cdm_lossless.py",
-    "test_cdm_models.py", "test_cdm_pntmap_adapter.py", "test_cdm_schemas.py",
-    "test_cdm_stanag4676_adapter.py", "test_cdm_tak_adapter.py",
+    "test_cdm_asterix_cat021_adapter.py", "test_cdm_asterix_cat023_adapter.py",
+    "test_cdm_asterix_cat034_adapter.py", "test_cdm_asterix_cat048_adapter.py",
+    "test_cdm_asterix_cat062_adapter.py", "test_cdm_gmtif_adapter.py", "test_cdm_gmtif_codec.py",
+    "test_cdm_harness.py", "test_cdm_legion_adapter.py", "test_cdm_list_adapters.py",
+    "test_cdm_lossless.py", "test_cdm_models.py", "test_cdm_pntmap_adapter.py",
+    "test_cdm_schemas.py", "test_cdm_stanag4676_adapter.py", "test_cdm_tak_adapter.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
@@ -102,7 +104,9 @@ PACKAGE_ONLY_TESTS = (
 REPO_BOUND_TESTS = {
     "test_cdm_boundary.py": "AST over the package sources as files in the tree",
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
+    "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",
+    "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
     "test_cdm_format_coverage.py": "FORMAT_COVERAGE.md against the repository's fixtures",
     "test_cdm_generator_loading.py": "how three test modules load a generator",
     "test_cdm_getting_started.py": "README.md and CONTRIBUTING.md against pyproject.toml",
@@ -116,8 +120,45 @@ REPO_BOUND_TESTS = {
     "test_cdm_version_floor.py": "every Python file in the repository, gates included",
 }
 
-ADAPTERS = ("adsb", "ais", "cat021", "cat034", "cat048", "gmti", "legion", "pntmap",
-            "stanag4676", "tak")
+def source_roster() -> tuple[str, ...]:
+    """The adapter names the REPOSITORY registers, asked of the source tree rather than typed.
+
+    WHY THIS IS NOT A TUPLE OF NAMES ANY MORE
+    -----------------------------------------
+    It was one: ten strings, written down. Then `cat023` and `cat062` shipped, the tuple did not
+    grow, and this gate's two roster checks failed in OPPOSITE ways on the same run.
+
+    `check_resources` compared LENGTHS and said `12 adapters resolved, expected 10` — loud, and
+    right. `check_harness` iterated the tuple, replayed ten of the twelve, and reported
+    `10 adapters x 2 schema modes, 596 fixture verdicts, 0 failed`. That row is a PASS printed over
+    a run that never touched either new adapter, and the count in it is the subset's own count,
+    so nothing in the line admits that anything was skipped. The loud half was the harmless one.
+
+    `tests/test_cdm_list_adapters.py` predicted this exact shape — "a tuple of ten names in
+    `harness.py` that stays right until the eleventh adapter ships, and then reads as
+    authoritative while being wrong". It landed HERE rather than in `harness.py`, and it landed
+    because nothing read this file: the gate is a protocol act and not a suite member, so the one
+    roster in the repository with no test over it was the one inside the gate.
+    `tests/test_cdm_gate_rosters.py` is that test now, and it runs under `pytest` — where the
+    drift would have been caught on the commit that caused it rather than on a release build.
+
+    ASKED IN A SUBPROCESS, AND WHY
+    ------------------------------
+    `PYTHONPATH` set to `DIST_SRC`, because this file must not import the package it is about to
+    build. An installed `synapse_cdm` on the gate runner's own path would answer for a different
+    tree, which is the confusion every clean-venv arrangement below exists to prevent.
+    """
+    script = ("import json;from synapse_cdm.adapter import roster;"
+              "print(json.dumps([n for n, c in roster().items() "
+              "if c.__module__.startswith('synapse_cdm.adapters.')]))")
+    env = {**os.environ, "PYTHONPATH": str(DIST_SRC)}
+    names = json.loads(must(run([sys.executable, "-c", script], cwd=REPO, env=env),
+                            "the source tree's roster"))
+    if not names:
+        raise Failed("the source tree registers no adapters at all, so every roster check below "
+                     "would compare one empty set against another and pass. Something is wrong "
+                     "with the tree, not with the wheel")
+    return tuple(names)
 
 
 class Failed(Exception):
@@ -334,8 +375,20 @@ def check_resources(python: pathlib.Path, outside: pathlib.Path) -> str:
         "print(json.dumps(out))"
     )
     found = json.loads(must(run([str(python), "-c", script], cwd=outside), "packaged_fixtures"))
-    if len(found) != len(ADAPTERS):
-        raise Failed(f"{len(found)} adapters resolved, expected {len(ADAPTERS)}: {sorted(found)}")
+    # Compared as SETS, in both directions, and not by length. The length comparison this
+    # replaces could tell that the totals differed and nothing else — not WHICH adapter the wheel
+    # was missing, and not which of the two possible faults it was looking at. Both are real: a
+    # wheel short of the tree is a build that dropped a module, a wheel longer than the tree is a
+    # wheel built from a tree that is not this one.
+    expected = set(source_roster())
+    if set(found) != expected:
+        missing = sorted(expected - set(found))
+        extra = sorted(set(found) - expected)
+        raise Failed(
+            f"the wheel's adapters are not the repository's ({len(found)} resolved, "
+            f"{len(expected)} registered in the tree)"
+            + (f"; in the tree but NOT in the wheel: {missing}" if missing else "")
+            + (f"; in the wheel but NOT in the tree: {extra}" if extra else ""))
     empty = {n: v for n, v in found.items() if not v[1] or v[2] == 0}
     if empty:
         raise Failed(f"adapters whose packaged fixtures are missing or empty: {empty}")
@@ -372,14 +425,21 @@ def check_schemas(python: pathlib.Path, outside: pathlib.Path,
 
 def check_harness(python: pathlib.Path, outside: pathlib.Path,
                   schema_dir: pathlib.Path) -> str:
-    """All ten, with NO `--fixtures` argument — the invocation that used to be impossible.
+    """Every adapter the tree registers, with NO `--fixtures` argument — the invocation that used
+    to be impossible.
 
     Run twice over: once letting the harness generate the schemas in-process, and once against
     the files it just wrote, because those are two different claims. The second is the one
     `--schemas` exists for and the one a partner validating against the published contract makes.
+
+    The roster comes from `source_roster()` and not from a literal, because this loop is where a
+    written-down one did its damage: it replayed ten adapters out of twelve and printed the ten as
+    its verdict. The count in the returned line is now the length of what was actually iterated,
+    which is the only count that cannot describe a run that did not happen.
     """
+    adapters = source_roster()
     total = 0
-    for name in ADAPTERS:
+    for name in adapters:
         for extra in ([], ["--schemas", str(schema_dir)]):
             result = run([str(python), "-m", "synapse_cdm.harness",
                           "--adapter", name, "--json", *extra], cwd=outside)
@@ -398,7 +458,7 @@ def check_harness(python: pathlib.Path, outside: pathlib.Path,
                 raise Failed(f"--adapter {name} replayed {replayed}, which is not inside the "
                              "clean venv — the fixtures came from somewhere other than the wheel")
             total += report["passed"]
-    return f"10 adapters x 2 schema modes, {total} fixture verdicts, 0 failed"
+    return (f"{len(adapters)} adapters x 2 schema modes, {total} fixture verdicts, 0 failed")
 
 
 def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
