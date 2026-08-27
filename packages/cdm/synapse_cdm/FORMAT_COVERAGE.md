@@ -9134,6 +9134,61 @@ whose provenance is worse than the park. **The `not_obtained` field in the pin's
 records that the CDX index lists ST 0601 `.2` through `.17`; that remains true and is now
 unreachable rather than merely unfetched.**
 
+#### The retry, 2026-08-27T14:05Z — park 9 STAYS PARKED, and the blocker is now ONE route rather than three
+
+The parks round ranked park 9 the most closable of the three and said so conditionally: "the moment
+the archive's rate limit clears, this park closes on bytes alone". One retry was taken, of the route
+that would close it and of the two the FORWARD names. **The rate limit has not cleared, and the two
+official routes turn out never to have been reachable from here at all.**
+
+| Route | Asked | Answer, verbatim |
+|---|---|---|
+| `web.archive.org` playback, the **byte-exact URL the pin records as having served ST 0601.4** | ranged GET, 1 KiB | **HTTP 429**, `Server: nginx`, `X-RL: 1`, `Content-Type: text/html`, 162 bytes |
+| `web.archive.org` CDX API, the index query park 9 needs — `url=gwg.nga.mil/misb/docs/standards/ST1402*` | GET | **HTTP 429**, `X-RL: 1`, the same 162-byte nginx page |
+| `gwg.nga.mil` — the host the FORWARD names first | GET `/misb/docs/standards/ST1402.2.pdf` | **`curl: (6) Could not resolve host`.** No request was sent |
+| `nsgreg.nga.mil` — the second route the FORWARD names | GET `/misb.jsp` | **`curl: (6) Could not resolve host`.** No request was sent |
+
+**The 429's body was read and deliberately not hashed, which is finding 4's discipline applied
+before it could go wrong.** 162 bytes of `<title>429 Too Many Requests</title>` is an error page,
+and a probe that hashed it would have produced a stable digest for "the document" that never
+changed between attempts — the mirror of the byte comparison that reported fifteen identical
+Cloudflare 403s as proof the deploy had changed nothing. Every fetch above checked its status code
+first and none of them treated a body as a document.
+
+**`X-RL` moved from `0` to `1` and the refusal did not, so the header does not predict the answer.**
+The parks round recorded `X-RL: 0`. Recorded as an observation and not read as progress: the quota
+counter is a different number and the response is the same 429, which is all that can be said from
+two samples.
+
+**THE TWO OFFICIAL ROUTES' FAILURE MODE IS MIS-STATED IN THE RECORD ABOVE, and the correction makes
+park 9 smaller rather than larger.** The paragraph above says `gwg.nga.mil` "answered **nothing**: no
+headers, no body" and `nsgreg.nga.mil` "answered **nothing**", ranked alongside the 403 the park 13
+round met and the JavaScript interstitial. What is reproducible here is not a host declining to
+answer — it is that **the whole `nga.mil` zone does not resolve from this environment.** Measured,
+because "the host is down" and "the question never left the machine" look identical to a client that
+does not ask why:
+
+* the only reachable resolver answers **`SERVFAIL`** for `gwg.nga.mil`, `nsgreg.nga.mil`,
+  `www.nga.mil` **and the `nga.mil` apex** — the entire zone, not the park's two hosts;
+* the same resolver answers **normally** for `web.archive.org` and `www.nist.gov`, so it is not
+  broken and this is not a general loss of DNS;
+* **no independent resolver is available to cross-check**: `1.1.1.1` and `8.8.8.8` both time out on
+  every query including ones that must succeed, so outbound port 53 is closed here. **That bounds
+  the claim**, and it is the honest form of it: this is a fact about this environment's DNS path to
+  one zone, and it is **not** evidence that either host would refuse a GET.
+
+**So the record's "answered nothing" is withdrawn as a statement about those hosts** and replaced by
+the measurement above, dated. It is the same class as finding 4 one layer down — a probe reporting a
+property of itself as a property of its target — and it was invisible for the same reason: a
+uniformly failing route makes "refused" true.
+
+**What that does to park 9, stated exactly.** Its blocker is unchanged in kind and smaller in
+extent: **one throttled route, not three refusing hosts.** The park's premise is untouched — ST
+1402.2 is a public download, the artefact half is prose, and no credential is involved — so the
+stop rule about a contradicted premise did not engage. The park closes on bytes alone the moment
+`web.archive.org` answers 200, and whether the two official routes would serve it is a question this
+environment cannot ask. **No mirror was improvised**, per the standing rule.
+
 #### Act 2 — what the three narrowings cost, and the one that changes character
 
 **KLV 17 and KLV 16 narrow within their own terms.** Neither was resolvable from what was held when
