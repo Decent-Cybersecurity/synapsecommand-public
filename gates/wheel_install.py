@@ -115,6 +115,7 @@ PACKAGE_ONLY_TESTS = (
 #: is what stops a module drifting in here because it was easier than making it installable.
 REPO_BOUND_TESTS = {
     "test_cdm_boundary.py": "AST over the package sources as files in the tree",
+    "test_cdm_bump_derivation.py": "gates/bump_derivation.py, release tags and git blobs",
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
     "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",

@@ -54,9 +54,18 @@ reverse does not hold, and most releases will change no schema at all.
 
 ### What a release requires
 
-Four conditions, none of them satisfiable by assertion. The **Actor** column is who or what checks
-each one, and it changed this round: three of the four now have a machine in it, and the fourth
-says so rather than pretending otherwise.
+Five conditions, none of them satisfiable by assertion. The **Actor** column is who or what checks
+each one. Four of the five now have a machine in it, and the one that does not says so rather than
+pretending otherwise.
+
+**Condition 5 was added after the release that needed it.** The 1.2.1 round was specified as
+**1.3.0** and renumbered itself from the diff — the ruling is `PUBLICATION.md` entry 10 — and the
+four conditions above were all satisfied by 1.3.0. Each of them checks that a number is stated
+*consistently*: the tag names the tree's `PACKAGE_VERSION`, the notes describe that version, the
+package source that moved is written down. None of them asks whether the number is the RIGHT one.
+A version number is the one claim in a release that can never be corrected — a PyPI filename is
+permanent — and until this condition existed it was the only claim in a release with no machine
+behind it.
 
 | # | Condition | Actor |
 | --- | --- | --- |
@@ -64,6 +73,7 @@ says so rather than pretending otherwise.
 | 2 | the harnesses are green, one against the installed wheel | the workflow |
 | 3 | the tag names its tree's `PACKAGE_VERSION` | the workflow, and it knows the tag |
 | 4 | the notes are derived, not remembered | **a person.** The workflow prints the derivations |
+| 5 | the number is derived from the packaged diff | `gates/bump_derivation.py`, in the suite |
 
 1. **The suite is green**, from the repository root, with the count recorded in the commit.
    `.github/workflows/publish.yml` runs it. Note that a CI green is not identical to a
@@ -89,6 +99,32 @@ says so rather than pretending otherwise.
    and the workflow cannot take it: "derived" is a claim about what the writer read, and a
    generated file does not satisfy it. What the workflow does is print all three derivations into
    the run summary, so the notes are copied off a run rather than recalled.
+5. **The number is derived from the packaged diff, not from the brief.**
+   `gates/bump_derivation.py` classifies the diff over the distribution's own contents between the
+   previous tag and the tree being released, against `version.py`'s `PACKAGE_VERSION` table, and
+   refuses a number that **exceeds** or **undershoots** what the diff proves. It is a suite member
+   as well as a command — it needs git and nothing else, no network and no credential — so unlike
+   conditions 1 through 3 it does not wait for a tag. Run it before typing a number:
+
+   ```bash
+   python gates/bump_derivation.py --mutation-check
+   ```
+
+   **Where the table needs judgment the gate refuses rather than guessing.** Its PATCH row ("a
+   translation fix, a message, a docstring. No surface change") and its MAJOR row ("an importable
+   name is removed or its **meaning** changes") both reach a function whose body moved and whose
+   name did not, and no diff separates them — "the meaning changed" is a claim about intent. The
+   gate names the unit and stops. A person then rules it, in this file, in the section describing
+   the arc, as `**Bump ruling.** ` followed by the unit in backticks, a dash, and the category:
+
+   ```
+   **Bump ruling.** `synapse_cdm/harness.py:main` — PATCH: the wording of a refusal message.
+   ```
+
+   The gate reads those and refuses a ruling that outlives its case, so the mechanism cannot decay
+   into a list of exemptions nobody re-derives. **Retroactively, it derives the number every one of
+   this package's releases actually shipped** — 1.1.0 and 1.2.0 as MINOR, 1.2.1 as PATCH — having
+   been told none of them; `tests/test_cdm_bump_derivation.py` asserts that over the tags.
 
 ### The sequence
 
@@ -169,6 +205,44 @@ Three things are still deliberately a person's:
 measured off the index afterwards, and which step of it did not run.
 
 ## History
+
+### Unreleased
+
+**Nothing here is in any release.** The distribution on the index is **1.2.1**, and a reader who
+ran `pip install synapse-cdm` does not have what this section describes.
+
+**What moved inside the distribution: this file, and nothing else.** No adapter, no harness flag or
+check, no fixture set, no dependency, no importable name — so the arc since `v1.2.1` derives
+**PATCH** and the next release is at least **1.2.2**.
+
+**A fifth release condition exists, and the thing that enforces it ships nothing.**
+`gates/bump_derivation.py` classifies the diff over the distribution's contents between the
+previous tag and the tree being released against this document's `PACKAGE_VERSION` table, and
+refuses a number that exceeds or undershoots it. The gate is repository infrastructure —
+`pyproject.toml`'s "DOES NOT SHIP" list names `gates/` in as many words — so a consumer installing
+the next release receives none of it. It is recorded here because condition 5 is now part of the
+procedure a release follows, which is a fact about this document rather than about the wheel.
+
+**THE ROUND THAT BUILT THE GATE EXPECTED IT TO RULE ITSELF A MINOR, AND THE TABLE DOES NOT AGREE.**
+The expectation was that "a new gate is a MINOR per the table", on the MINOR row's "a harness flag
+or **check** is added". It is not: the harness is `synapse_cdm/harness.py`, the shipped `cdm-harness`
+CLI, and its checks are the six `_check_*` functions inside it — all of which a consumer runs.
+`gates/bump_derivation.py` is none of those things and is not in the sdist or the wheel.
+`PACKAGE_VERSION` is defined in `version.py` as "ordinary semver over the Python surface: the
+importable names, the `Adapter` contract, the harness CLI and its exit codes, the fixture set", and
+this round moves no member of that list. **So the expectation is refuted by the table it appealed
+to, and the derived answer is PATCH.** It is recorded here, with its derivation, because the round
+that built the gate asked for its expectation to be written down so the next release round could
+check the gate against it — and what the next round will find is that the gate refuses the
+expectation rather than confirming it. Run
+`python gates/bump_derivation.py` to see the same verdict off the tree.
+
+**And the arc would be NONE without this file.** The only distribution member this round touches is
+`MIGRATIONS.md` itself, so the PATCH floor rests entirely on a shipped document moving. Had the
+round written its record only in `PUBLICATION.md` — which does not ship — the gate would have
+derived **NONE**, and the correct next release would have been no release at all. That is the
+distinction `PACKAGE_VERSION` exists to make and it is worth seeing it land on a round this large.
+
 
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 

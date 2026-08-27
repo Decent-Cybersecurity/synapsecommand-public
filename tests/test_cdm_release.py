@@ -167,11 +167,18 @@ def test_the_newest_tag_is_not_ahead_of_the_working_trees_package_version():
 # ----------------------------------------------------------------------- the written procedure
 
 
-def test_the_release_procedure_is_written_down_and_states_its_four_conditions():
+def test_the_release_procedure_is_written_down_and_states_its_five_conditions():
     """Recorded so the SECOND release follows a procedure rather than the first one's memory.
 
-    Anchored on the four conditions rather than on the heading alone, because a section that
-    survives as a heading with its requirements edited out is the failure this is written against.
+    Anchored on the conditions rather than on the heading alone, because a section that survives as
+    a heading with its requirements edited out is the failure this is written against.
+
+    **Condition 5 arrived after the release that needed it, and this test's name moved with it.**
+    Every one of the first four is satisfied by any number typed consistently — the tag names the
+    tree's `PACKAGE_VERSION`, the notes describe that version, the moved source is written down —
+    and none of them asks whether the number is the RIGHT one. The 1.2.1 round was specified as
+    1.3.0 over an arc that changed no executable line, and this module would have passed it.
+    `gates/bump_derivation.py` is condition 5, and `tests/test_cdm_bump_derivation.py` holds it.
     """
     text = MIGRATIONS.read_text()
     assert "## Releasing the package — the procedure" in text, (
@@ -187,6 +194,9 @@ def test_the_release_procedure_is_written_down_and_states_its_four_conditions():
             ("gates/wheel_install.py", "the gate that makes condition 2 checkable"),
             ("names the package version of the tree it points at", "condition 3: the tag"),
             ("derived, not remembered", "condition 4: the notes"),
+            ("gates/bump_derivation.py", "condition 5: the number, derived from the diff"),
+            ("exceeds", "condition 5's refusal of a number the diff does not support"),
+            ("Bump ruling", "the exit condition 5 leaves for the judgment it cannot make"),
             ("annotated", "the tag is annotated and not lightweight")):
         assert fragment in section, (
             f"the release procedure no longer states {why} (looked for {fragment!r}). A procedure "
