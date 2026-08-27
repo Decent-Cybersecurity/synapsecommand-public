@@ -582,6 +582,93 @@ console scripts working. The GitHub release for `v1.1.0` carries the notes and b
 | — a tag published through the workflow | **done** | run 32944124955, digests above |
 | C — the 1.0.0 API token revoked | **NOT DONE** | only the maintainer |
 
+#### 1.2.0, verified from the index — and the digest comparison nobody had run for it
+
+`synapse-cdm` **1.2.0** was published on **2026-08-26** by
+[run 33023449211](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/33023449211),
+triggered by the `v1.2.0` tag. Both jobs succeeded. This block is the **re-verification**, run on
+2026-08-27 in an environment with no clone on its path, and it exists because the digest comparison
+below had not been made for this release — 1.0.0 and 1.1.0 each carry one and 1.2.0 did not.
+
+**Installed from the index, not from the local wheel.** A fresh virtualenv, `pip install
+synapse-cdm==1.2.0` with `--no-cache-dir`, resolving only the declared dependency surface —
+`pydantic`, `jsonschema` and their transitive closure, nothing else. Read back from the installed
+copy in `site-packages`:
+
+| | |
+| --- | --- |
+| `PACKAGE_VERSION` | `1.2.0`, and `Version:` in the installed `METADATA` agrees |
+| `SCHEMA_VERSION` | `1.0.0` — unmoved, which is the claim the release was made to test |
+| `--list-adapters` | **13 adapters**, `stanag4609` among them at `1.0.0`, fixtures resolving to `klv` |
+| harness | `--adapter stanag4609` against the installed copy: **20 passed, 0 failed**, fixtures resolved from `site-packages/synapse_cdm/fixtures/klv` |
+
+The SKIPs in that run are the expected binary-adapter pattern and not a shortfall: `lossless` skips
+on a raw `.klv` fixture and runs — and passes — on each `.parsed.json` sibling, and `roundtrip`
+skips wherever `from_cdm()` returns bytes the check cannot parse as JSON. **The second of those is
+now a register entry** rather than a footnote; see below.
+
+**The digests, which is the comparison this block was written for.** Three readings of the same two
+files: what the gated job hashed before handing them over, what the publish job hashed immediately
+before uploading, and what the index serves now — the last read back from
+`https://pypi.org/pypi/synapse-cdm/1.2.0/json` **and** recomputed over the downloaded bytes rather
+than trusted from the API.
+
+```
+3d3810f2c54b2c66458e4f0a1fa006ba2dafea97a0e2bff5e4feca293b74227c  synapse_cdm-1.2.0-py3-none-any.whl
+30a7960d9e19017b56ba6e492ccb9806fdce9a43b96c4292dc45706f667af43a  synapse_cdm-1.2.0.tar.gz
+```
+
+**All three readings agree, and the sizes agree with them** — 3 738 692 bytes for the wheel and
+1 920 469 for the sdist, identical in the gate's own `ls -l`, in PyPI's metadata, and in the files
+downloaded from the index. The handover between the two jobs is separately hashed and separately
+equal: the gate uploaded artefact `b614be97034d96c1b387d4dc6a8ee3b7d10a85aef335460191bf070d0d9c188d`
+and the publish job recorded the same digest on download. The attestations name the same two
+SHA-256 values in their in-toto subjects. That is the `--export-dist` chain closed for a third
+release: one build, gated as that build, uploaded as those bytes, served as those bytes.
+
+**The `v1.2.0` push carried fifteen commits to the remote at once, and it was their first time
+there.** The last recorded push to `main` left it at `d2c1eb9`, and `d2c1eb9..8a382b1` is exactly
+the fifteen commits of the KLV arc — the profile pin, the four park closures, the two guard rounds
+and the release commit. So the whole arc reached the remote in the same push that triggered the
+publish, and the gate saw all fifteen for the first time on the run that shipped them. Nothing was
+wrong with that and it is recorded because it is unusual: the failure mode it invites is a review
+surface fifteen commits deep arriving at the moment of least appetite for reading it, and the gate
+is the only thing that read them.
+
+**A KNOWN DEFECT IN THE PUBLISHED ARTEFACTS, recorded rather than re-released.** The adapter count
+disagreed with itself at seven sites in the tree, and four of those sentences were **inside** the
+files on the index:
+
+| Artefact | File | What it says |
+| --- | --- | --- |
+| wheel **and** sdist | `synapse_cdm/MIGRATIONS.md` | release condition 2, reading `All twelve harnesses are green` |
+| wheel **and** sdist | `synapse_cdm/adapter.py` | the `fixture_dir` note, reading `eleven of the twelve shipped adapters — stanag4676 … is the only one` |
+| sdist only | `pyproject.toml` | twice: `twelve adapters shipped and harness-verified`, and the SHIPS list's `the harness, twelve adapters` |
+
+**The long description is not among them, and neither is the root `README.md`.** `pyproject.toml`
+points `readme` at `synapse_cdm/README.md`, whose count was repaired in the 1.2.0 round itself, so
+the page a stranger reads on PyPI says thirteen. The root `README.md` — where the disjunction was
+found, saying thirteen in its intro and twelve under Using it — is packaged in neither artefact.
+This was determined by reading the downloaded `.whl` and `.tar.gz`, not by reasoning about what
+`pyproject.toml` includes.
+
+**Why this is not a reason to re-release.** All four are prose, in two Python comments and one
+packaged document; nothing executable reads any of them, no model, schema, adapter, fixture or
+version constant is affected, and every functional claim above was verified against these exact
+bytes. A filename on PyPI can never be reused, so correcting them means a new version number for a
+comment — and `SCHEMA_VERSION` and `PACKAGE_VERSION` both staying put is the thing 1.2.0 exists to
+demonstrate. They are repaired in the tree, recorded here against the artefact that carries them,
+and they will ship corrected in whatever release comes next. The correction is in `MIGRATIONS.md`'s
+Unreleased section, which is where a reader who installed 1.2.0 is told what their copy does not
+have.
+
+**And the guard that should have caught them is now a different kind of guard.** The one this
+missed with was an allowlist built out of repairs — every row a place a count had once gone
+wrong — so it had exactly the coverage its own history bought it, and seven sites sat outside it
+at HEAD through a round whose subject was that count. `tests/test_cdm_prose_counts.py` now derives
+the roster once and sweeps `git ls-files`, ruling every site it collects by comparison. Its
+recorded debt since 1.1.0 was that a discovery sweep "is not written"; it is written.
+
 #### Step C — done. The token is revoked, not merely unused
 
 **Revoked on 2026-08-26**, at `pypi.org` → Account settings → API tokens, by the maintainer, after

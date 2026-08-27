@@ -58,9 +58,17 @@ class Adapter(ABC):
 
     #: The directory under `synapse_cdm/fixtures/` holding this adapter's fixtures, when it is
     #: NOT the adapter's own name. Left None means "the same string as `name`", which is true of
-    #: eleven of the twelve shipped adapters — `stanag4676`, whose fixtures are in
-    #: `fixtures/nits`, is the only one where the two differ today, and the split below is the
-    #: reason rather than an accident.
+    #: eleven of the thirteen shipped adapters — `stanag4676`, whose fixtures are in
+    #: `fixtures/nits`, and `stanag4609`, whose fixtures are in `fixtures/klv`, are the two where
+    #: the name and the directory differ today, and the split below is the reason rather than an
+    #: accident.
+    #:
+    #: THE SECOND ONE ARRIVED WITHOUT MOVING THE FIRST HALF OF THIS SENTENCE. `stanag4609` shipped
+    #: in 1.2.0 declaring `fixture_dir = "klv"`, which took the divergent set from one adapter to
+    #: two while the roster went twelve to thirteen — so "eleven of" stayed arithmetically correct
+    #: and "is the only one" went false, in one sentence, with nothing reading either half. Both
+    #: halves are derived now: see `test_the_divergent_fixture_dirs_are_what_the_registry_declares`
+    #: in `tests/test_cdm_prose_counts.py`, which reads the registry rather than this comment.
     #:
     #: WHY THIS IS DECLARED BY THE ADAPTER AND NOT LOOKED UP BY THE HARNESS
     #: -------------------------------------------------------------------

@@ -14,7 +14,7 @@ It is deliberately **not** a general prose-number scanner. A scanner over every 
 word "adapter" would flag "two altitudes that are two different measurements" and "three
 translations, nine rotations" and a dozen more, and the maintenance cost of its exemption list
 would exceed the cost of the sweep it replaced. **The sweep stays a manual protocol act** —
-see `packages/cdm/synapse_cdm/README.md`, "Three things the harness cannot check for you" — and
+see `packages/cdm/synapse_cdm/README.md`, "Four things the harness cannot check for you" — and
 this module pins only the sites the sweep has ALREADY had to fix. Its job is narrow and worth
 stating plainly: the next half-edit at a known site fails a build instead of waiting for
 somebody to grep.
@@ -373,7 +373,7 @@ CHECK_SITES: tuple[tuple[str, str], ...] = (
     ("packages/cdm/synapse_cdm/README.md",
      r"(?P<n>[A-Z][a-z]+) checks per fixture, and an unrun"),
     ("packages/cdm/synapse_cdm/README.md",
-     r"None of the three is something the (?P<n>[a-z]+) checks"),
+     r"None of them is something the (?P<n>[a-z]+) checks"),
     ("packages/cdm/synapse_cdm/harness.py",
      r"applies the same (?P<n>[a-z]+) checks to all of them"),
     ("packages/cdm/synapse_cdm/harness.py", r"THE (?P<n>[A-Z]+) CHECKS, AND WHY EACH ONE"),
@@ -1163,6 +1163,19 @@ PKG_README_SITES: tuple[ReadmeSite, ...] = (
             "unordered": lambda: pairs(_roster()),
         },
     ),
+    # The fourth register entry's reach: every adapter that declares an egress direction, which
+    # is what makes `roundtrip` reachable at all. The number is the whole point of the entry — a
+    # wheel-only conformance claim is short by exactly this many adapters — and it moves on the
+    # next adapter like any roster count, so it is derived rather than written.
+    ReadmeSite(
+        "the fourth register entry's count of adapters with an egress direction",
+        r"affected — (?P<n>[a-z]+) of the (?P<roster>[a-z]+) shipped adapters, every one of which",
+        {
+            "n": lambda: len([c for c in shipped_adapters().values()
+                              if c.direction != "ingest"]),
+            "roster": _roster,
+        },
+    ),
     # How many documents the allowlist above covers, stated in the paragraph that introduces it.
     # Derived from `SITES` itself, so widening the allowlist moves the prose or fails.
     ReadmeSite(
@@ -1544,3 +1557,430 @@ def test_the_roster_table_and_the_shipped_adapter_sentence_agree():
         f"{PKG_README_PATH} says {match.group('n')!r} integration adapters are shipped and its "
         f"own table three lines later has {len(tabled)} rows"
     )
+
+
+# ==================== the adapter count over the WHOLE INDEX, which is the recorded debt closed
+#
+# THE DEBT, IN THE WORDS IT WAS RECORDED IN. `test_the_allowlist_covers_every_site_the_sweep_had_
+# to_fix` says: "A discovery sweep would close this: scan the tree for a spelled number adjacent to
+# 'adapter', and require each hit to be in the allowlist, to name its subset, or to equal the
+# registry. It is not written." This section writes it.
+#
+# WHAT MADE IT WORTH WRITING NOW, WHICH IS A MISS AND NOT A TIDY-UP. The 1.2.0 round repaired the
+# adapter count in `packages/cdm/synapse_cdm/README.md` and in `PUBLICATION.md` and guarded both.
+# The ROOT `README.md` shipped that same round saying "Thirteen integration adapters are shipped"
+# in its intro and "the twelve shipped adapters" under Using it — one file, one fact, two numbers,
+# live at HEAD. Six more sites were in the same state and nothing was looking at any of them:
+# `docs/docs/intro.mdx`, `packages/cdm/pyproject.toml` twice, `synapse_cdm/MIGRATIONS.md`'s release
+# condition 2, `synapse_cdm/adapter.py`, and — a roster away — `tests/test_cdm_pins.py`'s floor.
+#
+# The finding is the shape of the miss rather than any one of those numbers: **last round's guards
+# covered the sites that had FAILED, not the fact.** Every row in `SITES` is a place a count once
+# went wrong. A fact is not a list of places, and a guard built by repair has exactly the coverage
+# its repair history bought it — which is why the seven sites above could sit at HEAD, in files the
+# release ships, through a round whose subject was this very count.
+#
+# HOW THIS DIFFERS FROM EVERY ALLOWLIST ABOVE. It does not enumerate sites. It derives the roster
+# ONCE, sweeps `git ls-files`, and rules every hit by comparison: a hit that STATES the roster
+# count needs no row and can never go stale silently, because the next adapter fails it. Only a hit
+# that states something else needs a row, and `TREE_EXEMPT` is therefore bounded by the number of
+# NON-roster adapter counts in the tree rather than by the number of adapter counts — which is what
+# keeps the exemption list from becoming the restatement the module header refuses.
+#
+# THE TWO NARROWINGS, BOTH MEASURED RATHER THAN ASSERTED
+# ------------------------------------------------------
+# 1. GRAMMAR. A number qualifying `adapters` or `harnesses`, with at most two words between. That
+#    is `COUNTED_NOUN`'s discipline widened by the adjectives this fact is actually written with —
+#    "twelve SHIPPED adapters", "thirteen INTEGRATION adapters" — and `harnesses` is here because
+#    the count escaped through that word once already: `MIGRATIONS.md`'s release condition 2 said
+#    "all ten harnesses" while twelve adapters shipped, and the by-name patterns could not see it.
+# 2. MAGNITUDE. `ROSTER_FLOOR`. Below it the sweep does not look, and the ground is a measurement
+#    over this tree: numbers under five qualifying `adapters` are relational without exception —
+#    "two adapters agree", "one adapter's bug", "three adapters map FAKER" — and the roster has
+#    never been stated below five, the lowest being `__init__.py`'s repaired "five adapters means
+#    ten translations". A floor is a gap and this one is named rather than implied: a roster of
+#    four would be invisible here, and a roster of four is a tree with nine adapters deleted.
+#
+# TWO FILES ARE OUT OF THE SWEEP AND BOTH GROUNDS ARE ALREADY WRITTEN ABOVE, not invented here:
+# `packages/cdm/synapse_cdm/README.md` is swept file-locally by the section before this one, at a
+# finer grain than this can manage, and sweeping it twice would put one fact under two lists.
+# THIS module is excluded on the measurement its own section header states — nearly every number in
+# it is past-tense narrative or a pre-repair exhibit, so a sweep of it would be an exemption list
+# almost as long as the file. That gap stays open, and it stays recorded where it was recorded.
+
+#: The lowest number this sweep will look at. See narrowing 2 above.
+ROSTER_FLOOR = 5
+
+#: A number qualifying the roster's noun, spelled or in digits. See narrowing 1 above.
+ROSTER_COUNT = re.compile(
+    rf"(?<![\w-])(?P<num>{_NUMBER_WORD}|\d{{1,3}})(?:[ -][a-z]+){{0,2}}[ -](?:adapters|harnesses)"
+    r"(?![\w])",
+    re.I,
+)
+
+#: Comment and bullet markers, stripped before flattening so a pattern is anchored to the sentence
+#: rather than to where its comment block happens to wrap. `unwrapped()`'s reasoning, generalised
+#: past `.toml` because this sweep reads `.py`, `.mjs` and `.md` in the same pass. `\*` requires a
+#: following space so a markdown bold marker (`**Eight adapters`) is left alone.
+COMMENT_MARKER = re.compile(r"(?m)^[ \t]*(?:#:|#|//|\*(?= ))[ \t]?")
+
+#: Swept elsewhere, at a finer grain or not at all. Grounds in the section header above.
+SWEEP_EXCLUDED = {
+    "packages/cdm/synapse_cdm/README.md": "swept file-locally by PKG_README_SITES above",
+    "tests/test_cdm_prose_counts.py": "ruled out by this module's own SELF_SITES header, on a "
+                                      "measurement rather than an unwillingness",
+}
+
+#: Every adapter count in the tree that is NOT the roster, quoted as it stands with its ground.
+#: A row here is a claim that the number means something other than "how many adapters ship", and
+#: the grounds are the ones this module already rules on: a NAMED SUBSET, PAST-TENSE NARRATIVE
+#: about a specific round or run, a VERBATIM QUOTATION of pre-repair or past output, or a count
+#: PINNED BY ANOTHER SECTION of this module — which is a cross-reference, not a second guard.
+TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
+    # --- named subsets: a count of something narrower than the roster, and it says which ---
+    ("PUBLICATION.md", "**Ten adapters, 298 fixture verdicts, 0 failed.**",
+     "named subset — the roster OF 1.0.0, measured off the index. MIGRATIONS.md's stale-count "
+     "sweep ruled explicitly that updating it would falsify the record"),
+    ("PUBLICATION.md", "ten adapters, 298 fixture verdicts, the roster OF 1.0.0",
+     "the same measurement, quoted one block later and carrying its own subset marker"),
+    ("PUBLICATION.md", "12 adapters, 776 fixture verdicts",
+     "the gated job's own output for the 1.1.0 run, transcribed. A record of what a run printed"),
+    ("PUBLICATION.md", "all **twelve adapters replayed from the packaged fixtures — 388",
+     "the 1.1.0 install measurement, which is a fact about 1.1.0 and not about the tree"),
+    ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "unanimous across five ASTERIX adapters",
+     "named subset — the ASTERIX categories, not the roster"),
+    ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "**Eight adapters, eleven private keys.**",
+     "named subset — gap 1's tally of adapters inventing a private key, derived from the table "
+     "three lines above it"),
+    ("tests/test_cdm_pins.py", "this repository has pinned standards for seven adapters",
+     "named subset — adapters with a pinned specification on disk. It moved six to seven when "
+     "`stanag4609` shipped into `fixtures/klv/spec/`, which is how it reached this list"),
+    ("packages/cdm/synapse_cdm/adapters/stanag4676.py",
+     "one airframe seen by five adapters derives one entity_id",
+     "named subset, and pinned by ICAO24_SITES above — the adapters sharing that namespace"),
+    ("tests/test_cdm_ordinals.py", "fewer than eight distinct adapters were bound anywhere",
+     "a FLOOR on a sweep's own coverage, not a count of the roster"),
+    # --- pinned by another section of this module: cross-references, not second guards ---
+    ("docs/docs/changelog.mdx", "twelve adapters have shipped so far",
+     "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
+    ("packages/cdm/synapse_cdm/version.py", "entries — twelve adapters, each of which",
+     "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
+    ("tests/test_cdm_changelog_claim.py", "\"Twelve adapters landed with no schema change",
+     "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
+    ("tests/test_cdm_packaging.py", "MIGRATIONS.md already lists twelve adapters that shipped",
+     "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
+    # --- past-tense narrative about a named round, run or defect ---
+    ("gates/wheel_install.py", "it replayed ten adapters out of twelve and printed the ten",
+     "past-tense narrative about the defect this loop was rewritten to prevent"),
+    ("packages/cdm/pyproject.toml", "every raw ASTERIX data block for two of the ten adapters",
+     "past-tense narrative about the package-data defect, at the roster of the round that had it"),
+    ("tests/test_cdm_packaging.py", "every raw ASTERIX data block for two of the ten adapters.",
+     "the same narrative, in the module that gates what that defect broke"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "replayed ten of twelve adapters and reported the",
+     "past-tense narrative about the written-down roster the gate replaced"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "Six sites said ten or nine adapters and now say",
+     "past-tense narrative about what the adapter #11 stale-count sweep found"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "seven adapters and eight keys became **eight and",
+     "past-tense narrative about gap 1's tally moving when `cat062` landed"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "`PUBLICATION.md`'s \"Ten adapters, 298 fixture",
+     "quotation of PUBLICATION.md's named subset, in the sweep note that ruled it exempt"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "and `harness.py`'s \"nine adapters\" are "
+                                               "descriptions of things that happened",
+     "quotation of a past-tense narrative, and the sentence that rules it one"),
+    ("packages/cdm/synapse_cdm/harness.py", "a gate sweep over all nine adapters reported nine",
+     "past-tense narrative about the vacuous-run defect `NoFixturesFound` was written for"),
+    ("packages/cdm/synapse_cdm/adapters/stanag4676.py",
+     "a gate sweep over nine adapters reporting nine greens",
+     "the same narrative, at the adapter it happened to"),
+    ("tests/test_cdm_gate_rosters.py", "replayed ten of the twelve adapters and printed",
+     "past-tense narrative about the two roster checks disagreeing on one run"),
+    ("tests/test_cdm_gate_rosters.py", "reported ten of twelve adapters as a green run",
+     "the same narrative, in the assertion message that argues it to whoever broke the rule"),
+    # --- verbatim quotations of pre-repair bytes or of a run's own output ---
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "\"nine of the ten shipped adapters\" (now eleven",
+     "verbatim quotation of pre-repair bytes in `adapter.py`, with the repair beside it"),
+    ("gates/wheel_install.py", "`12 adapters resolved, expected 10`",
+     "verbatim quotation of what the gate printed on the run that failed both ways"),
+    ("gates/wheel_install.py", "`10 adapters x 2 schema modes, 596 fixture verdicts, 0 failed`",
+     "verbatim quotation of the PASS line printed over a run that never touched two adapters"),
+    ("tests/test_cdm_gate_rosters.py", "said `12 adapters resolved, expected 10`",
+     "the same quotation, in the module that gates against its recurrence"),
+    ("tests/test_cdm_gate_rosters.py", "printed `10 adapters x 2 schema modes, 596 fixture",
+     "the same quotation, in the module that gates against its recurrence"),
+    ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "read \"seven adapters and eight private keys\"",
+     "verbatim quotation of gap 1's previous tally, correct until `cat062` landed"),
+    ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "read \"five adapters and six private keys\"",
+     "verbatim quotation of the tally before that, and of the undercount it carried"),
+    # --- the ledger's exhibits: the four sentences that shipped INSIDE the 1.2.0 artefacts ---
+    ("PUBLICATION.md", "release condition 2, reading `All twelve harnesses are green`",
+     "verbatim quotation of what the published 1.2.0 wheel and sdist carry, recorded as a known "
+     "defect against that artefact; repaired in the tree, see TREE_PRE_REPAIR"),
+    ("PUBLICATION.md",
+     "reading `eleven of the twelve shipped adapters — stanag4676 … is the only one`",
+     "verbatim quotation of what the published 1.2.0 artefacts carry; see TREE_PRE_REPAIR"),
+    ("PUBLICATION.md",
+     "twice: `twelve adapters shipped and harness-verified`, and the SHIPS list's `the harness, "
+     "twelve adapters`",
+     "verbatim quotation of what the published 1.2.0 sdist carries; see TREE_PRE_REPAIR"),
+    # --- the Unreleased section's exhibits: bytes this commit repaired, quoted as they stood ---
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md", "\"the twelve shipped adapters\" under Using it",
+     "verbatim quotation of pre-repair bytes in the root `README.md`; see TREE_PRE_REPAIR"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "condition 2 (\"all twelve harnesses\", and the \"thirteenth adapter\" it hangs on",
+     "verbatim quotation of pre-repair bytes in this same file; see TREE_PRE_REPAIR"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "\"pinned standards for six adapters\" became seven",
+     "verbatim quotation of pre-repair bytes in `tests/test_cdm_pins.py`; see TREE_PRE_REPAIR"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "left unset by \"eleven of the twelve shipped adapters — `stanag4676` … is the only one",
+     "verbatim quotation of pre-repair bytes in `adapter.py`; see TREE_PRE_REPAIR"),
+)
+
+#: Pre-repair bytes quoted somewhere in the tree, and the file each was repaired in. Same
+#: discipline as `PRE_REPAIR_QUOTATIONS` and `PKG_README_PRE_REPAIR` above — an exhibit is exempt
+#: only while it is genuinely overtaken — stated as a rule that also holds when the quoting file
+#: and the repaired file are the SAME one, which is the case those two lists never had to meet.
+TREE_PRE_REPAIR: tuple[tuple[str, str], ...] = (
+    ("the twelve shipped adapters", "README.md"),
+    ("all twelve harnesses", "packages/cdm/synapse_cdm/MIGRATIONS.md"),
+    ("pinned standards for six adapters", "tests/test_cdm_pins.py"),
+    ("eleven of the twelve shipped adapters", "packages/cdm/synapse_cdm/adapter.py"),
+    ("twelve adapters shipped and harness-verified", "packages/cdm/pyproject.toml"),
+    ("the harness, twelve adapters", "packages/cdm/pyproject.toml"),
+)
+
+
+@pytest.mark.parametrize("phrase,path", TREE_PRE_REPAIR,
+                         ids=[f"{p.rsplit('/', 1)[-1]}::{i}"
+                              for i, (_q, p) in enumerate(TREE_PRE_REPAIR)])
+def test_the_trees_pre_repair_quotations_are_still_quotations_of_repaired_bytes(phrase, path):
+    """The exhibits, checked so that none can quietly become a live claim again.
+
+    The rule is stated once and covers both cases: every occurrence of the pre-repair phrase in the
+    file it was repaired in must lie INSIDE a span this module exempts as a quotation. For a
+    cross-file exhibit that means zero occurrences, which is what the two lists above assert. For a
+    file that quotes its own repaired bytes — `MIGRATIONS.md`'s Unreleased section quoting release
+    condition 2 — it means the only occurrence left is the quotation itself, which a bare absence
+    check would call a failure and a bare presence check would call a pass either way.
+    """
+    file = REPO / path
+    assert file.exists(), f"{path} does not exist; this exemption is stale"
+    text = flat(COMMENT_MARKER.sub("", file.read_text(encoding="utf-8", errors="replace")))
+    exempt = [m.span() for site, quotation, _g in TREE_EXEMPT if site == path
+              for m in re.finditer(re.escape(quotation), text)]
+    live = [m.span() for m in re.finditer(re.escape(phrase), text)
+            if not any(lo <= m.start() and m.end() <= hi for lo, hi in exempt)]
+    assert not live, (
+        f"{path} contains {phrase!r} at {len(live)} place(s) outside any quotation this module "
+        "exempts, and TREE_EXEMPT quotes it as bytes that were REPAIRED. Either the repair was "
+        "reverted, or an exhibit has become a live claim wearing an exemption written for a "
+        "historical one"
+    )
+
+
+def swept_files() -> list[tuple[str, str]]:
+    """`(path, normalised text)` for every tracked text file this sweep reads.
+
+    The file set is `tracked_text_files()` — the git index, with no extension list in it, for the
+    reason rule 8's section gives: an extension list is a second derivation, and a second
+    derivation is a thing to be wrong. Two paths are dropped, each on a ground in `SWEEP_EXCLUDED`.
+    """
+    out = []
+    for path in tracked_text_files():
+        name = str(path.relative_to(REPO))
+        if name in SWEEP_EXCLUDED:
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        out.append((name, flat(COMMENT_MARKER.sub("", text))))
+    return out
+
+
+def test_the_sweeps_exclusions_are_two_files_that_exist_and_are_covered_elsewhere():
+    """The exclusion list, before anything is swept with it.
+
+    An exclusion is the one kind of row that makes a sweep report clean by looking away, so it is
+    checked in both directions the module checks every other list: the file has to exist, and the
+    ground has to be written down. `packages/cdm/synapse_cdm/README.md` must additionally still be
+    swept by the section above — an exclusion pointing at a sweep that was deleted is a file
+    nothing reads at all.
+    """
+    for name, ground in SWEEP_EXCLUDED.items():
+        assert (REPO / name).exists(), f"{name} is excluded from the sweep and does not exist"
+        assert ground.strip(), f"{name} is excluded on no stated ground, which is not an exclusion"
+    assert PKG_README in SWEEP_EXCLUDED, (
+        "the package README is no longer excluded here; if the file-local sweep was retired, drop "
+        "the exclusion in the same commit rather than leaving the file swept twice"
+    )
+    assert PKG_README_SITES, (
+        f"{PKG_README} is excluded from this sweep on the ground that the section above sweeps it, "
+        "and that section now pins nothing. One of the two has to read the file"
+    )
+
+
+def test_the_floor_is_low_enough_to_see_a_roster_that_has_gone_stale():
+    """The floor's own gate, so it cannot quietly rise past the fact it is filtering for.
+
+    A floor at or above the roster would hide every stale statement of it — the previous roster
+    value is what a stale site says, and the previous roster value is always below today's. This
+    is the assertion that turns "five is low enough" from a claim in a comment into a check.
+    """
+    shipped = len(shipped_adapters())
+    assert ROSTER_FLOOR < shipped, (
+        f"the sweep ignores numbers below {ROSTER_FLOOR} and the roster is {shipped}. A floor that "
+        "reaches the roster hides exactly the sites this sweep exists to find — every stale one "
+        "states a number smaller than today's"
+    )
+    assert ROSTER_FLOOR >= 2, (
+        "a floor below two makes 'one adapter' a hit, and 'one adapter's bug' is a referent rather "
+        "than a count. The exemption list would then be the tree"
+    )
+
+
+@pytest.mark.parametrize("path,quotation,ground", TREE_EXEMPT,
+                         ids=[f"{p.rsplit('/', 1)[-1]}::{i}"
+                              for i, (p, _q, _g) in enumerate(TREE_EXEMPT)])
+def test_every_tree_exemption_still_points_at_prose_that_is_there(path, quotation, ground):
+    """An exemption covering no site reads as a live ruling, which is the failure every closure
+    in this module refuses in its own direction.
+
+    Checked per row so the failure names the row, and checked against the SAME normalisation the
+    sweep uses — a quotation that matches the raw bytes but not the flattened text would exempt
+    nothing while looking like it did.
+    """
+    assert ground.strip(), f"{path}: {quotation!r} is exempt on no stated ground"
+    file = REPO / path
+    assert file.exists(), f"{path} does not exist; this exemption is stale"
+    text = flat(COMMENT_MARKER.sub("", file.read_text(encoding="utf-8", errors="replace")))
+    assert quotation in text, (
+        f"{path} no longer contains {quotation!r}, exempt here on the ground {ground!r}. Drop the "
+        "row with the prose; an exemption pointing at nothing reads as a ruling on a site that is "
+        "gone"
+    )
+
+
+def test_no_tracked_file_states_an_adapter_count_that_is_neither_the_roster_nor_ruled():
+    """THE SWEEP. One derivation of the roster, every collected site checked against it.
+
+    This is the check the seven stale sites of the 1.2.0 round would have failed. It needs no row
+    per site and gains none when a site is repaired: a sentence that says the roster count is
+    correct by comparison, today and after the next adapter, and nothing here has to know it
+    exists. What needs a row is a number that is NOT the roster, and `TREE_EXEMPT` is that list.
+
+    The message quotes the file, the phrase and the surrounding sentence, because the fix is
+    usually one word and the hard part is finding which word.
+    """
+    shipped = len(shipped_adapters())
+    strays = []
+    for name, text in swept_files():
+        exempt = [span for path, quotation, _g in TREE_EXEMPT if path == name
+                  for span in (m.span() for m in re.finditer(re.escape(quotation), text))]
+        for match in ROSTER_COUNT.finditer(text):
+            word = match.group("num")
+            if stated(word) < ROSTER_FLOOR or stated(word) == shipped:
+                continue
+            if any(lo <= match.start() and match.end() <= hi for lo, hi in exempt):
+                continue
+            context = text[max(0, match.start() - 110):match.end() + 90]
+            strays.append(f"{name}: {match.group(0)!r} ({stated(word)})\n      …{context}…")
+    assert not strays, (
+        f"{len(strays)} site(s) state an adapter count that is not the {shipped} the registry "
+        "ships and that nothing here rules:\n    " + "\n    ".join(strays) + "\n"
+        "Each is one of two things. If it means the ROSTER, it is stale — fix the prose, and note "
+        "that no row is needed here afterwards, because a sentence stating the roster is checked "
+        "by comparison. If it means something else — a named subset, a past run, a quotation of "
+        "bytes that were repaired — add it to TREE_EXEMPT with the ground, which is what makes "
+        "that list short enough to read"
+    )
+
+
+def test_the_divergent_fixture_dirs_are_what_the_registry_declares():
+    """`adapter.py`'s note on `fixture_dir`, both halves, against the registry.
+
+    THE FAILURE THIS EARNED, and it is a new shape for this module. The note said "true of eleven
+    of the twelve shipped adapters — `stanag4676` … is the only one where the two differ". When
+    `stanag4609` shipped declaring `fixture_dir = "klv"`, the roster went twelve to thirteen AND
+    the divergent set went one to two — so the count "eleven" stayed arithmetically correct while
+    "is the only one" went false, in the same sentence. A count guard reads numbers; the half that
+    broke was a claim of UNIQUENESS, which has no number in it at all.
+
+    So both halves are derived here: how many declare nothing, and exactly which ones do.
+    """
+    shipped = shipped_adapters()
+    divergent = {name for name, cls in shipped.items() if cls.fixture_dir is not None}
+    same = len(shipped) - len(divergent)
+    note = flat(COMMENT_MARKER.sub("", (PKG / "adapter.py").read_text()))
+    match = re.search(
+        r"which is true of (?P<n>[a-z]+) of the (?P<roster>[a-z]+) shipped adapters — "
+        r"(?P<list>.*?), and the split below",
+        note)
+    assert match, (
+        "`adapter.py`'s fixture_dir note no longer states how many adapters leave it unset, or no "
+        "longer names the ones that do. If the sentence was rewritten, re-anchor this deliberately "
+        "— it carries both halves, and only one of them has a number in it"
+    )
+    assert spelled(match.group("n")) == same, (
+        f"`adapter.py` says {match.group('n')!r} of the adapters leave `fixture_dir` unset and "
+        f"{same} of {len(shipped)} do. Divergent: {sorted(divergent)}"
+    )
+    assert spelled(match.group("roster")) == len(shipped), (
+        f"`adapter.py` states the roster as {match.group('roster')!r} and {len(shipped)} ship"
+    )
+    # THE SET, read from the naming clause ALONE and not from the file. Reading the file would let
+    # a name mentioned anywhere else in the module satisfy this — including in the paragraph below
+    # that explains the failure — which is the check passing because of prose about the check.
+    named = {n for n in re.findall(r"`([a-z0-9_]+)`", match.group("list")) if n in shipped}
+    assert named == divergent, (
+        f"`adapter.py`'s note names {sorted(named)} as the adapters whose fixture directory is not "
+        f"their name, and the registry says {sorted(divergent)}.\n"
+        f"  matched: {match.group('list')!r}\n"
+        "This is the half that has no number in it. `stanag4609` shipped into `fixtures/klv` and "
+        "made the sentence's 'is the only one' false while its count stayed right, so the set is "
+        "compared here and not merely counted"
+    )
+
+
+#: The register heading other files quote by name. Built from a part and the word, so this module's
+#: own quotation of it — in the header, where the sweep protocol is cited — is the thing checked
+#: rather than a second copy of it.
+REGISTER_HEADING_TAIL = "things the harness cannot check for you"
+
+#: Every file that cites the register by its heading, this module included.
+REGISTER_CITERS = (
+    "packages/cdm/synapse_cdm/fixtures/klv/README.md",
+    "tests/test_cdm_prose_counts.py",
+)
+
+
+def test_every_citation_of_the_register_quotes_the_heading_that_is_there():
+    """A quotation of a heading is a restatement of it, and headings that carry a count move.
+
+    THE FAILURE THIS EARNED, in this commit. The register gained a fourth entry, its heading went
+    "Three things" to "Four things", and two files went on quoting the old one — one of them THIS
+    module, in the paragraph that cites the register as the reason the roster sweep is manual. The
+    tree sweep above could not see it: the count qualifies "things", not "adapters", and this file
+    is excluded from that sweep on a ground written above. So it is checked here, by reading the
+    heading rather than by anyone remembering to.
+    """
+    readme = (PKG / "README.md").read_text()
+    headings = re.findall(rf"^#+ (\w+) {re.escape(REGISTER_HEADING_TAIL)}$", readme, re.MULTILINE)
+    assert len(headings) == 1, (
+        f"{PKG_README} has {len(headings)} heading(s) ending {REGISTER_HEADING_TAIL!r}, expected "
+        "1. If the register was renamed, re-anchor this deliberately — the citations below quote "
+        "it by name"
+    )
+    live = f"{headings[0]} {REGISTER_HEADING_TAIL}"
+    for path in REGISTER_CITERS:
+        file = REPO / path
+        assert file.exists(), f"{path} does not exist; this citation list is stale"
+        text = file.read_text()
+        quoted = re.findall(rf"\"(\w+) {re.escape(REGISTER_HEADING_TAIL)}\"", text)
+        assert quoted, (
+            f"{path} no longer quotes the register's heading. Drop it from REGISTER_CITERS in the "
+            "same commit rather than leaving a list that checks nothing"
+        )
+        stale = sorted({q for q in quoted if f"{q} {REGISTER_HEADING_TAIL}" != live})
+        assert not stale, (
+            f"{path} quotes the register as {stale} and the heading reads {live!r}. A quotation of "
+            "a heading that carries a count is a restatement of that count, and it goes stale on "
+            "the event — a new register entry — that makes anybody read it"
+        )

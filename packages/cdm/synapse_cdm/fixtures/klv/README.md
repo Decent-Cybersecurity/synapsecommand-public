@@ -272,6 +272,6 @@ narrowed them:**
 not are still tabulated in `../../FORMAT_COVERAGE.md`: `security_local_set_present.klv` needs park 2,
 `vmti_detections.klv` needs park 6, `mismms_minimum_set.klv` needs park 12. What the ten above
 discharge is the envelope, the witnessed items, the defect classes and the refusals — and the
-round-trip trap `../../README.md` names under "Three things the harness cannot check for you",
+round-trip trap `../../README.md` names under "Four things the harness cannot check for you",
 self-consistency without an external anchor, is answered here by the documents' own worked examples
 rather than by a promise.

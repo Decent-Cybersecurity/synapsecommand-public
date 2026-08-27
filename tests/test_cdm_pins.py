@@ -575,7 +575,7 @@ def test_the_pin_set_was_actually_discovered():
     """A gate that discovered no pins would pass every check below and prove nothing.
 
     The floor is deliberately a hard number and not `>= 1`: this repository has pinned standards for
-    six adapters, and a discovery that found one of them is a broken parser rather than a small
+    seven adapters, and a discovery that found one of them is a broken parser rather than a small
     tree. The floor moves when a pin lands — 9 to 10 and four homes to five when STANAG 5527's
     covering document landed in `fixtures/fft/spec/`, then 10 to 11 and five homes to six when
     CAT034 Edition 1.29 landed in `fixtures/cat034/spec/` — and moving it is the deliberate act,

@@ -70,11 +70,11 @@ says so rather than pretending otherwise.
    maintainer's: the pinned specification documents are gitignored, so a fresh clone skips the
    tests that read them, and the workflow prints the skip list with `-rs` rather than reporting
    one number.
-2. **All twelve harnesses are green**, and at least one of them run against the INSTALLED wheel
+2. **All thirteen harnesses are green**, and at least one of them run against the INSTALLED wheel
    rather than the source tree — `gates/wheel_install.py` does both halves and is the gate this
    condition means. The workflow runs it with `--mutation-check`, so the release build also proves
    the gate can still fail. Neither the count nor the roster is written down anywhere that a
-   thirteenth adapter would not update: the gate derives it, after a written-down ten replayed ten
+   fourteenth adapter would not update: the gate derives it, after a written-down ten replayed ten
    of twelve adapters and reported the ten as a pass.
 3. **The tag names the package version of the tree it points at.** `v1.0.0` on a tree whose
    `PACKAGE_VERSION` is `1.0.1` is a release nobody can reproduce, and
@@ -169,6 +169,53 @@ Three things are still deliberately a person's:
 measured off the index afterwards, and which step of it did not run.
 
 ## History
+
+### Unreleased
+
+**Nothing here is in a release — no release contains any of it.** The distribution on the index
+is **1.2.0** and this tree is not
+it: everything below landed after the `v1.2.0` tag, in one signed commit that does not move the
+tag. `PACKAGE_VERSION` stays `1.2.0` and `SCHEMA_VERSION` stays `1.0.0` — no model, schema, adapter
+or fixture changed, and no published artefact is affected by any of it.
+
+**The adapter count disagreed with itself at seven sites, and the guards did not see it.** The
+1.2.0 round repaired this count in the package README and in `PUBLICATION.md` and guarded both;
+the root `README.md` shipped that same round saying "Thirteen integration adapters are shipped" in
+its intro and "the twelve shipped adapters" under Using it. Six more sites were in the same state.
+**The finding is not any one of those numbers — it is that last round's guards covered the sites
+that had FAILED, not the fact.** `SITES` is a list of places a count once went wrong, and a fact is
+not a list of places.
+
+Repaired: `README.md`, `docs/docs/intro.mdx`, `pyproject.toml` twice, this file's release
+condition 2 ("all twelve harnesses", and the "thirteenth adapter" it hangs on, both one roster
+behind), `adapter.py`'s `fixture_dir` note, and — a roster along — `tests/test_cdm_pins.py`'s
+floor, where "pinned standards for six adapters" became seven when `stanag4609` shipped into
+`fixtures/klv/spec/`. `tests/test_cdm_ordinals.py`'s "a thirteenth adapter cannot arrive" is now
+"a fifteenth", the series having reached fourteen.
+
+**One of those was stale in a way no count guard could see.** `adapter.py` said `fixture_dir` is
+left unset by "eleven of the twelve shipped adapters — `stanag4676` … is the only one where the
+two differ". `stanag4609` shipped declaring `fixture_dir = "klv"`, which moved the roster twelve to
+thirteen AND the divergent set one to two — so "eleven of" stayed arithmetically correct while "is
+the only one" went false, in the same sentence. The half that broke was a claim of UNIQUENESS,
+which has no number in it. Both halves are derived now, the set as a set.
+
+**The guard is no longer an allowlist.** `tests/test_cdm_prose_counts.py` gains the tree-wide
+discovery sweep it has carried as recorded debt since 1.1.0: the roster is derived ONCE, `git
+ls-files` is swept, and every collected site is ruled by comparison. A sentence stating the roster
+needs no row and cannot go stale silently. Only a NON-roster count needs one, so the exemption list
+is bounded by how many of those exist rather than by how many adapter counts exist.
+
+**The harness register gained a fourth entry**, from verifying the published 1.2.0 rather than from
+mutating an adapter: a wheel-only consumer cannot run any round-trip proof for an adapter with a
+non-JSON egress, because the SKIP text points at `tests/`, which the wheel does not carry. It
+affects eleven of the thirteen adapters, it is pre-existing across every version, and it is not a
+1.2.0 defect. Renaming that heading "Three things" → "Four things" left two files quoting the old
+one, this module's own header among them; that is guarded now too.
+
+**What the published 1.2.0 carries, and why it is not being re-released.** Four of the repaired
+sentences were inside the artefacts on the index. `PUBLICATION.md`'s ledger records which, with
+the digests. They are prose in comments and in a packaged document; nothing executable reads them.
 
 ### 1.2.0 — adapter #10, a codec ruling, and a schema version that did not move
 

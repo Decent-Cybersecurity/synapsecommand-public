@@ -39,8 +39,8 @@ It is generated, and a test fails the build if it drifts from the models.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the twelve shipped adapters are verified against** — which is what makes
-conformance something you can prove rather than take on trust.
+harness and **every fixture the thirteen shipped adapters are verified against** — which is what
+makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:
 

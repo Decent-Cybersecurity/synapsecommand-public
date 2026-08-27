@@ -528,7 +528,7 @@ def test_the_two_modules_that_claim_no_ordinal_are_the_two_the_table_names():
 
 
 def test_no_site_claims_an_ordinal_past_the_series():
-    """AN ABSENCE. A thirteenth adapter cannot arrive by writing a number in a comment.
+    """AN ABSENCE. A fifteenth adapter cannot arrive by writing a number in a comment.
 
     This is the check that stops the whole question reopening: the next adapter has to extend the
     table, and extending the table is where the reserved-ordinal rule gets applied on purpose.

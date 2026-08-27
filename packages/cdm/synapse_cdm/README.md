@@ -264,10 +264,12 @@ miss — a failure naming a directory you never mentioned — or HIT, because yo
 collided with one of ours, and then your code is judged against our payloads and every check
 passes or fails for reasons that have nothing to do with it.
 
-### Three things the harness cannot check for you
+### Four things the harness cannot check for you
 
 Adapter #11 mutation-checked its own assertions and each mutation found a hole that a green run
-had been hiding. All three generalise, so they are here rather than in one adapter's notes.
+had been hiding. They generalise, so they are here rather than in one adapter's notes. The last
+arrived later and by a different route — from verifying a published release rather than from
+mutating an adapter — and it is a property of the DISTRIBUTION rather than of any adapter.
 
 **A fixture whose behaviour is invariant under the harness clock exercises nothing.** The harness
 injects ONE frozen instant for a whole fixture directory. CAT048's two midnight-rollover fixtures
@@ -296,6 +298,25 @@ So audit the model separately, against something outside the implementation —
   influence.
 - `asterix_cat021`'s scale factors are the safe kind: each is a single stated LSB, checkable
   against the document without running anything.
+
+**A wheel-only consumer cannot run any round-trip proof for an adapter with a non-JSON egress,
+and the harness says so in a sentence that points where the wheel does not reach.** `roundtrip`
+reports `SKIP` when `from_cdm()` returns bytes it cannot compare structurally, and the SKIP text
+reads "the adapter must ship its own round-trip test in `tests/`". That instruction is correct and
+it is unreachable from a wheel: `tests/` is not packaged, so a consumer who installed from PyPI
+reads a pointer to a directory they do not have. It is not a defect in any adapter and not a defect
+in a release — it is the shape of the distribution, and it has been true of every version. What it
+costs is specific rather than general: `lossless` and the schema checks still run and still prove
+what they prove, so the floor a wheel-only consumer gets is **ingress** conformance, and egress
+byte-exactness is proved only in a clone. Every adapter that declares an egress direction is
+affected — eleven of the thirteen shipped adapters, every one of which emits something the check
+cannot parse as JSON, leaving only the two ingest-only adapters unaffected for a different reason.
+Two things would change it and neither is free: packaging the round-trip tests, which puts a test
+suite inside a runtime distribution; or giving the harness a comparison that works on the emitted
+bytes per format, which is the codec-level work each of those adapters already does in `tests/`.
+Recorded here rather than fixed in passing, and recorded as reach rather than as a count of one
+release: it is what a wheel-only conformance claim does NOT cover, and the person who needs to know
+is the one reading `20 passed, 0 failed` from an installed copy.
 
 **The roster sweep is a manual protocol act, and prose counts are what it is for.** When an
 adapter joins the shipped roster, every document that restates how many adapters there are has to
@@ -388,7 +409,7 @@ sweep's work stops being undone. This file is the one exception, and only inside
 every number here that qualifies an adapter, a document or a site is swept file-locally, and each
 is either pinned to a derivation or exempt on a ground recorded beside it.
 
-None of the three is something the six checks can produce, and that is the point of writing them
+None of them is something the six checks can produce, and that is the point of writing them
 down here: a green harness run is a floor.
 
 ## Layout
