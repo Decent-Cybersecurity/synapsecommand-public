@@ -9079,10 +9079,14 @@ reading a file that was already on disk.
 commit, suite **3183 passed, 2 skipped**. The three untouchables hold: the pinned phrase derives to
 **35** over the git index by the human command the guard shares, `gates/scripted_edit.py` is intact
 and its contract green, and `RELEASE_NOTES.md` opened **1.2.0**, the release then on the index.
-**That last clause read "still opens", in the bare present tense**, which is the class this record
-mechanized against two rounds earlier and then wrote again about its own tree. The 1.2.1 release
-falsified it — the notes are replaced at every release by their own one-release guard — so it is
-dated to the audit that observed it rather than carried forward.
+**That last clause named the release the notes open with in the bare present tense**, which is
+the class this record mechanized against two rounds earlier and then wrote again about its own
+tree. The 1.2.1 release falsified it — the notes are replaced at every release by their own
+one-release guard — so it is dated to the audit that observed it rather than carried forward.
+**The phrase itself is described here and not quoted**, on the pattern
+`tests/test_cdm_publication.py` documents for the deploy markers: a site that spells a string in
+order to correct it becomes a carrier of it, and the sweep that later looks for the string finds
+the correction and calls it a defect.
 
 #### Act 0, continued — four held claims re-derived rather than inherited, and all four hold
 

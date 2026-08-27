@@ -292,6 +292,16 @@ while the refusal does not say only that the counter moves.
 exactly one of the three routes, which is the same one route the previous retry could ask, and the
 two official routes remain a question this environment cannot put.
 
+**A quoting trap was closed in `FORMAT_COVERAGE.md`, and it was a carrier rather than a defect.**
+The parks-round audit corrected a bare-present-tense claim about which release `RELEASE_NOTES.md`
+opens with, and it did so by **quoting the phrase it was correcting**. The correction is right and
+the quotation is the trap: `tests/test_cdm_publication.py` documents the pattern for the deploy
+markers — "a checker that spells the forbidden string is itself a carrier of it" — and the same
+holds for a record. The sentence now describes the phrase instead of reproducing it, and says why.
+**Nothing swept the string before the edit and nothing does after**: it occurred exactly once in
+the tracked tree, in the correction itself, and occurs zero times now. So this closes a trap that
+had not yet sprung, which is the only time closing one is cheap.
+
 **No adapter, no codec and no fixture changed**, so none of the above touches an octet. The register
 is a record of what the standards say about themselves, and this round read six PDFs and promoted no
 tag row.
