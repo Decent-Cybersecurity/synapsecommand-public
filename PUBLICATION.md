@@ -635,6 +635,20 @@ wrong with that and it is recorded because it is unusual: the failure mode it in
 surface fifteen commits deep arriving at the moment of least appetite for reading it, and the gate
 is the only thing that read them.
 
+**Two independent logs, both incomplete, agree — so this is corroborated rather than proved.** The
+sentence above says "the last RECORDED push" and it keeps saying that, because neither source is a
+guaranteed-complete history of the remote. GitHub's events feed is capped and lossy. `git reflog
+show origin/main` is a record of what this clone observed, so a push from anywhere else would be
+invisible to it. What raises the confidence is that they are wrong in different ways and still
+agree on the same two facts: the last observed state before the arc is `d2c1eb9`, and the next
+observed state is `8a382b1`, adjacent, with none of the fourteen intervening commits ever appearing
+as a remote state in either. **They also agree on the clock**, which is the part neither was
+constructed to do — the feed puts the `d2c1eb9` push at `08:18:40Z` and the reflog at `08:18:39Z`,
+one second apart, and the reflog puts the arc's push at `23:27:59Z`, two seconds before the publish
+run this entry cites was triggered at `23:28:01Z`. A third source would still be better; what would
+settle it is a log neither of these is a copy of, and neither this repository nor a stranger can
+reach one.
+
 **A KNOWN DEFECT IN THE PUBLISHED ARTEFACTS, recorded rather than re-released.** The adapter count
 disagreed with itself at seven sites in the tree, and four of those sentences were **inside** the
 files on the index:
