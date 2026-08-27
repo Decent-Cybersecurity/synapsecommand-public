@@ -119,6 +119,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",
     "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
+    "test_cdm_commit_message.py": "gates/commit_message.py and this history's messages",
     "test_cdm_scripted_edits.py": "gates/scripted_edit.py and git blobs — neither ships",
     "test_cdm_format_coverage.py": "FORMAT_COVERAGE.md against the repository's fixtures",
     "test_cdm_generator_loading.py": "how three test modules load a generator",

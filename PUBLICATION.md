@@ -140,14 +140,17 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Six entries, and the set does not move — entries change **state**, they are not deleted. Three are
-**settled**: entry 1 is a ruling, and entries 5 and 6 are closed by acts. Entry 5 records the 1.0.0
-upload a human performed, what was measured off the index afterwards, and which step of its own
-sequence was skipped. Entry 6 is the one that retired the way entry 5 worked: it was written open,
-before the configuration it specified existed, and it closed in three acts — a trusted publisher
-registered on PyPI, 1.1.0 published through the workflow over OIDC, and the 1.0.0 API token revoked.
-Reading the two in order is the whole story of how publishing this package stopped needing a
-credential. Entries 2, 3 and 4 are open. None blocks anything.
+Eight entries, and the set does not move — entries change **state**, they are not deleted. Five are
+**settled**: entry 1 is a ruling, entries 5 and 6 are closed by acts, entry 7 is a disposition, and
+entry 8 is a reconciliation. Entry 5 records the 1.0.0 upload a human performed, what was measured
+off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
+retired the way entry 5 worked: it was written open, before the configuration it specified existed,
+and it closed in three acts — a trusted publisher registered on PyPI, 1.1.0 published through the
+workflow over OIDC, and the 1.0.0 API token revoked. Reading the two in order is the whole story of
+how publishing this package stopped needing a credential. Entry 7 records a defect in the history
+that is being left in the history, on entry 2's precedent, and mechanized so there is not a second.
+Entry 8 is the one this file's own structure argued for and did not have: a record of what has been
+served, read back against what the file says. Entries 2, 3 and 4 are open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
@@ -721,6 +724,111 @@ on this page; there is no longer a token to fall back to, and that is the intend
 a gap. `.github/workflows/publish.yml`'s header carries the same warning at the point somebody
 would be tempted.
 
+### 7. A malformed trailer block: one commit, recorded and left in place
+
+`c4a1071f`'s message ends with **two** lines git parses as `Signed-off-by` trailers:
+
+| Trailer, as git parses it | What it is |
+| --- | --- |
+| `Signed-off-by: nothing else changed; the suite is unmoved at 3151 passed, 2 skipped.` | a sentence of prose that acquired a trailer key |
+| `Signed-off-by: Matej Michalko <m@decentcybersecurity.eu>` | the real sign-off |
+
+Both sit in the message's last paragraph, and git's rule for trailers is positional — the last
+paragraph is the trailer block — so both are trailers to `git log`, to `%(trailers:…)`, and to the
+DCO app. The author was reaching for the `Suite:` summary line the previous commit used and typed a
+sign-off instead.
+
+**Nothing in this repository could have noticed, and that is the entry.** Entry 2's gate reads
+sign-offs through `%(trailers:key=Signed-off-by,valueonly)`, finds a non-empty value, and calls the
+commit signed. It **is** signed, by the second line. The DCO app agrees for the same reason. Every
+check here asked *is there a sign-off?* and none asked *does the trailer block say what it appears
+to say* — so a false statement about provenance passed a gate designed to catch exactly that, by
+standing next to a true one.
+
+**Disposition: left in place, on entry 2's precedent.** No history rewrite is contemplated. Entry 2
+declines to rewrite three unsigned commits because doing so would falsify the record of how this
+repository was actually built, and the same argument governs a fourth: amending `c4a1071f` would
+erase the only instance of a defect this file now describes, and the description would then rest on
+nothing. `main-protection`'s **`non_fast_forward`** rule stands and is not being relaxed for this —
+the amend-and-force-push path is the one the ruleset refuses, as witnessed above, and no exception
+is being sought.
+
+**Mechanized rather than remembered.** `gates/commit_message.py` refuses a message whose trailer
+block carries a line that is not the trailer it appears to be, and refuses a certifying trailer
+stranded in the body — the mirror-image failure, where a commit reads as signed to a human and is
+unsigned to git. `tests/test_cdm_commit_message.py` holds it to both directions on synthetic
+messages, replays the incident out of git, and recomputes the offending set from the actual history
+and requires it to equal the one commit named above. A second malformed message fails the build.
+
+**One thing the mechanization found that the incident did not.** The trailer vocabulary was
+derived from git's parse of all 95 messages rather than decided, and it is `Signed-off-by` (93),
+`Co-Authored-By` (51) and **`Suite` (1)** — a one-line result summary, used once, declared nowhere.
+It is a legitimate trailer and it is now declared; an undeclared key used once is how the next one
+gets in by typo, which is what happened here.
+
+### 8. The deployment record, reconciled — and it starts existing here
+
+**The defect was an absence.** This file named exactly one deployment, `e08d2ea7`, and named it
+inside a measurement rather than as a record. Nothing in the tree recorded a deploy as an act. The
+project's list was therefore the only account of what had been served, and it was never read back
+against what this file said — so a claim in the present tense outlived the state it described by
+two days and two deployments.
+
+**The list, measured 2026-08-27.** Sixteen deployments, every one `ad_hoc` — an explicit upload,
+which is what the mechanism `docs/README.md` states predicts, and no other trigger type appears.
+Every recorded source commit resolves in this repository's history; none is from anywhere else.
+
+| Deployment | UTC | Source | Recorded, before this round |
+| --- | --- | --- | --- |
+| `5ed34cd8` | 2026-08-27 01:01:32 | `c4a1071f` | **this entry** |
+| `57ac1878` | 2026-08-25 14:35:07 | `01fb685f` | no |
+| `919b58db` | 2026-08-25 10:42:03 | `30fa0454` | no |
+| `e08d2ea7` | 2026-08-25 09:12:28 | `e1161489` | yes — the measurement above, and `f916ba2` |
+| `e4a1c33d` | 2026-08-25 07:00:13 | `26c7f3f3` | yes — commit messages `4732429` and `7e641e6` |
+| eleven earlier | 2026-08-22 → 2026-08-25 | all resolve | no |
+
+**Two of sixteen had ever been written down**, and both of those in passing. The other fourteen
+happened and left no trace outside Cloudflare's own list.
+
+**The unrecorded deploy the live bytes implied, identified.** `57ac1878` served the site from
+2026-08-25 until this round. Its recorded source is `01fb685`, which touched no rendered page; the
+last commit before it that did is `1a62104`, and the served bytes carried three strings introduced
+there — including the changelog admonition separating the package version from `schema_version` —
+and none introduced after it. The diff from `1a62104` to `c4a1071` over `docs/` is **5 files, 71
+insertions, 22 deletions**, which is the figure the staleness round measured before any of this was
+read off the API: the fingerprint and the deployment list were derived independently and agree.
+
+**Disposition of `919b58db` and `57ac1878`: recorded retrospectively, and nothing else.** Neither
+was wrong. Both followed the documented order — a commit that changed a rendered page, then a
+deploy of the build made from it — and `57ac1878` is the successful half of the sequence whose
+first attempt `01fb685`'s message describes failing. What was missing was the writing-down. There
+is nothing to roll back and no redeploy is owed; the correction is that the measurement above is
+now dated and that this table exists.
+
+**The deploy this round performed.** `5ed34cd8`, source commit `c4a1071f`, uploaded
+2026-08-27 01:01:32Z after `npm --prefix docs run ci` reported all three gates green — 9 generated
+files current, 15 directives rendered across 16 pages. The stamp is honest despite an uncommitted
+tree: this round changes no file under `docs/`, so the rendered pages uploaded are exactly
+`c4a1071f`'s, which is the property the commit-then-deploy order exists to protect.
+
+**Verified from the served bytes, both halves, as the flip measurement was.** Fetched from
+<https://docs.synapsecommand.com> after the upload: five pages **byte-identical** to the local
+build, and **differing** from `57ac1878` on all five — identical to the current deployment and
+different from the previous one, which is the pair that distinguishes "serving what was deployed"
+from "serving something". The intro serves thirteen adapters with STANAG 4609 named and the pair
+arithmetic reading seventy-eight and thirteen; the "landing next" sentence naming adapters that
+shipped in 1.1.0 is gone; the changelog and entity pages match the build; the tutorial carries the
+`fixture_dir` material — `--fixtures` optional for a shipped adapter, refused for a
+`module:ClassName` one. The seven schema-reference pages differ from `57ac1878` only in their asset
+hashes: the generated pages themselves are unchanged, which is what a release that moved
+`PACKAGE_VERSION` and not `schema_version` should look like on a rendered site.
+
+**What this entry changes going forward.** A deploy gets a row in this table, with its id and its
+source commit, in the commit that follows it. That is a **protocol act** and not a gate: the suite
+cannot reach Cloudflare and must not want to, so nothing here can fail a build when a row is
+missing. What can be checked is the thing that actually went wrong — a claim about the live site
+written in the present tense — and the repair for that is the dating above rather than a test.
+
 ## The deployment was not affected
 
 The documentation site is deployed by explicit upload and **the Pages project has no Git
@@ -731,13 +839,27 @@ becoming public.
 The mechanism itself is stated in [`docs/README.md`](docs/README.md) and in `wrangler.toml`, and
 `tests/test_cdm_deploy_workflow.py` requires those two to agree. **This file deliberately does not
 restate it** — that gate's closure sweep treats any file describing the mechanism as a site it must
-check, and a third site would be a third thing to keep in agreement for no gain. What is recorded
-here is the post-flip *measurement*: the live site at <https://docs.synapsecommand.com> returns
-HTTP 200 and is **byte-identical**, across five pages, to deployment `e08d2ea7` — whose recorded
-source commit is `e116148`, the tip of `main` at the flip — and **differs** from the deployment
-before it. The second half of that is the part that makes it a measurement rather than a
-tautology: identical to the current deployment and different from the previous one is the only pair
-of facts that distinguishes "serving the last deployed state" from "serving something".
+check, and a third site would be a third thing to keep in agreement for no gain.
+
+**The post-flip measurement, and it is dated because it has been superseded.** Measured
+**2026-08-25, 10:01Z**: the live site at <https://docs.synapsecommand.com> returned HTTP 200 and
+was **byte-identical**, across five pages, to deployment `e08d2ea7` — whose recorded source commit
+is `e116148`, the tip of `main` at the flip — and **differed** from the deployment before it. The
+second half of that is what made it a measurement rather than a tautology: identical to the current
+deployment and different from the previous one is the only pair of facts that distinguishes
+"serving the last deployed state" from "serving something".
+
+**It stopped being true forty-one minutes later.** Deployment `919b58db` went up at `10:42:03Z`
+from source `30fa045`, and `57ac1878` at `14:35:07Z` from source `01fb685`; the second holds the
+`docs.synapsecommand.com` alias and is what the site has served since. Neither was written down
+anywhere — not here, not in a commit message — and the paragraph above went on asserting itself in
+the **present tense** for two days while a stranger reading it would have been reading a fact about
+a deployment three back.
+
+This is the decay the table below predicts for a witnessed claim, arriving exactly as predicted:
+*someone changes the setting afterwards and nothing notices*, with the deployment list playing the
+part of the setting. The disposition of both unrecorded deploys, the reconciliation of the whole
+list against this file, and the deploy that supersedes `57ac1878` are **ledger entry 8**.
 
 ## What is gated and what is witnessed
 
