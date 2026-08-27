@@ -9593,7 +9593,7 @@ of *unobtained documents* rather than of undocumented history — the editions s
 perfectly well, in a §3 that ST 0601.8's reformatting later dropped — which makes this entry a park
 list rather than a defect in the standard.
 
-**THAT LAST CLAUSE IS WRONG, and the documents that refute it were on disk when it was written.
+**THAT CLAUSE IS WRONG, and the documents that refute it were on disk when it was written.
 2026-08-27.** "The editions state their own deltas perfectly well" is checkable, because the item
 SET is readable from any held edition's own §7/§8 subsection headers without any changelog at all,
 and six editions are held. Enumerated from the headers, contiguous and with no gaps in any of them:
@@ -9620,6 +9620,33 @@ Platform heights" (75 and 76). **Items 77 Operational Mode, 78 Frame Center Heig
 the surviving changelog is **incomplete where it exists**, not merely absent where it does not, and
 the wall is made of *both* unobtained documents and undocumented history. The closure's conclusion
 overstated what the chain proves; the chain's *own* endpoints are what refute it.
+
+**THE REFUTATION ABOVE POINTED AT THE WRONG CLAUSE AND LEFT THE CONCLUSION STANDING. 2026-08-27,
+and it is this round's correction to the round that found the defect.** The paragraph it answers ends
+in three clauses, not one: *(a)* the wall is made of unobtained documents rather than of undocumented
+history; *(b)* the editions state their own deltas perfectly well; *(c)* which makes this entry a park
+list rather than a defect in the standard. The refutation was headed "THAT LAST CLAUSE" and then
+quoted *(b)*, which is the middle one — so *(a)* was corrected in the paragraph above this, *(b)* was
+the one actually quoted and refuted, and *(c)*, the conclusion the amendment was FOR, was never
+adjudicated at all. The heading is corrected to name the clause it quotes, and *(c)* is ruled here.
+
+**Clause *(c)* is false in the exclusive form it states, and the held bytes decide it rather than a
+judgement about drafting.** ST 0601.4's §3 exists to log revisions — its own first bullet, inherited
+verbatim from edition 1's §3, is "Added section 3 for modifications and changes" — and four of the
+eight item additions between editions 1 and 4 appear in **no row of it**. A revision log that omits
+half the additions it was created to record is a defect in the document, first-hand, in a document
+this repository holds. **So the corrected form of the conclusion is that this entry is BOTH**: a park
+list, because fourteen editions are unheld and their tables are the thing a reader honouring a stamp
+needs; and a record of a drafting defect, because the one surviving changelog that reaches back to
+the initial release does not account for what it logs. "Rather than" is the word that fails — the
+two are not alternatives, and the amendment's whole case rested on their being alternatives.
+
+**What that does NOT change, stated so the correction is not read as a reversal.** The park is still
+worth its price and worth it for the same reason: an edition's item SET is readable from its own
+subsection headers whether or not its §3 is complete, so obtaining an edition buys its table. What
+changes is only what the entry is a record OF. The pricing paragraph below already says this in its
+own terms — "worth it for the tables, not for the histories" — and this ruling is what that sentence
+follows from rather than a second opinion about it.
 
 **What this buys, which is more than it costs.** The item set is now known **exactly** at six
 editions rather than two, and editions 2 and 3 are bounded rather than blank: their sets lie between
@@ -9692,6 +9719,55 @@ stating plainly:** the pin's edition-date field does not move — it already rec
 it is now **positively corroborated** rather than merely elected by the provenance ruling, which is
 a different epistemic standing for the same value. **No ruling in this repository rests on the
 date** and that has not changed.
+
+**EXTENDED FROM HELD BYTES, 2026-08-27, AND THE "13 DECEMBER" ROW IS NO LONGER UNTOUCHED.** The entry
+above says of that row that "nothing held separates them at all". That sentence is now false, and
+what separates them is the section's own **row order**. §3's list runs, in both held copies and in
+the same order:
+
+```
+EG0601   – UAV Datalink Local Data Set.  Initial Release 12 January 2006
+EG0601.1 – UAS Datalink Local Data Set.  13 December 2007      (ST 0601.4 restates: 13 December 2006)
+EG0601.1 – UAS Datalink Local Data Set.  15 May 2007.
+```
+
+The first row fixes the list as **chronological**, oldest first. Under ST 0601.4's `13 December 2006`
+the three rows are in order. Under edition 1's own `13 December 2007` they are **not** — 13 December
+2007 would follow 15 May 2007 and the list would run backwards across its last two rows. **So one
+reading makes the section internally consistent and the other makes it wrong twice**, in the same
+sentence and in its position on the page. Recorded as **evidence and not as proof**, on this
+register's standing discipline: a list can be misordered, and nothing held says this one is not. What
+it is no longer is undecided-on-nothing — the row order is a held-bytes argument where before there
+was none, and it points the same way ST 0601.4 does.
+
+**AND A THIRD CORROBORATION OF THE COVER DATE, from the file rather than from the page.** EG 0601.1's
+PDF document-information dictionary reads `/CreationDate D:20080515125829`, `/ModDate` **identical to
+it** — so the file was produced once, on 15 May 2008 at 12:58:29, and never re-saved — and its
+`/Title` carries the source document's own filename, `EG0601.1_UAS_Local_Data_Set_20080515.doc`,
+which is a second date stamp inside the same field. **The field is only worth quoting because it was
+calibrated against the lineage rather than assumed**: across the four held 0601 documents
+`/CreationDate` equals the cover date exactly for EG 0601.1, ST 0601.4 and ST 0601.8, and post-dates
+it by four days for the initial release — 12 January 2006 on the cover, `D:20060116085414` in the
+file. So in this series the field tracks the cover, with one known lag of four days, and that is what
+makes 15 May 2008 in the file a corroboration of 15 May 2008 on the cover rather than a coincidence
+of two unrelated numbers.
+
+**WHAT THE TWO READINGS NOW COST, because the asymmetry has grown and is still not a proof.** Reading
+**(a)** — §3's `15 May 2007` is a one-digit typo for the cover's own issue — needs **one** mistyped
+digit, copied forward into ST 0601.4's §3 along with the rest of the row, whose bullets ST 0601.4
+reproduces verbatim. Reading **(b)** — a real 15 May 2007 editorial issue, re-issued 15 May 2008
+without §3 gaining a row — now needs **two** documents to fail to log the same re-issue: edition 1's
+own §3, and **ST 0601.4's §3 four editions later, which carries exactly the same two `EG0601.1` rows
+and no third** while having taken the trouble to correct the 13 December year. A round that read only
+edition 1 could not see that second cost. **(a) remains the better reading and remains unproven**, and
+the entry's refusal to elect it stands: no ruling in this repository rests on the date, and a register
+entry that resolved a question on the balance of economy would be a different kind of record.
+
+**What is still undecided after this round.** The `15 May` row, between (a) and (b), with (a)
+preferred on a wider margin than before. The `13 December` row is **narrowed and not closed** — the
+row order and ST 0601.4 both say 2006, edition 1 says 2007, and no held document states which was
+typed wrongly. **No acquisition was attempted for this entry**, and none was needed: everything above
+is read out of two PDFs already pinned and held.
 
 **KLV 17 — two editions fill the Format column of items 11 and 12 differently, and the difference is
 a character encoding.** ST 0601.14a's §8.11 and §8.12 both state a KLV Format of `utf8` with a

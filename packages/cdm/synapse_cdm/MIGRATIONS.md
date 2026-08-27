@@ -243,6 +243,42 @@ round written its record only in `PUBLICATION.md` — which does not ship — th
 derived **NONE**, and the correct next release would have been no release at all. That is the
 distinction `PACKAGE_VERSION` exists to make and it is worth seeing it land on a round this large.
 
+**The KLV register moved, and two sentences of the `1.2.1` section below are superseded rather than
+edited.** That section is a closed release record, and entry 5's ruling is that a closed record which
+quietly updates its own history is a record nobody can date. So both supersessions are stated here:
+
+* it says the `13 December` row of EG 0601.1's §3 is "untouched and undecidable from anything held".
+  **It is now narrowed from held bytes.** §3's list is chronological — its first row is the initial
+  release — and the two candidate years are not symmetric under that: ST 0601.4's `13 December 2006`
+  leaves the three rows in order, while edition 1's own `13 December 2007` would place it *after* the
+  `15 May 2007` row below it and run the list backwards. One reading makes the section consistent and
+  the other makes it wrong twice. Evidence, not proof — a list can be misordered — but the row is no
+  longer undecided on nothing.
+* it reports KLV 14 as "refuted in part" and states the corrected finding. **What that round's
+  refutation pointed at was the middle clause of a three-clause conclusion**, under a heading reading
+  "THAT LAST CLAUSE", so the conclusion itself — that the entry is "a park list rather than a defect
+  in the standard" — was never adjudicated. It is ruled now, and it is false in that exclusive form:
+  ST 0601.4's §3 exists to log revisions and omits four of the eight additions it should log, which is
+  a defect in the document and not an absence of one. **The entry is both**, and "rather than" is the
+  word that fails.
+
+**KLV 16's cover date is corroborated a third time, from the file rather than the page.** EG 0601.1's
+PDF document-information dictionary carries `/CreationDate D:20080515125829` with `/ModDate` identical
+to it, and a `/Title` naming the source document `EG0601.1_UAS_Local_Data_Set_20080515.doc`. The field
+was calibrated against the lineage before being quoted: it equals the cover date exactly for three of
+the four held 0601 documents and post-dates it by four days for the initial release. Reading (a) — a
+one-digit typo — is now preferred on a wider margin, because reading (b) needs **two** documents to
+fail to log the same re-issue. It is still not a proof and the entry still elects neither.
+
+**Park 9 was retried once and stays parked**, and the retry withdrew a claim about the two official
+routes rather than the throttled one: `web.archive.org` still answers HTTP 429, and `gwg.nga.mil` and
+`nsgreg.nga.mil` were never reached at all, because the whole `nga.mil` zone does not resolve from
+this environment. The blocker is one throttled route, not three refusing hosts.
+
+**No adapter, no codec and no fixture changed**, so none of the above touches an octet. The register
+is a record of what the standards say about themselves, and this round read six PDFs and promoted no
+tag row.
+
 
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
