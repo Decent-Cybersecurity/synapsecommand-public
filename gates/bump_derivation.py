@@ -1189,13 +1189,13 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
         "a PATCH arc numbered MINOR — comments and a shipped document, and nothing else. "
         "THIS IS THE ARC THAT JUST HAPPENED, in its smallest form",
         {"pyproject.toml": _PYPROJECT,
-         f"{PKG}/adapter.py": b'"""The SDK."""\n\n\n# twelve adapters\ndef discover():\n'
+         f"{PKG}/adapter.py": b'"""The SDK."""\n\n\n# a comment\ndef discover():\n'
                               b'    return REGISTRY\n',
-         f"{PKG}/MIGRATIONS.md": b"# History\n\nthe roster is twelve\n"},
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, before\n"},
         {"pyproject.toml": _PYPROJECT.replace(b"which is the point", b"which is still the point"),
-         f"{PKG}/adapter.py": b'"""The SDK, restated."""\n\n\n# thirteen adapters\ndef discover():\n'
+         f"{PKG}/adapter.py": b'"""The SDK, restated."""\n\n\n# the same comment, reworded\ndef discover():\n'
                               b'    return REGISTRY\n',
-         f"{PKG}/MIGRATIONS.md": b"# History\n\nthe roster is thirteen\n"},
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, after\n"},
         (1, 2, 0), "1.3.0", "EXCEED",
     ),
     (

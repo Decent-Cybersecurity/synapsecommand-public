@@ -194,10 +194,10 @@ def test_a_comment_only_edit_is_patch_and_is_derived_from_the_parse(gate):
     right about all three because comments are not in an AST at all.
     """
     before = {"synapse_cdm/adapter.py":
-              b'"""The SDK."""\n\n\n# twelve adapters, and a hash # inside a comment\n'
+              b'"""The SDK."""\n\n\n# a comment, and a hash # inside it\n'
               b'def discover():\n    return "# not a comment"\n'}
     after = {"synapse_cdm/adapter.py":
-             b'"""The SDK, restated at length."""\n\n\n# thirteen adapters\ndef discover():\n'
+             b'"""The SDK, restated at length."""\n\n\n# the same comment, reworded\ndef discover():\n'
              b'    return "# not a comment"\n'}
     derived = gate.derive(before, after)
     assert derived.floor == "PATCH", f"derived {derived.floor}"
