@@ -359,6 +359,102 @@ is a record of what the standards say about themselves, and this round read six 
 tag row.
 
 
+**THE OFF-PEAK ROUND: PARK 9 IS CLOSED, and what moved was the hour rather than the argument.**
+2026-08-27T20:20Z. Three attempts had asked `web.archive.org` for park 9's document and met HTTP 429
+— the parks round, a retry at ~14:05Z and a second at ~14:51Z — and each recorded the refusal
+faithfully. **All three asked at the same hour of the day.** This round asked at 20:20Z, roughly six
+hours off that mark, and the archive answered `X-RL: 0` and HTTP 200. The park arithmetic therefore
+moves in every term: thirteen parks, **four closed** — 1, 4, 13 and now 9 — and of **the nine still
+open**, eight are public downloads and one is SMPTE's purchase.
+
+**The environment bound was re-derived before the network was trusted, and it had MOVED.** The two
+previous retries recorded that the whole `nga.mil` zone answers `SERVFAIL` here and correctly bounded
+their claims to this environment's DNS path. That bound is gone: `gwg.nga.mil`, `nsgreg.nga.mil` and
+the apex all resolve now, stable across three consecutive queries on the same resolver that refused
+them before. **So the two official routes were asked for the first time in this record** — the
+question the earlier rounds recorded as one this environment could not put. `gwg.nga.mil` answered
+**HTTP 403** with an S3 `AccessDenied` body, where earlier rounds met CloudFront's 403; `nsgreg.nga.mil`
+answered **HTTP 200 whose body is the F5 JavaScript interstitial**. **A 200 carrying a challenge page
+is not a document**, and that is recorded because the status line alone would have supported "the
+registry now serves" — finding 4 in its purest form, a probe reporting its own transport as its
+target's behaviour. The status was checked, then the body was read, and only then was the route ruled
+out.
+
+**The pin was TESTED, which is the half the two previous retries could never reach.** Their plan was
+to digest fetched bytes against the pin *before* reading anything, and no bytes ever arrived. This
+round ran it as a **control first**: the byte-exact archived `ST0601.4.pdf` URL served 1 268 558 bytes
+digesting to the value this record already pins, equal in both terms. The route was shown to serve
+**the recorded bytes** before it was trusted with unrecorded ones, and only then was ST 1402.2
+fetched. Had it disagreed the round would have stopped for adjudication and closed nothing.
+
+**What park 9 bought.** MISB ST 1402.2, 27 October 2016, thirteen pages, pinned at
+`52a3b32a…773100e0` / 1 112 404 bytes. Its artefact half was prose from the beginning, which is why
+the parks round ranked it most closable of the three, and the row set is now written: **26
+requirements, four deprecated and 22 live**. Two findings came with it. **The requirement identifiers
+are unsuffixed** — 25 of the 26 read `ST 1402-NN`, so an identifier does not say which edition states
+it, which is the same defect one layer in that this record already logs about the profile's own
+citations; the 26th reads `ST 1402.1-26`, suffixed with the *previous* edition inside the edition-2
+document, and that is recorded and **not** adjudicated because no other edition of ST 1402 is held.
+**And the four deprecated requirements are still needed**: they carry the `stream_type` and
+`stream_id` values for both multiplex methods, deprecated as re-specifications of ISO/IEC 13818-1
+rather than withdrawn as facts, and a reader who read "deprecated" as "not applicable" would lose
+exactly the ability to locate a KLV stream that park 9 existed to buy.
+
+**Parks 5 and 11 did NOT close, and their blocker is now down to the one that needs a ruling.** Their
+documents were checked for obtainability from the index only, with nothing fetched and nothing
+landed: **ST 1201.3, ST 1303.1, ST 1204.1 and ST 1301.2 are all present as `application/pdf` 200
+captures at the exact revisions those parks pin.** So the acquisition half is discharged in principle
+by the same route that just worked, and each park now stands on its **second** blocker alone — an
+artefact half that is *source* under `packages/`, an `IMAPB` codec for park 5 and populating
+`Entity.source_ids` for park 11. That is held behind a standing rule, so this round **framed the
+question and did not act on it**; the framing is in `FORMAT_COVERAGE.md`, marked as awaiting a
+ruling, so the next round can act on an answer without re-deriving the context.
+
+**THE MANUAL REVERSE SWEEP WAS RUN, and it found one gap in nine commits.** The four refuted
+formulations above stand untouched — this sweep is evidence about the *manual* reading's cost, which
+is the datum a future mechanization attempt needs. Over `v1.2.1..HEAD`, **eight of nine commits are
+accounted for** by prose in a tracked `.md`. The ninth is **`90f65f7`**, and the gap is real: its
+repair reworded synthetic fixtures inside `gates/bump_derivation.py` and
+`tests/test_cdm_bump_derivation.py` that had spelled an adapter count, and **sweep rule 1's own file
+set is `*.md`, `*.mdx` and `*.py`** — so a test fixture spelling a count is a *live carrier* of it,
+indistinguishable to the sweep from a real claim. No rule recorded that case. It is the same shape as
+the quoting trap closed one commit later, one layer over: there a correction became a carrier by
+quoting, here a fixture becomes one by illustrating. **Repaired in place** in the package README's
+rule 1 rather than left as a finding.
+
+**A GUARD WAS GENERALISED AND CAUGHT A DEFECT IN THE SAME ROUND THAT WROTE IT — the defect its
+own comment had warned about, recurring for the third time.**
+`test_the_pinned_copy_is_the_same_copy_at_every_site_that_names_one` checks that an abbreviated
+digest expands to the pinned one, because eight characters at each end look right for any hash
+sharing them. Its comment read "generalised rather than duplicated, because the framing round's
+version hard-coded ONE digest and a second document would have slipped past it" — and it then
+hard-coded **two**, skipping every other abbreviation as "another document's pin, checked by its
+own gate" when no such gate existed. **ST 1402.2 slipped past exactly that way.** The subjects are
+now DERIVED from `delegated_specifications_held`, so a document cannot be held without being
+swept, and the sweep refuses to run vacuously. **It failed on its first run, correctly:** this
+round had written the new digest's abbreviation with a NINE-character tail, which reads as a
+digest at a glance and is not one. Generalising a list is not generalising — the list is the
+thing that goes stale — and the lesson is cheap only because the guard was widened before the
+commit rather than after it.
+
+**WHAT MOVED IN THE DISTRIBUTION, named file by file** — condition 4, and the guard that reads
+this section wants the names rather than a count. Five files under `packages/`:
+`FORMAT_COVERAGE.md` (the round record, the ST 1402.2 row set, the parks 5/11 framing, the pin
+row and the park-table closure); `MIGRATIONS.md`, this entry; `synapse_cdm/README.md`, where
+**sweep rule 1 gained the synthetic-fixture case** the manual sweep found; 
+`fixtures/klv/README.md`, which gains the ninth round and moves its delegated-document tally
+from four to five; and `fixtures/klv/spec/klv_pin.json`, which gains the ST 1402.2 pin, the
+park 9 closure entry and the round's own node. **Every one of them is a shipped document and
+none is executable**, so the arc still derives PATCH and the floor stays **1.2.2** — which the
+bump gate is asked rather than asserted here.
+
+**What the sweep cost, recorded because that is the number a mechanization attempt needs.** Nine
+commits, and judgement was required at exactly **two** of them — `90f65f7` and `9b62e9b` — where the
+question was whether prose about a mechanism accounts for a *repair within* that mechanism. Seven
+were unambiguous in both directions. So the manual reading is cheap at this arc length and the
+expensive part is not the reading: it is that the two hard cases turn on a distinction — mechanism
+versus repair-within-mechanism — that none of the four refuted formulations can express.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
@@ -558,9 +654,13 @@ octets, 0 left over**; item 22 at `uint16` Len **2** at all six held editions; E
 range verbatim; and **98** undated running headers. **A tool whose first job is to reproduce known
 answers is a tool whose later answers mean something.**
 
-**What did NOT move.** No park closed and no document was fetched, so the download count stays at
-**9 of 10** and the park arithmetic is unchanged in every term — thirteen parks, three closed, ten
-open. **All 115 tag rows that read `not yet` still read `not yet`**: this round read six editions and
+**What did NOT move, as at that round.** No park closed and no document was fetched, so the
+download count stood at **9 of 10** and the park arithmetic was unchanged in every term —
+thirteen parks, three closed, ten open. **Dated rather than carried forward**, on sweep rule 6:
+this is a past-tense narrative about a specific run and it stays true of that run, but it was
+written in the bare present tense and the off-peak round falsified it hours later by closing
+park 9. The live arithmetic is four closed and nine open, stated in that round's entry above.
+**All 115 tag rows that read `not yet` still read `not yet`**: this round read six editions and
 promoted nothing, because every finding is about the standard's history rather than about what an
 octet means. **KLV 15 stands untouched**, its evidence re-derived verbatim. No new park and no new
 register entry — **ST 1010.3** was checked as a candidate and is already carried in the §4.4.2.5 row.
@@ -1805,7 +1905,7 @@ too — so the first is now stated.
 
   **Why there is nothing to propose, stated rather than left to inference.** Every absence in that
   row set is a *document this repository does not hold* — thirteen parks over fifteen documents,
-  **three closed**, nine of the ten still open being public downloads and one behind SMPTE's paywall —
+  **four closed**, eight of the nine still open being public downloads and one behind SMPTE's paywall —
   and not a CDM shortfall. The fifteenth document is park 13's edition 1, now **held** as
   `EG0601.1.pdf`, and it is **not** a fifteenth *delegated* document: the profile delegates to
   ST 0601.14, that count stays at fourteen, and closing park 13 on a fifteenth document did not move

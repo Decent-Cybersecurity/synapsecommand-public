@@ -866,6 +866,17 @@ MULTIPLIED_FACTS = (
     ("ST 0601.19's own /CreationDate — the copy is amended past its 2 March 2023 cover",
      "D:20250702122555",
      ("fixtures/klv/spec/klv_pin.json",)),
+    # ADDED BY THE OFF-PEAK ROUND, WITH ST 1402.2 — park 9's document, and the pin records its
+    # /CreationDate and /ModDate as the same value. It goes in for the SET's sake rather than
+    # for a cross-site comparison: one site states it, so the row above asserts nothing new,
+    # and what it buys is that the closure direction below stops treating it as an unknown
+    # timestamp. The CALIBRATION is the part worth reading and it lives beside the value in the
+    # pin: this file post-dates its own cover by 47 days, where the four held 0601 documents
+    # gave 0, 0, 0 and 4 — so it corroborates the YEAR and nothing finer, and the pin says so
+    # rather than quoting the field as if it dated the edition.
+    ("ST 1402.2's own /CreationDate — 47 days after its 27 October 2016 cover",
+     "D:20161213145428",
+     ("fixtures/klv/spec/klv_pin.json",)),
 )
 
 
@@ -921,11 +932,25 @@ def test_the_pinned_copy_is_the_same_copy_at_every_site_that_names_one():
         "length_ruling_st_0107_3 is quoted from ONE file, and the digest is the only thing that "
         "says which"
     )
-    # BOTH copies, in one sweep. Generalised rather than duplicated, because the framing round's
-    # version of this test hard-coded one digest and a second document would have slipped past it
-    # abbreviated any way it liked.
-    for full, abbreviated, label in ((ST_0601_14A, ABBREVIATED, "ST 0601.14a"),
-                                     (ST_0107_3, ABBREVIATED_0107_3, "ST 0107.3")):
+    # EVERY held copy, in one sweep, and the pairs are DERIVED FROM THE PIN rather than listed.
+    #
+    # THIS COMMENT USED TO SAY "generalised rather than duplicated" ABOUT A HARD-CODED PAIR, and
+    # the defect it warned about had already recurred by the time anyone re-read it: it said the
+    # framing round "hard-coded one digest and a second document would have slipped past it
+    # abbreviated any way it liked", and then hard-coded TWO. A third document did slip past —
+    # ST 1402.2 landed on 2026-08-27 abbreviated at two sites, and the `continue` below skipped it
+    # as "another document's pin, checked by its own gate" when no such gate existed. Generalising
+    # to a LIST is not generalising; the list is the thing that goes stale. So the pairs now come
+    # from `delegated_specifications_held`, and a document cannot be held without being swept.
+    held_digests = [(e["sha256"], e.get("document", key))
+                    for key, e in sorted(held.items())
+                    if isinstance(e, dict) and isinstance(e.get("sha256"), str)]
+    assert len(held_digests) >= 3, (
+        f"only {len(held_digests)} held documents carry a sha256 in the pin; this sweep derives "
+        "its subjects from that node and a short count means the derivation stopped matching"
+    )
+    for full, label in held_digests:
+        abbreviated = f"{full[:8]}…{full[-8:]}"
         found = {}
         for name, read in SITES.items():
             for head, tail in set(re.findall(r"\b([0-9a-f]{8})…([0-9a-f]{8})\b", read())):
@@ -1137,8 +1162,13 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     )
 
     # 7. The park arithmetic, DERIVED from the record's own closure entries rather than typed here,
-    #    and then required at the prose sites. Thirteen parks, THREE closed (1, 4 and 13), ten open,
-    #    nine of them downloads and one a purchase.
+    #    and then required at the prose sites. Thirteen parks, FOUR closed (1, 4, 13 and 9), nine
+    #    open, eight of them downloads and one a purchase.
+    #
+    #    PARK 9 CLOSED 2026-08-27 and moved every term at once: closures 3 -> 4, open 10 -> 9,
+    #    downloads 9 -> 8. Nothing here was retyped from the prose — the arithmetic is still
+    #    DERIVED from the pin's own closure entries and the words are looked up from it, which
+    #    is why closing a park is three edits to the derivation's inputs and none to its logic.
     #
     #    THE SUBSTRING FORM THIS REPLACED WAS NOT A CHECK. It read `"two" in text and "ten" in text`
     #    over the whole flattened node, which passes on any prose containing the word "two"
@@ -1148,12 +1178,12 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    the two fields are required to agree with the derivation, so the same drift fails.
     parks = pin["parks"]
     closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
-    assert closed == ["park_1", "park_13", "park_4"], closed
+    assert closed == ["park_1", "park_13", "park_4", "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open - 1                 # park 8 is the purchase, and the only one
-    assert (n_closed, n_open, n_downloads) == (3, 10, 9)
-    words = {3: "three", 10: "ten", 9: "nine"}
+    assert (n_closed, n_open, n_downloads) == (4, 9, 8)
+    words = {4: "four", 9: "nine", 8: "eight"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"

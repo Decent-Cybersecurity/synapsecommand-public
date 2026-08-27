@@ -3920,13 +3920,14 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     # And the other eleven DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
-    assert len(downloads) == 9, (
-        f"{len(downloads)} park rows state a public-download reopen condition, expected 9 — "
-        "ten open parks, of which nine are downloads and one is the purchase. The count IS the "
+    assert len(downloads) == 8, (
+        f"{len(downloads)} park rows state a public-download reopen condition, expected 8 — "
+        "nine open parks, of which eight are downloads and one is the purchase. The count IS the "
         "honest-strength claim in the paragraph above the table, and it has now moved FOUR times: "
         "from 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, from 9 to 10 when "
         "the walk round opened park 13, and from 10 back to 9 when the adjudication round closed "
-        "it hours later. It falls every time somebody does the cheap thing and rises when a round "
+        "it hours later, and from 9 to 8 when the off-peak round closed park 9. It falls every "
+        "time somebody does the cheap thing and rises when a round "
         "finds a question it cannot answer from what is held — which is the claim the paragraph "
         "makes and the only way it can be checked. Park 13 is the one row that has done both"
     )

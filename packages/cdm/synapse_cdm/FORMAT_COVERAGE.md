@@ -7480,12 +7480,14 @@ STANAG contains no technical requirement of any kind, and the MISP contains no N
 | **The normative act** | The wrapper's AGREEMENT clause reads "**Participating nations agree to implement the following standard**" and its STANDARD clause names exactly one: "**U.S. Motion Imagery Standards Board (MISB) Motion Imagery Standards Profile-2019.1 (MISP-2019.1)**". Its IMPLEMENTATION OF THE AGREEMENT clause restates the scope: "MISP-2019.1 defines the technical requirements for motion imagery formats, compression, metadata and transmission protocols for ISR systems and systems that manage and/or exploit motion imagery data." NATO Effective Date: "Not applicable" |
 | **The target** | **MISP-2019.1, Motion Imagery Standards Profile, Motion Imagery Standards Board — title page dated November 2018**, which is also the footer of all 73 pages. Every requirement mapped or parked below cites this document |
 | SHA-256 (target) | `3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea`, 1 372 771 bytes, 73 pages, `fixtures/klv/spec/misb-misp-2019-1.pdf` |
-| **The delegated documents obtained** | **Four** of the fourteen delegated documents were obtained on 2026-08-26 and are pinned below. The heading says *documents* rather than *dictionaries* because the fourth is not one: **MISB ST 0107.3** is six pages of KLV-wide baseline requirements, and it closed **park 4**. **ST 0102.12 and ST 0601.14 are the editions the profile pins** (Appendix B refs [55] and [53]); **ST 0601.19 is not** — it is five major revisions past the 0601.14 ref [53] cites. What follows is ruled in `fixtures/klv/spec/klv_pin.json`'s `reconciliation_ruling`: **ST 0601.14 — this copy, this hash — is the authoritative tag table for the row set, and ST 0601.19 remains pinned as context only**, never a source of tag semantics here. It is retained for the item-42 divergence note and for the measured .14-to-.19 delta. So **parks 1 and 4 are closed** and park 2 is not: park 2's document is held and its row set is still unwritten — which is the precedent that forced park 4's closure to be argued rather than assumed, since ST 0107.3 supports no row set at all. See the parks preamble |
+| **The delegated documents obtained** | **Five** of the fourteen delegated documents are obtained and pinned below — **four on 2026-08-26 and the fifth, MISB ST 1402.2, on 2026-08-27**, which is the first movement in this count since it was written. The heading says *documents* rather than *dictionaries* because the fourth is not one: **MISB ST 0107.3** is six pages of KLV-wide baseline requirements, and it closed **park 4**. **ST 0102.12 and ST 0601.14 are the editions the profile pins** (Appendix B refs [55] and [53]); **ST 0601.19 is not** — it is five major revisions past the 0601.14 ref [53] cites. What follows is ruled in `fixtures/klv/spec/klv_pin.json`'s `reconciliation_ruling`: **ST 0601.14 — this copy, this hash — is the authoritative tag table for the row set, and ST 0601.19 remains pinned as context only**, never a source of tag semantics here. It is retained for the item-42 divergence note and for the measured .14-to-.19 delta. So **parks 1 and 4 are closed** and park 2 is not: park 2's document is held and its row set is still unwritten — which is the precedent that forced park 4's closure to be argued rather than assumed, since ST 0107.3 supports no row set at all. See the parks preamble |
 | SHA-256 (ST 0601.14) | `3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4`, 3 969 201 bytes, 218 pages, `fixtures/klv/spec/ST0601.14a.pdf` |
 | SHA-256 (ST 0601.19) | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1`, 4 700 978 bytes, 226 pages, `fixtures/klv/spec/ST0601.19.pdf` |
 | SHA-256 (ST 0102.12) | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267`, 514 842 bytes, 18 pages, `fixtures/klv/spec/ST0102.12.pdf` |
 | SHA-256 (ST 0107.3) | `500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794`, 656 949 bytes, 6 pages, `fixtures/klv/spec/ST0107.3.pdf` |
-| **A park's document, obtained, and NOT a fifteenth delegation** | **MISB EG 0601.1, UAS Datalink Local Metadata Set, 15 May 2008** — obtained 2026-08-26 by the adjudication round and pinned below. It is the first pin in this row set that the profile does not delegate to: the count of delegated documents obtained stays at **Four of the fourteen**, because a park's deciding document and a profile's delegation are different things and this is the first row where they come apart. **It closed park 13.** It is also the document that showed park 13's own name to be wrong — there is no *MISB ST 0601.1* — register entry **KLV 15** |
+| **The fifth delegated document, and it CLOSED a park** | **MISB ST 1402.2, MPEG-2 Transport Stream for Class 1/Class 2 Motion Imagery, Audio and Metadata, 27 October 2016** — obtained 2026-08-27 by the off-peak round and pinned below. **It closed park 9**, the park three previous attempts could not reach, and the variable that moved was the **hour**: both recorded refusals were at ~14:50Z and this one asked at 20:20Z. Thirteen pages, 26 requirements, of which **four are deprecated and 22 live**. Its row set is below, at *MISB ST 1402.2 — the row set, and park 9 is CLOSED* |
+| SHA-256 (ST 1402.2) | `52a3b32a7314d2884d421c74718b808402f9cc5c852168b0c84f872b773100e0`, 1 112 404 bytes, 13 pages, `fixtures/klv/spec/ST1402.2.pdf` |
+| **A park's document, obtained, and NOT a fifteenth delegation** | **MISB EG 0601.1, UAS Datalink Local Metadata Set, 15 May 2008** — obtained 2026-08-26 by the adjudication round and pinned below. It is the first pin in this row set that the profile does not delegate to: the count of delegated documents obtained stayed at **Four of the fourteen** when this row was written, because a park's deciding document and a profile's delegation are different things and this was the first row where they came apart. **That distinction is what decided the count the other way on 2026-08-27:** ST 1402.2 closed park 9 *and* is a delegation the profile makes — refs [48], `MISP-2015.1-48` and `-49` — so it moves the count where EG 0601.1 could not, and the tally now reads **Five of the fourteen**. The rule did not change; a document arrived on the other side of it. **It closed park 13.** It is also the document that showed park 13's own name to be wrong — there is no *MISB ST 0601.1* — register entry **KLV 15** |
 | SHA-256 (EG 0601.1) | `1714322c25e00e00ccabd5d861318f1448055cbf2000dc2e5099fb30dec0b730`, 918 722 bytes, 98 pages, `fixtures/klv/spec/EG0601.1.pdf` |
 | **The first pin here whose source is a MIRROR** | **Recorded as a provenance caveat rather than softened, because it is a weaker provenance than every other pin above.** `provenance_ruling.page_as_source` makes a MISB document's NSG Registry page its source of record, and **this pin has none** — both official routes refuse an automated GET. `gwg.nga.mil`, the MISB's own document host, answers **HTTP 403** from CloudFront at every `ST0601.N.pdf` and `EG0601.N.pdf` pattern tried, with and without a browser User-Agent and Referer; `nsgreg.nga.mil` answers with an **F5 JavaScript interstitial**, which is the same wall the pin record already records against the registry *pages*, now met on the document route. The bytes came from the **Internet Archive's snapshot of `gwg.nga.mil`'s own copy**, dated 2020-01-11. **What the mirror costs and does not cost:** it costs the third leg of the disjunction — ST 0107.3 could check its edition date against a registry page's agreement and this cannot — and it does not touch the hash, which identifies *the copy that was read* and never claimed more. What the snapshot carries that a bare mirror could not: the URL it archives is `gwg.nga.mil`'s own, so the record names which origin served these bytes and when |
 | **The 0601 lineage — three editions, NOT pins** | **EG 0601 (initial release, 12 Jan 2006), STD 0601.4 (4 March 2010) and MISB ST 0601.8 (23 October 2014)**, in `fixtures/klv/spec/history/`, on the precedent CAT048's 22-edition lineage set. The governing text is still **ST 0601.14 alone** and no row below is read against any of them. Each carries something the others do not: the initial release makes *tag 22 is in the initial-release item set* a **direct read** rather than an inference; ST 0601.4 carries the **full §3 revision history back to the initial release**, which no later edition does, and with it the sentence that makes edition 1 non-normative; ST 0601.8 makes `ST 0601.8-09`, `-11` and `-12` **first-hand**, having been quoted from ST 0601.14a's restatement until now. Hashes, byte counts, page counts and per-file origins are in `spec/klv_pin.json`'s `edition_history` |
@@ -9049,7 +9051,11 @@ each other item by item. Reading them is what this round was.
 
 **No code under `packages/` changed, no fixture changed, the `v1.2.0` tag did not move, and no park
 count moved** — thirteen parks, three closed, ten open, nine downloads and one purchase, exactly as
-the previous round left them. **This sentence read "nothing under `packages/` changed" and that was
+the previous round left them. **True of that round and dated here, on sweep rule 6:** the off-peak
+round closed park 9 hours later, so the live arithmetic is **four closed, nine open, eight
+downloads and one purchase**. The sentence is kept in its own tense rather than re-synced, because
+a narrative about a specific run that is edited to match a later state stops being a record of
+that run. **This sentence read "nothing under `packages/` changed" and that was
 never true**, in the document it was written in: this file is under `packages/` and is shipped, and
 so are `fixtures/klv/README.md` and `klv_pin.json`, which this round also wrote. Corrected by the
 1.2.1 release audit's stale-count sweep, which found it here and at the same wording in
@@ -9114,9 +9120,9 @@ bytes, so it stands exactly as the adjudication round wrote it.
 | **KLV 14** | Which items each edition admits | **Yes, at six editions** — the item set is readable from any edition's own subsection headers, no changelog needed | **2, narrowed and its conclusion corrected** |
 | **KLV 16** | Anything deciding which year is the typo | **Partly — the DOCUMENT'S own date, from edition 1's reference list.** Which year §3 should read: two readings survive. The "13 December" row: nothing held | **3, the pin's own date corroborated, neither §3 row decided** |
 | **KLV 15** | — | Already resolved; re-verified this round | **n/a, stands** |
-| **Park 9** | ST 1402.2, pinned, plus a row set | **No — acquisition.** But its artefact is prose, so it is the only one of the three that closes on bytes alone | **4, most closable park** |
-| **Park 11** | ST 1204.1 + ST 1301.2, pinned, plus `Entity.source_ids` | **No — acquisition, AND a source change under `packages/`** | **5, two blockers** |
-| **Park 5** | ST 1201.3 + ST 1303.1, pinned, plus an `IMAPB` codec | **No — acquisition, AND a source change under `packages/`** | **6, two blockers** |
+| **Park 9** | ST 1402.2, pinned, plus a row set | **YES, as of 2026-08-27T20:20Z** — the acquisition succeeded off-peak. Its artefact was prose, so it closed on bytes alone exactly as this row predicted | **4 — RANKED MOST CLOSABLE, AND IT IS THE ONE THAT CLOSED.** The ranking is the round's main product and this is the check on it |
+| **Park 11** | ST 1204.1 + ST 1301.2, pinned, plus `Entity.source_ids` | **Acquisition is now discharged in principle** — both documents are in the index at the pinned revisions, checked 2026-08-27 with nothing fetched. **The source change under `packages/` remains** | **5 — now ONE blocker, and it is the one that needs a ruling** |
+| **Park 5** | ST 1201.3 + ST 1303.1, pinned, plus an `IMAPB` codec | **Acquisition is now discharged in principle** — both documents are in the index at the pinned revisions, same check. **The source change under `packages/` remains** | **6 — now ONE blocker, and it is the heavier of the two artefacts** |
 
 **The acquisition blocker, named exactly rather than as "unobtainable".** Three routes, all tried on
 2026-08-27:
@@ -9220,6 +9226,159 @@ untouched: one throttled route, most closable of the three, artefact half is pro
 involved. **The park is not narrowed by this round** — a refusal reproduced is not a narrowing,
 and recording it as one would be the "wrong kind of progress" the KLV 16 narrowing already
 names.
+
+#### The THIRD retry, 2026-08-27T20:20Z — the route answered 200, and park 9 is CLOSED
+
+**One retry again, and the only thing this round changed about the question was the hour.** Both
+recorded refusals were at ~14:50Z; the parks round's was at the same time of day. This one asked at
+**20:20Z**, and the answer is different in every term.
+
+**The environment bound was re-derived before the network was trusted — and the bound had moved.**
+That order is the discipline the first retry's own correction argues for, and this is the round where
+it paid: a round that trusted the recorded bound would have skipped the two official routes as
+unaskable and never noticed they had become askable.
+
+| Route | Asked | Answer, verbatim |
+|---|---|---|
+| the `nga.mil` zone — `gwg.nga.mil`, `nsgreg.nga.mil`, and the apex | resolver query, before any GET | **RESOLVES.** `gwg.nga.mil` is a CNAME to `d3twm1tfj00pmn.cloudfront.net`; `nsgreg.nga.mil` answers `214.28.173.222` and `214.28.174.222`; the apex answers. **Stable across three consecutive queries on the same resolver** — `192.168.0.1` — that returned `SERVFAIL` for all of them at 14:51Z |
+| `gwg.nga.mil` — the host the FORWARD names first | GET `/misb/docs/standards/ST1402.2.pdf`, browser UA and same-origin Referer | **HTTP 403**, `Content-Type: application/xml`, 263 bytes: `<Error><Code>AccessDenied</Code>…`. **An S3 refusal, not CloudFront's** — the 403 earlier rounds recorded came from CloudFront, so the layer moved even though the outcome did not |
+| `nsgreg.nga.mil` — the second route the FORWARD names | GET `/misb.jsp` | **HTTP 200** — and the body is the **F5 JavaScript interstitial**: `bobcmn`, a `noscript` block, "Please enable JavaScript". The same wall park 13 met at the registry |
+| `web.archive.org` CDX API — `url=gwg.nga.mil/misb/docs/standards/ST1402*` | GET | **HTTP 200**, `X-RL: 0`, `application/json`, **15 rows**. ST 1402.2 is listed at `20200111024144`, `application/pdf`, `200` |
+| `web.archive.org` playback, the **byte-exact URL the pin records as having served ST 0601.4** | full GET | **HTTP 200**, `application/pdf`, **1 268 558 bytes**, SHA-256 `1485e578…925c58c5a` — **equal to this record's pin in both terms** |
+| `web.archive.org` playback, ST 1402.2 at `20200111024144` | full GET | **HTTP 200**, `application/pdf`, **1 112 404 bytes**, SHA-256 `52a3b32a…773100e0` |
+
+**A 200 IS NOT A DOCUMENT, and `nsgreg.nga.mil` is the row that proves it.** Its status line alone
+would have supported "the registry serves now" — which is the biggest single claim this round could
+have made, since `provenance_ruling.page_as_source` wants a registry page and no KLV pin has one. The
+body was read before the status was believed, and it is a challenge page. **This is finding 4 in its
+purest form** — a probe reporting its own transport as a property of its target — and it is the
+second time in three rounds that the honest answer came from checking what the bytes actually were.
+
+**THE PIN WAS TESTED, AND THAT IS THE HALF THE TWO PREVIOUS RETRIES COULD NEVER REACH.** Their plan
+put the digest comparison *before* any reading, and no bytes ever arrived to compare. Here it was run
+as a **control, first, on a document whose answer was already known**: the archived ST 0601.4 URL,
+fetched in full, digested to the pinned value exactly. Only then was ST 1402.2 requested. **The route
+was demonstrated to serve the recorded bytes before it was trusted to serve unrecorded ones**, and
+had the control disagreed this round would have stopped for adjudication and closed nothing.
+
+**`X-RL` is now sampled four times — `0`, `1`, `1`, `0` — and it STILL does not predict the answer,
+which is worth stating carefully because this is the sample that could be over-read.** The counter
+read `0` at a refusal and reads `0` at a success, so the two are not distinguished by it. What
+changed with the answer is the **hour**, and the honest form of that claim is narrow: one success at
+20:20Z after three refusals at ~14:05Z and ~14:50Z is consistent with a windowed quota and does not
+establish one. It is enough to make the hour a variable a future round should vary, and not enough to
+call the window measured.
+
+**What the three earlier records are now worth.** None is withdrawn. Each was true of the moment it
+measured, and the second retry's insistence that "a refusal reproduced is not a narrowing" was
+correct on its own terms. What they share is a blind spot the fourth attempt only found by accident
+of scheduling: **three observations of one quota, all taken within one hour of the clock, were
+recorded as three independent samples of a route.** They were three samples of a route *at one hour*.
+That is not a defect in any one of them and it is a defect in the set, and it is the reason this
+section names the hour in its own heading.
+
+#### MISB ST 1402.2 — the row set, and park 9 is CLOSED
+
+**The park's exit condition was one document plus an artefact, and for this park the artefact was
+prose.** Twenty-six requirements, **four deprecated and 22 live**, tabulated from the pinned copy.
+Section 9.4 states the whole point of the document in one sentence: "Metadata is encapsulated in a
+MPEG-2 TS as private data. Two methods for encapsulating metadata within an MPEG-2 Transport Stream
+are defined by ISO/IEC 13818-1 and SMPTE RP 217, denoted here as the Synchronous Metadata Multiplex
+Method and the Asynchronous Metadata Multiplex Method, respectively."
+
+| ID | Status | Requirement, verbatim | §|
+|---|---|---|---|
+| `ST 1402-01` | live | All User Datagram Protocol (UDP) datagrams encapsulating MPEG-2 Transport Stream (TS) packets shall contain an integer number of TS packets | 8 |
+| `ST 1402-02` | live | Both a Program Association Table (PAT) and a Program Map Table (PMT) shall be inserted in the transport stream greater than 4 times per second (8 times per second recommended) throughout the program to facilitate rapid program acquisition | 7.1 |
+| `ST 1402-03` | live | When implementing the Asynchronous Metadata Multiplex Method, KLV metadata shall be identified by the registered `format_identifier` `0x4B4C5641` ("KLVA") | 9.4.2 |
+| `ST 1402-04` | live | When inserting metadata using the Synchronous Metadata Multiplex Method, it shall be implemented in accordance with ISO13818-1 | 9.4.1 |
+| `ST 1402-05` | **deprecated** | For the Synchronous Metadata Multiplex Method, the `stream_id` shall be `0xFC`, indicating "metadata stream" | 9.4.1 |
+| `ST 1402-06` | **deprecated** | For the Synchronous Metadata Multiplex Method, the `stream_type` shall be `0x15`, indicating "Metadata carried in PES packets" | 9.4.1 |
+| `ST 1402-07` | live | …each PES packet shall have a PTS to be used to synchronize the metadata with the Motion Imagery | 9.4.1 |
+| `ST 1402-08` | live | …the `PTS_DTS_flags` shall be set to '10' | 9.4.1 |
+| `ST 1402-09` | live | …the first PES packet data byte shall be the first byte of a Metadata Access Unit Cell | 9.4.1 |
+| `ST 1402-10` | live | …the PTS in the PES header shall apply to each Access Unit contained in the PES packet | 9.4.1 |
+| `ST 1402-11` | live | …the PTS shall signal the time that the metadata Access Unit becomes relevant | 9.4.1 |
+| `ST 1402-12` | live | …the delay of any data through the System Target Decoder buffers shall be less than or equal to one second | 9.4.1 |
+| `ST 1402-13` | live | When inserting synchronous metadata into a transport stream which already carries synchronous metadata, new metadata shall be added to the existing synchronous metadata elementary stream | 9.4.1 |
+| `ST 1402-14` | live | …the metadata elementary stream shall be defined in the PMT as a separate stream within the same program as the Motion Imagery elementary stream | 9.4.1 |
+| `ST 1402-15` | live | …the PMT shall contain a `metadata_descriptor` for each metadata service within the metadata stream | 9.4.1 |
+| `ST 1402-16` | live | …the `metadata_descriptor` shall be within the descriptor loop for the metadata elementary stream | 9.4.1 |
+| `ST 1402-17` | live | …the PMT shall contain a single `metadata_std_descriptor` for the metadata stream | 9.4.1 |
+| `ST 1402-18` | live | When inserting metadata using the Asynchronous Metadata Multiplex Method (MISB ST 1402), it shall be implemented in accordance with SMPTE RP 217 | 9.4.2 |
+| `ST 1402-19` | **deprecated** | For the Asynchronous Metadata Multiplex Method, the `stream_id` shall be `0xBD`, indicating "private_stream_1" | 9.4.2 |
+| `ST 1402-20` | live | …the `data_alignment_indicator` shall be set to one when the PES packet contains the beginning of a KLV item | 9.4.2 |
+| `ST 1402-21` | live | …the `data_alignment_indicator` shall be set to zero when the PES packet does not contain the beginning of a KLV item | 9.4.2 |
+| `ST 1402-22` | live | …the `PTS_DTS_flags` shall be set to 00 (no PTS or DTS present in PES packet header) | 9.4.2 |
+| `ST 1402-23` | **deprecated** | For the Asynchronous Metadata Multiplex Method, the `stream_type` shall be `0x06`, indicating "PES packets containing private data" | 9.4.2 |
+| `ST 1402-24` | live | …the metadata elementary stream shall be defined in the PMT as a separate stream within the same program as the Motion Imagery elementary stream | 9.4.2 |
+| `ST 1402-25` | live | …the program element loop in the PMT shall contain a `registration_descriptor` as defined in ISO/IEC 13818-1 for legacy compliance with SMPTE RP 217 | 9.4.2 |
+| `ST 1402.1-26` | live | When implementing the Synchronous Metadata Multiplex Method, KLV metadata shall be identified by the registered `metadata_format_identifier` `0x4B4C5641` ("KLVA") | 9.4.1 |
+
+**THE DEPRECATED FOUR ARE THE ROWS A READER IS MOST LIKELY TO MISREAD, and the document's own §3 says
+why they are deprecated without saying what that costs.** The row reads: "Deprecated REQ's -05, -6,
+-19, -23; these are required by ISO/IEC 13818-1 and should not be re-specified here." So they are
+withdrawn **as re-specifications**, not as facts — the `stream_type` and `stream_id` values are still
+the values, they are simply ISO's to state. **This matters to exactly the thing park 9 existed to
+buy:** those four carry `0x15`/`0xFC` for the synchronous method and `0x06`/`0xBD` for the
+asynchronous one, which is *how a reader finds the KLV stream in the multiplex at all*. A reader who
+took "deprecated" for "not applicable" would be left with two named methods and no way to identify
+either. Recorded here rather than left to the reader because the deprecation notice and the
+consequence are in different places in the document.
+
+**The requirement identifiers are UNSUFFIXED, and that is the profile's defect met one layer in.**
+This document's own delegation row above notes that `MISP-2015.1-48`, `-49`, `MISP-2016.1-90` and
+§5.3.1 all cite "MISB ST 1402 [48]" with no revision suffix, which is why the version cell has to
+cite Appendix B. **Twenty-five of these 26 identifiers do the same thing**: they read `ST 1402-NN`,
+so a requirement's own ID does not say which edition states it. The twenty-sixth reads
+**`ST 1402.1-26`** — suffixed, and suffixed with the *previous* edition, inside the edition-2 document
+that carries it. **Recorded and deliberately NOT adjudicated:** whether that marks the edition that
+introduced the requirement or is a drafting slip is not decidable from this document alone, and no
+other edition of ST 1402 is held. **It is the same class as the two requirements inside ST 0107.3
+that carry the PRECEDING edition's prefix** — described rather than spelled here, because this
+section's delegation table pins one revision suffix per document and a guard holds it to that, so a
+sentence quoting a second suffix becomes a carrier of it. This record already explains those two as
+MISB stamping a requirement with the edition that introduced it. **So a precedent exists that would
+decide `ST 1402.1-26` the same way, and one precedent is not a reading** — which is why the entry
+above records the observation and elects neither.
+
+**What this closes, and what it does not.** Park 9 is **CLOSED**: document pinned, row set written.
+**No tag row moved — all 141 still read `not yet`** — and no other park closed. Settlement 1's
+asymmetry stands: the input is still a local set and not a transport stream, and what has changed is
+that widening it is no longer blocked on a document nobody had. **ST 1402.2's own reference [3] names
+`MISP-2017.1`**, an edition this repository does not hold, where the delegation that made it park 9
+runs through MISP-2015.1 and the held profile is MISP-2019.1. That is recorded as an observation and
+opens nothing: no row above is read against MISP-2017.1.
+
+#### Parks 5 and 11 — the question, FRAMED AND AWAITING A RULING, not acted on
+
+**Their acquisition blocker is discharged in principle and their second one is not.** Checked
+2026-08-27 from the CDX index only, with nothing fetched and nothing landed: **ST 1201.3**
+(`20200111024317`), **ST 1303.1** (`20200111024150`), **ST 1204.1** (`20161222204930`) and
+**ST 1301.2** (`20161223010245`) are all present as `application/pdf` `200` captures, at the exact
+revisions the parks pin. The route that served them is the one that just served ST 1402.2 and
+re-served the pinned ST 0601.4 byte-for-byte. **So "two blockers, one of them transient" is now "one
+blocker", and it is the one that was never transient.**
+
+**Each park's artefact half is source under `packages/`, which is held behind a standing rule.** What
+follows is the framing that rule requires, stated so a ruling can be given without re-deriving any of
+it. **No edit was made under `packages/` for either park.**
+
+| | **Park 5 — ST 1201.3 + ST 1303.1** | **Park 11 — ST 1204.1 + ST 1301.2** |
+|---|---|---|
+| **What would change under `packages/`** | A new `IMAPB` codec — the ST 1201 float↔integer mapping — plus its inverse for egress, and the tag rows that consume it. New executable module, new fixtures, new tests | Populating `Entity.source_ids` from item 94's MIIS Core Identifier: a decoder for ST 1204.1's identifier structure, wired into `klv_uas_codec`. New executable code inside an existing shipped adapter |
+| **What the bump gate would derive** | **MINOR at least.** A new importable module and a new fixture set are both on `version.py`'s MINOR list, and the gate classifies the diff over the distribution — this is not a comment-only or document-only change, so the 1.2.2 floor would not hold | **MINOR at least, and arguably the same.** It adds no importable name but it changes what a shipped adapter *emits*: an `Entity` that previously carried no `source_ids` would carry one. That is a behaviour change in the distribution, and the gate's PATCH row — "a translation fix, a message, a docstring. No surface change" — does not describe it |
+| **What the park's claim needs it for** | The park blocks **16 rows** by section count and 14 by the Format column, both stated. **None is witnessed** by the pinned stream, whose 26 items stop at tag 65 — so the codec would be written against rows no held octet exercises. The one row that bites is **tag 112**, Platform Course Angle, which is the item `Kinematics.course_deg` is waiting for | The park blocks the **only identity the format guarantees**. §4.4.2.1 calls the Core Identifier "a mandatory consistent unique identifier for all sensors and platforms", so without it an `Entity` cannot be keyed on anything the stream states. **Item 94 is also absent from the pinned stream**, so this too would be written against no held octet |
+| **The alternative if the ruling is no** | Obtain and pin both documents *without* writing the codec — the park's acquisition half discharged, the artefact half left open, exactly as **park 2** already stands: document held, row set unwritten. That is a real and precedented intermediate state, and it would narrow the park to one blocker recorded as such | The same intermediate: pin ST 1204.1 and ST 1301.2, leave `Entity.source_ids` unpopulated, and record the park as acquisition-discharged. **This is the weaker of the two cases for acting**, because ST 1301 is the thinner dependency — `1301` occurs **zero** times in ST 0601.14a |
+| **What makes this a question rather than a decision** | Both parks would have code written against **documents whose rows the held stream does not exercise**. Park 4's closure was argued rather than assumed precisely because ST 0107.3 supports no row set; here the inverse risk applies — a codec with no witnessed input is a codec whose first real bytes are its first test | Same, and sharper: an identifier decoder that no held packet exercises would be the first thing in this adapter whose correctness rests entirely on the document |
+
+**The recommendation this round makes, and it is a recommendation rather than an act.** Take the
+intermediate on both: **obtain and pin all four documents, write no source**. It discharges the half
+that is now cheap, it is precedented by park 2, it leaves the floor at 1.2.2, and it converts two
+parks from "blocked on a document *and* a ruling" to "blocked on a ruling" — which is a state the
+record can carry honestly and a later round can act on in one step. **What it does not do is close
+either park**, and calling a pinned-but-unwritten park closed is the error park 4's closure argument
+exists to prevent.
 
 #### Act 2 — what the three narrowings cost, and the one that changes character
 
@@ -9391,7 +9550,7 @@ treated two ways in the other direction.
 | **6** | **MISB ST 0903 — VMTI and Track Metadata** | **0903.4** | §4.4.2.4. The detections and derived tracks live here, which is the content the CDM is shaped for | Public download. The highest-value park after 1: it is what would make this adapter emit `Event`s of type `DETECTION` rather than only parked bytes |
 | **7** | **MISB ST 0806 — Remote Video Terminal Metadata Set** | **0806.4** | §4.4.2.4 | Public download |
 | **8** | **SMPTE ST 336 — Data Encoding Protocol Using Key-Length-Value** | **ST 336:2017** | `MISP-2015.1-07`. The KLV encoding itself. **The one park in this table that is not a download** — SMPTE is a commercial standards body and ST 336 sits behind a paywall, which the profile concedes in its own register: "Commercial references cited in this document are available from industry organizations" (FORWARD) | **A purchase decision, not a download**, and **still OPEN — shrunk twice in one day and lifted neither time.** The Reason cell used to read "key forms, the 16-byte Universal Label, the length forms", written before anybody read ST 0601.14. The framing round took two thirds: **the 16-byte UL of this Local Set is in §6.2** and **the BER-OID tag form is in §7.1 and Figure 67**, neither needing ST 336. The length round took the rest: **ST 0107.3 §6.3.2 states the length grammar and §6.3.1 the BER-OID chain rule for any width.** What is left to this park is **two absences in ST 0107.3** — `0x80` as a first length octet, which it never mentions, and any **ceiling** on the count of length octets, which it does not state — and **neither is reachable from a conforming stream**, which is why the length codec is complete and total with this park open. Recording that a blocker shrank is not recording that it lifted. Named as a purchase deliberately: the other nine open parks need somebody to spend an afternoon and this one needs somebody to spend money. **Two questions of its own.** Register entry **KLV 11**: ST 0102.12's reference [3] pins ST 336:**2007** where the profile, ST 0601.14a and now ST 0107.3 all pin **2017** — three against one, and still unresolved because ST 0102.12 is the document whose own items must conform to *its* edition. Register entry **KLV 13**: ST 0107.3 §6.3.3.1 sources the BER length rules to **ASN.1**, an ITU recommendation and therefore free, so part of this park may not cost money at all — but its reference is X.680, which specifies notation, where BER is X.690. **A round that wants this park cheaper starts at KLV 13** |
-| **9** | **MISB ST 1402 — MPEG-2 Transport Stream for Class 1/Class 2** | **1402.2** | `MISP-2015.1-48` and `-49`, §3.6.9.1 and §5.3.1. Names how KLV is carried in the multiplex, and the two multiplex methods | Public download. **Only needed if the input widens** to a transport stream — settlement 1's asymmetry. Listed so the dependency is visible before somebody widens the input casually. **WORKED AND STILL PARKED, 2026-08-27, on ONE blocker — and that makes it the most closable of the three this round worked.** The blocker is acquisition alone. **It is ONE throttled route and not the three refusals park 5's cell records** — that framing was withdrawn on 2026-08-27 and this cell is corrected rather than left to agree with the withdrawn version: the `nga.mil` zone does not resolve from this environment, so no request reached either official host and neither refused anything. Reproduced unmoved at a second retry the same day. Parks 5 and 11 each carry a *second* blocker this one does not: their artefact half is source under `packages/`, and this park's is not — the input is DECLINED rather than deferred to a codec, so what ST 1402.2 makes writable is the multiplex mechanism as prose, which is a row set and nothing else. **So the moment the archive's rate limit clears, this park closes on bytes alone.** **Narrowed from held documents:** `1402` occurs **zero** times in ST 0601.14a's 218 pages, so like ST 1303 and ST 1301 this document is delegated by MISP-2019.1 alone and the governing document names it nowhere |
+| **9** | ~~**MISB ST 1402 — MPEG-2 Transport Stream for Class 1/Class 2**~~ **CLOSED 2026-08-27** | **1402.2**, obtained and pinned | `MISP-2015.1-48` and `-49`, §3.6.9.1 and §5.3.1. Names how KLV is carried in the multiplex, and the two multiplex methods | **CLOSED 2026-08-27, and it is the first park closed by an ACQUISITION that earlier rounds could not make.** Both halves of the exit condition are discharged: the document is pinned above — SHA-256 `52a3b32a…773100e0`, 1 112 404 bytes, 13 pages — and the artefact half, which for this park was prose and nothing else, is the 26-requirement row set below. **What actually moved was the HOUR, not the record's understanding.** Three prior attempts asked at ~14:05Z and ~14:50Z and met HTTP 429; this one asked at 20:20Z and met `X-RL: 0` and HTTP 200. The quota is evidently windowed in a way no earlier round had varied, because every earlier attempt held the hour fixed while varying nothing else. **The pin was TESTED before anything new was trusted:** the byte-exact archived ST 0601.4 URL was re-fetched in full first and digested to this record's pinned value exactly, so the route was shown to serve the recorded bytes before it was asked for unrecorded ones. **The two official routes were asked first and neither served it** — `gwg.nga.mil` HTTP 403 with an S3 `AccessDenied` body, `nsgreg.nga.mil` HTTP 200 whose body is the F5 JavaScript interstitial, which is a challenge page and not a document — so the provenance is the Internet Archive's snapshot of `gwg.nga.mil`'s own copy, the same 2020-01-11 crawl that served EG 0601.1 and ST 0601.4, and the caveat those pins carry governs this one. **What it did NOT close:** no other park, and no tag row — all 141 still read `not yet`. Settlement 1's asymmetry is unchanged; what this buys is that widening the input to a transport stream is no longer blocked on an unobtained document |
 | **10** | **MISP-2019.1: Motion Imagery Handbook** | the 2019.1 edition, Nov 2018 | STANAG 4609 Ed 5 lists it as its only OTHER RELATED DOCUMENT and MISP §1.3 calls it a companion "providing definitions of terms used with more background and technical detail". But §3.6.7 says of the same document that it "defines the Structure of the Common Metadata System (CMS), describes how to organize the sensor/platform data into a hierarchy of KLV Packs and Local Sets ... **and defines the required data items**" — register entry **KLV 8** | Public download, the same two URLs. Its billing and its stated function disagree, so whoever obtains it answers that first: a document that defines required data items is normative in fact, whatever the wrapper's headings say |
 | **11** | **MISB ST 1204 and ST 1301 — MIIS Core Identifier, Augmentation Identifiers** | **1204.1**, **1301.2** | `MISP-2015.1-68` and `-69`. §4.4.2.1: "a mandatory consistent unique identifier for all sensors and platforms" | Public download. Blocks `Entity.source_ids`, and therefore blocks keying an `Entity` on anything the stream states. The NITS MIIS decline deferred the *decoding*; here the identifier is the only identity the format guarantees, so the same document is a heavier dependency for this adapter than for that one. **WORKED AND STILL PARKED, 2026-08-27, on TWO blockers**, the same pair as park 5: acquisition, on the three refusals recorded in that cell, and an artefact half — populating `Entity.source_ids` — that is source under `packages/`. **Narrowed from held documents, and this is the one of the three whose version cell is now corroborated TWICE.** ST 0601.14a's reference [16] and ST 0601.8's reference [18] both pin it as "MISB ST 1204.1 Motion Imagery Identification System (MIIS) Core Identifier, **Oct 2013**" — two held editions, eight revisions apart, agreeing on edition and date. **The item it decodes has been on the wire since edition 8:** item 94 `MIIS Core Identifier` is §8.94 of ST 0601.8 and Table 1 of .14a gives its Format as `byte` with the value "MISB ST 1204 MIIS Core Identifier binary value", §8.94 adding that it "does not include MISB ST 1204's 16-byte Key or length, only the value portion". **It is absent from the pinned stream**, whose 26 items stop at 65 — so this park, like park 5, blocks a row and no held octet. **ST 1301 is the weaker half:** `1301` occurs **zero** times in ST 0601.14a |
 | **12** | **MISB ST 0902 — Motion Imagery Sensor Minimum Metadata Set** | **0902.8** | `MISP-2015.1-75`, and §4.4.4 calls it "a prerequisite for MISP conformance" | Public download. The minimum conformant content of an airborne feed, which makes it the smallest possible Phase 2: **parks 4, 5 and 8 are enough to READ a stream at all, and parks 1, 3, 11 and 12 are enough to TRANSLATE a conformant one** |

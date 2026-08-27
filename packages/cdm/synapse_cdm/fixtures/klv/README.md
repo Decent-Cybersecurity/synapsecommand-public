@@ -111,6 +111,18 @@ routes refused — `gwg.nga.mil` and `nsgreg.nga.mil` answered nothing and `web.
 **HTTP 429**, including on the byte-exact archived URL that served `ST0601.4.pdf` the day before. It
 is a quota, not a credential, so the routes are throttled rather than closed.
 
+**A NINTH ROUND ASKED THE SAME ROUTE AT A DIFFERENT HOUR AND PARK 9 CLOSED.** 2026-08-27T20:20Z,
+against the ~14:05Z and ~14:51Z of the two recorded refusals. `web.archive.org` answered `X-RL: 0`
+and **HTTP 200**, and the byte-exact archived `ST0601.4.pdf` URL served bytes digesting to this
+record's pin **exactly** — so the route was proved against a known answer before it was asked for a
+new one. **MISB ST 1402.2 is now held and pinned**, 13 pages, and its 26 requirements are the row
+set park 9 wanted. The park arithmetic is **four closed** — 1, 4, 13, 9 — and **nine open**, eight
+of them public downloads. The two official routes were askable for the first time and neither
+served it: `gwg.nga.mil` answered **403**, `nsgreg.nga.mil` answered **200 carrying the F5
+JavaScript interstitial**, which is a challenge page and not a document. **Parks 5 and 11 did not
+close**: their documents are now reachable too — checked from the index, nothing fetched — so each
+stands on its second blocker alone, an artefact half that is source under `packages/`.
+
 **The sentence above about item introductions was true when it was written and is not true now.**
 This file says "**no held document dates any item's introduction**", scoped in the same breath to
 `ST 0601.14a` and `ST 0601.19` — the only two ST 0601 copies held at the time. **Six editions are now
@@ -153,8 +165,9 @@ What is here:
 - **`spec/nato-stanag-4609-edition-5.pdf`** and **`spec/misb-misp-2019-1.pdf`** — in the working
   tree because they had to be read, and **not committed**, matching every other adapter here.
   `git ls-files | grep -c '\.pdf$'` is 0 across the whole repository.
-- **`spec/ST0601.14a.pdf`**, **`spec/ST0102.12.pdf`**, **`spec/ST0601.19.pdf`** and
-  **`spec/ST0107.3.pdf`** — four of the fourteen delegated documents, all obtained 2026-08-26, in the
+- **`spec/ST0601.14a.pdf`**, **`spec/ST0102.12.pdf`**, **`spec/ST0601.19.pdf`**,
+  **`spec/ST0107.3.pdf`** and **`spec/ST1402.2.pdf`** — five of the fourteen delegated documents,
+  four obtained 2026-08-26 and **ST 1402.2 on 2026-08-27**, in the
   working tree and **not committed** on the same rule. Three of the four are editions MISP-2019.1
   pins: **ST 0601.14** (Appendix B ref [53]), **ST 0102.12** (ref [55]) and **ST 0107.3** (ref [14]).
   **ST 0601.19 is not** — it is five major revisions later — and it is kept as **context only**, never
