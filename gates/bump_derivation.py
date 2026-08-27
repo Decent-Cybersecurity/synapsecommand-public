@@ -441,9 +441,13 @@ def _adapter_names(tree: ast.Module) -> set[str]:
     """`name = "…"` on classes that subclass something called `Adapter`, by AST and no import.
 
     Importing would be the more accurate reading and is not available: the arc's other end is a
-    git revision, not an importable tree. The shape is uniform across all thirteen — `class
-    XAdapter(Adapter):` with `name = "…"` as a class attribute — and `adapter.py`'s
-    `__init_subclass__` is what turns that literal into the registry key.
+    git revision, not an importable tree. The shape is uniform across the whole shipped roster —
+    `class XAdapter(Adapter):` with `name = "…"` as a class attribute — and `adapter.py`'s
+    `__init_subclass__` is what turns that literal into the registry key. **The roster is stated
+    as no number here**, on rule 7 of the sweep protocol: this reading is compared against
+    `adapter.roster()` by `test_the_gates_adapter_roster_is_the_registry`, so a count in this
+    docstring would be a second statement of a fact one test already derives, and a second
+    statement re-drifts where a citation cannot.
     """
     found = set()
     for node in ast.walk(tree):
@@ -490,16 +494,45 @@ def _harness_exit_codes(tree: ast.Module) -> set[str]:
         if not (isinstance(node, ast.FunctionDef) and node.name == "main"):
             continue
         for inner in ast.walk(node):
-            if (isinstance(inner, ast.Return) and isinstance(inner.value, ast.Constant)
-                    and isinstance(inner.value.value, int)):
-                codes.add(f"return {inner.value.value}")
+            if not isinstance(inner, ast.Return) or inner.value is None:
+                continue
+            # EVERY integer constant inside the returned EXPRESSION, not just a bare `return 2`.
+            # The first version tested `isinstance(inner.value, ast.Constant)` and therefore read
+            # `return 0` and missed `return 1 if report["failed"] else 0` — so exit code 1, the one
+            # a caller checks for "some fixture failed", was not in the roster at all and removing
+            # it would have moved nothing. Same class as the `_check_*` subset above, found by the
+            # same sweep, and the reason both are now derived from the shape rather than the name.
+            for leaf in ast.walk(inner.value):
+                if isinstance(leaf, ast.Constant) and isinstance(leaf.value, int) \
+                        and not isinstance(leaf.value, bool):
+                    codes.add(f"return {leaf.value}")
     return codes
 
 
 def _harness_checks(tree: ast.Module) -> set[str]:
-    return {s.name for s in tree.body
-            if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and s.name.startswith("_check_")}
+    """The harness's check roster, read from `_COLUMNS` — NOT from the `_check_*` function names.
+
+    THIS WAS `_check_*` AND IT WAS A SUBSET, found by the round's own roster sweep before the gate
+    had ever been asked about a harness change. `harness.py` runs **six** checks and only three of
+    them are functions named `_check_*`: `translate`, `lossless` and `golden` are inline in `run()`.
+    So a gate reading the function names would hold a roster of three, and adding a seventh check
+    inline would move nothing it can see — the exact shape of the defect
+    `tests/test_cdm_gate_rosters.py` exists for, where a gate's written-down roster replayed a
+    SUBSET of the adapter roster and reported the subset's own count as a pass.
+
+    `_COLUMNS` is the right roster because it is the one the REPORT renders, so it is what a
+    consumer of the harness actually receives, and `tests/test_cdm_harness.py` already holds it to
+    `run()`'s own output — a check missing from `_COLUMNS` is invisible in the report and that test
+    fails. Reading it here means this gate and that test share one definition of "a harness check"
+    instead of having two.
+    """
+    for stmt in tree.body:
+        if _unit_name(stmt) != "_COLUMNS" or not isinstance(stmt, ast.Assign):
+            continue
+        if isinstance(stmt.value, (ast.Tuple, ast.List)):
+            return {e.value for e in stmt.value.elts
+                    if isinstance(e, ast.Constant) and isinstance(e.value, str)}
+    return set()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -1209,9 +1242,9 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
     (
         "a PATCH arc numbered PATCH — the arc this repository actually shipped, in miniature",
         {"pyproject.toml": _PYPROJECT,
-         f"{PKG}/MIGRATIONS.md": b"# History\n\ntwelve\n"},
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, before\n"},
         {"pyproject.toml": _PYPROJECT,
-         f"{PKG}/MIGRATIONS.md": b"# History\n\nthirteen\n"},
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, after\n"},
         (1, 2, 0), "1.2.1", None,
     ),
     (

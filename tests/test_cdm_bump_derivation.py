@@ -42,6 +42,7 @@ outlives its case is refused as stale.
 """
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import types
@@ -306,8 +307,8 @@ def test_a_ruling_that_outlives_its_case_is_refused_as_stale(gate, tmp_path, mon
                 "**Bump ruling.** `synapse_cdm/adapter.py:gone` — PATCH: a unit that no longer "
                 "moves.\n")
     clean = gate.derive(
-        {"synapse_cdm/MIGRATIONS.md": b"twelve\n"},
-        {"synapse_cdm/MIGRATIONS.md": b"thirteen\n"})
+        {"synapse_cdm/MIGRATIONS.md": b"a shipped document, before\n"},
+        {"synapse_cdm/MIGRATIONS.md": b"a shipped document, after\n"})
     with pytest.raises(gate.Finding) as refusal:
         gate.apply_rulings(clean, "Unreleased")
     assert "does not find ambiguous" in str(refusal.value)
@@ -366,6 +367,98 @@ def test_the_json_measurement_is_what_a_round_would_quote():
 
 def gate_kinds() -> tuple[str, ...]:
     return ("NONE", "PATCH", "MINOR", "MAJOR")
+
+
+# ---------------------------------------------------------------- the rosters, against the package
+#
+# `tests/test_cdm_gate_rosters.py`'s discipline, applied to this gate's rosters for its reason: a
+# gate holding a roster that nothing compares is the arrangement in which `gates/wheel_install.py`
+# replayed a SUBSET of the adapter roster and printed the subset's own count as a pass. This gate
+# reads its rosters out of the source by AST — stated as no number here, on rule 7 of the sweep
+# protocol — because the other end of every arc is a git revision and not an importable tree — and an AST reading of the tree it is standing in can be compared with what the
+# tree actually does. Two of the five were SUBSETS when first written and both were found by the
+# round's own roster sweep rather than by a failing test:
+#
+#   * the check roster read the `_check_*` FUNCTION NAMES and got three. The harness runs six;
+#     `translate`, `lossless` and `golden` are inline in `run()`. It now reads `_COLUMNS`, which is
+#     the roster the report renders and which `tests/test_cdm_harness.py` holds to `run()`'s output.
+#   * the exit-code roster tested `isinstance(return.value, ast.Constant)` and so read `return 0`
+#     and missed `return 1 if report["failed"] else 0` — exit code 1, the one a caller checks, was
+#     absent from the roster and removing it would have moved nothing.
+#
+# Both are now derived from the shape rather than from a name, and both are closed here.
+
+
+def test_the_gates_adapter_roster_is_the_registry(gate):
+    """Read by AST from the source; compared against what the package actually registers."""
+    from synapse_cdm import adapter
+    derived = gate.read_surface(gate.snapshot_at(None)).adapters
+    # Scoped to the SHIPPED adapters, exactly as `tests/test_cdm_gate_rosters.py` scopes its own
+    # comparison: `roster()` is a live registry and other test modules register synthetic adapters
+    # into it, so an unscoped comparison passes alone and fails inside the suite — which it did.
+    registered = {name for name, cls in adapter.roster().items()
+                  if cls.__module__.startswith("synapse_cdm.adapters.")}
+    assert derived == registered, (
+        f"only in the gate {sorted(derived - registered)}, only in the registry "
+        f"{sorted(registered - derived)}. The gate finds an adapter by the `name = \"…\"` literal "
+        "on a class subclassing `Adapter`; if that stops being the shape, an adapter can be added "
+        "with nothing in this gate seeing a MINOR"
+    )
+
+
+def test_the_gates_check_roster_is_the_harnesss_own(gate):
+    """`_COLUMNS`, not the `_check_*` names — see the note above for the subset this replaced."""
+    from synapse_cdm import harness
+    derived = gate.read_surface(gate.snapshot_at(None)).checks
+    assert derived == set(harness._COLUMNS), (
+        f"the gate reads {sorted(derived)} and the harness renders {sorted(harness._COLUMNS)}. "
+        "`version.py`'s MINOR row names 'a harness flag or check is added', so a roster short of "
+        "the real one is a MINOR this gate cannot see"
+    )
+    assert len(derived) > 3, (
+        "the roster is back down to the `_check_*` functions, which are three of the six checks. "
+        "That subset is the defect this test was written for"
+    )
+
+
+def test_the_gates_flag_and_exit_code_rosters_are_what_the_harness_declares(gate):
+    """Both compared against the real parser and the real returns, not against a written list."""
+    from synapse_cdm import harness
+    surface = gate.read_surface(gate.snapshot_at(None))
+    parser_flags = _declared_flags(harness)
+    assert surface.flags == parser_flags, (
+        f"only in the gate {sorted(surface.flags - parser_flags)}, only in the parser "
+        f"{sorted(parser_flags - surface.flags)}"
+    )
+    assert "return 1" in surface.exit_codes, (
+        "exit code 1 is missing from the roster. It is returned by "
+        "`return 1 if report['failed'] else 0` — inside a ternary, which is why the first version "
+        "of this reader could not see it. The MAJOR row names a harness exit code being removed, "
+        "and a code the gate never held cannot be seen to go"
+    )
+    assert f"EXIT_NO_FIXTURES={harness.EXIT_NO_FIXTURES}" in surface.exit_codes
+
+
+def _declared_flags(harness) -> set[str]:
+    """Every option string the harness's own parser declares, asked of argparse rather than read.
+
+    The independent second derivation: this one builds the real parser and inspects its actions,
+    where the gate reads `add_argument`'s first literal out of the AST. Two methods, one answer, or
+    one of them is wrong.
+    """
+    import contextlib
+    import io
+    # The parser is built inside `main()`, so it is reconstructed the only way that does not run a
+    # harness: ask for `--help` and read the option strings argparse prints for itself.
+    with contextlib.redirect_stdout(io.StringIO()) as out:
+        with contextlib.suppress(SystemExit):
+            harness.main(["--help"])
+    found = set(re.findall(r"(?<![\w-])(--[a-z][a-z0-9-]*)", out.getvalue()))
+    # `--help` is argparse's own and no `add_argument` in `harness.py` declares it, so the gate
+    # cannot see it and should not: it is not a flag this package chose, and its removal would be
+    # argparse's decision rather than a release's. Dropped from the comparison rather than added to
+    # the gate, so the two derivations stay derivations of the same thing.
+    return found - {"--help"}
 
 
 # ------------------------------------------------------------------- the spec, stated and checked

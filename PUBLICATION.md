@@ -1131,6 +1131,33 @@ mistake this section exists to prevent.
 | **Witnessed** | the force-push refusal; the DCO check failing then passing; the byte-identical pages | someone changes the setting afterwards and nothing notices |
 | **Recorded from the API** | the `deletion` rule; the ruleset version history; the app install time | same, and it was never observed in action |
 
+**A FOURTH KIND HAS BEEN RETIRED, and entry 10 is where it was last exercised: a claim that is
+merely CONSISTENT.** 2026-08-27. The release number is the sharpest case in this file, because a
+PyPI filename is permanent and a version is the one claim in a release that can never be
+corrected. Entry 10 records that the round was specified as **1.3.0** and renumbered itself to
+1.2.1 from the diff — and every check in this repository would have passed 1.3.0. Each of them asks
+whether a number is stated the same way in two places: the tag names the tree's `PACKAGE_VERSION`,
+the notes describe that version, the package source that moved is written down. **Consistency is
+not a measurement.** Three documents agreeing about a wrong number is three documents agreeing.
+
+The number is now **gated**, on the top row's terms — it cannot go stale because a test fails.
+[`gates/bump_derivation.py`](gates/bump_derivation.py) classifies the diff over the distribution's
+own contents between the previous tag and the tree being released against `version.py`'s
+`PACKAGE_VERSION` table, and refuses a number that exceeds or undershoots it; it is condition 5 of
+`MIGRATIONS.md`'s release procedure and it is in the suite, because it needs git and nothing else.
+**Retroactively it derives the number every release of this package actually shipped** — 1.1.0 and
+1.2.0 as MINOR, 1.2.1 as PATCH — having been told none of them, which is the check
+`tests/test_cdm_bump_derivation.py` runs over the tags rather than a claim made here. Entry 10's
+ruling is unchanged and is now re-derivable from the two trees it was made about.
+
+**Where the table's prose needs judgement the gate refuses instead of guessing, and that is the
+part worth reading as a design decision rather than a feature.** Its PATCH row and its MAJOR row
+both reach a function whose body moved and whose name did not, and no diff separates them —
+"the meaning changed" is a claim about intent. So the gate names the unit and stops, and a person
+rules it in `MIGRATIONS.md` in the section describing the arc. The gate reads those rulings and
+**refuses one that outlives its case**, which is this file's own discipline about exemptions applied
+to a mechanism a round could otherwise satisfy by writing a sentence.
+
 The suite cannot reach GitHub or Cloudflare, and it must not want to: a test that needs
 credentials is a test that fails for every outsider and turns green only for whoever holds the
 token. Re-witnessing is therefore a **protocol act**, like the stale-count sweep — the probes in

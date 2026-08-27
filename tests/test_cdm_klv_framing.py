@@ -811,6 +811,86 @@ SITES = {
 }
 
 
+#: MEASUREMENTS THIS ROUND PUT AT MORE THAN ONE SITE, collected the moment they were multiplied
+#: rather than after one of them drifted — which is the disjunction protocol's whole argument. Each
+#: row is (what it is, the value verbatim, the sites required to carry it). The sites are NAMED and
+#: not globbed, for `SITES`' own reason: adding a fourth site is a deliberate act.
+#:
+#: The KLV 16 rows are read out of EG 0601.1's PDF document-information dictionary, and they are
+#: guarded HERE and not re-derived by this suite for a reason worth stating: the pinned PDFs are
+#: gitignored and no PDF library is installed in the environment the suite judges, so a test that
+#: parsed them would skip everywhere and assert nothing. What CAN be asserted for free is that the
+#: three prose statements of one measurement are the same statement, which is the half that
+#: actually rots. The derivation itself is recorded in `FORMAT_COVERAGE.md` beside the value, with
+#: the calibration that makes it meaningful.
+MULTIPLIED_FACTS = (
+    ("EG 0601.1's PDF /CreationDate, KLV 16's third corroboration of the cover date",
+     "D:20080515125829",
+     ("FORMAT_COVERAGE.md", "MIGRATIONS.md", "fixtures/klv/spec/klv_pin.json")),
+    ("the initial release's PDF /CreationDate, which calibrates the field's four-day lag",
+     "D:20060116085414",
+     ("FORMAT_COVERAGE.md", "fixtures/klv/spec/klv_pin.json")),
+    ("EG 0601.1's source-document filename, the second date stamp inside /Title",
+     "EG0601.1_UAS_Local_Data_Set_20080515.doc",
+     ("FORMAT_COVERAGE.md", "MIGRATIONS.md", "fixtures/klv/spec/klv_pin.json")),
+    ("park 9's retry: the rate-limit header the archive answered with",
+     "X-RL: 1",
+     ("FORMAT_COVERAGE.md", "fixtures/klv/spec/klv_pin.json")),
+    # TWO ROWS THIS GUARD COLLECTED RATHER THAN THIS ROUND CREATING THEM, and both were load-bearing
+    # and unguarded. Each is the /CreationDate that establishes that a pinned copy is NOT the
+    # pristine edition its cover claims — ST 0601.14a as amended through 19 August 2021 but
+    # generated 17 December 2021, and ST 0601.19 as amended through 11 June 2025 but generated
+    # 2 July 2025. They are stated at one site each, so the row above them asserts nothing new; what
+    # the row does is put them inside the SET the second direction below closes, so a retyped digit
+    # in either fails a build. Timezone suffixes are deliberately not part of the value: the pin
+    # writes `-05'00'` after both and the regex reads the fourteen digits, which is the part that
+    # dates the file.
+    ("ST 0601.14a's own /CreationDate — the copy is amended past its 1 May 2020 cover",
+     "D:20211217145743",
+     ("fixtures/klv/spec/klv_pin.json",)),
+    ("ST 0601.19's own /CreationDate — the copy is amended past its 2 March 2023 cover",
+     "D:20250702122555",
+     ("fixtures/klv/spec/klv_pin.json",)),
+)
+
+
+@pytest.mark.parametrize("label,value,required", MULTIPLIED_FACTS,
+                         ids=[v for _l, v, _s in MULTIPLIED_FACTS])
+def test_a_measurement_stated_at_more_than_one_site_is_the_same_measurement(label, value, required):
+    """Every site required to carry a multiplied measurement carries it, verbatim.
+
+    The direction that catches a half-edit. A round that corrects one of three statements of one
+    timestamp leaves two documents disagreeing about a file's own bytes, and nothing reads prose.
+    """
+    for name in required:
+        assert name in SITES, f"{name} is not a known site; add it to SITES deliberately"
+        assert value in SITES[name](), (
+            f"{name} no longer states {value!r} — {label}. Either the measurement was corrected at "
+            f"one site and not the others, which is the half-edit this row exists to catch, or it "
+            f"was withdrawn, in which case it goes from every site and from this row together"
+        )
+
+
+def test_no_site_states_a_second_pdf_timestamp_for_a_document_that_has_one():
+    """The other direction: no THIRD form of a value the rows above pin.
+
+    `test_the_pinned_copy_is_the_same_copy_at_every_site_that_names_one` does this for digests,
+    where an abbreviation is how a hash drifts unnoticed. A PDF timestamp drifts the other way —
+    it is short enough to retype, and a retyped `D:2008...` differing in one digit reads correctly
+    at every site that carries it. So the SET of timestamps stated anywhere must be exactly the
+    set these rows pin, and a new one is a row somebody has to add.
+    """
+    pinned = {value for _l, value, _s in MULTIPLIED_FACTS if value.startswith("D:")}
+    for name, read in SITES.items():
+        found = set(re.findall(r"\bD:\d{14}\b", read()))
+        unknown = sorted(found - pinned)
+        assert not unknown, (
+            f"{name} states PDF timestamp(s) {unknown} that MULTIPLIED_FACTS does not pin. A "
+            "timestamp is short enough to retype and a wrong digit reads correctly, so each one "
+            "gets a row naming which document it is from and which sites carry it"
+        )
+
+
 def test_the_pinned_copy_is_the_same_copy_at_every_site_that_names_one():
     """The digest, full or abbreviated, and no third form anywhere.
 
