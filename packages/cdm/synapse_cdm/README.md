@@ -332,6 +332,21 @@ cannot find a site nobody has added to it. The sweep is:
    `synapse_cdm/__init__.py`, which still said "five adapters means ten translations" four
    adapters later. A site that is stale by more than one release does not contain the previous
    count word, so searching for it cannot find the sites that have drifted furthest.
+
+   **A SYNTHETIC TEST FIXTURE THAT SPELLS A COUNT IS A LIVE SITE, and this rule's own file set
+   is why.** The set is `*.md`, `*.mdx` and `*.py`, so a fixture inside a `.py` module is swept
+   exactly like prose — and a fixture is written to *look* like the thing it stands for, which
+   is precisely what makes it indistinguishable from a real claim to a grep. Commit `90f65f7`
+   reworded two such fixtures in `gates/bump_derivation.py` and its test module, where
+   before-and-after strings had been given a roster count to differ by; they now differ by a
+   neutral phrase and state no count at all. **The repair is to make the fixture stop stating
+   the fact**, not to exempt the file: an exemption would have to be renewed by judgement every
+   round, and rule 7 already prefers deleting a restated count to maintaining one. This is the
+   same shape as the quoting trap `tests/test_cdm_publication.py` records for the deploy
+   markers — a checker that spells the forbidden string carries it — one layer over: there a
+   correction became a carrier by quoting, here a fixture becomes one by illustrating.
+   **Found by the manual reverse sweep**, as the one commit of nine that no tracked `.md`
+   accounted for, which is what that sweep is for.
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
