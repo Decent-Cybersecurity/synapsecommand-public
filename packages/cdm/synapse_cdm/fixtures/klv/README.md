@@ -166,8 +166,10 @@ What is here:
   tree because they had to be read, and **not committed**, matching every other adapter here.
   `git ls-files | grep -c '\.pdf$'` is 0 across the whole repository.
 - **`spec/ST0601.14a.pdf`**, **`spec/ST0102.12.pdf`**, **`spec/ST0601.19.pdf`**,
-  **`spec/ST0107.3.pdf`** and **`spec/ST1402.2.pdf`** — five of the fourteen delegated documents,
-  four obtained 2026-08-26 and **ST 1402.2 on 2026-08-27**, in the
+  **`spec/ST0107.3.pdf`**, **`spec/ST1402.2.pdf`**, **`spec/ST1201.3.pdf`**,
+  **`spec/ST1303.1.pdf`**, **`spec/ST1204.1.pdf`** and **`spec/ST1301.2.pdf`** — **nine** of the
+  fourteen delegated documents, four obtained 2026-08-26 and **five on 2026-08-27** — ST 1402.2 by
+  the off-peak round and the last four by the pins round the same evening — in the
   working tree and **not committed** on the same rule. Three of the four are editions MISP-2019.1
   pins: **ST 0601.14** (Appendix B ref [53]), **ST 0102.12** (ref [55]) and **ST 0107.3** (ref [14]).
   **ST 0601.19 is not** — it is five major revisions later — and it is kept as **context only**, never

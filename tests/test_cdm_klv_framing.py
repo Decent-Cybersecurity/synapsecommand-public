@@ -877,6 +877,34 @@ MULTIPLIED_FACTS = (
     ("ST 1402.2's own /CreationDate — 47 days after its 27 October 2016 cover",
      "D:20161213145428",
      ("fixtures/klv/spec/klv_pin.json",)),
+    # FOUR ROWS ADDED BY THE PINS ROUND, 2026-08-27 evening, and together they RETIRE THE
+    # CALIBRATION the row above rests on. That row reasons that ST 1402.2's field "corroborates the
+    # YEAR and nothing finer" because it lags its cover by 47 days where the four held 0601
+    # documents gave 0, 0, 0 and 4. These four give 462, 63, 47 and 288. So across the nine samples
+    # now held the lag runs 0 to 462 days, and at 462 the field does not corroborate even the year
+    # — the method is a LOWER BOUND on production date and nothing more.
+    #
+    # THE 47-DAY ROW ABOVE IS LEFT AS IT WAS WRITTEN, deliberately. Its claim is true of ST 1402.2,
+    # whose lag really is 47 days; what is false is the general rule a reader would infer from it,
+    # and that is narrowed in `klv_pin.json` under its own key rather than edited into a closed
+    # round's node. Same rule as entry 5's: a record that quietly updates its own history is a
+    # record nobody can date.
+    #
+    # Each is stated at ONE site, so the row asserts nothing new across sites; what it buys is that
+    # the closure direction below stops treating four real measurements as unknown timestamps. The
+    # timezone suffix is not part of the value, as above — the pin writes `-05'00'` after all four.
+    ("ST 1201.3's own /CreationDate — 462 days after its 5 October 2017 cover, the widest lag held",
+     "D:20190110145430",
+     ("fixtures/klv/spec/klv_pin.json",)),
+    ("ST 1303.1's own /CreationDate — 63 days after its 1 November 2018 cover",
+     "D:20190103135529",
+     ("fixtures/klv/spec/klv_pin.json",)),
+    ("ST 1204.1's own /CreationDate — 47 days after its 24 October 2013 cover, the same lag as ST 1402.2",
+     "D:20131210114511",
+     ("fixtures/klv/spec/klv_pin.json",)),
+    ("ST 1301.2's own /CreationDate — 288 days after its 27 February 2014 cover",
+     "D:20141212132252",
+     ("fixtures/klv/spec/klv_pin.json",)),
 )
 
 
