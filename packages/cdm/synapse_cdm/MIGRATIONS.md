@@ -211,10 +211,25 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing here is in any release.** The distribution on the index is **1.2.1**, and a reader who
 ran `pip install synapse-cdm` does not have what this section describes.
 
-**What moved inside the distribution: three shipped documents, and no code.** `MIGRATIONS.md`,
-`FORMAT_COVERAGE.md` and `fixtures/klv/spec/klv_pin.json`. No adapter, no harness flag or check,
-no fixture set, no dependency, no importable name — so the arc since `v1.2.1` derives **PATCH**
-and the next release is at least **1.2.2**.
+**What moved inside the distribution: FIVE shipped documents, and no code.** `MIGRATIONS.md`,
+`FORMAT_COVERAGE.md`, `fixtures/klv/spec/klv_pin.json`, `synapse_cdm/README.md` and
+`fixtures/klv/README.md` — the last two both carrying the basename `README.md`. No adapter, no
+harness flag or check, no fixture set, no dependency, no importable name — so the arc since
+`v1.2.1` derives **PATCH** and the next release is at least **1.2.2**.
+
+**THIS SENTENCE WENT STALE A SECOND TIME, AND THE PARAGRAPH BELOW IS ABOUT IT GOING STALE THE
+FIRST TIME.** It read "three shipped documents" and named three, while the arc had moved five:
+`synapse_cdm/README.md` joined at `2cc0643`'s predecessor when sweep rule 1 gained the
+synthetic-fixture case, and `fixtures/klv/README.md` at the off-peak round. **Found by the pins
+round's stale-count sweep, not by a gate**, and the reason no gate caught it is the one the
+paragraph below already names: the guard requires every moved path to be named **by basename**, and
+`README.md` occurs throughout this section for unrelated reasons, so both files were counted as
+named while the sentence that is supposed to name them said *three*. **The guard's one-directional
+design is doing exactly what it was documented to do** — it asserts that no moved file is unnamed,
+not that the prose's own arithmetic is right — so this is a gap in coverage rather than a gate
+failing. Recorded rather than quietly re-synced, because a sentence that has now drifted twice in
+one arc is evidence about the sentence and not about either round: **the count is the part no
+machine reads, and `gates/bump_derivation.py` prints the true set on every run.**
 
 **THAT SENTENCE NAMED ONLY THIS DOCUMENT AND WAS FALSE WHEN IT WAS READ, three commits after it
 was written.** It was true at `e825e96`, whose only shipped file was this one. `6475615` then moved
@@ -263,8 +278,11 @@ check the gate against it — and what the next round will find is that the gate
 expectation rather than confirming it. Run
 `python gates/bump_derivation.py` to see the same verdict off the tree.
 
-**And the arc would be NONE without this file.** The only distribution member this round touches is
-`MIGRATIONS.md` itself, so the PATCH floor rests entirely on a shipped document moving. Had the
+**And the arc would have been NONE without this file, as at the round that wrote this.** The only
+distribution member THAT round touched was `MIGRATIONS.md` itself, so the PATCH floor rested
+entirely on a shipped document moving. **Dated rather than carried forward**, on sweep rule 6: it is
+a true statement about one round and it was written in the bare present tense, and four later rounds
+have since moved four more shipped documents into the same arc. Had the
 round written its record only in `PUBLICATION.md` — which does not ship — the gate would have
 derived **NONE**, and the correct next release would have been no release at all. That is the
 distinction `PACKAGE_VERSION` exists to make and it is worth seeing it land on a round this large.
@@ -454,6 +472,106 @@ question was whether prose about a mechanism accounts for a *repair within* that
 were unambiguous in both directions. So the manual reading is cheap at this arc length and the
 expensive part is not the reading: it is that the two hard cases turn on a distinction — mechanism
 versus repair-within-mechanism — that none of the four refuted formulations can express.
+
+**THE PINS ROUND: FOUR DOCUMENTS PINNED, NO SOURCE WRITTEN, AND NEITHER PARK CLOSED.**
+2026-08-27 evening. The off-peak round ended by recommending an intermediate for parks 5 and 11 —
+*obtain and pin all four documents, write no source* — and that ruling was given and executed here.
+**MISB ST 1201.3** (`c5d8cb2d…bff4a07e`, 617 525 bytes, 20 pages), **ST 1303.1**
+(`e30487b0…a3627895`, 1 084 929 bytes, 14 pages), **ST 1204.1** (`2503960a…61d9f1c5`, 1 078 045
+bytes, 36 pages) and **ST 1301.2** (`3d08d35d…e509f9a6`, 590 094 bytes, 4 pages) are held, pinned and
+read. **The delegated-document tally moves from five to nine of fourteen** — it had not moved at all
+between the day it was written and this morning, and it has now moved twice in one day.
+
+**THE ACQUISITION WINDOW WAS SPENT BEFORE THE AUDIT WAS FINISHED, deliberately.** The quota is
+hour-windowed by the previous round's finding and a window that is open now has closed without
+warning before, so Act 0 was abbreviated in its favour: environment bound re-derived at **21:03Z**,
+control fetch at **21:04Z**, all four documents in hand by **21:05:40Z**, prose afterwards. The
+window held throughout — every response carried `X-RL: 0`, HTTP 200 and an `application/pdf` body.
+
+**THE PIN-AS-CONTROL STEP IS NOW THE STANDARD METHOD RATHER THAN ONE ROUND'S IDEA, AND IT PASSED.**
+The byte-exact archived `ST0601.4.pdf` URL was re-fetched in full first and served 1 268 558 bytes
+digesting to this record's pinned value, equal in both terms. **The route was shown to serve the
+RECORDED bytes before it was asked for unrecorded ones.** Had it disagreed the round would have
+stopped and pinned nothing.
+
+**Both official routes were asked first and the BODY was read, not the status.** `gwg.nga.mil`
+answered **403** with an S3 `AccessDenied` body; `nsgreg.nga.mil` answered **200 whose body is the F5
+JavaScript interstitial**, 43 652 bytes of `text/html` carrying the `bobcmn` marker. A 200 with a
+challenge page in it is the most expensive wrong answer this environment offers, which is why the
+check is run every round rather than recalled. **And the environment bound had to be re-derived
+again**: the whole `nga.mil` zone answered `SERVFAIL` on the afternoon of 2026-08-27 and `NOERROR`
+that evening and again now, so the honest reading is an **intermittency** and not a recovery.
+
+**THE STOP RULE WAS NEVER REACHED.** Each document was to be halted for adjudication if its fetched
+bytes disagreed with what the index-only check had recorded of that revision. All four served at the
+exact CDX timestamps that check read, all four returned `application/pdf` 200, and all four bodies
+are real PDFs whose page counts two independent walkers agree on — 20, 14, 36 and 4. **A second party
+corroborates every one:** each capture's CDX digest is the base32 SHA-1 of its payload, and all four
+were recomputed on the fetched bytes and matched.
+
+**THE DISJUNCTION SWEEP RAN ON ALL FOUR COVERS AND ALL FOUR ARE CLEAN** — cover, running footer and
+changes table agreeing in each, and each agreeing with MISP-2019.1's Appendix B read first-hand. The
+cover-versus-changelog hazard was looked for in four documents and found in none, which is worth
+stating because it was found in three of the documents where it was looked for before.
+
+**PARKS 5 AND 11 ARE NARROWED TO ONE BLOCKER EACH AND NEITHER IS CLOSED.** The acquisition half is
+discharged; the artefact half — an `IMAPB` codec for park 5, populating `Entity.source_ids` for park
+11 — is source under `packages/` and is now marked **blocked on a per-change ruling**. The standing
+rule is unchanged, and any concrete proposal goes to the maintainer with the bump gate's own
+derivation attached. **Park 2 is the exact precedent** for the intermediate state: document held, row
+set unwritten, park open. **The park arithmetic is unchanged in every term** — thirteen parks, four
+closed, nine open. The off-peak round's framing table is **amended in place** rather than left beside
+its own answer, so the record carries one state of that question and not two.
+
+**TWO REGISTER ENTRIES, FROM A DOCUMENT THAT WAS ALREADY HELD.** KLV 18 and KLV 19 are both about
+**ST 1402.2**, pinned hours earlier, and both were **re-derived from the pinned bytes at writing
+time** rather than copied from the closing round's report. KLV 18: twenty-five of its twenty-six
+requirement identifiers carry no revision suffix and the twenty-sixth carries the *previous*
+edition's — deliberately not adjudicated, because KLV 12 rules the converse shape in ST 0107.3 as
+provenance and there the suffixed form is the majority. KLV 19: the four deprecated requirements are
+withdrawn as **re-specifications of ISO/IEC 13818-1 and not as facts**, so the `stream_type` and
+`stream_id` values they carry still apply — and the entry states that distinction because a reader
+taking "deprecated" in its ordinary sense loses exactly the ability to locate a KLV stream, which is
+what park 9 existed to buy.
+
+**TWO STALE COUNTS WERE SWEPT OUT OF `FORMAT_COVERAGE.md`, BOTH HALF A DAY OLD.** The parks preamble
+said *three closed, ten open* and the download-count paragraph said *moved four times*, while park 9's
+own row three rows below already read `CLOSED 2026-08-27`. **The file contradicted itself about its
+own table.** Both repaired and both recorded. **This is the first full round under the widened sweep
+rule 1** — the one that gained the synthetic-fixture case a commit earlier — and what it caught was
+not a fixture but ordinary narrative arithmetic that no gate reads.
+
+**A METHOD GOT WEAKER AND IS NARROWED RATHER THAN LEFT TO BE TRUSTED.** The PDF
+document-information dictionary entered this record as a date corroborator, calibrated on the 0601
+set where it equalled the cover exactly three times in four. These four post-date their covers by
+**462, 63, 47 and 288 days**, so across nine samples the lag runs 0 to 462 and the field corroborates
+only that a file was produced **no earlier than** its cover — at 462 days, not even the year. The
+narrowing is written in `klv_pin.json` under its own key and **not** edited into ST 1402.2's node,
+whose 47-day claim is true of that document. The four new timestamps are declared in
+`MULTIPLIED_FACTS` beside the row whose calibration they retire.
+
+**A NEAR-MISS RECORDED BECAUSE IT WOULD HAVE READ AS A FINDING.** A first pass at MISP-2019.1's
+Appendix B reported ST 1301 as carrying no dated citation where the other three had one — a real
+asymmetry, had it been real. It was a line break: reference [56]'s title wraps between `Local` and
+`Set`, so a single-line regex missed it. Re-derived against the unwrapped text before anything was
+written down.
+
+**WHAT MOVED IN THE DISTRIBUTION, named file by file** — condition 4, and the guard that reads this
+section wants names rather than a count. Four files under `packages/`: `FORMAT_COVERAGE.md` (the pin
+table's four rows and the tally, the parks 5/11 section amended in place, both parks-table rows, two
+stale counts, register entries KLV 18 and KLV 19, and this round's own record); `MIGRATIONS.md`, this
+entry; `fixtures/klv/README.md`, which gains the tenth round and moves its delegated-document tally
+from five to nine; and `fixtures/klv/spec/klv_pin.json`, which gains four pin nodes, the parks
+narrowing, the two register entries, the document-info narrowing and the round's own node. **Every
+one of them is a shipped document and none is executable.** Two files under `tests/` moved as well
+and are not in the distribution. **So the arc still derives PATCH and the floor stays 1.2.2** — which
+the bump gate is asked rather than told.
+
+**WHAT THIS ROUND DID NOT DO.** No park closed. No tag row moved — all 115 `not yet` rows still read
+`not yet`, and no row set was written for any of the four documents. **No source under `packages/`**:
+no `IMAPB` codec, no Core Identifier decoder, no adapter, no model, no fixture, no schema, and
+`SCHEMA_VERSION` is unmoved at `1.0.0`. No mirror was improvised. No new park. **No deploy, no tag,
+no rendered page.**
 
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 

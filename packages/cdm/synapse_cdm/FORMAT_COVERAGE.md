@@ -7493,7 +7493,7 @@ STANAG contains no technical requirement of any kind, and the MISP contains no N
 | SHA-256 (ST 1204.1) | `2503960a0af92b73fe329663b2538b87fbdcca4823c968885a26978d61d9f1c5`, 1 078 045 bytes, 36 pages, `fixtures/klv/spec/ST1204.1.pdf` |
 | SHA-256 (ST 1301.2) | `3d08d35dbfcc6b3de90dde39bbcc1b2cde96043baeac87f9f3b222aae509f9a6`, 590 094 bytes, 4 pages, `fixtures/klv/spec/ST1301.2.pdf` |
 | **The four pins that came from a DIFFERENT CRAWL, and a method that got WEAKER** | Two of the four — **ST 1204.1 and ST 1301.2** — were archived on **22/23 December 2016** from `http://www.gwg.nga.mil/...`, the www alias over plain http, where every other pin here comes from the **2020-01-11** crawl of `https://gwg.nga.mil/...`. Same mirror caveat, a second crawl, and it is recorded because the origin *string* differs and not only the date. **And the PDF document-information dictionary is narrowed by these four**: the adjudication round calibrated it as a date corroborator on the 0601 set, where it equalled the cover exactly three times in four. These four post-date their covers by **462, 63, 47 and 288 days**, so across the nine samples now held the delta runs 0 to 462 and the field corroborates only that a file was produced **no earlier than** its cover — at 462 days not even the year. It is narrowed in `klv_pin.json` rather than edited into ST 1402.2's node, whose own claim for it is true of that document |
-| **A park's document, obtained, and NOT a fifteenth delegation** | **MISB EG 0601.1, UAS Datalink Local Metadata Set, 15 May 2008** — obtained 2026-08-26 by the adjudication round and pinned below. It is the first pin in this row set that the profile does not delegate to: the count of delegated documents obtained stayed at **Four of the fourteen** when this row was written, because a park's deciding document and a profile's delegation are different things and this was the first row where they came apart. **That distinction is what decided the count the other way on 2026-08-27:** ST 1402.2 closed park 9 *and* is a delegation the profile makes — refs [48], `MISP-2015.1-48` and `-49` — so it moves the count where EG 0601.1 could not, and the tally now reads **Five of the fourteen**. The rule did not change; a document arrived on the other side of it. **It closed park 13.** It is also the document that showed park 13's own name to be wrong — there is no *MISB ST 0601.1* — register entry **KLV 15** |
+| **A park's document, obtained, and NOT a fifteenth delegation** | **MISB EG 0601.1, UAS Datalink Local Metadata Set, 15 May 2008** — obtained 2026-08-26 by the adjudication round and pinned below. It is the first pin in this row set that the profile does not delegate to: the count of delegated documents obtained stayed at **Four of the fourteen** when this row was written, because a park's deciding document and a profile's delegation are different things and this was the first row where they came apart. **That distinction is what decided the count the other way on 2026-08-27:** ST 1402.2 closed park 9 *and* is a delegation the profile makes — refs [48], `MISP-2015.1-48` and `-49` — so it moves the count where EG 0601.1 could not, and the tally read **Five of the fourteen** when that sentence was written. **It reads NINE as of 2026-08-27 evening** — the pins round added ST 1201.3, ST 1303.1, ST 1204.1 and ST 1301.2, all four of them delegations the profile makes — and the sentence is re-dated rather than silently re-synced, because its subject is a count that moved and a bare present tense is what let it go stale within the day. The rule did not change; a document arrived on the other side of it, and then four more did. **It closed park 13.** It is also the document that showed park 13's own name to be wrong — there is no *MISB ST 0601.1* — register entry **KLV 15** |
 | SHA-256 (EG 0601.1) | `1714322c25e00e00ccabd5d861318f1448055cbf2000dc2e5099fb30dec0b730`, 918 722 bytes, 98 pages, `fixtures/klv/spec/EG0601.1.pdf` |
 | **The first pin here whose source is a MIRROR** | **Recorded as a provenance caveat rather than softened, because it is a weaker provenance than every other pin above.** `provenance_ruling.page_as_source` makes a MISB document's NSG Registry page its source of record, and **this pin has none** — both official routes refuse an automated GET. `gwg.nga.mil`, the MISB's own document host, answers **HTTP 403** from CloudFront at every `ST0601.N.pdf` and `EG0601.N.pdf` pattern tried, with and without a browser User-Agent and Referer; `nsgreg.nga.mil` answers with an **F5 JavaScript interstitial**, which is the same wall the pin record already records against the registry *pages*, now met on the document route. The bytes came from the **Internet Archive's snapshot of `gwg.nga.mil`'s own copy**, dated 2020-01-11. **What the mirror costs and does not cost:** it costs the third leg of the disjunction — ST 0107.3 could check its edition date against a registry page's agreement and this cannot — and it does not touch the hash, which identifies *the copy that was read* and never claimed more. What the snapshot carries that a bare mirror could not: the URL it archives is `gwg.nga.mil`'s own, so the record names which origin served these bytes and when |
 | **The 0601 lineage — three editions, NOT pins** | **EG 0601 (initial release, 12 Jan 2006), STD 0601.4 (4 March 2010) and MISB ST 0601.8 (23 October 2014)**, in `fixtures/klv/spec/history/`, on the precedent CAT048's 22-edition lineage set. The governing text is still **ST 0601.14 alone** and no row below is read against any of them. Each carries something the others do not: the initial release makes *tag 22 is in the initial-release item set* a **direct read** rather than an inference; ST 0601.4 carries the **full §3 revision history back to the initial release**, which no later edition does, and with it the sentence that makes edition 1 non-normative; ST 0601.8 makes `ST 0601.8-09`, `-11` and `-12` **first-hand**, having been quoted from ST 0601.14a's restatement until now. Hashes, byte counts, page counts and per-file origins are in `spec/klv_pin.json`'s `edition_history` |
@@ -9495,6 +9495,99 @@ an explicit call. **Recorded here, not acted on:**
   round found nothing in ST 0601.14a's reference list that no park or row covers.
 * **No deploy, no tag, no rendered page.** The docs site is untouched.
 
+#### THE PINS ROUND, 2026-08-27 evening — four documents pinned, no source written, no park closed
+
+**The ruling the section above asked for was given and executed.** That section recommended the
+intermediate on both parks — *obtain and pin all four documents, write no source* — and this round
+did exactly that and nothing more. **Four pins, two parks narrowed to one blocker each, two register
+entries, and not one octet of source under `packages/`.**
+
+**The window was treated as the scarce resource, and the audit yielded to it.** The archive's quota
+is hour-windowed by the previous round's finding, and a window that is open now has closed without
+warning before. So the order was: re-derive the environment bound at **21:03Z**, control fetch at
+**21:04Z**, all four documents in hand by **21:05:40Z**, and only then write prose. **The window held
+throughout** — every one of the four responses carried `X-RL: 0`, HTTP 200 and an `application/pdf`
+body.
+
+**The environment bound was re-derived before the network was trusted, and the series now runs in
+both directions.** The whole `nga.mil` zone answered `SERVFAIL` on the afternoon of 2026-08-27,
+resolved that evening, and resolves again now: `gwg.nga.mil` (via `d3twm1tfj00pmn.cloudfront.net`),
+`nsgreg.nga.mil` and the apex all `NOERROR` from the same resolver. **One SERVFAIL and two NOERRORs
+is not a trend, it is an intermittency** — which is why the bound is re-derived each round rather
+than recalled, or a probe reports its own DNS path as the target's behaviour.
+
+**Both official routes were asked FIRST and the BODY was read, not the status.** 21:04Z.
+`gwg.nga.mil` answered **HTTP 403** with an S3 `AccessDenied` XML body — CloudFront, `x-cache: Error
+from cloudfront`, `server: None` — the same refusal at the same layer the off-peak round recorded.
+`nsgreg.nga.mil` answered **HTTP 200**, 43 652 bytes of `text/html` whose body is the F5 JavaScript
+interstitial, carrying the `bobcmn` marker. **The status line alone would have supported "the
+registry serves this document."** It does not. This is finding 4 applied rather than quoted, and it
+is recorded every round because a 200 is the most expensive wrong answer this environment offers.
+
+**The pin-as-control step is now the standard method, and it passed.** Promoted from the off-peak
+round's idea to this round's procedure: re-fetch an already-pinned document and match its digest
+before trusting any new bytes. The byte-exact archived `ST0601.4.pdf` URL served **1 268 558 bytes**
+digesting to `1485e578…25c58c5a` — **equal to this record's pin in both terms**. Only then were the
+four new documents fetched. Had it disagreed, the round would have stopped for adjudication and
+pinned nothing.
+
+**Every fetch agreed with what the index-only check had recorded, so the stop rule was never
+reached.** The rule was that a document whose fetched bytes disagree with the index-only record of
+that revision stops for adjudication while the rest continue. All four served at the exact
+timestamps the previous round read off the CDX index — `20200111024317`, `20200111024150`,
+`20161222204930`, `20161223010245` — all four returned `application/pdf` 200, and all four bodies are
+real PDFs at the page counts two independent walkers agree on. **No document was stopped and no
+partial set was taken.**
+
+**The archive's index is a second party to all four identity claims.** Each capture's CDX row states
+a digest — the base32 SHA-1 of the payload — and all four were recomputed on the fetched bytes and
+matched exactly: `MDZEFRU6DCF5ZPQDKSMXOX4BRWDWEFCA`, `5YYDV4QORBKZOG5LIHV7W2UNEZCIZR3R`,
+`VIUBSW5OGIAKAMS7SO6VFV75NAELNTZW` and `HEIJHHKPFZURHJUULGYDGGRIM5NM5QR2`. It costs nothing and it is
+a witness that is neither this repository nor the origin host. **The `length` column differs from the
+payload in all four cases** — it is the compressed WARC record length — and each pin says so.
+
+**The disjunction sweep was run on all four covers and all four are clean.** Each document states its
+edition date three times: the cover, the running footer of every page, and the revision-history or
+modifications-and-changes table. **All three agree in all four documents, and all four agree with the
+profile's Appendix B.** The KLV 9 / KLV 10 cover-versus-changelog hazard was *looked for* in four
+documents and found in none — worth stating precisely because it was found at ST 0601.19, at ST
+0601.14a and at EG 0601.1 when it was looked for there.
+
+**The profile was read first-hand for all four cited dates, and one near-miss is recorded because it
+would have read as a finding.** MISP-2019.1 Appendix B, from the held copy: ST 1201.3 "Oct 2017",
+ST 1303.1 "Nov 2018", ST 1204.1 ref [54] "Oct 2013", ST 1301.2 ref [56] "Feb 2014" — every one
+agreeing with its document's cover. **A first pass reported ST 1301 as carrying no dated citation at
+all**, which would have been a real asymmetry among the four. It was an artefact of the extraction:
+ref [56]'s title wraps across a line, so a single-line regex missed it. The claim was re-derived
+against the unwrapped text before being written down. **"The profile does not date this one" is
+exactly the kind of finding that reads as significant and was an artefact of a line break.**
+
+**Two stale counts were swept out of the parks section, both half a day old.** The parks preamble
+said *three closed, ten open* and the download-count paragraph said *moved four times*, while park
+9's own row three rows below said `CLOSED 2026-08-27`. **This file contradicted itself about its own
+table.** Both repaired and both recorded rather than quietly fixed. The lesson is the one the pin's
+own stale-count node already states: **a count that no gate reads is a count that goes stale between
+the round that moves it and the round that notices**, and the machine-checked copy of this arithmetic
+lives in `klv_pin.json`, which `tests/test_cdm_klv_framing.py` recomputes from `the_ones_that_closed`.
+
+**A method got weaker, and it is narrowed rather than left to be trusted.** The PDF
+document-information dictionary was introduced as a date corroborator and calibrated on the 0601 set,
+where it equalled the cover exactly three times in four. **These four post-date their covers by 462,
+63, 47 and 288 days.** Across the nine samples now held the delta runs 0 to 462, so the field
+corroborates only that a file was produced **no earlier than** its cover — and at 462 days not even
+the year. Narrowed in `klv_pin.json` under its own key, and **not** edited into ST 1402.2's node,
+whose claim for it is true of that document.
+
+**What this round did NOT do, stated so the four pins are not read as progress they are not.** **No
+park closed** — the arithmetic is unchanged in every term: thirteen parks, four closed, nine open,
+eight of the nine public downloads. **No tag row moved** — all 115 rows reading `not yet` still read
+`not yet`, and no row set was written for any of the four documents. **No source under `packages/`**:
+no `IMAPB` codec, no Core Identifier decoder, no adapter, no model, no fixture, no schema, and
+`SCHEMA_VERSION` is unmoved. **No mirror was improvised.** **No new park.** The two register entries
+added are about **ST 1402.2**, held since the previous round, and not about anything fetched today —
+which is worth saying because a round that pins four documents and files two findings invites the
+inference that the findings came out of the pins.
+
 ### What the adapter fills that ST 0601.14 does not state
 
 Six values on every object come from this adapter rather than from the wire, and each is a decision
@@ -9555,8 +9648,16 @@ than approximates.
 
 ### The parks, each with a named reopen condition
 
-**Thirteen parks over fifteen documents, THREE of them closed, and the honest thing to say first is
-that of the ten still open, nine are public downloads and one is not.** **Park 13 was opened and
+**Thirteen parks over fifteen documents, FOUR of them closed, and the honest thing to say first is
+that of the nine still open, eight are public downloads and one is not.** **This sentence read
+"THREE" and "ten still open" until 2026-08-27 evening, and it was STALE by half a day** — park 9
+closed that afternoon and its own row three rows below said so, so this preamble contradicted the
+table it introduces. Repaired by the pins round's stale-count sweep and recorded rather than quietly
+fixed, on the precedent `klv_pin.json`'s `these_two_counts_were_STALE_and_the_closure_makes_them_RIGHT_AGAIN`
+sets: the arithmetic here is prose and the machine-checked copy is in the pin, which
+`tests/test_cdm_klv_framing.py` recomputes from `the_ones_that_closed`. **A count that no gate reads
+is a count that goes stale between the round that moves it and the round that notices**, and this is
+the second time in two days that this table's own narrative has lagged its rows. **Park 13 was opened and
 closed on 2026-08-26** — opened by the walk round, closed by the adjudication round, the only row here
 with that history — and it is the only park in this table that a *stream* asked for rather than a
 document: it is a superseded revision of a document this repository already holds at a later edition,
@@ -9566,11 +9667,16 @@ a fifteenth document and not a re-read of the third. It is **not** a fifteenth *
 from the fixture plan and from the register, so renumbering rows to close a gap would silently
 re-point every one of those citations. A closed park says it is closed.
 
-**And the download count has now moved four times, which is the point of asserting it rather than
+**And the download count has now moved five times, which is the point of asserting it rather than
 describing it.** From 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, from 9 to 10 when
-the walk round opened park 13, and from 10 back to 9 when the adjudication round closed it. **It falls
-every time somebody does the cheap thing and rises when a round finds a question it cannot answer from
-what is held** — and park 13 is the one case where it did both inside a single day.
+the walk round opened park 13, from 10 back to 9 when the adjudication round closed it, and **from 9
+to 8 when the off-peak round closed park 9**. **It falls every time somebody does the cheap thing and
+rises when a round finds a question it cannot answer from what is held** — and park 13 is the one case
+where it did both inside a single day. **The fifth move was also stale prose until the pins round
+swept it**, in the same sentence-pair as the preamble above: this paragraph said "four times" and
+stopped at park 13 while park 9's closure sat in the table beneath it. **What the pins round did NOT
+move is this count**, and that is the distinction the round turns on — it obtained four documents and
+closed no park, so eight public downloads remain outstanding and four of them are now on disk.
 
 **That the largest park in this table and the cheapest were both closed by one person with a browser
 is not an exception to the paragraph below — it is the evidence for it.** Park 4 is the sharper of the

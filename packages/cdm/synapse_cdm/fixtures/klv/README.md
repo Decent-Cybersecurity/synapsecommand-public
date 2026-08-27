@@ -123,6 +123,23 @@ JavaScript interstitial**, which is a challenge page and not a document. **Parks
 close**: their documents are now reachable too — checked from the index, nothing fetched — so each
 stands on its second blocker alone, an artefact half that is source under `packages/`.
 
+**A TENTH ROUND PINNED THOSE FOUR DOCUMENTS AND WROTE NO SOURCE.** The ninth round ended with a
+recommendation and this one executed it. **ST 1201.3** (20 pages), **ST 1303.1** (14), **ST 1204.1**
+(36) and **ST 1301.2** (4, the smallest document in `spec/`) are held and pinned, obtained
+2026-08-27 between 21:05:18Z and 21:05:40Z at the exact revisions parks 5 and 11 name — and only
+after the **pin-as-control** step passed, the archived `ST0601.4.pdf` URL re-serving bytes that
+digest to this record's pin in both terms. **The delegated-document tally moves from five to nine of
+fourteen.** **NEITHER PARK CLOSED**: each park's exit condition is a document *plus* the artefact it
+makes writable, and the artefact for both is source under `packages/` — an `IMAPB` codec for park 5,
+`Entity.source_ids` for park 11 — which this round did not write. So both are now **blocked on a
+per-change ruling** and the park arithmetic is unchanged in every term: four closed, nine open.
+**Park 2 is the precedent** for the state, and it is exact — document held, row set unwritten, park
+open. Two register entries were written, **KLV 18 and KLV 19**, both re-derived from **ST 1402.2**'s
+pinned bytes rather than from the round that fetched it. All four covers passed the disjunction
+sweep — cover, footer and changes table agreeing in each — and all four agree with MISP-2019.1's
+Appendix B read first-hand. **Both official routes were asked first and refused again**: `403` with
+an S3 body, and a `200` whose body is the F5 interstitial.
+
 **The sentence above about item introductions was true when it was written and is not true now.**
 This file says "**no held document dates any item's introduction**", scoped in the same breath to
 `ST 0601.14a` and `ST 0601.19` — the only two ST 0601 copies held at the time. **Six editions are now
@@ -177,8 +194,14 @@ What is here:
   two editions. `spec/klv_pin.json`'s `reconciliation_ruling` records every reading verbatim and rules
   on each.
 
-  **`ST0107.3.pdf` is the one that closed a park**, and it is the smallest document in this
-  directory: six pages against ST 0601.14a's 218, carrying the rule 218 pages could not state. Its
+  **`ST0107.3.pdf` is the smallest document here that CLOSED a park**: six pages against ST
+  0601.14a's 218, carrying the rule 218 pages could not state. **It was the smallest document in
+  this directory outright until 2026-08-27 evening**, when `ST1301.2.pdf` landed at **four** pages
+  and the STANAG wrapper's five were already between them — so the claim is narrowed to the one that
+  is still true and still the point. **Caught by the pins round's own disjunction sweep**, against
+  text that round had just written two sites away: a superlative is a claim about every other member
+  of a set, so it goes stale the moment the set grows, and this one went stale in the same commit
+  that falsified it. Its
   cover reads `MISB ST0107.3` with **no letter suffix** and `1 November 2018`, which agrees with the
   registry's reported edition date and with the footer of all six pages — so unlike `ST0601.14a.pdf`
   there was nothing to adjudicate, and the KLV 10 hazard was looked for and absent. Two of its
