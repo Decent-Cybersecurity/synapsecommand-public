@@ -357,6 +357,199 @@ def test_package_source_that_has_moved_past_its_released_tag_is_recorded_as_unre
         )
 
 
+def _unreleased_section(text: str) -> str:
+    """The `### Unreleased` section's own body, up to the next entry of the same level."""
+    body = text[text.index(UNRELEASED):]
+    return body[:body.index("\n### ", 1)]
+
+
+def _moved_paths_the_section_does_not_name(moved: list[str], section: str) -> list[str]:
+    """The assertion, as a function, so a synthetic section can witness it refusing.
+
+    Factored out for exactly that reason and for no other: a check whose logic exists only inside
+    the test that runs it against the real tree is a check nobody has seen fail. The real-tree
+    test and the refusal witness below call this same function, so the witness cannot drift into
+    proving a different rule from the one that gates.
+
+    EVERY PATH IS REQUIRED BY BASENAME, INCLUDING `MIGRATIONS.md` ITSELF — no self-reference is
+    accepted, and the first draft of this gate got that wrong in a way worth recording. Prose
+    inside `MIGRATIONS.md` naturally calls it "this file", so the draft accepted that phrase as
+    the file naming itself. Two things went wrong at once. The phrase occurs all over the section
+    for unrelated reasons, so `MIGRATIONS.md` was in practice always considered named; and the
+    paragraph announcing the gate quoted the very sentence the gate exists to prevent, which
+    carried the phrase and would have kept the gate green with the real naming sentence deleted.
+    A token that weak is not a rule. Requiring the basename costs the prose one word and has no
+    hole in it.
+
+    Case-SENSITIVE, because `FORMAT_COVERAGE.md` and `format_coverage.md` are not the same file on
+    every platform this repository is cloned onto.
+    """
+    return [path for path in moved
+            if pathlib.PurePosixPath(path).name not in section]
+
+
+# ------------------------------------- the section's ACCOUNT of the arc, not merely its presence
+#
+# THE CLAIM
+# ---------
+# The `### Unreleased` section names every distribution file the arc has moved. The check above
+# asks only whether the section EXISTS when something moved; it is satisfied by a section that
+# describes the wrong arc, which is what happened.
+#
+# WHAT WENT WRONG, and why the presence check could not see it
+# -----------------------------------------------------------
+# The section read "What moved inside the distribution: this file, and nothing else." That was
+# true at the commit that wrote it — `e825e96`, whose only shipped file was `MIGRATIONS.md`
+# — and false three commits later, when `6475615` and `2d2c320` moved `FORMAT_COVERAGE.md` and
+# `klv_pin.json`. Neither round revisited the sentence, because the presence check was green
+# throughout: a section existed, and it said something.
+#
+# This is the stale-count class applied to the arc's own contents, and it is the worst site for it
+# in the repository: `gates/bump_derivation.py` derives the moved set on every run and prints it,
+# so the true answer was one command away at every moment the sentence was wrong.
+#
+# ONE DIRECTION IS DERIVABLE AND THE OTHER IS NOT, and only the derivable one is asserted
+# ---------------------------------------------------------------------------------------
+# Every moved path must be NAMED here: that is a set from git compared against a substring search,
+# with no judgement in it. The reverse — that the section names no file the arc did not move
+# — is NOT asserted and must not be, because the section legitimately cites files for other
+# reasons: `gates/bump_derivation.py`, `pyproject.toml` and `version.py` are all named in it
+# while shipping nothing or not having moved. A check in that direction would have to decide which mentions are
+# claims about the arc and which are citations, and that is a reading rather than a derivation.
+#
+# MATCHED ON BASENAME, deliberately. The section is prose written for a reader inside the package,
+# and it refers to `FORMAT_COVERAGE.md` and to `fixtures/klv/spec/klv_pin.json` — one bare, one
+# partially pathed. Requiring the full repository-relative path would force the prose to spell
+# `packages/cdm/synapse_cdm/...` at every mention, which is noise in a file that lives there.
+
+
+def test_the_unreleased_section_names_every_distribution_file_the_arc_moved():
+    """THE GATE. The moved set comes from git; the section is searched for each member.
+
+    Scoped exactly as the presence check above is — `packages/cdm`, committed diff plus working
+    tree — so the two halves cannot look at different trees. That equivalence is not incidental:
+    the docstring above records a window in which they disagreed and the gate was unsatisfiable.
+    """
+    _require_git()
+    tag = _released_tag_for_this_version()
+    if tag is None:
+        pytest.skip(f"no v{PACKAGE_VERSION} tag, so there is no arc to account for")
+    moved = _package_tree_moved_since(tag)
+    if not moved:
+        pytest.skip("the package tree is identical to the tag; the presence check owns this case")
+    text = MIGRATIONS.read_text()
+    assert UNRELEASED in text, (
+        "the presence check above owns this failure and will report it with the right message"
+    )
+    missing = _moved_paths_the_section_does_not_name(moved, _unreleased_section(text))
+    assert not missing, (
+        f"the `{UNRELEASED}` section does not name {len(missing)} of the {len(moved)} "
+        f"distribution file(s) the arc since {tag} has moved: {missing}.\n"
+        "The section's subject IS the arc, so a file it does not name is a change no reader of "
+        "the history can find. Do not delete the sentence that is wrong — state what moved. "
+        "`python gates/bump_derivation.py` prints the derived set, which is where the true "
+        "answer has been all along"
+    )
+
+
+def test_the_moved_set_this_gate_reads_is_not_empty_by_construction():
+    """A gate whose input set is always empty passes for the wrong reason, forever.
+
+    The check above skips when nothing moved, which is correct and is also the shape that hides a
+    broken diff scope: a `_package_tree_moved_since` that returned `[]` unconditionally would skip
+    at every release and assert nothing at any of them. Asserted positively against a tag whose
+    arc is known non-empty by construction — the FIRST release tag, which every later commit is
+    downstream of.
+    """
+    _require_git()
+    # The same idiom the newest-tag check uses: the version tuple out of the TAG regex,
+    # so tag ordering is by version and not by string.
+    known = tags()
+    first = min(known, key=lambda t: tuple(
+        int(p) for p in TAG.match(t).group("version").split("."))) if known else None
+    if first is None:
+        pytest.skip("no tags yet, so there is no arc of any length to measure")
+    moved = _package_tree_moved_since(first)
+    assert moved, (
+        f"nothing under packages/cdm reads as moved since {first}, the first release tag. Every "
+        "release after it changed the distribution, so the diff scope in "
+        "`_package_tree_moved_since` has stopped seeing files and every check that depends on it "
+        "is skipping rather than passing"
+    )
+
+
+def test_the_account_gate_refuses_a_section_that_names_the_wrong_arc():
+    """THE FIXTURE WITNESSING REFUSAL. Four synthetic sections, three of them rejected.
+
+    The real-tree test passes today and will pass tomorrow whether or not it is capable of
+    failing. These four cases are the evidence that it is, and each one is a mutation of the
+    defect that prompted the gate — a section describing the arc it was written for rather than
+    the arc it is in.
+    """
+    moved = ["packages/cdm/synapse_cdm/MIGRATIONS.md",
+             "packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
+             "packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json"]
+
+    # 1. THE ACTUAL DEFECT, in the shape it had: a section describing itself as the whole arc.
+    #    All three paths are unaccounted for, MIGRATIONS.md included — a section that calls the
+    #    file "this file" has not named it, which is the rule the docstring above argues for.
+    stale = "### Unreleased\n\nWhat moved inside the distribution: only the file you are reading.\n"
+    assert _moved_paths_the_section_does_not_name(moved, stale) == moved, (
+        "the gate credited the stale section with accounting for a file it never named"
+    )
+
+    # 1b. AND A SELF-REFERENCE IS NOT A WILDCARD. Spelled out because the first draft accepted
+    #     one, and a regression here would be silent: the gate would pass on every arc whose only
+    #     moved file is MIGRATIONS.md, which is the most common arc this repository has.
+    only_self = ["packages/cdm/synapse_cdm/MIGRATIONS.md"]
+    assert _moved_paths_the_section_does_not_name(
+        only_self, "### Unreleased\n\nThis file moved and nothing else did.\n") == only_self, (
+        "a section referring to MIGRATIONS.md only as \"this file\" was credited with naming it. "
+        "That phrase occurs throughout the section for unrelated reasons, so accepting it makes "
+        "the gate vacuous for the commonest arc in this repository"
+    )
+
+    # 2. A section naming SOME of the arc. The half-repair is the likely mistake once the gate
+    #    starts failing, so it is asserted to be refused rather than assumed to be.
+    partial = "### Unreleased\n\nMIGRATIONS.md and FORMAT_COVERAGE.md moved.\n"
+    assert _moved_paths_the_section_does_not_name(moved, partial) == [
+        "packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json",
+    ], "a section naming two of three moved files was accepted"
+
+    # 3. A section naming nothing at all — the empty-prose case.
+    assert len(_moved_paths_the_section_does_not_name(
+        moved, "### Unreleased\n\nNothing.\n")) == 3, "the empty-prose case accounted for something"
+
+    # 4. AND IT ACCEPTS THE CORRECT ONE, which is the half that makes the three above mean
+    #    something: a function returning every path unconditionally would satisfy 1 through 3.
+    complete = ("### Unreleased\n\nMIGRATIONS.md, FORMAT_COVERAGE.md and "
+                "fixtures/klv/spec/klv_pin.json all moved.\n")
+    assert _moved_paths_the_section_does_not_name(moved, complete) == [], (
+        "a section naming all three moved files was rejected, so the gate refuses everything"
+    )
+
+
+def test_the_section_reader_stops_at_the_next_entry():
+    """The window matters more than it looks: the whole file names every file in the repository.
+
+    `_unreleased_section` bounding at the next `### ` heading is what makes the gate an assertion
+    about the Unreleased entry rather than about `MIGRATIONS.md`. Read the whole file instead and
+    every moved path is "named" by some closed release section, and the gate passes always.
+    """
+    text = ("## History\n\n### Unreleased\n\nOnly MIGRATIONS.md here.\n\n"
+            "### 1.2.1 — a closed release\n\nFORMAT_COVERAGE.md and klv_pin.json moved.\n")
+    section = _unreleased_section(text)
+    assert "1.2.1" not in section, (
+        "the section reader ran past the Unreleased entry into the release below it, so the gate "
+        "is satisfiable by any file named anywhere in the history"
+    )
+    assert _moved_paths_the_section_does_not_name(
+        ["a/FORMAT_COVERAGE.md", "b/klv_pin.json"], section) == [
+        "a/FORMAT_COVERAGE.md", "b/klv_pin.json"], (
+        "paths named only by a closed release section were accepted as accounted for"
+    )
+
+
 def test_the_unreleased_section_is_the_first_thing_under_history():
     """Newest first, and nothing is newer than what has not shipped.
 

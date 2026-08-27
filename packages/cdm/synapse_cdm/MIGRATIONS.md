@@ -211,9 +211,35 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing here is in any release.** The distribution on the index is **1.2.1**, and a reader who
 ran `pip install synapse-cdm` does not have what this section describes.
 
-**What moved inside the distribution: this file, and nothing else.** No adapter, no harness flag or
-check, no fixture set, no dependency, no importable name — so the arc since `v1.2.1` derives
-**PATCH** and the next release is at least **1.2.2**.
+**What moved inside the distribution: three shipped documents, and no code.** `MIGRATIONS.md`,
+`FORMAT_COVERAGE.md` and `fixtures/klv/spec/klv_pin.json`. No adapter, no harness flag or check,
+no fixture set, no dependency, no importable name — so the arc since `v1.2.1` derives **PATCH**
+and the next release is at least **1.2.2**.
+
+**THAT SENTENCE NAMED ONLY THIS DOCUMENT AND WAS FALSE WHEN IT WAS READ, three commits after it
+was written.** It was true at `e825e96`, whose only shipped file was this one. `6475615` then moved
+`FORMAT_COVERAGE.md` and `klv_pin.json`, and `2d2c320` moved all three — and neither round came
+back to the sentence, because nothing asked it to. It is the arc's own contents mis-stated by the
+section whose subject *is* the arc, which is a worse site for the defect than any prose count this
+record has swept: `gates/bump_derivation.py` derives the true set on every run and prints it, so
+the correct answer was one command away at every moment the sentence was wrong.
+
+**Now guarded** —
+`tests/test_cdm_release.py::test_the_unreleased_section_names_every_distribution_file_the_arc_moved`
+requires this section to name, by basename, every shipped path the arc has moved, derived from git
+rather than read out of the prose. Only that direction is asserted: the reverse — that the section
+names no file the arc did *not* move — is not derivable, because the section legitimately cites
+`gates/bump_derivation.py`, `pyproject.toml` and `version.py` while none of them moved or ships.
+
+**THE GUARD'S FIRST DRAFT HAD A HOLE, AND THE PARAGRAPH ANNOUNCING IT DUG THE HOLE.** The draft
+accepted this document referring to itself the way prose naturally does, instead of requiring the
+basename. That phrase recurs through the section for unrelated reasons, so `MIGRATIONS.md` was in
+practice always counted as named — and the announcement above originally *quoted* the defective
+sentence, which carried the phrase, so the guard would have stayed green with the naming sentence
+deleted. **It is the quoting trap closed in `FORMAT_COVERAGE.md` this same round, met a second
+time inside the round that closed it**, which is the argument for closing it. The rule is now
+uniform: every path is required by basename, this document included, and no self-reference is
+accepted anywhere.
 
 **A fifth release condition exists, and the thing that enforces it ships nothing.**
 `gates/bump_derivation.py` classifies the diff over the distribution's contents between the
@@ -301,6 +327,32 @@ holds for a record. The sentence now describes the phrase instead of reproducing
 **Nothing swept the string before the edit and nothing does after**: it occurred exactly once in
 the tracked tree, in the correction itself, and occurs zero times now. So this closes a trap that
 had not yet sprung, which is the only time closing one is cheap.
+
+**A NAMED AMBIGUITY, LEFT AS A MANUAL SWEEP RATHER THAN GUESSED AT.** The round was briefed to
+mechanize the reverse direction of the record's commit accounting — every commit that lands under
+`gates/` or `tests/` should be answerable from an entry — after a hand sweep found `7544880`
+unaccounted for. **It is not mechanizable in that form from this tree, and four candidate rules
+were tested rather than one:**
+
+* *every commit touching `gates/` or `tests/` has its short SHA in a tracked `.md`* — fails at
+  **53 of the 81** such commits in the history. Most rounds are recorded by their commit message
+  and by prose that names no SHA, which is the documented convention and not a defect.
+* *every file under `gates/` is named by a tracked `.md`* — **holds, 5 of 5**, and would not have
+  found `7544880`: that commit named both files it added, in the same diff.
+* *every file under `tests/` is named by a tracked `.md`* — fails at **eleven** modules. A test
+  module is not owed a prose citation and nothing in the record says it is.
+* *every commit adding a `gates/` or `tests/` file names it in its own message* — fails at
+  **16** commits, and again does not reach `7544880`, whose message names both.
+
+**So the rule cannot be stated without deciding what "answerable from an entry" means, and that
+decision is a reading of prose rather than a derivation from the tree.** The briefing's own stop
+rule applies — a guard that guesses is worse than none — and the sweep stays manual. What is
+recorded here is the **four refuted formulations**, so the next round attempting it starts from
+what has already been ruled out rather than from the idea.
+
+**What the round mechanized instead is the direction that IS derivable, and it caught a live
+defect** — this section's own account of the arc, above. That is the same family of check aimed at
+the place where the tree, and not a reading, settles the answer.
 
 **No adapter, no codec and no fixture changed**, so none of the above touches an octet. The register
 is a record of what the standards say about themselves, and this round read six PDFs and promoted no
