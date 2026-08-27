@@ -9795,6 +9795,70 @@ the three TRMs at refs [98], [99] and [100]. ST 1607 is the one with a requireme
 of it, and a Phase 2 needing the Amend and Segment Local Sets cannot tell from this text which
 revision it must read.
 
+**A DATED NOTE BESIDE THIS ENTRY, AND ITS SUBJECT IS THE PINNED PROFILE RATHER THAN THE ENTRY.
+2026-08-27.** The entry above is unchanged and this note proposes no change to it. It was
+re-derived first, because a note filed beside a claim is worthless if the claim has drifted:
+MISP-2019.1's Appendix B carries **103 references, 56 of them MISB documents, 50 of those suffixed
+and exactly six not** — refs [74], [84], [89], [98], [99] and [100], the six the entry names, and
+there is no seventh. **KLV 5 holds as written**, re-derived from `misb-misp-2019-1.pdf`,
+`3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea`, 1 372 771 bytes, 73 pages. What
+follows is a different fact about that same copy, and it is a note rather than an amendment because
+nothing above it is wrong.
+
+**Where the version is stated and where the mandate is stated are not the same place.** Appendix B
+ref [56] reads, verbatim, "MISB ST 1301.2 Motion Imagery Identification System - Augmentation
+Identifiers Local Set, Feb 2014." — suffixed, and dated. The profile's only two citations of that
+document, both in §4.4.2.1 on page 46, read "**MISB ST 1301 [56]**" — unsuffixed — and the second of
+them is the requirement: `MISP-2015.1-69`, "Where supplemental identifiers are used with MISB ST
+1204 [54], the supplemental identifiers shall be defined by MISB ST 1301 [56]." So at the point
+where the profile binds an implementer it names a document and not an edition of it, and the edition
+is recoverable only by following the bracket out of the requirement and into the reference list.
+That is the row this document already carries for `MISP-2015.1-69` in the tag table, and park 11's
+second half is the document it points at.
+
+**THE FAMILY THIS NOTE WAS EXPECTED TO NAME DOES NOT SURVIVE THE DERIVATION, AND THE COUNT IS GIVEN
+INSTEAD OF THE FRAMING.** The natural way to file this was as *the profile's second citation
+defect*, beside **KLV 18**'s finding that twenty-five of ST 1402.2's twenty-six requirement
+identifiers carry no edition suffix. It is not a second anything. Every bracketed citation in the
+profile's body — everything before Appendix B — was enumerated from the pinned bytes at writing
+time: **116 citations over 53 distinct documents, and not one of them carries a revision suffix.**
+The one suffixed mention anywhere outside the reference list is the aside "Note: Requirement moved
+to MISB ST 0605.9" inside §6.3's deprecated-requirements table, which carries no reference number
+and is not a citation of anything. **Unsuffixed in the body is the profile's convention, exhausted
+over its own text, and ST 1301 is an instance of it rather than an exception to it.**
+
+**Which is what makes KLV 5 the sharper entry rather than the looser one, and is the whole reason
+this is filed here.** The convention is lossless wherever the bracket resolves to a versioned
+reference, and for 50 of the 56 MISB documents it does. For the six **KLV 5** names it resolves to a
+reference that states no version either, and there the convention has nothing left to hand back — so
+those six are not a defect *beside* the citation form, they are the citation form met at the six
+places where the reference list cannot complete it. ST 1301.2 is the opposite case and is recorded
+because it reads like the same thing and is not: the version is stated, one bracket away.
+
+**One addition to KLV 18, recorded here and deliberately not edited into it.** That entry names
+§3.6.9.1 and §5.3.1 as the sites where the profile cites "MISB ST 1402 [48]" without a suffix. The
+enumeration finds a **third bracketed site**: §3.7.12.1, requirement `MISP-2016.1-90`, "Class 2
+Motion Imagery encapsulated in a MPEG-2 Transport Stream Container shall comply with MISB ST 1402
+[48]" — the Class 2 counterpart of `MISP-2015.1-48`, which is the §3.6.9.1 site. Four further
+mentions occur in §6.3's deprecated table as "[Superseded by MISB ST 1402]", which are not
+citations. **KLV 18 is not refuted** — it names two sites and never claims they are all — so it is
+short by one rather than wrong, and it is left exactly as written on this round's ruling.
+
+**What this note is derived from, stated because the round that ordered it named a different
+document.** It was to be re-derived from the pinned ST 1402.2 bytes,
+`52a3b32a7314d2884d421c74718b808402f9cc5c852168b0c84f872b773100e0`, 1 112 404 bytes, 13 pages. That
+copy cannot support it: the string `1301` occurs **zero** times in it. The claims above are
+therefore derived from the pinned MISP-2019.1 copy hashed at the top of this note, with ST 1301.2
+itself (`3d08d35dbfcc6b3de90dde39bbcc1b2cde96043baeac87f9f3b222aae509f9a6`, 4 pages) held and read
+and stating nothing about ST 1402 in return. The derivation is a page-tree walk and text extraction
+under a reader installed outside `.venv`, on the standing rule that the environment the suite judges
+is not the environment a round's tooling is installed into.
+
+**What this note does NOT claim.** It does not claim KLV 5's parenthetical should list ST 1301.2.
+That parenthetical enumerates the documents *this section relies on*, which is a scope a note has no
+standing to widen, and widening it would turn a true sentence about Appendix B into a maintenance
+obligation nothing derives. The entry is left as it stands, and the fact lives here.
+
 **KLV 6 — nothing in the profile requires a standalone metadata stream to carry an absolute time.**
 Settlement 3 states the reading; this entry records that it is the *standard's* ambiguity and not a
 reading choice. The unconditional mandate `MISP-2018.3-116` attaches to a Motion Imagery **frame**;
