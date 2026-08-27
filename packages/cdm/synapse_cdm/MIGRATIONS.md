@@ -231,6 +231,53 @@ failing. Recorded rather than quietly re-synced, because a sentence that has now
 one arc is evidence about the sentence and not about either round: **the count is the part no
 machine reads, and `gates/bump_derivation.py` prints the true set on every run.**
 
+**AND NOW A MACHINE READS IT. 2026-08-27.** The gap the paragraph above records is closed, and it is
+closed at the count rather than at the naming, which is the part worth stating. The tempting repair
+was to make *named* mean something narrower — only a basename inside the listing sentence, only one
+in backticks — and every version of that is a heuristic about which mentions are claims about the
+arc, which is the reading this file's own guard already refuses to make in the reverse direction.
+The count needs no heuristic: the sentence asserts a number, `git` derives a number, and they are
+equal or they are not. So
+`tests/test_cdm_release.py::test_the_unreleased_sections_spelled_count_agrees_with_the_derived_moved_set`
+compares the spelled count against the **derived set**, never against what the section names — a
+file named here for unrelated reasons cannot satisfy it, because it never looks at what is named.
+The naming gate is unchanged and still runs beside it; the two now assert different things.
+
+**The refusal path is a recorded outcome and not a hole.** Parsing prose to a number is safe only
+where the prose is unambiguous, so the parser requires exactly one `What moved inside the
+distribution:` anchor in the section and exactly one count-bearing token in the clause it opens.
+Zero, or two, and the gate **fails with the ambiguity named** and the count stays a manual step. It
+is not resolved by preferring the first number: a sentence reading "FIVE shipped documents and TWO
+code files" has two candidate arc sizes and choosing between them is a reading. This is the
+treatment the four refuted reverse-sweep formulations got, applied to a live gate rather than to a
+dead end — the difference being that here the refusal fires on the sentence, so it cannot be dodged
+by writing prose the parser gives up on.
+
+**Three refusal directions are witnessed by fixtures and the live gate was mutation-tested against
+this tree.** The fixtures cover count high, count low, and the one that is the whole point: a
+section naming **every** basename of a five-file arc while its sentence says three. The naming gate
+accepts that section and the count gate refuses it, which is the gap between the two predicates
+written down as an assertion rather than as a claim. Against the real tree, moving the count word by
+one in either direction breaks the comparison, and a two-number sentence produces the named refusal
+— run before this paragraph was written, not after.
+
+**This round's own sentence is the first thing the tightened gate rules, and the count did not
+move.** The arc since `v1.2.1` moved five shipped files before this round and moves the same five
+now: `FORMAT_COVERAGE.md` gained a dated register note beside **KLV 5**, `MIGRATIONS.md` is the file
+you are reading, `fixtures/klv/spec/klv_pin.json` gained the round's node, and both `README.md`
+files were already in the arc and did not move again. **FIVE is now derived rather than remembered**
+— which is the non-vacuity witness worth recording, because a gate whose first live subject already
+satisfied it is a gate nobody has watched decide anything.
+
+**What the register note found, recorded here because it is a negative result about a framing this
+file will otherwise inherit.** The note was to be filed as *the profile's second citation defect*,
+beside **KLV 18**. It is not a second anything: all **116** bracketed citations in MISP-2019.1's
+body, over **53** distinct documents, are unsuffixed, so unsuffixed-in-the-body is the profile's
+convention and ST 1301 is an instance of it. The full derivation, and the reason this sharpens
+**KLV 5** rather than weakening it, is in `FORMAT_COVERAGE.md` beside the entry. **No register entry
+was added or edited** — the note is filed adjacent, because its subject is the pinned profile and
+not any claim the register makes.
+
 **THAT SENTENCE NAMED ONLY THIS DOCUMENT AND WAS FALSE WHEN IT WAS READ, three commits after it
 was written.** It was true at `e825e96`, whose only shipped file was this one. `6475615` then moved
 `FORMAT_COVERAGE.md` and `klv_pin.json`, and `2d2c320` moved all three — and neither round came
