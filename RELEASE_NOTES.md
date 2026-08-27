@@ -1,15 +1,33 @@
-# synapse-cdm 1.2.0
+# synapse-cdm 1.2.1
 
-One adapter, one codec ruling, and a schema version that deliberately did not move.
+A patch release. Nothing you import changed; the documents shipped inside the distribution did.
 
-**Package version 1.2.0 · CDM `schema_version` 1.0.0.** The two numbers parted at 1.1.0 and this
-release widened the gap on purpose — see "The schema version did not move, and that was a ruling"
-below, which is the part of these notes worth reading if you consume CDM objects.
+**Package version 1.2.1 · CDM `schema_version` 1.0.0.** If you consume CDM objects, this release
+asks nothing of you: no schema moved, no field was added, removed or retyped, and the diff over
+`schemas/` since 1.2.0 is empty. If you write an adapter against the shipped protocol documents,
+they are what this release is for.
 
-For what 1.1.0 was, see [the 1.1.0 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.1.0)
+For what 1.2.0 was — one new adapter, a codec ruling, and the schema version that deliberately did
+not move — see [the 1.2.0 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.2.0)
 and the previous notes in this file's git history. This document does not restate them.
 
-## Thirteen adapters, all harness-verified
+## Why this is a PATCH, and it was nearly numbered wrong
+
+The round behind this release is about 2 800 lines, and almost none of it is in the distribution.
+Every file that changed under `packages/` is a comment or a shipped document: `pyproject.toml` and
+`adapter.py` changed comment lines only — filtering both diffs to functional lines yields nothing —
+and the rest are `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, the two READMEs and one pin record.
+
+No importable name, no `Adapter` contract change, no harness flag or exit code, no fixture set and
+no dependency moved. That is `version.py`'s MINOR list in full, and none of it occurred; its PATCH
+row — "a translation fix, a message, a docstring. No surface change" — is this release read
+literally. The large work is in `gates/`, `tests/` and `PUBLICATION.md`, none of which a wheel
+carries.
+
+**This release was drafted as 1.3.0 and renumbered before anything was tagged**, on the diff rather
+than on the size of the round. A release number states what a consumer receives.
+
+## Thirteen adapters, all harness-verified, all unchanged
 
 `python -m synapse_cdm.harness --adapter <name> --json`, run over the roster with no `--fixtures`:
 
@@ -25,98 +43,68 @@ and the previous notes in this file's git history. This document does not restat
 | `gmti` | bidirectional | 32 |
 | `legion` | ingest | 6 |
 | `pntmap` | ingest | 4 |
-| **`stanag4609`** | bidirectional | **20** |
+| `stanag4609` | bidirectional | 20 |
 | `stanag4676` | bidirectional | 34 |
 | `tak` | bidirectional | 12 |
 
-**408 fixture verdicts, 0 failed**, against the published schemas. 1.1.0 shipped twelve adapters and
-388 verdicts; the new one is the difference.
+**408 fixture verdicts, 0 failed**, against the published schemas — the same roster and the same
+408 that 1.2.0 shipped. No fixture changed, so an identical table is the correct table, and it is
+printed because a release that claims nothing moved should show the measurement rather than assert
+it.
 
-## The new adapter
+The six published schemas — `cdm_object`, `entity`, `event`, `plan_object`, `track`,
+`payload_gnss_interference` — regenerate byte-identical from the models.
 
-- **`stanag4609` — STANAG 4609 / MISP-2019.1, the UAS Datalink Local Set, bidirectional,
-  byte-exact.** Adapter **#10**, whose ordinal had been reserved since Phase 1 and is now made good.
-  KLV metadata packets in, `Entity` + `Event` per packet out, and back to a payload byte for byte.
+## What actually reaches you
 
-  **It covers 26 of ST 0601.14a's 141 items, and the other 115 rows still read `not yet`.** That is
-  a scope contract rather than an unfinished edge, and it is the honest headline for this release:
-  the 26 are exactly the distinct tags the one real KLV stream this repository holds actually
-  carries, and an item nobody here has met on a wire is an item whose decoder could only ever be
-  checked against a fixture written from the same reading of the same table. `FORMAT_COVERAGE.md`
-  names the blocker on every one of the 115.
+- **The shipped protocol documents carry repairs that the published 1.2.0 does not.** An adapter
+  count disagreed with itself across the tree, and four of the sentences involved were inside the
+  1.2.0 artefacts on the index — prose in comments and in a packaged document, which is why 1.2.0
+  was not withdrawn and is not yanked now. `PUBLICATION.md`'s ledger records which four, with the
+  digests of the artefacts carrying them. **This release is where the repaired text reaches a
+  consumer.**
 
-  Every one of the 26 maps was checked against the standard's own worked examples — each §8.x block
-  prints a Software Value beside the octets that encode it — and against MISB EG 0601.1's
-  independently printed examples for the 23 it has. Both checks run on every suite run.
+  The repair worth naming for anyone writing an adapter is in `adapter.py`'s `fixture_dir` note. It
+  said `stanag4676` was "the only one" whose fixture directory differs from its adapter name.
+  `stanag4609` had shipped in 1.2.0 with `fixture_dir = "klv"`, which made that false while the
+  count in the same sentence stayed right — a claim of *uniqueness* has no number in it. Both
+  halves are derived from the registry now.
 
-  Three things about it are unlike the twelve before it. It is the **first adapter here with a real
-  integrity gate**: ST 0601.14a §8.1 defines a checksum, `ST 0601.14-32` makes it mandatory in every
-  packet, and CAT021, CAT048, CAT034, CAT023 and GMTIF each had to record that their format defines
-  none. Its `entity_id` is **packet-scoped**, because the witnessed set contains no identifier at all
-  — a measurement, not a preference, with the cost recorded as gap 30. And it ships a codec ruling:
+- **`FORMAT_COVERAGE.md` gained a round of standards reading and one restoration.** Three entries
+  in the KLV register narrowed, two of them against conclusions the document had already recorded,
+  and every byte of that came from documents already held rather than from anything newly fetched.
+  A register entry that had been truncated mid-clause is restored from the pin record that held the
+  complete sentence.
 
-- **The length-divergence policy.** The one real stream carries item 22 at **four octets where its
-  own standard states a Required Length of 2**, at all six sites. Park 13 adjudicated that as a
-  stream defect; what no held document said was what a decoder should then DO, so this release rules
-  it: **the item is skipped and a structured defect annotation is recorded** — never the packet
-  rejected, never the octets reinterpreted. Rejecting the packet would discard 25 conformant items
-  whose checksum validates; reinterpreting them would require choosing between three truncation
-  rules no held document states, which agree on this stream and disagree the moment a top octet is
-  non-zero. Two of the four class boundaries are drawn by the standard's own wording — a `shall` for
-  a Required Length against a "**recommended**" Max Length — and the annotation carries both the
-  factual and the normative basis on every object.
+  **No coverage gap closed and no tag row moved.** All 115 `not yet` rows still read `not yet`. The
+  findings are about the standard's history, not about what an octet means, and the document says so
+  in each entry rather than leaving a reader to infer scope from a narrowed blocker.
 
-## The schema version did not move, and that was a ruling
+- **Nothing else.** No adapter, model, fixture or schema changed. `--list-adapters`, the harness
+  exit codes and the `Adapter` contract are what 1.2.0 shipped.
 
-**If you consume CDM objects, this is the paragraph that matters: nothing changes for you.** A
-1.0.0 reader validates a 1.2.0 object from the new adapter unchanged, and there is no migration.
+## Published by CI over OIDC, as 1.1.0 and 1.2.0 were
 
-The defect annotation is new output surface, which is exactly the shape that ought to move a schema
-version, so the question was put before the version moved and answered from the schema files rather
-than from judgement:
-
-* the Entity and Event objects are `"additionalProperties": false` — `schemas/entity.schema.json:29`
-  and `schemas/event.schema.json:17` — so a new **top-level** field would have been a schema change;
-* `attributes` and `payload` are `"additionalProperties": true` — `schemas/entity.schema.json:248`
-  and `schemas/event.schema.json:267` — and every part of the annotation lives inside them;
-* neither object gained a top-level key, and all six published schemas regenerate byte-identical
-  from the models.
-
-**361 adapter-private keys already live in those two bags across the thirteen adapters' golden
-files.** If a new key in a never-drop bag moved `SCHEMA_VERSION`, every adapter this repository has
-ever shipped would have moved it. `MIGRATIONS.md`'s 1.2.0 section holds the full evidence.
-
-## Also in this release
-
-- **A scripted-edit safety tool, `gates/scripted_edit.py`, and it exists because of a near-miss.**
-  A scripted section rewrite in the previous round anchored on a heading that appears twice in
-  `FORMAT_COVERAGE.md`, and `str.index` took the first: **~5 000 lines were deleted in one write**,
-  caught only by a `git diff --stat`. `replace_unique` refuses any anchor that does not occur
-  exactly once, and `bounded_batch` aborts a batch that deletes more than the caller said it would.
-  The incident is reproducible from git and the guard replays it against the real blob.
-- Documentation: the ordinal table, the roster tables and the adapter count moved to thirteen; the
-  `PUBLICATION.md` sentence describing the tree's roster was stale by one and is corrected.
-
-## Published by CI over OIDC, as 1.1.0 was
-
-No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build, and
-uploads those same files through PyPI Trusted Publishing. `PUBLICATION.md` ledger entry 6 records
-the configuration.
+No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
+`gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
+the tree's `PACKAGE_VERSION`, and uploads those same files through PyPI Trusted Publishing after a
+required reviewer approves the `pypi` environment. `PUBLICATION.md` ledger entry 6 records the
+configuration.
 
 ## Artefacts
 
 An sdist and a wheel, built once by the workflow, gated as that build, and uploaded as those same
 files. Their **SHA-256 digests are recorded in `PUBLICATION.md`'s ledger** together with the
-workflow run that produced them — entry 5 records 1.0.0's, entry 6 records 1.1.0's and 1.2.0's.
+workflow run that produced them.
 
-They are deliberately not committed to `RELEASE_NOTES.md` in the repository, and the reason is the
-same one it was at 1.1.0. A digest is a property of one build rather than of the tree: two builds of
-one tree have identical payloads but differ in their generated metadata, so a digest written here
-before the tag would not be the digest of the file PyPI serves, and one written after the tag could
-never be inside the tree the tag names. Everything else in this document is readable off that tree,
-which is what condition 4 of the release procedure asks for.
+They are deliberately not committed here, for the reason this file has given since 1.1.0. A digest
+is a property of one build rather than of the tree: two builds of one tree have identical payloads
+but differ in their generated metadata, so a digest written here before the tag would not be the
+digest of the file PyPI serves, and one written after the tag could never be inside the tree the tag
+names. Everything else in this document is readable off that tree, which is what condition 4 of the
+release procedure asks for.
 
 ```bash
-pip install synapse-cdm==1.2.0
+pip install synapse-cdm==1.2.1
 python -m synapse_cdm.harness --list-adapters
 ```

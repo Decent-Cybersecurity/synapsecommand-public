@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is twelve entri
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `1.2.0` and `SCHEMA_VERSION` is `1.0.0`.
+`PACKAGE_VERSION` is `1.2.1` and `SCHEMA_VERSION` is `1.0.0`.
 
 ## What each bump means
 
@@ -93,7 +93,7 @@ says so rather than pretending otherwise.
 ### The sequence
 
 ```bash
-git tag -a v1.2.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.2.1 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -170,13 +170,26 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
-**Nothing here is in a release — no release contains any of it.** The distribution on the index
-is **1.2.0** and this tree is not
-it: everything below landed after the `v1.2.0` tag, in one signed commit that does not move the
-tag. `PACKAGE_VERSION` stays `1.2.0` and `SCHEMA_VERSION` stays `1.0.0` — no model, schema, adapter
-or fixture changed, and no published artefact is affected by any of it.
+**A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
+at all.** Everything below was written into the Unreleased section as it landed — condition 4 of
+"What a release requires", notes derived rather than remembered — and the release absorbed the
+section rather than restating it. `PACKAGE_VERSION` moves `1.2.0` → `1.2.1`; `SCHEMA_VERSION`
+stays `1.0.0`, and this time that needed no ruling of the kind the 1.2.0 section argues: the diff
+over `schemas/` since `v1.2.0` is **empty**, and no model, adapter or fixture changed either.
+
+**WHY PATCH AND NOT MINOR, RULED FROM THE DIFF RATHER THAN FROM THE ROUND'S SIZE.** The arc behind
+this release is about 2 800 lines and almost none of it is in the distribution. Every file that
+changed under `packages/` is a comment or a shipped document: `pyproject.toml` and `adapter.py`
+changed **comment lines only** — filtering both diffs to functional lines yields nothing — and the
+rest are `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, the two READMEs and `klv_pin.json`. No importable
+name, no `Adapter` contract change, no harness flag or exit code, no fixture set and no dependency
+moved, which is `version.py`'s MINOR list in full and none of it occurred; its PATCH row — "a
+translation fix, a message, a docstring. No surface change" — is this release read literally. The
+work that was large is in `gates/`, `tests/` and `PUBLICATION.md`, none of which a wheel carries.
+**A release number states what a consumer receives, not how much a round did**, and the first
+draft of this round proposed 1.3.0 on the second reading before the diff was consulted.
 
 **The adapter count disagreed with itself at seven sites, and the guards did not see it.** The
 1.2.0 round repaired this count in the package README and in `PUBLICATION.md` and guarded both;
@@ -213,9 +226,24 @@ affects eleven of the thirteen adapters, it is pre-existing across every version
 1.2.0 defect. Renaming that heading "Three things" → "Four things" left two files quoting the old
 one, this module's own header among them; that is guarded now too.
 
-**What the published 1.2.0 carries, and why it is not being re-released.** Four of the repaired
-sentences were inside the artefacts on the index. `PUBLICATION.md`'s ledger records which, with
-the digests. They are prose in comments and in a packaged document; nothing executable reads them.
+**What the published 1.2.0 carries, and what 1.2.1 replaces.** Four of the repaired sentences were
+inside the artefacts on the index, and this paragraph was written when the round that repaired
+them was not going to be released on its own account. `PUBLICATION.md`'s ledger records which
+four, with the digests of the artefacts carrying them. They are prose in comments and in a
+packaged document and nothing executable reads them, which is why 1.2.0 was not withdrawn and is
+not yanked now. **1.2.1 is the release in which the repaired text reaches a consumer**, and it is
+very nearly the whole of what this release changes for anybody who installs it.
+
+**The third mechanized protocol act landed in this arc too, and nothing recorded its arrival:
+`gates/commit_message.py`.** It came from a commit that acquired two `Signed-off-by` trailers, one
+of them prose in the body — a sign-off that was not one — and it reads a commit message's trailers
+rather than trusting that whoever wrote it meant what the hook accepted.
+`tests/test_cdm_commit_message.py` holds its parsers and both refusal directions on every suite
+run, for the reason the paragraph below gives about the fourth. **This entry is written by the
+release round rather than by the round that landed it**, and derived from `git log`: the paragraph
+below names the tool while listing the habits already mechanized, so the record said it existed
+and never said it was new. The release audit found it by checking the arc against this section in
+both directions — every entry to a commit, and every commit to an entry.
 
 **The fourth mechanized protocol act: `gates/deploy_record.py`.** Three habits in this repository
 have been turned into things that fail — the pinned count *derivation*, so a number and the command
@@ -347,8 +375,13 @@ open. **All 115 tag rows that read `not yet` still read `not yet`**: this round 
 promoted nothing, because every finding is about the standard's history rather than about what an
 octet means. **KLV 15 stands untouched**, its evidence re-derived verbatim. No new park and no new
 register entry — **ST 1010.3** was checked as a candidate and is already carried in the §4.4.2.5 row.
-Nothing under `packages/` changed, no fixture changed, `PACKAGE_VERSION` and `SCHEMA_VERSION` are
-unmoved, and there was no deploy.
+No adapter, model or fixture changed, `SCHEMA_VERSION` is unmoved, and there was no deploy.
+**That last sentence used to read "nothing under `packages/` changed", which was never true and
+is corrected here rather than promoted:** the parks round wrote `FORMAT_COVERAGE.md`,
+`fixtures/klv/README.md` and `klv_pin.json`, all three of them under `packages/` and all three
+shipped, which is exactly why there is a 1.2.1 to put them in. What was meant is that no *code*
+moved, and that is what it now says. `PACKAGE_VERSION` was unmoved by the round and is moved by
+the release absorbing it.
 
 ### 1.2.0 — adapter #10, a codec ruling, and a schema version that did not move
 

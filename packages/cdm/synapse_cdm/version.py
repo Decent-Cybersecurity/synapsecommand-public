@@ -18,11 +18,18 @@ CLI and its exit codes, the fixture set. It follows the general rule and not MIG
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``1.2.0`` and ``SCHEMA_VERSION`` is ``1.0.0``, and this paragraph is the
-second version of itself that does not have to reason about a hypothetical. Every entry in
+``PACKAGE_VERSION`` is ``1.2.1`` and ``SCHEMA_VERSION`` is ``1.0.0``, and this paragraph is the
+third version of itself that does not have to reason about a hypothetical. Every entry in
 ``MIGRATIONS.md``'s 1.1.0 and 1.2.0 sections says the same two things — an added surface, no
 schema touched — so each release moved one number and not the other, which is exactly what two
 numbers are FOR.
+
+**1.2.1 moved this number for no surface at all, and that is the PATCH row read literally.**
+It ships comments and shipped documents and nothing importable — no adapter, no harness flag,
+no fixture set, no dependency — so the MINOR list below does not reach it and the PATCH row
+does. The round behind it was large and almost none of that is in the distribution, which is
+the distinction this number exists to make: it states what a consumer receives, not how much
+work a round did.
 
 **1.2.0 is the release where that arrangement was TESTED rather than merely relied on.** It
 ships a new kind of output — a structured defect annotation, which the ``stanag4609`` adapter
@@ -109,7 +116,7 @@ SCHEMA_VERSION = "1.0.0"
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
 #: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
-PACKAGE_VERSION = "1.2.0"
+PACKAGE_VERSION = "1.2.1"
 
 
 def parse(version: str) -> tuple[int, int, int]:
