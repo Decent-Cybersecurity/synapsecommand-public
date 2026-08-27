@@ -140,8 +140,8 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Nine entries, and the set does not move — entries change **state**, they are not deleted. Six are
-**settled**: entry 1 is a ruling, entries 5 and 6 are closed by acts, entry 7 is a disposition,
+Ten entries, and the set does not move — entries change **state**, they are not deleted. Seven are
+**settled**: entry 1 is a ruling, entries 5, 6 and 10 are closed by acts, entry 7 is a disposition,
 entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
@@ -151,7 +151,11 @@ how publishing this package stopped needing a credential. Entry 7 records a defe
 that is being left in the history, on entry 2's precedent, and mechanized so there is not a second.
 Entry 8 is the one this file's own structure argued for and did not have: a record of what has been
 served, read back against what the file says. Entry 9 is the tense sweep's finding about this file:
-two claims that were never true, in a document whose subject is claims that stop being true.
+two claims that were never true, in a document whose subject is claims that stop being true. Entry
+10 is the 1.2.1 release, and it is the third entry closed by an act rather than by a ruling: the
+release that renumbered itself from 1.3.0 on the evidence of its own diff, and the one that
+discharges entry 6's promise that the four prose defects in the 1.2.0 artefacts would ship
+corrected.
 Entries 2, 3 and 4 are open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
@@ -800,6 +804,7 @@ Every recorded source commit resolves in this repository's history; none is from
 
 | Deployment | UTC | Source | Recorded, before this round |
 | --- | --- | --- | --- |
+| `222a55be` | 2026-08-27 12:37:06 | `43213316` | **did not exist** — deployed by the 1.2.1 release; ledger entry 10 |
 | `5ed34cd8` | 2026-08-27 01:01:32 | `c4a1071f` | **this entry** |
 | `57ac1878` | 2026-08-25 14:35:07 | `01fb685f` | no |
 | `919b58db` | 2026-08-25 10:42:03 | `30fa0454` | no |
@@ -824,9 +829,12 @@ hides.** `ccfa7476` went up at `07:01:45` — ninety-two seconds *after* the `e4
 Nothing rested on the ordering; it is recorded because the phrase was doing work it could not do.
 
 **The alias, and which deployment serves it.** `docs.synapsecommand.com` is served by deployment
-`5ed34cd8`. Witnessed **2026-08-27** by bytes and not read off a settings field: five pages fetched
-from the domain are byte-identical to `5ed34cd8`'s own `pages.dev` URL and **differ** from
-`57ac1878`'s on all five. Identical to one deployment and different from the one before it is the
+`222a55be`. Witnessed **2026-08-27** by bytes and not read off a settings field: five pages fetched
+from the domain are byte-identical to `222a55be`'s own `pages.dev` URL and **differ** from
+`5ed34cd8`'s on all five. **The pin moved in the same commit as the deploy**, which is what this
+paragraph is for; it named `5ed34cd8` until the 1.2.1 release superseded it at `12:37:06Z`, and the
+superseded reading is ledger entry 8's table rather than a struck sentence here, because the id is
+the claim and a paragraph carrying two of them is a paragraph a parser has to guess at. Identical to one deployment and different from the one before it is the
 pair that distinguishes "serving what was deployed" from "serving something", which is the shape
 every deploy measurement in this file has used. The reason it is bytes rather than the `aliases`
 field the API also offers: that field says which deployment is *configured* to hold the domain, and
@@ -848,7 +856,7 @@ first attempt `01fb685`'s message describes failing. What was missing was the wr
 is nothing to roll back and no redeploy is owed; the correction is that the measurement above is
 now dated and that this table exists.
 
-**The deploy this round performed.** `5ed34cd8`, source commit `c4a1071f`, uploaded
+**The deploy the round that wrote this entry performed.** `5ed34cd8`, source commit `c4a1071f`, uploaded
 2026-08-27 01:01:32Z after `npm --prefix docs run ci` reported all three gates green — 9 generated
 files current, 15 directives rendered across 16 pages. The stamp is honest despite an uncommitted
 tree: this round changes no file under `docs/`, so the rendered pages uploaded are exactly
@@ -867,10 +875,15 @@ hashes: the generated pages themselves are unchanged, which is what a release th
 `PACKAGE_VERSION` and not `schema_version` should look like on a rendered site.
 
 **What this entry changes going forward.** A deploy gets a row in this table, with its id and its
-source commit, in the commit that follows it. That is a **protocol act** and not a gate: the suite
-cannot reach Cloudflare and must not want to, so nothing here can fail a build when a row is
-missing. What can be checked is the thing that actually went wrong — a claim about the live site
-written in the present tense — and the repair for that is the dating above rather than a test.
+source commit, in the commit that follows it. **This paragraph used to end "that is a protocol act
+and not a gate", and the round after it made that false:**
+[`gates/deploy_record.py`](gates/deploy_record.py) reconciles this table against Cloudflare's list
+in both directions and refuses an unrecorded deployment, which is exactly the missing row the old
+wording said nothing could fail on. What stays true is the narrower claim the old sentence was
+reaching for: the gate is **not a suite member**, because the suite cannot reach Cloudflare and must
+not want to, so a missing row fails a command somebody runs rather than a build. Corrected by the
+1.2.1 release audit, which found it while writing the row above — the sentence had been superseded
+for two rounds by a tool this same entry already cites twice.
 
 ### 9. Two claims that were never true, found by the tense sweep
 
@@ -936,6 +949,135 @@ updates its own history is a record nobody can date.
 sweep is an enumeration over nine record files and a human read of what it collected, and a claim
 phrased so as to mention none of the platforms it depends on is a claim it cannot see. The two
 found here were both inside its reach; what it cannot bound is how many are outside it.
+
+### 10. `synapse-cdm` 1.2.1 is on the index — CLOSED, and the release renumbered itself
+
+**Published 2026-08-27** by
+[run 33061413447](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/33061413447),
+triggered by the `v1.2.1` tag. Both jobs succeeded; the upload took 24 seconds once the `pypi`
+environment was approved. This entry is the release's own record, written in the commit that
+follows the tag, and it closes on the evidence below rather than on the run being green.
+
+**THE NUMBER WAS RULED FROM THE DIFF, AND IT IS NOT THE ONE THE ROUND WAS ASKED FOR.** The release
+was specified as **1.3.0**. Not one executable line had changed inside the distribution since
+`v1.2.0`: `pyproject.toml` and `adapter.py` changed comment lines only — filtering both diffs to
+functional lines yields nothing — and every other file that moved under `packages/` is a shipped
+document. No importable name, no `Adapter` contract change, no harness flag or exit code, no fixture
+set, no dependency. That is `version.py`'s MINOR list in full and none of it occurred, so the PATCH
+row governs and the release is **1.2.1**. Recorded here because a version number is the one claim in
+a release that can never be corrected: a PyPI filename is permanent, and 1.3.0 would have been a
+distribution asserting a surface change that had not happened.
+
+**`SCHEMA_VERSION` stayed 1.0.0 on evidence rather than on inheritance.** The diff over `schemas/`
+since `v1.2.0` is empty and no model, adapter or fixture changed. Unlike 1.2.0's, this required no
+ruling — there was no new output surface to adjudicate.
+
+**Installed from the index, not from the local build.** A fresh virtualenv with no clone on its
+path, `pip install synapse-cdm==1.2.1 --no-cache-dir`. Read back from `site-packages`:
+
+| | |
+| --- | --- |
+| `PACKAGE_VERSION` | `1.2.1`, and `Version:` in the installed `METADATA` agrees |
+| `SCHEMA_VERSION` | `1.0.0` — unmoved, and this time uncontested |
+| `--list-adapters` | **13 adapters**, unchanged from 1.2.0, `stanag4609` at `1.0.0` with fixtures in `klv` |
+| harness | the whole roster against the installed copy, no `--fixtures`: **408 verdicts, 0 failed** |
+
+**The first install attempt failed, and it is the propagation lag rather than a defect.** `pip`
+answered `Could not find a version that satisfies the requirement synapse-cdm==1.2.1 (from
+versions: 1.0.0, 1.1.0, 1.2.0)` while `GET /pypi/synapse-cdm/1.2.1/json` was already answering
+**200**. The per-release JSON endpoint, the aggregate JSON endpoint and the simple index update
+independently, and `pip` resolves against the last of the three. Retried once and it resolved. The
+1.2.0 round met the same lag from the other direction and this is the second observation of it, so
+it is recorded as the expected behaviour of the index rather than as an incident.
+
+**The digests, in four readings.** What the gate hashed after building and gating, what the publish
+job hashed immediately before uploading, what the index states in its metadata, and what a
+recomputation over the downloaded bytes yields:
+
+```
+f07f32e057a6e387f12b7c9565a26895873d763469ac0386dc28522c6a1e7e2b  synapse_cdm-1.2.1-py3-none-any.whl
+71c06af009a2fb03e2911f8fe18a8d46a4800ad277946888c6c4debff8b47e7f  synapse_cdm-1.2.1.tar.gz
+```
+
+**All four readings agree, and the sizes agree with them** — 3 762 311 bytes for the wheel and
+1 946 985 for the sdist, identical in the gate's `ls -l`, in the publish job's pre-upload hash, in
+PyPI's metadata, and in the files downloaded from the index. The simple index's own `sha256`
+fragments carry the same two values, which is a fifth reading nobody asked for. The attestations
+name the same digests in their in-toto subjects. The gate handed over artefact
+`4c3a9091352c9bf63adb0d84730c85556bed258e5002d714307557f9c58bde05` and the publish job downloaded
+that digest. One build, gated as that build, uploaded as those bytes, served as those bytes — for a
+fourth release.
+
+**A local build of the same tree was made first and its digests are deliberately NOT recorded.**
+They differ from the published ones — `4aa4fd28…` and `e590ad57…` — and the sdist differed in size
+as well, 1 953 838 against 1 946 985. That is the ordinary consequence of two builds of one tree
+carrying different generated metadata, and it is the whole reason the notes point here instead of
+stating a digest: the local build's numbers would have been a true measurement of a file nobody can
+install.
+
+**WHAT 1.2.1 IS FOR: the four sentences that shipped wrong inside 1.2.0 are corrected in it.**
+Entry 6's block on 1.2.0 recorded them against the artefacts carrying them and said they "will ship
+corrected in whatever release comes next". That is this release, and it was verified in the
+installed copy rather than in the tree:
+
+**The four are named in entry 6's table and are deliberately not restated here** — that table is
+the record of what the 1.2.0 artefacts carry, and a second copy of four verbatim quotations is four
+more sites to keep in agreement, which is the defect the round behind this release was about. What
+belongs here is the verification, per file, read out of the downloaded 1.2.1 artefacts:
+
+| Artefact | File | Verified in 1.2.1 |
+| --- | --- | --- |
+| wheel and sdist | `synapse_cdm/MIGRATIONS.md` | release condition 2 states the roster correctly |
+| wheel and sdist | `synapse_cdm/adapter.py` | the `fixture_dir` note states the roster correctly, and its uniqueness clause is **gone** — the substring occurs 0 times |
+| sdist only | `pyproject.toml` | both sites state the roster correctly |
+
+Each was checked by reading the installed `site-packages` copy and the unpacked sdist, against the
+roster the registry derives — not by re-reading the tree, which is what the 1.2.0 round could have
+done and would have passed.
+
+**TWO POINTERS IN ENTRY 6 NO LONGER RESOLVE, and they are corrected here rather than there.** Entry
+6 is closed, and entry 5's ruling is that a closed record which quietly updates its own history is a
+record nobody can date. Its 1.2.0 block sends a reader to `MIGRATIONS.md`'s `### Unreleased` section
+"which is where a reader who installed 1.2.0 is told what their copy does not have"; that section
+was absorbed into `### 1.2.1` when this release took it, which is what the release-condition test
+requires it to do. And its "will ship corrected in whatever release comes next" is discharged by the
+table above. Both measurements it accompanies are unchanged.
+
+**The docs site was deployed, and the order was publish first.** Deployment `222a55be`, source commit
+`43213316`, uploaded 2026-08-27 12:37:06Z after `npm --prefix docs run ci` reported all three gates
+green — 9 generated files current, 15 directives rendered across 16 pages. The only rendered page
+that moved is `changelog.mdx`, whose one live version claim read "the package is at `1.2.0`".
+**The deploy was deliberately held until 1.2.1 was on the index**: serving a page that claims a
+version the index does not have is the same bare-claim class this file spent two rounds
+mechanizing against, and the page would have been false for as long as the approval took.
+
+**Verified from the served bytes, both halves.** Five pages fetched from
+<https://docs.synapsecommand.com> after the upload are **byte-identical** to the local build and to
+`222a55be`'s own `pages.dev` URL, and **differ** from `5ed34cd8`'s on all five. The changelog page
+serves `package is at 1.2.1` where `5ed34cd8` serves `1.2.0`, and the two deployments' bytes differ
+at exactly one character — the two strings are the same length, so the file sizes are identical at
+58 816 bytes and a size comparison would have shown nothing.
+
+**A PROBE FORM THAT REPORTS THE OPPOSITE OF THE TRUTH, found by running it.** The first byte
+comparison above was written with Python's `urllib` at its default `User-Agent` and reported the
+domain as identical to **both** `222a55be` and `5ed34cd8` and different from the local build —
+which is to say it reported that the deploy had changed nothing. Every one of its fifteen fetches
+had returned **HTTP 403** from Cloudflare's bot challenge, and the comparison was hashing fifteen
+identical error strings. **A uniformly failing probe makes "identical" true.** `curl` gets 200 from
+the same URLs, and so does `urllib` with any `User-Agent` set — including
+`synapsecommand-deploy-record`, which is the one
+[`gates/deploy_record.py`](gates/deploy_record.py) sends, so the gate is unaffected and was checked
+rather than assumed. The gate is also structurally immune: its `fetch()` raises on `HTTPError`
+instead of returning a value, and its "must differ from the previous deployment" half would refuse
+a uniform failure even if it did not. **This is the mirror of the `synapsecdm` 200 already recorded
+below** — that one turns a 404 into an apparent 200, this one turns a difference into an apparent
+identity — and it belongs to the same lesson: a written-down probe is only as good as the response
+it distinguishes.
+
+**What this entry does not claim.** That the release changed anything executable — it did not, and
+the PATCH number says so. And not that the four corrected sentences were the only prose defects in
+the 1.2.0 artefacts; they are the four the sweep that found them could see, and the sweep that
+replaced it derives the roster and reads `git ls-files` rather than an allowlist.
 
 ## The deployment was not affected
 
@@ -1050,8 +1192,13 @@ mentions no platform**, which is the limit stated in entry 9.
 | ~~`57ac1878` holds the alias and is what the site has served since~~ | deployment section | five pages, byte compared | **FALSE — decayed inside the round that wrote it** | dated and superseded; **`gates/deploy_record.py`** |
 | the deployment list is all `ad_hoc`, every source commit resolving here | entry 8 | `gates/deploy_record.py` | holds | **GATED** — the count is derived by the gate and stated in no prose |
 | every deployment id is named by a row or by the pinned coverage set | entry 8 | `gates/deploy_record.py` | holds | **GATED** |
-| `docs.synapsecommand.com` is served by `5ed34cd8` | entry 8 | `gates/deploy_record.py`, by bytes | holds | **GATED** |
-| the distribution on the index is 1.2.0 | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | holds | **GATED at one remove**: `tests/test_cdm_release.py` requires that section to name the tree's `PACKAGE_VERSION`, and every release tag to name the `PACKAGE_VERSION` of the tree it points at |
+| ~~`docs.synapsecommand.com` is served by `5ed34cd8`~~ | entry 8 | `gates/deploy_record.py`, by bytes | **superseded 2026-08-27 12:37:06Z** by `222a55be` | **GATED** — the gate refused the stale id, which is how the pin moved |
+| `docs.synapsecommand.com` is served by `222a55be` | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | holds | **GATED** |
+| ~~the distribution on the index is 1.2.0~~ | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | **superseded 2026-08-27** by 1.2.1, and the section cited was absorbed into `### 1.2.1` | the citation is why this row is struck rather than edited: an `Unreleased` section is by construction not a durable address |
+| the distribution on the index is 1.2.1 | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | holds | **GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at, and forbids an `Unreleased` section once the tag exists |
+| 1.2.1's digests equal what the index serves, in four readings | entry 10 | recomputed over downloaded bytes | holds | dated 2026-08-27 |
+| the four prose defects in the 1.2.0 artefacts are corrected in 1.2.1 | entry 10 | read out of the installed copy and the downloaded sdist | holds | dated 2026-08-27; the tree half is **GATED** by `tests/test_cdm_prose_counts.py` |
+| a `urllib` default `User-Agent` gets HTTP 403 from `docs.synapsecommand.com` | entry 10 | four `User-Agent` values compared | holds | dated 2026-08-27 — recorded because a uniformly failing probe reports identity |
 
 **A probe form that gives the wrong answer, and it is the sort of thing this table exists to
 carry.** `https://pypi.org/project/synapsecdm/` returns **HTTP 200** — a bot-challenge page titled
