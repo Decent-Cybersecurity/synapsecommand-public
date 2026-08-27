@@ -550,6 +550,214 @@ def test_the_section_reader_stops_at_the_next_entry():
     )
 
 
+# ---------------------------------------------- the section's own ARITHMETIC, which nothing read
+#
+# THE GAP, STATED AS THE DIFFERENCE BETWEEN TWO PREDICATES
+# --------------------------------------------------------
+# The gate above asks "does this path's basename appear in the section?". The sentence the section
+# leads with claims something stronger: "these are the N files this arc moved". Those come apart
+# exactly where the basename is one a section would carry for other reasons, and they did:
+# `synapse_cdm/README.md` and `fixtures/klv/README.md` both joined the arc while the sentence still
+# read *three*, and the guard stayed green throughout because `README.md` occurs all over the
+# section's prose. Coverage was satisfied by a mention that was never a claim about the arc.
+#
+# WHY THE COUNT AND NOT A SHARPER NOTION OF "NAMED"
+# -------------------------------------------------
+# The tempting repair is to scope the naming test — only count a basename inside the listing
+# sentence, only count one in backticks, and so on. Every version of that is a heuristic about
+# which mentions are claims, which is the reading the module already refuses to make in the
+# reverse direction. The count needs no heuristic: the sentence asserts a number, `git` derives a
+# number, and they are equal or they are not. So the count is checked against the DERIVATION
+# directly, and the naming check is left exactly as it is. A file named for unrelated reasons
+# cannot satisfy this one, because this one never looks at what the section names.
+#
+# WHAT IS REFUSED WHEN THE GRAMMAR IS NOT A COUNT
+# ------------------------------------------------
+# Parsing prose to a number is only safe where the prose is unambiguous, and the honest answer to
+# an ambiguous sentence is a refusal rather than a guess. `_spelled_moved_count` returns the count
+# or the reason it could not read one, and the gate fails on the reason — which keeps the manual
+# step rather than pretending to have replaced it, and cannot be dodged by writing a sentence the
+# parser gives up on.
+
+#: The sentence that carries the arithmetic. Required to occur exactly once in the section.
+COUNT_ANCHOR = "What moved inside the distribution:"
+
+#: Spelled numbers this parser accepts. Deliberately small: the arc has never moved more than a
+#: handful of files, and a set this size cannot quietly acquire a wrong entry.
+NUMBER_WORDS = {
+    "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+    "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
+}
+
+
+def _spelled_moved_count(section: str) -> tuple[int | None, str | None]:
+    """The number the section's leading sentence asserts, or the reason it cannot be read.
+
+    Exactly one anchor, and exactly one count-bearing token in the clause it opens. Both
+    "exactly one"s are the same rule the anchor discipline in `gates/scripted_edit.py` states for
+    a different job: a match count other than one is a bug and never a coin flip.
+    """
+    if section.count(COUNT_ANCHOR) != 1:
+        return None, (
+            f"{section.count(COUNT_ANCHOR)} occurrences of {COUNT_ANCHOR!r} in the section, and "
+            "the parser requires exactly one. With none there is no arithmetic to check; with "
+            "two there is no saying which sentence is the claim"
+        )
+    clause = section[section.index(COUNT_ANCHOR) + len(COUNT_ANCHOR):]
+    # The claim ends at the end of its own sentence. `**` closes the bolded lead, and a period
+    # ends it in the unbolded case; whichever comes first bounds the clause.
+    ends = [i for i in (clause.find("**"), clause.find(".")) if i != -1]
+    if not ends:
+        return None, "the sentence after the anchor is unterminated, so its extent is a guess"
+    clause = clause[:min(ends)]
+    found = [NUMBER_WORDS[w.lower()] for w in re.findall(r"[A-Za-z]+", clause)
+             if w.lower() in NUMBER_WORDS]
+    found += [int(d) for d in re.findall(r"\b\d+\b", clause)]
+    if len(found) != 1:
+        return None, (
+            f"the clause {clause.strip()!r} carries {len(found)} count-bearing tokens and the "
+            "parser requires exactly one. Rewrite it so the arc's size is stated once, or accept "
+            "that this number is checked by a person"
+        )
+    return found[0], None
+
+
+def test_the_unreleased_sections_spelled_count_agrees_with_the_derived_moved_set():
+    """THE TIGHTENED GATE. The sentence's own number, against `git`.
+
+    Not against how many files the section names — that is the predicate this exists to be
+    stronger than.
+    """
+    _require_git()
+    tag = _released_tag_for_this_version()
+    if tag is None:
+        pytest.skip(f"no v{PACKAGE_VERSION} tag, so there is no arc whose size to state")
+    moved = _package_tree_moved_since(tag)
+    if not moved:
+        pytest.skip("the package tree is identical to the tag; the presence check owns this case")
+    section = _unreleased_section(MIGRATIONS.read_text())
+    count, refusal = _spelled_moved_count(section)
+    assert refusal is None, (
+        f"the `{UNRELEASED}` section's arithmetic could not be read without judgement: {refusal}.\n"
+        "This is a refusal and not a pass: the count stays a manual step until the sentence is "
+        "written so a parser can reach it"
+    )
+    assert count == len(moved), (
+        f"the `{UNRELEASED}` section says {count} and the arc since {tag} has moved "
+        f"{len(moved)} distribution file(s): {moved}.\n"
+        "The naming check passing does not make this right — a basename can appear in the section "
+        "for unrelated reasons, which is exactly how this sentence went stale twice. "
+        "`python gates/bump_derivation.py` prints the derived set"
+    )
+
+
+def test_the_count_gate_refuses_every_direction_it_has_to():
+    """THE FIXTURES WITNESSING REFUSAL, one per direction, and the acceptance that makes them mean
+    something.
+
+    The third case is the defect itself: a section whose count is stale AND whose basenames are all
+    present, so the naming gate above is green on it. If this suite could only refuse it via the
+    naming check, the tightening bought nothing.
+    """
+    listing = ("`MIGRATIONS.md`, `FORMAT_COVERAGE.md`, `README.md`, `fixtures/klv/README.md` and "
+               "`fixtures/klv/spec/klv_pin.json`")
+
+    # 1. COUNT HIGH — the sentence claims more than the arc moved.
+    high = f"### Unreleased\n\n**{COUNT_ANCHOR} SIX shipped documents.** {listing}\n"
+    assert _spelled_moved_count(high) == (6, None)
+
+    # 2. COUNT LOW — the historical shape, and the one a round produces by adding a file and not
+    #    the number.
+    low = f"### Unreleased\n\n**{COUNT_ANCHOR} THREE shipped documents.** {listing}\n"
+    assert _spelled_moved_count(low) == (3, None)
+
+    # 3. NAMED IS NOT COUNTED. Every basename of a five-file arc is present here — the naming gate
+    #    accepts it — and the count says three. This is the exact defect, and the two gates now
+    #    disagree about it, which is the whole tightening.
+    moved = ["packages/cdm/synapse_cdm/MIGRATIONS.md",
+             "packages/cdm/synapse_cdm/FORMAT_COVERAGE.md",
+             "packages/cdm/synapse_cdm/README.md",
+             "packages/cdm/synapse_cdm/fixtures/klv/README.md",
+             "packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json"]
+    assert _moved_paths_the_section_does_not_name(moved, low) == [], (
+        "the naming gate was expected to ACCEPT this section — it names every basename. If it "
+        "refuses, this fixture no longer witnesses the gap between the two predicates"
+    )
+    assert _spelled_moved_count(low)[0] != len(moved), (
+        "the count gate accepted a section the naming gate accepts and the arithmetic refutes, "
+        "so the tightening buys nothing over the check it was added beside"
+    )
+
+    # 4. AND IT ACCEPTS THE CORRECT ONE. Without this, a parser returning a number nothing equals
+    #    would satisfy 1 through 3.
+    right = f"### Unreleased\n\n**{COUNT_ANCHOR} FIVE shipped documents.** {listing}\n"
+    assert _spelled_moved_count(right) == (5, None)
+    assert _spelled_moved_count(right)[0] == len(moved)
+
+
+def test_the_count_parser_refuses_rather_than_guesses_when_the_grammar_is_ambiguous():
+    """The named-refusal path, which is a recorded outcome and not a hole.
+
+    The four refuted reverse-sweep formulations are the precedent: an invariant that cannot be
+    derived without judgement is written down as refused, so the next round does not re-derive the
+    same dead end. Here the refusal is live rather than historical — it fires on the sentence.
+    """
+    # No anchor at all.
+    count, why = _spelled_moved_count("### Unreleased\n\nSomething changed.\n")
+    assert count is None and "0 occurrences" in why
+
+    # Two anchors: no saying which sentence is the claim.
+    two = (f"### Unreleased\n\n**{COUNT_ANCHOR} FIVE documents.**\n\n"
+           f"Earlier, **{COUNT_ANCHOR} THREE documents.**\n")
+    count, why = _spelled_moved_count(two)
+    assert count is None and "2 occurrences" in why
+
+    # Anchor present, no number in the clause.
+    count, why = _spelled_moved_count(f"### Unreleased\n\n**{COUNT_ANCHOR} some documents.**\n")
+    assert count is None and "0 count-bearing tokens" in why
+
+    # Anchor present, TWO numbers — the shape a round produces by splitting the arc into shipped
+    # documents and code. It is refused rather than resolved by preferring the first, because
+    # which of the two is the arc's size is a reading.
+    count, why = _spelled_moved_count(
+        f"### Unreleased\n\n**{COUNT_ANCHOR} FIVE documents and TWO code files.**\n")
+    assert count is None and "2 count-bearing tokens" in why
+
+
+def test_the_count_gate_is_not_vacuous_against_the_real_section():
+    """The established form: prove the live gate CAN fail by mutating the tree it reads.
+
+    A gate whose real input happens to satisfy it is indistinguishable from a gate that asserts
+    nothing, and the count gate is unusually exposed to that — it is one integer comparison. So
+    the real section is read, its number is moved by one, and the comparison is asserted to break.
+    """
+    _require_git()
+    tag = _released_tag_for_this_version()
+    if tag is None:
+        pytest.skip(f"no v{PACKAGE_VERSION} tag")
+    moved = _package_tree_moved_since(tag)
+    if not moved:
+        pytest.skip("nothing moved; there is no live count to mutate")
+    section = _unreleased_section(MIGRATIONS.read_text())
+    count, refusal = _spelled_moved_count(section)
+    assert refusal is None and count == len(moved), (
+        "the live gate is failing; its own message is the one to read, not this one"
+    )
+    spelled = next(w for w, n in NUMBER_WORDS.items() if n == count)
+    wrong = next(w for w, n in NUMBER_WORDS.items() if n == count + 1)
+    mutant = re.sub(spelled, wrong, section, count=1, flags=re.IGNORECASE)
+    assert mutant != section, (
+        f"the section's count {count} is not spelled as the word {spelled!r}, so this mutation "
+        "changed nothing and the non-vacuity claim is unproven"
+    )
+    mutated_count, mutated_refusal = _spelled_moved_count(mutant)
+    assert mutated_refusal is None, mutated_refusal
+    assert mutated_count == count + 1 != len(moved), (
+        "the parser read the same number out of a section whose count word was changed, so it is "
+        "not reading the sentence it claims to read"
+    )
+
+
 def test_the_unreleased_section_is_the_first_thing_under_history():
     """Newest first, and nothing is newer than what has not shipped.
 
