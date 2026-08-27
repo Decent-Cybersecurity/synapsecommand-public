@@ -9100,6 +9100,55 @@ one-release guard — so it is dated to the audit that observed it rather than c
 order to correct it becomes a carrier of it, and the sweep that later looks for the string finds
 the correction and calls it a defect.
 
+**KLV 18 — a held document's requirement identifiers do not say which edition states them, and the
+one that does says the wrong one.** MISB ST 1402.2 states **26** requirements. **Twenty-five carry no
+revision suffix at all** — they read `ST 1402-NN`, `-01` through `-25` — so a requirement's own
+identifier does not say which edition of ST 1402 states it. **Re-derived from the pinned bytes at
+writing time** rather than carried over from the round that closed park 9: the 26 distinct
+identifiers extracted from the copy at `fixtures/klv/spec/ST1402.2.pdf` run `-01` through `-26`
+contiguously, twenty-five unsuffixed and one not. **The twenty-sixth reads `ST 1402.1-26`** —
+suffixed, and suffixed with the *previous* edition, inside the edition-2 document that carries it.
+**Why this is its own entry rather than an amendment to KLV 12.** KLV 12 records the converse shape
+in ST 0107.3: eleven requirements carry their own edition's number and two carry the preceding
+edition's, which that entry rules is **provenance rather than error** — MISB stamps a requirement
+with the edition that introduced it, and ST 0107.3's revision history confirms it from the other
+side. **Here the majority is the unsuffixed form**, so that explanation cannot be reached: if the
+suffix were provenance, twenty-five of twenty-six requirements would be claiming no provenance at
+all. **Deliberately NOT adjudicated.** Whether the twenty-sixth marks the edition that introduced
+that requirement — the KLV 12 reading — or is a drafting slip is not decidable from this document,
+and **no other edition of ST 1402 is held**. A precedent that would decide it exists, and one
+precedent is not a reading. **What it costs, which is why it is registered:** this is the same defect
+one layer in. MISP-2019.1 cites "MISB ST 1402 [48]" with no revision suffix at §3.6.9.1 and §5.3.1,
+which is why the delegation table has to cite Appendix B to get a version at all — and a reader
+following that unsuffixed citation into the document finds the document's own requirements unsuffixed
+too. **At no point in the chain does an identifier carry its edition**, so this pin's SHA-256 is the
+only thing in this repository that says which text a quoted `ST 1402-05` came from.
+
+**KLV 19 — four requirements are withdrawn as re-specifications and not as facts, and the values they
+carry are the ones that locate a KLV stream.** MISB ST 1402.2 deprecates four of its 26 —
+`ST 1402-05`, `-06`, `-19` and `-23` — leaving **22 live**. **Re-derived from the pinned bytes at
+writing time.** Verbatim, with the marker as the document prints it: `ST 1402-05 (Deprecated) For the
+Synchronous Metadata Multiplex Method, the stream_id shall be 0xFC, indicating "metadata stream."`;
+`ST 1402-06 (Deprecated) ... the stream_type shall be 0x15, indicating "Metadata carried in PES
+packets".`; `ST 1402-19 (Deprecated) For the Asynchronous Metadata Multiplex Method, the stream_id
+shall be 0xBD, indicating "private_stream_1."`; `ST 1402-23 (Deprecated) ... the stream_type shall be
+0x06, indicating "PES packets containing private data."` **The distinction IS the entry, and the
+document states it in its own words.** §3's revision history: "Deprecated REQ's -05, -6, -19, -23;
+these are required by ISO/IEC 13818-1 and should not be re-specified here." So what was withdrawn is
+**MISB's act of requiring these values**, on the ground that ISO/IEC 13818-1 already requires them.
+**The values themselves are unchanged and still apply** — they are somebody else's to state. **Why it
+is registered rather than noted in passing:** a reader who takes "deprecated" in its ordinary sense,
+as *no longer applicable*, would discard the `stream_type` and `stream_id` for **both** multiplex
+methods — which is precisely the ability to find the KLV elementary stream inside an MPEG-2 transport
+stream, and that ability is what park 9 existed to buy. The two readings differ by the whole value of
+the document. **Note the KLV 18 defect running through the quotations:** all four identifiers are of
+the unsuffixed form, and the revision history writes the second as `-6` where the requirement itself
+prints `-06`. **A second instance of the same move is now held:** ST 1303.1, pinned 2026-08-27,
+deprecates a requirement of its own *"as it is a definition"* and renames its Appendix A to
+"Deprecated Requirements". Recorded inside this entry as an observation and **not** as a reading —
+two documents in one delegation chain using deprecation for something other than obsolescence is a
+pattern worth watching and is not yet a rule about the series.
+
 #### Act 0, continued — four held claims re-derived rather than inherited, and all four hold
 
 The round needed a PDF text reader it did not have, so it built one and then spent its first output

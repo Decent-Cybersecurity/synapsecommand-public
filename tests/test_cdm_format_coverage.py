@@ -3934,7 +3934,14 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
 
 
 def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
-    """Fourteen entries, `KLV n`, no fifteenth without a deliberate edit — and every CITATION defined.
+    """Every `KLV n` present up to the bound, none past it, and every CITATION defined.
+
+    THE COUNT USED TO BE SPELLED IN THIS LINE — "Fourteen entries ... no fifteenth" — and it was
+    stale by five entries when the pins round's sweep reached it, having been written when the bound
+    was 14 and not moved by any of the three rounds that moved the bound. It is DELETED rather than
+    re-synced, per sweep rule 7: the `range()` below is the count, it cannot drift from itself, and a
+    docstring restating it is a second site with nothing reading it. The rule that a new entry is a
+    deliberate edit is unchanged and is what the upper assertion enforces.
 
     Numbered per the new adapter's own convention rather than continuing the GMTIF or NITS series,
     because a register is scoped to the document it reads. The upper guard matters as much as the
@@ -3978,10 +3985,26 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     # differ at all. It costs nothing on any octet either edition admits — ISO 646 is a UTF-8
     # subset — which is precisely why an entry is the right home for it: a divergence that costs
     # nothing today is a divergence nobody would remember when it stops costing nothing.
-    for n in range(1, 18):
+    # THE BOUND MOVED 17 -> 19 ON 2026-08-27 EVENING, and both new entries are about a document
+    # that was already held — ST 1402.2, pinned by the off-peak round hours earlier — rather than
+    # about any of the four the pins round fetched. That is worth noting here because the round
+    # that files a finding is usually the round that fetched the document, and these two are the
+    # exception: they are what re-reading a held copy at writing time turns up. Both were
+    # RE-DERIVED from the pinned bytes rather than copied from the closing round's report, which is
+    # the discipline that separates a register entry from a quotation of one.
+    # KLV 18: twenty-five of ST 1402.2's twenty-six requirement identifiers carry no revision
+    # suffix, and the twenty-sixth carries the PREVIOUS edition's. It is deliberately not
+    # adjudicated — KLV 12 rules the converse shape in ST 0107.3 as provenance, but there the
+    # suffixed form is the majority, and here it is one in twenty-six.
+    # KLV 19: the four deprecated requirements are withdrawn as RE-SPECIFICATIONS of ISO/IEC
+    # 13818-1 and not as facts, so the stream_type and stream_id values they carry still apply. A
+    # reader taking "deprecated" in its ordinary sense loses the ability to locate the KLV stream,
+    # which is what park 9 existed to buy — the two readings differ by the whole value of the
+    # document.
+    for n in range(1, 20):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 18 —" not in section, (
-        "the register has grown past KLV 17 without this test being updated"
+    assert "**KLV 20 —" not in section, (
+        "the register has grown past KLV 19 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a
