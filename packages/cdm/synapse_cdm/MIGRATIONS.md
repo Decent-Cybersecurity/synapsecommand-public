@@ -275,6 +275,23 @@ routes rather than the throttled one: `web.archive.org` still answers HTTP 429, 
 `nsgreg.nga.mil` were never reached at all, because the whole `nga.mil` zone does not resolve from
 this environment. The blocker is one throttled route, not three refusing hosts.
 
+**RETRIED A SECOND TIME, 2026-08-27T14:51Z, and the answer is the same in every term.** The CDX
+index query and playback of the byte-exact archived `ST0601.4.pdf` URL both answered **HTTP 429**,
+`Server: nginx`, `X-RL: 1`, `Content-Type: text/html`, 162 bytes. **The park's premise was not
+contradicted, because no bytes arrived to contradict it** — the pin's digest was never reached, so
+nothing was compared and nothing is claimed. The 429 body was read and deliberately not hashed, on
+the same discipline as the previous retry. **No mirror was improvised**, per the standing rule.
+
+**`X-RL` has now been sampled three times — `0`, `1`, `1` — and it still does not predict the
+answer.** Recorded as an observation and not as a trend: three samples of a counter that moves
+while the refusal does not say only that the counter moves.
+
+**And the environment bound was re-derived before the network was trusted, not after.** The whole
+`nga.mil` zone still answers `SERVFAIL` from the only reachable resolver — `gwg.nga.mil`,
+`nsgreg.nga.mil` and the apex — while `web.archive.org` resolves normally. So this round could ask
+exactly one of the three routes, which is the same one route the previous retry could ask, and the
+two official routes remain a question this environment cannot put.
+
 **No adapter, no codec and no fixture changed**, so none of the above touches an octet. The register
 is a record of what the standards say about themselves, and this round read six PDFs and promoted no
 tag row.

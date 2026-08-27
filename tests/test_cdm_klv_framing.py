@@ -833,9 +833,24 @@ MULTIPLIED_FACTS = (
     ("EG 0601.1's source-document filename, the second date stamp inside /Title",
      "EG0601.1_UAS_Local_Data_Set_20080515.doc",
      ("FORMAT_COVERAGE.md", "MIGRATIONS.md", "fixtures/klv/spec/klv_pin.json")),
+    # MIGRATIONS.md JOINED THIS ROW when the second retry was recorded there. The row named two
+    # sites and the value is now at three, so the third is added deliberately rather than left
+    # unguarded — which is this table's stated rule about adding a site, applied in the direction
+    # that is easy to skip: a site that starts carrying a measurement is as much a change as a
+    # site that stops.
     ("park 9's retry: the rate-limit header the archive answered with",
      "X-RL: 1",
-     ("FORMAT_COVERAGE.md", "fixtures/klv/spec/klv_pin.json")),
+     ("FORMAT_COVERAGE.md", "MIGRATIONS.md", "fixtures/klv/spec/klv_pin.json")),
+    # COLLECTED THE MOMENT IT WAS MULTIPLIED, which is the whole protocol. The second retry's
+    # timestamp is the identifier of the observation the three sites are describing; if one site
+    # is later re-dated and the others are not, the record carries two retries where there was
+    # one, and nothing else in the suite would notice. The BYTE COUNT of the 429 body is
+    # deliberately NOT a row: it is written "162 bytes" at two sites and "162-byte" at a third,
+    # which is one measurement in two grammars, and pinning a string would force a spelling
+    # rather than guard a value — the same judgement the timezone suffixes above get.
+    ("park 9's second retry: the timestamp all three sites date the observation to",
+     "2026-08-27T14:51Z",
+     ("FORMAT_COVERAGE.md", "MIGRATIONS.md", "fixtures/klv/spec/klv_pin.json")),
     # TWO ROWS THIS GUARD COLLECTED RATHER THAN THIS ROUND CREATING THEM, and both were load-bearing
     # and unguarded. Each is the /CreationDate that establishes that a pinned copy is NOT the
     # pristine edition its cover claims — ST 0601.14a as amended through 19 August 2021 but
