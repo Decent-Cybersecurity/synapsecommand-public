@@ -9124,6 +9124,47 @@ following that unsuffixed citation into the document finds the document's own re
 too. **At no point in the chain does an identifier carry its edition**, so this pin's SHA-256 is the
 only thing in this repository that says which text a quoted `ST 1402-05` came from.
 
+**A DATED NOTE BESIDE THIS ENTRY, AND ITS SUBJECT IS THE PINNED PROFILE RATHER THAN THE ENTRY.
+2026-08-27.** The entry above is unchanged and this note proposes no change to it. It was re-derived
+first, on the rule the KLV 5 note established: a note filed beside a claim is worthless if the claim
+has drifted. From `fixtures/klv/spec/ST1402.2.pdf`,
+`52a3b32a7314d2884d421c74718b808402f9cc5c852168b0c84f872b773100e0`, 13 pages — the 26 identifiers run
+`-01` through `-26` contiguously, twenty-five bare and the twenty-sixth `ST 1402.1-26`. **KLV 18
+holds as written.** What follows is a different fact about a different document, and it is a note
+rather than an amendment because nothing above it is wrong.
+
+**The profile cites ST 1402 at three requirement sites and the entry names two.** Every occurrence of
+the string `1402` in the pinned profile — `misb-misp-2019-1.pdf`,
+`3167362ace20746ed13e85522130c2e9f3fc9ecf62a112bd75bdced7b102d5ea`, 73 pages — was enumerated: **eight
+in total**. Four are bracketed citations of `MISB ST 1402 [48]`: `MISP-2015.1-48` and `MISP-2015.1-49`
+in §3.6.9.1, `MISP-2016.1-90` in **§3.7.12.1**, and the §5.3.1 prose on inserting MPEG-2 TS packets
+into UDP packets. **§3.7.12.1 is the third site** and it is the Class 2 counterpart of the §3.6.9.1
+row: "Class 2 Motion Imagery encapsulated in a MPEG-2 Transport Stream Container shall comply with
+MISB ST 1402 [48]". **Three** further occurrences are in §6.3's deprecated table as
+"[Superseded by MISB ST 1402]" — against ST 9701, RP 9717 and RP 0101 — and are not citations. The
+eighth is Appendix B ref [48] itself. **KLV 18 is not refuted**: it names two sites and never claims
+they are all, so it is short by one rather than wrong, and it is left exactly as written.
+
+**Why this is filed here rather than where it was first written.** The observation was made by the
+2026-08-27 register-note round and filed **beside KLV 5**, inside a note whose subject is the
+profile's citation convention. That is the wrong neighbour: a reader auditing KLV 18's two named
+sites has no reason to read the KLV 5 block, which is where the third one was. The fact is restated
+here beside the entry it qualifies, and the count is given rather than remembered — **the earlier
+filing says "four further mentions" and the bytes say three**, which is logged as a stale count in
+`klv_pin.json`'s `register_round_2026_08_27` node and corrected in that note in this arc.
+
+**What this note does NOT claim.** It does not claim KLV 18 should be amended to three sites; the
+entry's ruling turns on the identifiers inside ST 1402.2, not on how many times the profile points
+at it, and widening it would turn a true sentence into a maintenance obligation nothing derives. Nor
+does it touch the entry's deliberate non-adjudication of `ST 1402.1-26` — **that question moved this
+round, and it moved in the register rather than here**: `delegated_specifications_held.st_1201_3`
+records that ST 1201.3 stamps fifteen requirements `ST 1201.1-NN` and two `ST 1201.2-NN` with none at
+its own edition, a monotone partition that is the KLV 12 reading witnessed a second time. KLV 18
+declined to adjudicate because "one precedent is not a reading". There are now two, and the entry
+still stands unadjudicated — because ST 1402.2's case rests on its other twenty-five rows, and ST
+1303.1's nineteen bare `ST 1303-NN` identifiers show the unsuffixed form is a house form too.
+
+
 **KLV 19 — four requirements are withdrawn as re-specifications and not as facts, and the values they
 carry are the ones that locate a KLV stream.** MISB ST 1402.2 deprecates four of its 26 —
 `ST 1402-05`, `-06`, `-19` and `-23` — leaving **22 live**. **Re-derived from the pinned bytes at
@@ -9839,9 +9880,11 @@ because it reads like the same thing and is not: the version is stated, one brac
 §3.6.9.1 and §5.3.1 as the sites where the profile cites "MISB ST 1402 [48]" without a suffix. The
 enumeration finds a **third bracketed site**: §3.7.12.1, requirement `MISP-2016.1-90`, "Class 2
 Motion Imagery encapsulated in a MPEG-2 Transport Stream Container shall comply with MISB ST 1402
-[48]" — the Class 2 counterpart of `MISP-2015.1-48`, which is the §3.6.9.1 site. Four further
-mentions occur in §6.3's deprecated table as "[Superseded by MISB ST 1402]", which are not
-citations. **KLV 18 is not refuted** — it names two sites and never claims they are all — so it is
+[48]" — the Class 2 counterpart of `MISP-2015.1-48`, which is the §3.6.9.1 site. **Three** further
+mentions occur in §6.3's deprecated table as "[Superseded by MISB ST 1402]" — against ST 9701,
+RP 9717 and RP 0101 — and are not citations. **That count read "four" when this note was written on
+2026-08-27 and the bytes said three**; it is corrected here and classed in `klv_pin.json` as a
+born-false stale count, since the profile's bytes are pinned and have not moved. **KLV 18 is not refuted** — it names two sites and never claims they are all — so it is
 short by one rather than wrong, and it is left exactly as written on this round's ruling.
 
 **What this note is derived from, stated because the round that ordered it named a different
