@@ -105,6 +105,28 @@ Value beside the KLV octets that encode it, and all 26 agree, as do the 23 examp
 independently prints. `26 of 141` rows moved; **115 still read `not yet`**, blocked on the scope
 contract rather than on a park.
 
+**AN EIGHTH ROUND READ THE SIX EDITIONS AGAINST EACH OTHER AND CORRECTED THIS FILE.** It re-opened
+parks 5, 9 and 11 and register entries KLV 14–17; **no park closed**, because all three acquisition
+routes refused — `gwg.nga.mil` and `nsgreg.nga.mil` answered nothing and `web.archive.org` answered
+**HTTP 429**, including on the byte-exact archived URL that served `ST0601.4.pdf` the day before. It
+is a quota, not a credential, so the routes are throttled rather than closed.
+
+**The sentence above about item introductions was true when it was written and is not true now.**
+This file says "**no held document dates any item's introduction**", scoped in the same breath to
+`ST 0601.14a` and `ST 0601.19` — the only two ST 0601 copies held at the time. **Six editions are now
+held**, and two of them do date item introductions: EG 0601.1's §3 says "Added metadata items 40
+through 72", and ST 0601.4's §3 dates the additions at editions `.2` and `.3`. So the scoped clause
+still holds of `.14a` and `.19` and **the unscoped claim does not**, which is register entry KLV 14's
+correction rather than this file's — but this is a site of the fact and the fact moved. What the same
+§3 does **not** do is account for items **77, 78, 79 and 80**, four of the eight items separating
+edition 1 from edition 4, so the surviving changelog is incomplete where it exists.
+
+**And this file's claim about item 22's length is now first-hand at all six editions rather than
+three.** "**The length never changed** across every edition this repository can sample" was
+re-derived from the bytes: `uint16`, Len **2**, at the initial release, `.1`, `.4`, `.8`, `.14a` and
+`.19`. **It holds.** So do this file's stream counts, re-walked the same way: **6 packets, 26 items
+each, 156 items, 977 octets, 0 left over.**
+
 ```bash
 # This now RUNS, and for six rounds it did not. Twenty fixtures — ten payloads and their ten
 # parsed twins — replay against adapter #10, with goldens in golden/. No --fixtures: the adapter

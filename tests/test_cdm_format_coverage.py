@@ -3126,6 +3126,25 @@ KLV_HELD_NOT_PINNED = {
     # copy, and the admitting phrase says what that reason is rather than merely licensing the
     # number. Register entry KLV 11.
     "SMPTE ST 336": {"2007": "a divergence between two delegations of one profile"},
+    # ADDED 2026-08-27 BY THE PARKS ROUND, and it is a FIFTH kind after "held but not pinned", "a
+    # park's deciding document", "part of a quoted range" and "named by the series' own changelog":
+    # a revision of a DIFFERENT SERIES DESIGNATION, quoted from a held document's own reference
+    # list and used as a DATE WITNESS rather than as a text anything is read against.
+    #
+    # READ THE DESIGNATION. The section states **RP** 0102.5, not ST 0102.5 — EG 0601.1's §2.3
+    # cites "MISB RP 0102.5, Security Metadata Universal and Local Sets for Digital motion
+    # Imagery, 15 May 2008". The 0102 series converted Recommended Practice to Standard exactly as
+    # the 0601 series converted Engineering Guideline to Standard, so this is KLV 15's phenomenon
+    # one series over, and it is why a gate whose family is the bare number `0102` reads a
+    # revision of the RP as a second revision of the ST. That is the gate being blunt in the
+    # correct direction: it stopped a genuinely new citation and made it be declared.
+    #
+    # WHAT IT IS LOAD-BEARING ON. That date decides KLV 16's "15 May" row — a document cannot cite
+    # a reference published a year after itself, so EG 0601.1's cover date of 15 May 2008 is
+    # corroborated from inside its own 98 pages and §3's "15 May 2007" is the typo. Nothing is
+    # read against RP 0102.5; this repository does not hold it and the profile does not pin it.
+    # The delegation the gate protects is untouched: the profile pins ST 0102.12.
+    "MISB ST 0102": {"5": "MISB RP 0102.5, Security Metadata Universal and Local Sets"},
 }
 
 KLV_DELEGATION = (

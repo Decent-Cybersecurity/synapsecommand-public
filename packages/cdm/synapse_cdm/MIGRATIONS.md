@@ -261,6 +261,95 @@ collects any file containing it, so a document that spelled the marker in order 
 become a site by discussing it — which is what the first draft of this paragraph did, and the sweep
 caught it on the next run.
 
+**THE PARKS ROUND: no park closed, three register entries narrowed, and the record refuted itself
+twice.** Parks 5, 9 and 11 and register entries KLV 14–17 were re-opened after five rounds of record
+discipline. **No park closed, and the reason is acquisition rather than judgement.** All three routes
+the parks table names refused on 2026-08-27: `gwg.nga.mil` answered nothing, `nsgreg.nga.mil`
+answered nothing, and `web.archive.org` answered **HTTP 429 with `X-RL: 0`** — on the CDX API and on
+playback alike, **including the byte-exact archived URL the pin records as having served
+`ST0601.4.pdf` the day before.** It needs no credentials and no account: it is a quota, so the route
+is named as throttled rather than as closed, and the round refused to substitute an unnamed mirror to
+close a park — `upload.wikimedia.org` is already the weakest provenance in this record, and a pin
+weaker than the park it lifts is not a lift.
+
+**Everything that moved came off documents already on disk.** The six ST 0601 editions in `spec/` and
+`spec/history/` had never been read against each other item by item.
+
+**KLV 17: narrowed from twelve revisions to five, and the middle step is not an encoding change.**
+The entry was written from the two *endpoints* of the span. The lineage holds two documents inside
+it: **ST 0601.4 still states items 11 and 12 as `String 1..127 ISO7`** — unchanged at edition 4 — and
+**ST 0601.8 states them as `String 1..127 ISO 646`**, a third spelling, while adding the reference
+`ISO7` had denoted for eight editions without citing: **[16] ISO/IEC 646:1991**. So the column moved
+twice and only the second move is an encoding change, and the gap shrinks from `.2`–`.13` to
+**`.9`–`.13`**. ST 0601.14a carries **no ISO 646 reference at all**, so the edition that adopted
+`utf8` dropped the old normative reference rather than superseding it in place.
+
+**KLV 16: the cover date is corroborated from inside edition 1, by a route nobody had tried.** EG
+0601.1's §2.3 cites "MISB **RP** 0102.5 … **15 May 2008**", and a document cannot cite a reference
+published a year after itself — so **the held bytes cannot be the 15 May 2007 issue**, and the pin's
+edition-date field is now positively corroborated rather than merely elected by the provenance
+ruling. **What it does not prove is why §3 reads 2007**, and the entry keeps both surviving readings
+rather than rounding up: a one-digit typo, or a real 2007 issue re-issued in 2008 without §3 gaining
+a row. The typo is the better reading and is not a proof. **Under either, ST 0601.4 restates 2007
+and so does not repair that row**, which corrects the entry's "makes the sequence coherent". The
+"13 December" row — 2007 against 2006 — is untouched and undecidable from anything held.
+
+**KLV 14: refuted in part, by documents that were on disk when the refuted sentence was written.**
+The park-13 closure concluded "the editions state their own deltas perfectly well". They do not. An
+edition's item **set** is readable from its own subsection headers with no changelog at all, and six
+editions are held: **39, 72, 80, 95, 141, 143** items, contiguous, no gaps. Edition 1's changelog
+balances exactly — "Added metadata items 40 through 72", and 39 + 33 = 72. **Editions 2 through 4 do
+not:** eight items separate edition 1 from edition 4, and ST 0601.4's §3 accounts for four of them.
+**Items 77, 78, 79 and 80 are named in no §3 row** — "operational" and "velocity" occur nowhere in
+that section. So the surviving changelog is **incomplete where it exists**, and obtaining an edition
+buys its table but not reliably its delta.
+
+**And a truncation, which is the defect the guards could not see.** `FORMAT_COVERAGE.md`'s KLV 16
+entry ended mid-clause — "the pin states one date and the document contains" — with no blank line
+before `**KLV 17 — `, running two register entries together. **`klv_pin.json` held the complete
+sentence**, so the repair is a restoration and is recorded as one. The register-numbering guard
+requires each `**KLV n — ` to be *present*, which it was; a truncated sentence carries no count.
+
+**The three parks are narrowed without being lifted, and ranked.** **Park 9 carries ONE blocker** —
+acquisition — because the transport-stream input is *declined* rather than deferred to a codec, so
+what ST 1402.2 makes writable is prose. **Parks 5 and 11 each carry a second blocker:** their
+artefact half is source under `packages/`, which this round had no call for. Park 5's `IMAPB` reach
+was re-derived and **the two counts in this file and that one are now reconciled rather than left to
+collide**: sixteen §8.x sections name IMAPB and **fourteen** Table 1 rows have `IMAPB` in the Format
+column, the difference being tags **128 and 130**, `vlp` packs whose *members* are IMAPB-mapped.
+Park 11's ST 1204.1 is now pinned as "Oct 2013" by **two** held editions eight revisions apart. Item
+94 has been on the wire since edition 8 and is **absent from the pinned stream**, whose 26 items stop
+at 65 — so parks 5 and 11 each block rows and no held octet. `1303`, `1402` and `1301` each occur
+**zero** times in ST 0601.14a, so three of the five documents these parks need are delegated by
+MISP-2019.1 alone.
+
+**One gate amended, and it is the gate working.** Quoting "MISB RP 0102.5" put a second revision of
+the `0102` family in the section where the profile pins ST 0102.12, and
+`test_the_delegation_table_states_the_exact_version_the_profile_pins` refused the edit. The gate's
+family is the bare number, so it read a revision of the *RP* as a revision of the *ST* — which is
+KLV 15's phenomenon one series over, the 0102 series having converted Recommended Practice to
+Standard exactly as 0601 converted Engineering Guideline to Standard. Admitted in
+`KLV_HELD_NOT_PINNED` as a **fifth kind** — a revision of a different series designation, quoted from
+a held document's reference list and used as a **date witness** — with its own admitting phrase, per
+that table's one-phrase-per-revision rule. **No new gate was added.**
+
+**Six held claims were re-derived rather than inherited, and all six hold.** The round needed a PDF
+text reader it did not have, so it built one and spent its first output reproducing answers this
+record already states: the four 0601 page counts **98, 116, 155, 59** under a second independent
+page-tree walker; **141** tag rows; the pinned stream's **6 packets, 26 items each, 156 items, 977
+octets, 0 left over**; item 22 at `uint16` Len **2** at all six held editions; EG 0601.1 §7.65's
+range verbatim; and **98** undated running headers. **A tool whose first job is to reproduce known
+answers is a tool whose later answers mean something.**
+
+**What did NOT move.** No park closed and no document was fetched, so the download count stays at
+**9 of 10** and the park arithmetic is unchanged in every term — thirteen parks, three closed, ten
+open. **All 115 tag rows that read `not yet` still read `not yet`**: this round read six editions and
+promoted nothing, because every finding is about the standard's history rather than about what an
+octet means. **KLV 15 stands untouched**, its evidence re-derived verbatim. No new park and no new
+register entry — **ST 1010.3** was checked as a candidate and is already carried in the §4.4.2.5 row.
+Nothing under `packages/` changed, no fixture changed, `PACKAGE_VERSION` and `SCHEMA_VERSION` are
+unmoved, and there was no deploy.
+
 ### 1.2.0 — adapter #10, a codec ruling, and a schema version that did not move
 
 **A package MINOR, and the release where the two-number arrangement was tested rather than
