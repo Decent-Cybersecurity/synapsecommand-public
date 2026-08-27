@@ -217,6 +217,50 @@ one, this module's own header among them; that is guarded now too.
 sentences were inside the artefacts on the index. `PUBLICATION.md`'s ledger records which, with
 the digests. They are prose in comments and in a packaged document; nothing executable reads them.
 
+**The fourth mechanized protocol act: `gates/deploy_record.py`.** Three habits in this repository
+have been turned into things that fail — the pinned count *derivation*, so a number and the command
+behind it cannot disagree; `gates/scripted_edit.py`, after a scripted rewrite deleted ~5 000 lines
+on a non-unique anchor; and `gates/commit_message.py`, after a commit acquired two `Signed-off-by`
+trailers, one of them prose. This is the fourth, and it comes from the same shape: the deployment
+round wrote "a deploy gets a row in the commit that follows it" and called it a protocol act rather
+than a gate, on the correct ground that the suite cannot reach Cloudflare.
+
+**The habit failed inside the round that wrote it.** That round deployed `5ed34cd8` and recorded it,
+and left the paragraph three above its own table saying `57ac1878` "is what the site has served
+since" — present tense, undated, false four hours before it was typed. The gate reconciles
+Cloudflare's list against ledger entry 8 in both directions, and pins which deployment the custom
+domain serves. Two properties are worth naming: the entry's retrospective coverage is now an
+explicit **set of ids** rather than a date range, because a range cannot be wrong about an id it
+never mentions; and the alias is witnessed **by bytes** rather than read off the API's `aliases`
+field, since that field says which deployment is configured to hold the domain and the record claims
+the stronger thing a stranger experiences. `tests/test_cdm_deploy_record.py` holds the pure half —
+the parsers and both refusal directions — on every suite run, because a gate outside the suite is a
+gate whose rosters nothing reads, which is the lesson `tests/test_cdm_gate_rosters.py` was written
+for.
+
+**The fifth: every witnessed claim about external state now carries a date or names a gate.** The
+same defect twice in two rounds is a class, and the class is a **bare present-tense assertion about
+something outside this tree**. `PUBLICATION.md` gains the sweep's full collection, with
+the sites it judged already correct shown beside the ones it repaired, because a sweep reported as a
+count is a sweep whose misses are invisible — and for the same reason this sentence states no
+total: the table is the claim, and a number beside it is one more thing to keep in agreement. It found two claims that were **never** true, which
+its own premise did not predict, and they are ledger entry 9. One claim is recorded as **undatable**
+rather than given a date: whether the retired PyPI token is revoked is observable by nobody but the
+maintainer, and an invented "verified as of" is the failure the whole exercise is against.
+
+**One existing gate got more precise as a side effect, and this paragraph cannot quote it.**
+`tests/test_cdm_deploy_workflow.py` sweeps the tree for files that state the deploy mechanism, and
+one of its two markers was a plain substring that turned out to be a **prefix of a longer, unrelated
+wrangler subcommand** — the one that merely enumerates deployments and describes no mechanism at
+all. The new gate runs that subcommand, so it was collected as a site that would then have had to
+agree about wrangler forever. The marker now carries a negative lookahead and is asserted in both
+directions, against a string it must match and one it must not.
+
+The markers are named in that module and deliberately **not** repeated here: a sweep for a string
+collects any file containing it, so a document that spelled the marker in order to discuss it would
+become a site by discussing it — which is what the first draft of this paragraph did, and the sweep
+caught it on the next run.
+
 ### 1.2.0 — adapter #10, a codec ruling, and a schema version that did not move
 
 **A package MINOR, and the release where the two-number arrangement was tested rather than

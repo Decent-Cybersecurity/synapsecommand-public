@@ -118,6 +118,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
     "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",
+    "test_cdm_deploy_record.py": "gates/deploy_record.py and the deployment ledger",
     "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
     "test_cdm_commit_message.py": "gates/commit_message.py and this history's messages",
     "test_cdm_scripted_edits.py": "gates/scripted_edit.py and git blobs — neither ships",

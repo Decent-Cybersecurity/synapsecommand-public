@@ -51,11 +51,18 @@ SITES = ("wrangler.toml", "docs/README.md")
 #: as a site. The same exclusion `tests/test_cdm_ordinals.py` makes, for the same reason.
 SELF = "tests/test_cdm_deploy_workflow.py"
 
-#: Strings that occur only where this mechanism is described. Deliberately narrow: `deploy` alone
+#: Patterns that occur only where this mechanism is described. Deliberately narrow: `deploy` alone
 #: appears in the changelog and in MIGRATIONS.md in the unrelated sense of a CONSUMER being
 #: redeployed after a schema bump, and a marker that matched those would need an exemption list
 #: longer than the thing it checks.
-MARKERS = ("pages deploy", "Git Provider")
+#:
+#: THEY ARE REGEXES AND `pages deploy` CARRIES A NEGATIVE LOOKAHEAD, because as a plain substring
+#: it was a PREFIX of `pages deployment list` — a different wrangler subcommand, which merely
+#: ENUMERATES deployments and states nothing about how one is made. `gates/deploy_record.py` runs
+#: that subcommand and was swept in as a site describing the deploy, which it does not do. A marker
+#: that matches a longer command containing it is a marker that will keep collecting files for
+#: mentioning a neighbour of the thing it is looking for.
+MARKERS = (r"pages deploy(?!ment)", r"Git Provider")
 
 #: The directory the CLI uploads. Read from `wrangler.toml` as DATA rather than as a substring,
 #: because a substring check is satisfied by the prose around the value as well as by the value.
@@ -209,7 +216,7 @@ def _files_stating_the_mechanism() -> list[str]:
             text = path.read_text()
         except (OSError, UnicodeDecodeError):
             continue
-        if any(marker in text for marker in MARKERS):
+        if any(re.search(marker, text) for marker in MARKERS):
             found.append(rel)
     return found
 
@@ -242,13 +249,28 @@ def test_the_marker_sweep_is_not_vacuous():
     Asserted positively against each marker, because the two are load-bearing in different ways:
     `pages deploy` is the command and `Git Provider` is the measurement, and a site could state
     one without the other.
+
+    The third assertion is the lookahead's own check. `pages deploy(?!ment)` exists to stop
+    `pages deployment list` being read as a statement of the deploy mechanism, and a lookahead
+    silently dropped would widen the sweep again — so it is asserted against the string it was
+    added for rather than trusted to stay in the constant.
     """
     for marker in MARKERS:
-        carriers = [rel for rel in SITES if marker in _read(rel)]
+        carriers = [rel for rel in SITES if re.search(marker, _read(rel))]
         assert carriers, (
             f"no site contains the marker {marker!r}, so the closure sweep cannot see this "
             "mechanism at all and would pass against an empty site list"
         )
+    deploy_marker = MARKERS[0]
+    assert re.search(deploy_marker, "npx wrangler pages deploy docs/build"), (
+        f"{deploy_marker!r} no longer matches the deploy command itself, so the sweep would find "
+        "no site stating it"
+    )
+    assert not re.search(deploy_marker, "npx wrangler pages deployment list --json"), (
+        f"{deploy_marker!r} matches `pages deployment list`, which is a subcommand that ENUMERATES "
+        "deployments and describes no mechanism. gates/deploy_record.py runs it, and with this "
+        "lookahead gone that gate is swept in as a site that must agree about wrangler forever"
+    )
 
 
 def test_the_built_site_is_not_committed_so_a_deploy_is_the_only_way_it_ships():

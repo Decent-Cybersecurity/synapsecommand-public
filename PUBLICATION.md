@@ -140,9 +140,9 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Eight entries, and the set does not move — entries change **state**, they are not deleted. Five are
-**settled**: entry 1 is a ruling, entries 5 and 6 are closed by acts, entry 7 is a disposition, and
-entry 8 is a reconciliation. Entry 5 records the 1.0.0 upload a human performed, what was measured
+Nine entries, and the set does not move — entries change **state**, they are not deleted. Six are
+**settled**: entry 1 is a ruling, entries 5 and 6 are closed by acts, entry 7 is a disposition,
+entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
 and it closed in three acts — a trusted publisher registered on PyPI, 1.1.0 published through the
@@ -150,7 +150,9 @@ workflow over OIDC, and the 1.0.0 API token revoked. Reading the two in order is
 how publishing this package stopped needing a credential. Entry 7 records a defect in the history
 that is being left in the history, on entry 2's precedent, and mechanized so there is not a second.
 Entry 8 is the one this file's own structure argued for and did not have: a record of what has been
-served, read back against what the file says. Entries 2, 3 and 4 are open. None blocks anything.
+served, read back against what the file says. Entry 9 is the tense sweep's finding about this file:
+two claims that were never true, in a document whose subject is claims that stop being true.
+Entries 2, 3 and 4 are open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
@@ -242,7 +244,8 @@ not a guess a round is entitled to make.
 
 - **GitHub attributes almost none of this repository to anyone.** `GET /contributors` returns a
   single contributor with **2** contributions. Those two are `d7986017` and `2a51871f` — the two
-  unsigned web-UI commits. The other 46 commits are authored by `m@decentcybersecurity.eu`, which
+  unsigned web-UI commits. **Every other commit in the history** is authored by
+  `m@decentcybersecurity.eu`, which
   is not associated with a GitHub account, so `commit.author.login` is `null` and Insights →
   Contributors shows the repository as very nearly unwritten. The address is real and reachable,
   which is what `CONTRIBUTING.md` requires of a sign-off, and the DCO check accepts it — GitHub's
@@ -250,14 +253,24 @@ not a guess a round is entitled to make.
   the address to the account would populate them. Nothing here is broken; it is simply a surprising
   thing for a first visitor to see, and it is the sort of surprise that gets misread as "nobody
   works on this".
-- No commit in the history is GPG/SSH-signed (`verification.verified` is `false` throughout).
-  Sign-off and cryptographic signing are different claims and only the first is required here.
+- ~~No commit in the history is GPG/SSH-signed (`verification.verified` is `false` throughout).~~
+  **Never true — see ledger entry 9.** Measured 2026-08-27 over the whole history: **exactly two
+  commits are `verified: true` with `reason: valid`**, and the set is `d7986017` and `2a51871f` —
+  *the same two the
+  entry above names as carrying no sign-off*, because the web UI signs what it commits with
+  GitHub's own key and offers no sign-off checkbox. Struck rather than rewritten, because it was
+  false when it was written and a "true as of" date on it would be a second false statement about
+  the first. Sign-off and cryptographic signing are different claims and only the first is required
+  here — that sentence stands, and being right is why the count beside it went unchecked.
 - **Dependency graph:** not enabled — the SBOM endpoint returns 404. **Secret scanning:** disabled.
   **Dependabot security updates:** disabled. All three are available to a public repository and all
   three are off; none is asserted anywhere to be on.
-- **Code search** returns `total_count: 0` for terms that certainly occur in the tree: GitHub has
-  not indexed the repository yet. Expected shortly after a flip, and worth knowing before anyone
-  reads a zero as an absence.
+- ~~**Code search** returns `total_count: 0` for terms that certainly occur in the tree: GitHub has
+  not indexed the repository yet.~~ **Indexed — measured 2026-08-27**: `synapse_cdm` returns 103
+  results, and `AnchorNotUnique`, a name this repository did not contain until 2026-08-26, returns
+  2. The bullet forecast this in its own words — "expected shortly after a flip" — so it is struck
+  and dated rather than deleted: the zero was real, and the reason to keep the sentence is that a
+  reader who sees a zero here *again* should read it as an absence after all.
 - **Community Standards** reads 50%: `README`, `LICENSE` and `CONTRIBUTING` present; no code of
   conduct, no issue template, no pull-request template. A newly visible page, listed here so the
   absences are on the record as absences rather than oversights.
@@ -576,14 +589,21 @@ imported from `site-packages`, all **twelve adapters replayed from the packaged 
 verdicts, 0 failed**, all six schemas regenerated byte-identical to the published set, and both
 console scripts working. The GitHub release for `v1.1.0` carries the notes and both artefacts.
 
-**Where this stands.** Two of the three closing conditions are met:
+**Where this stood when this section was written — superseded four paragraphs below, and see
+ledger entry 9.** Two of the three closing conditions were met at the time of writing. Step C was
+done on **2026-08-26** and this entry is CLOSED; the table is kept in its as-written state, on the
+precedent the two struck bullets above it set, because the entry was written forwards and the state
+it was written in is what makes it readable. **What it lacked is this sentence.** An undated
+snapshot reading `NOT DONE` four paragraphs above a heading reading "Step C — done" is a
+contradiction a reader resolves by guessing which half is current, and the mechanism for marking
+supersession already existed in this entry and was simply not applied to a table.
 
 | Step | State | Who can verify it |
 | --- | --- | --- |
 | A — trusted publisher registered on pypi.org | **done** | not readable from the index, but proven indirectly: an OIDC upload succeeded and no token was used |
 | B — the `pypi` environment with reviewers | **done** 2026-08-26T06:46:16Z | anyone; it is public API on a public repository |
 | — a tag published through the workflow | **done** | run 32944124955, digests above |
-| C — the 1.0.0 API token revoked | **NOT DONE** | only the maintainer |
+| C — the 1.0.0 API token revoked | ~~**NOT DONE**~~ **done 2026-08-26** — as-written value struck, see below | only the maintainer |
 
 #### 1.2.0, verified from the index — and the digest comparison nobody had run for it
 
@@ -785,10 +805,33 @@ Every recorded source commit resolves in this repository's history; none is from
 | `919b58db` | 2026-08-25 10:42:03 | `30fa0454` | no |
 | `e08d2ea7` | 2026-08-25 09:12:28 | `e1161489` | yes — the measurement above, and `f916ba2` |
 | `e4a1c33d` | 2026-08-25 07:00:13 | `26c7f3f3` | yes — commit messages `4732429` and `7e641e6` |
-| eleven earlier | 2026-08-22 → 2026-08-25 | all resolve | no |
+| the eleven named below | 2026-08-22 → 2026-08-25 | all resolve | no |
 
 **Two of sixteen had ever been written down**, and both of those in passing. The other fourteen
 happened and left no trace outside Cloudflare's own list.
+
+**The eleven earlier deployments, named rather than dated.** `ccfa7476`, `c9494c05`, `bbfad083`,
+`fc7bc5db`, `1ba36baf`, `090a5edb`, `10d0dc94`, `33e0e1ba`, `323dff1f`, `7489e528` and `039866b1`.
+That row used to read `eleven earlier | 2026-08-22 → 2026-08-25`, and a date range **cannot be
+wrong about an id it never mentions** — so it could not be checked, and a sixteenth deployment
+arriving inside the range would have been covered by it silently.
+[`gates/deploy_record.py`](gates/deploy_record.py) can refuse a deployment this file cannot name
+only because this paragraph names them.
+
+**The range was also wrong in its own terms, which is what an enumeration exposes and a heuristic
+hides.** `ccfa7476` went up at `07:01:45` — ninety-two seconds *after* the `e4a1c33d` row above it
+— so one of the eleven "earlier" deployments was never earlier than the row that was covering it.
+Nothing rested on the ordering; it is recorded because the phrase was doing work it could not do.
+
+**The alias, and which deployment serves it.** `docs.synapsecommand.com` is served by deployment
+`5ed34cd8`. Witnessed **2026-08-27** by bytes and not read off a settings field: five pages fetched
+from the domain are byte-identical to `5ed34cd8`'s own `pages.dev` URL and **differ** from
+`57ac1878`'s on all five. Identical to one deployment and different from the one before it is the
+pair that distinguishes "serving what was deployed" from "serving something", which is the shape
+every deploy measurement in this file has used. The reason it is bytes rather than the `aliases`
+field the API also offers: that field says which deployment is *configured* to hold the domain, and
+what this file claims is the stronger thing a stranger experiences. `gates/deploy_record.py` re-runs
+exactly this probe and fails if the id in this paragraph is not the one the bytes give.
 
 **The unrecorded deploy the live bytes implied, identified.** `57ac1878` served the site from
 2026-08-25 until this round. Its recorded source is `01fb685`, which touched no rendered page; the
@@ -829,6 +872,71 @@ cannot reach Cloudflare and must not want to, so nothing here can fail a build w
 missing. What can be checked is the thing that actually went wrong — a claim about the live site
 written in the present tense — and the repair for that is the dating above rather than a test.
 
+### 9. Two claims that were never true, found by the tense sweep
+
+**This is a different defect from the one entry 8 records, and the difference is the entry.** Entry
+8 is about **decay**: a claim that was true when written and was overtaken by an event nobody wrote
+down. Neither claim below ever had a moment of being true. **Dating them would be worse than
+leaving them** — a "true as of" stamp on a sentence that was false when it was typed is a second
+false statement about the first — so both are struck and measured rather than dated.
+
+They were found by this round's sweep of every present-tense witnessed claim in this file, which is
+published in full under "What is gated and what is witnessed" below. **The sweep was written to
+find decay and found these instead**, which is the finding about the sweep and the reason the
+collection is shown rather than summarised: a sweep whose results are reported as a count is a
+sweep whose misses are invisible.
+
+**Claim 1 — "No commit in the history is GPG/SSH-signed."** Entry 4 asserted it with a parenthesis
+reading "`verification.verified` is `false` throughout". Measured 2026-08-27 over the whole
+history: **exactly two commits are `verified: true` with `reason: valid`**, PGP-signed, and the set
+is `d7986017` and `2a51871f`.
+
+**Stated as a set of two named commits and not as a ratio, on entry 2's rule.** The first draft of
+this entry wrote "two of 96 commits", which is a number that moves on the next commit — the exact
+shape entry 2 rejected when it replaced "44 of 47 are signed" with a named set. It was caught by
+this round's own stale-count sweep, at two sites, in the entry repairing a claim that had gone
+unchecked for the same kind of reason. The set is closed unless somebody commits through the web UI
+again.
+
+**Those are the same two commits entry 2 names as carrying no sign-off, and the coincidence is the
+mechanism.** Both were made in the GitHub web UI. The web UI commits on the author's behalf and
+signs the result with GitHub's own key, and it offers no sign-off checkbox — so the single fact that
+makes those two commits unsigned in the DCO sense is what makes them the only two signed in the
+cryptographic sense. The two senses of "signed" that this repository is careful to keep apart turn
+out to be exactly anti-correlated across its history, and neither entry noticed because each was
+looking at one of them.
+
+**It was never true and it was never decidable from inside the tree either.** The claim was written
+after the flip, about a history that already contained those two commits; nothing changed
+underneath it. The sentence beside it — "Sign-off and cryptographic signing are different claims and
+only the first is required here" — is correct, and **being correct is why the count next to it went
+unread**: a reader who accepts the distinction has no reason to check the number, and the number was
+the half that was wrong.
+
+**Claim 2 — entry 6's "Where this stands" table says step C is `NOT DONE`.** Revoking the 1.0.0 API
+token was done on 2026-08-26. The table sits four paragraphs above a heading reading "Step C —
+done", inside an entry whose own title says CLOSED and two of whose bullets are struck through
+*precisely* to mark this kind of supersession. The tool for saying "this was true when written"
+existed in that entry, in that entry's own prose, and was not applied to a table.
+
+**Why one entry rather than two corrections.** Neither is reachable by any check this repository can
+run — one is a claim about GitHub's API the suite must not hold a token for, the other an internal
+contradiction between a table and a heading in one file. What they share is the thing worth a ledger
+number: **both are undated present-tense assertions in the file whose own table predicts that exact
+failure mode**, and both survived every round since they were written, including two rounds whose
+declared subject was claim decay. The repair is therefore the dating discipline applied to the whole
+collection below, not two repaired sentences.
+
+**Disposition: corrected in place, with the wrong version preserved at both sites.** Entry 4's
+bullet is struck and the measurement written beside it; entry 6's table keeps its as-written value
+struck rather than replaced. Nothing is deleted, on entry 5's ruling: a closed record that quietly
+updates its own history is a record nobody can date.
+
+**What this entry does not claim.** Not that the collection below is complete. It is a floor — the
+sweep is an enumeration over nine record files and a human read of what it collected, and a claim
+phrased so as to mention none of the platforms it depends on is a claim it cannot see. The two
+found here were both inside its reach; what it cannot bound is how many are outside it.
+
 ## The deployment was not affected
 
 The documentation site is deployed by explicit upload and **the Pages project has no Git
@@ -850,11 +958,20 @@ deployment and different from the previous one is the only pair of facts that di
 "serving the last deployed state" from "serving something".
 
 **It stopped being true forty-one minutes later.** Deployment `919b58db` went up at `10:42:03Z`
-from source `30fa045`, and `57ac1878` at `14:35:07Z` from source `01fb685`; the second holds the
-`docs.synapsecommand.com` alias and is what the site has served since. Neither was written down
-anywhere — not here, not in a commit message — and the paragraph above went on asserting itself in
-the **present tense** for two days while a stranger reading it would have been reading a fact about
-a deployment three back.
+from source `30fa045`, and `57ac1878` at `14:35:07Z` from source `01fb685`; the second held the
+`docs.synapsecommand.com` alias and served the site until `5ed34cd8` superseded it on **2026-08-27
+at 01:01:32Z**. Neither was written down anywhere — not here, not in a commit message — and the
+paragraph above went on asserting itself in the **present tense** for two days while a stranger
+reading it would have been reading a fact about a deployment three back.
+
+**And this sentence made the same mistake, in the round that was diagnosing it.** It read
+"`57ac1878` … holds the alias and is what the site has served since" — present tense, undated, and
+already false when it was typed: `5ed34cd8` had gone up four hours earlier in that same round, and
+ledger entry 8's table records it. The file therefore contradicted itself for one round, with the
+correction sitting three paragraphs below the error. **That is the argument for
+[`gates/deploy_record.py`](gates/deploy_record.py) rather than for another paragraph about care**:
+the round with the most attention this class has ever had still wrote it, because nothing could
+fail.
 
 This is the decay the table below predicts for a witnessed claim, arriving exactly as predicted:
 *someone changes the setting afterwards and nothing notices*, with the deployment list playing the
@@ -876,3 +993,75 @@ The suite cannot reach GitHub or Cloudflare, and it must not want to: a test tha
 credentials is a test that fails for every outsider and turns green only for whoever holds the
 token. Re-witnessing is therefore a **protocol act**, like the stale-count sweep — the probes in
 this file are written out in full so that re-running them is copying, not designing.
+
+### The tense sweep, and the collection it produced
+
+**Every witnessed claim in this file now carries a date or names a gate, and this is the list.** The
+table above says a witnessed claim decays when "someone changes the setting afterwards and nothing
+notices". Twice now that has happened here and the second time it happened *inside the round
+diagnosing the first*, so the treatment is no longer per-incident: a claim about state outside this
+tree is either **dated**, so a reader knows what it is a fact about, or it **names the gate** that
+re-establishes it continuously. A bare present-tense assertion is neither, and it is what both
+defects were made of.
+
+**The collection is published rather than summarised, including the sites it judged already
+correct.** A sweep reported as "n sites checked, m repaired" is a sweep whose misses nobody can
+find. This one found two claims that were never true — ledger entry 9 — and it found them among
+the rows it expected to tick off, which is the argument.
+
+**How it was derived, so re-running it is copying.** Nine files carry claims about external state:
+this file, `CONTRIBUTING.md`, `README.md`, `RELEASE_NOTES.md`, `docs/README.md`, `NOTICE`,
+`wrangler.toml`, `MIGRATIONS.md` and the package `README.md`. Each was split into sentences and kept
+where a sentence names an external system *and* carries a present-tense verb — 158 candidates, then
+read by hand, because the filter is a floor and not a judgement. **It cannot see a claim that
+mentions no platform**, which is the limit stated in entry 9.
+
+| Claim | Where | Probe | 2026-08-27 | Treatment |
+| --- | --- | --- | --- | --- |
+| public: `private: false`, `visibility: public` | Visibility | unauthenticated `GET /repos` | holds | dated |
+| anonymous `git clone` succeeds, `HEAD` == pushed tip of `main` | Visibility | credential-less shallow clone; `7544880` at both ends | holds | dated |
+| ruleset 21205830 `main-protection`, `active`, `bypass_actors: []`, rules `deletion` + `non_fast_forward`, scope `~DEFAULT_BRANCH` | ruleset section | `GET /rulesets/21205830` | holds | dated |
+| the ruleset's three-version history | ruleset section | — | historical | already dated per row |
+| a non-fast-forward push to `main` is refused | ruleset section | the `GH013` probe | **not re-run** — re-witnessing means attempting the push | dated to its witness, 2026-08-25 |
+| the `deletion` rule is recorded from the API and unwitnessed by behaviour | ruleset section | `GET /rules/branches/main` | holds, still unwitnessed | dated |
+| DCO app id 1861, slug `dco`, org install `156427530`, `selected`, created 2026-08-25 09:32:51Z | DCO check | `GET /orgs/…/installations` | holds, to the second | dated |
+| status-check name is `DCO`; a check run, not a legacy commit status | DCO check | needs a pull request to re-run | **not re-run** | dated to its witness |
+| `main-protection` carries no `required_status_checks` rule | entry 1 | `GET /rulesets/21205830` | holds — the ruling stands | dated |
+| `GET /commits/f916ba2/check-runs` returns `total_count: 0` | entry 1, ground 1 | — | historical measurement | already dated by its commit |
+| `GET /contributors` → one contributor, 2 contributions | entry 4 | `GET /contributors` | holds | dated |
+| ~~the other **46** commits are authored by `m@…`~~ | entry 4 | `git log` | **stale count** — 94 of 96 | number removed; the claim is now the set, not a ratio, on entry 2's rule |
+| ~~no commit is GPG/SSH-signed~~ | entry 4 | `GET /commits` verification | **FALSE, and never true** — 2 of 96 | struck; **ledger entry 9** |
+| SBOM 404; secret scanning disabled; Dependabot security updates disabled | entry 4 | `GET /repos` + SBOM endpoint | all three hold | dated |
+| ~~code search returns `total_count: 0`; not indexed yet~~ | entry 4 | `GET /search/code` | **FALSE — decayed**, as the bullet forecast | struck and dated |
+| Community Standards 50%; no code of conduct, issue or PR template | entry 4 | `GET /community/profile` | holds, all four | dated |
+| 1.0.0 on the index: one release, two files, the digests, the metadata | entry 5 | `GET /pypi/…/json` | superseded by 1.1.0 and 1.2.0 | **already dated 2026-08-25**, and scoped to 1.0.0 deliberately |
+| `synapse-cdm` returns 404 on TestPyPI | entry 5 | `GET test.pypi.org/pypi/…/json` | holds | dated |
+| `synapse_cdm` answers `301` to the canonical name | entry 5 | `GET /simple/synapse_cdm/` | holds **on the simple index**; `/pypi/synapse_cdm/json` answers `200` directly, without a redirect | dated, and the endpoint named — the claim is true of one of the two APIs |
+| `synapsecdm` is 404, unclaimed, a different project | entry 5 | `GET /pypi/synapsecdm/json` | holds | dated, **and see the probe-form warning below** |
+| the long description's fifteen links are relative; all five `project.urls` are on the page | entry 5 | `project_urls` in the JSON API | five URLs hold | dated; the relative-link half is **not re-witnessable** — see below |
+| the `pypi` environment: reviewer `decentcybersecurity`, tag policy `v*`, `prevent_self_review: false`, `wait_timer: 0`, created 2026-08-26T06:46:16Z | entry 6, step B | `GET /environments/pypi` and its branch policies | all five hold | dated |
+| 1.1.0's and 1.2.0's digests equal what the index serves | entry 6 | recomputed over downloaded bytes | historical | **already dated**, 2026-08-26 and 2026-08-27 |
+| 1.0.0 and 1.1.0 are both on the index | entry 6, step C | `GET /pypi/…/json` | holds, and 1.2.0 with them | dated |
+| the token is revoked; OIDC is the only way in | entry 6, step C | none exists — PyPI publishes no token state | **UNDATABLE from held evidence** | recorded as resting on the maintainer's word, which that step already said in as many words |
+| ~~step C is `NOT DONE`~~ | entry 6, "Where this stands" | the same entry, four paragraphs down | **FALSE, and never true as an undated snapshot** | struck; **ledger entry 9** |
+| the Pages project has no Git integration | deployment section | `wrangler pages project list` | holds — the project reports none | dated |
+| the deploy mechanism is stated in two places and they agree | deployment section | — | — | **GATED**: `tests/test_cdm_deploy_workflow.py` |
+| the flip-day byte identity to `e08d2ea7` | deployment section | — | superseded | **already dated 2026-08-25 10:01Z**, and this is the pattern the rest of this table follows |
+| ~~`57ac1878` holds the alias and is what the site has served since~~ | deployment section | five pages, byte compared | **FALSE — decayed inside the round that wrote it** | dated and superseded; **`gates/deploy_record.py`** |
+| the deployment list is all `ad_hoc`, every source commit resolving here | entry 8 | `gates/deploy_record.py` | holds | **GATED** — the count is derived by the gate and stated in no prose |
+| every deployment id is named by a row or by the pinned coverage set | entry 8 | `gates/deploy_record.py` | holds | **GATED** |
+| `docs.synapsecommand.com` is served by `5ed34cd8` | entry 8 | `gates/deploy_record.py`, by bytes | holds | **GATED** |
+| the distribution on the index is 1.2.0 | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | holds | **GATED at one remove**: `tests/test_cdm_release.py` requires that section to name the tree's `PACKAGE_VERSION`, and every release tag to name the `PACKAGE_VERSION` of the tree it points at |
+
+**A probe form that gives the wrong answer, and it is the sort of thing this table exists to
+carry.** `https://pypi.org/project/synapsecdm/` returns **HTTP 200** — a bot-challenge page titled
+`Client Challenge`, not a project page. Anyone re-witnessing "the name is unclaimed" from the
+project URL reads a 200 and concludes the opposite of the truth. The probe that answers is the JSON
+API, `GET /pypi/synapsecdm/json`, which returns 404. A written-down probe is only as good as the
+endpoint it names.
+
+**One claim is recorded as undatable rather than given a date, and one is half-witnessable.** The
+revoked token cannot be observed by anyone but the maintainer, so it gets no date and says so — an
+invented "verified as of" on a fact nothing can check is the failure this whole file is against. And
+the fifteen relative links in the long description cannot be re-read off the project page while that
+page answers with a challenge; the five `project.urls` can, and do.
