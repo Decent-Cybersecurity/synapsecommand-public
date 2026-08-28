@@ -902,6 +902,102 @@ under `tests/`, which the wheel does not carry, and the one line it changed in `
 roster entry. **Neither sweep finding was repaired**, which is the point of the stop rule. No
 deploy, no tag, no rendered page, and the floor stays **1.2.2**.
 
+**THE RULED ROUND, 2026-08-28 — the two stopped findings are repaired, the third is settled by
+definition rather than arithmetic, and the sweep table's own excuse for missing the first is the
+root cause.** The repair round stopped two sweep findings unrepaired on the standing rule and
+recorded a third as unrepairable by counting. All three are now closed, each in its ruled form.
+
+**Entry 8's deployment count, amended and then MECHANIZED.** The entry said sixteen where its own
+table enumerates seventeen — six rows and eleven named ids, which is what
+[`gates/deploy_record.py`](../../gates/deploy_record.py) reports. Amended in the KLV 11 form: the
+original stands date-scoped to the set it was true under, with the falsifying act named — commit
+`1fc35e8` appended the `222a55be` row for the 1.2.1 deploy and left the prose where the previous
+round had it. **Only the total is restated live**, and the reason is stated in the entry: the gate
+derives rows and coverage and derives nothing about which deploys earlier rounds had written down,
+so restating that pair would add a figure no command recomputes — the failure being amended, one
+figure over.
+
+**The guard, and it rules the amendment that occasioned it.**
+`tests/test_cdm_deploy_record.py` now requires the entry's spelled count and both its parts to equal
+what the gate's two sets derive, each figure with its basis and each exactly once — sweep rule 9's
+carrier rule, because the entry is dense with spelled numbers that are other claims. Both failure
+directions are mutation-tested against the real entry, and a third fixture replays the incident's
+actual shape: a deployment added to the enumeration with the prose untouched, which must go red. It
+does. **The date-scoped original is deliberately unconstrained**, and the limit is written into the
+module: constraining it would forbid the amendment form, and telling two spellings apart is a
+reading of prose — the check rule 9 already specced, measured and refused.
+
+**AND THE ROOT CAUSE WAS NOT THE DECAY.** The "gated and witnessed" table carried a cell saying the
+list's length was derived by the gate and appeared in no prose. Commit `07214f9` wrote that clause,
+and entry 8 spelled the figure three times in the same file at the same commit. **So the file's own
+index of what is checkable told every later reader there was nothing there to check**, about the one
+figure that then went stale. That is why two rounds whose declared subject was claim decay walked
+past it. Corrected in the cell, describing the wrong claim rather than reproducing it.
+
+**Entry 9's "exactly anti-correlated", corrected with its fourth cell named.** The two senses of
+signed are **disjoint** — nothing is both — and not complementary. `965e939d` is signed in neither:
+no `Signed-off-by` trailer, and GitHub reports it `verified: false`. **Entry 2 has named it since it
+was written**, under a heading saying three commits carry no sign-off, so the sentence cites entry 2
+for a set of two where entry 2 states three. **Both measurements were right and witnessed**; the
+error is the word joining them, which is why a sweep that checks claims one at a time could not see
+it. The web-UI mechanism survives and was re-derived rather than recalled: both verified commits
+carry `committer: GitHub`, and `965e939d` carries a human one, putting it outside the mechanism's
+scope rather than against it. The cells are named as sets and never as a ratio, on entry 2's rule —
+a count of the remainder would have moved on the commit that recorded the correction.
+
+**The field-dictionary question, settled by the record's own ruling.** The repair round refused to
+move `delegated_specifications_held`'s "THREE are here" because the sentence says *field
+dictionaries* and this record rules ST 0107.3 is not one, so moving the number alone would settle a
+question about the documents by arithmetic. **That stop was right, and the other route was open the
+whole time: the term had already been ruled, twice, and neither ruling reached this sentence.** The
+length round recorded ST 0107.3 as the first held document that is not a field dictionary and
+changed *dictionaries* to *documents* in the top-level header; `FORMAT_COVERAGE.md`'s tally row says
+the same in its own words. With the term settled the number follows without judgment: **eight of the
+fourteen delegations are held**, the figure `FORMAT_COVERAGE.md` re-derived from the delegation and
+parks tables, and the node holds **ten documents**, the extra two being ST 0601.19 as context only
+and EG 0601.1 as a park's deciding document.
+
+**THREE was never a delegation count**, which is the part worth keeping. Written over a node holding
+ST 0601.14, ST 0102.12 and ST 0601.19, it was right as a count of what was there and already one too
+high as a count of delegations — the same off-by-one annotated in the top-level header and repaired
+in `FORMAT_COVERAGE.md`. **This is its third site and the first where the figure and the term were
+wrong together.** The sentence then passed through a point where it was accidentally right as a
+delegation count while wrong as a held count, which is what kept it alive through both increments.
+**One clause of it was checked and found NOT stale:** fourteen is the right total — eight
+stream-governing, five mandatory-and-parked, and the Motion Imagery Handbook at park 10 — but
+`delegation_table` names thirteen, because the Handbook is named by the wrapper. The figure was
+right and its locus was wrong.
+
+**The brief's own claims, checked rather than taken.** The standing rule caught one again. The brief
+named an untouchable as "35 via the derivation"; nothing the derivation reports is 35 — its signals
+are seven, the pending arc is five, its module has 22 tests — and the divergence is recorded rather
+than reconciled to a number that would fit. Its other figures held: seventeen deployments,
+`965e939d` as the fourth cell, the scripted-edit contract at nine, `RELEASE_NOTES.md` opening 1.2.1,
+zero tracked PDFs. **A sweep-class finding of this round's own was ALSO checked before it was
+believed and did not survive:** `delegation_table` looked one short of the fourteen its sentence
+claims, and the fourteenth turned out to be the Handbook rather than the missing document a first
+reading suggested — a stray `ST 0605.9` inside a quoted deprecation note makes the node's raw
+document-token count fourteen by coincidence, which is exactly the false finding the rule exists to
+stop.
+
+**The environment bound, re-derived twice, and the second reading is the one the series wanted.**
+2026-08-28 at 13:44Z and again at **14:08Z**, resolution only, no route asked for bytes; gwg.nga.mil,
+nsgreg.nga.mil and the apex all NOERROR at both, from the same resolver as every prior reading.
+**14:08Z is inside the ~14:00–15:00Z hour the series had never retested**, three minutes past the
+clock position of the earlier SERVFAIL probe. So the afternoon window is directly retested and does
+not reproduce. One SERVFAIL episode against eight NOERRORs, and the honest summary is unchanged
+except that "the afternoon is the bad window" is now a reading the sample actively disfavours rather
+than one it merely could not carry. **Pin-as-control at the widened scope before anything was
+trusted:** fifteen documents re-digested against their recorded pins — wrapper, target, the ten
+delegated and the three lineage editions — all fifteen matching.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched, no CDX query was made, and no pin was
+added. **Nothing executable under `packages/`** — no adapter, no codec, no model, no fixture, no
+schema, and `SCHEMA_VERSION` unmoved. No park moved and no park closed. No tag row moved. No
+register entry was added. The only files touched under `packages/` are `MIGRATIONS.md` and
+`klv_pin.json`, both prose and both already among the **FIVE** the arc had moved, so the Unreleased
+count does not move and the floor stays **1.2.2**. No deploy, no tag, no rendered page.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
