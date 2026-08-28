@@ -9145,6 +9145,16 @@ MISB ST 1402 [48]". **Three** further occurrences are in §6.3's deprecated tabl
 eighth is Appendix B ref [48] itself. **KLV 18 is not refuted**: it names two sites and never claims
 they are all, so it is short by one rather than wrong, and it is left exactly as written.
 
+**Two of those eight wrap, and both figures above would be wrong without the counting rule.**
+Re-derived 2026-08-28 through `gates/pdf_text.py`: the §5.3.1 prose citation prints as
+`see MISB ST \n1402 [48]`, and ST 9701's deprecated-table row prints as
+`[Superseded by MISB ST \n1402]` — both breaking between `ST` and the series number. A raw
+per-page count therefore reads **three** bracketed citations and **two** deprecated-table mentions
+against the true four and three. The counts stated above were derived over whitespace-normalised
+text and are unchanged by the re-derivation; what the re-derivation adds is that **this note's own
+subject matter is the third and fourth instance of the wrap defect**, in the same profile whose
+reference [56] supplied the first.
+
 **Why this is filed here rather than where it was first written.** The observation was made by the
 2026-08-27 register-note round and filed **beside KLV 5**, inside a note whose subject is the
 profile's citation convention. That is the wrong neighbour: a reader auditing KLV 18's two named
