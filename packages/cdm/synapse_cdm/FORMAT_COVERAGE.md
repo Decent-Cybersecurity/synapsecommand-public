@@ -10018,9 +10018,36 @@ three-against-one.** MISB ST 0107.3's reference [1] reads "SMPTE ST 336:2017 Dat
 Using Key-Length-Value", agreeing with the profile and with ST 0601.14a. **The stronger majority does
 not resolve it**, and the reason is worth stating: ST 0102.12 is the document whose *own* items are
 required to conform to *its* edition, so a majority of other documents naming a different one does not
-relieve a reader of `ST 0102.12-65`. What did change is that the edition park 8 should buy is now named
-by three of the four held documents rather than two — an easier purchase decision and no easier
-ST 0102 question.
+relieve a reader of `ST 0102.12-65`. What changed is that the edition park 8 should buy was, over the
+set held that day, named by three of the four held documents rather than two — an easier purchase
+decision and no easier ST 0102 question.
+
+**Amended 2026-08-28 by the repair round, and the sentence above stands as a dated claim.** It was
+**true when written** and is false today, and what falsified it is this repository's own later
+acquisition rather than any error in the reading. ST 1204.1 and ST 1301.2 were pinned on 2026-08-27
+and **both name the older edition**: ST 1204.1's reference [10] reads "SMPTE ST 336:2007 Data Encoding
+Protocol Using Key-Length-Value" and ST 1301.2's informative reference [2] reads "SMPTE ST 336-2007
+Data Encoding Protocol Using Key-Length-Value". **The tally over the profile's pinned delegation set
+is now four-against-three**, re-derived from held bytes at writing time: **:2017** at MISP-2019.1
+ref [13], ST 0601.14a ref [2], ST 0107.3 ref [1] and ST 1303.1 ref [1]; **:2007** at ST 0102.12
+ref [3], ST 1204.1 ref [10] and ST 1301.2 ref [2]. ST 0601.19's ref [1] also reads :2017 and is
+**excluded** — this record holds it as *context only* and never as a delegation the profile pins, so
+counting it would read five-against-three off a document the row set may not take semantics from.
+
+**The entry's reasoning survives its own sentence, and that is why this is decay rather than error.**
+The entry already explains the divergence as *each pins what was current when it was written*, and
+the two new witnesses **corroborate that explanation while refuting the count** — ST 1204.1's cover is
+24 October 2013 and ST 1301.2's is 27 February 2014, so both predate SMPTE ST 336:2017 outright and
+could not have named it. What does not survive unqualified is the purchase clause: four of the seven
+held documents that date this reference name the edition park 8 should buy, and a bare majority
+argues for that purchase less strongly than a three-to-one one did. **The ST 0102 question is
+unchanged and is not the kind of question counting can move**, for the reason the 2026-08-26
+amendment already gives.
+
+**A derivation note that is part of the finding.** ST 1301.2 writes `ST 336-2007` with a **hyphen**
+where every other held document writes a colon, so the first sweep for this — keyed on `ST 336:` —
+missed it and found only ST 1204.1. The tally above was re-derived with a form-tolerant pattern over
+whitespace-normalized text, and both readings agree.
 
 **KLV 12 — a held document's requirement identifiers do not all carry its own edition number.** MISB
 ST 0107.3 states thirteen requirements. Eleven are prefixed `ST 0107.3` — `-03` through `-13` — and
