@@ -692,6 +692,24 @@ the tree rather than from a round report:
    row, lags its cover by more than the recorded maximum. The method's conclusion is unaffected in
    direction and strengthened in degree — the field is a lower bound and nothing more.
 
+**THE OPEN LEDGER'S TWO WITNESSED ENTRIES WERE RE-DERIVED, one confirmed and one marked
+UNREACHABLE-TODAY.** Entry 2's unsigned set derives from the history to exactly the three commits
+it names, over the 128 the branch now carries — the set, not a ratio, which is the point that entry
+makes about itself. Entry 3's substance is confirmed from the bytes: none of the five documents it
+names yields a distribution statement anywhere in its extractable text, and the two the sweep found
+carrying `NATO UNCLASSIFIED` and `RELEASABLE` markings are carrying classification markings, which
+are a different object from a distribution statement and do not touch the entry's claim. **What did
+not reproduce is that entry's one precise figure** — the character count it gives for AEDP-12
+Ed. B v2's eight front pages. This round's extractor yields a count one higher by per-page
+normalization and seven higher by the joined normalization `gates/pdf_text.py` performs, and eight
+methods were tried without landing on the recorded number. **That is not a finding of falsity and
+is not recorded as one:** `extract_text()` output moves between extractor versions, the gap is
+inside that range, and the round that wrote the figure predates the counting rule this arc
+mechanized. It is marked unreachable-today with both of this round's derivations written down, so
+the next round starts from two numbers and a method rather than from the bytes. **The entry's
+conclusion is untouched** — either figure is a few hundred characters across eight pages of a
+150-page document, which is what an image-only front matter looks like from the text layer.
+
 **Act 0 in full, because a claim about the tree is a claim.** Tree clean, `origin/main` at the
 commit this round started from, suite **3254 passed, 3 skipped** before the round and green after.
 The untouchables hold: the pinned phrase derives to **35** over the git index by the command the
