@@ -486,6 +486,55 @@ cannot find a site nobody has added to it. The sweep is:
    `test_the_klv_2_figure_guard_is_not_vacuous_in_either_direction` mutates the real section in
    both directions — figure dropped, figure re-quoted — to prove the guard can fail in each.
 
+10. **AN INDEX OF WHAT IS CHECKABLE IS ITSELF A CLAIM, AND IT GETS SWEPT LIKE ONE.** A record
+   this size stops being read row by row and starts being read through its own summaries: a table
+   that says which of its claims are gated, a cell that says a figure is derived rather than
+   written down, a treatment column naming the test behind a row. Those summaries are the fastest
+   thing in a document to trust and the slowest to check, because checking one means reading the
+   thing it summarises — which is the work the summary exists to save. **A false one does not merely
+   mislead, it redirects the sweeps**, and that is the whole cost: an ordinary stale claim waits to
+   be found, while a false index sends the next reader somewhere else and keeps on sending them.
+
+   Three instances, all in `PUBLICATION.md`'s "gated and witnessed" table and all found by sweeping
+   the table's own cells rather than the claims underneath them:
+
+   * **A cell said a figure lived in no prose, and the entry above it spelled that figure three
+     times in the same file.** It was false in the commit that wrote it. The count it waved off is
+     the one that then decayed, through two rounds whose stale-count sweeps each read the cell,
+     believed it and looked elsewhere — so the record's own excuse for the miss was the cause of
+     it. `MIGRATIONS.md` records the repair.
+   * **A treatment cell named a gate and misdescribed what that gate enforces.** It said
+     `tests/test_cdm_release.py` forbids an `Unreleased` section once a release tag exists. That
+     gate's rule is conditional on the moved set: the section is *required* while shipped files
+     have moved past the tag, and forbidden only when the tree is identical to the tag. The
+     sentence was consistent with the tree in the hour it was written, when nothing had moved and
+     no such section existed, and was refuted about an hour later when the section came back under
+     the tag — where it has stood since, above the table, in the file the cell is about.
+   * **One label carried two disjoint senses and the table defined only one of them.** Its own top
+     row explains a gated claim as one that cannot go stale because a test fails. Rows further down
+     apply that label to claims whose truth lives at Cloudflare, which the suite cannot reach and
+     must not want to; what refuses those is `gates/deploy_record.py`, and running it is an act a
+     person performs. Both senses are real and the table needs both. What proves they are not one
+     sense is two rows of the same table: an alias claim that went false *inside the round that
+     wrote it*, and another superseded a day later, each caught by somebody running the gate and
+     neither by a build going red.
+
+   **The failure shapes differ, and the second is the one to watch.** The first was simply false.
+   The third was one word doing two jobs — the defect the record had just adjudicated one class
+   over, for "signed". The second is subtler: a claim true of a moment, stated as a property of a
+   mechanism. That is rule 8's substitution moved onto a gate's contract, a reading off the tree
+   standing in for the derivation that produces it, and re-reading the cell cannot find it — the
+   cell was accurate when written and describes the wrong thing.
+
+   **What follows for the sweep is one line: the summary cells are in scope, and they are cheaper
+   to check than what they summarise.** A cell saying GATED, `derived by the gate`, `stated in no
+   prose` or `already dated` is an assertion about this repository, and the named test either
+   exists and asserts that thing or it does not. **Nothing here is mechanized, and the reason is
+   worth stating**: checking that a cell names a test that exists is nearly free and nearly
+   worthless, while checking that the test asserts what the cell says it asserts is a reading of
+   two files. So this is a protocol act like the roster sweep, and what bounds its cost is that a
+   table is finite.
+
 **A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
 `Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see
 the two prose sentences in the same section that still described the row set as unimplemented.
