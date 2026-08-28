@@ -815,6 +815,26 @@ Every recorded source commit resolves in this repository's history; none is from
 **Two of sixteen had ever been written down**, and both of those in passing. The other fourteen
 happened and left no trace outside Cloudflare's own list.
 
+**Amended 2026-08-28 by the ruled round, and the two counts above stand as dated claims.** They were
+**true when written** by commit `7544880`, whose table carried five rows above the eleven named
+below them, and whose second sentence balanced over that same set. What falsified them is this
+repository's own later act rather than any error in the reading: commit `1fc35e8` appended the
+`222a55be` row when the 1.2.1 release deployed at `12:37:06Z`, and **the enumeration grew while the
+prose count did not**. The list this entry accounts for is **seventeen deployments — six carrying a
+row and eleven covered by the naming paragraph below**, derived at writing time from
+[`gates/deploy_record.py`](gates/deploy_record.py)'s own reconciliation rather than counted by hand.
+
+**The gate was green on every one of those runs, and correctly so.** Its predicate is that no
+deployment Cloudflare lists is unaccounted for, and none ever was — the appended row is what kept
+it true. A spelled number in a sentence is not a deployment, so the check could not see the
+sentence drift away from the table directly above it. **This is the predicate-weaker-than-the-prose
+gap, and it landed inside the entry whose subject is that gap** — under a ruling, four paragraphs
+above, that a protocol act nobody can fail decays at the speed of somebody's attention, and by
+exactly that mechanism: the round that appended the row was the round that would have had to keep
+the paragraph, and nothing asked it to.
+`tests/test_cdm_deploy_record.py::test_the_entry_states_the_deployment_count_its_own_enumeration_derives`
+closes it, and this amendment is the first commit it ruled.
+
 **The eleven earlier deployments, named rather than dated.** `ccfa7476`, `c9494c05`, `bbfad083`,
 `fc7bc5db`, `1ba36baf`, `090a5edb`, `10d0dc94`, `33e0e1ba`, `323dff1f`, `7489e528` and `039866b1`.
 That row used to read `eleven earlier | 2026-08-22 → 2026-08-25`, and a date range **cannot be

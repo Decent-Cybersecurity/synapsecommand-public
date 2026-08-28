@@ -309,3 +309,163 @@ def test_the_gate_is_not_a_suite_member_and_says_so(gate):
         "the gate no longer documents its mutation check. A gate nobody has seen fail is a gate "
         "nobody has seen"
     )
+
+
+# ==================== the prose count, against the gate's own enumeration
+#
+# WHY THIS EXISTS, AND IT IS AN INCIDENT RATHER THAN A PRINCIPLE
+# --------------------------------------------------------------
+# Entry 8 said "Sixteen deployments" for a day and a half after its own table stopped listing that
+# many. Commit `7544880` wrote the sentence over five rows and eleven named ids, which was true;
+# commit `1fc35e8` appended the `222a55be` row for the 1.2.1 release and left the sentence alone.
+# The gate went green throughout and was right to: its predicate is "0 unaccounted for", every
+# deployment WAS accounted for, and the appended row is what kept it so. **A spelled number in a
+# sentence is not a deployment**, so nothing compared the prose to the table above it.
+#
+# That is the same gap in the same shape as the two the repository has already paid for — the
+# gate's rosters that drifted because nothing read them, and the header count that stayed at seven
+# while the record reached twelve pins. The move is the one `synapse_cdm/README.md`'s sweep rule 9
+# settled on: check the CONSEQUENCE, not the intent. A stale count's consequence is that two
+# statements of one fact disagree, and that is countable without reading anything.
+#
+# WHAT IS COUNTED IS THE FIGURE WITH ITS BASIS, NEVER THE BARE NUMERAL
+# --------------------------------------------------------------------
+# Rule 9's carrier rule, and here it is forced rather than stylistic. The entry is dense with
+# spelled numbers that are other claims — "the eleven named below" and "The eleven earlier
+# deployments" are the same eleven twice, and "two" is the recorded-before count in a sentence this
+# module has no business ruling. So each figure is pinned as the phrase that carries its basis.
+#
+# EXACTLY ONCE, AND THE SUPERSEDED FIGURE IS OUT OF SCOPE BY CONSTRUCTION
+# -----------------------------------------------------------------------
+# Zero means the enumeration moved and the prose did not — the recorded incident. More than one
+# means a second site in the entry now carries the live figure, which is the carrier pattern that
+# cost the KLV 2 repair a first draft: a correction note re-quoting the figure it corrected leaves
+# a copy the guard passes on after the live one is deleted.
+#
+# The date-scoped original is deliberately NOT constrained. Entry 8 is amended in the KLV 11 form —
+# the false sentence stands, dated, with the amendment beneath it — so the superseded count is
+# still spelled in the entry, twice, and must be. This guard rules the LIVE figure only. That is a
+# real limit and it is the honest one: requiring the superseded figure to be absent would forbid
+# the amendment form, and recognising which of two spellings is the live one is a reading of the
+# prose rather than a derivation from the tree. See rule 9, where the briefed form of exactly that
+# check was specced, measured against the tracked record, and refused.
+
+#: Spelled out because the entry spells them out, and an unknown word must be a loud failure rather
+#: than a silent miss. Deliberately not a general parser, for `tests/test_cdm_pin_header.py`'s
+#: reason: the vocabulary is the one this record uses.
+NUMBER_WORDS = {
+    1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight",
+    9: "nine", 10: "ten", 11: "eleven", 12: "twelve", 13: "thirteen", 14: "fourteen",
+    15: "fifteen", 16: "sixteen", 17: "seventeen", 18: "eighteen", 19: "nineteen", 20: "twenty",
+    21: "twenty-one", 22: "twenty-two", 23: "twenty-three", 24: "twenty-four", 25: "twenty-five",
+}
+
+
+def _spell(count: int) -> str:
+    """The number word this record would write, or a failure naming the number it could not spell."""
+    assert count in NUMBER_WORDS, (
+        f"the enumeration derives {count} and this module cannot spell it. Extend NUMBER_WORDS "
+        "deliberately rather than letting an unspellable count read as a figure nobody stated"
+    )
+    return NUMBER_WORDS[count]
+
+
+def live_figures(rows: set[str], coverage: set[str]) -> tuple[str, ...]:
+    """The entry's live count and its two parts, each figure WITH ITS BASIS.
+
+    Derived from the gate's own two sets and nothing else, so the guard and the reconciliation
+    cannot come apart: the total is the union because an id in both sets is one deployment, which
+    is the double-accounting `reconcile()` already refuses in its own direction.
+    """
+    return (
+        f"{_spell(len(set(rows) | set(coverage)))} deployments",
+        f"{_spell(len(rows))} carrying a row",
+        f"{_spell(len(coverage))} covered by the naming paragraph below",
+    )
+
+
+def figure_occurrences(section_text: str, figures: tuple[str, ...]) -> dict[str, int]:
+    """How many times each figure occurs in the entry. The predicate, over text.
+
+    A function rather than an inline count so the vacuity checks below can run it against mutated
+    copies of the real entry without writing to the tree — the property the KLV 2 guard has, and
+    for the same reason.
+    """
+    flat = " ".join(section_text.split()).lower()
+    return {figure: flat.count(figure.lower()) for figure in figures}
+
+
+def test_the_entry_states_the_deployment_count_its_own_enumeration_derives(gate):
+    """The guard, and the one assertion the incident would have failed.
+
+    Every figure exactly once, over the entry as it stands. Run against the tree, so this is also
+    the module's non-vacuity check in the direction that matters most: if the entry stopped
+    carrying these phrases at all, this fails rather than passing over nothing.
+    """
+    figures = live_figures(gate.recorded_rows(), gate.recorded_coverage())
+    for figure, found in figure_occurrences(gate.entry_section(), figures).items():
+        assert found == 1, (
+            f"{figure!r} occurs {found} times in ledger entry 8 and must occur exactly ONCE.\n"
+            "  ZERO means the enumeration moved and the sentence did not — the 2026-08-28 finding, "
+            "where a row was appended for the 1.2.1 deploy and the count above the table stayed "
+            "where the previous round left it. Amend the entry; do not rewrite the dated claim.\n"
+            "  MORE THAN ONE means a second site in the entry now spells the live figure, which is "
+            "sweep rule 9's carrier pattern: describe a superseded figure, never re-quote it, and "
+            "state each live figure exactly once, with its basis"
+        )
+
+
+def test_the_deployment_count_guard_is_not_vacuous_in_either_direction(gate):
+    """Both failure directions, mutated on the real entry, because they mean opposite things.
+
+    A guard whose real input happens to satisfy it is indistinguishable from one that asserts
+    nothing, and three substring counts is exactly the shape that goes quietly green.
+    """
+    section = gate.entry_section()
+    figures = live_figures(gate.recorded_rows(), gate.recorded_coverage())
+    total = figures[0]
+
+    dropped = " ".join(section.split()).replace(total, "", 1)
+    assert figure_occurrences(dropped, (total,))[total] == 0, (
+        "deleting the live count from the entry left the guard's predicate satisfied. The guard "
+        "cannot see the staleness it exists to refuse")
+
+    requoted = " ".join(section.split()) + f" ... which superseded the {total} this entry states."
+    assert figure_occurrences(requoted, (total,))[total] == 2, (
+        "re-quoting the live count did not raise its occurrence count, so a correction note could "
+        "carry a second copy and the guard would pass on it after the live one was deleted")
+
+
+def test_the_guard_refuses_the_shape_the_incident_ACTUALLY_HAD(gate):
+    """The recorded failure, as a fixture: the enumeration grows and the prose count does not.
+
+    This is the fixture that makes the guard a witness rather than a plausible check. It does not
+    invent a defect — it replays the one in the history. A deployment id is added to the row set,
+    exactly as commit `1fc35e8` added `222a55be`, and the entry's text is left untouched. The
+    derived total moves; the sentence does not; the guard must go red.
+    """
+    section = gate.entry_section()
+    rows, coverage = set(gate.recorded_rows()), set(gate.recorded_coverage())
+    assert figure_occurrences(section, live_figures(rows, coverage))[
+        live_figures(rows, coverage)[0]] == 1, "the entry does not state its live count today"
+
+    grown = rows | {"deadbeef"}
+    stale = live_figures(grown, coverage)
+    assert figure_occurrences(section, stale)[stale[0]] == 0, (
+        "a deployment was added to the enumeration, the entry's prose was left exactly as it is, "
+        "and the guard still found the total it states. That is the 2026-08-28 incident passing")
+    assert figure_occurrences(section, stale)[stale[1]] == 0, (
+        "the row count moved and the guard still found the part-figure the entry states")
+
+
+def test_the_number_vocabulary_refuses_a_count_it_cannot_spell(gate):
+    """An unspellable count must fail loudly, not read as a figure nobody wrote.
+
+    `tests/test_cdm_pin_header.py` states the rule this borrows: a word the module does not know is
+    a failure rather than a silent zero. The inverse direction has the same hazard — a count past
+    the end of the table would otherwise raise a `KeyError` naming nothing about this record.
+    """
+    with pytest.raises(AssertionError, match="cannot spell it"):
+        _spell(max(NUMBER_WORDS) + 1)
+    assert _spell(len(set(gate.recorded_rows()) | set(gate.recorded_coverage()))) in {
+        word for word in NUMBER_WORDS.values()}
