@@ -939,6 +939,34 @@ cryptographic sense. The two senses of "signed" that this repository is careful 
 out to be exactly anti-correlated across its history, and neither entry noticed because each was
 looking at one of them.
 
+**Corrected 2026-08-28 by the ruled round: the relation word in the sentence above is too strong,
+and what refutes it is named in this same file, in the entry that sentence cites.** The two senses
+are **disjoint** — no commit in this history is both signed off and cryptographically signed, and
+that empty cell is real and is the part worth keeping. Disjoint is not complementary. `965e939d` is
+signed in **neither** sense: it carries no `Signed-off-by` trailer, and GitHub reports it
+`verified: false` with `reason: unsigned`. It is the fourth cell, the one the sentence above claims
+is empty. Entry 2 has named it since it was written, under a heading that says three commits carry
+no sign-off and in a table of three rows — **so the sentence cites entry 2 for a set of two, and
+entry 2 states a set of three.** No round noticed, this file's own sweep of present-tense claims
+included, because the error is not a stale figure and not an unwitnessed assertion: it is a
+correctly measured pair of sets joined by a word that claims more about them than either measurement
+supports. Nothing that checks claims one at a time can see it.
+
+**The mechanism this paragraph exists to state survives intact, and it is the half the entry needed.**
+Re-derived 2026-08-28 from the platform rather than recalled: `d7986017` and `2a51871f` are the only
+commits GitHub reports `verified: true` with `reason: valid`, and both carry `committer: GitHub` —
+they are the two web-UI commits, and the single fact that they were authored through the web UI is
+still exactly what makes them unsigned in the DCO sense and signed in the cryptographic one.
+`965e939d` carries a human committer; it is an ordinary local commit from before the sign-off
+discipline was installed, which puts it **outside the mechanism's scope rather than against it**.
+So Claim 1's repair stands, entry 2's set stands, entry 4's struck bullet stands, and what is
+withdrawn is only the stronger claim that the two senses partition the history between them.
+
+**Named and not counted, which is the rule this entry invokes four paragraphs above its own error.**
+The occupied cells are a set of two, a set of one, and every other commit — and stating that last
+one as a number would be the ratio entry 2 rejected, moving on the very commit that recorded this
+correction.
+
 **It was never true and it was never decidable from inside the tree either.** The claim was written
 after the flip, about a history that already contained those two commits; nothing changed
 underneath it. The sentence beside it — "Sign-off and cryptographic signing are different claims and
