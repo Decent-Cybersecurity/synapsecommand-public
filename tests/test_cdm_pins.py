@@ -216,26 +216,31 @@ import subprocess
 import pytest
 
 import synapse_cdm
+from gates import pin_paths
 
 PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
 FIXTURES = PKG / "fixtures"
 DOC = PKG / "FORMAT_COVERAGE.md"
 
-#: Pin records and FORMAT_COVERAGE.md both write a pin path as `fixtures/gmti/spec/x.pdf` —
-#: relative to the PACKAGE, which is the form every one of those documents uses. Git speaks
-#: repo-relative. The recorded form is the key here and `_full` and `_repo_rel` convert, because
-#: normalising the records to git's form instead would mean rewriting nine statements to satisfy a
-#: test rather than the other way round.
-PKG_PREFIX = str(PKG.relative_to(REPO)) + "/"
-
-
+#: Pin records and FORMAT_COVERAGE.md both write a pin path as `fixtures/gmti/spec/x.pdf`. Git
+#: speaks repo-relative, so the recorded form is the key here and the two helpers below convert.
+#:
+#: THESE USED TO JOIN A BASE THEMSELVES, AND THE BASE WAS WRONG FOR HALF THE CORPUS. `_full` read
+#: `PKG / recorded` unconditionally, on a comment asserting that package-relative "is the form
+#: every one of those documents uses". It is the form every *document* uses; it is not the form the
+#: pinned STREAM artefacts use, which are root-relative because `.gitignore` excludes
+#: `fixtures/klv/streams/` by a directory rule and they are never vendored. This module was correct
+#: anyway, by luck rather than by rule: `discover_pins` filters its corpus to `.pdf`, so no stream
+#: path has ever reached `_full`. The filter was load-bearing while reading as an extension
+#: preference. Both helpers now defer to `gates/pin_paths.py`, which chooses the base per pin and
+#: refuses a kind it does not know — see that module for the incident and the three reproductions.
 def _full(recorded: str) -> pathlib.Path:
-    return PKG / recorded
+    return pin_paths.resolve(recorded)
 
 
 def _repo_rel(recorded: str) -> str:
-    return PKG_PREFIX + recorded
+    return str(pin_paths.resolve(recorded).relative_to(REPO))
 
 #: A pin row in FORMAT_COVERAGE.md. The byte count is written with thin grouping — `558 866` — and
 #: the path is the last backticked cell, so both are read rather than assumed.

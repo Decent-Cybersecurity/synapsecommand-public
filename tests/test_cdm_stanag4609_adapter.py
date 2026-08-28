@@ -58,6 +58,7 @@ from synapse_cdm.adapters.stanag4609 import (
 )
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
 from synapse_cdm.models import Entity, Event
+from gates import pin_paths
 
 PACKAGE = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PACKAGE.parents[2]
@@ -67,7 +68,13 @@ GOLDEN = FIXTURES / "golden"
 #: The pinned extraction the witnessed set was enumerated from. NOT in the index — `.gitignore`
 #: excludes `fixtures/klv/streams/` as a directory — so every check that needs it is skipped with a
 #: reason when it is absent rather than failing on a fresh clone.
-STREAM = REPO / "fixtures" / "klv" / "streams" / "day_flight.klv"
+#:
+#: RESOLVED RATHER THAN SPELLED. This line used to read `REPO / "fixtures" / "klv" / "streams" /
+#: "day_flight.klv"`, a third literal restatement of a path the pin already carries, against a
+#: third spelling of the repository root. `gates/pin_paths.py` chooses the base from the pin's own
+#: `local_path`, which is what keeps a stream from being looked for inside the package — the
+#: failure that reads as a fresh clone rather than as an error.
+STREAM = pin_paths.resolve("fixtures/klv/streams/day_flight.klv")
 STREAM_SHA = "a810e4b60ff33b1bdc1831594201d8158655c0808bdef1b22d84a9eb26e22e51"
 STREAM_BYTES = 977
 
