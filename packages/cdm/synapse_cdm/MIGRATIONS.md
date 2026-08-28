@@ -620,6 +620,102 @@ no `IMAPB` codec, no Core Identifier decoder, no adapter, no model, no fixture, 
 `SCHEMA_VERSION` is unmoved at `1.0.0`. No mirror was improvised. No new park. **No deploy, no tag,
 no rendered page.**
 
+**THE NAMING ROUND, 2026-08-28 — the carrier pattern is a class with a rule, and the decay sweep
+found four claims that stop unrepaired.** Two acts, no acquisition, nothing executable under
+`packages/`.
+
+**The carrier pattern is named once and centrally, as sweep rule 9 in `synapse_cdm/README.md`.**
+It had been met four times and ruled on four times, each ruling local to where it was met: the
+phrase rule 8 pins, the deploy markers, the paragraph announcing a guard, and the KLV 2 correction
+note. Rule 9 states the class — a record that discusses a token becomes a site of it, and a note
+that corrects a figure becomes a carrier of the figure — cites each instance at its own record
+rather than restating it, and states the rule the four already share: describe rather than quote,
+every path by basename with no self-reference, and each live figure exactly once with its basis.
+**It is rule 9 and not a fifth entry under the heading above it**, deliberately: that heading
+states a count, two files quote it, and renaming it once already stranded both quotations.
+
+**The mechanization question was answered by measuring, and it split in two.** The briefed form —
+a check that refuses re-quotation *inside correction notes* — is **refused, with the refusal
+recorded** on the treatment the four reverse-sweep formulations got. Two formulations were tested
+against the tracked record rather than argued about: *a repair-marked paragraph states no digits*
+refuses the correct form of a correction note far more often than the defective one, and *a number
+occurring only inside a repair-marked paragraph is a superseded figure* returns tag numbers,
+reference numbers and status codes and cannot do better in principle — where the discipline holds,
+a superseded figure is absent by construction. **And the deciding argument is not either
+measurement:** what KLV 2's note superseded was a figure paired with the wrong basis, both of whose
+numbers are live today, so recognising one requires knowing which basis is right, which is a
+reading.
+
+**What was mechanized instead is the consequence, which the tree settles.** A carrier's effect is
+that a guard loses the ability to fail, and that is countable. KLV 2's live figures are now asserted
+to occur **exactly once** in their section rather than merely to be present, so a second copy fails
+the build with nothing having had to recognise a correction note, and
+`test_the_klv_2_figure_guard_is_not_vacuous_in_either_direction` mutates the real section both ways
+— figure dropped, figure re-quoted — to prove the guard can fail in each. **The mutation check
+earned itself immediately**: the first draft of that test asserted the wrong count for the
+re-quoted direction and failed on the real section, which is the check working on the round that
+wrote it.
+
+**THE DECAY SWEEP: FOUR FINDINGS, AND ALL FOUR STOP FOR ADJUDICATION UNREPAIRED.** The sweep
+repairs nothing, on the standing rule. Classes named, and each re-derived from held bytes or from
+the tree rather than from a round report:
+
+1. **The CAT062 `TYP` authorship split in `FORMAT_COVERAGE.md` contradicts the adapter and every
+   golden fixture — BORN-FALSE.** The item's NOTE splits fourteen defined values by whether the
+   name says *Predicted*. `asterix_cat062.py`'s table defines fourteen and exactly **three** carry
+   that word — values 4, 9 and 12 — so eleven are the flight plan's, which is what the adapter and
+   all five golden fixtures state. The document's row states a split two higher on the prediction
+   side. Introduced at `dd99acd`, the specification-before-code commit, and the document has never
+   said three; the adapter was written afterwards from the same table and has never said anything
+   else. **The figures are described and not re-quoted here**, per rule 9.
+2. **`klv_pin.json`'s root `what_this_is` is STALE.** Its convention is an append-only log of dated
+   `UPDATED … BY THE … ROUND` clauses, and it stops at 2026-08-26, so its opening sentence still
+   describes the file in the bare present tense as pinning seven documents obtained from four
+   delegations. Two rounds on 2026-08-27 added five pins and appended nothing. The file today
+   carries fifteen pinned identities, every one of which matched its bytes this round.
+3. **`FORMAT_COVERAGE.md`'s tally of delegated documents obtained is one too high — BORN-FALSE, and
+   it has been carried through both increments.** Derived here from the record's own two tables:
+   the delegation table and the parks table give **fourteen** delegated documents, of which six are
+   unobtained — the ones parks 3, 6, 7, 8, 10 and 12 stand on — leaving **eight** obtained, not the
+   nine the row states. The ninth in that tally is the copy of ST 0601.19, which the same row
+   declares is *not* an edition the profile pins and is retained as context only. The error entered
+   when the count was first stated on 2026-08-26, because the four documents retrieved that day
+   included that copy, and each re-dating preserved it.
+4. **The document-info calibration is correctly scoped and materially incomplete — NOT false, and
+   recorded as a narrowing rather than a defect.** All nine sampled lags were re-derived from the
+   held bytes this round and **all nine match the record exactly**, as did all fifteen digests, all
+   fifteen byte counts and all fifteen page counts. But the sample is nine of the thirteen PDFs
+   held. Two of the four unsampled are excluded for cause — they are the KLV 9 and KLV 10 copies,
+   whose covers are known not to describe their contents. **The other two are clean and were simply
+   never sampled, and one of them is the sharpest case in the set**: ST 0102.12, whose cover date
+   the record says three independent statements agree on and which has a single revision-history
+   row, lags its cover by more than the recorded maximum. The method's conclusion is unaffected in
+   direction and strengthened in degree — the field is a lower bound and nothing more.
+
+**Act 0 in full, because a claim about the tree is a claim.** Tree clean, `origin/main` at the
+commit this round started from, suite **3254 passed, 3 skipped** before the round and green after.
+The untouchables hold: the pinned phrase derives to **35** over the git index by the command the
+guard shares, `gates/scripted_edit.py`'s contract is intact and green, `RELEASE_NOTES.md` opens the
+release then on the index, and `git ls-files` matches no PDF. The bump gate derives PATCH over the
+arc and the floor stays **1.2.2**. **Pin-as-control was run at the widened scope before any held
+byte was trusted** — every pinned digest recomputed against the file it names, with the
+edition-history set checked at the `home` the pin declares rather than where a first pass assumed
+it, which is why that pass reported three absences that were the reader's error and not the
+record's.
+
+**The `nga.mil` resolution series is extended by one observation and still cannot carry a window
+reading.** `NOERROR` for the apex, `gwg` and `nsgreg` alike at **2026-08-28 10:56Z**, a morning
+hour from the same resolver — one SERVFAIL now against three successes over three hours. **It is
+not the archive quota's finding and must not be read as one:** that reading was earned by
+re-testing the failing hour and getting a different answer, and nothing has ever re-tested this
+one's. One failure is an intermittency until something separates the hour from the moment.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched and no pin was added — the PDF library it
+used to re-derive the calibration was installed out-of-tree and `.venv` is unchanged. No park moved.
+No tag row moved. **No source under `packages/`**, no adapter, no codec, no fixture, no schema, and
+`SCHEMA_VERSION` is unmoved at `1.0.0`. **No finding was repaired**, which is the point of the stop
+rule. No deploy, no tag, no rendered page.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
