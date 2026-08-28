@@ -815,14 +815,18 @@ Every recorded source commit resolves in this repository's history; none is from
 **Two of sixteen had ever been written down**, and both of those in passing. The other fourteen
 happened and left no trace outside Cloudflare's own list.
 
-**Amended 2026-08-28 by the ruled round, and the two counts above stand as dated claims.** They were
-**true when written** by commit `7544880`, whose table carried five rows above the eleven named
-below them, and whose second sentence balanced over that same set. What falsified them is this
+**Amended 2026-08-28 by the ruled round, and the three figures above stand as dated claims.** They
+were **true when written** by commit `7544880`, whose table carried five rows above the eleven named
+below them, and whose second sentence balanced its pair over that same set. What falsified them is this
 repository's own later act rather than any error in the reading: commit `1fc35e8` appended the
 `222a55be` row when the 1.2.1 release deployed at `12:37:06Z`, and **the enumeration grew while the
 prose count did not**. The list this entry accounts for is **seventeen deployments — six carrying a
 row and eleven covered by the naming paragraph below**, derived at writing time from
 [`gates/deploy_record.py`](gates/deploy_record.py)'s own reconciliation rather than counted by hand.
+**Only the total is restated, and the split it is restated by is the gate's.** The second sentence's
+pair is a claim about what earlier rounds had written down, which no tool here derives; restating it
+would put a fourth figure in this entry that nothing could keep, which is the failure being amended.
+So it is dated and left, and what replaces it is a decomposition a command recomputes.
 
 **The gate was green on every one of those runs, and correctly so.** Its predicate is that no
 deployment Cloudflare lists is unaccounted for, and none ever was — the appended row is what kept
