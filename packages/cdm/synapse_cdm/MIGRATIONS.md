@@ -744,6 +744,164 @@ No tag row moved. **No source under `packages/`**, no adapter, no codec, no fixt
 `SCHEMA_VERSION` is unmoved at `1.0.0`. **No finding was repaired**, which is the point of the stop
 rule. No deploy, no tag, no rendered page.
 
+**THE REPAIR ROUND, 2026-08-28. The four adjudicated findings are repaired, the guard-shaped one
+is a guard, and the sweep's second half is done.** Each repair is its own commit and each was
+made from the authority the finding named rather than from the round report that carried it.
+
+**Act 0, and one of its own claims did not hold.** Tree clean, `origin/main` at `4ac1df3`, the
+untouchables intact — the pinned phrase derives to **35** over the git index, `scripted_edit`'s
+contract is green at 9, `RELEASE_NOTES.md` still opens 1.2.1 and `git ls-files` matches no PDF —
+and the bump gate derives PATCH with the floor at **1.2.2**. **The brief's expected suite figure
+was wrong and so was the record's:** both said 3254 passed, and the tree has said **3255 passed, 3
+skipped** since `91ef1df`. It is repaired in this arc's stale-count sweep below, where the third
+refutation is that the commit carrying the sentence has the trailer `Suite: 3255 passed, 3
+skipped`.
+
+**Pin-as-control at the widened scope, and the widened scope is FIFTEEN.** Every pinned digest in
+`klv_pin.json` recomputed against the file it names before any held byte was read: the wrapper,
+the target profile, the ten entries under `delegated_specifications_held` and the three lineage
+editions under `history/`. All fifteen match in both terms. The CAT062 pins were tested the same
+way before that repair was attempted, both files matching digest, byte count and page count.
+
+**The `nga.mil` series gains one observation and STILL cannot carry a window reading.** `NOERROR`
+for the apex, `gwg` and `nsgreg` alike at **2026-08-28 11:49Z**, a second morning hour from the
+same resolver — one SERVFAIL now against four successes. **This round did not land in the failing
+hour**: it ran from ~11:48Z and the recorded SERVFAIL is a ~14:00-15:00Z observation, so the one
+reading that would settle the question was again not taken. That is stated rather than left as a
+gap, because four successes outside the failing hour add nothing to the question the series is
+actually about.
+
+**Act 1(a) — the CAT062 `TYP` split, repaired to three and eleven.** Re-derived from the pinned
+specification, which is the authority the finding named, and NOT from the adapter that disagreed
+with the document. SS 5.2.25 Subfield #12 defines fourteen values and exactly three carry the word
+*Predicted*, so the document's *five and nine* was wrong and the code was right throughout. **The
+table and the NOTE that splits it are on opposite sides of a page break**, so the derivation ran
+through `gates/pdf_text.py`'s joined normalization; a reader who stopped at the table's own page
+would not have seen the NOTE at all. Born false at `dd99acd` and never true. One figure in the
+finding did not survive its own repair and is corrected: the fixtures carrying the note are
+**three**, each in an emitted and a re-parsed form, so six files rather than the five fixtures the
+finding named.
+
+**Act 1(b) — the obtained tally is EIGHT, and the dropped reason is what is restored.** Derived
+from the record's own two tables: fourteen delegated documents, six unobtained and standing on
+parks 3, 6, 7, 8, 10 and 12. The off-by-one was never a counting slip. Four documents were
+retrieved on 2026-08-26 and only three are delegations, because the fourth is the ST 0601.19 copy
+the same row declares is *not* an edition the profile pins. That distinction was stated when the
+count was first written and dropped once the count became arithmetic. **The sentence was carried
+at four sites and all four are repaired**, the two dated round records marked as corrected rather
+than renumbered.
+
+**Act 1(c) — the header log is appended to, five pins late, and nothing is backfilled.** Two
+clauses carrying the true 2026-08-27 dates of the off-peak and pins rounds, and a third naming
+**this** round as the appender and saying plainly that the two above were not written on the days
+they name. One wrong figure in the opening sentence is deliberately left standing and annotated:
+it reads "the four delegated documents this repository has obtained" where three is right for that
+date. Editing it would be the backfill the clause exists to refuse. The counts now form a ladder —
+ten of which seven, eleven of which eight, fifteen of which twelve.
+
+**Act 1(d) — the calibration states its sample, and the sharpest case was the one left out.** All
+nine sampled lags re-derived from the bytes and all nine match. **The sample is nine of THIRTEEN,
+and the thirteen are now defined rather than asserted**: the held MISB documents carrying a
+day-precision cover date. Fifteen PDFs are held and two are outside that set for two different
+reasons — the NATO wrapper is not a MISB document, and MISP-2019.1's cover states a month with no
+day. Of the four unsampled, ST 0601.19 (853 days) and ST 0601.14a (595) are excluded for cause as
+the KLV 9 and KLV 10 copies; **ST 0107.3 (63) and ST 0102.12 (567) are clean and were simply never
+sampled**. ST 0102.12 is the sharpest document in the set — three independent statements agree on
+its cover and it has one revision-history row — so **the widest lag over cleanly-dated copies is
+567 and not 462**, and 617 if the wrapper is admitted. The conclusion is unchanged in direction and
+stronger in degree.
+
+**Act 2 — `tests/test_cdm_pin_header.py`, and the failure it guards is not the shape people guard
+against.** The header did not become malformed; it stayed internally consistent, well-formed and
+pleasant to read while describing a repository that had stopped existing. A log whose convention is
+"append when you change something" cannot notice the append that did not happen. Both sides of the
+equality live in the same file and **the module counts pin NODES and never looks at the disk**,
+which is why it is a real check in a fresh clone and in the wheel, where none of the fifteen PDFs
+it counts is present. **Its first live subject was Act 1(c)'s own commit and it ruled it**: against
+the record at `646b306` it fails with "header states 10 documents of which 7 are pins; the record
+carries 15 and 12", and against the repaired record it passes. Mutation-tested on the real artefact
+over four cases with the file restored byte-identically after each, the vacuity attack among them.
+**Its limit is asserted rather than implied** — editing the last clause satisfies the equality
+exactly as appending does, and a test says so; what refuses the edit is the failure message and the
+reviewer. One regression is recorded because it happened here: the dated-clause pattern's character
+class carries a hyphen, and the first draft's `[A-Z0-9 ]+` dropped the OFF-PEAK ROUND clause
+entirely rather than truncating it, so the clause was present and the pattern reported one fewer
+with no error anywhere.
+
+**Act 3 — the sweep's second half, and it is COMPLETE over the named debt.** Ledger entries 1 and
+4-10, `CONTRIBUTING.md`, `RELEASE_NOTES.md` and `fixtures/klv/README.md`, claim by claim, in the
+first half's form. **The platform route was reachable today**, which is what made most of it
+derivable rather than parked. Confirmed from outside the tree: `main-protection` carries exactly
+`deletion` and `non_fast_forward` and no `required_status_checks`; `f916ba2` still returns
+`total_count: 0` check runs; the contributor list is one login with two contributions; **exactly
+two commits are `verified: true` with `reason: valid`** and both are PGP-signed web-UI commits; the
+SBOM endpoint is 404 and secret scanning and Dependabot are disabled; Community Standards is 50%;
+the `pypi` environment carries `decentcybersecurity` as required reviewer, tag policy `v*` and
+`prevent_self_review: false`, created at the recorded `2026-08-26T06:46:16Z`; the repository holds
+**zero Actions secrets**; runs `32944124955` and `33061413447` are the v1.1.0 and v1.2.1 publishes;
+every 1.0.0 and 1.2.1 digest and byte count matches the index, and the 1.0.0 pair also matches the
+two artefacts still sitting in the repository root — a third reading nobody asked for. The harness
+reproduces `RELEASE_NOTES.md`'s table adapter by adapter and **408 verdicts, 0 failed**. Entry 8's
+arithmetic re-derives exactly: the `docs/` diff is 5 files, 71 insertions, 22 deletions, and
+`ccfa7476` is 92 seconds after `e4a1c33d`.
+
+**One reading of this round's own was wrong and is corrected here rather than carried.** A first
+pass read the legacy per-file `provenance` field as null across every release and was about to
+record entry 10's attestations claim as unwitnessed. **The simple index carries the provenance URL
+and the legacy JSON API does not**, and fetching it returns an in-toto subject naming the same
+wheel digest and a publisher block reading exactly `GitHub` / `Decent-Cybersecurity/`
+`synapsecommand-public` / `publish.yml` / `pypi`. That is **entry 6 step A witnessed from PyPI's
+own side**, which entry 6 could only assert, and it arrived because the first reading was checked
+rather than reported.
+
+**TWO SWEEP FINDINGS, BOTH STOPPING FOR ADJUDICATION UNREPAIRED, on the standing rule.**
+
+1. **Ledger entry 8's "Sixteen deployments" is one low — DECAY, and inside the entry whose own
+   subject is this failure.** The entry enumerates **seventeen** distinct deployment ids, six in
+   its table and eleven named below it, and `gates/deploy_record.py` run today reports "17 listed;
+   6 with a row, 11 covered retrospectively; 0 unaccounted for". Two were recorded before that
+   round, so the unrecorded remainder is **fifteen and not the fourteen** the entry states. The
+   mechanism is visible in the table: `222a55be` was deployed by the 1.2.1 release at
+   `2026-08-27 12:37:06` and its row **was** added — the three prose figures around it were not
+   moved with it. **The gate does not catch this and is not failing:** it asserts that no
+   deployment is unaccounted for, never that the prose's own arithmetic equals the list length. So
+   this is a count no machine reads, which is precisely what entry 8 was written to say about
+   deployments.
+
+2. **Ledger entry 9's "exactly anti-correlated" is stronger than its own measurement — OVERSTATED.**
+   Over the 134 commits the branch now carries the four cells are: signed-off and verified **0**;
+   signed-off and not verified **131**; not signed-off and verified **2**, being `d7986017` and
+   `2a51871f`; **not signed-off and not verified 1**, being `965e939d`. The two senses of "signed"
+   are therefore **disjoint** — nothing is both — but **not complementary**, and "exactly
+   anti-correlated across its history" requires the fourth cell to be empty. Everything measured in
+   that entry is right, and the sentence beside it explaining the web-UI mechanism is exactly true
+   of the two commits it describes. Entry 2 is precise where entry 9 is not: it says "The first two
+   were made in the GitHub web UI".
+
+**What the sweep covered and what it did not, so the bound is stated rather than implied.** It
+swept the **witnessed and numeric** claims — every assertion carrying an id, a digest, a count, a
+date or an API reading — and it is complete over those for the named debt. **It is not a read of
+every prose sentence in those four files**, and no claim is made that the remainder is clean. The
+residue is named that way rather than by file, because a file-shaped residue would read as though
+the files not listed had been finished.
+
+**Act 4 — the stale-count sweep found two more, both refuted by the thing carrying them.** The
+suite figure above, and `klv_pin.json`'s pin-as-control node reading "the nine delegated
+specifications" inside a sentence whose own total of fifteen requires ten. A third candidate is
+recorded and **not** repaired: `delegated_specifications_held`'s header says "THREE are here"
+against ten entries, but that sentence says *field dictionaries* and this record explicitly rules
+ST 0107.3 is not one, so repairing the number would settle a question about the documents by
+arithmetic. **No disjunction sweep ran, and it had no subject** — that sweep is over a newly
+obtained document's identity field and this round obtained nothing.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched and no pin was added; the PDF library was
+installed out-of-tree and `.venv` is unchanged. No park moved and no park closed. No tag row moved.
+**No source under `packages/` that executes**, no adapter, no codec, no fixture, no schema, and
+`SCHEMA_VERSION` is unmoved at `1.0.0`. The one executable file this round wrote is a test module
+under `tests/`, which the wheel does not carry, and the one line it changed in `gates/` is a
+roster entry. **Neither sweep finding was repaired**, which is the point of the stop rule. No
+deploy, no tag, no rendered page, and the floor stays **1.2.2**.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
