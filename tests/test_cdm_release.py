@@ -743,12 +743,23 @@ def test_the_count_gate_is_not_vacuous_against_the_real_section():
     assert refusal is None and count == len(moved), (
         "the live gate is failing; its own message is the one to read, not this one"
     )
-    spelled = next(w for w, n in NUMBER_WORDS.items() if n == count)
-    wrong = next(w for w, n in NUMBER_WORDS.items() if n == count + 1)
+    # THE MUTATION VEHICLE FOLLOWS THE SPELLING, and it used to assume one. `NUMBER_WORDS` stops
+    # at twelve, so this line raised `StopIteration` the moment an arc moved more files than that
+    # — which happened on 2026-08-28, when a fixture set of sixty landed and the count went from
+    # five to 66. The guard's SUBJECT is unchanged: the claim is still that the parser reads the
+    # sentence rather than agreeing with it by luck. Only the substitution needed to learn digits,
+    # because `_spelled_moved_count` has read both forms all along and nothing here exercised the
+    # second. A test whose mutation cannot be applied is a test that passes without running.
+    spelled = next((w for w, n in NUMBER_WORDS.items() if n == count), None)
+    if spelled is not None:
+        wrong = next(w for w, n in NUMBER_WORDS.items() if n == count + 1)
+    else:
+        spelled, wrong = rf"\b{count}\b", str(count + 1)
     mutant = re.sub(spelled, wrong, section, count=1, flags=re.IGNORECASE)
     assert mutant != section, (
-        f"the section's count {count} is not spelled as the word {spelled!r}, so this mutation "
-        "changed nothing and the non-vacuity claim is unproven"
+        f"the section's count {count} appears as neither the word nor the digit this mutation "
+        f"looked for ({spelled!r}), so the mutation changed nothing and the non-vacuity claim is "
+        "unproven"
     )
     mutated_count, mutated_refusal = _spelled_moved_count(mutant)
     assert mutated_refusal is None, mutated_refusal

@@ -211,11 +211,102 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing here is in any release.** The distribution on the index is **1.2.1**, and a reader who
 ran `pip install synapse-cdm` does not have what this section describes.
 
-**What moved inside the distribution: FIVE shipped documents, and no code.** `MIGRATIONS.md`,
-`FORMAT_COVERAGE.md`, `fixtures/klv/spec/klv_pin.json`, `synapse_cdm/README.md` and
-`fixtures/klv/README.md` — the last two both carrying the basename `README.md`. No adapter, no
-harness flag or check, no fixture set, no dependency, no importable name — so the arc since
-`v1.2.1` derives **PATCH** and the next release is at least **1.2.2**.
+**What moved inside the distribution: 66 files, and this arc now carries CODE.** The count is
+`gates/bump_derivation.py`'s and the enumeration below is derived from it rather than typed —
+4 shipped documents, 1 pin record, 1 module of source and 60 fixture files.
+
+* **Documents (4):** `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md`, `fixtures/klv/README.md` — the last two both carrying the
+  basename `README.md`.
+* **Pin record (1):** `fixtures/klv/spec/klv_pin.json`.
+* **Source (1):** `adapters/imapb_codec.py`, the IMAPB codec — MISB ST 1201.3's mapping,
+  both directions, park 5's artefact.
+* **Fixtures (60):** a new set at `fixtures/klv/imapb/`, 30 payloads each with its parsed
+  record:
+
+```
+  item_103_document_worked_example.imapb
+  item_103_document_worked_example.parsed.json
+  item_104_document_worked_example.imapb
+  item_104_document_worked_example.parsed.json
+  item_105_document_worked_example.imapb
+  item_105_document_worked_example.parsed.json
+  item_109_document_worked_example.imapb
+  item_109_document_worked_example.parsed.json
+  item_112_document_worked_example.imapb
+  item_112_document_worked_example.parsed.json
+  item_113_document_worked_example.imapb
+  item_113_document_worked_example.parsed.json
+  item_114_document_worked_example.imapb
+  item_114_document_worked_example.parsed.json
+  item_117_document_worked_example.imapb
+  item_117_document_worked_example.parsed.json
+  item_118_document_worked_example.imapb
+  item_118_document_worked_example.parsed.json
+  item_119_document_worked_example.imapb
+  item_119_document_worked_example.parsed.json
+  item_120_document_worked_example.imapb
+  item_120_document_worked_example.parsed.json
+  item_132_document_worked_example.imapb
+  item_132_document_worked_example.parsed.json
+  item_134_document_worked_example.imapb
+  item_134_document_worked_example.parsed.json
+  item_96_document_worked_example.imapb
+  item_96_document_worked_example.parsed.json
+  length_from_the_wire_tag112_2_octets.imapb
+  length_from_the_wire_tag112_2_octets.parsed.json
+  length_from_the_wire_tag112_3_octets.imapb
+  length_from_the_wire_tag112_3_octets.parsed.json
+  length_from_the_wire_tag112_4_octets.imapb
+  length_from_the_wire_tag112_4_octets.parsed.json
+  msb_high_is_a_normal_value_when_the_range_is_a_power_of_two.imapb
+  msb_high_is_a_normal_value_when_the_range_is_a_power_of_two.parsed.json
+  special_minus_inf.imapb
+  special_minus_inf.parsed.json
+  special_minus_qnan.imapb
+  special_minus_qnan.parsed.json
+  special_minus_snan.imapb
+  special_minus_snan.parsed.json
+  special_plus_inf.imapb
+  special_plus_inf.parsed.json
+  special_plus_qnan.imapb
+  special_plus_qnan.parsed.json
+  special_plus_snan_with_payload.imapb
+  special_plus_snan_with_payload.parsed.json
+  special_reserved.imapb
+  special_reserved.parsed.json
+  special_userdefined_with_payload.imapb
+  special_userdefined_with_payload.parsed.json
+  st1201_example_3_altitude.imapb
+  st1201_example_3_altitude.parsed.json
+  st1201_example_4_small_range.imapb
+  st1201_example_4_small_range.parsed.json
+  zero_offset_applies_when_the_range_spans_zero.imapb
+  zero_offset_applies_when_the_range_spans_zero.parsed.json
+  zero_offset_is_not_applied_to_an_all_positive_range.imapb
+  zero_offset_is_not_applied_to_an_all_positive_range.parsed.json
+```
+
+**THE BUMP MOVED FROM PATCH TO MINOR THIS ROUND, AND THE GATE DERIVED IT RATHER THAN BEING TOLD.**
+Before the codec landed the arc derived **PATCH** with the floor at **1.2.2**, which is what every
+round since `v1.2.1` had recorded. `adapters/imapb_codec.py` introduces public top-level names and
+`fixtures/klv/imapb/` is a new fixture set, and `version.py`'s MINOR row covers both — "an optional
+field added; an enum member added; a payload model registered" in the schema's terms, and the
+gate's own table in the package's: *a public top-level name appears → MINOR*, *a fixture set
+appears → MINOR*. So the arc since `v1.2.1` now derives **MINOR** and the next release is at least
+**1.3.0**. **No release is forced by this.** `SCHEMA_VERSION` is unmoved at 1.0.0 — nothing about
+the wire contract changed, no field was added to any model, and a consumer reading CDM objects is
+unaffected. What moved is the Python surface, which is what a package MINOR states and all it
+states.
+
+**WHAT THE NEW CODE DOES NOT BUY, because a MINOR that reads as a park closure would be worse than
+no note at all.** **Park 5 is not closed.** Its exit condition is the document plus the artefact
+that document makes writable; both documents have been held since 2026-08-27 and the artefact now
+exists, and what remains is that **none of the fourteen rows the codec reaches is witnessed by any
+held octet** — the pinned stream's 26 items stop at tag 65 and the lowest IMAPB item is tag 96. All
+fourteen rows still read `not yet`. In particular `Kinematics.course_deg` is still `None` on every
+object this package emits from the pinned stream, because tag 112 is not in it. The codec is
+checked against ST 0601.14a's fourteen worked examples and ST 1201.3's two, and against nothing on
+a wire.
 
 **THIS SENTENCE WENT STALE A SECOND TIME, AND THE PARAGRAPH BELOW IS ABOUT IT GOING STALE THE
 FIRST TIME.** It read "three shipped documents" and named three, while the arc had moved five:
@@ -1576,6 +1667,167 @@ The markers are named in that module and deliberately **not** repeated here: a s
 collects any file containing it, so a document that spelled the marker in order to discuss it would
 become a site by discussing it — which is what the first draft of this paragraph did, and the sweep
 caught it on the next run.
+
+**THE BUILD ROUND, 2026-08-28 — the four decayed rows are repaired, a warning is retired by
+mechanization, park 5's artefact is written under Ruling 1, and the gate moves the floor by itself.
+Two of the brief's own assertions are refuted by the tree and both are recorded as losses.**
+
+**Act 0, and the audit's own figures.** Tree clean, `HEAD` equal to `origin/main` at `26d3305`.
+Suite **3271 passed, 3 skipped** at the start. The untouchables hold, each by its own command: the
+pinned phrase derives to **35** over the git index, `scripted_edit`'s contract is green at **9**,
+`RELEASE_NOTES.md` opens **1.2.1** on the index, and `git ls-files` matches **no** PDF. **The bump
+gate was recorded twice on purpose, because this round moves it:** before the codec it derived
+**PATCH** with the floor at **1.2.2**, and `--mutation-check` proved both refusal directions and the
+unruled case on its five fixtures.
+
+**The `nga.mil` resolution series is extended by one observation.** `NOERROR` for the apex, `gwg`
+and `nsgreg` alike at **2026-08-28 21:14Z**, resolution only, no route asked for bytes, from
+`192.168.0.1` as every prior reading. Bookkeeping only: **one SERVFAIL episode against twelve
+NOERRORs**.
+
+**Pin-as-control, and the decomposition parts from the one it inherited in a way that is a
+FINDING.** Every `local_path` paired with a `sha256` across the eight pin files was re-digested:
+**21 such pairs resolving to TWENTY distinct copies** — `day_flight.klv` is pinned twice, which is
+the whole of the difference — of which **EIGHTEEN are documents under a `spec/` directory** and
+**two are the transport-stream artefacts**. All twenty present, all twenty matched, none absent and
+none mismatched. **Where this parts company with the last round: that round's decomposition added
+"three of them under `spec/history/`", and no pinned copy is under `spec/history/` at all.**
+`klv_pin.json`'s `edition_history` node says so in its own first words — *"THE 0601 LINEAGE, NOT
+PINS"* — and carries no `local_path`/`sha256` pair anywhere beneath it; the three lineage editions
+are held and deliberately unpinned. **The arithmetic also refutes it from the other side**: the
+eighteen are twelve under `fixtures/klv/spec/` plus one each for cat023, cat034, cat048 and fft and
+two for cat062, which is eighteen with no room for three more. **Class: a sub-clause added to a
+correct total.** The total was right, the parts were not, and nothing checked the parts because the
+total is what the gate reads.
+
+#### Act 1 — the four decayed rows, each repaired per its form and each checked for existence first
+
+All four exist and all four were located before anything was written. **Park 2's row** now records
+that the acquisition half is discharged — ST 0102.12 landed 2026-08-26, `20d40b52…85eca267`,
+514 842 bytes, 18 pages — and that what remains is item 48's unwritten row set; the row had gone on
+describing step one as pending while being cited elsewhere in the same file as *the precedent* for
+the state it was actually in. **Park 3's row** now says what it owns: not `Event.observed_at`, which
+is filled on all six packets, but the **name** of a scale of SI seconds since 1970 that is not UTC.
+**Park 6's row** keeps its `DETECTION` half and loses *"only parked bytes"*.
+
+**Park 6's repair is the one where the brief's method mattered, and the instruction earned itself.**
+The brief said to re-derive the emissions rather than copy last round's examples, and re-deriving
+changed the answer. Last round refuted *"only parked bytes"* with `speed_mps=46.0` — one figure.
+Running the adapter this round over the pinned stream gives **six** `Entity`/`Event` pairs, twelve
+objects, every entity a `PLATFORM` with a **GNSS position**, and `speed_mps` filled on all six at
+**46.0, 44.0, 43.0, 43.0, 43.0 and 47.0**. The single figure was packet 0's. **A park priced on
+"only parked bytes" is not corrected by one example any more than it is established by none**, and
+the repaired cell carries all six.
+
+**Park 11's plan cell — repaired, and the repair is that its artefact was described as filling a
+field that is already full.** Verified at its source rather than from the table: `models.py`'s
+`CDMBase` declares `source_ids` with **`min_length=1` on every kind**, so an adapter that populated
+nothing would not validate, and `adapters/stanag4609.py` line 369 fills it with a **packet-scoped**
+key — the Precision Time Stamp and the packet's index — with `attributes.identity_basis` stating on
+every object that it claims *this observation* and nothing more. **So the artefact is a REPLACEMENT,
+not an addition**, and what the park costs while open is not an empty field but an inexpressive one:
+consecutive packets from one aircraft get different `entity_id` values. **The UNRULED branch, stated
+as the reason the bump ruling waits:** the change moves `_translate`'s body and adds, removes and
+rosters no name — no subclass name, no harness flag, no `_check_*`, no exit code, no fixture set, no
+public top-level name, no optional dependency, no console entry point, `SCHEMA_VERSION` unmoved — so
+the gate reads it as a modification in place of something whose meaning is the question and
+**REFUSES the classification** rather than defaulting it to PATCH. **No hand-ruling is written**, per
+Ruling 2.
+
+#### Act 2 — the `local_path` resolver, and the warning is retired by mechanization
+
+**Three reproductions, and a fourth was found while retiring them.** Every pin states its subject as
+a `local_path` beginning `fixtures/`, and **two directories answer to that prefix**: specification
+documents live under `packages/cdm/synapse_cdm/` and the stream artefacts live at the repository
+root, because `.gitignore` excludes `fixtures/klv/streams/` by a directory rule. The two are
+**disjoint** — neither path exists under the other's base — and they share their first two segments,
+`fixtures/klv/`, so nothing a reader sees distinguishes them.
+
+**Why it is a method defect and not a warning: the failure is silent.** A stream's `local_path`
+under the package base names a file that does not exist, and every pin check here treats an absent
+subject as a `pytest.skip` — correctly, because a fresh clone has the record and not the bytes. **So
+a wrong base is indistinguishable from a fresh clone**, and the check goes green while measuring
+nothing. That is the absence a round reported and the round after it corrected.
+
+`gates/pin_paths.py` is now the only site that maps a `local_path` to a file. The base is chosen
+from the `<kind>` segment — `spec` to the package, `streams` and `provenance` to the root — and an
+unknown kind is **REFUSED** rather than defaulted, on `bump_derivation.py`'s UNRULED precedent and
+for the same reason: a guess here would be a silent one. `verify_convention()` checks the rule
+against the tree on every run, including that the *other* base does **not** hold the file, which is
+the half that makes the rule falsifiable rather than restated. The three by-hand sites now call it,
+and `tests/test_cdm_pin_paths.py` asserts that they do.
+
+**THE FOURTH SITE WAS `_repo_rel`, and it had the same bug pointed the other way.**
+`tests/test_cdm_pins.py` carried `_full = PKG / recorded` under a comment asserting that
+package-relative *"is the form every one of those documents uses"*. It is the form every **document**
+uses. The module was correct anyway — but by luck: `discover_pins` filters its corpus to `.pdf`, so
+no stream path had ever reached it, and **an extension filter was doing load-bearing work while
+reading as a preference.** `_repo_rel` joined the same prefix to produce a git-relative path and
+would have been wrong for a stream in the same way. Both now defer to the resolver.
+
+**Its first live subject is this round's own pin-as-control**, and it reproduces the hand derivation
+exactly: 21 pairs, 20 distinct copies, 18 spec documents and 2 stream artefacts, 20 present and 20
+matched. `--mutation-check` proves both directions — a document under the wrong base reads absent, a
+stream under the wrong base reads absent — and the refusal.
+
+#### Act 3 — the IMAPB codec, spec first, and the row set is written before the code
+
+**The order was the protocol's and it paid.** All 141 of ST 0601.14a's Table 1 rows were located in
+the pinned copy and **fourteen carry a Format column reading `IMAPB`: tags 96, 103, 104, 105, 109,
+112, 113, 114, 117, 118, 119, 120, 132 and 134.** That is park 5's enumeration member for member —
+**no spec-versus-memo divergence, so the stop rule did not fire.**
+
+**THE FIRST RE-DERIVATION RETURNED THIRTEEN AND WOULD HAVE BEEN REPORTED AS A FINDING.** Tag 105's
+Name wraps mid-phrase in Table 1, so a row parser matching line by line sees no Format column on
+that row and drops it. Re-run over text joined across pages and whitespace-collapsed first — the
+rule `gates/pdf_text.py` states — all 141 rows parse and the count is fourteen. **This is that
+module's third reproduction and the first outside a count**: the two it records are tallies, this
+one is a structured read of a table, so the rule's reach is wider than the incidents that produced
+it. The naive figure was short in the direction that looks like a real finding, which is the whole
+danger of the method.
+
+**Every parameter is checked against its own section's worked example, and all fourteen reproduce**
+— along with ST 1201.3 §10's two full examples including their intermediate constants. **One
+divergence inside the document's own row is recorded as register entry KLV 20**: §8.132's Units cell
+says MHz and its example says *2.4 GHz*, and only 2 400 reproduces the octets the same row prints.
+A codec calibrated on the example at face value would be wrong by a thousand, and `00 00 59` is a
+perfectly well-formed three-octet value — the failure with no shape.
+
+**A SECOND FINDING CAME OUT OF A TEST THIS ROUND WROTE AND THEN HAD TO CORRECT.** A test asserted
+that reverse-mapping a Table 2 signal yields a *plausible* number. **It does not**, and the reason
+is structural: a special pattern sets the top two bits, so it always reverse-maps above `b`, while
+the largest normal value is about half that. The claim was written from park 5's stated risk rather
+than measured, and the test failed on its own assertion. **Where the risk actually bites is one step
+later**: reverse-mapping a signal raises nothing, and ST 1201.3 requires no range check of a
+decoder, so a decoder skipping §7.2.2 step 1 hands its caller 800.0 as a course angle. Recorded as
+the correction it is.
+
+**PARK 5 IS NOT CLOSED, AND THE BRIEF'S TAG-112 VERIFICATION IS REFUSED BY THE TREE.** The brief
+asked that tag 112's fill of `Kinematics.course_deg` be verified against the six packets. **It
+cannot be: tag 112 is absent from all six.** The pinned stream's 26 items were re-enumerated this
+round and stop at **tag 65**; the lowest IMAPB item is 96. So `course_deg` is `None` on all six
+objects before this codec and `None` after it, exactly as item 5's row already predicted, and the
+codec is checked against §8.112's own worked example instead — 125° at two octets is `1F40`. **The
+brief loses and the divergence is recorded.** All fourteen rows still read `not yet`, because the
+exit condition each states is a witness and this round produced none.
+
+**THE GATE RULED THE BUMP AND NOTHING TOLD IT.** After the codec landed, `gates/bump_derivation.py`
+reports *"the arc since 1.2.1 derives **MINOR**, so the next release is at least **1.3.0**"*, where
+before it reported PATCH and 1.2.2. Both readings are recorded above. **No release is forced**:
+`PACKAGE_VERSION` stays **1.2.1** and `SCHEMA_VERSION` stays **1.0.0** — no field moved, no model
+changed, and a consumer reading CDM objects is unaffected. The park 5 / park 11 comparison table's
+*"What the bump gate would derive"* cell is the one place a bump was forecast before the change
+existed, and it now records the forecast as realised in every clause.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched, no CDX query was made, no pin was added, no
+acquisition of any kind — the PDF reader was installed outside `.venv` per the standing rule and
+read only held bytes. **No park closed and no park moved state**: parks 2, 3, 6 and 11 have repaired
+rows and the same standing. **No tag row moved** — all 141 still read `not yet`. **No hand-ruling on
+park 11**, per Ruling 2. **Nothing under `packages/` moved outside the granted scope**: the files
+added are `adapters/imapb_codec.py` and `fixtures/klv/imapb/`, and the files edited are
+`FORMAT_COVERAGE.md` and this one. `gates/`, `tests/` and the resolver are outside the distribution.
+**Two of the brief's assertions were refuted and both are recorded as losses rather than absorbed**:
+the tag-112 verification, and — from the round before it — the `spec/history/` sub-clause.
 
 **THE PARKS ROUND: no park closed, three register entries narrowed, and the record refuted itself
 twice.** Parks 5, 9 and 11 and register entries KLV 14–17 were re-opened after five rounds of record
