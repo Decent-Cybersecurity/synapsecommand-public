@@ -128,8 +128,8 @@ recommendation and this one executed it. **ST 1201.3** (20 pages), **ST 1303.1**
 (36) and **ST 1301.2** (4, the smallest document in `spec/`) are held and pinned, obtained
 2026-08-27 between 21:05:18Z and 21:05:40Z at the exact revisions parks 5 and 11 name — and only
 after the **pin-as-control** step passed, the archived `ST0601.4.pdf` URL re-serving bytes that
-digest to this record's pin in both terms. **The delegated-document tally moves from five to nine of
-fourteen.** **NEITHER PARK CLOSED**: each park's exit condition is a document *plus* the artefact it
+digest to this record's pin in both terms. **The delegated-document tally moves from four to eight of
+fourteen.** *(CORRECTED 2026-08-28 by the repair round: this sentence read "from five to nine" when it was written and both figures were one too high. The tally counts DELEGATIONS THE PROFILE MAKES, and the copy of ST 0601.19 is not one — the row set's own tally row says so, calling it not an edition the profile pins and retaining it as context only. It was counted anyway from the day the figure was first stated. Fourteen delegated documents, six unobtained on parks 3, 6, 7, 8, 10 and 12, leaves eight.)* **NEITHER PARK CLOSED**: each park's exit condition is a document *plus* the artefact it
 makes writable, and the artefact for both is source under `packages/` — an `IMAPB` codec for park 5,
 `Entity.source_ids` for park 11 — which this round did not write. So both are now **blocked on a
 per-change ruling** and the park arithmetic is unchanged in every term: four closed, nine open.

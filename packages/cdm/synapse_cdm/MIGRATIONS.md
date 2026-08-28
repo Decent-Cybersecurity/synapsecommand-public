@@ -526,8 +526,13 @@ versus repair-within-mechanism — that none of the four refuted formulations ca
 **MISB ST 1201.3** (`c5d8cb2d…bff4a07e`, 617 525 bytes, 20 pages), **ST 1303.1**
 (`e30487b0…a3627895`, 1 084 929 bytes, 14 pages), **ST 1204.1** (`2503960a…61d9f1c5`, 1 078 045
 bytes, 36 pages) and **ST 1301.2** (`3d08d35d…e509f9a6`, 590 094 bytes, 4 pages) are held, pinned and
-read. **The delegated-document tally moves from five to nine of fourteen** — it had not moved at all
+read. **The delegated-document tally moves from four to eight of fourteen** — it had not moved at all
 between the day it was written and this morning, and it has now moved twice in one day.
+*(CORRECTED 2026-08-28 by the repair round. This sentence read "from five to nine" as written and
+both figures were one too high, for the reason the decay sweep's finding 3 names: the tally counts
+delegations the profile makes, and the held copy of ST 0601.19 is not one. The acquisition this
+entry records is unaffected — four documents were obtained and all four are delegations; what was
+wrong is the base the increment started from.)*
 
 **THE ACQUISITION WINDOW WAS SPENT BEFORE THE AUDIT WAS FINISHED, deliberately.** The quota is
 hour-windowed by the previous round's finding and a window that is open now has closed without
@@ -608,7 +613,7 @@ section wants names rather than a count. Four files under `packages/`: `FORMAT_C
 table's four rows and the tally, the parks 5/11 section amended in place, both parks-table rows, two
 stale counts, register entries KLV 18 and KLV 19, and this round's own record); `MIGRATIONS.md`, this
 entry; `fixtures/klv/README.md`, which gains the tenth round and moves its delegated-document tally
-from five to nine; and `fixtures/klv/spec/klv_pin.json`, which gains four pin nodes, the parks
+from four to eight (*written as "five to nine" and corrected 2026-08-28 — see above*); and `fixtures/klv/spec/klv_pin.json`, which gains four pin nodes, the parks
 narrowing, the two register entries, the document-info narrowing and the round's own node. **Every
 one of them is a shipped document and none is executable.** Two files under `tests/` moved as well
 and are not in the distribution. **So the arc still derives PATCH and the floor stays 1.2.2** — which
