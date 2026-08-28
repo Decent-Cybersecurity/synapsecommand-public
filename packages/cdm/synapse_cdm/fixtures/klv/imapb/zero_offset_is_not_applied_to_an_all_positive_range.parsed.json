@@ -1,0 +1,14 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000027",
+  "name": "zero_offset_is_not_applied_to_an_all_positive_range",
+  "kind": "boundary",
+  "octets_hex": "0000",
+  "octet_count": 2,
+  "imapb_min": 0.0,
+  "imapb_max": 360.0,
+  "software_value": 0.0,
+  "decodes_to": 0.0,
+  "citation": "MISB ST 1201.3 \u00a77.1.2 step 6: 'if (a<0 and b>0)'",
+  "note": "The condition is a CONJUNCTION on the sign of both bounds. Applying the offset unconditionally shifts every all-positive range by a fraction of a step \u2014 tag 112's range is one of five here that would be wrong.",
+  "source": "MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}

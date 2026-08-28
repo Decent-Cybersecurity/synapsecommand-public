@@ -109,6 +109,13 @@ PACKAGE_ONLY_TESTS = (
     # compares that document against the repository's fixture tree; this one compares a ruling
     # against the artefacts the ruling produced, and those travel together.
     "test_cdm_klv_framing.py",
+    # `test_cdm_imapb_codec.py` is package-only on the same reading, and the reading is
+    # cleaner here than for the framing module: every path it touches is
+    # `adapters/imapb_codec.py` and `fixtures/klv/imapb/`, both inside the package and both
+    # anchored on `synapse_cdm.__file__`. It reads no prose document and no pin record — its
+    # authorities are two PDFs it never opens, transcribed into the test as literals — so it
+    # is a real check against an installed wheel rather than one that would skip there.
+    "test_cdm_imapb_codec.py",
     # `test_cdm_pin_header.py` is package-only for the same reason and a narrower one: the only
     # artefact it reads is `fixtures/klv/spec/klv_pin.json`, which ships in the wheel, and it
     # counts pin NODES rather than files on disk — so it is a real check against an installed
@@ -129,6 +136,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_commit_message.py": "gates/commit_message.py and this history's messages",
     "test_cdm_scripted_edits.py": "gates/scripted_edit.py and git blobs — neither ships",
     "test_cdm_pdf_text.py": "gates/pdf_text.py and the pinned PDFs — neither ships",
+    "test_cdm_pin_paths.py": "gates/pin_paths.py and BOTH fixture bases — the repository root is one of the two, so an installed wheel has no second base for the resolver to be right about",
     "test_cdm_format_coverage.py": "FORMAT_COVERAGE.md against the repository's fixtures",
     "test_cdm_generator_loading.py": "how three test modules load a generator",
     "test_cdm_getting_started.py": "README.md and CONTRIBUTING.md against pyproject.toml",

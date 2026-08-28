@@ -1,0 +1,15 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000025",
+  "name": "msb_high_is_a_normal_value_when_the_range_is_a_power_of_two",
+  "kind": "boundary",
+  "octets_hex": "8000",
+  "octet_count": 2,
+  "imapb_min": 0.0,
+  "imapb_max": 256.0,
+  "software_value": 256.0,
+  "decodes_to": 256.0,
+  "decodes_to_number": true,
+  "citation": "MISB ST 1201.3 \u00a77.2.3, Table 1 row 2: '1 0 0 Normal mapped value but this is the max value of the normal mapping values; this is the only normal value that has the MSB=1'",
+  "note": "THE FIXTURE THAT SEPARATES A CONJUNCTION FROM AN MSB TEST. A decoder testing only the MSB reads this as a signal and loses the top of every power-of-two range. It arises only when (b-a) is a power of two, which is why the range here is 256 and not one of the fourteen items'.",
+  "source": "MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}

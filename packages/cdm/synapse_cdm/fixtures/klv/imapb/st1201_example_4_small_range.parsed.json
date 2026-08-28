@@ -1,0 +1,14 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000016",
+  "name": "st1201_example_4_small_range",
+  "kind": "st1201_example",
+  "octets_hex": "3333",
+  "octet_count": 2,
+  "imapb_min": 0.1,
+  "imapb_max": 0.9,
+  "software_value": 0.5,
+  "decodes_to": 0.499993896484375,
+  "citation": "MISB ST 1201.3 \u00a710, Example 4 (IMAPB(0.1, 0.9, 2)), Table 7",
+  "note": "A range narrower than 1.0, so bPow is 0 and the reverse value is NOT the forward value: the document itself prints 0.499993896484375 and an error of 6.10e-6. The fixture asserts the lossy reverse rather than a round trip, because a round-trip assertion here would be asserting something the standard says is false.",
+  "source": "MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}

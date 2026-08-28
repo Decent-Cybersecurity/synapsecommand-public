@@ -1,0 +1,14 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000026",
+  "name": "zero_offset_applies_when_the_range_spans_zero",
+  "kind": "boundary",
+  "octets_hex": "3E80",
+  "octet_count": 2,
+  "imapb_min": -1000.0,
+  "imapb_max": 1000.0,
+  "software_value": 0.0,
+  "decodes_to": 0.0,
+  "citation": "MISB ST 1201.3 \u00a78.5 and \u00a77.1.2 step 6",
+  "note": "0.0 must map to an integer exactly, and every negative value must map below it. This is the Zero Point Izero. Drop Zoffset and 0.0 collides with a negative value, which \u00a78.5's Table 3 shows happening.",
+  "source": "MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}

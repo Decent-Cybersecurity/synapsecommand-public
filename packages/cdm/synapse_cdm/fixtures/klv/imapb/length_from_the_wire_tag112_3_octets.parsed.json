@@ -1,0 +1,15 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000029",
+  "name": "length_from_the_wire_tag112_3_octets",
+  "kind": "variable_length",
+  "octets_hex": "1F4000",
+  "octet_count": 3,
+  "tag": 112,
+  "imapb_min": 0.0,
+  "imapb_max": 360.0,
+  "software_value": 125.0,
+  "decodes_to": 125.0,
+  "citation": "MISB ST 1201.3 \u00a77.4; ST 0601.14a \u00a78.112 Length row reads 'Variable'",
+  "note": "The same value at three widths, each with its own constants. A codec that pinned tag 112's Max Length of 8 would decode all three of these wrongly and return a plausible number for each.",
+  "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}

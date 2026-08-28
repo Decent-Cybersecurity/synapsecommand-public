@@ -1,0 +1,15 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000024",
+  "name": "special_userdefined_with_payload",
+  "kind": "special_value",
+  "octets_hex": "C007",
+  "octet_count": 2,
+  "special_kind": "UserDefined",
+  "payload": 7,
+  "imapb_min": -900.0,
+  "imapb_max": 40000.0,
+  "decodes_to_number": false,
+  "citation": "MISB ST 1201.3 \u00a77.2.3, Table 1 (the two-bit indicator) and Table 2",
+  "note": "MUST NOT be run through the reverse map. Reverse-mapping this pattern returns a finite float and raises nothing, so a decoder that skips ST 1201.3 \u00a77.2.2 step 1 hands its caller a number. The number lands ABOVE b \u2014 a Table 2 pattern sets the top two bits, so it exceeds the largest normal value structurally \u2014 which means a caller that range-checks catches it and a caller that does not gets a silent lie. The codec returns a Special so neither caller has to.",
+  "source": "MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}

@@ -21,6 +21,7 @@ import pytest
 from pydantic import BaseModel
 
 import synapse_cdm
+from gates import pin_paths
 from synapse_cdm import models
 from synapse_cdm.geo import LineString, Point, Polygon
 
@@ -4074,10 +4075,16 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     # reader taking "deprecated" in its ordinary sense loses the ability to locate the KLV stream,
     # which is what park 9 existed to buy — the two readings differ by the whole value of the
     # document.
-    for n in range(1, 20):
+    # THE BOUND MOVED 19 -> 20 ON 2026-08-28, in the round that wrote the IMAPB row set, and it is
+    # the first entry here found by COMPUTING against a document rather than by reading one. KLV 20:
+    # §8.132's Example Software Value is stated in GHz while the item's Units cell says MHz, so the
+    # octets the same row prints are reproducible only after a conversion the row does not mention.
+    # It was found by running both mappings, not by noticing the units — which is why it is filed
+    # under this round and not under any of the three that read this document before it.
+    for n in range(1, 21):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 20 —" not in section, (
-        "the register has grown past KLV 19 without this test being updated"
+    assert "**KLV 21 —" not in section, (
+        "the register has grown past KLV 20 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a
@@ -4152,9 +4159,15 @@ KLV_STREAM_PINS = (
 KLV_WALK_HEADING = "### The walk over a real stream"
 
 
-def _klv_streams_dir() -> pathlib.Path:
-    root = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
-    return root / "fixtures" / "klv" / "streams"
+def _klv_stream(name: str) -> pathlib.Path:
+    """Where a pinned stream artefact lives, via the one resolver.
+
+    THIS USED TO REBUILD THE PATH AS A LITERAL — `parents[3] / "fixtures" / "klv" / "streams"` —
+    which is a second spelling of the repository root and a second statement of a directory the
+    pin already names. It is now read from the pin's own `local_path` form, so the record and the
+    lookup cannot disagree. See `gates/pin_paths.py`.
+    """
+    return pin_paths.resolve(f"fixtures/klv/streams/{name}")
 
 
 def test_the_walk_sections_numbers_are_the_bytes_own_numbers():
@@ -4176,9 +4189,8 @@ def test_the_walk_sections_numbers_are_the_bytes_own_numbers():
         decode_ber_length, decode_ber_oid, encode_ber_length, is_local_set_key,
         read_local_set_key, walk_local_set, bcc_16,
     )
-    streams = _klv_streams_dir()
     for name, digest, size in KLV_STREAM_PINS:
-        path = streams / name
+        path = _klv_stream(name)
         if not path.exists():
             pytest.skip(f"{path} is not in the working tree — the stream is pinned, not vendored")
         assert path.stat().st_size == size, f"{name} is the wrong size for the pin"
@@ -4186,7 +4198,7 @@ def test_the_walk_sections_numbers_are_the_bytes_own_numbers():
             f"{name} does not hash to the pinned value — this is a different clip"
         )
 
-    buf = (streams / "day_flight.klv").read_bytes()
+    buf = _klv_stream("day_flight.klv").read_bytes()
 
     packets, offset = [], 0
     while offset < len(buf):

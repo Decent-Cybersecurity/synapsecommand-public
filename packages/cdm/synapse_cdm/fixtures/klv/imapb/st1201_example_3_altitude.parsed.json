@@ -1,0 +1,14 @@
+{
+  "fixture_id": "f1c71201-0300-8000-8000-000000000015",
+  "name": "st1201_example_3_altitude",
+  "kind": "st1201_example",
+  "octets_hex": "038E00",
+  "octet_count": 3,
+  "imapb_min": -900.0,
+  "imapb_max": 19000.0,
+  "software_value": 10.0,
+  "decodes_to": 10.0,
+  "citation": "MISB ST 1201.3 \u00a710, Example 3 (IMAPA(-900, 19000, 0.5) -> L=3), Table 6",
+  "note": "The document's Example 3 works from a PRECISION and derives L=3, then maps x=10.0 to 232,960 = 0x038E00. Both halves are exercised: `length_for_precision` must return 3 and the forward map must return these octets.",
+  "source": "MISB ST 1201.3, SHA-256 c5d8cb2d4ce371f0691dc51bc7b03053260c28e58de5ccfe9d60031fbff4a07e, fixtures/klv/spec/ST1201.3.pdf"
+}
