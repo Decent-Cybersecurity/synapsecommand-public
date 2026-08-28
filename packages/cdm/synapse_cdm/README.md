@@ -406,6 +406,85 @@ cannot find a site nobody has added to it. The sweep is:
    to the tree is inside the derivation the moment `git` tracks it, which is the property a
    remembered list of suffixes cannot have. The general rule: **a count whose derivation is a
    command somebody retypes each round is a count that will be re-derived differently.**
+9. **A RECORD THAT DISCUSSES A TOKEN BECOMES A SITE OF IT, and a note that corrects a figure
+   becomes a carrier of the figure.** This is one class with several instances on record, and it
+   was met and ruled on separately at every one of them before it was named here. The two halves
+   are the same defect: a document that spells a string in order to forbid, correct or announce it
+   is thereafter a site that spells that string, and a note that restates a figure in order to
+   supersede it is thereafter a place that figure is stated. What makes it expensive rather than
+   untidy is that a carrier always sits upstream of a checker — the sweep that later looks for the
+   string finds the correction and calls it a defect, and the guard that asserts a live figure
+   passes on the correction's copy of it. **A carrier does not fail; it stops something else from
+   being able to fail**, which is why every instance below was found by mutating a guard or by a
+   hand sweep and none of them by a red build.
+
+   The instances, each left at its own record rather than re-derived here:
+
+   * **The phrase rule 8 pins.** Rule 8 refers to it as a regex and never as itself, because a
+     paragraph spelling it out would move the count it describes, and
+     `tests/test_cdm_prose_counts.py::test_this_module_does_not_spell_the_phrase_it_counts`
+     asserts the counting module's own source carries no literal occurrence — so the trap is
+     closed rather than avoided by care. Met a second time as prose, where an audit paragraph in
+     `FORMAT_COVERAGE.md` corrected a claim about that phrase by quoting it; `MIGRATIONS.md`
+     records the closure, and records that it had not yet sprung, which is the only time closing
+     one is cheap.
+   * **The strings that mark the deploy mechanism.**
+     `tests/test_cdm_publication.py::test_the_record_does_not_restate_the_deploy_mechanism` states
+     the pattern in one sentence — a checker that spells the forbidden string is itself a carrier
+     of it — and IMPORTS the markers rather than restating them, after quoting both in order to
+     forbid them made the deploy gate's own sweep find the checker.
+   * **The paragraph announcing a guard, which dug that guard's hole.** `MIGRATIONS.md` records
+     it: the announcement quoted the defective sentence it was reporting, that sentence carried
+     the phrase the guard searches for, and the guard would therefore have stayed green with the
+     sentence it exists to require deleted.
+   * **A correction note re-quoting the figures it corrected.** The KLV 2 arithmetic repair in
+     `FORMAT_COVERAGE.md`, whose first draft described the repair by restating the superseded
+     figures — so dropping a live figure from the entry still passed on the note's copy of it.
+     Found by the mutation check on the repaired guard, inside the commit that wrote both.
+
+   **The rule already in force at every one of them, stated once here because it was that many
+   local rules before.** Describe, do not quote — a correction names what was wrong and does not
+   reproduce it. Every path by basename, this document included, and no self-reference anywhere,
+   because a phrase that recurs for unrelated reasons is not evidence that a path was named. And
+   each live figure exactly once, with its basis.
+
+   **WHAT IS MECHANIZED.** Three of the four are guarded, and all three the same way — by making
+   the token unspellable at the site rather than by detecting a spelling: the phrase is assembled
+   from parts, the markers are imported, the path is required by basename. That works wherever the
+   token is **enumerable in advance**, and it is the first thing to try.
+
+   A figure is not enumerable in advance, so the fourth needed a different answer, and **the
+   briefed form of it — a check that refuses re-quotation inside correction notes — was specced,
+   measured and refused.** Two formulations were tested against the tracked record rather than
+   argued about, on the treatment the four refuted reverse-sweep formulations got:
+
+   * *a repair-marked paragraph states no digits* — **refuted.** Of the repair-marked paragraphs
+     in the three long records at the time of writing, all but ten carried digits, and nearly all
+     of those digits were dates, section numbers, or the corrected live figure itself. The rule
+     would refuse the correct form of a correction note far more often than the defective one.
+   * *a number occurring only inside a repair-marked paragraph is a superseded figure* —
+     **refuted**, and more instructively. It produced candidates across those same records and
+     every one inspected was a tag number, a reference number or an HTTP status code. It cannot do
+     better in principle: where the discipline holds, a superseded figure is **absent by
+     construction**, so the rule's true positives are exactly the cases that no longer exist.
+
+   **The deciding argument is stronger than either measurement.** What KLV 2's note superseded was
+   not a token but a figure PAIRED WITH THE WRONG BASIS — both of its numbers are live today and
+   both are stated in the repaired entry. Recognising a figure attached to the wrong basis
+   requires knowing which basis is right, and that is a reading of the prose and not a derivation
+   from the tree. **Recorded as refused**, so the next round attempting it starts from what has
+   been ruled out rather than from the idea.
+
+   **WHAT WAS MECHANIZED INSTEAD is the direction the tree settles, which is the move rule 8 made
+   one class over: check the consequence, not the intent.** A carrier's consequence is that a
+   guard loses the ability to fail, and that is countable without reading anything. KLV 2's live
+   figures are now asserted to occur **exactly once** in the section rather than merely to be
+   present, so a second copy anywhere in it fails the build with nothing having had to recognise a
+   correction note. The figure WITH ITS BASIS is what is counted and never the bare numeral —
+   each of those numerals is a live tag number or reference number elsewhere in the same section,
+   so a bare count would be counting other claims.
+   `test_the_klv_2_figure_guard_is_not_vacuous_in_either_direction` mutates the real section in
+   both directions — figure dropped, figure re-quoted — to prove the guard can fail in each.
 
 **A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
 `Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see

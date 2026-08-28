@@ -3661,6 +3661,22 @@ def test_no_verbatim_requirement_quotation_has_had_a_revision_added_to_it():
         )
 
 
+#: KLV 2's four live figures, each the figure WITH ITS BASIS. Shared by the guard below and by its
+#: vacuity check, so the two cannot drift apart — the property `occurrences_over_tracked_files()`
+#: has in `tests/test_cdm_prose_counts.py` and for the same reason.
+KLV2_FIGURES = ("120 distinct", "`MISP-2015.1` 84", "**129**", "`MISP-2015.1` 93")
+
+
+def _figure_occurrences(section_text: str) -> dict[str, int]:
+    """How many times each of KLV 2's live figures occurs. The predicate, over text.
+
+    A function rather than an inline count so the vacuity check below can run it against mutated
+    copies of the real section without writing to the tree.
+    """
+    flat = _flat(section_text)
+    return {figure: flat.count(figure) for figure in KLV2_FIGURES}
+
+
 def test_no_requirement_id_in_the_section_names_this_profile_version():
     """AN ABSENCE. MISP-2019.1 contains no requirement of its own, and the section must not invent one.
 
@@ -3679,14 +3695,65 @@ def test_no_requirement_id_in_the_section_names_this_profile_version():
         "requirement in MISP-2019.1 is numbered against the profile version that INTRODUCED it — "
         "see register entry KLV 2 — so an ID with this document's own version in it was invented"
     )
-    # And the finding itself is on the record, with the count that makes it checkable.
+    # And the finding itself is on the record, with the count that makes it checkable — each
+    # figure EXACTLY ONCE, which is sweep rule 9's carrier rule mechanized. A correction note that
+    # re-quoted a figure would leave two copies of it, and dropping the live one would then still
+    # pass on the note's copy — the defect the mutation check caught by hand in the commit that
+    # repaired this entry. Counting refuses that WITHOUT having to recognise a correction note,
+    # which is the predicate rule 9 records as unmechanizable.
+    #
+    # THE PINNED FORM IS THE FIGURE WITH ITS BASIS AND NEVER THE BARE NUMERAL, and that is forced
+    # rather than stylistic: `129`, `120`, `84` and `93` are each live tag numbers or reference
+    # numbers elsewhere in this section, so a bare-numeral count would be counting other claims.
     flat = _flat(section)
-    for figure in ("120 distinct", "`MISP-2015.1` 84", "**129**", "`MISP-2015.1` 93"):
-        assert figure in flat, (
-            f"{figure!r} is missing from the section. KLV 2's evidence is TWO enumerations, each "
-            "named with its basis: 120 distinct IDs of which 84 are MISP-2015.1, and 129 "
-            "occurrences of which 93 are. Asserting only one of them is how the entry came to "
-            "state a distinct headline over an occurrence distribution — see the 2026-08-28 repair"
+    for figure in KLV2_FIGURES:
+        found = flat.count(figure)
+        assert found == 1, (
+            f"{figure!r} occurs {found} times in the section and must occur exactly ONCE. KLV 2's "
+            "evidence is TWO enumerations, each named with its basis: 120 distinct IDs of which 84 "
+            "are MISP-2015.1, and 129 occurrences of which 93 are.\n"
+            "  ZERO means a live figure was dropped, and asserting only one enumeration is how the "
+            "entry came to state a distinct headline over an occurrence distribution — see the "
+            "2026-08-28 repair.\n"
+            "  MORE THAN ONE means a second site in this section now carries the figure, which is "
+            "the carrier pattern sweep rule 9 names: describe a superseded figure, never re-quote "
+            "it, and state each live figure exactly once"
+        )
+
+
+def test_the_klv_2_figure_guard_is_not_vacuous_in_either_direction():
+    """The established form, aimed at a class that has already produced a defect once.
+
+    The guard above is four substring counts, and a guard whose real input happens to satisfy it
+    is indistinguishable from one that asserts nothing. Both failure directions are mutated here,
+    because the two mean opposite things and only one of them is the ordinary staleness case:
+
+    * **dropped** — a live figure removed from the entry, which is the direction the 2026-08-28
+      repair was about: an entry stating one enumeration where its evidence is two.
+    * **re-quoted** — a live figure stated a SECOND time somewhere in the section, which is the
+      carrier pattern of sweep rule 9. This is the direction that a presence check could not see
+      at all: with a second copy on the record, dropping the live one still leaves the substring
+      behind, so the guard passes over the defect it exists to catch. It was caught by hand, on
+      this entry, in the commit that repaired it. A count sees it without having to recognise a
+      correction note, which is the reading rule 9 records as refused.
+    """
+    section = _section(KLV_HEADING)
+    live = _figure_occurrences(section)
+    assert set(live.values()) == {1}, (
+        f"the live guard is already failing ({live}); read its message rather than this one"
+    )
+
+    for figure in KLV2_FIGURES:
+        dropped = section.replace(figure, "«removed»")
+        assert _figure_occurrences(dropped)[figure] == 0, (
+            f"removing {figure!r} from the section left the count unmoved, so this mutation "
+            "proves nothing about the guard"
+        )
+        requoted = section.replace(figure, figure + " (and again: " + figure + ")", 1)
+        assert _figure_occurrences(requoted)[figure] == 2, (
+            f"a section re-quoting {figure!r} did not raise its count, so the guard cannot "
+            "distinguish one statement of a figure from several and the carrier direction is "
+            "unguarded"
         )
 
 
