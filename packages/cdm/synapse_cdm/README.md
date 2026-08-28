@@ -441,17 +441,41 @@ cannot find a site nobody has added to it. The sweep is:
      `FORMAT_COVERAGE.md`, whose first draft described the repair by restating the superseded
      figures — so dropping a live figure from the entry still passed on the note's copy of it.
      Found by the mutation check on the repaired guard, inside the commit that wrote both.
+   * **A round's own record carrying a REFUTATION that was later withdrawn, and this is the
+     direction the rule was missing.** The four instances above are all carriers of a token or a
+     figure. This one carried a *negative claim* — a round recorded that an untouchable named a
+     figure its derivation does not report, the next round traced the figure and found it sourced,
+     gated and correct at birth, and the refutation was withdrawn at its own site in
+     `MIGRATIONS.md`. The withdrawal did not reach the round's node in `klv_pin.json`, which went
+     on asserting it unqualified until a sweep went looking. **A carrier of a refutation is worse
+     than a carrier of a figure, and the asymmetry is the point**: a figure has a derivation
+     somebody may re-run out of habit, while a refutation reads as the work already having been
+     done, so it is believed instead of checked. This one was believed — it left the record as a
+     later brief's premise and arrived back as an instruction to strip a live gated figure. **What
+     it costs is a whole round**, which is more than any of the four above cost.
+
+     Two things follow for the treatment. **A withdrawal is a sweep and not an edit**: withdrawing
+     a refutation means enumerating every site that carried or quoted it, which is why the check
+     that found this one walked the records and the pins as DATA rather than reading prose. And
+     **where the site is an append-only history, the withdrawal is a dated clause placed where a
+     sweep lands** — adjacent to the field that carries the claim, with the withdrawal in the key's
+     own name — rather than an edit to the field or a clause at the end of the node. The first
+     placement of this one was at the end of the node, which a reader reaches and a `grep` does
+     not.
 
    **The rule already in force at every one of them, stated once here because it was that many
-   local rules before.** Describe, do not quote — a correction names what was wrong and does not
+   local rules before**, and the fifth was found by a sweep run under it rather than met head-on. Describe, do not quote — a correction names what was wrong and does not
    reproduce it. Every path by basename, this document included, and no self-reference anywhere,
    because a phrase that recurs for unrelated reasons is not evidence that a path was named. And
    each live figure exactly once, with its basis.
 
-   **WHAT IS MECHANIZED.** Three of the four are guarded, and all three the same way — by making
+   **WHAT IS MECHANIZED.** Three of the five are guarded, and all three the same way — by making
    the token unspellable at the site rather than by detecting a spelling: the phrase is assembled
    from parts, the markers are imported, the path is required by basename. That works wherever the
-   token is **enumerable in advance**, and it is the first thing to try.
+   token is **enumerable in advance**, and it is the first thing to try. **The two that are not
+   guarded are the two whose carried thing is not a token**: a figure and a refutation. Neither is
+   enumerable in advance, and the second is not even a string — a refutation is a claim, and the
+   same claim has as many spellings as a round has sentences.
 
    A figure is not enumerable in advance, so the fourth needed a different answer, and **the
    briefed form of it — a check that refuses re-quotation inside correction notes — was specced,
