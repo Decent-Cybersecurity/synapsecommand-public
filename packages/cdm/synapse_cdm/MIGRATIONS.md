@@ -973,7 +973,24 @@ named an untouchable as "35 via the derivation"; nothing the derivation reports 
 are seven, the pending arc is five, its module has 22 tests — and the divergence is recorded rather
 than reconciled to a number that would fit. Its other figures held: seventeen deployments,
 `965e939d` as the fourth cell, the scripted-edit contract at nine, `RELEASE_NOTES.md` opening 1.2.1,
-zero tracked PDFs. **A sweep-class finding of this round's own was ALSO checked before it was
+zero tracked PDFs.
+
+**WITHDRAWN 2026-08-28 BY THE PROVENANCE ROUND: the finding above is itself false, and it is a
+category error rather than a miscount.** "35 via the derivation" is exactly what the pinned-phrase
+derivation reports. The command the record states at every site — `git ls-files -z | xargs -0 grep
+-Ioh '1\.1\.0 candidate' | wc -l` — answers **35** today, `occurrences_over_tracked_files()` sums
+to the same over the tracked tree, and `tests/test_cdm_prose_counts.py` holds the two equal, so the
+figure is gated rather than unsourced. The three figures the paragraph above measured it against
+belong to a **different untouchable**: signals and the pending arc are
+`gates/bump_derivation.py`'s and the Unreleased count guard's, and the module holding 22 tests is
+that gate's. Two derivations, one of them not the one
+the brief named. **The refutation was already in this file, twice, in the two round records above
+that state the pinned phrase's reading together with its command** — so nothing had to be measured
+to find it. The standing rule did not catch a fifth brief error here; it produced one, and the next
+brief inherited it as a premise. Classed **born-false**; the trace, and what it did not change, is
+in the provenance round below.
+
+**A sweep-class finding of this round's own was ALSO checked before it was
 believed and did not survive:** `delegation_table` looked one short of the fourteen its sentence
 claims, and the fourteenth turned out to be the Handbook rather than the missing document a first
 reading suggested — a stray `ST 0605.9` inside a quoted deprecation note makes the node's raw
@@ -997,6 +1014,118 @@ schema, and `SCHEMA_VERSION` unmoved. No park moved and no park closed. No tag r
 register entry was added. The only files touched under `packages/` are `MIGRATIONS.md` and
 `klv_pin.json`, both prose and both already among the **FIVE** the arc had moved, so the Unreleased
 count does not move and the floor stays **1.2.2**. No deploy, no tag, no rendered page.
+
+**THE PROVENANCE ROUND, 2026-08-28 — the figure the last round called unsourced is the one its
+own derivation reports, the residue that round left dissolves on reading, and sweeping the record's
+index of what is checkable found a false row of a shape no previous sweep had a name for.** Three
+acts. The first reverses a finding instead of closing one, the second closes nothing because there
+was nothing there, and the third is the only one that repaired anything.
+
+**THE 35 TRACE FOUND NEITHER DECAY NOR A BIRTH DEFECT, which is the one outcome the brief did not
+allow for.** The brief was written on the premise that the figure stands unsourced and instructed
+this round to re-anchor the untouchable away from any number. Run first, as the audit: the command
+answers **35**, `occurrences_over_tracked_files()` sums to 35 across the tracked tree, and the two
+are held equal by a guard that calls the same function the human command mirrors. The trace by
+history is short. `8e020eb` (2026-08-26) introduced sweep rule 8 and `PINNED_PHRASE_OCCURRENCES` in
+one commit, so the figure and its derivation were born together and correct together; the last
+commit that could have moved the count is `1b0316b` (2026-08-24), two days earlier, and nothing has
+touched the phrase since. **Every round's commit message from `487a421` onward states the figure
+together with the command**, which is a re-derivation and not a carrier. So the figure was correct
+at birth, has not drifted, and is gated. The withdrawal is recorded at the false finding's own site
+above.
+
+**WHAT ACTUALLY RODE BRIEF TO BRIEF WAS THE REFUTATION, NOT THE FIGURE — and that is rule 9's
+class, one layer up and pointed the other way.** The brief asked honestly whether the figure was
+rule 9's fifth instance. It was not: a number re-derived by command in every round is the opposite
+of a carrier. What travelled unre-derived was the *negative* claim about it — "nothing the
+derivation reports is 35" — which was written into three sites in one round and then carried into
+the next round's premises, where it cost this round's first act. **A carrier of a refutation is
+worse than a carrier of a figure**, because a figure has a derivation somebody may re-run out of
+habit while a refutation reads as the work already having been done. Nothing here is mechanized and
+the honest reason is that the check is free: the paragraph that made the claim sat two paragraphs
+below two paragraphs stating the correct fact with its command.
+
+**THE RE-ANCHORING IS DECLINED, ON THE BRIEF'S OWN STOP RULE.** The ruling the brief carried as
+already-made — state the command and never a number, record any current figure as a dated reading
+— was ordered against a defect that does not exist. The record already states the command at every
+site that states the figure, the figure is what the command reports, and a guard fails if they
+part. Stripping it would remove a gated number on a false premise and leave the untouchable weaker
+than it is. **The brief loses and the divergence is recorded**: the untouchable stays anchored to
+both, because that is what "pin the derivation, not just the number" asked for and got.
+
+**THE ENTRY 2 RESIDUE DISSOLVES, AND A DISSOLVED RESIDUE IS A FINDING.** `PUBLICATION.md`'s entry 2
+is headed for a set of three, enumerates three rows, says three in its prose, and the tree derives
+exactly those three commits as carrying no `Signed-off-by` trailer — `965e939d`, `2a51871f` and
+`d7986017`, with a guard recomputing the set from the history and a second guard proving that
+reader is not vacuous. Nothing in entry 2 is stale. The tension the last round left was between
+entry 2 and a *pre-correction* sentence in entry 9 that cites it for a set of two, and that round's
+own amendment already names it in those words. There was no arithmetic to repair, and the reason it
+looked like a stale count from outside is worth keeping: **a citation can be wrong about the source
+it cites without either the citation or the source containing a wrong number.**
+
+**SWEEP RULE 10 — an index of what is checkable is itself a claim, and it gets swept like one.**
+Written into `synapse_cdm/README.md` beside rule 9 from the last round's root cause, which was a
+cell asserting that a figure lived in no prose while the entry above it spelled that figure three
+times in the same file. The generalisation is what makes it a rule rather than an incident: a
+summary of what is checkable is the fastest thing in a long record to trust and the slowest to
+check, and a false one does not merely mislead — it redirects the sweeps, and keeps redirecting
+them.
+
+**APPLIED ONCE, AND IT FOUND TWO, IN THE TABLE THAT SUPPLIED THE RULE.** Both stopped for
+adjudication before anything was written, on the standing rule.
+
+* **A treatment cell named a gate and misdescribed what the gate enforces — BORN-FALSE.** It said
+  `tests/test_cdm_release.py` forbids an `Unreleased` section once the release tag exists. The gate
+  requires that section while shipped files have moved past the tag and forbids it only when the
+  tree is identical to the tag, so a tag and an `Unreleased` section coexist legally. They coexist
+  in this repository right now, on a green suite, and have since `e825e96` — written about an hour
+  after the cell, at the moment the arc moved its first file. **The cell was consistent with the
+  tree in the hour it was written and false about the mechanism from the start**, which is rule 8's
+  substitution — a state read off the tree standing in for the derivation that produces it —
+  applied to a gate's contract instead of to a count. Corrected in the cell, dated.
+* **One label carried two disjoint senses and the table defined one — BORN-FALSE in the
+  definition, not in the rows that use it.** The table explains a gated claim as one that cannot go
+  stale because a test fails. Four of its rows apply the label to claims whose truth lives at
+  Cloudflare: the deployment list's two, and the two naming which deployment serves the custom
+  domain. The suite cannot reach Cloudflare and must not want to — `tests/test_cdm_deploy_record.py`
+  says so while checking the part of the gate that can be wrong sitting still — so what refuses a
+  stale one is `gates/deploy_record.py`, an act a person performs. **The proof they are not one
+  sense is two rows of the same table**: one custom-domain claim went false inside the round that
+  wrote it and another was superseded a day later, each caught by somebody running the gate and
+  neither by a build going red. Both senses are kept and both are now named; relabelling the rows
+  would have thrown away the weaker one, which is the honest description of four of them.
+
+**The rest of the table holds, and the sweep is published rather than counted.** Checked one cell
+at a time against the tree: the top row's two gated examples both have suite tests, and one of them
+has a non-vacuity witness; the deploy mechanism is stated at two paths and its gate reads exactly
+those two; the retroactive bump claim is a test that classifies every released arc from the trees
+alone; the tree half of the 1.2.1 prose corrections is pinned in `tests/test_cdm_prose_counts.py` at
+each of the paths the entry names; the entry 8 cell the last round corrected now names a figure its
+own guard derives; release condition 5 exists and is the derivation the prose says it is. Five
+cells claim a fact is *already dated* elsewhere in the file and all five resolve — the flip-day byte
+identity to a timestamped paragraph, the ruleset's version history to a table dated per row, the
+check-runs measurement to its own commit, and the two index readings — 1.0.0's, and 1.1.0's
+with 1.2.0's — to their entries. The two
+cells that record a claim as undatable or half-witnessable both resolve to the paragraph below the
+table that explains why.
+
+**The environment bound, extended into an hour the series had never sampled.** 2026-08-28 at
+**18:23Z**, resolution only, no route asked for bytes: gwg.nga.mil, nsgreg.nga.mil and the apex all
+NOERROR, same resolver as every prior reading. That is a new hour between the retested afternoon and
+the evening window, and it does not fail. **One SERVFAIL episode against nine NOERRORs**, so the
+series continues as intermittency bookkeeping and the reading it disfavours — that the failure is a
+property of an hour — is disfavoured a little further. **Pin-as-control at the widened scope before
+anything was trusted:** the fifteen held documents re-digested from their bytes, every digest
+matching one recorded in the pin, none unmatched.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched, no CDX query was made, no pin was added.
+**Nothing executable under `packages/`** — no adapter, no codec, no model, no fixture, no schema,
+and `SCHEMA_VERSION` unmoved. No park moved and no park closed. No tag row moved. No register entry
+was added. No number in the record was reconciled to a nearby number, and the one figure this round
+was told to unanchor stays anchored, with the reason recorded. The files touched under `packages/`
+are `MIGRATIONS.md`, `synapse_cdm/README.md` and `klv_pin.json`, all prose and all already among
+the **FIVE** the arc had moved, so the Unreleased count does not move and the floor stays **1.2.2**.
+No deploy, no tag, no rendered page.
 
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
