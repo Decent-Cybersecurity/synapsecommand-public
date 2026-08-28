@@ -1179,9 +1179,26 @@ mistake this section exists to prevent.
 
 | Kind | Example | How it can go stale |
 | --- | --- | --- |
-| **Gated** | the three unsigned commits; the two files agreeing about the required status | it cannot — a test fails |
+| **Gated** | the three unsigned commits; the two files agreeing about the required status | it cannot — a test fails; and see the note below, on the label's second sense |
 | **Witnessed** | the force-push refusal; the DCO check failing then passing; the byte-identical pages | someone changes the setting afterwards and nothing notices |
 | **Recorded from the API** | the `deletion` rule; the ruleset version history; the app install time | same, and it was never observed in action |
+
+**THE `GATED` LABEL IN THE SWEEP TABLE BELOW CARRIES TWO DISJOINT SENSES, AND THE ROW ABOVE
+DEFINES ONLY ONE. 2026-08-28.** Recorded here rather than by relabelling the rows, because both
+senses are real and this file needs both. **Suite-gated** is the row above: the claim cannot go
+stale without a red build, because a test in the suite reads it. **Protocol-gated** is weaker, and
+it is what four rows of the sweep table mean — the deployment list's two claims, and the two rows
+about which deployment serves the custom domain. Their truth lives at Cloudflare. The suite cannot
+reach it and must not want to, and `tests/test_cdm_deploy_record.py` says so in as many words while
+checking the part of the gate that can be wrong sitting still; what refuses a stale one is
+[`gates/deploy_record.py`](gates/deploy_record.py), and running it is an act a person performs.
+**The difference is not academic, and this table already carries the proof.** One custom-domain
+claim went false *inside the round that wrote it* and another was superseded a day later, and each
+was caught by somebody running the gate rather than by a build going red. A protocol-gated claim
+goes stale silently for exactly as long as nobody runs the gate — which is the decay mode the row
+above assigns to a witnessed claim, not to a gated one. Found by sweeping this table's own cells:
+**sweep rule 10** in `synapse_cdm/README.md`, written from this finding and from the one
+corrected in the treatment column of the sweep table below.
 
 **A FOURTH KIND HAS BEEN RETIRED, and entry 10 is where it was last exercised: a claim that is
 merely CONSISTENT.** 2026-08-27. The release number is the sharpest case in this file, because a
@@ -1274,7 +1291,7 @@ mentions no platform**, which is the limit stated in entry 9.
 | ~~`docs.synapsecommand.com` is served by `5ed34cd8`~~ | entry 8 | `gates/deploy_record.py`, by bytes | **superseded 2026-08-27 12:37:06Z** by `222a55be` | **GATED** — the gate refused the stale id, which is how the pin moved |
 | `docs.synapsecommand.com` is served by `222a55be` | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | holds | **GATED** |
 | ~~the distribution on the index is 1.2.0~~ | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | **superseded 2026-08-27** by 1.2.1, and the section cited was absorbed into `### 1.2.1` | the citation is why this row is struck rather than edited: an `Unreleased` section is by construction not a durable address |
-| the distribution on the index is 1.2.1 | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | holds | **GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at, and forbids an `Unreleased` section once the tag exists |
+| the distribution on the index is 1.2.1 | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | holds | **GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
 | 1.2.1's digests equal what the index serves, in four readings | entry 10 | recomputed over downloaded bytes | holds | dated 2026-08-27 |
 | the four prose defects in the 1.2.0 artefacts are corrected in 1.2.1 | entry 10 | read out of the installed copy and the downloaded sdist | holds | dated 2026-08-27; the tree half is **GATED** by `tests/test_cdm_prose_counts.py` |
 | a `urllib` default `User-Agent` gets HTTP 403 from `docs.synapsecommand.com` | entry 10 | four `User-Agent` values compared | holds | dated 2026-08-27 — recorded because a uniformly failing probe reports identity |
