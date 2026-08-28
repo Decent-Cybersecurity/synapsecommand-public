@@ -1250,6 +1250,126 @@ all already among the **FIVE** the arc had moved, so the Unreleased count does n
 floor stays **1.2.2**. `PUBLICATION.md` and `tests/test_cdm_publication.py` are outside the
 distribution and move nothing a release ships. No deploy, no tag, no rendered page.
 
+**THE BLOCKER ROUND, 2026-08-28. Parks 5 and 11 are put to the ruling they wait on, and the two
+rows turn out to want ONE ruling at the first step and TWO at the second.**
+
+**Act 0, and the audit's own figures.** Tree clean, `origin/main` at `a40bd02` and `HEAD` equal to
+it. Suite **3271 passed, 3 skipped**. The untouchables hold, each by its own command: the pinned
+phrase derives to **35** over the git index, `scripted_edit`'s contract is green at **9**,
+`RELEASE_NOTES.md` opens **1.2.1** on the index, and `git ls-files` matches **no** PDF. The bump
+gate derives **PATCH** over the arc with the floor at **1.2.2**, and `--mutation-check` proves both
+refusal directions and the unruled case on its five fixtures. **One reading needed care and is not
+a finding:** `pytest -k scripted_edit` collects **11**, not 9 — the extra two are
+`test_cdm_version_floor.py`'s parametrisations, which carry the module's name and are not its
+contract. The contract file is `tests/test_cdm_scripted_edits.py` and it holds **9**.
+
+**The `nga.mil` resolution series is extended by one observation.** `NOERROR` for the apex, `gwg`
+and `nsgreg` alike at **2026-08-28 20:17Z**, resolution only, no route asked for bytes, from
+`192.168.0.1` as every prior reading. That is the evening hour after the 19:47Z reading and it does
+not fail. Intermittency bookkeeping only: **one SERVFAIL episode against eleven NOERRORs**.
+
+**Pin-as-control at the widened scope, decomposed from the files rather than inherited.** Every
+`local_path` paired with a `sha256` across all eight pin files was re-digested from the bytes on
+disk: **21** such pairs resolving to **TWENTY distinct copies** — `day_flight.klv` is pinned twice,
+which is the whole of the difference — of which **EIGHTEEN are documents under a `spec/`
+directory**, three of them under `spec/history/`, and **two are the transport-stream artefacts**.
+**All twenty are present and all twenty match; none is unmatched and none is absent.** That last
+clause is where this round's derivation parts company with the one it inherited, and the divergence
+is Act 0's finding rather than a decomposition dispute — see the sweep below. The choice between
+"fifteen documents" and "eighteen pinned copies" is settled the same way the last round settled it
+and for the same reason: they measure different sets, fifteen counting the documents the KLV
+directory holds and eighteen counting pinned copies across every fixture directory. This round
+states **twenty**, because the two stream copies are pinned copies that were re-digested like the
+rest.
+
+#### Act 1 — Park 5, the decision memo
+
+**The existence check first, because the protocol now requires it of every commanded repair.** No
+`IMAPB` codec exists. `grep -i imapb` over `packages/` returns **two** hits, both prose in
+`adapters/klv_codec.py`'s module docstring naming this park; `klv_uas_codec.py` and
+`stanag4609.py` return none. The artefact is unwritten, so this is a memo and not a verification
+note.
+
+**The blocker, in one sentence.** *Park 5 waits on permission to write new source under
+`packages/` — an `IMAPB` codec — and on nothing else, both its documents being held, pinned and
+re-digested clean this round.*
+
+**The minimal change that would unblock it.** A new importable module carrying ST 1201.3's
+forward map and its inverse for egress, plus the tag rows that consume it. **New importable name,
+new fixtures, new tests.** ST 1303.1 is not on the critical path and the record already says why:
+`1303` occurs **zero** times in ST 0601.14a's 218 pages, so the governing document delegates
+nothing to it and the delegation is MISP-2019.1's alone.
+
+**The cost, and which guard rules it.** `gates/bump_derivation.py`'s `_classify_module` reads a
+module that APPEARS as every unit added, and a public unit among them fires *"a public top-level
+name appears"* — **MINOR**, derived by the gate with no human ruling required. So the **1.2.2 floor
+does not hold** and the next release is **1.3.0**. The gate's own mutation fixture confirms the
+shape: *"a MINOR arc numbered MINOR — an adapter added and the number moved by one minor"*.
+
+**What closing park 5 would claim, and what it would not.** It would claim that the mapping
+mechanism is written and that the rows delegating to it can be read. **It would not claim a single
+held octet is newly understood.** Re-derived from the bytes this round rather than carried:
+**fourteen** of the 141 Table 1 rows have a Format column reading `IMAPB` — tags 96, 103, 104, 105,
+109, 112, 113, 114, 117, 118, 119, 120, 132 and 134, which is the row's own enumeration reproduced
+exactly — and the sections reach **sixteen**, adding 128 and 130 whose `vlp` packs map members with
+IMAPB. **Not one of the sixteen is in the pinned stream**, whose 26 witnessed items stop at tag 65,
+verified this round by walking `day_flight.klv` rather than by citation. **The row that bites is
+tag 112**, Platform Course Angle: the shipped adapter emits `kinematics.course_deg=None` on all six
+packets, measured, and 112 is what would fill it.
+
+#### Act 2 — Park 11, derived independently, and its plan cell does not hold
+
+**The existence check, and it is the finding.** `Entity.source_ids` is **not** empty today.
+`adapters/stanag4609.py:369` sets `source_ids=[SourceId(system=OBSERVATION_SYSTEM,
+external_id=f"{stamp_us}|{index}")]`, and running the shipped adapter over the pinned stream emits
+`[('UAS-LS-PACKET', '1245257585099653|0')]` on every packet. `OBSERVATION_SYSTEM` is documented in
+that module as *"the adapter's own construction over items that identify nothing"*.
+
+**So the plan's bump cell rests on a premise its own tree refutes.** The cell reads: the PATCH row
+*"does not describe an `Entity` that gains a `source_ids` it did not carry"*. **One phrase doing two
+jobs** — true read as *gains a source id it did not carry*, false read as *gains the field* — and
+**the bump argument rides on the false reading**, because "the field appears" is a surface change
+and "an existing field carries a second, better-sourced entry" is not. It was false when written:
+adapter #10 shipped 2026-08-26 emitting this `source_ids`, and the cell was written on the evening
+of 2026-08-27. **Finding first, memo second**, per the brief.
+
+**The blocker, in one sentence.** *Park 11 waits on permission to write source under `packages/` —
+decoding item 94's MIIS Core Identifier into `Entity.source_ids` — and, separately, on a written
+bump ruling that the gate will refuse to derive for it.*
+
+**The minimal change that would unblock it.** A MIIS decoder in `klv_uas_codec`, and a call site in
+`stanag4609.py`'s `_translate` that appends the decoded identity beside the packet key rather than
+replacing it — the packet key is what makes an `Entity` addressable when item 94 is absent, which
+is every packet of the only stream held.
+
+**The cost, and which guard rules it — re-derived, and it is not what the plan says.**
+`functional_units` keys a module by its **top-level** statements, so a change inside `_translate`
+is a change to the public unit `Stanag4609Adapter`, which exists at both ends of the arc. With no
+name added or removed in `stanag4609.py` there is no roster move to explain it, and
+`_classify_module`'s last branch files it as an **Ambiguity**: *"changed on functional lines with
+NO name added or removed and no roster behind it"*, and the branch's remedy clause sends the reader
+to this file's arc section to rule the unit by hand. The gate's own
+mutation fixture names this exact case — *"UNRULED — an unruled arc — a function body moved with no
+name added, removed or rostered"*. **So the gate REFUSES park 11's change rather than classifying
+it**, printing `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter`, and a
+`**Bump ruling.**` paragraph naming that unit verbatim is required before the arc measures. The
+plan's *"MINOR at least"* is not wrong about the direction; it is wrong that the gate supplies it.
+
+**What closing park 11 would claim, and what it would not.** It would claim that the only identity
+the format guarantees can key an `Entity`. **It would not claim that any held octet was decoded:**
+item 94 is **absent from the pinned stream**, verified this round by walking the bytes, so the
+decoder would ship against no witness — the sharper form of park 5's risk, and the reason the
+appending call site above matters rather than a replacing one.
+
+**ARE THE TWO PARKS THE SAME RULING WEARING TWO ROWS? At the first step yes, at the second no, and
+the difference is the whole answer.** Both parks' first blocker is one ruling: the standing rule on
+source under `packages/`, and a single answer to *"may source be written for the KLV adapter"*
+unblocks both. **They diverge at the second step.** Park 5's bump is derived by the gate
+automatically and costs the 1.2.2 floor. Park 11's bump is **refused** by the gate and costs a
+second, separately written human ruling that park 5 does not need. **So one ruling is being
+requested for both, and park 11 additionally requests a second.** A round that asked for "a ruling
+on parks 5 and 11" as one item would get park 11 half-unblocked.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
