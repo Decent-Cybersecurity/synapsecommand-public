@@ -1233,6 +1233,12 @@ re-digested from the bytes on disk: **TWENTY** distinct pinned copies, of which 
 documents under a `spec/` directory — all eighteen present, all eighteen matching, none unmatched —
 and two are the walk round's transport-stream artefacts under `fixtures/klv/streams/`, both absent
 from disk, which is what a held-but-never-committed stream looks like after the round that held it.
+*(CORRECTED 2026-08-28 by the blocker round's stale-count sweep: they are NOT absent. Both sit at
+the REPOSITORY ROOT — `local_path` is package-relative for the `spec/` documents and
+root-relative for the streams — with mtimes of 2026-08-26, two days before this round, and both
+digest to their pinned values. So the widened scope is twenty present and twenty matching, not
+eighteen of twenty. The absence was a path-resolution error of exactly the class the round before
+this one had already recorded.)*
 **That is a different decomposition from the "fifteen documents" the last two rounds recorded, and
 it is not a disagreement**: fifteen counts the documents the KLV directory holds, of which twelve
 are pins, while eighteen counts pinned copies across every fixture directory. Both are derived and
@@ -1369,6 +1375,88 @@ automatically and costs the 1.2.2 floor. Park 11's bump is **refused** by the ga
 second, separately written human ruling that park 5 does not need. **So one ruling is being
 requested for both, and park 11 additionally requests a second.** A round that asked for "a ruling
 on parks 5 and 11" as one item would get park 11 half-unblocked.
+
+#### Act 3 — the parks table swept, and four of the nine open rows have decayed
+
+**The sweep repairs nothing.** Each row was asked the two questions the brief sets — does its
+stated blocker still match what its plan needs today, and does it cite anything the last seventeen
+rounds have obtained or refuted — and every answer is derived from the tree or from held bytes
+rather than from the row beside it. **Nine parks are open: 2, 3, 5, 6, 7, 8, 10, 11 and 12.**
+
+**Park 2 — DECAYED, and the record refutes it in its own prose.** The row's Reopen cell reads
+*"Public download. Blocks the confidentiality ruling … so until it lands, nothing this adapter
+emits can be claimed conformant"*. **ST 0102.12 landed on 2026-08-26**; it is pinned in
+`klv_pin.json` and was re-digested clean in this round's pin-as-control. The record says so itself
+two sections above the table — *"Park 2 is the precedent: ST 0102.12 held since 2026-08-26, row set
+unwritten, park open"* — and the delegated-documents row counts park 2 among the obtained, listing
+only parks 3, 6, 7, 8, 10 and 12 as standing on unobtained documents. **Class: the acquisition half
+is discharged and the row was never given the update parks 5 and 11 received.** Park 2 is in
+exactly the state those two rows describe at length and its own row still describes step one as
+pending.
+
+**Park 3 — DECAYED, and the refutation is the shipped adapter.** The row reads *"Blocks
+`Event.observed_at` — the one CDM field this format's own users would consider mandatory"*. Running
+adapter #10 over the pinned stream emits `observed_at = 2009-06-17 16:53:05.099653+00:00` on every
+packet. The record already contains the narrowing: the tag 2 row says **"Promoted"**, reads the
+epoch out of ST 0601.14 §6.4 and §8.2, and states twice that *"park 3 is not closed by this: ST
+0603.5 still owns what to call a scale of SI seconds since 1970 that is not UTC"*. **Class: the
+blocker was narrowed elsewhere in the record and the row was not re-derived.** What park 3 owns
+today is the timescale's NAME, not the field.
+
+**Park 6 — DECAYED, mildly, and only in its second half.** The row reads *"what would make this
+adapter emit `Event`s of type `DETECTION` rather than only parked bytes"*. The `DETECTION` half
+stands. **"Only parked bytes" does not:** the adapter emits six `Entity`/`Event` pairs with a GNSS
+position, `speed_mps=46.0` and `STATUS_CHANGE`, measured this round. **Class: a comparison written
+against an adapter that had not shipped yet.**
+
+**Park 11's plan cell — DECAYED, and it is Act 2's finding above rather than the sweep's.** Named
+here so the table sweep and the memo agree on the count: **four decayed rows, and this is the
+fourth.**
+
+**Park 7 — CLEAN.** Four cells, a document unobtained, one section citation, and nothing that any
+round has since obtained or refuted.
+
+**Park 10 — CLEAN, and a near-false finding is declined.** `spec/misb-misp-2019-1.pdf` is held and
+matched, which read at a glance as park 10's document arriving without its row moving. **It is not
+that document.** The held copy is `klv_pin.json`'s `target` — the 73-page MISP-2019.1 profile, the
+thing being profiled. Park 10 is the **Motion Imagery Handbook**, a companion volume, and the
+record already carries the distinction verbatim: *"Named by the wrapper and NOT held"*. **The row
+stands unchanged**, and this is recorded because the near-miss is the interesting part: two
+documents whose short names differ by nothing a filename shows.
+
+**Park 12 — FLAGGED, at lower confidence, and not called decay.** The row prices itself on a
+partition: *"parks 4, 5 and 8 are enough to READ a stream at all, and parks 1, 3, 11 and 12 are
+enough to TRANSLATE a conformant one"*. Read as **sufficiency** it is untested and nothing here
+touches it. Read as **necessity** the tree refutes both halves: the pinned stream is read today —
+six packets, 26 items, walked end to end — with parks 5 and 8 open, and it is translated today into
+positions, kinematics and instants with parks 3, 11 and 12 open. **Class: a partition written
+before adapter #10 shipped and not re-derived since.** Named rather than repaired, and flagged
+rather than ruled, because the sentence is ambiguous between a claim the tree refutes and one it
+does not reach.
+
+**Park 8 — UNTOUCHABLE, verified unchanged rather than assumed.** Its row is line 9777 of
+`FORMAT_COVERAGE.md` and its SHA-256 opens `f16f602d7473`, taken at the start of this round and
+re-taken at the end. `FORMAT_COVERAGE.md` is not modified by this round at all, so the row is
+unchanged by the stronger fact that the file is.
+
+#### Act 0's finding, repaired here as a stale-count sweep item
+
+**The last round reported an absence that was the reader's error, and it is the same error the
+round before it warned about.** Its pin-as-control recorded the two transport-stream artefacts as
+*"both absent from disk"*. **They are present.** `fixtures/klv/streams/day_flight.klv` and
+`day_flight.mpg` sit at the **repository root**, mtimes **2026-08-26**, two days before that round
+ran, and both digest to their pinned values exactly. The cause is path resolution: `local_path` is
+package-relative for the `spec/` documents and repository-root-relative for the streams, and a
+single base applied to both makes the streams vanish. **The round before last had already written
+the warning** — its own first pass *"reported three absences that were the reader's error and not
+the record's"* — and the next round reproduced the class in the same step. **This round's first
+pass reproduced it a third time** and caught it only by looking for the files rather than trusting
+the resolver, which is why it is recorded as a property of the method and not of a round.
+
+The correction is made in place beside the claim rather than appended, so a reader arriving at the
+sentence meets its refutation there. **The last round's commit message carries the same
+formulation** and is not rewritten; a message is a historical artefact and the record is the thing
+that has to be right.
 
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
