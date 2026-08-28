@@ -1179,15 +1179,18 @@ mistake this section exists to prevent.
 
 | Kind | Example | How it can go stale |
 | --- | --- | --- |
-| **Gated** | the three unsigned commits; the two files agreeing about the required status | it cannot — a test fails; and see the note below, on the label's second sense |
+| **Suite-gated** | the three unsigned commits; the two files agreeing about the required status | it cannot — a test in the suite reads the claim, so a stale one is a red build |
+| **Protocol-gated** | which deployment serves `docs.synapsecommand.com`; the deployment list being all `ad_hoc` | silently, and for as long as nobody runs the gate — the claim's truth lives at Cloudflare, which the suite cannot reach, and the gate that refuses a stale one is an act a person performs |
 | **Witnessed** | the force-push refusal; the DCO check failing then passing; the byte-identical pages | someone changes the setting afterwards and nothing notices |
 | **Recorded from the API** | the `deletion` rule; the ruleset version history; the app install time | same, and it was never observed in action |
 
-**THE `GATED` LABEL IN THE SWEEP TABLE BELOW CARRIES TWO DISJOINT SENSES, AND THE ROW ABOVE
-DEFINES ONLY ONE. 2026-08-28.** Recorded here rather than by relabelling the rows, because both
-senses are real and this file needs both. **Suite-gated** is the row above: the claim cannot go
-stale without a red build, because a test in the suite reads it. **Protocol-gated** is weaker, and
-it is what four rows of the sweep table mean — the deployment list's two claims, and the two rows
+**THE SINGLE `GATED` LABEL CARRIED TWO DISJOINT SENSES AND THE TERMS TABLE DEFINED ONLY ONE.
+Found 2026-08-28, the two senses named the same day, the rows reclassified under them 2026-08-28 by
+the repair round — the half the finding round left undone.** Both terms are now
+defined once each, in the terms table above, and every row of the sweep table below carries one of
+them. **Suite-gated** is the table's first row: the claim cannot go stale without a red build,
+because a test in the suite reads it. **Protocol-gated** is weaker, and it is what four rows of the
+sweep table mean — the deployment list's two claims, and the two rows
 about which deployment serves the custom domain. Their truth lives at Cloudflare. The suite cannot
 reach it and must not want to, and `tests/test_cdm_deploy_record.py` says so in as many words while
 checking the part of the gate that can be wrong sitting still; what refuses a stale one is
@@ -1195,10 +1198,39 @@ checking the part of the gate that can be wrong sitting still; what refuses a st
 **The difference is not academic, and this table already carries the proof.** One custom-domain
 claim went false *inside the round that wrote it* and another was superseded a day later, and each
 was caught by somebody running the gate rather than by a build going red. A protocol-gated claim
-goes stale silently for exactly as long as nobody runs the gate — which is the decay mode the row
-above assigns to a witnessed claim, not to a gated one. Found by sweeping this table's own cells:
+goes stale silently for exactly as long as nobody runs the gate — which is the decay mode the
+terms table assigns to a **witnessed** claim, and the reason the split is a split rather than a
+qualifier: on the axis the third column measures, protocol-gated sits with witnessed and not with
+the word it used to share. Found by sweeping this table's own cells:
 **sweep rule 10** in `synapse_cdm/README.md`, written from this finding and from the one
 corrected in the treatment column of the sweep table below.
+
+**WHY THE ROWS WERE LEFT UNLABELLED WHEN THE SENSES WERE NAMED, AND WHY THAT IS REVERSED.
+2026-08-28.** The finding round recorded the split in this paragraph and left every row saying
+`GATED`, on the reasoning that relabelling them "would have thrown away the weaker one, which is
+the honest description of four of them". **That reasoning does not survive being read.** Labelling
+the four Cloudflare rows protocol-gated is precisely what *applies* the weaker sense; it is the
+un-relabelled table that discards it, by showing a reader four claims under the stronger word. Two
+terms are only worth defining if the rows use them. And leaving them was the defect sweep rule 10
+exists to name, one turn deeper than the round found it: an index of what is checkable, telling a
+reader that four claims whose truth lives at Cloudflare cannot go stale without a red build, with
+the correction a paragraph away and out of the path of anyone reading the row. **A note that a
+label is wrong is not a label that is right.** Which rows moved was re-derived here rather than
+carried over — each cell read against what actually refuses its claim, not counted to four: the
+four naming [`gates/deploy_record.py`](gates/deploy_record.py) as the check are protocol-gated,
+because that gate shells out to `wrangler` and `tests/test_cdm_deploy_record.py` asserts in as many
+words that it is not a suite member; the deploy-mechanism row and the prose-defect row's tree half
+name suite tests that read only the tree, and stay suite-gated; the 1.2.1-on-the-index row keeps
+its **at one remove** qualifier, because the suite test it names gates a proxy — the tag matching
+the tree's `PACKAGE_VERSION` — and nothing in the suite reads the index itself.
+
+**One carrier is opened by this repair and is left standing deliberately, named here so the next
+sweep does not mistake it.** The paragraph above is now the only place in this file that spells the
+retired single label, so a sweep for that label finds this explanation rather than a surviving row.
+It is spelled twice, both times inside the sentence that records the retirement, and it cannot be
+made unspellable the way sweep rule 9's three mechanized instances were — a retired label has to be
+named to be retired. What makes it cheap is that the table it describes no longer contains the
+token, so a reader who greps arrives at prose that says so in its first line.
 
 **A FOURTH KIND HAS BEEN RETIRED, and entry 10 is where it was last exercised: a claim that is
 merely CONSISTENT.** 2026-08-27. The release number is the sharpest case in this file, because a
@@ -1209,7 +1241,7 @@ whether a number is stated the same way in two places: the tag names the tree's 
 the notes describe that version, the package source that moved is written down. **Consistency is
 not a measurement.** Three documents agreeing about a wrong number is three documents agreeing.
 
-The number is now **gated**, on the top row's terms — it cannot go stale because a test fails.
+The number is now **suite-gated**, on the top row's terms — it cannot go stale because a test fails.
 [`gates/bump_derivation.py`](gates/bump_derivation.py) classifies the diff over the distribution's
 own contents between the previous tag and the tree being released against `version.py`'s
 `PACKAGE_VERSION` table, and refuses a number that exceeds or undershoots it; it is condition 5 of
@@ -1283,17 +1315,17 @@ mentions no platform**, which is the limit stated in entry 9.
 | the token is revoked; OIDC is the only way in | entry 6, step C | none exists — PyPI publishes no token state | **UNDATABLE from held evidence** | recorded as resting on the maintainer's word, which that step already said in as many words |
 | ~~step C is `NOT DONE`~~ | entry 6, "Where this stands" | the same entry, four paragraphs down | **FALSE, and never true as an undated snapshot** | struck; **ledger entry 9** |
 | the Pages project has no Git integration | deployment section | `wrangler pages project list` | holds — the project reports none | dated |
-| the deploy mechanism is stated in two places and they agree | deployment section | — | — | **GATED**: `tests/test_cdm_deploy_workflow.py` |
+| the deploy mechanism is stated in two places and they agree | deployment section | — | — | **SUITE-GATED**: `tests/test_cdm_deploy_workflow.py` |
 | the flip-day byte identity to `e08d2ea7` | deployment section | — | superseded | **already dated 2026-08-25 10:01Z**, and this is the pattern the rest of this table follows |
 | ~~`57ac1878` holds the alias and is what the site has served since~~ | deployment section | five pages, byte compared | **FALSE — decayed inside the round that wrote it** | dated and superseded; **`gates/deploy_record.py`** |
-| the deployment list is all `ad_hoc`, every source commit resolving here | entry 8 | `gates/deploy_record.py` | holds | **GATED** for the two claims in the left column. **This cell's own trailing claim about where the list's length lives was wrong in the commit that wrote it** — it said the figure was derived by the gate and appeared in no prose, and entry 8 spelled it three times in this same file on that day. **That sentence is why nobody looked**, and the count it waved off is the one that then decayed. Corrected 2026-08-28: the figure is stated in the entry, derived from the gate's own enumeration, and ruled by `tests/test_cdm_deploy_record.py` |
-| every deployment id is named by a row or by the pinned coverage set | entry 8 | `gates/deploy_record.py` | holds | **GATED** |
-| ~~`docs.synapsecommand.com` is served by `5ed34cd8`~~ | entry 8 | `gates/deploy_record.py`, by bytes | **superseded 2026-08-27 12:37:06Z** by `222a55be` | **GATED** — the gate refused the stale id, which is how the pin moved |
-| `docs.synapsecommand.com` is served by `222a55be` | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | holds | **GATED** |
+| the deployment list is all `ad_hoc`, every source commit resolving here | entry 8 | `gates/deploy_record.py` | holds | **PROTOCOL-GATED** for the two claims in the left column. **This cell's own trailing claim about where the list's length lives was wrong in the commit that wrote it** — it said the figure was derived by the gate and appeared in no prose, and entry 8 spelled it three times in this same file on that day. **That sentence is why nobody looked**, and the count it waved off is the one that then decayed. Corrected 2026-08-28: the figure is stated in the entry, derived from the gate's own enumeration, and ruled by `tests/test_cdm_deploy_record.py` |
+| every deployment id is named by a row or by the pinned coverage set | entry 8 | `gates/deploy_record.py` | holds | **PROTOCOL-GATED** |
+| ~~`docs.synapsecommand.com` is served by `5ed34cd8`~~ | entry 8 | `gates/deploy_record.py`, by bytes | **superseded 2026-08-27 12:37:06Z** by `222a55be` | **PROTOCOL-GATED** — the gate refused the stale id, which is how the pin moved |
+| `docs.synapsecommand.com` is served by `222a55be` | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | holds | **PROTOCOL-GATED** |
 | ~~the distribution on the index is 1.2.0~~ | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | **superseded 2026-08-27** by 1.2.1, and the section cited was absorbed into `### 1.2.1` | the citation is why this row is struck rather than edited: an `Unreleased` section is by construction not a durable address |
-| the distribution on the index is 1.2.1 | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | holds | **GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
+| the distribution on the index is 1.2.1 | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | holds | **SUITE-GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
 | 1.2.1's digests equal what the index serves, in four readings | entry 10 | recomputed over downloaded bytes | holds | dated 2026-08-27 |
-| the four prose defects in the 1.2.0 artefacts are corrected in 1.2.1 | entry 10 | read out of the installed copy and the downloaded sdist | holds | dated 2026-08-27; the tree half is **GATED** by `tests/test_cdm_prose_counts.py` |
+| the four prose defects in the 1.2.0 artefacts are corrected in 1.2.1 | entry 10 | read out of the installed copy and the downloaded sdist | holds | dated 2026-08-27; the tree half is **SUITE-GATED** by `tests/test_cdm_prose_counts.py` |
 | a `urllib` default `User-Agent` gets HTTP 403 from `docs.synapsecommand.com` | entry 10 | four `User-Agent` values compared | holds | dated 2026-08-27 — recorded because a uniformly failing probe reports identity |
 
 **A probe form that gives the wrong answer, and it is the sort of thing this table exists to

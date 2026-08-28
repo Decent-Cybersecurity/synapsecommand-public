@@ -510,14 +510,28 @@ cannot find a site nobody has added to it. The sweep is:
      sentence was consistent with the tree in the hour it was written, when nothing had moved and
      no such section existed, and was refuted about an hour later when the section came back under
      the tag — where it has stood since, above the table, in the file the cell is about.
-   * **One label carried two disjoint senses and the table defined only one of them.** Its own top
-     row explains a gated claim as one that cannot go stale because a test fails. Rows further down
-     apply that label to claims whose truth lives at Cloudflare, which the suite cannot reach and
-     must not want to; what refuses those is `gates/deploy_record.py`, and running it is an act a
-     person performs. Both senses are real and the table needs both. What proves they are not one
-     sense is two rows of the same table: an alias claim that went false *inside the round that
-     wrote it*, and another superseded a day later, each caught by somebody running the gate and
-     neither by a build going red.
+   * **One label carried two disjoint senses and the table defined only one of them.** Its terms
+     table explained a gated claim as one that cannot go stale because a test fails, while rows
+     further down applied that same label to claims whose truth lives at Cloudflare, which the
+     suite cannot reach and must not want to; what refuses those is `gates/deploy_record.py`, and
+     running it is an act a person performs. Both senses are real and the table needs both. What
+     proves they are not one sense is two rows of the same table: an alias claim that went false
+     *inside the round that wrote it*, and another superseded a day later, each caught by somebody
+     running the gate and neither by a build going red.
+
+     **REPAIRED IN TWO ROUNDS, AND THE SECOND HALF IS THE INSTRUCTIVE ONE.** The finding round
+     named the two senses in a paragraph and left every row under the collapsed word, reasoning
+     that relabelling them would discard the weaker sense. It is the other way round: applying the
+     weaker label to the four rows that earn it is what keeps that sense, and two terms are only
+     worth defining if the rows use them. So the terms table now carries a row for each, and every
+     row of the sweep table carries one of them — four protocol-gated, three suite-gated of which
+     one at one remove, and none under the retired word. **A note that a label is wrong is not a
+     label that is right**, and for the whole interval between the two rounds this bullet was the
+     note. The tier vocabulary turned out to be gated by
+     `tests/test_cdm_publication.py::test_the_record_states_what_it_cannot_check`, which went red
+     on the rename; mutating it then showed its roster check was satisfied by the paragraph that
+     DISCUSSES a tier while the tier row itself had been renamed away, so it reads the table row
+     now. That is this rule's own defect found inside the check meant to enforce it.
 
    **The failure shapes differ, and the second is the one to watch.** The first was simply false.
    The third was one word doing two jobs — the defect the record had just adjudicated one class
@@ -527,8 +541,9 @@ cannot find a site nobody has added to it. The sweep is:
    cell was accurate when written and describes the wrong thing.
 
    **What follows for the sweep is one line: the summary cells are in scope, and they are cheaper
-   to check than what they summarise.** A cell saying GATED, `derived by the gate`, `stated in no
-   prose` or `already dated` is an assertion about this repository, and the named test either
+   to check than what they summarise.** A cell naming its own tier, or saying `derived by the gate`,
+   `stated in no prose` or `already dated`, is an assertion about this repository, and the named
+   test either
    exists and asserts that thing or it does not. **Nothing here is mechanized, and the reason is
    worth stating**: checking that a cell names a test that exists is nearly free and nearly
    worthless, while checking that the test asserts what the cell says it asserts is a reading of

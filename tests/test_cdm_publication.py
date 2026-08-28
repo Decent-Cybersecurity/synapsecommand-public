@@ -585,8 +585,18 @@ def test_the_record_states_what_it_cannot_check():
     Every protection in this file was verified by a refusal, except one: the `deletion` rule
     cannot be witnessed on the default branch, because GitHub's older default-branch guard
     refuses first and never cites the ruleset. Collapsing that into "protections verified" is the
-    kind of rounding-up this repository treats as a defect, so the three tiers are written out and
+    kind of rounding-up this repository treats as a defect, so the tiers are written out and
     the unwitnessed rule is named.
+
+    THE ROSTER WAS THREE AND IS FOUR, and the reason is the finding that split it. `Gated` carried
+    two disjoint senses: a claim a suite test reads, which cannot go stale without a red build, and
+    a claim whose truth lives at Cloudflare, which goes stale silently until somebody runs
+    `gates/deploy_record.py`. This roster asserted only the collapsed word, so it was green through
+    the whole period the table applied one label to both — which is the shape of the defect, not an
+    accident of it. A tier vocabulary is exactly the kind of index sweep rule 10 puts in scope, and
+    a gate that pins it is the reason the rename could not be half-done: the second assertion below
+    refuses the retired label as a row label, so the split cannot be silently reverted in the table
+    while this roster still names the two senses.
     """
     record = _flat(_read(RECORD))
     assert "unwitnessed by behaviour" in record, (
@@ -594,12 +604,27 @@ def test_the_record_states_what_it_cannot_check():
         "It is recorded from the API only, and the probe that would witness it needs a "
         "non-default branch inside a ruleset whose scope is the default branch alone"
     )
-    for tier in ("Gated", "Witnessed", "Recorded from the API"):
-        assert tier in _read(RECORD), (
-            f"{RECORD} no longer separates its claims into tiers (missing {tier!r}). A witness "
-            "statement and a gated invariant read identically on the page and decay completely "
-            "differently, which is why the table exists"
+    # By the table ROW rather than by the bare token, and the difference is not pedantic: every
+    # one of these four names also occurs in the prose underneath the table, so a membership test
+    # over the whole file is satisfied by the paragraph that DISCUSSES a tier and cannot see the
+    # tier itself being renamed or dropped. Found by mutating this assertion — renaming the
+    # `Protocol-gated` row left it green — which is the same lesson as the finding it was written
+    # for: a check on an index has to read the index and not the commentary beside it.
+    for tier in ("Suite-gated", "Protocol-gated", "Witnessed", "Recorded from the API"):
+        assert f"| **{tier}** |" in _read(RECORD), (
+            f"{RECORD} no longer separates its claims into tiers (missing a {tier!r} row in the "
+            "kinds table). A witness statement and a gated invariant read identically on the page "
+            "and decay completely differently, which is why the table exists; and a suite-gated "
+            "claim reads identically to a protocol-gated one, which is why there are two gated "
+            "tiers and not one"
         )
+    assert "**GATED**" not in _read(RECORD), (
+        f"{RECORD} carries the retired collapsed label as a row label again. It was split into "
+        "`Suite-gated` and `Protocol-gated` because four rows whose truth lives at Cloudflare were "
+        "labelled as though a red build would catch them going stale, and two of those four had "
+        "already gone stale silently. Label the row with whichever of the two senses actually "
+        "refuses it rather than restoring the word that covered both"
+    )
 
 
 # --------------------------------------------- 4. the repository's own URL, read and not retyped
