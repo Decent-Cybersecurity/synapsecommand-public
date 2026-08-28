@@ -1127,6 +1127,129 @@ are `MIGRATIONS.md`, `synapse_cdm/README.md` and `klv_pin.json`, all prose and a
 the **FIVE** the arc had moved, so the Unreleased count does not move and the floor stays **1.2.2**.
 No deploy, no tag, no rendered page.
 
+**THE WITHDRAWAL-SITE ROUND, 2026-08-28 — one of the two carried findings was already repaired,
+the other was half repaired, and the withdrawal check found a carrier where it expected none.**
+Three of the brief's four acts turned on something the brief asserted being wrong about the tree,
+which is what the standing rule is for. The rule now reads in its widened form — figures, citation
+paths and RULINGS alike are claims to verify — and this round is the first where it was the
+*rulings* that failed rather than the figures.
+
+**ACT 1 WAS ALREADY DONE, AND THE BRIEF DID NOT KNOW IT.** The brief instructed a repair of the
+treatment cell that misdescribed `tests/test_cdm_release.py`, as though the cell still carried the
+false sentence. It does not: the ruled round's successor repaired it, dated it and classed it, and
+the repair is correct. Verified from the source rather than from the cell — the gate's predicate
+re-derived at `tests/test_cdm_release.py`'s
+`test_package_source_that_has_moved_past_its_released_tag_is_recorded_as_unreleased`, which
+requires the section while the moved set is non-empty and forbids it only when the set is empty;
+the coexistence re-established from the history, with the section absent at `1fc35e8`'s parent and
+present from `e825e96`, the tag an ancestor of both and the suite green over the whole span. The
+birth commit the record names also holds: `1fc35e8` at 13:49 carried the false sentence and
+`e825e96` at 15:05 refuted it, an hour and a quarter later, which is the "about an hour" the record
+claims. **Nothing was written for act 1**, because a correct repair rewritten by the next round is
+how a record acquires two accounts of one defect.
+
+**ACT 2 WAS HALF DONE, AND THE HALF LEFT UNDONE WAS THE HALF THAT MATTERED.** The finding round
+named the two senses — **suite-gated**, a claim a suite test reads, and **protocol-gated**, a claim
+whose truth lives at Cloudflare — and then left every row of the sweep table under the collapsed
+label, recording the split in a paragraph beneath the table. Its stated reason was that relabelling
+"would have thrown away the weaker one, which is the honest description of four of them", and that
+reason inverts: labelling those four rows protocol-gated is what APPLIES the weaker sense. The
+un-relabelled table is what discarded it. So the rows are relabelled, both terms are defined once
+each in the kinds table where the table's terms live, and the reversal is recorded in
+`PUBLICATION.md` beside the original decision rather than replacing it.
+
+**WHICH ROWS MOVED WAS RE-DERIVED AND NOT COUNTED TO FOUR.** Each cell was read against what
+actually refuses its claim. Four name `gates/deploy_record.py`, which shells out to `wrangler` and
+which `tests/test_cdm_deploy_record.py` asserts in as many words is not a suite member — those are
+protocol-gated. Two name suite tests that read only the tree, `test_cdm_deploy_workflow.py` and
+`test_cdm_prose_counts.py`, and stay suite-gated. One keeps its **at one remove** qualifier and
+fits the suite-refuses class on inspection rather than by its label: the suite test it names gates
+a proxy — a tag matching its tree's `PACKAGE_VERSION` — and nothing in the suite reads the index
+itself. **No row fitted neither class**, so nothing stopped here. The derived split is four
+protocol-gated, three suite-gated of which one at one remove, and zero rows under the retired word.
+
+**THE TIER ROSTER WAS GATED ALL ALONG, WHICH IS WHY THE RENAME COULD NOT BE HALF-DONE, AND THE
+GUARD WAS VACUOUS IN THE DIRECTION THAT MATTERED.**
+`tests/test_cdm_publication.py::test_the_record_states_what_it_cannot_check` pins the tier
+vocabulary, so the rename turned it red immediately and the roster was amended to the four tiers.
+Its membership test was then mutated and **survived renaming the `Protocol-gated` row**, because
+all four tier names also occur in the prose below the table, so a test for the bare token was
+satisfied by the paragraph that DISCUSSES a tier while the tier itself was gone. It now matches the
+table row. That is the round's own instance of the finding it was repairing: a check on an index
+that reads the commentary beside the index. Three mutations refuse it now — the retired label
+restored on a row, and either of two tier rows renamed — and a fourth assertion refuses the
+collapsed label as a row label outright, so the split cannot be silently reverted while the roster
+still names both senses.
+
+**ACT 3 — THE WITHDRAWAL CHECK, AND IT FOUND A CARRIER WHERE THE BRIEF EXPECTED NONE.** The brief
+predicted zero carriers beyond the already-classed site and instructed that the result be recorded
+either way. It is not zero. Every tracked site mentioning the withdrawn refutation was enumerated
+by walking the record and every pin as data rather than by reading prose: three sites, all in this
+file and in `klv_pin.json`. Two state the withdrawal. The third — the ruled round's own node in
+`klv_pin.json`, at the field recording what the standing rule caught in that round's brief — still
+asserted the refutation unqualified, with no withdrawal anywhere in the node. **It was the last
+carrier, and it is exactly the shape act 3 was sent to look for**: the refutation that reached a
+later brief as a premise, still sitting where it was written, in a file a round reads for its pins
+rather than for its history. The two memory-file echoes the brief raised as candidates do not
+exist; `synapse_cdm/README.md`'s rule 8 states the figure live with its derivation and never the
+negative claim about it.
+
+**THE CARRIER IS ANNOTATED AND NOT EDITED, AND THE WITHDRAWAL IS PLACED WHERE A SWEEP LANDS.** The
+node's text is not rewritten, backfilled or re-dated, on the convention `klv_pin.json`'s own
+`what_this_is` follows. A dated withdrawal clause was appended to the node instead, and then MOVED
+to sit immediately after the field that carries the refutation — one line below it in the
+serialised file, with the withdrawal in the key's own name. The first placement put it at the end
+of the node, which is a node-level withdrawal a reader gets to and a `grep` does not. The clause
+describes the withdrawn claim rather than re-quoting it and does not restate the figure, which is
+stated once with its basis at rule 8: a second copy inside a withdrawal note is the carrier shape
+rule 9 names, and writing one here while repairing a carrier would have been the round's second
+instance of its own finding. **The superseded tally goes with it** — the count of brief errors the
+standing rule had caught was four in five rounds, not five.
+
+**A CLEAN CHECK WOULD HAVE BEEN A DATED READING; THIS ONE IS A REPAIR, AND THE DIFFERENCE IS THE
+BRIEF'S THIRD LOSS.** Act 1's premise was stale, act 3's expectation was false, and act 2's
+inherited reasoning was unsound. None of the three was detectable from the brief — each needed the
+tree — which is the whole content of the widened rule. **What the brief got right** was checked one
+at a time and held: tree clean, remote at `b56bc57`, suite green, the scripted-edit contract at
+nine, `RELEASE_NOTES.md` opening 1.2.1, zero tracked PDFs, the bump gate green deriving PATCH with
+the floor at **1.2.2**, the Unreleased count at **FIVE**, the pinned-phrase derivation answering
+what `README.md` rule 8 says it answers, and the expected four rows moving — that last one derived
+rather than accepted, and it is the one expectation of the four that survived being re-derived.
+
+**ONE CARRIER IS OPENED DELIBERATELY AND NAMED.** `PUBLICATION.md`'s reversal paragraph is now the
+only place in that file spelling the retired collapsed label, so a sweep for it arrives at the
+explanation instead of a surviving row. It cannot be made unspellable the way rule 9's three
+mechanized instances were — a retired label has to be named to be retired — so it is named, twice,
+inside the sentence that retires it, and the table it describes carries none.
+
+**The environment bound, extended into an hour the series had never sampled.** 2026-08-28 at
+**19:47Z**, resolution only, no route asked for bytes: gwg.nga.mil, nsgreg.nga.mil and the apex all
+NOERROR, same resolver as every prior reading. That is the evening hour after the 18:23Z reading
+and it does not fail. Intermittency bookkeeping only: **one SERVFAIL episode against ten NOERRORs**.
+
+**Pin-as-control at the widened scope, run before anything was trusted, and its decomposition is
+stated rather than inherited.** Every `local_path` paired with a `sha256` in all eight pin files was
+re-digested from the bytes on disk: **TWENTY** distinct pinned copies, of which **EIGHTEEN** are
+documents under a `spec/` directory — all eighteen present, all eighteen matching, none unmatched —
+and two are the walk round's transport-stream artefacts under `fixtures/klv/streams/`, both absent
+from disk, which is what a held-but-never-committed stream looks like after the round that held it.
+**That is a different decomposition from the "fifteen documents" the last two rounds recorded, and
+it is not a disagreement**: fifteen counts the documents the KLV directory holds, of which twelve
+are pins, while eighteen counts pinned copies across every fixture directory. Both are derived and
+they measure different sets, which is the distinction the pin's own header keeps between a document
+and the copy that was read.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched, no CDX query was made, no pin was added,
+no acquisition of any kind. **Nothing executable under `packages/`** — no adapter, no codec, no
+model, no fixture, no schema, and `SCHEMA_VERSION` unmoved. No park moved and no park closed. No
+tag row moved. No register entry was added. **Act 1 wrote nothing**, and no correct repair was
+rewritten. No number was reconciled to a nearby number: the one figure this round derived against
+an expectation, the four moved rows, was derived first and agreed afterwards. The files touched
+under `packages/` are `MIGRATIONS.md`, `synapse_cdm/README.md` and `klv_pin.json`, all prose and
+all already among the **FIVE** the arc had moved, so the Unreleased count does not move and the
+floor stays **1.2.2**. `PUBLICATION.md` and `tests/test_cdm_publication.py` are outside the
+distribution and move nothing a release ships. No deploy, no tag, no rendered page.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
