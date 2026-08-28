@@ -716,7 +716,12 @@ conclusion is untouched** — either figure is a few hundred characters across e
 150-page document, which is what an image-only front matter looks like from the text layer.
 
 **Act 0 in full, because a claim about the tree is a claim.** Tree clean, `origin/main` at the
-commit this round started from, suite **3254 passed, 3 skipped** before the round and green after.
+commit this round started from, suite **3255 passed, 3 skipped** before the round and green after.
+*(CORRECTED 2026-08-28 by the repair round's stale-count sweep: this read **3254 passed, 3
+skipped**, which is one low and was refuted three ways — the tree at `91ef1df` collects 3258
+tests, so 3254 and 3 skipped do not sum to it; re-running that tree gives 3255 and 3; and THIS
+ROUND'S OWN COMMIT TRAILER says `Suite: 3255 passed, 3 skipped`, as do the two commits either
+side of it. The prose disagreed with the trailer of the commit that carried it.)*
 The untouchables hold: the pinned phrase derives to **35** over the git index by the command the
 guard shares, `gates/scripted_edit.py`'s contract is intact and green, `RELEASE_NOTES.md` opens the
 release then on the index, and `git ls-files` matches no PDF. The bump gate derives PATCH over the
