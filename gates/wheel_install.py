@@ -109,6 +109,11 @@ PACKAGE_ONLY_TESTS = (
     # compares that document against the repository's fixture tree; this one compares a ruling
     # against the artefacts the ruling produced, and those travel together.
     "test_cdm_klv_framing.py",
+    # `test_cdm_pin_header.py` is package-only for the same reason and a narrower one: the only
+    # artefact it reads is `fixtures/klv/spec/klv_pin.json`, which ships in the wheel, and it
+    # counts pin NODES rather than files on disk — so it is a real check against an installed
+    # distribution, where none of the fifteen PDFs it counts is present.
+    "test_cdm_pin_header.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
