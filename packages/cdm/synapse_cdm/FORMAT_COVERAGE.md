@@ -9794,16 +9794,36 @@ ambiguous between three of them: 2018 printed, 2019 in the identifier, 2020 prom
 **Consequence adopted here:** every citation in this section names the document by identifier and
 hash, never by date.
 
-**KLV 2 — every requirement ID inside MISP-2019.1 names an earlier profile version.** 120 distinct
-requirement IDs occur in the pinned copy and **not one of them is `MISP-2019.1-nn`**. The
-distribution: `MISP-2015.1` 93, `MISP-2018.1` 17, `MISP-2016.1` 8, `MISP-2018.3` 4, `MISP-2018.2` 3,
-`MISP-2017.1` 3, `MISP-2015.3` 1. So the prefix records **the profile version that introduced the
-requirement** rather than the document that carries it, and `MISP-2015.1-07` is a live requirement of
+**KLV 2 — every requirement ID inside MISP-2019.1 names an earlier profile version.** **120 distinct**
+requirement IDs occur in the pinned copy and **not one of them is `MISP-2019.1-nn`**. **Two counts,
+each under its own basis** — this entry once gave one headline and the other's distribution. Over
+**distinct identifiers**, summing to the 120: `MISP-2015.1` 84, `MISP-2018.1` 17, `MISP-2016.1` 8,
+`MISP-2018.3` 4, `MISP-2018.2` 3, `MISP-2017.1` 3, `MISP-2015.3` 1. Over **occurrences**, **129** in
+total: `MISP-2015.1` 93, with the other six families identical to their distinct figures because
+`MISP-2015.1` is the only family whose identifiers repeat — nine repeats across its 84. So the prefix
+records **the profile version that introduced the requirement** rather than the document that carries
+it, and `MISP-2015.1-07` is a live requirement of
 MISP-2019.1 and not a reference to a superseded profile. The 2019.1 change log corroborates the
 reading: it lists approvals of other documents and "Minor editorial changes for improved clarity",
 and introduces no requirement of its own. **Consequence adopted here:** requirements are cited by
 their own ID *with the pinned document named beside them*, because an ID alone reads to a NATO reader
 as a citation of MISP-2015.1 — which STANAG 4609 Edition 4 promulgated and Edition 5 superseded.
+
+**THE ARITHMETIC WAS REPAIRED 2026-08-28 AND THE CONCLUSION WAS NEVER IN DOUBT.** The entry
+previously gave the distinct total as its headline and then listed the *occurrence* distribution
+beneath it, without naming either basis — so its own seven family figures summed to nine more than
+the total it had just stated. **The pre-repair figures are described here and not re-quoted**, on the
+pattern this document already applies to the pinned phrase: a site that spells a string in order to
+correct it becomes a carrier of it, and the guard that asserts the live figure then passes on the
+correction's copy of it. That is not hypothetical here — it was caught by the mutation check on the
+repaired guard, in this commit, before the string was left in place. **Both figures were correct under their own basis and
+neither was stated with it** — and the splice was invisible for six of the seven families, because
+only `MISP-2015.1` repeats, so the single bucket that could reveal it was the only one that did.
+**The defect was arithmetic framing, not the conclusion:** the distinct total, the absence of any
+identifier naming this profile version, and the consequence above all stand exactly as adopted —
+each stated once, above, where the guard can find it. **Stable under normalized counting**, checked rather
+than assumed: no requirement ID wraps a line in the pinned copy, so raw and whitespace-normalized text
+yield 129 and 120 alike — the whitespace defect that Act 2 mechanizes against did not produce these.
 
 **KLV 3 — the profile's reference to the STANAG is one edition behind, and its Appendix C is one
 edition ahead.** Appendix B ref [1] reads "NATO STANAG 4609: NATO Digital Motion Imagery Standard,

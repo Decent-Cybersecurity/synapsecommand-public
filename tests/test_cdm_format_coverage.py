@@ -3664,8 +3664,11 @@ def test_no_verbatim_requirement_quotation_has_had_a_revision_added_to_it():
 def test_no_requirement_id_in_the_section_names_this_profile_version():
     """AN ABSENCE. MISP-2019.1 contains no requirement of its own, and the section must not invent one.
 
-    All 120 requirement IDs in the pinned copy carry an earlier profile version — 93 of them
-    `MISP-2015.1`. That is register entry KLV 2, and it is the kind of finding a later editor
+    All 120 DISTINCT requirement IDs in the pinned copy carry an earlier profile version — 84 of
+    them `MISP-2015.1`, which occurs 93 times because it is the one family whose IDs repeat. Stating
+    either figure without its basis is what KLV 2 was repaired for on 2026-08-28, and this guard
+    asserts BOTH so the repaired form cannot decay back into one number. That is register entry
+    KLV 2, and it is the kind of finding a later editor
     "tidies" by rewriting `MISP-2015.1-07` as `MISP-2019.1-07`, which reads more natural and is
     false. Presence checks cannot catch that; only this can.
     """
@@ -3678,10 +3681,13 @@ def test_no_requirement_id_in_the_section_names_this_profile_version():
     )
     # And the finding itself is on the record, with the count that makes it checkable.
     flat = _flat(section)
-    assert "120 distinct" in flat and "`MISP-2015.1` 93" in flat, (
-        "KLV 2's evidence is the enumeration: 120 distinct IDs, 93 of them MISP-2015.1. Without "
-        "the numbers the entry is an impression"
-    )
+    for figure in ("120 distinct", "`MISP-2015.1` 84", "**129**", "`MISP-2015.1` 93"):
+        assert figure in flat, (
+            f"{figure!r} is missing from the section. KLV 2's evidence is TWO enumerations, each "
+            "named with its basis: 120 distinct IDs of which 84 are MISP-2015.1, and 129 "
+            "occurrences of which 93 are. Asserting only one of them is how the entry came to "
+            "state a distinct headline over an occurrence distribution — see the 2026-08-28 repair"
+        )
 
 
 def test_no_epoch_is_stated_anywhere_in_the_section():
