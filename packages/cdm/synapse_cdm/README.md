@@ -574,6 +574,71 @@ cannot find a site nobody has added to it. The sweep is:
    two files. So this is a protocol act like the roster sweep, and what bounds its cost is that a
    table is finite.
 
+11. **THE PARKS TABLE IS A STANDING SWEEP SURFACE, AND ITS SET-CLAIMS ARE DERIVED RATHER THAN
+   READ.** `FORMAT_COVERAGE.md`'s parks table is the fastest-decaying surface in this record,
+   because its rows cite the tree's most-moved parts — the held documents, the shipped adapters,
+   and each other. Three instances put it on this list, each verified at its own site rather than
+   from a summary:
+
+   * **A row denied its own artefact for a day.** `adapters/imapb_codec.py` landed in `431b0c5`
+     and park 5's row went on calling the artefact blocked while the plan table's park 5 column had
+     already recorded the landing — the row and the plan cell disagreeing about one fact. `MIGRATIONS.md` records the disjunction
+     sweep that found it.
+   * **Four of the nine open rows had decayed in one pass** — parks 2, 3 and 6 and park 11's plan
+     cell — each repaired with its reason stated in the row it repairs, by the decay sweep of
+     2026-08-28.
+   * **Park 12's partition outlived the closure of two of its own members.** Flagged once for an
+     unrelated ambiguity, then re-derived and found stale on a test that does not need the
+     ambiguity resolved. `MIGRATIONS.md` records the finding and the round that repaired it.
+
+   **THE THIRD IS A DIFFERENT SHAPE FROM THE FIRST TWO AND IT IS WHY THIS IS A RULE.** The first
+   two are claims that went stale about their own row's subject, and re-reading the row finds them.
+   The third is a claim about a SET, and **nothing in the sentence changes when one of its members
+   closes** — so re-reading that row as carefully as you like cannot find it, because the row is
+   not where the change happened. That is rule 10's disease one class over: not a summary that
+   misdirects a reader, but a claim whose truth lives in rows nobody re-reads together.
+
+   **The sweep, per round:**
+
+   * **each open row's blocker re-checked for EXISTENCE** — is the document still unheld, is the
+     ruling still unwritten, is the artefact still unbuilt. Never inherited from the row and never
+     from a brief;
+   * **each plan cell against what its plan actually needs**, which is the pairing that produced
+     two of the three instances above;
+   * **each partition or set-claim RE-DERIVED against current membership**, which is the one no
+     amount of careful reading substitutes for.
+
+   **WHAT IS MECHANIZED, and the split is stated so a green cannot be mistaken for a clean bill.**
+   `gates/parks_table.py` derives the table and takes rule 8's move — pin the derivation, not the
+   number — in `pin_paths.decompose()`'s form: derive the parts, compare them to what somebody
+   stated. `check_set_claims()` walks every set-claim in the table and complains **CLOSED MEMBER**
+   for a named park that has since closed and **PHANTOM MEMBER** for one the table does not have;
+   `check_stated()` takes a partition somebody wrote and adds **MISSING** and **OVERLAP**;
+   `blocker_existence()` answers, for each open row, whether the MISB series its title names is
+   held on disk. `tests/test_cdm_parks_table.py` runs all of it in the suite, because a gate
+   somebody remembers to run is the arrangement that let these three happen.
+
+   **It caught a fourth instance on its first live run, in a row nobody was sweeping because it is
+   CLOSED**: park 1's row listed park 4 among the parks still owning how an item is found in the
+   octets, and park 4 closed **116 minutes** after that row was written — `642280b` at 12:08,
+   `77210e1` at 14:04, both 2026-08-26 — where the clause then stood for three days. A sweep
+   scoped to open rows would not have opened it.
+
+   **AND ONE FORMULATION WAS SPECCED, MEASURED AND REFUSED**, on the treatment this file gives a
+   rule the tree refutes. *A set-claim naming its own row is a defect* — refused: park 12's
+   partition names park 12, because a row that prices its own park by saying which parks together
+   suffice has its own membership as the claim's subject. The rule would have fired three times on
+   the single row it was written to protect. It is reported as an observation and is not a problem.
+
+   **WHAT IS NOT MECHANIZED, named rather than left to a reader's optimism**, because checking it
+   means reading a cell against the document it cites, and not a derivation from the tree:
+   whether a Reason cell's
+   quotation is what the pinned PDF says, whether a plan cell describes what its plan needs, and
+   whether a row's argument still follows from what it cites. The gate prints these on every run as
+   the surface its exit code does **not** cover. That is rule 10's own reasoning applied to this
+   rule's own gate: a check that is nearly free and nearly worthless must not be allowed to read as
+   the expensive one.
+
 **A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
 `Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see
 the two prose sentences in the same section that still described the row set as unimplemented.

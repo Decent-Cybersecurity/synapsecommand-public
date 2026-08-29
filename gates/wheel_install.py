@@ -136,6 +136,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_commit_message.py": "gates/commit_message.py and this history's messages",
     "test_cdm_scripted_edits.py": "gates/scripted_edit.py and git blobs — neither ships",
     "test_cdm_pdf_text.py": "gates/pdf_text.py and the pinned PDFs — neither ships",
+    "test_cdm_parks_table.py": "gates/parks_table.py and FORMAT_COVERAGE.md's parks table — the gate does not ship, and the check is about rows citing each other rather than about anything the wheel installs",
     "test_cdm_pin_paths.py": "gates/pin_paths.py and BOTH fixture bases — the repository root is one of the two, so an installed wheel has no second base for the resolver to be right about",
     "test_cdm_format_coverage.py": "FORMAT_COVERAGE.md against the repository's fixtures",
     "test_cdm_generator_loading.py": "how three test modules load a generator",
