@@ -1927,6 +1927,148 @@ shipped, which is exactly why there is a 1.2.1 to put them in. What was meant is
 moved, and that is what it now says. `PACKAGE_VERSION` was unmoved by the round and is moved by
 the release absorbing it.
 
+**THE SWEEP-SURFACE ROUND, 2026-08-29 — park 12's partition is re-derived to current
+membership, the parks table joins the per-round sweep list as sweep rule 11 with the derivable half
+mechanized, and the new gate's FIRST LIVE RUN found a fourth decay in a row nobody was sweeping
+because it is closed. One of the brief's figures is confirmed by derivation, one specced check is
+refused by the table, and one of this round's own claims was found to be checking itself.**
+
+**Act 0, and the audit's own figures.** Tree clean, `HEAD` equal to `origin/main` at `36cd947`.
+Suite **3377 passed, 3 skipped** at the start. The untouchables hold, each by its own command: the
+pinned phrase derives to **35** over the git index, `scripted_edit`'s contract is green at **9**,
+`RELEASE_NOTES.md` opens **1.2.1** on the index, and `git ls-files` matches **no** PDF. The bump
+gate is green and reads exactly as the brief predicted — declared **1.2.1**, a PATCH over v1.2.0,
+the pending arc since 1.2.1 deriving **MINOR** with the floor at **1.3.0** — verified by running it
+rather than by copying the figure. **Pin-as-control's second live run through the resolver**: 21
+`local_path`+`sha256` pairs stated by **six of the eight** pin files, resolving to **20 distinct
+copies**, 18 spec and 2 stream, twelve of them under `fixtures/klv/spec` — all twenty present, all
+twenty matched, the decomposition derived by `decompose()` and not narrated. Identical in every
+part to the run that mechanized it, which is what a second run is for.
+
+**The `nga.mil` resolution series is extended by one observation.** `NOERROR` for the apex, `gwg`
+and `nsgreg` alike at **2026-08-29 08:49Z**, resolution only, no route asked for bytes, from
+`192.168.0.1` as every prior reading. Bookkeeping only, and the tally is carried rather than
+derived, on the ground the last round stated: **fourteen NOERROR readings against one SERVFAIL
+episode**.
+
+#### Act 1 — park 12's partition, re-derived rather than restated
+
+**The blocker was re-verified and not inherited, which the brief required and the tree confirms.**
+**MISB ST 0902.8 is not held**: no file under `fixtures/klv/spec/` carries the `0902` series, now
+checked by `gates/parks_table.py`'s own existence test rather than by eye. **And the Reason cell's
+quotation was re-read from the bytes**, because re-verifying that the bytes still say it is part of
+the existence check. Extracting MISP-2019.1's 73 pages and normalising whitespace first — the rule
+`gates/pdf_text.py` exists for — the profile reads *"MISMMS is defined in MISB ST 0902 [73], and is
+a prerequisite for MISP conformance. Requirement MISP-2015.1-75 Motion Imagery shall contain Motion
+Imagery Sensor Minimum Metadata in accordance with MISB ST 0902 [73]"*, and the enclosing heading
+derived by walking back from that offset is **§4.4.4 Airborne Collection**. So `MISP-2015.1-75` and
+§4.4.4 both hold. **One thing was found that the last round's record states slightly wrong** and it
+is left standing as a dated narrative under sweep rule 6: that record quotes the following heading
+as *"4.4.4.1 Airborne UAS Collection"* and the bytes read `4.4.4.1 Airborne - UAS Collection`, with
+a hyphen. It changes nothing the round concluded. **A second corroboration was found and not looked
+for:** Appendix B's reference [73] reads *"MISB ST 0902.8 Motion Imagery Sensor Minimum Metadata
+Set, Nov 2018"*, so the row's Version cell is pinned by the governing document and not by the
+delegation table alone.
+
+**THE PARTITION IS DERIVED FROM THE TABLE AT READING TIME, AND THE BRIEF'S FIGURE IS CONFIRMED
+RATHER THAN COPIED.** Parsing the parks table and cross-referencing every member: the claim names
+**seven** parks, of which **five are open — 3, 5, 8, 11 and 12** — and **two are closed, 1 and 4**,
+both on **2026-08-26**, park 1 in `642280b` at 12:08 and park 4 in `77210e1` at 14:04. The brief
+expected five of seven and it is right; it is recorded as confirmed-by-derivation because a figure
+that arrives as a premise and leaves as a conclusion has not been checked. The row now states the
+groups as they stand — reading a stream wants parks 5 and 8, translating a conformant one wants
+parks 3, 11 and 12 — and **names the class: a set-claim decays silently when its members move.**
+
+**The one derived sentence the brief asked for, and it produced no finding.** Each of the five open
+members was checked at its source for a live blocker. Parks 3, 8 and 12 are **unacquired** — no
+`0603`, no ST 336 and no `0902` under `spec/`. Parks 5 and 11 **hold every document their version
+cells name** and are blocked on the artefact half: park 5 on the sixteen rows that would consume
+its codec, park 11 on the source change under `packages/`. **No open member is blocker-free**, so
+nothing stopped for adjudication under that rule.
+
+#### Act 2 — the parks table becomes a standing sweep surface, and the gate catches a fourth decay
+
+**Sweep rule 11 is written where the sweep rules live**, numbered per the house convention, with
+the three instances cited at their own record sites and verified there: park 5's row denying its
+own artefact for a day after `431b0c5`; four of the nine open rows decaying in one pass; park 12's
+partition outliving two closures. **The third is a different shape from the first two and it is why
+the rule exists** — the first two are claims that went stale about their own row's subject, which
+re-reading the row finds, while a set-claim goes stale when a DIFFERENT row changes, so re-reading
+its row cannot find it at all.
+
+**The derivable half is a gate, in `decompose()`'s form, because the brief was right that it
+fits.** `gates/parks_table.py` derives the table's rows, their open/closed state and their closing
+dates, then walks every set-claim: **CLOSED MEMBER** for a named park that has since closed,
+**PHANTOM MEMBER** for one the table does not have, with `check_stated()` adding **MISSING** and
+**OVERLAP** for a partition somebody writes down. `blocker_existence()` answers, per open row,
+whether the MISB series its title names is held on disk. Ten tests in
+`tests/test_cdm_parks_table.py`, five mutations in `--mutation-check`, and the module is rostered
+REPO-bound in `gates/wheel_install.py` because it judges the repository and does not ship.
+
+**FINDING — A FOURTH DECAY, ON THE GATE'S FIRST LIVE RUN, IN A ROW NOBODY WAS SWEEPING.** Park 1's
+Reopen cell listed **park 4** among the parks still owning how an item is found in the octets. Park
+1 closed at **12:08** and park 4 at **14:04 the same day** — 116 minutes — and the clause stood for
+three days. It is instance 3's shape exactly, and it is the argument for the whole rule: **a sweep
+scoped to OPEN rows would never have opened this one**, because park 1 is closed and reads as
+finished. Repaired, with the class named in the cell.
+
+**A SECOND FINDING, AND THIS ONE IS THIS ROUND'S OWN SUBJECT TURNED ON ITSELF.** Park 5's row
+argued that not one of its sixteen rows had moved by asserting that the codec's `name version`
+citation token *appears nowhere in this file* — **and that sentence was the file's only occurrence
+of the token.** So the claim was true only because of the sentence making it, and a future round
+running the obvious `grep` gets a hit and concludes a row has moved. That is **sweep rule 9's
+carrier pattern** — a record that discusses a token becomes a site of it — met for the sixth time
+and the first time inside the parks table. Repaired per rule 9's own treatment, describe and do not
+quote: the cell now names the citation form without spelling it, says why, and the token's
+occurrence count in `FORMAT_COVERAGE.md` is back to **zero**, which re-arms the check.
+
+**ONE SPECCED CHECK WAS MEASURED AGAINST THE TABLE AND REFUSED.** *A set-claim naming its own row
+is a defect* — plausible, and false here. Park 12's partition names park 12, and always did: a row
+that prices its own park by saying which parks together suffice has its own membership as the
+claim's subject. The rule fired **three times on the one row it was written to protect**. Demoted
+to an observation the gate prints and does not fail on, and recorded as refused so the next round
+starts from what has been ruled out. **Two calibration defects in the gate were caught by its own
+mutation check before it was trusted**: a `\b` anchor that never matches inside `ST0102.12.pdf` and
+reported every held document as absent, and a series pattern loose enough to read `2017` out of
+`ST 336:2017` as a document. Park 8 and park 10 are now reported **NOT DERIVABLE from a filename**
+rather than guessed at, which is `pin_paths`'s refusal discipline in a second module.
+
+**WHAT THE GATE DOES NOT CHECK IS PRINTED ON EVERY RUN**, and that is rule 10 applied to this
+rule's own gate: a Reason cell's quotation against the pinned bytes, a plan cell against what its
+plan needs, and whether a row's argument still follows. Checking that a cell names a test that
+exists is nearly free and nearly worthless; the expensive half stays a human's, and the exit code
+says so rather than letting a green read as a clean bill.
+
+#### Act 3 — park 11's row states the question that is actually left
+
+**Checked for existence first, and most of what the brief asked for was already written — in the
+other table.** The plan table's bump row and its remaining-blocker cell both carry the shape
+question in full, ruled and repaired last round. **The parks-table row did not**: it said the
+ruling was DRAFTED and MINOR and named three steps to closure, without saying that MINOR is ruled
+for **one shape of the artefact and not the other**. Only the delta is written. The row now states
+that MINOR holds where the artefact **appends** the decoded identity beside the packet key; that
+the shape which **drops** the packet key is **unruled**, because it removes from shipped output an
+identifier a consumer may key on and no MINOR row here covers that; and that the shape decision is
+therefore itself a step — **four now, not three**: the shape, the artefact, the ruling moved into
+the arc that carries it, then the rows. The draft discharges none of them.
+
+#### Act 4 — the sweeps, and what this round did not do
+
+**The parks sweep ran live as its own first subject**, which is where both findings above came
+from. **The disjunction sweep** checked the parks arithmetic across every site that states it:
+thirteen parks, **four closed and nine open**, agreeing everywhere, with the one site reading
+*three closed, ten open* already dated and exempt under sweep rule 6 with the live figure beside
+it. **The stale-count sweep** found two counts this round's own new prose had introduced into
+`synapse_cdm/README.md` — the guard caught them, and both were **deleted rather than re-synced**,
+on sweep rule 7: a restated count re-drifts and a rephrasing cannot.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched and no route was asked for bytes — the DNS
+reading is resolution only. No pin was added and no digest changed. **Nothing new was written under
+`packages/`**: the only executable code added is `gates/parks_table.py` and its test module,
+neither of which ships. No adapter, model or fixture moved, `SCHEMA_VERSION` is unmoved at 1.0.0,
+`PACKAGE_VERSION` at 1.2.1, and no release is forced — the floor stays at 1.3.0 where the gate put
+it. **No park was closed, and no bump ruling was installed.**
+
 **THE RULING ROUND, 2026-08-29 — park 11's bump ruling is derived and DRAFTED rather than written,
 because the gate refuses a ruling that precedes its case; the pin-as-control decomposition is
 mechanized; and park 12 decays on a test that does not need its ambiguity resolved. Three of the
