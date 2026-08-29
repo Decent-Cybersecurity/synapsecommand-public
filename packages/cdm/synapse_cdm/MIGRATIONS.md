@@ -1927,6 +1927,182 @@ shipped, which is exactly why there is a 1.2.1 to put them in. What was meant is
 moved, and that is what it now says. `PACKAGE_VERSION` was unmoved by the round and is moved by
 the release absorbing it.
 
+**THE RULING ROUND, 2026-08-29 — park 11's bump ruling is derived and DRAFTED rather than written,
+because the gate refuses a ruling that precedes its case; the pin-as-control decomposition is
+mechanized; and park 12 decays on a test that does not need its ambiguity resolved. Three of the
+brief's assertions are refuted by the tree and all three are recorded as losses.**
+
+**Act 0, and the audit's own figures.** Tree clean, `HEAD` equal to `origin/main` at `9fcfbad`.
+Suite **3368 passed, 3 skipped** at the start. The untouchables hold, each by its own command: the
+pinned phrase derives to **35** over the git index, `scripted_edit`'s contract is green at **9**,
+`RELEASE_NOTES.md` opens **1.2.1** on the index, and `git ls-files` matches **no** PDF. The bump
+gate is green and its arc reads as the brief predicted — declared **1.2.1**, a PATCH over v1.2.0,
+and the pending arc since 1.2.1 deriving **MINOR** with the floor at **1.3.0** — verified by running
+it rather than by copying the figure, and `--mutation-check` passes all five fixtures.
+
+**The `nga.mil` resolution series is extended by one observation.** `NOERROR` for the apex, `gwg`
+and `nsgreg` alike at **2026-08-29 07:59Z**, resolution only, no route asked for bytes, from
+`192.168.0.1` as every prior reading. Bookkeeping only, and the tally is carried rather than
+derived: the prose series is distributed across rounds in words no sweep collects, so **thirteen
+NOERROR readings against one SERVFAIL episode** is the previous round's derivation plus this one,
+and it is the one figure in this record that no command reproduces.
+
+#### Act 1 — park 11's ruling, derived, and the two things the brief did not know about it
+
+**The stop rule did not fire, and it was checked before anything was written.** The brief conditions
+the ruling on the repaired plan cell matching what the decay sweep reported. It does, clause for
+clause: `min_length=1` on every kind, the packet-scoped key at line 369, `identity_basis` claiming
+this observation and nothing more, the UNRULED branch with the same enumeration of names not moved.
+**All three of its source claims were re-verified at their sources rather than from the table** —
+`models.py`'s `CDMBase` declares `source_ids: list[SourceId]` with `min_length=1` and says so in its
+docstring; `adapters/stanag4609.py:369` is `source_ids = [SourceId(system=OBSERVATION_SYSTEM,
+external_id=external_id)]` with `OBSERVATION_SYSTEM = "UAS-LS-PACKET"` at line 120; and `CDMBase` is
+the base of `Entity`, `Event`, `Track` and `PlanObject`, so "every kind" is the whole of them.
+
+**FINDING 1 — THE PLAN HAS TWO CELLS ABOUT PARK 11'S BUMP AND THE SWEEP REPAIRED THE OTHER ONE.**
+The brief says the ruling is to be written "against the repaired plan". The repaired cell is the
+*remaining-blocker* cell. The cell that actually states the bump — the plan table's **"What the bump
+gate would derive"** row, park 11's column — was never touched, and it still read *"MINOR at least.
+The gate's PATCH row ... does not describe an `Entity` that gains a `source_ids` it did not carry"*.
+**That is verbatim the phrase the 2026-08-28 round named as doing two jobs** and identified as the
+premise the bump argument rode on. Park 5's column of the same row was rewritten by the codec round;
+park 11's was not. **Class: a repair applied to the cell that stated the premise and not to the cell
+that used it.** Repaired here, and the ruling below is rebuilt without the phrase.
+
+**FINDING 2 — THE ARTEFACT'S SHAPE IS UNSETTLED, AND THE BUMP KIND DEPENDS ON IT.** Three sites
+describe what park 11 would change and they do not agree. The repaired cell says the artefact
+**swaps** a synthetic observation key for the identity the format guarantees. The round that
+proposed the artefact specified the opposite in as many words: a call site that **appends the
+decoded identity beside the packet key rather than replacing it**, because the packet key is what
+makes an `Entity` addressable when item 94 is absent — which is every packet of the only stream
+held. And the plan's own remaining-blocker row says the adapter *"emits something it did not"*,
+which is the appending shape again. **The repair established that the field is never empty; it did
+not establish that the packet key goes away**, and the cell took one step past its own evidence.
+Both cells are corrected.
+
+**THE RULING, derived from `version.py`'s rows rather than adopted from the brief.** **PATCH is
+refused**: its row is "a translation fix, a message, a docstring — no surface change", and all three
+examples leave the meaning of the output where it was, whereas nothing this adapter emits today is
+wrong and the change makes it assert a cross-packet identity it has never asserted. That is new
+emitted content, which 1.2.0 already ruled on in the shape of the structured defect annotation — "a
+new kind of output", where the only open question was the schema's. **MAJOR is refused**: every
+MAJOR row here is about the importable surface, and the change moves a function body, adds and
+removes no name and breaks no third-party adapter; reading "its meaning changes" to cover a
+translation's VALUES would make every translation fix a MAJOR, which the PATCH row forbids in the
+same breath. **So MINOR, on the MINOR row's own governing clause, "Existing code keeps working"** —
+no import breaks, no signature moves, every object still validates at `SCHEMA_VERSION` 1.0.0.
+
+**THE BRIEF LOSES ON THE RULING'S PREMISE, AND THE NARROW READING IS RULED ANYWAY.** The brief
+expected *"a replacement of a populated public field's contents is a behavioral change to shipped
+output and rules MINOR"*. **That is the one pairing the record cannot support.** MINOR holds for an
+artefact that APPENDS; an artefact that DROPS the packet key removes from shipped output an
+identifier a consumer may key on, and that is not MINOR and needs its own ruling. The brief takes
+the dropping premise and the appending conclusion. The ruling states the shape it rules.
+
+**FINDING 3 — THE RULING CANNOT BE INSTALLED, AND THIS IS PROVEN RATHER THAN ARGUED.** The brief
+says to draft it "in the form the gate's hand-ruling slot expects". Written into that slot today it
+**fails the gate**. `apply_rulings()` refuses as stale any ruling naming a unit the arc does not
+find ambiguous, and park 11's change does not exist, so `Stanag4609Adapter` is not an `Ambiguity` of
+the pending arc. A probe inserted the ruling into `### Unreleased`, ran the gate, and got
+*"MIGRATIONS.md's `### Unreleased` section carries 1 bump ruling(s) for unit(s) this arc does not
+find ambiguous"*; the probe was reverted and the gate re-run green. **So the gate refuses a ruling
+that PRECEDES its case exactly as it refuses one that OUTLIVES it, and for the same reason** — the
+refusal message says a ruling is dated by the entry it sits in, and an entry for a change nobody has
+made dates nothing. The ruling is therefore drafted in `FORMAT_COVERAGE.md`, which the gate does not
+read, in the exact form the slot parses — the `RULING_MARKER` string, then the unit as ONE backticked
+span, then an em dash, then the kind — and it moves into the arc that carries the artefact. **The
+scope is narrow by construction and not by choice**: the slot keys a ruling by unit and refuses a
+stale one, so no class can be ruled through it.
+
+**What park 11's row now states between ruling and closure.** The artefact, then the ruling moved
+into the arc that carries it, then the rows. The ruling alone closes nothing, and drafting it does
+not shorten that list.
+
+#### Act 2 — the decomposition, derived by the gate instead of narrated by a round
+
+**The subject is last round's finding: a right total with wrong parts, and nothing checked the
+parts.** That round's decomposition added *"three of them under `spec/history/`"* to a correct
+eighteen, and no pinned copy is under `spec/history/` at all. **The shape matters and the fixture
+now reproduces it exactly: it was a SUB-CLAUSE and not an addend**, so the total went on adding up.
+A guard that summed the parts would have passed it.
+
+`gates/pin_paths.py` now derives the decomposition rather than leaving it to prose. `decompose()`
+returns pairs per pin file, the pin files that state **no** pair, distinct copies per location and
+per kind by the resolver's own classification; `check_parts()` is the arithmetic half; and
+`check_stated()` is the guard proper, comparing a decomposition somebody STATED against the derived
+one and complaining in three ways — **PHANTOM** for a location the corpus does not have, **MISSING**
+for one it has and the statement omits, **COUNT** for a disagreement. The report prints all of it,
+so the parts are no longer something a round has to get right by hand.
+
+**This round's own control run is the first live subject, and it settles a latent disjunction.**
+**21 `local_path`+`sha256` pairs, stated by SIX of the EIGHT pin files** — `cat021/spec/sac_pin.json`
+and `legion/spec/openapi_pin.json` state none — **resolving to TWENTY distinct copies**, `day_flight.klv`
+being pinned twice; **eighteen documents and two stream artefacts**; all twenty present, all twenty
+matched. The last round wrote "across the eight pin files" and the tool printed six. **Both were
+true of different things and neither said which**, so the report now names the silent files instead
+of choosing a number. By location: twelve under `fixtures/klv/spec`, two under `fixtures/klv/streams`
+after resolution from three pairs, two for cat062 and one each for cat023, cat034, cat048 and fft.
+
+**The non-vacuity witness is the interesting half, and its mutation's domain is checked against its
+subject.** The mutation re-attributes three copies from `fixtures/klv/spec` to
+`fixtures/klv/spec/history` — the recorded failure, reproduced — and asserts before applying it both
+that the phantom location is *not* a location of this corpus and that the donor holds at least three,
+because a mutation with an empty domain is a case that passes without running, which is the
+`StopIteration` lesson from the round before. The mutated statement **sums to 20, which is the
+correct total**, so a sum-only guard passes it and `check_stated()` does not. Nine tests, and
+breaking the PHANTOM branch was confirmed to fail two of them.
+
+#### Act 3 — park 12, and the flag decays on a test that does not need the ambiguity resolved
+
+**What was re-derived, not carried.** The blocker is real: **MISB ST 0902.8 is not held** — absent
+from `fixtures/klv/spec/`, and `klv_pin.json`'s own filesystem sweep records "no ... 0902" over 1940
+PDFs examined. The Reason cell is sound and was checked against the held profile's own bytes rather
+than cited: MISP-2019.1 reads *"MISMMS is defined in MISB ST 0902 [73] and is a prerequisite for
+MISP conformance"* followed by *"Requirement MISP-2015.1-75: Motion Imagery shall contain Motion
+Imagery Sensor Minimum Metadata in accordance with MISB ST 0902 [73]"*, immediately before the
+heading "4.4.4.1 Airborne UAS Collection" — so the row's `MISP-2015.1-75` and its §4.4.4 both hold,
+and ref [73] matches the pin record. Park 12 has no plan cell, so there is none to match.
+
+**THE FLAG DECAYS, AND THE FINDING IS THAT ITS AMBIGUITY WAS NEVER THE ONLY DEFECT.** The row prices
+park 12 on a partition: *"parks 4, 5 and 8 are enough to READ a stream at all, and parks 1, 3, 11
+and 12 are enough to TRANSLATE a conformant one"*. Two rounds ago that was flagged and deliberately
+not called decay, because the sentence is ambiguous between a sufficiency claim the tree does not
+reach and a necessity claim it refutes. **Re-derived now, a test applies that does not need the
+reading resolved: the partition names SEVEN parks as prerequisites and TWO OF THEM ARE CLOSED** —
+park 1 and park 4, both closed 2026-08-26. A statement of what is still needed that lists two
+things no longer needed is stale on its face, whichever way its verb is read. The necessity reading
+is refuted more strongly than when it was flagged, too: the pinned stream is read and translated
+today with parks 3, 5, 8, 11 and 12 all open, and the codec round added an `IMAPB` codec without
+closing any of them. **Class: a prerequisite partition that outlived the closure of two of its own
+members** — the flag's own class, "written before adapter #10 shipped and not re-derived since",
+sharpened by naming what specifically decayed. **The row is NOT repaired here.** Park 12 findings
+stop for adjudication under the brief's own stop rule, and this one stops.
+
+#### Act 4 — the sweeps, and a second disjunction the codec round left behind
+
+**The disjunction sweep found park 5's row denying its own artefact.** `adapters/imapb_codec.py`
+landed in `431b0c5` on 2026-08-28 — 309 lines — and the parks table's park 5 row went on saying the
+artefact was *"blocked on a per-change ruling"* and citing park 2 for *"document held, artefact
+unwritten"*, while the plan table's park 5 column had already recorded the landing. **Two sites, one
+fact, a day apart.** Repaired, and the repair is not "park 5 is closed": it is not. Its artefact is
+a codec **plus the tag rows that consume it**, and **`imapb 1.0.0` appears nowhere in
+`FORMAT_COVERAGE.md`** — not one of the sixteen rows has moved, because none of the sixteen is
+witnessed and the scope contract blocks them independently of this park. That is a state park 2 is
+not the precedent for, and the row now says so.
+
+**The retired phrase was swept for and found at one more live site.** *"Populating
+`Entity.source_ids`"* survived in park 11's parks-table row a day after the plan cell was repaired
+of it; corrected there to "decoding item 94 into", with the reason stated once. The occurrence in
+the round record of 2026-08-27 is left standing: a dated round narrative is a historical artefact
+and the correction belongs beside the claim, not on top of it.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched and no route was asked for bytes — the DNS
+reading is resolution only. No pin was added, no digest changed, and nothing new was written under
+`packages/`: the only executable code this round adds is in `gates/` and `tests/`, which do not
+ship. No adapter, model or fixture moved, `SCHEMA_VERSION` is unmoved at 1.0.0, `PACKAGE_VERSION` at
+1.2.1, and no release is forced — the floor stays where the gate put it. **No park was closed, and
+no bump ruling was installed.**
+
 ### 1.2.0 — adapter #10, a codec ruling, and a schema version that did not move
 
 **A package MINOR, and the release where the two-number arrangement was tested rather than
