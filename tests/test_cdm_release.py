@@ -1145,3 +1145,134 @@ def test_every_documented_tag_command_names_this_trees_package_version():
         "A reader copying one would push a tag that already exists. The command is an instruction, "
         "not a record — historical references to a released tag are fine and are not swept here"
     )
+
+
+# ------------------------------------------- the pending heading as a TOKEN, and the carrier rule
+#
+# THREE CONSECUTIVE ROLLS RECREATED ONE DEFECT, AND THIS IS THE MECHANIZATION OF THE HAND SWEEP
+# THAT KEPT CATCHING IT.
+#
+# Four checks above key on the literal `### Unreleased`, and every one of them asks the same
+# question of the same file: is that string IN `MIGRATIONS.md`? None of them asks whether the
+# occurrence it found is a HEADING. So a sentence of prose that spells the heading — in order to
+# quote a gate's refusal message, or to say the section has just been absorbed — answers those
+# checks in the affirmative while the section itself is gone.
+#
+# The occurrences, each reconstructed from history for the witness below rather than trusted:
+#
+#   1. `96f5920` — a round record quoted the bump gate's own refusal message, which spells the
+#      heading in full. THREE occurrences of the literal in the file, ONE of them a heading.
+#      Repaired in `6c0615a` by eliding the token from the quotation.
+#   2. the same shape recurred while that repair was being written.
+#   3. `148e7a6`, the commit that rolled the section into `### 1.3.0` — the rolled section's own
+#      opening sentence named the heading in order to say it had been absorbed. Caught before it
+#      was committed, by the previous repair's record telling the round to grep after rolling,
+#      which is a human following an instruction and not a gate.
+#
+# WHAT THE RECONSTRUCTION SHOWED, BECAUSE IT DOES NOT MATCH WHAT THE RECORD CLAIMS. `4f1932f`
+# records that on the third occurrence "neither gate that keys on the string could see it — both
+# were skipping, because the bumped version had no tag yet". Rebuilt at `148e7a6` with the
+# un-elided sentence restored and no `v1.3.0` tag, that is not what happens:
+# `test_the_unreleased_section_is_the_first_thing_under_history` STOPS skipping — the carrier is
+# what makes `UNRELEASED in text` true — reads the real headings, finds `### 1.3.0` first and goes
+# RED. The three tag-conditional checks skip, and `..._states_that_it_is_in_no_release` passes
+# green while reading a paragraph of prose as the section body.
+#
+# So the tag was never the thing that blinded them, and THE FULLY BLIND STATE IS THE OTHER ONE:
+# a carrier beside a genuine heading, which is occurrence 1's shape. Reconstructed at `4f1932f`
+# with a carrier added, every check above passes or skips and nothing in the tree objects. That
+# state is legal to every gate and wrong, it survives a release, and it is what this closes.
+#
+# NO SKIP STATE. Not on git, not on a tag, not on the token being absent — a check whose subject
+# is "an occurrence that should not exist" cannot be conditioned on occurrences existing, which is
+# the circularity that let occurrence 1 live through a release. It reads one file that ships
+# inside the wheel, so it holds on a clone and inside an unpacked sdist too.
+
+
+def _pending_heading_sites(text: str) -> tuple[list[str], list[str]]:
+    """Every occurrence of the pending-arc heading, split into genuine headings and carriers.
+
+    A genuine heading is a line that STARTS with the literal and is not inside a fenced code
+    block. `startswith` rather than equality because the heading is allowed a subtitle after an
+    em dash — that is what the consuming checks accept, and this must not be stricter than they
+    are or it would refuse a section they are happy with.
+    """
+    headings, carriers, fenced = [], [], False
+    for number, line in enumerate(text.splitlines(), 1):
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+        if UNRELEASED not in line:
+            continue
+        where = f"{number}: {line.strip()[:110]}"
+        # A heading inside a fence is an EXAMPLE of one, not one. It reads as a section to every
+        # `in`-test above, so it is a carrier however it is indented.
+        if line.startswith(UNRELEASED) and not fenced:
+            headings.append(where)
+        else:
+            carriers.append(where)
+    return headings, carriers
+
+
+def test_the_pending_heading_is_never_spelled_except_as_that_heading():
+    """`### Unreleased` appears in MIGRATIONS.md only where it IS the section. No skip state.
+
+    The property four checks above assume and none of them establishes: the literal is in the file
+    if and only if the file has a pending section. Break that and they do not fail — they answer
+    a question about a sentence and report it as an answer about a section.
+    """
+    headings, carriers = _pending_heading_sites(MIGRATIONS.read_text())
+    assert not carriers, (
+        f"MIGRATIONS.md spells the pending-arc heading at {len(carriers)} site(s) that are not "
+        f"that heading:\n  " + "\n  ".join(carriers) + "\n"
+        f"{len(headings)} genuine heading(s) in the file. Four checks in this module ask only "
+        "whether the literal is present, so a sentence that spells it answers for a section that "
+        "may not exist — and once a release absorbs the section, the carrier is the only thing "
+        "left saying there is one. Describe the heading instead of reproducing it: the record's "
+        "own repair reads 'the token itself is elided here', and says why, so that a later round "
+        "does not restore the full quotation for fidelity"
+    )
+    assert len(headings) <= 1, (
+        f"MIGRATIONS.md has {len(headings)} pending-arc headings:\n  " + "\n  ".join(headings)
+        + "\nThe checks above resolve the section with `text.index`, which takes the first and "
+        "silently ignores the rest"
+    )
+
+
+def test_the_pending_heading_carrier_check_is_not_vacuous():
+    """The three shapes it exists for, reconstructed, plus the two it must not object to.
+
+    A gate that has never been red is a gate nobody has witnessed. These are built as text rather
+    than by checking out the commits: the third occurrence was repaired before it was committed,
+    so there is no tree to check out, and a check that needed git would have to skip without one.
+    """
+    clean = ("## History\n\n### Unreleased\n\nNothing shipped.\n\n### 1.3.0 — a release\n\nText.\n")
+    assert _pending_heading_sites(clean) == ([f"3: {UNRELEASED}"], [])
+
+    # Nothing pending, and nothing that says there is. The state after a roll, done right.
+    rolled = "## History\n\n### 1.3.0 — a release\n\nThis section carried the pending heading.\n"
+    assert _pending_heading_sites(rolled) == ([], [])
+
+    # OCCURRENCE 3, reconstructed: the rolled section names the heading it absorbed, and the file
+    # now carries the token with no such section.
+    absorbed = ("## History\n\n### 1.3.0 — a release\n\n"
+                f"**This section was `{UNRELEASED}` and a release absorbed it.**\n")
+    headings, carriers = _pending_heading_sites(absorbed)
+    assert headings == [] and len(carriers) == 1, (headings, carriers)
+
+    # OCCURRENCE 1, reconstructed: a quoted refusal message beside a real heading. Every check
+    # above passes on this, which is why it survived a release.
+    quoted = ("## History\n\n### Unreleased\n\nPending.\n\n### 1.2.1 — a release\n\n"
+              f'The gate refused: "MIGRATIONS.md\'s `{UNRELEASED}` section carries 1 ruling".\n')
+    headings, carriers = _pending_heading_sites(quoted)
+    assert headings == [f"3: {UNRELEASED}"] and len(carriers) == 1, (headings, carriers)
+
+    # A heading inside a fence is an example of one. `in` cannot tell the difference.
+    fenced = "## History\n\n```\n### Unreleased\n```\n\n### 1.3.0 — a release\n"
+    headings, carriers = _pending_heading_sites(fenced)
+    assert headings == [] and len(carriers) == 1, (headings, carriers)
+
+    # And the subtitle form is a heading, not a carrier — this must not be stricter than the
+    # checks it protects, which accept anything `startswith` the literal.
+    subtitled = f"## History\n\n{UNRELEASED} — the arc since v1.3.0\n\nPending.\n"
+    headings, carriers = _pending_heading_sites(subtitled)
+    assert len(headings) == 1 and carriers == [], (headings, carriers)
