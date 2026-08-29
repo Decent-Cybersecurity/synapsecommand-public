@@ -140,9 +140,9 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Ten entries, and the set does not move — entries change **state**, they are not deleted. Seven are
-**settled**: entry 1 is a ruling, entries 5, 6 and 10 are closed by acts, entry 7 is a disposition,
-entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
+Eleven entries, and the set does not move — entries change **state**, they are not deleted. Eight
+are **settled**: entry 1 is a ruling, entries 5, 6, 10 and 11 are closed by acts, entry 7 is a
+disposition, entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
 and it closed in three acts — a trusted publisher registered on PyPI, 1.1.0 published through the
@@ -155,7 +155,9 @@ two claims that were never true, in a document whose subject is claims that stop
 10 is the 1.2.1 release, and it is the third entry closed by an act rather than by a ruling: the
 release that renumbered itself from 1.3.0 on the evidence of its own diff, and the one that
 discharges entry 6's promise that the four prose defects in the 1.2.0 artefacts would ship
-corrected.
+corrected. Entry 11 is the 1.3.0 release, the fourth closed by an act: the release a maintainer
+refused on 2026-08-28 and an operator reversed on 2026-08-29, re-derived forward rather than
+restored, and the first whose number a machine ruled **before** it was typed rather than after.
 Entries 2, 3 and 4 are open. None blocks anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
@@ -1131,6 +1133,117 @@ the PATCH number says so. And not that the four corrected sentences were the onl
 the 1.2.0 artefacts; they are the four the sweep that found them could see, and the sweep that
 replaced it derives the roster and reads `git ls-files` rather than an allowlist.
 
+### 11. `synapse-cdm` 1.3.0 is on the index — CLOSED, and it is the release a refusal did not stop
+
+**Published 2026-08-29** by
+[run 33247697980](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/33247697980),
+triggered by the `v1.3.0` tag. The build job ran 10:23:08–10:26:10Z and the `pypi` environment then
+held the upload for **twenty-one minutes** until a required reviewer approved it at **10:47:24Z**;
+the publish job ran 10:47:27–10:47:50Z. This entry is the release's own record, written in the
+commit that follows the tag, and it closes on the evidence below rather than on the run being green.
+
+**THE RELEASE WAS REFUSED ONCE AND THE REFUSAL IS NOT DELETED.** 1.3.0 was derived, built and
+verified on **2026-08-28**, and the maintainer refused it on a finding about the brief that ordered
+it. The operator **reversed** that refusal on **2026-08-29** and this release is the reversal
+carried out. Both rulings stand — the refusal as a dated reading, the reversal as the decision that
+outranks it — and neither was rewritten out of the history: the refused attempt's bump, rolled
+section and notes were unwound before it closed, and this release re-derived every one of them
+forward from the tip rather than restoring them. **Nothing from the refused attempt is in these
+artefacts**, which is a claim about method and is why the number was re-derived rather than
+recalled.
+
+**AND THE STEP THAT REFUSED IT DOES NOT EXIST, which is the finding worth carrying forward.** The
+2026-08-28 brief conditioned the release on *"the release protocol's step C"* and a dated PyPI
+token witness. `MIGRATIONS.md`'s procedure states **five numbered conditions and no lettered
+steps**; the only lettered steps in this repository are **entry 6**'s one-time trusted-publishing
+migration, whose step C is *retire the 1.0.0 API token*, recorded **done 2026-08-26**. The
+token row in the witness table reads **UNDATABLE from held evidence** by construction, because PyPI
+publishes no token state — so a release gate built on it could never open. The refusal was a
+person's and not this repository's: no condition was unsatisfiable and no gate went red on the
+release itself.
+
+**THE NUMBER WAS DERIVED BY A MACHINE, AND THIS IS THE FIRST RELEASE WHERE THAT HAPPENED
+PROSPECTIVELY.** Entry 10 records condition 5 being added after the release that needed it, and
+`gates/bump_derivation.py` deriving retroactively the number every prior release actually shipped.
+Here it ruled **before** the number was typed: the packaged diff between `v1.2.1` and the tree
+classifies **MINOR** on thirteen public top-level names in `adapters/imapb_codec.py`, so the floor
+was **1.3.0** and the release is 1.3.0. No unit came out ambiguous, so no human bump ruling was
+written or needed. The contrast with entry 10 is the point — 1.2.1 was talked down from 1.3.0 by a
+person reading a diff, and 1.3.0 was ruled up to by the gate reading one.
+
+**`SCHEMA_VERSION` stayed 1.0.0 on evidence rather than on inheritance.** The diff over `schemas/`
+since `v1.2.1` is empty, no model changed, and all six published schemas regenerate byte-identical
+from the models — checked from outside the repository by the wheel gate. A new importable module is
+a package MINOR and says nothing about the wire contract, which is the distinction `version.py`
+argues and this release is a clean instance of.
+
+**Installed from the index, not from the local build.** A fresh virtualenv with no clone on its
+path, `pip install synapse-cdm==1.3.0 --no-cache-dir`. Read back from `site-packages`:
+
+| | |
+| --- | --- |
+| `PACKAGE_VERSION` | `1.3.0`, and `Version:` in the installed `METADATA` agrees |
+| `SCHEMA_VERSION` | `1.0.0` — unmoved, and uncontested |
+| `--list-adapters` | **13 adapters**, unchanged from 1.2.1, `stanag4609` at `1.0.0` with fixtures in `klv` |
+| harness | the whole roster against the installed copy, no `--fixtures`: **408 verdicts, 0 failed** |
+| the new surface | `synapse_cdm.adapters.imapb_codec` imports from `site-packages` and reports **14** IMAPB items |
+
+**No propagation lag this time, and that is worth one line only because entry 10 recorded one.**
+`pip` resolved 1.3.0 on the first attempt. Entry 10 met `Could not find a version that satisfies`
+while the per-release JSON endpoint already answered 200, and recorded it as the index's expected
+behaviour rather than an incident. A second observation that does **not** reproduce is evidence
+about the lag being a race and not a rule.
+
+**The digests, in six readings.** What the gate hashed after building and gating, what the publish
+job hashed immediately before uploading, what the in-toto attestation names as its subject, what
+the simple index declares, what the legacy JSON metadata states, and what a recomputation over the
+downloaded bytes yields:
+
+```
+5cb8e3fcab683c183b726e344023aaca58bfd878cf0ec2d14a896d4b19a9343a  synapse_cdm-1.3.0-py3-none-any.whl
+55a1e9f296880dc6ff27b9692d9639d0b6de770b2faba236d9dd6b5630924fc5  synapse_cdm-1.3.0.tar.gz
+```
+
+**All six readings agree, and the sizes agree with them** — 3 960 762 bytes for the wheel and
+2 126 808 for the sdist, identical in PyPI's metadata and in the files downloaded from the index.
+The gate handed the publish job artefact
+`d5eb88be20d70de478e77bca8e09d93da006b0fadef1a349c212f552805727c6` and the publish job downloaded
+that digest before uploading. One build, gated as that build, uploaded as those bytes, served as
+those bytes.
+
+**A SIZE IS NOT AN IDENTITY, AND THIS RELEASE DEMONSTRATES IT INSTEAD OF ASSERTING IT.** This round
+also built the same tree locally, to run `twine check --strict` before the tag. Its wheel is
+**3 960 762 bytes — byte-for-byte the same size as the published one — and digests
+`2a38b9bb428b48e8d1284f1f62f88f4c43409f4fdbd75c4b0b38c04b20818ee3`, a different file**. Its sdist
+differs in size as well, at 2 135 120. So the two builds of one tree differ exactly as
+`RELEASE_NOTES.md` has said since 1.1.0, and the wheel half of it is the sharper case: a size
+comparison would have called them identical. This is why the served-versus-built check compares the
+**workflow's** digests and never a local rebuild's.
+
+**THE PyPI PROVENANCE TRAP, RE-CONFIRMED LIVE ON THIS RELEASE.** `GET /pypi/synapse-cdm/1.3.0/json`
+reports `provenance: null` on **both** files while attestations demonstrably exist. The
+attestations live on the **simple index**: request `https://pypi.org/simple/synapse-cdm/` with
+`Accept: application/vnd.pypi.simple.v1+json`, read each file's `provenance` URL, fetch it. The
+bundle's `publisher` block returns PyPI's own statement of the four trusted-publisher values —
+`kind` GitHub, `repository` `Decent-Cybersecurity/synapsecommand-public`, `workflow` `publish.yml`,
+`environment` `pypi` — and the in-toto subjects carry the two digests above. That is a **second
+party** to the identity claim, from the index's side rather than the repository's.
+
+**WHAT THE APPROVAL TIMESTAMP WITNESSES, AND WHAT IT DOES NOT.** The upload was accepted over OIDC
+with no credential in `.github/workflows/publish.yml` and no `secrets.*` reference in it, at a
+recorded time, after a named reviewer approved a named environment. That is a dated witness that
+**the tokenless mechanism works** — the fourth such upload, after 1.1.0, 1.2.0 and 1.2.1. It is
+**not** a witness about token state, and it does not supersede the UNDATABLE row: an upload proves
+what it used and says nothing about what else would still be accepted. The distinction is the whole
+of entry 9's lesson and is kept sharp here deliberately, because the 2026-08-28 brief's error was
+to treat exactly these two claims as one.
+
+**What this entry does not claim.** That park 5 is closed — it is not. The codec ships, and not one
+of the ST 0601 rows that would consume it has moved: none of the fourteen is witnessed by any held
+octet, the pinned stream's 26 items stop at tag 65, and all fourteen still read `not yet`. A
+release that adds a capability nothing on a wire has exercised is what this is, and
+`RELEASE_NOTES.md` says so in the release's own voice rather than leaving it here.
+
 ## The deployment was not affected
 
 The documentation site is deployed by explicit upload and **the Pages project has no Git
@@ -1323,9 +1436,13 @@ mentions no platform**, which is the limit stated in entry 9.
 | ~~`docs.synapsecommand.com` is served by `5ed34cd8`~~ | entry 8 | `gates/deploy_record.py`, by bytes | **superseded 2026-08-27 12:37:06Z** by `222a55be` | **PROTOCOL-GATED** — the gate refused the stale id, which is how the pin moved |
 | `docs.synapsecommand.com` is served by `222a55be` | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | holds | **PROTOCOL-GATED** |
 | ~~the distribution on the index is 1.2.0~~ | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | **superseded 2026-08-27** by 1.2.1, and the section cited was absorbed into `### 1.2.1` | the citation is why this row is struck rather than edited: an `Unreleased` section is by construction not a durable address |
-| the distribution on the index is 1.2.1 | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | holds | **SUITE-GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
+| ~~the distribution on the index is 1.2.1~~ | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | **superseded 2026-08-29** by 1.3.0; the section cited is a released heading and stays a durable address, which is the difference from the struck 1.2.0 row above | **SUITE-GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
 | 1.2.1's digests equal what the index serves, in four readings | entry 10 | recomputed over downloaded bytes | holds | dated 2026-08-27 |
 | the four prose defects in the 1.2.0 artefacts are corrected in 1.2.1 | entry 10 | read out of the installed copy and the downloaded sdist | holds | dated 2026-08-27; the tree half is **SUITE-GATED** by `tests/test_cdm_prose_counts.py` |
+| the distribution on the index is 1.3.0 | `MIGRATIONS.md`, `### 1.3.0`; entry 11 | `GET /pypi/…/json`, and `pip install synapse-cdm==1.3.0` in a clean venv | holds | dated 2026-08-29. **SUITE-GATED at one remove**, on the same reading as the row it supersedes: the suite requires every release tag to name the `PACKAGE_VERSION` of the tree it points at, which ties the tag to the tree and not the tree to the index |
+| 1.3.0's served artefacts equal the bytes the workflow gated, both files | entry 11 | SHA-256 recomputed over the downloaded bytes, against the digests `--export-dist` printed inside run `33247697980` | holds | dated 2026-08-29. The comparison basis is the WORKFLOW's build, not a local one: a local rebuild of the same tree differs in generated metadata, and this round rebuilt locally and got two different digests, which is the claim demonstrated rather than asserted |
+| the trusted publisher's four values, from PyPI's own side | entry 11 | the **simple index**'s per-file `provenance` URL, then the bundle's `publisher` block | holds — `kind` GitHub, `repository` `Decent-Cybersecurity/synapsecommand-public`, `workflow` `publish.yml`, `environment` `pypi` | dated 2026-08-29. **The legacy JSON API's per-file `provenance` is the WRONG field** — it reads `null` on every release of this package whether attestations exist or not |
+| the upload was accepted over OIDC with no credential in the workflow | entry 11 | the `pypi` environment's approval and the publish job's own run | holds | dated 2026-08-29T10:47:24–50Z. **This is a witness that the mechanism WORKS, and it is not a witness about token state** — the row four above still reads UNDATABLE and this one does not supersede it, because PyPI publishes no token state and an upload proves only what it used |
 | a `urllib` default `User-Agent` gets HTTP 403 from `docs.synapsecommand.com` | entry 10 | four `User-Agent` values compared | holds | dated 2026-08-27 — recorded because a uniformly failing probe reports identity |
 
 **A probe form that gives the wrong answer, and it is the sort of thing this table exists to
