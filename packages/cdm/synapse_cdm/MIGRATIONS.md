@@ -1549,6 +1549,242 @@ sentence meets its refutation there. **The last round's commit message carries t
 formulation** and is not rewritten; a message is a historical artefact and the record is the thing
 that has to be right.
 
+**THE REFUSED-RELEASE ROUND, 2026-08-29 — 1.3.0 was derived, built, verified and REFUSED. The round
+closes at 1.2.1 with one scope repair and THREE gate defects, every one of them found by taking the
+release far enough to trip it. The brief's own release gate turns out not to exist in the tree, and
+the release was refused anyway.**
+
+**What this round did NOT do, first, because it is the headline.** No tag exists. Nothing was
+pushed to any index. `PACKAGE_VERSION` is **1.2.1** and `SCHEMA_VERSION` is **1.0.0**, both
+unmoved. The distribution on the index is unchanged. The version bump, the rolled release section
+and the rewritten notes were all written, verified and then **unwound**, and this record is what
+survives them.
+
+#### Act 0 — the audit, and its figures
+
+Tree clean, `HEAD` equal to `origin/main` at `86cbf9e`. Suite **3391 passed, 3 skipped**. The
+untouchables hold, each by its own command: the pinned phrase derives to **35** over the git index,
+`scripted_edit`'s contract is green at **9**, `RELEASE_NOTES.md` opens **1.2.1** on the index, and
+`git ls-files` matches **no** PDF. **Exactly one of the four cites the version**, the
+`RELEASE_NOTES.md` opening — and its guard reads `PACKAGE_VERSION` rather than a literal, so it
+would have moved without an edit. All four are unchanged at the close, because nothing shipped.
+
+The bump gate was **run and not copied**: declared **1.2.1**, a PATCH over `v1.2.0`, with the
+pending arc since 1.2.1 deriving **MINOR** and the floor at **1.3.0**. `--mutation-check` witnessed
+both refusal directions and the unruled case on its five fixtures. **Re-run at the close and
+identical**, which is the point of recording it twice in a round that moved the number and put it
+back.
+
+**Pin-as-control, third live run through the resolver:** 21 `local_path`+`sha256` pairs stated by
+**six of the eight** pin files, resolving to **20 distinct copies** — 18 spec and 2 stream, twelve
+of the spec copies under `fixtures/klv/spec` — all twenty present, all twenty matched, the
+decomposition derived by `decompose()` rather than narrated. Identical in every part to the two runs
+before it.
+
+**The `nga.mil` resolution series is extended by one observation.** `NOERROR` for the apex, `gwg`
+and `nsgreg` alike at **2026-08-29 09:21Z**, resolution only, no route asked for bytes, from
+`192.168.0.1` as every prior reading. Bookkeeping only, and the tally is carried rather than
+derived, on the ground earlier rounds stated: **fifteen NOERROR readings against one SERVFAIL
+episode**.
+
+#### Act 1 — sweep rule 11's scope, and the existence check had a subject
+
+**The shipped text did not say table-scope, so the repair was written.** Rule 11's per-round sweep
+was three bullets under a preamble stating no scope at all, and its first bullet reads *each open
+row's blocker* — correct for a blocker and, being the only scope word in the list, read as the
+list's. Meanwhile the rule's own fourth instance had been found in a **closed** row, and the
+paragraph recording it says in as many words that a sweep scoped to open rows would not have opened
+it. **The spec had never caught up with its own witness.**
+
+The scope is now stated above the list; the witness is cited at its own record site rather than
+restated, because a second copy of its two figures is the carrier shape rule 9 names; and the one
+open-scoped bullet says which it is and why its subject makes it so. **The mechanized half already
+agreed** and was checked rather than assumed: `check_set_claims()` walks every row, and
+`blocker_existence()` is open-scoped and says so in its own docstring — an unheld document is what
+an open row waits on, and a closed row waits on nothing.
+
+#### Act 2 — the release gate the brief specified, which the tree does not have
+
+**THE BRIEF LOSES ON ITS OWN ACT 2, and the release was refused notwithstanding.** Both halves of
+that sentence are the finding, and they point opposite ways, so both are recorded.
+
+The brief conditioned the whole release on a step it named *"the release protocol's step C"*,
+requiring a dated PyPI token witness and instructing refusal if the witness were absent. Checked
+before any release mechanic ran, in three parts:
+
+* **There is no step C in the release protocol.** "Releasing the package — the procedure", above,
+  states **five numbered conditions**; none is lettered and none mentions a token, a witness or a
+  date. Verified by reading the section and by sweeping every `*.md` at the repository root and in
+  this package for a lettered step. The only lettered steps in the tree are `PUBLICATION.md` ledger
+  entry 6's, which is a **one-time trusted-publishing migration** rather than a per-release gate.
+* **That step C is closed, not pending.** It is *retire the 1.0.0 API token*, recorded **done
+  2026-08-26** under a heading that says so. Its own "Where this stands" table once read `NOT DONE`
+  four paragraphs above that heading, and that is already a recorded ledger defect — entry 9 —
+  struck as never true.
+* **The brief is right that one claim in the record carries no date, and wrong about what that
+  means.** The witness table's row for *the token is revoked; OIDC is the only way in* reads
+  **UNDATABLE from held evidence**, because PyPI publishes no token state. The record's own
+  treatment says an invented "verified as of" on a fact nothing can check is the failure the whole
+  file exists against.
+
+**So the brief's gate is not a gate that can ever open.** Its condition is unobtainable by
+construction, which makes *"no token witness, no release"* a permanent refusal rather than a
+protocol step, refusing on a requirement the release procedure does not contain. That is the shape
+of the ruling the blocker round declined: an instruction ordered against a defect that does not
+exist. The finding is recorded rather than reconciled.
+
+**AND THE RELEASE WAS REFUSED ANYWAY, BY THE MAINTAINER, WHICH IS A DECISION AND NOT A
+DERIVATION — and the distinction is the whole reason this paragraph exists.** The round put the
+finding above and the completed, verified release side by side and asked; the ruling came back to
+refuse and close at 1.2.1. **Nothing in this repository refused it.** The five conditions were
+satisfiable, the artefact passed every check below, and no gate went red on the release itself. So
+the refusal is recorded here as **a dated reading with the step it failed** — *2026-08-29, refused
+for want of a dated PyPI token witness* — and immediately beside it, because a record that stated
+only the first half would assert a gate the tree does not have: **that step is the brief's and not
+the release procedure's**, and a later round re-deriving it will not find it. **A version number is
+the one claim in a release that can never be corrected**, and a PyPI filename is permanent; on an
+irreversible act, a refusal that costs a round is cheaper than a publication that cannot be undone.
+**This is the house's oldest form working as intended** — a small round that stops honestly — with
+the one qualification that it stopped on a decision and says so.
+
+#### Act 3 and Act 4, which ran in full and were then unwound
+
+Recorded because the work is the evidence for the refusal being cheap rather than forced, and
+because two of this round's three findings only exist because the release went this far.
+
+**The number was derived and it was MINOR.** With the bump applied, `gates/bump_derivation.py`
+reported `declared_kind == derived_kind == MINOR` over `v1.2.1 → the working tree`, from
+`adapters/imapb_codec.py`'s public top-level names and the new fixture set at `fixtures/klv/imapb/`
+— two entries in `version.py`'s MINOR list, read verbatim. **1.3.0 was the right number**, and
+condition 5 would have had its first live release.
+
+**Every guard citing the old version was witnessed RED before any was touched**, which the brief
+required. The bump landed alone and the suite named four: the two-version pin in
+`tests/test_cdm_packaging.py`, the release-notes heading, the documented tag commands at their two
+sites, and the bump gate's JSON measurement. Three moved by an edit under their own stated rules.
+**The fourth cannot be moved by an edit at all**, and it is the interesting one: the gate reports a
+null pending arc until a tag exists for the declared number, so it goes green on the **tag** and is
+red by construction in the commit that bumps. Both states were witnessed.
+
+**`SCHEMA_VERSION` was verified rather than assumed to hold.** The diff over `schemas/` since
+`v1.2.1` is empty, `models.py`, `enums.py` and `schemas.py` are untouched across the whole arc, and
+the generated schemas report CURRENT at 1.0.0. No row of the schema table is reached.
+
+**The artefact was built and verified before anything left, and nothing left.**
+`gates/wheel_install.py` reported **13 checks, 0 failed** on the tagged tree, with
+`--mutation-check` still refusing the fixture-less wheel on five of them. Read off the exported
+artefacts directly rather than from the gate's summary: the wheel's manifest **equal to `git` in
+both directions**; **42** `.py` files under the package against the same 42 `git` tracks, with no
+`.so`, `.dylib`, `.exe`, `.sh` or `.pyc` in either artefact; and **zero PDFs** in the wheel, zero in
+the sdist, zero tracked. `twine check --strict` passed both files. `twine` was installed out of
+tree, never into `.venv`, which the suite judges.
+
+**The unwind, and what it means for the numbers above.** The bump, the rolled release section, the
+rewritten notes and the moved guards were reverted; the tag was deleted before it was ever pushed;
+`RELEASE_NOTES.md` opens 1.2.1 again and the two-version pin is back at 1.2.1 and 1.0.0. The bump
+gate re-derives the pending arc as **MINOR with the floor still at 1.3.0**, which is exactly where
+Act 0 found it — **a refused release leaves the floor, not a gap**. The three repairs below are all
+that survive under `packages/`, plus this record.
+
+#### The three gate defects, which are the round's return
+
+Each was found by taking the release to the point where the gate actually runs, and none of them
+would have been found by a green suite on a tree nobody tried to release.
+
+**ONE — a prose carrier had defeated two release gates.** Both key on the literal heading of the
+pending-arc section and both are conditional on the file containing it: one skips when it is
+absent, the other **requires** it to be absent once the package tree is identical to its tag. A
+round record quoting the bump gate's own refusal message spelled that heading in full. Today that
+is harmless, because the real heading appears earlier in the file. It stops being harmless at
+exactly one moment — when a release absorbs the section and the heading goes with it — and **this
+round watched both gates fail on it**: the first stopped skipping and read the quoted message as
+the section, and the second would have refused the tagged tree outright. The tag could not be made
+until the quotation changed. **Rule 9's carrier pattern landing on a gate's own precondition rather
+than on a reader**, which is a first. Repaired by eliding the heading, and the paragraph now says
+the elision *is* the repair, so a later round does not restore the full quote for fidelity.
+
+**TWO — condition 2's gate was red on `main` before this round touched anything.**
+`gates/wheel_install.py` refuses a distribution whose shipped prose names the package's own
+contents by the repository's layout — a directory an installed reader HAS under another name, so
+the instruction looks correct, resolves, and fails on a path they never chose. The 2026-08-28 build
+round's own record of the two-base pin defect spelled that layout while explaining it, and shipped.
+**The gate has refused the built artefact ever since — one line, red on `main` for a day, with a
+green suite over it the whole time.** The reason nothing noticed is structural: condition 2's actor
+is the release workflow, the workflow runs on a tag, so **the only gate that reads the built
+artefact is also the only one nothing exercises between releases**. Repaired at the sentence, which
+now states both bases without spelling either as a path and points at `gates/pin_paths.py`'s
+`BASES`. **Mechanized as well as repaired**, because this round is the proof that waiting for a tag
+does not work: `tests/test_cdm_packaging.py` runs the same needle over the tracked distribution — no
+wheel, no venv, no network — and was witnessed refusing the **real** incident at `86cbf9e` rather
+than a fixture. The wheel gate stays authoritative over the built artefact, which sees what
+`package-data` sweeps in that `git` does not track.
+
+**THREE — the Unreleased count gate's own non-vacuity witness mutated the wrong sentence.** The
+witness proves the parser reads the anchor rather than agreeing with it by luck: change the count,
+require the parser to notice. **The substitution ran over the whole section with `count=1`**, so it
+replaced the first lookalike token instead of the one the parser reads. Witnessed on the two-file
+arc the release produced, whose section said *"the two documents that moved"* above the anchor: the
+opening paragraph was mutated, the anchor kept saying `2`, the parser returned the unchanged count,
+and the witness reported that **the gate** was not reading its own sentence. **The gate was right
+and its witness was wrong** — worse than a stale figure, because a witness that accuses the
+mechanism it defends invites repairing the mechanism. It is `gates/scripted_edit.py`'s founding
+incident inside the suite that cites it: a non-unique anchor is a bug and not a coin flip. Repaired
+twice over — the mutation now applies to the clause a **shared** helper returns, so the vehicle and
+the gate cannot address different bytes by construction; and both spellings are tried rather than
+one chosen, retiring the bare `next()` that had already raised `StopIteration` once when an arc
+exceeded twelve files. **Proven on both arcs**: on the two-file arc the old vehicle leaves the
+parser reading 2 where it wanted 3 and the new one gets 3, and on this tree's live 66-file arc the
+clause the parser reads is ` 66 files, and this arc now carries CODE` with the digit as the only
+spelling tried.
+
+#### Act 5 — the sweeps, at rule 11's repaired scope
+
+**The parks sweep ran at table scope**, which is Act 1's repair applied in the round that wrote it.
+`gates/parks_table.py`: 13 rows, **four closed and nine open**, 7 set-claims across 2 rows, no
+`CLOSED MEMBER` and no `PHANTOM MEMBER`, 0 failed; three self-members printed as the observation the
+gate refuses to fail on.
+
+**And table scope earned itself on a version figure, which is the sweep's most interesting non-find
+this round.** Park 5's row asserts `PACKAGE_VERSION` **stays** 1.2.1, inside a forecast the same
+cell records as realised — a *closed forecast in an open row*, which is the class rule 11 was
+widened to reach. The clause was identified as the sweep's live subject **while the bump was
+applied**, at which moment it was false. **The refusal is what makes it true again**, and it is left
+exactly as it stands rather than rewritten: it is correct at 1.2.1, and a claim repaired against a
+release that did not happen would be the worse defect. **Recorded because the next release will
+falsify it**, and a sweep that found a claim, watched it go false and then watched it come back owes
+the next round that sentence.
+
+**The disjunction sweep** checked the parks arithmetic at every site that states it: thirteen parks,
+four closed and nine open, agreeing everywhere, with the two sites reading *three closed, ten open*
+already dated and exempt under sweep rule 6 with the live figure stated beside them.
+
+**The stale-count sweep** re-derived every figure this round's prose introduced rather than carrying
+any: the 30 IMAPB payloads and their 30 parsed records, the 14 ST 0601 item worked examples against
+`IMAPB_ITEMS`'s own length, the five bump-gate mutation fixtures, and the 42 shipped modules. The
+13 adapters and 408 fixture verdicts were derived off `adapter.discover()` and the harness for the
+notes that were then unwound; they are stated here only as the reading they were.
+
+**Version figures moved at no site at all, and that is the derived outcome rather than an omission.**
+The sweep's subject was every occurrence of the old number, classified: two **live tree-fact** sites
+(this file's statement of the two numbers, and park 5's cell) which moved with the bump and moved
+back with the unwind; the **dated round readings** — the per-round untouchable records and the pin
+file's round nodes — which rule 6 exempts; and the **index claims** in `docs/docs/changelog.mdx` and
+`PUBLICATION.md`'s witness-table row, which were deliberately left at 1.2.1 throughout, because
+moving them before the artefact is served is the bare-claim class this record spent two rounds
+mechanizing against. **The 1.2.1 release held its own deploy for that reason** and this round would
+have done the same. All of them are correct at the close, unchanged, and they are unchanged because
+the release did not happen rather than because nobody looked.
+
+#### What this round did not do
+
+**No acquisition of any kind** — no fetch, no CDX query, no control re-fetch, and the DNS probe
+asked for no bytes. **No tag, no push to any index, no deploy and no rendered page.** **Nothing new
+under `packages/` beyond three prose repairs**: no adapter, no model, no fixture, no pin, no schema,
+`SCHEMA_VERSION` unmoved at 1.0.0 and `PACKAGE_VERSION` unmoved at 1.2.1. The only new executable
+code is one test in `tests/test_cdm_packaging.py` and one helper in `tests/test_cdm_release.py`,
+neither of which a wheel carries. **No park was closed and no bump ruling was installed.** The
+Unreleased arc is the same **66** files it was at Act 0.
+
 ### 1.2.1 — 2026-08-27 — no surface moved, three gates, and a record that refuted itself twice
 
 **A package PATCH, and the first release here to move `PACKAGE_VERSION` for no executable change
