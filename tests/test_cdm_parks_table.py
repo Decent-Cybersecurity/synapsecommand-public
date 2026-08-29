@@ -91,7 +91,37 @@ def test_every_open_row_reports_its_blocker_as_derived_or_as_a_human_read(parks)
     assert reported == set(parks.open_parks), f"{reported} vs {parks.open_parks}"
     states = {number: state for number, _, state in parks_table.blocker_existence(parks)}
     for number, state in states.items():
-        assert ("held" in state) or ("NOT DERIVABLE" in state), (number, state)
+        # Three legitimate answers and no fourth: a reading, "a human reads this row", or "this
+        # working tree cannot say". The last is what a fresh clone gets, so this assertion has to
+        # admit it or the module fails everywhere its own gate is most careful.
+        assert (("held" in state) or ("NOT DERIVABLE" in state)
+                or ("UNVERIFIABLE HERE" in state)), (number, state)
+
+
+def test_an_empty_spec_directory_reports_unverifiable_and_never_absence(parks, tmp_path):
+    """The defect the fresh-clone verification caught in this module's first pushed version.
+
+    Every pinned PDF is untracked by design, so a clone has the records and not the documents. A
+    report that prints `NOT held` there is measuring the checkout and describing the park, beside a
+    row whose own cell says *held* — which invites a reader to repair a correct row. `pin_paths` is
+    named for that failure on a different axis.
+    """
+    empty = tmp_path / "spec"
+    empty.mkdir()
+    assert parks_table.held_series(empty) == frozenset()
+    states = [state for _, _, state in parks_table.blocker_existence(parks, empty)]
+    assert states, "no open rows would make this vacuous"
+    assert not any("NOT held" in s for s in states), states
+    assert any("UNVERIFIABLE HERE" in s for s in states), states
+
+
+def test_the_set_claim_half_needs_no_bytes_at_all(parks, tmp_path):
+    """The split: the record half runs everywhere, the bytes half says when it cannot."""
+    empty = tmp_path / "spec"
+    empty.mkdir()
+    assert parks_table.check_set_claims(parks) == []
+    reported = {n for n, _, _ in parks_table.blocker_existence(parks, empty)}
+    assert reported == set(parks.open_parks)
 
 
 def test_check_stated_refuses_a_partition_the_table_refutes(parks):

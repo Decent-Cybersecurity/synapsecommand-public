@@ -54,6 +54,15 @@ there. Reported as `held` / `not held` so a reader cannot mistake it for a pin c
 **A held series is not a lifted blocker and this module never says it is.** Parks 5 and 11 hold
 every document their rows name and are blocked on their artefacts; park 8's blocker is a purchase.
 So this reports a fact about the filesystem and leaves the verdict to the row.
+
+**AND ON A FRESH CLONE IT REPORTS NOTHING RATHER THAN ABSENCE, which the clone verification caught
+in this module's first pushed version.** Every pinned PDF is untracked by design, so a clone has
+the records and not the documents — and the first draft printed `ST 0102 NOT held` beside a row
+whose own cell says *held*, inviting a reader to "repair" a correct row from a measurement of their
+checkout. **A wrong base is indistinguishable from a fresh clone** is the failure `gates/pin_paths.py`
+is named for, and this is the same one on a different axis: when NO pinned PDF is present at all,
+the state is `UNVERIFIABLE HERE`. The set-claim half needs no bytes and runs everywhere, which is
+the split the round before this one had to make in `pin_paths` for the same reason.
 """
 from __future__ import annotations
 
@@ -276,9 +285,14 @@ def blocker_existence(p: Parks | None = None, spec: pathlib.Path | None = None
             out.append((number, row.version_required,
                         "NOT DERIVABLE from a filename — this row's document is not a MISB "
                         "four-digit series, so a human reads it"))
-            continue
-        state = ", ".join(f"ST {s} {'held' if s in held else 'NOT held'}" for s in series)
-        out.append((number, row.version_required, state))
+        elif not held:
+            out.append((number, row.version_required,
+                        "UNVERIFIABLE HERE — no pinned PDF is in this working tree at all, so an "
+                        "absence measures the clone and not the park"))
+        else:
+            out.append((number, row.version_required,
+                        ", ".join(f"ST {s} {'held' if s in held else 'NOT held'}"
+                                  for s in series)))
     return out
 
 

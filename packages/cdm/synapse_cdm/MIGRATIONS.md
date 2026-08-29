@@ -2039,6 +2039,18 @@ plan needs, and whether a row's argument still follows. Checking that a cell nam
 exists is nearly free and nearly worthless; the expensive half stays a human's, and the exit code
 says so rather than letting a green read as a clean bill.
 
+**A THIRD FINDING, AND THE FRESH-CLONE VERIFICATION IS WHAT FOUND IT — IN THIS ROUND'S OWN
+PUSHED GATE.** `blocker_existence()`'s first pushed version printed `ST 0102 NOT held` on a clone,
+beside a row whose own cell says *held*, because every pinned PDF is untracked by design and a
+clone has the records and not the documents. **An absence there measures the checkout and reads as
+a fact about the park** — it would invite the next reader to "repair" a correct row from their own
+empty `spec/`. That is `gates/pin_paths.py`'s named failure on a second axis, and it is the mirror
+of what the round before this one had to fix in that module: a check whose bytes half must say when
+it cannot speak. With no pinned PDF present at all the state is now **`UNVERIFIABLE HERE`**, and
+the set-claim half — which needs no bytes and is the half rule 11 turns on — runs everywhere. Two
+tests pin both directions. **The verification step earned its place this round rather than
+confirming a green.**
+
 #### Act 3 — park 11's row states the question that is actually left
 
 **Checked for existence first, and most of what the brief asked for was already written — in the
