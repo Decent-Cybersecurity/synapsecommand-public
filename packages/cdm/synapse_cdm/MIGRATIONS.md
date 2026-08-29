@@ -213,7 +213,23 @@ ran `pip install synapse-cdm` does not have what this section describes.
 
 **What moved inside the distribution: one file.** `MIGRATIONS.md` — the record below and nothing
 else. The count is `gates/bump_derivation.py`'s, and the gate derives the arc since `v1.3.0` as
-**NONE**, so the floor stays at **1.3.0** and no release is pending.
+**PATCH**, on the row that covers a shipped document, so the floor is **1.3.1**. **No release is
+forced by that** — a floor is what the next release may not go below, not a release.
+
+**THIS SENTENCE WAS WRONG IN THE COMMIT THAT WROTE IT, and it is the arc-mis-stating-the-arc class
+one turn tighter than this file has caught it before.** It read *"derives **NONE**, so the floor
+stays at **1.3.0** and no release is pending"*, and that was the gate's true answer **at the moment
+the gate was run** — before this record existed. Writing the record moved `MIGRATIONS.md`, which is
+a shipped document, which moved the arc from NONE to PATCH; so the prose was falsified by the very
+commit that carried it, in the interval between running the derivation and committing the sentence
+quoting it. **The count half was right throughout** — one file, and the gate agrees — which is why
+every Unreleased gate passed over a section that was already wrong: they check the spelled count
+against the derived set and nothing checks a quoted *kind* or *floor*. Every previous instance of
+this class in this file went stale over commits or days; this one went stale over minutes inside a
+single commit, and the lesson is narrower than "re-derive each round": **a derivation quoted in a
+file the derivation reads must be re-run after the file is written, not before.** Repaired
+2026-08-29 in the commit below; the repair is a fixed point, because editing an already-moved file
+changes neither the set nor its classification.
 
 #### The reversal round — 1.3.0 shipped, and both rulings stand
 
