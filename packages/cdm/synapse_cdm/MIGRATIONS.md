@@ -129,7 +129,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.2.1 -m "..."                           # annotated, never lightweight
+git tag -a v1.3.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -206,20 +206,36 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.3.0 — 2026-08-29 — the IMAPB codec ships, and a refused release re-derived forward
 
-**Nothing here is in any release.** The distribution on the index is **1.2.1**, and a reader who
-ran `pip install synapse-cdm` does not have what this section describes.
+**This section carried the pending heading and a release absorbed it**, which is what that
+heading is for — the token itself is elided here, because prose that spells it leaves the file
+carrying it with no such section and two release gates key on the literal string. It is the arc since `v1.2.1`, and every paragraph below it was written while the work
+landed rather than assembled at the tag — condition 4's "derived, not remembered" read as a
+rule about *when* prose is written and not only about what it cites.
 
-**What moved inside the distribution: 66 files, and this arc now carries CODE.** The count is
+**THIS RELEASE WAS DERIVED, VERIFIED AND REFUSED ONCE BEFORE IT SHIPPED.** The refusal is dated
+2026-08-28 and is recorded below in full, with the finding that accompanied it; the operator
+**reversed** it on 2026-08-29 and this release is that reversal carried out. Both rulings stand:
+the refusal as a dated reading, the reversal as the decision that outranks it. **Nothing was
+cherry-picked from the refused attempt.** That attempt's bump, rolled section and rewritten notes
+were unwound before it closed, and every release mechanic here was re-run from scratch against the
+tip — the number re-derived by the gate, the notes re-read off the tree, the guards re-witnessed
+red and then green. The refused attempt exists as history and as this paragraph, and contributed
+no bytes.
+
+**What moved inside the distribution: 67 files, and this arc now carries CODE.** The count is
 `gates/bump_derivation.py`'s and the enumeration below is derived from it rather than typed —
-4 shipped documents, 1 pin record, 1 module of source and 60 fixture files.
+4 shipped documents, 1 pin record, 2 modules of source and 60 fixture files. **It was 66 for the
+whole of the arc's life and the release itself is what made it 67**: `version.py` is a
+distribution file, so the bump that closes an arc joins the arc it closes. That is a property of
+every release this file will ever record and it is stated here once.
 
 * **Documents (4):** `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md`, `fixtures/klv/README.md` — the last two both carrying the
   basename `README.md`.
 * **Pin record (1):** `fixtures/klv/spec/klv_pin.json`.
-* **Source (1):** `adapters/imapb_codec.py`, the IMAPB codec — MISB ST 1201.3's mapping,
-  both directions, park 5's artefact.
+* **Source (2):** `adapters/imapb_codec.py`, the IMAPB codec — MISB ST 1201.3's mapping,
+  both directions, park 5's artefact — and `version.py`, carrying the bump to 1.3.0.
 * **Fixtures (60):** a new set at `fixtures/klv/imapb/`, 30 payloads each with its parsed
   record:
 

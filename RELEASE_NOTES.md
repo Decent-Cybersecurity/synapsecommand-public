@@ -1,31 +1,60 @@
-# synapse-cdm 1.2.1
+# synapse-cdm 1.3.0
 
-A patch release. Nothing you import changed; the documents shipped inside the distribution did.
+A minor release. It adds one importable module and one fixture set, and moves no wire contract.
 
-**Package version 1.2.1 · CDM `schema_version` 1.0.0.** If you consume CDM objects, this release
+**Package version 1.3.0 · CDM `schema_version` 1.0.0.** If you consume CDM objects, this release
 asks nothing of you: no schema moved, no field was added, removed or retyped, and the diff over
-`schemas/` since 1.2.0 is empty. If you write an adapter against the shipped protocol documents,
-they are what this release is for.
+`schemas/` since 1.2.1 is empty. If you decode MISB KLV metadata, the new codec is what this
+release is for.
 
-For what 1.2.0 was — one new adapter, a codec ruling, and the schema version that deliberately did
-not move — see [the 1.2.0 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.2.0)
+For what 1.2.1 was — no importable surface at all, shipped documents carrying repairs the published
+1.2.0 did not have — see [the 1.2.1 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.2.1)
 and the previous notes in this file's git history. This document does not restate them.
 
-## Why this is a PATCH, and it was nearly numbered wrong
+## Why this is a MINOR, and the gate derived it rather than being told
 
-The round behind this release is about 2 800 lines, and almost none of it is in the distribution.
-Every file that changed under `packages/` is a comment or a shipped document: `pyproject.toml` and
-`adapter.py` changed comment lines only — filtering both diffs to functional lines yields nothing —
-and the rest are `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, the two READMEs and one pin record.
+`gates/bump_derivation.py` classifies the diff over the distribution's own contents between
+`v1.2.1` and this tree against `version.py`'s `PACKAGE_VERSION` table. It reports **MINOR**, and it
+names the thirteen public top-level names in `synapse_cdm/adapters/imapb_codec.py` as the signals
+that make it one — `decode`, `encode`, `decode_item`, `encode_item`, `encode_special`, `forward`,
+`reverse`, `length_for_precision`, `IMAPB_ITEMS`, `Constants`, `Special`, `SpecialKind` and
+`constants`. The MINOR row covers both halves of what landed: *a public top-level name appears*,
+and *a fixture set appears*.
 
-No importable name, no `Adapter` contract change, no harness flag or exit code, no fixture set and
-no dependency moved. That is `version.py`'s MINOR list in full, and none of it occurred; its PATCH
-row — "a translation fix, a message, a docstring. No surface change" — is this release read
-literally. The large work is in `gates/`, `tests/` and `PUBLICATION.md`, none of which a wheel
-carries.
+`SCHEMA_VERSION` is unmoved at 1.0.0 and that is not an oversight. Nothing about the wire contract
+changed — no field was added to any model, and a consumer reading CDM objects off a queue is
+unaffected. What moved is the Python surface, which is what a package MINOR states and all it
+states.
 
-**This release was drafted as 1.3.0 and renumbered before anything was tagged**, on the diff rather
-than on the size of the round. A release number states what a consumer receives.
+**The distribution moved 67 files**: 4 shipped documents, 1 pin record, 2 modules of source and 60
+fixture files. The count is the gate's, not a tally — `python gates/bump_derivation.py` prints the
+set.
+
+## What is new
+
+- **An IMAPB codec.** `synapse_cdm.adapters.imapb_codec` implements MISB ST 1201.3's Integer
+  Mapping (IMAPB) in both directions — `encode`/`decode` over the mapping's parameters, and
+  `encode_item`/`decode_item` over the **fourteen** ST 0601 items whose values are IMAPB-mapped:
+  tags 96, 103, 104, 105, 109, 112, 113, 114, 117, 118, 119, 120, 132 and 134. The special values
+  the standard reserves — ±∞, quiet and signalling NaN with their payloads, the reserved and
+  user-defined ranges — are decoded as `Special` rather than collapsed into a float, so a consumer
+  can tell "the sensor said unknown" from "the sensor said zero".
+
+- **A fixture set at `fixtures/klv/imapb/`.** Thirty payloads, each with its parsed record, for
+  sixty files. They are the standards' own worked examples plus the edge cases the mapping has:
+  the fourteen ST 0601.14a item examples, ST 1201.3's example 3 and example 4, the three
+  wire-length variants of tag 112, the zero-offset rule in both directions, the
+  power-of-two range where a high MSB is an ordinary value rather than a special, and the eight
+  special-value encodings.
+
+## What this release does NOT buy
+
+**Park 5 is not closed, and a MINOR that reads as a park closure would be worse than no note.**
+The codec is checked against ST 0601.14a's fourteen worked examples and ST 1201.3's two, and
+against nothing on a wire. None of the fourteen rows it reaches is witnessed by any held octet —
+the pinned transport stream's 26 items stop at tag 65, and the lowest IMAPB item is tag 96. All
+fourteen still read `not yet` in `FORMAT_COVERAGE.md`. In particular `Kinematics.course_deg` is
+still `None` on every object this package emits from that stream, because tag 112 is not in it.
 
 ## Thirteen adapters, all harness-verified, all unchanged
 
@@ -48,42 +77,14 @@ than on the size of the round. A release number states what a consumer receives.
 | `tak` | bidirectional | 12 |
 
 **408 fixture verdicts, 0 failed**, against the published schemas — the same roster and the same
-408 that 1.2.0 shipped. No fixture changed, so an identical table is the correct table, and it is
-printed because a release that claims nothing moved should show the measurement rather than assert
-it.
+408 that 1.2.1 and 1.2.0 shipped. The new fixture set is the codec's and is not an adapter's, so it
+adds no verdict to this table; that the table did not move is the measurement, and it is printed
+rather than asserted.
 
 The six published schemas — `cdm_object`, `entity`, `event`, `plan_object`, `track`,
 `payload_gnss_interference` — regenerate byte-identical from the models.
 
-## What actually reaches you
-
-- **The shipped protocol documents carry repairs that the published 1.2.0 does not.** An adapter
-  count disagreed with itself across the tree, and four of the sentences involved were inside the
-  1.2.0 artefacts on the index — prose in comments and in a packaged document, which is why 1.2.0
-  was not withdrawn and is not yanked now. `PUBLICATION.md`'s ledger records which four, with the
-  digests of the artefacts carrying them. **This release is where the repaired text reaches a
-  consumer.**
-
-  The repair worth naming for anyone writing an adapter is in `adapter.py`'s `fixture_dir` note. It
-  said `stanag4676` was "the only one" whose fixture directory differs from its adapter name.
-  `stanag4609` had shipped in 1.2.0 with `fixture_dir = "klv"`, which made that false while the
-  count in the same sentence stayed right — a claim of *uniqueness* has no number in it. Both
-  halves are derived from the registry now.
-
-- **`FORMAT_COVERAGE.md` gained a round of standards reading and one restoration.** Three entries
-  in the KLV register narrowed, two of them against conclusions the document had already recorded,
-  and every byte of that came from documents already held rather than from anything newly fetched.
-  A register entry that had been truncated mid-clause is restored from the pin record that held the
-  complete sentence.
-
-  **No coverage gap closed and no tag row moved.** All 115 `not yet` rows still read `not yet`. The
-  findings are about the standard's history, not about what an octet means, and the document says so
-  in each entry rather than leaving a reader to infer scope from a narrowed blocker.
-
-- **Nothing else.** No adapter, model, fixture or schema changed. `--list-adapters`, the harness
-  exit codes and the `Adapter` contract are what 1.2.0 shipped.
-
-## Published by CI over OIDC, as 1.1.0 and 1.2.0 were
+## Published by CI over OIDC, as 1.1.0, 1.2.0 and 1.2.1 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
@@ -105,6 +106,6 @@ names. Everything else in this document is readable off that tree, which is what
 release procedure asks for.
 
 ```bash
-pip install synapse-cdm==1.2.1
+pip install synapse-cdm==1.3.0
 python -m synapse_cdm.harness --list-adapters
 ```
