@@ -371,12 +371,16 @@ def _mutation_check() -> int:
     """
     pins = discover()
     present = [p for p in pins if p.resolved.exists()]
-    if not present:
-        print("mutation  SKIPPED — no pinned bytes in this working tree to mutate against")
-        return 0
-
     lines, failed = [], 0
+
+    # The BYTES half only. The decomposition half below is a property of the pin RECORDS and runs
+    # on a fresh clone too — gating it on bytes would be this module's own defect, a check that
+    # goes green while measuring nothing.
+    if not present:
+        lines.append("mutation  SKIPPED  no pinned bytes in this working tree to mutate against")
     for kind, label in (("spec", "a document"), ("streams", "a stream artefact")):
+        if not present:
+            break
         subjects = [p for p in present if p.kind == kind]
         if not subjects:
             lines.append(f"mutation  SKIPPED  {kind}: none present in this working tree")

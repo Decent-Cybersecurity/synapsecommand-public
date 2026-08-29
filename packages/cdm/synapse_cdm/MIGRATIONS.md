@@ -2052,6 +2052,14 @@ because a mutation with an empty domain is a case that passes without running, w
 correct total**, so a sum-only guard passes it and `check_stated()` does not. Nine tests, and
 breaking the PHANTOM branch was confirmed to fail two of them.
 
+**And the fresh-clone run caught this module committing its own defect.** The decomposition
+mutations were placed inside `_mutation_check()`'s early return for *no pinned bytes in this
+working tree* — so on a clone, where `.gitignore` keeps every pinned byte out and the untouchable
+`git ls-files` matches no PDF, the whole block was skipped. **The decomposition is a property of the
+pin RECORDS and needs no bytes at all**, so gating it on bytes was a check going green while
+measuring nothing, which is the exact failure this module exists to retire. The bytes half still
+skips and says so; the record half now runs everywhere, verified against a fresh clone.
+
 #### Act 3 — park 12, and the flag decays on a test that does not need the ambiguity resolved
 
 **What was re-derived, not carried.** The blocker is real: **MISB ST 0902.8 is not held** — absent
