@@ -206,6 +206,131 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+**Nothing here is in any release.** The distribution on the index is **1.3.0**, and a reader who
+ran `pip install synapse-cdm` does not have what this section describes.
+
+**What moved inside the distribution: one file.** `MIGRATIONS.md` — the record below and nothing
+else. The count is `gates/bump_derivation.py`'s, and the gate derives the arc since `v1.3.0` as
+**NONE**, so the floor stays at **1.3.0** and no release is pending.
+
+#### The reversal round — 1.3.0 shipped, and both rulings stand
+
+**THE RULING FIRST.** The maintainer refused this release on **2026-08-28**. The operator
+**reversed** that refusal on **2026-08-29**, and 1.3.0 published the same day. Both are in the
+record: the refusal as a dated reading with the step it failed, the reversal as the decision that
+outranks it. **No history was rewritten** — the unwind arc at `86cbf9e` stands as committed and
+this release re-derived forward from the tip rather than restoring anything.
+
+**The step the refusal turned on does not exist, and this round corrected its own brief before
+acting on it.** The 2026-08-28 brief conditioned the release on *"the release protocol's step C"*
+and a dated PyPI token witness; the procedure states five numbered conditions and no lettered
+steps, and the only lettered steps in the tree are `PUBLICATION.md` entry 6's, whose step C closed
+**2026-08-26**. That was refuted last round at its own site and nothing this round waited on it.
+**The carrier sweep for it is a non-find**: every site naming *step C* or a token witness is either
+entry 6's genuine closed step or one of the refutation's own paragraphs. No site asserts the
+withdrawn obligation, so nothing was repaired and the sweep's result is that there was nothing to
+repair.
+
+#### Act 0 — the audit, and its figures
+
+Tree clean, `HEAD` equal to `origin/main` at `feca9dd`, a descendant of `86cbf9e`. Suite **3392
+passed, 3 skipped**. The untouchables hold, each by its own command: the pinned phrase derives to
+**35** over the git index, `scripted_edit`'s contract is green at **9**, `RELEASE_NOTES.md` opened
+**1.2.1** on the index, and `git ls-files` matched **no** PDF. The bump gate was **run and not
+copied**: declared 1.2.1 a PATCH over `v1.2.0`, with the pending arc deriving **MINOR** and the
+floor at **1.3.0**, which is the derivation that decided the number rather than the brief.
+
+**The `nga.mil` series is extended by one reading, resolution only.** At **2026-08-29T10:10Z** all
+three names answered `NOERROR`. That is **eleven** successes against the single SERVFAIL episode,
+and it is a reading — one timestamped probe of all three names — which is the counting unit every
+increment in this record uses.
+
+**Pin-as-control ran through the resolver and its decomposition is derived, not recalled.**
+`gates/pin_paths.py`: **21** `local_path`+`sha256` pairs stated by **six of the eight** pin files,
+resolving to **20** distinct copies — 18 spec and 2 streams, twelve of the spec copies under
+`fixtures/klv/spec` — with **20 present and 20 matched, 0 failed**.
+
+#### Act 1 — the release, re-derived forward
+
+Every mechanic was re-run from scratch and **nothing was cherry-picked from the refused attempt**,
+which contributed no bytes. The gate derived **MINOR over `v1.2.1`** on thirteen public top-level
+names in `adapters/imapb_codec.py`, with no ambiguity and so no bump ruling. `SCHEMA_VERSION` moved
+only if its own categories said so and they did not: the diff over `schemas/` since `v1.2.1` is
+empty and no model changed.
+
+**The four guards were watched failing before they were repaired**, which is the part a green suite
+cannot show. Three move by editing — the two-version literal pin, the notes' opening line, and the
+documented `git tag -a` commands — and the fourth,
+`test_the_json_measurement_is_what_a_round_would_quote`, is red **by construction** between the
+bump and the tag and went green on the tag rather than on an edit, exactly as this file records.
+
+**THE PROSE-CARRIER INCIDENT REPEATED ITSELF INSIDE THE COMMIT THAT ROLLS THE SECTION, and that is
+the strongest result the last round's repair could have produced.** The rolled section's own
+opening sentence spelled the pending heading in order to say it had been absorbed — leaving the
+file carrying the literal token with no such section, which is precisely the defect repaired on
+2026-08-29 one commit earlier. It was found by grepping the token after the roll, as that repair's
+record instructs, and not by a gate: both gates that key on the string were skipping, because the
+version had no tag yet. **A repair whose own record tells the next round how to catch the repeat is
+worth more than a gate here**, and the token is elided with the sentence saying why.
+
+**A NEAR-FALSE FINDING OF THIS ROUND'S OWN, caught by re-deriving rather than by reporting.** A
+first pass concluded that **none** of the fourteen IMAPB rows reads `not yet` — which would have
+contradicted the release notes being written beside it. The cause is this record's own counting
+trap one turn further on: the row regex `^\| `\d+` \| ` matches **two different tables** keyed by
+the same tag numbers, the ST 0601 tag table and the IMAPB worked-example table, and collapsing them
+into one map by tag let the second overwrite the first. Scoped by column count the answer is
+**141 tag-table rows, 115 reading `not yet`** — the record's own 115, reproduced — with all
+fourteen IMAPB rows among them. **The disagreement was the reader's and the record was right**,
+which is the fourth time that sentence has had to be written and the first time about a table
+collision rather than a wrapped line.
+
+**Park 5's row is repaired and its own note is the citation.** The row asserted `PACKAGE_VERSION`
+*stays* 1.2.1 inside a realised forecast; the refused round left it standing, recorded that the
+refusal made it true again, and wrote that *"the next release will falsify it"*. This is that
+release. The clause now states what happened, what held — `SCHEMA_VERSION` at 1.0.0 — and that the
+floor's own reading survives, the gate's MINOR and the decision to ship having been six days apart.
+
+#### Act 2 — published, and verified against the bytes
+
+Run **33247697980**, triggered by the `v1.3.0` tag: build green on every step, then the `pypi`
+environment held the upload for twenty-one minutes until a required reviewer approved at
+**10:47:24Z**. **The approval was the operator's alone.** Before pushing, the environment's
+`required_reviewers` protection was verified rather than assumed — a tag pushed at a workflow with
+no reviewer on its environment would publish unattended, and that is the one thing the plan rested
+on.
+
+**Six readings of each digest agree**, and the served bytes were fetched and re-hashed rather than
+trusted, with the body read before the status was believed. **The size trap is demonstrated instead
+of asserted**: this round's local build, made for `twine check --strict`, produced a wheel of
+**exactly the published wheel's size** and a different digest. A size comparison would have called
+two different files identical, which is why the check compares the workflow's digests and never a
+rebuild's. `PUBLICATION.md` entry 11 carries the whole verification.
+
+#### Act 3 — the sweeps, and what they found
+
+**The version-figure sweep moved two sites and no others.** Both are index claims —
+`docs/docs/changelog.mdx`'s live sentence and the witness table's row — and both moved only after
+the artefact was actually on the index, on the rule the 1.2.1 release followed. Every remaining
+1.2.1 is a dated round reading exempt under sweep rule 6 or a historical reference to a released
+tag. **The parks sweep ran at rule 11's table scope**: 13 rows, four closed and nine open, 7
+set-claims across 2 rows, no `CLOSED MEMBER` and no `PHANTOM MEMBER`, 0 failed.
+
+**The ledger count gate's word map stopped at ten, and an eleventh entry is what found it.** It
+derives the count from the headings and requires two prose sites to state it in words; the map had
+no entry for eleven, so the gate refused with its own instruction to extend it. Extended to
+fifteen rather than to eleven, because a bound that is met again next round is the same defect.
+
+**Untouchables re-verified at the close, each by its own command:** the pinned phrase derives to
+**35** over the git index, `scripted_edit`'s contract is green at **9**, `RELEASE_NOTES.md` opens
+**1.3.0**, and `git ls-files` matches **no** PDF. **Exactly one of the four cites the version** and
+it moved with the release under its own guard, which reads `PACKAGE_VERSION` rather than a literal.
+The bump gate re-derives the arc since `v1.3.0` as **NONE** with the floor at **1.3.0**. Fresh
+clone at the tag **3331 passed, 64 skipped**, reconciling with the working tree at the same
+**3395** total.
+
+
 ### 1.3.0 — 2026-08-29 — the IMAPB codec ships, and a refused release re-derived forward
 
 **This section carried the pending heading and a release absorbed it**, which is what that
