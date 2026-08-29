@@ -219,3 +219,109 @@ def test_no_second_site_resolves_a_pin_path_by_hand():
             f"references gates.pin_paths — either the refactor was reverted or a fourth spelling "
             f"of a base has appeared"
         )
+
+
+# ------------------------------------------- the decomposition: a RECORD about JSON, never skips
+
+DECOMPOSITION = pin_paths.decompose(PINS)
+
+
+def test_the_decomposition_parts_add_to_their_totals():
+    """Every part set adds to the total it is a part set OF. The arithmetic half."""
+    assert pin_paths.check_parts(DECOMPOSITION) == []
+    assert sum(DECOMPOSITION.per_pin_file.values()) == DECOMPOSITION.pairs == len(PINS)
+    assert sum(DECOMPOSITION.per_location.values()) == DECOMPOSITION.copies
+    assert sum(DECOMPOSITION.per_kind.values()) == DECOMPOSITION.copies
+
+
+def test_every_pin_file_is_accounted_for_as_contributing_or_silent():
+    """"Across N pin files" is two different numbers, and the report may not pick one silently.
+
+    Six pin files state a `local_path`+`sha256` pair and eight exist. A round wrote "across the
+    eight pin files" and the tool printed six; both were true of different things and neither said
+    which. The decomposition names the silent ones instead of choosing.
+    """
+    corpus = {str(f.relative_to(pin_paths.REPO))
+              for f in (pin_paths.PKG / "fixtures").rglob("*_pin.json")}
+    stated = set(DECOMPOSITION.per_pin_file) | set(DECOMPOSITION.silent_pin_files)
+    assert stated == corpus, f"pin files unaccounted for: {corpus ^ stated}"
+    assert not (set(DECOMPOSITION.per_pin_file) & set(DECOMPOSITION.silent_pin_files)), (
+        "a pin file counted as both contributing and silent")
+
+
+def test_the_recorded_decomposition_failure_is_caught():
+    """The incident itself, as a fixture: a sub-location the corpus does not have.
+
+    A round reported "eighteen documents, three of them under `spec/history/`". The eighteen was
+    right; no pinned copy is under `spec/history/` at all. The statement was a SUB-CLAUSE and not
+    an addend, so it re-attributed three copies rather than inventing a nineteenth.
+    """
+    truthful = dict(DECOMPOSITION.per_location)
+    phantom_at = f"{pin_paths.PREFIX}/klv/spec/history"
+    donor = f"{pin_paths.PREFIX}/klv/spec"
+
+    assert phantom_at not in truthful, (
+        f"the mutation's subject exists — {phantom_at} IS a location of this corpus, so this test "
+        f"would prove nothing")
+    assert truthful.get(donor, 0) >= 3, (
+        f"the mutation cannot be applied: it moves three copies off {donor!r} and the corpus "
+        f"resolves {truthful.get(donor, 0)} there. A mutation with an empty domain is a test that "
+        f"passes without running")
+
+    stated = dict(truthful)
+    stated[donor] -= 3
+    stated[phantom_at] = 3
+
+    complaints = pin_paths.check_stated(stated, DECOMPOSITION)
+    assert any(c.startswith("PHANTOM") for c in complaints), complaints
+    assert phantom_at in " ".join(complaints)
+
+
+def test_a_sum_only_guard_would_have_passed_the_recorded_failure():
+    """The non-vacuity witness, and it is why the guard is not `sum(parts) == total`.
+
+    The same statement the test above refuses adds up perfectly. If this assertion ever fails the
+    guard above has stopped being interesting — it would be catching something a total already
+    catches — and the reason for comparing parts would need restating rather than assuming.
+    """
+    truthful = dict(DECOMPOSITION.per_location)
+    donor = f"{pin_paths.PREFIX}/klv/spec"
+    stated = dict(truthful)
+    stated[donor] -= 3
+    stated[f"{pin_paths.PREFIX}/klv/spec/history"] = 3
+
+    assert sum(stated.values()) == DECOMPOSITION.copies, (
+        "the fixture no longer reproduces the recorded shape: the recorded failure kept the total "
+        "correct, and this statement does not")
+    assert sum(truthful.values()) == DECOMPOSITION.copies
+
+
+def test_the_truthful_decomposition_passes_the_guard():
+    """A guard that refused everything would pass every test above. This is the other direction."""
+    assert pin_paths.check_stated(dict(DECOMPOSITION.per_location), DECOMPOSITION) == []
+
+
+@pytest.mark.parametrize("prefix,mutate", [
+    ("COUNT", lambda d: {**d, sorted(d)[0]: d[sorted(d)[0]] + 1}),
+    ("MISSING", lambda d: {k: v for k, v in d.items() if k != sorted(d)[0]}),
+])
+def test_the_guard_catches_the_other_two_ways_a_part_can_be_wrong(prefix, mutate):
+    truthful = dict(DECOMPOSITION.per_location)
+    assert len(truthful) >= 2, "too few locations for these mutations to mean anything"
+    complaints = pin_paths.check_stated(mutate(truthful), DECOMPOSITION)
+    assert any(c.startswith(prefix) for c in complaints), (prefix, complaints)
+
+
+def test_the_gate_prints_the_decomposition_rather_than_leaving_it_to_prose(capsys):
+    """The point of the whole act: nobody has to narrate the parts, so nobody can narrate them wrong."""
+    assert pin_paths.main([]) == 0
+    out = capsys.readouterr().out
+    for location, n in DECOMPOSITION.per_location.items():
+        assert location in out, f"{location} is derived and not printed"
+        assert f"{n:>3} {location}" in out
+    for pin_file in DECOMPOSITION.silent_pin_files:
+        assert pin_file in out, "a pin file stating no pair is invisible in the report"
+
+
+def test_the_gates_own_mutation_check_passes():
+    assert pin_paths.main(["--mutation-check"]) == 0

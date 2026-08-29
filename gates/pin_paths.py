@@ -210,6 +210,114 @@ def verify_convention(pins: list[Pin] | None = None) -> list[str]:
     return problems
 
 
+# ------------------------------------------------------------------ the decomposition, DERIVED
+
+class Decomposition(NamedTuple):
+    """The parts of a pin-as-control run, derived from the corpus rather than narrated.
+
+    WHY THIS IS A TYPE AND NOT A PARAGRAPH. A round reported the corpus as "eighteen documents,
+    three of them under `spec/history/`". The eighteen was right. **No pinned copy is under
+    `spec/history/` at all** — the sub-clause named a location the corpus does not have, and it
+    survived because it was a SUB-CLAUSE rather than an addend: the total still added up, and the
+    total is what the gate read. A decomposition nobody derives is a decomposition nobody checks.
+    """
+    pairs: int
+    copies: int
+    per_pin_file: dict[str, int]
+    silent_pin_files: tuple[str, ...]
+    per_location: dict[str, int]
+    per_kind: dict[str, int]
+
+
+def decompose(pins: list[Pin] | None = None, root: pathlib.Path | None = None) -> Decomposition:
+    """Every part of the control run, each counted from the pins themselves.
+
+    `per_pin_file` counts PAIRS — a pin file states pairs, and two of them may name one copy.
+    `per_location` and `per_kind` count DISTINCT COPIES after resolution, because that is what
+    "eighteen documents and two stream artefacts" is a decomposition OF.
+    """
+    pins = discover(root) if pins is None else pins
+    base = (root or PKG) / "fixtures"
+
+    per_pin_file: dict[str, int] = {}
+    for pin in pins:
+        key = str(pin.pin_file.relative_to(REPO))
+        per_pin_file[key] = per_pin_file.get(key, 0) + 1
+
+    silent = tuple(sorted(
+        str(f.relative_to(REPO)) for f in base.rglob("*_pin.json")
+        if str(f.relative_to(REPO)) not in per_pin_file
+    ))
+
+    seen: set[str] = set()
+    per_location: dict[str, int] = {}
+    per_kind: dict[str, int] = {}
+    for pin in pins:
+        resolved = str(pin.resolved)
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        location = str(pathlib.PurePosixPath(pin.local_path).parent)
+        per_location[location] = per_location.get(location, 0) + 1
+        per_kind[pin.kind] = per_kind.get(pin.kind, 0) + 1
+
+    return Decomposition(
+        pairs=len(pins), copies=len(seen),
+        per_pin_file=dict(sorted(per_pin_file.items())), silent_pin_files=silent,
+        per_location=dict(sorted(per_location.items())), per_kind=dict(sorted(per_kind.items())))
+
+
+def check_parts(d: Decomposition) -> list[str]:
+    """The partition half: every part set must add to the total it is a part set OF."""
+    problems: list[str] = []
+    if sum(d.per_pin_file.values()) != d.pairs:
+        problems.append(
+            f"per-pin-file counts sum to {sum(d.per_pin_file.values())}, not the {d.pairs} pairs "
+            f"discovered")
+    for name, part in (("location", d.per_location), ("kind", d.per_kind)):
+        if sum(part.values()) != d.copies:
+            problems.append(
+                f"per-{name} counts sum to {sum(part.values())}, not the {d.copies} distinct "
+                f"copies after resolution")
+    for name, part in (("pin file", d.per_pin_file), ("location", d.per_location),
+                       ("kind", d.per_kind)):
+        empty = sorted(k for k, v in part.items() if v <= 0)
+        if empty:
+            problems.append(f"{name} part(s) with no copies at all: {empty}")
+    return problems
+
+
+def check_stated(stated: dict[str, int], d: Decomposition | None = None) -> list[str]:
+    """Compare a decomposition SOMEBODY STATED against the derived one. THE guard.
+
+    Locations only, because that is the axis the recorded failure moved on. Three complaints, and
+    the FIRST is the one a sum check cannot make:
+
+    * **PHANTOM** — a location stated that the corpus does not have. This is the recorded failure's
+      shape exactly, and a guard that only added the parts up would pass it: `spec/history/` was
+      never an addend, it was a sub-clause of a correct eighteen.
+    * **MISSING** — a location the corpus has and the statement omits.
+    * **COUNT** — a location both agree exists and disagree about.
+    """
+    d = decompose() if d is None else d
+    problems: list[str] = []
+    for location in sorted(set(stated) - set(d.per_location)):
+        problems.append(
+            f"PHANTOM location {location!r}: stated as holding {stated[location]} pinned "
+            f"copy/copies, and the corpus resolves NONE into it. The corpus has "
+            f"{sorted(d.per_location)}. A total that still adds up does not make a part real")
+    for location in sorted(set(d.per_location) - set(stated)):
+        problems.append(
+            f"MISSING location {location!r}: the corpus resolves {d.per_location[location]} "
+            f"pinned copy/copies into it and the statement does not mention it")
+    for location in sorted(set(stated) & set(d.per_location)):
+        if stated[location] != d.per_location[location]:
+            problems.append(
+                f"COUNT at {location!r}: stated {stated[location]}, derived "
+                f"{d.per_location[location]}")
+    return problems
+
+
 def _report(readings: list[Reading], problems: list[str]) -> int:
     by_kind: dict[str, list[Reading]] = {}
     for r in readings:
@@ -221,12 +329,19 @@ def _report(readings: list[Reading], problems: list[str]) -> int:
     absent = sum(1 for r in distinct.values() if not r.present)
     mismatched = sum(1 for r in distinct.values() if r.matched is False)
 
-    print(f"pairs         {len(readings)} local_path+sha256 pairs across "
-          f"{len({str(r.pin.pin_file) for r in readings})} pin files")
-    print(f"copies        {len(distinct)} distinct, after resolution")
-    for kind in sorted(by_kind):
-        d = {str(r.pin.resolved) for r in by_kind[kind]}
-        print(f"  {kind:<11} {len(d)} distinct, base {BASES[kind].relative_to(REPO) or '.'}")
+    dec = decompose([r.pin for r in readings])
+    print(f"pairs         {dec.pairs} local_path+sha256 pairs, stated by "
+          f"{len(dec.per_pin_file)} of {len(dec.per_pin_file) + len(dec.silent_pin_files)} "
+          f"pin files")
+    for pin_file, n in dec.per_pin_file.items():
+        print(f"  {n:>3} {pin_file}")
+    for pin_file in dec.silent_pin_files:
+        print(f"    . {pin_file} — states no local_path+sha256 pair")
+    print(f"copies        {dec.copies} distinct, after resolution")
+    for kind, n in dec.per_kind.items():
+        print(f"  {kind:<11} {n} distinct, base {BASES[kind].relative_to(REPO) or '.'}")
+    for location, n in dec.per_location.items():
+        print(f"    {n:>3} {location}")
     print(f"present       {present}")
     print(f"matched       {matched}")
     if absent:
@@ -240,7 +355,10 @@ def _report(readings: list[Reading], problems: list[str]) -> int:
                 print(f"MISMATCH      {r.pin.local_path}: disk {r.digest} pin {r.pin.sha256}")
     for p in problems:
         print(f"CONVENTION    {p}")
-    failed = mismatched + len(problems)
+    parts = check_parts(dec)
+    for p in parts:
+        print(f"DECOMPOSITION {p}")
+    failed = mismatched + len(problems) + len(parts)
     print(f"{len(distinct)} copies, {failed} failed")
     return 1 if failed else 0
 
@@ -279,6 +397,57 @@ def _mutation_check() -> int:
     else:
         failed += 1
         lines.append("mutation  FAIL     an unknown <kind> resolved to a base")
+
+    # The decomposition guard, against the shape the record actually failed in.
+    dec = decompose(pins)
+    truthful = dict(dec.per_location)
+
+    # THE RECORDED FAILURE'S SHAPE, reproduced exactly: not an addend, a SUB-CLAUSE. The round
+    # said "eighteen documents, three of them under `spec/history/`" — so three copies were
+    # re-attributed from a real location to one the corpus does not have, and the TOTAL WENT ON
+    # ADDING UP. That is why the guard compares the parts and not their sum.
+    phantom_at = PREFIX + "/klv/spec/history"
+    assert phantom_at not in truthful, (
+        "the phantom mutation's own subject exists: %r IS a location of this corpus, so this "
+        "case would prove nothing. Pick a location the corpus does not have" % phantom_at)
+    donor = "%s/klv/spec" % PREFIX
+    assert truthful.get(donor, 0) >= 3, (
+        "the mutation cannot be applied: it re-attributes three copies away from %r and the "
+        "corpus resolves %d there. A mutation whose domain is empty is a case that passes "
+        "without running" % (donor, truthful.get(donor, 0)))
+    phantom = dict(truthful)
+    phantom[donor] -= 3
+    phantom[phantom_at] = 3
+
+    caught = [c for c in check_stated(phantom, dec) if c.startswith("PHANTOM")]
+    failed += not caught
+    lines.append(
+        "mutation  %s     the recorded failure is caught — %r stated, none resolved into it"
+        % ("PASS" if caught else "FAIL", phantom_at))
+
+    sum_only_blind = sum(phantom.values()) == dec.copies
+    failed += not sum_only_blind
+    lines.append(
+        "mutation  %s     ...and a SUM-ONLY guard passes that same statement (%d == %d), which "
+        "is the whole reason this guard compares parts"
+        % ("PASS" if sum_only_blind else "FAIL", sum(phantom.values()), dec.copies))
+
+    subclause_only = check_stated(truthful, dec)
+    sum_still_right = sum(truthful.values()) == dec.copies
+    ok = not subclause_only and sum_still_right
+    failed += not ok
+    lines.append(
+        f"mutation  {'PASS' if ok else 'FAIL'}     the truthful decomposition passes both halves, "
+        f"so the guard is not simply refusing everything")
+
+    for label, mutated, prefix in (
+            ("a wrong count at a real location",
+             dict(truthful, **{next(iter(truthful)): truthful[next(iter(truthful))] + 1}), "COUNT"),
+            ("an omitted location",
+             {k: v for k, v in list(truthful.items())[1:]}, "MISSING")):
+        got = [c for c in check_stated(mutated, dec) if c.startswith(prefix)]
+        failed += not got
+        lines.append(f"mutation  {'PASS' if got else 'FAIL'}     {label} is caught ({prefix})")
     for line in lines:
         print(line)
     return 1 if failed else 0
