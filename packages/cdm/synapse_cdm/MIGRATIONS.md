@@ -2161,9 +2161,12 @@ the dropping premise and the appending conclusion. The ruling states the shape i
 says to draft it "in the form the gate's hand-ruling slot expects". Written into that slot today it
 **fails the gate**. `apply_rulings()` refuses as stale any ruling naming a unit the arc does not
 find ambiguous, and park 11's change does not exist, so `Stanag4609Adapter` is not an `Ambiguity` of
-the pending arc. A probe inserted the ruling into `### Unreleased`, ran the gate, and got
-*"MIGRATIONS.md's `### Unreleased` section carries 1 bump ruling(s) for unit(s) this arc does not
-find ambiguous"*; the probe was reverted and the gate re-run green. **So the gate refuses a ruling
+the pending arc. A probe inserted the ruling into the section describing the pending arc, ran the
+gate, and got *"MIGRATIONS.md's `### …` section carries 1 bump ruling(s) for unit(s) this arc does
+not find ambiguous"*; the probe was reverted and the gate re-run green. **The heading is elided from
+that quotation on purpose and the elision is the repair, not a style choice** — spelled in full it
+is the token two release gates key on, and this paragraph was carrying it. See the refused-release
+round's record above. **So the gate refuses a ruling
 that PRECEDES its case exactly as it refuses one that OUTLIVES it, and for the same reason** — the
 refusal message says a ruling is dated by the entry it sits in, and an entry for a change nobody has
 made dates nothing. The ruling is therefore drafted in `FORMAT_COVERAGE.md`, which the gate does not
