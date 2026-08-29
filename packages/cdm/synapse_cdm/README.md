@@ -598,15 +598,26 @@ cannot find a site nobody has added to it. The sweep is:
    not where the change happened. That is rule 10's disease one class over: not a summary that
    misdirects a reader, but a claim whose truth lives in rows nobody re-reads together.
 
+   **THE SWEEP'S SUBJECT IS THE TABLE, CLOSED ROWS INCLUDED, and the scope is written down
+   because without it the list below reads as open-scoped off its first bullet.** The witness is
+   the fourth instance recorded further down and it is cited rather than restated: the gate found
+   it in a **closed** row, in a clause about a park that closed after the clause was written.
+   **Closure freezes a park, not the sentences its row spends on other parks** — a row stops
+   waiting on anything and goes on asserting things about rows that have not — so a row's own state
+   is no evidence at all about whether its claims have decayed. One bullet below is open-scoped,
+   and by its subject rather than by choice: an unheld document, an unwritten ruling and an unbuilt
+   artefact are what an OPEN row waits on, and a closed row waits on nothing.
+
    **The sweep, per round:**
 
    * **each open row's blocker re-checked for EXISTENCE** — is the document still unheld, is the
      ruling still unwritten, is the artefact still unbuilt. Never inherited from the row and never
-     from a brief;
-   * **each plan cell against what its plan actually needs**, which is the pairing that produced
-     two of the three instances above;
-   * **each partition or set-claim RE-DERIVED against current membership**, which is the one no
-     amount of careful reading substitutes for.
+     from a brief. This is the one the scope note exempts;
+   * **every row's plan cell against what its plan actually needs**, which is the pairing that
+     produced two of the three instances above;
+   * **every row's partitions and set-claims RE-DERIVED against current membership**, which is the
+     one no amount of careful reading substitutes for — and the one the fourth instance came out
+     of, which is why this bullet's subject is the table and not the open half of it.
 
    **WHAT IS MECHANIZED, and the split is stated so a green cannot be mistaken for a clean bill.**
    `gates/parks_table.py` derives the table and takes rule 8's move — pin the derivation, not the
