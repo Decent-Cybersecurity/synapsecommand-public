@@ -231,6 +231,177 @@ file the derivation reads must be re-run after the file is written, not before.*
 2026-08-29 in the commit below; the repair is a fixed point, because editing an already-moved file
 changes neither the set nor its classification.
 
+#### The maintenance round — the carrier grep becomes a gate, and two briefed facts do not survive reconstruction
+
+**THE ROUND'S RETURN IS THAT BOTH THINGS IT WAS SENT TO MECHANIZE WERE MIS-DESCRIBED IN THE BRIEF,
+AND THE TREE SAYS SO IN BOTH DIRECTIONS.** The defect is real and the gate is written; the account
+of *why no gate caught it* is wrong, and correcting it moved the gate's design. A hand-carried
+tally that no command reproduces turned out to have drifted in both directions. Neither was
+findable by re-reading — both needed the state rebuilt and the derivation re-run.
+
+##### Act 0 — the audit, and a tally that had drifted in both directions
+
+Tree clean, `HEAD` equal to `origin/main` at `7895083`. Suite **3392 passed, 3 skipped** before
+anything moved. The untouchables hold, each by its own command: the pinned phrase derives to **35**
+over the git index, `scripted_edit`'s contract is green at **9**, `RELEASE_NOTES.md` opens
+**1.3.0**, and `git ls-files` matches **no** PDF. **The bump gate was run and not copied**: it
+derives the arc since `v1.3.0` as **PATCH** with the floor at **1.3.1**, which is what the section
+above already says — the previous commit's repair is a fixed point and this run is the check of it,
+not a restatement. `--mutation-check` passes all five fixtures. **Pin-as-control through the
+resolver, decomposition derived:** **21** `local_path`+`sha256` pairs stated by **six of the eight**
+pin files, resolving to **20** distinct copies — 18 spec and 2 streams, twelve of the spec copies
+under `fixtures/klv/spec` — **20 present, 20 matched, 0 failed**. Identical in every part to the
+three runs before it. **Fresh clone at `v1.3.0`: 3331 passed, 64 skipped**, reconciling with the
+working tree's **3392 + 3** at the same **3395** total, which confirms the figure the round below
+recorded rather than carrying it.
+
+**The `nga.mil` series is extended by one reading, resolution only.** At **2026-08-29 15:16Z** the
+apex, `gwg` and `nsgreg` all answered `NOERROR`, from `192.168.0.1` as every prior reading. No
+route was asked for bytes. **The hour is the reason this one is worth its line**: the single
+SERVFAIL episode is a ~14:00–15:00Z observation, and this reading is the closest to that window
+since the 14:08Z probe that first retested it. It does not fail either.
+
+**AND THE TALLY IT WAS SUPPOSED TO CARRY IS NOT MONOTONIC, WHICH IS A FINDING.** The round above
+records *eleven* successes at **10:10Z**. The round before it records *fifteen* at **09:21Z** — an
+earlier reading with a higher count. A series that only ever grows cannot do that, so at least one
+of the two is wrong and re-reading either sentence cannot say which. **Derived instead of carried**,
+using the counting unit the record itself states — one timestamped probe of all three names — the
+readings are: 2026-08-27 20:20Z and 21:03Z; 2026-08-28 10:56Z, 11:49Z, 13:44Z, 14:08Z, 18:23Z,
+19:47Z, 20:17Z and 21:14Z; 2026-08-29 07:59Z, 08:49Z, 09:21Z and 10:10Z. **Fourteen, so this
+round's is the FIFTEENTH**, against the one SERVFAIL episode. The stated series drifted in both
+directions: it was **two too high** at 09:21Z and **three too low** at 10:10Z, and the step from
+*four* at 11:49Z to *eight* at 14:08Z adds four for two probes.
+
+**Class: an underived figure doing exactly what an underived figure does, at the one site that had
+already said so.** The 07:59Z reading records that the tally *"is the one figure in this record that
+no command reproduces"* — the defect and its own diagnosis were written in the same sentence, one
+round apart. **The dated tallies are NOT rewritten.** Each was a round's reading of its own moment
+and a dated round narrative is a historical artefact; the correction belongs beside the claim and
+not on top of it, which is the ruling this file already applied to the retired `Entity.source_ids`
+phrase. What changes is that the count above is derived from the timestamps and shows its work, so
+the next round has something to check rather than something to increment.
+
+##### Act 1 — the carrier gate, and the blindness it was briefed to close is not the blindness that exists
+
+**The defect, which is not in dispute.** Four checks in `tests/test_cdm_release.py` key on the
+literal pending-arc heading, and every one asks the same question of the same file: is that string
+IN `MIGRATIONS.md`? **None asks whether the occurrence it found is a heading.** So a sentence of
+prose that spells the heading — to quote a gate's refusal message, or to say the section has just
+been absorbed — answers all four in the affirmative on behalf of a section that may not exist.
+Three consecutive rolls recreated it: `96f5920`, the same shape again while that repair was being
+written, and `148e7a6`, where the rolled section's opening sentence named the heading it had just
+absorbed. The third was caught by a human following the previous repair's written instruction to
+grep after rolling. **A defect caught three times by an instruction, while the gates that key on the
+string stay green, is past the mechanization threshold** — that part of the brief holds and the gate
+is written to it.
+
+**THE BRIEF'S ACCOUNT OF WHY THE GATES MISSED IT DOES NOT SURVIVE REBUILDING THE STATE.** The brief
+and `4f1932f` both record that on the third occurrence *"both watching gates were structurally
+blind, skipping because the bumped version had no tag yet"*. Rebuilt — `148e7a6` in an isolated
+clone, `v1.3.0` removed there and nowhere else, the elided sentence restored to the form the repair
+describes — **that is not what happens.**
+`test_the_unreleased_section_is_the_first_thing_under_history` **STOPS** skipping, because the
+carrier is precisely what makes the presence test true; it then reads the real headings, finds the
+released one first, and goes **RED**. Three tag-conditional checks skip, and
+`..._states_that_it_is_in_no_release` passes **green while reading a paragraph of prose as the
+section body**. So the tag blinded three checks that were never watching for this, one check would
+have refused the tree, and one answered a question about a sentence.
+
+**THE FULLY BLIND STATE IS THE OTHER ONE, AND IT IS THE FIRST OCCURRENCE'S SHAPE.** Rebuilt at
+`4f1932f` with a carrier added beside a genuine heading, **every check passes or skips and nothing
+in the tree objects.** That is the state `96f5920` was actually in — the literal three times, one of
+them a heading — and it is the state that **survived a release**. It is legal to every gate and it
+is wrong, and it is what the new check is aimed at. **Had the gate been written to the brief's
+account it would have been built around the tag condition, which is not the mechanism.**
+
+**The gate: `test_the_pending_heading_is_never_spelled_except_as_that_heading`.** It splits every
+occurrence in `MIGRATIONS.md` into genuine headings and carriers and requires the carrier list to be
+empty, plus at most one heading, because the checks it protects resolve the section with `index`
+and silently ignore the rest. A heading inside a code fence is a carrier however it is indented — it
+reads as a section to every presence test. The subtitle form is a heading and not a carrier, so the
+gate is not stricter than the checks it exists to protect. **NO SKIP STATE, and that is the design
+point rather than a convenience**: not on git, not on a tag, not on the token being absent. A check
+whose subject is *an occurrence that should not exist* cannot be conditioned on occurrences
+existing, which is the circularity that let the first occurrence live through a release. It reads
+one file that ships inside the wheel, so it holds on a clone and in an unpacked sdist.
+
+**WITNESSED RED THREE TIMES, ONCE ON BYTES NOBODY RECONSTRUCTED.** On `96f5920`'s **real committed
+`MIGRATIONS.md`, unmodified** — two carriers, one heading, the quoted refusal message at lines 2164
+and 2165. On the third occurrence rebuilt — one carrier, no heading. On a carrier beside a genuine
+heading — one carrier, one heading, the state every existing check passes. And **green on
+`6c0615a`, `b7a5474`, `feca9dd`, `e79f81a` and `7895083`**, so it discriminates rather than
+objecting to everything. Its non-vacuity witness is hermetic text rather than a checkout, because
+the third occurrence was repaired before it was committed and there is no tree to check out — a
+witness that needed git would have to skip without one, which is the property being retired.
+Verified to run with `.git` removed entirely.
+
+##### Act 2 — the size collision, verified in place rather than placed again
+
+**Existence check first, and it is a verification note.** Both conditions the brief set are already
+met. The incident sits at the rule's own site — `PUBLICATION.md` entry 11 — where the published
+wheel's **3 960 762 bytes** and the local rebuild's **identical 3 960 762** are stated with their
+two different digests, immediately above the sentence the rule is: the served-versus-built check
+compares the **workflow's** digests and never a rebuild's. The local rebuild's digest occurs
+**exactly once in the tree**, at that site, so rule 9's "cited once, at the rule's own site" holds
+as written. The round record above cites entry 11 for the verification instead of restating the
+digests. **Nothing was placed and nothing was moved.**
+
+**A near-false finding, caught before it was reported.** A first pass looked for the standing claim
+in each release's notes and found it at 1.1.0, 1.2.1 and 1.3.0 but **not at 1.2.0**, which would
+have made the brief's *"claimed since 1.1.0"* false and the claim's continuity broken by a release.
+It is there: at 1.2.0 the sentence is **line-wrapped** between "two builds of" and "one tree", and a
+`grep -c` for the phrase cannot cross the newline. The claim is continuous from 1.1.0. **Fifth time
+the record has been right against a crude derivation, and the second whose cause is a wrapped
+line.**
+
+##### Act 3 — the sweeps at the new values
+
+**The disjunction and stale-count sweep over the version figures is a NON-FIND, and it is stated
+rather than reported as clean by silence.** Every `1.2.1` still in the tree was read and classed:
+55 in `MIGRATIONS.md`, 32 in `PUBLICATION.md`, 9 in `gates/bump_derivation.py`, 8 in
+`tests/test_cdm_bump_derivation.py`, 7 in `klv_pin.json`, 6 in `RELEASE_NOTES.md`, 4 each in
+`tests/test_cdm_release.py` and `FORMAT_COVERAGE.md`, 2 in `tests/test_cdm_deploy_record.py` and 1
+in `version.py`. **Not one asserts 1.2.1 as the current distribution.** They are dated release
+records, ledger entry 10, the bump gate's founding incident, test fixture strings, and — in
+`RELEASE_NOTES.md` and `version.py` — correct live statements *about the arc from* `v1.2.1`, which
+is what a release's notes are for. The live current-version claims agree with each other and with
+the tree: `docs/docs/changelog.mdx` reads **1.3.0**, `version.py` reads **1.3.0** in both its
+constant and its prose, the witness table's index row reads 1.3.0 and the 1.2.1 row is struck and
+superseded. `README.md`'s single occurrence is the documented `git tag -a v1.3.0` command, which its
+own gate holds to `PACKAGE_VERSION`.
+
+**Rule 11's parks sweep at table scope, by the gate:** **13 rows — 9 open [2, 3, 5, 6, 7, 8, 10, 11,
+12] and 4 closed [1, 4, 9, 13]**, 7 set-claims across 2 rows, 3 self-members, blockers re-derived by
+series number, **0 failed**. Unchanged in every part from the round above.
+
+**Park 5's row was checked against the tag, and the brief mis-states what it claims.** The brief has
+it claiming *"1.3.0 shipped the codec"*. The row does not say that: it says `adapters/imapb_codec.py`
+landed in `431b0c5` and that the bump gate **moved the floor to 1.3.0 by itself**. Both are true of
+this tree and they are different claims — a floor is not a release, which is the distinction the
+section above this one exists to keep. Verified against the tag rather than read: `431b0c5` adds the
+file at **309 lines**, exactly as the row says; the codec **is** in the `v1.3.0` tree and **absent**
+from `v1.2.1`, so the codec did ship in 1.3.0 and `431b0c5` is inside that arc. The row's live
+negative holds too — `imapb` occurs **four** times in `FORMAT_COVERAGE.md`, all of them as a file
+path, **none** in the adapter name-and-version form that `stanag4609` carries 38 times. **No repair;
+the row is right and the brief's paraphrase is what was wrong.**
+
+**Rule 10 over the index the release round touched.** The witness table's four new entry-11 rows are
+dated 2026-08-29, each names a probe that exists, and the section each cites — `### 1.3.0` — is a
+heading `MIGRATIONS.md` actually has, which the citation gate re-derives. The superseded index rows
+are struck rather than deleted and carry what superseded them.
+
+**Finding 3's lesson applied as a check and not as a sentence.** The derivation this record quotes
+is the bump gate's, and the gate reads `MIGRATIONS.md`, which this record moves — the exact
+configuration that falsified the sentence one commit above. So it was re-run **after** this section
+was written, and the figures here are that second run's.
+
+**WHAT THIS ROUND DID NOT DO.** No document was fetched and no route was asked for bytes — the DNS
+reading is resolution only. No pin was added and no digest changed. **Nothing new was written under
+`packages/` except this record**: the only code this round adds is in `tests/`, which does not ship,
+so the moved set inside the distribution is one file and the count above is unchanged. No adapter,
+model or fixture moved, `SCHEMA_VERSION` is unmoved at 1.0.0 and `PACKAGE_VERSION` at 1.3.0. **No
+park was closed, no bump ruling was installed, no release was made, and nothing went outward.**
+
 #### The reversal round — 1.3.0 shipped, and both rulings stand
 
 **THE RULING FIRST.** The maintainer refused this release on **2026-08-28**. The operator
