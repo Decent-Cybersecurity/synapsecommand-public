@@ -411,3 +411,61 @@ def test_the_metadata_a_publishable_distribution_needs_is_complete():
         "a License:: classifier alongside a license expression is the deprecated form; PyPI "
         "rejects the combination"
     )
+
+
+# ------------------------- the repository's layout, named inside the distribution it does not fit
+#
+# THE INCIDENT, AND IT IS WHY THIS IS HERE RATHER THAN ONLY IN THE WHEEL GATE.
+# `gates/wheel_install.py`'s `check_no_repo_paths` refuses a built distribution whose shipped
+# `.py`/`.md` name the package's own contents the way the development repository lays them out.
+# The rule is not "never mention the repository": what is always wrong for an installed reader is a
+# path INTO the package's insides, because they have that directory under a different name, so the
+# instruction looks right, resolves, and fails on a path they never chose.
+#
+# On 2026-08-28 a round record explaining the two-base pin defect spelled that layout while
+# explaining it. The gate went red and **stayed red on `main` for a day**, because condition 2's
+# actor is the release workflow and the workflow runs on a tag — so the only gate that reads the
+# built artefact is also the only one nothing exercises between releases. It was found on
+# 2026-08-29 by a release round that ran the gate its Act 4 requires and then REFUSED the release
+# for an unrelated reason — so the gate that would have caught this at the tag was never going to
+# be reached, and the finding survives its round. That is the argument for moving the check here.
+#
+# WHAT THIS ADDS AND WHAT IT DELIBERATELY DOES NOT REPLACE. The wheel gate stays authoritative: it
+# reads the ZIP, so it sees what a consumer receives, including anything `package-data` sweeps in
+# that `git` does not track. This runs the same needle over the TRACKED distribution — no wheel, no
+# venv, no network — so it costs milliseconds and fires on the commit that writes the sentence
+# rather than on the tag that would have shipped it. The needle is spelled once, here, and this
+# module is excluded from its own scan for the reason the pinned-phrase guard states about itself:
+# a check that counted its own source would refuse the file that defines it.
+
+#: The path shape that is always wrong inside a shipped file. Same string as the wheel gate's.
+REPO_LAYOUT_NEEDLE = "packages/cdm/synapse_cdm/"
+
+
+def test_no_shipped_file_names_the_packages_own_contents_by_the_repository_layout():
+    """`gates/wheel_install.py`'s prose rule, over the tracked tree, on every commit."""
+    listed = subprocess.run(["git", "ls-files", "synapse_cdm"], cwd=DIST,
+                            capture_output=True, text=True, check=True).stdout.split()
+    offenders = []
+    scanned = 0
+    for name in listed:
+        if not name.endswith((".py", ".md")):
+            continue
+        scanned += 1
+        path = DIST / name
+        for number, line in enumerate(path.read_text(encoding="utf-8",
+                                                     errors="replace").splitlines(), 1):
+            if REPO_LAYOUT_NEEDLE in line:
+                offenders.append(f"{name}:{number}: {line.strip()[:90]}")
+    assert scanned, (
+        "no tracked .py/.md was scanned under the distribution, so a PASS here would mean nothing "
+        "— the same non-vacuity the wheel gate asserts by deriving its own expected count"
+    )
+    assert not offenders, (
+        f"{len(offenders)} shipped line(s) name a path inside this package using the repository's "
+        "layout, which is a directory an installed reader has under another name:\n  "
+        + "\n  ".join(offenders)
+        + "\nWrite it as the package directory, or name the gate that derives the base. "
+          "`gates/wheel_install.py` refuses the built artefact for this and is condition 2 of the "
+          "release procedure; this test exists so the refusal does not wait for a tag"
+    )

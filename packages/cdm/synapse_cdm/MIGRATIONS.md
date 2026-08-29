@@ -1738,8 +1738,12 @@ Ruling 2.
 
 **Three reproductions, and a fourth was found while retiring them.** Every pin states its subject as
 a `local_path` beginning `fixtures/`, and **two directories answer to that prefix**: specification
-documents live under `packages/cdm/synapse_cdm/` and the stream artefacts live at the repository
-root, because `.gitignore` excludes `fixtures/klv/streams/` by a directory rule. The two are
+documents resolve against the package directory — the one you are reading this inside — and the
+stream artefacts resolve against the repository root, because `.gitignore` excludes
+`fixtures/klv/streams/` by a directory rule. `gates/pin_paths.py`'s `BASES` states both, and is
+where they are read from rather than retyped; **this sentence deliberately spells neither as a
+path**, because the package's own layout written the repository's way is a directory an installed
+reader has under another name — see the refused-release round's record above. The two are
 **disjoint** — neither path exists under the other's base — and they share their first two segments,
 `fixtures/klv/`, so nothing a reader sees distinguishes them.
 
