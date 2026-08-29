@@ -590,6 +590,38 @@ NUMBER_WORDS = {
 }
 
 
+def _count_clause_bounds(section: str) -> tuple[int, int]:
+    """Where in `section` the clause `_spelled_moved_count` reads begins and ends.
+
+    Factored out for ONE reason and it is an incident: the non-vacuity witness below has to mutate
+    the same bytes the parser reads, and when it computed its own target it mutated a DIFFERENT
+    sentence. Both now derive the extent here, so they cannot address different text. The two rules
+    are the parser's own — the anchor, then the first of `**` or `.` after it — and the result is
+    only meaningful for a section the parser has already accepted, which is asserted before this is
+    called.
+    """
+    start = section.index(COUNT_ANCHOR) + len(COUNT_ANCHOR)
+    rest = section[start:]
+    ends = [i for i in (rest.find("**"), rest.find(".")) if i != -1]
+    return start, start + (min(ends) if ends else len(rest))
+
+
+def _count_spellings(count: int) -> list[tuple[str, str]]:
+    """`(pattern, replacement)` pairs that turn `count` into `count + 1`, digit form and word form.
+
+    Both forms are returned and neither is assumed to exist, because `NUMBER_WORDS` stops at twelve
+    and this function is called with whatever the arc happens to be. A `next()` over the word table
+    without a default is how the previous version of this vehicle raised `StopIteration` the moment
+    an arc moved more than twelve files; returning a LIST retires that shape instead of moving it.
+    """
+    pairs = [(rf"\b{count}\b", str(count + 1))]
+    word = next((w for w, n in NUMBER_WORDS.items() if n == count), None)
+    nxt = next((w for w, n in NUMBER_WORDS.items() if n == count + 1), None)
+    if word is not None and nxt is not None:
+        pairs.append((word, nxt))
+    return pairs
+
+
 def _spelled_moved_count(section: str) -> tuple[int | None, str | None]:
     """The number the section's leading sentence asserts, or the reason it cannot be read.
 
@@ -750,16 +782,37 @@ def test_the_count_gate_is_not_vacuous_against_the_real_section():
     # sentence rather than agreeing with it by luck. Only the substitution needed to learn digits,
     # because `_spelled_moved_count` has read both forms all along and nothing here exercised the
     # second. A test whose mutation cannot be applied is a test that passes without running.
-    spelled = next((w for w, n in NUMBER_WORDS.items() if n == count), None)
-    if spelled is not None:
-        wrong = next(w for w, n in NUMBER_WORDS.items() if n == count + 1)
-    else:
-        spelled, wrong = rf"\b{count}\b", str(count + 1)
-    mutant = re.sub(spelled, wrong, section, count=1, flags=re.IGNORECASE)
-    assert mutant != section, (
-        f"the section's count {count} appears as neither the word nor the digit this mutation "
-        f"looked for ({spelled!r}), so the mutation changed nothing and the non-vacuity claim is "
-        "unproven"
+    #
+    # AND IT MUTATED THE WRONG SENTENCE, WHICH IS THE SAME DEFECT ONE LAYER OVER. Found 2026-08-29
+    # by the refused-release round. The substitution ran over the WHOLE SECTION with `count=1`, so
+    # it replaced the first lookalike token rather than the one the parser reads. Witnessed on a
+    # two-file arc whose section said "the two documents that moved" above the anchor: the opening
+    # paragraph was mutated, the anchor kept saying `2`, the parser returned the unchanged count,
+    # and this test reported that the GATE was not reading its own sentence. **The gate was right
+    # and its witness was wrong**, which is worse than a stale figure — a witness that accuses the
+    # mechanism it defends invites repairing the mechanism.
+    #
+    # It is `gates/scripted_edit.py`'s founding incident inside the suite that cites it: an anchor
+    # that is not unique is a bug and not a coin flip, and `re.sub(..., count=1)` picks one
+    # silently. Two repairs, and the second is why this is not just a narrower regex — the mutation
+    # is applied to the CLAUSE `_count_clause_bounds` returns, which is the same function the
+    # parser's extent is derived from, so the two cannot address different bytes by construction;
+    # and both spellings are TRIED rather than one being chosen, so no arc size can make the
+    # vehicle unapplicable.
+    lo, hi = _count_clause_bounds(section)
+    clause = section[lo:hi]
+    mutated, substitutions, tried = clause, 0, []
+    for pattern, replacement in _count_spellings(count):
+        tried.append(pattern)
+        mutated, substitutions = re.subn(pattern, replacement, clause, count=1,
+                                        flags=re.IGNORECASE)
+        if substitutions:
+            break
+    mutant = section[:lo] + mutated + section[hi:]
+    assert substitutions == 1 and mutant != section, (
+        f"the count {count} appears in the anchor's own clause {clause.strip()!r} as none of the "
+        f"spellings this mutation tried ({tried}), so the mutation changed nothing and the "
+        "non-vacuity claim is unproven"
     )
     mutated_count, mutated_refusal = _spelled_moved_count(mutant)
     assert mutated_refusal is None, mutated_refusal
