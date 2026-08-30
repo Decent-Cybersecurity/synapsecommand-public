@@ -65,6 +65,11 @@ LOADERS = {
     # payloads on disk are what the generator produces, and to assert each parsed twin is the parsed
     # form of its own payload.
     "test_cdm_stanag4609_adapter": "_build_fixtures_module",
+    # Adapter #15's harness loads it for the same two reasons #10's does, and for a third that is
+    # this format's own: the generator is where the ENCODER lives, because the shipped codec
+    # decodes only. So the assertion that the octets on disk are the generator's output is the
+    # only place anything checks that this repository can still produce the bytes it reads.
+    "test_cdm_stanag4586_adapter": "_build_fixtures_module",
 }
 
 #: The adapter test modules. The ones absent from `LOADERS` are the other half of the closure:

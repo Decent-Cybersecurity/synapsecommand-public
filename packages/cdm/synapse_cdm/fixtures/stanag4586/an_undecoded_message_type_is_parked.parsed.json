@@ -1,0 +1,30 @@
+{
+  "datagram_hex": "ffff0020070001010700ff010fa01e400038ffc16d0ea36028e5bd760f8fdc520124f80304d802bcffce0222011114e81176ffff0008070001010700ff0117701e4000010203040506070417",
+  "frames": [
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [
+        "checksum_width_taken_from_the_properties_subfield"
+      ],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 32,
+      "message_name": "Inertial States",
+      "message_type": 4000,
+      "source_id": 117440769
+    },
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 8,
+      "message_name": "not decoded by this adapter",
+      "message_type": 6000,
+      "source_id": 117440769
+    }
+  ],
+  "octets": 76
+}

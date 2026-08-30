@@ -1,0 +1,211 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "STANAG 4586 Edition 3 states no affiliation field. A DLI link runs between a control station and a vehicle it controls, so FRIENDLY would usually be right \u2014 and it is an inference from deployment context, not from anything on the wire, which a relayed or recorded feed breaks. UNKNOWN, and a deployment that knows better decides it in the fusion layer where the decision is visible",
+      "altitude_datum_ambiguity": "STANAG 4586 Ed 3 \u00a74.4.3 field 0101.07 names altitude type 3 'WGS-84 (geoid)', which is two different surfaces: WGS-84 is an ellipsoid and the geoid is an equipotential surface, and they differ by roughly -107 m to +85 m over the earth. CDM Position.alt_m is metres HAE. The value is carried because type 3 is the only one that could be a geodetic height at all, and the residue is stated here rather than dropped at the seam",
+      "position_basis": "2 #4000 Inertial States messages for this vehicle in one datagram; the format does not say which is the vehicle's current state and this adapter does not choose. All of them are samples on the Track",
+      "position_source_basis": "INERTIAL, because the message carrying the position is #4000 Inertial States and the document states no GNSS source for it. Not GNSS: PositionSource is what lets a jammed-area warning discriminate, so an unstated GNSS claim would be trusted for a reason the wire never gave",
+      "s4586_datagram": {
+        "frames": 2,
+        "hex": "ffff0020070001010700ff010fa01e400038ffc16d0ea36028e5bd760f8fdc520124f80304d802bcffce0222011114e81176ffff0020070001010700ff010fa01e400038ffc16d0eb30028e760e50f91f4420124f80304d802bcffce0222011114e81144",
+        "octets": 100
+      },
+      "s4586_defects": [
+        {
+          "ambiguity": "pin ambiguity 1",
+          "detail": "this frame is not the last in its datagram, so its checksum width could not be derived from the buffer length and was read at Message Properties bits 7:6 instead",
+          "kind": "checksum_width_taken_from_the_properties_subfield",
+          "message_type": 4000,
+          "octets": 2
+        }
+      ],
+      "s4586_edition": "Edition 3",
+      "s4586_frames": [
+        {
+          "ack_requested": false,
+          "checksum_computed": 4470,
+          "checksum_octets": 2,
+          "checksum_stated": 4470,
+          "checksum_valid": true,
+          "destination_id": 117505793,
+          "idd_version": 30,
+          "message_length": 32,
+          "message_name": "Inertial States",
+          "message_type": 4000,
+          "properties": 7744,
+          "sequence": 65535,
+          "source_id": 117440769
+        },
+        {
+          "ack_requested": false,
+          "checksum_computed": 4420,
+          "checksum_octets": 2,
+          "checksum_stated": 4420,
+          "checksum_valid": true,
+          "destination_id": 117505793,
+          "idd_version": 30,
+          "message_length": 32,
+          "message_name": "Inertial States",
+          "message_type": 4000,
+          "properties": 7744,
+          "sequence": 65535,
+          "source_id": 117440769
+        }
+      ],
+      "s4586_messages": {
+        "#4000": {
+          "absent_fields": [
+            9,
+            10,
+            11,
+            15,
+            16,
+            17,
+            18
+          ],
+          "fields": {
+            "0101.01": {
+              "name": "Time Stamp",
+              "raw": 830758368000,
+              "units": "0.001 s",
+              "value": "2026-04-29T06:12:48.000Z"
+            },
+            "0101.04": {
+              "name": "Latitude",
+              "raw": 686252261,
+              "units": "BAM",
+              "value": 1.0039308395548656
+            },
+            "0101.05": {
+              "name": "Longitude",
+              "raw": 261223490,
+              "units": "BAM",
+              "value": 0.38214856625026405
+            },
+            "0101.06": {
+              "name": "Altitude",
+              "raw": 75000,
+              "units": "0.02 m",
+              "value": 1500.0
+            },
+            "0101.07": {
+              "name": "Altitude Type",
+              "raw": 3,
+              "text": "WGS-84 (geoid)",
+              "units": "Enumerated",
+              "value": 3
+            },
+            "0101.08": {
+              "name": "U_Speed",
+              "raw": 1240,
+              "units": "0.05 m/s",
+              "value": 62.0
+            },
+            "0101.09": {
+              "name": "V_Speed",
+              "raw": 700,
+              "units": "0.05 m/s",
+              "value": 35.0
+            },
+            "0101.10": {
+              "name": "W_Speed",
+              "raw": -50,
+              "units": "0.05 m/s",
+              "value": -2.5
+            },
+            "0101.14": {
+              "name": "Roll",
+              "raw": 546,
+              "units": "BAM",
+              "value": 0.05234709438659751
+            },
+            "0101.15": {
+              "name": "Pitch",
+              "raw": 273,
+              "units": "BAM",
+              "value": 0.026173547193298754
+            },
+            "0101.16": {
+              "name": "Heading",
+              "raw": 5352,
+              "units": "BAM",
+              "value": 0.513116573547747
+            }
+          },
+          "name": "Inertial States",
+          "presence_vector": 14591,
+          "table": "B1-74"
+        }
+      },
+      "s4586_owning_id": 7,
+      "s4586_source_id": "7.0.1.1",
+      "time_basis": "every Time Stamp is \u00a71.7.2's 5-octet count of milliseconds since 2000-01-01, which the document calls UTC and about which it says nothing further. Whether the count steps at a leap second is UNSTATED, so instants near a leap second carry that ambiguity. The field rolls over in 2034 by the document's own statement, and this adapter does not unwrap a rollover it cannot detect"
+    },
+    "confidence": null,
+    "entity_id": "e6e3f161-a501-5446-9775-010bdfc1bfae",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4586",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4586"
+    },
+    "source_ids": [
+      {
+        "external_id": "7.0.1.1",
+        "system": "STANAG4586"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2026-04-29T06:12:44.000Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "e6e3f161-a501-5446-9775-010bdfc1bfae",
+    "integrity": null,
+    "object_kind": "track",
+    "samples": [
+      {
+        "observed_at": "2026-04-29T06:12:44.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 1500.0,
+          "lat": 57.51199996098876,
+          "lon": 21.88400002196431,
+          "position_source": "INERTIAL"
+        }
+      },
+      {
+        "observed_at": "2026-04-29T06:12:48.000Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 1500.0,
+          "lat": 57.52100002951921,
+          "lon": 21.895499993115664,
+          "position_source": "INERTIAL"
+        }
+      }
+    ],
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4586",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4586"
+    },
+    "source_ids": [
+      {
+        "external_id": "7.0.1.1",
+        "system": "STANAG4586"
+      }
+    ],
+    "track_id": "f109da18-73dd-5b33-8422-7736d7e6088a",
+    "track_quality": null
+  }
+]

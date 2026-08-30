@@ -1,0 +1,56 @@
+{
+  "datagram_hex": "ffff0020070001010700ff010fa01e4001c0ffc16d0ea36028e5bd760f8fdc520124f80304d802bcffce000afffc000312d5ffff000e070001010700ff010bba1e40050381c16d0ea4280082014a034707e7ffff0016070001010700ff010bc11e403239c16d0ea4f00596052802320124940120480124f80ac4ffff0012070001010700ff010bc21e407fc16d0ea5b8001efff607a601f4ff3800960ce5",
+  "frames": [
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [
+        "checksum_width_taken_from_the_properties_subfield"
+      ],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 32,
+      "message_name": "Inertial States",
+      "message_type": 4000,
+      "source_id": 117440769
+    },
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [
+        "checksum_width_taken_from_the_properties_subfield"
+      ],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 14,
+      "message_name": "Vehicle Operating States",
+      "message_type": 3002,
+      "source_id": 117440769
+    },
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [
+        "checksum_width_taken_from_the_properties_subfield"
+      ],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 22,
+      "message_name": "Air and Ground Relative States",
+      "message_type": 3009,
+      "source_id": 117440769
+    },
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 18,
+      "message_name": "Body-Relative Sensed States",
+      "message_type": 3010,
+      "source_id": 117440769
+    }
+  ],
+  "octets": 158
+}

@@ -375,7 +375,8 @@ def test_the_cli_exits_with_a_distinct_code_and_writes_the_message_to_stderr(
 SHIPPED_FIXTURE_DIRS = {"adsb": "adsb", "ais": "ais", "cat021": "cat021",
                         "cat023": "cat023", "cat034": "cat034", "cat048": "cat048",
                         "cat062": "cat062", "gmti": "gmti", "legion": "legion",
-                        "pntmap": "pntmap", "stanag4609": "klv", "stanag4676": "nits",
+                        "pntmap": "pntmap", "stanag4586": "stanag4586",
+                        "stanag4609": "klv", "stanag4676": "nits",
                         "tak": "tak"}
 
 #: Phase 1 entries: the row set exists in FORMAT_COVERAGE.md, the adapter does not.
@@ -552,7 +553,7 @@ def test_the_adapters_declare_the_same_fixture_directories_this_module_pins():
 
 
 def test_only_the_adapters_named_for_a_standard_declare_a_different_directory():
-    """Eleven of thirteen leave `fixture_dir` unset, and that is the property worth asserting.
+    """Twelve of fourteen leave `fixture_dir` unset, and that is the property worth asserting.
 
     `fixture_dir = None` means "the same string as `name`". If a future adapter sets it to its own
     name, the declaration is noise that reads as a meaningful exception; if the exception spreads
@@ -565,6 +566,15 @@ def test_only_the_adapters_named_for_a_standard_declare_a_different_directory():
     rule the pair establishes is the one the singleton could only illustrate — an adapter named
     after a STANDARD is named for a document, and the fixture directory is named for the bytes —
     and `klv_pin.json` recorded both of this one's names five rounds before its code existed.
+
+    **AND THE THIRD STANAG-NAMED ADAPTER DID NOT MAKE IT THREE, which is the case that shows the
+    rule is about the BYTES and not about the prefix.** `stanag4586` is named for a covering
+    document exactly as its two siblings are, and it does not override: STANAG 4586's payload has
+    no name of its own other than the standard's number — the messages are "DLI messages" and the
+    fixtures are `.s4586` — so the directory the bytes want and the name the standard gives are the
+    same string, and an override would be the no-op this test refuses. A reader who expected
+    "STANAG-named implies overriding" would have got it wrong here, which is why the pair's reason
+    is stated as the payload having another name rather than as the adapter having a prefix.
     """
     from synapse_cdm.adapter import discover
     overridden = {name: cls.fixture_dir for name, cls in discover().items()

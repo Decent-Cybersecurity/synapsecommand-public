@@ -1,0 +1,17 @@
+{
+  "datagram_hex": "ffff001c070001010700ff010fa01e400038fbc16d0ea36028e5bd760124f80304d802bcffce0222011114e80fa2",
+  "frames": [
+    {
+      "checksum_octets": 2,
+      "checksum_valid": true,
+      "defects": [],
+      "destination_id": 117505793,
+      "idd_version": 30,
+      "message_length": 28,
+      "message_name": "Inertial States",
+      "message_type": 4000,
+      "source_id": 117440769
+    }
+  ],
+  "octets": 46
+}
