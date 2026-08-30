@@ -250,6 +250,7 @@ friendly-force-tracking document to arrive. The next park gets the same treatmen
 | 12 | `cat034` | shipped | `adapters/asterix_cat034.py`, "Adapter #12", this document's CAT034 section, `fixtures/cat034/spec/cat034_pin.json`, `fixtures/cat034/README.md` and `MIGRATIONS.md`. **The forecast made good, then made real.** The row read *(forecast)* until Phase 1 and cited the CAT048 declines table — "if it lands, it lands as adapter #12 with its own pin" — and it landed at that number with that pin; Phase 2 shipped the adapter against the row set Phase 1 wrote, and every row of it now says `cat034 1.0.0` |
 | 13 | `cat062` | shipped | `adapters/asterix_cat062.py`, "Adapter #13", this document's CAT062 section, `fixtures/cat062/spec/cat062_pin.json`, `fixtures/cat062/README.md` and `MIGRATIONS.md`. **The widest Phase 1 in this repository, and Phase 2 landed against it with one row changed.** 27 data items, a two-document pin and a full egress row set; the row set was the first written against a source that is itself the output of a fusion process, which is what settlement 1 exists for |
 | 14 | `cat023` | shipped | `adapters/asterix_cat023.py`, "Adapter #14", this document's CAT023 section, `fixtures/cat023/spec/cat023_pin.json`, `fixtures/cat023/README.md` and `MIGRATIONS.md`. **The narrowest Phase 1 with a complete row set, and Phase 2 landed with no row changed.** Nine data items on 21 printed pages, every one dispositioned. Ruled in the same round as #13 and deliberately not merged with it — a category is an adapter, and these are two categories in two Parts with two UAPs. **The first adapter here that emits TWO Entities from one record** |
+| 15 | `stanag4586` | shipped | `adapters/stanag4586.py`, "Adapter #15", this document's STANAG 4586 section, `fixtures/stanag4586/spec/stanag4586_pin.json`, `fixtures/stanag4586/README.md` and `MIGRATIONS.md`. **The ordinal and the roster count are two apart here and the gap is this table's own doing** — one earlier ordinal is held by a specification with no adapter, so the fourteenth shipped adapter is the fifteenth ordinal. `MIGRATIONS.md` records the round that predicted otherwise |
 
 `tests/test_cdm_ordinals.py` treats this table as the authority and checks every other site against
 it: one adapter per ordinal, one ordinal per adapter, and a Phase 1 ordinal permitted to have no
@@ -13422,6 +13423,371 @@ symmetry with CAT062's.
 | `service_status_extension` | `I023/110` with `FX` set — the case where no extension exists in any edition in hand |
 | `service_statistics_rep_zero` | `I023/120` with `REP` = 0, excluded by the item's own "at least one block of 6 octets" |
 | `reporting_period_zero` | `I023/100`'s extension with `GSSP` = 0, outside the stated `1..127` range |
+
+## STANAG 4586 Edition 3 — DLI air-vehicle telemetry, ingest
+
+Adapter #15, `adapters/stanag4586.py` on the decode layer in `adapters/stanag4586_codec.py`,
+**direction `ingest`**. The pinned document is `fixtures/stanag4586/spec/STANAG_4586_Ed3.pdf`,
+SHA-256 `a4fa6e54…c15da`, 3 852 365 octets, **509 pages**, and every figure in this section is read
+off those bytes. `fixtures/stanag4586/spec/stanag4586_pin.json` is the record.
+
+### The edition is not the current one, and that is a ruling with a named alternative
+
+**Edition 4 is current** — dated 2017-04-05 and promulgated as **AEP-84 Edition A** — and it could
+not be acquired. Each route was tried and each refusal has a shape rather than a summary:
+`nso.nato.int` answers **HTTP 403** on the apex, on `/nso/nsdd/`, on `main/standards`, on
+`listpromulg.html` and on the `stanag-details` pages for ids 8989 and 8892, with and without a
+browser User-Agent; the **Internet Archive holds no capture of any STANAG 4586 PDF at any URL**,
+checked by four CDX queries; the mirror that does carry this family lists **exactly two** editions,
+2 and 3; and the commercial distributors that hold Edition 4 serve it **paywalled and DRM-wrapped**.
+
+That is park 8's class — *procurement*, not procedure — and this repository's other paywalled
+document (SMPTE ST 336) is parked rather than substituted. **The ruling here went the other way and
+was taken deliberately**: Edition 3 is pinned and built against, with the edition named at every
+site. The alternative — park on Edition 4 and ship nothing — was live and is recorded at the pin's
+`edition_ruling` so a later reader knows the branch existed.
+
+**WHAT THE RULING DOES NOT LICENSE.** No sentence in this repository claims an Edition 3 decoder
+reads an Edition 4 feed. Edition 4 is documented to have changed the vehicle-identifier list and
+added mission-phase and autonomy messages — changes that land on exactly the tables this section
+tabulates — so the compatibility question is **open**, and answering it needs Edition 4's own bytes.
+The fixture `an_idd_version_that_is_not_edition_3.s4586` exists for this: Table B1-3 assigns
+Edition 3 the IDD version **30**, and a frame declaring anything else decodes against Edition 3's
+tables anyway *with a defect recorded*, which is how a later-edition feed announces itself.
+
+**The document dates itself nowhere.** Its front matter carries no date and no NSA promulgation
+reference — pages 1–20 were swept for any year 2005–2015 and for any `NSA/` reference and both
+return zero — and its RECORD OF AMENDMENTS is **present and empty**, where Edition 2's carries one
+row. So the "09 NOV 2012" this repository uses to identify the edition is the *distributor's*
+catalogue metadata and is external to the pinned bytes. Recorded rather than attributed to the
+document, which is STANAG 4676's situation reached by another route.
+
+**The copy is a mirror's and carries the mirror's stamp**, on every one of the 509 pages, with
+`/Producer` reading `SetaPDF-Stamper`. Any text sweep must strip it first. **The identity was
+attested by a second party**: the Internet Archive's 2019-11-20 capture of the same URL, itself
+verified against the CDX row's own base32 SHA-1. The two copies are **one byte apart** — 3 852 365
+against 3 852 364, and completely different SHA-256s — and the divergence is confined to PDF object
+2389, the stamp's own content stream, drawn at a different x-offset. Text extracted from all 509
+pages of both, stamp removed, digests **identically**, and the count of pages whose text differs is
+**zero**. The standard's content is the same across seven years; only the mirror's signature moved.
+
+### The two blockers this format was parked on, and where the row is NOT
+
+**The round that built this was told to open a parks-table row for STANAG 4586 with two blockers in
+order. It did not, and the divergence is recorded here rather than resolved by typing the row
+anyway.** The parks table lives in the STANAG 4609 section under *The parks, each with a named
+reopen condition*, and it is not a general-purpose blocker register: its column header reads
+*"Reason, grounded in the delegation table"*, every one of its thirteen rows is a MISB document that
+**MISP-2019.1 delegates to**, and its own preamble derives counts over that set — "Thirteen parks
+over fifteen documents", "eight are public downloads and one is not", "the profile delegates to
+ST 0601.14 and that count stays at fourteen". **STANAG 4586 is delegated by nothing in this
+repository**, so a row there would be an entry no reason cell could ground and would falsify three
+derived counts in the paragraph above it.
+
+**And it would break a gate in a way worth naming, because the collision is invisible in a diff.**
+`gates/parks_table.py`'s row pattern is `^\| \*\*(\d+)\*\* \|` applied to **the whole file**, not
+to that section — exactly 13 lines in `FORMAT_COVERAGE.md` match it and the gate reports exactly 13
+parks. A second bold-numbered table anywhere in this document would be silently absorbed into the
+parks set, and its rows would be cross-referenced against park closures as though they were parks.
+So the table below is deliberately **lettered**.
+
+| Blocker | State | What it required, and what discharged or did not discharge it |
+|---|---|---|
+| **(a)** spec pinned | **DISCHARGED**, with a ruling | The edition had to be determined rather than inherited, then acquired and held under the pin discipline — `local_path`/`sha256`, gitignored bytes, resolver-derived, counted by the decomposition. **Edition 4 was confirmed current and could not be acquired**; Edition 3 was acquired, verified against a second party, and pinned. `gates/pin_paths.py` now derives 22 `local_path`+`sha256` pairs across 7 of 9 pin files, resolving to 21 distinct copies, all present and all matched. **This blocker was discharged by a ruling with a live alternative, not by the obvious step**, and the alternative — park on Edition 4 and build nothing — is recorded at the pin |
+| **(b)** scope ruling recorded | **DISCHARGED** | The telemetry-subset ruling had to be recorded at the row, naming the DLI message subset in scope and the command set out. It is recorded in three places that a gate or a test can reach: the pin's `adapter.scope_ruling`, the **OUT OF SCOPE** heading below with all 48 command messages enumerated by group and range, and `test_no_command_message_is_decodable_which_is_the_scope_ruling_made_executable`, which names eleven command numbers and requires each to be absent from the decoded set |
+
+**Neither blocker is open, so nothing here is parked.** The row's remaining descendant is the
+Edition 4 **reopen condition**: obtain STANAG 4586 Edition 4 / AEP-84 Edition A, pin it by SHA-256,
+byte count and page count with its title-page identity read, and diff its DLI message tables against
+Edition 3's. Until then the row set's authority is Edition 3 and every site says so.
+
+### The wire format — §1.7 and §3.3.1
+
+Byte order is **most significant first**, §1.7.1, everywhere. The application-layer wrapper of
+Figure B1-7 is **sixteen octets**:
+
+| Field | Octets | What the document says |
+|---|---|---|
+| Sequence # | 2 | §3.3.1.5 — "not used and shall contain '-1'". The same section declares every header entry *unsigned*, so the only reading that satisfies both is `0xFFFF`. **The document never spells that**, and it is ambiguity 2 |
+| Message Length | 2 | §3.3.1.6 — octets of message data, "any number between 1 and 528" |
+| Source ID | 4 | §3.3.1.7 with §1.7.6 — "ID numbers shall be formed as 4-byte numbers. The first (most significant) byte shall be the Owning ID". 255 is reserved |
+| Destination ID | 4 | §3.3.1.8, same formation |
+| Message Type | 2 | §3.3.1.9 — 16-bit unsigned. **The width was checked against the numbers rather than assumed**: the highest numbered field table is 51000 and Table B1-33 puts the private range at 50000–65000, so 16 bits holds every number the document assigns |
+| Message Properties | 2 | §3.3.1.10 — bitmapped, four subfields |
+| *(message data)* | Message Length | |
+| Optional Checksum | 0, 2 or 4 | §3.3.1.11 — "byte-wise unsigned binary addition of all data contained in the message excluding the checksum, and truncated" |
+
+§3.3.1.6 says "subtracting the message wrapper size of **20 bytes**"; the six fixed fields sum to
+**16**, and 16 plus the largest checksum is that 20. The two figures measure different things and
+both are kept, with the derivation written down rather than the total copied.
+
+**Scales and frames, §1.7.2 and §1.7.3.** Positions are WGS-84 latitude/longitude in radians as
+**Binary Angle Measurement**, scaled `π / 2^(n−1)` per LSB for a field of `n` bits — read from the
+document's own stated range, "−π inclusive to π exclusive", because the π renders as a mojibake
+glyph in every extraction of this copy. Times are a **5-octet unsigned count of milliseconds since
+2000-01-01** which the document calls UTC and about which it says nothing further; it states the
+field rolls over "in 2034", and 2⁴⁰−1 milliseconds after that epoch **is** in 2034, which
+corroborates the epoch and the LSB together. Bearings are clockwise from true north.
+
+**Presence vectors.** The first field of every message. Bit 0 selects field 1, the time stamp; bit
+*k* selects field *k+1*. The document states each message's vector width in that message's own table
+*and* states the rule that generates it — "a message containing ten fields would have a two-byte
+Presence Vector" — so the two are independent, and `test_every_decoded_messages_presence_vector_width_holds_its_field_count`
+requires them to agree for all four decoded messages. **What an absent field means is stated and is
+not flattened**: "The lack of a field in a message only indicates that no data is present; it does
+not imply that the field is not supported."
+
+**Data types, §4.1.2, verbatim**: `Character(n)` ASCII including the null terminator; `Integer(n)`
+signed, "where n is 1, 2, 3, 4 or 5 bytes"; `Float` IEEE 754, 4 octets; `Unsigned(n)` likewise 1–5;
+`Byte(n)` an array. **Three- and five-octet integers are ordinary here** — Altitude is `Integer 3`
+and every Time Stamp is `Unsigned 5` — and neither width has a `struct` format character, which is
+why the codec walks octets explicitly instead.
+
+### The message inventory — all 166 field tables the document defines
+
+Derived by walking every `Table B1-N: Message #M: <name>` caption in the body, with the List of
+Tables excluded so its dotted leaders are not read as captions. **166 messages, numbered 1 to
+51000, in 27 functional groups**, every one of them accounted for below and none unclassified.
+
+| § | Functional group | Number range | Summary table | Messages | Scope | State |
+|---|---|---|---|---|---|---|
+| §4.2 | **System ID** | `0`–`1999` | B1-6 | 3 | in scope | `not yet` |
+| §4.3 | **Flight Vehicle Command** | `2000`–`2999` | B1-7 | 14 | **OUT OF SCOPE** | `not yet` |
+| §4.4 | **Flight Vehicle Status** | `3000`–`3999` | B1-8 | 15 | in scope | **3 decoded** |
+| §4.5 | **Flight Vehicle Payload Relevant Status** | `4000`–`4999` | B1-9 | 2 | in scope | **1 decoded** |
+| §4.6 | **IFF Command** | `5000`–`5999` | B1-10 | 2 | **OUT OF SCOPE** | `not yet` |
+| §4.7 | **IFF Status** | `6000`–`6999` | B1-11 | 1 | in scope | `not yet` |
+| §4.8 | **ATC Interface Command** | `7000`–`8999` | B1-12 | 2 | **OUT OF SCOPE** | `not yet` |
+| §4.9 | **ATC Interface Status** | `9000`–`10999` | B1-13 | 2 | in scope | `not yet` |
+| §4.10 | **Vehicle Auxiliary Command** | `11000`–`11999` | B1-14 | 3 | **OUT OF SCOPE** | `not yet` |
+| §4.11 | **Vehicle Auxiliary Status** | `12000`–`12999` | B1-15 | 5 | in scope | `not yet` |
+| §4.12 | **Mission Command and Status** | `13000`–`14999` | B1-16 | 8 | **mixed — see below** | `not yet` |
+| §4.13 | **Subsystem Status** | `15000`–`16999` | B1-17 | 5 | in scope | `not yet` |
+| §4.14 | **Miscellaneous** | `17000`–`18999` | B1-18 | 14 | **mixed — see below** | `not yet` |
+| §4.15 | **Payload Command** | `19000`–`20999` | B1-19 | 10 | **OUT OF SCOPE** | `not yet` |
+| §4.16 | **Payload Status** | `21000`–`23999` | B1-20 | 11 | in scope | `not yet` |
+| §4.17 | **Weapons Command** | `24000`–`25999` | B1-22 | 1 | **OUT OF SCOPE** | `not yet` |
+| §4.18 | **Weapons Status** | `26000`–`27999` | B1-23 | 1 | in scope | `not yet` |
+| §4.19 | **Data Link Discovery** | `28000`–`29999` | B1-24 | 2 | **mixed — see below** | `not yet` |
+| §4.20 | **Data Link Command** | `30000`–`31999` | B1-25 | 10 | **OUT OF SCOPE** | `not yet` |
+| §4.21 | **Data Link Status** | `32000`–`33999` | B1-26 | 15 | in scope | `not yet` |
+| §4.22 | **Data Link Transition** | `34000`–`35999` | B1-27 | 2 | **OUT OF SCOPE** | `not yet` |
+| §4.23 | **Autonomy** | `36000`–`39999` | B1-28 | 6 | **mixed — see below** | `not yet` |
+| §4.24 | **General Preconnection Configuration** | `40000`–`41999` | B1-29 | 8 | **mixed — see below** | `not yet` |
+| §4.25 | **General Postconnection Configuration** | `42000`–`43999` | B1-30 | 7 | **mixed — see below** | `not yet` |
+| §4.26 | **VSM Forced Command** | `44000`–`45999` | B1-31 | 4 | **OUT OF SCOPE** | `not yet` |
+| §4.27 | **Draw Interface** | `46000`–`49999` | B1-32 | 12 | **mixed — see below** | `not yet` |
+| §4.28 | **Private (VSM-specific)** | `50000`–`65000` | B1-33 | 1 | in scope | `not yet` |
+
+### OUT OF SCOPE — the DLI command uplink
+
+**This adapter is "STANAG 4586 telemetry ingest" and never "STANAG 4586 support".** The groups
+marked **OUT OF SCOPE** above — Flight Vehicle Command (§4.3), IFF Command (§4.6), ATC Interface
+Command (§4.8), Vehicle Auxiliary Command (§4.10), Payload Command (§4.15), Weapons Command
+(§4.17), Data Link Command (§4.20), Data Link Transition (§4.22) and VSM Forced Command (§4.26) —
+are **48 messages** that this repository will not decode under the present ruling. They are
+enumerated here rather than silently omitted, because a coverage document that lists only what it
+covers cannot be checked for what it left out.
+
+**The ruling, and its first reason is sufficient alone.**
+
+1. **The CDM carries no command or tasking kind.** Its object kinds are `entity`, `event`, `track`
+   and `plan_object`, and not one of them is an instruction to an actuator. A Vehicle Steering
+   Command, a waypoint upload, a payload slew, a link handover — none has anything to translate
+   *into*. Growing a kind for it is the deferred `ONTOLOGY.md` decision, and that does not happen
+   as a side effect of an adapter round.
+2. **Emitting DLI edges toward being a UCS component.** A thing that sends these messages is a CUCS
+   or a VSM. Whether this repository should ship one is a scope question this round was not asked
+   to answer, and answering it by writing an encoder would be answering it by accident.
+
+**The consequences are structural, not merely declared.** `adapters/stanag4586_codec.py` has **no
+encoder at all** — the synthetic frames these fixtures replay are built by
+`fixtures/stanag4586/spec/build_fixtures.py`, a generator that is not shipped surface — and
+`Stanag4586Adapter.direction` is `ingest`, which `adapter.py`'s contract enforces at class-definition
+time by refusing an ingest adapter that overrides `from_cdm`.
+`test_no_command_message_is_decodable_which_is_the_scope_ruling_made_executable` names eleven
+command message numbers and requires each to be absent from the decoded set.
+
+**The mixed groups are mixed and are not quietly counted either way.** Mission Command and Status
+(§4.12), Miscellaneous (§4.14), Data Link Discovery (§4.19), Autonomy (§4.23), the two
+Configuration groups (§4.24, §4.25) and Draw Interface (§4.27) each carry messages in both
+directions — §4.12's own summary table is titled "Mission Command **and Status** Messages". None of
+them is decoded today, so the split does not yet have to be drawn message by message; when one is
+taken up, the drawing of it is the work, and this paragraph is the note that it has not been done.
+
+### The decoded set — four messages, and why these four
+
+**Four of the 166 are decoded field by field.** Every other message, status and command alike, has
+its wrapper read and its data octets parked verbatim at `attributes.s4586_unparsed_messages` with
+its type recorded — the ST 0107.3-04 treatment `stanag4609` gives an unwitnessed KLV tag, reached
+here for the same reason: a datagram carrying one unknown message among four known ones must still
+translate the four.
+
+The four are the air-vehicle **state** messages. `#4000` is the only message in the entire format
+from which a position can be built at all; the other three are the Flight Vehicle Status group's
+state messages, and `#3009` and `#3010` are included specifically because they make two of the
+ambiguities below concrete rather than theoretical.
+
+#### Message #4000: Inertial States — Table B1-74, 18 fields, 3-octet presence vector
+
+| Unique ID | Field | Name | Type | Units | CDM target | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `0101.01` | 1 | Time Stamp | Unsigned 5 | 0.001 s | `Entity.valid_from`, `Track.samples[].observed_at` | `stanag4586 1.0.0` | §1.7.2's 5-octet millisecond count since 2000-01-01. The earliest stamp across this vehicle's messages in the datagram is `valid_from`; each positioned message's own stamp times its sample. Whether the count steps at a leap second is unstated — `attributes.time_basis` carries that on every object |
+| `0101.04` | 2 | Latitude | Integer 4 | BAM | `Entity.position.lat` | `stanag4586 1.0.0` | BAM to degrees. Range cell reads −π/2 ≤ x ≤ π/2. Absent from the presence vector means NO position, never a half-built one |
+| `0101.05` | 3 | Longitude | Integer 4 | BAM | `Entity.position.lon` | `stanag4586 1.0.0` | BAM to degrees, 'No Restrictions', so the full −π to π |
+| `0101.06` | 4 | Altitude | Integer 3 | 0.02 m | `Entity.position.alt_m` | `stanag4586 1.0.0 · conditional` | **reaches `alt_m` ONLY when 0101.07 is 3**, and carries ambiguity 3 with it. Under types 0, 1 and 2 it parks and `alt_m` stays `None` |
+| `0101.07` | 5 | Altitude Type | Unsigned 1 | Enumerated | `Entity.attributes` | `stanag4586 1.0.0` | the enumeration that gates the field above. **`3 = WGS-84 (geoid)` names an ellipsoid and an equipotential surface at once** — ambiguity 3 |
+| `0101.08` | 6 | U_Speed | Integer 2 | 0.05 m/s | `Entity.kinematics.speed_mps`, `.course_deg` | `stanag4586 1.0.0` | north component. With 0101.09 it becomes one speed and one bearing; both components park, so the pair is recoverable |
+| `0101.09` | 7 | V_Speed | Integer 2 | 0.05 m/s | `Entity.kinematics.speed_mps`, `.course_deg` | `stanag4586 1.0.0` | east component. §1.7.2: 'Bearings shall be measured clockwise from true north', so the bearing is `atan2(east, north)` |
+| `0101.10` | 8 | W_Speed | Integer 2 | 0.05 m/s | `Entity.kinematics.climb_mps` | `stanag4586 1.0.0` | 'Inertial vertical speed component pointing **down**' and `climb_mps` is a climb, so **the sign is inverted** |
+| `0101.11` | 9 | U_Accel | Integer 2 | 0.005 m/s2 | `Entity.attributes` | `stanag4586 1.0.0 · parked` | the CDM models no acceleration in any frame — the `legion` and `nits` treatment |
+| `0101.12` | 10 | V_Accel | Integer 2 | 0.005 m/s2 | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0101.11 |
+| `0101.13` | 11 | W_Accel | Integer 2 | 0.005 m/s2 | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0101.11 |
+| `0101.14` | 12 | Roll | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` | attitude. The CDM has no attitude field; `course_deg` is a track angle and not a heading, so nothing here may fill it |
+| `0101.15` | 13 | Pitch | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0101.14 |
+| `0101.16` | 14 | Heading | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` | **heading, and deliberately NOT `course_deg`** — where the aircraft points is not where it is going, and a crosswind separates them. 0101.08/09 give the course |
+| `0101.17` | 15 | Roll Rate | Integer 2 | 0.005 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` | at `euler_rates_rad_s`, never a shared key — ambiguity 4 |
+| `0101.18` | 16 | Pitch Rate | Integer 2 | 0.005 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0101.17 |
+| `0101.19` | 17 | Turn Rate | Integer 2 | 0.005 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0101.17 |
+| `0101.20` | 18 | Magnetic Variation | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` | magnetic variation, 'True = Magnetic + Variation'. Parked and never applied — the CDM's bearings are true |
+
+#### Message #3002: Vehicle Operating States — Table B1-60, 19 fields, 3-octet presence vector
+
+| Unique ID | Field | Name | Type | Units | CDM target | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `0104.01` | 1 | Time Stamp | Unsigned 5 | 0.001 s | `Entity.valid_from` candidate | `stanag4586 1.0.0` | the message's own instant |
+| `0104.04` | 2 | Commanded Altitude | Integer 3 | 0.02 m | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.05` | 3 | Altitude Type | Unsigned 1 | Enumerated | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.06` | 4 | Commanded Heading | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.07` | 5 | Commanded Course | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.08` | 6 | Commanded Turn Rate | Integer 2 | 0.0001 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.09` | 7 | Commanded Roll Rate | Integer 2 | 0.005 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.10` | 8 | Commanded Speed | Unsigned 2 | 0.5 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.11` | 9 | Speed Type | Unsigned 1 | Enumerated | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.12` | 10 | Power Level | Integer 1 | % | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.21` | 11 | Bingo Energy | Unsigned 2 | 0.0016 % | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.16` | 12 | Current Propulsion Energy Level | Unsigned 2 | 0.0016 % | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.17` | 13 | Current Propulsion Energy Usage Rate | Unsigned 2 | 0.0002 %/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.18` | 14 | Commanded Roll | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.19` | 15 | Altitude Command Type | Unsigned 1 | Enumerated | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0104.20` | 16 | Heading Command Type | Unsigned 1 | Enumerated | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `3002.01` | 17 | AV State | Unsigned 1 | Enumerated | `Entity.attributes` | `stanag4586 1.0.0 · parked` | **the flight-phase field, and it cannot express flight.** Every assigned value is a phase BEFORE flight and 10–255 is 'VSM Specific', so it is parked with its text and is never read into `entity_type` or into an `Event` |
+| `3002.02` | 18 | Thrust Direction | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `3002.03` | 19 | Thrust | Unsigned 1 | % | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+
+#### Message #3009: Air and Ground Relative States — Table B1-67, 16 fields, 2-octet presence vector
+
+| Unique ID | Field | Name | Type | Units | CDM target | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `0102.01` | 1 | Time Stamp | Unsigned 5 | 0.001 s | `Entity.valid_from` candidate | `stanag4586 1.0.0` | the message's own instant |
+| `0102.04` | 2 | Angle of Attack | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.05` | 3 | Angle of Sideslip | Integer 2 | BAM | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.06` | 4 | True Airspeed | Unsigned 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.07` | 5 | Indicated Airspeed | Unsigned 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.08` | 6 | Outside Air Temp | Unsigned 2 | 0.5 K | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.09` | 7 | U_Wind | Integer 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.10` | 8 | V_Wind | Integer 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.11` | 9 | Altimeter Setting | Unsigned 2 | 10 Pa | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.12` | 10 | Barometric Altitude | Integer 3 | 0.02 m | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.13` | 11 | Barometric Altitude Rate | Integer 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.14` | 12 | Pressure Altitude | Integer 3 | 0.02 m | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.15` | 13 | AGL Altitude | Integer 3 | 0.02 m | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.16` | 14 | WGS-84 Altitude | Integer 3 | 0.02 m | `Entity.attributes` | `stanag4586 1.0.0 · parked` | **the one altitude in the format that names a datum without contradicting itself** — and it is not used, because the `Position` this adapter builds comes from #4000 and mixing two messages' altitudes would be a join |
+| `0102.17` | 15 | U_Ground | Integer 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0102.18` | 16 | V_Ground | Integer 2 | 0.05 m/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+
+#### Message #3010: Body-Relative Sensed States — Table B1-68, 7 fields, 1-octet presence vector
+
+| Unique ID | Field | Name | Type | Units | CDM target | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `0103.01` | 1 | Time Stamp | Unsigned 5 | 0.001 s | `Entity.valid_from` candidate | `stanag4586 1.0.0` | the message's own instant |
+| `0103.04` | 2 | X_Body_Accel | Integer 2 | 0.005 m/s2 | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0103.05` | 3 | Y_Body_Accel | Integer 2 | 0.005 m/s2 | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0103.06` | 4 | Z_Body_Accel | Integer 2 | 0.005 m/s2 | `Entity.attributes` | `stanag4586 1.0.0 · parked` |  |
+| `0103.07` | 5 | Roll_Rate | Integer 2 | 0.0001 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` | at `body_rates_rad_s`, scaled 0.0001 rad/s against #4000's 0.005 — ambiguity 4 |
+| `0103.08` | 6 | Pitch_Rate | Integer 2 | 0.0001 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0103.07 |
+| `0103.09` | 7 | Yaw_Rate | Integer 2 | 0.0001 rad/s | `Entity.attributes` | `stanag4586 1.0.0 · parked` | as 0103.07 |
+
+### Settlements
+
+**Settlement 1 — identity is the wire's, and this format can do what STANAG 4609 could not.**
+`stanag4609` keys its platform on the packet because nothing in its witnessed set identifies an
+airframe. Here §3.3.1.7 puts a Source ID in **every** wrapper — "the ID number of UAS element which
+is originating/transmitting the message, e.g. air vehicle for downlink messages" — whose stated
+purpose (§1.7.6) is "to uniquely identify any entity in an arbitrarily formed system". So
+`entity_id` is `ids.derive` over that identifier and is **stable across datagrams without this
+adapter remembering anything**. The id is keyed on the same rendered string `SourceId.external_id`
+publishes, `owning.b.c.d`; keying it on the raw integer while publishing the dotted form was a real
+defect in the first draft and would have made a consumer's re-derivation disagree with the emitter.
+
+**Settlement 2 — no fusion, no joins, twelfth time, and the refusal that costs something.** The
+datagram is the unit of delivery and nothing crosses its boundary. Within one datagram, messages
+sharing a Source ID contribute to that vehicle's `Entity`, which is reading one payload rather than
+correlating two. **Where a datagram carries more than one positioned `#4000` for one vehicle, the
+`Entity` takes NO position and records why**, while the `Track` carries every one of them as a
+sample. Picking "the latest" would be a decision made inside a translator — invisible in the output
+and absent from the audit trail — and `adapter.py`'s contract forbids exactly that.
+
+**Settlement 3 — position source is `INERTIAL`, and it is the most safety-loaded line in the
+adapter.** `PositionSource` exists so a commander can tell a fix from a guess: when PNTMAP reports
+jamming over an area, every `GNSS` position inside it becomes suspect and every `INERTIAL` one does
+not. **The message carrying the position is named `Inertial States` and the document states no GNSS
+source anywhere in it.** A real airframe's INS is usually GNSS-aided, but that is knowledge about
+airframes, not something this datagram says. `INERTIAL` is read off the message's own name — the
+only evidence there is — and it is the safe direction of the two.
+
+**Settlement 4 — affiliation is `UNKNOWN`, and the tempting inference is named.** A DLI link runs
+between a control station and a vehicle it controls, so `FRIENDLY` would usually be right. The
+format states **no affiliation field**, and the inference runs from deployment context rather than
+from anything on the wire — a relayed, recorded or captured feed breaks it. This is the CAT021
+performance-class refusal and the GMTI platform-type refusal in a third costume.
+`attributes.affiliation_basis` carries the whole argument, and a deployment that knows better
+decides it in the fusion layer where the decision is visible.
+
+**Settlement 5 — heading is not course, and the format gives both.** `0101.16` Heading is "the
+projection of the longitudinal axis"; `0101.08`/`0101.09` are velocity components. Where the
+aircraft points and where it is going differ by the crosswind, so **heading parks and never fills
+`course_deg`**, which is derived from the velocity pair.
+
+### Ambiguity register
+
+| # | The ambiguity | What is done about it |
+|---|---|---|
+| 1 | **The Message Properties bit layout below bit 8 is not recoverable from this copy's text layer.** §3.3.1.10 fixes bit 15 (ACK) and bits 14:8 (IDD version) in words, and Table B1-4 gives the Checksum Length encoding — but *where* the two-bit field sits inside bits 7:0 lives in Figure B1-8, whose bit-number row extracts as the scrambled sequence `1 2 045 3 67910 812 13 11`. Every label is present and their order is a property of the PDF's text placement. **An extraction limit, not a defect in the standard** — the figure is legible to a human reading the rendered page | The checksum width is **derived from the frame arithmetic**, `total − 16 − message_length`, which the format constrains to exactly 0, 2 or 4 and which the octets fully determine. The subfield is read at bits 7:6 as a *second* statement and a **disagreement is recorded as a defect rather than resolved**. The ambiguity is carried, not guessed. It bites only on a multi-frame datagram, where there is no unique trailing count to solve for — and a wrong reading there is loud, because mis-sizing one checksum shifts the next wrapper and its message length falls outside 1..528 |
+| 2 | **"shall contain −1" is specified for a field the same section declares unsigned.** Figure B1-7's notes: "all header entries … shall be 16-bit unsigned integers". §3.3.1.5: the Sequence # "shall contain '-1'" | The only reading satisfying both is the two's-complement pattern `0xFFFF`, which is what the fixtures carry and what a non-conformant value is measured against. Recorded rather than silently applied, because the document spells `0xFFFF` nowhere. Severity low: both readings agree on the octets |
+| 3 | **The Altitude Type enumeration contradicts itself on the one value the CDM could use.** `0101.07` reads `0 = Pressure Altitude`, `1 = Baro Altitude`, `2 = AGL`, **`3 = WGS-84 (geoid)`** — and WGS-84 is an *ellipsoid* while the geoid is an *equipotential surface*, differing by roughly −107 m to +85 m over the earth. `Position.alt_m` is documented "Metres HAE", and value 3 is the only one of the four that could ever populate it | **`alt_m` is populated only under type 3**, and every object built from one carries `attributes.altitude_datum_ambiguity` naming this entry, so the residue travels with the value. Types 0, 1 and 2 park with their frame named and never reach `alt_m`. **What is refused** is treating type 3 as ellipsoidal because the CDM wants HAE and "WGS-84" is the nearest word — that converts a stated ambiguity into an unstated error of up to a hundred metres |
+| 4 | **Two decoded messages carry rotation rates fifty times apart.** `#4000` fields 15–17 are `Integer 2` at **0.005 rad/s** with range "No Restrictions"; `#3010` fields 5–7 are `Integer 2` at **0.0001 rad/s** with range −π ≤ x < π | **Probably design, and recorded as an observation rather than a contradiction**: `#3010`'s scale is self-consistent with its range (32767 × 0.0001 = 3.2767, which is π to four places) and the document says why the messages are separate — `#3010`'s states "may need to be known at substantially higher rates". Structurally: decoded fields are filed under their **message number**, never merged, so a flat `roll_rate` key written by whichever message arrived last — a number wrong by a factor of 50 that looks entirely reasonable — is unrepresentable |
+| 5 | **The flight-phase field cannot express flight.** `3002.01` AV State is "the reported flight phase of the air vehicle" and its assigned values are `0 = Unknown`, `1 = Power Up`, `2 = Pre-start`, `3 = Pre-launch`, `4 = Launch Abort`, with `5–9 = Reserved` and `10–255 = VSM Specific`. **Every named phase is before flight**, so an airborne vehicle reports either `Unknown` or a vendor number this document does not name | The value parks with the document's own word for it, including "Reserved" and "VSM Specific" for the spans it does not name. **It is never read as a CDM semantic** — not into `entity_type`, not into an `Event`, not into a status anything acts on. Reading a vendor's private number as a flight phase would be inventing a fleet model, which is the CAT034 platform-type refusal again |
+
+### The fixture set — twelve synthetic datagrams
+
+**Everything is synthetic.** No recorded DLI traffic and no real air vehicle. Source IDs are built
+on Owning ID **7**, which §1.7.6 leaves for the Custodian to assign and which no allocation known
+here uses; 255 is avoided because the document reserves it. Positions are in the Gulf of Riga,
+matching this repository's other synthetic sets. Each datagram ships twice — as `.s4586` octets and
+as a `.parsed.json` twin that is a *readable form of the same octets*, decoded through the same
+path and never by a second decoder — and **all twelve translate**, each carrying a golden per
+replayed form, which is why the goldens number twenty-four and not twelve. **This sentence said
+"the eleven that translate" until it was derived rather than asserted**: the count came from
+assuming that `longitude_absent_from_the_presence_vector`, which yields an `Entity` with no
+position and no `Track`, was a refusal. It is not — an `Entity` stating no position is a
+translation, and the distinction between "no position" and "no object" is the one this whole
+fixture exists to draw.
+
+| Fixture | What it is for |
+|---|---|
+| `inertial_states_wgs84_altitude` | the ordinary case, and the only one where an `Entity` gets both a position and an altitude |
+| `altitude_type_baro_never_reaches_alt_m` | ambiguity 3 made concrete: a baro altitude parks and `alt_m` stays `None` while the fix itself survives |
+| `longitude_absent_from_the_presence_vector` | half a coordinate pair is **no** position — building one would put the aircraft on the prime meridian. No `Track` either, because there is no positioned sample |
+| `two_inertial_states_leave_the_entity_unpositioned` | **the refusal fixture.** Two positioned `#4000` for one vehicle: the `Entity` states no position and says why, and both instants survive as `Track` samples |
+| `four_decoded_messages_one_vehicle` | all four decoded messages at once — the keying rule under load, and the case where `#4000` and `#3010` both carry a roll rate at raw values 10 and 500 for the same physical rate |
+| `an_undecoded_message_type_is_parked` | `#6000` IFF Status Report, a real Edition 3 message this adapter does not decode, parked verbatim beside a `#4000` that still translates |
+| `two_vehicles_are_two_entities` | two Source IDs in one datagram are two aircraft and two Tracks, never one |
+| `no_checksum_is_not_a_failing_checksum` | §3.3.1.11 makes it optional, and `None` is not `False` |
+| `four_octet_checksum` | Table B1-4's other assigned width |
+| `a_checksum_that_does_not_validate_is_flagged` | a producer's error reaches the operator as data — `stanag4609`'s policy on its own checksum |
+| `zero_ground_speed_yields_no_course` | a bearing at zero speed would be invented, so `course_deg` is `None` and the basis says so |
+| `an_idd_version_that_is_not_edition_3` | Table B1-3 assigns Edition 3 the value 30. A frame declaring 40 decodes against Edition 3's tables **with a defect recorded** — the shape in which a later-edition feed announces itself |
 
 ## GeoJSON (RFC 7946)
 
