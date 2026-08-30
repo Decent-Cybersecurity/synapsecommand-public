@@ -77,8 +77,23 @@ PKG = REPO / "packages" / "cdm" / "synapse_cdm"
 COVERAGE = PKG / "FORMAT_COVERAGE.md"
 SPEC = PKG / "fixtures" / "klv" / "spec"
 
-#: A parks-table row opens with its number as the first cell, bolded.
+#: A parks-table row opens with its number as the first cell, bolded. **THIS PATTERN IS NOT A
+#: SCOPE.** It ran over the WHOLE FILE until 2026-08-30 and matched exactly the thirteen rows of
+#: the parks table, which is why nothing objected — but `FORMAT_COVERAGE.md` is thirteen thousand
+#: lines and any SECOND bold-numbered table anywhere in it is absorbed into the parks set in
+#: silence, inflating `rows`, `open_parks` and every set-claim derived over them. Found during the
+#: 2026-08-29 adapter round and worked around by spelling that round's other table with lettered
+#: rows — a convention nothing enforces. The pattern is now applied only inside `_table_span`.
 ROW = re.compile(r"^\| \*\*(\d+)\*\* \|")
+#: The parks table's own column header — THE SCOPE, and it is the header rather than a line number
+#: because a line number is a fact about today's file. The `Reason, grounded in the delegation
+#: table` cell is what makes it this table and not another: the parks table is MISB-only and every
+#: row is a document MISP-2019.1 delegates to.
+TABLE_HEADER = ("| # | Parked | Version required | Reason, grounded in the delegation table "
+                "| Reopen condition |")
+#: The `|---|---|` line under a header. Optional in the scan, so a table written without one is
+#: read rather than silently dropped.
+SEPARATOR = re.compile(r"^\|[\s:|-]+\|$")
 #: A row is closed when its `Parked` cell strikes the title through AND says so.
 CLOSED = re.compile(r"\*\*CLOSED (\d{4}-\d{2}-\d{2})\*\*")
 #: A set-claim names two or more parks in one breath: "parks 4, 5 and 8", "parks 1, 3, 11 and 12".
@@ -96,6 +111,15 @@ SERIES = re.compile(r"\b(?:ST|EG|RP)\s*(\d{4})\b")
 #: this tree is prefixed. It reported every held document as absent and the mutation check caught
 #: it, which is the whole reason that check exists.
 FILE_SERIES = re.compile(r"\d{4}")
+
+
+class ParksTableNotFound(Exception):
+    """The scope could not be resolved, which is refused rather than guessed at.
+
+    Zero headers means the table was renamed or moved out of this file; two means there are two
+    candidates and picking one is a coin toss. Both are louder failures than the file-global scan
+    they replace, and that is the point — the defect this repair closes was silent.
+    """
 
 
 class Row(NamedTuple):
@@ -146,8 +170,52 @@ def _cells(line: str) -> list[str]:
     return [c.strip() for c in line.strip().strip("|").split(" | ")]
 
 
+def _table_span(text: str) -> tuple[int, int]:
+    """The half-open [start, end) line range of the parks table's BODY, 0-based.
+
+    The body is the run of table lines after the header and its separator, ending at the first
+    line that is not a table line. A row check that scans the whole file is a row check whose
+    subject is "every bold-numbered table in a thirteen-thousand-line document", which is not what
+    any caller here means.
+    """
+    lines = text.split("\n")
+    heads = [i for i, line in enumerate(lines) if line.strip() == TABLE_HEADER]
+    if len(heads) != 1:
+        raise ParksTableNotFound(
+            f"{len(heads)} line(s) match the parks table's column header, expected exactly 1. "
+            f"The header this scopes on is:\n  {TABLE_HEADER}\n"
+            "Zero means the table moved or its columns were renamed — repair this anchor rather "
+            "than removing the scope, because an unscoped scan absorbs every other bold-numbered "
+            "table in the file without saying so.")
+    start = heads[0] + 1
+    if start < len(lines) and SEPARATOR.match(lines[start].strip()):
+        start += 1
+    end = start
+    while end < len(lines) and lines[end].startswith("|"):
+        end += 1
+    return start, end
+
+
+def _unscoped_row_numbers(text: str) -> set[int]:
+    """What `_rows` would yield with NO scope. Exists only so the scope's witness is honest.
+
+    **THE FIVE-COLUMN NOTE.** `_cells`'s `len(cells) < 5` guard already excluded any second table
+    with fewer than five columns, so a three-column synthetic table is absorbed by neither scan
+    and witnesses nothing — the first draft of the scope's mutation used one and passed against
+    the unrepaired parser. The absorbing shape is a second table with FIVE OR MORE columns, and
+    that is what the witness has to build.
+    """
+    out: set[int] = set()
+    for line in text.split("\n"):
+        m = ROW.match(line)
+        if m and len(_cells(line)) >= 5:
+            out.add(int(m.group(1)))
+    return out
+
+
 def _rows(text: str) -> Iterator[Row]:
-    for i, line in enumerate(text.split("\n"), start=1):
+    start, end = _table_span(text)
+    for i, line in enumerate(text.split("\n")[start:end], start=start + 1):
         m = ROW.match(line)
         if not m:
             continue
@@ -376,6 +444,44 @@ def _mutation_check() -> int:
     half = len(p.open_parks) // 2
     whole = {"read": list(p.open_parks[:half]), "translate": list(p.open_parks[half:])}
     assert check_stated(whole, p) == [], check_stated(whole, p)
+    cases += 1
+
+    # 6. THE SCOPE, witnessed against the defect it closes: a SECOND bold-numbered table in the
+    #    same file. The unscoped scan absorbs its rows and says nothing; the scoped one does not
+    #    see them at all. Both halves are asserted, because "the count did not move" is only
+    #    evidence if the mutation could have moved it.
+    text = COVERAGE.read_text(encoding="utf-8")
+    ghost = max(p.rows) + 1
+    wide = text + (f"\n\n### A second table that is not the parks table\n\n"
+                   f"| # | Thing | Version | Note | Other |\n|---|---|---|---|---|\n"
+                   f"| **{ghost}** | not a park | v1 | not a delegation | none |\n")
+    assert ghost in _unscoped_row_numbers(wide), (
+        "the synthetic second table is not absorbed by the unscoped scan, so this mutation "
+        "proves nothing about the scope — see the FIVE-COLUMN note above")
+    assert _unscoped_row_numbers(wide) == set(p.rows) | {ghost}
+    assert {r.number for r in _rows(wide)} == set(p.rows), (
+        f"the scope absorbed a row of another table: "
+        f"{sorted({r.number for r in _rows(wide)} - set(p.rows))}")
+    cases += 1
+
+    # 6b. And the narrower shape, which `_cells` already refused before the scope existed. Kept
+    #     as a case so a later round cannot "simplify" the five columns out of case 6 and leave a
+    #     witness that passes against the unscoped scan — which is what the first draft did.
+    narrow = text + (f"\n\n| # | Thing | Note |\n|---|---|---|\n"
+                     f"| **{ghost}** | not a park | not a delegation |\n")
+    assert _unscoped_row_numbers(narrow) == set(p.rows), (
+        "the five-cell minimum no longer excludes a three-column table; case 6's note is stale")
+    cases += 1
+
+    # 7. And the scope REFUSES rather than guesses when its anchor does not resolve once.
+    for broken, why in ((text.replace(TABLE_HEADER, "| # | Renamed |", 1), "zero"),
+                        (text + "\n" + TABLE_HEADER + "\n", "two")):
+        try:
+            _table_span(broken)
+        except ParksTableNotFound:
+            pass
+        else:
+            raise AssertionError(f"the scope resolved with {why} header(s) instead of refusing")
     cases += 1
 
     print(f"{cases} mutations, no survivors")

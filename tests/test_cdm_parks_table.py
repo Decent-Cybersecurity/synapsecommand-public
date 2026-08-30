@@ -145,6 +145,93 @@ def test_check_stated_refuses_a_partition_the_table_refutes(parks):
     assert parks_table.check_stated(whole, parks) == []
 
 
+# ------------------------------------------- the ROW pattern's SCOPE, which was the whole file
+#
+# THE DEFECT, RECORDED RATHER THAN DESCRIBED. `ROW` is `^\| \*\*(\d+)\*\* \|` and until
+# 2026-08-30 `_rows` applied it to every line of `FORMAT_COVERAGE.md`. Exactly thirteen lines
+# matched, the gate reported thirteen parks, and every check above was right for a reason nobody
+# had checked: the file happened to hold one bold-numbered table. The 2026-08-29 adapter round
+# found this and WORKED AROUND it, spelling its own new table with lettered rows — a convention
+# that lives in a round record and in nothing executable. The next bold-numbered table inflates
+# `rows`, and with it `open_parks`, `closed_parks` and the membership every set-claim is derived
+# against, in silence and with no exit code.
+#
+# WHY A SILENT INFLATION IS WORSE THAN A CRASH HERE. The set-claim guard's whole subject is
+# membership. A phantom park 14 in `rows` makes `PHANTOM MEMBER` unreachable for 14, and a
+# fourteenth row read as open makes `check_stated`'s MISSING branch demand a group for a park that
+# is not a park. The guard would go on passing while measuring the wrong set — the exact shape
+# `gates/pin_paths.py` is named for.
+
+
+def test_the_row_scan_is_scoped_to_the_parks_table_and_not_the_file(parks, tmp_path):
+    """A second bold-numbered table is refused entry, and it could have got in.
+
+    Built by APPENDING to the real document rather than from a fixture, so the subject is the
+    parser against the file it actually reads — and both halves are asserted, because "the count
+    did not move" proves nothing unless the mutation could have moved it.
+    """
+    text = parks_table.COVERAGE.read_text(encoding="utf-8")
+    ghost = max(parks.rows) + 1
+    mutated = text + (
+        f"\n\n### Another table, bold-numbered\n\n"
+        f"| # | Thing | Version | Note | Other |\n|---|---|---|---|---|\n"
+        f"| **{ghost}** | not a park | v1 | not a delegation | none |\n")
+
+    # THE MUTATION'S DOMAIN, and getting it wrong is on record. The unscoped scan must absorb
+    # this row or the test proves nothing — and a three-column table does NOT get absorbed,
+    # because `_cells`'s five-cell minimum drops it. The first draft used three columns and
+    # passed against the unrepaired parser, which is a witness measuring nothing.
+    assert parks_table._unscoped_row_numbers(mutated) == set(parks.rows) | {ghost}
+
+    scoped = tmp_path / "FORMAT_COVERAGE.md"
+    scoped.write_text(mutated, encoding="utf-8")
+    derived = parks_table.derive(scoped)
+    assert set(derived.rows) == set(parks.rows), (
+        f"a row of another table was absorbed: {sorted(set(derived.rows) - set(parks.rows))}")
+    assert derived.open_parks == parks.open_parks
+    assert derived.closed_parks == parks.closed_parks
+
+
+def test_the_five_cell_minimum_is_what_narrow_second_tables_hit_and_the_scope_is_the_rest(parks):
+    """The exposure's real boundary, measured rather than assumed.
+
+    `_cells` requires five cells, so a second bold-numbered table with fewer columns was already
+    refused before the scope existed. Recording that here keeps the scope's witness from being
+    "simplified" back into the shape that proves nothing, and keeps this module honest about how
+    wide the original defect actually was: five-or-more-column tables only.
+    """
+    text = parks_table.COVERAGE.read_text(encoding="utf-8")
+    ghost = max(parks.rows) + 1
+    narrow = text + (f"\n\n| # | Thing | Note |\n|---|---|---|\n"
+                     f"| **{ghost}** | not a park | not a delegation |\n")
+    assert parks_table._unscoped_row_numbers(narrow) == set(parks.rows)
+
+
+def test_the_scope_refuses_rather_than_guesses_when_its_anchor_does_not_resolve_once(tmp_path):
+    """Zero headers and two headers are both refusals, and neither is a silent fallback.
+
+    A scope that falls back to the whole file when it cannot find its table reintroduces the
+    defect at exactly the moment somebody renames a column — which is the moment nobody is
+    watching the parks table.
+    """
+    text = parks_table.COVERAGE.read_text(encoding="utf-8")
+    for broken, why in ((text.replace(parks_table.TABLE_HEADER, "| # | Renamed |", 1), "zero"),
+                        (text + "\n" + parks_table.TABLE_HEADER + "\n", "two")):
+        with pytest.raises(parks_table.ParksTableNotFound):
+            parks_table._table_span(broken)
+        assert why  # named for the failure message
+
+
+def test_the_scope_ends_at_the_table_and_not_at_the_next_blank_line(parks):
+    """The span covers every row the table has and stops before the prose under it."""
+    text = parks_table.COVERAGE.read_text(encoding="utf-8")
+    start, end = parks_table._table_span(text)
+    lines = text.split("\n")
+    assert all(line.startswith("|") for line in lines[start:end]), "the span left the table"
+    assert end < len(lines) and not lines[end].startswith("|"), "the span did not stop"
+    assert len([1 for line in lines[start:end] if parks_table.ROW.match(line)]) == len(parks.rows)
+
+
 def test_the_gate_names_what_it_does_not_check():
     """A green that reads as a clean bill is the defect rule 10 is about."""
     assert parks_table.NOT_DERIVABLE, "the unchecked surface must be stated, not implied"
