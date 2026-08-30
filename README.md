@@ -8,12 +8,13 @@ publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this reposito
 which protections are enforced on it and how each was verified, and its ledger of what publication
 left open and what has since been ruled on.
 
-This is the contract layer, and it is public because that is what a contract is for. **Thirteen
+This is the contract layer, and it is public because that is what a contract is for. **Fourteen
 integration adapters are shipped and harness-verified**: `pntmap` (ingest), `tak`, `ais`,
 `adsb`, `legion` (ingest), `cat021`, `stanag4676`, `gmti`, `stanag4609`, `cat048`, `cat034`,
-`cat062` and `cat023` — the last eight byte-exact on the wire where the format is binary. Without a
+`cat062`, `cat023` and `stanag4586` (ingest) — byte-exact on the wire wherever the format is
+binary and the direction is bidirectional. Without a
 canonical model in the middle, N adapters means N(N−1)/2 translations and N private notions of
-"a contact" — seventy-eight and thirteen as of today; with one, an adapter is a thin translator and
+"a contact" — ninety-one and fourteen as of today; with one, an adapter is a thin translator and
 nothing else.
 
 ```
@@ -39,7 +40,7 @@ It is generated, and a test fails the build if it drifts from the models.
 
 You do not need this repository to use the CDM. The distribution is `synapse-cdm`, it depends on
 `pydantic` and `jsonschema` and nothing else, and it carries the models, the adapter SDK, the
-harness and **every fixture the thirteen shipped adapters are verified against** — which is what
+harness and **every fixture the fourteen shipped adapters are verified against** — which is what
 makes conformance something you can prove rather than take on trust.
 
 **Install.** From PyPI, and nothing else is needed:

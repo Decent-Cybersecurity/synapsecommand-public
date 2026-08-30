@@ -1,13 +1,14 @@
 # `synapse_cdm` — the Canonical Data Model and adapter framework
 
-Thirteen integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
+Fourteen integration adapters are shipped: PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS /
 NMEA 0183 AIVDM, ADS-B 1090ES extended squitter, Picogrid Legion, ASTERIX category 021,
 STANAG 4676 / AEDP-12 Edition B NITS tracks, STANAG 4607 / AEDP-4607 Edition A GMTI,
 STANAG 4609 / MISP-2019.1 UAS Datalink Local Set KLV metadata,
 ASTERIX category 048 monoradar target reports, ASTERIX category 034 monoradar service
 messages, ASTERIX category 062 SDPS system track messages, and ASTERIX category 023 CNS/ATM
-ground station and service status reports. Without a canonical model in the middle, thirteen
-adapters means seventy-eight translations and thirteen private notions of "a contact".
+ground station and service status reports, and STANAG 4586 Edition 3 DLI air-vehicle telemetry.
+Without a canonical model in the middle, fourteen
+adapters means ninety-one translations and fourteen private notions of "a contact".
 With one, an adapter is a thin translator and nothing else.
 
 **Shipped so far:**
@@ -26,6 +27,7 @@ With one, an adapter is a thin translator and nothing else.
 | [`cat034`](adapters/asterix_cat034.py) 1.0.0 | bidirectional | ASTERIX category 034 monoradar service messages, EUROCONTROL SPEC-0149-2b **Edition 1.29** (all 14 UAP FRNs, all 12 data items, RE and SP) → `Entity` + `Event` **per record**; Entities → one data block, **byte for byte**, on its own tested codec layer ([`cat034_codec`](adapters/cat034_codec.py)). **The first adapter whose primary object is the sensor itself** — every record describes the radar station, so `entity_type` is `SENSOR`, the SAC/SIC that `cat048` parks as a sensor identifier is a `SourceId` here, and no object carries `Kinematics` because the one bearing the category states is the antenna's. Table 2's M/O/X matrix is the encoding rule for eleven of the twelve items, and it is what rules out ever deriving a `Geometry` from the Generic Polar Window: the window and the station's own position are mutually exclusive across all seven message types |
 | [`cat062`](adapters/asterix_cat062.py) 1.0.0 | bidirectional | ASTERIX category 062 SDPS track messages, EUROCONTROL SPEC-0149-9 **Edition 1.21** with the Reserved Expansion Field **Edition 1.3** (all 35 UAP slots, all 27 data items, all five REF items, SP) → `Entity` + `Event` **per record**; Entities → one data block, **byte for byte**, on its own tested codec layer ([`cat062_codec`](adapters/cat062_codec.py)). **The first adapter whose input is already the output of a fusion process** — an SDPS system track, correlated from radars, Mode S interrogators, multilateration, ADS-B and ADS-C and then correlated with a flight plan. The per-technology update ages, the thirty-one per-parameter ages, the amalgamation and coasting flags, the contributing-sensor lists and the tracker's own estimated standard deviations are the **upstream system's statements about its own processing**, collected under `attributes.fusion_provenance` with the SAC/SIC of the system that made them, and acted on nowhere. Identity is the Mode S address where the record states one; the system track number is **never** the basis, because sixteen bits allocated by the emitting system and recycled would merge two airframes into one entity |
 | [`cat023`](adapters/asterix_cat023.py) 1.0.0 | bidirectional | ASTERIX category 023 CNS/ATM ground station and service status reports, EUROCONTROL SPEC-0149-16 **Edition 1.3** (all 14 UAP FRNs, all 9 data items, RE and SP) → `Entity` + `Event` **per record**, and a **second `Entity` for the SERVICE** on the two report types that are about one; Entities → one data block, **byte for byte**, on its own tested codec layer ([`cat023_codec`](adapters/cat023_codec.py)). **The first adapter here that emits two Entities from one record** — §4.5.1.2 requires each of a station's services to be reported independently, so a service is an object keyed on the pair `(SAC/SIC, Service Identification)` and both ids ride on one `Event`, which records the relationship without joining anything. Nine items and **not one coordinate**: `Entity.position` is `None` on every object and `Event.geometry` is `None` permanently, because `I023/200` is a radius with no centre. Three of its nine items have an `FX` bit that names an extension the document never defines, and all three refuse |
+| [`stanag4586`](adapters/stanag4586.py) 1.0.0 | ingest | STANAG 4586 **Edition 3** DLI air-vehicle telemetry (§3.3.1 wrapped messages, big-endian, presence-vector bodies) → one `Entity` per air vehicle plus a `Track` of that datagram's positioned observations, on its own tested decode layer ([`stanag4586_codec`](adapters/stanag4586_codec.py)). **Four messages are decoded** — #4000 Inertial States, #3002 Vehicle Operating States, #3009 Air and Ground Relative States and #3010 Body-Relative Sensed States — and every other message type, command messages included, is parked whole with its wrapper read. **Ingest by ruling, not by omission**: the DLI command uplink is out of scope because the CDM has no command kind and emitting DLI edges toward being a UCS component. **The edition is not the current one** — Edition 4 is paywalled and DRM-wrapped, and nothing here claims to read it. The first adapter whose `Position` is `INERTIAL` rather than `GNSS`, read off the message's own name, and the first to carry an ellipsoid/geoid datum ambiguity on the object |
 
 | [`stanag4609`](adapters/stanag4609.py) 1.0.0 | bidirectional | STANAG 4609 / MISP-2019.1 **UAS Datalink Local Set** KLV metadata, MISB ST 0601.14a (**26 of its 141 items** — the witnessed set one pinned real stream attests; the other 115 rows read `not yet`) → `Entity` + `Event` **per packet**; Entities → one payload, **byte for byte**, on two tested codec layers ([`klv_codec`](adapters/klv_codec.py) for the framing, [`klv_uas_codec`](adapters/klv_uas_codec.py) for the tag table). **The first adapter here whose format defines a real checksum** — `ST 0601.14-32` makes it mandatory in every packet, where the five binary siblings each had to record that theirs defines none — and the first to ship a **codec ruling**: the one real stream carries an item at four octets where its own standard states a Required Length of two, so the length-divergence policy skips that item and records a structured defect annotation rather than rejecting the packet or reinterpreting the octets. `entity_id` is **packet-scoped**, because the witnessed set carries no identifier at all — items 3, 4, 10, 59 and 94 are the five that could and the stream has none of them, so consecutive packets of one aircraft get different ids and gap 30 records the cost |
     external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | PlanObject ──▶ platform
@@ -309,8 +311,9 @@ in a release — it is the shape of the distribution, and it has been true of ev
 costs is specific rather than general: `lossless` and the schema checks still run and still prove
 what they prove, so the floor a wheel-only consumer gets is **ingress** conformance, and egress
 byte-exactness is proved only in a clone. Every adapter that declares an egress direction is
-affected — eleven of the thirteen shipped adapters, every one of which emits something the check
-cannot parse as JSON, leaving only the two ingest-only adapters unaffected for a different reason.
+affected — eleven of the fourteen shipped adapters, every one of which emits something the check
+cannot parse as JSON, leaving only the three ingest-only adapters unaffected for a different
+reason.
 Two things would change it and neither is free: packaging the round-trip tests, which puts a test
 suite inside a runtime distribution; or giving the harness a comparison that works on the emitted
 bytes per format, which is the codec-level work each of those adapters already does in `tests/`.
@@ -350,9 +353,9 @@ cannot find a site nobody has added to it. The sweep is:
 2. **Check the pair arithmetic at every site that states a number**, not just the count. Two
    documents disagreed on whether it is `N×(N−1)` or `N(N−1)/2`, which for the nine adapters of
    the day was 72 against 36; neither was wrong on its own page and together they were a
-   contradiction. At today's thirteen adapters it is 156 against 78.
+   contradiction. At today's fourteen adapters it is 182 against 91.
 3. **Read every sentence that states the count TWICE.** `symbology.py` and
-   `docs/docs/cdm/entity.mdx` both carry "so that thirteen adapters cannot grow thirteen slightly
+   `docs/docs/cdm/entity.mdx` both carry "so that fourteen adapters cannot grow fourteen slightly
    different opinions", and commit 94c000a had to repair that sentence half-updated —
    "seven adapters cannot grow six" — which reads as prose either way.
 4. **Read the gap list's own tallies.** `FORMAT_COVERAGE.md` gap 1 counts how many adapters park

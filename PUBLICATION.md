@@ -344,7 +344,7 @@ checkout:
 298 is a number nobody can check and ten numbers that sum to it are.
 
 **Ten is the roster OF 1.0.0 and not of `main`.** `cat062` and `cat023` landed afterwards and
-are in `MIGRATIONS.md`'s history, so the tree ships thirteen adapters and the
+are in `MIGRATIONS.md`'s history, so the tree ships fourteen adapters and the
 release this block verifies carries ten. The table above is what a `pip install synapse-cdm`
 gets, which is the whole point of the block: it is a measurement of the artefact a stranger
 downloads, and it does not move when `main` does. The stale-count sweep names this sentence

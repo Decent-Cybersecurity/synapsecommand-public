@@ -56,9 +56,16 @@ the pinned transport stream's 26 items stop at tag 65, and the lowest IMAPB item
 fourteen still read `not yet` in `FORMAT_COVERAGE.md`. In particular `Kinematics.course_deg` is
 still `None` on every object this package emits from that stream, because tag 112 is not in it.
 
-## Thirteen adapters, all harness-verified, all unchanged
+## Fourteen adapters, all harness-verified — thirteen of them unchanged, and one that
+## postdates this release
 
-`python -m synapse_cdm.harness --adapter <name> --json`, run over the roster with no `--fixtures`:
+`python -m synapse_cdm.harness --adapter <name> --json`, run over the roster with no `--fixtures`.
+**The table is the roster of the TREE, not of the 1.3.0 artefact**, and the difference is one
+row: `stanag4586` landed after 1.3.0 was published and is marked. It is here because
+`tests/test_cdm_release.py::test_the_release_notes_roster_table_is_the_registry` reads the live
+registry and requires both directions to agree — a table missing an adapter tells a reader the
+roster is smaller than it is. Marking the row is how that gate is satisfied without the notes
+claiming 1.3.0 shipped something it did not:
 
 | Adapter | Direction | Fixture verdicts |
 |---|---|---|
@@ -72,14 +79,20 @@ still `None` on every object this package emits from that stream, because tag 11
 | `gmti` | bidirectional | 32 |
 | `legion` | ingest | 6 |
 | `pntmap` | ingest | 4 |
+| `stanag4586` | ingest | 24 — **NOT IN 1.3.0**, landed after publication |
 | `stanag4609` | bidirectional | 20 |
 | `stanag4676` | bidirectional | 34 |
 | `tak` | bidirectional | 12 |
 
-**408 fixture verdicts, 0 failed**, against the published schemas — the same roster and the same
-408 that 1.2.1 and 1.2.0 shipped. The new fixture set is the codec's and is not an adapter's, so it
-adds no verdict to this table; that the table did not move is the measurement, and it is printed
-rather than asserted.
+**408 fixture verdicts, 0 failed** across the thirteen adapters 1.3.0 shipped, against the published
+schemas — the same roster and the same 408 that 1.2.1 and 1.2.0 shipped. The new fixture set of that
+release is the codec's and is not an adapter's, so it added no verdict; that the table did not move
+across those three releases is the measurement, and it is printed rather than asserted.
+
+`stanag4586`'s 24 are NOT in that 408 and must not be added to it: they are verdicts on an adapter
+this release does not contain. The tree's total is **432**, and the two figures are kept apart on
+purpose — 408 is a fact about the artefact a `pip install synapse-cdm==1.3.0` gets, and 432 is a
+fact about `main`.
 
 The six published schemas — `cdm_object`, `entity`, `event`, `plan_object`, `track`,
 `payload_gnss_interference` — regenerate byte-identical from the models.

@@ -2,12 +2,12 @@
 
 WHY THIS EXISTS
 ---------------
-Thirteen integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
+Fourteen integration adapters are shipped (PNTMAP GNSS alerts, TAK / Cursor-on-Target, AIS,
 ADS-B 1090ES, Picogrid Legion, ASTERIX category 021, STANAG 4676 NITS, STANAG 4607 GMTI,
 STANAG 4609 UAS Datalink LS KLV, ASTERIX category 048, ASTERIX category 034, ASTERIX category 062
 and ASTERIX category 023).
-Without a canonical model in the middle, thirteen adapters means seventy-eight translations and
-thirteen private notions of "a contact", and the integration layer becomes the place where meaning is
+Without a canonical model in the middle, fourteen adapters means ninety-one translations and
+fourteen private notions of "a contact", and the integration layer becomes the place where meaning is
 quietly lost. With one, an adapter is a thin translator and nothing else: external format in,
 CDM out.
 

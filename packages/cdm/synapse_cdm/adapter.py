@@ -58,10 +58,18 @@ class Adapter(ABC):
 
     #: The directory under `synapse_cdm/fixtures/` holding this adapter's fixtures, when it is
     #: NOT the adapter's own name. Left None means "the same string as `name`", which is true of
-    #: eleven of the thirteen shipped adapters — `stanag4676`, whose fixtures are in
+    #: twelve of the fourteen shipped adapters — `stanag4676`, whose fixtures are in
     #: `fixtures/nits`, and `stanag4609`, whose fixtures are in `fixtures/klv`, are the two where
     #: the name and the directory differ today, and the split below is the reason rather than an
     #: accident.
+    #:
+    #: AND A THIRD STANAG-NAMED ADAPTER ARRIVED WITHOUT JOINING THEM, which is the case that
+    #: shows what this split is actually about. `stanag4586` is named for a covering document
+    #: exactly as the two above are, and it declares NO override: STANAG 4586's payload has no
+    #: name of its own beyond the standard's number — its messages are "DLI messages" and its
+    #: fixtures are `.s4586` — so the name the bytes want and the name the standard gives are one
+    #: string. The rule is "the payload has another name", NOT "the adapter has a STANAG prefix",
+    #: and until this adapter the two readings were indistinguishable.
     #:
     #: THE SECOND ONE ARRIVED WITHOUT MOVING THE FIRST HALF OF THIS SENTENCE. `stanag4609` shipped
     #: in 1.2.0 declaring `fixture_dir = "klv"`, which took the divergent set from one adapter to

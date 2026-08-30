@@ -27,8 +27,8 @@ pattern that stops matching is a FAILURE with the path and the pattern quoted, a
 re-anchor it deliberately rather than to delete the row.
 
 The double-count sites are the ones this exists for most. `symbology.py` and
-`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that thirteen adapters
-cannot grow thirteen slightly different opinions" — and that is exactly the shape that half-edited
+`docs/docs/cdm/entity.mdx` both carry the count TWICE in one clause — "so that fourteen adapters
+cannot grow fourteen slightly different opinions" — and that is exactly the shape that half-edited
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
@@ -1647,6 +1647,72 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
      "the gated job's own output for the 1.1.0 run, transcribed. A record of what a run printed"),
     ("PUBLICATION.md", "all **twelve adapters replayed from the packaged fixtures — 388",
      "the 1.1.0 install measurement, which is a fact about 1.1.0 and not about the tree"),
+    ("PUBLICATION.md", "**13 adapters**, `stanag4609` among them at `1.0.0`, fixtures resolving "
+     "to `klv`",
+     "the 1.2.0 release-verification block's own `--list-adapters` output, transcribed. A record "
+     "of what that artefact printed, and it does not move when the tree does"),
+    ("PUBLICATION.md", "**13 adapters**, unchanged from 1.2.0, `stanag4609` at `1.0.0` with "
+     "fixtures in `klv`",
+     "the 1.2.1 release-verification block's own output, same ground as the 1.2.0 row above"),
+    ("PUBLICATION.md", "**13 adapters**, unchanged from 1.2.1, `stanag4609` at `1.0.0` with "
+     "fixtures in `klv`",
+     "the 1.3.0 release-verification block's own output, same ground again. THREE RELEASES NOW "
+     "SHARE THIS SHAPE, which is why they are three rows and not one: each names the release it "
+     "measured, and a single row quoting only the common prefix would exempt a future stale one"),
+    ("PUBLICATION.md", "The intro serves thirteen adapters with STANAG 4609 named and the pair "
+     "arithmetic reading seventy-eight and thirteen",
+     "a record of what a PAST DEPLOYMENT served, byte-compared against a named build. Updating it "
+     "would assert that the deployment served something it did not"),
+    ("RELEASE_NOTES.md", "across the thirteen adapters 1.3.0 shipped",
+     "named subset — the roster OF 1.3.0, which is what these notes describe. The table above it "
+     "is the live registry by gate, and the row that postdates the release is marked as such; "
+     "this figure is the artefact's and must not move with the tree"),
+    ("packages/cdm/synapse_cdm/fixtures/stanag4586/spec/stanag4586_pin.json",
+     "thirteen SHIPPED adapters occupied fourteen ordinals",
+     "named subset and a PAST STATE — the roster as it stood before `stanag4586` existed, "
+     "recorded to explain why the fourteenth adapter took the fifteenth ordinal. The sentence's "
+     "next clause states today's fourteen"),
+    # --- the acquisition round's own record, which is RULE 9's shape three times over ---
+    #
+    # "A record that discusses a token becomes a site of it." Each of these is either a QUOTATION
+    # of bytes that exist elsewhere or a statement of a PAST state, and updating any of them would
+    # falsify the thing being described.
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     'its "13 adapters" describes the 1.3.0 artefact',
+     "a quotation of the v1.3.0 GitHub Release body, which is a dated version-figure site. The "
+     "sentence's whole point is that this figure must NOT move with the tree"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     'the release procedure\'s "all thirteen harnesses"',
+     "a quotation of the PRE-repair bytes, inside the list of sites that round repaired. The live "
+     "sentence now reads fourteen; misquoting it would hide what was fixed"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "so thirteen shipped adapters occupied fourteen ordinals",
+     "a PAST state — the roster before `stanag4586` existed — recorded to explain why the "
+     "fourteenth adapter took the fifteenth ordinal. The clause before it states today's fourteen"),
+    # --- dated round records in MIGRATIONS.md: each measured the tree ON ITS OWN DAY ---
+    #
+    # These are not stale sentences. A round record states what a round found, and this file's own
+    # convention is that a later round ANNOTATES rather than tidies — so editing the number would
+    # make the record assert a measurement nobody took. The live sites are elsewhere and are
+    # checked by comparison; these are the archive.
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "The 13 adapters and 408 fixture verdicts were derived off `adapter.discover()`",
+     "a dated round record of a derivation that round ran. The figure is what the command "
+     "printed on the day"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     'saying "Thirteen integration adapters are shipped"',
+     "a QUOTATION of bytes another file carried at the time, inside the record of the round that "
+     "repaired them. Updating it would misquote the defect being described"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "affects eleven of the thirteen adapters, it is pre-existing across every version",
+     "a dated round record of an egress-SKIP measurement. Its subject is a named subset — the "
+     "egress-capable adapters — and its eleven is still eleven today"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "across the thirteen adapters' golden files",
+     "a dated round record of a key census over the goldens as they stood that day"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     "across the thirteen adapters' goldens",
+     "the same census quoted one round later, carrying its own date"),
     ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "unanimous across five ASTERIX adapters",
      "named subset — the ASTERIX categories, not the roster"),
     ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "**Eight adapters, eleven private keys.**",
