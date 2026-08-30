@@ -65,6 +65,7 @@ import re
 import pytest
 
 import synapse_cdm
+from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION
 
 PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
@@ -242,6 +243,28 @@ def test_the_page_is_still_a_curated_summary_and_not_yet_a_copy():
         "the page no longer has the section the FILE lacks. It is half the evidence that 'mirrors' "
         "was the wrong word: a mirror is neither a superset nor a reworded subset"
     )
+
+
+def test_the_page_states_the_two_live_version_numbers_this_tree_actually_has():
+    """The curated page names both versions in one sentence, and nothing guarded either.
+
+    **FOUND BY THE 1.4.0 ROUND'S STALE-COUNT SWEEP, not by a gate.** The page read *"the package is
+    at `1.3.0` and the schema stays at `1.0.0`"* on a tree whose `PACKAGE_VERSION` was already
+    1.4.0. Everything else about this page is derived — the adapter set against MIGRATIONS.md, the
+    no-schema-change count against that section's entries — and this sentence, the one a reader is
+    most likely to take as current, was prose nobody compared to anything for a release.
+
+    It is the same shape `RELEASE_NOTES.md`'s opening has a gate for and this page did not: the
+    number is stated where a consumer reads it, and a version bump does not travel to prose on its
+    own. The schema half is guarded too, because a sentence whose whole point is that the two
+    numbers differ can go wrong on either side of the "and".
+    """
+    text = CHANGELOG.read_text()
+    assert f"package is at `{PACKAGE_VERSION}`" in text, (
+        f"docs/docs/changelog.mdx does not state the package version {PACKAGE_VERSION}. It is a "
+        "curated page a consumer reads for the current state, and the bump did not reach it")
+    assert f"the schema stays at `{SCHEMA_VERSION}`" in text, (
+        f"docs/docs/changelog.mdx does not state schema_version {SCHEMA_VERSION}")
 
 
 @pytest.mark.parametrize("heading,terminator,path", [
