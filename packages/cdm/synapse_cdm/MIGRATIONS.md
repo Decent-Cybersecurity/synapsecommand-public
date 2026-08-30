@@ -80,12 +80,16 @@ behind it.
    maintainer's: the pinned specification documents are gitignored, so a fresh clone skips the
    tests that read them, and the workflow prints the skip list with `-rs` rather than reporting
    one number.
-2. **All thirteen harnesses are green**, and at least one of them run against the INSTALLED wheel
-   rather than the source tree — `gates/wheel_install.py` does both halves and is the gate this
-   condition means. The workflow runs it with `--mutation-check`, so the release build also proves
-   the gate can still fail. Neither the count nor the roster is written down anywhere that a
-   fourteenth adapter would not update: the gate derives it, after a written-down ten replayed ten
-   of twelve adapters and reported the ten as a pass.
+2. **All fourteen harnesses are green**, and at least one of them run against the INSTALLED
+   wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
+   this condition means. The workflow runs it with `--mutation-check`, so the release build also
+   proves the gate can still fail. Neither the count nor the roster is written down anywhere that a
+   fifteenth adapter would not update: the gate derives it, after a written-down ten replayed ten
+   of twelve adapters and reported the ten as a pass. **THE PREDICTION IN THIS SENTENCE CAME TRUE
+   AND THE SENTENCE STILL NEEDED EDITING**: it said a fourteenth adapter would update the count
+   wherever it was written down, `stanag4586` is the fourteenth, and the number in this very
+   condition is one of the places — updated by the stale-count sweep, which is the mechanism the
+   sentence was describing rather than an exception to it.
 3. **The tag names the package version of the tree it points at.** `v1.0.0` on a tree whose
    `PACKAGE_VERSION` is `1.0.1` is a release nobody can reproduce, and
    `tests/test_cdm_release.py` re-derives this for every tag in history rather than for the one
@@ -211,10 +215,63 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing here is in any release.** The distribution on the index is **1.3.0**, and a reader who
 ran `pip install synapse-cdm` does not have what this section describes.
 
-**What moved inside the distribution: one file.** `MIGRATIONS.md` — the record below and nothing
-else. The count is `gates/bump_derivation.py`'s, and the gate derives the arc since `v1.3.0` as
-**PATCH**, on the row that covers a shipped document, so the floor is **1.3.1**. **No release is
-forced by that** — a floor is what the next release may not go below, not a release.
+**What moved inside the distribution: 60 files.** The count and the set are
+`gates/bump_derivation.py`'s, re-derived AFTER this record was written rather than before it — the
+fixed point the repair note below insists on. The gate derives the arc since `v1.3.0` as **MINOR**,
+on the row that covers a public top-level name appearing, so the floor is **1.4.0**. **No release is
+forced by that** — a floor is what the next release may not go below, not a release, and nothing
+went outward this round.
+
+**THE TRANSITION WAS WITNESSED AND NOT ASSERTED, AND THE FIRST TWO READINGS DISAGREED FOR A REASON
+WORTH KEEPING.** The brief predicted a new public top-level name would move the gate from
+PATCH/1.3.1 to MINOR/1.4.0. Run at the audit, before any of this existed, it reported **PATCH**,
+floor **1.3.1** — the state the brief described, measured rather than taken on trust. Run again with
+both adapter modules written, it *still* reported PATCH: the files were **untracked**, and the gate
+reads the distribution through `git`, so a module on disk that `git` has never seen is a module the
+gate cannot classify. Only after `git add` did it report **MINOR**, floor **1.4.0**, with `unruled`
+empty. **A gate that measures the index and a round that measures the working tree will disagree
+silently, and the disagreement looks exactly like "the prediction was wrong".** It is recorded
+because the wrong conclusion was available and cheap: PATCH twice in a row reads as a settled
+answer.
+
+The twelve modules, documents and records:
+  `FORMAT_COVERAGE.md`, `MIGRATIONS.md`,
+  `README.md`, `__init__.py`,
+  `adapter.py`, `build_fixtures.py`,
+  `pyproject.toml`, `stanag4586.py`,
+  `stanag4586_codec.py`, `stanag4586_pin.json`,
+  `symbology.py`, `version.py`
+
+The twelve synthetic datagrams ship as octets:
+  `a_checksum_that_does_not_validate_is_flagged.s4586`, `altitude_type_baro_never_reaches_alt_m.s4586`,
+  `an_idd_version_that_is_not_edition_3.s4586`, `an_undecoded_message_type_is_parked.s4586`,
+  `four_decoded_messages_one_vehicle.s4586`, `four_octet_checksum.s4586`,
+  `inertial_states_wgs84_altitude.s4586`, `longitude_absent_from_the_presence_vector.s4586`,
+  `no_checksum_is_not_a_failing_checksum.s4586`, `two_inertial_states_leave_the_entity_unpositioned.s4586`,
+  `two_vehicles_are_two_entities.s4586`, `zero_ground_speed_yields_no_course.s4586`
+
+each with the readable twin the adapter decodes through the same path:
+  `a_checksum_that_does_not_validate_is_flagged.parsed.json`, `altitude_type_baro_never_reaches_alt_m.parsed.json`,
+  `an_idd_version_that_is_not_edition_3.parsed.json`, `an_undecoded_message_type_is_parked.parsed.json`,
+  `four_decoded_messages_one_vehicle.parsed.json`, `four_octet_checksum.parsed.json`,
+  `inertial_states_wgs84_altitude.parsed.json`, `longitude_absent_from_the_presence_vector.parsed.json`,
+  `no_checksum_is_not_a_failing_checksum.parsed.json`, `two_inertial_states_leave_the_entity_unpositioned.parsed.json`,
+  `two_vehicles_are_two_entities.parsed.json`, `zero_ground_speed_yields_no_course.parsed.json`
+
+and all twelve translate, each carrying a golden per replayed form, octets and twin, which is why
+the goldens number twenty-four and not twelve:
+  `a_checksum_that_does_not_validate_is_flagged.cdm.json`, `a_checksum_that_does_not_validate_is_flagged.parsed.cdm.json`,
+  `altitude_type_baro_never_reaches_alt_m.cdm.json`, `altitude_type_baro_never_reaches_alt_m.parsed.cdm.json`,
+  `an_idd_version_that_is_not_edition_3.cdm.json`, `an_idd_version_that_is_not_edition_3.parsed.cdm.json`,
+  `an_undecoded_message_type_is_parked.cdm.json`, `an_undecoded_message_type_is_parked.parsed.cdm.json`,
+  `four_decoded_messages_one_vehicle.cdm.json`, `four_decoded_messages_one_vehicle.parsed.cdm.json`,
+  `four_octet_checksum.cdm.json`, `four_octet_checksum.parsed.cdm.json`,
+  `inertial_states_wgs84_altitude.cdm.json`, `inertial_states_wgs84_altitude.parsed.cdm.json`,
+  `longitude_absent_from_the_presence_vector.cdm.json`, `longitude_absent_from_the_presence_vector.parsed.cdm.json`,
+  `no_checksum_is_not_a_failing_checksum.cdm.json`, `no_checksum_is_not_a_failing_checksum.parsed.cdm.json`,
+  `two_inertial_states_leave_the_entity_unpositioned.cdm.json`, `two_inertial_states_leave_the_entity_unpositioned.parsed.cdm.json`,
+  `two_vehicles_are_two_entities.cdm.json`, `two_vehicles_are_two_entities.parsed.cdm.json`,
+  `zero_ground_speed_yields_no_course.cdm.json`, `zero_ground_speed_yields_no_course.parsed.cdm.json`
 
 **THIS SENTENCE WAS WRONG IN THE COMMIT THAT WROTE IT, and it is the arc-mis-stating-the-arc class
 one turn tighter than this file has caught it before.** It read *"derives **NONE**, so the floor
@@ -230,6 +287,206 @@ single commit, and the lesson is narrower than "re-derive each round": **a deriv
 file the derivation reads must be re-run after the file is written, not before.** Repaired
 2026-08-29 in the commit below; the repair is a fixed point, because editing an already-moved file
 changes neither the set nor its classification.
+
+#### The acquisition round — STANAG 4586 telemetry ingest, built on an edition that is not the current one
+
+**THE ROUND'S CENTRAL FACT IS THAT ITS FIRST BLOCKER COULD NOT BE DISCHARGED THE WAY THE BRIEF
+IMAGINED, AND THE FORK WAS PUT UP RATHER THAN TAKEN.** The brief opened the edition question
+explicitly — "Edition 4 is believed current — verify, don't inherit this brief's belief" — and the
+belief **held**: Edition 4 is current, dated 2017-04-05, promulgated as AEP-84 Edition A. What the
+brief did not anticipate is that the current edition is **not obtainable**. Every route was tried
+and each refusal is recorded with its shape: `nso.nato.int` answers HTTP 403 on six distinct paths
+with and without a browser User-Agent; the Internet Archive holds **no capture of any STANAG 4586
+PDF at any URL**, checked by four CDX queries; the one mirror carrying this family lists exactly
+two editions, 2 and 3; and the commercial distributors that hold Edition 4 serve it paywalled and
+**DRM-wrapped**. That is park 8's class — procurement, not procedure.
+
+**The round stopped there rather than choosing.** Two branches were live and materially different:
+park on Edition 4 and ship nothing (Acts 2 and 3 skipped, adapter count staying 13 everywhere), or
+pin the obtainable Edition 3 and build against a superseded document. The ruling — **pin Edition 3
+and build, with the edition named at every site** — was given to the round, not made by it, and it
+is recorded at `fixtures/stanag4586/spec/stanag4586_pin.json`'s `edition_ruling` with the
+alternative named, because a later reader who finds an adapter built on a superseded standard is
+owed both the reasoning and the fact that the other branch existed.
+
+**WHAT THE RULING DOES NOT LICENSE, and it is asserted by a test rather than promised.** No sentence
+anywhere claims an Edition 3 decoder reads an Edition 4 feed. Edition 4 changed the vehicle
+identifier list and added mission-phase and autonomy messages — changes landing on exactly the
+tables the row set tabulates — so the compatibility question is left **open**.
+`test_both_modules_carry_the_disclaimer_rather_than_merely_not_claiming_edition_4` requires both
+shipped modules to say Edition 4 is current, is not held, and is not what they decode; **silence is
+the failure**, because a module mentioning neither edition would pass any absence check ever
+written. That test is itself a repair: its first draft swept for phrases like "reads an Edition 4
+feed" and required their absence, and **failed against a correct tree** — the adapter's docstring
+carries that exact phrase inside its own negation. A substring sweep cannot tell a claim from its
+denial, which is sweep rule 9's lesson arriving in a test instead of in prose.
+
+**Act 0, and the audit's own figures.** Tree clean, `HEAD` equal to `origin/main` at `d463edd` — a
+descendant of the `7895083` the brief named, which is what the brief allowed for. Suite **3394
+passed, 3 skipped** at the start. The untouchables hold, each by its own command: the pinned phrase
+derives to **35** over the git index, `scripted_edit`'s contract is green at **9**,
+`RELEASE_NOTES.md` opens **1.3.0**, and `git ls-files` matches **no** PDF. The bump gate derived
+**PATCH** with the floor at **1.3.1**, which is the state the brief described, measured rather than
+taken on trust. `nga.mil` resolved `NOERROR` for the apex, `gwg` and `nsgreg` alike at
+**2026-08-30 08:58Z**, resolution only, no route asked for bytes. Pin-as-control through the
+resolver: **20 copies present, 20 matched, 0 failed** before any new byte was trusted.
+
+**The new sweep subject was verified and joined the surface.** The GitHub Release at `v1.3.0`
+states two artefact digests. Both were matched against run `33247697980`'s own log — the gate's
+`--export-dist` output, the publish job's pre-upload hashes and the in-toto DSSE statements all
+carry `5cb8e3fc…9343a` for the wheel and `55a1e9f2…24fc5` for the sdist, and the release body's
+figures equal them. **The release body's other figures are dated and must NOT move with the tree**:
+its "13 adapters" describes the 1.3.0 artefact, and this round's adapter does not change what that
+release contains.
+
+**Act 1 — the pin, and a second party that disagreed by one byte.** STANAG 4586 Edition 3 is pinned
+at `fixtures/stanag4586/spec/STANAG_4586_Ed3.pdf`, SHA-256 `a4fa6e54…c15da`, **3 852 365 octets**,
+**509 pages** by the ruled `/Pages` walk, by pypdf's independent walker and by the `/Count` the page
+tree declares — three statements agreeing. The digest was recomputed at the landed path and
+`.gitignore:42`'s extension rule covered it with **no new rule needed**, which is that rule's own
+note making good on itself.
+
+**THE IDENTITY WAS ATTESTED BY TWO PARTIES AND THE SECOND ONE DID NOT MATCH.** A 2019-11-20
+Internet Archive capture of the same URL was fetched and verified against the archive's own CDX
+digest, then compared. The two copies are **one byte apart** — 3 852 365 against 3 852 364, with
+completely different SHA-256s — and a round that stopped at the sizes would have called them the
+same file or called them different documents, and both would have been wrong. The divergence begins
+at byte offset 3 675 201, **inside PDF object 2389, which is the mirror's own download stamp**,
+declared `/Length 205` in one copy and `204` in the other and drawn at a different x-offset. Text
+was then extracted from all 509 pages of **both**, the stamp stripped and whitespace normalised, and
+the two digest **identically** with **zero** pages differing. The standard's content is the same
+across seven years; the only thing that moved is where the mirror paints its own name. This is the
+1.3.0 release's "a size is not an identity" lesson inverted — there, two *different* wheels shared
+one size; here, one document has two sizes.
+
+**The document dates itself nowhere, and that is a positive reading rather than a failed
+extraction.** Its front matter carries no date and no `NSA/` promulgation reference — pages 1–20
+swept for both, returning zero — and its RECORD OF AMENDMENTS is **present and empty**, where
+Edition 2's copy carries one row. So the "09 NOV 2012" identifying the edition is the distributor's
+catalogue metadata and is **external to the pinned bytes**, recorded as such. That is STANAG 4676's
+situation reached by a different route.
+
+**Act 1 also produced the round's one refused instruction, and the refusal is a category error the
+brief could not have seen.** It asked for a new **parks-table row**. `FORMAT_COVERAGE.md`'s parks
+table is not a general blocker register: its column header reads "Reason, grounded in the delegation
+table", all thirteen rows are MISB documents **MISP-2019.1 delegates to**, and its preamble derives
+counts over that set. STANAG 4586 is delegated by nothing here, so a row would be an entry no reason
+cell could ground and would falsify three counts in the paragraph above it. **And it would have
+broken a gate invisibly**: `gates/parks_table.py`'s row pattern is applied to the WHOLE FILE — 13
+lines match it and the gate reports 13 parks — so a second bold-numbered table anywhere in the
+document would be absorbed into the parks set and cross-referenced against park closures as though
+its rows were parks. The two blockers are recorded instead in the 4586 section's own **lettered**
+table, which that pattern cannot match, and the gate still reports **13 rows, 9 open, 4 closed, 7
+set-claims, 0 failed** with the new table present. **Both blockers are discharged**, so nothing is
+parked and the only survivor is Edition 4's reopen condition.
+
+**Act 2 — the coverage, derived rather than remembered.** The section enumerates **all 166 message
+field tables** the document defines, numbered 1 to 51000, across **27 functional groups**, with
+**none unclassified** — derived by walking every `Table B1-N: Message #M:` caption in the body with
+the List of Tables excluded so its dotted leaders are not read as captions. Three transcription
+traps were met and each cost a wrong count before it was fixed: the payload tables carry an extra
+`Payload Type` column that defeats a fixed-column row regex; the System ID group's messages are
+numbered 1, 2 and 3, which a `\d{4,5}` pattern silently drops; and two messages are named "Fuel,
+Oil & Hydraulic", which a name character class without `&` silently drops. **The first count was
+163 and the derived answer is 166**, and the difference is entirely those two classes.
+
+**The 48 command messages are enumerated under an OUT OF SCOPE heading rather than omitted**, by
+group and by number range, with the ruling's two reasons stated — the CDM has no command or tasking
+kind for them to translate into, and emitting DLI edges toward being a UCS component. The
+consequences are structural rather than declared: the shipped codec has **no encoder at all** (the
+frame builder lives in the generator, which `gates/bump_derivation.py:295` correctly excludes from
+public surface), the adapter's direction is `ingest` which `adapter.py` enforces at
+class-definition time, and a test names eleven command message numbers and requires each to be
+absent from the decoded set. **The seven mixed groups are named as mixed** rather than counted
+either way, with a note that the message-by-message split has not been drawn because none of them
+is decoded.
+
+**Act 3 — the adapter, and the two calls that are load-bearing.** `stanag4586 1.0.0`, ingest, on a
+decode-only layer. Four messages are decoded field by field — `#4000` Inertial States, `#3002`
+Vehicle Operating States, `#3009` Air and Ground Relative States, `#3010` Body-Relative Sensed
+States — and every other message has its wrapper read and its data parked verbatim, which is
+`stanag4609`'s ST 0107.3-04 treatment of an unwitnessed tag.
+
+* **`PositionSource` is `INERTIAL` and not `GNSS`, and this is the most safety-loaded line in the
+  file.** That field exists so a jammed-area warning can discriminate a fix from a guess. The
+  message carrying the position is named **Inertial States** and the document states no GNSS source
+  anywhere in it; a real airframe's INS is usually GNSS-aided, but that is knowledge about airframes
+  and not something the datagram says. Read off the message's own name — the only evidence there is
+  — and it is the safe direction of the two.
+* **Where a datagram carries two positioned `#4000` for one vehicle, the `Entity` takes NO position
+  and says why**, while the `Track` carries both as samples. Picking "the latest" would be a
+  decision made inside a translator, which `adapter.py`'s contract forbids in as many words.
+
+**This format can do what `stanag4609` could not, and the gain is the format's rather than the
+adapter's.** Every wrapper carries a Source ID whose stated purpose is to "uniquely identify any
+entity in an arbitrarily formed system", so `entity_id` derives from the wire's own identifier and
+is **stable across datagrams with the adapter remembering nothing**. A first-draft defect is worth
+recording: the id was derived from the raw integer while `SourceId.external_id` published the dotted
+`7.0.1.1` form, so a consumer re-deriving the id from the identifier the object publishes would have
+got a different UUID — and `Track.track_id` already used the dotted form, so the adapter disagreed
+with itself across two objects it emits together. Caught by a test asserting both halves.
+
+**Five ambiguities are registered and none is resolved by guessing.** The sharpest is the third:
+Altitude Type value 3 reads **"WGS-84 (geoid)"**, which names an ellipsoid and an equipotential
+surface in four words — they differ by roughly −107 m to +85 m — and it is the *only* one of four
+values that could ever populate `Position.alt_m`, documented "Metres HAE". The value is carried and
+every object built from one states the ambiguity; types 0, 1 and 2 park and never reach `alt_m`.
+What is refused is treating type 3 as ellipsoidal because the CDM wants HAE and "WGS-84" is the
+nearest word. The first is an **extraction limit rather than a defect in the standard**: Figure
+B1-8's bit-number row extracts scrambled, so where the two-bit Checksum Length subfield sits inside
+bits 7:0 is unrecoverable from this copy's text layer — the codec therefore **derives the checksum
+width from the frame arithmetic**, reads the subfield as a second statement, and records a
+disagreement rather than resolving one.
+
+**THE BUMP GATE'S TRANSITION WAS WITNESSED, AND THE FIRST TWO READINGS DISAGREED FOR A REASON WORTH
+KEEPING.** Before the adapter existed it derived **PATCH**, floor **1.3.1**. With both modules
+written it *still* reported PATCH — the files were **untracked**, and the gate reads the
+distribution through `git`, so a module on disk that `git` has never seen is one the gate cannot
+classify. Only after `git add` did it report **MINOR**, floor **1.4.0**, `unruled` empty. A gate
+measuring the index and a round measuring the working tree disagree silently, and the disagreement
+looks exactly like "the prediction was wrong" — PATCH twice running reads as a settled answer.
+
+**Act 4 — the sweeps, and three figures that were wrong before they were derived.** The stale-count
+sweep moved the roster from 13 to 14 across every live site and left the dated ones alone: nine
+prose sites, the pair arithmetic from seventy-eight to **ninety-one** (and 156 against 78 to **182
+against 91**), `adapter.py`'s `fixture_dir` note from "eleven of the thirteen" to "twelve of the
+fourteen", the release procedure's "all thirteen harnesses", the package README's roster table, the
+release notes' table, and both `pyproject.toml` voices. Nine sites went to `TREE_EXEMPT` with their
+grounds — dated round records, past deployment readings and three release-verification blocks, each
+a separate row because a single row quoting the common prefix would exempt a future stale one.
+
+Three findings came out of deriving rather than asserting:
+
+1. **The ordinal is 15 and the roster count is 14, and the brief conflated them.** Ordinals 1–14
+   were already assigned because #9 is `stanag5527`'s Phase 1 specification with no adapter, so
+   thirteen shipped adapters occupied fourteen ordinals. A round predicting the ordinal from the
+   roster count collides with `cat023`, and this one did before the ordinals gate caught it.
+2. **The egress-capable count did NOT move** and stays at eleven, because the new adapter is
+   ingest — sweep rule 6's "know which counts are not drift". What moved beside it is the
+   ingest-only count, two to **three**.
+3. **"the eleven that translate" was wrong and all twelve do.** The figure came from assuming that
+   the fixture yielding an `Entity` with no position and no `Track` was a refusal. It is not: an
+   `Entity` stating no position **is** a translation, and that distinction is the one the fixture
+   exists to draw. Repaired at both sites, and 12 × 2 = 24 goldens is now arithmetic rather than
+   recollection.
+
+**A disjunction guard was added rather than a third statement tolerated.** The pinned digest, byte
+count and page count are stated in three files — the pin, the codec's docstring and the coverage
+section — and collapsing to one site is not available, because a codec whose docstring does not name
+the bytes it was written from is what the pin discipline exists to prevent. So they are gated, with
+the abbreviated digest checked as a prefix-and-suffix of the full hash rather than as a substring.
+
+**Untouchables re-verified at the close, each by its own command:** the pinned phrase derives to
+**35** over the git index — **re-derived and unmoved**, which is why that guard exists, since sixty
+new files could have carried the phrase — `scripted_edit`'s contract is green at **9**,
+`RELEASE_NOTES.md` opens **1.3.0**, and `git ls-files` matches **no** PDF. Pin-as-control after the
+new pin: **21 copies, 21 matched, 0 failed**, 22 pairs across 7 of 9 pin files.
+
+**WHAT THIS ROUND DID NOT DO.** **Nothing outward**: no tag, no release, no PyPI upload, no
+deployment. `PACKAGE_VERSION` is unmoved at **1.3.0** and `SCHEMA_VERSION` at **1.0.0** — the gate
+moved the *floor* to 1.4.0 and a floor is not a release. **No command message was decoded and no
+encoder was written.** No park was closed and none was opened. No document was fetched for any other
+format, and the `nga.mil` reading is resolution only.
 
 #### The maintenance round — the carrier grep becomes a gate, and two briefed facts do not survive reconstruction
 
