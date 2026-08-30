@@ -133,7 +133,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.3.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.4.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -210,17 +210,22 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.4.0 — 2026-08-30 — STANAG 4586 telemetry ingest ships, and the parks regex is scoped to the table it owns
 
-**Nothing here is in any release.** The distribution on the index is **1.3.0**, and a reader who
-ran `pip install synapse-cdm` does not have what this section describes.
+**This section carried the pending heading and a release absorbed it**, which is what that heading
+is for — the token itself is elided here, because prose that spells it leaves the file carrying the
+literal with no such section, and two release gates key on it. **Since 2026-08-29 a third gate
+refuses the carrier outright**, `test_the_pending_heading_is_never_spelled_except_as_that_heading`,
+and it has NO skip state; this round verified it exists rather than rebuilding it, and witnessed it
+red against a reconstructed carrier before the roll. It is the arc since `v1.3.0`.
 
 **What moved inside the distribution: 60 files.** The count and the set are
 `gates/bump_derivation.py`'s, re-derived AFTER this record was written rather than before it — the
-fixed point the repair note below insists on. The gate derives the arc since `v1.3.0` as **MINOR**,
-on the row that covers a public top-level name appearing, so the floor is **1.4.0**. **No release is
-forced by that** — a floor is what the next release may not go below, not a release, and nothing
-went outward this round.
+fixed point the repair note below insists on. The gate derives the arc as **MINOR** over **46
+signals** — 41 public top-level names in `adapters/stanag4586_codec.py`, 4 in
+`adapters/stanag4586.py`, and the `fixtures/stanag4586` fixture set — on the row that covers a
+public top-level name appearing, so the floor was **1.4.0**. **This release is that floor taken
+up**, and the number was not chosen: the gate derived it and the round adopted what it derived.
 
 **THE TRANSITION WAS WITNESSED AND NOT ASSERTED, AND THE FIRST TWO READINGS DISAGREED FOR A REASON
 WORTH KEEPING.** The brief predicted a new public top-level name would move the gate from
@@ -484,7 +489,11 @@ new pin: **21 copies, 21 matched, 0 failed**, 22 pairs across 7 of 9 pin files.
 
 **WHAT THIS ROUND DID NOT DO.** **Nothing outward**: no tag, no release, no PyPI upload, no
 deployment. `PACKAGE_VERSION` is unmoved at **1.3.0** and `SCHEMA_VERSION` at **1.0.0** — the gate
-moved the *floor* to 1.4.0 and a floor is not a release. **No command message was decoded and no
+moved the *floor* to 1.4.0 and a floor is not a release. *(Annotated 2026-08-30: the release round
+below took that floor up, so `PACKAGE_VERSION` now reads 1.4.0. This paragraph is left as the
+acquisition round wrote it — it is a dated reading of that round's tree, and editing it would make
+the record assert a state nobody measured. `SCHEMA_VERSION` is still 1.0.0 and that half needed no
+annotation.)* **No command message was decoded and no
 encoder was written.** No park was closed and none was opened. No document was fetched for any other
 format, and the `nga.mil` reading is resolution only.
 
@@ -624,8 +633,12 @@ records, ledger entry 10, the bump gate's founding incident, test fixture string
 is what a release's notes are for. The live current-version claims agree with each other and with
 the tree: `docs/docs/changelog.mdx` reads **1.3.0**, `version.py` reads **1.3.0** in both its
 constant and its prose, the witness table's index row reads 1.3.0 and the 1.2.1 row is struck and
-superseded. `README.md`'s single occurrence is the documented `git tag -a v1.3.0` command, which its
-own gate holds to `PACKAGE_VERSION`.
+superseded. `README.md`'s single occurrence is its documented annotated-tag command, whose version
+its own gate holds to `PACKAGE_VERSION`. **The command form is described here and not reproduced**,
+and that elision is a repair made during the 1.4.0 round rather than a style choice: spelled out,
+this dated record reads to `test_every_documented_tag_command_names_this_trees_package_version`
+as a live instruction naming a superseded version, and it went red on it. It is the pending-heading
+carrier class on a second gate — a record that quotes a command becomes a command.
 
 **Rule 11's parks sweep at table scope, by the gate:** **13 rows — 9 open [2, 3, 5, 6, 7, 8, 10, 11,
 12] and 4 closed [1, 4, 9, 13]**, 7 set-claims across 2 rows, 3 self-members, blockers re-derived by
@@ -774,6 +787,173 @@ The bump gate re-derives the arc since `v1.3.0` as **NONE** with the floor at **
 clone at the tag **3331 passed, 64 skipped**, reconciling with the working tree at the same
 **3395** total.
 
+
+#### The release round, 2026-08-30 — the number was derived, one pre-check was already built, the other was not, and the first witness of the one that was not proved nothing
+
+**Act 0, and the audit's own figures.** Tree clean, `HEAD` equal to `origin/main` at `d6f9ef3`.
+Suite **3459 passed, 3 skipped** at the start. **The untouchables hold, each by its own command**:
+the pinned phrase derives to **35** over the git index, `scripted_edit`'s contract is green at **9**
+(`pytest -k scripted_edit` collects **11**, which is the recorded trap and not a disagreement),
+`RELEASE_NOTES.md` opened **1.3.0** on the index, and `git ls-files` matches **no** PDF. Of the
+four, exactly one cites a version and therefore moves this round — the notes — and its before-state
+is recorded here as `# synapse-cdm 1.3.0`. The other three are version-free and are unchanged at the
+close.
+
+**The bump gate was run fresh from the tracked index and its derivation decided the number.** The
+arc since `v1.3.0` derives **MINOR**, floor **1.4.0**, over **46 signals**. The brief predicted
+MINOR and floor 1.4.0 and the prediction held, but the round adopted the gate's answer rather than
+the brief's: the two agreeing is a fact worth recording precisely because it is not what makes the
+number right.
+
+**`SCHEMA_VERSION` was checked and not assumed.** `git diff v1.3.0..HEAD -- schemas/` is empty, and
+no path matching `schema` appears in the arc's name list at all. It stays **1.0.0**, and the release
+is a package MINOR with no wire movement — the arrangement `version.py` argues two numbers exist
+for.
+
+**The `nga.mil` resolution series is extended by one observation.** `NOERROR` for the apex, `gwg`
+and `nsgreg` alike at **2026-08-30 10:26Z**, resolution only, no route asked for bytes, from
+`192.168.0.1` as every prior reading.
+
+**Pin-as-control through the resolver, and the decomposition derived rather than stated.** **22
+`local_path`+`sha256` pairs stated by 7 of 9 pin files** — `cat021/spec/sac_pin.json` and
+`legion/spec/openapi_pin.json` state none — resolving to **21 distinct copies, all present, all
+matched, 0 failed**. By location: 19 under `spec` bases and 2 under `fixtures/klv/streams`. The
+Edition 3 pin is among them and matched, and the **one-byte** mirror-stamp divergence is recorded at
+its own site in `stanag4586_pin.json` rather than here — live copy 3 852 365 octets, archived copy
+3 852 364, wholly different digests, and every one of 509 pages textually identical.
+
+#### Act 1 — the two pre-checks, and they came out opposite ways
+
+**PRE-CHECK 1: THE PROSE-CARRIER GATE ALREADY EXISTS, so this round verified it instead of building
+a second one.** It is `test_the_pending_heading_is_never_spelled_except_as_that_heading`, and it was
+built in `c73ea45` during the maintenance round — the acquisition round did not detour past it. Its
+skip conditions were checked against the third incident as the brief asked, and there are none: the
+module states in as many words that a check whose subject is "an occurrence that should not exist"
+cannot be conditioned on occurrences existing. It runs tag-or-no-tag, on a file that ships inside
+the wheel, so it holds on a clone and in an unpacked sdist. Its companion reconstructs occurrences 1
+and 3 as text and asserts both are caught. **It was additionally witnessed red live**: a quoted
+refusal message was appended to this file, the gate named the carrier by line and failed, and the
+file was restored.
+
+**AND THE GATE'S OWN RECONSTRUCTION REFUTES WHAT THE 1.3.0 RECORD SAYS ABOUT THE THIRD INCIDENT** —
+already recorded at the gate, repeated here because it is the kind of correction that gets
+re-inherited. `4f1932f` recorded that on the third occurrence "neither gate that keys on the string
+could see it — both were skipping". Rebuilt at `148e7a6` with the un-elided sentence restored and no
+tag, `test_the_unreleased_section_is_the_first_thing_under_history` **stops** skipping and goes red.
+The tag was never what blinded them. **The fully blind state is occurrence 1's** — a carrier beside a
+genuine heading — and that is the state the gate closes.
+
+**PRE-CHECK 2: THE PARKS REGEX WAS NOT SCOPED. Found last round, worked around, not repaired — the
+brief was right, and it is repaired here.** `gates/parks_table.py`'s `ROW` pattern ran over the whole
+of `FORMAT_COVERAGE.md`, thirteen thousand lines, and reported thirteen parks because the file
+happens to hold one bold-numbered table. The workaround was a convention — spell other tables with
+lettered rows — that lives in a round record and in nothing executable. `_rows` now scans only the
+span `_table_span` resolves, anchored on the parks table's own column header (`Reason, grounded in
+the delegation table`, the cell that makes it this table and not another), and **refuses rather than
+falls back** when that anchor does not resolve exactly once: zero headers means the table moved, two
+means a coin toss, and a scope that silently reverts to the whole file on a renamed column
+reintroduces the defect at the moment nobody is watching.
+
+**FINDING 1 — THE FIRST NON-VACUITY WITNESS WAS ITSELF VACUOUS, TWICE OVER, AND BOTH FAILURES ARE
+THIS REPOSITORY'S OWN RECORDED CLASSES.** The repair was witnessed by appending a synthetic second
+bold-numbered table and asserting the scoped parser did not absorb it. It passed. It also passed
+against the **unrepaired** parser, which is a witness measuring nothing.
+
+*The first cause was mechanical:* the edit that was supposed to un-repair the parser silently matched
+nothing and the file was never modified, so the "red" run was a green run of the repaired code. It
+carried no assertion that its pattern had matched. **A mutation with an empty domain is a case that
+passes without running** — `gates/pin_paths.py` records that lesson and this round re-committed it
+one layer up, in the scaffolding rather than in the gate. Every subsequent un-repair asserts its
+pattern is present before writing.
+
+*The second cause was substantive and is the more useful half:* with the parser genuinely unscoped,
+the witness **still** passed, because `_cells` requires **five** cells and the synthetic table had
+three. **So the original defect is narrower than it was recorded as being.** A second bold-numbered
+table with fewer than five columns was never absorbed — the cell-count guard already dropped it —
+and the exposure is second tables with **five or more** columns only. Measured directly: over the
+real document plus a three-column second table the unscoped scan yields the same 13 rows; plus a
+five-column one it yields **14**, and the scoped scan yields 13. **Class: a repair whose witness
+tested a shape the defect never had, hiding both that the witness was inert and that the defect's
+domain had never been measured.** The witness is rebuilt at five columns, is red against the
+unscoped parser and green against the scoped one, and the three-column case is kept as its own test
+so the five columns cannot be "simplified" back out.
+
+**What the scope is worth, stated rather than implied.** A phantom row inflates `rows`, and with it
+`open_parks`, `closed_parks` and the membership every set-claim is derived against — so
+`check_set_claims` would go on passing while measuring the wrong set, and `check_stated`'s MISSING
+branch would demand a group for a park that is not a park. That is the shape `gates/pin_paths.py` is
+named for: a guard whose subject is a set, checking the wrong set, in silence.
+
+#### Act 2 — the release, derived end to end
+
+**Every guard the bump turns red was witnessed red before it was moved.** Bumping `PACKAGE_VERSION`
+alone and running the suite produced exactly four failures and no others:
+`test_the_json_measurement_is_what_a_round_would_quote` (**red by construction until the tag** — it
+requires `pending.kind` to be a classification and `measure()` leaves it `None` while no tag names
+the declared version, so it goes green on the tag and not on an edit),
+`test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other`,
+`test_the_release_notes_describe_this_version`, and
+`test_every_documented_tag_command_names_this_trees_package_version`. The first is left red until
+the tag; the other three were moved to 1.4.0 and re-run green. Skips went 3 to 7 as the
+tag-conditional release checks stood down, which is the same construction.
+
+**FINDING 2 — THE TAG-COMMAND GATE HAS A PROSE-CARRIER CLASS OF ITS OWN, and this round is the first
+to hit it.** `test_every_documented_tag_command_names_this_trees_package_version` went red on a site
+that is not a command: a **dated round record** in this file, describing what `README.md` said during
+the 1.3.0 round, which reproduced the annotated-tag command verbatim in order to describe it. The
+gate reads it as a live instruction naming a superseded version. It is the pending-heading carrier
+class on a second gate — **a record that quotes a command becomes a command** — and the repair is the
+same one: the command form is described and not reproduced, with the elision marked as a repair so a
+later round does not restore it for fidelity. The number in the record was **not** updated, because
+the sentence is a dated reading and moving its figure would make it assert a measurement nobody took.
+
+**FINDING 3 — A TREE EXEMPTION OUTLIVED THE PROSE IT EXEMPTED, and the guard caught it within
+seconds.** `TREE_EXEMPT` carried a row for `RELEASE_NOTES.md`'s "across the thirteen adapters 1.3.0
+shipped", a named subset that needed exempting because the 1.3.0 notes described an artefact smaller
+than the tree. The 1.4.0 notes describe an artefact that **is** the tree, so the sentence is gone and
+needs no licence; `test_every_tree_exemption_still_points_at_prose_that_is_there` went red on the
+leftover row the moment the notes were rewritten. The row is retired with its reasoning kept as a
+comment. **An exemption outliving its prose is a licence nobody is using**, and the next stale figure
+to land on those bytes would inherit it.
+
+**And retiring it cost one, which is rule 9 closing on itself and is worth knowing terminates.** The
+paragraph above quotes the retired bytes in order to say what was retired, which made this file a
+site of the figure and turned the adapter-count sweep red. A row was added for the quotation. The
+loop is finite: a record of *that* exemption need not quote it, and the ground recorded on the row
+says so. The alternative — eliding the figure from the quotation, as the two carrier repairs above
+do — was available and was not taken, because here the quoted bytes exist nowhere else in the tree
+any more and a description of them could not be checked against anything.
+
+**The notes were re-read off the tree, and the acquisition round's figures were re-derived from
+their own sources rather than copied from its report.** All four came out as the brief predicted and
+none was taken from it:
+
+* **14 adapters** from `roster()`, and **15 ordinals** from the ordinal table's own parser. **These
+  are two derivations over two sources and they are not the same number** — `#9` is `stanag5527`, a
+  Phase 1 row set with no adapter — so `stanag4586` is the fourteenth shipped adapter at ordinal
+  **15**. The brief's standing lesson from the last release is exactly this, and it is why neither
+  figure was obtained from the other.
+* **432 fixture verdicts, 0 failed**, summed from the harness over the registry. 1.3.0's 408 plus
+  `stanag4586`'s 24 is the same number, and the notes say so — but the 432 in them was summed, not
+  added, and the agreement of two independent routes is the check.
+* **166 messages in 27 functional groups, 48 of them out of scope across 9 groups**, all three
+  re-derived by parsing the inventory table. **The parts were summed as well as the total**: 48 out
+  of scope + 57 mixed + 61 in scope = 166 over 27 rows, and the nine section numbers the
+  out-of-scope prose names are exactly the nine the table marks. That is the guard the last
+  decomposition failure asked for — a right total with wrong parts is what `pin_paths.check_parts`
+  exists for, and a figure re-derived without its partition would not have caught it.
+
+**The roll, and the grep that no gate can replace was run anyway.** The pending section became
+`### 1.4.0` and its opening sentence describes the heading it absorbed rather than spelling it. The
+literal now occurs **zero** times in this file, confirmed by grep after the roll and independently by
+the carrier gate — belt and suspenders on a defect that three consecutive rolls recreated, and this
+was the fourth roll.
+
+**The fixed point was respected.** Writing this record moves `MIGRATIONS.md`, which is a shipped
+document and already in the arc, so the moved set stays at **60** and the classification stays
+**MINOR** — verified by re-running the derivation after this file was written, not before it. That
+is the 1.3.0 round's own falsified-sentence lesson applied as a procedure rather than remembered as
+a warning.
 
 ### 1.3.0 — 2026-08-29 — the IMAPB codec ships, and a refused release re-derived forward
 

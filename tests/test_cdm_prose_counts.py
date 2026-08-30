@@ -1663,15 +1663,29 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
      "arithmetic reading seventy-eight and thirteen",
      "a record of what a PAST DEPLOYMENT served, byte-compared against a named build. Updating it "
      "would assert that the deployment served something it did not"),
-    ("RELEASE_NOTES.md", "across the thirteen adapters 1.3.0 shipped",
-     "named subset — the roster OF 1.3.0, which is what these notes describe. The table above it "
-     "is the live registry by gate, and the row that postdates the release is marked as such; "
-     "this figure is the artefact's and must not move with the tree"),
+    # RETIRED IN THE 1.4.0 ROUND, and the retirement is the interesting half. This exempted
+    # RELEASE_NOTES.md's "across the thirteen adapters 1.3.0 shipped" — a named subset that had to
+    # be exempt because the notes described an artefact smaller than the tree. The 1.4.0 notes
+    # describe an artefact that IS the tree: fourteen adapters, 432 verdicts, no row marked as
+    # postdating the release. So the sentence needs no exemption, and
+    # `test_every_tree_exemption_still_points_at_prose_that_is_there` went red on the leftover row
+    # the moment the notes were rewritten — which is the guard doing exactly its job. An exemption
+    # outliving its prose is a licence nobody is using, and the next stale figure that lands on
+    # those bytes would inherit it.
     ("packages/cdm/synapse_cdm/fixtures/stanag4586/spec/stanag4586_pin.json",
      "thirteen SHIPPED adapters occupied fourteen ordinals",
      "named subset and a PAST STATE — the roster as it stood before `stanag4586` existed, "
      "recorded to explain why the fourteenth adapter took the fifteenth ordinal. The sentence's "
      "next clause states today's fourteen"),
+    ("packages/cdm/synapse_cdm/MIGRATIONS.md",
+     'across the thirteen adapters 1.3.0 shipped',
+     "RULE 9 CLOSING ON ITSELF, and the loop is finite. The 1.4.0 round RETIRED the TREE_EXEMPT "
+     "row that covered these bytes in RELEASE_NOTES.md, because the 1.4.0 notes no longer contain "
+     "them — and then quoted the retired bytes in its own record of the retirement, which made "
+     "MIGRATIONS.md a site of the figure. A quotation of bytes that no longer exist anywhere else "
+     "is the purest form of the case this list is for: there is nothing left to update, and "
+     "editing the quotation would misreport what was removed. It terminates here because a record "
+     "of THIS exemption need not quote it"),
     # --- the acquisition round's own record, which is RULE 9's shape three times over ---
     #
     # "A record that discusses a token becomes a site of it." Each of these is either a QUOTATION

@@ -18,7 +18,7 @@ CLI and its exit codes, the fixture set. It follows the general rule and not MIG
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``1.3.0`` and ``SCHEMA_VERSION`` is ``1.0.0``, and this paragraph is the
+``PACKAGE_VERSION`` is ``1.4.0`` and ``SCHEMA_VERSION`` is ``1.0.0``, and this paragraph is the
 third version of itself that does not have to reason about a hypothetical. Every entry in
 ``MIGRATIONS.md``'s 1.1.0 and 1.2.0 sections says the same two things — an added surface, no
 schema touched — so each release moved one number and not the other, which is exactly what two
@@ -116,7 +116,7 @@ SCHEMA_VERSION = "1.0.0"
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
 #: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
-PACKAGE_VERSION = "1.3.0"
+PACKAGE_VERSION = "1.4.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:
