@@ -1,0 +1,186 @@
+{
+  "what_this_is": "The pinned identity of the document the STANAG 4586 row set in FORMAT_COVERAGE.md was read from, plus every value extracted from it that a ruling cites, each with the locus inside the document. House style follows fixtures/cat034/spec/cat034_pin.json and fixtures/klv/spec/klv_pin.json: an edition number names a DOCUMENT and a SHA-256 names the COPY THAT WAS READ, and those are different claims. Written BEFORE the row set and before the adapter, on the parks discipline. ONE DOCUMENT IS PINNED HERE AND IT IS NOT THE CURRENT EDITION - see edition_ruling, which is the most important node in this file and was an adjudication rather than a default.",
+  "adapter": {
+    "name": "stanag4586",
+    "ordinal": 15,
+    "direction": "ingest",
+    "fixture_directory": "stanag4586",
+    "scope_ruling": {
+      "ruled": "TELEMETRY INGEST ONLY. The adapter reads DLI status/telemetry messages sent from the air vehicle (VSM) to the control station (CUCS) and emits CDM. It does not emit DLI, and it decodes no command message.",
+      "why_the_name_does_not_overclaim": "The adapter is 'STANAG 4586 telemetry ingest' and never 'STANAG 4586 support'. The DLI command uplink - flight mode commands, waypoint loading, payload steering, link management - is OUT OF SCOPE explicitly and is enumerated under its own heading in FORMAT_COVERAGE.md rather than silently omitted. Two independent reasons, and the first is sufficient on its own: (1) THE CDM CARRIES NO COMMAND OR TASKING KIND. Its object kinds are entity, event, track and plan_object; none of them is an instruction to an actuator, and growing one is the deferred ONTOLOGY.md decision, which does not happen as a side effect of an adapter. (2) EMITTING DLI MESSAGES EDGES TOWARD ACTING AS A UCS COMPONENT - a CUCS or a VSM - and that scope question is not this round's to answer. So the direction is ingest, like legion and pntmap.",
+      "what_in_scope_means_precisely": "Four messages of the Flight Vehicle Status functional group and the Inertial States message are DECODED: #4000, #3002, #3009 and #3010. Every other DLI message - status messages included - reads 'not yet' in the row set. A message outside the decoded set is NOT an error: its wrapper is read, its type recorded, and its data octets parked verbatim, which is the ST 0107.3-04 treatment stanag4609 gives an unwitnessed tag."
+    },
+    "ordinal_is_15_and_the_roster_count_is_14": "THESE ARE DIFFERENT NUMBERS AND THE ROUND'S BRIEF CONFLATED THEM. The ordinal table in FORMAT_COVERAGE.md had assigned 1 through 14 before this adapter existed, because #9 is held by `stanag5527` at Phase 1 - a row set with no adapter - so thirteen SHIPPED adapters occupied fourteen ordinals. Adding this one makes the roster fourteen and takes ordinal FIFTEEN. The brief predicted '14 adapters' for the roster and was right about the roster; anyone reading that as the ordinal would have collided with `cat023`."
+  },
+  "edition_ruling": {
+    "the_question": "Which edition does this repository pin for STANAG 4586, given that the current edition and the obtainable edition are not the same document?",
+    "what_is_current_VERIFIED_and_not_inherited": "EDITION 4, dated 2017-04-05, promulgated as AEP-84 Edition A under the title 'Standard Interfaces of UAV Control System (UCS) for NATO UAV Interoperability - AEP-84 Edition A', responsible body JCGUAS. The round was briefed that Edition 4 was BELIEVED current and told to verify rather than inherit the belief. It verified and THE BELIEF HELD. Corroborated by the NISP standards catalogue's coverdoc entry for STANAG 4586 Ed 4, which also carries the NSO URI nso.nato.int/nso/nsdd/main/standards/stanag-details/8989/EN, and independently by secondary literature dating Ed 4 to 2017 with the AEP-84 designation.",
+    "EDITION_4_COULD_NOT_BE_ACQUIRED_and_the_routes_are_named": "Every route was tried and each refusal is recorded with its shape rather than summarised as 'unavailable'. (1) nso.nato.int, the publisher's own registry: HTTP 403 on the apex, on /nso/nsdd/, on main/standards, on listpromulg.html, and on the stanag-details pages for id 8989 and id 8892 - with and without a browser User-Agent. (2) The Internet Archive: NO capture of any STANAG 4586 PDF exists at any URL. Four CDX queries were run - */*4586*.pdf, nso.nato.int/*4586*, */*STANAG_4586*, and everyspec.com/NATO/NATO-STANAG* filtered to 4586 - and the first three return the empty set. (3) everyspec.com, the mirror that does hold this family: its NATO-STANAG index carries EXACTLY TWO 4586 entries, Edition 2 (08-NOV-2007) and Edition 3 (09-NOV-2012). There is no Edition 4 on it. (4) Commercial distributors (Accuris, GlobalSpec, Intertek) list AEP-84 and STANAG 4586 for PURCHASE, and at least one serves it DRM-wrapped behind the FileOpen plugin.",
+    "so_edition_4_is_park_8s_class_and_not_park_3s": "This matters and is stated in the table's own vocabulary: a park whose reason is PROCUREMENT and a park whose reason is PROCEDURE should not read the same. Edition 4 is behind a paywall and a DRM wrapper, which is SMPTE ST 336's situation - 'the one park in this table that is not a download' - and not the situation of the eight MISB documents that one person with a browser can close.",
+    "THE_RULING": "PIN EDITION 3 AND BUILD AGAINST IT, with the edition named at every site. This was NOT the round's own call: the round stopped, laid out the fork - park on Edition 4 versus pin Edition 3 and build - and the ruling was given to it. It is recorded here as an adjudication with a named alternative rather than as a default, because a later reader who finds an adapter built on a superseded edition is owed the reasoning and the fact that the other branch was live.",
+    "WHAT_THE_RULING_DOES_NOT_LICENSE": "No claim about Edition 4 anywhere. The coverage rows, the adapter's docstring, the roster row and the fixture plan all say Edition 3, and NO SENTENCE IN THIS REPOSITORY ASSERTS THAT AN EDITION 3 DECODER READS AN EDITION 4 FEED. That claim would need Edition 4's own message tables to check, and this repository does not hold them. Edition 4 is documented to have changed things that land exactly on the tables a telemetry row set tabulates - an updated list of vehicle identifiers, mission-phase enhancements, datalink transition/handover and autonomy - so the compatibility question is live and is left OPEN rather than answered optimistically.",
+    "the_reopen_condition": "Obtain STANAG 4586 Edition 4 / AEP-84 Edition A, pin it here by SHA-256, byte count and page count with its title-page identity read, and diff its DLI message tables against Edition 3's. Until then the row set's authority is Edition 3 and says so.",
+    "what_edition_2_would_have_given_and_why_it_was_not_taken": "Edition 2 IS also obtainable - a publicly-released copy, 272 pages, NATO UNCLASSIFIED, carrying Amendment 1 of 28-08-2009 and the same DLI message tables in an earlier form - and it was fetched and read during the acquisition pass. It is not pinned because it is superseded BY an obtainable edition, which makes it strictly the worse choice: where Edition 3 is the best available reading of the format, Edition 2 would be a worse reading of it with no compensating advantage."
+  },
+  "wire_format": {
+    "locus": "Annex B Appendix 1, sections 1.7 and 3.3.1. Every value below is quoted or derived from the pinned bytes and each carries its section.",
+    "byte_order": "MSB first. Section 1.7.1: 'The byte ordering shall be most significant byte first. Floating point numbers shall be as defined in IEEE Standard for Binary Floating-Point Arithmetic, ANSI/IEEE Standard 754-1985'.",
+    "message_wrapper_fields_in_order": [
+      {
+        "field": "Sequence #",
+        "bytes": 2,
+        "note": "Section 3.3.1.5: 'The purpose of Sequence Number was to provide a means for segmenting data from a single message into sequences of blocks of a maximum length. This field is not used and shall contain \"-1\".' So the conformant value is 0xFFFF."
+      },
+      {
+        "field": "Message Length",
+        "bytes": 2,
+        "note": "Section 3.3.1.6: 'a 16-bit unsigned integer of the number of bytes in the \"Message Data\". The length shall be any number between 1 and 528.'"
+      },
+      {
+        "field": "Source ID",
+        "bytes": 4,
+        "note": "Section 3.3.1.7 with Section 1.7.6. 'ID numbers shall be formed as 4-byte numbers. The first (most significant) byte shall be the Owning ID for that CUCS or air vehicle.' 255 (0xFF) is reserved."
+      },
+      {
+        "field": "Destination ID",
+        "bytes": 4,
+        "note": "Section 3.3.1.8, same formation as Source ID."
+      },
+      {
+        "field": "Message Type",
+        "bytes": 2,
+        "note": "Section 3.3.1.9: 'The message type is a 16-bit unsigned integer value associated with the defined messages types below.' THE WIDTH WAS CHECKED AGAINST THE MESSAGE NUMBERS RATHER THAN ASSUMED SUFFICIENT: the highest number carrying a field table in this document is 51000, and Table B1-33 puts the private range at 50000-65000. 65000 < 65535, so 16 bits holds every number the document assigns, with no overflow and no ambiguity. Recorded because the round expected to find a problem here and did not."
+      },
+      {
+        "field": "Message Properties",
+        "bytes": 2,
+        "note": "Section 3.3.1.10, bitmapped, four subfields."
+      },
+      {
+        "field": "Data (Message Payload)",
+        "bytes": "Message Length",
+        "note": "Figure B1-7."
+      },
+      {
+        "field": "Optional Checksum",
+        "bytes": "0, 2 or 4",
+        "note": "Section 3.3.1.11: 'an unsigned integer and calculated by simple, byte-wise unsigned binary addition of all data contained in the message excluding the checksum, and truncated to 2 or 4 bytes.'"
+      }
+    ],
+    "wrapper_size_derivation": "The six fixed header fields sum to 2+2+4+4+2+2 = 16 bytes. Section 3.3.1.6 says '[s]ubtracting the message wrapper size of 20 bytes, gives 528 bytes as the maximum message length', and 16 + a 4-byte optional checksum = 20, so the document's own 20 is the header plus the LARGEST checksum. The 16 is derived here and the 20 is quoted; they are consistent and they measure different things, which is why both are written down.",
+    "message_properties_layout": "Bit 15 is the ACK flag ('When the bit is \"1,\" an acknowledgement shall be sent: if \"0,\" an acknowledgement shall not be sent'). Bits 14:8 are the IDD version, stated in the document's own words as 'The next seven bits (bits 14:8) shall indicate the IDD version number', with Table B1-3 assigning STANAG 4586 Edition 3 the value 30. The remaining subfields are Checksum Length (2 bits, Table B1-4: 00=none, 01=2 bytes, 10=4 bytes) and Reserved for Future Use - SEE ambiguity_register entry 2, because the figure that positions them does not survive text extraction.",
+    "units_and_scales": {
+      "position": "Section 1.7.2: 'All earth-fixed position references shall be expressed in the latitude-longitude system with respect to the WGS-84 ellipsoid in units of radians using Binary Angle Measurement (BAM).'",
+      "BAM": "Section 1.7.3: 'The fixed point scaling for BAM is a function of the field size and is defined as pi / 2^(n-1) radians, where n is the bit-width of the field[.] For an Integer field, this provides a real range of -pi inclusive to pi exclusive, and for an Unsigned field, a real range of 0 inclusive to 2pi exclusive.' The pi renders as a mojibake glyph in extraction and is read from the stated range rather than from the character.",
+      "time": "Section 1.7.2: 'All times shall be represented in Universal Time Coordinated (UTC) in seconds since Jan 1, 2000 using a 5 byte unsigned integer where the least significant bit represents 0.001 seconds. In 2034 and in subsequent years, when the maximum value of the five byte field is exceeded, the timestamp shall \"roll over\" and numbering shall restart at zero.'",
+      "angles": "Section 1.7.2: 'All angular parameters shall be expressed in radians. Bearings shall be measured clockwise from true north. Elevation shall be referenced from local horizontal, positive toward the zenith.'"
+    },
+    "presence_vector": "The first field of every message. Its bits select which of the message's fields are present: 'The least significant bit indicates the presence of the time stamp (field 1); the next more significant bit indicates the presence of the second field, etc.', and '\"1\" indicates the field is present, and a \"0\" indicates that the field is absent'. Its WIDTH follows the field count - 'a message containing ten fields would have a two-byte Presence Vector' - and the message tables state the width per message rather than leaving it to that rule. AND THE DOCUMENT STATES WHAT AN ABSENT FIELD MEANS, which is a semantic the CDM must not flatten: 'The lack of a field in a message only indicates that no data is present; it does not imply that the field is not supported. If data is needed, but the field is not present, the receiving unit should assume that the last data it received is still valid, though possibly less fresh.'"
+  },
+  "source": {
+    "document": "STANAG 4586 Edition 3 - NATO STANDARDISATION AGREEMENT (STANAG): STANDARD INTERFACES OF UAV CONTROL SYSTEM (UCS) FOR NATO UAV INTEROPERABILITY",
+    "edition_as_the_document_states_it": "Edition 3. The running header of every page of Annex B and its Appendix 1 reads 'STANAG 4586 E d i t i o n 3' - letter-spaced in the source, which is a property of the typesetting and not of the text, and is why a sweep keyed on the literal string 'Edition 3' must normalise whitespace first.",
+    "annexes_as_page_4_lists_them": [
+      "A. TERMS AND DEFINITIONS",
+      "B. STANDARD INTERFACES OF UAV CONTROL SYSTEM (UCS) FOR NATO UAV INTEROPERABILITY"
+    ],
+    "custodian_as_the_document_names_him": "Mr. Shawn R. Murray, PEO (U&W) CSI, e-mail: Shawn.R.Murray@Navy.Mil - paragraph 10, STANAG MAINTENANCE AND UPDATE. Recorded because Edition 2 names a DIFFERENT custodian (Mr. Keith Wheeler) in the same paragraph position, so the field is edition-discriminating.",
+    "record_of_amendments": "PRESENT AND EMPTY. The table's header row (No. / Reference-date of Amendment / Date entered / Signature) is printed with no rows beneath it. Edition 2's copy of the same table carries one row - amendment 1, NSA/0903(2009)NAVY/4586, 28-08-2009 - so the emptiness here is a positive reading of this edition and not a failed extraction.",
+    "THE_DOCUMENT_DATES_ITSELF_NOWHERE": "NO DATE APPEARS IN THIS DOCUMENT'S FRONT MATTER AT ALL, and no NSA promulgation reference appears anywhere in it. Pages 1-20 were swept for any year in 2005-2015 and for any 'NSA/' reference: both return zero. So the date '09 NOV 2012' this repository uses to identify the edition is EXTERNAL to the pinned bytes - it is the catalogue metadata of the distributor the copy came from - and it is recorded as such rather than attributed to the document. This is the STANAG 4676 situation reached by a different route: there, no promulgation date for Edition B Version 2 is stated in any pinned document; here, none is stated for Edition 3.",
+    "retrieved_at": "2026-08-30",
+    "bytes": 3852365,
+    "sha256": "a4fa6e545838b53d18a66feeee1a39686fbd4df403c9ec5e43369886571c15da",
+    "local_path": "fixtures/stanag4586/spec/STANAG_4586_Ed3.pdf",
+    "page_count": 509,
+    "page_count_method": "Page objects reachable from the catalog's /Pages tree walked in /Kids order - the ruled method - AND an independent second walker, pypdf's len(reader.pages). Both return 509, and the /Pages node's own declared /Count is 509 as well, so three statements agree.",
+    "origin_url": "https://everyspec.com/NATO/NATO-STANAG/download.php?spec=STANAG_4586_ED-3_09NOV2012.051642.pdf",
+    "origin_is_a_MIRROR_and_not_the_publisher": "THE SAME CAVEAT THAT GOVERNS klv_pin.json's eg_0601_1 AND ITS THREE LINEAGE FILES, recorded rather than softened. The publisher's own route was asked FIRST and refused: nso.nato.int answers HTTP 403 on every route tried - the apex, /nso/nsdd/, main/standards, listpromulg.html, and the stanag-details pages for both id 8989 and id 8892 - with and without a browser User-Agent. The Internet Archive holds NO capture of any STANAG 4586 PDF at any URL, which was checked by four CDX queries. So the bytes come from everyspec.com, a standards mirror, and the copy CARRIES THAT MIRROR'S STAMP: a 'Downloaded from https://www.everyspec.com' overlay is drawn on every one of the 509 pages, and the document-info /Producer field is 'SetaPDF-Stamper API v1.7.6'. The stamp is part of the pinned bytes and any text extraction must strip it - see stamp_removal_is_required_before_any_count."
+  },
+  "the_identity_is_attested_by_TWO_PARTIES_and_the_second_one_disagreed_by_one_byte": {
+    "what_was_done": "Before any coverage claim was written, a SECOND copy of this document was fetched from an independent party - the Internet Archive's 2019-11-20 capture of the same everyspec URL, timestamp 20191120183950 - and compared against the copy pinned here.",
+    "the_archive_capture_is_itself_verified": "The archived bytes digest to base32 SHA-1 GJHU6MBZA3GJSCHYGXBAEFTBJOTQ3S5V, which EQUALS the digest field the archive's own CDX row states for that capture. So the capture was served intact and the archive is a genuine second party to the comparison rather than a second copy of the same fetch.",
+    "THE_TWO_COPIES_ARE_NOT_BYTE_IDENTICAL": "Live copy 3 852 365 bytes, sha256 a4fa6e54...c15da. Archived copy 3 852 364 bytes, sha256 7c1df5aa...f5f5d0. ONE BYTE APART, and a size that differs by one is exactly the case where a reader is tempted to call it the same file.",
+    "WHERE_THE_DIFFERENCE_IS_AND_WHY_IT_DOES_NOT_TOUCH_THE_STANDARD": "The divergence begins at byte offset 3 675 201, inside PDF object 2389 - which is the MIRROR'S OWN STAMP content stream, not NATO text. The live copy declares <</Length 205>> and draws the overlay at x=223.75 with width 164.50; the archived copy declares <</Length 204>> and draws it at x=225.75 with width 160.50. Everything after that offset is the same content shifted by one byte, which is why the differing region measures 177 157 against 177 156 bytes rather than one against one.",
+    "AND_THE_NATO_CONTENT_WAS_PROVED_IDENTICAL_RATHER_THAN_ASSUMED": "Text was extracted from all 509 pages of BOTH copies, the stamp string removed by regex and whitespace normalised, and the two page lists digested: both give sha256 634b304640aef66a849c6297fcfe0ba0e323f37388a8254b592ed317d8a6a689, and the count of pages whose text differs is ZERO. So the standard's content is identical across a 2019 capture and a 2026 serve, and the only thing that moved in seven years is where the mirror paints its own name. THE FIGURE THAT MATTERS: a one-byte size difference and a completely different SHA-256 over a document whose every page reads the same - which is the 'a size is not an identity' lesson from the 1.3.0 release inverted, where two DIFFERENT wheels shared one size."
+  },
+  "stamp_removal_is_required_before_any_count": "EVERY page of this copy carries the mirror's overlay text, so any sweep over extracted text counts 509 occurrences of 'everyspec.com' that are not in the standard. The removal regex used here is r'Downloaded\\s+from\\s+https?://www\\.everyspec\\.com' applied per page BEFORE whitespace normalisation, and the running header r'APPENDIX 1 to Annex B to STANAG 4586 E d i t i o n 3 1 - B - \\d+' is removed the same way. Both were needed to make the two-party text comparison above return zero differing pages. This is the reading-pinned-PDFs rule met in a new form: normalise whitespace before counting anything, and here also strip what the CARRIER added to the document.",
+  "data_types_as_section_4_1_2_defines_them": {
+    "locus": "Section 4.1.2, immediately after Table B1-33, quoted from the pinned bytes.",
+    "Character(n)": "'ASCII character data of n bytes in length, which includes the null terminator character'",
+    "Integer(n)": "'signed integers, where n is 1, 2, 3, 4 or 5 bytes'",
+    "Float": "'IEEE format floating point numbers (4 bytes in length)'",
+    "Unsigned(n)": "'unsigned integers; where n is 1, 2, 3, 4 or 5 bytes'",
+    "Byte(n)": "'array of bytes'",
+    "WHY_THIS_NODE_EXISTS": "The widths are 1, 2, 3, 4 or 5 bytes - so THREE AND FIVE BYTE INTEGERS ARE NORMAL IN THIS FORMAT and both appear in the decoded set (Altitude is Integer 3; every Time Stamp is Unsigned 5). Neither has a struct format character, so both are decoded by an explicit big-endian byte walk with a sign extension for the Integer case. A codec written around struct's fixed widths would silently have no way to express half this format."
+  },
+  "ambiguity_register": [
+    {
+      "entry": 1,
+      "subject": "The Message Properties bit layout below bit 8 is NOT RECOVERABLE from this copy's text layer.",
+      "what_the_prose_fixes": "Bit 15 is the ACK flag and bits 14:8 are the IDD version - both stated in words in section 3.3.1.10 and both unambiguous. Table B1-3 assigns Edition 3 the version value 30; Table B1-4 gives the Checksum Length encoding 00/01/10 as none/2 bytes/4 bytes.",
+      "what_is_missing": "WHERE the 2-bit Checksum Length subfield sits inside bits 7:0. The information is in Figure B1-8, and the figure's bit-number row extracts as the scrambled sequence '1 2 045 3 67910 812 13 11' - every bit label is present and their ORDER is a property of the PDF's text placement rather than of the figure, so the column each label belongs to cannot be recovered from the text layer.",
+      "class": "AN EXTRACTION LIMIT, NOT A DEFECT IN THE STANDARD. The figure is perfectly legible to a human reading the rendered page; it is the text layer that loses the geometry. Stated this way so that a later round with a rendering tool can close it cheaply, and does not go looking for a contradiction in the document.",
+      "how_the_codec_AVOIDS_needing_it": "The checksum length is DERIVED FROM THE FRAME ARITHMETIC and not read from the subfield: trailing = total_frame_length - 16 - message_length, which the document constrains to exactly 0, 2 or 4. That is fully determined by the bytes and needs no bit position at all. The subfield is still read at bits 7:6 - the position the figure's own column order supports - and a DISAGREEMENT between the two is recorded on the object as a defect rather than resolved by preferring one. So the ambiguity is carried, not guessed."
+    },
+    {
+      "entry": 2,
+      "subject": "'shall contain -1' is specified for a field the same section declares unsigned.",
+      "the_two_statements": "Figure B1-7's Special Notes: 'Unless otherwise noted, all header entries described below shall be 16-bit unsigned integers.' Section 3.3.1.5: the Sequence # 'is not used and shall contain \"-1\"'.",
+      "resolution_and_its_basis": "A 16-bit unsigned field cannot hold -1 as a value; the only reading that satisfies both sentences is the two's-complement bit pattern, 0xFFFF. That is what the codec writes and what its fixtures carry. RECORDED RATHER THAN SILENTLY APPLIED because it is an inference and the document does not spell 0xFFFF anywhere.",
+      "severity": "Low. Both readings agree on the octets; only the wording is loose."
+    },
+    {
+      "entry": 3,
+      "subject": "THE ALTITUDE TYPE ENUMERATION CONTRADICTS ITSELF ON THE ONE VALUE THE CDM NEEDS, and this is the sharpest entry in the register.",
+      "the_field": "Message #4000 field 5, Unique ID 0101.07, 'Altitude Type - Defines altitude type (reference frame) for all altitude related fields in this message', Unsigned 1, Enumerated: '0 = Pressure Altitude 1 = Baro Altitude 2 = AGL 3 = WGS-84 (geoid)'.",
+      "the_contradiction": "Value 3 names TWO DIFFERENT SURFACES in four words. WGS-84 is an ELLIPSOID; the geoid is an equipotential surface approximated by EGM96/EGM2008. They are not the same reference and they differ by roughly -107 m to +85 m over the earth. So 'WGS-84 (geoid)' does not identify a datum, and an altitude tagged 3 cannot be known to be height-above-ellipsoid from this field alone.",
+      "why_it_matters_HERE_specifically": "The CDM's Position.alt_m is documented 'Metres HAE' - height above the ellipsoid. Value 3 is the ONLY one of the four that could populate it, and value 3 is the ambiguous one. Values 0, 1 and 2 are pressure, barometric and above-ground-level, none of which is a geodetic height at all.",
+      "the_ruling_and_what_it_refuses": "alt_m IS POPULATED ONLY FOR ALTITUDE TYPE 3, and every object built from a type-3 altitude carries attributes.altitude_datum_ambiguity naming this entry, so the residue travels with the value instead of being dropped at the seam. Types 0, 1 and 2 park at attributes with their frame named and DO NOT reach alt_m. What is refused is the tempting move: treating type 3 as ellipsoidal because the CDM wants HAE and 'WGS-84' is the nearest word. That would convert a stated ambiguity into an unstated error of up to a hundred metres, which is this repository's ellipsoid-audit class of defect exactly."
+    },
+    {
+      "entry": 4,
+      "subject": "Two decoded messages carry rotation rates at scales fifty times apart.",
+      "the_two": "Message #4000 fields 15-17 (0101.17 Roll Rate, 0101.18 Pitch Rate, 0101.19 Turn Rate) are Integer 2 at 0.005 rad/s with Range 'No Restrictions'. Message #3010 fields 5-7 (0103.07 Roll_Rate, 0103.08 Pitch_Rate, 0103.09 Yaw_Rate) are Integer 2 at 0.0001 rad/s with Range '-pi <= x < pi'.",
+      "this_is_probably_DESIGN_and_is_recorded_as_an_observation": "#3010's scale is self-consistent with its stated range - 32767 * 0.0001 = 3.2767 rad/s, which is pi to four places - so that message's rates are full-scale at +/-pi by construction. #4000's 0.005 rad/s reaches 163.8 rad/s, far past any airframe rate, and states no bound. The document also says why the two messages exist separately: #3010's are 'directly sensed body-relative states ... packaged as a separate message type from other vehicle states because these terms may need to be known at substantially higher rates'. So this reads as a deliberate precision/range trade and NOT as a contradiction.",
+      "what_the_adapter_does_about_it": "Both sets park in attributes under keys that NAME THEIR SOURCE MESSAGE - body_rates_rad_s from #3010, euler_rates_rad_s from #4000 - and neither is promoted to a shared CDM field. The failure this prevents is a single 'roll_rate' key written by whichever message arrived last, at whichever scale, with nothing on the object saying which."
+    }
+  ],
+  "decoded_message_set": {
+    "rule": "FOUR messages are decoded field by field. Every other DLI message is parked whole. The set is the air-vehicle STATE messages: the Flight Vehicle Status group's three state messages plus Inertial States, which is the only message in the format carrying a position.",
+    "messages": [
+      {
+        "msg": 4000,
+        "name": "Inertial States",
+        "table": "B1-74",
+        "fields": 19,
+        "group": "Flight Vehicle Payload Relevant Status (Table B1-9)",
+        "why": "The position message. Latitude and Longitude are Integer 4 BAM against WGS-84 per section 1.7.2, so this is the only message from which Entity.position can be built at all."
+      },
+      {
+        "msg": 3002,
+        "name": "Vehicle Operating States",
+        "table": "B1-60",
+        "fields": 20,
+        "group": "Flight Vehicle Status (Table B1-8)",
+        "why": "Carries AV State, 'the reported flight phase of the air vehicle', which is the one field in the decoded set that says what the aircraft is DOING rather than where it is."
+      },
+      {
+        "msg": 3009,
+        "name": "Air and Ground Relative States",
+        "table": "B1-67",
+        "fields": 17,
+        "group": "Flight Vehicle Status (Table B1-8)",
+        "why": "Airspeeds, wind estimate, ground-speed components and FOUR altitudes in four different reference frames - the message that makes ambiguity 3 concrete rather than theoretical."
+      },
+      {
+        "msg": 3010,
+        "name": "Body-Relative Sensed States",
+        "table": "B1-68",
+        "fields": 8,
+        "group": "Flight Vehicle Status (Table B1-8)",
+        "why": "Body accelerations and body rates, the high-rate sensed set. Included because it is the counterpart to #4000's inertial set and because the pair is what makes ambiguity 4 visible."
+      }
+    ],
+    "what_is_NOT_decoded_and_how_it_behaves": "Every other message type - status and command alike - has its WRAPPER read and its data octets parked verbatim at attributes.s4586_unparsed_messages with the message type recorded. This is the ST 0107.3-04 treatment stanag4609 gives an unwitnessed KLV tag, reached here for the same reason: a frame carrying one unknown message among four known ones must still translate the four."
+  }
+}
