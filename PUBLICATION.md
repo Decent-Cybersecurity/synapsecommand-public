@@ -1325,6 +1325,39 @@ release and was about to record entry 10's attestations claim as unwitnessed. Fo
 re-confirmed twice, on three separate releases — a property of the endpoint, not an observation
 about one of them.
 
+**THREE SUITE TOTALS THAT DIFFER, AND NONE OF THE DIFFERENCES IS DRIFT.** Reconciled
+2026-09-02, because three numbers are quoted for this release and a reader meeting them apart would
+read two of them as decay:
+
+| reading | passed | skipped | total |
+| --- | --- | --- | --- |
+| CI, at the tag, 2026-08-30T10:47:54Z | 3400 | 67 | 3467 |
+| fresh clone at the tag, this machine | 3402 | 65 | 3467 |
+| fresh clone at `c1cb308` | 3403 | 65 | 3468 |
+| maintainer's tree at `c1cb308` | 3460 | 8 | 3468 |
+
+**The totals are what reconcile, and they do exactly.** Clone versus maintainer is **57** tests that
+pass here and skip there: the pinned specification PDFs and the KLV streams are gitignored, so a
+clone carries the pin records and not the documents. That is the standing clone delta and not a
+regression. Tag versus tip is **+1**, the changelog version sentence's gate, added by `7c76b5e`
+after the tag — which is why the release body's 3467 and this file's 3468 are both right.
+
+**The remaining two — CI's 3400/67 against this machine's 3402/65 on the SAME tree — are
+environment and not tree**, and both are in `tests/test_cdm_version_floor.py`. One skips when there
+is no virtualenv inside the clone, which is true of CI's checkout and false of a clone someone
+built an environment inside. The other skips when the machine has no CPython 3.11; the CI image
+carries none and this one has a `uv`-managed 3.11 that is not on `PATH`. Both are written as
+corroboration that skips when absent rather than as an assertion nobody can satisfy, which is why
+their absence costs two skips and no failures. **A suite total is a reading of a tree AND of the
+machine under it**, and quoting one without the other is how a clone delta gets reported as decay.
+
+**The four untouchables hold, each by its own command, and exactly one of them moved.**
+The pinned phrase derives to **35** over the git index; `scripted_edit`'s contract is green at
+**9**, with `pytest -k scripted_edit` collecting **11** because two `version_floor`
+parametrizations match the name — the recorded trap, reproduced, and not a disagreement;
+`git ls-files` matches **no** PDF. The one that cites a version is `RELEASE_NOTES.md`, which now
+opens **1.4.0**. The other three are version-free and are unchanged by this release.
+
 **What this entry does not claim.** That the approval says anything about token state. It does
 not: the row reading **UNDATABLE from held evidence** stands untouched, and this upload is the
 fifth dated witness that the tokenless mechanism works and the fifth that is silent about what else
