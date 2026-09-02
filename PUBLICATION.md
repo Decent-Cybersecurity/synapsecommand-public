@@ -140,8 +140,8 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Eleven entries, and the set does not move — entries change **state**, they are not deleted. Eight
-are **settled**: entry 1 is a ruling, entries 5, 6, 10 and 11 are closed by acts, entry 7 is a
+Twelve entries, and the set does not move — entries change **state**, they are not deleted. Nine
+are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11 and 12 are closed by acts, entry 7 is a
 disposition, entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
@@ -158,7 +158,11 @@ discharges entry 6's promise that the four prose defects in the 1.2.0 artefacts 
 corrected. Entry 11 is the 1.3.0 release, the fourth closed by an act: the release a maintainer
 refused on 2026-08-28 and an operator reversed on 2026-08-29, re-derived forward rather than
 restored, and the first whose number a machine ruled **before** it was typed rather than after.
-Entries 2, 3 and 4 are open. None blocks anything.
+Entry 12 is the 1.4.0 release, the fifth closed by an act, and the first written days after the act
+rather than beside it: the release the `pypi` environment held for six and a half hours, and the
+one whose close-out found that the readings taken during that hold were **true when taken** and had
+merely been carried across three days without their dates. Entries 2, 3 and 4 are open. None blocks
+anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
 
@@ -1244,6 +1248,90 @@ octet, the pinned stream's 26 items stop at tag 65, and all fourteen still read 
 release that adds a capability nothing on a wire has exercised is what this is, and
 `RELEASE_NOTES.md` says so in the release's own voice rather than leaving it here.
 
+### 12. `synapse-cdm` 1.4.0 is on the index — CLOSED, and the reading that was called stale was true when it was taken
+
+**Published 2026-08-30** by
+[run 33307299409](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/33307299409),
+triggered by the `v1.4.0` tag at `62acc12f`. The build job ran 10:46:53–10:49:23Z; the `pypi`
+environment then held the upload for **six hours, twenty-nine minutes and twenty-eight seconds**
+until a required reviewer approved it at **17:18:53Z**, and the publish job ran 17:18:55–17:19:18Z.
+Deployment `6165823339` carries the sequence: `waiting` twice at 10:49:25Z, `queued` at 17:18:53Z,
+`in_progress` at 17:18:56Z, `success` at 17:19:19Z. This entry is written **three days after** the
+act it records, which is the fact that gave it its subject.
+
+**THE HOLD WAS NOT A STALL, AND THE WATCHER THAT REPORTED IT WAS NOT WRONG.** The brief that
+ordered this close-out said the previous round's `waiting` readings *"were stale"* and that a
+monitor reporting a stale state as current is the same defect class as a quoted derivation gone
+stale. **Read against the status rows, that is not what happened.** The previous round's last
+`waiting` readings are dated **2026-08-30T17:16:27Z** — a watcher returning `TIMEOUT after 60m:
+waiting` — and **17:16:36Z**, a direct read reporting `waiting … pending: pypi can_approve=true`.
+Approval registered at **17:18:53Z**, **two minutes and seventeen seconds later**. Every one of
+those readings described the run's actual state at the moment it was taken, and the same session
+re-read the deployment at 17:20:26Z, saw `success`, and acted on it.
+
+**So the defect class the brief named is not the one present here, and the distinction is worth
+keeping.** A stale reading reports a state that had *already* changed when it was reported. These
+reported a state that changed *afterwards* — which is not staleness but the ordinary condition of
+every observation. What made them misleading was the three-day carry: restated on **2026-09-02**
+without their timestamps, true readings about 17:16Z read as claims about now. **The remedy is the
+one this file already applies to every other claim — a date attached at the point of reading, not a
+better monitor.** An undated true reading and a stale one are indistinguishable to the next reader,
+which is the whole of entry 9's lesson pointed at observations rather than at prose.
+
+**THE RELEASE WAS ALREADY CREATED, AND NOT BY THE OPERATOR.** The same brief reserved the GitHub
+Release for the operator and asked this round to hand over a body for them to post. The Release at
+`v1.4.0` already exists — created 2026-08-30T10:45:15Z by the tag, **published 17:22:06Z**, not a
+draft, and `Latest` — with the completed body on it, posted by the previous round four minutes
+after the approval it describes. Nothing was re-posted here and the body was not edited. Recorded
+because a reservation that was already spent is exactly the sort of thing a later reader would
+otherwise take as still pending.
+
+**The digests, in six readings, and all six were reachable.** What the gate hashed after building
+and gating, what the publish job hashed immediately before uploading, what the in-toto attestation
+names as its subject, what the simple index declares, what the legacy JSON metadata states, and
+what a recomputation over the downloaded bytes yields:
+
+```
+006e5f0e8b8557d91c7cf90da1e5a6fd0341d8f398bab6617a1802e4ac1dd9f3  synapse_cdm-1.4.0-py3-none-any.whl
+3f16e818d92af4a69721c248110eab16e9dbf8f75fd9bf9201981e09f97635e2  synapse_cdm-1.4.0.tar.gz
+```
+
+**All six agree, and the sizes agree with them** — 4 105 837 bytes for the wheel and 2 206 389 for
+the sdist, identical in PyPI's metadata and in the files downloaded from the index on
+**2026-09-02**. The gate handed the publish job artefact
+`0d77928a148fcdcddf492bdccf29f1c6a6ee4a932bd26b3fd069ec025e5f63ae` at 10:49:21Z and the publish job
+downloaded that same digest at 17:19:00Z, across the six-and-a-half-hour hold; the wheel was
+accepted at 17:19:12.788614Z and the sdist at 17:19:14.909453Z. One build, gated as that build,
+uploaded as those bytes, served as those bytes. **The comparison basis is the WORKFLOW's build and
+never a local rebuild** — entry 11 demonstrated why with two same-size, different-digest wheels, and
+that ruling is inherited here rather than re-argued.
+
+**The probe protocol was applied rather than assumed.** Every request carried a declared
+`User-Agent`, non-200 raised before any body was touched, and each downloaded file was checked for
+its archive magic — `PK\x03\x04` for the wheel, `\x1f\x8b` for the sdist — **before** it was
+hashed. A hash of an error page is a number that compares unequal for the wrong reason, and the
+challenge-page trap recorded at the foot of the witness table is the live proof that this endpoint
+family serves 200s that are not what they look like.
+
+**THE PyPI PROVENANCE TRAP, RE-CONFIRMED LIVE A THIRD TIME.** `GET /pypi/synapse-cdm/1.4.0/json`
+reports `provenance` as **null on both files** while attestations demonstrably exist. The simple
+index carries the real URLs, and the bundles fetched from them return PyPI's own statement of the
+four trusted-publisher values — `kind` GitHub, `repository`
+`Decent-Cybersecurity/synapsecommand-public`, `workflow` `publish.yml`, `environment` `pypi` — with
+in-toto subjects carrying the two digests above. Dated 2026-09-02. **This is the third reading,
+not the second**, and the count matters because entry 11 was itself a re-confirmation: the trap was
+first met in the **1.2.1** round, where a first pass read the legacy field as null across every
+release and was about to record entry 10's attestations claim as unwitnessed. Found once and
+re-confirmed twice, on three separate releases — a property of the endpoint, not an observation
+about one of them.
+
+**What this entry does not claim.** That the approval says anything about token state. It does
+not: the row reading **UNDATABLE from held evidence** stands untouched, and this upload is the
+fifth dated witness that the tokenless mechanism works and the fifth that is silent about what else
+would be accepted. And it does not claim the round moved anything inside the distribution — it did
+not, which is why the bump gate still derives **NONE** over the arc since `v1.4.0` and no
+`### Unreleased` section is owed.
+
 ## The deployment was not affected
 
 The documentation site is deployed by explicit upload and **the Pages project has no Git
@@ -1439,10 +1527,12 @@ mentions no platform**, which is the limit stated in entry 9.
 | ~~the distribution on the index is 1.2.1~~ | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | **superseded 2026-08-29** by 1.3.0; the section cited is a released heading and stays a durable address, which is the difference from the struck 1.2.0 row above | **SUITE-GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
 | 1.2.1's digests equal what the index serves, in four readings | entry 10 | recomputed over downloaded bytes | holds | dated 2026-08-27 |
 | the four prose defects in the 1.2.0 artefacts are corrected in 1.2.1 | entry 10 | read out of the installed copy and the downloaded sdist | holds | dated 2026-08-27; the tree half is **SUITE-GATED** by `tests/test_cdm_prose_counts.py` |
-| the distribution on the index is 1.3.0 | `MIGRATIONS.md`, `### 1.3.0`; entry 11 | `GET /pypi/…/json`, and `pip install synapse-cdm==1.3.0` in a clean venv | holds | dated 2026-08-29. **SUITE-GATED at one remove**, on the same reading as the row it supersedes: the suite requires every release tag to name the `PACKAGE_VERSION` of the tree it points at, which ties the tag to the tree and not the tree to the index |
+| ~~the distribution on the index is 1.3.0~~ | `MIGRATIONS.md`, `### 1.3.0`; entry 11 | `GET /pypi/…/json`, and `pip install synapse-cdm==1.3.0` in a clean venv | holds | dated 2026-08-29. **SUITE-GATED at one remove**, on the same reading as the row it supersedes: the suite requires every release tag to name the `PACKAGE_VERSION` of the tree it points at, which ties the tag to the tree and not the tree to the index. **Superseded 2026-09-02** by 1.4.0; the section cited is a released heading and stays a durable address |
+| the distribution on the index is 1.4.0 | `MIGRATIONS.md`, `### 1.4.0`; entry 12 | `GET /pypi/…/json`, and `pip install synapse-cdm==1.4.0 --no-cache-dir` in a clean venv with no clone on its path | holds — `PACKAGE_VERSION` `1.4.0`, installed `METADATA` `Version: 1.4.0`, `SCHEMA_VERSION` `1.0.0` unmoved, and `cdm-harness --list-adapters` reports **14 adapters**, three ingest and eleven bidirectional | dated 2026-09-02. **SUITE-GATED at one remove**, on the same reading as every version row before it. `pip` resolved it on the first attempt, so entry 10's propagation lag does not reproduce a second time |
 | 1.3.0's served artefacts equal the bytes the workflow gated, both files | entry 11 | SHA-256 recomputed over the downloaded bytes, against the digests `--export-dist` printed inside run `33247697980` | holds | dated 2026-08-29. The comparison basis is the WORKFLOW's build, not a local one: a local rebuild of the same tree differs in generated metadata, and this round rebuilt locally and got two different digests, which is the claim demonstrated rather than asserted |
-| the trusted publisher's four values, from PyPI's own side | entry 11 | the **simple index**'s per-file `provenance` URL, then the bundle's `publisher` block | holds — `kind` GitHub, `repository` `Decent-Cybersecurity/synapsecommand-public`, `workflow` `publish.yml`, `environment` `pypi` | dated 2026-08-29. **The legacy JSON API's per-file `provenance` is the WRONG field** — it reads `null` on every release of this package whether attestations exist or not |
-| the upload was accepted over OIDC with no credential in the workflow | entry 11 | the `pypi` environment's approval and the publish job's own run | holds | dated 2026-08-29T10:47:24–50Z. **This is a witness that the mechanism WORKS, and it is not a witness about token state** — the row four above still reads UNDATABLE and this one does not supersede it, because PyPI publishes no token state and an upload proves only what it used |
+| 1.4.0's served artefacts equal the bytes the workflow gated, both files | entry 12 | SHA-256 recomputed over the downloaded bytes, against the digests `--export-dist` printed inside run `33307299409` | holds, in **six** readings that were all reachable | dated 2026-09-02. Same comparison basis as the row above — the WORKFLOW's build, never a local rebuild. The probe raised on non-200, declared a `User-Agent`, and checked each file's **archive magic before hashing it**, because a hash of an error body compares unequal for the wrong reason |
+| the trusted publisher's four values, from PyPI's own side | entry 11 | the **simple index**'s per-file `provenance` URL, then the bundle's `publisher` block | holds — `kind` GitHub, `repository` `Decent-Cybersecurity/synapsecommand-public`, `workflow` `publish.yml`, `environment` `pypi` | dated 2026-08-29. **The legacy JSON API's per-file `provenance` is the WRONG field** — it reads `null` on every release of this package whether attestations exist or not. **Re-confirmed on 1.4.0, dated 2026-09-02**, with the same four values. That is the **third** reading of it — found in the 1.2.1 round (`MIGRATIONS.md`, where a first pass nearly recorded entry 10's attestations as unwitnessed), re-confirmed on 1.3.0, and again here — which makes it a property of the endpoint rather than an observation about one release |
+| the upload was accepted over OIDC with no credential in the workflow | entry 11 | the `pypi` environment's approval and the publish job's own run | holds | dated 2026-08-29T10:47:24–50Z. **This is a witness that the mechanism WORKS, and it is not a witness about token state** — the row four above still reads UNDATABLE and this one does not supersede it, because PyPI publishes no token state and an upload proves only what it used. **A fifth such witness, 1.4.0, dated 2026-08-30T17:18:53–17:19:19Z** — approval to `success` — and it does not supersede the UNDATABLE row either |
 | a `urllib` default `User-Agent` gets HTTP 403 from `docs.synapsecommand.com` | entry 10 | four `User-Agent` values compared | holds | dated 2026-08-27 — recorded because a uniformly failing probe reports identity |
 
 **A probe form that gives the wrong answer, and it is the sort of thing this table exists to
