@@ -462,30 +462,49 @@ def test_the_length_codec_is_total_because_st_0107_3_05_leaves_no_choice_of_form
     )
 
 
-def test_the_0x7f_to_0x80_transition_is_asymmetric_and_0x80_is_still_park_8():
-    """THE ONE PLACE THE GRAMMAR STOPS. 0x7F is a length; 0x80 is a blocker.
+def test_the_0x7f_to_0x80_transition_is_asymmetric_and_0x80_is_now_a_framing_error():
+    """THE ONE PLACE THE GRAMMAR STOPS. 0x7F is a length; 0x80 is a refusal.
 
     `0x80` as a first length octet declares zero following octets, and **ST 0107.3 never mentions
     that form** — §6.3.2 defines the short form and the long form and says nothing about a count of
-    zero. In BER it is the indefinite-length form, and BER is SMPTE ST 336:2017, park 8, a purchase.
+    zero. **PARK 8 CLOSED 2026-09-03 and SMPTE ST 336:2017 §5.3 states what the octet means**: the
+    Length field "shall be set to [0x80] which shall indicate a non-deterministic length of the
+    Value field", available only where an application document "shall define an alternative method
+    of locating the end of the Value field".
 
-    So this raises `UnderivableFromPinnedCopy` and not `KLVFramingError`, and the distinction is the
-    point: *nobody here knows whether these bytes are wrong*. The message carries park 8 and the
-    delegating sentence, `ST 0107.3-03`, so it is a reopen condition rather than a complaint.
+    **So the exception TYPE moved, and that is the assertion this test exists to make.** It used to
+    be `UnderivableFromPinnedCopy` — *nobody here knows whether these bytes are wrong* — and it is
+    now `KLVFramingError` — *these bytes are wrong* — because no held MISB document defines the
+    alternative end-finding method the standard's condition requires, and `ST 0107.3-05`'s
+    fewest-possible-bytes rule makes every conforming length determinate. The asymmetry across the
+    transition survives the closure; what changed is which side of the module's two-exception
+    contract the refusal sits on.
+
+    The message still carries the delegating sentence, because a refusal naming the document it
+    rests on is the contract every refusal here keeps.
     """
     assert codec.BER_LENGTH_INDEFINITE_OCTET == 0x80
     assert codec.decode_ber_length(b"\x7f") == (127, 1)          # the octet below it is a length
 
-    with pytest.raises(codec.UnderivableFromPinnedCopy) as excinfo:
+    with pytest.raises(codec.KLVFramingError) as excinfo:
         codec.decode_ber_length(b"\x80")
     message = str(excinfo.value)
-    assert "PARK 8" in message
     assert "ST 0107.3-03" in message, "the message does not carry the delegating requirement"
-    assert "SMPTE ST 336" in message
-    assert "indefinite" in message.lower()
+    assert "SMPTE ST 336:2017" in message, "the message does not name the document that states it"
+    assert "5.3" in message, "the message does not carry the clause number"
+    assert "non-deterministic" in message.lower()
+    assert "offset 0" in message, "every refusal in this module says WHERE"
+
+    # AND IT IS NOT THE PARK EXCEPTION ANY MORE. Asserted in the negative as well, because
+    # `KLVFramingError` and `UnderivableFromPinnedCopy` are both exceptions and a test that only
+    # named the new one would pass if the old one were somehow raised as a subclass of it.
+    assert not isinstance(excinfo.value, codec.UnderivableFromPinnedCopy)
+    assert "PARK 8" not in message, (
+        "park 8 closed on 2026-09-03 and a refusal that still cites it as a blocker is a reopen "
+        "condition for a park that has no reopening left to do")
 
 
-def test_no_ceiling_on_length_octets_is_stated_so_the_structural_bound_is_the_park():
+def test_no_ceiling_on_length_octets_is_stated_so_the_structural_bound_stands_alone():
     """§6.3.2 states NO maximum, and the only maxima in the document govern Values.
 
     `ST 0107.3-07` — "Where a MISB standard defines a numeric maximum Length for a Local Set item's
@@ -493,8 +512,19 @@ def test_no_ceiling_on_length_octets_is_stated_so_the_structural_bound_is_the_pa
     about a Value's size, not a length field's width. So the 127-octet bound below is the first
     octet's seven bits and nothing else: **structural, not cited.**
 
-    Which is why exceeding it raises the park exception rather than a framing error. A ceiling ST 336
-    imposes would be lower, and this repository cannot know.
+    **AND ST 336 STATES NONE EITHER, which is what park 8 was holding open here.** §5.3 NOTE 1 says
+    in the standard's own words that there are no restrictions in it on the maximum number of bytes
+    in the Length field, and the body invites application documents to impose one — an invitation
+    ST 0107.3 declined. So the absence was never a silence in two documents: it is one document
+    delegating and the other not exercising the delegation.
+
+    **The exception type does NOT move here, and the reason is the interesting half of the ruling.**
+    ST 336 sends the length rules onward to ISO/IEC 8825-1 §8.1.3.3–8.1.3.5, whose §8.1.3.5(c)
+    forbids an initial octet of `0xFF` and would cap the count at 126. That text is reproduced in
+    ST 336's Annex I, which is marked *Informative*, and X.690 itself is not held — so the tighter
+    bound is recorded and not enforced, and asking for more octets than the first one can express
+    stays `UnderivableFromPinnedCopy`. What moved is the REASON: it is no longer a parked document,
+    it is a document nobody needs to buy and nobody has read.
     """
     assert codec.BER_LENGTH_OF_LENGTH_MAX == 127
     widest = (1 << (8 * 127)) - 1
@@ -504,8 +534,14 @@ def test_no_ceiling_on_length_octets_is_stated_so_the_structural_bound_is_the_pa
     with pytest.raises(codec.UnderivableFromPinnedCopy) as excinfo:
         codec.encode_ber_length(1 << (8 * 127))
     message = str(excinfo.value)
-    assert "PARK 8" in message and "ST 0107.3-03" in message
     assert "states no ceiling" in message
+    assert "5.3 NOTE 1" in message, "the message does not carry ST 336's own statement of the absence"
+    assert "8.1.3.5(c)" in message, "the message does not name where the ceiling actually lives"
+    assert "126" in message, "the message does not state the bound it declines to enforce"
+    assert "PARK 8" not in message, (
+        "park 8 closed on 2026-09-03. What is underivable here is X.690's own text, which this "
+        "repository does not hold — naming a closed park as the blocker would send a reader to a "
+        "row that has nothing left to answer")
 
 
 def test_a_truncated_long_form_length_is_a_malformed_stream_and_not_a_park():
@@ -740,18 +776,30 @@ def test_every_framing_fixture_kind_is_a_rule_one_of_the_two_documents_states():
     assert kinds == {
         "universal_label", "universal_label_refusal",
         "ber_oid_tag", "ber_oid_refusal",
-        "ber_length", "ber_length_refusal", "ber_length_park",
+        "ber_length", "ber_length_refusal",
         "local_set_item", "local_set_packet",
         "checksum",
     }, f"unexpected fixture kinds: {sorted(kinds)}"
 
-    # EXACTLY ONE fixture is still a park, and it is 0x80. Asserted as a count so that a later
-    # round cannot quietly decide what an indefinite length means and leave the set looking the same.
-    parks = [json.loads(p.read_text()) for p in FRAMING.glob("*.parsed.json")
-             if json.loads(p.read_text())["kind"] == "ber_length_park"]
-    assert len(parks) == 1, f"{len(parks)} park fixtures, expected exactly one"
-    assert parks[0]["octets_hex"] == "80"
-    assert "PARK 8" in parks[0]["note"]
+    # NO FIXTURE IN THIS SET IS A PARK, and `ber_length_park` is gone from the allow-list above
+    # rather than left in it with nothing to match. It held exactly one member — 0x80 — until
+    # 2026-09-03, when SMPTE ST 336:2017 was obtained and §5.3 turned that fixture into an ordinary
+    # refusal. Asserted as an absence for the reason the count was asserted before: a later round
+    # that re-parks an answered question would otherwise leave the set looking the same.
+    parked = sorted(p.name for p in FRAMING.glob("*.parsed.json")
+                    if json.loads(p.read_text())["kind"].endswith("_park"))
+    assert not parked, (
+        f"park fixtures are back: {parked}. Park 8 closed on 2026-09-03 and every framing rule in "
+        "this set now has a held document behind it — ST 0107.3 for the profile's restrictions and "
+        "SMPTE ST 336:2017 for what the profile delegates. A fixture that parks a rule again needs "
+        "a park to point at, and there is not one")
+
+    # AND THE 0x80 FIXTURE IS STILL HERE, on the other side of the reclassification. Dropping it
+    # would also empty the park set, so the absence above is only evidence alongside this.
+    indefinite = json.loads((FRAMING / "length_indefinite_first_octet.parsed.json").read_text())
+    assert indefinite["kind"] == "ber_length_refusal"
+    assert indefinite["octets_hex"] == "80"
+    assert "ST 336:2017" in indefinite["note"] and "5.3" in indefinite["note"]
 
     for name, site in (("FORMAT_COVERAGE.md", _framing_section()),
                        ("README", README.read_text()),
@@ -993,28 +1041,48 @@ def test_the_pinned_copy_is_the_same_copy_at_every_site_that_names_one():
             )
 
 
-def test_park_four_is_stated_CLOSED_and_park_eight_OPEN_at_every_site_that_names_them():
-    """The park states, at every site, in both directions — and the polarity FLIPPED this round.
+def test_parks_four_and_eight_are_stated_CLOSED_without_the_closure_growing():
+    """The park states, at every site — and the polarity has now flipped TWICE, for the same reason.
 
-    This test used to be `test_parks_four_and_eight_are_stated_OPEN_wherever_this_round_names_them`,
-    and it forbade any site from saying park 4 was closed. That was the right gate then: the framing
-    round narrowed park 4 without obtaining anything, and "the tempting error in a round that narrows
-    a park is to write it up as progress and let a reader infer a closure."
+    Round one, the framing round, narrowed park 4 without obtaining anything, and this gate forbade
+    any site from saying park 4 was closed: "the tempting error in a round that narrows a park is to
+    write it up as progress and let a reader infer a closure."
 
-    **The length round obtained the document, so the tempting error inverted.** It is now to write up
-    a closure as though it settled more than it did — park 4 closing does not close park 8, and park 8
-    is where the two remaining residues live. So the gate runs the other way: park 4 must be stated
-    CLOSED as data and in words, park 8 must still be stated OPEN at every site, and **no site may
-    claim park 8 closed**.
+    Round two, the length round, obtained ST 0107.3 and the error inverted — so the gate required
+    park 4 CLOSED and park 8 OPEN, and forbade any site from claiming park 8 closed.
+
+    **Round three, the publisher round, obtained SMPTE ST 336 at both editions and park 8 closed on
+    2026-09-03, so the gate inverts a second time.** The tempting error is the same one in a new
+    place: writing a closure up as settling more than it did. Park 8 closing settles two absences in
+    a length grammar and settles **nothing about meaning** — so the gate now requires park 8 stated
+    CLOSED as data and in words, and forbids the overreach instead: **no site may claim a tag row
+    moved, and no site may claim park 8's closure closed another park.**
+
+    **The history nodes keep their own tense and are checked for it.** The framing round's node
+    still reads park 4 OPEN and the length round's still reads park 8 OPEN, because each was true of
+    its round; both must carry a forward pointer so a reader landing there is not left believing a
+    superseded state. That is the invariant the three flips have in common and it is the one worth
+    keeping: a round's record says what that round found, and the pointer says what happened next.
     """
     pin = json.loads(PIN.read_text())
 
-    # 1. The new ruling's own outcome node, as data.
+    # 1. The length round's own outcome node, as data — UNCHANGED, and that is the assertion.
+    #    It recorded park 8 OPEN on 2026-08-26 and park 8 closed eight days later; the node is
+    #    history and keeps its tense, exactly as the framing round's does below.
     outcome = pin["length_ruling_st_0107_3"]["the_park_outcome"]
     assert outcome["park_4"]["state_before_this_round"] == "OPEN"
     assert outcome["park_4"]["state_after_this_round"] == "CLOSED"
     assert outcome["park_8"]["state_before_this_round"] == "OPEN"
-    assert outcome["park_8"]["state_after_this_round"] == "OPEN"
+    assert outcome["park_8"]["state_after_this_round"] == "OPEN", (
+        "the length round's record was rewritten to agree with the publisher round. It states what "
+        "ST 0107.3 could establish ALONE, which is the finding that sent somebody to fetch ST 336; "
+        "editing it would destroy the only evidence that the two rounds differed"
+    )
+    forward = _flat(json.dumps(pin["length_ruling_st_0107_3"].get(
+        "SUPERSEDED_IN_PART_BY_THE_PUBLISHER_ROUND", "")))
+    assert "2026-09-03" in forward and "CLOSED" in forward, (
+        "the length round's node states park 8 OPEN and does not point at the round that closed it"
+    )
 
     # 2. The framing round's node is HISTORY and is not rewritten. Its park_4 still reads OPEN,
     #    because that was true of that round — and it must carry a forward pointer, so a reader who
@@ -1039,18 +1107,45 @@ def test_park_four_is_stated_CLOSED_and_park_eight_OPEN_at_every_site_that_names
         "field can only record one of them"
     )
 
-    # 4. Every site, in words. Park 4 closed, park 8 open, and never the reverse.
+    # 3b. Park 8 is in the closed set, with its date, and the document that closed it is pinned.
+    closed_8 = parks["the_ones_that_closed"]["park_8"]
+    assert closed_8["park"] == 8
+    assert closed_8["closed_on"] == "2026-09-03"
+    held = pin["delegated_specifications_held"]
+    assert held["st_336_2017"]["sha256"] and held["st_336_2017"]["pages"] == 36, (
+        "park 8 is recorded closed and the document it closed on is not pinned. A closure whose "
+        "document is not on the record is the failure the framing round's polarity guarded against, "
+        "arrived at from the other side"
+    )
+
+    # 4. Every site, in words. The overreach is what is forbidden now, not the closure.
     section = _flat(_framing_section())
-    assert "Park 4 is CLOSED" in section and "Park 8 stays OPEN" in section
+    assert "Park 4 is CLOSED" in section
     for name, read in SITES.items():
-        flat = _flat(read())
-        for claim in ("park 8 is closed", "park 8 closed", "closes park 8",
-                      "parks 4 and 8 are closed", "park 8 is now closed"):
-            assert claim.lower() not in flat.lower(), (
-                f"{name} states {claim!r}. ST 336 was not obtained — park 8 is a purchase, it "
-                "still owns 0x80 and the ceiling, and a park narrowed to two absences written up "
-                "as a closed one is the failure this round is most exposed to"
+        flat = _flat(read()).lower()
+        for claim in ("closes park 3", "closes park 5", "park 2 is closed",
+                      "parks 3 and 8 are closed", "closed every park"):
+            assert claim not in flat, (
+                f"{name} states {claim!r}. Park 8 closed on 2026-09-03 and discharged its own two "
+                "absences and nothing else — not park 3's epoch, not park 5's IMAPB ranges, not "
+                "park 2's unwritten row set. A closure written up as settling more than it did is "
+                "the failure this round is most exposed to"
             )
+    # AND THE TAG ROWS, ASSERTED POSITIVELY RATHER THAN BY BLACKLIST. A first draft of this
+    # forbade the substring "tag row moved" at every site and FAILED on the sentence "**No tag row
+    # moved.**" — the negation contains the claim, so the blacklist caught the record saying exactly
+    # the right thing. That is the same shape as the carrier defect README rule 9 names: a document
+    # that spells a string in order to deny it becomes a site that spells it. The check that
+    # survives contact is the positive one, and it cannot be satisfied by accident.
+    closure = _flat(json.dumps(closed_8))
+    assert "141" in closure and "not yet" in closure, (
+        "park 8's closure entry does not state that all 141 tag rows still read 'not yet'. A "
+        "framing rule says where an item begins and never what it means, and a closure that does "
+        "not say what it left alone is the overreach this gate exists for"
+    )
+    assert "141" in section and "not yet" in section, (
+        "the framing section no longer states that the 141 tag rows still read 'not yet'"
+    )
 
 
 def test_the_two_residues_park_eight_still_owns_are_named_at_every_ruling_site():
@@ -1204,14 +1299,21 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    "ten that remain open" while `parks.how_many` said "Eleven remain open". Two fields of one
     #    node disagreed by one and this assertion reported agreement. The count is now derived and
     #    the two fields are required to agree with the derivation, so the same drift fails.
+    #    PARK 8 CLOSED 2026-09-03 and moved the terms differently from every closure before it:
+    #    closures 4 -> 5, open 9 -> 8, and the DOWNLOADS TERM STOPPED BEING A SEPARATE QUANTITY.
+    #    Park 8 was the one park this table priced as a purchase, so `n_downloads = n_open - 1` had
+    #    a subtrahend of exactly one row; that row is now closed and every open park is a public
+    #    download. The subtraction is gone rather than re-pointed at zero, because a contrast with
+    #    nothing on one side of it is not a contrast — see `parks.honest_strength`, which is retired
+    #    as a comparison for the same reason and in the same words.
     parks = pin["parks"]
     closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
-    assert closed == ["park_1", "park_13", "park_4", "park_9"], closed
+    assert closed == ["park_1", "park_13", "park_4", "park_8", "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
-    n_downloads = n_open - 1                 # park 8 is the purchase, and the only one
-    assert (n_closed, n_open, n_downloads) == (4, 9, 8)
-    words = {4: "four", 9: "nine", 8: "eight"}
+    n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
+    assert (n_closed, n_open, n_downloads) == (5, 8, 8)
+    words = {5: "five", 8: "eight"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"
@@ -1224,12 +1326,29 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     assert words[n_downloads] in honest, (
         f"parks.honest_strength does not state {words[n_downloads]!r} public downloads"
     )
+    # AND THE RETIRED CONTRAST. Both fields used to end "...and one is not" / "...and one a
+    # purchase", and park 8's closure removed the row on the other side of that comparison.
+    #
+    # CHECKED POSITIVELY, AND THE FIRST DRAFT OF THIS WAS AN ABSENCE THAT FAILED ON THE RECORD
+    # SAYING THE RIGHT THING. Both fields are append-only logs: the superseded clause is still in
+    # there, because it was true on the day it names, and every earlier clause in this record is
+    # kept for that reason. So "the contrast is gone" cannot be tested by not finding it — that is
+    # README rule 9's carrier defect wearing a test's clothes, and it would force a round to delete
+    # history in order to go green. What is testable is that the LATEST clause retires it, by date.
+    for field, text in (("how_many", how_many), ("honest_strength", honest)):
+        assert "2026-09-03" in text, (
+            f"parks.{field} does not carry a clause dated the day park 8 closed. Both fields "
+            "stated the download/purchase contrast, and the row on the purchase side of it is gone"
+        )
+        assert "publisher round" in text, (
+            f"parks.{field} does not name the round that retired its contrast"
+        )
     for text, where in ((_flat(json.dumps(parks)), "the pin's parks node"),
                         (_flat(MIGRATIONS.read_text()), "MIGRATIONS.md"),
                         (_flat(README.read_text()), "the KLV README")):
         assert "park 13" in text.lower(), f"{where} no longer mentions park 13"
     mig = _flat(MIGRATIONS.read_text()).lower()
-    assert f"{words[n_closed]} closed" in mig and f"the {words[n_open]} still open" in mig, (
+    assert f"{words[n_closed]} closed" in mig, (
         "MIGRATIONS.md does not state the park arithmetic after this round's closure"
     )
 

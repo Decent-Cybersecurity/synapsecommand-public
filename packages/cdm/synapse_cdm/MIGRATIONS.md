@@ -212,14 +212,181 @@ measured off the index afterwards, and which step of it did not run.
 
 ### Unreleased
 
-**What moved inside the distribution: six shipped documents.** `MIGRATIONS.md`,
-`FORMAT_COVERAGE.md`, `README.md`, `fft_pin.json`, `klv_pin.json` and `stanag4586_pin.json`. The
-count and the set are `gates/bump_derivation.py`'s, re-derived AFTER this record was written rather
-than before it — the fixed point the 1.4.0 arc's own repair note insists on, and the reason the
-sentence above is not a quotation of a derivation that has since moved. The arc derives **PATCH**,
-so the floor is **1.4.1**. Nothing under `packages/` that
-ships as code moved, no adapter, no codec, no model, no fixture, no schema, and `SCHEMA_VERSION` is
-unmoved at 1.0.0. **Nothing in this section is in any release**, and the version a reader who ran `pip install synapse-cdm` actually has is **1.4.0** — no release is made here and none is owed.
+**What moved inside the distribution: eleven files.** Five shipped documents —
+`MIGRATIONS.md`, `FORMAT_COVERAGE.md`, `README.md`, `fixtures/klv/README.md` and
+`fixtures/klv/spec/build_fixtures.py` — three pin records — `fft_pin.json`, `klv_pin.json` and
+`stanag4586_pin.json` — one fixture payload, `fixtures/klv/framing/`
+`length_indefinite_first_octet.parsed.json`, and **two modules**, `adapters/klv_codec.py` and
+`adapters/stanag4586_codec.py`. The count and the set are `gates/bump_derivation.py`'s, re-derived
+AFTER this record was written rather than before it — the fixed point the 1.4.0 arc's own repair
+note insists on, and the reason the sentence above is not a quotation of a derivation that has since
+moved. **The set grew from six to eleven when the publisher round closed park 8**, and the shape of
+the growth is the interesting part: **code moved for the first time in this arc.** `klv_codec.py`
+changed which exception one first-octet value raises and `stanag4586_codec.py` corrected a docstring
+analogy, and both units the gate could not classify have a **Bump ruling** below.
+
+**The arc still derives PATCH, so the floor is still 1.4.1**, and the two rulings are why: an
+exception class swapped between two refusals the function already raised, and a module-private
+message string. No adapter gained or lost a capability, no model, no schema and no harness flag
+moved, and `SCHEMA_VERSION` is unmoved at 1.0.0. **Nothing in this section is in any release**, and
+the version a reader who ran `pip install synapse-cdm` actually has is **1.4.0** — no release is made
+here and none is owed.
+
+#### The publisher round, 2026-09-03 — park 8 closed on a document that was never for sale, and the register entry it was blocking is resolved
+
+**THE ROUND TOOK THE FORK THE MAINTENANCE ROUND PUT UP AND DID NOT WIDEN IT.** That round asked
+`pub.smpte.org` with `HEAD`, moved zero body bytes, refuted park 8's premise and stopped, because
+acquisition is not a round's own call here. The ruling was **ACQUIRE**. Both editions of SMPTE
+ST 336 were obtained from the publisher's own library, **park 8 CLOSED**, and register entries
+**KLV 11** and **KLV 13** both closed with it — the first round here to close two.
+
+**What was acquired, with the instants (rule 12).** `pub.smpte.org/doc/st336/` listed both
+publications and both artefact routes answered **200**. `st0336-2017.pdf` — **457 808 bytes**,
+**36 pages**, SHA-256 `d6658f63…f37dc294` — was fetched at **2026-09-03T21:14:22Z**;
+`st0336-2007.pdf` — **300 320 bytes**, **41 pages**, SHA-256 `e05e5415…4ea92522` — at
+**21:14:23Z**. Both were fetched a second time in a pass beginning **21:14:33Z** and both came back
+byte-identical, and the received lengths match the `Content-Length` this repository read by `HEAD`
+at three separate hours across two rounds. **The transport was a zip and the pin is the PDF**: each
+zip holds exactly one file, the SHA-256 that identifies *the copy that was read* is the PDF's, and
+each zip's own digest is recorded as transport at `retrieved_inside` rather than as a second
+`local_path`+`sha256` pair — which would have been demanded by `gates/pin_paths.py`, whose
+resolver has no extension filter, and skipped by `tests/test_cdm_pins.py`, which filters to `.pdf`.
+The zips were unpacked in scratch **outside** the repository and never placed under `spec/`.
+
+**THE DOWNLOAD DID NOT CLOSE THE PARK. READING §5.3 DID**, and the two residual absences were ruled
+apart rather than together — which is the round's actual content.
+
+* **`0x80` as a first length octet — STATED**, at ST 336:2017 **§5.3**, in the normative body:
+  the Length field *"shall be set to [0x80] which shall indicate a non-deterministic length of the
+  Value field. Any application document which allows the length of the Value field to be undefined
+  shall define an alternative method of locating the end of the Value field."* **The second sentence
+  decides it**: no held MISB document defines such a method, and `ST 0107.3-05`'s
+  fewest-possible-bytes rule makes every conforming length determinate — so a MISB local set
+  carrying `0x80` has no conforming way to end. `klv_codec.decode_ber_length` now raises
+  `KLVFramingError` where it raised `UnderivableFromPinnedCopy`, with the refusal fixture
+  reclassified from the generator's `ber_length_park` kind, which is **gone rather than left empty**.
+  Note the scope, stated at the codec and the pin: **ST 336 permits `0x80`** — the refusal is the
+  profile's, not the framing standard's.
+* **Any ceiling on the count of length octets — DELEGATED ONWARD**, and ST 336 says so in its own
+  voice. §5.3 NOTE 1: *"While there are no restrictions in this standard on the maximum number of
+  bytes in the Length field…"*, with the body inviting application documents to impose one — an
+  invitation ST 0107.3 declined. **So this was never a silence in two documents**: it is one
+  delegating and the other not exercising the delegation. `BER_LENGTH_OF_LENGTH_MAX` stays **127**
+  and the encoder's refusal stays `UnderivableFromPinnedCopy` **for a new reason** — ISO/IEC 8825-1
+  §8.1.3.5(c) forbids an initial `0xFF` and would cap the count at **126**, that text is reproduced
+  verbatim in ST 336's **Informative** Annex I, and X.690 itself is not held. **Recorded, not
+  enforced**, because a refusal taken from an informative annex quoting an unheld standard is a rule
+  read off a reference rather than off a document.
+
+**KLV 11, resolved as shape (a) and NOT by majority.** The four-against-three divergence is a
+reference-list fact with no octet behind it: `ST 0102.12-65`/`-66`, `ST 1204.1` ref [10] and
+`ST 1301.2` ref [2] are governed by text that reads the same in both editions. The clauses were read
+against each other and then checked mechanically — every `0xNN` literal in each normative body
+counted and the multisets compared, every "byte N" statement extracted and the lists diffed.
+**Exactly two differences reach a key form, a length octet or a UL structure, and neither reaches an
+octet a conforming stream can carry**: 2007 §6.6 forbids byte 6 = `0x06` where 2017's Table 3 marks
+it *Reserved* — and 2017 §2 defines *reserved* as "shall not be used" plus *may be defined in
+future*, so the prohibition on emitting is identical and only the future differs; and 2017 adds a
+`0x06`–`0x7E` **Reserved** row for byte 5 where 2007 said nothing, which names a previously unstated
+range rather than changing a stated one. The BER annexes are **word-for-word identical**. ST 336:2017
+§1 states *"This revision is intended to yield identical encodings to previous revisions of ST 336
+given identical dictionaries"* — quoted as corroboration and **not relied on**, because it is a
+statement of intent and the clause-by-clause read is the evidence.
+
+**An identity finding that explains the register's own derivation note.** The 2007 document does not
+call itself ST 336:2007. Its cover reads **`SMPTE 336M-2007`**, "Revision of SMPTE 336M-2001", its
+running header says the same on all 41 pages, and the string "ST 336" **does not occur in it**. All
+three citing documents are back-forming the newer naming style onto the older document, which is why
+they disagree about the punctuation and why the register's first sweep — keyed on `ST 336:` — missed
+`ST 1301.2`'s hyphen.
+
+**KLV 13, closed, and its reasoning was right at every step.** ST 336:2017's own Normative References
+read *"ISO/IEC 8825-1:2008 |ITU-T X.690:2008 … BER Paragraphs 8.1.3.4 and 8.1.3.5 for Length, 8.19
+for Object Identifier Coding"*, so X.690 is the document and the `ST 0107.3` pointer at X.680 is the
+slip the entry suspected. **What it got wrong is not the citation: it priced the wrong thing.** It
+reasoned about reaching a free ITU document to get around SMPTE's paywall, and the premise in its own
+first clause — that ST 336 costs money — was false when it was written. The cheap route was never a
+substitute document; **the source itself was already free**.
+
+**The parks arithmetic, re-derived rather than incremented.** `gates/parks_table.py` reads **13
+rows — 8 open, five closed** \[1, 4, 8, 9, 13], **6 set-claims, 0 failed**. Park 12's three
+set-claims naming park 8 fired **CLOSED MEMBER** the moment the row's title cell gained its date, and
+were rewritten: the partition's seven named parks are now four open and three closed, and "reading a
+stream wants parks 5 and 8" becomes **park 5 alone**. **This is the second time that partition has
+decayed by exactly this mechanism**, and the difference is that nothing had to notice — the gate
+failed the build.
+
+**A contrast was retired rather than re-pointed, and that is the honest form of this count moving.**
+`parks.how_many`, `parks.honest_strength` and the table's own preamble all ended on the same clause:
+eight of the nine open parks are public downloads *and one is not*. **The one was park 8.** All eight
+still open are downloads, so the sentence has no second side and is retired as a comparison instead
+of restated with a different pair of numbers. What survives is weaker and truer, and is what the four
+earlier closures were already evidence for: every open row is obtainable by one person with a browser.
+
+**THE FINDING THIS ROUND WOULD CARRY OUT OF ITSELF, and it is about the guard rather than the row.**
+`tests/test_cdm_format_coverage.py` **required** park 8's row to keep saying *a purchase decision,
+not a download*, and was green for eleven days over a claim that was false the whole time — green
+**because** it was doing its job. Its subject, whether a publisher sells a document, lives at
+`pub.smpte.org`, and no test here can reach it: a **protocol-gated** fact wearing a **suite-gated**
+label cannot fail, because the only thing that could falsify it is a request nobody makes. The guard
+now asserts the closure, whose evidence is two PDFs on disk with digests, page counts and title-page
+identities. **That is an improvement in tier and not in kind** — it is still the tree agreeing with
+itself, and the difference is that the tree now contains the bytes the claim is about. The general
+form, recorded at `publisher_round_2026_09_03.the_finding_worth_carrying_out`: **before writing a
+guard, ask where its subject lives.** If the answer is a host, a registry or a price, the guard can
+pin the record's *wording* and cannot pin the *fact*, and saying so at the guard is the only honest
+arrangement.
+
+**The sweep was classified, not scrubbed.** `git grep -Il -e paywall -e 'purchase decision' -e 'not
+a download'` returned **27 lines across 9 files** before the round. Each was classified as a **live
+claim** or a **dated record**; the dated ones stand, and the four that would redirect a reader —
+this file's acquisition-round analogy, `FORMAT_COVERAGE.md`'s STANAG 4586 section, `fft_pin.json`'s
+`honest_strength` and `stanag4586_pin.json`'s park-8 class note — got an **adjacent dated
+correction** rather than an edit, on rule 9's placement discipline. **The count does not go to zero
+and must not be made to**: the refutation and this closure both spell the word in order to retire it,
+and are thereafter sites of it. `parks.the_one_that_is_not_a_download` **keeps its now-false key**
+and carries the correction beside it, on the precedent
+`these_two_counts_were_STALE_and_the_closure_makes_them_RIGHT_AGAIN` set.
+
+**Nothing about meaning moved.** All **141** rows of the ST 0601 row set still read `not yet` and
+none was eligible — the third round running to predict that and record it, for the same reason: a
+framing rule says where an item begins and never what it means. No other park closed, no park opened,
+no park renumbered, and `SCHEMA_VERSION` is unmoved at **1.0.0**.
+
+**Free access is not redistribution and nothing here redistributes.** `.gitignore` carries `*.pdf`
+and `*.zip`; both new files report `.gitignore:42:*.pdf` under `git check-ignore -v`;
+`tests/test_cdm_pins.py` asserts `git ls-files` matches no PDF anywhere; and the commit names its
+paths rather than using `git add -A`. The policy behind the 200 is recorded with the instant it was
+read: `www.smpte.org/setting-the-standards-free` answered **200** at **2026-09-03T21:25:43Z**,
+headlined *"SMPTE Makes Its Standards Freely Accessible, Opening Standards Library to the Global
+Media Technology Community"*. **It was re-read rather than carried from the brief**, which is what
+rule 12 was installed for.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_codec.py:decode_ber_length` — PATCH: the refusal for a
+single first-octet value changes EXCEPTION CLASS, from `UnderivableFromPinnedCopy` to
+`KLVFramingError`. Both are raised, both are documented, and both were already reachable from this
+function on other inputs — so the set of inputs it accepts is unchanged, every length it decodes
+decodes to the same value, and no caller that handled the function's refusals handles fewer of them
+now. What moved is which of two refusals one octet gets and the sentence it carries, which is the
+PATCH row's "a translation fix, a message". **It is not MINOR**: the MINOR row is about a surface
+gaining or losing something a caller can reach, and a caller catching `UnderivableFromPinnedCopy`
+alone for `0x80` was catching a park that no longer exists — the park's disappearance is the
+shipped-evidence change the PATCH row governs, not a new capability.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_codec.py:_CEILING_RESIDUE` — PATCH: a module-private
+message string. It is not exported, not reachable by name from outside the module, and its only use
+is the text of an exception whose class and trigger condition are both unchanged. The sentence now
+cites SMPTE ST 336:2017 §5.3 NOTE 1 and ISO/IEC 8825-1 §8.1.3.5(c) where it used to cite park 8;
+`BER_LENGTH_OF_LENGTH_MAX` is unmoved at 127 and the encoder refuses exactly the same values.
+
+**THE ROUND'S OWN HISTORY, WHICH IS NOT A WAIVER.** The brief's first issue **stopped at Act 0 on
+two of its own bookkeeping figures** — an untracked input directory in the working root, and a sweep
+count carried over from a single-pattern grep — and was corrected and re-issued with the tree
+untouched between the runs. The second issue's Act 0 was re-taken from scratch rather than carried,
+and **one of the two corrections had not actually landed**: the input directory was still in the
+working root, so `git status --porcelain | wc -l` read **1** and not the **0** the brief asserted.
+It was moved out before Act 1 and the reading was re-taken at **0**. Recorded because a round that
+stops on a premise and then proceeds on that premise's second statement should say which.
 
 #### The maintenance round, 2026-09-03 — two standing rules installed, and the sweep that installed the first one refuted a park
 
@@ -513,6 +680,17 @@ with and without a browser User-Agent; the Internet Archive holds **no capture o
 PDF at any URL**, checked by four CDX queries; the one mirror carrying this family lists exactly
 two editions, 2 and 3; and the commercial distributors that hold Edition 4 serve it paywalled and
 **DRM-wrapped**. That is park 8's class — procurement, not procedure.
+
+**† SUPERSEDED 2026-09-03 BY THE PUBLISHER ROUND, AND THE SENTENCE ABOVE STANDS.** Park 8 was not
+park 8's class. SMPTE ST 336 is served free from `pub.smpte.org/doc/st336/`, both editions were
+obtained at no cost on 2026-09-03, and the park **closed**. The correction is placed here rather
+than in the sentence because this is a round record and the sentence is a true statement about what
+the acquisition round believed — **and because this is the site the classification sweep lands on**,
+which is the whole of README rule 9's placement discipline. **Nothing about the Edition 4 ruling
+moves**: `nso.nato.int` still answers 403, the Archive still holds no capture, and the commercial
+distributors really do serve Edition 4 paywalled and DRM-wrapped. What is gone is the *comparison* —
+there is no longer another park in this repository whose reason is procurement, so Edition 4 is the
+only instance of the class rather than the second one.
 
 **The round stopped there rather than choosing.** Two branches were live and materially different:
 park on Edition 4 and ship nothing (Acts 2 and 3 skipped, adapter count staying 13 everywhere), or

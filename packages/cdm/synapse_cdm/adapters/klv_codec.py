@@ -54,14 +54,26 @@ the SMPTE standards." So ST 0107.3 **restricts** ST 336 rather than deferring to
 restriction is `ST 0107.3-05`'s minimality — which is why the length codec is complete and total
 even with park 8 open.
 
-Two things ST 336 still owns, both refused as `UnderivableFromPinnedCopy` and neither reachable from
-a conforming stream:
+Two things ST 336 owned, both unreachable from a conforming stream, and **PARK 8 CLOSED 2026-09-03
+when SMPTE ST 336:2017 was obtained and both were read against §5.3.** They are no longer the same
+kind of thing as each other and the module no longer treats them as one:
 
-* `0x80` as a first length octet — zero following octets, which is BER's indefinite-length form. **ST
-  0107.3 never mentions it.**
-* any ceiling on the count of length octets. **ST 0107.3 states none**; every maximum it states
-  (§6.3.3, `ST 0107.3-07`) governs a Value's length, not a length field's width. The structural bound
-  of 127 is the first octet's seven bits and is marked as structural where it is used.
+* `0x80` as a first length octet — zero following octets. **ST 0107.3 never mentions it and ST 336
+  §5.3 states it outright**: the Length field "shall be set to [0x80] which shall indicate a
+  non-deterministic length of the Value field", and any application document allowing an undefined
+  Value length "shall define an alternative method of locating the end of the Value field". **No held
+  MISB document defines such a method**, so a MISB local set carrying `0x80` cannot be terminated
+  conformantly and `decode_ber_length` now refuses it as a `KLVFramingError` — *these bytes are
+  wrong* — rather than parking the question. Note the scope: ST 336 **permits** `0x80`, and the
+  refusal rests on a missing end-finding method in the profile rather than on a prohibition in the
+  framing standard.
+* any ceiling on the count of length octets. **ST 0107.3 states none and ST 336 states that it
+  states none** — §5.3 NOTE 1, "there are no restrictions in this standard on the maximum number of
+  bytes in the Length field" — and delegates the length rules onward to ISO/IEC 8825-1 §8.1.3.3
+  through 8.1.3.5. So this was never a silence in two documents: it is one document delegating and
+  the other declining to exercise the delegation. The structural bound of 127 is the first octet's
+  seven bits and is still marked as structural where it is used; see that constant for the tighter
+  bound X.690 would impose and why it is recorded rather than applied.
 
 WHAT THE TWO DOCUMENTS ESTABLISH ABOUT TAGS, AND THE BOUND THAT LIFTED
 -----------------------------------------------------------------------
@@ -176,6 +188,13 @@ class UnderivableFromPinnedCopy(NotImplementedError):
 
     Every instance names the park that owns the rule and the exact sentence in ST 0601.14a that
     delegates it, so the message is a reopen condition rather than a complaint.
+
+    **AFTER 2026-09-03 THIS CLASS NO LONGER NAMES A PARK, AND THAT IS THE INTERESTING STATE.** Park 8
+    closed, and the one length-side use that remains is the long-form octet ceiling: what is
+    underivable there is not a parked document but ISO/IEC 8825-1's own §8.1.3.5(c), which ST 336
+    reproduces in an **informative** annex and which this repository does not hold. The class means
+    what it always meant — *nobody here knows* — and the reason has moved from a document nobody
+    bought to a document nobody needs.
     """
 
 
@@ -424,34 +443,60 @@ BER_LENGTH_SHORT_FORM_MAX = 127
 #: octet carries the long-form flag in bit 7 and the count in the remaining seven bits — `0x81` is
 #: one, `0x83` is three — so 127 is the largest count that octet can express. **ST 0107.3 states no
 #: ceiling of its own**: §6.3.2 gives no maximum, and every "maximum" in the document (§6.3.3,
-#: `ST 0107.3-07`) governs a Value's length and not the count of length octets. Whether ST 336
-#: imposes a lower one is park 8's, and is why exceeding this raises `UnderivableFromPinnedCopy`
-#: rather than `KLVFramingError`.
+#: `ST 0107.3-07`) governs a Value's length and not the count of length octets.
+#:
+#: **ST 336 IMPOSES NONE EITHER, AND SAYS SO — read 2026-09-03, park 8 closed.** §5.3 NOTE 1: "While
+#: there are no restrictions in this standard on the maximum number of bytes in the Length field…",
+#: with the body inviting "individual application ST / RPs" to define one. ST 0107.3 is such a
+#: document and declined.
+#:
+#: **THE TIGHTER BOUND IS 126 AND IT IS RECORDED RATHER THAN APPLIED.** ST 336 §5.3 delegates the
+#: length rules to ISO/IEC 8825-1 §8.1.3.3–8.1.3.5, and §8.1.3.5(c) — reproduced verbatim in
+#: ST 336's Annex I — reads "the value 111111112 shall not be used", forbidding an initial octet of
+#: `0xFF` and therefore a count of 127. **Not enforced**, because Annex I is marked *Informative* and
+#: X.690 itself is not held: a refusal taken from an informative annex's quotation of an unheld
+#: standard is a rule read off a reference rather than off a document, which is the move this
+#: repository refused when `ST 0107.3` §6.3.3.1 pointed at ASN.1. The gap is one count wide and
+#: unreachable — a length needing 127 octets is a Value of roughly 10³⁰⁵ bytes.
 BER_LENGTH_OF_LENGTH_MAX = 127
 
-#: `0x80` as a first length octet declares zero following octets. **ST 0107.3 never mentions it.**
-#: In BER it is the indefinite-length form, which is a rule from a document this repository does not
-#: hold — so it is named here, refused in `decode_ber_length`, and left to park 8.
+#: `0x80` as a first length octet declares zero following octets. **ST 0107.3 never mentions it and
+#: SMPTE ST 336:2017 §5.3 does** — it is not BER's indefinite-length form under that name, it is what
+#: ST 336 calls a **non-deterministic length**, and the standard gives it a meaning and a condition.
+#: Held since 2026-09-03; refused in `decode_ber_length` as a framing error rather than parked.
 BER_LENGTH_INDEFINITE_OCTET = 0x80
 
-_INDEFINITE_RESIDUE = (
-    "0x80 as a first length octet declares zero following octets, and MISB ST 0107.3 never "
-    "mentions that form. §6.3.2 defines the short form (one octet, the octet is the length) and "
-    "the long form (0x80 | n, then n octets big-endian) and says nothing about n = 0; every "
-    "'maximum' in the document governs a Value's length, not a count of length octets. In BER this "
-    "is the indefinite-length form, and BER is SMPTE ST 336 — PARK 8, a purchase, still OPEN. The "
-    "delegating sentence is ST 0107.3-03: 'All Local Set KLV metadata shall be formatted in "
-    "compliance with SMPTE ST 336 [1].' Whether ST 336 permits, forbids or reserves n = 0 is "
-    "underivable from the bytes in hand, so this is not reported as a malformed stream."
+#: The 0x80 refusal, DERIVED FROM A HELD DOCUMENT since 2026-09-03. It reads as a framing error
+#: rather than a park because ST 336 answered the question: the octet has a meaning, and the
+#: condition the standard attaches to using it is not met anywhere in this profile.
+_INDEFINITE_REFUSAL = (
+    "0x80 as a first length octet declares zero following octets. MISB ST 0107.3 never mentions "
+    "that form — §6.3.2 defines the short form and the long form and says nothing about n = 0 — so "
+    "the rule comes from the document ST 0107.3-03 delegates to: 'All Local Set KLV metadata shall "
+    "be formatted in compliance with SMPTE ST 336 [1].' SMPTE ST 336:2017 §5.3 states it: 'In such "
+    "cases, the Length field shall be set to [0x80] which shall indicate a non-deterministic length "
+    "of the Value field. Any application document which allows the length of the Value field to be "
+    "undefined shall define an alternative method of locating the end of the Value field.' THE "
+    "SECOND SENTENCE IS THE ONE THAT DECIDES IT: no held MISB document defines such an alternative "
+    "method, and ST 0107.3-05 requires every item Length to be encoded 'using the fewest possible "
+    "bytes', which makes every conforming length determinate. So this local set has no conforming "
+    "way to end and the bytes are wrong. ST 336 PERMITS 0x80 — the refusal is the profile's, not "
+    "the framing standard's."
 )
 
 _CEILING_RESIDUE = (
     "the long form's first octet carries the count of following octets in seven bits, so it can "
     f"declare at most {BER_LENGTH_OF_LENGTH_MAX}. That bound is STRUCTURAL and not cited: MISB ST "
     "0107.3 §6.3.2 states no ceiling on the number of length octets at all, and its only stated "
-    "maxima (§6.3.3, ST 0107.3-07) govern a Value's length. Any ceiling ST 336 imposes is PARK 8's "
-    "— 'All Local Set KLV metadata shall be formatted in compliance with SMPTE ST 336 [1]' "
-    "(ST 0107.3-03) — and park 8 is a purchase and still OPEN."
+    "maxima (§6.3.3, ST 0107.3-07) govern a Value's length. NEITHER DOES ST 336, AND IT SAYS SO: "
+    "§5.3 NOTE 1 reads 'While there are no restrictions in this standard on the maximum number of "
+    "bytes in the Length field', with the body inviting individual application ST / RPs to define "
+    "one — which ST 0107.3 declined to do. So no held document bounds this count. The one document "
+    "that would is ISO/IEC 8825-1, whose §8.1.3.5(c) forbids an initial octet of 0xFF and would cap "
+    "the count at 126; ST 336 reproduces that text in Annex I, which is marked Informative, and "
+    "X.690 itself is not held. That bound is therefore RECORDED AND NOT ENFORCED, and asking for "
+    "more octets than the first one can express is still a question this repository declines to "
+    "answer rather than a stream it calls malformed."
 )
 
 
@@ -462,9 +507,12 @@ def decode_ber_length(buf: bytes, offset: int = 0) -> tuple[int, int]:
 
     * an empty slice — there is no length at `offset` at all;
     * `0x00`–`0x7F` — short form, and the length is the octet;
-    * `0x80` — refused as `UnderivableFromPinnedCopy`. Zero following octets is BER's
-      indefinite-length form and §6.3.2 does not mention it. **This is the one place the 0x7F/0x80
-      transition is not symmetric**: 0x7F is a length and 0x80 is a park;
+    * `0x80` — refused as `KLVFramingError` since 2026-09-03. §6.3.2 does not mention zero
+      following octets, but SMPTE ST 336:2017 §5.3 does: it is a *non-deterministic length*, usable
+      only where an application document defines another way to find the end of the Value, and no
+      held MISB document defines one. **The 0x7F/0x80 transition is still not symmetric** — 0x7F is
+      a length and 0x80 is a refusal — but it is now a refusal with a document behind it rather
+      than a park;
     * `0x81`–`0xFF` — long form. The low seven bits are the count of following octets, which are the
       length big-endian. Refused as `KLVFramingError` if they run off the end of the buffer, or if
       the encoding is not the fewest possible bytes;
@@ -498,7 +546,7 @@ def decode_ber_length(buf: bytes, offset: int = 0) -> tuple[int, int]:
         # length" — the octet IS the length, with no flag to strip.
         return first, offset + 1
     if first == BER_LENGTH_INDEFINITE_OCTET:
-        raise UnderivableFromPinnedCopy(f"offset {offset}: " + _INDEFINITE_RESIDUE)
+        raise KLVFramingError(f"offset {offset}: " + _INDEFINITE_REFUSAL)
     count = first & 0x7F
     payload = buf[offset + 1:offset + 1 + count]
     if len(payload) < count:

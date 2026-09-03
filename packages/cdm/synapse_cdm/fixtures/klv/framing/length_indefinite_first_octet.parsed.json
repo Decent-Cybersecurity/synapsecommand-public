@@ -1,12 +1,12 @@
 {
   "fixture_id": "f1c70601-14a0-8000-8000-000000000021",
   "name": "length_indefinite_first_octet",
-  "kind": "ber_length_park",
+  "kind": "ber_length_refusal",
   "octets_hex": "80",
   "octet_count": 1,
   "decodes_to": null,
-  "refused": false,
+  "refused": true,
   "source": "MISB ST 0601.14a, SHA-256 3d5f1ca105befe6f48023a3cdd29262883d6b77c73c06ba915c4da91ab212ce4, fixtures/klv/spec/ST0601.14a.pdf; and MISB ST 0107.3, SHA-256 500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794, fixtures/klv/spec/ST0107.3.pdf",
-  "citation": "MISB ST 0107.3 \u00a76.3.2, by SILENCE; delegated by ST 0107.3-03",
-  "note": "0x80 declares ZERO following octets, and ST 0107.3 never mentions that form. In BER it is the indefinite-length form, and BER is SMPTE ST 336 \u2014 PARK 8, a purchase, still OPEN. THE ONE FIXTURE IN THIS SET THAT IS STILL A PARK, and it raises UnderivableFromPinnedCopy rather than KLVFramingError because nobody here knows whether these bytes are wrong. The 0x7F/0x80 transition is asymmetric for exactly this reason: 0x7F is a length and 0x80 is a blocker."
+  "citation": "SMPTE ST 336:2017 \u00a75.3; delegated by ST 0107.3-03",
+  "note": "0x80 declares ZERO following octets, and ST 0107.3 never mentions that form. SMPTE ST 336:2017 \u00a75.3 does: the Length field 'shall be set to [0x80] which shall indicate a non-deterministic length of the Value field', usable only where an application document 'shall define an alternative method of locating the end of the Value field'. NO HELD MISB DOCUMENT DEFINES ONE, and ST 0107.3-05's fewest-possible-bytes rule makes every conforming length determinate \u2014 so a MISB local set carrying this octet cannot be terminated conformantly and the bytes are wrong. THIS FIXTURE WAS THE SET'S LAST PARK UNTIL 2026-09-03 and it raises KLVFramingError rather than UnderivableFromPinnedCopy since park 8 closed. The 0x7F/0x80 transition is still asymmetric: 0x7F is a length and 0x80 is a refusal."
 }

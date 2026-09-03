@@ -38,11 +38,19 @@ residue rather than invented. **All three are now here, and MISB ST 0107.3 is wh
   said "two-bytes (or more)" and never defined the "or more"; ST 0107.3 §6.3.1 states the chain rule
   for any width, so `tag_three_octet_lowest` replaces the refusal `tag_third_continuation_octet`.
 
-**One fixture is still a park, and it is the only one.** `length_indefinite_first_octet` — the octet
-`0x80`, declaring zero following octets — raises `UnderivableFromPinnedCopy`, because ST 0107.3 never
-mentions that form and BER's indefinite length is **SMPTE ST 336:2017**, park 8, a purchase. The
-generator asserts the exception TYPE for it, so a later round that decides what `0x80` means without
-buying the document fails here.
+**NO FIXTURE IN THIS SET IS A PARK ANY MORE, AND ONE STOPPED BEING ONE ON 2026-09-03.**
+`length_indefinite_first_octet` — the octet `0x80`, declaring zero following octets — used to raise
+`UnderivableFromPinnedCopy` because ST 0107.3 never mentions that form and the rule belonged to
+SMPTE ST 336, park 8, which this record had priced as a purchase. **ST 336:2017 was obtained free
+from the publisher and §5.3 states the form outright**, so the fixture is now an ordinary refusal:
+the standard permits `0x80` only where an application document defines another way to find the end
+of the Value, no held MISB document defines one, and the bytes are therefore wrong.
+
+**The generator still asserts the exception TYPE, and now asserts it in both directions.** It was
+guarding against a round that decided what `0x80` means without buying the document; it now also
+guards the reverse — a round that quietly parks the question again after it has been answered. The
+`ber_length_park` branch is gone rather than left empty, because a kind with no members is a
+classification this fixture set no longer makes.
 
 EVERYTHING IS SYNTHETIC, AND THERE IS NOTHING IN IT TO BE OTHERWISE
 --------------------------------------------------------------------
@@ -271,14 +279,18 @@ FIXTURES_SPEC = [
              "two following octets and one remains. A malformed stream and not a park: the rule "
              "is held, and these bytes break it."),
 
-    _refusal("length_indefinite_first_octet", "ber_length_park", "80",
-             "MISB ST 0107.3 §6.3.2, by SILENCE; delegated by ST 0107.3-03",
-             "0x80 declares ZERO following octets, and ST 0107.3 never mentions that form. In BER "
-             "it is the indefinite-length form, and BER is SMPTE ST 336 — PARK 8, a purchase, "
-             "still OPEN. THE ONE FIXTURE IN THIS SET THAT IS STILL A PARK, and it raises "
-             "UnderivableFromPinnedCopy rather than KLVFramingError because nobody here knows "
-             "whether these bytes are wrong. The 0x7F/0x80 transition is asymmetric for exactly "
-             "this reason: 0x7F is a length and 0x80 is a blocker."),
+    _refusal("length_indefinite_first_octet", "ber_length_refusal", "80",
+             "SMPTE ST 336:2017 §5.3; delegated by ST 0107.3-03",
+             "0x80 declares ZERO following octets, and ST 0107.3 never mentions that form. SMPTE "
+             "ST 336:2017 §5.3 does: the Length field 'shall be set to [0x80] which shall indicate "
+             "a non-deterministic length of the Value field', usable only where an application "
+             "document 'shall define an alternative method of locating the end of the Value "
+             "field'. NO HELD MISB DOCUMENT DEFINES ONE, and ST 0107.3-05's fewest-possible-bytes "
+             "rule makes every conforming length determinate — so a MISB local set carrying this "
+             "octet cannot be terminated conformantly and the bytes are wrong. THIS FIXTURE WAS "
+             "THE SET'S LAST PARK UNTIL 2026-09-03 and it raises KLVFramingError rather than "
+             "UnderivableFromPinnedCopy since park 8 closed. The 0x7F/0x80 transition is still "
+             "asymmetric: 0x7F is a length and 0x80 is a refusal."),
 
     # --------------------------------------------- triplets and packets, ST 0107.3 §6.3
     #
@@ -375,32 +387,25 @@ def check_established_rules() -> None:
                 f"{name}: {spec['octets']} does not decode to ({value}, {len(octets)})"
             )
         elif spec["kind"] == "ber_length_refusal":
+            # THE TYPE IS ASSERTED IN BOTH DIRECTIONS. Accepting these octets is the obvious
+            # regression; parking them is the other one, and it became possible on 2026-09-03 when
+            # `length_indefinite_first_octet` moved into this kind. A refusal that degrades back
+            # into `UnderivableFromPinnedCopy` would be a round quietly un-reading ST 336:2017,
+            # which reads as caution and is a retreat from a document on disk.
             try:
                 codec.decode_ber_length(octets)
+            except codec.UnderivableFromPinnedCopy as exc:        # pragma: no cover - regression
+                raise AssertionError(
+                    f"{name}: {spec['octets']} was parked rather than refused ({exc}). Every "
+                    f"length refusal in this set has a held document behind it — ST 0107.3-05 for "
+                    f"the non-minimal forms and §6.3.2 for the overrun, SMPTE ST 336:2017 §5.3 for "
+                    f"0x80 — so none of them is a park"
+                ) from exc
             except codec.KLVFramingError:
                 pass
             else:
                 raise AssertionError(
-                    f"{name}: {spec['octets']} was accepted and ST 0107.3-05 refuses it"
-                )
-        elif spec["kind"] == "ber_length_park":
-            # A PARK AND NOT A MALFORMATION, and the assertion is on which exception fires. If this
-            # ever raises KLVFramingError instead, somebody has decided what 0x80 means without
-            # buying ST 336, and the fixture is the thing that says so.
-            try:
-                codec.decode_ber_length(octets)
-            except codec.UnderivableFromPinnedCopy:
-                pass
-            except codec.KLVFramingError as exc:                  # pragma: no cover - regression
-                raise AssertionError(
-                    f"{name}: {spec['octets']} was refused as a malformed stream "
-                    f"({exc}). MISB ST 0107.3 is silent on this form, so it is park 8's and must "
-                    f"raise UnderivableFromPinnedCopy"
-                ) from exc
-            else:
-                raise AssertionError(
-                    f"{name}: {spec['octets']} was DECODED. ST 0107.3 never mentions a zero "
-                    f"length-of-length, so a value here is a reconstruction"
+                    f"{name}: {spec['octets']} was accepted and a held document refuses it"
                 )
         elif spec["kind"] == "local_set_item":
             expected = spec["decodes_to"]

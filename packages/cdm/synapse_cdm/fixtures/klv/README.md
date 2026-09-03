@@ -33,10 +33,19 @@ KLV Metadata in Motion Imagery** was obtained from NSG Registry document 4738 an
 account, and park 4 is CLOSED** — the second park to close, and the cheapest in the table. §6.3.2
 prints four encodings of two lengths while explaining which two are wasteful, `ST 0107.3-05` requires
 "the fewest possible bytes" as **live** text where ST 0601.14a had only a deprecated requirement, and
-§6.3.1 states the BER-OID chain rule for any width. **Park 8 stays OPEN** and now owns two absences:
+§6.3.1 states the BER-OID chain rule for any width. **Park 8 stayed OPEN** after that round and owned two absences:
 `0x80` as a first length octet, which ST 0107.3 never mentions, and any ceiling on the count of
 length octets, which it does not state. Neither is reachable from a conforming stream, which is why
-`klv_codec` walks a local set end to end with park 8 open.
+`klv_codec` walked a local set end to end with park 8 open.
+
+**PARK 8 CLOSED 2026-09-03**, on SMPTE ST 336:2017 and SMPTE 336M-2007 obtained free from the
+publisher's own library, and the two absences were ruled apart rather than together. `0x80` is
+**STATED** at ST 336:2017 §5.3 — a *non-deterministic length*, usable only where an application
+document defines another way to find the end of the Value, which no held MISB document does — so the
+codec now refuses it as a `KLVFramingError` instead of parking it. Any ceiling on the count of length
+octets is **DELEGATED ONWARD**: §5.3 NOTE 1 says ST 336 imposes none, and sends the rules to
+ISO/IEC 8825-1 §8.1.3.3–8.1.3.5. So the absence was never a silence in two documents — it was one
+document delegating and the other declining to exercise the delegation.
 
 **A fourth round the same day pointed the codec at a REAL STREAM, and it ended in a park.** The
 first three rounds read documents; this one read octets nobody here wrote. `streams/` now holds an
@@ -259,11 +268,16 @@ any width, so `tag_three_octet_lowest` replaces the refusal `tag_third_continuat
 the nine length fixtures are the document's **own octets**: `0x02`, `0x8180`, `0x8102` and
 `0x8300 0080`, the four encodings §6.3.2 prints while explaining which two are wasteful.
 
-**One fixture is still a park, and it is the only one.** `length_indefinite_first_octet` — the single
-octet `0x80`, a long form declaring zero following octets — raises `UnderivableFromPinnedCopy`, because
-ST 0107.3 never mentions that form and BER's indefinite length is **SMPTE ST 336:2017**, park 8, a
-purchase. `spec/build_fixtures.py` asserts the exception **type** for it, so a later round that decides
-what `0x80` means without buying the document fails in the generator.
+**No fixture is a park any more, and one stopped being one on 2026-09-03.**
+`length_indefinite_first_octet` — the single octet `0x80`, a long form declaring zero following
+octets — used to raise `UnderivableFromPinnedCopy`, because ST 0107.3 never mentions that form and
+the rule belonged to **SMPTE ST 336:2017**, park 8, which this record had priced as a purchase.
+**ST 336:2017 was obtained free from SMPTE's own library and §5.3 states the form**, so the fixture
+is an ordinary refusal: the standard permits `0x80` only where an application document defines
+another way to find the end of the Value, none does here, and the bytes are wrong.
+`spec/build_fixtures.py` still asserts the exception **type**, and now asserts it in both directions
+— it guarded against a round deciding what `0x80` means without buying the document, and it also
+guards a round quietly parking the question again after it has been answered.
 
 ## The ten payload fixtures, and the plan they replaced
 

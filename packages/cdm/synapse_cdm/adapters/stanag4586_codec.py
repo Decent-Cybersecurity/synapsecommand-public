@@ -11,9 +11,11 @@ THE EDITION IS NOT THE CURRENT ONE AND THAT IS A RULING, NOT AN OVERSIGHT
 Edition 4 (2017-04-05, promulgated as AEP-84 Edition A) is current. It could not be acquired:
 `nso.nato.int` answers HTTP 403 on every route, the Internet Archive holds no capture of any
 STANAG 4586 PDF at any URL, and the commercial distributors that carry Edition 4 serve it behind a
-paywall and a DRM wrapper — which is SMPTE ST 336's situation, the one park in this repository
-whose reason is procurement rather than procedure. Edition 3 is what is obtainable and it is what
-is pinned. **No sentence in this repository claims an Edition 3 decoder reads an Edition 4 feed**,
+paywall and a DRM wrapper — which was said here to be SMPTE ST 336's situation too. **It was not,
+and that clause is superseded as of 2026-09-03**: ST 336 is served free from SMPTE's own library,
+park 8 closed, and this repository holds both of its editions. Edition 4 of STANAG 4586 is now the
+only document here whose reason is procurement rather than procedure. Edition 3 is what is
+obtainable and it is what is pinned. **No sentence in this repository claims an Edition 3 decoder reads an Edition 4 feed**,
 and Edition 4 is documented to have changed the vehicle identifier list and added mission-phase and
 autonomy messages — changes that land on exactly the tables a telemetry row set tabulates. See
 `edition_ruling` in the pin.

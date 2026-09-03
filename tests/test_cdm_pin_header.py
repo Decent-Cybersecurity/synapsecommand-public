@@ -330,4 +330,4 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     everything.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (15, 12)
+    assert stated_counts(record) == derived_counts(record) == (17, 14)

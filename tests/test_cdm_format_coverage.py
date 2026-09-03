@@ -3868,13 +3868,32 @@ def test_the_scope_split_declines_the_essence_and_the_container_together():
         )
 
 
-def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
-    """Thirteen numbered parks, TWO of them CLOSED, and the honest difference between the rest.
+def test_the_parks_are_numbered_and_the_smpte_one_is_named_as_CLOSED():
+    """Thirteen numbered parks, FIVE of them CLOSED, and the SMPTE row's closure held to its date.
 
-    The reason this is a test and not a convention: the MISB parks and the one SMPTE park have the
-    same SHAPE — "obtain the document and pin it" — and collapsing the paywalled one into that
-    phrasing would hide the only entry in the table that cannot be closed by someone with a
-    browser. A park table that reads uniformly is a park table that has lost information.
+    **THIS GUARD USED TO ASSERT THE OPPOSITE AND THAT IS THE MOST USEFUL THING ABOUT IT.** It
+    required park 8's row to keep saying *a purchase decision, not a download*, required it not to
+    say *public download*, and pinned how many rows did — on the reasoning that the MISB parks and
+    the one SMPTE park have the same SHAPE, "obtain the document and pin it", and that collapsing
+    them would hide the only entry no browser could close.
+
+    **The reasoning was sound and the premise was false.** SMPTE opened its library in June 2026;
+    the maintenance round asked `pub.smpte.org` on 2026-09-03 and got a 200; the publisher round
+    fetched both editions the same day for nothing and park 8 closed. So for eleven days this test
+    **required the record to state a refuted claim**, and went green the whole time.
+
+    **What that cost, named precisely, because it is the reason this docstring is long.** The
+    assertion was labelled a suite check, and what it actually checked was that the record agreed
+    with itself: its subject — whether a publisher sells a document — lives at `pub.smpte.org`, and
+    no test in this repository can reach it. A **protocol-gated** fact wearing a **suite-gated**
+    label cannot fail, because the only thing that could falsify it is a request nobody makes.
+
+    **It is document-gated now and that is a real improvement and a small one.** The row states a
+    closure, and the closure's evidence is two PDFs on disk with recorded digests, page counts and
+    title-page identities — things the suite CAN reach, and `tests/test_cdm_pins.py` does. It is
+    still a tree-agrees-with-itself check; the difference is that the tree now contains the bytes
+    the claim is about. **No test here re-asks the publisher, and none should**: rule 12's point is
+    that an external reading carries the instant it was taken, not that a suite should take one.
 
     PARK 1 CLOSED ON 2026-08-26 AND THE NUMBERING DID NOT MOVE, which this test now pins in both
     directions. Parks are cited by number from the row sets, from the fixture plan and from the
@@ -3960,12 +3979,10 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
         "the date park 1 closed is gone. A park that closes without a date cannot be checked "
         "against the commit that closed it"
     )
-    assert "A purchase decision, not a download" in flat, (
-        "park 8 (SMPTE ST 336) is the one park that is not a download, and saying so is the point "
-        "of the table's honest-strength paragraph"
-    )
-    assert "public downloads and one is not" in flat, (
-        "the count of downloads against purchases is the table's summary claim"
+    assert "all eight still open are public downloads" in flat, (
+        "the table's summary claim about its open rows is gone. It used to read 'eight are public "
+        "downloads and one is not', and the ONE was park 8 — which closed on 2026-09-03, leaving "
+        "no row on the other side of the contrast"
     )
     assert "http://www.gwg.nga.mil/misb" in section and "https://nsgreg.nga.mil/misb.jsp" in section, (
         "the reopen route for the eleven public parks is quoted from the profile's own FORWARD. "
@@ -3982,28 +3999,49 @@ def test_the_parks_are_numbered_and_the_paywalled_one_is_named_as_a_purchase():
     park_rows = [ln for ln in section.splitlines() if re.match(r"\| \*\*\d+\*\* \|", ln)]
     smpte = [ln for ln in park_rows if "SMPTE ST 336" in ln]
     assert len(smpte) == 1, (
-        f"expected exactly one park row for SMPTE ST 336, found {len(smpte)} — the paywalled park "
-        "is the one row in this table whose reopen condition is different in kind"
+        f"expected exactly one park row for SMPTE ST 336, found {len(smpte)} — this is the row "
+        "the table priced as a purchase for eleven days and closed on 2026-09-03"
+    )
+    # THE THREE THINGS A CLOSURE HAS TO SAY, mirroring the park 1 and park 13 guards above: that it
+    # is closed, WHEN, and on WHICH document. A closure without a date cannot be checked against
+    # the commit that made it, and one without a document cannot be checked against anything.
+    assert "CLOSED" in smpte[0], (
+        "park 8's row no longer says it is closed. It was closed on 2026-09-03 by obtaining SMPTE "
+        "ST 336:2017 from the publisher's own library and ruling both of its residual absences "
+        "against §5.3; a row that stops saying so reads as an open park whose document happens to "
+        "be on disk, which is what park 2 actually is"
+    )
+    assert "CLOSED 2026-09-03" in smpte[0], (
+        "the date park 8 closed is gone, or is not in the shape gates/parks_table.py reads. That "
+        "gate wants exactly '**CLOSED YYYY-MM-DD**' in the title cell, and the closed set it "
+        "derives is what park 12's set-claims are checked against"
+    )
+    assert "ST 336:2017" in smpte[0], (
+        "park 8's row no longer names the edition it closed on. Two editions were acquired and "
+        "only ST 336:2017 is the one MISP-2019.1 pins and the one this park required"
     )
     assert "Public download" not in smpte[0], (
-        "park 8's row now describes itself as a public download. It is not one: SMPTE is a "
-        "commercial standards body and the profile's own FORWARD sends commercial references to "
-        "'industry organizations'. Eleven parks need an afternoon and this one needs a budget, "
-        "and a uniformly-phrased table has lost that distinction"
+        "park 8's row describes itself as a public download. ST 336 IS a public download — that is "
+        "what closed the park — but this row's reopen condition is CLOSED, not a route. The other "
+        "eight rows say 'Public download' because they are still open and that is how they will be "
+        "closed; a closed row borrowing the phrasing of an open one is the uniformity this guard "
+        "has always been about, pointing the other way"
     )
     # And the other eleven DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
     assert len(downloads) == 8, (
-        f"{len(downloads)} park rows state a public-download reopen condition, expected 8 — "
-        "nine open parks, of which eight are downloads and one is the purchase. The count IS the "
-        "honest-strength claim in the paragraph above the table, and it has now moved FOUR times: "
-        "from 11 to 10 when park 1 closed, from 10 to 9 when park 4 closed, from 9 to 10 when "
-        "the walk round opened park 13, and from 10 back to 9 when the adjudication round closed "
-        "it hours later, and from 9 to 8 when the off-peak round closed park 9. It falls every "
-        "time somebody does the cheap thing and rises when a round "
-        "finds a question it cannot answer from what is held — which is the claim the paragraph "
-        "makes and the only way it can be checked. Park 13 is the one row that has done both"
+        f"{len(downloads)} park rows state a public-download reopen condition, expected 8 — and "
+        "EVERY open row is now one, which is the change park 8's closure made to this count's "
+        "meaning rather than to its value. It has moved five times: 11 to 10 when park 1 closed, "
+        "10 to 9 when park 4 closed, 9 to 10 when the walk round opened park 13, 10 back to 9 "
+        "when the adjudication round closed it hours later, and 9 to 8 when the off-peak round "
+        "closed park 9. The publisher round closed park 8 and this number did NOT move, because "
+        "park 8's row never said 'Public download' — it said the opposite. That is the sharpest "
+        "form of the finding: the count the honest-strength paragraph rested on was blind to the "
+        "one row the paragraph was about. It falls when somebody does the cheap thing and rises "
+        "when a round finds a question it cannot answer from what is held; park 13 is the one row "
+        "that has done both, and park 8 is the one row that did neither"
     )
 
 
