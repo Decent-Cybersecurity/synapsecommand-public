@@ -31,11 +31,19 @@ page shows what someone intended; a refusal shows what is enforced. Each entry n
 
 ### Visibility
 
+**Both halves re-read 2026-09-03, 10:28:40Z and 10:31:06Z, and both hold.**
 `GET /repos/Decent-Cybersecurity/synapsecommand-public` **with no credentials** returns HTTP 200
 with `"private": false` and `"visibility": "public"`. An anonymous `git clone` over HTTPS succeeds
-and its `HEAD` matches the pushed tip of `main`. Both were run from a clean environment with the
+and its `HEAD` matches the pushed tip of `main` — `e48f3ee` on both sides at that second reading.
+Both were run from a clean environment with the
 credential helper disabled, because a probe that quietly authenticates proves nothing about what a
 stranger can see.
+
+**THE DATES ARE THE REPAIR AND THE PROBE NAMES WERE NEVER THE PROBLEM.** This entry stated both
+readings in the present tense with no instant on either, in the section that opens by promising
+each entry names its probe — it named them, and said nothing about when either was run. Found by
+the sweep rule 12 owes, and repaired by re-reading rather than by attaching a date to a recollection:
+a date on an inherited reading is a second claim nobody checked.
 
 ### The `main-protection` ruleset, and its history is not what it looks like
 
@@ -274,7 +282,11 @@ not a guess a round is entitled to make.
   here — that sentence stands, and being right is why the count beside it went unchecked.
 - **Dependency graph:** not enabled — the SBOM endpoint returns 404. **Secret scanning:** disabled.
   **Dependabot security updates:** disabled. All three are available to a public repository and all
-  three are off; none is asserted anywhere to be on.
+  three are off; none is asserted anywhere to be on. **Re-read 2026-09-03 at 10:28:43Z and
+  unchanged**, the SBOM endpoint answering 404 and the API reporting `disabled` for secret scanning,
+  its push protection and Dependabot alike. The date is here because it was not: this bullet sat
+  between two neighbours that each carry their measurement date and carried none of its own, which
+  is the shape rule 12's sweep was looking for.
 - ~~**Code search** returns `total_count: 0` for terms that certainly occur in the tree: GitHub has
   not indexed the repository yet.~~ **Indexed — measured 2026-08-27**: `synapse_cdm` returns 103
   results, and `AnchorNotUnique`, a name this repository did not contain until 2026-08-26, returns
@@ -1370,7 +1382,22 @@ not, which is why the bump gate still derives **NONE** over the arc since `v1.4.
 The documentation site is deployed by explicit upload and **the Pages project has no Git
 integration**, so the flip changed nothing about it: `wrangler pages project list` still reports
 none for `synapsecommand-docs`, and no integration appeared as a side effect of the repository
-becoming public.
+becoming public. **Read 2026-09-03 at 10:28:56Z**, the project listing still naming no provider
+for it, its domains `synapsecommand-docs.pages.dev` and `docs.synapsecommand.com`.
+
+**THIS SENTENCE WAS THE SWEEP'S SHARPEST FIND, AND WHERE IT SITS IS WHY.** It asserted a
+Cloudflare setting in the present tense with no instant — inside the section whose entire recorded
+lesson is an undated present-tense claim about Cloudflare state going false while nothing noticed,
+with the diagnosis three paragraphs below. **The round with the most attention this class has ever
+had wrote the sentence and then wrote the paragraph explaining why the sentence is dangerous**,
+which is the same argument `gates/deploy_record.py` was built on, arriving one class over: the
+undated *reading* is not what that gate covers, because the gate reconciles which deployment serves
+the alias and says nothing about when anyone last looked at the project's integration setting.
+**And the first draft of this very repair was refused by a build**, because it quoted the listing's
+column heading in order to report what the column said — one of the two strings
+`tests/test_cdm_publication.py` forbids this file, so a note about an undated reading briefly made
+the record a site of the deploy mechanism. Rule 9's carrier trap, sprung by a rule 12 repair, and
+caught by a gate rather than by care.
 
 The mechanism itself is stated in [`docs/README.md`](docs/README.md) and in `wrangler.toml`, and
 `tests/test_cdm_deploy_workflow.py` requires those two to agree. **This file deliberately does not

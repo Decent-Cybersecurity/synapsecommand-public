@@ -8651,7 +8651,7 @@ four octets against a stated length of two.
 * **No registry page was obtained for any of the four documents**, which is the standing caveat on all
   of them and the reason the pin table carries a mirror row.
 
-### The Day Flight provenance round — the origin verifies by byte identity, the MISB lead does not
+### The Day Flight provenance round, 2026-08-26 — the origin verifies by byte identity, the MISB lead does not
 
 **The result first, because a round that verifies an adjacent fact and reports itself as a round
 that verified the lead is the failure this section exists to prevent.** The adjudication round left
@@ -8813,7 +8813,7 @@ that is (a)'s **standing annotation** rather than a loose end that closure tidie
 * **The protected site was not accessed, and no attempt was made to access it.** Applying for an NGA
   account is not a fetch; it is a relationship, and it is outside what a round like this can do.
 
-### The witnessed-set coverage round — 26 rows promoted, the defect policy ruled, adapter #10 shipped
+### The witnessed-set coverage round, 2026-08-26 — 26 rows promoted, the defect policy ruled, adapter #10 shipped
 
 **What this round did, in one paragraph, because the four before it each ended in a park and this
 one does not.** The walk round found six packets and 156 items in a real stream and decoded no
@@ -9046,7 +9046,7 @@ precedent, and the cost is named in **gap 30** rather than hidden.
   here because "the codec handles 26 items" and "the codec handles one level of structure" are
   different claims and only the first is true.
 
-### The parks round — no park closed, three register entries narrowed, and the record refuted itself twice
+### The parks round, 2026-08-27 — no park closed, three register entries narrowed, and the record refuted itself twice
 
 **What this round was.** It re-opened parks 5, 9 and 11 and register entries KLV 14 through 17 after
 five consecutive rounds of record discipline. **No park closed, and the reason is acquisition rather

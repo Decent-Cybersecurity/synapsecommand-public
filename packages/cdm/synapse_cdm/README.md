@@ -653,6 +653,77 @@ cannot find a site nobody has added to it. The sweep is:
    rule's own gate: a check that is nearly free and nearly worthless must not be allowed to read as
    the expensive one.
 
+12. **AN EXTERNAL-STATE READING IS DATED AT THE POINT OF READING, AND AN UNDATED TRUE ONE IS
+   INDISTINGUISHABLE FROM A STALE ONE.** Everything the tree can derive — a count, a digest, a
+   classification — the next reader can re-derive. An external-state reading cannot be re-derived
+   from anything in here: a workflow run's status, a deployment's state, a DNS answer, what a host
+   serves, whether a park's blocker still refuses. Those facts live outside this repository, the
+   suite cannot reach them and must not want to, so what a later reader holds is the sentence and
+   nothing else. **The rule is that the sentence carries the instant it was taken.** It binds any
+   such reading carried across a session boundary or restated later, and the defect sits at the
+   restating site rather than at the reading's.
+
+   **The witness is `PUBLICATION.md` ledger entry 12, cited rather than restated.** A brief called
+   a previous round's `waiting` readings stale; read against the run's own status rows they were
+   not — the approval registered barely two minutes after the last of them, and the same session
+   re-read, saw the run succeed, and acted on it. What made them misleading was a three-day carry
+   that dropped their timestamps. **So the defect was never in the monitor, and a better monitor
+   cannot fix it**: a reading that was true when taken and a reading that was already false are the
+   same sentence once the instant is gone. That asymmetry is why this is a rule about writing and
+   not about instrumentation — rule 9's lesson, that a claim's basis travels with it, pointed at
+   observations instead of at prose.
+
+   **WHAT COUNTS AS DATED, stated so the sweep does not churn every round record.** A round
+   record's heading dates the readings inside it, which is the convention already in force and the
+   reason most of this record needs nothing. A reading in a table row, a bullet, or a pin field
+   carries its own date, because nothing above it does. **A relative date is not a date** —
+   "reachable today", "6 days ago" — and is converted where it is found.
+
+   **The sweep this rule owes is over external-state claims stated in the present tense with no
+   instant, and it has been run once.** Its findings are recorded in `MIGRATIONS.md` with each
+   one's fresh dated reading, at the round that installed this rule, and they are not enumerated
+   here: a rule that lists the defects it was written for becomes a second site for every one of
+   them, which is rule 9 exactly. What belongs here is the shape they shared. **All of them were
+   re-read and all of them held, and holding is the expected result rather than the point** — an
+   undated claim that happens to still be true is precisely the one that gets carried, and the
+   sharpest find was in the section whose own recorded lesson is an undated present-tense claim
+   about the same host.
+
+13. **A COMPLETION NOTICE IS A CLAIM ABOUT A PROCESS, AND IT IS CONFIRMED AGAINST THE PROCESS
+   RATHER THAN BELIEVED.** A background notice reported a long-running command finished, exit zero,
+   while the run it named was still going; it was refused because the process table was asked and
+   the process was still in it. **What earns this a rule rather than a shrug is which way the error
+   points.** A notice that lies by saying *not yet* costs a wait. A notice that lies by saying
+   *done* hands the round a result to write down — and every figure a round states about a run, the
+   suite total and the skip list and the exit code alike, is downstream of believing that the run
+   ended. A false completion is therefore upstream of all of them at once.
+
+   **The confirmation must be an INDEPENDENT read, and the independence is the whole of it.** Asking
+   the same reporter a second time is not a second reading. What counts is the process table, the
+   command's own exit status taken in the foreground, or an artefact only a finished run could have
+   left behind.
+
+   **THIS IS PROCEDURE, AND THAT IS AN EXISTENCE CHECK RATHER THAN A PREFERENCE.** Mechanizing it
+   was tried first, because the precedent is real and recent: a prose sweep that had been procedure
+   became a gate with no skip state once the token it hunted turned out to be enumerable in advance.
+   That move does not reach here. The notice is not a string in a tracked file and not a fact about
+   the tree — it arrives from outside the repository on a channel no member of the suite can
+   observe, and this tree carries no hook configuration for one to be attached to. A gate could
+   only check the **consequence**, and one place already does, partially: the reconciliation of a
+   release's suite totals across CI, a fresh clone and the maintainer's tree will fail a figure
+   taken from a run that had not finished — **but only when some other reading disagrees with it.**
+   That is a net with a known hole, not a guard, and it is named here rather than left to a
+   reader's optimism, which is rule 10's own instruction about a check that is nearly free and
+   nearly worthless.
+
+   **The class has ONE recorded member, and the brief that ordered this rule counted two.** The
+   reading it took for the first is the one ledger entry 12 adjudicated the other way, at its own
+   site and in as many words: that watcher was not wrong. **A monitor reporting a state that
+   changes afterwards is not a monitor that lied** — that is the ordinary condition of every
+   observation — and collapsing the two would give back the whole of rule 12's distinction. So the
+   ordinal is not carried. One incident, this one; the next to arrive is what would make it a
+   pattern.
+
 **A structured-status counter is blind to all of this.** The adapter #11 flip counter walked every
 `Status`-bearing table row, correctly reported zero rows left saying `not yet`, and did not see
 the two prose sentences in the same section that still described the row set as unimplemented.

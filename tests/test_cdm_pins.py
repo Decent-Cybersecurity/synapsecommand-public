@@ -1683,3 +1683,136 @@ def test_the_cited_gitignore_line_for_the_provenance_rule_is_the_line_it_cites()
         "is refused by line 121, and an ignore that comes from a different rule makes those "
         "sentences false even though the file still is not staged"
     )
+
+
+# ================== every reopen condition carries the date it was last tested
+#
+# README sweep rule 12: an external-state reading is dated at the point of reading, and an undated
+# true one is indistinguishable from a stale one. A park's blocker is external state by definition
+# — the document is unheld somewhere else — so "still blocked" with no date behind it cannot be
+# told apart from "nobody has looked since 2024".
+#
+# THIS IS A GENERALISATION OF A CHECK THAT ALREADY EXISTED FOR ONE ROW, and that is why it is
+# written rather than argued for. `test_cdm_format_coverage.py`'s
+# `test_the_annex_l_reopen_condition_records_the_date_it_was_checked` requires exactly this of the
+# GMTIF Controlled Extension blocker, on exactly this reasoning, and it had been the only reopen
+# condition in the tree with a machine behind it. The sweep that installed rule 12 found the rest:
+# of the reopen conditions across the pin records, two carried a date and three did not.
+#
+# WHAT THE FIRST RUN OF IT COST, WHICH IS THE ARGUMENT FOR IT
+# ----------------------------------------------------------
+# Dating one of the undated ones meant asking its route, and asking its route REFUTED it — park 8's
+# reopen condition priced the document as a purchase, and the publisher's own document library
+# serves it. That claim had a suite guard on it and the guard was green throughout, because what it
+# checks is that the record keeps saying the thing rather than that the thing is true. A date is the
+# cheapest possible defence against that, and it is the only one available: the suite cannot reach
+# the publisher and must not want to.
+#
+# WHAT COUNTS AS DATED, and the second clause is the round-record convention rather than a licence
+# -----------------------------------------------------------------------------------------------
+# An ISO date in the field itself, or an ISO date in the KEY PATH that reaches it. The second is how
+# this record already dates a reading whose whole container is one round's work — a node named for
+# the round that wrote it dates everything inside it, which is the convention rule 12 states for a
+# round record's heading. What is NOT accepted is a bare year or a relative date: "recently" and
+# "6 days ago" are the shapes the sweep was looking for.
+
+#: `2026-08-30`, `2026-09-03T10:35:03Z` — a day at minimum, because a month is not a reading.
+_ISO_DAY = re.compile(r"20\d\d-\d\d-\d\d")
+
+#: The same day, spelled the only way a JSON key can spell it. `day_flight_provenance_2026_08_26`
+#: and `the_reopen_condition_re_probed_2026_09_03` are both real keys in this tree, and a hyphen is
+#: not available inside an identifier-shaped one — so the KEY form is underscored and needs its own
+#: pattern rather than a looser one shared with the prose form.
+_KEY_DAY = re.compile(r"20\d\d_\d\d_\d\d")
+
+
+def reopen_conditions(records: dict[str, dict] | None = None) -> dict[tuple[str, str], str]:
+    """`{(pin file, dotted path): condition text}` — DISCOVERED, never enumerated.
+
+    The key name is the contract: `reopen_condition`, or a `the_reopen_condition…` variant, which
+    is what this repository's pins actually use. Discovery rather than a list, on this module's own
+    founding lesson — a hand-written roster of what to check reports a clean run over a smaller
+    tree than the one in front of it.
+    """
+    records = records if records is not None else _pin_records()
+    found: dict[tuple[str, str], str] = {}
+    for pin_file, record in records.items():
+        for path, text in _strings(record):
+            leaf = path.split(".")[-1].split("[")[0]
+            if leaf == "reopen_condition" or leaf.startswith("the_reopen_condition"):
+                found[(pin_file, path)] = text
+    return found
+
+
+def _condition_is_dated(path: str, text: str) -> bool:
+    """A date in the field, or a date in the key path that reaches it.
+
+    The path is matched in both spellings. A dated node is named `…_2026_08_26` because a key
+    cannot carry hyphens, and a round that wrote its date into prose writes `2026-08-26`; refusing
+    the underscored form would refuse the convention this record actually uses.
+    """
+    return bool(_ISO_DAY.search(text)
+                or _ISO_DAY.search(path)
+                or _KEY_DAY.search(path))
+
+
+def test_the_reopen_conditions_were_actually_discovered():
+    """The closure property, in the direction an empty result would hide.
+
+    A discovery helper that finds nothing passes every check built on it. This module was founded on
+    a gate that under-counted, so the count is asserted to be plural and to span more than one pin
+    record — the two properties a broken key match would destroy first.
+    """
+    found = reopen_conditions()
+    assert len(found) >= 4, (
+        f"{len(found)} reopen conditions discovered across the pin records. The key match has "
+        "stopped finding them, which makes every check below vacuous"
+    )
+    assert len({pin for pin, _ in found}) >= 3, (
+        "every discovered reopen condition is in one pin record. The blockers are spread across "
+        "several, so a single-file result means the walk stopped early"
+    )
+
+
+def test_every_reopen_condition_records_the_date_it_was_last_tested():
+    """Rule 12, mechanized for the one external-state class the pins state in their own fields.
+
+    The failure this earned: park 8's reopen condition priced its document as a purchase in the
+    present tense with no instant behind it, and the price was wrong. Nothing could fail, and the
+    guard that reads that row was green the whole time, because it checks the record against itself.
+    """
+    undated = {f"{pin}::{path}": text[:120]
+               for (pin, path), text in reopen_conditions().items()
+               if not _condition_is_dated(path, text)}
+    assert not undated, (
+        "these reopen conditions state a blocker with no date behind them:\n  "
+        + "\n  ".join(sorted(undated))
+        + "\n\nA park's blocker is external state, so an undated 'still blocked' and 'nobody has "
+          "looked' are the same sentence. Re-check the route, then record the day — in the field, "
+          "or in a key named for the dated round that wrote it. Do NOT date it from a "
+          "recollection: a date on an inherited reading is a second claim nobody checked."
+    )
+
+
+def test_the_reopen_condition_date_check_can_fail_in_both_directions():
+    """The mutation check, because a matcher this permissive is where a vacuous guard hides.
+
+    Both directions are needed. A pattern that accepts anything passes the tree and proves nothing;
+    a pattern that accepts a bare year or a relative date accepts exactly the shapes the sweep that
+    wrote this was hunting.
+    """
+    assert _condition_is_dated("parks.park_1.reopen_condition",
+                               "Obtain the document. LAST CHECKED 2026-09-03 and unmet.")
+    assert _condition_is_dated("day_flight_provenance_2026_08_26.the_reopen_condition",
+                               "Obtain the document."), (
+        "a container named for its dated round has to date what is inside it, which is the "
+        "convention rule 12 states for a round record's heading"
+    )
+    for refused in ("Obtain the document. Checked recently and unmet.",
+                    "Obtain the document. Last checked in 2026.",
+                    "Obtain the document. Re-checked 6 days ago.",
+                    "Obtain the document."):
+        assert not _condition_is_dated("parks.park_1.reopen_condition", refused), (
+            f"{refused!r} reads as dated. A bare year and a relative date are the two shapes rule "
+            "12 refuses, and an undated condition is the default this check exists to catch"
+        )
