@@ -210,6 +210,214 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+**What moved inside the distribution: six shipped documents.** `MIGRATIONS.md`,
+`FORMAT_COVERAGE.md`, `README.md`, `fft_pin.json`, `klv_pin.json` and `stanag4586_pin.json`. The
+count and the set are `gates/bump_derivation.py`'s, re-derived AFTER this record was written rather
+than before it — the fixed point the 1.4.0 arc's own repair note insists on, and the reason the
+sentence above is not a quotation of a derivation that has since moved. The arc derives **PATCH**,
+so the floor is **1.4.1**. Nothing under `packages/` that
+ships as code moved, no adapter, no codec, no model, no fixture, no schema, and `SCHEMA_VERSION` is
+unmoved at 1.0.0. **Nothing in this section is in any release**, and the version a reader who ran `pip install synapse-cdm` actually has is **1.4.0** — no release is made here and none is owed.
+
+#### The maintenance round, 2026-09-03 — two standing rules installed, and the sweep that installed the first one refuted a park
+
+**THE ROUND'S CENTRAL FINDING IS NOT ONE OF THE TWO RULES IT WAS SENT TO INSTALL.** It is what the
+first rule's sweep turned up on its first run: **park 8's reopen condition priced its document as a
+purchase, and the publisher serves it for nothing.** That claim had a suite guard on it and the
+guard was green throughout, because what a guard like that checks is that the record keeps saying
+the thing. The route to finding it was mechanical rather than clever — an undated field had to be
+dated, dating it meant asking the route, and asking the route refuted it.
+
+**Act 0 — the audit, and every figure in it was measured.** Tree clean, `HEAD` equal to
+`origin/main` at `e48f3ee`, the tip the brief named. Suite **3460 passed, 8 skipped** at the start,
+total **3468**, which is the four-way reconciliation's maintainer-tree row exactly and therefore no
+drift. The four untouchables hold, each by its own command: the pinned phrase derives to **35** over
+the git index; `scripted_edit`'s contract is green at **9**, with `pytest -k scripted_edit`
+collecting **11** because two `version_floor` parametrizations match the name — the recorded trap,
+reproduced; `git ls-files` matches **no** PDF; and `RELEASE_NOTES.md` opens **1.4.0**. The bump gate
+derived **NONE** over the arc since `v1.4.0` with the floor at **1.4.0**, which is the state the
+brief described, measured rather than taken on trust. Pin-as-control through the resolver: **21
+copies present, 21 matched, 0 failed**, the Edition 3 pin among them, with its one-byte divergence
+recorded at its own site and not re-derived here. Decomposition derived — **22** stated
+`local_path`+`sha256` pairs resolving to **21** distinct copies, **19** under the spec base and
+**2** under the streams base.
+
+**The `nga.mil` series is extended by one reading, resolution only, AND THE SERIES' CONSTANT IS NO
+LONGER CONSTANT.** At **2026-09-03 10:24:57Z** the apex, `gwg` and `nsgreg` all answered `NOERROR`.
+No route was asked for bytes. **But the resolver is `127.175.81.17` and every prior reading in this
+series was from `192.168.0.1`** — a loopback-range address, so a local proxy rather than the gateway
+this environment used to ask through. That is recorded rather than smoothed, because the whole value
+of a resolution series is that one variable moves at a time: this reading extends the series only
+under the caveat that it came down a different DNS path, and it is not evidence about the path the
+earlier readings measured. The hour is 10:24Z, which is outside the single `SERVFAIL` episode's
+~14:00–15:00Z window either way.
+
+#### Act 1 — the two rules, and one of them is mechanized further than the brief asked
+
+**Rule 12, dating an external-state reading at the point of reading, is installed in `README.md`
+with its witness cited rather than restated.** The witness is ledger entry 12, which had already
+adjudicated the case: readings a brief called stale were true when taken, and what made them
+misleading was a three-day carry that dropped their timestamps. The rule states what counts as
+dated, so the sweep does not churn every round record, and it names the relative-date forms it
+refuses.
+
+**The sweep the rule owes was run once, and each finding is repaired at its own site by RE-READING
+rather than by dating a recollection.** A date attached to an inherited reading is a second claim
+nobody checked. What it found:
+
+* **`PUBLICATION.md`'s visibility probe** stated an anonymous `200`, a `private` flag and a
+  successful clone in the present tense with no instant on either half — in the section that opens
+  by promising each entry names its probe. It named them and said nothing about when. Both halves
+  re-read **2026-09-03 at 10:28:40Z and 10:31:06Z**, and the clone's `HEAD` matched the pushed tip
+  at that second reading.
+* **The platform bullet** stating an SBOM `404` and two disabled features carried no date while
+  sitting between two neighbours that each carry theirs. Re-read **10:28:43Z**, unchanged.
+* **The deployment section's Pages reading**, and this was the sharpest of them, for where it sits:
+  it asserted a Cloudflare setting in the present tense inside **the section whose entire recorded
+  lesson is an undated present-tense claim about Cloudflare state going false while nothing
+  noticed**, with the diagnosis three paragraphs below. Re-read **10:28:56Z**, unchanged.
+* **`stanag4586_pin.json` dated the copy it fetched and not the refusals that made the fetch
+  necessary**, so this park's whole evidence base was undated while reading as current. Act 2's
+  probe is that repair.
+* **`FORMAT_COVERAGE.md`'s round headings carry no date at all**, where `MIGRATIONS.md`'s carry one
+  and its own sub-round headings carry one to the minute. So rule 12's own exemption — a round
+  record's heading dates the readings inside it — did not hold for one of the three long records,
+  which left readings like a re-checked `403` undated at their site. All three were dated from git
+  rather than from memory.
+
+**A REPAIR TO ONE OF THOSE WAS REFUSED BY A BUILD, AND THE REFUSAL IS THE RULE 9 CARRIER TRAP
+SPRINGING ON A RULE 12 FIX.** The Pages note quoted the listing's own column heading in order to
+report what the column said — one of the two strings `test_cdm_publication.py` forbids this file —
+so a note about an undated reading briefly made the record a site of the deploy mechanism. Caught by
+a gate rather than by care, which is the only reason it is a footnote instead of a finding.
+
+**AND RULE 12 IS MECHANIZED FOR THE ONE CLASS WHERE A PRECEDENT ALREADY EXISTED.** The existence
+check came first and found one: `test_the_annex_l_reopen_condition_records_the_date_it_was_checked`
+requires exactly this of the GMTIF Controlled Extension blocker, on exactly this reasoning, and it
+had been the only reopen condition in the tree with a machine behind it. `tests/test_cdm_pins.py`
+now generalises it — the conditions are **discovered** from the pin records rather than listed, on
+this module's own founding lesson, and each must carry an ISO day in its field or in the key path
+that reaches it. Of the **five** it discovers across four pin records, two were dated and three were
+not. All five are dated now, and the check is proved non-vacuous against the real tree in both
+directions: stripping park 8's date makes it red, and a bare year, a relative date and an undated
+condition are all refused.
+
+**Rule 13, distrusting a completion notice, is installed AS PROCEDURE, and that is an existence
+check rather than a preference.** A background notice reported a long-running command finished, exit
+zero, while the run it named was still going; the process table was asked and the process was still
+in it. Mechanizing it was tried first, because the precedent is real — a prose sweep became a gate
+with no skip state once its token turned out to be enumerable in advance — and it does not reach: the
+notice is not a string in a tracked file and not a fact about the tree, it arrives on a channel no
+suite member can observe, and this tree carries no hook configuration for one to be attached to. The
+consequence is partly checked in one place and the hole in that net is named in the rule.
+
+**AND THE BRIEF'S ORDINAL FOR IT DOES NOT SURVIVE THE RECORD. THE BRIEF LOSES.** It called this the
+second incident of the lying-monitor class. The reading it took for the first is the one ledger entry
+12 adjudicated the other way, at its own site and in as many words: that watcher was not wrong. A
+monitor reporting a state that changes afterwards is not a monitor that lied — it is the ordinary
+condition of every observation — and collapsing the two gives back the whole of rule 12's
+distinction. **One recorded incident, this one.** The divergence is recorded and the ordinal is not
+carried.
+
+#### Act 2 — the Edition 4 re-probe, and every reading carries the instant it was taken
+
+**EDITION 4 / AEP-84 EDITION A REMAINS CURRENT AND UNHELD, WHICH IS THE EXPECTED RESULT AND A FINE
+ONE.** Nothing was acquired: no document byte was fetched, no park moved, and the readings are
+resolution and status only. They are in `stanag4586_pin.json` at
+`the_reopen_condition_re_probed_2026_09_03` rather than restated here. **What is worth naming here
+is that two of the four route families could not be asked at all**, and recording that as
+"unchanged" would have been the comfortable error: the Internet Archive's CDX answered **429** to
+all four queries and the distributors answered **403** to an automated read, so the pin's archive
+claim and its purchase-and-DRM claim are **un-re-derivable at this hour** rather than
+re-confirmed. Only the publisher's registry (403 on six paths, both with and without a browser
+User-Agent) and the mirror's index (200, still exactly the two 4586 entries, editions 2 and 3) both
+answered and answered the question.
+
+**ONE LEAD IS RECORDED AND STOPPED FOR A RULING.** A route no earlier round here used — the
+archive's availability API — answered 200 and reported a capture of the publisher's own Edition 4
+page. **The pin's claim is not refuted**: it says no capture of any STANAG 4586 *PDF* exists, and a
+captured HTML details page is not a PDF; the four CDX queries could not have found it, because that
+URL carries the document's registry id and not its number. What is unverified is everything that
+would matter, because replaying the capture needs the host that answered 429 in the same minute. So
+it is a lead with a dated first reading and no content behind it, and acquisition is not this
+round's to decide.
+
+#### Act 3 — the standing sweeps, and the parks sweep is where the round earned its keep
+
+**THE DISJUNCTION SWEEP FOUND NOTHING, over twelve twice-stateable facts, with the `v1.4.0` Release
+body and ledger entry 12 in scope for the first time.** Read from the API at **2026-09-03
+10:42:00Z**: the Release is not a draft, is what the `releases/latest` endpoint returns, was created
+by the tag at 10:45:15Z on 2026-08-30 and published at 17:22:06Z — all four as entry 12 states them.
+Both artefact digests, the run id, CI's passed and skipped figures, the tag-tree total, the approval
+instant and the verdict count each agree at every site that states them. **AND THE SWEEP'S OWN FIRST
+PASS PRODUCED TWO FALSE DISAGREEMENTS**, which is the more useful half: its patterns alternated two
+*spellings* of one figure — a table cell against a sentence, and an instant with and without its
+trailing `Z` — so it compared spellings and called the difference a divergence. Re-run with one
+canonical capture per fact it reports zero. **A disjunction sweep whose regex alternates is a
+sweep that can disagree with itself**, and the near-false finding is recorded because the
+comfortable move was to write up two disagreements that were not there.
+
+**The stale-count sweep holds at every named subject.** Roster **14** derived from the registry,
+pair arithmetic **91** and **182**, ordinal **15** — different derivations over different sources,
+and the ordinals module is green. **432** fixture verdicts, summed from the release notes' own
+fourteen-row table and tied to the registry by its gate. The **166 / 27 / 48** message figures and
+**1.4.0** unmoved. The pending-heading token gate passes with **no skip state**, verified by running
+it rather than by reading about it, and the Edition 4 compatibility presence gate passes with its
+scope still correct — no sentence in this repository asserts that an Edition 3 decoder reads an
+Edition 4 feed.
+
+**The rule 11 parks sweep, at table scope through the repaired regex.** The gate reports **13 rows,
+9 open, 4 closed**, **7** set-claims across two rows all resolving, **3** self-membership claims
+which are an observation and not a problem, and no `CLOSED MEMBER` or `PHANTOM MEMBER`. Park 12's
+partition re-derived against current membership: the five it names are all still open. The
+MISB-series blockers were re-checked for existence by the gate. **The two rows the gate hands to a
+human are where the round's finding is**, and it printed them as its own uncovered surface, which is
+the split working rather than failing:
+
+* **Park 10 holds and was verified rather than inherited.** Its document is the Motion Imagery
+  Handbook and it is not held — the `misp-2019-1` file under `spec/` is the **profile**, which the
+  pin's own target field settles, and the pin states in as many words that the delegation table does
+  not carry the Handbook. Its two stated routes re-read **2026-09-03**: the registry answers 200 at
+  10:43:06Z, which this record already establishes is an interstitial and not a serving route, and
+  the public host answers **403** at 10:43:24Z over `https`. **A 000 over `http` is a scheme
+  artefact and not a new state**, recorded so the next round does not read it as one.
+* **Park 8's premise is refuted, dated, and stopped for a ruling.** The findings are in the row and
+  in `klv_pin.json` and are not re-derived here. **The sharper half is about the guard rather than
+  the row**: the suite requires that row to keep saying the document is a purchase and pins how many
+  rows say otherwise, so **it asserts a fact that lives at the publisher's host and cannot reach
+  it** — green forever, because the tree agrees with itself. That is the record's own tier confusion
+  one class over, a claim wearing the suite-gated label whose truth is protocol-gated. The wording
+  and the guards are left standing deliberately, because editing them presumes the ruling. **The
+  park's residual absences are unchanged in every term; only the price of answering them moved.**
+
+#### Act 4 — the suite, and the difference from Act 0 is named rather than averaged
+
+**3462 passed, 5 skipped, 4 failed at the moment this section was owed and unwritten, total 3471**,
+against Act 0's **3460 / 8 / 3468**. Every part of that difference is accounted for. **The total
+moved by +3** and they are this round's three new tests, the reopen-condition discovery, its date
+check and its mutation check. **The four failures were the four release gates that demand this
+section**, and they are what this section discharges. **The skips fell from 8 to 5, and the three
+that left are the three release gates conditional on the moved set** — two that skip while the
+package tree is identical to the tag, and one that skips while there is no live count to mutate.
+They did not disappear; they woke up, because this round moved shipped documents. **A skip that
+becomes a live test is the opposite of decay**, and reporting 8→5 without saying which three is how
+a conditional gate's activation gets filed as a loss.
+
+**AND THE FINAL READING IS 3468 PASSED, 3 SKIPPED, EXIT 0 — total 3471.** Writing this section
+woke the last two, the pair that skip while there is nothing unreleased, and turned the four
+failures into passes. So the round's skip arc is **8 → 5 → 3** and not one number: eight while the
+tree matched the tag, five once shipped documents had moved, three once the section they were
+waiting for existed. Only the **3** is a property of the tree at this commit; the other two are
+readings of intermediate states and are dated as such.
+
+**The suite was run in the foreground and its exit status read directly**, which is rule 13's own
+prescription applied to the round that wrote it rather than left as advice for the next one. The
+floor was re-derived AFTER this record was written, not before: **six** shipped documents, arc
+**PATCH**, floor **1.4.1**, which is the same set and the same classification the section above
+states — the fixed point holding, because editing an already-moved file moves neither.
+
 ### 1.4.0 — 2026-08-30 — STANAG 4586 telemetry ingest ships, and the parks regex is scoped to the table it owns
 
 **This section carried the pending heading and a release absorbed it**, which is what that heading
