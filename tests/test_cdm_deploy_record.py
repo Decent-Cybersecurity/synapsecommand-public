@@ -311,6 +311,92 @@ def test_the_gate_is_not_a_suite_member_and_says_so(gate):
     )
 
 
+# ==================== the served-version witness, over a saved page and never over the network
+
+
+#: A saved fragment of what the site serves, in the shape the built page actually has: the version
+#: is inside a `<code>` element and the sentence wraps across a newline, because that is what
+#: Docusaurus emitted for the source paragraph and a parser written against the .mdx source would
+#: have missed it. Held here as bytes rather than fetched, on this module's own rule — the gate is
+#: a protocol act and the suite must pass for an outsider with no network.
+#: THE FIXTURE STATES NO COUNT, AND THAT IS A RULE RATHER THAN AN OVERSIGHT. The page it stands
+#: for opens with a clause counting the adapters that shipped without a schema change; reproducing
+#: it here would make this module a live site of that figure, which is sweep rule 1's own sub-rule
+#: — a synthetic fixture is written to LOOK like the thing it stands for, and that is exactly what
+#: makes it indistinguishable from a real claim to a grep. Commit 90f65f7 made the same repair to
+#: two fixtures in `gates/bump_derivation.py`, and the repair is to stop stating the fact rather
+#: than to exempt the file. The clause is elided; the version sentence and the decoy semvers, which
+#: are what this parser has to get right, are verbatim.
+SERVED_PAGE = (
+    "and the two are allowed to diverge: adapters have shipped without a single\n"
+    "change to <code>schema_version</code>, and each of them would have been a release of the "
+    "package. They were\nboth <code>1.0.0</code> at first release, by coincidence of two first "
+    "releases, and they parted at 1.1.0: the\npackage is at <code>1.5.0</code> and the schema "
+    "stays at <code>1.0.0</code>."
+)
+
+
+def test_the_served_version_parser_reads_the_page_the_site_actually_serves(gate):
+    """The witness's parser, over the saved page. It must find the PACKAGE version and not another.
+
+    The trap this pins is specific and the page is full of it: that fragment carries `1.0.0` three
+    times and `1.1.0` once, and only one of the four is the distribution's version. A parser keyed
+    on "the first semver on the page" would read the schema's, agree with nothing, and disagree
+    with `version.py` forever — which is the failure mode of a witness that cannot fail a build:
+    nobody would find out from a red run.
+    """
+    assert gate.served_version(SERVED_PAGE) == "1.5.0", (
+        "served_version() no longer reads the package version out of the served changelog. The "
+        "sentence is 'the package is at <code>X.Y.Z</code>' with the number inside a code element; "
+        "if the page's markup changed, re-anchor the pattern rather than loosening it to any semver"
+    )
+
+
+def test_the_served_version_parser_returns_None_rather_than_guessing(gate):
+    """A page that states no version is a reading of `None`, not a reading of whatever is nearby.
+
+    The two directions matter differently. A parser that returned a wrong version would make the
+    witness report a confident disagreement that is really a parse failure; one that returns `None`
+    reports that it could not read the page, which is the truth and is what the gate prints.
+    """
+    assert gate.served_version("<p>no version here</p>") is None
+    assert gate.served_version("") is None
+    # The schema's version in the same sentence shape must NOT satisfy it.
+    assert gate.served_version("the schema stays at <code>1.0.0</code>") is None
+
+
+def test_the_witness_compares_against_version_py_read_the_same_way_bump_derivation_reads_it(gate):
+    """The tree half of the comparison, and it is read from the assignment rather than imported.
+
+    `gates/bump_derivation.py` reads `PACKAGE_VERSION` out of the file's own assignment for the
+    reason this gate has too: both run standalone, and importing the package would make the number
+    depend on what happens to be on the path.
+    """
+    declared = gate.declared_package_version()
+    assert declared.count(".") == 2, f"declared_package_version() returned {declared!r}"
+    assert f'PACKAGE_VERSION = "{declared}"' in gate.VERSION_PY.read_text()
+
+
+def test_the_witness_cannot_fail_the_gate_and_the_file_says_why(gate):
+    """The scope of it, asserted rather than remembered.
+
+    A witness that acquired an exit code would be red for every hour between a release and its
+    deploy — a state the tree cannot fix — and `PUBLICATION.md`'s own terms table is what this
+    rests on: what the site serves is protocol-gated, and this gate is the protocol.
+    """
+    doc = gate.check_served_version.__doc__ or ""
+    assert "WITNESS, NOT AN ASSERTION" in doc, (
+        "check_served_version()'s docstring no longer states that it cannot fail the gate. If it "
+        "has become an assertion, that is a decision about what a red gate means and it belongs in "
+        "PUBLICATION.md's terms table, not in a docstring nobody re-read"
+    )
+    source = GATE_PATH.read_text()
+    assert "1 witness, which cannot fail" in source, (
+        "the gate's own output no longer distinguishes its witness from its checks. A reader "
+        "counting 'checks' has to be able to tell which lines the exit code covers"
+    )
+
+
 # ==================== the prose count, against the gate's own enumeration
 #
 # WHY THIS EXISTS, AND IT IS AN INCIDENT RATHER THAN A PRINCIPLE

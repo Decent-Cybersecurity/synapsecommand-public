@@ -14,11 +14,20 @@ written and reviewed as a specification across five earlier rounds before this f
 
 THE SCOPE IS THE WITNESSED SET, AND THAT IS THE WHOLE SHAPE OF THIS ADAPTER
 ---------------------------------------------------------------------------
-`klv_uas_codec` decodes **26 items and no others**: the distinct tags the pinned stream
-`fixtures/klv/streams/day_flight.klv` — SHA-256 `a810e4b6…e51`, 977 octets — actually carries. The
-other 115 rows of ST 0601.14a's Table 1 still read `not yet`, and the reason is stated as a rule
-rather than as a to-do: an item this repository has never met on a wire is an item whose decoder
-could only ever be checked against a fixture written from the same reading of the same table.
+`klv_uas_codec`'s `ITEMS` is **26 items and no others**: the distinct tags the pinned stream
+`fixtures/klv/streams/day_flight.klv` — SHA-256 `a810e4b6…e51`, 977 octets — actually carries. That
+set is the scope contract, and the reason is stated as a rule rather than as a to-do: an item this
+repository has never met on a wire is an item whose decoder could only ever be checked against a
+fixture written from the same reading of the same table.
+
+**THE CONTRACT HAS BEEN CROSSED ON A SECOND GROUND SINCE 2026-09-04, AND THAT IS WHY THIS SECTION NO
+LONGER STATES ONE NUMBER.** This adapter reads **44** of ST 0601.14a's 141 items: the 26 above plus
+`NESTED_SETS` (item 48, on a second document) and `DOCUMENT_WITNESSED_TAGS` (seventeen, on this
+document's own printed worked examples). **97 rows read `not yet`** and every one of them is blocked
+on the contract above. The counts and the two grounds are derived in `FORMAT_COVERAGE.md`'s "Not
+witnessed" ledger row, and this docstring cites it rather than restating it — **because the figure it
+used to restate went stale here while that row moved four times in one day**, which is exactly what
+rule 7 says a second statement of a count will do.
 
 A tag outside the 26 is **not** an error. `ST 0107.3-04` requires a decoder to "skip unknown Local
 Set values so as to not impact the decoding of known Local Set items within the same Local Set

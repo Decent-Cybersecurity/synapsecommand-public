@@ -295,12 +295,19 @@ def test_the_count_clause_pattern_is_not_vacuous():
     A regex that matches everything is as useless as one that matches nothing, and the first draft
     of a pattern like this one is usually the former.
     """
-    assert COUNT_CLAUSE.findall("holds FIFTEEN documents of which TWELVE are pins") == [
-        ("FIFTEEN", "TWELVE")]
+    # THE FIGURES HERE ARE ONES THIS RECORD HAS NEVER HELD, and that is a rule rather than a
+    # stylistic choice. The pair this fixture used until 2026-09-05 was FIFTEEN/TWELVE, which is a
+    # real superseded clause of the header it checks — so the vacuity test was a live site of a
+    # retired figure, in a module whose whole subject is that this record's counts are derived.
+    # Sweep rule 1's sub-rule: a synthetic fixture that spells a count is indistinguishable from a
+    # real claim to a grep, and the repair is to make the fixture stop stating the fact. FORTY and
+    # THIRTY are the same shape and name nothing.
+    assert COUNT_CLAUSE.findall("holds FORTY documents of which THIRTY are pins") == [
+        ("FORTY", "THIRTY")]
     for negative in (
-        "holds fifteen documents",
-        "of which twelve are pins",
-        "holds FIFTEEN documents of which TWELVE are parks",
+        "holds forty documents",
+        "of which thirty are pins",
+        "holds FORTY documents of which THIRTY are parks",
         "the directory is large",
     ):
         assert not COUNT_CLAUSE.findall(negative), f"pattern wrongly matched {negative!r}"

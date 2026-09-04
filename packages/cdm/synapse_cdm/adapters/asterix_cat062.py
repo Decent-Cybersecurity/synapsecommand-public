@@ -45,8 +45,13 @@ a consumer can see whose opinion each one is.
 IDENTITY: THE ADDRESS IS THE BASIS, THE TRACK NUMBER NEVER IS
 --------------------------------------------------------------
 `I062/380` Subfield #1's 24-bit Mode S address, filed under `ICAO24` — the same string `adsb.py`,
-`asterix_cat021.py` and `asterix_cat048.py` use, so one airframe seen by four adapters derives one
-`entity_id` without them coordinating. `I062/040` is mandatory in every record and is **never** the
+`asterix_cat021.py`, `asterix_cat048.py` and `stanag4676.py` use, so one airframe seen by any of the
+adapters sharing that namespace derives one `entity_id` without them coordinating. **The set is
+enumerated in `stanag4676.py`'s `_source_ids` and is not counted again here**: this sentence said
+"seen by four adapters" until 2026-09-05, and it had omitted `stanag4676.py` — which has keyed a
+Mode S `IFFCode` under `ICAO24` since 2026-08-23, two days before this docstring was written.
+`FORMAT_COVERAGE.md` carried the same wrong figure in the same words for the same reason and was
+corrected in the same sweep; `stanag4676.py`'s own comment said five and was right throughout. `I062/040` is mandatory in every record and is **never** the
 basis: sixteen bits allocated by the emitting system and recycled would merge two airframes into one
 entity, and CAT023's `I023/100` bit 2 exists in the same family precisely to announce that a
 track-number space has been reused. Where no address is stated the id is scoped to the RECORD and

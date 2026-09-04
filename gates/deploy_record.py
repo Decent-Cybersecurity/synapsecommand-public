@@ -70,6 +70,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import datetime as _dt
 import hashlib
 import json
 import pathlib
@@ -106,6 +107,15 @@ PROBE_PAGES = ("/", "/cdm/", "/changelog/", "/writing-an-adapter/", "/cdm/entity
 #: expected to be the newest; a deeper match means a deploy did not take the alias, which is a
 #: finding and not a reason to keep searching the whole history.
 ALIAS_SEARCH_DEPTH = 4
+
+#: The page whose prose states the package version, and the sentence that states it. The docs site
+#: is built from `docs/` and deployed by an act, so what it serves is a fact about the last deploy
+#: and never about this tree — which is exactly the class rule 12 in `synapse_cdm/README.md` says
+#: cannot be re-derived from anything in here. The witness below reads it and dates it.
+SERVED_VERSION_PAGE = "/changelog/"
+SERVED_VERSION_SENTENCE = re.compile(
+    r"package is at <code>(\d+\.\d+\.\d+)</code>")
+VERSION_PY = REPO / "packages/cdm/synapse_cdm/version.py"
 
 
 class Finding(Exception):
@@ -400,6 +410,53 @@ def check_alias(deployments: list[Deployment]) -> dict:
     return measurement
 
 
+def declared_package_version() -> str:
+    """`PACKAGE_VERSION`, read out of the file's own assignment rather than by importing it.
+
+    `gates/bump_derivation.py` reads it the same way and for the same reason: this gate runs
+    standalone, and importing the package would make the number depend on what is on the path.
+    """
+    found = re.search(r'^PACKAGE_VERSION\s*=\s*"([^"]+)"', VERSION_PY.read_text(), re.M)
+    if not found:
+        raise Finding(f"{VERSION_PY.name} carries no PACKAGE_VERSION assignment")
+    return found.group(1)
+
+
+def served_version(html: str) -> str | None:
+    """The version the served changelog page's own prose states, or `None` if it states none.
+
+    Split out from the fetch so it can be tested over a saved page with no network: the parser is
+    the part that can be wrong quietly, and the fetch is the part that cannot be tested offline at
+    all. `tests/test_cdm_deploy_record.py` runs it over a fixture in both directions.
+    """
+    found = SERVED_VERSION_SENTENCE.search(html)
+    return found.group(1) if found else None
+
+
+def check_served_version() -> dict:
+    """WHAT THE SITE SAYS ITS VERSION IS, AGAINST WHAT THIS TREE SAYS — A WITNESS, NOT AN ASSERTION.
+
+    **It cannot fail this gate and that is deliberate.** The docs site is deployed by an act, so a
+    disagreement here is the ordinary condition of every hour between a release and its deploy; a
+    check that refused it would be red for reasons the tree cannot fix and would train somebody to
+    ignore it. What it reports instead is the one thing nobody could otherwise read: WHETHER the
+    site is behind, and BY HOW MUCH, at a stated instant.
+
+    **Why it belongs beside the alias check rather than in the suite.** Both facts live at
+    Cloudflare, both are protocol-gated in `PUBLICATION.md`'s own vocabulary, and neither can be
+    reached by a test that must pass for an outsider with no network. Entry 12's probe protocol is
+    the one used: a declared `User-Agent`, and a non-200 raised rather than parsed — a version
+    parsed out of an error body compares unequal for the wrong reason.
+    """
+    host = custom_domain()
+    url = f"https://{host}{SERVED_VERSION_PAGE}"
+    instant = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    served = served_version(fetch(url).decode("utf-8", "replace"))
+    declared = declared_package_version()
+    return {"url": url, "read_at": instant, "served": served, "declared": declared,
+            "verdict": "agree" if served == declared else "disagree"}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--json", action="store_true", help="print the measurement as JSON")
@@ -414,6 +471,15 @@ def main(argv: list[str] | None = None) -> int:
     except Finding as finding:
         print(f"FAIL  {finding}", file=sys.stderr)
         return 1
+
+    # THE WITNESS, and its failure to read is reported rather than raised for the same reason its
+    # disagreement is: this gate's exit code is about the record, and the version the site serves
+    # is not a claim the record makes.
+    try:
+        served = check_served_version()
+    except Finding as finding:
+        served = {"url": None, "read_at": None, "served": None, "declared": None,
+                  "verdict": f"unread: {finding}"}
 
     if args.mutation_check:
         fake = Deployment(id="deadbeef" + "0" * 28, source="cafef00d", status="fabricated")
@@ -433,7 +499,7 @@ def main(argv: list[str] | None = None) -> int:
         print("mutation  the real list PASSES                             ok")
 
     if args.json:
-        print(json.dumps({"ids": ids, "alias": alias}, indent=2))
+        print(json.dumps({"ids": ids, "alias": alias, "served_version": served}, indent=2))
         return 0
 
     print(f"deployments   {ids['listed']} listed; {ids['rows']} with a row, "
@@ -442,7 +508,10 @@ def main(argv: list[str] | None = None) -> int:
           f"{measurement['identical_to_serving']}/{measurement['pages']} pages identical to it, "
           f"{measurement['differing_from_previous']}/{measurement['pages']} differing from "
           f"`{measurement['previous']}`")
-    print("2 checks, 0 failed")
+    print(f"served        {served['url']} states {served['served']} and version.py declares "
+          f"{served['declared']} — {served['verdict'].upper()}, read {served['read_at']}"
+          if served["read_at"] else f"served        {served['verdict']}")
+    print("2 checks, 0 failed; 1 witness, which cannot fail")
     return 0
 
 

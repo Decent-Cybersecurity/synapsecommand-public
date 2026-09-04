@@ -21,7 +21,7 @@ import pytest
 from pydantic import BaseModel
 
 import synapse_cdm
-from gates import pin_paths
+from gates import parks_table, pin_paths
 from synapse_cdm import models
 from synapse_cdm.geo import LineString, Point, Polygon
 
@@ -3250,9 +3250,11 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     WHAT MAKES THIS ONE DIFFERENT FROM THE SEVEN BEFORE IT: the promotion is **partial**, and this
     is the first row set in the document where that is true. So both halves are asserted and the
     lower bound on `not yet` rows matters as much as the upper — a round that quietly promoted the
-    remaining 115 would pass a test that only checked for the presence of markers, and 115 decoders
-    checkable against nothing but themselves is the exact failure this section has spent six rounds
-    avoiding. `klv_uas_codec.WITNESSED_TAGS` is the authority for which side of the line a row is
+    rows still reading `not yet` would pass a test that only checked for the presence of markers,
+    and that many decoders checkable against nothing but themselves is the exact failure this
+    section has spent six rounds avoiding. **The figure is not spelled in this docstring**: it said
+    "the remaining 115" twice until 2026-09-05, a count four rounds moved on 2026-09-04 while the
+    assertion below re-derived it on every run. `klv_uas_codec.WITNESSED_TAGS` is the authority for which side of the line a row is
     on, and `test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document` checks the
     partition tag by tag.
     """
@@ -4208,18 +4210,37 @@ def test_the_parks_are_numbered_and_the_smpte_one_is_named_as_CLOSED():
         "strikethrough and '**CLOSED YYYY-MM-DD**' before it counts a row closed, so a row with "
         "the date and no strikethrough reads as closed to a person and open to the gate"
     )
-    assert "all eight still open are public downloads" in flat, (
-        "the table's summary claim about its open rows is gone. It used to read 'eight are public "
-        "downloads and one is not', and the ONE was park 8 — which closed on 2026-09-03, leaving "
-        "no row on the other side of the contrast"
+    # THE PREAMBLE'S OPEN-ROW CLAIM, WITH ITS NUMBER DERIVED RATHER THAN SPELLED IN THIS NEEDLE.
+    # This assertion read `"all eight still open are public downloads" in flat` until 2026-09-05,
+    # which is a literal naming a figure it does not derive — the shape `fixtures/klv/README.md`
+    # records for its own guard, one file over. Parks 2, 5 and 3 all closed on 2026-09-04 and the
+    # preamble did not move, so for a day this needle was the thing keeping the stale pair in place:
+    # correcting the prose would have gone RED and leaving it went green. A guard that pins prose to
+    # whatever it last said cannot catch prose that stopped being true.
+    open_count = len(parks_table.derive().open_parks)
+    spelled = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+               "ten", "eleven", "twelve", "thirteen")[open_count]
+    assert f"all {spelled} still open are public downloads" in flat, (
+        f"the table's summary claim about its open rows does not state today's derived figure. "
+        f"gates/parks_table.py reads {open_count} open row(s) — {parks_table.derive().open_parks} — "
+        f"so the preamble should read 'all {spelled} still open are public downloads'. It used to "
+        "read 'eight are public downloads and one is not', and the ONE was park 8, which closed on "
+        "2026-09-03 leaving no row on the other side of the contrast; the comparison stays retired "
+        "and only the count moves"
     )
     assert "http://www.gwg.nga.mil/misb" in section and "https://nsgreg.nga.mil/misb.jsp" in section, (
-        "the reopen route for the eleven public parks is quoted from the profile's own FORWARD. "
-        "Without the URLs the reopen condition is an instruction to go and look"
+        "the reopen route the open public-download parks share is quoted from the profile's own "
+        "FORWARD. Without the URLs the reopen condition is an instruction to go and look. This "
+        "message named 'the eleven public parks' until 2026-09-05, a figure last true when eleven "
+        "rows were open — the route is quoted once for the rows that share it and the count of "
+        "them is derived above, not spelled here"
     )
     # AN ABSENCE, scoped to one row. Park 8 is the SMPTE one, and the failure mode is not that
     # somebody deletes it — it is that somebody normalises its reopen condition into the phrasing
-    # the other eleven use, at which point the table reads as twelve afternoons of work. The row
+    # the other open rows use, at which point the table reads as one afternoon of work per row. The
+    # count is not spelled here: this comment said "the other eleven" and "twelve afternoons" until
+    # 2026-09-05, both last true when eleven rows were open, and a comment is a site under rule 9.
+    # The row
     # is located by its own document name rather than by position, so reordering the table does
     # not silently turn this into a check on a different row.
     # Rows of the PARK table specifically: `| **n** | ...`. The delegation table's rows also open
@@ -4252,12 +4273,16 @@ def test_the_parks_are_numbered_and_the_smpte_one_is_named_as_CLOSED():
     )
     assert "Public download" not in smpte[0], (
         "park 8's row describes itself as a public download. ST 336 IS a public download — that is "
-        "what closed the park — but this row's reopen condition is CLOSED, not a route. The other "
-        "eight rows say 'Public download' because they are still open and that is how they will be "
-        "closed; a closed row borrowing the phrasing of an open one is the uniformity this guard "
-        "has always been about, pointing the other way"
+        "what closed the park — but this row's reopen condition is CLOSED, not a route. Every OPEN "
+        "row says 'Public download' because that is how it will be closed; a closed row borrowing "
+        "the phrasing of an open one is the uniformity this guard has always been about, pointing "
+        "the other way. This message said 'the other eight rows' until 2026-09-05, when the sweep "
+        "derived the phrase's real spread: eight rows carry it and only five of them are open, "
+        "because parks 2, 3 and 5 closed on 2026-09-04 and each keeps the phrase in a historical "
+        "or pre-repair cell. So the count is not stated and the CONTRAST is, which is the claim "
+        "this assertion actually rests on"
     )
-    # And the other eleven DO say it, so the distinction is a real contrast rather than one row
+    # And the OPEN rows DO say it, so the distinction is a real contrast rather than one row
     # being vague.
     downloads = [ln for ln in park_rows if "Public download" in ln]
     assert len(downloads) == 8, (

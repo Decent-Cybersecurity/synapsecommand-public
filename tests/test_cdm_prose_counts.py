@@ -1729,7 +1729,7 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
      "the same census quoted one round later, carrying its own date"),
     ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "unanimous across five ASTERIX adapters",
      "named subset — the ASTERIX categories, not the roster"),
-    ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "**Eight adapters, eleven private keys.**",
+    ("packages/cdm/synapse_cdm/FORMAT_COVERAGE.md", "**Eight adapters, eleven private keys**",
      "named subset — gap 1's tally of adapters inventing a private key, derived from the table "
      "three lines above it"),
     ("tests/test_cdm_pins.py", "this repository has pinned standards for seven adapters",

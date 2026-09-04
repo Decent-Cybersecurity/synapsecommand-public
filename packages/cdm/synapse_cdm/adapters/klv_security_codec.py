@@ -25,8 +25,8 @@ second table inside `klv_uas_codec` for three reasons, of which the second is de
    stated Min/Max/Offset; ST 0102's are an enumeration lookup, an ISO 646 string and a uint16.
    `klv_uas_codec._Item` has twenty-seven fields, of which ST 0102.12 states none.
 
-WHY THIS DOCUMENT'S ITEMS ARE READ AT ALL, WHEN THE OTHER 115 ST 0601 ITEMS ARE NOT
------------------------------------------------------------------------------------
+WHY THIS DOCUMENT'S ITEMS ARE READ AT ALL, WHEN MOST ST 0601 ITEMS ARE NOT
+--------------------------------------------------------------------------
 `klv_uas_codec`'s scope contract is that an item this repository has never met on a wire "is an
 item whose decoder could only ever be checked against a fixture written from the same reading of
 the same table". Item 48 is **not** in the pinned stream and the contract's premise therefore
@@ -38,8 +38,14 @@ second document rather than from a second reading of the first**:
   ``06 0E 2B 34 02 03 01 01 0E 01 03 03 02 00 00 00 (CRC 40980)``.
 
 Two documents, obtained on different days from different routes, state the same sixteen octets and
-the same CRC. **No unwitnessed ST 0601 item has a second document behind it**, which is exactly
-why the other 115 stay `not yet` and this one does not. What is still true of item 48 and is
+the same CRC. **No unwitnessed ST 0601 item has a second document behind it**, which is exactly why
+this one crossed the contract when it did and why no other row has crossed on THIS ground.
+
+**THIS PARAGRAPH USED TO SAY THAT IS WHY "THE OTHER 115 STAY `not yet`", AND IT WAS OVERTAKEN ON
+2026-09-04**: seventeen rows crossed on a different ground — ST 0601.14a's own printed worked
+examples — so a unique second document explains item 48's promotion and no longer explains anybody
+else's absence. The remaining rows are held by the scope contract and their count is derived in
+`FORMAT_COVERAGE.md`'s "Not witnessed" ledger row. Corrected 2026-09-05 by the maintenance sweep. What is still true of item 48 and is
 recorded rather than smoothed over: the pinned stream carries no security set, so nothing below is
 checked against an octet anybody has met on a wire, and ST 0102.12 prints **no worked example of a
 complete set** — see `WHY check_against_the_documents_own_examples HAS NO TWIN HERE`.

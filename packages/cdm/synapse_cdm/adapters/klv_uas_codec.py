@@ -10,8 +10,8 @@ module would destroy it. So the tag table lives here, one layer up, on the `cat0
 `asterix_cat048` precedent: a codec that reads octets, and above it a codec that knows what they
 mean.
 
-WHAT IT COVERS, AND WHY THAT SET AND NOT THE OTHER 115 ITEMS
--------------------------------------------------------------
+WHAT IT COVERS, AND WHY THAT SET AND NOT THE REST OF ST 0601.14a's 141 ITEMS
+----------------------------------------------------------------------------
 **`ITEMS` is the 26 items the pinned stream attests, and nothing else.**
 `fixtures/klv/streams/day_flight.klv` — SHA-256 `a810e4b6…e51`, 977 octets, provenance closed at
 `samples.ffmpeg.org` by byte identity — carries six packets of 26 items each, the same 26 tags in
@@ -805,8 +805,15 @@ WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(ITEMS))
 #: ST 0601.14a §8.48 prints `KLV Key 06.0E.2B.34.02.03.01.01.0E.01.03.03.02.00.00.00 (CRC 40980)`
 #: and MISB ST 0102.12 §6.7 registers the Security Metadata Local Set under the same sixteen
 #: octets and the same CRC — two documents, obtained on different days by different routes, in
-#: agreement. **No unwitnessed ST 0601 item has a second document behind it**, which is why the
-#: other 115 rows stay `not yet` and this one does not.
+#: agreement. **No unwitnessed ST 0601 item has a second document behind it**, which is why this
+#: one crossed the contract when it did and no other row crossed on THIS ground.
+#:
+#: **THAT CLAUSE USED TO END "which is why the other 115 rows stay `not yet`", AND THE SECOND HALF OF
+#: IT STOPPED BEING TRUE ON 2026-09-04** — seventeen rows have since crossed on a DIFFERENT ground,
+#: this document's own printed worked examples, so a second-document ground being unique to item 48
+#: is no longer the reason anything else stays behind. The remaining rows are held by the scope
+#: contract, and their count is derived in `FORMAT_COVERAGE.md`'s "Not witnessed" ledger row rather
+#: than restated here. Corrected 2026-09-05 by the maintenance sweep.
 #:
 #: WHAT IS STILL TRUE AND IS NOT SOFTENED: the pinned stream carries no item 48, so nothing in
 #: `klv_security_codec` is checked against an octet anybody has met on a wire, and ST 0102.12

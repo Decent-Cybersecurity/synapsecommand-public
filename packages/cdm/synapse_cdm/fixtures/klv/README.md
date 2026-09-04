@@ -32,11 +32,15 @@ opened with the sentence
 "There are none yet, and that is the state this directory is in rather than a step somebody
 forgot" from the day the directory was created until the witnessed-set round of 2026-08-26, and
 that sentence is quoted here rather than deleted because what replaced it is the interesting part: **adapter `stanag4609` has
-shipped**, and it covers **26 of ST 0601.14a's 141 items** — the distinct tags the one real stream
-this repository holds actually carries. The other **115** rows still read `not yet` in
-`../../FORMAT_COVERAGE.md`, and that is a scope contract rather than a backlog — **with one
-crossing, ruled rather than waived: item 48, whose value is a nested Local Set another held
-document defines.** See "The ten payload fixtures, and the plan they replaced" below, and the
+shipped**, and the pinned stream witnesses **26 of ST 0601.14a's 141 items** — the distinct tags the
+one real stream this repository holds actually carries. **RE-DERIVED 2026-09-05: the adapter covers 44
+of the 141 and the other 97 read `not yet`** in `../../FORMAT_COVERAGE.md`, and that is a scope
+contract rather than a backlog — **with the contract crossed on two grounds, each ruled rather than
+waived**: item 48, whose value is a nested Local Set another held document defines, and seventeen
+items promoted on ST 0601.14a's own printed worked examples. This sentence said *the other 115* and
+*one crossing* until the maintenance sweep moved it, and both halves went stale on 2026-09-04 in the
+same four rounds — which is why the counts and the grounds are now cited to the ledger row that
+derives them instead of stated a second time here. See "The ten payload fixtures, and the plan they replaced" below, and the
 seven `security_*` rows at the end of the table. This directory also holds `spec/` and — since the
 framing round of the same day — `framing/`, and `framing/` is still not a payload directory.
 
@@ -215,8 +219,14 @@ the three rejected alternatives (`misp`, `misb`, `fmv`), are in `spec/klv_pin.js
 
 What is here:
 
-- **`spec/klv_pin.json`** — the pinned identity of all six documents and every value extracted from
-  them that a ruling cites, each with its locus. Written first, for the reason the Legion, CAT021
+- **`spec/klv_pin.json`** — the pinned identity of every document in `spec/` and every value
+  extracted from them that a ruling cites, each with its locus. **The count is the record's own and
+  is not restated here**: its root `what_this_is` closes each dated clause by stating how many
+  documents the directory holds and how many of them are pins, and
+  `tests/test_cdm_pin_header.py` derives both from the record and refuses a clause that disagrees.
+  This bullet said *all six documents* from the day it was written until 2026-09-05, through nine
+  acquisitions — a restated count with nothing watching it, which is what rule 7 prefers deleting to
+  re-syncing. Written first, for the reason the Legion, CAT021
   and CAT048 pins were: a quotation with no pin behind it is a recollection.
 - **`spec/nato-stanag-4609-edition-5.pdf`** and **`spec/misb-misp-2019-1.pdf`** — in the working
   tree because they had to be read, and **not committed**, matching every other adapter here.
