@@ -827,6 +827,7 @@ Every recorded source commit resolves in this repository's history; none is from
 
 | Deployment | UTC | Source | Recorded, before this round |
 | --- | --- | --- | --- |
+| `e2d3bec5` | 2026-09-04 08:03:16 | `8e3dc2a3` | **did not exist** — deployed by the docs deploy round, on ledger entry 13's finding |
 | `222a55be` | 2026-08-27 12:37:06 | `43213316` | **did not exist** — deployed by the 1.2.1 release; ledger entry 10 |
 | `5ed34cd8` | 2026-08-27 01:01:32 | `c4a1071f` | **this entry** |
 | `57ac1878` | 2026-08-25 14:35:07 | `01fb685f` | no |
@@ -843,7 +844,7 @@ were **true when written** by commit `7544880`, whose table carried five rows ab
 below them, and whose second sentence balanced its pair over that same set. What falsified them is this
 repository's own later act rather than any error in the reading: commit `1fc35e8` appended the
 `222a55be` row when the 1.2.1 release deployed at `12:37:06Z`, and **the enumeration grew while the
-prose count did not**. The list this entry accounts for is **seventeen deployments — six carrying a
+prose count did not**. The list this entry accounts for is **eighteen deployments — seven carrying a
 row and eleven covered by the naming paragraph below**, derived at writing time from
 [`gates/deploy_record.py`](gates/deploy_record.py)'s own reconciliation rather than counted by hand.
 **Only the total is restated, and the split it is restated by is the gate's.** The second sentence's
@@ -876,12 +877,16 @@ hides.** `ccfa7476` went up at `07:01:45` — ninety-two seconds *after* the `e4
 Nothing rested on the ordering; it is recorded because the phrase was doing work it could not do.
 
 **The alias, and which deployment serves it.** `docs.synapsecommand.com` is served by deployment
-`222a55be`. Witnessed **2026-08-27** by bytes and not read off a settings field: five pages fetched
-from the domain are byte-identical to `222a55be`'s own `pages.dev` URL and **differ** from
-`5ed34cd8`'s on all five. **The pin moved in the same commit as the deploy**, which is what this
-paragraph is for; it named `5ed34cd8` until the 1.2.1 release superseded it at `12:37:06Z`, and the
-superseded reading is ledger entry 8's table rather than a struck sentence here, because the id is
-the claim and a paragraph carrying two of them is a paragraph a parser has to guess at. Identical to one deployment and different from the one before it is the
+`e2d3bec5`. Witnessed **2026-09-04 at 08:03:38Z** by bytes and not read off a settings field: five
+pages fetched from the domain are byte-identical to `e2d3bec5`'s own `pages.dev` URL and **differ**
+from the deployment before it on all five. **The pin moved in the same commit as the deploy**, which
+is what this paragraph is for; it named `222a55be` for eight days until the docs deploy round
+superseded it at `08:03:16Z`, and before that `5ed34cd8` until the 1.2.1 release superseded it at
+`12:37:06Z` — every superseded reading is ledger entry 8's table rather than a struck sentence here,
+because the id is the claim and a paragraph carrying two live ones is a paragraph a parser has to
+guess at. **`gates/deploy_record.py` refused this paragraph before it was rewritten**, naming
+`222a55be` against bytes that said `e2d3bec5`, which is the third time the gate has caught its own
+round's upload and the reason the id here is never edited from memory. Identical to one deployment and different from the one before it is the
 pair that distinguishes "serving what was deployed" from "serving something", which is the shape
 every deploy measurement in this file has used. The reason it is bytes rather than the `aliases`
 field the API also offers: that field says which deployment is *configured* to hold the domain, and
@@ -1521,6 +1526,19 @@ alias, and `222a55be` serving the alias is exactly what it expects. **A deploy i
 here and this round did not perform one**: it moves no version string by its own terms, and
 deploying the docs is not a witness round's to do.
 
+**† THE GAP CLOSED THE SAME DAY, AND THIS PARAGRAPH IS NOT EDITED.** The finding above stands
+exactly as it was measured at **2026-09-04T07:50:05Z**, because it is what was true then and it is
+the reason the deploy happened. On an explicit authorisation the docs deploy round built `docs/` at
+`8e3dc2a` and uploaded it: deployment **`e2d3bec5`**, source `8e3dc2a`, complete at
+**08:03:16Z** — **thirteen minutes** after the sentence above was written. Read at **08:03:26Z**,
+<https://docs.synapsecommand.com/changelog> serves *"the package is at 1.4.1"* and its footer reads
+*"Last updated on Sep 4, 2026"*. `gates/deploy_record.py` reconciles at **eighteen deployments, 0
+unaccounted for**, with the alias on `e2d3bec5`. **The three-release gap this entry found is closed
+and the mechanism that allowed it is unchanged** — a push still deploys nothing, which is why the
+close is a dated note here and a dated clause under *The deployment was not affected*, rather than
+an edit to either. **What is still not gated is the same thing**: no check compares the served
+page's *content* against the tree, so the next gap will also have to be found by somebody looking.
+
 **The four untouchables hold, each by its own command, and none of them moved.** The pinned phrase
 derives to **35** over the git index; `scripted_edit`'s contract is green at **9**, with
 `pytest -k scripted_edit` collecting **11** because two `version_floor` parametrizations match the
@@ -1539,6 +1557,25 @@ inside the distribution: it did not, which is why the bump gate derives **NONE**
 `v1.4.1` and no pending section is owed.
 
 ## The deployment was not affected
+
+**CLOSED 2026-09-04 AS A PRESENT-TENSE CLAIM, AND EVERY WORD OF IT IS STILL TRUE ABOUT THE
+MECHANISM.** This heading has always said two things at once — that the repository going public
+deployed nothing, which is what it was written for, and, by its tense, that the live site was
+keeping pace. The first is permanent. **The second was false for three releases and nobody had
+measured it.** Ledger entry 13 found it on 2026-09-04: the site served 1.2.1's changelog while the
+index served 1.4.1, because the alias was held by `222a55be`, whose source is the v1.2.1 release
+commit, and the 1.3.0, 1.4.0 and 1.4.1 releases each moved `docs/docs/changelog.mdx` and deployed
+nothing. **That is this section's own claim working exactly as written** — a push deploys nothing,
+so three pushes deployed nothing — and the gap is the claim's consequence rather than its
+refutation.
+
+**The gap closed at 2026-09-04T08:03:16Z**, by deployment `e2d3bec5` from source `8e3dc2a`, uploaded
+by the docs deploy round on an explicit authorisation. The site was read at **08:03:26Z** and serves
+*"the package is at 1.4.1"* with a footer of *"Last updated on Sep 4, 2026"*. **Nothing about the
+mechanism moved and nothing here is edited**: the paragraphs below are dated readings of what was
+true when they were taken, and this clause is what a reader needs before them so that a section
+titled *the deployment was not affected* is not read as *the deployment is current*. **The two are
+different claims and only the first was ever gated.**
 
 The documentation site is deployed by explicit upload and **the Pages project has no Git
 integration**, so the flip changed nothing about it: `wrangler pages project list` still reports
@@ -1743,7 +1780,8 @@ mentions no platform**, which is the limit stated in entry 9.
 | the deployment list is all `ad_hoc`, every source commit resolving here | entry 8 | `gates/deploy_record.py` | holds | **PROTOCOL-GATED** for the two claims in the left column. **This cell's own trailing claim about where the list's length lives was wrong in the commit that wrote it** — it said the figure was derived by the gate and appeared in no prose, and entry 8 spelled it three times in this same file on that day. **That sentence is why nobody looked**, and the count it waved off is the one that then decayed. Corrected 2026-08-28: the figure is stated in the entry, derived from the gate's own enumeration, and ruled by `tests/test_cdm_deploy_record.py` |
 | every deployment id is named by a row or by the pinned coverage set | entry 8 | `gates/deploy_record.py` | holds | **PROTOCOL-GATED** |
 | ~~`docs.synapsecommand.com` is served by `5ed34cd8`~~ | entry 8 | `gates/deploy_record.py`, by bytes | **superseded 2026-08-27 12:37:06Z** by `222a55be` | **PROTOCOL-GATED** — the gate refused the stale id, which is how the pin moved |
-| `docs.synapsecommand.com` is served by `222a55be` | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | holds | **PROTOCOL-GATED** |
+| ~~`docs.synapsecommand.com` is served by `222a55be`~~ | entry 8, entry 10 | `gates/deploy_record.py`, by bytes | **superseded 2026-09-04 08:03:16Z** by `e2d3bec5` | **PROTOCOL-GATED** — the gate refused the stale id again, on the round that made it stale |
+| `docs.synapsecommand.com` is served by `e2d3bec5` | entry 8, entry 13 | `gates/deploy_record.py`, by bytes | holds | **PROTOCOL-GATED** |
 | ~~the distribution on the index is 1.2.0~~ | `MIGRATIONS.md`, Unreleased | `GET /pypi/…/json` | **superseded 2026-08-27** by 1.2.1, and the section cited was absorbed into `### 1.2.1` | the citation is why this row is struck rather than edited: an `Unreleased` section is by construction not a durable address |
 | ~~the distribution on the index is 1.2.1~~ | `MIGRATIONS.md`, `### 1.2.1`; entry 10 | `GET /pypi/…/json`, and `pip install` in a clean venv | **superseded 2026-08-29** by 1.3.0; the section cited is a released heading and stays a durable address, which is the difference from the struck 1.2.0 row above | **SUITE-GATED at one remove**: `tests/test_cdm_release.py` requires every release tag to name the `PACKAGE_VERSION` of the tree it points at. **Corrected 2026-08-28 — the rest of this cell was wrong about the gate it names, and wrong from the commit that wrote it.** It said the gate forbids an `Unreleased` section once the tag exists. That rule is conditional on the moved set: the section is *required* while shipped files have moved past the tag and forbidden only when the tree is identical to it, so a tag and an `Unreleased` section coexist legally — as they have here since `e825e96`, written about an hour after this cell was. Consistent with the tree in that hour and false about the mechanism throughout; sweep rule 10's second instance |
 | 1.2.1's digests equal what the index serves, in four readings | entry 10 | recomputed over downloaded bytes | holds | dated 2026-08-27 |
