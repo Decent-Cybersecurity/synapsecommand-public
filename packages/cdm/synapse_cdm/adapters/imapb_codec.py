@@ -13,13 +13,21 @@ Both documents are held and pinned: ST 1201.3 at `fixtures/klv/spec/ST1201.3.pdf
 `3d5f1ca1…ab212ce4`. Every constant below is read from one of them and every one is checked
 against a worked example the document prints itself.
 
-**PARK 5 IS NOT CLOSED BY THIS FILE.** Its exit condition is the document *plus* the artefact that
-document makes writable; the artefact is here and the fourteen rows it reaches still read `not
-yet`, because **none of the fourteen is in the witnessed set**. The pinned stream carries 26 items
-whose highest tag is 65. So this codec is checked against the documents' own examples and against
-no held octet, which is a weaker footing than every other codec in this package has, and it is the
-reason the rows do not move. See FORMAT_COVERAGE.md, *The IMAPB codec — ST 1201.3, and the fourteen
-rows it reaches*.
+**PARK 5 CLOSED ON 2026-09-04, AND THIS FILE IS HALF OF WHAT CLOSED IT.** Its exit condition is
+the document *plus* the artefact that document makes writable, and for a year the artefact was
+here while the rows it reaches read `not yet`. What moved is not the footing but the RULE: RULING 1
+(2026-09-04) read `FORMAT_COVERAGE.md`'s own reopen condition — *"a second pinned stream, OR a
+document-side check as strong as a worked example — and ST 0601.14a prints one per item"* — and
+found its second half already satisfied by `IMAPB_WORKED_EXAMPLES`, which reproduces all fourteen
+printed examples on every suite run. So the fourteen rows now read `stanag4609 1.0.0`, each
+carrying that basis in its own description, and `klv_uas_codec` decodes them.
+
+**WHAT IS STILL TRUE AND IS NOT SOFTENED BY THE CLOSURE: none of the fourteen is in the witnessed
+set.** The pinned stream carries 26 items whose highest tag is 65. This codec is checked against
+the documents' own examples and against **no held octet**, which is a weaker footing than every
+other codec in this package has — the promotion changed which check is accepted as a witness, not
+how many octets anybody has met on a wire. See FORMAT_COVERAGE.md, *The IMAPB codec — ST 1201.3,
+and the fourteen rows it reaches*.
 
 THE ALGORITHM, AND WHY IT IS SHIFTS RATHER THAN A DIVISION
 ----------------------------------------------------------
@@ -90,6 +98,8 @@ from typing import Final
 __all__ = [
     "IMAPB_ITEMS", "Constants", "Special", "SpecialKind",
     "constants", "forward", "reverse", "encode", "decode", "length_for_precision",
+    "IMAPB_WORKED_EXAMPLES", "PRINTED_RESOLUTION_DISAGREEMENTS", "resolution",
+    "decode_item", "encode_item", "encode_special",
 ]
 
 
@@ -289,6 +299,84 @@ IMAPB_ITEMS: Final[dict[int, tuple[str, str, float, float, int]]] = {
     132: ("Transmission Frequency",                       "MHz", 1.0,     99_999.0,    4),
     134: ("Zoom Percentage",                              "%",   0.0,     100.0,       4),
 }
+
+
+#: EACH ITEM'S OWN PRINTED WORKED EXAMPLE: `(printed Software Value, the Len the block states,
+#: the Value octets it prints)`. Transcribed by hand from the fourteen §8.x blocks of the pinned
+#: copy, and the SECOND independent transcription of them in this repository — the first is
+#: `tests/test_cdm_imapb_codec.py`'s `DOCUMENT_EXAMPLES`, and
+#: `test_the_codecs_example_table_agrees_with_the_tests_own_transcription` asserts the two agree.
+#: Two hand transcriptions that agree is the arrangement that file's docstring argues for; a table
+#: checked only against itself is the arrangement it argues against.
+#:
+#: **WHY THE EXAMPLES LIVE HERE AND NOT ONLY IN THE TEST, 2026-09-04.** The park 5 round wired
+#: these fourteen items into `klv_uas_codec`, whose `check_against_the_documents_own_examples()`
+#: runs every covered item's printed example on every suite run and is the witness basis each of
+#: their rows now cites. That function is in the package and cannot read a test module, so the
+#: octets have to be importable. **The examples are the witness and not a convenience**: RULING 1
+#: (2026-09-04) promotes these rows on "a document-side check as strong as a worked example", and
+#: this table is the check's input.
+#:
+#: The `Len` recorded is the block's own — every one of the fourteen states `Length` = `Variable`,
+#: so the length the example happens to use is a fact about the example and NOT a width to enforce;
+#: §7.4 makes the wire's length authoritative and `decode` reads it from the octets.
+IMAPB_WORKED_EXAMPLES: Final[dict[int, tuple[float, int, str]]] = {
+    96:  (13898.5463, 3, "00D92A"),
+    103: (23456.24,   3, "2F921E"),
+    104: (23456.24,   3, "2F921E"),
+    105: (23456.24,   3, "2F921E"),
+    109: (1.625,      3, "0001A0"),
+    112: (125.0,      2, "1F40"),
+    113: (2150.0,     3, "05F500"),
+    114: (2154.5,     3, "05F740"),
+    117: (1.0,        2, "3E90"),
+    118: (0.004176,   3, "3E8011"),
+    119: (-50.0,      2, "3B60"),
+    120: (72.0,       2, "4800"),
+    132: (2400.0,     3, "0257C0"),
+    134: (55.0,       2, "3700"),
+}
+
+#: THE PRINTED `Resolution` CELL IS NOT READ BY THIS CODEC, AND THREE OF THEM ARE WRONG.
+#: Re-derived from the pinned copy on 2026-09-04 by the park 5 round: for each of the fourteen
+#: items, every `N bytes = x` entry in its Resolution cell was compared with `1/sF` computed from
+#: that item's own `(a, b, N)`. **Eleven of the fourteen agree** — the printed figures are
+#: roundings or truncations of the derived step, some to one figure ("3 bytes = 0.7 cm" for
+#: 0.78125 cm). **Three do not, and each is proved wrong by its own section's example octets**,
+#: which pin `sF` independently of the cell:
+#:
+#: * **§8.104 and §8.105** print "3 bytes = 78.125 mm" where `IMAPB(-900, 40000, 3)` gives
+#:   `1/sF` = **7.8125 mm** — a factor of ten. The same range appears at §8.113 and §8.114, which
+#:   print "3 bytes = 0.7 cm" and AGREE with the derivation, so the document contradicts itself
+#:   across four sections that share one range and the two that are wrong are 104 and 105.
+#: * **§8.112** prints "2 bytes = 16.625 milli-degrees" where `IMAPB(0, 360, 2)` gives **15.625
+#:   milli-degrees**. Every other rounded cell in the set is a truncation TOWARD the derived value;
+#:   this one is larger than the true step and shares its fraction exactly, which is a digit slip
+#:   rather than a rounding.
+#:
+#: In all three cases the block's printed Software Value encodes to the block's printed octets
+#: EXACTLY under the derivation — 23456.24 to `2F921E`, 125 to `1F40` — so `sF` is the document's
+#: own and the Resolution cell is the odd statement out. **Nothing here changes as a result**:
+#: this codec computes the step from `(a, b, L)` per §7.1.2 and never reads a Resolution cell, so
+#: the defect is recorded rather than worked around. It is recorded at all because two of the
+#: three sit on the two items that reach a canonical CDM field — 104 fills `Position.alt_m` and
+#: 112 fills `Kinematics.course_deg` — so a reader sizing either field's precision from the
+#: document's own cell would be out by 10x and by 6%.
+PRINTED_RESOLUTION_DISAGREEMENTS: Final[dict[int, tuple[str, float, str]]] = {
+    104: ("3 bytes = 78.125 mm", 0.0078125, "m"),
+    105: ("3 bytes = 78.125 mm", 0.0078125, "m"),
+    112: ("2 bytes = 16.625 milli-degrees", 0.015625, "deg"),
+}
+
+
+def resolution(tag: int, length: int) -> float:
+    """One integer step for an item at a given wire length: `1/sF`, per §7.1.2.
+
+    The quantity the `Resolution` cells of §8.x are trying to state, computed instead of read —
+    see `PRINTED_RESOLUTION_DISAGREEMENTS` for why that distinction earned a name.
+    """
+    _name, _units, a, b, _max_len = IMAPB_ITEMS[tag]
+    return 1.0 / constants(a, b, length).s_f
 
 
 def decode_item(tag: int, octets: bytes) -> float | Special:

@@ -3267,19 +3267,44 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # TWO held documents state identically — item 48, ruled at the tag-by-tag guard below. Summing
     # them here rather than widening `WITNESSED_TAGS` is the point: the scope contract's number
     # does not move, and the crossing has to be declared in its own table to be counted.
-    expected = len(uas_codec.WITNESSED_TAGS) + len(uas_codec.NESTED_SETS)
+    # THREE TERMS SINCE 2026-09-04, AND THEY ARE SUMMED RATHER THAN MERGED BECAUSE THEY ARE THREE
+    # DIFFERENT CLAIMS ABOUT WHAT WITNESSES A ROW. `WITNESSED_TAGS` is what the pinned stream
+    # attests and is still 26. `NESTED_SETS` is the one item whose value another held document
+    # defines and whose key TWO held documents state identically — item 48, park 2's round.
+    # `DOCUMENT_WITNESSED_TAGS` is the park 5 round's fifteen, promoted under RULING 1 on ST
+    # 0601.14a's OWN printed worked examples, reproduced by
+    # `check_against_the_documents_own_examples()` on every suite run. Summing them here rather
+    # than widening `WITNESSED_TAGS` is the whole point and is the decision
+    # `klv_uas_codec.WITNESS_KINDS` records: the scope contract's number does not move, and each
+    # crossing has to be declared in its own table to be counted.
+    expected = (len(uas_codec.WITNESSED_TAGS) + len(uas_codec.NESTED_SETS)
+                + len(uas_codec.DOCUMENT_WITNESSED_TAGS))
     assert len(promoted) == expected, (
         f"{len(promoted)} rows carry a stanag4609 marker and the codec covers "
         f"{len(uas_codec.WITNESSED_TAGS)} witnessed tags plus {len(uas_codec.NESTED_SETS)} nested "
-        "set(s). The witnessed set is the scope contract and the two sites have to state one set"
+        f"set(s) plus {len(uas_codec.DOCUMENT_WITNESSED_TAGS)} document-witnessed tags. Each "
+        "crossing of the scope contract is declared in its own table so that it can be counted "
+        "here; a promotion with no table behind it fails this assertion"
     )
-    # 114 SINCE 2026-09-04, DOWN FROM 115, AND THE ONE THAT MOVED IS NAMED. Item 48 left this set
-    # for the nested-set ruling; every other row outside the witnessed set is still blocked on it.
-    assert len(not_yet) >= 114, (
-        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 114 of the 141 rows "
-        "are outside the witnessed set and outside the nested-set ruling, and each is blocked on "
-        "the scope contract; a round that promoted them wrote decoders nothing can check, which "
-        "is the trap this section exists to avoid"
+    # 99 SINCE 2026-09-04, DOWN FROM 114 THAT MORNING AND 115 THE DAY BEFORE, AND WHAT MOVED IS
+    # NAMED AT EACH STEP: item 48 left for the nested-set ruling (park 2), then fifteen left for
+    # the document-side witness (park 5). Every remaining row is blocked on the scope contract,
+    # and tag 130 is the one that is ALSO one of park 5's sixteen — it stays because §8.130 prints
+    # no worked example, which is the condition RULING 1 measures against.
+    assert len(not_yet) >= 99, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 99 of the 141 rows "
+        "are outside all three witness grounds and each is blocked on the scope contract; a round "
+        "that promoted them wrote decoders nothing can check, which is the trap this section "
+        "exists to avoid"
+    )
+    assert 130 in {int(re.match(r"^\| `(\d+)` \| ", ln).group(1)) for ln in not_yet}, (
+        "tag 130 Airbase Locations is no longer `not yet`. It is the sixteenth of park 5's sixteen "
+        "and the one RULING 1 did NOT reach: §8.130 prints no worked example — Example Software "
+        "Value 'N/A', Example KLV Item '8102 - N/A' — so there is nothing for a document-side "
+        "check to be as strong as, and its own section states its HAE member's range two ways, "
+        "IMAPB(-900, 9000,3) in Figures 60/61 against IMAPB(-600, 9000, 3) in the prose. A round "
+        "that promoted it either found a third statement of that range or waived the condition, "
+        "and the second is what this assertion exists to stop"
     )
     # THE NESTED ST 0102.12 ROW SET HAS ITS OWN PARTITION AND IT IS ASSERTED SEPARATELY, because
     # scoping the check above to ST 0601's table would otherwise have stopped checking these rows
@@ -3482,6 +3507,15 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
         # and the row must still say which document owns the elements. Deleting the nested-set
         # table or promoting a second unwitnessed row fails here.
         nested = tag in uas_codec.NESTED_SETS
+        # AND A THIRD GROUND SINCE 2026-09-04, WHOSE ADMISSION IS WIDER AND WHOSE CHECK IS
+        # DIFFERENT. `DOCUMENT_WITNESSED_TAGS` is the park 5 round's fifteen, admitted under
+        # RULING 1 on the reopen condition the "Not witnessed" ledger row has stated since
+        # 2026-08-26: "a second pinned stream, OR a document-side check as strong as a worked
+        # example — and ST 0601.14a prints one per item." Item 48's ground is TWO DOCUMENTS
+        # agreeing; these fifteen rest on ONE document checking itself, which is weaker and is why
+        # the check is asserted mechanically below rather than described: the admission holds only
+        # while `check_against_the_documents_own_examples()` actually reproduces each one.
+        document_witnessed = tag in uas_codec.DOCUMENT_WITNESSED_TAGS
         if witnessed:
             assert b["status"].startswith("stanag4609 1.0.0"), (
                 f"item {tag} is in klv_uas_codec.WITNESSED_TAGS — the pinned stream attests it and "
@@ -3504,12 +3538,26 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
                 "the two documents agree on. That agreement IS the ground for crossing the scope "
                 "contract; a row that stops stating it is a promotion with no argument left"
             )
+        elif document_witnessed:
+            assert b["status"].startswith("stanag4609 1.0.0"), (
+                f"item {tag} is in klv_uas_codec.DOCUMENT_WITNESSED_TAGS — the codec decodes it "
+                f"and ST 0601.14a prints a worked example for it — and its row reads "
+                f"{b['status']!r}. A decoded item whose row says `not yet` makes the status "
+                "column a claim nobody can rely on"
+            )
+            assert "witnessed by §" in b["notes"] or "worked example" in b["notes"], (
+                f"item {tag}'s row no longer states its witness basis. RULING 1 requires EACH "
+                "ROW to say which kind of witness stands behind it — 'witnessed by §8.n's own "
+                "worked example; no held stream carries this tag' — because the "
+                "stream-versus-document distinction is this record's whole argument and a "
+                "promotion that stops stating it is indistinguishable from one made on a wire"
+            )
         else:
             assert b["status"] == "not yet", (
-                f"item {tag} reads {b['status']!r} and is NOT in klv_uas_codec.WITNESSED_TAGS. The "
-                "witnessed set is the scope contract: a row promoted past the set the pinned "
-                "stream attests is a decoder checkable only against a fixture written from the "
-                "same reading of the same table"
+                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's three witness "
+                "tables — WITNESSED_TAGS, NESTED_SETS, DOCUMENT_WITNESSED_TAGS. The scope "
+                "contract: a row promoted past all three is a decoder checkable only against a "
+                "fixture written from the same reading of the same table"
             )
 
 
@@ -4863,13 +4911,17 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 23, (
-        f"{len(expected)} adapter fixtures, expected twenty-three — ten from the witnessed-set "
+    assert len(expected) == 32, (
+        f"{len(expected)} adapter fixtures, expected thirty-two — ten from the witnessed-set "
         "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
-        "seventeen elements inside item 48, and the six `security_object_country_codes_*` "
-        "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held: a byte-order "
+        "seventeen elements inside item 48, the six `security_object_country_codes_*` "
+        "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held (a byte-order "
         "mark in each direction, the no-BOM default, `ST 0102.10-24`'s semi-colon split, and the "
-        "two refusals — an odd octet count and a lone surrogate"
+        "two refusals — an odd octet count and a lone surrogate), and the NINE the park 5 round "
+        "added the same day for the fifteen document-witnessed items: the fourteen IMAPB items "
+        "from their own printed examples, RULING 4's pair, all eight of ST 1201.3 Table 2's "
+        "special patterns, tag 128's printed pack example, a short pack refused, a course of "
+        "exactly 360 degrees, a zero-length IMAPB item and one past its Max Length"
     )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (
@@ -4889,7 +4941,26 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "kept: a directory that fills up and loses the record of having been empty loses the "
         "evidence a reader could check the parks against"
     )
-    assert "There are SEVENTEEN" in readme, "the README does not state the new count"
+    assert "There are THIRTY-TWO" in readme, "the README does not state the new count"
+    # **THE COUNT SENTENCE HAD DECAYED AND THIS ASSERTION IS WHY NOTHING CAUGHT IT.** It read
+    # `assert "There are SEVENTEEN" in readme` from the park 2 round until 2026-09-04, and the
+    # text-pins round of the same day added six fixtures without re-dating the sentence — so the
+    # README said SEVENTEEN while twenty-three payloads sat beside it, and this test ASSERTED the
+    # stale string rather than catching it. A literal that names a number the test does not derive
+    # is a check that pins the prose to whatever it happened to say. The count above is now
+    # derived — `len(expected)` — and the historical strings below are asserted as QUOTATIONS,
+    # which is what they are, so the same failure cannot recur silently: a round that adds a
+    # fixture and does not re-date the sentence fails on the derived count, not on a literal.
+    assert "There were TWENTY-THREE" in readme, (
+        "the README no longer records that the count was TWENTY-THREE between the text-pins round "
+        "and the park 5 round of 2026-09-04. Both moved it on the same day and the middle value is "
+        "the one that had no trace at all — see the note above this assertion"
+    )
+    assert "There were SEVENTEEN" in readme, (
+        "the README no longer records that the count was SEVENTEEN between the park 2 round and "
+        "the text-pins round. It is re-dated rather than re-synced for the same reason the "
+        "opening sentence is quoted rather than deleted"
+    )
     assert "There were TEN" in readme, (
         "the README no longer records that the count was TEN between the witnessed-set round "
         "and the park 2 round. It is re-dated rather than re-synced for the same reason the "

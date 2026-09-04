@@ -3,6 +3,31 @@
     "affiliation": "UNKNOWN",
     "attributes": {
       "affiliation_basis": "UNKNOWN, always, and here it is barely a decision: ST 0601.14a carries no item stating an allegiance at all. A UAS Datalink LS describes one's own aircraft to one's own ground station, which is a context in which the question does not arise on the wire \u2014 and inferring FRIENDLY from that context would be this adapter reasoning about who deployed the sensor",
+      "document_witnessed_basis": {
+        "declined": {
+          "130": "tag 130 Airbase Locations is NOT decoded, on two grounds. (1) \u00a78.130 PRINTS NO WORKED EXAMPLE \u2014 its Example Software Value cell reads 'N/A' and its Example KLV Item row reads '8102 - N/A' \u2014 so the document-side witness RULING 1 requires, 'a document-side check as strong as a worked example', does not exist for this item, and no held stream carries it either. (2) THE SECTION CONTRADICTS ITSELF ON THE HAE MEMBER'S RANGE: Figures 60 and 61 both label it IMAPB(-900, 9000,3) while \u00a78.130.1's prose says 'a range from -600 to 9000 meters' and 'Using IMAPB(-600, 9000, 3) provides 0.19 cm of precision'. The two readings put every decoded HAE 300 m apart, and the precision figure cannot arbitrate them because 1/sF is 1/512 m on both \u2014 9600 and 9900 fall in the same power-of-two bracket, so the document's one checkable number is equal under both. Latitude and longitude are stated consistently and would decode; a pack decoded as far as its optional third member and then refused is not a row this file's status vocabulary can express, so the whole item stays `not yet`. See AIRBASE_LOCATIONS_LAYOUT for everything the section does state"
+        },
+        "how_many": 15,
+        "tags_read": [
+          96,
+          103,
+          104,
+          105,
+          109,
+          112,
+          113,
+          114,
+          117,
+          118,
+          119,
+          120,
+          128,
+          132,
+          134
+        ],
+        "what_it_is_not": "NOT a claim that any of these fifteen has been met on a wire. The pinned stream carries 26 items whose highest tag is 65 and not one of the fifteen is among them, so every value here is decoded by a codec checked against a printed example and against no held octet \u2014 a weaker footing than the 26 have, and the reason `klv_uas_codec.WITNESSED_TAGS` was left at 26 rather than widened",
+        "witness": "ST 0601.14a's own printed worked examples, under RULING 1 of 2026-09-04, which read the reopen condition this record's scope contract has stated since 2026-08-26: 'a second pinned stream, OR a document-side check as strong as a worked example \u2014 and ST 0601.14a prints one per item'. `klv_uas_codec.check_against_the_documents_own_examples()` runs all fifteen alongside the 26 on every suite run, 41 in total"
+      },
       "entity_type_basis": "PLATFORM, from the standard's own subject rather than from any item. \u00a71: 'MISB ST 0601 defines the Unmanned Air System (UAS) Datalink Local Set (LS) for UAS platforms. The UAS Datalink LS is typically produced on-board a UAS airborne platform'. Tag 10 Platform Designation is the item that would say WHICH platform and it is not in the witnessed set, so the type is the format's and the model is nobody's \u2014 the CAT034 reading, where the object's type is a property of the format",
       "identity_basis": "uuid5 over (UAS-LS-PACKET, '1224807209913000|0') \u2014 the Precision Time Stamp and the packet's index in its payload. PACKET-SCOPED, and it claims exactly that: THIS OBSERVATION. Nothing in the witnessed set identifies anything \u2014 tag 3 Mission ID, tag 4 Platform Tail Number, tag 10 Platform Designation, tag 59 Platform Call Sign and tag 94's MIIS Core Identifier are the five items that would, and the pinned stream carries none of them. Tag 11 Image Source Sensor is the one witnessed item that looks like a name and it is disqualified BY THE BYTES: it reads 'EON' in five of the six packets and 'IR' in the sixth, so keying on it would split one aircraft into two entities inside a three-minute clip. WHAT THIS COSTS, stated rather than hidden: consecutive packets from one platform get DIFFERENT entity_id values, so the continuity a real feed has is continuity the CDM cannot express from this format. Park 11 \u2014 MISB ST 1204.1, the MIIS Core Identifier \u2014 is what closes it, and reading the stream turned that park from a prediction into a measurement",
       "integrity_basis": {
@@ -16,7 +41,8 @@
       },
       "kinematics_basis": {
         "climb_mps": "None on every object. Tag 51 Platform Vertical Speed is the item and it is not in the witnessed set; deriving a climb rate from two packets' altitudes would be differentiating across records, which is the accumulation this adapter refuses",
-        "course_deg": "None on EVERY object, and tag 5 is the temptation. Tag 5 is the Platform HEADING Angle \u2014 \u00a78.5, 'the angle between longitudinal axis (line made by the fuselage) and true north' \u2014 and Kinematics.course_deg is documented as a COURSE, which is the direction of travel. On an aircraft in wind those differ by the drift angle, and the standard itself keeps them apart: tag 112 is the Platform Course Angle and it is NOT in the witnessed set. So the heading parks at attributes.platform_heading_deg and course_deg stays None. The AIS heading/course distinction, reached by an airborne format",
+        "course_deg": "TAG 112's VALUE WHEN THE PACKET CARRIES TAG 112, AND None OTHERWISE \u2014 changed 2026-09-04 by the park 5 round. Tag 112 is the Platform Course Angle, \u00a78.112, 'Direction the aircraft is moving relative to True North', IMAPB(0, 360, Length) with the bullets '0 (or 360) is true north, east is 90, south is 180, west is 270' \u2014 degrees clockwise from true north, which is what Kinematics.course_deg is documented as, so it lands with no conversion. Decoded by `imapb_codec` at the wire's length per ST 1201.3 \u00a77.4, and promoted on the document-side witness RULING 1 names: \u00a78.112 prints 125 degrees against octets 1F40 and `klv_uas_codec.check_against_the_documents_own_examples()` reproduces it both ways on every suite run. **Tag 112 is NOT in the pinned stream**, whose 26 items stop at tag 65, so this field is filled against a printed example and against no held octet \u2014 which is the sentence every one of the fifteen promoted rows carries. **AND TAG 5 IS STILL NOT A COURSE, WHICH IS THE HALF OF THIS BASIS THAT DID NOT MOVE.** Tag 5 is the Platform HEADING Angle \u2014 \u00a78.5, 'the angle between longitudinal axis (line made by the fuselage) and true north' \u2014 and a course is the direction of travel. On an aircraft in wind those differ by the drift angle, and the standard keeps them apart in two items rather than one. The heading still parks at attributes.platform_heading_deg and is NEVER substituted for a missing course: a packet with tag 5 and no tag 112 emits course_deg None, which is the AIS heading/course distinction reached by an airborne format. **A \u00a77.2.3 SIGNAL EMITS NO COURSE.** \u00a78.112's Special Values cell reads 'None', so the document declares no reserved integer for this item \u2014 but IMAPB reserves the top two bits for every item it maps, per ST 1201.3 \u00a77.2.3 Table 1, so a conforming emitter can still send +QNaN here. It is carried as the signal it is and course_deg stays None, the same ruling item 13's 0x80000000 got",
+        "course_item": null,
         "speed_basis": "\u00a78.56, 'Speed projected to the ground of an airborne platform passing overhead', Units Meters/Second, KLV format uint8 over 0..255 with the Software format also uint8 \u2014 so the document's own formula is the identity `KLV = Soft` and there is no conversion to get wrong. A speed over GROUND, which is what Kinematics.speed_mps documents itself as, so this is the one kinematic figure in the witnessed set that lands without an argument",
         "speed_item": null
       },
@@ -33,7 +59,8 @@
           "octets": "ccf7",
           "section": "ST 0601.14a \u00a78.1",
           "units": "None",
-          "value": 52471
+          "value": 52471,
+          "witness": "stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, six packets of this item"
         },
         "2": {
           "klv_format": "uint64",
@@ -41,7 +68,8 @@
           "octets": "000459f4a6aa4aa8",
           "section": "ST 0601.14a \u00a78.2",
           "units": "Micro-seconds (\u00b5s)",
-          "value": 1224807209913000
+          "value": 1224807209913000,
+          "witness": "stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, six packets of this item"
         },
         "65": {
           "klv_format": "uint8",
@@ -49,7 +77,8 @@
           "octets": "0d",
           "section": "ST 0601.14a \u00a78.65",
           "units": "Number (None)",
-          "value": 13
+          "value": 13,
+          "witness": "stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, six packets of this item"
         }
       },
       "klv_packet": {
@@ -81,7 +110,7 @@
       },
       "position_basis": {
         "accuracy_m": "None on every object. ST 0601.14a carries CE90/LE90 error estimates at tags 45 and 46 and a Standard Deviation Cross Correlation pack at tag 102, and none of the three is in the witnessed set. The item's stated Resolution \u2014 '~42 nano degrees' for tag 13 \u2014 is a QUANTISATION STEP and not an accuracy, and writing it here would claim the platform knows where it is to within millimetres. The CAT034 quantisation note, reached a second time",
-        "alt_m": "None on EVERY object, and this is a decline rather than an absence. Tag 15 Sensor True Altitude is witnessed and is measured 'from Mean Sea Level (MSL)' (\u00a78.15), while Position.alt_m is documented as 'Metres HAE' \u2014 so the one altitude in the witnessed set cannot fill the one altitude field. \u00a78.15 itself points at the twin: 'For improved modeling accuracy use Sensor Ellipsoid Height (Tag 75) or Sensor Ellipsoid Height Extended (Tag 104)', and `ST 0601.8-17` settles the collision in the same direction \u2014 a decoder that understands HAE 'shall use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist'. Neither 75 nor 104 is witnessed. The MSL figure is parked at attributes.sensor_true_altitude_msl_m, converting nothing: a geoid separation is a model this repository does not hold",
+        "alt_m": "TAG 104's VALUE WHEN THE PACKET CARRIES TAG 104, AND None OTHERWISE \u2014 changed 2026-09-04 by the park 5 round, and this field is HAE by construction. Position.alt_m is documented as 'Metres HAE'. Tag 104 Sensor Ellipsoid Height Extended is 'measured from the reference WGS84 ellipsoid' (\u00a78.104), which is the same datum, so it lands with no conversion at all; its value is IMAPB(-900, 40000, Length) per \u00a78.104 and is decoded by `imapb_codec` at the length the wire supplies, per ST 1201.3 \u00a77.4. Its row promoted on the document-side witness RULING 1 names \u2014 \u00a78.104 prints a worked example, 23,456.24 m against octets 2F921E, and `klv_uas_codec.check_against_the_documents_own_examples()` reproduces it on every suite run \u2014 and tag 104 is NOT in the pinned stream, whose 26 items stop at tag 65, so this field is filled against a printed example and against no held octet. **THE HAE-OVER-MSL RULE IS HONOURED BY CONSTRUCTION AND NEEDS NO PRECEDENCE LOGIC HERE (RULING 4, 2026-09-04).** `ST 0601.8-17` requires a decoder that understands HAE to 'use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS Datalink LS packet', and \u00a78.104.1, \u00a78.75.1 and \u00a78.15.1 each state the same preference in the document's own words: 'For legacy systems, Tag 15 and Tag 75 | Tag 104 are allowed with preference for Tag 75 | Tag 104.' There is nothing to arbitrate: tag 15 Sensor True Altitude is measured 'from Mean Sea Level (MSL)' (\u00a78.15) and is therefore NEVER a candidate for an HAE field \u2014 it was not one before tag 104 was decoded and it is not one now. So a packet carrying BOTH 15 and 104 fills alt_m from 104 because 104 is the only HAE item read, not because a rule chose between them, and no code here compares a document-witnessed item against a stream-witnessed one. The MSL figure stays parked at attributes.sensor_true_altitude_msl_m, converting nothing: a geoid separation is a model this repository does not hold. **WHAT IS STILL OUTSTANDING IS TAG 75.** \u00a78.15 points at both twins \u2014 'For improved modeling accuracy use Sensor Ellipsoid Height (Tag 75) or Sensor Ellipsoid Height Extended (Tag 104)' \u2014 and 75 is Sensor Ellipsoid Height, uint16 over -900..19000, NOT IMAPB, so it is not one of park 5's sixteen and RULING 1 does not reach it. It is UNREAD as of 2026-09-04 and is the one row standing between alt_m and the base HAE item; the same document-side witness would promote it \u2014 \u00a78.75 prints its own worked example, 14,190.7195 m against octets C221 \u2014 in a round scoped to it. **WHAT \u00a78.104.1 SAYS ABOUT COEXISTENCE WITH 75, RECORDED FOR THAT ROUND (RULING 5):** the preference it states is for the pair over tag 15, written as the disjunction 'Tag 75 | Tag 104', and it states NO ordering BETWEEN 75 and 104. What it does state is 104's purpose \u2014 'to increase the range of altitude values currently defined in Tag 75 Sensor Ellipsoid Height to support all CONOPs for airborne systems' \u2014 40 000 m against 75's 19 000 m, which is a reason to prefer 104 where both appear and is not a rule the document writes. Not implemented here while 75 is unread. One more fact for that round, read off the two sections this one: \u00a78.75 and \u00a78.104 print the SAME KLV Key, 06.0E.2B.34.01.01.01.01.0E.01.02.01.82.47.00.00 (CRC 16670) \u2014 the extended item reuses the base item's Universal Label, so the UL does not distinguish them and only the tag does",
         "datum": "WGS 84, and the packet says so about itself: tag 12 Image Coordinate System carries the name of the datum every geographic angle in the Local Set is expressed in \u2014 \u00a78.12.1 lists the items it governs, 13 and 14 among them \u2014 and \u00a78.13's own bullet says 'Based on WGS84 ellipsoid'. Two statements, one datum, and the CDM's Position is WGS 84 as well, so there is no transform here at all",
         "lat_item": null,
         "lon_item": null,
@@ -265,7 +294,7 @@
         "value": 13
       },
       "unavailable_fields": [
-        "Kinematics (tag 56 absent or zero-length)",
+        "Kinematics (tag 56 absent or zero-length, and tag 112 absent or not a measurement \u2014 a Kinematics with every field None states nothing)",
         "Position (tag 13 and/or tag 14 absent or reserved \u2014 an absent Position is the honest statement, never a Position holding zeros)"
       ]
     },

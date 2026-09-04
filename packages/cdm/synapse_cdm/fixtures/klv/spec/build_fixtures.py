@@ -75,7 +75,9 @@ FIXTURES = HERE.parent.parent
 FRAMING = FIXTURES / "framing"
 sys.path.insert(0, str(FIXTURES.parent.parent.parent))
 
+from synapse_cdm.adapters import imapb_codec as imapb              # noqa: E402
 from synapse_cdm.adapters import klv_codec as codec                # noqa: E402
+from synapse_cdm.adapters import klv_pack_codec as packs           # noqa: E402
 from synapse_cdm.adapters import klv_security_codec as security   # noqa: E402
 from synapse_cdm.adapters import klv_uas_codec as uas               # noqa: E402
 
@@ -1103,6 +1105,251 @@ ADAPTER_FIXTURES: tuple[dict, ...] = (
         citation="RFC 2781 §2.2 steps 2 and 3; ST 0102.12 §6.7 Table 2 tag 13 Data Type",
     ),
 )
+
+
+# ======================================================================================
+# THE PARK 5 FIXTURES — the fifteen document-witnessed items, and every one cites a clause
+# ======================================================================================
+#
+# **THESE ARE THE FIRST FIXTURES IN THIS FILE WHOSE ITEMS THE PINNED STREAM DOES NOT CARRY.** The
+# 26-item block above draws its octets from the document AND those items are attested by
+# `fixtures/klv/streams/day_flight.klv`; the ST 0102.12 block draws from element rules with no
+# worked example anywhere. This block is a third arrangement and it is the one RULING 1
+# (2026-09-04) licensed: **the octets are the DOCUMENT'S OWN PRINTED Example KLV Values, and no
+# held stream carries any of these tags.** So the fixtures are as strong as the 26-item block on
+# the only axis that separates a fixture from a guess — nobody here chose the octets — and weaker
+# on the axis the scope contract cares about, which is whether anyone has met them on a wire.
+#
+# Nothing below is a real platform, a real airbase or a real sensor. The wavelength record is the
+# document's own `NNIR` example; the coordinates in the HAE fixtures are §8.13/§8.14's own printed
+# Example KLV Values, which is where every geographic octet in this file comes from.
+
+#: Each of the fourteen IMAPB items' own printed Example KLV Value, keyed by tag. Read from the
+#: codec's table rather than re-typed here, so a fixture cannot carry octets the codec's own
+#: worked-example check has not already reproduced against the document.
+_IMAPB_EXAMPLE = {tag: octets for tag, (_x, _len, octets) in imapb.IMAPB_WORKED_EXAMPLES.items()}
+
+#: ST 1201.3 §7.2.3 Table 2's eight patterns, one per tag and each at a DIFFERENT length, so the
+#: fixture also proves what §7.4 requires: the special-value test is on the top two bits of the
+#: value at the width the wire supplied, and is not a comparison against a fixed sentinel. The top
+#: five bits are the pattern; the remainder is Table 2's `bn-5 … b0`, which it gives a meaning to
+#: for the two SNaN rows ("Remaining bits are used as the signal value") and for `UserDefined`.
+_IMAPB_SPECIALS: tuple[tuple[int, str, str], ...] = (
+    (96,  "C80000",   "+Inf"),
+    (103, "E80000",   "-Inf"),
+    (105, "D00000",   "+QNaN"),
+    (109, "F000",     "-QNaN"),
+    (113, "D8002A",   "+SNaN, with 42 as Table 2's own signal value"),
+    (114, "F800002A", "-SNaN, with 42 as the signal value at a fourth octet"),
+    (117, "E000",     "Reserved"),
+    (118, "C00007",   "UserDefined, with 7 in the user-defined remainder"),
+)
+
+_PARK_5_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="imapb_items_from_the_documents_own_examples",
+        octets=_payload(_packet(
+            [(2, _EXAMPLE[2]), (65, _EXAMPLE[65])]
+            + [(tag, _IMAPB_EXAMPLE[tag]) for tag in sorted(_IMAPB_EXAMPLE)]
+            + [(1, _EXAMPLE[1])])),
+        what_it_is_for=(
+            "all fourteen IMAPB items in one packet, each carrying the Example KLV Value its own "
+            "§8.x block prints. It is the adapter-level twin of "
+            "`imapb_codec`'s worked-example check: that check runs the map, this one runs the map "
+            "THROUGH the item layer, the adapter and the schema, so a tag wired to the wrong "
+            "range, decoded at a fixed width instead of the wire's, or landing in the wrong "
+            "attribute fails here. Two of the fourteen reach canonical fields — tag 104 fills "
+            "Position.alt_m and tag 112 fills Kinematics.course_deg — and the other twelve land at "
+            "attributes.document_witnessed_items under the names the document gives them. Note "
+            "what is NOT here: no Position is built, because tags 13 and 14 are absent and an "
+            "altitude with no coordinates is not a fix"),
+        citation="ST 0601.14a §8.96 … §8.134, each item's Example KLV Item row; ST 1201.3 §7.1.2",
+    ),
+    dict(
+        name="hae_is_tag_104_and_never_tag_15s_msl",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (15, _EXAMPLE[15]),                  # 14 190.7195 m MSL, §8.15's own example
+            (104, _IMAPB_EXAMPLE[104]),          # 23 456.24 m HAE, §8.104's own example
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RULING 4's FIXTURE (2026-09-04): ONE PACKET CARRYING BOTH ALTITUDES.** Tag 15 "
+            "Sensor True Altitude is MSL and stream-witnessed; tag 104 Sensor Ellipsoid Height "
+            "Extended is HAE and document-witnessed. `ST 0601.8-17` requires a decoder that "
+            "understands HAE to 'use the HAE representation and ignore the Mean Sea Level (MSL) "
+            "representation when both exist in the same UAS Datalink LS packet', and §8.104.1, "
+            "§8.75.1 and §8.15.1 each state 'preference for Tag 75 | Tag 104'. What must happen: "
+            "Position.alt_m is 104's 23 456.234375 m and NOT 15's 14 190.72 m, and the MSL figure "
+            "is still parked whole at attributes.sensor_true_altitude_msl_m. **What must NOT "
+            "happen is a precedence rule firing**: alt_m is an HAE field and tag 15 was never a "
+            "candidate for it, so the right answer here comes out of the field's definition rather "
+            "than out of a comparison — which is the whole of RULING 4. The two values are 9 265 m "
+            "apart, deliberately: a fixture where the two altitudes were close would pass under a "
+            "wiring that read the wrong one"),
+        citation=("ST 0601.14a §8.15, §8.104 and their Details subsections; ST 0601.8-17; "
+                  "FORMAT_COVERAGE.md, RULING 4 of the park 5 round"),
+    ),
+    dict(
+        name="tag_104_carrying_a_signal_emits_no_altitude",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (104, "D00000"),                     # +QNaN, ST 1201.3 §7.2.3 Table 2
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "RULING 4's second fixture: tag 104 present and carrying a ST 1201.3 §7.2.3 signal "
+            "rather than a height. What must happen: a Position IS emitted — tags 13 and 14 are "
+            "measurements — with alt_m None, the signal recorded at "
+            "attributes.position_basis.alt_not_measured naming which of Table 2's eight patterns "
+            "it was, and attributes.unavailable_fields saying Position.alt_m is unavailable "
+            "BECAUSE the item was present and not a measurement, which is a different statement "
+            "from the item being absent. What must NOT happen: 0xD00000 run through §7.2.2's "
+            "reverse map, which yields 40 038 m — a plausible-looking altitude above the item's "
+            "own stated maximum, and the same class of defect item 13's 0x80000000 got"),
+        citation="ST 1201.3 §7.2.3 Tables 1 and 2; ST 0601.14a §8.104",
+    ),
+    dict(
+        name="imapb_special_values_are_signals_and_not_measurements",
+        octets=_payload(_packet(
+            [(2, _EXAMPLE[2]), (65, _EXAMPLE[65])]
+            + [(tag, octets) for tag, octets, _name in _IMAPB_SPECIALS]
+            + [(1, _EXAMPLE[1])])),
+        what_it_is_for=(
+            "**ALL EIGHT of ST 1201.3 §7.2.3 Table 2's patterns in one packet, each on a different "
+            "item and each at a different length** — two, three and four octets — because §7.4 "
+            "makes the width the wire's and a special-value test written against a fixed sentinel "
+            "would pass at one width and fail at another. The two SNaN rows and UserDefined carry "
+            "a non-zero remainder, which Table 2 gives a meaning to ('Remaining bits are used as "
+            "the signal value'), so the fixture also proves the payload survives. What must "
+            "happen: eight signals, no numbers, each rendered with its Table 2 name and its "
+            "remainder. **The twin of the witnessed set's own "
+            "`special_values_are_signals_and_not_measurements`**, one document down: there the "
+            "sentinels are integers ST 0601.14a's own Special Values cells declare, here they are "
+            "bit patterns ST 1201.3 reserves in every IMAPB value regardless of what the §8.x "
+            "Special Values cell says — and every one of these fourteen cells says 'None', which "
+            "is exactly why this fixture is not redundant"),
+        citation="ST 1201.3 §7.2.3 Table 1 and Table 2; §7.4 on the KLV-supplied length",
+    ),
+    dict(
+        name="a_wavelengths_list_from_the_documents_own_example",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (128, str(packs.WAVELENGTHS_LIST_EXAMPLE["value_octets"])),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "tag 128 Wavelengths List, carrying §8.128's own printed Example KLV Value — "
+            "`0D 15 0000 07D0 0000 0FA0 4E4E 4952` against the Software Value "
+            "'21,1000, 2000, NNIR (Narrow NIR)'. It is the only pack fixture in this file whose "
+            "octets the document prints, and **the only pack in park 5's sixteen that has an "
+            "example at all**: §8.130's Example Software Value cell reads 'N/A', which is one of "
+            "the two reasons tag 130 stays `not yet`. Four things must come out right and each "
+            "would fail differently — the VLP's BER length (§6.3), the BER-OID Wavelength ID, two "
+            "IMAPB(0, 1e9, 4) members in NANOMETRES, and a utf8 name whose length is found by the "
+            "FLP subtraction §8.128.1 prints, 'Namelen = Length1 - (BEROIDlen + 8)'"),
+        citation="ST 0601.14a §6.3 (the VLP/DLP/FLP grammar), §8.128 and §8.128.1 with Table 15",
+    ),
+    dict(
+        name="a_short_wavelength_record_is_refused_and_the_packet_translates",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (56, _EXAMPLE[56]),
+            # A record declaring nine octets: a one-octet BER-OID id and EIGHT for two four-octet
+            # IMAPB members needs nine exactly, so this is one short of the minimum and there is
+            # no room for a name. §8.128.1's own rule gives Namelen = 8 - (1 + 8) = -1.
+            (128, "0815000007D000000F"),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "a malformed pack, and the fixture that fixes the POLICY for one. The wavelength "
+            "record declares eight octets where its own layout needs at least nine, so "
+            "§8.128.1's name-length rule yields a NEGATIVE length. What must happen: **the ITEM "
+            "is refused and the PACKET is not** — the ST 0102.12 element precedent and the "
+            "length-divergence ruling's own ground, that discarding well-formed items over one "
+            "malformed one destroys the evidence a consumer needs. So tag 56's ground speed still "
+            "reaches Kinematics.speed_mps, the pack's octets are parked verbatim at "
+            "attributes.klv_item_octets['128'], and a structured refusal at "
+            "attributes.pack_refusals names the clause. What must NOT happen: the packet refused, "
+            "or the eight octets read as a record with an empty name — which is the same "
+            "truncation-by-guessing that candidate (c) was rejected for at tag 22"),
+        citation="ST 0601.14a §8.128.1's Namelen rule and Table 15's Mandatory members; §6.3",
+    ),
+    dict(
+        name="a_course_of_360_degrees_is_the_documents_own_zero",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (56, _EXAMPLE[56]),
+            (112, "5A00"),                       # IMAPB(0, 360, 2) maps 360.0 to exactly 0x5A00
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "the one value tag 112 can carry that the CDM's own field cannot hold as it stands. "
+            "§8.112's range is IMAPB(0, 360) — CLOSED at both ends — so 360.0 is conformant and "
+            "encodes to exactly `5A00` at two octets, while Kinematics.course_deg is documented "
+            "'[0, 360)' and declares lt=360.0. What must happen: course_deg is 0.0, and "
+            "attributes.kinematics_basis.course_360_folded_to_0 says so and quotes the sentence "
+            "that licenses it — §8.112's own bullet, '0 (or 360) is true north, east is 90, south "
+            "is 180, west is 270'. **The document states the identity, so the fold applies its "
+            "sentence rather than this adapter's judgement.** What must NOT happen: a "
+            "ValidationError on a conforming packet, a silent clamp to 359.99, or a schema change "
+            "— the last was this round's brief's explicit STOP"),
+        citation="ST 0601.14a §8.112 and its bullets; models.Kinematics.course_deg",
+    ),
+    dict(
+        name="a_zero_length_imapb_item_is_an_explicit_unknown",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (104, ""),                           # a ZLI on a document-witnessed item
+            (112, ""),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "`ST 0601.14-33` reaching the fifteen document-witnessed items, which is the length "
+            "policy applying to them unchanged rather than being re-decided for them. A "
+            "zero-length tag 104 and tag 112 are the producer SAYING those values are now "
+            "unknown, not a defect: neither is among the three items `ST 0601.14-32` forbids a "
+            "ZLI on, so no defect is recorded, alt_m and course_deg are None, and the explicit "
+            "unknown is carried as itself. It also exercises the one branch of `imapb_codec` that "
+            "REFUSES rather than decodes — `decode` raises on empty octets, calling a "
+            "zero-length item 'ST 0601.14a §6.5's explicit unknown and the caller's to handle' — "
+            "so this fixture proves the item layer handles it above the codec and the codec is "
+            "never asked"),
+        citation="ST 0601.14a §6.5, ST 0601.14-33 and ST 0601.14-32; ST 1201.3 §7.4",
+    ),
+    dict(
+        name="an_imapb_item_past_its_max_length_is_an_advisory",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            # Tag 120's Max Length cell says 3; four octets is one past it, and §7 makes Max
+            # Length "the recommended maximum length" rather than a `shall`.
+            (120, "48000000"),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "the Max Length advisory on a document-witnessed item, which is the third branch of "
+            "`_length_verdict` — the only one an IMAPB item can reach, since all fifteen state "
+            "`Length` Variable and `Required Length` N/A and `ST 0601.13-29` therefore reaches "
+            "none of them. What must happen: the value is DECODED at four octets — §7.4's rule, "
+            "'it is important to compute the constants needed to do the forward and reverse "
+            "mapping based on the KLV supplied length', so the constants differ from the "
+            "three-octet case and the answer is still right — and an advisory records that the "
+            "item is past its recommendation. What must NOT happen: a defect, a refusal, or a "
+            "decode at the recommended width, which is the mutation "
+            "`test_cdm_imapb_codec.py` already fixtures for tag 112"),
+        citation="ST 0601.14a §7's Max Length column definition, §8.120; ST 1201.3 §7.4",
+    ),
+)
+
+
+#: The park 5 fixtures are APPENDED rather than interleaved, so every fixture that existed before
+#: 2026-09-04 keeps the index `enumerate` gives it and therefore the UUID-v8 identity
+#: `fixtures/klv/README.md` records for it. Inserting in tag order would renumber sixteen
+#: fixtures to no purpose.
+ADAPTER_FIXTURES = ADAPTER_FIXTURES + _PARK_5_FIXTURES
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:

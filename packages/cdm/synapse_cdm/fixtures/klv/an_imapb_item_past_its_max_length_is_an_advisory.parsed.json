@@ -1,0 +1,46 @@
+{
+  "packets": [
+    {
+      "advisories": [
+        {
+          "basis": "\u00a77 defines Max Length as 'the recommended maximum length' and names its consumer \u2014 'Network guards may use this value as a check to prevent data leaks' \u2014 so exceeding it breaks no 'shall' and the item is decoded. Recorded as an advisory rather than skipped, because applying ST 0601.13-29's requirement to a recommendation would enforce a rule the document did not write",
+          "class": "over_recommended_max_length",
+          "max_length": 3,
+          "name": "On-board MI Storage Percent Full",
+          "observed_length": 4,
+          "section": "8.120",
+          "tag": 120
+        }
+      ],
+      "at": 0,
+      "checksum": {
+        "computed": 29423,
+        "stored": 29423,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "72ef",
+        "120": "48000000",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d"
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        65,
+        120,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 23,
+      "value_length_octets": "17"
+    }
+  ],
+  "payload": {
+    "octets": 40,
+    "packet_count": 1
+  }
+}

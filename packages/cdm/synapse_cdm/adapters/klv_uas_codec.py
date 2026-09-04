@@ -12,13 +12,34 @@ mean.
 
 WHAT IT COVERS, AND WHY THAT SET AND NOT THE OTHER 115 ITEMS
 -------------------------------------------------------------
-**The 26 items the pinned stream attests, and nothing else.** `fixtures/klv/streams/day_flight.klv`
-— SHA-256 `a810e4b6…e51`, 977 octets, provenance closed at `samples.ffmpeg.org` by byte identity —
-carries six packets of 26 items each, the same 26 tags in the same order every time: 1, 2, 5, 6, 7,
-11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 40, 41, 42, 56, 57 and 65. Every other
-tag in ST 0601.14a's 141-row Table 1 is absent from this module, and the absence is the scope
-contract: an item this repository has never seen on a wire is an item whose decoder nothing here
+**`ITEMS` is the 26 items the pinned stream attests, and nothing else.**
+`fixtures/klv/streams/day_flight.klv` — SHA-256 `a810e4b6…e51`, 977 octets, provenance closed at
+`samples.ffmpeg.org` by byte identity — carries six packets of 26 items each, the same 26 tags in
+the same order every time: 1, 2, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+25, 40, 41, 42, 56, 57 and 65. That set is the scope contract, and its reason is a rule rather than
+a schedule: an item this repository has never seen on a wire is an item whose decoder nothing here
 could check against anything but itself.
+
+**THE CONTRACT HAS A STATED REOPEN CONDITION AND IT HAS NOW BEEN EXERCISED TWICE, SO THIS MODULE
+DECODES 42 TAGS AND NOT 26.** The condition, written into `FORMAT_COVERAGE.md`'s "Not witnessed"
+ledger row on 2026-08-26, is *"a second pinned stream, OR a document-side check as strong as a
+worked example"*. **The first half has never been met** — one stream is held and one only.
+The second has been met twice, by two different kinds of document evidence, and each crossing has
+its own table beside `ITEMS` rather than an entry inside it:
+
+* **item 48**, `NESTED_SETS`, 2026-09-04 (the park 2 round). Ground: a SECOND DOCUMENT. ST 0601.14a
+  §8.48 and MISB ST 0102.12 §6.7 state the same sixteen Universal Label octets and the same CRC.
+  Its Value is a nested Local Set and `klv_security_codec` is that document's item layer.
+* **fifteen items**, `DOCUMENT_WITNESSED_TAGS`, 2026-09-04 (the park 5 round). Ground: THIS
+  document's own printed worked examples — tags 96, 103, 104, 105, 109, 112, 113, 114, 117, 118,
+  119, 120, 132 and 134, whose values `imapb_codec` maps, plus tag 128, whose Value is a pack read
+  by `klv_pack_codec`. `check_against_the_documents_own_examples()` runs all fifteen examples
+  alongside the 26 on every suite run: 41 in total.
+
+**The remaining 99 rows of the 141 stay absent, and tag 130 is one of them** — §8.130 prints no
+worked example at all, so the reopen condition's second half has nothing to be as strong as. What
+is true of all 42 tags this module now reads and is not softened anywhere: **only 26 of them have
+ever been met on a wire.**
 
 WHERE EVERY NUMBER BELOW COMES FROM, AND THE CHECK THAT MAKES IT TRUSTWORTHY
 ----------------------------------------------------------------------------
@@ -65,7 +86,9 @@ from __future__ import annotations
 
 from typing import Any, NamedTuple
 
+from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
+from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
 
 #: The pinned copies every citation in this module is read from. Stated here as well as in
@@ -790,6 +813,74 @@ NESTED_SETS: dict[int, str] = {48: "MISB ST 0102.12 Security Metadata Local Set"
 #: rode under are at `klv_pin.json`'s `security_basis_ruling.relocated_from_the_wire.carrier_basis`.
 NESTED_SET_BASIS = security.CARRIER_BASIS
 
+#: **THE SECOND CROSSING OF THE SCOPE CONTRACT, 2026-09-04, AND ITS GROUND IS DIFFERENT FROM
+#: `NESTED_SETS`'.** Item 48 crossed on a SECOND DOCUMENT agreeing with this one about sixteen
+#: octets. These fifteen cross on THIS document's own printed worked examples, under RULING 1
+#: (2026-09-04), which read the reopen condition `FORMAT_COVERAGE.md`'s "Not witnessed" ledger row
+#: has stated since 2026-08-26 — *"a second pinned stream, OR a document-side check as strong as a
+#: worked example — and ST 0601.14a prints one per item"* — and found the second half already
+#: discharged by `imapb_codec.IMAPB_WORKED_EXAMPLES`, which reproduces every one of the fourteen
+#: §8.x examples on every suite run.
+#:
+#: **IT MUST BE DECLARED TO BE COUNTED, AND ITS GROUND IS STATED.** That is the park 2 round's
+#: pattern and this is a table beside `ITEMS` for the same reason `NESTED_SETS` is: `ITEMS` answers
+#: "what does this integer mean under one affine map", and neither of these fifteen items has one.
+#: The fourteen delegate their whole value map to `imapb_codec` — §7.4's variable width, §7.2.3's
+#: signals — and tag 128's Value is not a value at all but a nested pack, read by
+#: `klv_pack_codec` under §6.3's grammar.
+#:
+#: **WHAT EACH ENTRY'S CHECK ACTUALLY IS, per item, because "a worked example" is a claim:**
+#: for the fourteen, `check_against_the_documents_own_examples()` encodes the block's printed
+#: Software Value and compares the octets with the block's printed Value, then decodes those octets
+#: back and compares against the printed value within one integer step computed from `(a, b, L)`;
+#: for tag 128, `klv_pack_codec.check_against_the_documents_own_example()` decodes §8.128's printed
+#: Value and compares all four members of the record with the four the block prints.
+#:
+#: **AND WHAT IS NOT SOFTENED: not one of the fifteen is in the pinned stream.** Its 26 items stop
+#: at tag 65. So every entry here ships against a printed example and against no held octet, which
+#: is weaker than the 26 enjoy and is the sentence each promoted row carries in its own
+#: description rather than leaving to a reader to remember.
+IMAPB_ITEM_TAGS: tuple[int, ...] = tuple(sorted(imapb.IMAPB_ITEMS))
+
+#: The pack items this module hands to `klv_pack_codec`, derived from that module's own table so a
+#: pack it declines cannot appear here. Tag 130 Airbase Locations is declined — §8.130 prints no
+#: worked example and contradicts itself on its HAE member's range — see
+#: `klv_pack_codec.AIRBASE_LOCATIONS_NOT_DECODED`, which is the same sentence its row carries.
+PACK_ITEM_TAGS: tuple[int, ...] = packs.PACK_TAGS_READ
+
+#: The tags this module reads on a DOCUMENT-side witness rather than a stream-side one.
+#: `WITNESSED_TAGS` is NOT widened and NOT renamed — see the decision recorded below it — so the
+#: two sets stay separately derivable, which is what the module docstring's scope argument needs.
+DOCUMENT_WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(IMAPB_ITEM_TAGS + PACK_ITEM_TAGS))
+
+#: **THE DECISION THE park 5 ROUND WAS ASKED TO MAKE AND RECORD, 2026-09-04.** The brief offered
+#: two shapes: widen `WITNESSED_TAGS` and rename it, or leave it meaning "stream-witnessed" and
+#: add a second tuple. **The second was chosen, and the reason is that `WITNESSED_TAGS` is a claim
+#: about the pinned stream and nothing else.** Its own docstring calls it "the scope contract,
+#: stated once as data so no caller has to derive it from the table's keys and no round can widen
+#: it by accident" — and a round that widened it would be doing precisely what that sentence
+#: forbids, in the name of a different kind of witness. Three consequences, all of them wanted:
+#:
+#: * `WITNESSED_TAGS` stays **26** and keeps its meaning, so the module docstring's argument —
+#:   "the 26 items the pinned stream attests, and nothing else" — is still true of the constant it
+#:   names, and `fixtures/klv/spec/build_fixtures.py`'s `witnessed_set_from_the_documents_own_
+#:   examples` fixture still builds the same 26-item packet it always built;
+#: * the two witness kinds are derivable separately and countable separately, which the ledger
+#:   needs: it states both counts wherever it states the witnessed set;
+#: * `ITEMS` stays the table of the 26, so `ITEMS.get(tag)` returning None still means "not
+#:   stream-witnessed" and every caller that tests it keeps working. **This is why `decode_packet`
+#:   consults three tables in sequence rather than one widened one**, and the sequence is the
+#:   order of the grounds: one affine map from this document, one nested set from a second
+#:   document, one printed worked example from this document.
+WITNESS_KINDS = (
+    "stream-witnessed: 26 tags, WITNESSED_TAGS, attested by fixtures/klv/streams/day_flight.klv; "
+    "document-witnessed: 15 tags, DOCUMENT_WITNESSED_TAGS, attested by ST 0601.14a's own printed "
+    "worked examples under RULING 1 of 2026-09-04; and item 48, whose ground is neither — a second "
+    "document, MISB ST 0102.12, registering the same Universal Label. Three grounds, three tables, "
+    "no tag in two of them"
+)
+
+
 #: The three items ST 0601.14a makes Mandatory in every packet, derived from the table's own
 #: `required_in_ls` cells rather than listed a second time. §6.4 and §8.2 say it of tag 2, §8.1 of
 #: tag 1, §8.65 of tag 65, and `ST 0601.8-09`/`-11`/`-12` require the order and the presence.
@@ -932,6 +1023,12 @@ class DecodedPacket(NamedTuple):
     #: "The absence of Security Metadata does not signify Motion Imagery Data as Unclassified" —
     #: and the caller emits that sentence rather than a marking.
     security: security.DecodedSecuritySet | None = None
+    #: Pack items this layer declined, as structured refusals. **THE ITEM IS REFUSED AND THE
+    #: PACKET IS NOT**, which is `klv_security_codec`'s element precedent rather than a new rule:
+    #: a refused member yields no value, its octets stay parked at `raw_items`, and the clause it
+    #: failed is named. Discarding 25 well-formed items over one malformed pack is the thing the
+    #: length-divergence ruling already refused to do.
+    pack_refusals: tuple[dict, ...] = ()
 
     @property
     def checksum_valid(self) -> bool | None:
@@ -956,6 +1053,65 @@ def _length_verdict(item: _Item, observed: int, entry) -> tuple[str | None, str 
     return None, None
 
 
+def _decode_document_witnessed(entry, advisories: list[dict],
+                               refusals: list[dict]) -> DecodedItem | None:
+    """One `DOCUMENT_WITNESSED_TAGS` item: an IMAPB value or a pack, decoded by its own layer.
+
+    Returns None where the item is refused, having appended the refusal — the ST 0102.12 element
+    precedent, stated at `DecodedPacket.pack_refusals`.
+
+    **THE LENGTH POLICY IS THE SAME POLICY AND IS NOT RE-DECIDED HERE.** All fifteen state
+    `Length` = `Variable` and `Required Length` = `N/A`, so `ST 0601.13-29` — the only clause that
+    makes a length a `shall` — reaches none of them, and `_length_verdict`'s first two branches are
+    unreachable for them by construction. What is left of the policy is its third branch: a length
+    past the item's Max Length is an ADVISORY and the value is still decoded, because §7 defines
+    Max Length as "the recommended maximum length". And a length of ZERO is `ST 0601.14-33`'s
+    explicit unknown, exactly as it is for the 26 — none of the fifteen is in `ZLI_FORBIDDEN`,
+    which holds only the three items §8's `ST 0601.14-32` names.
+    """
+    tag = entry.tag
+    if tag in PACK_ITEM_TAGS:
+        name, section = "Wavelengths List", "8.128"
+        max_length = None
+    else:
+        name, _units, _a, _b, max_length = imapb.IMAPB_ITEMS[tag]
+        section = f"8.{tag}"
+
+    if entry.length == 0:
+        value = ZeroLength(tag)
+    else:
+        if max_length is not None and entry.length > max_length:
+            advisories.append({
+                "tag": tag, "name": name, "class": ADVISORY_OVER_MAX_LENGTH,
+                "observed_length": entry.length, "max_length": max_length,
+                "section": section, "basis": MAX_LENGTH_BASIS,
+            })
+        try:
+            if tag in PACK_ITEM_TAGS:
+                value = packs.decode_wavelengths_list(
+                    entry.value, base_offset=entry.value_offset)
+            else:
+                value = imapb.decode_item(tag, entry.value)
+        except (packs.PackError, framing.UnderivableFromPinnedCopy, ValueError) as e:
+            refusals.append({
+                "tag": tag, "name": name, "section": section,
+                "class": "pack_refused" if tag in PACK_ITEM_TAGS else "imapb_value_refused",
+                "observed_length": entry.length,
+                "octets": entry.value.hex(),
+                "tag_offset": entry.tag_offset,
+                "value_offset": entry.value_offset,
+                "clause": str(e),
+                "policy": "the ITEM is refused and the PACKET is not — the ST 0102.12 element "
+                          "precedent at klv_security_codec, and the length-divergence ruling's "
+                          "own ground: discarding well-formed items over one malformed one "
+                          "destroys the evidence a consumer needs",
+            })
+            return None
+    return DecodedItem(
+        tag=tag, name=name, length=entry.length, value=value, raw=entry.value,
+        tag_offset=entry.tag_offset, value_offset=entry.value_offset, section=section)
+
+
 def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
     """Walk one packet with the framing layer, then decode the items this table knows.
 
@@ -978,6 +1134,7 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
     advisories: list[dict] = []
     unknown: list[int] = []
     raw_items: dict[int, str] = {}
+    pack_refusals: list[dict] = []
     checksum_stored = checksum_computed = None
     security_set = None
 
@@ -994,6 +1151,15 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
                 # refusal inside the nested set points at an octet of the PACKET.
                 security_set = security.decode_set(
                     entry.value, base_offset=entry.value_offset)
+                continue
+            if entry.tag in DOCUMENT_WITNESSED_TAGS:
+                # The second crossing of the scope contract — see `IMAPB_ITEM_TAGS` above. These
+                # tags are absent from `ITEMS` on purpose: `ITEMS` is the 26 the pinned stream
+                # attests, and widening it would make `ITEMS.get(tag) is None` stop meaning
+                # "not stream-witnessed".
+                decoded = _decode_document_witnessed(entry, advisories, pack_refusals)
+                if decoded is not None:
+                    items[entry.tag] = decoded
                 continue
             unknown.append(entry.tag)
             continue
@@ -1033,7 +1199,7 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
         items=items, order=tuple(order), defects=tuple(defects),
         advisories=tuple(advisories), unknown_tags=tuple(unknown), raw_items=raw_items,
         checksum_stored=checksum_stored, checksum_computed=checksum_computed,
-        security=security_set)
+        security=security_set, pack_refusals=tuple(pack_refusals))
 
 
 def decode_stream(buf: bytes) -> list[DecodedPacket]:
@@ -1136,13 +1302,36 @@ def check_against_the_documents_own_examples() -> list[str]:
     invisible to a fixture written from the same transcription. The document forecloses that: each
     §8.x block prints one Software Value beside the KLV octets that encode it, and §7's
     Programmer's Notes say why — "the 'Example Value' for a tag is shown in full precision, beyond
-    a tag's resolution, so programmers can verify they are using the right formulas". This runs all
-    26.
+    a tag's resolution, so programmers can verify they are using the right formulas". **That
+    sentence is stated of every tag's summary table and not of a subset**, in the same §7 prose
+    that introduces `IMAPB` and `RIMAPB` as the Software-to-KLV method — re-read from the pinned
+    copy on 2026-09-04 and quoted here for that reason — so it covers the fifteen
+    document-witnessed items exactly as it covers the 26. This runs all 41.
 
     Returns a list of disagreements, empty when they all agree. Called by
     `tests/test_cdm_stanag4609_codec.py` on every suite run, and by edition 1's examples too — for
     which the tolerance is one quantisation step rather than the printed precision, because
     edition 1 prints round decimals and ST 0601.14a prints full precision.
+
+    **IT RUNS 41 EXAMPLES AND NOT 26, SINCE 2026-09-04.** The park 5 round added the fifteen
+    document-witnessed items, and for them this function is not a corroboration of a transcription
+    but **the whole of the witness basis their rows cite** — RULING 1 promotes them on "a
+    document-side check as strong as a worked example", and this is that check. The three groups
+    and what each compares:
+
+    * **26 stream-witnessed items**, `ITEMS` — one printed Software Value against the octets that
+      encode it, to the printed precision of the block's stated Software format;
+    * **14 IMAPB items**, `imapb_codec.IMAPB_WORKED_EXAMPLES` — both directions: the printed value
+      encodes to the printed octets EXACTLY, and those octets decode back to within one integer
+      step computed from `(a, b, L)`. Exactness one way is what would catch a wrong `bPow`, a
+      dropped `Zoffset` or a little-endian conversion, each of which round-trips perfectly and is
+      wrong against every other reader in the world;
+    * **1 pack**, delegated to `klv_pack_codec.check_against_the_documents_own_example()`, which
+      compares all four members of §8.128's printed record.
+
+    **41 = 26 + 14 + 1, and the sixteenth of park 5's sixteen is not here because the document
+    prints no example for it.** Tag 130's block reads `N/A` in both example cells, so it is absent
+    from `DOCUMENT_WITNESSED_TAGS` and its row stays `not yet`.
     """
     problems: list[str] = []
     for tag, item in sorted(ITEMS.items()):
@@ -1181,6 +1370,34 @@ def check_against_the_documents_own_examples() -> list[str]:
                 f"decode to {value!r} and the block prints {expected!r} — a difference of "
                 f"{abs(value - expected):.3g}, outside the {tolerance:.3g} the block's stated "
                 f"{item.software_format} precision allows")
+
+    for tag, (printed, length, octets_hex) in sorted(imapb.IMAPB_WORKED_EXAMPLES.items()):
+        name, _units, a, b, _max_len = imapb.IMAPB_ITEMS[tag]
+        try:
+            encoded = imapb.encode_item(tag, length, printed).hex().upper()
+        except ValueError as e:
+            problems.append(f"tag {tag} ({name}): §8.{tag}'s printed Software Value {printed!r} "
+                            f"will not encode at the block's own length {length}: {e}")
+            continue
+        if encoded != octets_hex:
+            problems.append(
+                f"tag {tag} ({name}): §8.{tag}'s printed Software Value {printed!r} encodes to "
+                f"{encoded} and the block prints {octets_hex}")
+        back = imapb.decode_item(tag, bytes.fromhex(octets_hex))
+        if isinstance(back, imapb.Special):
+            problems.append(f"tag {tag} ({name}): §8.{tag}'s own example read as a §7.2.3 signal")
+            continue
+        # The tolerance is ONE INTEGER STEP, computed from the item's own range and the example's
+        # own length — never the block's printed `Resolution` cell, three of which are wrong; see
+        # `imapb_codec.PRINTED_RESOLUTION_DISAGREEMENTS`.
+        step = imapb.resolution(tag, length)
+        if abs(back - printed) > step:
+            problems.append(
+                f"tag {tag} ({name}): §8.{tag}'s example octets {octets_hex} decode to {back!r} "
+                f"and the block prints {printed!r} — a difference of {abs(back - printed):.3g}, "
+                f"further than the one step ({step:.3g}) IMAPB({a:g}, {b:g}, {length}) allows")
+
+    problems += packs.check_against_the_documents_own_example()
     return problems
 
 

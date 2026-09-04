@@ -231,6 +231,289 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+**What moved inside the distribution: 91 files.** Three records — `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md` — the
+five source files `imapb_codec.py`, `klv_pack_codec.py`, `klv_uas_codec.py`, `stanag4609.py`, `build_fixtures.py`, the pin `klv_pin.json`, nine new payloads
+`a_course_of_360_degrees_is_the_documents_own_zero.klv`, `a_short_wavelength_record_is_refused_and_the_packet_translates.klv`, `a_wavelengths_list_from_the_documents_own_example.klv`, `a_zero_length_imapb_item_is_an_explicit_unknown.klv`, `an_imapb_item_past_its_max_length_is_an_advisory.klv`, `hae_is_tag_104_and_never_tag_15s_msl.klv`, `imapb_items_from_the_documents_own_examples.klv`, `imapb_special_values_are_signals_and_not_measurements.klv`, `tag_104_carrying_a_signal_emits_no_altitude.klv`, their nine parsed twins `a_course_of_360_degrees_is_the_documents_own_zero.parsed.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.json`, `imapb_items_from_the_documents_own_examples.parsed.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.json`, and all sixty-four goldens
+`a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`, `a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`, `imapb_items_from_the_documents_own_examples.cdm.json`, `imapb_items_from_the_documents_own_examples.parsed.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`, `length_divergence_at_a_required_length.cdm.json`, `length_divergence_at_a_required_length.parsed.cdm.json`, `mandatory_items_only.cdm.json`, `mandatory_items_only.parsed.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`, `over_recommended_max_length_is_an_advisory.cdm.json`, `over_recommended_max_length_is_an_advisory.parsed.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`, `security_local_set_complete_from_the_element_rules.cdm.json`, `security_local_set_complete_from_the_element_rules.parsed.cdm.json`, `security_local_set_minimal_required_only.cdm.json`, `security_local_set_minimal_required_only.parsed.cdm.json`, `security_local_set_partial_is_carried_as_partial.cdm.json`, `security_local_set_partial_is_carried_as_partial.parsed.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`, `special_values_are_signals_and_not_measurements.cdm.json`, `special_values_are_signals_and_not_measurements.parsed.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`, `two_packets_one_payload_are_two_statements.cdm.json`, `two_packets_one_payload_are_two_statements.parsed.cdm.json`, `witnessed_set_from_the_documents_own_examples.cdm.json`, `witnessed_set_from_the_documents_own_examples.parsed.cdm.json`, `zero_length_item_is_an_explicit_unknown.cdm.json`, `zero_length_item_is_an_explicit_unknown.parsed.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`.
+
+**Why the golden set moves whole when nine fixtures were added.** Every object this adapter emits
+carries `attributes.position_basis` and `attributes.kinematics_basis`, and both of those basis
+paragraphs were rewritten — so the prose inside all forty-six pre-existing goldens changed even
+where not one decoded value did. **That distinction is measured rather than asserted**: see the
+structural diff below.
+
+**Nothing here is in a release.** `PACKAGE_VERSION` is unmoved at 1.5.0, `SCHEMA_VERSION` at
+1.0.0, `RELEASE_NOTES.md` still opens 1.5.0, and no tag was created. `python
+gates/bump_derivation.py`, re-run after this section was written, derives **MINOR** over the arc
+since v1.5.0 — so the next release is at least **1.6.0** — and it derived it with **no human
+ruling**: the arc adds a public importable module and public top-level names, which is the MINOR
+row's own shape, and the gate reports `1 check, 0 failed`.
+
+#### The park 5 round, 2026-09-04 — fifteen of sixteen rows promote on a document-side witness, and the sixteenth is what shows the reading has teeth
+
+**PARK 5 IS CLOSED.** The thirteen parks now read **seven closed and six open**, which is the
+second closure of one day: park 2 closed that morning on ST 0102.12's row set and park 5 that
+evening on ST 1201.3's. **Both closed by writing something rather than by obtaining something, and
+before this day no park here had ever closed that way.** Nothing was fetched, nothing was pinned,
+and the delegation tally does not move for the second round running: the profile still delegates to
+fourteen documents and nine are held.
+
+**WHAT CLOSED IT WAS A READING OF THIS RECORD'S OWN REOPEN CONDITION, NOT A NEW DOCUMENT OR A NEW
+OCTET.** `FORMAT_COVERAGE.md`'s "Not witnessed" ledger row has said since 2026-08-26 that an
+unwitnessed row reopens on *"a second pinned stream, OR a document-side check as strong as a worked
+example — and ST 0601.14a prints one per item"*. `adapters/imapb_codec.py` landed on 2026-08-28 and
+has reproduced all fourteen of its items' printed worked examples on every suite run since. **The
+check the condition asks for already existed and no round had drawn the conclusion.** RULING 1 drew
+it, and it is a ruling about a sentence rather than about bytes — which is why every claim this
+round makes about the octets is the same claim the record already made.
+
+**ACT 0 WAS NOT RE-TAKEN EXCEPT FOR THE ONE PREMISE THAT HAD DIVERGED, AND THE DIVERGENCE IS THIS
+ROUND'S SECOND CDM FIELD.** The brief's first issue stopped at Act 0 with a stop, not a note: it
+stated that of park 5's sixteen rows only tag 112 named a canonical CDM field, and the tree said
+**two** did. Row 104 Sensor Ellipsoid Height Extended has named `Entity.position.alt_m` since
+2026-08-26, and three sites rested on its not being read — row 15's *"neither is in the witnessed
+set, so `alt_m` is `None` on every object"*, the adapter's own `_position` docstring, and the
+ledger's park 5 cell saying *"ONE of the 16 matters to a row that DID promote"*. **RULING 3 settled
+it: the round gains TWO CDM field sources.** Tag 112 fills `Kinematics.course_deg` and tag 104 fills
+`Position.alt_m`.
+
+**RULING 4 — THE HAE-OVER-MSL COLLISION NEEDED NO PRECEDENCE LOGIC, AND THAT IS A FINDING RATHER
+THAN A CONVENIENCE.** `ST 0601.8-17` requires a decoder that understands HAE to *"use the HAE
+representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS
+Datalink LS packet"*, and reading §8.104 for this round turned up the same rule in the document's
+own voice at three sites — §8.104.1, §8.75.1 and §8.15.1 each print *"For legacy systems, Tag 15
+and Tag 75 | Tag 104 are allowed with preference for Tag 75 | Tag 104."* **There is nothing to
+arbitrate.** `Position.alt_m` is an HAE field; tag 15 is MSL and was never a candidate for it. So a
+packet carrying both fills `alt_m` from 104 because 104 is the only HAE item read — not because a
+rule chose — and **no code compares a document-witnessed item against a stream-witnessed one**,
+which would have been the first such comparison in this adapter. The fixture
+`hae_is_tag_104_and_never_tag_15s_msl` carries §8.15's own printed altitude and §8.104's together,
+9 265 m apart on purpose, and asserts the field takes the HAE one.
+
+**RULING 5 — TAG 75 IS NOT READ, AND WHAT §8.104.1 SAYS ABOUT THE TWO COEXISTING IS RECORDED FOR
+THE ROUND THAT READS IT.** Tag 75 Sensor Ellipsoid Height is 104's twin, `uint16` over
+-900..19000, **not** `IMAPB`, so it was never one of park 5's sixteen and RULING 1 does not reach
+it. It is now the one row standing between `alt_m` and the base HAE item. What the section states
+and what it does not: the preference is for the PAIR over tag 15, written as the disjunction *"Tag
+75 | Tag 104"*, with **no ordering between 75 and 104**; what it does state is 104's purpose, *"to
+increase the range of altitude values currently defined in Tag 75 Sensor Ellipsoid Height to
+support all CONOPs for airborne systems"* — 40 000 m against 19 000 m — which is a reason to prefer
+104 and not a rule the document writes. **One more fact for that round, read off the two sections
+here: §8.75 and §8.104 print the SAME KLV Key**, `06.0E.2B.34.01.01.01.01.0E.01.02.01.82.47.00.00`
+(CRC 16670), so the Universal Label does not distinguish the twins and only the tag does.
+
+**THE FOURTEEN SECTIONS WERE RE-READ OFF THE PINNED PDF AND AGREE WITH `IMAPB_ITEMS` FOURTEEN TIMES
+OUT OF FOURTEEN.** Every `(a, b, Max Length, Units)` tuple, the `KLV Format` cell reading `IMAPB`,
+the `Length` cell reading `Variable` with `Required Length` `N/A`, and each block's printed example
+octets against its printed Software Value — all checked against ST 0601.14a at
+`3d5f1ca1…ab212ce4`, 218 pages, under `gates/pdf_text.py`'s join-and-collapse rule. **Not one
+disagreement, so the round's sharpest STOP was never reached.**
+
+**BUT THREE PRINTED `Resolution` CELLS OF THE GOVERNING DOCUMENT ARE WRONG, AND TWO OF THE THREE SIT
+ON THE ITEMS THAT REACH A CDM FIELD.** Each item's Resolution cell was derived from its own
+`(a, b, L)` as `1/sF` and compared with what the block prints. **Eleven of the fourteen agree** —
+the printed figures are roundings or truncations of the derived step. Three do not:
+
+* **§8.104 and §8.105** print *"3 bytes = 78.125 mm"* where `IMAPB(-900, 40000, 3)` gives
+  **7.8125 mm**, a factor of ten. **The document contradicts itself across four sections that share
+  one range**: §8.113 and §8.114 carry the identical `(-900, 40000)` and print *"3 bytes = 0.7 cm"*,
+  which agrees with the derivation.
+* **§8.112** prints *"2 bytes = 16.625 milli-degrees"* where `IMAPB(0, 360, 2)` gives **15.625**.
+  Every other rounded cell in the set truncates toward the derived value; this one is larger than
+  the true step and shares its fraction exactly, which is a digit slip rather than a rounding.
+
+**All three are proved from those sections' own example octets rather than argued.** §8.104's
+printed 23,456.24 m encodes to the printed `2F921E` exactly and §8.112's printed 125° to `1F40`
+exactly, which pins `sF` at 128 and 64 and makes the Resolution cell the odd statement out.
+**Nothing changed as a result**: the codec computes the step from `(a, b, L)` per ST 1201.3 §7.1.2
+and reads no Resolution cell, so this is recorded at
+`imapb_codec.PRINTED_RESOLUTION_DISAGREEMENTS` rather than worked around. It is recorded at all
+because a reader sizing `alt_m`'s or `course_deg`'s precision from the document's own cell would be
+out by a factor of ten and by 6% respectively.
+
+**RULING 2 — ST 1303.1'S HALF IS DISCHARGED BY ABSENCE, AND THE GROUND WAS RE-DERIVED RATHER THAN
+QUOTED.** `1303` occurs **zero** times in ST 0601.14a's 218 pages and so does `MDARRAY` — zero for
+the spaced and lower-case variants too, counted under `gates/pdf_text.py`. So no row of any held row
+set consumes a multi-dimensional array, the row set this document supports is within this
+repository's scope **empty**, and there is no artefact for it to make writable. That is the park 4
+reading — *the artefact this document makes writable* — applied to a document that makes nothing
+writable here. **Recorded as a discharge and not a silent drop, with a reopen condition: a held row
+set that names ST 1303**, park 6's VMTI being the candidate.
+
+#### The pack layer, and the precedent's decisive reason does not apply
+
+**`adapters/klv_pack_codec.py` is a new module and the argument for it is weaker than park 2's
+was.** `klv_security_codec` gives three reasons for being its own module and names the second as
+decisive. Taken one at a time: reason 1, *one item layer per document*, **points the other way** —
+this module reads ST 0601.14a, the same document `klv_uas_codec` reads. Reason 2, *the tag numbers
+collide and `ITEMS` is keyed on the tag*, **does not apply at all** — a VLP suppresses its members'
+tags entirely, so there is nothing to collide. Reason 3, *the value maps have nothing in common*,
+**applies and is what carried the decision**, together with the grammar/value split the framing
+layer already draws: §6.3 is a grammar section like the BER rules `klv_codec` owns, and `_Item`'s
+twenty-seven fields describe one affine map over one integer and cannot express a pack. **A later
+round that folds this into `klv_uas_codec` would be re-weighing reason 3 rather than undoing a
+rule**, and the module's docstring says which paragraph to re-weigh.
+
+**§6.3 STATES THE PACK GRAMMAR OUTRIGHT AND NOTHING UNHELD IS NEEDED FOR IT.** *"A VLP is a group
+of items represented as length-value pairs with the item's tags suppressed. Lengths in BER short or
+long form precede each item's value."* That is ST 0107.3 §6.3.2's grammar, park 4's closed
+document, so `klv_codec.decode_ber_length` reads them. §6.3's zeroed element — *"the length for the
+value is zero (0) and the value is omitted. This preserves the defined order of the pack"* — comes
+back as `b""` **in position**, because a pack whose members are identified by position is one where
+dropping a pair is not a lossy read but a wrong one.
+
+**TAG 128 PROMOTED AND TAG 130 DID NOT, WHICH IS THE PART OF THIS ROUND THAT DIVERGES FROM ITS
+BRIEF.** The brief priced sixteen items; **fifteen shipped.** §8.128 Wavelengths List prints a
+worked example — `0D15000007D000000FA04E4E4952` against *"21,1000, 2000, NNIR (Narrow NIR)"* — and
+all four members decode from it: a BER-OID id, two `IMAPB(0, 1e9, 4)` wavelengths in **nanometres**
+(the section's own *"precision of ~1/2 a nanometer"* is what fixes the unit, `1/sF` for that range
+at four octets being exactly 0.5), and a utf8 name whose length is the FLP subtraction the section
+prints. **§8.130 Airbase Locations prints no worked example at all** — Example Software Value
+`N/A`, Example KLV Item `8102 - N/A` — so RULING 1's condition is *unmet* for it rather than
+waived, **and that is what shows the reading is a condition and not a licence.** It carries a second
+defect too: **the section states its HAE member's range twice and differently**,
+`IMAPB(-900, 9000,3)` in Figures 60 and 61 against `IMAPB(-600, 9000, 3)` in its own prose, which
+puts every decoded HAE 300 m apart — and **the printed precision figure cannot arbitrate**, because
+`1/sF` is 1/512 m under both readings: 9600 and 9900 fall in the same power-of-two bracket, so the
+one checkable number the section prints is equal on both. Latitude and longitude are stated
+consistently and would decode; a pack read as far as its optional third member and then refused is
+not a state the status vocabulary expresses, so the whole item waits. Everything the section does
+state is transcribed at `klv_pack_codec.AIRBASE_LOCATIONS_LAYOUT`, and the row's reopen condition
+is **a statement of that member's `a` that is not one of the two this section gives**.
+
+#### The wiring, and the decision the brief asked to be recorded
+
+**`WITNESSED_TAGS` STAYS 26 AND KEEPS ITS MEANING.** The brief offered two shapes — widen and
+rename it, or leave it meaning *stream-witnessed* and add a second tuple — and the second was
+chosen because that constant's own docstring calls it *"the scope contract, stated once as data so
+no caller has to derive it from the table's keys and no round can widen it by accident"*. A round
+that widened it would do precisely what that sentence forbids, in the name of a different kind of
+witness. So `klv_uas_codec` now consults **three tables in sequence, and the sequence is the order
+of the grounds**: `ITEMS` (26, one affine map from this document, attested by the pinned stream),
+`NESTED_SETS` (item 48, a second document registering the same Universal Label), and
+`DOCUMENT_WITNESSED_TAGS` (fifteen, this document's own printed worked examples). `WITNESS_KINDS`
+states the arrangement; `ITEMS.get(tag) is None` still means *not stream-witnessed* and every caller
+that tests it keeps working. **Three grounds, three tables, no tag in two of them.**
+
+**`check_against_the_documents_own_examples()` RUNS 41 EXAMPLES AND NOT 26**, and for the fifteen
+it is not a corroboration of a transcription but the whole of the witness basis their rows cite:
+26 + 14 + 1. §7's Programmer's Notes were re-read for this and cover it — *"the 'Example Value' for
+a tag is shown in full precision, beyond a tag's resolution, so programmers can verify they are
+using the right formulas"* is stated of every tag's summary table in the same §7 prose that
+introduces `IMAPB` and `RIMAPB`, not of a subset.
+
+**A MALFORMED PACK REFUSES THE ITEM AND NOT THE PACKET**, on `klv_security_codec`'s element
+precedent and the length-divergence ruling's own ground: discarding well-formed items over one
+malformed one destroys the evidence a consumer needs. `DecodedPacket.pack_refusals` is the channel.
+
+**ONE VALUE TAG 112 CAN CARRY THAT THE CDM FIELD CANNOT HOLD, AND THE DOCUMENT SETTLES IT.**
+§8.112's range is `IMAPB(0, 360)`, closed at both ends, so 360.0 is conformant and encodes to
+exactly `5A00` at two octets, while `Kinematics.course_deg` is documented `[0, 360)` and declares
+`lt=360.0`. §8.112's own bullet states the identity — *"0 (or 360) is true north, east is 90, south
+is 180, west is 270"* — so 360.0 is folded to 0.0 and
+`attributes.kinematics_basis.course_360_folded_to_0` records it with the sentence that licenses it.
+**The alternatives were a `ValidationError` on a conforming packet, a silent clamp, or a schema
+change, and the last was this round's brief's explicit STOP.** The CoT and Legion rows reached the
+same fold from their own documents, which is why the field's range is not the thing that moved.
+
+#### The fixtures, the structural diff, and the counts
+
+**NINE NEW FIXTURES, thirty-two in the set**, each citing its clause: the fourteen IMAPB items in
+one packet from their own printed examples; RULING 4's pair; **all eight of ST 1201.3 §7.2.3 Table
+2's patterns in one packet at three different widths**, with a non-zero remainder on the two SNaN
+rows and on `UserDefined` where Table 2 gives one a meaning; tag 128's printed pack; a short pack
+refused; a course of exactly 360°; a zero-length IMAPB item; and one past its Max Length. **A tenth
+was not written and the absence is the finding**: there is no §8.130 fixture, because there are no
+octets the document prints for it.
+
+**THE STRUCTURAL DIFF: NOT ONE VALUE POSITION MOVED ACROSS THE FORTY-SIX PRE-EXISTING GOLDENS.**
+Every golden was compared against its pre-round copy with documentation excluded **by path** —
+anything under a `*_basis` key, `length_divergence_policy`, `source_extras`,
+`document_witnessed_basis`, `unavailable_fields` or `pack_refusals` — and every other leaf
+compared exactly. 113 value leaves per golden, **including the eight `position.alt_m` sites, the
+fourteen `kinematics.course_deg` sites and the fourteen `speed_mps` sites**, and not one differs.
+**The first draft of that diff could not have seen the change it was checking for**: it excluded
+the KEY names `alt_m` and `course_deg` because they also name basis paragraphs, and so excluded the
+two fields this round moved. Recorded because a diff that cannot see its own subject is worse than
+none, and the repair is the same one `gates/pdf_text.py` records — match the structure, not the
+rendering. The pinned stream's own goldens carry neither tag 104 nor tag 112, so their `alt_m` and
+`course_deg` stay `None`, which is what the diff shows.
+
+**THE ROW COUNTS, RE-DERIVED FROM THE STATUS COLUMN RATHER THAN INCREMENTED.** The ST 0601 row set
+holds **141** rows, of which **42** now carry a `stanag4609 1.0.0` marker — 9 plain, 32 `· parked`,
+1 `· defect` — and **99** read `not yet`. **RULING 1 requires both witness counts wherever the
+witnessed set is stated, and they are: 26 stream-witnessed, 16 document-witnessed.** 26 + 16 = 42,
+42 + 99 = 141.
+
+**AND THE LEDGER'S NUMBER WAS ALREADY STALE BY ONE BEFORE THIS ROUND TOUCHED IT.** The "Not
+witnessed" cell read *"all 115"*; the park 2 round had promoted item 48 that morning and had not
+re-derived it, so the true figure was 114. **115 → 114 → 99, and the middle value had no trace
+anywhere.** Recorded rather than quietly fixed, because a count that moves and leaves no trace is
+what `gates/parks_table.py` exists for, met one table over.
+
+**THE SAME DEFECT, TWICE MORE, IN THE KLV FIXTURE README — AND ONE OF ITS GUARDS WAS ASSERTING THE
+STALE STRING.** `fixtures/klv/README.md` opened *"There are SEVENTEEN"* while **twenty-three**
+payloads sat beside it: the text-pins round of the same morning added six and re-dated nothing, and
+**the six were missing from the fixture table entirely**, so the count and the enumeration were
+stale in the same direction and neither could catch the other. The guard that reads the file carried
+`assert "There are SEVENTEEN" in readme` — **a literal naming a number it did not derive, which
+pins the prose to whatever it last said.** All three are repaired here: the count chain is re-dated
+SEVENTEEN → TWENTY-THREE → THIRTY-TWO, the fifteen missing table rows are written, and the guard
+now derives the count from the generator so a round that adds a payload and leaves the sentence
+alone fails on the number instead of passing on a string.
+
+#### Act 4's blast radius, and the gates
+
+**THE PARKS GATE FIRED ON EXACTLY THE THREE SET-CLAIMS NAMING 5, AND EVERY ONE WAS IN A ROW NOTHING
+ELSE WOULD HAVE OPENED.** `gates/parks_table.py` reported `CLOSED MEMBER` three times — park 2's
+*"the one this park has always shared with 5 and 11"*, park 12's four-member partition, and park
+12's live-blocker sentence — and all three are the failure that gate is named for: nothing in those
+rows changed when park 5 closed, so re-reading them could not find it. **Park 12's partition has
+now decayed three times by the same mechanism**, and twice the gate caught it rather than a person.
+Each was rewritten in its own row. **The gate then failed a fourth time on this round's own
+quotation of a retired claim**, because `SET_CLAIM` is keyed on the literal word `parks` followed by
+numbers and cannot read a tense; the quotation now writes *"rows"* where the original wrote
+*"parks"* and the numbers stay verbatim. That is the shape of the park 2 round's refusal the bump
+gate could not accept, met again.
+
+**Two suite guards learned the third witness kind rather than being loosened.** The partition guard
+now derives its expectation as `len(WITNESSED_TAGS) + len(NESTED_SETS) +
+len(DOCUMENT_WITNESSED_TAGS)`, so a promotion with no table behind it still fails; the tag-by-tag
+guard asserts that a document-witnessed row **states its witness basis in its own Notes**, per
+RULING 1, because a promotion that stops saying which kind of witness stands behind it is
+indistinguishable from one made on a wire. And a third assertion was added rather than implied:
+**tag 130 must still read `not yet`**, with the message naming what a round would have to have
+found to promote it.
+
+**One test's method was repaired rather than its claim.** `test_a_length_divergent_item_is_skipped_
+and_annotated_and_never_reinterpreted` asserted `"4000" not in json.dumps(...)` to prove tag 22's
+octets were not reinterpreted — and this round tripped it on **prose**: `alt_m`'s new basis
+paragraph quotes `IMAPB(-900, 40000, Length)`, and "40000" contains "4000". Nothing had
+reinterpreted anything. **That is `gates/pdf_text.py`'s recorded defect met from the other side** —
+there a substring test under-counted and returned a plausible number, here one over-matched and
+returned a plausible failure — and the check now walks every numeric leaf of both objects, which is
+strictly stronger and cannot be tripped by documentation.
+
+**The gates after, each by its own command.** `gates/parks_table.py`: **13 rows, 7 closed
+[1, 2, 4, 5, 8, 9, 13], 6 open, 4 set-claims, 0 failed**, and no set-claim names 5.
+`gates/pin_paths.py`: **24 copies, 24 matched, 0 failed** — no pin was added and none moved.
+`python -m synapse_cdm.schemas --check`: **CURRENT**, and `git diff v1.5.0..HEAD -- schemas/` is
+empty, so **no schema change was needed** — which was a STOP had it been.
+
+**The untouchables, unmoved.** The pinned phrase derives to **35** over the git index;
+`pytest -k "scripted_edit and not version_floor"` is **9 passed**; `git ls-files` matches **no**
+`.pdf` and **no** `.zip`; `spec/` tracks only `.json` and `.py`; the fourteen-delegation sentence is
+in place; `version.py`, `RELEASE_NOTES.md` and `PUBLICATION.md` are **byte-identical to `HEAD`** —
+`aacca218…24e936f`, `72a0259d…8a79ed0` and `551c7350…7f84680`, the digests this round's own
+audit recorded before it wrote anything — and `delegated_specifications_held` is unchanged at
+seventeen keys. **`HEAD` and not the v1.5.0 tag is the baseline, and the difference is not
+cosmetic:** `PUBLICATION.md` MOVED between the tag and `HEAD`, because the witness round wrote
+ledger entry 14 after the release was tagged. Comparing against the tag would report a change
+this round did not make; the untouchable claim is that **this round** moved none of the three,
+and the tag-relative diff is a different question with a different answer.
+
 ### 1.5.0 — 2026-09-04 — the ST 0102.12 security row set ships, and the first pinned document that is not a PDF
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as it has been at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

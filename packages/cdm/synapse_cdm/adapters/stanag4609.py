@@ -97,7 +97,9 @@ from typing import Any
 
 from synapse_cdm import ids, lossless, symbology, times
 from synapse_cdm.adapter import Adapter
+from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
+from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_uas_codec as uas
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
@@ -122,6 +124,14 @@ OBSERVATION_SYSTEM = "UAS-LS-PACKET"
 
 #: §8.2.1: "the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z)".
 EPOCH = _dt.datetime(1970, 1, 1, tzinfo=_dt.timezone.utc)
+
+#: What kind of witness stands behind one decoded item, carried on every parked item since
+#: 2026-09-04. Two strings rather than a bool, because "which stream" and "which example" are the
+#: questions a reader actually has and a `True` answers neither.
+_WITNESS_STREAM = ("stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, "
+                   "six packets of this item")
+_WITNESS_DOCUMENT = ("document: ST 0601.14a's own printed worked example for this section, "
+                     "reproduced on every suite run; no held stream carries this tag")
 
 
 class Stanag4609ParseError(ValueError):
@@ -234,6 +244,24 @@ def _rendered(value: Any) -> Any:
                           "affine map over it would produce a plausible-looking number")}
     if isinstance(value, uas.ZeroLength):
         return {"zero_length_item": True, "basis": value.basis}
+    if isinstance(value, imapb.Special):
+        # ST 1201.3 §7.2.3's signal, rendered the same way §8.x's Special Values integers are and
+        # for the same reason: it is a SIGNAL and not a measurement, and a reverse map run over it
+        # returns a number. The bit pattern is carried so a consumer can see which of Table 2's
+        # eight it was, and `payload` is Table 2's own `bn-5 … b0` remainder.
+        return {"imapb_special_value": value.kind, "payload": value.payload,
+                "octet_count": value.length,
+                "basis": ("ST 1201.3 §7.2.3 Table 1: the top two bits set mean the value is a "
+                          "signal and Table 2 assigns the pattern. Running it through §7.2.2's "
+                          "reverse map would produce a plausible-looking number, which is the "
+                          "same ruling item 13's 0x80000000 got")}
+    if isinstance(value, list) and value and isinstance(value[0], packs.WavelengthRecord):
+        return [{"wavelength_id": record.wavelength_id,
+                 "min_nm": _rendered(record.min_nm), "max_nm": _rendered(record.max_nm),
+                 "name": record.name, "octets": record.octets.hex(),
+                 "predefined_band": packs.PREDEFINED_WAVELENGTHS.get(record.wavelength_id, [None]*4)[2],
+                 "reserved_id_band": record.wavelength_id in packs.PREDEFINED_WAVELENGTHS_RESERVED}
+                for record in value]
     return value
 
 
@@ -243,9 +271,9 @@ def _measured(value: Any) -> float | int | None:
     A `SpecialValue` and a `ZeroLength` both return None, which is what keeps a "Reserved"
     latitude out of `Position.lat` and a zero-length ground speed out of `Kinematics.speed_mps`.
     """
-    if isinstance(value, (uas.SpecialValue, uas.ZeroLength)):
+    if isinstance(value, (uas.SpecialValue, uas.ZeroLength, imapb.Special)):
         return None
-    if isinstance(value, str):
+    if isinstance(value, (str, list)):
         return None
     return value
 
@@ -544,9 +572,15 @@ class Stanag4609Adapter(Adapter):
 
     def _position(self, items: dict[int, uas.DecodedItem],
                   unavailable: list[str]) -> tuple[Position | None, dict]:
-        """Tags 13 and 14, both or neither. `alt_m` is None on every object and tag 15 is why."""
+        """Tags 13 and 14, both or neither. `alt_m` is tag 104's HAE, or None — never tag 15's MSL.
+
+        **CHANGED 2026-09-04 BY THE park 5 ROUND (RULINGS 3 and 4).** This docstring read "`alt_m`
+        is None on every object and tag 15 is why" from 2026-08-26 until tag 104 was decoded. Tag
+        15 is still why `alt_m` is not MSL; what moved is that there is now an HAE item to fill it.
+        """
         lat = _measured(items[13].value) if 13 in items else None
         lon = _measured(items[14].value) if 14 in items else None
+        alt = _measured(items[104].value) if 104 in items else None
         basis: dict[str, Any] = {
             "lat_item": "tag 13 Sensor Latitude" if lat is not None else None,
             "lon_item": "tag 14 Sensor Longitude" if lon is not None else None,
@@ -568,17 +602,51 @@ class Stanag4609Adapter(Adapter):
                 "airframe's dimensions, this IS where the platform is, and the residue is a "
                 "distance the document declines to state"),
             "alt_m": (
-                "None on EVERY object, and this is a decline rather than an absence. Tag 15 Sensor "
-                "True Altitude is witnessed and is measured 'from Mean Sea Level (MSL)' (§8.15), "
-                "while Position.alt_m is documented as 'Metres HAE' — so the one altitude in the "
-                "witnessed set cannot fill the one altitude field. §8.15 itself points at the "
-                "twin: 'For improved modeling accuracy use Sensor Ellipsoid Height (Tag 75) or "
-                "Sensor Ellipsoid Height Extended (Tag 104)', and `ST 0601.8-17` settles the "
-                "collision in the same direction — a decoder that understands HAE 'shall use the "
-                "HAE representation and ignore the Mean Sea Level (MSL) representation when both "
-                "exist'. Neither 75 nor 104 is witnessed. The MSL figure is parked at "
-                "attributes.sensor_true_altitude_msl_m, converting nothing: a geoid separation is "
-                "a model this repository does not hold"),
+                "TAG 104's VALUE WHEN THE PACKET CARRIES TAG 104, AND None OTHERWISE — changed "
+                "2026-09-04 by the park 5 round, and this field is HAE by construction. "
+                "Position.alt_m is documented as 'Metres HAE'. Tag 104 Sensor Ellipsoid Height "
+                "Extended is 'measured from the reference WGS84 ellipsoid' (§8.104), which is the "
+                "same datum, so it lands with no conversion at all; its value is IMAPB(-900, "
+                "40000, Length) per §8.104 and is decoded by `imapb_codec` at the length the wire "
+                "supplies, per ST 1201.3 §7.4. Its row promoted on the document-side witness "
+                "RULING 1 names — §8.104 prints a worked example, 23,456.24 m against octets "
+                "2F921E, and `klv_uas_codec.check_against_the_documents_own_examples()` reproduces "
+                "it on every suite run — and tag 104 is NOT in the pinned stream, whose 26 items "
+                "stop at tag 65, so this field is filled against a printed example and against no "
+                "held octet. "
+                "**THE HAE-OVER-MSL RULE IS HONOURED BY CONSTRUCTION AND NEEDS NO PRECEDENCE "
+                "LOGIC HERE (RULING 4, 2026-09-04).** `ST 0601.8-17` requires a decoder that "
+                "understands HAE to 'use the HAE representation and ignore the Mean Sea Level "
+                "(MSL) representation when both exist in the same UAS Datalink LS packet', and "
+                "§8.104.1, §8.75.1 and §8.15.1 each state the same preference in the document's "
+                "own words: 'For legacy systems, Tag 15 and Tag 75 | Tag 104 are allowed with "
+                "preference for Tag 75 | Tag 104.' There is nothing to arbitrate: tag 15 Sensor "
+                "True Altitude is measured 'from Mean Sea Level (MSL)' (§8.15) and is therefore "
+                "NEVER a candidate for an HAE field — it was not one before tag 104 was decoded "
+                "and it is not one now. So a packet carrying BOTH 15 and 104 fills alt_m from 104 "
+                "because 104 is the only HAE item read, not because a rule chose between them, and "
+                "no code here compares a document-witnessed item against a stream-witnessed one. "
+                "The MSL figure stays parked at attributes.sensor_true_altitude_msl_m, converting "
+                "nothing: a geoid separation is a model this repository does not hold. "
+                "**WHAT IS STILL OUTSTANDING IS TAG 75.** §8.15 points at both twins — 'For "
+                "improved modeling accuracy use Sensor Ellipsoid Height (Tag 75) or Sensor "
+                "Ellipsoid Height Extended (Tag 104)' — and 75 is Sensor Ellipsoid Height, uint16 "
+                "over -900..19000, NOT IMAPB, so it is not one of park 5's sixteen and RULING 1 "
+                "does not reach it. It is UNREAD as of 2026-09-04 and is the one row standing "
+                "between alt_m and the base HAE item; the same document-side witness would promote "
+                "it — §8.75 prints its own worked example, 14,190.7195 m against octets C221 — in a "
+                "round scoped to it. **WHAT §8.104.1 SAYS ABOUT COEXISTENCE WITH 75, RECORDED FOR "
+                "THAT ROUND (RULING 5):** the preference it states is for the pair over tag 15, "
+                "written as the disjunction 'Tag 75 | Tag 104', and it states NO ordering BETWEEN "
+                "75 and 104. What it does state is 104's purpose — 'to increase the range of "
+                "altitude values currently defined in Tag 75 Sensor Ellipsoid Height to support "
+                "all CONOPs for airborne systems' — 40 000 m against 75's 19 000 m, which is a "
+                "reason to prefer 104 where both appear and is not a rule the document writes. "
+                "Not implemented here while 75 is unread. One more fact for that round, read off "
+                "the two sections this one: §8.75 and §8.104 print the SAME KLV Key, "
+                "06.0E.2B.34.01.01.01.01.0E.01.02.01.82.47.00.00 (CRC 16670) — the extended item "
+                "reuses the base item's Universal Label, so the UL does not distinguish them and "
+                "only the tag does"),
             "accuracy_m": (
                 "None on every object. ST 0601.14a carries CE90/LE90 error estimates at tags 45 "
                 "and 46 and a Standard Deviation Cross Correlation pack at tag 102, and none of "
@@ -603,8 +671,21 @@ class Stanag4609Adapter(Adapter):
             "none of them exactly — GNSS is the member naming the source the document names "
             "first, and ESTIMATED would understate a fix that really is a satellite solution. "
             "The blend is recorded here rather than resolved")
+        basis["alt_item"] = "tag 104 Sensor Ellipsoid Height Extended" if alt is not None else None
+        if 104 in items and alt is None:
+            # Present but not a measurement: a §7.2.3 signal or a zero-length item. `alt_m` is
+            # None and the reason is recorded rather than left to look like an absent item.
+            basis["alt_not_measured"] = _rendered(items[104].value)
+            unavailable.append(
+                "Position.alt_m (tag 104 present but carrying a ST 1201.3 §7.2.3 signal or a "
+                "zero-length value — a signal is not a measurement and no altitude is built over "
+                "one)")
+        elif alt is None:
+            unavailable.append(
+                "Position.alt_m (tag 104 absent — and tag 15's MSL figure is not a candidate for "
+                "an HAE field; see the alt_m basis)")
         return Position(
-            lat=lat, lon=lon, alt_m=None,
+            lat=lat, lon=lon, alt_m=alt,
             position_source=PositionSource.GNSS,
             accuracy_m=None,
         ), basis
@@ -613,8 +694,14 @@ class Stanag4609Adapter(Adapter):
 
     def _kinematics(self, items: dict[int, uas.DecodedItem],
                     unavailable: list[str]) -> tuple[Kinematics | None, dict]:
-        """Tag 56 fills `speed_mps`. Tag 5 is a HEADING and fills nothing."""
+        """Tag 56 fills `speed_mps`, tag 112 fills `course_deg`. Tag 5 is a HEADING and fills nothing.
+
+        **CHANGED 2026-09-04 BY THE park 5 ROUND.** This docstring read "Tag 5 is a HEADING and
+        fills nothing" alone; that is still true of tag 5, and tag 112 — the item every version of
+        the course_deg basis has named as the one it waits for — is now decoded.
+        """
         speed = _measured(items[56].value) if 56 in items else None
+        course = _measured(items[112].value) if 112 in items else None
         basis: dict[str, Any] = {
             "speed_item": "tag 56 Platform Ground Speed" if speed is not None else None,
             "speed_basis": (
@@ -625,23 +712,79 @@ class Stanag4609Adapter(Adapter):
                 "which is what Kinematics.speed_mps documents itself as, so this is the one "
                 "kinematic figure in the witnessed set that lands without an argument"),
             "course_deg": (
-                "None on EVERY object, and tag 5 is the temptation. Tag 5 is the Platform HEADING "
-                "Angle — §8.5, 'the angle between longitudinal axis (line made by the fuselage) "
-                "and true north' — and Kinematics.course_deg is documented as a COURSE, which is "
+                "TAG 112's VALUE WHEN THE PACKET CARRIES TAG 112, AND None OTHERWISE — changed "
+                "2026-09-04 by the park 5 round. Tag 112 is the Platform Course Angle, §8.112, "
+                "'Direction the aircraft is moving relative to True North', IMAPB(0, 360, Length) "
+                "with the bullets '0 (or 360) is true north, east is 90, south is 180, west is "
+                "270' — degrees clockwise from true north, which is what Kinematics.course_deg is "
+                "documented as, so it lands with no conversion. Decoded by `imapb_codec` at the "
+                "wire's length per ST 1201.3 §7.4, and promoted on the document-side witness "
+                "RULING 1 names: §8.112 prints 125 degrees against octets 1F40 and "
+                "`klv_uas_codec.check_against_the_documents_own_examples()` reproduces it both "
+                "ways on every suite run. **Tag 112 is NOT in the pinned stream**, whose 26 items "
+                "stop at tag 65, so this field is filled against a printed example and against no "
+                "held octet — which is the sentence every one of the fifteen promoted rows "
+                "carries. "
+                "**AND TAG 5 IS STILL NOT A COURSE, WHICH IS THE HALF OF THIS BASIS THAT DID NOT "
+                "MOVE.** Tag 5 is the Platform HEADING Angle — §8.5, 'the angle between "
+                "longitudinal axis (line made by the fuselage) and true north' — and a course is "
                 "the direction of travel. On an aircraft in wind those differ by the drift angle, "
-                "and the standard itself keeps them apart: tag 112 is the Platform Course Angle "
-                "and it is NOT in the witnessed set. So the heading parks at "
-                "attributes.platform_heading_deg and course_deg stays None. The AIS heading/course "
-                "distinction, reached by an airborne format"),
+                "and the standard keeps them apart in two items rather than one. The heading still "
+                "parks at attributes.platform_heading_deg and is NEVER substituted for a missing "
+                "course: a packet with tag 5 and no tag 112 emits course_deg None, which is the "
+                "AIS heading/course distinction reached by an airborne format. "
+                "**A §7.2.3 SIGNAL EMITS NO COURSE.** §8.112's Special Values cell reads 'None', "
+                "so the document declares no reserved integer for this item — but IMAPB reserves "
+                "the top two bits for every item it maps, per ST 1201.3 §7.2.3 Table 1, so a "
+                "conforming emitter can still send +QNaN here. It is carried as the signal it is "
+                "and course_deg stays None, the same ruling item 13's 0x80000000 got"),
             "climb_mps": (
                 "None on every object. Tag 51 Platform Vertical Speed is the item and it is not "
                 "in the witnessed set; deriving a climb rate from two packets' altitudes would be "
                 "differentiating across records, which is the accumulation this adapter refuses"),
         }
-        if speed is None:
-            unavailable.append("Kinematics (tag 56 absent or zero-length)")
+        if course == 360.0:
+            # §8.112's OWN BULLET IS THE CONVERSION AND NOT A CONVENIENCE: "0 (or 360) is true
+            # north, east is 90, south is 180, west is 270". The item's range is IMAPB(0, 360),
+            # CLOSED at both ends, so 360.0 is a value a conforming emitter can send — `0x5A00`
+            # decodes to exactly 360.0 at two octets — while `Kinematics.course_deg` is documented
+            # as "[0, 360)" and declares `lt=360.0`. The document states the identity of the two
+            # readings itself, so folding 360 onto 0 applies the document's sentence rather than
+            # this adapter's judgement, and it is the alternative to a schema change (which this
+            # round's brief makes a STOP) and to refusing a conforming packet. Nothing is lost:
+            # the octets are parked verbatim at attributes.klv_item_octets and the decoded 360.0
+            # is at payload.platform_attitude.course_deg.
+            basis["course_360_folded_to_0"] = (
+                "the packet's tag 112 decoded to exactly 360.0 degrees and this field carries "
+                "0.0. §8.112: '0 (or 360) is true north, east is 90, south is 180, west is 270' — "
+                "the document states the two as one direction. Kinematics.course_deg is [0, 360), "
+                "so 360 has one representation here and the document says which")
+            course = 0.0
+        basis["course_item"] = "tag 112 Platform Course Angle" if course is not None else None
+        if 112 in items and course is None:
+            basis["course_not_measured"] = _rendered(items[112].value)
+        if speed is None and course is None:
+            unavailable.append(
+                "Kinematics (tag 56 absent or zero-length, and tag 112 absent or not a "
+                "measurement — a Kinematics with every field None states nothing)")
             return None, basis
-        return Kinematics(speed_mps=float(speed), course_deg=None, climb_mps=None), basis
+        if speed is None:
+            # A COURSE WITHOUT A SPEED IS STILL A STATEMENT, and this is the one branch the
+            # 2026-08-26 shape could not have: `speed_mps` was the only field this adapter could
+            # fill, so `speed is None` meant the whole object was empty. It no longer does.
+            # `Kinematics.speed_mps` is optional in the model and a packet that reports where the
+            # aircraft is going without how fast is a packet whose course this adapter has no
+            # licence to discard.
+            unavailable.append("Kinematics.speed_mps (tag 56 absent or zero-length)")
+        if course is None:
+            unavailable.append(
+                "Kinematics.course_deg (tag 112 absent or not a measurement — tag 5's heading is "
+                "not a course and is never substituted; see attributes.kinematics_basis)")
+        return Kinematics(
+            speed_mps=float(speed) if speed is not None else None,
+            course_deg=float(course) if course is not None else None,
+            climb_mps=None,
+        ), basis
 
     # ------------------------------------------------------------------ geometry
 
@@ -765,16 +908,90 @@ class Stanag4609Adapter(Adapter):
 
         parked = {}
         for tag, entry in sorted(items.items()):
-            spec = uas.ITEMS[tag]
+            # `uas.ITEMS` holds the 26 stream-witnessed items only, so the fifteen
+            # document-witnessed tags are not in it — see `klv_uas_codec.DOCUMENT_WITNESSED_TAGS`
+            # and the decision recorded at `WITNESS_KINDS`. Their Units and Format come from the
+            # table that does hold them, and `witness` is carried per item because the difference
+            # between "met on a wire" and "met in a printed example" is the whole of this
+            # adapter's scope argument and a consumer reading one value should not have to find
+            # it in a document.
+            spec = uas.ITEMS.get(tag)
+            if spec is not None:
+                units, klv_format, section = spec.units, spec.klv_format, spec.section
+                name, witness = spec.name, _WITNESS_STREAM
+            elif tag in uas.PACK_ITEM_TAGS:
+                units, klv_format, section = None, "vlp", str(packs.PACK_ITEMS[tag]["section"])
+                name, witness = str(packs.PACK_ITEMS[tag]["name"]), _WITNESS_DOCUMENT
+            else:
+                item_name, units, _a, _b, _max = imapb.IMAPB_ITEMS[tag]
+                klv_format, section = "IMAPB", f"8.{tag}"
+                name, witness = item_name, _WITNESS_DOCUMENT
             parked[str(tag)] = {
-                "name": spec.name,
+                "name": name,
                 "value": _rendered(entry.value),
-                "units": spec.units,
-                "klv_format": spec.klv_format,
+                "units": units,
+                "klv_format": klv_format,
                 "octets": entry.raw.hex(),
-                "section": f"ST 0601.14a §{spec.section}",
+                "section": f"ST 0601.14a §{section}",
+                "witness": witness,
             }
         attributes["klv_items"] = parked
+
+        # ---------------------------------------------------------- the document-witnessed items
+        #
+        # THE TWELVE THAT REACH NO CANONICAL FIELD, PLUS THE ONE PACK, "as the document names
+        # them" — which is this round's brief in its own words and is why the keys below are the
+        # §8.x item names lowercased with their units appended rather than names of this
+        # repository's choosing. Two of the fifteen are NOT here: tag 104 fills
+        # `Position.alt_m` and tag 112 fills `Kinematics.course_deg`, and each is stated in its
+        # own basis paragraph instead. The other thirteen have no CDM field to reach — a radar
+        # altimeter, a storage percentage and a transmit frequency are facts about an airframe and
+        # its payload, not about a contact's identity, position or motion — so they are carried
+        # whole and nothing is derived from them.
+        witnessed_by_document = {}
+        for tag in uas.DOCUMENT_WITNESSED_TAGS:
+            if tag not in items or tag in (104, 112):
+                continue
+            if tag in uas.PACK_ITEM_TAGS:
+                key = "wavelengths_list"
+                units = None
+            else:
+                item_name, units, _a, _b, _max = imapb.IMAPB_ITEMS[tag]
+                key = item_name.lower().replace("-", "_").replace(" ", "_")
+                key = f"{key}_{units}" if units not in (None, "%") else key
+                key = key.replace("%", "pct")
+            witnessed_by_document[key] = {
+                "tag": tag,
+                "value": _rendered(items[tag].value),
+                "units": units,
+                "section": ("ST 0601.14a §"
+                            + (str(packs.PACK_ITEMS[tag]["section"])
+                               if tag in uas.PACK_ITEM_TAGS else f"8.{tag}")),
+            }
+        if witnessed_by_document:
+            attributes["document_witnessed_items"] = witnessed_by_document
+        attributes["document_witnessed_basis"] = {
+            "tags_read": list(uas.DOCUMENT_WITNESSED_TAGS),
+            "how_many": len(uas.DOCUMENT_WITNESSED_TAGS),
+            "witness": (
+                "ST 0601.14a's own printed worked examples, under RULING 1 of 2026-09-04, which "
+                "read the reopen condition this record's scope contract has stated since "
+                "2026-08-26: 'a second pinned stream, OR a document-side check as strong as a "
+                "worked example — and ST 0601.14a prints one per item'. "
+                "`klv_uas_codec.check_against_the_documents_own_examples()` runs all fifteen "
+                "alongside the 26 on every suite run, 41 in total"),
+            "what_it_is_not": (
+                "NOT a claim that any of these fifteen has been met on a wire. The pinned stream "
+                "carries 26 items whose highest tag is 65 and not one of the fifteen is among "
+                "them, so every value here is decoded by a codec checked against a printed "
+                "example and against no held octet — a weaker footing than the 26 have, and the "
+                "reason `klv_uas_codec.WITNESSED_TAGS` was left at 26 rather than widened"),
+            "declined": {
+                "130": packs.AIRBASE_LOCATIONS_NOT_DECODED,
+            },
+        }
+        if packet.pack_refusals:
+            attributes["pack_refusals"] = [dict(refusal) for refusal in packet.pack_refusals]
 
         if 15 in items:
             attributes["sensor_true_altitude_msl_m"] = _rendered(items[15].value)

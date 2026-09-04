@@ -227,10 +227,34 @@ def test_a_length_divergent_item_is_skipped_and_annotated_and_never_reinterprete
     assert "edition 1" in defect["factual_basis"]
 
     # (c) is refused: no plausible number appeared anywhere in the output for tag 22.
-    flat = json.dumps(dumped(objects))
-    assert "4000" not in flat, (
-        "4000 appears in the output, which is what `0x00000FA0` would decode to under a "
-        "truncation rule no held document states. That is candidate (c), and it was rejected: "
+    #
+    # **THE FORM OF THIS CHECK CHANGED 2026-09-04 AND THE CLAIM DID NOT.** It was
+    # `assert "4000" not in json.dumps(dumped(objects))` — a substring test standing in for a
+    # structural claim — and the park 5 round tripped it on PROSE: `Position.alt_m`'s new basis
+    # paragraph quotes tag 104's range as `IMAPB(-900, 40000, Length)`, and "40000" contains
+    # "4000". Nothing had reinterpreted anything. That is `gates/pdf_text.py`'s recorded defect
+    # met from the other side — there a substring test UNDER-counted and returned a plausible
+    # number, here one OVER-matched and returned a plausible failure — and the repair is the same
+    # in kind: match the structure rather than the rendering. Candidate (c) would put 4000 in a
+    # VALUE position, so that is what is asserted, over every numeric leaf of both objects. It is
+    # strictly stronger than the substring form, which a value of `"4000"` as a string would have
+    # caught and a value of `4000.0` nested under a differently-named key would also have caught —
+    # both are covered here — while no amount of documentation can trip it.
+    def numeric_leaves(node):
+        if isinstance(node, bool):
+            return
+        if isinstance(node, (int, float)):
+            yield node
+        elif isinstance(node, dict):
+            for value in node.values():
+                yield from numeric_leaves(value)
+        elif isinstance(node, (list, tuple)):
+            for value in node:
+                yield from numeric_leaves(value)
+    leaves = list(numeric_leaves(dumped(objects)))
+    assert 4000 not in leaves and 4000.0 not in leaves, (
+        "4000 appears as a value in the output, which is what `0x00000FA0` would decode to under "
+        "a truncation rule no held document states. That is candidate (c), and it was rejected: "
         "the three available rules agree on the pinned stream's octets and disagree the moment a "
         "top octet is non-zero"
     )
@@ -686,7 +710,14 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # no-BOM default, `-24`'s semi-colon split, and the two refusals — an odd octet count
     # and a lone surrogate.
     # moving is a fixture nobody decided to add.
-    assert len(module.ADAPTER_FIXTURES) == 23
+    # TWENTY-THREE until the park 5 round of the same day, which added NINE for the fifteen
+    # document-witnessed items: the fourteen IMAPB items in one packet from their own printed
+    # examples, RULING 4's pair (tag 15 and tag 104 together, then tag 104 carrying a signal),
+    # all eight of ST 1201.3 Table 2's special patterns at three different widths, tag 128's
+    # printed pack example, a short pack refused, a course of exactly 360 degrees, a zero-length
+    # IMAPB item and one past its Max Length. **The count is 32 and not 33: park 5's sixteenth
+    # item, tag 130, has no fixture because §8.130 prints no worked example to build one from.**
+    assert len(module.ADAPTER_FIXTURES) == 32
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (

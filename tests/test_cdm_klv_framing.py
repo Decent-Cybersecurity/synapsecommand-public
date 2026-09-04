@@ -1354,13 +1354,21 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    the state park 2 was this table's precedent FOR. So closures 5 -> 6 and open 8 -> 7, and
     #    the delegations-held count does NOT move, because this round obtained nothing — the first
     #    closure of which that is true. `n_downloads` still tracks `n_open` for park 8's reason.
+    #    PARK 5 CLOSED 2026-09-04 TOO, and it is the second closure in a row that moved no
+    #    acquisition term: both its documents had been held since 2026-08-27, and what was missing
+    #    was the sixteen rows that would consume its codec — fifteen of which were written that
+    #    day, on RULING 1's reading of the scope contract's own reopen condition. So closures
+    #    6 -> 7 and open 7 -> 6, and the delegations-held count does NOT move for the second time
+    #    running. Note the sixteenth row, tag 130, did not move and the park closed anyway: its
+    #    blocker is the scope contract and §8.130's own self-contradiction, not ST 1201.3.
     parks = pin["parks"]
     closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
-    assert closed == ["park_1", "park_13", "park_2", "park_4", "park_8", "park_9"], closed
+    assert closed == ["park_1", "park_13", "park_2", "park_4", "park_5", "park_8",
+                      "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
-    assert (n_closed, n_open, n_downloads) == (6, 7, 7)
+    assert (n_closed, n_open, n_downloads) == (7, 6, 6)
     words = {6: "six", 7: "seven"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
