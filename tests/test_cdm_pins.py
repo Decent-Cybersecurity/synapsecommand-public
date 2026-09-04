@@ -1308,8 +1308,20 @@ def test_a_stream_or_a_provenance_capture_under_a_pin_path_is_still_refused():
     """
     # 1. LOCATION. The disk half of the closure property must not reach either directory, whatever
     #    the extension is — asserted by construction over the real trees.
+    #
+    #    SKIPS ON A TREE HOLDING NO DOCUMENTS AT ALL, and the `assert disk` this replaced is the
+    #    reason there was a re-tag round. A guard that is RIGHT on a maintainer tree is a FAILURE
+    #    on a clone: here an empty disk set can only mean the glob broke, and refusing to run over
+    #    nothing is correct; on a fresh clone it is the ORDINARY state, because `.gitignore:42` and
+    #    its `*.txt` sibling keep every pinned document out of the index. Condition 1 is read by a
+    #    clone — run 33875771133 failed on this line at the tag for 1.5.0, having passed on the
+    #    maintainer tree that produced the commit. The fresh-clone boundary in this module's
+    #    docstring is the rule for exactly this, and this was the one site not following it.
     disk = spec_pin_files_on_disk()
-    assert disk, "the disk half is empty, so every assertion below is vacuous"
+    if not disk:
+        pytest.skip("no specification document is in this working tree at all, so the disk half "
+                    "has nothing to filter for strays (a fresh clone has the record, not the "
+                    "bytes). The location check runs as soon as one document is held")
     strays = sorted(d for d in disk if "/streams/" in d or "/provenance/" in d)
     assert not strays, (
         f"{strays} reached the pin corpus from a streams/ or provenance/ directory. The glob is "

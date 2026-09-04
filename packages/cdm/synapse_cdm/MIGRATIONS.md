@@ -80,6 +80,24 @@ behind it.
    maintainer's: the pinned specification documents are gitignored, so a fresh clone skips the
    tests that read them, and the workflow prints the skip list with `-rs` rather than reporting
    one number.
+
+   **CONDITION 1'S LOCAL PRE-CHECK IS A FRESH-CLONE SUITE RUN**, added 2026-09-04 after the
+   release that needed it. The sentence above already knew that a CI green and a maintainer's are
+   different runs, and it stopped one step short of what follows from that: **a maintainer green
+   is not evidence for this condition, because this condition is read by a clone.** So the
+   pre-check is a clone, and it stands beside condition 5's `--mutation-check` in the block below
+   — the two things this repository can check locally before a tag exists.
+
+   1.5.0's first tag is the case that put it here. `tests/test_cdm_pins.py` carried a guard
+   asserting the pin corpus was on disk, which is right on the tree that wrote it and is the
+   ORDINARY state of a clone, where `.gitignore` keeps every pinned document out of the index.
+   Run 33875771133 failed condition 1 on that one test at the tag, from a commit whose own suite
+   was green — the re-tag round in the 1.5.0 section carries it. The gitignored corpus is the
+   WHOLE of the difference between the two trees, so a clone is the only tree that can see a
+   defect of that class, and nothing in this procedure had ever asked anybody to make one. It
+   stays a PRE-CHECK and does not become a sixth condition: the workflow checks condition 1
+   already, and what a clone changes is only whether the finding arrives before the tag or after
+   it.
 2. **All fourteen harnesses are green**, and at least one of them run against the INSTALLED
    wheel rather than the source tree — `gates/wheel_install.py` does both halves and is the gate
    this condition means. The workflow runs it with `--mutation-check`, so the release build also
@@ -108,10 +126,13 @@ behind it.
    previous tag and the tree being released, against `version.py`'s `PACKAGE_VERSION` table, and
    refuses a number that **exceeds** or **undershoots** what the diff proves. It is a suite member
    as well as a command — it needs git and nothing else, no network and no credential — so unlike
-   conditions 1 through 3 it does not wait for a tag. Run it before typing a number:
+   conditions 1 through 3 it does not wait for a tag. Run it before typing a number, beside
+   condition 1's fresh-clone pre-check, which is the other check that does not wait for one:
 
    ```bash
-   python gates/bump_derivation.py --mutation-check
+   python gates/bump_derivation.py --mutation-check              # condition 5, this one
+   git clone --no-local . /tmp/precheck && \
+     (cd /tmp/precheck && pytest -q -rs)                         # condition 1, on the tree CI reads
    ```
 
    **Where the table needs judgment the gate refuses rather than guessing.** Its PATCH row ("a
@@ -433,6 +454,112 @@ held since 2026-08-26 and what was missing was the artefact, which is the state 
 table's own precedent FOR. The delegation count does not move either — fourteen delegations in
 scope and **nine** held, unchanged, because this round fetched nothing.
 
+#### The re-tag round, 2026-09-04 — the tag moved to a fix a clone could see and the maintainer tree could not, and no artefact was ever at risk
+
+**THE TAG MOVED. IT WAS NOT SUPERSEDED, AND THE DIFFERENCE IS THE WHOLE RULING.** `v1.5.0` was
+pushed at `bf95b77` and run **33875771133** failed **condition 1** — one test, on a tree that was
+green when the commit was made. The standing rule that a remote tag is never deleted was set
+aside for this case only, on two conditions taken as readings rather than assumed, and both were
+re-taken at the top of this round:
+
+* **PyPI does not serve 1.5.0.** `GET https://pypi.org/pypi/synapse-cdm/1.5.0/json` → **404** at
+  `2026-09-04T15:00:45Z`; `/pypi/synapse-cdm/json` lists 1.0.0 through 1.4.1 and stops. The
+  publish job never ran — the build job failed at its fifth step and the publish job is reported
+  `skipped` — so the one irreversible step in a release was never reached;
+* **no GitHub Release exists for `v1.5.0`.** `gh release view v1.5.0` → *release not found* at
+  `2026-09-04T15:00:50Z`; the newest Release is `v1.4.1`.
+
+The procedure says which steps are revocable and which are not, in *What the workflow does*: the
+tag is a person's and nothing creates it, the approval is a person's, **and a PyPI upload cannot
+be undone and its filename can never be reused**. A tag moves. A Release deletes. An upload does
+neither, and there was no upload. **So this round is a re-tag and not a 1.5.1**: the number is
+still the gate's, over the same arc, and the fix is outside the distribution.
+
+**WHAT FAILED, AND WHY A GREEN MAINTAINER TREE COULD NOT SEE IT.**
+`tests/test_cdm_pins.py::test_a_stream_or_a_provenance_capture_under_a_pin_path_is_still_refused`
+opened with `assert disk, "the disk half is empty, so every assertion below is vacuous"`. On a
+maintainer tree that guard is exactly right: the pin corpus is held, so an empty set can only mean
+the glob broke. On a fresh clone the empty set is the ORDINARY state, because `.gitignore:42` and
+its `*.txt` sibling keep every pinned document out of the index — which is the fresh-clone
+boundary this module's own docstring states and the sibling at `test_every_pin_is_present_intact_
+and_untracked` obeys with a `pytest.skip`. **The test was right about the tree it was written on
+and wrong about the tree condition 1 is read by.** CI: `1 failed, 3468 passed, 71 skipped`. The
+same tree at `bf95b77`, with the documents present: `3532 passed, 8 skipped`.
+
+`git log -S` names one commit for that test — **`3b5a5dd`**, the text-pins round — so the release
+commit did not touch it and the defect shipped one round before the release that found it.
+
+**THE FIX, AND ITS SCOPE.** The strays check becomes conditional on a non-empty disk set and skips
+in the wording its sibling in that file already uses; parts 2, 3 and 4 — the `PINS` read and the
+two `CITED_PATH` predicates — are untouched, so every tooth the text-pins round required is still
+there on a maintainer tree, where it is measuring something. The maintainer count does not move:
+**3532 passed, 8 skipped** before and after, so the fix costs the maintainer tree nothing and buys
+the clone a skip in place of a failure.
+
+**THE SWEEP FOR SIBLINGS OF THE SAME CLASS FOUND NONE**, and the enumeration is the point rather
+than the result. Every site in `tests/` that builds a set from files `.gitignore` excludes was
+read: `spec_pin_files_on_disk()` has exactly two callers — `tests/test_cdm_pins.py:619`, whose
+`DISK` is guarded by the skip at `tests/test_cdm_pins.py:694`, and the failing test. Of the rest,
+`tests/test_cdm_pins.py:1409`, `:1446`, `:1498`, `:1664`, `:1820` and `:1835` already skip on
+absence; `:768` and `:1583` assert a NEGATIVE, which an empty set satisfies; `:1235` floors itself
+on the tracked pin records and says so in its own message — *"it is keyed on the record precisely
+so that a fresh clone checks fifteen paths instead of none"*; `:1617` feeds a printed line whose
+assertions are over `PINS`; `tests/test_cdm_format_coverage.py:2768` compares two disk readings
+against each other and asserts only the tracked `spec/` directory exists. Every other non-emptiness
+assertion over a glob — `.klv`, `.klvframe`, `.cat0*`, `.s4586`, `.nmea`, `.gmti`, `.xml`, `.adsb`
+— is over a TRACKED fixture and a clone has all of them. **The empirical half agrees with the
+enumeration**: a clone of the fixed tree runs the whole suite with **0 failed**.
+
+**THE CLONE IS NOW THE PROCEDURE'S**, which is this round's return and not a note. Condition 1
+gains a local pre-check — a fresh-clone suite run, with the command, beside condition 5's
+`--mutation-check` in the block that does not wait for a tag. The reading it is grounded on is the
+one this failure proves was missing: *a maintainer green is not evidence for condition 1, because
+condition 1 is read by a clone.* Condition 1's paragraph had known since it was written that the
+two trees run different suites; what it never said is what follows from that.
+
+**THE READINGS.** Tree clean, `HEAD` and `origin/main` both `bf95b77`, one `Signed-off-by`
+identity on that commit. **EIGHT tags**; `v1.5.0` annotated, tagger Matej Michalko,
+2026-09-04 13:59:43 +0100, at `bf95b77` locally and on `origin`. `PACKAGE_VERSION` `1.5.0`,
+`SCHEMA_VERSION` `1.0.0`. Repository ruleset **21205830** targets `~DEFAULT_BRANCH` with `deletion`
+and `non_fast_forward` and **no tag target** — read rather than assumed, because a tag rule would
+have made the deletion a person's decision and stopped this round there; it is the only ruleset on
+the repository. The clone reproduced the failure at the `assert disk` guard before the fix and ran
+`0 failed` after it, both against the same interpreter.
+
+**THE DERIVATION IS UNCHANGED AND IS RE-RUN RATHER THAN RECALLED**, after this record was written,
+which is the fixed point the arc's own preamble insists on:
+
+```
+declared      1.5.0 — a MINOR over v1.4.1
+derived       MINOR, from the diff over the distribution between v1.4.1 and v1.5.0
+              ... 173 signals over 91 distribution files, elided ...
+ruled         8 unit(s) ruled by a person: [...]
+pending       the arc since 1.5.0 derives PATCH, so the next release is at least 1.5.1
+1 check, 0 failed
+```
+
+**173 signals over 91 files, MINOR, zero unruled — the same three figures the release commit
+recorded**, taken from the git index of this commit rather than from that message. The `pending`
+line is the one reading that is about this round rather than about the arc, and it is quoted
+because it is the alternative that was NOT taken: with the tag still at `bf95b77` the fix is an
+unreleased PATCH and the gate correctly says the next release is 1.5.1. **Moving the tag is what
+empties that arc**, and it is legitimate here for the reason at the top of this section and for no
+other — the number is not being reused, because 1.5.0 was never issued.
+
+**So the 1.5.0 derivation, its nine `Bump ruling` paragraphs — eight ruled units and one stated
+absence — and the arc's notes all stand.** The fix is a test and this record is a document; neither
+is code a consumer imports, and the classification of the arc does not move because a `.md` and a
+`tests/` file cannot raise a floor that is already MINOR. **The record gets a dated note and not a
+rewrite**: nothing above this heading was edited to make the first tag disappear, because a record
+that erases a failed run is a record that cannot be checked against the runs.
+
+**What this round did not do**, each because it is somebody else's: it did not approve the `pypi`
+environment, did not create the GitHub release, and did not write `PUBLICATION.md` entry 14 — and
+entry 14 now has two more things to carry than it did this morning, the failed run and the tag
+move. No park, pin or ledger row moved: `version.py`, `RELEASE_NOTES.md`, `klv_pin.json`,
+`FORMAT_COVERAGE.md` and `PUBLICATION.md` are byte-identical to `bf95b77`, verified by SHA-256
+before and after. `MIGRATIONS.md` and `tests/test_cdm_pins.py` are the only two files that moved.
+
 #### The release round, 2026-09-04 — the number was the gate's over the largest arc this file records, and one Act 0 premise had no reading behind it
 
 **Act 0, and every figure was measured rather than inherited.** Tree clean. `HEAD` and `origin/main`
@@ -562,6 +689,18 @@ well, and neither cites a heading by the double-quoted form that gate sweeps.
 document and already in the arc, so the moved set stays at **92** and the classification stays
 **MINOR** — verified by re-running the derivation after this file was written, not before it.
 
+**DATED NOTE, 2026-09-04 — THE TAG THIS ROUND PUSHED HAS MOVED, and this section is annotated
+rather than rewritten.** `v1.5.0` first pointed at `bf95b77`, the commit this round made. Run
+**33875771133** failed **condition 1** on one test —
+`tests/test_cdm_pins.py::test_a_stream_or_a_provenance_capture_under_a_pin_path_is_still_refused`,
+at its `assert disk` guard, a guard that holds on a maintainer tree and cannot hold on a clone.
+`1 failed, 3468 passed, 71 skipped`. Nothing reached the publish job, no artefact was uploaded and
+no Release was made, so the release's one irreversible step was never taken. The tag was moved to
+the fix commit the same day; see *The re-tag round* above. **Nothing in this section is wrong** —
+the suite was green on the tree it was run on, the count recorded below is that tree's, and the
+defect was in a test the round did not touch and could not have seen. That is the finding, and it
+is why condition 1 now carries a fresh-clone pre-check.
+
 **What this round did not do**, each because it is somebody else's: it did not approve the `pypi`
 environment, did not create the GitHub release, did not write `PUBLICATION.md` entry 14, and did
 not deploy the documentation site — all of which are the witness round's once PyPI serves 1.5.0 and
@@ -570,6 +709,15 @@ the workflow's digests exist. No park, pin or ledger row moved: `klv_pin.json`,
 before and after.
 
 #### The text-pins round, 2026-09-04 — a pin may be text, and tag 13 is read from three documents
+
+**DATED NOTE, 2026-09-04 — ONE TEST THIS ROUND SHIPPED WAS RIGHT ON A MAINTAINER TREE AND WRONG ON
+A CLONE, and the release it landed on is what found it.** `test_a_stream_or_a_provenance_capture_
+under_a_pin_path_is_still_refused` opened by asserting the pin corpus was on disk. That is the
+correct guard on the tree that wrote it and it cannot hold on a fresh clone, where `.gitignore`
+keeps every pinned document out of the index — including the `*.txt` rule this very round added.
+It failed condition 1 on the tag for 1.5.0, run 33875771133, four commits later; the guard is now
+a skip and condition 1 has a fresh-clone pre-check. See *The re-tag round* above. The round's
+substantive work is untouched by it.
 
 **WHAT A CONSUMER RECEIVES CHANGES AT EXACTLY ONE KEY, AND THIS IS THE PARAGRAPH THE 1.5.0 NOTES
 HAVE TO BE DERIVED FROM.** `Entity.attributes.security_metadata.object_country_codes` stops
