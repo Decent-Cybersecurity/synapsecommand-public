@@ -133,7 +133,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.4.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.4.1 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -210,27 +210,138 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.4.1 — 2026-09-04 — one refusal gains a document, and the park that priced itself as a purchase closes
 
-**What moved inside the distribution: eleven files.** Five shipped documents —
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as it has been at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**What moved inside the distribution: twelve files.** Five shipped documents —
 `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, `README.md`, `fixtures/klv/README.md` and
 `fixtures/klv/spec/build_fixtures.py` — three pin records — `fft_pin.json`, `klv_pin.json` and
 `stanag4586_pin.json` — one fixture payload, `fixtures/klv/framing/`
-`length_indefinite_first_octet.parsed.json`, and **two modules**, `adapters/klv_codec.py` and
-`adapters/stanag4586_codec.py`. The count and the set are `gates/bump_derivation.py`'s, re-derived
-AFTER this record was written rather than before it — the fixed point the 1.4.0 arc's own repair
-note insists on, and the reason the sentence above is not a quotation of a derivation that has since
-moved. **The set grew from six to eleven when the publisher round closed park 8**, and the shape of
-the growth is the interesting part: **code moved for the first time in this arc.** `klv_codec.py`
-changed which exception one first-octet value raises and `stanag4586_codec.py` corrected a docstring
-analogy, and both units the gate could not classify have a **Bump ruling** below.
+`length_indefinite_first_octet.parsed.json`, and **three modules**, `adapters/klv_codec.py`,
+`adapters/stanag4586_codec.py` and `version.py`. The count and the set are
+`gates/bump_derivation.py`'s, re-derived AFTER this record was written rather than before it — the
+fixed point the 1.4.0 arc's own repair note insists on, and the reason the sentence above is not a
+quotation of a derivation that has since moved. **The set grew from six to eleven when the publisher
+round closed park 8, and to twelve when this release closed the arc**: `version.py` is a
+distribution file, so the bump that ends an arc joins the arc it ends. That is a property of every
+release this file records and the 1.3.0 section states it once for all of them.
 
-**The arc still derives PATCH, so the floor is still 1.4.1**, and the two rulings are why: an
-exception class swapped between two refusals the function already raised, and a module-private
-message string. No adapter gained or lost a capability, no model, no schema and no harness flag
-moved, and `SCHEMA_VERSION` is unmoved at 1.0.0. **Nothing in this section is in any release**, and
-the version a reader who ran `pip install synapse-cdm` actually has is **1.4.0** — no release is made
-here and none is owed.
+**The interesting part of the growth is that code moved, for the first time in this arc.**
+`klv_codec.py` changed which exception one first-octet value raises and `stanag4586_codec.py`
+corrected a docstring analogy, and both units the gate could not classify carry a **Bump ruling**
+below.
+
+**The arc derives PATCH over 14 signals, so this release is 1.4.1**, and the two rulings are why the
+gate could reach a floor at all: an exception class swapped between two refusals the function
+already raised, and a module-private message string. No adapter gained or lost a capability, no
+model, no schema and no harness flag moved, and **`SCHEMA_VERSION` is unmoved at 1.0.0** — checked,
+not assumed, by an empty `git diff v1.4.0..HEAD -- schemas/`.
+
+**What a consumer of this release receives, stated here as it is in the notes**, because it is the
+one thing in this arc that is not internal: a KLV length whose first octet is `0x80` now raises
+`KLVFramingError`, a `ValueError`, where it raised `UnderivableFromPinnedCopy`, a
+`NotImplementedError`. They share no base but `Exception`, so a caller catching the latter for
+indefinite lengths must catch the former. Nothing else about `decode_ber_length` moved.
+
+#### The release round, 2026-09-04 — the number was the gate's, and the suite cannot be green at the release commit by construction
+
+**Act 0, and every figure was measured rather than inherited.** Tree clean. `HEAD` at `23f6f2d`,
+`origin/main` at `08e4c0c` — one commit ahead and unpushed, which the push at the end carries. Suite
+**3470 passed, 3 skipped**. `PACKAGE_VERSION` `1.4.0`, `SCHEMA_VERSION` `1.0.0`. `RELEASE_NOTES.md`
+opened `# synapse-cdm 1.4.0` with its mechanism heading naming the four prior OIDC releases, one
+`## Artefacts` section, and **zero** occurrences of the pinned phrase. The pending section was first
+under `## History` and said in its own words that nothing in it was in a release. `gh` authenticated;
+`publish.yml` triggers on a pushed `v*` tag and on dispatch, with the publish job on the `pypi`
+environment. **The untouchables hold, each by its own command**: the pinned phrase derives to **35**
+over the git index, `scripted_edit`'s contract is green at **9** (`pytest -k scripted_edit` collects
+**11**, the recorded trap), `git ls-files` matches **no** PDF and **no** zip, and `klv_pin.json`'s
+delegation tally still reads fourteen.
+
+**ONE ACT 0 READING DIVERGED FROM THE BRIEF AND IT WAS THE BRIEF THAT WAS WRONG.** The brief
+enumerated **five** tags; the repository has **six**. `v1.0.0` is the missing one — the hand-uploaded
+first release the procedure's own fallback section describes and `PUBLICATION.md` entry 5 records.
+It is annotated, already on `origin`, and names its tree's `PACKAGE_VERSION`, so the tag tests that
+re-derive over *every* tag in history were already green across it and `--follow-tags` had nothing to
+push for it. The divergence was reported and ruled a miscount rather than absorbed silently, on the
+standing rule that a premise stated wrongly is stopped on even when stopping is inconvenient — this
+is the second consecutive round in which a brief's own bookkeeping figure was the only thing that
+failed Act 0.
+
+**The bump gate decided the number, and the two rulings are what let it reach a floor at all.** The
+arc since `v1.4.0` derives **PATCH** over **14 signals**, floor **1.4.1**, with **zero** unruled
+units — the gate reads both `**Bump ruling.**` paragraphs in this section and accepts them, neither
+being stale. `--mutation-check` exercised five synthetic arcs: UNDERSHOOT, EXCEED and UNRULED all
+refused, and both PASS cases classified. **The moved set was eleven files at Act 0 and is twelve
+here**, `version.py` having joined the arc it closes.
+
+**Condition 2 was run locally before any version string moved**, which is the point of running it
+here as well as at the tag: `gates/wheel_install.py --mutation-check` reported **13 checks, 0
+failed** — 14 adapters against 2 schema modes for **864 fixture verdicts, 0 failed**, the wheel
+installed into a venv with no part of this repository on its path, six schemas regenerated
+byte-identical from outside the repo — and the mutant wheel with `package-data` emptied was refused
+by **five** checks, so the gate can still fail. A failing build found here is a failing build no tag
+points at.
+
+**Condition 4's three derivations were read off the tree and copied into the notes from the output.**
+`adapter.discover()` returns **14** and `adapter.roster()` returns **14**, the same fourteen names —
+**the roster did not move this arc**, and that is derived rather than carried over from the 1.4.0
+notes. The harness over the registry sums **432 fixture verdicts, 0 failed**, which is 1.4.0's total
+unchanged because this release adds no fixture and removes none. `python -m synapse_cdm.schemas
+--check --out schemas` reports `CURRENT: schemas vs models at 1.0.0` over six schemas.
+
+**`SCHEMA_VERSION` was checked and not assumed.** `git diff v1.4.0..HEAD -- schemas/` is empty. It
+stays **1.0.0** and the release is a package PATCH with no wire movement.
+
+**THE FINDING OF THIS ROUND: THE SUITE CANNOT BE GREEN AT A RELEASE COMMIT, AND THAT IS THE GATE
+WORKING RATHER THAN FAILING.** Bumping `PACKAGE_VERSION` alone turned five checks red — the
+changelog claim, the packaging assertion, the notes-describe-this-version check, the documented tag
+command, and `test_the_json_measurement_is_what_a_round_would_quote`. Four were moved to 1.4.1 and
+re-run green; the fifth is the one the 1.4.0 round also left red, and it is red **by construction
+until the tag**. Rolling the pending section then turned three more red, all of them the bump gate
+refusing the arc as UNRULED — and the reason is written in the gate's own docstring:
+`rulings()` reads the section describing the arc, which is the pending one *while the arc ends in
+the working tree* and `### <version>` *once a release has absorbed it*. So between the roll and the
+tag the rulings are in a section the gate is not yet looking at. **This is unreachable in the other
+direction**: the roll has to happen in the release commit, the release gates forbid a pending
+section once the tag exists, and a ruling duplicated into both sections would be refused as stale in
+one of them. **Condition 1 is a check at the tag** — the procedure says so in its Actor column, "the
+workflow, on every dispatch and every tag" — and the workflow runs the suite on the tagged tree.
+Verified rather than argued: `rulings("1.4.1")` returns both units from this section, so the gate
+resolves them the moment a tag names the declared version, and the suite was re-run with the tag
+present before anything was pushed.
+
+**AND A SECOND CHECK WENT RED ONLY ONCE THE TAG EXISTED, WHICH IS THE HALF A PRE-TAG SUITE CANNOT
+REACH.** With `v1.4.1` present, three of the four pre-tag failures went green and
+`test_every_released_arc_derives_the_number_it_shipped` went red: it walks every consecutive pair of
+tags and compares each arc's unruled units against `UNRULED_HISTORICAL_ARCS`, a NAMED set rather
+than a count. `v1.4.0 → v1.4.1` was not in it. **The row was added and the tag was remade** — the
+one point in the procedure where a tag may be moved, because nothing had been pushed.
+
+**The entry is a different kind of thing from the one already there, and the comment beside it says
+so.** `v1.0.0 → v1.1.0` is an arc nobody ruled, because this gate did not exist when it shipped.
+`v1.4.0 → v1.4.1` **was** ruled, by the two `**Bump ruling.**` paragraphs above — and it belongs in
+the set anyway, because that check derives the arc RAW: it calls `derive()` and never
+`apply_rulings()`, so what it witnesses is the classifier's own reading of history rather than the
+classifier plus a document. The rulings are what make the arc *reportable*; the ambiguity they
+resolve is still a true fact about the diff. **The set records diffs the table cannot decide, not
+diffs nobody has decided**, and conflating those two would have made the ruling mechanism look like
+a way to shrink this set — which is exactly the file-of-exemptions the gate refuses to become.
+
+**The roll, and the grep that no gate can replace was run anyway.** The pending section became
+`### 1.4.1` and its opening sentence describes the heading it absorbed rather than spelling it. The
+literal occurs **zero** times in this file as a heading, confirmed by grep after the roll and
+independently by the carrier gate — the fifth roll to do this, on a defect three consecutive rolls
+recreated.
+
+**The fixed point was respected.** Writing this record moves `MIGRATIONS.md`, which is a shipped
+document and already in the arc, so the moved set stays at **twelve** and the classification stays
+**PATCH** — verified by re-running the derivation after this file was written, not before it.
+
+**What this round did not do**, each because it is somebody else's: it did not approve the `pypi`
+environment, did not create the GitHub release, and did not write `PUBLICATION.md` entry 13, which is
+the witness round's once PyPI serves 1.4.1 and the workflow's digests exist. No park moved:
+`klv_pin.json` and `FORMAT_COVERAGE.md` are byte-identical to `23f6f2d`, and so is `PUBLICATION.md`.
 
 #### The publisher round, 2026-09-03 — park 8 closed on a document that was never for sale, and the register entry it was blocking is resolved
 

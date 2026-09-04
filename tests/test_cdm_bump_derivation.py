@@ -18,14 +18,17 @@ half. **The strong witness is that the gate, run over this repository's four rel
 number each one actually shipped** — 1.1.0 and 1.2.0 as MINOR, 1.2.1 as PATCH — without being told
 any of them. Three arcs, ruled by three different rounds, none of which had this gate.
 
-`test_every_released_arc_derives_the_number_it_shipped` is that check. It also NAMES the one
-historical arc the gate cannot rule on its own, rather than counting them: `v1.0.0 → v1.1.0`
+`test_every_released_arc_derives_the_number_it_shipped` is that check. It also NAMES the
+historical arcs the gate cannot rule on its own, rather than counting them: `v1.0.0 → v1.1.0`
 changed `adapter.py`'s `load_adapter` on functional lines while adding a roster elsewhere in the
 same file, and a body change with no roster of its own is the unruled case by construction. The
 arc's number is not in doubt — two adapters and two fixture sets landed in it and the MINOR floor
 is proved several times over — but the gate refuses to report a floor while any unit is unruled,
-so the arc is listed here as a set of one. A second entry fails the build; so does dropping this
-one while it is still ambiguous, which is `tests/test_cdm_prose_counts.py`'s treatment of an
+so the arc is listed. **1.4.1 added the second entry and it is a different kind of thing**: that
+arc WAS ruled, by two `**Bump ruling.**` paragraphs, and it is listed because this check derives
+raw and never applies them — the ambiguity the rulings resolve is still a true fact about the diff.
+An entry for an arc that is NOT ambiguous fails the build; so does dropping one
+while it is still ambiguous, which is `tests/test_cdm_prose_counts.py`'s treatment of an
 exhibit whose repair was reverted.
 
 WHY THE UNRULED DIRECTION GETS AS MUCH ATTENTION AS THE OTHER TWO
@@ -55,7 +58,20 @@ GATE_PATH = REPO / "gates" / "bump_derivation.py"
 #: The historical arcs whose floor the gate cannot report without a person's ruling. NAMED, never
 #: counted — a ratio goes stale on the next release and a set does not. See the module docstring
 #: for why `v1.0.0 → v1.1.0` is here and why its NUMBER was never in doubt.
-UNRULED_HISTORICAL_ARCS = {("v1.0.0", "v1.1.0"): {"synapse_cdm/adapter.py:load_adapter"}}
+#:
+#: `v1.4.0 → v1.4.1` is the second entry and it arrived by a different route from the first. The
+#: first is an arc nobody ruled, because the gate did not exist when it shipped. This one WAS ruled,
+#: in `MIGRATIONS.md`'s 1.4.1 section, by two `**Bump ruling.**` paragraphs the release round wrote
+#: — and it belongs here anyway, because this test derives the arc RAW: it calls `derive()` and
+#: never `apply_rulings()`, deliberately, so that what it witnesses is the classifier's own reading
+#: of history rather than the classifier plus a document. The rulings are what make the arc
+#: reportable; the ambiguity they resolve is still a true fact about the diff, and this set records
+#: the diffs the table cannot decide rather than the ones nobody has decided.
+UNRULED_HISTORICAL_ARCS = {
+    ("v1.0.0", "v1.1.0"): {"synapse_cdm/adapter.py:load_adapter"},
+    ("v1.4.0", "v1.4.1"): {"synapse_cdm/adapters/klv_codec.py:decode_ber_length",
+                           "synapse_cdm/adapters/klv_codec.py:_CEILING_RESIDUE"},
+}
 
 
 @pytest.fixture(scope="module")
