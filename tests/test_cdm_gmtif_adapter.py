@@ -20,6 +20,7 @@ that a checkable claim rather than a preface. They fall into five groups:
    `test_every_fixture_round_trips_byte_for_byte` is where byte-exactness is established.
 """
 import datetime as _dt
+import itertools
 import json
 import pathlib
 import types
@@ -1648,7 +1649,76 @@ def test_where_a_detections_position_lives_diverges_across_four_adapters():
     assert "For `None` (the CAT021 and ADS-B answer)" in flat
     assert "1.1.0" in flat
     for name in ("stanag4676.py", "gmtif.py", "asterix_cat021.py", "adsb.py"):
-        assert name in flat, f"gap 20's divergence table does not name {name}"
+        assert name in _divergence_table_rows(gap20), (
+            f"gap 20's divergence table has no ROW naming {name}. The check is on the TABLE and "
+            "not on the gap's text, which is the repair of 2026-09-05: a basename anywhere in the "
+            "gap used to satisfy it, and the paragraph that names two of these modules in order "
+            "to say they do NOT belong in the table satisfied it for both of them. If this "
+            "adapter is genuinely leaving the divergence, take its row out and take it out of "
+            "this tuple in the same commit — do not add a sentence about it")
+
+
+#: The four basenames the guard above pins, and the two an "only in prose" mutation moves.
+DIVERGENCE_TABLE_ADAPTERS = ("stanag4676.py", "gmtif.py", "asterix_cat021.py", "adsb.py")
+
+
+def _divergence_table_rows(gap20: str) -> set[str]:
+    """The basenames in the FIRST CELL of each row of gap 20's divergence table.
+
+    The structural position the guard means. The table is located as a contiguous block — its
+    header row down to the first line that is not a table row — rather than as a slice of the
+    gap's prose, so a row that moves out of the table stops counting even if the paragraph
+    beneath it still names the module.
+    """
+    lines = gap20.splitlines()
+    head = next((i for i, line in enumerate(lines)
+                 if line.strip().startswith("| Adapter |")), None)
+    assert head is not None, (
+        "gap 20 no longer has a divergence table with an `| Adapter |` header row. Re-anchor this "
+        "deliberately — a table this check cannot find is a table it cannot check, and it would "
+        "otherwise fail every basename below for the wrong reason")
+    rows = list(itertools.takewhile(lambda line: line.strip().startswith("|"), lines[head + 1:]))
+    first_cells = [row.split("|")[1].strip() for row in rows if row.count("|") >= 2]
+    return {cell.rsplit("/", 1)[-1].strip("`") for cell in first_cells if "adapters/" in cell}
+
+
+def test_the_gap_20_basename_check_reads_the_table_and_not_the_prose():
+    """RULING 2's mutation, in both directions, on the guard above.
+
+    The defect it repairs was reported and not fixed by the maintenance round of 2026-09-05 and is
+    written into gap 20 itself: `name in flat` over the gap's whole text was satisfied by the
+    correction paragraph, which names `asterix_cat021.py` and `adsb.py` in order to say the
+    predicate above the table was never true of them. A roster check answered by the prose that
+    discusses a row rather than by the row — sweep rule 10's own recorded defect, met in a guard.
+
+    Both directions, because only the pair is evidence. Removing a row must go RED; moving that
+    same basename into a paragraph must NOT bring it back.
+    """
+    gaps = DOC.read_text()
+    gap20 = gaps[gaps.index("20. **No detection"):gaps.index("21. **No home for a radar")]
+    intact = _divergence_table_rows(gap20)
+    assert set(DIVERGENCE_TABLE_ADAPTERS) <= intact, (
+        f"the unmutated tree already fails: the table names {sorted(intact)}. Every mutation "
+        "below would then be passing on nothing")
+
+    for victim in DIVERGENCE_TABLE_ADAPTERS:
+        # RED: the row is gone and nothing replaces it.
+        without = "\n".join(line for line in gap20.splitlines()
+                            if not (line.strip().startswith("| `adapters/")
+                                    and victim in line.split("|")[1]))
+        assert victim not in _divergence_table_rows(without), (
+            f"removing {victim}'s row from the divergence table left the check green. That is the "
+            "defect this test exists for and the repair did not take")
+        # STILL RED: the same basename put back as prose, which is exactly what the correction
+        # paragraph does. The old check could not tell these two mutations apart.
+        as_prose = without + f"\n\n   And `adapters/{victim}` is named here in a sentence about it.\n"
+        assert victim not in _divergence_table_rows(as_prose), (
+            f"a paragraph naming {victim} satisfies the check again, so it is still reading the "
+            "gap's prose rather than the table's rows")
+        # And the mutation is surgical: the other three rows are untouched by it.
+        assert _divergence_table_rows(as_prose) == intact - {victim}, (
+            f"removing {victim}'s row moved another adapter's row too, so this mutation is not "
+            "isolating the thing it claims to")
 
 
 def test_the_multi_sample_refusal_names_the_single_sample_exit():

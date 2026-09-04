@@ -273,7 +273,7 @@ def test_the_allowlist_covers_every_site_the_sweep_had_to_fix():
 
     * `MIGRATIONS.md`'s release condition 2 said "all ten harnesses" while twelve adapters shipped.
       The by-name patterns could not match it because the sentence says *harnesses*, not *adapters*;
-    * `docs/docs/changelog.mdx`'s "twelve adapters have shipped so far" — which turned out to be
+    * `docs/docs/changelog.mdx`'s "thirteen adapters have shipped so far" — which turned out to be
       CORRECT, being the count of adapters that landed with no schema change, a different set that
       happens to be spelled the same way. It is derived and gated now, but nothing had read it for
       three releases and the fact that it was right was luck rather than process.
@@ -605,7 +605,7 @@ def test_the_historical_statement_of_the_count_is_still_inside_the_history():
 NO_SCHEMA_CHANGE_HEADING = "### Adapters that landed with no schema change"
 
 #: Where the count is stated, and the pattern that finds it. `docs/docs/changelog.mdx` is included
-#: even though the page lists only nine of the twelve: `tests/test_cdm_changelog_claim.py` rules
+#: even though the page lists only nine of the thirteen: `tests/test_cdm_changelog_claim.py` rules
 #: that the page is a curated summary and that page-omits-an-entry is designed NOT to fail, so the
 #: page's SENTENCE is a claim about the file's count and is checked against the file's count.
 #:
@@ -691,7 +691,7 @@ def test_every_stated_no_schema_change_count_is_the_number_of_entries(path, patt
     """Each stated count, against the bullets.
 
     These are not decorative. The number is the argument for two version numbers existing at all:
-    twelve adapters' worth of shipped behaviour arriving at one unchanged `schema_version` is the
+    thirteen adapters' worth of shipped behaviour arriving at one unchanged `schema_version` is the
     evidence that the wire contract and the Python surface move independently. A wrong number here
     weakens the one claim `version.py` is written to make.
     """
@@ -1741,13 +1741,13 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     ("tests/test_cdm_ordinals.py", "fewer than eight distinct adapters were bound anywhere",
      "a FLOOR on a sweep's own coverage, not a count of the roster"),
     # --- pinned by another section of this module: cross-references, not second guards ---
-    ("docs/docs/changelog.mdx", "twelve adapters have shipped so far",
+    ("docs/docs/changelog.mdx", "thirteen adapters have shipped so far",
      "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
-    ("packages/cdm/synapse_cdm/version.py", "entries — twelve adapters, each of which",
+    ("packages/cdm/synapse_cdm/version.py", "entries — thirteen adapters, each of which",
      "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
-    ("tests/test_cdm_changelog_claim.py", "\"Twelve adapters landed with no schema change",
+    ("tests/test_cdm_changelog_claim.py", "\"Thirteen adapters landed with no schema change",
      "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
-    ("tests/test_cdm_packaging.py", "MIGRATIONS.md already lists twelve adapters that shipped",
+    ("tests/test_cdm_packaging.py", "MIGRATIONS.md already lists thirteen adapters that shipped",
      "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
     # --- past-tense narrative about a named round, run or defect ---
     ("gates/wheel_install.py", "it replayed ten adapters out of twelve and printed the ten",

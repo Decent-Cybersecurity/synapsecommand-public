@@ -743,7 +743,16 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # both §8.x printed examples in one packet, each equation of §6.4 alone, a NEGATIVE pair the
     # document prints no example for and whose reading §8.137 contradicts itself about (KLV 23),
     # and a zero-length pair proving an explicit unknown is not a +0 adjustment. 23 + 9 + 5 = 37.
-    assert len(module.ADAPTER_FIXTURES) == 37
+    # THIRTY-SEVEN until the pre-release round of 2026-09-05, which added FIVE for tag 75 under
+    # its RULING 4 — one clause each, which is why there are five and not one: §8.75's own printed
+    # worked example through the whole stack with no coordinates and therefore no Position; tag 75
+    # alone filling `Position.alt_m`, the half of the ruling that moved; both HAE items agreeing
+    # inside tag 75's own LSB and raising nothing; both disagreeing by 9 265 m, each at its own
+    # block's printed value, taking tag 104 and raising `hae_items_disagree`; and tag 75 beside
+    # tag 15, whose two values are deliberately NOT the printed pair, because §8.15 and §8.75
+    # print the SAME example and a fixture carrying both at their printed values could not tell a
+    # right reading from a wrong one. 23 + 9 + 5 + 5 = 42.
+    assert len(module.ADAPTER_FIXTURES) == 42
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (

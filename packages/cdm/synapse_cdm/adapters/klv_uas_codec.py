@@ -20,8 +20,8 @@ the same order every time: 1, 2, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 a schedule: an item this repository has never seen on a wire is an item whose decoder nothing here
 could check against anything but itself.
 
-**THE CONTRACT HAS A STATED REOPEN CONDITION AND IT HAS NOW BEEN EXERCISED THREE TIMES, SO THIS
-MODULE DECODES 44 TAGS AND NOT 26.** The condition, written into `FORMAT_COVERAGE.md`'s "Not witnessed"
+**THE CONTRACT HAS A STATED REOPEN CONDITION AND IT HAS NOW BEEN EXERCISED FOUR TIMES, SO THIS
+MODULE DECODES 45 TAGS AND NOT 26.** The condition, written into `FORMAT_COVERAGE.md`'s "Not witnessed"
 ledger row on 2026-08-26, is *"a second pinned stream, OR a document-side check as strong as a
 worked example"*. **The first half has never been met** — one stream is held and one only.
 The second has been met three times, by two different kinds of document evidence, and each crossing
@@ -43,13 +43,21 @@ has its own table beside `ITEMS` rather than an entry inside it:
   and inclusion of leap seconds", and these two are the terms ST 0601.14a §6.4's Equations 1 and 2
   put in that arithmetic.
 
-`DOCUMENT_WITNESSED_TAGS` is the union of the second and third of those — seventeen tags — and
-`check_against_the_documents_own_examples()` runs all seventeen examples alongside the 26 on every
-suite run: **43 in total**.
+* **one item**, `AFFINE_DOCUMENT_ITEMS`, 2026-09-05 (the pre-release round, RULING 4). Ground:
+  the SAME as the fifteen's and the two's — §8.75 prints `14190.7195 Meters` against `C221`. Tag
+  75 Sensor Ellipsoid Height is the base HAE item tag 104 extends, and it is neither an IMAPB
+  value nor a pack nor an identity map: it states the plain affine form the 26 state, `uint16`
+  over 0..(2^16)-1 with an offset of -900, so it is transcribed as an `_Item` and decoded down the
+  same path they take. **It is also the only document-witnessed item whose block states a Required
+  Length**, which is why it has a table rather than a row in one of the other three.
 
-**The remaining 97 rows of the 141 stay absent, and tag 130 is one of them** — §8.130 prints no
+`DOCUMENT_WITNESSED_TAGS` is the union of the second, third and fourth of those — eighteen tags —
+and `check_against_the_documents_own_examples()` runs all eighteen examples alongside the 26 on
+every suite run: **44 in total**.
+
+**The remaining 96 rows of the 141 stay absent, and tag 130 is one of them** — §8.130 prints no
 worked example at all, so the reopen condition's second half has nothing to be as strong as. What
-is true of all 44 tags this module now reads and is not softened anywhere: **only 26 of them have
+is true of all 45 tags this module now reads and is not softened anywhere: **only 26 of them have
 ever been met on a wire.**
 
 WHERE EVERY NUMBER BELOW COMES FROM, AND THE CHECK THAT MAKES IT TRUSTWORTHY
@@ -991,11 +999,63 @@ TIME_ADJUSTMENT_SIGNEDNESS = (
 #: The tags of the two, derived from the table so a caller cannot name one the table does not hold.
 TIME_ADJUSTMENT_TAGS: tuple[int, ...] = tuple(sorted(TIME_ADJUSTMENT_ITEMS))
 
+#: **ONE ITEM, `AFFINE_DOCUMENT_ITEMS`, 2026-09-05 (the pre-release round, RULING 4). Ground: THIS
+#: document's own printed worked example — the same ground as the fifteen and the two — and tag 75
+#: is the FOURTH crossing of the reopen condition's second half.**
+#:
+#: **WHY IT IS AN `_Item` AND NOT A TABLE OF ITS OWN SHAPE.** §8.75 draws exactly the eleven facts
+#: `_Item` transcribes and states the affine map the 26 state: `uint16` over 0..(2^16)-1, offset
+#: -900, software `float32` over -900..19000, Required Length 2. There is nothing about it a
+#: stream-witnessed block does not also have — it is the WITNESS that differs and not the shape —
+#: so it is transcribed in the shape the document draws and kept in a separate table, which is the
+#: same decision `WITNESS_KINDS` records for the other three: one kind of evidence, one table, and
+#: `ITEMS.get(tag) is None` still means "not stream-witnessed".
+#:
+#: **AND IT IS THE ONE DOCUMENT-WITNESSED ITEM THE LENGTH POLICY REACHES IN FULL.** All seventeen
+#: items `_decode_document_witnessed` reads state `Length` Variable and `Required Length` N/A, so
+#: `_length_verdict`'s first two branches are unreachable for them. §8.75 states 2 / 2 / 2, so
+#: `ST 0601.13-29` DOES reach it and a tag 75 at any length but two is a length divergence of the
+#: same class tag 22 carries in the pinned stream. It is therefore decoded down the same path the
+#: 26 take — see `decode_packet` — rather than through `_decode_document_witnessed`, and that is a
+#: statement about the BLOCK rather than about the witness.
+#:
+#: **SPECIAL VALUES: `None`, and §8.75's own cell says so.** Unlike tags 13, 14, 19 and 23 there is
+#: no reserved integer here, so there is no sentinel to refuse and `special_integer` is None. A
+#: zero-length item is `ST 0601.14-33`'s explicit unknown exactly as it is for the 26 — 75 is not
+#: one of the three tags `ZLI_FORBIDDEN` holds — and yields `ZeroLength(75)`, which is not a
+#: measurement and fills nothing.
+#:
+#: **NOT IN THE PINNED STREAM.** Its 26 items stop at tag 65, so this ships against a printed
+#: example and against no held octet — the sentence every document-witnessed row carries.
+AFFINE_DOCUMENT_ITEMS: dict[int, _Item] = {
+    75: _Item(
+        tag=75, name="Sensor Ellipsoid Height", units="Meters (m)",
+        description="Sensor ellipsoid height as measured from the reference WGS84 ellipsoid",
+        klv_format="uint16", klv_min=0, klv_max=65535,
+        offset=-900,
+        software_format="float32", software_min=-900, software_max=19000,
+        length=2, max_length=2, required_length=2,
+        resolution="~0.3 meters", special_values="None",
+        required_in_ls="Optional", sdcc_allowed="Yes",
+        multiples_allowed="No",
+        map_bullet="Map 0..(2^16)-1 to -900..19000 meters", section="8.75", page=121,
+        example_value="14190.7195 Meters",
+        example_octets="C221",
+        # MISB EG 0601.1 carries no §7.75 — edition 1's Local Set stops short of this tag — so the
+        # cross-read the 26 get has nothing to read here. Recorded as absent rather than omitted.
+        edition_1_header=None, edition_1_example_length=None, edition_1_example_octets=None,
+    ),
+}
+
+#: The tag of the one, derived from the table for the reason `TIME_ADJUSTMENT_TAGS` gives.
+AFFINE_DOCUMENT_ITEM_TAGS: tuple[int, ...] = tuple(sorted(AFFINE_DOCUMENT_ITEMS))
+
 #: The tags this module reads on a DOCUMENT-side witness rather than a stream-side one.
 #: `WITNESSED_TAGS` is NOT widened and NOT renamed — see the decision recorded below it — so the
 #: two sets stay separately derivable, which is what the module docstring's scope argument needs.
 DOCUMENT_WITNESSED_TAGS: tuple[int, ...] = tuple(
-    sorted(IMAPB_ITEM_TAGS + PACK_ITEM_TAGS + TIME_ADJUSTMENT_TAGS))
+    sorted(IMAPB_ITEM_TAGS + PACK_ITEM_TAGS + TIME_ADJUSTMENT_TAGS
+           + AFFINE_DOCUMENT_ITEM_TAGS))
 
 #: **THE DECISION THE park 5 ROUND WAS ASKED TO MAKE AND RECORD, 2026-09-04.** The brief offered
 #: two shapes: widen `WITNESSED_TAGS` and rename it, or leave it meaning "stream-witnessed" and
@@ -1310,6 +1370,15 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
         order.append(entry.tag)
         raw_items[entry.tag] = entry.value.hex()
         item = ITEMS.get(entry.tag)
+        if item is None and entry.tag in AFFINE_DOCUMENT_ITEMS:
+            # Tag 75, and it is the one document-witnessed item that takes the STREAM-witnessed
+            # path. `ITEMS` is not widened — `ITEMS.get(tag) is None` still means "not
+            # stream-witnessed" — but §8.75 states a Required Length of 2 where all seventeen
+            # items `_decode_document_witnessed` reads state Variable / N/A, so the length policy
+            # reaches this block in full and re-implementing it beside the other table would be
+            # two statements of one ruling. The WITNESS is what put this tag in a separate table;
+            # the BLOCK is what decides which path decodes it.
+            item = AFFINE_DOCUMENT_ITEMS[entry.tag]
         if item is None:
             if entry.tag in NESTED_SETS:
                 # ST 0601 item 48. The Value is a bare run of ST 0102 Local Set triplets — §8.48:
@@ -1473,23 +1542,28 @@ def check_against_the_documents_own_examples() -> list[str]:
     a tag's resolution, so programmers can verify they are using the right formulas". **That
     sentence is stated of every tag's summary table and not of a subset**, in the same §7 prose
     that introduces `IMAPB` and `RIMAPB` as the Software-to-KLV method — re-read from the pinned
-    copy on 2026-09-04 and quoted here for that reason — so it covers the seventeen
-    document-witnessed items exactly as it covers the 26. This runs all 43.
+    copy on 2026-09-04 and quoted here for that reason — so it covers the eighteen
+    document-witnessed items exactly as it covers the 26. This runs all 44.
 
     Returns a list of disagreements, empty when they all agree. Called by
     `tests/test_cdm_stanag4609_codec.py` on every suite run, and by edition 1's examples too — for
     which the tolerance is one quantisation step rather than the printed precision, because
     edition 1 prints round decimals and ST 0601.14a prints full precision.
 
-    **IT RUNS 43 EXAMPLES AND NOT 26, SINCE 2026-09-04.** The park 5 round added fifteen
-    document-witnessed items and the park 3 round, the same day, added two more; for all
-    seventeen this function is not a corroboration of a transcription but **the whole of the
-    witness basis their rows cite** — RULING 1 and RULING 3 promote them on "a document-side
-    check as strong as a worked example", and this is that check. The four groups and what each
-    compares:
+    **IT RUNS 44 EXAMPLES AND NOT 26, SINCE 2026-09-04.** The park 5 round added fifteen
+    document-witnessed items, the park 3 round, the same day, added two more, and the pre-release
+    round of 2026-09-05 added tag 75; for all eighteen this function is not a corroboration of a
+    transcription but **the whole of the witness basis their rows cite** — RULING 1, RULING 3 and
+    RULING 4 promote them on "a document-side check as strong as a worked example", and this is
+    that check. The four groups and what each compares:
 
-    * **26 stream-witnessed items**, `ITEMS` — one printed Software Value against the octets that
-      encode it, to the printed precision of the block's stated Software format;
+    * **26 stream-witnessed items plus tag 75**, `ITEMS` and `AFFINE_DOCUMENT_ITEMS` — one printed
+      Software Value against the octets that encode it, to the printed precision of the block's
+      stated Software format. **Tag 75 is in this group and not in a fifth**, because §8.75 states
+      the same affine form the 26 state; what is different about it is where the witness comes
+      from, and that is what the two tables say. Its example is §8.75's `C221` against
+      `14190.7195 Meters` — the SAME pair §8.15 prints, since the two items share one map and
+      differ only in the datum their Descriptions name;
     * **14 IMAPB items**, `imapb_codec.IMAPB_WORKED_EXAMPLES` — both directions: the printed value
       encodes to the printed octets EXACTLY, and those octets decode back to within one integer
       step computed from `(a, b, L)`. Exactness one way is what would catch a wrong `bPow`, a
@@ -1504,12 +1578,15 @@ def check_against_the_documents_own_examples() -> list[str]:
       on a negative example the document does not print, and a wrong tag; what it cannot catch is
       anything about a map, because there is none.
 
-    **43 = 26 + 14 + 1 + 2, and the sixteenth of park 5's sixteen is still not here because the
+    **44 = 27 + 14 + 1 + 2, and the sixteenth of park 5's sixteen is still not here because the
     document prints no example for it.** Tag 130's block reads `N/A` in both example cells, so it
     is absent from `DOCUMENT_WITNESSED_TAGS` and its row stays `not yet`.
     """
     problems: list[str] = []
-    for tag, item in sorted(ITEMS.items()):
+    # The 26 and tag 75 together: one loop, because §8.75 draws the same eleven facts in the same
+    # three tables and the check that reads them is the same check. What differs is the WITNESS,
+    # and the witness is what the two tables record.
+    for tag, item in sorted({**ITEMS, **AFFINE_DOCUMENT_ITEMS}.items()):
         raw = bytes.fromhex(item.example_octets)
         if len(raw) != (item.required_length or len(raw)):
             problems.append(

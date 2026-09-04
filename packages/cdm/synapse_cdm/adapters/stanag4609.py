@@ -157,6 +157,48 @@ OBSERVATION_SYSTEM = "UAS-LS-PACKET"
 #: §8.2.1: "the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z)".
 EPOCH = _dt.datetime(1970, 1, 1, tzinfo=_dt.timezone.utc)
 
+#: **THE HAE PRECEDENCE, AND IT IS THIS REPOSITORY'S AND SAYS SO (RULING 4, 2026-09-05).**
+#: `Position.alt_m` is documented "Metres HAE" and ST 0601.14a carries TWO items measured from the
+#: WGS84 ellipsoid — tag 75 Sensor Ellipsoid Height and tag 104 Sensor Ellipsoid Height Extended.
+#: The document rules tag 15 out of the question and does NOT order these two against each other,
+#: so what follows is a decision taken here, stated as one, rather than a clause quoted.
+HAE_PRECEDENCE = (
+    "TAG 104 WHEN A PACKET CARRIES BOTH, TAG 75 WHEN IT CARRIES ONLY 75, AND NEVER TAG 15. "
+    "THE DOCUMENT DOES NOT DECIDE THE FIRST OF THOSE AND THIS REPOSITORY DOES. §8.15.1, §8.75.1 "
+    "and §8.104.1 each print 'For legacy systems, Tag 15 and Tag 75 | Tag 104 are allowed with "
+    "preference for Tag 75 | Tag 104' — a preference for the PAIR over tag 15, written as a "
+    "disjunction, stating no ordering between 75 and 104 — and ST 0601.8-17 requires a decoder "
+    "that understands HAE to 'use the HAE representation and ignore the Mean Sea Level (MSL) "
+    "representation when both exist in the same UAS Datalink LS packet'. Both settle tag 15 and "
+    "neither settles this. TWO GROUNDS FOR PREFERRING 104, both read off the blocks rather than "
+    "argued from taste: RANGE, because §8.104.1 states 104's own purpose as 'to increase the "
+    "range of altitude values currently defined in Tag 75 Sensor Ellipsoid Height to support all "
+    "CONOPs for airborne systems' — 40 000 m against 19 000 m, so a packet above 19 000 m can be "
+    "stated by one item and not the other; and RESOLUTION, because §8.75's uint16 over "
+    "-900..19000 at a Required Length of 2 is one step of 0.30365 m, computed from the block's "
+    "own Min, Max and integer span, while §8.104's IMAPB(-900, 40000, Length) is 0.0078125 m at "
+    "three octets. WHAT THIS IS NOT: it is not a claim that the standard requires it, and a "
+    "reader who needs the standard's own answer will not find one. Tag 15 is excluded on a "
+    "different footing entirely - it is MSL, so it was never a candidate for an HAE field and no "
+    "precedence had to reach it."
+)
+
+#: The basis a `hae_items_disagree` advisory carries. Its own constant because it is an argument
+#: and not a message, and because the advisory is emitted at one site and read at three.
+HAE_DISAGREEMENT_BASIS = (
+    "This packet carries tag 75 and tag 104 as measurements and they differ by more than tag 75's "
+    "own quantisation step, so one of the two is wrong about where the sensor is and the packet "
+    "does not say which. THE SELECTED VALUE IS STILL EMITTED and the disagreement is recorded "
+    "beside it, on the ST 0102.10-57 precedent klv_security_codec cites for tag 13's byte order: "
+    "refusing would discard a measurement the packet carried because its PRODUCER was "
+    "inconsistent, and silently taking one would put a figure in alt_m that a consumer cannot "
+    "audit. WHICH ONE IS TAKEN is HAE_PRECEDENCE's answer and not this advisory's. THE THRESHOLD "
+    "IS ONE LSB AND NOT ZERO, and the reason is quantisation rather than tolerance: the two items "
+    "map different ranges onto different integer spans, so a producer stating one true height "
+    "through both will differ in the low bits on almost every packet, and an advisory that fires "
+    "on every packet is one nobody reads."
+)
+
 #: What kind of witness stands behind one decoded item, carried on every parked item since
 #: 2026-09-04. Two strings rather than a bool, because "which stream" and "which example" are the
 #: questions a reader actually has and a `True` answers neither.
@@ -577,13 +619,14 @@ class Stanag4609Adapter(Adapter):
                    received_at: _dt.datetime, source: Any) -> tuple[Entity, Event]:
         items = packet.items
         unavailable: list[str] = []
+        adapter_advisories: list[dict] = []
 
         observed_at, stamp_us, time_basis = self._observed_at(index, items)
         external_id = f"{stamp_us}|{index}"
         entity_id = ids.derive(OBSERVATION_SYSTEM, external_id, kind="entity")
         source_ids = [SourceId(system=OBSERVATION_SYSTEM, external_id=external_id)]
 
-        position, position_basis = self._position(items, unavailable)
+        position, position_basis = self._position(items, unavailable, adapter_advisories)
         kinematics, kinematics_basis = self._kinematics(items, unavailable)
         geometry, geometry_basis = self._frame_centre(items)
 
@@ -636,7 +679,8 @@ class Stanag4609Adapter(Adapter):
             severity=Severity.INFO,
             related_entities=[entity_id],
             geometry=geometry,
-            payload=self._payload(index, packet, payload, geometry_basis, time_basis),
+            payload=self._payload(index, packet, payload, geometry_basis, time_basis,
+                                  adapter_advisories),
             observed_at=observed_at,
             received_at=received_at,
         )
@@ -765,16 +809,23 @@ class Stanag4609Adapter(Adapter):
     # ------------------------------------------------------------------ position
 
     def _position(self, items: dict[int, uas.DecodedItem],
-                  unavailable: list[str]) -> tuple[Position | None, dict]:
-        """Tags 13 and 14, both or neither. `alt_m` is tag 104's HAE, or None — never tag 15's MSL.
+                  unavailable: list[str],
+                  advisories: list[dict]) -> tuple[Position | None, dict]:
+        """Tags 13 and 14, both or neither. `alt_m` is an HAE item's, or None — never tag 15's MSL.
 
         **CHANGED 2026-09-04 BY THE park 5 ROUND (RULINGS 3 and 4).** This docstring read "`alt_m`
         is None on every object and tag 15 is why" from 2026-08-26 until tag 104 was decoded. Tag
         15 is still why `alt_m` is not MSL; what moved is that there is now an HAE item to fill it.
+
+        **CHANGED AGAIN 2026-09-05 BY THE PRE-RELEASE ROUND (RULING 4).** There are now TWO HAE
+        items — tag 75 and tag 104 — so this method has a precedence to apply where it used to
+        have a single candidate, and `HAE_PRECEDENCE` is where that precedence is argued. Tag 15
+        is still not one of them and still never will be.
         """
         lat = _measured(items[13].value) if 13 in items else None
         lon = _measured(items[14].value) if 14 in items else None
-        alt = _measured(items[104].value) if 104 in items else None
+        hae = self._hae(items, advisories)
+        alt = hae["alt_m"]
         basis: dict[str, Any] = {
             "lat_item": "tag 13 Sensor Latitude" if lat is not None else None,
             "lon_item": "tag 14 Sensor Longitude" if lon is not None else None,
@@ -796,8 +847,10 @@ class Stanag4609Adapter(Adapter):
                 "airframe's dimensions, this IS where the platform is, and the residue is a "
                 "distance the document declines to state"),
             "alt_m": (
-                "TAG 104's VALUE WHEN THE PACKET CARRIES TAG 104, AND None OTHERWISE — changed "
-                "2026-09-04 by the park 5 round, and this field is HAE by construction. "
+                "AN HAE ITEM'S VALUE WHEN THE PACKET CARRIES ONE, AND None OTHERWISE — tag 104's "
+                "where both are carried and tag 75's where only 75 is, per HAE_PRECEDENCE, "
+                "changed 2026-09-05 by the pre-release round and 2026-09-04 by the park 5 round "
+                "before it; this field is HAE by construction. "
                 "Position.alt_m is documented as 'Metres HAE'. Tag 104 Sensor Ellipsoid Height "
                 "Extended is 'measured from the reference WGS84 ellipsoid' (§8.104), which is the "
                 "same datum, so it lands with no conversion at all; its value is IMAPB(-900, "
@@ -822,22 +875,22 @@ class Stanag4609Adapter(Adapter):
                 "no code here compares a document-witnessed item against a stream-witnessed one. "
                 "The MSL figure stays parked at attributes.sensor_true_altitude_msl_m, converting "
                 "nothing: a geoid separation is a model this repository does not hold. "
-                "**WHAT IS STILL OUTSTANDING IS TAG 75.** §8.15 points at both twins — 'For "
-                "improved modeling accuracy use Sensor Ellipsoid Height (Tag 75) or Sensor "
-                "Ellipsoid Height Extended (Tag 104)' — and 75 is Sensor Ellipsoid Height, uint16 "
-                "over -900..19000, NOT IMAPB, so it is not one of park 5's sixteen and RULING 1 "
-                "does not reach it. It is UNREAD as of 2026-09-04 and is the one row standing "
-                "between alt_m and the base HAE item; the same document-side witness would promote "
-                "it — §8.75 prints its own worked example, 14,190.7195 m against octets C221 — in a "
-                "round scoped to it. **WHAT §8.104.1 SAYS ABOUT COEXISTENCE WITH 75, RECORDED FOR "
-                "THAT ROUND (RULING 5):** the preference it states is for the pair over tag 15, "
-                "written as the disjunction 'Tag 75 | Tag 104', and it states NO ordering BETWEEN "
-                "75 and 104. What it does state is 104's purpose — 'to increase the range of "
-                "altitude values currently defined in Tag 75 Sensor Ellipsoid Height to support "
-                "all CONOPs for airborne systems' — 40 000 m against 75's 19 000 m, which is a "
-                "reason to prefer 104 where both appear and is not a rule the document writes. "
-                "Not implemented here while 75 is unread. One more fact for that round, read off "
-                "the two sections this one: §8.75 and §8.104 print the SAME KLV Key, "
+                "**TAG 75 IS NO LONGER OUTSTANDING — READ 2026-09-05 (RULING 4), AND THIS "
+                "PARAGRAPH'S PREDICTION IS WHAT HAPPENED.** It read 'It is UNREAD as of "
+                "2026-09-04 and is the one row standing between alt_m and the base HAE item; the "
+                "same document-side witness would promote it ... in a round scoped to it', and a "
+                "round scoped to it promoted it on that witness: §8.75 prints 14,190.7195 m "
+                "against octets C221, which check_against_the_documents_own_examples() now "
+                "reproduces alongside the other 43. So alt_m has TWO sources and a precedence "
+                "between them, and the precedence is at HAE_PRECEDENCE rather than here because "
+                "it is a decision and not a clause — the same §8.104.1 sentence this paragraph "
+                "quoted as 'a reason to prefer 104 where both appear and not a rule the document "
+                "writes' is exactly the footing it is stated on. Short form: 104 when a packet "
+                "carries both, 75 when it carries only 75, never 15; and where both are carried "
+                "and differ by more than tag 75's own LSB of 0.30365 m, an advisory "
+                "hae_items_disagree carries both values while the selected one is still emitted. "
+                "One more fact, read off the two sections together and unchanged: §8.75 and "
+                "§8.104 print the SAME KLV Key, "
                 "06.0E.2B.34.01.01.01.01.0E.01.02.01.82.47.00.00 (CRC 16670) — the extended item "
                 "reuses the base item's Universal Label, so the UL does not distinguish them and "
                 "only the tag does"),
@@ -849,6 +902,13 @@ class Stanag4609Adapter(Adapter):
                 "here would claim the platform knows where it is to within millimetres. The "
                 "CAT034 quantisation note, reached a second time"),
         }
+        # The HAE reading goes in BEFORE the no-coordinates exit, not after it. A packet that
+        # carries an ellipsoid height and no coordinates builds no `Position`, and the height it
+        # carried is still a fact about the packet — including a disagreement between two of them,
+        # which `_hae` has already raised as an advisory by this point whether or not there is a
+        # `Position` for the winner to land in.
+        basis.update({key: value for key, value in hae.items()
+                      if key not in ("alt_m", "unavailable")})
         if lat is None or lon is None:
             unavailable.append(
                 "Position (tag 13 and/or tag 14 absent or reserved — an absent Position is the "
@@ -858,6 +918,7 @@ class Stanag4609Adapter(Adapter):
                 "carry both as measurements. A Position holding a zero for the missing half is a "
                 "real point in the Gulf of Guinea")
             return None, basis
+        unavailable.extend(hae["unavailable"])
         basis["position_source"] = (
             "GNSS, and the enum has no member that says what the document says. §8.13.1: "
             "'Generated from GPS/INS information and based on the WGS84 coordinate system.' "
@@ -865,24 +926,125 @@ class Stanag4609Adapter(Adapter):
             "none of them exactly — GNSS is the member naming the source the document names "
             "first, and ESTIMATED would understate a fix that really is a satellite solution. "
             "The blend is recorded here rather than resolved")
-        basis["alt_item"] = "tag 104 Sensor Ellipsoid Height Extended" if alt is not None else None
-        if 104 in items and alt is None:
-            # Present but not a measurement: a §7.2.3 signal or a zero-length item. `alt_m` is
-            # None and the reason is recorded rather than left to look like an absent item.
-            basis["alt_not_measured"] = _rendered(items[104].value)
-            unavailable.append(
-                "Position.alt_m (tag 104 present but carrying a ST 1201.3 §7.2.3 signal or a "
-                "zero-length value — a signal is not a measurement and no altitude is built over "
-                "one)")
-        elif alt is None:
-            unavailable.append(
-                "Position.alt_m (tag 104 absent — and tag 15's MSL figure is not a candidate for "
-                "an HAE field; see the alt_m basis)")
         return Position(
             lat=lat, lon=lon, alt_m=alt,
             position_source=PositionSource.GNSS,
             accuracy_m=None,
         ), basis
+
+    #: The advisory class a packet carrying two disagreeing HAE items earns. Named as a class
+    #: rather than written at the site, so a consumer can filter on it and this module states it
+    #: once — the `byte_order_contradicts_st_0107_2_02` shape at `klv_security_codec`.
+    HAE_DISAGREEMENT = "hae_items_disagree"
+
+    def _hae(self, items: dict[int, uas.DecodedItem],
+             advisories: list[dict]) -> dict:
+        """`Position.alt_m` from tags 75 and 104, and the precedence between them is THIS
+        REPOSITORY'S rather than the document's.
+
+        **WHAT THE DOCUMENT SETTLES AND WHAT IT DOES NOT.** §8.15.1, §8.75.1 and §8.104.1 each
+        print one sentence — "For legacy systems, Tag 15 and Tag 75 | Tag 104 are allowed with
+        preference for Tag 75 | Tag 104" — and `ST 0601.8-17` requires a decoder that understands
+        HAE to "use the HAE representation and ignore the Mean Sea Level (MSL) representation when
+        both exist in the same UAS Datalink LS packet". **Both of those rule tag 15 out and neither
+        orders 75 against 104**: the preference is written as a disjunction, `Tag 75 | Tag 104`,
+        and the document states no rule for a packet that carries both. That absence was read off
+        the pinned copy rather than assumed, and it is why the rule below is labelled as a
+        preference of this repository's and not quoted as a requirement.
+
+        **THE PREFERENCE, AND ITS TWO GROUNDS, BOTH READ OFF THE BLOCKS.** Where a packet carries
+        both, `alt_m` is tag 104's.
+
+        * **Range.** §8.104.1 states 104's own purpose — "to increase the range of altitude values
+          currently defined in Tag 75 Sensor Ellipsoid Height to support all CONOPs for airborne
+          systems" — so 40 000 m against 75's 19 000 m. A packet at 25 000 m can be stated by one
+          item and not by the other, and preferring the item that cannot express the value would
+          be a rule that fails exactly where it matters.
+        * **Resolution.** §8.75 fixes `uint16` over -900..19000 at a Required Length of 2, which is
+          one step of 0.30365 m — computed from the block's own Min, Max and integer span, never
+          read off its `~0.3 meters` Resolution cell. §8.104's `IMAPB(-900, 40000, Length)` is
+          0.0078125 m at three octets. Finer at any length of three or more.
+
+        **AND WHERE ONLY 75 IS CARRIED IT FILLS `alt_m`, WHICH IS THE HALF THAT MOVED TODAY.** Both
+        items are "measured from the reference WGS84 ellipsoid" in their own Descriptions, which is
+        what `Position.alt_m`'s "Metres HAE" asks for, so there is no conversion in either
+        direction and no geoid model is needed or held.
+
+        **A DISAGREEMENT IS RECORDED AND NEVER RESOLVED SILENTLY.** Where both are carried as
+        measurements and they differ by more than tag 75's own LSB, an advisory of class
+        `hae_items_disagree` carries both values, their difference and the step — on the
+        `ST 0102.10-57` / `byte_order` precedent: the value the preference selects is still
+        emitted, because refusing would discard a measurement over a producer's inconsistency, and
+        the disagreement is put where a consumer can find it. **The threshold is one LSB and not
+        zero**, because two items quantised differently over different ranges will differ in their
+        low bits on any real airframe and an advisory that fires on every packet says nothing.
+
+        **A SPECIAL OR A ZERO-LENGTH ITEM ON 75 FILLS NOTHING**, exactly as on 104. §8.75's Special
+        Values cell reads `None`, so there is no reserved integer to meet; a zero-length tag 75 is
+        `ST 0601.14-33`'s explicit unknown and decodes to a `ZeroLength`, and a tag 75 at any
+        length but two is a length divergence and never reaches this method at all. In each case
+        the item is present and its value is not a measurement, which is recorded rather than left
+        to read as an absent item.
+        """
+        step = uas.AFFINE_DOCUMENT_ITEMS[75].scale
+        readings = {tag: (_measured(items[tag].value) if tag in items else None)
+                    for tag in (75, 104)}
+        # Collected rather than appended, and handed back for `_position` to file. A packet with
+        # no coordinates emits no `Position`, so "Position.alt_m is unavailable" would be a second
+        # way of saying "there is no Position" — the caller is the only one that knows.
+        missing: list[str] = []
+        basis: dict[str, Any] = {
+            "alt_m": None,
+            "unavailable": missing,
+            "alt_item": None,
+            "hae_precedence": HAE_PRECEDENCE,
+            "hae_items_carried": sorted(tag for tag in (75, 104) if tag in items),
+        }
+        for tag, name in ((104, "tag 104 Sensor Ellipsoid Height Extended"),
+                          (75, "tag 75 Sensor Ellipsoid Height")):
+            if readings[tag] is not None:
+                basis["alt_m"], basis["alt_item"] = readings[tag], name
+                break
+
+        for tag in (75, 104):
+            if tag in items and readings[tag] is None:
+                # Present but not a measurement: a §7.2.3 signal, or a zero-length item.
+                basis[f"tag_{tag}_not_measured"] = _rendered(items[tag].value)
+                # The two items are present-and-not-a-measurement for DIFFERENT reasons and the
+                # message says which. §8.104 is IMAPB, so ST 1201.3 §7.2.3's eight signal patterns
+                # reach it; §8.75's own Special Values cell reads `None`, so the only way tag 75
+                # is present and not a measurement is a zero-length item. One message covering
+                # both would name a clause that does not reach one of them.
+                missing.append(
+                    "Position.alt_m (tag 104 present but carrying a ST 1201.3 §7.2.3 signal or a "
+                    "zero-length value — a signal is not a measurement and no altitude is built "
+                    "over one)" if tag == 104 else
+                    "Position.alt_m (tag 75 present but carrying a zero-length value — §8.75 "
+                    "states no Special Values, so ST 0601.14-33's explicit unknown is the only "
+                    "way this item is present and not a measurement, and no altitude is built "
+                    "over one)")
+
+        if readings[75] is not None and readings[104] is not None:
+            difference = abs(readings[75] - readings[104])
+            basis["hae_difference_m"] = difference
+            basis["hae_lsb_m"] = step
+            if difference > step:
+                advisory = {
+                    "tag": 104, "name": "Sensor Ellipsoid Height Extended",
+                    "class": self.HAE_DISAGREEMENT,
+                    "layer": "adapter",
+                    "tag_75_m": readings[75], "tag_104_m": readings[104],
+                    "difference_m": difference, "tag_75_lsb_m": step,
+                    "selected": "tag 104", "section": "8.75, 8.104",
+                    "basis": HAE_DISAGREEMENT_BASIS,
+                }
+                advisories.append(advisory)
+                basis["hae_disagreement"] = dict(advisory)
+        elif readings[75] is None and readings[104] is None and not basis["hae_items_carried"]:
+            missing.append(
+                "Position.alt_m (neither tag 104 nor tag 75 is carried — and tag 15's MSL figure "
+                "is not a candidate for an HAE field; see the alt_m basis)")
+        return basis
 
     # ------------------------------------------------------------------ kinematics
 
@@ -1113,6 +1275,13 @@ class Stanag4609Adapter(Adapter):
             if spec is not None:
                 units, klv_format, section = spec.units, spec.klv_format, spec.section
                 name, witness = spec.name, _WITNESS_STREAM
+            elif tag in uas.AFFINE_DOCUMENT_ITEMS:
+                # Tag 75. Its block draws the same cells `uas.ITEMS`'s do — this branch reads the
+                # same three attributes off it — and only its `witness` differs, which is exactly
+                # the distinction the two tables exist to keep.
+                spec = uas.AFFINE_DOCUMENT_ITEMS[tag]
+                units, klv_format, section = spec.units, spec.klv_format, spec.section
+                name, witness = spec.name, _WITNESS_DOCUMENT
             elif tag in uas.PACK_ITEM_TAGS:
                 units, klv_format, section = None, "vlp", str(packs.PACK_ITEMS[tag]["section"])
                 name, witness = str(packs.PACK_ITEMS[tag]["name"]), _WITNESS_DOCUMENT
@@ -1140,9 +1309,14 @@ class Stanag4609Adapter(Adapter):
         # THE TWELVE THAT REACH NO CANONICAL FIELD, PLUS THE ONE PACK, PLUS THE TWO TIME
         # ADJUSTMENTS, "as the document names them" — which is the park 5 round's brief in its own
         # words and is why the keys below are the §8.x item names lowercased with their units
-        # appended rather than names of this repository's choosing. Two of the seventeen are NOT
-        # here: tag 104 fills `Position.alt_m` and tag 112 fills `Kinematics.course_deg`, and each
-        # is stated in its own basis paragraph instead. Thirteen have no CDM field to reach — a
+        # appended rather than names of this repository's choosing. THREE of the eighteen are NOT
+        # here: tag 104 fills `Position.alt_m`, tag 112 fills `Kinematics.course_deg`, and tag 75
+        # is the second candidate for `Position.alt_m` as of 2026-09-05 — each is stated in its own
+        # basis paragraph instead. **Tag 75 is excluded whether or not it WON the precedence**, and
+        # that is tag 104's own rule rather than a new one: an item is out of this bag because it
+        # is a CANDIDATE for a canonical field, not because it filled one. A packet carrying 75
+        # with no coordinates builds no `Position`, and the value is then at `attributes.klv_items`
+        # alone — exactly where 104's is in the same case. Thirteen have no CDM field to reach — a
         # radar altimeter, a storage percentage and a transmit frequency are facts about an
         # airframe and its payload, not about a contact's identity, position or motion — so they
         # are carried whole and nothing is derived from them.
@@ -1156,7 +1330,7 @@ class Stanag4609Adapter(Adapter):
         # `time_basis`, which states both terms whether or not the packet carried them.
         witnessed_by_document = {}
         for tag in uas.DOCUMENT_WITNESSED_TAGS:
-            if tag not in items or tag in (104, 112):
+            if tag not in items or tag in (75, 104, 112):
                 continue
             if tag in uas.PACK_ITEM_TAGS:
                 key = "wavelengths_list"
@@ -1394,7 +1568,8 @@ class Stanag4609Adapter(Adapter):
     # ------------------------------------------------------------------ payload
 
     def _payload(self, index: int, packet: uas.DecodedPacket, envelope: dict,
-                 geometry_basis: dict, time_basis: dict) -> dict:
+                 geometry_basis: dict, time_basis: dict,
+                 adapter_advisories: list[dict]) -> dict:
         items = packet.items
         payload: dict[str, Any] = {
             "packet_index": index,
@@ -1466,7 +1641,15 @@ class Stanag4609Adapter(Adapter):
                 "adjudicated and CLOSED'. In a conformant packet it is a width in metres"),
         }
         payload["klv_defects"] = [_defect_dict(defect) for defect in packet.defects]
-        payload["klv_advisories"] = [dict(advisory) for advisory in packet.advisories]
+        # The codec's advisories and this adapter's, in one list and distinguishable inside it.
+        # A consumer asking "what did anything object to about this packet?" should not have to
+        # know which layer objected — and every adapter-raised entry carries `layer: adapter`, so
+        # one that does want to know can still tell. The codec's carry no `layer` key, which is
+        # the same asymmetry `klv_defects` already has and is recorded rather than normalised:
+        # adding a key to the codec's dicts would move every golden for a distinction only the
+        # newer half needs.
+        payload["klv_advisories"] = ([dict(advisory) for advisory in packet.advisories]
+                                     + [dict(advisory) for advisory in adapter_advisories])
         payload["integrity"] = {
             "checksum_valid": packet.checksum_valid,
             "checksum_stored": packet.checksum_stored,

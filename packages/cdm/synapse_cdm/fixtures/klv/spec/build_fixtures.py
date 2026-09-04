@@ -1129,6 +1129,23 @@ ADAPTER_FIXTURES: tuple[dict, ...] = (
 #: worked-example check has not already reproduced against the document.
 _IMAPB_EXAMPLE = {tag: octets for tag, (_x, _len, octets) in imapb.IMAPB_WORKED_EXAMPLES.items()}
 
+#: §8.75's own Example KLV Item, read off the block rather than typed: `C221` against
+#: `14190.7195 Meters`. Taken from the table the codec transcribes it into, so a fixture built here
+#: and the check `klv_uas_codec.check_against_the_documents_own_examples()` runs cannot diverge.
+_TAG_75_EXAMPLE = uas.AFFINE_DOCUMENT_ITEMS[75].example_octets
+
+#: A tag 104 value within ONE of tag 75's own quantisation steps of `_TAG_75_EXAMPLE`'s. Encoded
+#: through `imapb` at three octets rather than written down, because a hand-typed pair that drifted
+#: past the step would make the "agreeing" fixture assert the disagreeing behaviour and still look
+#: right. The step is `19900/65535` m = 0.30365 m and these two differ by 0.00071 m.
+_TAG_104_AGREEING = imapb.encode_item(104, 3, 14190.72).hex().upper()
+
+#: A tag 15 MSL figure DIFFERENT from tag 75's, and the difference is the point. §8.15 and §8.75
+#: print the SAME worked example — one map, two datums — so a fixture carrying both at their own
+#: printed values could not tell an adapter that read the right item from one that read the wrong
+#: one. `8000` is 9050.35 m on the shared map, 5 140 m away from tag 75's.
+_TAG_15_DIFFERENT = "8000"
+
 #: ST 1201.3 §7.2.3 Table 2's eight patterns, one per tag and each at a DIFFERENT length, so the
 #: fixture also proves what §7.4 requires: the special-value test is on the top two bits of the
 #: value at the width the wire supplied, and is not a comparison against a fixed sentinel. The top
@@ -1187,7 +1204,14 @@ _PARK_5_FIXTURES: tuple[dict, ...] = (
             "candidate for it, so the right answer here comes out of the field's definition rather "
             "than out of a comparison — which is the whole of RULING 4. The two values are 9 265 m "
             "apart, deliberately: a fixture where the two altitudes were close would pass under a "
-            "wiring that read the wrong one"),
+            "wiring that read the wrong one. **DATED NOTE, 2026-09-05: 'RULING 4' above is the "
+            "park 5 round's and it STANDS.** The pre-release round of 2026-09-05 has a RULING 4 "
+            "of its own, which reads tag 75 and settles what a packet carrying BOTH HAE items "
+            "does — and it changes nothing here, because this packet carries only one of them. "
+            "The sentence 'what must NOT happen is a precedence rule firing' is still true of "
+            "THIS fixture and is no longer true of the adapter in general: `HAE_PRECEDENCE` now "
+            "exists and orders 75 against 104. It never reaches tag 15, which is the half this "
+            "fixture asserts. `hae_is_tag_75_and_never_tag_15s_msl` is its twin one item down"),
         citation=("ST 0601.14a §8.15, §8.104 and their Details subsections; ST 0601.8-17; "
                   "FORMAT_COVERAGE.md, RULING 4 of the park 5 round"),
     ),
@@ -1494,7 +1518,141 @@ _PARK_3_FIXTURES: tuple[dict, ...] = (
 #: it now holds twice over**: park 3's round is later in the day than park 5's, so its five go
 #: after park 5's nine and both the twenty-three that existed before 2026-09-04 and those nine
 #: keep the indices they had. 23 + 9 + 5 = 37.
-ADAPTER_FIXTURES = ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
+
+#: **THE PRE-RELEASE ROUND'S FIVE, 2026-09-05, RULING 4 — APPENDED FOR THE REASON ABOVE AND FOR
+#: ONE MORE.** They belong beside `hae_is_tag_104_and_never_tag_15s_msl` by subject, and putting
+#: them there would have renumbered fourteen fixtures — park 5's last six and all five of park 3's
+#: — and falsified every UUID-v8 identity `fixtures/klv/README.md` records for them. The rule is
+#: append, and it costs nothing but adjacency. 23 + 9 + 5 + 5 = 42.
+_PRE_RELEASE_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="tag_75_from_the_documents_own_example",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (75, _TAG_75_EXAMPLE),               # 14 190.7195 m HAE, §8.75's own example
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RULING 4's FIRST FIXTURE (2026-09-05): TAG 75'S OWN PRINTED WORKED EXAMPLE, "
+            "THROUGH THE WHOLE STACK.** §8.75 prints `14190.7195 Meters` against the Value octets "
+            "`C221`, and that printed pair IS the document-side witness the row was promoted on — "
+            "the same ground as the fifteen IMAPB items and the two time adjustments. "
+            "`klv_uas_codec.check_against_the_documents_own_examples()` already runs the map; this "
+            "fixture runs it THROUGH the item layer, the adapter and the schema, so a tag wired to "
+            "the wrong range, decoded at a fixed width, or landing in the wrong attribute fails "
+            "here and not only there. What must happen: the item decodes to 14 190.719462882427 m "
+            "— the printed value to the precision §7's Programmer's Notes promise — and lands at "
+            "attributes.klv_items['75'] with witness DOCUMENT and not stream. **What must NOT "
+            "happen is a Position**: tags 13 and 14 are absent and an altitude with no coordinates "
+            "is not a fix, which is the `imapb_items_from_the_documents_own_examples` note reached "
+            "by the one item that could most plausibly have been special-cased into one"),
+        citation="ST 0601.14a §8.75, its Example KLV Item row and its Map bullet; §7's "
+                 "Programmer's Notes on printed precision",
+    ),
+    dict(
+        name="hae_from_tag_75_when_it_is_the_only_ellipsoid_item",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (75, _TAG_75_EXAMPLE),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RULING 4's SECOND FIXTURE: 75 ALONE FILLS `Position.alt_m`, WHICH IS THE HALF THAT "
+            "MOVED.** From 2026-09-04 until 2026-09-05 `alt_m` was tag 104's or nothing, and a "
+            "packet carrying only tag 75 emitted a Position with no altitude at all while the "
+            "height sat unread on the wire. What must happen: alt_m is 14 190.719462882427 m, "
+            "attributes.position_basis.alt_item names `tag 75 Sensor Ellipsoid Height`, and "
+            "hae_items_carried is [75]. No conversion happens in either direction — §8.75's own "
+            "Description says 'as measured from the reference WGS84 ellipsoid' and "
+            "Position.alt_m is documented 'Metres HAE', which is the same datum. **What must NOT "
+            "happen is an advisory**: one HAE item cannot disagree with anything"),
+        citation="ST 0601.14a §8.75 and §8.75.1; models.Position.alt_m; "
+                 "adapters/stanag4609.HAE_PRECEDENCE",
+    ),
+    dict(
+        name="both_hae_items_agreeing_take_tag_104_and_raise_nothing",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (75, _TAG_75_EXAMPLE),               # 14 190.719462882427 m
+            (104, _TAG_104_AGREEING),            # 14 190.71875 m — 0.00071 m away
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RULING 4's THIRD FIXTURE: BOTH HAE ITEMS, AGREEING, AND THE PRECEDENCE IS THIS "
+            "REPOSITORY'S.** ST 0601.14a states no ordering between 75 and 104 — §8.104.1's "
+            "preference is written as the disjunction `Tag 75 | Tag 104` and is about tag 15 — so "
+            "what decides this packet is `adapters/stanag4609.HAE_PRECEDENCE`, on the two grounds "
+            "the blocks do state: 104's range (40 000 m against 19 000 m, §8.104.1's own stated "
+            "purpose) and its resolution (0.0078125 m at three octets against 0.30365 m). What "
+            "must happen: alt_m is 104's 14 190.71875 m, alt_item names tag 104, "
+            "hae_items_carried is [75, 104], and hae_difference_m is recorded even though nothing "
+            "is raised. **What must NOT happen is an advisory**: the two differ by 0.00071 m and "
+            "the threshold is tag 75's own LSB, 0.30365 m. That threshold is the whole reason this "
+            "fixture exists beside the disagreeing one — two items quantised over different ranges "
+            "will differ in their low bits on any real airframe, and an advisory that fired here "
+            "would fire on every packet and be read by nobody"),
+        citation="ST 0601.14a §8.75, §8.104, §8.104.1; adapters/stanag4609.HAE_PRECEDENCE",
+    ),
+    dict(
+        name="both_hae_items_disagreeing_raise_an_advisory_and_still_emit",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (75, _TAG_75_EXAMPLE),               # 14 190.7195 m, §8.75's own example
+            (104, _IMAPB_EXAMPLE[104]),          # 23 456.24 m, §8.104's own example
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RULING 4's FOURTH FIXTURE: THE TWO HAE ITEMS CONTRADICTING EACH OTHER, EACH AT ITS "
+            "OWN BLOCK'S PRINTED VALUE.** 14 190.72 m against 23 456.23 m is 9 265 m apart — one "
+            "of the two is wrong about where the sensor is and the packet does not say which. What "
+            "must happen: alt_m is still 104's, because a disagreement does not change the "
+            "precedence; an advisory of class `hae_items_disagree` carries BOTH values, their "
+            "difference and tag 75's LSB, at payload.klv_advisories with layer `adapter` and at "
+            "attributes.position_basis.hae_disagreement so a consumer holding only the Entity can "
+            "still find it. **What must NOT happen is a refusal, and what must NOT happen is "
+            "silence** — the ST 0102.10-57 precedent klv_security_codec cites for tag 13's byte "
+            "order, reached in a second place: refusing would discard a measurement over a "
+            "producer's inconsistency, and taking one quietly would put a figure in alt_m that "
+            "nobody can audit. The two values are the documents' own, deliberately: a fixture "
+            "whose disagreement was invented would be testing a number somebody chose"),
+        citation="ST 0601.14a §8.75, §8.104; MISB ST 0102.10-57 as cited at "
+                 "adapters/klv_security_codec; adapters/stanag4609.HAE_DISAGREEMENT_BASIS",
+    ),
+    dict(
+        name="hae_is_tag_75_and_never_tag_15s_msl",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (15, _TAG_15_DIFFERENT),             # 9 050.35 m MSL — NOT §8.15's printed example
+            (75, _TAG_75_EXAMPLE),               # 14 190.7195 m HAE, §8.75's own example
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RULING 4's FIFTH FIXTURE: THE MSL/HAE REFUSAL, NOW AGAINST THE BASE HAE ITEM.** "
+            "`hae_is_tag_104_and_never_tag_15s_msl` asks this of tag 104; this asks it of tag 75, "
+            "which is the item §8.15's own Details points at FIRST — 'For improved modeling "
+            "accuracy use Sensor Ellipsoid Height (Tag 75) or Sensor Ellipsoid Height Extended "
+            "(Tag 104)'. What must happen: alt_m is 75's 14 190.719462882427 m, and tag 15's "
+            "9 050.35 m stays parked whole at attributes.sensor_true_altitude_msl_m, converting "
+            "nothing — a geoid separation is a model this repository does not hold. **THE TWO "
+            "VALUES ARE DELIBERATELY DIFFERENT AND THAT IS THIS FIXTURE'S WHOLE CONSTRUCTION**: "
+            "§8.15 and §8.75 print the SAME worked example, `C221` against 14190.7195, because "
+            "they share one affine map and differ only in the datum their Descriptions name — so "
+            "a fixture carrying both at their printed values would pass under an adapter that read "
+            "tag 15 into alt_m. Tag 15 carries `8000` here instead. **What must NOT happen is a "
+            "precedence firing**: tag 15 is MSL and was never a candidate for an HAE field, so "
+            "HAE_PRECEDENCE never reaches it and the right answer comes out of the field's "
+            "definition — RULING 4 of the park 5 round, which stands"),
+        citation="ST 0601.14a §8.15, §8.15.1, §8.75; ST 0601.8-17; FORMAT_COVERAGE.md, RULING 4 "
+                 "of the park 5 round and RULING 4 of the pre-release round",
+    ),
+)
+
+ADAPTER_FIXTURES = (ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
+                    + _PRE_RELEASE_FIXTURES)
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:

@@ -3304,15 +3304,18 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
         "crossing of the scope contract is declared in its own table so that it can be counted "
         "here; a promotion with no table behind it fails this assertion"
     )
-    # 97 SINCE 2026-09-04, DOWN FROM 99 EARLIER THE SAME DAY, 114 THAT MORNING AND 115 THE DAY
-    # BEFORE, AND WHAT MOVED IS NAMED AT EACH STEP: item 48 left for the nested-set ruling (park
-    # 2), fifteen left for the document-side witness (park 5), and items 136 and 137 left on the
-    # same witness (park 3, RULING 3) once MISB ST 0603.5 gave the MISP Time System a definition
-    # here and §6.4's two equations had terms to put in them. Every remaining row is blocked on
-    # the scope contract, and tag 130 is the one that is ALSO one of park 5's sixteen — it stays
-    # because §8.130 prints no worked example, which is the condition RULING 1 measures against.
-    assert len(not_yet) >= 97, (
-        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 97 of the 141 rows "
+    # 96 SINCE 2026-09-05, DOWN FROM 97, 99, 114 AND 115, AND WHAT MOVED IS NAMED AT EACH STEP:
+    # item 48 left for the nested-set ruling (park 2), fifteen left for the document-side witness
+    # (park 5), items 136 and 137 left on the same witness (park 3, RULING 3) once MISB ST 0603.5
+    # gave the MISP Time System a definition here and §6.4's two equations had terms to put in
+    # them, and TAG 75 left on that same witness on 2026-09-05 (the pre-release round, RULING 4) —
+    # §8.75 prints `14190.7195 Meters` against `C221`, and the reason it was not one of park 5's
+    # fifteen is that its map is a plain affine `uint16` and not `IMAPB`, so RULING 1's scope did
+    # not reach it. Every remaining row is blocked on the scope contract, and tag 130 is the one
+    # that is ALSO one of park 5's sixteen — it stays because §8.130 prints no worked example,
+    # which is the condition RULING 1 measures against.
+    assert len(not_yet) >= 96, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 96 of the 141 rows "
         "are outside all three witness grounds and each is blocked on the scope contract; a round "
         "that promoted them wrote decoders nothing can check, which is the trap this section "
         "exists to avoid"
@@ -4978,8 +4981,8 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 37, (
-        f"{len(expected)} adapter fixtures, expected thirty-seven — ten from the witnessed-set "
+    assert len(expected) == 42, (
+        f"{len(expected)} adapter fixtures, expected forty-two — ten from the witnessed-set "
         "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
         "seventeen elements inside item 48, the six `security_object_country_codes_*` "
         "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held (a byte-order "
@@ -4992,7 +4995,12 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "the park 3 round added the same day for items 136 and 137 — both §8.x printed examples "
         "in one packet, each of §6.4's two equations alone, a NEGATIVE pair the document prints "
         "no example for, and a zero-length pair proving an explicit unknown is not a +0 "
-        "adjustment"
+        "adjustment; and the FIVE the pre-release round added on 2026-09-05 for tag 75 under its "
+        "RULING 4 — §8.75's own printed example with no coordinates and therefore no Position, "
+        "tag 75 alone filling `Position.alt_m`, both HAE items agreeing inside tag 75's own LSB "
+        "and raising nothing, both disagreeing by 9 265 m and raising `hae_items_disagree`, and "
+        "tag 75 beside tag 15 at values that are deliberately NOT the printed pair, because "
+        "§8.15 and §8.75 print the same one"
     )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (

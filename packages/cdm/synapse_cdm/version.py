@@ -51,17 +51,17 @@ than right by luck.
 
 The supporting measurement stands and is worth keeping, because it says how far apart they
 WOULD already be: ``MIGRATIONS.md`` has a section titled "Adapters that landed with no schema
-change" and it holds **twelve** entries — twelve adapters, each of which added thousands of
+change" and it holds **thirteen** entries — thirteen adapters, each of which added thousands of
 lines of shipped behaviour to this distribution at ``schema_version`` 1.0.0, with no field
 added, removed or retyped. That count is derived from the section's own bullets by
 ``tests/test_cdm_prose_counts.py`` rather than stated here on trust.
 
 Had this package been released before any of them, each would have been a package MINOR and
-none of them a schema bump. The two numbers would already be twelve minors apart. Deriving one
+none of them a schema bump. The two numbers would already be thirteen minors apart. Deriving one
 from the other — which is what this file used to do, with the packaging metadata reading
 ``SCHEMA_VERSION`` directly — would have produced a distribution that could not express "the
 same contract, more adapters", and the only ways out are both wrong: bump the contract for a
-change no consumer's parser cares about, or ship thirteen different distributions all labelled
+change no consumer's parser cares about, or ship fourteen different distributions all labelled
 1.0.0 — that first release and one per adapter in the section — and let the index refuse the
 second one.
 
