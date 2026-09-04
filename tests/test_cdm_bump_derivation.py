@@ -71,6 +71,28 @@ UNRULED_HISTORICAL_ARCS = {
     ("v1.0.0", "v1.1.0"): {"synapse_cdm/adapter.py:load_adapter"},
     ("v1.4.0", "v1.4.1"): {"synapse_cdm/adapters/klv_codec.py:decode_ber_length",
                            "synapse_cdm/adapters/klv_codec.py:_CEILING_RESIDUE"},
+    # `v1.4.1 → v1.5.0` is the third entry and it arrives by the second entry's route, not the
+    # first's: it WAS ruled, in `MIGRATIONS.md`'s 1.5.0 section, by eight `**Bump ruling.**`
+    # paragraphs the park 2 round wrote and the release round carried across the roll. It belongs
+    # here for the reason the note above gives — this test derives the arc RAW — and it is the
+    # largest entry the set will hold for a while, at eight units.
+    #
+    # SIX OF THE EIGHT ARE ONE CAUSE READ SIX WAYS, AND THE SET RECORDS UNITS RATHER THAN CAUSES.
+    # `<statement 6>` through `<statement 9>` are four `from ... import ...` statements that DID
+    # NOT CHANGE: one import was inserted above them and the gate names an unnamed top-level
+    # statement by its position, so four imports were renamed and read as modified. One addition,
+    # four refusals. That is a property of positional unit naming and the cost of a scheme that
+    # cannot be fooled into silence, and it is left in the set at full width deliberately —
+    # collapsing the four would make this set a summary of causes, which is exactly the
+    # file-of-exemptions the ruling mechanism refuses to become.
+    ("v1.4.1", "v1.5.0"): {"synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket",
+                           "synapse_cdm/adapters/klv_uas_codec.py:decode_packet",
+                           "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+                           "synapse_cdm/adapters/stanag4609.py:_parsed_packet",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 6>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 7>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 8>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 9>"},
 }
 
 

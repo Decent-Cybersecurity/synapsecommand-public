@@ -133,7 +133,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.4.1 -m "..."                           # annotated, never lightweight
+git tag -a v1.5.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -210,16 +210,29 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.5.0 — 2026-09-04 — the ST 0102.12 security row set ships, and the first pinned document that is not a PDF
 
-**What moved inside the distribution: 91 files.** The largest arc this record has carried, and
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as it has been at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**What moved inside the distribution: 92 files.** The largest arc this record has carried, and
 the shape is three rounds': **park 2 closed by writing the row set MISB ST 0102.12 supports**,
 which took a new module, two modified ones, seven new fixture payloads with their twins and
 goldens, and every existing KLV golden re-generated because two attribute keys now ride on every
 object this adapter emits. The count and the set are `gates/bump_derivation.py`'s, re-derived
 **after** this record was written rather than before it — the fixed point the 1.4.0 arc's own
 repair note insists on, and the reason the number above is not a quotation of a derivation that
-has since moved.
+has since moved. **IT READ 91 AT `3b5a5dd` AND READS 92 HERE**, `version.py` having joined the
+arc it closes: it is a distribution file, so the bump that ends an arc is part of the arc. That is a
+property of every release this file records and the 1.3.0 section states it once for all of them.
+
+**AND TWO TRUE FILE COUNTS SIT ONE APART AT A RELEASE COMMIT, WHICH IS WORTH A SENTENCE BECAUSE THE
+1.4.1 RECORD STATED ONLY ONE OF THEM.** The number above is the release gate's moved set — the
+package files that differ from the previous tag, committed or in the working tree — and it is
+**92**. `gates/bump_derivation.py`'s own SIGNAL set spans **91** of them, and the missing one is
+`version.py`: the gate skips `version.py:PACKAGE_VERSION` by name as *the declaration under
+judgement*, because a gate that read the number it is judging as evidence for that number would be
+arguing in a circle. So the file moved and produced no signal. The same off-by-one is in the 1.4.1
+arc — twelve moved files, fourteen signals over eleven — and was recorded there as one figure.
 
 **THAT FIGURE READ 66 UNTIL 2026-09-04 AND THE PARAGRAPH ABOVE STILL DESCRIBES THE PARK 2 ROUND**,
 which is deliberate: the sentence names the shape of the arc's largest round and the arc has since
@@ -350,8 +363,11 @@ is park 5's shape rather than park 11's — the gate derives the kind by itself 
 a public name. **`SCHEMA_VERSION` is unmoved at 1.0.0** and had to be: `Entity.attributes` is
 `additionalProperties: true`, so carrying seventeen security elements into it adds no field to any
 schema, and `python -m synapse_cdm.schemas --check --out schemas` reports CURRENT against an empty
-`schemas/` diff. **Nothing in this section is in any release**, and the version a reader who ran
-`pip install synapse-cdm` actually has is **1.4.1** — no release is made here and none is owed.
+`schemas/` diff. **THIS SECTION IS 1.5.0**, and the sentences that stood here while it was pending said the opposite:
+nothing in it was in any release and the version a reader who ran `pip install synapse-cdm`
+actually had was 1.4.1. The release round below is what changed that — `PACKAGE_VERSION` moved to
+**1.5.0**, the tag names it, and a reader who installs the package receives everything described
+above.
 
 **EIGHT units the gate REFUSED to classify, and all eight are modifications in place.** The gate
 names them rather than defaulting them to PATCH, which is the refusal that keeps its other two
@@ -416,6 +432,142 @@ and 12. **Park 2 is the first park here closed without acquiring anything**: its
 held since 2026-08-26 and what was missing was the artefact, which is the state park 2 was this
 table's own precedent FOR. The delegation count does not move either — fourteen delegations in
 scope and **nine** held, unchanged, because this round fetched nothing.
+
+#### The release round, 2026-09-04 — the number was the gate's over the largest arc this file records, and one Act 0 premise had no reading behind it
+
+**Act 0, and every figure was measured rather than inherited.** Tree clean. `HEAD` and `origin/main`
+both at `3b5a5dd`, so nothing was owed to the remote before this round began, and the single
+`Signed-off-by` trailer on that commit names the one identity this history uses. **SEVEN tags**,
+newest `v1.4.1` at `10d0956` and annotated. `PACKAGE_VERSION` `1.4.1`, `SCHEMA_VERSION` `1.0.0`,
+the docstring stating both. Suite **3537 passed, 3 skipped**. `RELEASE_NOTES.md` opened
+`# synapse-cdm 1.4.1` with its mechanism heading naming the five prior OIDC releases, exactly one
+`## Artefacts` section, and **zero** occurrences of the pinned phrase. The pending section was
+first under `## History`, opened on its 91-file count, carried the three round headings, and said
+in its own words that nothing in it was in a release. `gh` authenticated; `publish.yml` triggers on
+a pushed `v*` tag and on dispatch, with the publish job on the `pypi` environment.
+`gates/commit_message.py --rev HEAD` clean. **The untouchables hold, each by its own command**: the
+pinned phrase derives to **35** over the git index across 26 files, `scripted_edit`'s contract is
+green at **9** while a bare `-k` collects **11** (the recorded trap), `git ls-files` matches **no**
+PDF and **no** zip, `fixtures/*/spec/` tracks **nine `.json` and nine `.py` and nothing else**,
+`klv_pin.json` still reads fourteen delegations in scope, and the three untouchable files were
+digested before anything moved.
+
+**ONE ACT 0 PREMISE HAD NO READING BEHIND IT, AND THAT IS THE SECOND HALF OF 0.10 RATHER THAN THE
+FIRST.** The brief paired the suite figure — which matched to the test — with `harness 46 passed`.
+**No reading of this tree yields 46.** `tests/test_cdm_harness.py` collects and passes **36**;
+`pytest -k harness` collects **64** across eleven modules; the module has held 36 at `v1.4.0`,
+at `v1.4.1` and here, so nothing regressed and nothing was removed. It was reported and ruled a
+miscount rather than absorbed, on the same standing rule the 1.4.1 record applied to a tag count
+that was five in the brief and six in the repository — **and this is the third consecutive round in
+which a brief bookkeeping figure is the only Act 0 reading that fails.** It moves no condition: the
+harness is green in the suite, and condition 2's actual actor is `gates/wheel_install.py`, run
+below.
+
+**The bump gate decided the number, and it needed no human ruling for the KIND.** The arc since
+`v1.4.1` derives **MINOR**, floor **1.5.0**, over **173 signals** spanning **91 distribution
+files**, with **zero** unruled units — the same three figures at Act 0 and at this commit, because
+`version.py`'s move is a change to the declaration the gate is judging and it emits no signal for
+it. The release gate's moved set is **92** and the section above states why the two differ.
+`klv_security_codec.py` is a new importable module and `fixtures/klv/` gains seven payloads, both
+on `version.py`'s MINOR list, so the gate reached the floor by itself: park 5's shape rather than
+park 11's. **The eight `Bump ruling` paragraphs are what make the arc reportable rather than what
+decides it**, and the gate read all eight and refused none as outliving its case.
+`--mutation-check` exercised five synthetic arcs: UNDERSHOOT, EXCEED and UNRULED all refused, and
+both PASS cases classified.
+
+**NINE PARAGRAPHS BEGIN `Bump ruling` IN THIS SECTION AND THE GATE PARSES EIGHT, WHICH IS THE
+PARSER BEING RIGHT.** The ninth is the surface round's, and it names no unit — it is a paragraph
+recording that no ruling was *required*, written so the absence of one would not read as an
+oversight. `rulings()` keys on a backticked unit followed by a category, so a paragraph with no
+unit contributes nothing, and the arithmetic is nine written against eight parsed with no
+discrepancy anywhere. Recorded because a brief counting the paragraphs and a gate counting the
+units will disagree by one for as long as that paragraph stands.
+
+**Condition 2 was run locally before any version string moved**, which is the point of running it
+here as well as at the tag: `gates/wheel_install.py --mutation-check` reported **13 checks, 0
+failed** — 14 adapters against 2 schema modes for **916 fixture verdicts, 0 failed**, a manifest of
+**1163 files equal to git in both directions**, 62 shipped prose files, six schemas regenerated
+byte-identical from outside the repository, and the package slice at **2439 passed, 1 skipped** —
+and the mutant wheel with `package-data` emptied was refused by **five** checks, so the gate can
+still fail.
+
+**AND THE TEXT-PINS ROUND'S `pyproject.toml` FINDING WAS RE-CHECKED AGAINST THE BUILT ARCHIVES
+RATHER THAN AGAINST THE GLOBS.** That round found `exclude-package-data` naming `.pdf` and nothing
+else, so a newly pinned `.txt` would have shipped inside the wheel, invisible to every check that
+reads `git ls-files`. The exported wheel and sdist were opened and enumerated here: **eighteen
+entries under `fixtures/*/spec/` in each, nine `.json` and nine `.py`, zero offenders**; **zero
+`.pdf` anywhere in either archive**; and the only `.txt` in either is packaging metadata generated
+by the build — `dist-info/entry_points.txt` and `top_level.txt` in the wheel, five `egg-info` files
+in the sdist. `rfc2781.txt` is on disk, gitignored by the global `*.txt` rule, and **in neither
+archive**. A glob that stopped matching would have been caught by the result and not by reading the
+pattern.
+
+**Condition 4's three derivations were read off the tree and copied into the notes from the
+output.** `adapter.discover()` returns **14** and `adapter.roster()` returns **14**, the same
+fourteen names in the same two directions — **the roster did not move this arc**, derived rather
+than carried over from the 1.4.1 notes. The harness over the registry sums **458 fixture verdicts,
+0 failed**; the whole of the increase is `stanag4609`'s, twenty to **forty-six**, and every other
+adapter's total is unchanged. `python -m synapse_cdm.schemas --check --out schemas` reports
+`CURRENT: schemas vs models at 1.0.0` over six schemas.
+
+**`SCHEMA_VERSION` was checked and not assumed.** `git diff v1.4.1..HEAD -- schemas/` is empty, and
+it had to be: `entity.schema.json` declares `attributes` `additionalProperties: true` while the
+object around it is `additionalProperties: false`, so carrying seventeen decoded security elements
+into it adds no field to any schema. That is the 1.2.0 ruling reached a second time by a different
+payload. It stays **1.0.0** and the release is a package MINOR with no wire movement.
+
+**THE SUITE AT THE RELEASE COMMIT, AND THE 1.4.1 RECORD'S FINDING HELD IN A CLEANER FORM.** That
+round moved five checks, then rolled the section and turned three more red. Here the five version
+sites were moved first and re-run green — the changelog claim, the packaging assertion, the
+notes-describe-this-version check and the documented tag command all pass at 1.5.0 — so the roll's
+consequence stands alone: **exactly FOUR red, all in `tests/test_cdm_bump_derivation.py`, all one
+cause.** `measure()` resolves rulings under the heading `declared if released else Unreleased`, and
+with no `v1.5.0` tag it looks in a section this commit no longer has, so the arc reads UNRULED with
+all eight units named. **Proven rather than argued, at the commit and before the tag**:
+`rulings("1.5.0")` returns all eight units with their categories and `rulings("Unreleased")`
+returns zero, so the gate resolves them the instant a tag names the declared version. Every other
+test in the suite is green, which is the STOP condition this round was given and did not meet. All
+four went green the moment the tag existed, as predicted.
+
+**AND A SECOND CHECK WENT RED ONLY ONCE THE TAG EXISTED, WHICH IS THE HALF A PRE-TAG SUITE CANNOT
+REACH.** With `v1.5.0` present, all four of those went green and
+`test_every_released_arc_derives_the_number_it_shipped` went red: it walks every consecutive pair
+of tags and compares each arc's unruled units against `UNRULED_HISTORICAL_ARCS`, a NAMED set rather
+than a count. `v1.4.1 → v1.5.0` was not in it. **The row was added and the tag was remade** — the
+one point in the procedure where a tag may be moved, because nothing had been pushed. It is the
+third entry and it arrives by the second's route rather than the first's: `v1.0.0 → v1.1.0` is an
+arc nobody ruled, because this gate did not exist when it shipped, while this one **was** ruled and
+belongs in the set anyway, because that check derives the arc RAW — it calls `derive()` and never
+`apply_rulings()`, so what it witnesses is the classifier's own reading of history rather than the
+classifier plus a document.
+
+**IT IS ALSO THE LARGEST ENTRY THE SET HOLDS, AT EIGHT UNITS, AND SIX OF THE EIGHT ARE ONE CAUSE
+READ SIX WAYS.** Four of them are the `<statement 6>` through `<statement 9>` imports that did not
+change, renamed by the position of an insertion above them. **They are left in at full width
+deliberately.** Collapsing four refusals with one cause into one entry would make this set a
+summary of causes rather than a record of units the table cannot decide — and a set that
+summarises is a set that can be argued smaller, which is the file-of-exemptions the whole ruling
+mechanism refuses to become. The comment beside the row says so, so a later round meets the
+reasoning before the temptation.
+
+**The roll, and the grep that no gate can replace was run anyway.** The pending section became
+`### 1.5.0` and its opening sentence describes the heading it absorbed rather than spelling it. The
+literal occurs **zero** times in this file, confirmed by grep after the roll and independently by
+the carrier gate — the sixth roll to do this, on a defect three consecutive rolls recreated. The
+two other tracked files that spell it, `FORMAT_COVERAGE.md` and `klv_pin.json`, are outside that
+gate's scope, which reads this file only; both were checked against the section-reference gate as
+well, and neither cites a heading by the double-quoted form that gate sweeps.
+
+**The fixed point was respected.** Writing this record moves `MIGRATIONS.md`, which is a shipped
+document and already in the arc, so the moved set stays at **92** and the classification stays
+**MINOR** — verified by re-running the derivation after this file was written, not before it.
+
+**What this round did not do**, each because it is somebody else's: it did not approve the `pypi`
+environment, did not create the GitHub release, did not write `PUBLICATION.md` entry 14, and did
+not deploy the documentation site — all of which are the witness round's once PyPI serves 1.5.0 and
+the workflow's digests exist. No park, pin or ledger row moved: `klv_pin.json`,
+`FORMAT_COVERAGE.md` and `PUBLICATION.md` are byte-identical to `3b5a5dd`, verified by SHA-256
+before and after.
 
 #### The text-pins round, 2026-09-04 — a pin may be text, and tag 13 is read from three documents
 
