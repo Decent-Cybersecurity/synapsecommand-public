@@ -1,13 +1,20 @@
 # STANAG 4609 / MISP-2019.1 KLV fixtures
 
-**There are TEN, and for six rounds there were none.** This file opened with the sentence
+**There are SEVENTEEN, and for six rounds there were none.** **There were TEN from the
+witnessed-set round of 2026-08-26 until the park 2 round of 2026-09-04**, which added the seven
+`security_*` payloads below when MISB ST 0102.12's element table was read into item 48 — the
+sentence is re-dated rather than silently re-synced, because its subject is a count that moved and
+a bare present tense is what let the delegated-document tally go stale within a day. This file
+opened with the sentence
 "There are none yet, and that is the state this directory is in rather than a step somebody
 forgot" from the day the directory was created until the witnessed-set round of 2026-08-26, and
 that sentence is quoted here rather than deleted because what replaced it is the interesting part: **adapter `stanag4609` has
 shipped**, and it covers **26 of ST 0601.14a's 141 items** — the distinct tags the one real stream
 this repository holds actually carries. The other **115** rows still read `not yet` in
-`../../FORMAT_COVERAGE.md`, and that is a scope contract rather than a backlog. See "The ten payload
-fixtures, and the plan they replaced" below. This directory also holds `spec/` and — since the
+`../../FORMAT_COVERAGE.md`, and that is a scope contract rather than a backlog — **with one
+crossing, ruled rather than waived: item 48, whose value is a nested Local Set another held
+document defines.** See "The ten payload fixtures, and the plan they replaced" below, and the
+seven `security_*` rows at the end of the table. This directory also holds `spec/` and — since the
 framing round of the same day — `framing/`, and `framing/` is still not a payload directory.
 
 **That did not change on 2026-08-26, and the thing that did change is worth stating precisely.** ST
@@ -314,6 +321,40 @@ have to be echoed into an object to pass. That is what this table is for.
 | `mandatory_items_only.klv` | the smallest conformant packet the standard admits: the three items ST 0601.14a makes Mandatory and nothing else. It is the fixture that proves the absences are absences — no Position, no Kinematics, no Event.geometry, and attributes.unavailable_fields saying so in words rather than the object simply having fewer keys | ST 0601.14a §6.4, §8.1, §8.65 and ST 0601.14-32 | `f1c70601-14a0-8001-8000-000000000008` |
 | `two_packets_one_payload_are_two_statements.klv` | two packets in one payload, half a second apart, at the same position and one metre per second different in ground speed. Four objects come out, not two, and the two Entities have DIFFERENT entity_id values — which is the packet-scoped identity's cost made visible in a golden file rather than described in a docstring. Nothing is accumulated across the boundary: no velocity is differenced, no state is carried | ST 0601.14a §6.3; FORMAT_COVERAGE.md, the fusion refusal | `f1c70601-14a0-8001-8000-000000000009` |
 | `a_checksum_that_does_not_validate_is_flagged_not_refused.klv` | a packet whose stored tag 1 disagrees with §6.6's summation over its own octets. It TRANSLATES, and attributes.integrity_basis carries `valid: false`. The reasoning is the length policy's: the stored checksum is one item among the packet's items, and discarding the others because a 16-bit sum disagrees destroys the evidence a consumer needs. `valid: false` on an object is a statement; a missing object is not | ST 0601.14a §6.6 and §8.1 | `f1c70601-14a0-8001-8000-000000000010` |
+
+| `security_local_set_complete_from_the_element_rules.klv` | ALL SEVENTEEN ST 0102.12 elements in one Security Metadata Local Set, carried in ST 0601 item 48. Every row of §6.7's Table 2 decodes once here — the three uint8 enumerations through their own tables, the uint16 Version, twelve ISO/IEC 646 strings, and tag 13's octets CARRIED AND NOT DECODED because RFC 2781 is not held. It is the fixture the confidentiality ruling is checked on: every value is either a code the document prints or a string beginning SYNTHETIC, and tag 1 is 0x01 UNCLASSIFIED//, which is the one classification §6.3 itself names in prose. **The octets of tag 13 assert nothing about their encoding** — the fixture states them and the codec carries them, which is exactly what a decoder without RFC 2781 can do | ST 0102.12 §6.7 Table 2 (all 17 rows), §6.1.1–§6.1.17, §6.8's three conversions; §6.9's own Tag 2 value 0x0C; §6.1.3's own //CZE; ST 0601.14a §8.48 and ST 0601.14-31 for the carrier | `f1c70601-14a0-8001-8000-000000000011` |
+| `security_local_set_minimal_required_only.klv` | the six elements §6.7 marks `Required` and nothing else — the smallest set that is not partial under §6.4. It is the fixture that proves the eleven absences are absences: no caveats key, no releasing instructions key, no declassification date, and `security_metadata_basis.state` reading COMPLETE-ON-REQUIRED rather than the object merely having fewer keys. The coding method and the code AGREE IN WIDTH here — ISO-3166 Two Letter with //GB, which §6.1.3 prints as its ISO-3166 example | ST 0102.12 §6.7's Required/Optional/Context column (tags 1, 2, 3, 12, 13, 22); §6.4; §6.1.3's own //GB | `f1c70601-14a0-8001-8000-000000000012` |
+| `security_local_set_partial_is_carried_as_partial.klv` | §6.4's SHAPE: a set carrying three of the six `Required` elements and one `Context` element, which the document explicitly admits — "For some operational situations or applications not all metadata elements in Section 6.1 may be required". What must happen: the set DECODES, `partial` is true, `required_absent` names tags 12, 13 and 22, and no element is completed or defaulted. What must NOT happen: the set refused for incompleteness, which would be enforcing a rule §6.4 declines to state. Note the absent Version: `ST 0102.10-57` says version three "shall be assumed" and the advisory records that clause WITHOUT writing 3 into the decoded elements | ST 0102.12 §6.4; §6.7's presence column; §6.1.15's ST 0102.10-57 | `f1c70601-14a0-8001-8000-000000000013` |
+| `no_security_local_set_is_unlabelled_not_unclassified.klv` | **§6.5's FIXTURE, AND IT IS THE ONE THE PARK 2 ROUND EXISTS FOR AS MUCH AS THE COMPLETE SET.** A well-formed UAS Datalink LS packet carrying NO item 48. "The absence of Security Metadata does not signify Motion Imagery Data as Unclassified", so what must happen is that the object carries NO `security_metadata` key at all — not an empty one, not a null classification — and carries `security_metadata_basis.state` reading UNLABELLED with §6.5's own sentence beside it. What must NOT happen is any of the three ways a decoder can quietly say unclassified: a default value, an empty object a reader can take for an empty marking, or silence. Item 48 is `Optional` in ST 0601.14a §8.48, so this packet is fully conformant and the absence is not a defect | ST 0102.12 §6.5, and §6.3 for the contrast; ST 0601.14a §8.48 "Required in LS? Optional" | `f1c70601-14a0-8001-8000-000000000014` |
+| `security_classification_outside_the_enumeration_carries_no_label.klv` | **THE CONFIDENTIALITY RULING'S SHARPEST CASE.** Tag 1 carries `0x07`, which §6.7's Allowed Values cell does not list — it enumerates 0x01 through 0x05 and no more. What must happen: the INTEGER is carried, NO label is produced, and an advisory names the clause. What must NOT happen: a nearest match (0x05 TOP SECRET// is the closest listed value and choosing it would be this adapter inventing a marking), a refusal that drops the element and makes the packet read as unlabelled when it is not, or a default. A classification is CARRIED AND NEVER INVENTED, and an integer with no name is exactly what carrying it looks like | ST 0102.12 §6.7 Table 2 tag 1 Allowed Values; §6.8.1; §6.1.1 | `f1c70601-14a0-8001-8000-000000000015` |
+| `security_required_element_at_a_forbidden_length_is_refused.klv` | A MALFORMED `Required` ELEMENT. Tag 1 Security Classification at two octets where §6.7's Length (Bytes) cell states 1 and its Data Type states uint8. What must happen: the ELEMENT is refused, its octets are parked verbatim, the refusal names the cell, and the other five elements decode — `klv_uas_codec`'s length policy reached by a second document, and §6.4 plus §6.5 are why it is safe here: a set that loses an element to a refusal is a shape §6.4 already admits, and the resulting gap cannot be mistaken for a claim because §6.5 says an absent marking is not "unclassified". What must NOT happen: the first octet read as the value, the whole set refused, or the packet refused | ST 0102.12 §6.7 Table 2 tag 1 Length (Bytes) = 1, Data Type = uint8; §6.4; §6.5 | `f1c70601-14a0-8001-8000-000000000016` |
+| `security_uint16_that_the_format_cannot_carry_is_refused.klv` | A LENGTH THE FORMAT CANNOT CARRY. Tag 22 Version at one octet where §6.7 states Data Type uint16 and Length 2 — a single octet cannot form a two-octet unsigned integer, so there is no reading of it that is not a guess. What must happen: the element is refused with `format_cannot_carry_the_octets`, the octet is parked, and the remaining five elements decode. What must NOT happen: zero-extension to 0x000C, which would produce a version number the packet did not state and which happens to be the RIGHT one for this document — the most dangerous possible near-miss, and the reason this fixture uses 0x0C rather than an arbitrary octet | ST 0102.12 §6.7 Table 2 tag 22 Data Type = uint16, Length (Bytes) = 2; §6.1.15 | `f1c70601-14a0-8001-8000-000000000017` |
+
+**THE SEVEN `security_*` FIXTURES ARE BUILT FROM CLAUSES AND NOT FROM A WORKED EXAMPLE, AND THAT IS
+A WEAKER ARRANGEMENT THAN THE TEN ABOVE.** Every value-carrying fixture in the first ten borrows
+its octets from a printed Example KLV Value, so `check_against_the_documents_own_examples` checks
+this repository's maps against ST 0601.14a rather than against itself. **MISB ST 0102.12 prints no
+worked example of an element or a set anywhere in its eighteen pages** — its only examples are two
+country codes (§6.1.2, §6.1.3) and one Tag 2 value (§6.9) — and **ST 0601.14a §8.48's own Example
+KLV Item row reads `30 - N/A`**, so neither of the two documents behind these fixtures supplies
+one. There is therefore **no analogue of `check_against_the_documents_own_examples` for the
+seventeen elements and none is simulated.** What stands in its place is the four-way agreement at
+`klv_security_codec.TRANSCRIPTION_CROSS_CHECK` — Table 2's seventeen rows against §6.1's seventeen
+subsections, §6.8's three conversions against the three `uint8` rows, and Table 1's Universal Set
+listing the same seventeen elements — which checks the TRANSCRIPTION and cannot check a decoded
+value. Saying which is the point.
+
+**NO FIXTURE HERE CARRIES A REAL-WORLD MARKING.** Two kinds of value appear and they are kept
+apart deliberately: codes the held document itself prints (`0x01` UNCLASSIFIED//, `0x0C` STANAG
+1059 Mixed, `//CZE`, `//GB`, `0x000C` for this document's own version), and clearly synthetic
+strings — every one begins `SYNTHETIC`, and `ZZZ` stands in where a second country code is needed,
+`ZZ` being the ISO 3166 user-assigned range and unmistakably not a state. **Not one caveat,
+compartment, handling instruction or releasability marking used in the real world appears in any
+fixture**, and no fixture pairs a coding method with a code of the wrong width. §6.1.2's "GENC Two
+Letter" and §6.1.3's "//CZE" are two independent examples in two sections rather than one worked
+set, so combining them verbatim would be internally incoherent; each fixture pairs a document code
+with a method of the matching width instead, and this sentence records that the choice was made
+rather than found.
 
 **The UUID-v8 identities are in the table above and NOT inside any payload.** `framing/`'s twins
 carry theirs in the twin, because a framing fixture "has no identifiers at all to carry one". Here

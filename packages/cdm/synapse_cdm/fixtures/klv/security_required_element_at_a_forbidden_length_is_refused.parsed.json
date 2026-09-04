@@ -1,0 +1,81 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 1977,
+        "stored": 1977,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "07b9",
+        "2": "000459f4a6aa4aa8",
+        "48": "0102010002010103042f2f47420c01010d04004700421602000c",
+        "65": "0d"
+      },
+      "security": {
+        "advisories": [],
+        "element_octets": {
+          "1": "0100",
+          "12": "01",
+          "13": "00470042",
+          "2": "01",
+          "22": "000c",
+          "3": "2f2f4742"
+        },
+        "element_order": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "partial": true,
+        "refusals": [
+          {
+            "class": "format_cannot_carry_the_octets",
+            "clause": "\u00a76.7's Table 2 states a Length (Bytes) of '1' for tag 1 Security Classification, Data Type 'uint8', and this element carries 2. THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
+            "name": "Security Classification",
+            "observed_length": 2,
+            "octets": "0100",
+            "presence": "Required",
+            "section": "ST 0102.12 \u00a76.1.1",
+            "stated_length": "1",
+            "tag": 1,
+            "tag_offset": 29,
+            "value_offset": 31
+          }
+        ],
+        "required_absent": [
+          1
+        ],
+        "required_present": [
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "unlisted_tags": []
+      },
+      "tag_order": [
+        2,
+        48,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 45,
+      "value_length_octets": "2d"
+    }
+  ],
+  "payload": {
+    "octets": 62,
+    "packet_count": 1
+  }
+}

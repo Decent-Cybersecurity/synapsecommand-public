@@ -1,0 +1,66 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 52465,
+        "stored": 52465,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "ccf1",
+        "2": "000459f4a6aa4aa8",
+        "48": "01010102010103042f2f47420c01010d04004700421602000c",
+        "65": "0d"
+      },
+      "security": {
+        "advisories": [],
+        "element_octets": {
+          "1": "01",
+          "12": "01",
+          "13": "00470042",
+          "2": "01",
+          "22": "000c",
+          "3": "2f2f4742"
+        },
+        "element_order": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "partial": false,
+        "refusals": [],
+        "required_absent": [],
+        "required_present": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "unlisted_tags": []
+      },
+      "tag_order": [
+        2,
+        48,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 44,
+      "value_length_octets": "2c"
+    }
+  ],
+  "payload": {
+    "octets": 61,
+    "packet_count": 1
+  }
+}

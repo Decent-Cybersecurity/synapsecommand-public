@@ -210,6 +210,321 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+**What moved inside the distribution: 66 files.** The largest arc this record has carried, and
+the shape is one round's: **park 2 closed by writing the row set MISB ST 0102.12 supports**, which
+took a new module, two modified ones, seven new fixture payloads with their twins and goldens, and
+every existing KLV golden re-generated because two attribute keys now ride on every object this
+adapter emits. The count and the set are `gates/bump_derivation.py`'s, re-derived **after** this
+record was written rather than before it — the fixed point the 1.4.0 arc's own repair note insists
+on, and the reason the number above is not a quotation of a derivation that has since moved.
+
+**THREE shipped documents** — `MIGRATIONS.md`, `FORMAT_COVERAGE.md` and `fixtures/klv/README.md`.
+**ONE pin record**, `klv_pin.json`, which gained `tag_table_st_0102_12` and
+`parks.the_ones_that_closed.park_2`. **FOUR modules**, of which **one is new**:
+
+`build_fixtures.py`, `klv_security_codec.py`, `klv_uas_codec.py`, `stanag4609.py`
+
+`klv_security_codec.py` is the new one — the MISB ST 0102.12 element layer — and it is what makes
+this arc **MINOR**; `build_fixtures.py` gained the seven fixture specs; `klv_uas_codec.py` gained a
+nested-set table and one field on `DecodedPacket`; `stanag4609.py` carries the decoded elements into
+`Entity.attributes`.
+
+**SEVEN new fixture payloads:**
+
+`no_security_local_set_is_unlabelled_not_unclassified.klv`,
+`security_classification_outside_the_enumeration_carries_no_label.klv`,
+`security_local_set_complete_from_the_element_rules.klv`,
+`security_local_set_minimal_required_only.klv`,
+`security_local_set_partial_is_carried_as_partial.klv`,
+`security_required_element_at_a_forbidden_length_is_refused.klv`,
+`security_uint16_that_the_format_cannot_carry_is_refused.klv`
+
+**SEVENTEEN parsed twins** — the seven new ones and the ten existing ones, every one of which
+gained a `security` key stating whether its packets carry item 48, because §6.5 makes that a claim
+rather than a silence:
+
+`a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.json`,
+`an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.json`,
+`length_divergence_at_a_required_length.parsed.json`, `mandatory_items_only.parsed.json`,
+`no_security_local_set_is_unlabelled_not_unclassified.parsed.json`,
+`over_recommended_max_length_is_an_advisory.parsed.json`,
+`security_classification_outside_the_enumeration_carries_no_label.parsed.json`,
+`security_local_set_complete_from_the_element_rules.parsed.json`,
+`security_local_set_minimal_required_only.parsed.json`,
+`security_local_set_partial_is_carried_as_partial.parsed.json`,
+`security_required_element_at_a_forbidden_length_is_refused.parsed.json`,
+`security_uint16_that_the_format_cannot_carry_is_refused.parsed.json`,
+`special_values_are_signals_and_not_measurements.parsed.json`,
+`two_packets_one_payload_are_two_statements.parsed.json`,
+`witnessed_set_from_the_documents_own_examples.parsed.json`,
+`zero_length_item_is_an_explicit_unknown.parsed.json`,
+`zero_length_item_on_a_required_item_is_a_defect.parsed.json`
+
+**THIRTY-FOUR goldens**, fourteen new and twenty regenerated:
+
+`a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`,
+`a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`,
+`an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`,
+`an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`,
+`length_divergence_at_a_required_length.cdm.json`,
+`length_divergence_at_a_required_length.parsed.cdm.json`, `mandatory_items_only.cdm.json`,
+`mandatory_items_only.parsed.cdm.json`,
+`no_security_local_set_is_unlabelled_not_unclassified.cdm.json`,
+`no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`,
+`over_recommended_max_length_is_an_advisory.cdm.json`,
+`over_recommended_max_length_is_an_advisory.parsed.cdm.json`,
+`security_classification_outside_the_enumeration_carries_no_label.cdm.json`,
+`security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`,
+`security_local_set_complete_from_the_element_rules.cdm.json`,
+`security_local_set_complete_from_the_element_rules.parsed.cdm.json`,
+`security_local_set_minimal_required_only.cdm.json`,
+`security_local_set_minimal_required_only.parsed.cdm.json`,
+`security_local_set_partial_is_carried_as_partial.cdm.json`,
+`security_local_set_partial_is_carried_as_partial.parsed.cdm.json`,
+`security_required_element_at_a_forbidden_length_is_refused.cdm.json`,
+`security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`,
+`security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`,
+`security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`,
+`special_values_are_signals_and_not_measurements.cdm.json`,
+`special_values_are_signals_and_not_measurements.parsed.cdm.json`,
+`two_packets_one_payload_are_two_statements.cdm.json`,
+`two_packets_one_payload_are_two_statements.parsed.cdm.json`,
+`witnessed_set_from_the_documents_own_examples.cdm.json`,
+`witnessed_set_from_the_documents_own_examples.parsed.cdm.json`,
+`zero_length_item_is_an_explicit_unknown.cdm.json`,
+`zero_length_item_is_an_explicit_unknown.parsed.cdm.json`,
+`zero_length_item_on_a_required_item_is_a_defect.cdm.json`,
+`zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`
+
+**The twenty regenerated goldens are the arc's own evidence and not noise.** Every object this
+adapter emits now carries `attributes.security_metadata_basis`, including the objects of packets
+that carry no item 48 — which is exactly what MISB ST 0102.12 §6.5 requires the output to say, so a
+golden that did NOT move would mean the §6.5 clause had not reached it.
+
+**The arc derives MINOR, so the floor is 1.5.0**, and `gates/bump_derivation.py` derived it with no
+human ruling required for the decision itself: `klv_security_codec.py` is a new importable module
+and `fixtures/klv/`'s seven payloads extend a fixture set, both on `version.py`'s MINOR list. That
+is park 5's shape rather than park 11's — the gate derives the kind by itself when the artefact has
+a public name. **`SCHEMA_VERSION` is unmoved at 1.0.0** and had to be: `Entity.attributes` is
+`additionalProperties: true`, so carrying seventeen security elements into it adds no field to any
+schema, and `python -m synapse_cdm.schemas --check --out schemas` reports CURRENT against an empty
+`schemas/` diff. **Nothing in this section is in any release**, and the version a reader who ran
+`pip install synapse-cdm` actually has is **1.4.1** — no release is made here and none is owed.
+
+**EIGHT units the gate REFUSED to classify, and all eight are modifications in place.** The gate
+names them rather than defaulting them to PATCH, which is the refusal that keeps its other two
+honest. Each is ruled below.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket` — MINOR: a `NamedTuple`
+gained a trailing field, `security`, with a default of `None`. Existing code keeps working, which
+is the MINOR row's own governing clause: the field is appended last so every positional unpack and
+every index is unchanged, and a caller that never mentions it sees the tuple it always saw. It is
+an ADDITION to a declared surface and not a modification of one — the modification is in the
+statement that fills it, ruled next.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:decode_packet` — MINOR: the function now
+decodes ST 0601 item 48 through `klv_security_codec` where it previously appended 48 to
+`unknown_tags` and carried its octets. **PATCH is refused** on its own row's terms — "a translation
+fix, a message, a docstring" — because nothing this function emitted was WRONG: parking an
+undecoded item's octets is what `ST 0107.3-04` requires of a decoder that does not know a tag, and
+the octets were carried losslessly. The change makes the function assert something it never
+asserted, which is new emitted content and not a corrected value. **MAJOR is refused** because no
+importable name is removed and no signature moves. This is the shape park 11's drafted ruling
+argues at length and the same conclusion, reached by a different item.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — MINOR: the adapter emits
+`attributes.security_metadata_basis` on every object and `attributes.security_metadata` on objects
+whose packet carried item 48, and `_agree` gained a cross-check that a fixture's stated security
+block matches what its own octets produce. Existing code keeps working — no import breaks, no
+signature moves, every object still validates at `SCHEMA_VERSION` 1.0.0 — and what moves is what
+the objects SAY. 1.2.0 is the precedent: a structured annotation added to shipped output was ruled
+"a new kind of output" rather than a fix.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:_parsed_packet` — MINOR: the parsed twin
+gained a `security` key. A private name by the leading underscore, which would ordinarily make it
+PATCH by the gate's own private-name rule — but this function's return value is written to disk as
+a `.parsed.json` fixture and read back by the harness, so its shape is a published artefact whatever
+its name's visibility. Ruled on what it produces rather than on how it is spelled.
+
+**FOUR RULINGS ON ONE INSERTION, AND SAYING SO IS THE POINT.** The four below name
+`<statement 6>` through `<statement 9>` of `synapse_cdm/adapters/stanag4609.py`. **They are four
+`from ... import ...` statements, and none of them changed.** What happened is that this round
+inserted one import — `klv_security_codec as security` — at index 6, and the gate names an
+unnamed top-level statement by its POSITION, so the four imports after it were renamed and read as
+modified. **One addition reported as four modifications.** That is a property of positional unit
+naming and not a defect in this arc: the gate refuses rather than guesses, and refusing four times
+for one cause is the cost of a naming scheme that cannot be fooled into silence. It is recorded
+here so the next round that inserts a module-level statement meets the explanation before the
+refusals.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 6>` — PATCH: an `import` statement,
+renamed by position when one import was inserted above it. No importable name of this module is
+added, removed or changed in meaning by an import's index.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 7>` — PATCH: the same, one position
+further down.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 8>` — PATCH: the same.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 9>` — PATCH: the same.
+
+**The parks arithmetic after this round: SIX closed and SEVEN open.** `gates/parks_table.py` reads
+thirteen rows, six closed — parks 1, 2, 4, 8, 9 and 13 — and seven open: parks 3, 5, 6, 7, 10, 11
+and 12. **Park 2 is the first park here closed without acquiring anything**: its document had been
+held since 2026-08-26 and what was missing was the artefact, which is the state park 2 was this
+table's own precedent FOR. The delegation count does not move either — fourteen delegations in
+scope and **nine** held, unchanged, because this round fetched nothing.
+
+#### The park 2 round, 2026-09-04 — the row set MISB ST 0102.12 supports, and a park that closed by writing rather than by obtaining
+
+**WHAT CLOSED, AND ON WHAT.** Park 2 closed on **both halves of `shared_exit_condition`**. The
+first half was discharged on 2026-08-26 and did not move: ST 0102.12 pinned by SHA-256
+`20d40b52…85eca267`, 514 842 bytes, 18 pages, title-page identity read — re-digested from the copy
+on disk at the start of this round and matching in both terms. **The second half is what this round
+wrote**: §6.7's Table 2 transcribed in full, **seventeen elements**, at `klv_pin.json`'s
+`tag_table_st_0102_12` and in `FORMAT_COVERAGE.md`'s *The ST 0102.12 Security Metadata Local Set —
+the row set nested under item 48*.
+
+**IT IS THE FIRST PARK HERE CLOSED WITHOUT ACQUIRING ANYTHING.** Parks 1, 4, 9, 13 and 8 each
+closed on bytes that arrived that day; this one closed on bytes that had been on disk for nine
+days. The park stood entirely on its unwritten artefact — which is precisely the state park 2 was
+this table's **precedent for**, cited as such by the delegated-documents row, the parks preamble,
+parks 5 and 11's rows and the *Why neither is CLOSED* row. **Closing it does not weaken the
+precedent**: it is the precedent being discharged the way it said it would be. Every citation now
+reads in the wrong tense and every one was given a **dated note rather than a rewrite**, because a
+citation rewritten to the past destroys the evidence that the state it names was real from
+2026-08-26 to 2026-09-04.
+
+**THE TRANSCRIPTION, AND WHAT MAKES IT CHECKABLE.** Seventeen rows — tags 1–14, then 22, 23 and 24
+— six `Required`, eight `Context`, three `Optional`, and the two splits are over different columns
+and agree at 17. **§6.1 carries seventeen subsections, §6.1.1 through §6.1.17, one per element and
+in the same order**; §6.8 has exactly three conversion subsections and they are exactly the three
+rows whose Data Type is `uint8`; and Table 1's Universal Set lists the same seventeen elements
+under 16-byte keys. Four statements of one table, all agreeing — which is park 1's arrangement
+reached by a second document.
+
+**AND WHAT CANNOT BE CHECKED, SAID PLAINLY.** `check_against_the_documents_own_examples` runs
+`klv_uas_codec`'s decoder over ST 0601.14a's own 26 printed Software Values and is the strongest
+check in this repository. **It has no analogue here and none was simulated.** ST 0102.12 prints no
+worked example of an element or a set anywhere in its eighteen pages — derived rather than assumed:
+every run of four or more hex pairs in the document was extracted and every one is a 16-byte
+Universal Label. Its only examples are two country codes (§6.1.2, §6.1.3) and one Tag 2 value
+(§6.9). **And ST 0601.14a §8.48's own Example KLV Item row reads `30`, `-`, `N/A`**, so neither of
+the two documents behind this row set supplies one. The transcription is checked four ways and not
+one decoded VALUE is checked against a document. That is weaker than park 1's arrangement and the
+record says so at four sites rather than leaving a reader to notice.
+
+**THE CONFIDENTIALITY RULING, IN THE OUTPUT.** A classification is **CARRIED AND NEVER INVENTED** —
+the NITS precedent, reached a second time. Three consequences a reader can check in a golden file:
+an integer outside §6.7's five listed Security Classification values is carried **with no label**
+and an advisory names the clause, because a nearest match would be inventing a marking; a malformed
+element is refused with its octets parked while the other sixteen decode; and **a packet with no
+item 48 emits no marking at all** — no `security_metadata` key, not a null classification, not an
+empty object a reader could take for an empty marking.
+
+**§6.5 IS WHAT DECIDED THE OUTPUT SHAPE, AND IT WAS READ BEFORE THE SHAPE WAS CHOSEN.** *"The
+absence of Security Metadata does not signify Motion Imagery Data as Unclassified."* So a packet
+without item 48 is **UNLABELLED**, unlabelled is not a value of a field, and what the object
+carries instead is §6.5's own sentence at `attributes.security_metadata_basis` — so a consumer
+meets the document's statement of what the absence does not mean rather than supplying one. **§6.3
+is the contrast that makes it precise**: `ST 0102.10-51` puts a VALUE on the wire for unclassified
+data, so *unclassified* and *unlabelled* are two different states.
+
+**THE TRAP THIS DOCUMENT SETS, AND IT IS THE FINDING WORTH CARRYING FORWARD.** Tags 2 and 12 are
+both a `uint8` "Country Coding Method" and **their enumerations disagree at seven of sixteen
+positions** — `0x03` is *FIPS 10-4 Two Letter* under tag 2 and *ISO-3166 Numeric* under tag 12,
+`0x0A`–`0x0C` are the three *Mixed* methods against *Omitted Value*, and the sixteenth value is
+`0x10 GENC Mixed` against `0x40 GENC AdminSub`. **The prose corroborates the tables
+independently** — §6.1.2 says GENC administrative subdivisions "are not applicable" to tag 2's
+method and §6.1.12 says tag 12's allows them — so it is a finding rather than an extraction
+artefact. A decoder sharing one enumeration would report a coding method the packet did not send,
+for seven of sixteen legal values, with no error and no clue: the plausible-looking lie this
+repository's ellipsoid audit exists for, in a new place.
+
+**WHERE THE ITEM LAYER WENT, AND THE ARGUMENT IS MECHANICAL.** Its own module,
+`adapters/klv_security_codec.py`, beside `klv_uas_codec` rather than inside it, on that module's
+own stated precedent — one item layer per document. **Every one of ST 0102.12's seventeen tags
+collides with a tag of ST 0601.14a's 141**: tag 1 is Checksum against Security Classification, tag
+2 Precision Time Stamp against the Country Coding Method, tag 22 Target Width against Version. Two
+tables cannot share one `dict[int, ...]`, and a module holding two dicts keyed on the same integers
+is one where a lookup's meaning depends on which document the reader thought they were in.
+
+**THE SCOPE CONTRACT WAS CROSSED, ONCE, WITH A GROUND.** `klv_uas_codec` covers the 26 items the
+pinned stream attests "and nothing else", because an unwitnessed item's decoder "could only ever be
+checked against a fixture written from the same reading of the same table". **Item 48 is not in the
+pinned stream.** What admits it is that its decoder is checked against a **second document**: ST
+0601.14a §8.48 prints `KLV Key 06.0E.2B.34.02.03.01.01.0E.01.03.03.02.00.00.00 (CRC 40980)` and ST
+0102.12 §6.7 registers the Security Metadata Local Set under the same sixteen octets and the same
+CRC — two documents, obtained on different days by different routes, in agreement. **No other
+unwitnessed ST 0601 item has a second document behind it**, so the admission is one tag wide and
+cannot grow without another one arriving. `WITNESSED_TAGS` is unchanged at 26; the crossing lives in
+a separate `NESTED_SETS` table so that it has to be declared to be counted, and the suite's
+tag-by-tag partition guard rules it explicitly rather than being widened.
+
+**KLV 7 IS NARROWED, STAYS REGISTERED, AND IS NOW SHOWN TO BE INERT.** The register entry is that
+MISP-2019.1 §4.4.2.9 says "Motion Imagery Data" where `MISP-2015.1-73` says "Motion Imagery", and
+Appendix E defines the two differently. **ST 0102.12 settles what the delegated document means**:
+its §1 Scope, its §3 definition and every live marking requirement in it — `-55`, `-03`, `-04`,
+`-05`, `-23`, `-54` — take the wider term, and the one requirement that named a narrower carrier
+(`-01`, MPEG-2 transport streams) is deprecated by this edition. **It does not settle the register
+entry**, because the question is about two sentences of MISP-2019.1 and a third document cannot
+adjudicate them — that would be the move KLV 11 refused when a majority of reference lists named
+one ST 336 edition. **What is new is that the question is INERT for the output**: §6.5 makes this
+adapter's behaviour identical under both readings, so KLV 7 bounds a conformance claim about
+somebody else's producer and bounds nothing this repository emits. That is why park 2 could close
+over it.
+
+**ONE ROW OF THE SEVENTEEN IS `not yet`, AND THE REASON IS A DOCUMENT.** Tag 13 Object Country
+Codes declares Data Type `RFC 2781 [26] [27]` — UTF-16, where every other text element here is
+ISO/IEC 646. **RFC 2781 is not held.** Decoding UTF-16 needs a byte order and guessing one would be
+a rule read off a reference rather than off a document, so the octets are carried verbatim and no
+string is produced. The same ruling covers GENC, the GEC register, ISO 3166 and STANAG 1059: **the
+codec carries a code as the element's Data Type cell says and does not validate it against a list
+it cannot read** — the shape of `klv_codec`'s refusal to enforce X.690's 126-octet ceiling from an
+informative annex.
+
+**THE FIXTURES ARE BUILT FROM CLAUSES AND CARRY NO REAL-WORLD MARKING.** Seven of them, each citing
+the clause it exercises: a complete set of all seventeen elements, a minimal set of the six
+`Required` ones, a partial set (§6.4), a packet with no item 48 (§6.5), a classification outside the
+enumeration, and two refusals — a `Required` element at a forbidden length and a `uint16` one octet
+short. Two kinds of value appear and are kept apart: **codes the held document itself prints**
+(`0x01` UNCLASSIFIED//, `0x0C` STANAG 1059 Mixed from §6.9's own worked Tag 2 value, `//CZE` and
+`//GB` from §6.1.3, `0x000C` for this document's own version) and **clearly synthetic strings**,
+every one beginning `SYNTHETIC`, with `ZZZ` where a second country code is needed. **Not one caveat,
+compartment, handling instruction or releasability marking used in the real world appears in any
+fixture.** The `uint16` refusal fixture uses `0x0C` deliberately: zero-extending it would produce
+`0x000C`, the RIGHT version for this document, from octets that do not state it — the most
+dangerous near-miss available, and the one worth a fixture.
+
+**A DATED CORRECTION, AND THE ORIGINAL WORDS ARE KEPT.**
+`reconciliation_ruling.ruling_st_0102.and_it_cannot_be_written_alone_anyway` said of parks 4, 5 and
+8 that "None of those three is held". **Parks 4 and 8 are held and closed** — 2026-08-26 and
+2026-09-03 — and **park 5's documents are held too**, so the sentence was false of all three by the
+time it was read this round. **And park 5 was never on this document's path at all**: not one of ST
+0102.12's seventeen elements is a scaled numeric value, and `IMAPB` does not occur in the document.
+The correction sits **immediately after the field it qualifies** rather than at the end of the node,
+because a reader reaches the end of a node and a `grep` does not. What the clause got right is kept:
+"real progress on identity and not yet progress on capability" was exactly true for nine days, and
+it stopped being true by the route it named — parks 4 and 8 closed first, and the security set
+became readable the moment its framing was.
+
+**AND A STALE COUNT MOVED WITH ITS DATE.** `FORMAT_COVERAGE.md` read **Eight** of the fourteen
+delegated documents obtained; `klv_pin.json` has read **NINE** since 2026-09-03, when park 8's
+`delegation_table` entry moved from `held: false` to `held: true`. The two sites disagreed by one
+for a day and the pin was right. The derived figure — fourteen in scope, five unobtained on parks 3,
+6, 7, 10 and 12, leaving nine — is now at both. **The scope figure does not move and never did:
+acquiring a document changes whether a delegation is HELD, never how many the profile makes.**
+
+**WHAT THIS ROUND DID NOT DO.** No acquisition of any kind: no fetch, no CDX query, no control
+re-fetch, no DNS probe. **No pin added** — `gates/pin_paths.py` reads 23 copies, unchanged. **No
+schema change**: `SCHEMA_VERSION` is unmoved at 1.0.0 and `python -m synapse_cdm.schemas --check`
+reports CURRENT against an empty `schemas/` diff, because `Entity.attributes` is
+`additionalProperties: true`. **No release**: `version.py`, `RELEASE_NOTES.md` and `PUBLICATION.md`
+are byte-identical and no tag was created. **No other park moved** and no other row: 114 of the 141
+ST 0601 rows still read `not yet`, and item 48 is the only one that left that set.
+
 ### 1.4.1 — 2026-09-04 — one refusal gains a document, and the park that priced itself as a purchase closes
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as it has been at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

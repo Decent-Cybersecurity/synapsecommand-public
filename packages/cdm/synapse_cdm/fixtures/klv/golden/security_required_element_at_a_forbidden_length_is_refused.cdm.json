@@ -1,0 +1,381 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and here it is barely a decision: ST 0601.14a carries no item stating an allegiance at all. A UAS Datalink LS describes one's own aircraft to one's own ground station, which is a context in which the question does not arise on the wire \u2014 and inferring FRIENDLY from that context would be this adapter reasoning about who deployed the sensor",
+      "entity_type_basis": "PLATFORM, from the standard's own subject rather than from any item. \u00a71: 'MISB ST 0601 defines the Unmanned Air System (UAS) Datalink Local Set (LS) for UAS platforms. The UAS Datalink LS is typically produced on-board a UAS airborne platform'. Tag 10 Platform Designation is the item that would say WHICH platform and it is not in the witnessed set, so the type is the format's and the model is nobody's \u2014 the CAT034 reading, where the object's type is a property of the format",
+      "identity_basis": "uuid5 over (UAS-LS-PACKET, '1224807209913000|0') \u2014 the Precision Time Stamp and the packet's index in its payload. PACKET-SCOPED, and it claims exactly that: THIS OBSERVATION. Nothing in the witnessed set identifies anything \u2014 tag 3 Mission ID, tag 4 Platform Tail Number, tag 10 Platform Designation, tag 59 Platform Call Sign and tag 94's MIIS Core Identifier are the five items that would, and the pinned stream carries none of them. Tag 11 Image Source Sensor is the one witnessed item that looks like a name and it is disqualified BY THE BYTES: it reads 'EON' in five of the six packets and 'IR' in the sixth, so keying on it would split one aircraft into two entities inside a three-minute clip. WHAT THIS COSTS, stated rather than hidden: consecutive packets from one platform get DIFFERENT entity_id values, so the continuity a real feed has is continuity the CDM cannot express from this format. Park 11 \u2014 MISB ST 1204.1, the MIIS Core Identifier \u2014 is what closes it, and reading the stream turned that park from a prediction into a measurement",
+      "integrity_basis": {
+        "checksum_item": "tag 1 Checksum",
+        "computed": 1977,
+        "range": "ST 0601.14a \u00a76.6 and \u00a78.1: 'Performed on entire LS packet, including 16-byte US key and 1-byte checksum length' \u2014 so the summation runs from the first octet of the Universal Label up to and including tag 1's own length octet, and the two octets of the stored value are outside it. Computed by klv_codec.bcc_16, which is a transcription of the C the document prints in \u00a78.1.1.1 and is checked against the eight-octet worked vector in \u00a78.1.1.2",
+        "stored": 1977,
+        "valid": true,
+        "what_this_is_NOT": "the four sibling ASTERIX adapters and the GMTIF one all had to record that their format defines no checksum at any level. This one does, `ST 0601.14-32` makes it mandatory in every packet, and a validating 16-bit summation over the whole packet is a materially stronger gate than a structural parse \u2014 it is what ruled out corruption as an explanation for the length divergence at tag 22",
+        "why_a_failure_is_not_a_refusal": "a packet whose checksum does not validate is TRANSLATED and flagged. The stored checksum is one item among 26, and discarding 25 items that each satisfied their own Required Length because a 16-bit sum disagrees would destroy the evidence a consumer needs to decide what happened \u2014 the same reasoning that makes the length policy skip an ITEM rather than a packet. `valid: false` on an object is a statement, and a missing object is not"
+      },
+      "kinematics_basis": {
+        "climb_mps": "None on every object. Tag 51 Platform Vertical Speed is the item and it is not in the witnessed set; deriving a climb rate from two packets' altitudes would be differentiating across records, which is the accumulation this adapter refuses",
+        "course_deg": "None on EVERY object, and tag 5 is the temptation. Tag 5 is the Platform HEADING Angle \u2014 \u00a78.5, 'the angle between longitudinal axis (line made by the fuselage) and true north' \u2014 and Kinematics.course_deg is documented as a COURSE, which is the direction of travel. On an aircraft in wind those differ by the drift angle, and the standard itself keeps them apart: tag 112 is the Platform Course Angle and it is NOT in the witnessed set. So the heading parks at attributes.platform_heading_deg and course_deg stays None. The AIS heading/course distinction, reached by an airborne format",
+        "speed_basis": "\u00a78.56, 'Speed projected to the ground of an airborne platform passing overhead', Units Meters/Second, KLV format uint8 over 0..255 with the Software format also uint8 \u2014 so the document's own formula is the identity `KLV = Soft` and there is no conversion to get wrong. A speed over GROUND, which is what Kinematics.speed_mps documents itself as, so this is the one kinematic figure in the witnessed set that lands without an argument",
+        "speed_item": null
+      },
+      "klv_item_octets": {
+        "1": "07b9",
+        "2": "000459f4a6aa4aa8",
+        "48": "0102010002010103042f2f47420c01010d04004700421602000c",
+        "65": "0d"
+      },
+      "klv_items": {
+        "1": {
+          "klv_format": "uint16",
+          "name": "Checksum",
+          "octets": "07b9",
+          "section": "ST 0601.14a \u00a78.1",
+          "units": "None",
+          "value": 1977
+        },
+        "2": {
+          "klv_format": "uint64",
+          "name": "Precision Time Stamp",
+          "octets": "000459f4a6aa4aa8",
+          "section": "ST 0601.14a \u00a78.2",
+          "units": "Micro-seconds (\u00b5s)",
+          "value": 1224807209913000
+        },
+        "65": {
+          "klv_format": "uint8",
+          "name": "UAS Datalink LS Version Number",
+          "octets": "0d",
+          "section": "ST 0601.14a \u00a78.65",
+          "units": "Number (None)",
+          "value": 13
+        }
+      },
+      "klv_packet": {
+        "index": 0,
+        "item_count": 4,
+        "offset": 0,
+        "universal_label": "060e2b34020b01010e01030101000000",
+        "universal_label_crc": 56773,
+        "value_length": 45,
+        "value_length_octets": "2d"
+      },
+      "klv_payload": {
+        "octets": 62,
+        "packet_count": 1
+      },
+      "klv_tag_order": [
+        2,
+        48,
+        65,
+        1
+      ],
+      "klv_unknown_items": {},
+      "klv_unknown_tags": [],
+      "length_divergence_policy": {
+        "advisories": [],
+        "defects": [],
+        "policy": "skip_the_item_and_record_a_structured_defect_annotation",
+        "stated_on_every_object": "the policy rides on every object and not only on the ones that tripped it, because a consumer needs to know that a clean object is clean UNDER A RULE and not merely unflagged"
+      },
+      "position_basis": {
+        "accuracy_m": "None on every object. ST 0601.14a carries CE90/LE90 error estimates at tags 45 and 46 and a Standard Deviation Cross Correlation pack at tag 102, and none of the three is in the witnessed set. The item's stated Resolution \u2014 '~42 nano degrees' for tag 13 \u2014 is a QUANTISATION STEP and not an accuracy, and writing it here would claim the platform knows where it is to within millimetres. The CAT034 quantisation note, reached a second time",
+        "alt_m": "None on EVERY object, and this is a decline rather than an absence. Tag 15 Sensor True Altitude is witnessed and is measured 'from Mean Sea Level (MSL)' (\u00a78.15), while Position.alt_m is documented as 'Metres HAE' \u2014 so the one altitude in the witnessed set cannot fill the one altitude field. \u00a78.15 itself points at the twin: 'For improved modeling accuracy use Sensor Ellipsoid Height (Tag 75) or Sensor Ellipsoid Height Extended (Tag 104)', and `ST 0601.8-17` settles the collision in the same direction \u2014 a decoder that understands HAE 'shall use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist'. Neither 75 nor 104 is witnessed. The MSL figure is parked at attributes.sensor_true_altitude_msl_m, converting nothing: a geoid separation is a model this repository does not hold",
+        "datum": "WGS 84, and the packet says so about itself: tag 12 Image Coordinate System carries the name of the datum every geographic angle in the Local Set is expressed in \u2014 \u00a78.12.1 lists the items it governs, 13 and 14 among them \u2014 and \u00a78.13's own bullet says 'Based on WGS84 ellipsoid'. Two statements, one datum, and the CDM's Position is WGS 84 as well, so there is no transform here at all",
+        "lat_item": null,
+        "lon_item": null,
+        "reason": "no Position is emitted: a Position needs both angles and this packet does not carry both as measurements. A Position holding a zero for the missing half is a real point in the Gulf of Guinea",
+        "what_this_position_IS": "the SENSOR's location, on an entity whose type is PLATFORM, and the document is what licenses the join: \u00a78.13.1, 'In a realized system, this item accounts for the lever arm distance between a platform's GPS antenna (or known central platform position) to a sensor's general location (like the center of a gimbaled sensor).' So it is the platform's position adjusted by a lever arm on the same airframe, not a second object's fix. Tag 67 Alternate Platform Latitude is the item that would state a platform position separately and it is NOT in the witnessed set \u2014 so this is named rather than smoothed over: to within one airframe's dimensions, this IS where the platform is, and the residue is a distance the document declines to state"
+      },
+      "precision_time_stamp_us": 1224807209913000,
+      "security_metadata": {
+        "_element_order": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "_local_set_key": "060e2b34020301010e01030302000000",
+        "_local_set_key_basis": "\u00a76.7's registered key, stated here as the set's IDENTITY. It is NOT an octet this packet carried: inside ST 0601 item 48 the key is not on the wire, because \u00a78.48 makes the item's own length 'the size of all MISB ST 0102 metadata items'. ST 0601.14a \u00a78.48 prints the same sixteen octets and the same CRC 40980, which is the two-document agreement item 48's reading rests on",
+        "_local_set_key_crc": 40980,
+        "classifying_country": {
+          "length_octets": 4,
+          "octets": "2f2f4742",
+          "presence": "Required",
+          "section": "ST 0102.12 \u00a76.1.3",
+          "tag": 3,
+          "value": "//GB"
+        },
+        "classifying_country_and_releasing_instructions_country_coding_method": {
+          "label": "ISO-3166 Two Letter",
+          "label_basis": "\u00a76.8 Conversion of Security Metadata Elements between Universal and Local Sets: 'For bandwidth efficiency, some elements in the Local Set are formatted differently than the Universal Set equivalent. This section provides conversion information for the differing items.' \u00a76.8.1 Security Classification, \u00a76.8.2 Classifying Country and Releasing Instructions Country Code and \u00a76.8.3 Object Country Coding Method each state the same pair: 'From Universal Set to Local Set: Convert string to corresponding unsigned integer. From Local Set to Universal Set: Convert unsigned integer to corresponding uppercase string.' THREE SUBSECTIONS FOR THREE ELEMENTS, and they are exactly tags 1, 2 and 12 \u2014 the three rows whose Local Set Data Type is uint8. That is where this module's labels come from, and it is why producing one is CARRYING a string the document states rather than naming a number",
+          "length_octets": 1,
+          "octets": "01",
+          "presence": "Required",
+          "section": "ST 0102.12 \u00a76.1.2",
+          "tag": 2,
+          "value": 1
+        },
+        "object_country_codes": {
+          "length_octets": 4,
+          "octets": "00470042",
+          "presence": "Required",
+          "section": "ST 0102.12 \u00a76.1.13",
+          "tag": 13,
+          "value": "00470042",
+          "value_is_octets_not_text": "TAG 13 ONLY. The Data Type cell reads `RFC 2781 [26] [27]`, reference [26] being 'IETF RFC 2781 UTF-16, and encoding of ISO 10646, Feb 2000'. **RFC 2781 IS NOT HELD BY THIS REPOSITORY**, so the octets are CARRIED VERBATIM and no string is produced: decoding UTF-16 requires a byte order, a byte order is what RFC 2781 states, and guessing one would be a rule read off a reference rather than off a document. This is the one element of the seventeen whose row is `not yet`, and the reason is an unheld document rather than unwritten code"
+        },
+        "object_country_coding_method": {
+          "label": "ISO-3166 Two Letter",
+          "label_basis": "\u00a76.8 Conversion of Security Metadata Elements between Universal and Local Sets: 'For bandwidth efficiency, some elements in the Local Set are formatted differently than the Universal Set equivalent. This section provides conversion information for the differing items.' \u00a76.8.1 Security Classification, \u00a76.8.2 Classifying Country and Releasing Instructions Country Code and \u00a76.8.3 Object Country Coding Method each state the same pair: 'From Universal Set to Local Set: Convert string to corresponding unsigned integer. From Local Set to Universal Set: Convert unsigned integer to corresponding uppercase string.' THREE SUBSECTIONS FOR THREE ELEMENTS, and they are exactly tags 1, 2 and 12 \u2014 the three rows whose Local Set Data Type is uint8. That is where this module's labels come from, and it is why producing one is CARRYING a string the document states rather than naming a number",
+          "length_octets": 1,
+          "octets": "01",
+          "presence": "Required",
+          "section": "ST 0102.12 \u00a76.1.12",
+          "tag": 12,
+          "value": 1
+        },
+        "version": {
+          "length_octets": 2,
+          "octets": "000c",
+          "presence": "Required",
+          "section": "ST 0102.12 \u00a76.1.15",
+          "tag": 22,
+          "value": 12
+        }
+      },
+      "security_metadata_basis": {
+        "absence_clause_still_applies": "\u00a76.5 governs the ELEMENTS this set does not carry as well as the sets a packet does not carry: an absent Security Classification inside a present set is unlabelled and not unclassified, for the same reason and by the same sentence",
+        "advisories": [],
+        "carried_in": "ST 0601 item 48, Security Local Set",
+        "carrier_basis": "ST 0601.14a \u00a78.48 Tag 48 Security Local Set, Description 'MISB ST 0102 local let Security Metadata items' (the document's own typo for 'local set', preserved), Format 'KLV set', Length 'Variable', Max Length 'Not Limited', Required in LS? 'Optional'. Its two bullets: 'Use the MISB ST 0102 Local Set tags within the MISB ST 0601 item 48' and 'The length field is the size of all MISB ST 0102 metadata items to be packaged within item 48'. Its \u00a78.48.1 Details: 'MISB ST 0102 [14] allows for the use of either Universal Set or Local Set methods. However, to minimize bandwidth when incorporating MISB ST 0102 into an instance of the UAS Datalink LS, the Local Set method is required.' And `ST 0601.14-31`: 'When incorporating the ST 0102 Security Metadata set into an instance of the UAS Datalink Local Set, the ST 0102 format shall use the Local Set format.' \u00a78.48's Example KLV Item row prints Tag 30 (hex for 48), a Len of '-' and a Value of 'N/A' \u2014 SO THE DELEGATING DOCUMENT PRINTS NO WORKED EXAMPLE EITHER, and neither of the two documents behind this codec supplies one",
+        "confidentiality_ruling": "CARRIED AND NEVER INVENTED. Every value below is an octet the packet sent, decoded by a rule this repository can cite in a held document, or it is absent. No marking is defaulted, inferred from context, completed from a partial set, or converted to a nearest listed value. Where the CDM has no field for a security element it goes into Entity.attributes AS THE DOCUMENT NAMES IT \u2014 which is why the keys below are ST 0102.12's element names and not a CDM vocabulary",
+        "element_layer": "MISB ST 0102.12, SHA-256 20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267, fixtures/klv/spec/ST0102.12.pdf",
+        "element_refusal_policy": "THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
+        "external_code_lists": "GENC (NGA.STND.0033_3.0.1, ref [6]), the GEC register (ref [8]), ISO 3166-1 and -2:2013 (refs [15] [16]), STANAG 1059 Ed 8 (ref [17]) and IETF RFC 2781 (ref [26]) are the code lists and encodings ST 0102.12's country elements are written against. **NONE IS HELD BY THIS REPOSITORY.** THE RULING: this codec CARRIES a country code as the element's own Data Type cell says to carry it and DOES NOT VALIDATE it against a list it cannot read. A decoder that rejected '//XX' because no held file lists XX would be refusing a value on the authority of a document nobody here has opened; one that accepted it while claiming conformance would be worse. So the code is carried verbatim, the coding METHOD the packet declared is carried beside it, and what the code denotes is the consumer's lookup. This is a RULING and not an omission \u2014 the same shape as klv_codec's refusal to enforce X.690's 126-octet ceiling from an informative annex quoting an unheld standard",
+        "partial_sets": "\u00a76.4 Partial Security Metadata Universal and Local Sets: 'For some operational situations or applications not all metadata elements in Section 6.1 may be required. The originator and his cognizant Security official are responsible to ensure all appropriate security entries are populated.' SO A SET MISSING A `Required` ELEMENT IS NOT MALFORMED. The Table 2 column reading Required states the element's status in a COMPLETE set, and \u00a76.4 says which sets must be complete is decided outside this document by a person. A decoder that refused a partial set would be enforcing a rule ST 0102.12 explicitly declines to state \u2014 so a partial set decodes, and which elements arrived is reported rather than judged",
+        "refusals": [
+          {
+            "class": "format_cannot_carry_the_octets",
+            "clause": "\u00a76.7's Table 2 states a Length (Bytes) of '1' for tag 1 Security Classification, Data Type 'uint8', and this element carries 2. THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
+            "name": "Security Classification",
+            "observed_length": 2,
+            "octets": "0100",
+            "presence": "Required",
+            "section": "ST 0102.12 \u00a76.1.1",
+            "stated_length": "1",
+            "tag": 1,
+            "tag_offset": 29,
+            "value_offset": 31
+          }
+        ],
+        "repetition_rate": "\u00a76.2 Security Metadata Repetition Rate. `ST 0102.10-49`: 'A Security Metadata set shall be repeated / updated whenever classification, special handling instructions, releasability, or other mandatory fields change value.' `ST 0102.10-50`: 'Security Metadata Sets shall be repeated no less than every thirty (30) seconds.' Followed by: 'Applications producing short Motion Imagery Data clips or segments of a few seconds in duration may need to repeat Security Metadata Sets as often as every frame.' BOTH ARE OBLIGATIONS ON A PRODUCER ACROSS PACKETS. This adapter states in its own docstring that no state crosses a packet boundary, so it neither checks nor enforces them and says so rather than implying compliance",
+        "required_absent": [
+          1
+        ],
+        "required_present": [
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "st_336_conformance": "`ST 0102.12-65`: 'The Security Metadata Universal Set shall conform to SMPTE ST 336 KLV encoding rules.' `ST 0102.12-66`: 'The Security Metadata Local Set shall conform to SMPTE ST 336 [3] KLV encoding rules.' Reference [3] is 'SMPTE ST 336:2007', a DIFFERENT edition from the ST 336:2017 MISP-2019.1 pins \u2014 register entry KLV 11. **RESOLVED 2026-09-03, SHAPE (a), AND CITED HERE RATHER THAN RE-ARGUED:** both editions are held and were read against each other clause by clause, and the two differences that reach a key form, a length octet or a UL structure reach no octet a conforming stream can carry. So this module's use of `klv_codec` \u2014 which is written against ST 336:2017 and ST 0107.3 \u2014 satisfies -66 as well",
+        "state": "PARTIAL \u2014 the set is present and does not carry every element \u00a76.7 marks Required"
+      },
+      "source_extras": {
+        "advisories": [],
+        "at": 0,
+        "checksum": {
+          "computed": 1977,
+          "stored": 1977,
+          "valid": true
+        },
+        "defects": [],
+        "security": {
+          "advisories": [],
+          "element_octets": {
+            "1": "0100",
+            "12": "01",
+            "13": "00470042",
+            "2": "01",
+            "22": "000c",
+            "3": "2f2f4742"
+          },
+          "element_order": [
+            1,
+            2,
+            3,
+            12,
+            13,
+            22
+          ],
+          "partial": true,
+          "refusals": [
+            {
+              "class": "format_cannot_carry_the_octets",
+              "clause": "\u00a76.7's Table 2 states a Length (Bytes) of '1' for tag 1 Security Classification, Data Type 'uint8', and this element carries 2. THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
+              "name": "Security Classification",
+              "observed_length": 2,
+              "octets": "0100",
+              "presence": "Required",
+              "section": "ST 0102.12 \u00a76.1.1",
+              "stated_length": "1",
+              "tag": 1,
+              "tag_offset": 29,
+              "value_offset": 31
+            }
+          ],
+          "required_absent": [
+            1
+          ],
+          "required_present": [
+            2,
+            3,
+            12,
+            13,
+            22
+          ],
+          "unlisted_tags": []
+        },
+        "unknown_tags": [],
+        "value_length": 45
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every STANAG 4609 platform is an UNKNOWN glyph. ST 0601.14a carries no symbology of any kind; tag 63 Sensor Field of View Name is the nearest thing to a rendering hint and it names a lens, not an icon",
+      "time_basis": {
+        "epoch": "1970-01-01T00:00:00Z, read from ST 0601.14a \u00a78.2.1: 'This item represents time as the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z) using an unsigned eight (8) byte integer.' The epoch is in a HELD document, which is why this field is filled at all \u2014 the profile MISP-2019.1 states none",
+        "item": "tag 2 Precision Time Stamp",
+        "precision": "the stamp is microseconds and times.render emits milliseconds, so the serialised timestamp is this instant truncated to a millisecond. The exact integer is at attributes.precision_time_stamp_us \u2014 the CAT021 treatment of its own high-precision items, where the mismatch is named as a mismatch and not as a defect",
+        "raw_microseconds": 1224807209913000,
+        "received_at": "the injected clock, never the wall clock. FORMAT_COVERAGE.md called this seam 'NAMED AND NOT BUILT' for two rounds because closing park 4 created no adapter to hang it on",
+        "timescale": "NOT UTC, on the document's own statement: \u00a78.2.1, 'The Precision Time Stamp does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.' A count of seconds since 1970 that excludes leap seconds is POSIX time, which is what EDITION 1 calls it in its own Table 1 note \u2014 'Derived from the POSIX IEEE 1003.1 standard' \u2014 and this adapter converts by the POSIX rule because it is the only conversion either held document describes and Event.observed_at is required. The residue is an ambiguity at a leap-second boundary and it is NOT resolved here: park 3, MISB ST 0603.5, owns the normative definition of the MISP Time System and of what to CALL this scale"
+      },
+      "uas_ls_version_number": {
+        "basis": "\u00a78.65: '1..255 corresponds to document revisions MISB ST 0601.1 thru MISB ST 0601.255'. Carried and NOT trusted as provenance, and register entry KLV 15 is why: there is no MISB ST 0601.1 \u2014 edition 1 was published as MISB EG 0601.1, an Engineering Guideline, and the standard has renamed its own history. Edition 1's own \u00a77.65.1 adds that the item 'is not required in every packet of metadata', so at the edition a value of 1 declares, the stamp was OPTIONAL; `ST 0601.8-12` made it mandatory",
+        "value": 13
+      },
+      "unavailable_fields": [
+        "Kinematics (tag 56 absent or zero-length)",
+        "Position (tag 13 and/or tag 14 absent or reserved \u2014 an absent Position is the honest statement, never a Position holding zeros)"
+      ]
+    },
+    "confidence": null,
+    "entity_id": "97a501bb-20a1-53b3-9ba7-1a697784bd42",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0",
+        "system": "UAS-LS-PACKET"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2008-10-24T00:13:29.913Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ebf58298-a59c-500b-8df0-71c7f02ddc78",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2008-10-24T00:13:29.913Z",
+    "payload": {
+      "frame_centre": {
+        "basis": "the point Event.geometry is built from, carried in full because the geometry is 2-D and the elevation is MSL",
+        "elevation_msl_m": null,
+        "lat": null,
+        "lon": null
+      },
+      "geometry_basis": {
+        "elevation": "2-D, [lon, lat], and the third element is deliberately absent. Tag 25 Frame Center Elevation is witnessed and is 'Terrain elevation at frame center relative to Mean Sea Level (MSL)' \u2014 the same MSL-against-HAE decline Position.alt_m carries, in a field that would not even be labelled. Parked at payload.frame_centre.elevation_msl_m",
+        "items": [
+          "tag 23 Frame Center Latitude",
+          "tag 24 Frame Center Longitude"
+        ],
+        "reason": "no geometry: tag 23 and/or 24 is absent or carries the '0x80000000 = \"N/A (Off-Earth)\"' signal \u00a78.23 declares, which is the document saying the frame centre is not on the earth's surface. A Point built over that signal would be a position at the south pole",
+        "why_frame_centre_and_not_target_location": "tags 40 and 41 carry the Target Location and \u00a78.40 makes them CONDITIONAL on their own face \u2014 'This is the crosshair location if different from frame center' \u2014 while the frame centre is stated unconditionally as the geometric centre of the imagery this packet's metadata describes. Choosing between them per packet, on whether they happen to differ, would be this adapter deciding which point the operator meant. So the frame centre is the geometry and the target location is carried in the payload beside it, both verbatim, neither reconciled. In the pinned stream they are BYTE-IDENTICAL at all six sites, which is the emitter reporting them as not different \u2014 and is exactly the case where a merge would look free and would still be a merge"
+      },
+      "integrity": {
+        "checksum_computed": 1977,
+        "checksum_stored": 1977,
+        "checksum_valid": true
+      },
+      "klv_advisories": [],
+      "klv_defects": [],
+      "klv_item_count": 4,
+      "packet_count": 1,
+      "packet_index": 0,
+      "payload_octets": 62,
+      "platform_attitude": {
+        "basis": "the platform half. Heading is NOT course \u2014 see attributes.kinematics_basis \u2014 and pitch and roll reach no CDM field because the CDM models a contact's motion and not an airframe's attitude. All three carry the '~610 micro degrees' class of stated resolution and all three are within their items' stated Min/Max",
+        "ground_speed_mps": null,
+        "heading_deg": null,
+        "pitch_deg": null,
+        "roll_deg": null
+      },
+      "sensor": {
+        "active_sensor_name": null,
+        "basis": "the sensor half of the witnessed set, parked whole. The three relative angles are the gimbal's orientation with respect to the airframe and the CDM has no field for a sensor's pointing at all; deriving where the sensor is LOOKING from them plus the platform attitude at tags 5/6/7 would be a photogrammetric computation the standard itself delegates \u2014 \u00a78.13.1 recommends 'the use of Photogrammetric metadata sets (i.e. MISB ST 0801)' for exactly this, and ST 0801.6 is not held",
+        "ground_range_m": null,
+        "horizontal_field_of_view_deg": null,
+        "image_coordinate_system": null,
+        "relative_azimuth_deg": null,
+        "relative_elevation_deg": null,
+        "relative_roll_deg": null,
+        "slant_range_m": null,
+        "true_altitude_msl_m": null,
+        "vertical_field_of_view_deg": null
+      },
+      "target_location": {
+        "basis": "\u00a78.40/\u00a78.41/\u00a78.42, 'This is the crosshair location if different from frame center'. Carried beside the frame centre and NEVER reconciled with it, not even where the two are byte-identical \u2014 which they are at all six sites of the pinned stream. Choosing between two stated points is a decision, and a decision made inside a translator is one nobody can find later",
+        "elevation_msl_m": null,
+        "lat": null,
+        "lon": null
+      },
+      "target_width_m": {
+        "basis": "tag 22 Target Width. In the PINNED stream this item is the length-divergence defect and this field is therefore null there, with the octets at attributes.klv_item_octets['22'] and the ruling at attributes.length_divergence_policy \u2014 see FORMAT_COVERAGE.md, 'Park 13 adjudicated and CLOSED'. In a conformant packet it is a width in metres",
+        "value": null
+      },
+      "time_basis": {
+        "epoch": "1970-01-01T00:00:00Z, read from ST 0601.14a \u00a78.2.1: 'This item represents time as the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z) using an unsigned eight (8) byte integer.' The epoch is in a HELD document, which is why this field is filled at all \u2014 the profile MISP-2019.1 states none",
+        "item": "tag 2 Precision Time Stamp",
+        "precision": "the stamp is microseconds and times.render emits milliseconds, so the serialised timestamp is this instant truncated to a millisecond. The exact integer is at attributes.precision_time_stamp_us \u2014 the CAT021 treatment of its own high-precision items, where the mismatch is named as a mismatch and not as a defect",
+        "raw_microseconds": 1224807209913000,
+        "received_at": "the injected clock, never the wall clock. FORMAT_COVERAGE.md called this seam 'NAMED AND NOT BUILT' for two rounds because closing park 4 created no adapter to hang it on",
+        "timescale": "NOT UTC, on the document's own statement: \u00a78.2.1, 'The Precision Time Stamp does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.' A count of seconds since 1970 that excludes leap seconds is POSIX time, which is what EDITION 1 calls it in its own Table 1 note \u2014 'Derived from the POSIX IEEE 1003.1 standard' \u2014 and this adapter converts by the POSIX rule because it is the only conversion either held document describes and Event.observed_at is required. The residue is an ambiguity at a leap-second boundary and it is NOT resolved here: park 3, MISB ST 0603.5, owns the normative definition of the MISP Time System and of what to CALL this scale"
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "97a501bb-20a1-53b3-9ba7-1a697784bd42"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0",
+        "system": "UAS-LS-PACKET"
+      }
+    ]
+  }
+]

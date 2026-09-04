@@ -3145,8 +3145,39 @@ KLV_HELD_NOT_PINNED = {
     # corroborated from inside its own 98 pages and §3's "15 May 2007" is the typo. Nothing is
     # read against RP 0102.5; this repository does not hold it and the profile does not pin it.
     # The delegation the gate protects is untouched: the profile pins ST 0102.12.
-    "MISB ST 0102": {"5": "MISB RP 0102.5, Security Metadata Universal and Local Sets"},
+    #
+    # TWO MORE, ADDED 2026-09-04 BY THE PARK 2 ROUND, when ST 0102.12's own row set landed and put
+    # two further 0102 revision strings in the section. Neither is drift and neither is a text any
+    # row is read against; each names the one sentence that admits it, the way every entry above
+    # does. The profile still pins ST 0102.12 and that row is untouched.
+    #
+    # `.10` IS PART OF A QUOTATION, which is the `0601.0`/`0601.255` kind one series over. §6.7's
+    # Allowed Values cell for tag 22 Version states the rule by example — "Value is version number
+    # of this document; e. g. for ST 0102.10, this value is 0x000A" — and the row set quotes it,
+    # because that sentence is the whole derivation of why this document's own value is `0x000C`.
+    # The admitting phrase is the quotation itself, which is the narrowest form available. NOTE the
+    # requirement IDs `ST 0102.10-02` through `-62` do NOT reach this gate at all: the `(?![\d-])`
+    # lookahead above excludes them, and the row set cites thirty-eight of them.
+    #
+    # `.11` IS A SIXTH KIND — A REVISION NAMED AS AN ABSENCE. Tags 15 through 21 are missing from
+    # §6.7's Table 2, the revision history names four deleted KEYS against seven missing TAG
+    # NUMBERS and never prints a tag number, and MISB ST 0102.11 is the document that would settle
+    # which numbers those keys held. It is not held, it is not a delegation the profile makes, and
+    # no park stands on it. So the section names it precisely to say that the question stops there
+    # — the opposite of a claim that anything is read against it — and the admitting phrase is the
+    # clause that says it is not held. A gate that refused this would be a gate forbidding the
+    # record to name the document whose absence bounds a finding.
+    "MISB ST 0102": {
+        "5": "MISB RP 0102.5, Security Metadata Universal and Local Sets",
+        "10": "for ST 0102.10, this value is 0x000A",
+        "11": "MISB ST 0102.11 — which would settle it — is not held",
+    },
 }
+
+#: The nested ST 0102.12 row set's own subsection heading. Named as a constant beside the
+#: delegation roster because two tests now have to tell the two tag tables in this section
+#: apart, and a literal repeated at two sites is a literal that drifts at one of them.
+KLV_ST_0102_HEADING = "### The ST 0102.12 Security Metadata Local Set"
 
 KLV_DELEGATION = (
     ("SMPTE ST 336", "ST 336:2017", "MISP-2015.1-07"),
@@ -3204,25 +3235,68 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     from synapse_cdm.adapters import klv_uas_codec as uas_codec
 
     section = _section(KLV_HEADING)
-    rows = [ln for ln in section.splitlines()
-            if ln.startswith("|") and not ln.startswith("|---")]
     # SCOPED TO THE TAG TABLE's rows, which is what `WITNESSED_TAGS` is a set of. The section also
     # holds an egress table whose eight rows carry the same marker, and counting those against a
     # tag count would make this assertion fail for a reason that has nothing to do with the scope
     # contract — the shape `_klv_tag_rows()` exists to avoid one level up.
-    tag_rows = [ln for ln in rows if re.match(r"^\| `\d+` \| ", ln)]
+    #
+    # AND SINCE 2026-09-04 THE SCOPING IS LOAD-BEARING RATHER THAN TIDY, WHICH IS WHY IT NOW USES
+    # THE SUBSECTION AND NOT A ROW PATTERN. The park 2 round added a SECOND tag table to this
+    # section — ST 0102.12's seventeen elements, nested under item 48 — whose rows open `| `1` |`
+    # exactly as ST 0601's do, because both documents number their tags from 1. A pattern-only
+    # filter collected all 158 rows and compared 42 promoted markers against a 26-tag witnessed
+    # set. That is the same defect one table over that the comment above describes for the egress
+    # table, met a second time, and a row pattern cannot fix it: the two tables are distinguished
+    # by which SUBSECTION they are in and by nothing on the row itself.
+    start = section.index(KLV_TAG_TABLE_HEADING)
+    body = section[start:section.index("\n### ", start + 10)]
+    tag_rows = [ln for ln in body.splitlines() if re.match(r"^\| `\d+` \| ", ln)]
     not_yet = [ln for ln in tag_rows if "| `not yet` |" in ln]
     promoted = [ln for ln in tag_rows if "| `stanag4609 1.0.0" in ln]
-    assert len(promoted) == len(uas_codec.WITNESSED_TAGS), (
+    # THE WITNESSED SET PLUS THE NESTED SETS, and the two terms are stated separately because they
+    # are two different claims. `WITNESSED_TAGS` is what the pinned stream attests and the codec
+    # maps; `NESTED_SETS` is the one item whose value another held document defines and whose key
+    # TWO held documents state identically — item 48, ruled at the tag-by-tag guard below. Summing
+    # them here rather than widening `WITNESSED_TAGS` is the point: the scope contract's number
+    # does not move, and the crossing has to be declared in its own table to be counted.
+    expected = len(uas_codec.WITNESSED_TAGS) + len(uas_codec.NESTED_SETS)
+    assert len(promoted) == expected, (
         f"{len(promoted)} rows carry a stanag4609 marker and the codec covers "
-        f"{len(uas_codec.WITNESSED_TAGS)} tags. The witnessed set is the scope contract and the "
-        "two sites have to state one set"
+        f"{len(uas_codec.WITNESSED_TAGS)} witnessed tags plus {len(uas_codec.NESTED_SETS)} nested "
+        "set(s). The witnessed set is the scope contract and the two sites have to state one set"
     )
-    assert len(not_yet) >= 115, (
-        f"only {len(not_yet)} `not yet` rows left in the KLV section. 115 of the 141 ST 0601 rows "
-        "are outside the witnessed set and each is blocked on it; a round that promoted them "
-        "wrote decoders nothing can check, which is the trap this section exists to avoid"
+    # 114 SINCE 2026-09-04, DOWN FROM 115, AND THE ONE THAT MOVED IS NAMED. Item 48 left this set
+    # for the nested-set ruling; every other row outside the witnessed set is still blocked on it.
+    assert len(not_yet) >= 114, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 114 of the 141 rows "
+        "are outside the witnessed set and outside the nested-set ruling, and each is blocked on "
+        "the scope contract; a round that promoted them wrote decoders nothing can check, which "
+        "is the trap this section exists to avoid"
     )
+    # THE NESTED ST 0102.12 ROW SET HAS ITS OWN PARTITION AND IT IS ASSERTED SEPARATELY, because
+    # scoping the check above to ST 0601's table would otherwise have stopped checking these rows
+    # at all — a scoping fix that quietly drops seventeen rows out of every assertion is a fix
+    # that makes the file less checked than it was.
+    sec_start = section.index(KLV_ST_0102_HEADING)
+    sec_body = section[sec_start:section.index("\n### ", sec_start + 10)]
+    sec_rows = [ln for ln in sec_body.splitlines() if re.match(r"^\| `\d+` \| ", ln)]
+    assert len(sec_rows) == 17, (
+        f"the ST 0102.12 row set parsed to {len(sec_rows)} rows, expected seventeen — §6.7's "
+        "Table 2 draws rows for tags 1-14, 22, 23 and 24 and for no others"
+    )
+    sec_not_yet = [ln for ln in sec_rows if "| `not yet` |" in ln]
+    assert len(sec_not_yet) == 1 and sec_not_yet[0].startswith("| `13` |"), (
+        f"the ST 0102.12 row set has {len(sec_not_yet)} `not yet` rows and exactly one is right: "
+        "tag 13 Object Country Codes, whose Data Type cell names RFC 2781 — a document this "
+        "repository does not hold, so its octets are carried and no string is produced. A second "
+        "`not yet` row means an element stopped being read; none means tag 13 was decoded by "
+        "guessing a byte order, which is the one thing that row exists to forbid"
+    )
+    assert "RFC 2781 is not held" in _flat(sec_body), (
+        "the ST 0102.12 row set no longer says WHY tag 13 is `not yet`. An unread row whose reason "
+        "is missing reads as unfinished work rather than as a bounded absence"
+    )
+
     before = DOC.read_text().split(KLV_HEADING)[0]
     assert "`stanag4609 1.0.0`" in before, (
         "the status-column table at the top of the document does not define the marker the KLV row "
@@ -3380,11 +3454,47 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
             f"item {tag} CDM field: {a['cdm_field']!r} vs {b['field']!r}"
         )
         witnessed = tag in uas_codec.WITNESSED_TAGS
+        # THE ONE ITEM PROMOTED PAST THE WITNESSED SET, AND THE CROSSING IS RULED RATHER THAN
+        # WAIVED — added 2026-09-04 by the park 2 round. Item 48's value is not a value this
+        # repository maps: it is a NESTED LOCAL SET whose seventeen elements another held
+        # document, MISB ST 0102.12, defines, and `klv_uas_codec.NESTED_SETS` is a second table
+        # beside `ITEMS` for exactly that distinction. `WITNESSED_TAGS` is unchanged at 26 and the
+        # scope contract's sentence is untouched.
+        #
+        # WHY THE CONTRACT'S REASON DOES NOT REACH IT. The contract exists because an unwitnessed
+        # item's decoder "could only ever be checked against a fixture written from the same
+        # reading of the same table". Item 48's is checked against a SECOND DOCUMENT: ST 0601.14a
+        # §8.48 prints `KLV Key 06.0E.2B.34.02.03.01.01.0E.01.03.03.02.00.00.00 (CRC 40980)` and
+        # ST 0102.12 §6.7 registers the Security Metadata Local Set under the same sixteen octets
+        # and the same CRC — two documents, obtained on different days by different routes, in
+        # agreement. NO OTHER UNWITNESSED ITEM HAS A SECOND DOCUMENT BEHIND IT, which is why this
+        # admission is one tag wide and cannot grow without another one arriving.
+        #
+        # THE ADMISSION IS NARROW ON PURPOSE: only tag 48, only if `NESTED_SETS` still claims it,
+        # and the row must still say which document owns the elements. Deleting the nested-set
+        # table or promoting a second unwitnessed row fails here.
+        nested = tag in uas_codec.NESTED_SETS
         if witnessed:
             assert b["status"].startswith("stanag4609 1.0.0"), (
                 f"item {tag} is in klv_uas_codec.WITNESSED_TAGS — the pinned stream attests it and "
                 f"the codec decodes it — and its row still reads {b['status']!r}. A decoded item "
                 "whose row says `not yet` makes the status column a claim nobody can rely on"
+            )
+        elif nested:
+            assert tag == 48 and set(uas_codec.NESTED_SETS) == {48}, (
+                f"klv_uas_codec.NESTED_SETS claims {sorted(uas_codec.NESTED_SETS)} and the only "
+                "item admitted past the witnessed set is 48, whose elements ST 0102.12 defines "
+                "and whose key TWO held documents state identically. A second entry needs its own "
+                "second document and its own ruling here"
+            )
+            assert b["status"].startswith("stanag4609 1.0.0"), (
+                f"item {tag} is a nested set klv_uas_codec delegates to another document's item "
+                f"layer, and its row reads {b['status']!r}. The codec reads it, so the row says so"
+            )
+            assert "ST 0102.12" in b["notes"] and "CRC 40980" in b["notes"], (
+                "item 48's row no longer names the document whose elements it carries and the key "
+                "the two documents agree on. That agreement IS the ground for crossing the scope "
+                "contract; a row that stops stating it is a promotion with no argument left"
             )
         else:
             assert b["status"] == "not yet", (
@@ -3973,11 +4083,46 @@ def test_the_parks_are_numbered_and_the_smpte_one_is_named_as_CLOSED():
     assert "CLOSED" in park_1[0], (
         "park 1's row no longer says it is closed. It was closed on 2026-08-26 by obtaining ST "
         "0601.14 and writing the row set it supports; a row that stops saying so reads as an open "
-        "park whose document happens to be on disk, which is what park 2 actually is"
+        "park whose document happens to be on disk — which is what park 2 WAS, from 2026-08-26 "
+        "until it closed on 2026-09-04 by writing its own row set. The comparison is kept in its "
+        "own tense: park 2 was the shape this failure would produce, and it stopped being it by "
+        "doing exactly what park 1 did"
     )
     assert "closed 2026-08-26" in flat.lower(), (
         "the date park 1 closed is gone. A park that closes without a date cannot be checked "
         "against the commit that closed it"
+    )
+    # PARK 2, CLOSED 2026-09-04, IN THE PARK 1 AND PARK 8 GUARDS' SHAPE: that it is closed, WHEN,
+    # and on WHICH document — plus one thing neither of those needs. Park 2 is the only park in
+    # this table that closed WITHOUT ACQUIRING ANYTHING, so "the document that closed it" is not
+    # what a reader has to be able to check; the ARTEFACT is. A row saying only that the document
+    # is held would describe park 2's state on any of the nine days it was open.
+    park_2 = [ln for ln in section.splitlines() if ln.startswith("| **2** |")]
+    assert len(park_2) == 1, f"expected exactly one park row numbered 2, found {len(park_2)}"
+    assert "CLOSED" in park_2[0], (
+        "park 2's row no longer says it is closed. It closed on 2026-09-04 by writing the row set "
+        "MISB ST 0102.12 supports — seventeen elements, nested under item 48 — and a row that "
+        "stops saying so reads as the open park it was the table's own precedent for"
+    )
+    assert "CLOSED 2026-09-04" in park_2[0], (
+        "the date park 2 closed is gone, or is not in the shape gates/parks_table.py reads. That "
+        "gate wants exactly '**CLOSED YYYY-MM-DD**' in the title cell, and the closed set it "
+        "derives is what park 12's set-claims are checked against"
+    )
+    assert "0102.12" in park_2[0], (
+        "park 2's row no longer names the edition its row set was written from. MISP-2019.1's "
+        "Appendix B reference [55] pins 0102.12 and a later revision is a different document"
+    )
+    assert "seventeen elements" in _flat(park_2[0]), (
+        "park 2's row no longer states the ARTEFACT that closed it. Its document had been held "
+        "since 2026-08-26 and the park stayed open for nine days on the row set alone, so a "
+        "closure cell that names only the pin describes the state the park was in while OPEN. "
+        "This is the one closure in the table where the document is not the news"
+    )
+    assert "~~" in park_2[0], (
+        "park 2's title cell is not struck through. gates/parks_table.py requires BOTH the "
+        "strikethrough and '**CLOSED YYYY-MM-DD**' before it counts a row closed, so a row with "
+        "the date and no strikethrough reads as closed to a person and open to the gate"
     )
     assert "all eight still open are public downloads" in flat, (
         "the table's summary claim about its open rows is gone. It used to read 'eight are public "
@@ -4009,7 +4154,8 @@ def test_the_parks_are_numbered_and_the_smpte_one_is_named_as_CLOSED():
         "park 8's row no longer says it is closed. It was closed on 2026-09-03 by obtaining SMPTE "
         "ST 336:2017 from the publisher's own library and ruling both of its residual absences "
         "against §5.3; a row that stops saying so reads as an open park whose document happens to "
-        "be on disk, which is what park 2 actually is"
+        "be on disk — which is what park 2 WAS until 2026-09-04. Kept in its own tense for the "
+        "reason the park 1 guard above gives"
     )
     assert "CLOSED 2026-09-03" in smpte[0], (
         "the date park 8 closed is gone, or is not in the shape gates/parks_table.py reads. That "
@@ -4709,7 +4855,11 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 10, f"{len(expected)} adapter fixtures, expected ten"
+    assert len(expected) == 17, (
+        f"{len(expected)} adapter fixtures, expected seventeen — ten from the witnessed-set "
+        "round and the seven `security_*` payloads the park 2 round added for ST 0102.12's "
+        "seventeen elements inside item 48"
+    )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (
             f"{name}.klv has no parsed twin. A bytes-only fixture has no leaf structure for the "
@@ -4728,7 +4878,13 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "kept: a directory that fills up and loses the record of having been empty loses the "
         "evidence a reader could check the parks against"
     )
-    assert "There are TEN" in readme, "the README does not state the new count"
+    assert "There are SEVENTEEN" in readme, "the README does not state the new count"
+    assert "There were TEN" in readme, (
+        "the README no longer records that the count was TEN between the witnessed-set round "
+        "and the park 2 round. It is re-dated rather than re-synced for the same reason the "
+        "opening sentence is quoted rather than deleted: a count that moves and leaves no "
+        "trace of having moved is a count a reader cannot check against a commit"
+    )
     assert "NoFixturesFound" not in readme and "unknown adapter" not in readme, (
         "the README still promises the two failures the harness command used to produce. It "
         "produces neither now, and a demonstration of a failure that no longer fails is a wrong "

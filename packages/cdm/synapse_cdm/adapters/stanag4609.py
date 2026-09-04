@@ -98,6 +98,7 @@ from typing import Any
 from synapse_cdm import ids, lossless, symbology, times
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters import klv_codec as framing
+from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_uas_codec as uas
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
 from synapse_cdm.models import (
@@ -163,6 +164,46 @@ def _parsed_packet(index: int, packet: uas.DecodedPacket, raw: bytes) -> dict:
         "defects": [_defect_dict(defect) for defect in packet.defects],
         "advisories": [dict(advisory) for advisory in packet.advisories],
         "unknown_tags": list(packet.unknown_tags),
+        "security": _security_dict(packet.security),
+    }
+
+
+def _security_dict(decoded) -> dict | None:
+    """The ST 0102.12 set as a fixture twin states it, or None where the packet carried no item 48.
+
+    **`None` here is the §6.5 shape and is not a value.** "The absence of Security Metadata does
+    not signify Motion Imagery Data as Unclassified", so a twin for an unlabelled packet carries
+    no security block at all rather than a block saying `classification: null` — which a reader
+    could take for a marking that had been read and found empty.
+    """
+    if decoded is None:
+        return None
+    return {
+        "element_order": list(decoded.order),
+        "element_octets": {str(tag): octets
+                           for tag, octets in sorted(decoded.raw_elements.items())},
+        "required_present": list(decoded.required_present),
+        "required_absent": list(decoded.required_absent),
+        "partial": decoded.is_partial,
+        "refusals": [_refusal_dict(refusal) for refusal in decoded.refusals],
+        "advisories": [dict(advisory) for advisory in decoded.advisories],
+        "unlisted_tags": list(decoded.unlisted_tags),
+    }
+
+
+def _refusal_dict(refusal: security.RefusedElement) -> dict:
+    return {
+        "tag": refusal.tag,
+        "name": refusal.name,
+        "class": refusal.refusal_class,
+        "observed_length": refusal.observed_length,
+        "stated_length": refusal.stated_length,
+        "presence": refusal.presence,
+        "octets": refusal.octets,
+        "tag_offset": refusal.tag_offset,
+        "value_offset": refusal.value_offset,
+        "section": refusal.section,
+        "clause": refusal.clause,
     }
 
 
@@ -355,6 +396,28 @@ class Stanag4609Adapter(Adapter):
                 f"parsed packet {entry.get('index')} states length defects {stated_defects} and "
                 f"the length policy derives {derived} from its own octets"
             )
+        # THE SAME ARRANGEMENT FOR THE NESTED SET, AND THE ABSENCE IS PART OF THE CLAIM. A twin
+        # stating a security block for a packet with no item 48 — or omitting one for a packet
+        # that carries it — is a twin that would teach a golden file that a marking was or was not
+        # there. §6.5 makes that the one error in this format nobody may make quietly.
+        stated_security = entry.get("security")
+        if (stated_security is None) != (packet.security is None):
+            raise Stanag4609ParseError(
+                f"parsed packet {entry.get('index')} "
+                f"{'states' if stated_security is not None else 'states no'} ST 0102.12 security "
+                f"metadata and its own octets "
+                f"{'carry' if packet.security is not None else 'carry no'} ST 0601 item 48. "
+                "MISB ST 0102.12 §6.5: 'The absence of Security Metadata does not signify Motion "
+                "Imagery Data as Unclassified' — so which of the two it is, is a claim"
+            )
+        if stated_security is not None:
+            stated_order = list(stated_security.get("element_order") or [])
+            derived_order = list(packet.security.order)
+            if stated_order != derived_order:
+                raise Stanag4609ParseError(
+                    f"parsed packet {entry.get('index')} states ST 0102.12 elements "
+                    f"{stated_order} and its own item 48 octets carry {derived_order}"
+                )
 
     # ------------------------------------------------------------------ translation
 
@@ -686,6 +749,10 @@ class Stanag4609Adapter(Adapter):
         attributes["position_basis"] = position_basis
         attributes["kinematics_basis"] = kinematics_basis
 
+        attributes["security_metadata_basis"] = self._security_basis(packet)
+        if packet.security is not None:
+            attributes["security_metadata"] = self._security_metadata(packet.security)
+
         attributes["length_divergence_policy"] = {
             "policy": uas.LENGTH_DIVERGENCE_POLICY,
             "stated_on_every_object": (
@@ -728,6 +795,121 @@ class Stanag4609Adapter(Adapter):
         attributes["unavailable_fields"] = sorted(unavailable)
         attributes["source_extras"] = lossless.residual(parsed, self.CONSUMED)
         return attributes
+
+    # ------------------------------------------------ ST 0102.12 security metadata, item 48
+
+    def _security_basis(self, packet: uas.DecodedPacket) -> dict:
+        """What this object says about its own security marking, in every case including absence.
+
+        **THE STANDING CONFIDENTIALITY RULING, WHICH IS WHY THIS METHOD IS SHAPED THE WAY IT IS.**
+        A classification is CARRIED AND NEVER INVENTED — the NITS precedent, reached here by a
+        second format. So there are exactly two things this adapter can say about a packet's
+        classification: what the packet's own item 48 stated, or that the packet stated nothing.
+        There is no third branch and in particular no default.
+
+        **§6.5 IS WHAT MAKES THE ABSENT CASE A STATEMENT RATHER THAN A GAP.** "The absence of
+        Security Metadata does not signify Motion Imagery Data as Unclassified." A packet with no
+        item 48 is UNLABELLED. Unlabelled is not a value of a field, so no classification field is
+        emitted for it — and the document's own sentence is, so that a consumer reading the object
+        meets ST 0102.12's statement of what the absence does not mean instead of supplying one.
+        """
+        basis: dict[str, Any] = {
+            "carried_in": "ST 0601 item 48, Security Local Set",
+            "carrier_basis": uas.NESTED_SET_BASIS,
+            "element_layer": security.SOURCE_ST_0102_12,
+            "confidentiality_ruling": (
+                "CARRIED AND NEVER INVENTED. Every value below is an octet the packet sent, "
+                "decoded by a rule this repository can cite in a held document, or it is absent. "
+                "No marking is defaulted, inferred from context, completed from a partial set, or "
+                "converted to a nearest listed value. Where the CDM has no field for a security "
+                "element it goes into Entity.attributes AS THE DOCUMENT NAMES IT — which is why "
+                "the keys below are ST 0102.12's element names and not a CDM vocabulary"),
+            "external_code_lists": security.EXTERNAL_CODE_LISTS_NOT_HELD,
+            "st_336_conformance": security.ST_336_CONFORMANCE,
+            "repetition_rate": security.REPETITION_RATE,
+        }
+        if packet.security is None:
+            basis["state"] = "UNLABELLED — this packet carried no ST 0601 item 48"
+            basis["absence"] = security.ABSENCE_OF_SETS
+            basis["what_is_NOT_emitted"] = (
+                "no classification, no country code, no coding method, no version. NOT 'null "
+                "meaning unclassified' and not an empty security_metadata object: attributes "
+                "carries NO security_metadata key at all for this packet, because a key present "
+                "with empty contents is a reader's invitation to treat emptiness as a value. "
+                "§6.3 is the contrast that makes this precise — an unclassified packet is a "
+                "MARKED packet whose Security Classification octet is 0x01, so 'unclassified' and "
+                "'unlabelled' are two different states and this is the second one")
+            basis["what_the_document_asks_of_a_consumer"] = (
+                "§6.5: 'Bit stream originators and system developers are responsible to "
+                "incorporate continual checks for Security Metadata in their applications.' This "
+                "adapter performs that check per packet and reports its result; deciding what to "
+                "do about an unlabelled packet is the consumer's, and it is a decision this "
+                "object gives them the evidence to make rather than one made here")
+            return basis
+        decoded = packet.security
+        basis["state"] = (
+            "PARTIAL — the set is present and does not carry every element §6.7 marks Required"
+            if decoded.is_partial else
+            "COMPLETE-ON-REQUIRED — the set carries all six elements §6.7 marks Required")
+        basis["partial_sets"] = security.PARTIAL_SETS
+        basis["required_present"] = list(decoded.required_present)
+        basis["required_absent"] = list(decoded.required_absent)
+        basis["absence_clause_still_applies"] = (
+            "§6.5 governs the ELEMENTS this set does not carry as well as the sets a packet does "
+            "not carry: an absent Security Classification inside a present set is unlabelled and "
+            "not unclassified, for the same reason and by the same sentence")
+        basis["element_refusal_policy"] = security.ELEMENT_REFUSAL_POLICY
+        basis["refusals"] = [_refusal_dict(refusal) for refusal in decoded.refusals]
+        basis["advisories"] = [dict(advisory) for advisory in decoded.advisories]
+        if decoded.unlisted_tags:
+            basis["unlisted_tags"] = list(decoded.unlisted_tags)
+            basis["unlisted_tags_basis"] = security.ABSENT_TAGS_BASIS
+        return basis
+
+    def _security_metadata(self, decoded: security.DecodedSecuritySet) -> dict:
+        """The decoded elements, keyed by ST 0102.12's own element names.
+
+        **KEYED AS THE DOCUMENT NAMES THEM.** The standing ruling puts a security element the CDM
+        has no field for into `Entity.attributes` "as the document names it", so the keys here are
+        §6.7's Name column lower-cased with spaces and slashes turned to underscores and nothing
+        else — no CDM vocabulary, no shortening, no renaming of the two long Version Date
+        elements. A reader with Table 2 open can find every key in it.
+
+        The three `uint8` elements carry BOTH the integer the packet sent and the string §6.8
+        converts it to, under two keys, because they are two different claims: the integer is what
+        arrived and the label is what a held clause says it means. A label is absent where the
+        integer is not one the element's own enumeration lists.
+        """
+        out: dict[str, Any] = {}
+        for tag in decoded.order:
+            entry = decoded.elements.get(tag)
+            if entry is None:
+                continue                       # refused or unlisted; it is in the basis, not here
+            key = _element_key(entry.name)
+            out[key] = {
+                "tag": tag,
+                "value": entry.value,
+                "octets": entry.raw.hex(),
+                "presence": entry.presence,
+                "section": entry.section,
+                "length_octets": entry.length,
+            }
+            if entry.label is not None:
+                out[key]["label"] = entry.label
+                out[key]["label_basis"] = security.CONVERSION_BETWEEN_SET_FORMS
+            if tag == 13:
+                out[key]["value_is_octets_not_text"] = (
+                    security.DECODING_RULES["carried_octets"])
+        out["_element_order"] = list(decoded.order)
+        out["_local_set_key"] = security.LOCAL_SET_KEY.hex()
+        out["_local_set_key_crc"] = security.LOCAL_SET_KEY_CRC
+        out["_local_set_key_basis"] = (
+            "§6.7's registered key, stated here as the set's IDENTITY. It is NOT an octet this "
+            "packet carried: inside ST 0601 item 48 the key is not on the wire, because §8.48 "
+            "makes the item's own length 'the size of all MISB ST 0102 metadata items'. ST "
+            "0601.14a §8.48 prints the same sixteen octets and the same CRC 40980, which is the "
+            "two-document agreement item 48's reading rests on")
+        return out
 
     def _integrity_basis(self, packet: uas.DecodedPacket) -> dict:
         """The first REAL integrity gate in a binary adapter here, and it is worth saying so."""
@@ -904,6 +1086,23 @@ class Stanag4609Adapter(Adapter):
             )
         return uas.encode_packet({}, order=tuple(wanted),
                                  raw_overrides={tag: by_tag[tag] for tag in wanted})
+
+
+def _element_key(name: str) -> str:
+    """§6.7's Name column to an attribute key: lower-cased, spaces and slashes to underscores.
+
+    Deliberately mechanical and deliberately not shortened. `Security-SCI/SHI information` becomes
+    `security_sci_shi_information` and the two Version Date elements keep their full names, so a
+    reader holding Table 2 can find every key in it and this adapter names no security element
+    anything the document does not.
+    """
+    out = []
+    for char in name:
+        out.append(char.lower() if char.isalnum() else "_")
+    key = "".join(out)
+    while "__" in key:
+        key = key.replace("__", "_")
+    return key.strip("_")
 
 
 def _packet_index(entity: Entity) -> int:

@@ -445,7 +445,9 @@
       "grounds": "MISP-2019.1 Appendix B reference [55] pins 0102.12; the copy obtained is 0102.12, its cover states 22 June 2017 and its revision history's single row states the same date. The profile pins this document and this is the document it pins.",
       "what_that_closes": "The first half of park 2's exit condition: the EXACT version is obtained and pinned by SHA-256, byte count and page count with its title-page identity read.",
       "what_it_does_not_close": "The second half: 'then write the row set that document supports'. That is Act 3, and Act 3 did not run. Park 2 therefore stays in the park table at twelve, and the mapping rows that cite it stay `not yet`. The park is not retired by this commit and the reason is not bookkeeping: the row set is the deliverable and it does not exist yet. UNCHANGED BY THE 2026-08-26 RESOLUTION: obtaining ST 0601.14 closed park 1 and did nothing for park 2. ST 0102.12 is held and its own row set is still unwritten, so park 2 stays open on the second half of shared_exit_condition exactly as before - which is the precedent this round applied to itself when deciding that park 1 needed the row set and not just the document.",
-      "and_it_cannot_be_written_alone_anyway": "Even with 0102.12 in hand, a security local set cannot be READ. Its octets are KLV, and KLV encoding is SMPTE ST 336:2017 (park 8, held since 2026-09-03 - this clause read \"the paywalled one\" and the premise was refuted that day) and KLV formatting in motion imagery is ST 0107.3 (park 4). This record's own smallest_useful_phase_2 states it: 'Parks 4, 5 and 8 are enough to READ a stream at all.' None of those three is held. So the ST 0102 match is real progress on identity and not yet progress on capability."
+      "and_it_cannot_be_written_alone_anyway": "Even with 0102.12 in hand, a security local set cannot be READ. Its octets are KLV, and KLV encoding is SMPTE ST 336:2017 (park 8, held since 2026-09-03 - this clause read \"the paywalled one\" and the premise was refuted that day) and KLV formatting in motion imagery is ST 0107.3 (park 4). This record's own smallest_useful_phase_2 states it: 'Parks 4, 5 and 8 are enough to READ a stream at all.' None of those three is held. So the ST 0102 match is real progress on identity and not yet progress on capability.",
+      "and_it_cannot_be_written_alone_anyway_CORRECTED_2026_09_04": "DATED CORRECTION, 2026-09-04, SITTING BESIDE THE FIELD IT QUALIFIES RATHER THAN AT THE END OF THE NODE — the original words above are kept entire and every one of them was true when written. THE CLAUSE THAT IS NOW FALSE IS ONE SENTENCE: 'None of those three is held' said of parks 4, 5 and 8. **PARK 4 IS HELD AND CLOSED** — MISB ST 0107.3, obtained and pinned 2026-08-26, park closed the same day; the clause was already false when the length round ran, hours after this text was written. **PARK 8 IS HELD AND CLOSED** — SMPTE ST 336:2017 and 336:2007, obtained from pub.smpte.org and pinned 2026-09-03, park closed the same day on a row this table had priced as a purchase for eleven days. **PARK 5 IS NEITHER HELD-AND-CLOSED NOR ON THIS DOCUMENT'S PATH, AND THAT IS TWO DIFFERENT FACTS.** Its documents ARE held — ST 1201.3 and ST 1303.1, pinned 2026-08-27 — so 'none of those three is held' is false of park 5 as well; the park stays OPEN on its artefact half, sixteen ST 0601 rows the scope contract blocks independently. AND IT WAS NEVER ON THIS DOCUMENT'S PATH: park 5 is the IMAPB float-to-integer mapping, and NOT ONE of ST 0102.12's seventeen elements is a scaled numeric value — the seventeen are three uint8 enumerations, one uint16, twelve ISO/IEC 646 strings and one element whose octets are carried undecoded. IMAPB does not occur in ST 0102.12 at all. So the sentence naming three parks named one too many even for its own purpose, and this is recorded rather than quietly dropped because the error was in the REACH of a true observation and not in the observation: reading a security local set really does need the framing layer, and the framing layer really was parks 4 and 8. WHAT THE WHOLE CLAUSE GOT RIGHT AND IS WORTH KEEPING: 'the ST 0102 match is real progress on identity and not yet progress on capability' was exactly true for nine days, and it stopped being true on 2026-09-04 by the route it named — parks 4 and 8 closed first, and the security set became readable the moment its framing was.",
+      "what_it_does_not_close_IS_NOW_DISCHARGED_2026_09_04": "The field above reads 'The second half: ... That is Act 3, and Act 3 did not run.' **ACT 3 RAN ON 2026-09-04 AND PARK 2 IS CLOSED.** The row set exists: §6.7's Table 2 transcribed in full at tag_table_st_0102_12, seventeen elements; the element layer at adapters/klv_security_codec.py; seven fixtures; item 48's own row and MISP-2015.1-73's mapping row both moved from `not yet` to `stanag4609 1.0.0`. The original words are kept because their subject is exactly this — 'the row set is the deliverable and it does not exist yet' — and a field describing a deliverable's absence is the field a reader checks the delivery against. PARK 2 IS NO LONGER 'in the park table at twelve': gates/parks_table.py reads thirteen rows, six closed (1, 2, 4, 8, 9, 13) and seven open."
     },
     "ruling_st_0601": {
       "cited_edition": "0601.14, Nov 2018",
@@ -2079,6 +2081,659 @@
       "the_reference_agrees_with_the_profile_which_is_worth_recording": "ST 0601.14's own reference [4] reads 'MISB ST 0603.5 MISP Time System and Timestamps, Oct 2017' - the same revision MISP-2019.1's Appendix B pins for park 3, and the same date. Two independently-pinned documents naming the same revision of a third is the corroboration delegation_table.entries was built to make checkable, and this is the first time it has been available from both sides."
     }
   },
+  "tag_table_st_0102_12": {
+    "what_this_is": "MISB ST 0102.12's §6.7 Table 2, 'Security Metadata Local Set Elements', transcribed in full — SEVENTEEN rows, each with the columns the document defines and with the §6.1.n element definition the row points at. This is the field dictionary of the security marking a UAS Datalink LS packet carries in ST 0601 item 48, and it is the artefact half of park 2's exit condition. Written in tag_table_st_0601_14's shape deliberately: the same node names, the same obligation to state how the transcription was made and what makes it checkable, and the same rule that the FORMAT_COVERAGE.md row set is generated from `items` below so the two cannot disagree. WHAT IS DIFFERENT AND IS NOT SMOOTHED OVER: park 1's table could be checked against the document's own 26 worked examples and this one cannot, because ST 0102.12 prints none.",
+    "source": "ST 0102.12, §6.7 Table 2, PDF pages 13-14, plus §6.1.1-§6.1.17 on pages 5-9 for the element definitions. The copy pinned at delegated_specifications_held.st_0102_12 — SHA-256 20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267, 514842 bytes, 18 pages, re-digested from disk at the start of this round and matching.",
+    "the_edition_this_is_read_from": "ST 0102.12, and there is no second edition to rule against — unlike ST 0601, where .14 and .19 are both held and reconciliation_ruling.ruling_st_0601 had to name one. The profile pins 0102.12 (MISP-2019.1 Appendix B ref [55]), this copy is 0102.12, and its revision history carries a single row whose date is the cover's. ruling_st_0102 already closed that question.",
+    "the_carrier_and_why_it_is_the_LOCAL_set": "ST 0601.14a §8.48 Tag 48 Security Local Set, Description 'MISB ST 0102 local let Security Metadata items' (the document's own typo for 'local set', preserved), Format 'KLV set', Length 'Variable', Max Length 'Not Limited', Required in LS? 'Optional'. Its two bullets: 'Use the MISB ST 0102 Local Set tags within the MISB ST 0601 item 48' and 'The length field is the size of all MISB ST 0102 metadata items to be packaged within item 48'. Its §8.48.1 Details: 'MISB ST 0102 [14] allows for the use of either Universal Set or Local Set methods. However, to minimize bandwidth when incorporating MISB ST 0102 into an instance of the UAS Datalink LS, the Local Set method is required.' And `ST 0601.14-31`: 'When incorporating the ST 0102 Security Metadata set into an instance of the UAS Datalink Local Set, the ST 0102 format shall use the Local Set format.' §8.48's Example KLV Item row prints Tag 30 (hex for 48), a Len of '-' and a Value of 'N/A' — SO THE DELEGATING DOCUMENT PRINTS NO WORKED EXAMPLE EITHER, and neither of the two documents behind this codec supplies one",
+    "the_universal_set_is_OUT_OF_SCOPE_and_this_is_the_ground": "§6.6 defines a Security Metadata UNIVERSAL Set carrying the same seventeen elements under 16-byte keys, registered at 06 0E 2B 34 02 01 01 01 02 08 02 00 00 00 00 00 (CRC 31942), and Table 1 lists its constituents. NOT TRANSCRIBED, on the delegating document's own sentence rather than on convenience: ST 0601.14a §8.48.1 reads 'MISB ST 0102 [14] allows for the use of either Universal Set or Local Set methods. However, to minimize bandwidth when incorporating MISB ST 0102 into an instance of the UAS Datalink LS, the Local Set method is required', and `ST 0601.14-31` makes it a shall. Item 48 carries the Local Set; the Universal Set is a different carrier and this round wrote no row for it. Table 1 WAS READ — it is one of the four cross-checks below — and reading a table to check another is not transcribing it.",
+    "item_count": 17,
+    "how_it_was_transcribed": "FROM THE DOCUMENT'S OWN TWO STATEMENTS OF THE SAME SEVENTEEN ELEMENTS, read separately and then compared, and NOT by trusting one extraction. Table 2's cells wrap heavily — tag 2's Allowed Values cell alone runs sixteen lines — so the columns were read per row against `gates/pdf_text.py`'s normalise-and-join rule and each row was then located by walking the tag sequence forward over the normalised text rather than by matching a line-anchored pattern, which is the trap ST 0601.14a's Table 1 sprang on the park 1 round at tag 105. The §6.1.n definitions were read from the prose, which does not wrap into columns, and each was matched to its row BY NAME rather than by position. WHAT THAT CATCHES: a row silently absorbing a neighbour's Allowed Values, which is the only way seventeen rows could read as seventeen and still be wrong.",
+    "cross_check_that_makes_the_transcription_checkable": "THE DOCUMENT STATES THE SAME SEVENTEEN ELEMENTS TWICE AND BOTH WERE READ, WHICH IS PARK 1'S ARRANGEMENT REACHED BY A SECOND DOCUMENT. §6.7's Table 2 draws seventeen tag rows — 1 through 14, then 22, 23, 24 — and §6.1 carries seventeen numbered subsections, §6.1.1 through §6.1.17, one per element and in the same order. The two agree on all seventeen names with no element in one and not the other. A THIRD statement checks the three elements that matter most: §6.8 gives conversion rules between the Universal and Local Set forms and has EXACTLY THREE subsections — §6.8.1 Security Classification, §6.8.2 Classifying Country and Releasing Instructions Country Code, §6.8.3 Object Country Coding Method — which are exactly the three rows whose Table 2 Data Type reads `uint8` where Table 1's reads text. AND A FOURTH, over the same rows from the other side: §6.1's Table 1 for the Universal Set lists the same seventeen elements under 16-byte keys, so a row present in one carrier and absent from the other would show. WHAT THIS CANNOT DO, AND `klv_uas_codec` CAN: check a decoded value against the document's own worked example, because ST 0102.12 prints none",
+    "the_count_read_off_the_documents_own_table": "SEVENTEEN, and the arithmetic that makes it checkable rather than counted once. Table 2 draws rows for tags 1 through 14 — fourteen — and then 22, 23 and 24 — three. 14 + 3 = 17. The presence column splits the same seventeen a second way and independently: SIX Required (tags 1, 2, 3, 12, 13, 22), EIGHT Context (4, 5, 6, 7, 8, 9, 10, 11) and THREE Optional (14, 23, 24); 6 + 8 + 3 = 17. The two splits are over different columns and agree. §6.1's subsections run §6.1.1 to §6.1.17 and give the same count a third time from a different part of the document. THE SPLIT IS DERIVED IN CODE from the transcribed presence cells rather than typed — klv_security_codec.REQUIRED_TAGS, CONTEXT_TAGS and OPTIONAL_TAGS are comprehensions over ELEMENTS — so a mistyped presence cell moves a count instead of hiding in one.",
+    "the_absent_tags_15_to_21": {
+      "what_the_table_shows": "Table 2 carries no row between tag 14 and tag 22. Seven tag numbers are absent and the document draws no row, no placeholder and no note for them.",
+      "the_revision_history_sentence_that_removed_them": "ST 0102.12's Revision History, the single row 'ST 0102.12 06/22/2017', carries two bullets that describe the removal: 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' and 'Deleted keys: UMID, Stream ID, Transport Stream ID, Item Designator'. Appendix A corroborates them from the requirement side: `ST 0102.10-32` through `-48` are the deprecated linking requirements and they name exactly those four carriers.",
+      "WHAT THIS ACCOUNT DOES NOT COVER, AND IT IS STATED RATHER THAN ROUNDED OFF": "FOUR KEYS ARE NAMED AND SEVEN TAG NUMBERS ARE ABSENT, so the sentence does not account for the gap. And the document nowhere prints the tag number any deleted key occupied — the revision history names keys, Appendix A names requirements, and neither names a tag. MISB ST 0102.11 would settle which numbers those keys held and IS NOT HELD; it is not a delegation the profile makes and no park stands on it. So this record says the seven are absent, quotes what the document says was removed, and stops. A decoder meeting tag 15..21 on a wire treats it as a tag Table 2 does not draw a row for and carries its octets.",
+      "what_the_codec_does_with_them": "klv_security_codec.ABSENT_TAGS records the seven and ABSENT_TAGS_BASIS carries this whole reasoning; an element with such a tag is refused as `tag_not_in_table_2` with its octets parked."
+    },
+    "columns_as_the_document_defines_them": "Tag, Name, Data Type or References, Allowed Values or References, Length (Bytes), Required/Optional/Context — the six columns Table 2 draws, and the document defines two of them in the prose immediately above Table 1 (§6.6), which governs Table 2 as well because the two tables list the same elements. LENGTH: 'SMPTE ST 335 [19] defines the length values of metadata items as “stated” as opposed to “normative”. Certain data types may have a flexible length. The value within the Length column in Table 1 specifies either a stated or “Variable” number of bytes. When the value is “Variable”, the length is determined by parsing the encoded BER length as specified in the KLV packet.' PRESENCE: 'Metadata elements are indicated as Required, by Context, or Optional.' THE LENGTH DEFINITION IS LOAD-BEARING AND IS WHY THE CODEC REFUSES RATHER THAN TRUNCATES: a stated length is stated, so an element carrying a different count is not an element with extra octets. Also recorded: §6.7 attaches ONE comment to its table, about the key's own history — 'In creating the key for the Security Metadata Local Set in version RP 0102.4, it was necessary to use the DRAFT of SMPTE RP 336M-2007. That draft contained ambiguous information, which led to the incorrect assignment of bytes five and six in the Security Metadata Local Set. The final version of SMPTE RP 336M removed the ambiguity and it became apparent the Security Metadata Local Set Key needed to be updated.' It bears on the KEY and on no row, which is why it is here and not in one.",
+    "the_trap_in_this_table": {
+      "finding": "TAGS 2 AND 12 ARE BOTH A uint8 'Country Coding Method' AND THEIR ENUMERATIONS DISAGREE AT SEVEN OF SIXTEEN POSITIONS. 0x03 is 'FIPS 10-4 Two Letter' under tag 2 and 'ISO-3166 Numeric' under tag 12; 0x04 and 0x05 are shifted by one the same way; 0x0A, 0x0B and 0x0C are the three 'Mixed' methods under tag 2 and 'Omitted Value' under tag 12; and the sixteenth value is 0x10 'GENC Mixed' under tag 2 against 0x40 'GENC AdminSub' under tag 12. Only 0x01, 0x02, 0x06-0x09 and 0x0D-0x0F agree.",
+      "why_it_is_a_finding_and_not_an_extraction_artefact": "THE PROSE STATES THE SAME ASYMMETRY INDEPENDENTLY. §6.1.2, of the tag 2 method: 'GENC administrative subdivision codes are not applicable.' §6.1.12, of the tag 12 method: '... and GENC two-letter, three-letter, three-digit numeric or administrative subdivisions.' Two sentences in two sections say what the 0x40 row says, so the divergence survives any doubt about the table extraction.",
+      "what_it_would_cost_a_decoder_that_missed_it": "A decoder sharing one enumeration between the two elements reports a coding method the packet did not state, for seven of the sixteen legal values, with no error and no clue — the plausible-looking lie this repository's ellipsoid audit exists for, in a new place. klv_security_codec keeps COUNTRY_CODING_METHOD and OBJECT_COUNTRY_CODING_METHOD as two dicts and states the reason at THE_TWO_COUNTRY_CODING_ENUMERATIONS_DIFFER.",
+      "it_meets_the_documents_own_example": "§6.9's worked value is 'a Tag 2 value of “0C”', which is 'STANAG 1059 Mixed' in tag 2's enumeration and 'Omitted Value' in tag 12's — so the only element value the document prints lands squarely inside the divergence."
+    },
+    "the_rules_around_the_table": {
+      "6_2_repetition_rate": "§6.2 Security Metadata Repetition Rate. `ST 0102.10-49`: 'A Security Metadata set shall be repeated / updated whenever classification, special handling instructions, releasability, or other mandatory fields change value.' `ST 0102.10-50`: 'Security Metadata Sets shall be repeated no less than every thirty (30) seconds.' Followed by: 'Applications producing short Motion Imagery Data clips or segments of a few seconds in duration may need to repeat Security Metadata Sets as often as every frame.' BOTH ARE OBLIGATIONS ON A PRODUCER ACROSS PACKETS. This adapter states in its own docstring that no state crosses a packet boundary, so it neither checks nor enforces them and says so rather than implying compliance",
+      "6_3_unclassified_motion_imagery_data": "§6.3 Unclassified Motion Imagery Data. `ST 0102.10-54`: 'Unclassified Motion Imagery Data shall be marked with Security Metadata.' `ST 0102.10-51`: 'When Motion Imagery Data is unclassified, the Security Metadata Set value shall be \"UNCLASSIFIED//\" for Security Classification.' Followed by: 'Other entries in the set which limit or clarify the classification are optional.' WHAT THIS DECIDES HERE: unclassified is a MARKED state with a value on the wire (0x01 by §6.8.1), which is what makes §6.5's absent set a different thing from it. It is also why the complete-set fixture uses 0x01: it is the document's own value for the one classification the document itself names in prose",
+      "6_4_partial_sets": "§6.4 Partial Security Metadata Universal and Local Sets: 'For some operational situations or applications not all metadata elements in Section 6.1 may be required. The originator and his cognizant Security official are responsible to ensure all appropriate security entries are populated.' SO A SET MISSING A `Required` ELEMENT IS NOT MALFORMED. The Table 2 column reading Required states the element's status in a COMPLETE set, and §6.4 says which sets must be complete is decided outside this document by a person. A decoder that refused a partial set would be enforcing a rule ST 0102.12 explicitly declines to state — so a partial set decodes, and which elements arrived is reported rather than judged",
+      "6_5_absence_of_sets": "§6.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet — not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+      "6_8_conversion_between_universal_and_local_set_forms": "§6.8 Conversion of Security Metadata Elements between Universal and Local Sets: 'For bandwidth efficiency, some elements in the Local Set are formatted differently than the Universal Set equivalent. This section provides conversion information for the differing items.' §6.8.1 Security Classification, §6.8.2 Classifying Country and Releasing Instructions Country Code and §6.8.3 Object Country Coding Method each state the same pair: 'From Universal Set to Local Set: Convert string to corresponding unsigned integer. From Local Set to Universal Set: Convert unsigned integer to corresponding uppercase string.' THREE SUBSECTIONS FOR THREE ELEMENTS, and they are exactly tags 1, 2 and 12 — the three rows whose Local Set Data Type is uint8. That is where this module's labels come from, and it is why producing one is CARRYING a string the document states rather than naming a number",
+      "6_9_mixed_country_coding_method": "§6.9 “Mixed” Country Coding Method. `ST 0102.10-58`: 'The Mixed Country Coding Method shall be used to support di- or tri-graphs (but not both) from GEC, ISO 3166, GENC and STANAG 1059, respectively, and approved tetragraphs in the same field.' Its example is the document's only printed element value: 'For example, a Tag 2 value of “0C” would indicated the payload of Tag 6 consists of STANAG 1059 di-graphs or tri-graphs (but not both), and one or more tetragraphs from the CAPCO Authorized Classification and Control Marking Register.' (The document's own 'indicated' is preserved.) Note 0x0C is `STANAG 1059 Mixed` in TAG 2's enumeration and `Omitted Value` in tag 12's, which is the divergence above meeting the document's own example",
+      "and_this_is_what_the_output_shape_was_DERIVED_FROM": "THE SHAPE WAS NOT DECIDED BEFORE THESE WERE READ, AND THE ORDER MATTERS. §6.5 is what makes an absent set a STATEMENT rather than a gap, so the adapter emits no marking and quotes the sentence; §6.3 is what makes that precise, because it puts a VALUE on the wire for unclassified data (0x01 by §6.8.1) and therefore makes 'unclassified' and 'unlabelled' two different states; §6.4 is what makes a set missing Required elements legitimate, so the codec reports which arrived instead of refusing; and §6.4 with §6.5 together are what make refusing ONE element safe, because the gap a refusal leaves is a shape the document admits and cannot be read as a claim. §6.2 reaches no decode at all and is recorded as reaching none. §6.8 is where the three uint8 labels come from and is the reason producing one is CARRYING a string rather than naming a number."
+    },
+    "the_external_code_lists_ruling": "GENC (NGA.STND.0033_3.0.1, ref [6]), the GEC register (ref [8]), ISO 3166-1 and -2:2013 (refs [15] [16]), STANAG 1059 Ed 8 (ref [17]) and IETF RFC 2781 (ref [26]) are the code lists and encodings ST 0102.12's country elements are written against. **NONE IS HELD BY THIS REPOSITORY.** THE RULING: this codec CARRIES a country code as the element's own Data Type cell says to carry it and DOES NOT VALIDATE it against a list it cannot read. A decoder that rejected '//XX' because no held file lists XX would be refusing a value on the authority of a document nobody here has opened; one that accepted it while claiming conformance would be worse. So the code is carried verbatim, the coding METHOD the packet declared is carried beside it, and what the code denotes is the consumer's lookup. This is a RULING and not an omission — the same shape as klv_codec's refusal to enforce X.690's 126-octet ceiling from an informative annex quoting an unheld standard",
+    "st_336_conformance_and_KLV_11": "`ST 0102.12-65`: 'The Security Metadata Universal Set shall conform to SMPTE ST 336 KLV encoding rules.' `ST 0102.12-66`: 'The Security Metadata Local Set shall conform to SMPTE ST 336 [3] KLV encoding rules.' Reference [3] is 'SMPTE ST 336:2007', a DIFFERENT edition from the ST 336:2017 MISP-2019.1 pins — register entry KLV 11. **RESOLVED 2026-09-03, SHAPE (a), AND CITED HERE RATHER THAN RE-ARGUED:** both editions are held and were read against each other clause by clause, and the two differences that reach a key form, a length octet or a UL structure reach no octet a conforming stream can carry. So this module's use of `klv_codec` — which is written against ST 336:2017 and ST 0107.3 — satisfies -66 as well",
+    "where_the_item_layer_lives_and_why": {
+      "module": "packages/cdm/synapse_cdm/adapters/klv_security_codec.py — ITS OWN MODULE, beside klv_uas_codec rather than inside it.",
+      "the_precedent_applied": "klv_uas_codec's module docstring states where a tag table lives: 'the tag table lives here, one layer up, on the cat048_codec / asterix_cat048 precedent: a codec that reads octets, and above it a codec that knows what they mean.' The precedent is ONE ITEM LAYER PER DOCUMENT — klv_uas_codec cites ST 0601.14a and EG 0601.1 by SHA-256 at module scope so that 'which copy is this read from' has one answer.",
+      "and_the_decisive_argument_is_mechanical": "THE TAG NUMBERS COLLIDE AND THE TABLE IS KEYED ON THE TAG. In ST 0601.14a tag 1 is Checksum, tag 2 is Precision Time Stamp, tag 3 is Mission ID, tag 13 is Sensor Latitude, tag 22 is Target Width. In ST 0102.12 they are Security Classification, the Country Coding Method, Classifying Country, Object Country Codes and Version. EVERY ONE OF THIS DOCUMENT'S SEVENTEEN TAGS COLLIDES WITH A TAG OF THAT ONE. Two tables cannot share one dict[int, ...], and a module holding two dicts keyed on the same integers is a module where a lookup's meaning depends on which document the reader thought they were in. Recorded because the choice was between two defensible layouts and this is what settled it.",
+      "what_klv_uas_codec_gained_instead": "A second, differently-grounded table: NESTED_SETS = {48: 'MISB ST 0102.12 Security Metadata Local Set'}. ITEMS answers 'what does this integer mean' and stays at the 26 witnessed items exactly as its docstring says; NESTED_SETS answers 'which document's item layer owns these octets'. WITNESSED_TAGS is unchanged at 26 and the scope contract's sentence is untouched.",
+      "and_the_scope_contract_is_CROSSED_HERE_WITH_A_GROUND": "Item 48 is NOT in the pinned stream, so klv_uas_codec's scope contract applies to it and crossing it needs an argument. THE ARGUMENT: the contract's reason is that an unwitnessed item's decoder 'could only ever be checked against a fixture written from the same reading of the same table', and item 48's is checked against a SECOND DOCUMENT — ST 0601.14a §8.48 prints KLV Key 06.0E.2B.34.02.03.01.01.0E.01.03.03.02.00.00.00 (CRC 40980) and ST 0102.12 §6.7 registers the Security Metadata Local Set under the same sixteen octets and the same CRC. Two documents, obtained on different days by different routes, in agreement. NO OTHER UNWITNESSED ST 0601 ITEM HAS A SECOND DOCUMENT BEHIND IT, which is why the other 115 rows stay `not yet` and this one does not. WHAT IS STILL TRUE: the pinned stream carries no security set, so nothing in the element layer is checked against an octet anybody has met on a wire."
+    },
+    "check_against_the_documents_own_examples_CANNOT_BE_APPLIED_AND_HERE_IS_WHY": "ST 0102.12 PRINTS NO WORKED EXAMPLE OF AN ELEMENT OR A SET, and this was derived rather than assumed: every run of four or more hex pairs in the eighteen pages was extracted and every one is a 16-byte Universal Label — the two registered set keys and Table 1's Universal Set constituent keys. The document's ONLY examples are 'Example of Country Coding Method: GENC Two Letter' (§6.1.2, p.5), 'Example of classifying country: //CZE (Example of GENC code) //GB (Example of ISO-3166 code)' (§6.1.3, p.5) and 'a Tag 2 value of “0C”' (§6.9, p.15). AND THE DELEGATING DOCUMENT SUPPLIES NONE EITHER: ST 0601.14a §8.48's Example KLV Item row reads Tag 30, Len '-', Value 'N/A'. So the strongest check klv_uas_codec has — 26 of 26 decoded values agreeing with the document's own printed Software Values — HAS NO ANALOGUE HERE AND IS NOT SIMULATED. The transcription is checked four ways and no decoded VALUE is checked against the document at all. That is a weaker arrangement than park 1's and this clause exists so that a reader meets the weakness here rather than inferring strength from the shape of the node. A FURTHER NOTE ON §6.1.2 AND §6.1.3: their two examples do NOT pair — 'GENC Two Letter' against a three-letter //CZE — because they are independent examples in two sections and not one worked set, so a fixture combining them verbatim would be internally incoherent. Each fixture pairs a document code with a coding method of the matching width instead.",
+    "requirement_ids": {
+      "how_many": "SIXTY-SIX, each occurring exactly once in the document, numbered 1 through 66 with no gap and no duplicate — which is the positive control the numbering offers about itself. Grouped by the version each names: ST 0102.10 sixty-two, ST 0102.11 two (-63, -64), ST 0102.12 two (-65, -66). That grouping matches delegated_specifications_held.st_0102_12.verification_performed, derived independently this round from normalised text.",
+      "live_and_deprecated": "THIRTY-EIGHT LIVE and TWENTY-EIGHT DEPRECATED, split by position against 'Appendix A Deprecated Requirements'. AND THE REVISION HISTORY'S OWN LIST IS SHORTER THAN THE APPENDIX, WHICH IS WORTH STATING: it reads 'Deprecated REQ's: 1, 12, 28 through 48, 52, 53' — TWENTY-FIVE — while Appendix A carries TWENTY-EIGHT. The three extra are -18, -19 and -20, the Releasing Instructions ordering rules, which were therefore deprecated by an EARLIER edition. The revision history lists what THIS edition deprecated; the appendix holds everything deprecated by any edition, and reading either as the other gives a count that is wrong by three.",
+      "each_one_and_where_it_lands": {
+        "what_the_four_landings_mean": "'a codec rule' — the requirement is discharged or bounded by code in klv_security_codec or klv_codec. 'a row' — it is what makes a column of `items` below read the way it does, typically the Required/Context marking. 'a fixture' — a fixture exercises the shape it describes, whether or not the codec enforces it. 'not this repository's' — it is an obligation on a PRODUCER of Motion Imagery Data, or it needs a document not held, and the note says which.",
+        "live": {
+          "ST 0102.10-02": {
+            "section": "§6",
+            "lands_on": "a codec rule",
+            "note": "'All security metadata shall be expressed in accordance with MISB ST 0107 [9].' Lands on klv_security_codec's uint16 decode being big-endian and on the BER-OID/BER length walk being klv_codec's, which is ST 0107.3's grammar — the document park 4 closed on. NOTE the delegation is to ST 0107.2 in this document's own reference list [9] and MISP-2019.1 pins ST 0107.3; recorded at delegated_specifications_held.st_0102_12.verification_performed and unchanged by this round."
+          },
+          "ST 0102.10-55": {
+            "section": "§6.1",
+            "lands_on": "not this repository's",
+            "note": "'All Motion Imagery Data shall be marked at their proper classification level with appropriate handling, caveats and releasing instructions.' An obligation on a PRODUCER of Motion Imagery Data. This repository translates packets somebody else produced and marks nothing."
+          },
+          "ST 0102.10-03": {
+            "section": "§6.1.1",
+            "lands_on": "a row",
+            "note": "tag 1's row. 'Motion Imagery Data shall contain the Security Classification metadata element' is what makes tag 1 Required in §6.7's presence column."
+          },
+          "ST 0102.10-04": {
+            "section": "§6.1.2",
+            "lands_on": "a row",
+            "note": "tag 2's row, and the source of its Required marking."
+          },
+          "ST 0102.10-05": {
+            "section": "§6.1.3",
+            "lands_on": "a row",
+            "note": "tag 3's row, and the source of its Required marking."
+          },
+          "ST 0102.10-06": {
+            "section": "§6.1.4",
+            "lands_on": "a row",
+            "note": "tag 4's Context marking: 'When special handling instructions or compartmented information are used' is the condition the Context column names."
+          },
+          "ST 0102.10-07": {
+            "section": "§6.1.4",
+            "lands_on": "not this repository's",
+            "note": "'When used, SCI/SHI digraphs, trigraphs, or compartment names shall be added identifying a single or a combination of special handling instructions.' A rule about which markings a producer selects. The codec carries whatever arrived."
+          },
+          "ST 0102.10-08": {
+            "section": "§6.1.4",
+            "lands_on": "a fixture",
+            "note": "'A single entry shall be ended with a double forward slash \"//\".' Exercised by security_local_set_partial_is_carried_as_partial's tag 5 and the complete set's tag 5, both ending '//'. NOT ENFORCED: the codec carries the string and does not police a producer's punctuation, because rejecting a caveat for a missing slash would drop a marking the packet carried."
+          },
+          "ST 0102.10-09": {
+            "section": "§6.1.4",
+            "lands_on": "a fixture",
+            "note": "'Multiple digraphs, trigraphs, or compartment names shall be separated by a single forward slash \"/\".' Exercised by the complete set's tag 4, 'SYNTHETIC-SCI-A/SYNTHETIC-SHI-B//'. Carried, not enforced, for the same reason."
+          },
+          "ST 0102.10-10": {
+            "section": "§6.1.4",
+            "lands_on": "a fixture",
+            "note": "'Multiple digraphs, trigraphs, or compartment names shall be ended with a double forward slash \"//\".' The same fixture's terminator. Carried, not enforced."
+          },
+          "ST 0102.10-11": {
+            "section": "§6.1.4",
+            "lands_on": "a codec rule",
+            "note": "'Multiple SCI/SHI digraphs, trigraphs, or compartment names shall be concatenated in one metadata element free text [18] entry.' Reference [18] is ISO/IEC 646, which is where tag 4's iso646 decoding rule comes from, and the ONE ENTRY is why the codec returns a single string rather than splitting on the separators -09 and -10 name."
+          },
+          "ST 0102.10-13": {
+            "section": "§6.1.5",
+            "lands_on": "a row",
+            "note": "tag 5's Context marking."
+          },
+          "ST 0102.10-14": {
+            "section": "§6.1.5",
+            "lands_on": "not this repository's",
+            "note": "'The Caveats metadata element shall be used to indicate FOR OFFICIAL USE ONLY (FOUO) data.' A producer's obligation about which marking to emit. DELIBERATELY NOT EXERCISED BY ANY FIXTURE: the round's rule is that no fixture carries a real-world marking, and FOUO is one even though this document prints it."
+          },
+          "ST 0102.10-15": {
+            "section": "§6.1.6",
+            "lands_on": "a row",
+            "note": "tag 6's Context marking."
+          },
+          "ST 0102.10-16": {
+            "section": "§6.1.6",
+            "lands_on": "a fixture",
+            "note": "'Multiple country codes shall be separated by a blank (space – NOT underscore).' Exercised by the complete set's tag 6, 'CZE ZZZ'. Carried and not enforced — the codec does not split, for -17's reason."
+          },
+          "ST 0102.10-17": {
+            "section": "§6.1.6",
+            "lands_on": "a codec rule",
+            "note": "'Multiple country codes shall be concatenated in one Releasing Instructions metadata element.' ONE ENTRY, so the codec returns one string and does not split on the blank -16 names. Splitting would make the decoder's output a list the packet did not send."
+          },
+          "ST 0102.11-63": {
+            "section": "§6.1.6",
+            "lands_on": "not this repository's",
+            "note": "'Systems shall populate the country codes in the Releasing Instructions metadata element in accordance with the security guidelines (national or international) appropriate to their mission.' A producer's obligation against guidelines this repository does not hold."
+          },
+          "ST 0102.11-64": {
+            "section": "§6.1.6",
+            "lands_on": "not this repository's",
+            "note": "'U.S. systems shall populate the country codes ... in accordance with DOD Manual 5200.01 Volume 2.' Reference [12] is not held and is a producer's obligation besides."
+          },
+          "ST 0102.10-22": {
+            "section": "§6.1.10",
+            "lands_on": "a row",
+            "note": "'The Declassification Date metadata element format shall be YYYYMMDD.' Tag 10's Allowed Values cell and its stated Length of 8, which is what the codec's stated-length check enforces. The DIGITS are not validated: a wrong-shaped date is a marking the packet carried and dropping it would lose it."
+          },
+          "ST 0102.10-21": {
+            "section": "§6.1.11",
+            "lands_on": "a row",
+            "note": "'The Classification or Marking System metadata element shall be free text.' Tag 11's iso646 decoding rule."
+          },
+          "ST 0102.10-23": {
+            "section": "§6.1.13",
+            "lands_on": "a row",
+            "note": "tag 13's Required marking."
+          },
+          "ST 0102.10-24": {
+            "section": "§6.1.13",
+            "lands_on": "a fixture",
+            "note": "'Multiple Object Country Codes shall be separated by a semi-colon \";\" (no spaces).' Exercised by the complete set's tag 13 octets. Carried as OCTETS and never split, because tag 13's encoding is RFC 2781's and RFC 2781 is not held."
+          },
+          "ST 0102.10-25": {
+            "section": "§6.1.13",
+            "lands_on": "a codec rule",
+            "note": "'Multiple Object Country Codes shall be concatenated in one Object Country Code metadata element entry.' One entry, so one carried value."
+          },
+          "ST 0102.10-26": {
+            "section": "§6.1.13",
+            "lands_on": "not this repository's",
+            "note": "'The object country code of the geographic region lying under the center of the image frame shall populate the Object Country Code metadata element.' A rule about what a producer puts in the field. Nothing here computes a country from a frame centre — that would be this adapter deciding which state an image is over."
+          },
+          "ST 0102.10-27": {
+            "section": "§6.1.14",
+            "lands_on": "not this repository's",
+            "note": "'The Classification Comments metadata element shall only be used to convey non-essential security-related information.' A producer's obligation about content, unverifiable from octets."
+          },
+          "ST 0102.10-56": {
+            "section": "§6.1.15",
+            "lands_on": "a row",
+            "note": "'The Security Metadata Version shall be included in all Security Metadata Universal and Local Sets utilizing version four (4) of the security metadata or later.' Tag 22's Required marking."
+          },
+          "ST 0102.10-57": {
+            "section": "§6.1.15",
+            "lands_on": "a codec rule",
+            "note": "'When the Security Metadata Version is not found in the Security Metadata, version three (3) shall be assumed.' RECORDED AND DELIBERATELY NOT APPLIED: the codec emits a version_absent advisory quoting this clause and does NOT write 3 into the decoded elements, because the packet did not carry it. Exercised by security_local_set_partial_is_carried_as_partial."
+          },
+          "ST 0102.10-49": {
+            "section": "§6.2",
+            "lands_on": "not this repository's",
+            "note": "'A Security Metadata set shall be repeated / updated whenever classification ... change value.' An obligation on a producer ACROSS packets. The adapter's own docstring states that no state crosses a packet boundary, so it cannot see the condition and does not claim to check it. Quoted at klv_security_codec.REPETITION_RATE."
+          },
+          "ST 0102.10-50": {
+            "section": "§6.2",
+            "lands_on": "not this repository's",
+            "note": "'Security Metadata Sets shall be repeated no less than every thirty (30) seconds.' The same: a decoder meets one packet at a time and cannot see thirty seconds."
+          },
+          "ST 0102.10-54": {
+            "section": "§6.3",
+            "lands_on": "not this repository's",
+            "note": "'Unclassified Motion Imagery Data shall be marked with Security Metadata.' A producer's obligation. What it settles HERE is the CONTRAST §6.5 needs: unclassified data is MARKED data, so an unmarked packet is not an unclassified one."
+          },
+          "ST 0102.10-51": {
+            "section": "§6.3",
+            "lands_on": "a codec rule",
+            "note": "'When Motion Imagery Data is unclassified, the Security Metadata Set value shall be \"UNCLASSIFIED//\" for Security Classification.' Together with §6.8.1 this is where the 0x01 label comes from, and it is why the complete-set and minimal fixtures use 0x01: it is the one classification the document itself names in prose."
+          },
+          "ST 0102.10-58": {
+            "section": "§6.9",
+            "lands_on": "a row",
+            "note": "'The Mixed Country Coding Method shall be used to support di- or tri-graphs (but not both) from GEC, ISO 3166, GENC and STANAG 1059, respectively, and approved tetragraphs in the same field.' Tags 2 and 12's Mixed enumeration values, and the source of the complete-set fixture's Tag 2 value 0x0C — the only element value the document prints. NOT VALIDATED: the graphs are carried, because the registers they come from are not held."
+          },
+          "ST 0102.10-59": {
+            "section": "§6.10",
+            "lands_on": "not this repository's",
+            "note": "'Current and future U.S. systems producing Motion Imagery Data shall adhere to guidance as directed by the Memorandum ... for GENC and ISO-3166 country codes.' A procurement obligation on a producer."
+          },
+          "ST 0102.10-60": {
+            "section": "§6.10",
+            "lands_on": "not this repository's",
+            "note": "'All current systems that do not use GENC or ISO-3166 shall use country codes as defined in GENC and ISO-3166 at their next block upgrade.' The same."
+          },
+          "ST 0102.10-61": {
+            "section": "§6.10",
+            "lands_on": "a codec rule",
+            "note": "'All current systems that consume Motion Imagery Data shall understand and properly interpret all country coding methods except for GENC Administrative Subdivisions (GENC AdminSub) code.' THE ONE REQUIREMENT IN THIS DOCUMENT ADDRESSED TO A CONSUMER, which is what this repository is. Discharged as far as octets allow: every one of the sixteen values in each element's own enumeration is decoded to the document's own label, and the two enumerations are kept apart — see THE_TWO_COUNTRY_CODING_ENUMERATIONS_DIFFER. NOT discharged as far as CODE LISTS go: interpreting the code a method names requires GENC, ISO 3166, the GEC register or STANAG 1059, none of which is held, and that limit is ruled at EXTERNAL_CODE_LISTS_NOT_HELD rather than left as a silence."
+          },
+          "ST 0102.10-62": {
+            "section": "§6.10",
+            "lands_on": "a codec rule",
+            "note": "'All current systems that consume Motion Imagery Data shall understand and properly interpret at least the country code portion of a GENC Administrative Subdivisions (GENC AdSub) code.' The AdminSub value 0x40 is in tag 12's enumeration and decodes to its label; splitting an AdSub code into its country portion needs GENC, which is not held, so the code is carried whole. The same ruling."
+          },
+          "ST 0102.12-65": {
+            "section": "§6.6",
+            "lands_on": "not this repository's",
+            "note": "'The Security Metadata Universal Set shall conform to SMPTE ST 336 KLV encoding rules.' The UNIVERSAL SET is out of this round's scope by ST 0601.14-31, so this requirement governs a carrier nothing here reads. Its edition question is KLV 11's and is resolved — see -66."
+          },
+          "ST 0102.12-66": {
+            "section": "§6.7",
+            "lands_on": "a codec rule",
+            "note": "'The Security Metadata Local Set shall conform to SMPTE ST 336 [3] KLV encoding rules.' Discharged by the walk being klv_codec's BER-OID and BER length primitives. THE EDITION QUESTION IS SETTLED AND CITED RATHER THAN RE-ARGUED: ref [3] is ST 336:2007 where MISP-2019.1 pins ST 336:2017, and ambiguity_register KLV 11 RESOLVED it on 2026-09-03, shape (a) — both editions held, read against each other, and the two differences that reach a key form, a length octet or a UL structure reach no octet a conforming stream can carry."
+          }
+        },
+        "deprecated": {
+          "ST 0102.10-01": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "'All MPEG-2 transport streams or files shall be tagged with security metadata in accordance with MISB ST 0102.'"
+          },
+          "ST 0102.10-12": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "'The Sensitive Compartmented Information (SCI) / Special Handling Instructions (SHI) metadata element shall only be present when the material in the transport stream or file requires special handling.'"
+          },
+          "ST 0102.10-18": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "the originating country's code appears first (US systems)."
+          },
+          "ST 0102.10-19": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "other releasable countries in alphabetical order."
+          },
+          "ST 0102.10-20": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "non-state organizations' codes in alphabetical order."
+          },
+          "ST 0102.10-28": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "the Universal Set's 16-byte key."
+          },
+          "ST 0102.10-29": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "required security and linking information contained entirely within a Universal Set."
+          },
+          "ST 0102.10-30": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "the Local Set's 16-byte key — the same sixteen octets klv_security_codec.LOCAL_SET_KEY records, deprecated as a REQUIREMENT while the key itself is still registered in §6.7's body."
+          },
+          "ST 0102.10-31": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "required security and linking information contained entirely within a Local Set."
+          },
+          "ST 0102.10-32": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-33": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-34": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-35": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-36": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-37": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-38": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-39": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-40": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-41": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-42": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-43": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-44": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-45": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-46": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-47": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-48": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "one of the linking requirements Appendix A retires — the UMID, Stream ID, Transport Stream ID and Universal Label Key ID chain the revision history's 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' describes."
+          },
+          "ST 0102.10-52": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "the Version element required for RP 0102.4, ST 0102.5 and later — superseded by the live ST 0102.10-56, which says the same thing about version four and later."
+          },
+          "ST 0102.10-53": {
+            "section": "Appendix A Deprecated Requirements",
+            "lands_on": "not this repository's",
+            "note": "RP 0102.3 assumed in the absence of a Version element — superseded by the live ST 0102.10-57, which assumes version three."
+          }
+        }
+      }
+    },
+    "items": [
+      {
+        "tag": 1,
+        "name": "Security Classification",
+        "data_type_or_references": "uint8",
+        "allowed_values_or_references": "UNCLASSIFIED// (0x01) RESTRICTED// (0x02) CONFIDENTIAL// (0x03) SECRET// (0x04) TOP SECRET// (0x05)",
+        "length_bytes": "1",
+        "required_optional_context": "Required",
+        "element_definition_section": "§6.1.1",
+        "element_definition_verbatim": "The Security Classification metadata element represents the overall security classification of the Motion Imagery Data in accordance with U.S. and NATO classification guidance. Values allowed include: TOP SECRET, SECRET, CONFIDENTIAL, RESTRICTED, and UNCLASSIFIED (all caps) followed by a double forward slash “//”. This is a mandatory entry in a Security Metadata set.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-03"
+        ],
+        "decoding_rule": "uint8_enum",
+        "cdm_field": "Entity.attributes.security_metadata.security_classification"
+      },
+      {
+        "tag": 2,
+        "name": "Classifying Country and Releasing Instructions Country Coding Method",
+        "data_type_or_references": "uint8",
+        "allowed_values_or_references": "ISO-3166 Two Letter (0x01) ISO-3166 Three Letter (0x02) FIPS 10-4 Two Letter (0x03) FIPS 10-4 Four Letter (0x04) ISO-3166 Numeric (0x05) 1059 Two Letter (0x06) 1059 Three Letter (0x07) Omitted Value (0x08) Omitted Value (0x09) FIPS 10-4 Mixed (0x0A) ISO 3166 Mixed (0x0B) STANAG 1059 Mixed (0x0C) GENC Two Letter (0x0D) GENC Three Letter (0x0E) GENC Numeric (0x0F) GENC Mixed (0x10)",
+        "length_bytes": "1",
+        "required_optional_context": "Required",
+        "element_definition_section": "§6.1.2",
+        "element_definition_verbatim": "This metadata element identifies the country coding method for the Classifying Country (Par. 6.1.3) and Releasing Instructions (Par. 6.1.6) metadata. The Country Coding Method value allows GEC two-letter or four-letter alphabetic country code (legacy systems only); ISO-3166 [15] [16] two-letter, three-letter, or three-digit numeric; STANAG 1059 [17] two-letter or three-letter codes; and GENC two-letter, three-letter or three-digit numeric. GENC administrative subdivision codes are not applicable.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-04"
+        ],
+        "decoding_rule": "uint8_enum",
+        "cdm_field": "Entity.attributes.security_metadata.classifying_country_and_releasing_instructions_country_coding_method"
+      },
+      {
+        "tag": 3,
+        "name": "Classifying Country",
+        "data_type_or_references": "Text from the appropriate standard preceded by ‘//’",
+        "allowed_values_or_references": "FIPS 10-4 [7] ISO-3166 [15] [16] STANAG 1059 [17] GENC [6]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Required",
+        "element_definition_section": "§6.1.3",
+        "element_definition_verbatim": "The Classifying Country metadata element contains a value for the classifying country code preceded by a double slash \"//.\"",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-05"
+        ],
+        "decoding_rule": "iso646_by_derivation",
+        "cdm_field": "Entity.attributes.security_metadata.classifying_country"
+      },
+      {
+        "tag": 4,
+        "name": "Security-SCI/SHI information",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "Security Ref [1]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.4",
+        "element_definition_verbatim": "§6.1.4 is titled 'Sensitive Compartmented Information (SCI) / Special Handling Instructions (SHI) Information' and states NO descriptive paragraph at all — it is a heading followed directly by six requirements. Recorded as an absence rather than filled in, because a paraphrase of six 'shall' sentences into a definition would be this transcription writing prose the document does not carry.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-06",
+          "ST 0102.10-07",
+          "ST 0102.10-08",
+          "ST 0102.10-09",
+          "ST 0102.10-10",
+          "ST 0102.10-11"
+        ],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.security_sci_shi_information"
+      },
+      {
+        "tag": 5,
+        "name": "Caveats",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "Security Ref [1]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.5",
+        "element_definition_verbatim": "The Caveats metadata element represents pertinent caveats (or code words) from each category of the appropriate security entity register. Entries in this field may be abbreviated or spelled out as free text [18] entries.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-13",
+          "ST 0102.10-14"
+        ],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.caveats"
+      },
+      {
+        "tag": 6,
+        "name": "Releasing Instructions",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "Security Refs [1] [20, 21, 22, 23, 24, 25]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.6",
+        "element_definition_verbatim": "The Releasing Instructions metadata element contains a list of country codes to indicate the countries to which the Motion Imagery Data is releasable.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-15",
+          "ST 0102.10-16",
+          "ST 0102.10-17",
+          "ST 0102.11-63",
+          "ST 0102.11-64"
+        ],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.releasing_instructions"
+      },
+      {
+        "tag": 7,
+        "name": "Classified By",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "Security Refs [1] [24]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.7",
+        "element_definition_verbatim": "The Classified By metadata element identifies the name and type of authority used to classify the Motion Imagery Data. The metadata element is free text and can contain either the original classification authority name and position or personal identifier, or the title of the document or security classification guide used to classify the data.",
+        "requirements_stated_in_that_section": [],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.classified_by"
+      },
+      {
+        "tag": 8,
+        "name": "Derived From",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "Security Refs [1], [24]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.8",
+        "element_definition_verbatim": "The Derived From metadata element contains information about the original source of data from which the classification was derived. The metadata element is free text [18].",
+        "requirements_stated_in_that_section": [],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.derived_from"
+      },
+      {
+        "tag": 9,
+        "name": "Classification Reason",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "Security Refs [1], [24]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.9",
+        "element_definition_verbatim": "The Classification Reason metadata element contains the reason for classification or a citation from a document. The metadata element is free text [18].",
+        "requirements_stated_in_that_section": [],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.classification_reason"
+      },
+      {
+        "tag": 10,
+        "name": "Declassification Date",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "YYYYMMDD",
+        "length_bytes": "8",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.10",
+        "element_definition_verbatim": "The Declassification Date metadata element provides a date when the classified material may be automatically declassified.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-22"
+        ],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.declassification_date"
+      },
+      {
+        "tag": 11,
+        "name": "Classification and Marking System",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "N/A",
+        "length_bytes": "Variable",
+        "required_optional_context": "Context",
+        "element_definition_section": "§6.1.11",
+        "element_definition_verbatim": "The Classification and Marking System metadata element identifies the classification or marking system used in the Security Metadata set as determined by the appropriate security entity for the country originating the data.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-21"
+        ],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.classification_and_marking_system"
+      },
+      {
+        "tag": 12,
+        "name": "Object Country Coding Method",
+        "data_type_or_references": "uint8",
+        "allowed_values_or_references": "ISO-3166 Two Letter (0x01) ISO-3166 Three Letter (0x02) ISO-3166 Numeric (0x03) FIPS 10-4 Two Letter (0x04) FIPS 10-4 Four Letter (0x05) 1059 Two Letter (0x06) 1059 Three Letter (0x07) Omitted Value (0x08) Omitted Value (0x09) Omitted Value (0x0A) Omitted Value (0x0B) Omitted Value (0x0C) GENC Two Letter (0x0D) GENC Three Letter (0x0E) GENC Numeric (0x0F) GENC AdminSub (0x40)",
+        "length_bytes": "1",
+        "required_optional_context": "Required",
+        "element_definition_section": "§6.1.12",
+        "element_definition_verbatim": "The Object Country Coding Method metadata element identifies the coding method for the Object Country Code (Par. 6.1.13) metadata. This element allows use of GEC two-letter or four-letter alphabetic country code (legacy systems only); ISO-3166 two-letter, three-letter, or three-digit numeric; STANAG 1059 two-letter or three-letter codes; and GENC two-letter, three-letter, three-digit numeric or administrative subdivisions. Use of this element in version 6 of this Standard and later is mandatory. In version 5 and earlier, it was optional; its absence indicates the default GENC two-letter coding method was used in the Object Country Code element. See also Section 6.9.",
+        "requirements_stated_in_that_section": [],
+        "decoding_rule": "uint8_enum",
+        "cdm_field": "Entity.attributes.security_metadata.object_country_coding_method"
+      },
+      {
+        "tag": 13,
+        "name": "Object Country Codes",
+        "data_type_or_references": "RFC 2781 [26] [27]",
+        "allowed_values_or_references": "Refs [15] [16] [28] [29]",
+        "length_bytes": "Variable",
+        "required_optional_context": "Required",
+        "element_definition_section": "§6.1.13",
+        "element_definition_verbatim": "The Object Country Codes metadata element contains a value identifying the country (or countries), which is the object of the Motion Imagery Data.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-23",
+          "ST 0102.10-24",
+          "ST 0102.10-25",
+          "ST 0102.10-26"
+        ],
+        "decoding_rule": "carried_octets",
+        "cdm_field": "Entity.attributes.security_metadata.object_country_codes"
+      },
+      {
+        "tag": 14,
+        "name": "Classification Comments",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "N/A",
+        "length_bytes": "Variable",
+        "required_optional_context": "Optional",
+        "element_definition_section": "§6.1.14",
+        "element_definition_verbatim": "The Classification Comments metadata element allows for security related comments and format changes necessary in the future. This field may be used in addition to those required by appropriate security entity and is optional.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-27"
+        ],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.classification_comments"
+      },
+      {
+        "tag": 22,
+        "name": "Version",
+        "data_type_or_references": "uint16",
+        "allowed_values_or_references": "Value is version number of this document; e. g. for ST 0102.10, this value is 0x000A",
+        "length_bytes": "2",
+        "required_optional_context": "Required",
+        "element_definition_section": "§6.1.15",
+        "element_definition_verbatim": "The Version metadata element indicates the version number of MISB ST 0102 referenced.",
+        "requirements_stated_in_that_section": [
+          "ST 0102.10-56",
+          "ST 0102.10-57"
+        ],
+        "decoding_rule": "uint16",
+        "cdm_field": "Entity.attributes.security_metadata.version"
+      },
+      {
+        "tag": 23,
+        "name": "Classifying Country and Releasing Instructions Country Coding Method Version Date",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "YYYY-MM-DD",
+        "length_bytes": "10",
+        "required_optional_context": "Optional",
+        "element_definition_section": "§6.1.16",
+        "element_definition_verbatim": "This metadata element provides the effective date (promulgation date) of the source (FIPS 10-4, ISO 3166, GENC 2.0, or STANAG 1059) used for the Classifying Country and Releasing Instructions Country Coding Method. As ISO 3166 is updated by dated circulars, not by version revision, the ISO 8601 YYYY-MM-DD formatted date is used.",
+        "requirements_stated_in_that_section": [],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.classifying_country_and_releasing_instructions_country_coding_method_version_date"
+      },
+      {
+        "tag": 24,
+        "name": "Object Country Coding Method Version Date",
+        "data_type_or_references": "ISO/IEC 646 [18]",
+        "allowed_values_or_references": "YYYY-MM-DD",
+        "length_bytes": "10",
+        "required_optional_context": "Optional",
+        "element_definition_section": "§6.1.17",
+        "element_definition_verbatim": "The Object Country Coding Method Version Date metadata element is the effective date (promulgation date) of the source (FIPS 10-4, ISO 3166, GENC 2.0, or STANAG 1059) used for the Object Country Coding Method. As ISO 3166 is updated by dated circulars, not by version revision, the ISO 8601 YYYY-MM-DD formatted date is used.",
+        "requirements_stated_in_that_section": [],
+        "decoding_rule": "iso646",
+        "cdm_field": "Entity.attributes.security_metadata.object_country_coding_method_version_date"
+      }
+    ],
+    "what_ST_0102_12_settles_that_the_profile_left_open": {
+      "the_profile_names_the_obligation_and_not_one_element": "MISP-2019.1's `MISP-2015.1-73` reads 'Motion Imagery shall include Security Metadata in accordance with MISB ST 0102 [55]' and §4.4.2.9 calls the practices 'mandatory for all Motion Imagery Data'. Neither names a tag, a length, a coding method or a classification value. Seventeen elements, six of them Required, are what the delegated document adds — which is the same relation park 1 found between the profile and ST 0601.14.",
+      "KLV_7_IS_NARROWED_AND_STAYS_REGISTERED": {
+        "the_question": "The paragraph and the requirement do not use the same term. §4.4.2.9 says 'Motion Imagery Data', which Appendix E defines as 'Three components: Motion Imagery ..., Metadata and/or Audio'; `MISP-2015.1-73` says 'Motion Imagery', which Appendix E defines as a sequence of pictures. So the paragraph's scope includes a metadata stream and the requirement's is the imagery — which decides whether this adapter's input must be labelled at all.",
+        "WHAT ST 0102.12 SETTLES": "THE DELEGATED DOCUMENT USES THE WIDER TERM THROUGHOUT AND NEVER THE NARROWER ONE. Its §1 Scope is 'marking Motion Imagery Data'; §3 defines Motion Imagery Data the same way Appendix E does, 'Three components: Motion Imagery, Metadata and/or Audio (see MISP)'; and EVERY live marking requirement in it takes the wide term — ST 0102.10-55 'All Motion Imagery Data shall be marked at their proper classification level', -03, -04, -05, -23 'Motion Imagery Data shall contain the ... metadata element', -54 'Unclassified Motion Imagery Data shall be marked with Security Metadata'. The one requirement that named a narrower carrier — -01, 'All MPEG-2 transport streams or files shall be tagged' — IS DEPRECATED by this edition. Derived by reading every live requirement's subject, not by sampling.",
+        "WHY IT IS NOT RESOLVED": "BECAUSE THE QUESTION IS ABOUT TWO SENTENCES OF MISP-2019.1 AND A THIRD DOCUMENT CANNOT ADJUDICATE THEM. `MISP-2015.1-73`'s own text still reads 'Motion Imagery shall include Security Metadata', the profile still defines that term as a sequence of pictures in its own Appendix E, and ST 0102.12 nowhere quotes or restates -73 — it cannot, being eighteen months older than MISP-2019.1 and delegated TO rather than FROM. A document consistently using the wider term is evidence about what the delegation MEANS and is not the profile's requirement changing its words. Resolving it on the strength of the delegated document's usage would be the move register entry KLV 11 refused when a majority of reference lists named one ST 336 edition: a count elsewhere does not relieve a reader of the sentence in front of them. THE SENTENCE THAT KEEPS IT OPEN, quoted: MISP-2019.1 `MISP-2015.1-73`, 'Motion Imagery shall include Security Metadata in accordance with MISB ST 0102 [55]'.",
+        "AND WHAT IS NEW IS THAT THE QUESTION IS NOW INERT FOR THE OUTPUT": "This is the round's actual contribution to KLV 7 and it is worth more than a resolution would have been. §6.5 makes the adapter's behaviour THE SAME UNDER BOTH READINGS: whether or not a standalone metadata stream was required to be labelled, an unlabelled packet is not an unclassified one, so the adapter emits no marking and quotes §6.5 either way. Under the narrow reading a packet with no item 48 may be conformant; under the wide reading it may not be; and in neither case may this adapter say anything about the data's classification. So KLV 7 bounds a CONFORMANCE claim about somebody else's producer and bounds nothing this repository emits — which is why it can stay open without blocking a row, and why park 2 could close over it."
+      },
+      "what_it_does_NOT_settle": "What a country code MEANS. Every code list the country elements are written against — GENC, the GEC register, ISO 3166-1 and -2, STANAG 1059 — and the UTF-16 encoding tag 13's Data Type names, RFC 2781, are documents this repository does not hold. See the_external_code_lists_ruling. And it does not settle the ST 0601 side of anything: all 115 unwitnessed ST 0601 rows still read `not yet` and item 48 is the only one that moved."
+    }
+  },
   "framing_ruling_st_0601_14": {
     "what_this_is": "THE FRAMING RULING, 2026-08-26. Parks 4 and 8 own how a key, a tag and a length are written, and this round asked the pinned copy of ST 0601.14 whether it states those rules itself. It states two of the three and delegates the third, so this node records each rule as ESTABLISHED with its section, or as UNDERIVABLE with the sentence that delegates it - and parks 4 and 8 both STAY OPEN. Nothing here flips a tag_table_st_0601_14 row: all 141 remain 'not yet', because a framing layer says where an item begins and never what it means.",
     "the_document_rule_this_round_worked_under": "Where ST 0601.14a's own text and worked examples state a rule completely enough to implement and test against, the rule is recorded as established from the pinned copy with its sections cited. Where a rule exists only by reference to SMPTE ST 336 or MISB ST 0107, it is NOT reconstructed from memory or from third-party sources: it is named as underivable and the park's closure stops there. Partial closure was a permitted outcome and partial closure is what happened - and 'partial' here means the tag half of the framing, not a fraction of a park.",
@@ -2432,8 +3087,8 @@
     "KLV 19": "FOUR REQUIREMENTS ARE WITHDRAWN AS RE-SPECIFICATIONS AND NOT AS FACTS, AND THE FOUR VALUES THEY CARRY ARE THE ONES THAT LOCATE A KLV STREAM. MISB ST 1402.2 deprecates four of its 26 requirements - ST 1402-05, -06, -19 and -23 - leaving 22 live. Re-derived from the pinned bytes at writing time. Verbatim, with the '(Deprecated)' marker as the document prints it: 'ST 1402-05 (Deprecated) For the Synchronous Metadata Multiplex Method, the stream_id shall be 0xFC, indicating “metadata stream.”'; 'ST 1402-06 (Deprecated) For the Synchronous Metadata Multiplex Method, the stream_type shall be 0x15, indicating “Metadata carried in PES packets”.'; 'ST 1402-19 (Deprecated) For the Asynchronous Metadata Multiplex Method, the stream_id shall be 0xBD, indicating “private_stream_1.”'; 'ST 1402-23 (Deprecated) For the Asynchronous Metadata Multiplex Method, the stream_type shall be 0x06, indicating “PES packets containing private data.”'. THE DISTINCTION IS THE ENTRY, AND THE DOCUMENT STATES IT ITSELF. Section 3's revision history gives the reason in its own words: 'Deprecated REQ’s -05, -6, -19, -23; these are required by ISO/IEC 13818-1 and should not be re-specified here.' So what was withdrawn is MISB's ACT OF REQUIRING these values, on the ground that ISO/IEC 13818-1 already requires them. THE VALUES THEMSELVES ARE UNCHANGED AND STILL APPLY - they are simply somebody else's to state. WHY IT IS REGISTERED. A reader who reads 'deprecated' as 'no longer applicable' - the ordinary reading, and the one a reader in a hurry takes - would discard the stream_type and stream_id for BOTH multiplex methods, which is precisely and exactly the ability to FIND the KLV elementary stream inside an MPEG-2 transport stream. That ability is what park 9 existed to buy. So the entry records that the deprecation is a change of WHO STATES A FACT and not a change of the fact, because the two readings differ by the whole value of the document. NOTE the identifier defect running through the quotations: all four are of the unsuffixed form KLV 18 registers, and the document's own revision history writes the second of them as '-6' where the requirement itself prints '-06'. AND A SECOND INSTANCE OF THE SAME MOVE IS NOW HELD: ST 1303.1, pinned 2026-08-27, deprecates a requirement of its own 'as it is a definition' and renames its Appendix A to 'Deprecated Requirements'. Recorded as an observation inside this entry rather than as a reading - two documents in one delegation chain using deprecation for something other than obsolescence is a pattern worth watching and is not yet a rule about the series."
   },
   "parks": {
-    "how_many": "Thirteen parks over fifteen documents, and FOUR are CLOSED - park 1, park 4, park 13 and park 9. Nine remain open, eight of them public downloads and one a purchase. PARK 9 CLOSED 2026-08-27 BY THE OFF-PEAK ROUND, and it is the first park in this table closed by an acquisition that earlier rounds attempted and could not make: three attempts met HTTP 429 and the fourth, asked at a different hour, met HTTP 200. PARK 13 CLOSED 2026-08-26 BY THE ADJUDICATION ROUND, on the same day it was opened by the walk round, and it is the only park in this table that opened and closed inside one day. It is also the only one a STREAM asked for rather than a document: it was a superseded revision of a document this repository already holds at a later edition, which under this repository's own rule - a later revision is a different document - makes it a fifteenth document and not a re-read of the third. THE FIFTEENTH DOCUMENT TURNED OUT NOT TO BE NAMED WHAT THIS TABLE CALLED IT: there is no MISB ST 0601.1, edition 1 is MISB EG 0601.1, and the park closed on that document - see ambiguity_register KLV 15 and park_13_ruling_2026_08_26. THE DELEGATION COUNT DOES NOT MOVE AND IS NOT THE SAME COUNT: the profile delegates to FOURTEEN documents, park 13's document is not one of them, and a park's document and a profile's delegation are different things. THE NUMBERING DOES NOT MOVE: the parks are cited by number from the row sets, from the fixture plan and from the register, so a closed park keeps its number and its row and says it is closed, and a new park extends the numbering rather than filling a gap. Renumbering to close a gap would silently re-point every citation, which is a larger lie than a table with three closed rows in it. || UPDATED 2026-09-03 BY THE PUBLISHER ROUND, AND THE COUNTS ARE RE-DERIVED FROM THE TABLE RATHER THAN INCREMENTED. gates/parks_table.py reads FIVE closed - parks 1, 4, 8, 9 and 13 - and EIGHT open: parks 2, 3, 5, 6, 7, 10, 11 and 12. PARK 8 CLOSED 2026-09-03, and it is the only park in this table closed on a document the table itself had priced as a purchase. THE CLAUSE ABOVE THAT SAID EIGHT OF THE NINE OPEN WERE PUBLIC DOWNLOADS AND ONE WAS NOT IS NOT RE-POINTED AT A NEW PAIR OF NUMBERS, BECAUSE ITS SUBJECT IS GONE: the one was park 8, and all eight parks still open are public downloads. See honest_strength, which carried the same contrast and is retired the same way. THE DELEGATION COUNT STILL DOES NOT MOVE and is still not the same count: the profile delegates to FOURTEEN documents and park 8's document is one of them, so this acquisition moved the number of delegations HELD and not the number in scope. THE DOCUMENT SPAN DOES NOT MOVE EITHER: the thirteen rows name fifteen documents, ST 336:2007 is named by no row, and it is held because three delegations require conformance to it rather than because a park asked for it.",
-    "honest_strength": "Of the nine that remain open, eight are public downloads and one is not. That is materially weaker than the two blockers this repository already carries - GMTIF's Annex L, which reads '(TO BE PROVIDED)' in the promulgated text, and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through national representatives. It is closer to CAT048's Reserved Expansion Field: obtainable, and simply not obtained. PARKS 1, 4 AND 13 ARE THE PROOF OF THAT CLAIM RATHER THAN EXCEPTIONS TO IT - the largest park in the table, the cheapest, and the narrowest were all closed by one person with a browser, which is what 'obtainable, and simply not obtained' predicts. Park 4 is the sharpest of the three proofs: it was SIX PAGES, it had been sitting behind a free download since November 2018, and it held the rule that stopped this repository reading a KLV stream at all. PARK 13 IS THE SECOND-SHARPEST AND IT SHARPENS A DIFFERENT EDGE: its document was not behind a free download at all - both official routes refuse an automated GET - and it was obtained anyway, from a mirror of the publisher's own host, which says that 'obtainable' can survive the publisher's front door being shut and that the honest cost of that is a provenance caveat rather than a stop. See delegated_specifications_held.eg_0601_1.source_is_a_MIRROR_and_not_the_registry. PARK 9 IS THE FOURTH PROOF OF THE SAME CLAIM AND THE SHARPEST: it was not closed by finding a new route or a new document, but by asking the SAME route for the SAME document at a different hour. 'Obtainable, and simply not obtained' turned out to include 'obtainable, and asked at the wrong time of day' - which is the cheapest failure mode in this table and the one least visible to a round that records a refusal faithfully. || REWRITTEN 2026-09-03 BY THE PUBLISHER ROUND, AND WHAT CHANGED IS NOT A COUNT BUT THE COMPARISON ITSELF. This field opened 'Of the nine that remain open, eight are public downloads and one is not', and the whole force of it was the ONE - a single row whose reopen route ran through a budget where the others ran through an afternoon. THAT ROW HAS CLOSED AND THERE IS NO REPLACEMENT FOR IT: all eight parks still open are public downloads, so the sentence is retired as a comparison rather than restated with a different pair of numbers. Swapping 'eight and one' for 'eight and none' would keep the shape of a contrast that no longer has two sides. WHAT SURVIVES IS THE WEAKER AND TRUER CLAIM the four earlier closures were already evidence for: every open row is obtainable by one person with a browser. PARK 8 IS THE FIFTH PROOF AND THE ONLY ONE THAT REFUTES THE FIELD IT PROVES. Parks 1, 4, 13 and 9 all closed on documents this record already called obtainable; park 8 closed on the one document this record said was not, and the reason it was closeable is that the claim had never been tested against the publisher. 'Obtainable, and simply not obtained' turned out to include 'obtainable, and assumed otherwise from a sentence in a third document' - which is a worse failure than park 9's wrong hour, because a wrong hour is a fact about a host and this was a fact about a habit.",
+    "how_many": "Thirteen parks over fifteen documents, and FOUR are CLOSED - park 1, park 4, park 13 and park 9. Nine remain open, eight of them public downloads and one a purchase. PARK 9 CLOSED 2026-08-27 BY THE OFF-PEAK ROUND, and it is the first park in this table closed by an acquisition that earlier rounds attempted and could not make: three attempts met HTTP 429 and the fourth, asked at a different hour, met HTTP 200. PARK 13 CLOSED 2026-08-26 BY THE ADJUDICATION ROUND, on the same day it was opened by the walk round, and it is the only park in this table that opened and closed inside one day. It is also the only one a STREAM asked for rather than a document: it was a superseded revision of a document this repository already holds at a later edition, which under this repository's own rule - a later revision is a different document - makes it a fifteenth document and not a re-read of the third. THE FIFTEENTH DOCUMENT TURNED OUT NOT TO BE NAMED WHAT THIS TABLE CALLED IT: there is no MISB ST 0601.1, edition 1 is MISB EG 0601.1, and the park closed on that document - see ambiguity_register KLV 15 and park_13_ruling_2026_08_26. THE DELEGATION COUNT DOES NOT MOVE AND IS NOT THE SAME COUNT: the profile delegates to FOURTEEN documents, park 13's document is not one of them, and a park's document and a profile's delegation are different things. THE NUMBERING DOES NOT MOVE: the parks are cited by number from the row sets, from the fixture plan and from the register, so a closed park keeps its number and its row and says it is closed, and a new park extends the numbering rather than filling a gap. Renumbering to close a gap would silently re-point every citation, which is a larger lie than a table with three closed rows in it. || UPDATED 2026-09-03 BY THE PUBLISHER ROUND, AND THE COUNTS ARE RE-DERIVED FROM THE TABLE RATHER THAN INCREMENTED. gates/parks_table.py reads FIVE closed - parks 1, 4, 8, 9 and 13 - and EIGHT open: parks 2, 3, 5, 6, 7, 10, 11 and 12. PARK 8 CLOSED 2026-09-03, and it is the only park in this table closed on a document the table itself had priced as a purchase. THE CLAUSE ABOVE THAT SAID EIGHT OF THE NINE OPEN WERE PUBLIC DOWNLOADS AND ONE WAS NOT IS NOT RE-POINTED AT A NEW PAIR OF NUMBERS, BECAUSE ITS SUBJECT IS GONE: the one was park 8, and all eight parks still open are public downloads. See honest_strength, which carried the same contrast and is retired the same way. THE DELEGATION COUNT STILL DOES NOT MOVE and is still not the same count: the profile delegates to FOURTEEN documents and park 8's document is one of them, so this acquisition moved the number of delegations HELD and not the number in scope. THE DOCUMENT SPAN DOES NOT MOVE EITHER: the thirteen rows name fifteen documents, ST 336:2007 is named by no row, and it is held because three delegations require conformance to it rather than because a park asked for it. || UPDATED 2026-09-04 BY THE PARK 2 ROUND, AND THE COUNTS ARE RE-DERIVED FROM THE TABLE RATHER THAN INCREMENTED, as the clause above them was. gates/parks_table.py reads SIX closed - parks 1, 2, 4, 8, 9 and 13 - and SEVEN open: parks 3, 5, 6, 7, 10, 11 and 12. PARK 2 CLOSED 2026-09-04, and what distinguishes it from the five before it is that NO DOCUMENT WAS ACQUIRED: ST 0102.12 had been held for nine days and the park stood entirely on its unwritten artefact, which is the state this park was the table's precedent FOR. It is the first park here closed by writing something rather than by obtaining something. ALL SEVEN PARKS STILL OPEN ARE PUBLIC DOWNLOADS, which is the clause park 8's closure left with one term instead of two and this closure does not change. THE DELEGATION COUNT DOES NOT MOVE AND THIS TIME FOR A DIFFERENT REASON THAN USUAL: the profile still delegates to FOURTEEN documents and NINE are held, unchanged by this round, because this round acquired nothing at all - the number of delegations HELD did not move either. THE DOCUMENT SPAN DOES NOT MOVE: the thirteen rows still name fifteen documents.",
+    "honest_strength": "Of the nine that remain open, eight are public downloads and one is not. That is materially weaker than the two blockers this repository already carries - GMTIF's Annex L, which reads '(TO BE PROVIDED)' in the promulgated text, and the NITS XSD, which the Custodian re-issues on its own revision axis and distributes through national representatives. It is closer to CAT048's Reserved Expansion Field: obtainable, and simply not obtained. PARKS 1, 4 AND 13 ARE THE PROOF OF THAT CLAIM RATHER THAN EXCEPTIONS TO IT - the largest park in the table, the cheapest, and the narrowest were all closed by one person with a browser, which is what 'obtainable, and simply not obtained' predicts. Park 4 is the sharpest of the three proofs: it was SIX PAGES, it had been sitting behind a free download since November 2018, and it held the rule that stopped this repository reading a KLV stream at all. PARK 13 IS THE SECOND-SHARPEST AND IT SHARPENS A DIFFERENT EDGE: its document was not behind a free download at all - both official routes refuse an automated GET - and it was obtained anyway, from a mirror of the publisher's own host, which says that 'obtainable' can survive the publisher's front door being shut and that the honest cost of that is a provenance caveat rather than a stop. See delegated_specifications_held.eg_0601_1.source_is_a_MIRROR_and_not_the_registry. PARK 9 IS THE FOURTH PROOF OF THE SAME CLAIM AND THE SHARPEST: it was not closed by finding a new route or a new document, but by asking the SAME route for the SAME document at a different hour. 'Obtainable, and simply not obtained' turned out to include 'obtainable, and asked at the wrong time of day' - which is the cheapest failure mode in this table and the one least visible to a round that records a refusal faithfully. || REWRITTEN 2026-09-03 BY THE PUBLISHER ROUND, AND WHAT CHANGED IS NOT A COUNT BUT THE COMPARISON ITSELF. This field opened 'Of the nine that remain open, eight are public downloads and one is not', and the whole force of it was the ONE - a single row whose reopen route ran through a budget where the others ran through an afternoon. THAT ROW HAS CLOSED AND THERE IS NO REPLACEMENT FOR IT: all eight parks still open are public downloads, so the sentence is retired as a comparison rather than restated with a different pair of numbers. Swapping 'eight and one' for 'eight and none' would keep the shape of a contrast that no longer has two sides. WHAT SURVIVES IS THE WEAKER AND TRUER CLAIM the four earlier closures were already evidence for: every open row is obtainable by one person with a browser. PARK 8 IS THE FIFTH PROOF AND THE ONLY ONE THAT REFUTES THE FIELD IT PROVES. Parks 1, 4, 13 and 9 all closed on documents this record already called obtainable; park 8 closed on the one document this record said was not, and the reason it was closeable is that the claim had never been tested against the publisher. 'Obtainable, and simply not obtained' turned out to include 'obtainable, and assumed otherwise from a sentence in a third document' - which is a worse failure than park 9's wrong hour, because a wrong hour is a fact about a host and this was a fact about a habit. || AMENDED 2026-09-04 BY THE PARK 2 ROUND, AND IT IS THE FIRST CLOSURE THIS FIELD'S CLAIM DOES NOT REACH. SEVEN parks remain open and all seven are public downloads, so the arithmetic moves and the retired comparison stays retired. But 'every open row is obtainable by one person with a browser' is a claim about ACQUISITION, and park 2 closed without acquiring anything - its document had been on disk since 2026-08-26 and what was missing was the row set. SO THIS FIELD IS NOW MEASURING THE WRONG HALF OF THE TABLE for at least two of the rows it covers: parks 5 and 11 hold every document they name and stand on artefacts under packages/, exactly as park 2 did, and for them 'obtainable with a browser' is true and irrelevant. Recorded rather than rewritten, because the field's subject is the strength of the parks' REOPEN ROUTES and that is still what it measures for the five rows whose documents are unheld - and because a field that quietly widened its subject to cover a case it was not built for is how the count drift this same field recorded got started.",
     "shared_reopen_route": "The profile's FORWARD prints it: 'References developed by the MISB are available under MISB Public Web Site: http://www.gwg.nga.mil/misb or NSG Registry Web Site: https://nsgreg.nga.mil/misb.jsp'. No NSO gate, no national representative, no account.",
     "shared_exit_condition": "For parks 2, 3, 5-7 and 9-12: obtain the EXACT version the delegation table pins (not 'the current one' - the profile pins a revision and a later revision is a different document); pin it in fixtures/klv/spec/ by SHA-256, byte count and page count with its title-page identity read; then write the row set that document supports. HOW THE SECOND HALF READS FOR A DOCUMENT WITH NO ROWS: park 4 closed on a standard that defines no tag table, and 'the row set that document supports' was read as 'the artefact this document makes writable' - a codec, for a framing standard. See length_ruling_st_0107_3.the_park_outcome.park_4.why_the_second_half_was_not_waived_and_how_it_was_read.",
     "the_one_that_is_not_a_download": {
@@ -2527,6 +3182,17 @@
         "what_it_does_not_discharge": "Any tag row: all 141 rows of tag_table_st_0601_14 still read 'not yet' and none was eligible to move, because a framing rule says where an item begins and never what it means. The round predicted no flips and there were none, which is the same prediction and the same outcome as the framing round and the length round. It discharges no other park - not park 3's epoch, not park 5's IMAPB ranges, not park 2's unwritten row set - and it does not make ST 336:2007 a delegation. WHAT_THIS_DOES_NOT_TOUCH from the maintenance round still holds in every term.",
         "the_lesson_it_records": "THE PARK WAS NEVER BLOCKED ON MONEY AND WAS BLOCKED ON AN UNASKED QUESTION, and the eleven days between the two are the finding. This row's reopen condition was inferred from a sentence in a THIRD document - the profile's FORWARD, saying commercial references are available from industry organizations - and the inference was never checked against the publisher's own host. The maintenance round asked and got a 200; this round asked for the bytes and got them, at no cost. WHAT MAKES IT WORTH RECORDING RATHER THAN FIXING QUIETLY is the shape the maintenance round named: the suite GUARD on this row asserted a fact that lives at pub.smpte.org and could not reach it, so the tree agreed with itself over a refuted claim for as long as nobody asked. THE GUARD IS NOW DOCUMENT-GATED RATHER THAN PROTOCOL-GATED and that is a real improvement and a small one - it was never the suite-gated check its label claimed, and it still is not: what it checks is that this record says what two PDFs on disk say, which is a tree-agrees-with-itself check over a fact that now has held bytes behind it instead of a host that was never asked.",
         "what_this_park_cost_and_it_is_recorded_because_the_row_priced_it": "Two GETs, 699437 bytes of transport in total, and no money. The row had priced it as the one park in the table needing somebody with a budget."
+      },
+      "park_2": {
+        "park": 2,
+        "document": "MISB ST 0102.12, Security Metadata Universal and Local Sets for Motion Imagery Data",
+        "closed_on": "2026-09-04",
+        "what_discharged_it": "Both halves of shared_exit_condition, and it needed both — park 1's own form, reached by the park that was park 1's reason for not waiving the second half. FIRST HALF, discharged 2026-08-26 and unchanged since: the exact version the delegation table pins was obtained — not 'the current one' — and pinned by SHA-256 20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267, 514842 bytes and 18 pages with its title-page identity read, at delegated_specifications_held.st_0102_12; re-digested from the copy on disk at the start of this round and matching in both terms. SECOND HALF, written this round: the row set that document supports — §6.7's Table 2 transcribed in full, SEVENTEEN elements, at tag_table_st_0102_12 and in FORMAT_COVERAGE.md's 'The ST 0102.12 Security Metadata Local Set — the row set nested under item 48'.",
+        "and_unlike_park_1_the_artefact_is_more_than_a_table": "Park 1 closed on a document plus a transcription. This park closed on a document, a transcription, AND CODE THAT READS IT: adapters/klv_security_codec.py is the ST 0102.12 item layer, klv_uas_codec delegates item 48 to it through NESTED_SETS, and adapters/stanag4609.py carries the decoded elements into Entity.attributes. Seven fixtures, each citing the clause it exercises. That is more than the exit condition asked for and it is recorded as such rather than as the bar: the condition is 'write the row set that document supports', and a round closing a later park on a row set alone is not being held to this one's standard.",
+        "where_the_item_layer_went_and_why": "ITS OWN MODULE, beside klv_uas_codec rather than inside it, on that module's own stated precedent — 'the tag table lives here, one layer up, on the cat048_codec / asterix_cat048 precedent: a codec that reads octets, and above it a codec that knows what they mean', which is ONE ITEM LAYER PER DOCUMENT. THE DECISIVE ARGUMENT IS MECHANICAL: every one of ST 0102.12's seventeen tags collides with a tag of ST 0601.14a's 141 — tag 1 is Checksum against Security Classification, tag 2 Precision Time Stamp against the Country Coding Method, tag 22 Target Width against Version — and ITEMS is a dict keyed on the tag. Two tables cannot share it, and a module holding two dicts keyed on the same integers is one where a lookup's meaning depends on which document the reader thought they were in. Full reasoning at tag_table_st_0102_12.where_the_item_layer_lives_and_why.",
+        "how_6_5_was_read_into_the_output": "§6.5: 'The absence of Security Metadata does not signify Motion Imagery Data as Unclassified.' SO A PACKET WITH NO ITEM 48 EMITS NO MARKING AT ALL — attributes carries no security_metadata key, not a null classification and not an empty object a reader could take for an empty marking — and it carries attributes.security_metadata_basis with §6.5's own sentence, so a consumer meets the document's statement of what the absence does not mean instead of supplying one. §6.3 is the contrast that makes it precise: ST 0102.10-51 puts a VALUE on the wire for unclassified data, so 'unclassified' and 'unlabelled' are two states and an absent set is the second. Fixture no_security_local_set_is_unlabelled_not_unclassified.",
+        "what_it_does_not_discharge": "ANY OTHER PARK. Not park 3's epoch, not park 5's IMAPB ranges — and park 5 was never on this document's path, since not one of the seventeen elements is a scaled numeric value and IMAPB does not occur in ST 0102.12 — and not the documents parks 6, 7, 10 and 12 stand on. NOT THE OTHER 114 ST 0601 ROWS: item 48 is the only one that moved, and it moved on a ground no other unwitnessed row has, namely that a SECOND held document states its key identically (ST 0601.14a §8.48 and ST 0102.12 §6.7, the same sixteen octets and the same CRC 40980). NOT KLV 7, which stays registered — see tag_table_st_0102_12's KLV_7_IS_NARROWED_AND_STAYS_REGISTERED, where it is narrowed and shown to be INERT for the output rather than resolved. NOT WHAT A COUNTRY CODE MEANS: GENC, the GEC register, ISO 3166, STANAG 1059 and RFC 2781 are unheld, codes are carried and never validated, and tag 13 is the one element of seventeen still `not yet` for that reason. AND NOT THE STRONGEST CHECK PARK 1 HAD: ST 0102.12 prints no worked example of an element or a set, so nothing decoded here is checked against a printed value and check_against_the_documents_own_examples has no analogue — the transcription is checked four ways and the decoder is checked against no document at all.",
+        "what_the_closure_does_to_the_PRECEDENT_it_was": "PARK 2 WAS THE PRECEDENT FOR 'document held, artefact unwritten, park open' and is cited for it by FORMAT_COVERAGE.md's delegated-documents row, its parks preamble, parks 5 and 11's rows and the 'Why neither is CLOSED' row. THE PRECEDENT IS NOT WEAKENED BY THE CLOSURE — it is the precedent being discharged the way it said it would be, on both halves. Every citation now reads in the wrong tense and every one was given a DATED NOTE rather than a rewrite, because a citation rewritten to the past destroys the evidence that the state it names was real from 2026-08-26 to 2026-09-04. Park 4's closure argument in particular is CORROBORATED: the reading that a framing standard's artefact is a codec rather than a row set was forced by park 2 being open, and park 2 closing by writing a row set is that reading's own prediction coming true — the two readings of the step have now each been applied once and each closed a park."
       }
     },
     "these_two_counts_were_STALE_and_the_closure_makes_them_RIGHT_AGAIN": "RECORDED RATHER THAN QUIETLY CORRECTED, because this is the exact failure a stale-count sweep exists to catch and the coincidence would have hidden it. Between the walk round and this one, how_many read 'Eleven remain open, ten of them public downloads' while honest_strength read 'Of the ten that remain open, nine are public downloads' - the two fields disagreed by one in the same node. how_many was right and honest_strength was STALE: it still held the post-park-4 state and was not updated when the walk round opened park 13. WHAT MAKES IT WORTH WRITING DOWN: park 13 closing returns the count to ten open and nine downloads, so honest_strength's NUMBERS are correct again without anybody having fixed them, and a reader diffing this file would see the field's arithmetic unchanged and conclude it had been maintained. It had not been. Only its prose changed this round, to name the third closure. The load-bearing half - that these parks are obtainable rather than blocked - was true throughout and the RULE never stopped working; only the arithmetic beside it went wrong, which is the same shape as the correction .gitignore records about its own derived counts. AND THE COUNT HAS SINCE MOVED AGAIN, 2026-08-27: park 9 closed, so the live arithmetic is four closed, NINE open and EIGHT downloads, and every sentence in this field describing 'ten open and nine downloads' is now history rather than state. Left in its own tense deliberately - this field's whole subject is a count that looked maintained because a later change happened to restore its arithmetic, and re-syncing the narrative would destroy the example. What protects the live numbers is not this prose: how_many and honest_strength are DERIVED against by tests/test_cdm_klv_framing.py, which recomputes the arithmetic from the_ones_that_closed and requires both fields to state it, so the drift recorded here cannot recur silently.",

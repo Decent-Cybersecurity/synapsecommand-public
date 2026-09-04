@@ -66,6 +66,7 @@ from __future__ import annotations
 from typing import Any, NamedTuple
 
 from synapse_cdm.adapters import klv_codec as framing
+from synapse_cdm.adapters import klv_security_codec as security
 
 #: The pinned copies every citation in this module is read from. Stated here as well as in
 #: `klv_pin.json` because a module that cites sections without naming the copy is citing a memory.
@@ -757,6 +758,32 @@ ITEMS: dict[int, _Item] = {
 #: caller has to derive it from the table's keys and no round can widen it by accident.
 WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(ITEMS))
 
+#: **THE ONE TAG THIS MODULE READS THAT THE PINNED STREAM DOES NOT ATTEST, AND THE GROUND FOR IT.**
+#: Item 48's Value is not a value this module maps — it is a NESTED LOCAL SET whose elements
+#: another held document defines, and `klv_security_codec` is that document's item layer. So the
+#: `ITEMS` table above stays at the 26 witnessed items exactly as its docstring says, and this is a
+#: second, differently-grounded table beside it: `ITEMS` answers "what does this integer mean",
+#: `NESTED_SETS` answers "which document's item layer owns these octets".
+#:
+#: **WHY THE SCOPE CONTRACT IS CROSSED HERE AND NOWHERE ELSE.** The contract's reason is that an
+#: item nobody here has met on a wire "could only ever be checked against a fixture written from
+#: the same reading of the same table". Item 48's decoder is checked against a SECOND DOCUMENT:
+#: ST 0601.14a §8.48 prints `KLV Key 06.0E.2B.34.02.03.01.01.0E.01.03.03.02.00.00.00 (CRC 40980)`
+#: and MISB ST 0102.12 §6.7 registers the Security Metadata Local Set under the same sixteen
+#: octets and the same CRC — two documents, obtained on different days by different routes, in
+#: agreement. **No unwitnessed ST 0601 item has a second document behind it**, which is why the
+#: other 115 rows stay `not yet` and this one does not.
+#:
+#: WHAT IS STILL TRUE AND IS NOT SOFTENED: the pinned stream carries no item 48, so nothing in
+#: `klv_security_codec` is checked against an octet anybody has met on a wire, and ST 0102.12
+#: prints no worked example of a set, so the strongest check `check_against_the_documents_own_
+#: examples` performs for the 26 is not available for these 17. Both are stated at that module's
+#: `TRANSCRIPTION_CROSS_CHECK` rather than left for a reader to notice.
+NESTED_SETS: dict[int, str] = {48: "MISB ST 0102.12 Security Metadata Local Set"}
+
+#: What ST 0601.14a says item 48 carries, quoted, so the delegation is readable from this module.
+NESTED_SET_BASIS = security.CARRIER_BASIS
+
 #: The three items ST 0601.14a makes Mandatory in every packet, derived from the table's own
 #: `required_in_ls` cells rather than listed a second time. §6.4 and §8.2 say it of tag 2, §8.1 of
 #: tag 1, §8.65 of tag 65, and `ST 0601.8-09`/`-11`/`-12` require the order and the presence.
@@ -894,6 +921,11 @@ class DecodedPacket(NamedTuple):
     raw_items: dict[int, str]
     checksum_stored: int | None
     checksum_computed: int | None
+    #: The decoded ST 0102.12 Security Metadata Local Set from item 48, or None where the packet
+    #: carried no item 48. **None means UNLABELLED and never `unclassified`** — ST 0102.12 §6.5,
+    #: "The absence of Security Metadata does not signify Motion Imagery Data as Unclassified" —
+    #: and the caller emits that sentence rather than a marking.
+    security: security.DecodedSecuritySet | None = None
 
     @property
     def checksum_valid(self) -> bool | None:
@@ -941,12 +973,22 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
     unknown: list[int] = []
     raw_items: dict[int, str] = {}
     checksum_stored = checksum_computed = None
+    security_set = None
 
     for entry in framing.walk_local_set(buf, offset):
         order.append(entry.tag)
         raw_items[entry.tag] = entry.value.hex()
         item = ITEMS.get(entry.tag)
         if item is None:
+            if entry.tag in NESTED_SETS:
+                # ST 0601 item 48. The Value is a bare run of ST 0102 Local Set triplets — §8.48:
+                # "The length field is the size of all MISB ST 0102 metadata items to be packaged
+                # within item 48" — so there is no key and no second length to strip, and the
+                # element layer is handed the Value as it stands. `value_offset` is passed so a
+                # refusal inside the nested set points at an octet of the PACKET.
+                security_set = security.decode_set(
+                    entry.value, base_offset=entry.value_offset)
+                continue
             unknown.append(entry.tag)
             continue
         defect_class, advisory_class = _length_verdict(item, entry.length, entry)
@@ -984,7 +1026,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
         at=offset, value_length=value_length, value_offset=value_offset, end=end,
         items=items, order=tuple(order), defects=tuple(defects),
         advisories=tuple(advisories), unknown_tags=tuple(unknown), raw_items=raw_items,
-        checksum_stored=checksum_stored, checksum_computed=checksum_computed)
+        checksum_stored=checksum_stored, checksum_computed=checksum_computed,
+        security=security_set)
 
 
 def decode_stream(buf: bytes) -> list[DecodedPacket]:

@@ -1,0 +1,72 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 36512,
+        "stored": 36512,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "8ea0",
+        "2": "000459f4a6aa4aa8",
+        "48": "01010102010103042f2f4742051653594e5448455449432d4341564541542d4f4e452f2f",
+        "65": "0d"
+      },
+      "security": {
+        "advisories": [
+          {
+            "basis": "`ST 0102.10-57`: 'When the Security Metadata Version is not found in the Security Metadata, version three (3) shall be assumed.' RECORDED AND NOT APPLIED: the assumed version is not written into the decoded elements, because the packet did not carry it and this record keeps what a packet stated apart from what a clause would let a reader assume. A consumer holding this advisory can apply -57 themselves and can see that they did",
+            "class": "version_absent",
+            "name": "Version",
+            "section": "ST 0102.12 \u00a76.1.15",
+            "tag": 22,
+            "value": null
+          }
+        ],
+        "element_octets": {
+          "1": "01",
+          "2": "01",
+          "3": "2f2f4742",
+          "5": "53594e5448455449432d4341564541542d4f4e452f2f"
+        },
+        "element_order": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "partial": true,
+        "refusals": [],
+        "required_absent": [
+          12,
+          13,
+          22
+        ],
+        "required_present": [
+          1,
+          2,
+          3
+        ],
+        "unlisted_tags": []
+      },
+      "tag_order": [
+        2,
+        48,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 55,
+      "value_length_octets": "37"
+    }
+  ],
+  "payload": {
+    "octets": 72,
+    "packet_count": 1
+  }
+}

@@ -676,7 +676,11 @@ def test_no_fixture_carries_a_VALUE_that_only_the_pinned_stream_states():
 def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     """A hand-edited `.klv` is a byte nothing cites — the house rule, applied to the tenth set."""
     module = _build_fixtures_module()
-    assert len(module.ADAPTER_FIXTURES) == 10
+    # TEN until the park 2 round of 2026-09-04, which added the seven `security_*` payloads
+    # when ST 0102.12's element table was read into item 48. The count is asserted rather
+    # than derived for the reason it always was: a fixture that appears without this number
+    # moving is a fixture nobody decided to add.
+    assert len(module.ADAPTER_FIXTURES) == 17
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (

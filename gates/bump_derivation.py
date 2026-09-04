@@ -174,8 +174,22 @@ RULING_MARKER = "**Bump ruling.**"
 #: first draft's spelling and the regex silently matched only the second of them, so a ruling read
 #: as being about `main` in no particular file and was refused as stale. One span, one id, and the
 #: message a refusal prints is the string a ruling has to name.
+#:
+#: **THE SPAN MAY CONTAIN SPACES, AND FORBIDDING THEM MADE THIS GATE UNSATISFIABLE FOR A WHOLE
+#: CLASS OF UNIT — found 2026-09-04 by the park 2 round.** `_units` names an unnamed top-level
+#: statement `<statement N>`, which contains a space, so `[^`\s]+` could never match the id the
+#: gate itself had just printed. The refusal named four units and would accept a ruling for none
+#: of them: the module docstring's own caveat — "the gate must therefore be satisfiable" — failed
+#: on ids the gate generates. Any module-level `import` insertion produces them, because those
+#: statements are keyed by POSITION where a named unit is keyed by name, so one inserted import
+#: renumbers every unnamed statement below it.
+#:
+#: **LOOSENING IT COSTS NOTHING, because the unit is validated downstream and not here.**
+#: `apply_rulings` refuses any ruling naming a unit the arc does not find ambiguous, so a span
+#: that matches loosely and means nothing is refused as stale rather than silently honoured. The
+#: closing backtick still bounds it and the kind still has to follow.
 RULING_LINE = re.compile(
-    r"`(?P<unit>[^`\s]+)`\s*(?:—|-)\s*(?P<kind>PATCH|MINOR|MAJOR)\b", re.I)
+    r"`(?P<unit>[^`]+?)`\s*(?:—|-)\s*(?P<kind>PATCH|MINOR|MAJOR)\b", re.I)
 
 
 class Finding(Exception):

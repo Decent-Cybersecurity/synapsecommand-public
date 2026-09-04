@@ -1121,8 +1121,31 @@ def test_parks_four_and_eight_are_stated_CLOSED_without_the_closure_growing():
     # 4. Every site, in words. The overreach is what is forbidden now, not the closure.
     section = _flat(_framing_section())
     assert "Park 4 is CLOSED" in section
-    for name, read in SITES.items():
-        flat = _flat(read()).lower()
+    # THE BLACKLIST IS SCOPED TO PARK 8's OWN CLOSURE ENTRY AND THE FRAMING SECTION SINCE
+    # 2026-09-04, AND THE REASON IS THAT PARK 2 ACTUALLY CLOSED.
+    #
+    # This ran over every site in `SITES` and forbade the bare string "park 2 is closed" anywhere
+    # in any of them. That was right for as long as the sentence could only be false: park 2 was
+    # open, so any site saying otherwise was park 8's closure claiming a park it did not settle.
+    # **The park 2 round closed park 2 on 2026-09-04**, and the whole-file blacklist then failed on
+    # `klv_pin.json` for saying something TRUE — the closure entry recording that park 2 is closed.
+    #
+    # This is the shape the comment twelve lines below already names and it has now been met from
+    # the other direction: a blacklist catching the record saying exactly the right thing. There
+    # the fix was to assert positively; here the string is a real claim about a real closure, so
+    # what has to move is the SCOPE. The gate's subject was never "no site may say park 2 is
+    # closed" — it was "PARK 8's closure may not claim it", and that is `closed_8` and the framing
+    # section, both of which are about park 8 and neither of which has any business mentioning it.
+    #
+    # The teeth are unchanged where they bite: park 8's entry and the framing prose still may not
+    # claim any of the five overreaches, and the positive assertion below still requires park 8's
+    # entry to say what it left alone.
+    park_8_sites = {
+        "parks.the_ones_that_closed.park_8": json.dumps(closed_8),
+        "the framing section of FORMAT_COVERAGE.md": _framing_section(),
+    }
+    for name, text in park_8_sites.items():
+        flat = _flat(text).lower()
         for claim in ("closes park 3", "closes park 5", "park 2 is closed",
                       "parks 3 and 8 are closed", "closed every park"):
             assert claim not in flat, (
@@ -1131,6 +1154,26 @@ def test_parks_four_and_eight_are_stated_CLOSED_without_the_closure_growing():
                 "park 2's unwritten row set. A closure written up as settling more than it did is "
                 "the failure this round is most exposed to"
             )
+    # AND THE FOUR CLAIMS THAT ARE STILL FALSE EVERYWHERE stay forbidden at every site. Only "park
+    # 2 is closed" left the whole-file list, because only it became true; parks 3 and 5 are open,
+    # so a site saying either closed is wrong wherever it says it.
+    for name, read in SITES.items():
+        flat = _flat(read()).lower()
+        for claim in ("closes park 3", "closes park 5", "parks 3 and 8 are closed",
+                      "closed every park"):
+            assert claim not in flat, (
+                f"{name} states {claim!r}, and parks 3 and 5 are open. gates/parks_table.py reads "
+                "six closed — 1, 2, 4, 8, 9 and 13 — and seven open"
+            )
+    # AND PARK 8's ENTRY MUST STILL SAY WHAT IT LEFT ALONE, which is the positive half and the one
+    # that cannot be satisfied by silence. Park 2's row set is named there because park 8's closure
+    # explicitly did not discharge it — a fact that stayed true until 2026-09-04 and is now dated
+    # history rather than state, which is exactly why the entry still has to carry it.
+    assert "park 2's unwritten row set" in _flat(json.dumps(closed_8)), (
+        "park 8's closure entry no longer names park 2's unwritten row set among the things it did "
+        "NOT discharge. Park 2 closed on 2026-09-04, so the sentence is now history — and dropping "
+        "it would leave park 8's closure looking broader in retrospect than it was on the day"
+    )
     # AND THE TAG ROWS, ASSERTED POSITIVELY RATHER THAN BY BLACKLIST. A first draft of this
     # forbade the substring "tag row moved" at every site and FAILED on the sentence "**No tag row
     # moved.**" — the negation contains the claim, so the blacklist caught the record saying exactly
@@ -1306,14 +1349,19 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    download. The subtraction is gone rather than re-pointed at zero, because a contrast with
     #    nothing on one side of it is not a contrast — see `parks.honest_strength`, which is retired
     #    as a comparison for the same reason and in the same words.
+    #    PARK 2 CLOSED 2026-09-04 and is the first closure here that moved NO ACQUISITION TERM.
+    #    Its document had been held since 2026-08-26; what was missing was the row set, which is
+    #    the state park 2 was this table's precedent FOR. So closures 5 -> 6 and open 8 -> 7, and
+    #    the delegations-held count does NOT move, because this round obtained nothing — the first
+    #    closure of which that is true. `n_downloads` still tracks `n_open` for park 8's reason.
     parks = pin["parks"]
     closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
-    assert closed == ["park_1", "park_13", "park_4", "park_8", "park_9"], closed
+    assert closed == ["park_1", "park_13", "park_2", "park_4", "park_8", "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
-    assert (n_closed, n_open, n_downloads) == (5, 8, 8)
-    words = {5: "five", 8: "eight"}
+    assert (n_closed, n_open, n_downloads) == (6, 7, 7)
+    words = {6: "six", 7: "seven"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"

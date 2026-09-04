@@ -76,6 +76,7 @@ FRAMING = FIXTURES / "framing"
 sys.path.insert(0, str(FIXTURES.parent.parent.parent))
 
 from synapse_cdm.adapters import klv_codec as codec                # noqa: E402
+from synapse_cdm.adapters import klv_security_codec as security   # noqa: E402
 from synapse_cdm.adapters import klv_uas_codec as uas               # noqa: E402
 
 #: UUID-v8, `f1c7` namespace, with the document this round read written into the second and third
@@ -519,6 +520,77 @@ def _packet(items, *, checksum_override=None) -> bytes:
     return octets
 
 
+# ======================================================================================
+# THE ST 0102.12 SECURITY LOCAL SET FIXTURES — item 48, and every one is built from a CLAUSE
+# ======================================================================================
+#
+# **THE DOCUMENT SUPPLIES NO WORKED EXAMPLE AND THAT IS WHY THIS BLOCK IS DIFFERENT.** Every other
+# value-carrying fixture in this file borrows its octets from a printed Example KLV Value, so the
+# decoder is checked against the document rather than against this repository. MISB ST 0102.12
+# prints none — its only examples are two country codes at §6.1.2/§6.1.3 and one Tag 2 value at
+# §6.9, and ST 0601.14a §8.48's own Example KLV Item row reads `30 - N/A`. So
+# `check_against_the_documents_own_examples` HAS NO ANALOGUE HERE AND IS NOT SIMULATED. These
+# fixtures are built from the ELEMENT RULES, each citing the clause it exercises, which is a
+# weaker arrangement than the 26 items enjoy and is labelled as one.
+#
+# **NO FIXTURE CARRIES A REAL-WORLD MARKING.** Two kinds of value appear and they are kept apart
+# deliberately:
+#
+# * codes the HELD DOCUMENT ITSELF PRINTS — `0x01` for UNCLASSIFIED// (§6.7's Allowed Values cell
+#   and §6.3's `ST 0102.10-51`), `0x0C` for STANAG 1059 Mixed (§6.9's own worked Tag 2 value, the
+#   only element value the document prints), `//CZE` and `//GB` (§6.1.3's own examples), `0x000C`
+#   for the Version (§6.1.15's rule, "the version number of MISB ST 0102 referenced", applied to
+#   this document);
+# * everything else is a CLEARLY SYNTHETIC string — `SYNTHETIC-...`, and `ZZZ` where a second
+#   country code is needed, `ZZ` being the ISO 3166 user-assigned range and unmistakably not a
+#   state. **Not one caveat, compartment, handling instruction or releasability marking used in
+#   the real world appears in any fixture below**, and no fixture pairs a coding method with a
+#   code of the wrong length.
+#
+# A NOTE ON §6.1.2's AND §6.1.3's EXAMPLES, which do NOT pair: §6.1.2 prints "GENC Two Letter" and
+# §6.1.3 prints "//CZE (Example of GENC code)", a THREE-letter code. They are two independent
+# examples in two sections and not one worked set, so a fixture combining them verbatim would be
+# internally incoherent. Each fixture below therefore pairs a document code with a coding method
+# of the matching width — `//GB` with ISO-3166 Two Letter (0x01), `//CZE` with the Mixed method
+# §6.9 prints — and this note records that the choice was made rather than found.
+
+def _element(tag: int, octets: bytes) -> bytes:
+    """One ST 0102 Local Set triplet: BER-OID tag, BER length, Value."""
+    return codec.encode_ber_oid(tag) + codec.encode_ber_length(len(octets)) + octets
+
+
+def _security_set(elements) -> str:
+    """A whole item 48 Value from `[(tag, bytes), ...]`, as hex for `_packet`'s overrides.
+
+    NO KEY AND NO OUTER LENGTH: ST 0601.14a §8.48, "The length field is the size of all MISB ST
+    0102 metadata items to be packaged within item 48". What item 48 carries is the triplets.
+    """
+    return b"".join(_element(tag, octets) for tag, octets in elements).hex()
+
+
+#: The complete set's element values, one per row of §6.7's Table 2. Kept as a named table rather
+#: than inline so the minimal and partial fixtures below draw from the same values and a reader
+#: can see at one site that nothing here is a real marking.
+_SECURITY_VALUES: tuple[tuple[int, bytes], ...] = (
+    (1, bytes([0x01])),                                    # UNCLASSIFIED//, §6.7 and §6.3's -51
+    (2, bytes([0x0C])),                                    # STANAG 1059 Mixed, §6.9's own example
+    (3, "//CZE".encode("ascii")),                          # §6.1.3's own printed code
+    (4, "SYNTHETIC-SCI-A/SYNTHETIC-SHI-B//".encode("ascii")),   # -09 separator, -10 terminator
+    (5, "SYNTHETIC-CAVEAT-ONE//".encode("ascii")),         # §6.1.5, -08's double-slash ending
+    (6, "CZE ZZZ".encode("ascii")),                        # -16's blank separator, -17's one entry
+    (7, "SYNTHETIC CLASSIFICATION AUTHORITY".encode("ascii")),
+    (8, "SYNTHETIC SOURCE DOCUMENT".encode("ascii")),
+    (9, "SYNTHETIC CLASSIFICATION REASON".encode("ascii")),
+    (10, "20301231".encode("ascii")),                      # -22's YYYYMMDD, stated Length 8
+    (11, "SYNTHETIC MARKING SYSTEM".encode("ascii")),      # -21, free text
+    (12, bytes([0x0E])),                                   # GENC Three Letter, tag 12's own table
+    (13, "CZE;ZZZ".encode("utf-16-be")),                   # -24's semicolon; octets only, see note
+    (14, "SYNTHETIC CLASSIFICATION COMMENT".encode("ascii")),
+    (22, (12).to_bytes(2, "big")),                         # §6.1.15: this document's version, 12
+    (23, "2016-07-08".encode("ascii")),                    # ref [6]'s own GENC 3.0.1 date
+    (24, "2016-07-08".encode("ascii")),                    # the same, stated Length 10
+)
+
 ADAPTER_FIXTURES: tuple[dict, ...] = (
     dict(
         name="witnessed_set_from_the_documents_own_examples",
@@ -685,6 +757,168 @@ ADAPTER_FIXTURES: tuple[dict, ...] = (
             "discarding the others because a 16-bit sum disagrees destroys the evidence a "
             "consumer needs. `valid: false` on an object is a statement; a missing object is not"),
         citation="ST 0601.14a §6.6 and §8.1",
+    ),
+    # ------------------------------------------------------------------ ST 0102.12, item 48
+    dict(
+        name="security_local_set_complete_from_the_element_rules",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (48, _security_set(_SECURITY_VALUES)),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "ALL SEVENTEEN ST 0102.12 elements in one Security Metadata Local Set, carried in ST "
+            "0601 item 48. Every row of §6.7's Table 2 decodes once here — the three uint8 "
+            "enumerations through their own tables, the uint16 Version, twelve ISO/IEC 646 "
+            "strings, and tag 13's octets CARRIED AND NOT DECODED because RFC 2781 is not held. "
+            "It is the fixture the confidentiality ruling is checked on: every value is either a "
+            "code the document prints or a string beginning SYNTHETIC, and tag 1 is 0x01 "
+            "UNCLASSIFIED//, which is the one classification §6.3 itself names in prose. **The "
+            "octets of tag 13 assert nothing about their encoding** — the fixture states them and "
+            "the codec carries them, which is exactly what a decoder without RFC 2781 can do"),
+        citation=("ST 0102.12 §6.7 Table 2 (all 17 rows), §6.1.1-§6.1.17, §6.8's three "
+                  "conversions; §6.9's own Tag 2 value 0x0C; §6.1.3's own //CZE; ST 0601.14a "
+                  "§8.48 and ST 0601.14-31 for the carrier"),
+    ),
+    dict(
+        name="security_local_set_minimal_required_only",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),                        # UNCLASSIFIED//
+                (2, bytes([0x01])),                        # ISO-3166 Two Letter
+                (3, "//GB".encode("ascii")),               # §6.1.3's own ISO-3166 example
+                (12, bytes([0x01])),                       # ISO-3166 Two Letter, tag 12's table
+                (13, "GB".encode("utf-16-be")),
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "the six elements §6.7 marks `Required` and nothing else — the smallest set that is "
+            "not partial under §6.4. It is the fixture that proves the eleven absences are "
+            "absences: no caveats key, no releasing instructions key, no declassification date, "
+            "and `security_metadata_basis.state` reading COMPLETE-ON-REQUIRED rather than the "
+            "object merely having fewer keys. The coding method and the code AGREE IN WIDTH here "
+            "— ISO-3166 Two Letter with //GB, which §6.1.3 prints as its ISO-3166 example"),
+        citation=("ST 0102.12 §6.7's Required/Optional/Context column (tags 1, 2, 3, 12, 13, 22); "
+                  "§6.4; §6.1.3's own //GB"),
+    ),
+    dict(
+        name="security_local_set_partial_is_carried_as_partial",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (5, "SYNTHETIC-CAVEAT-ONE//".encode("ascii")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "§6.4's SHAPE: a set carrying three of the six `Required` elements and one `Context` "
+            "element, which the document explicitly admits — 'For some operational situations or "
+            "applications not all metadata elements in Section 6.1 may be required'. What must "
+            "happen: the set DECODES, `partial` is true, `required_absent` names tags 12, 13 and "
+            "22, and no element is completed or defaulted. What must NOT happen: the set refused "
+            "for incompleteness, which would be enforcing a rule §6.4 declines to state. Note the "
+            "absent Version: `ST 0102.10-57` says version three 'shall be assumed' and the "
+            "advisory records that clause WITHOUT writing 3 into the decoded elements"),
+        citation="ST 0102.12 §6.4; §6.7's presence column; §6.1.15's ST 0102.10-57",
+    ),
+    dict(
+        name="no_security_local_set_is_unlabelled_not_unclassified",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (11, _EXAMPLE[11]), (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**§6.5's FIXTURE, AND IT IS THE ONE THIS ROUND EXISTS FOR AS MUCH AS THE COMPLETE "
+            "SET.** A well-formed UAS Datalink LS packet carrying NO item 48. 'The absence of "
+            "Security Metadata does not signify Motion Imagery Data as Unclassified', so what "
+            "must happen is that the object carries NO `security_metadata` key at all — not an "
+            "empty one, not a null classification — and carries "
+            "`security_metadata_basis.state` reading UNLABELLED with §6.5's own sentence beside "
+            "it. What must NOT happen is any of the three ways a decoder can quietly say "
+            "unclassified: a default value, an empty object a reader can take for an empty "
+            "marking, or silence. Item 48 is `Optional` in ST 0601.14a §8.48, so this packet is "
+            "fully conformant and the absence is not a defect"),
+        citation="ST 0102.12 §6.5, and §6.3 for the contrast; ST 0601.14a §8.48 'Required in LS? Optional'",
+    ),
+    dict(
+        name="security_classification_outside_the_enumeration_carries_no_label",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x07])),                        # not one of §6.7's five listed values
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x01])),
+                (13, "GB".encode("utf-16-be")),
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE CONFIDENTIALITY RULING'S SHARPEST CASE.** Tag 1 carries `0x07`, which §6.7's "
+            "Allowed Values cell does not list — it enumerates 0x01 through 0x05 and no more. "
+            "What must happen: the INTEGER is carried, NO label is produced, and an advisory "
+            "names the clause. What must NOT happen: a nearest match (0x05 TOP SECRET// is the "
+            "closest listed value and choosing it would be this adapter inventing a marking), a "
+            "refusal that drops the element and makes the packet read as unlabelled when it is "
+            "not, or a default. A classification is CARRIED AND NEVER INVENTED, and an integer "
+            "with no name is exactly what carrying it looks like"),
+        citation="ST 0102.12 §6.7 Table 2 tag 1 Allowed Values; §6.8.1; §6.1.1",
+    ),
+    dict(
+        name="security_required_element_at_a_forbidden_length_is_refused",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01, 0x00])),                  # TWO octets where Table 2 states 1
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x01])),
+                (13, "GB".encode("utf-16-be")),
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "A MALFORMED `Required` ELEMENT. Tag 1 Security Classification at two octets where "
+            "§6.7's Length (Bytes) cell states 1 and its Data Type states uint8. What must "
+            "happen: the ELEMENT is refused, its octets are parked verbatim, the refusal names "
+            "the cell, and the other five elements decode — `klv_uas_codec`'s length policy "
+            "reached by a second document, and §6.4 plus §6.5 are why it is safe here: a set that "
+            "loses an element to a refusal is a shape §6.4 already admits, and the resulting gap "
+            "cannot be mistaken for a claim because §6.5 says an absent marking is not "
+            "'unclassified'. What must NOT happen: the first octet read as the value, the whole "
+            "set refused, or the packet refused"),
+        citation="ST 0102.12 §6.7 Table 2 tag 1 Length (Bytes) = 1, Data Type = uint8; §6.4; §6.5",
+    ),
+    dict(
+        name="security_uint16_that_the_format_cannot_carry_is_refused",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x01])),
+                (13, "GB".encode("utf-16-be")),
+                (22, bytes([0x0C])),                       # ONE octet under a uint16 of Length 2
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "A LENGTH THE FORMAT CANNOT CARRY. Tag 22 Version at one octet where §6.7 states Data "
+            "Type uint16 and Length 2 — a single octet cannot form a two-octet unsigned integer, "
+            "so there is no reading of it that is not a guess. What must happen: the element is "
+            "refused with `format_cannot_carry_the_octets`, the octet is parked, and the "
+            "remaining five elements decode. What must NOT happen: zero-extension to 0x000C, "
+            "which would produce a version number the packet did not state and which happens to "
+            "be the RIGHT one for this document — the most dangerous possible near-miss, and the "
+            "reason this fixture uses 0x0C rather than an arbitrary octet"),
+        citation="ST 0102.12 §6.7 Table 2 tag 22 Data Type = uint16, Length (Bytes) = 2; §6.1.15",
     ),
 )
 
