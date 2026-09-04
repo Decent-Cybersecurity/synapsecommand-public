@@ -875,6 +875,17 @@ class Stanag4609Adapter(Adapter):
         argued and is now `_local_set_key_clauses`, the two clauses pointed at. All three
         paragraphs are in the record at `klv_pin.json`'s `security_basis_ruling`, under the keys
         they were emitted as.
+
+        **TAG 13 GAINED FOUR KEYS ON 2026-09-04 AND THAT IS THE ONE PLACE THIS METHOD'S OUTPUT
+        GREW SINCE THE SURFACE RULING SHRANK IT.** The element used to emit its octets as its
+        `value` because RFC 2781 was unheld; it now emits the decoded string, plus `codes` (the
+        `-24` split), `byte_order`, `byte_order_mark` and `byte_order_clause`. The clause is a
+        SENTENCE and not a paragraph — `TAG_13_BYTE_ORDER_RULE`, one rule naming which document
+        supplies which half — which is the surface ruling's own shape and not a departure from it:
+        the argument stays in `klv_pin.json`, and what rides is the fact plus a pointer. The three
+        derived facts ride because a consumer holding `value` alone cannot recover them: the split
+        is lossy the moment a code contains no semi-colon, and the byte order is not a property of
+        the string at all.
         """
         out: dict[str, Any] = {}
         for tag in decoded.order:
@@ -894,7 +905,19 @@ class Stanag4609Adapter(Adapter):
                 out[key]["label"] = entry.label
                 out[key]["label_clause"] = security.LABEL_CLAUSES[tag]
             if tag == 13:
+                # TAG 13 DECODES SINCE 2026-09-04, and `value_form` moves with the rule rather
+                # than being renamed: it was `carried_octets` and it is now
+                # `utf16_country_codes`, which is `ELEMENTS[13].kind` in both cases — the field
+                # names the rule and the rule changed, so the field changed without this line
+                # doing anything. What is NEW beside it is the three facts the rule produces and
+                # a reader cannot re-derive from `value` alone: the codes as `-24` splits them,
+                # the byte order §4.3 determined, and whether a BOM decided it or the default did.
+                reading = security.read_object_country_codes(entry.raw)
                 out[key]["value_form"] = security.ELEMENTS[13].kind
+                out[key]["codes"] = list(reading.codes)
+                out[key]["byte_order"] = reading.byte_order
+                out[key]["byte_order_mark"] = reading.bom
+                out[key]["byte_order_clause"] = security.TAG_13_BYTE_ORDER_RULE
         out["_element_order"] = list(decoded.order)
         out["_local_set_key"] = security.LOCAL_SET_KEY.hex()
         out["_local_set_key_crc"] = security.LOCAL_SET_KEY_CRC

@@ -1,0 +1,75 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 46711,
+        "stored": 46711,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "b677",
+        "2": "000459f4a6aa4aa8",
+        "48": "01010102010103042f2f47420c010e0d08fffe43005a0045001602000c",
+        "65": "0d"
+      },
+      "security": {
+        "advisories": [
+          {
+            "basis": "This element carries a little-endian byte-order mark, so RFC 2781 \u00a74.3 makes it little-endian text and it is decoded as such \u2014 that section's MUST NOT is explicit that the serialization may not be assumed without reading the first two octets. **AND `ST 0107.2-02` SAYS BYTE ORDER SHALL BE BIG-ENDIAN**, retroactively across all MISB documents per ST 0107.3 \u00a71, so this packet meets RFC 2781 and breaks the MISB baseline. THE VALUE IS CARRIED AND THE DISAGREEMENT IS RECORDED, on the `ST 0102.10-57` precedent at tag 22: refusing would discard a value the packet carried because its PRODUCER broke a rule, and big-endian-decoding it anyway would produce mojibake and call it a country code. MISB ST 0107.3 \u00a76.1 'Bit and Byte Order', requirement `ST 0107.2-02`: \"Byte order shall be big-endian or MSB.\" Its scope is \u00a71: \"This Standard defines the baseline requirements for all implementations of KLV within Motion Imagery files and streams. It applies retroactively to all documents approved by the Motion Imagery Standards Board (MISB).\"",
+            "class": "byte_order_contradicts_st_0107_2_02",
+            "name": "Object Country Codes",
+            "section": "ST 0102.12 \u00a76.1.13",
+            "tag": 13,
+            "value": "CZE"
+          }
+        ],
+        "element_octets": {
+          "1": "01",
+          "12": "0e",
+          "13": "fffe43005a004500",
+          "2": "01",
+          "22": "000c",
+          "3": "2f2f4742"
+        },
+        "element_order": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "partial": false,
+        "refusals": [],
+        "required_absent": [],
+        "required_present": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "unlisted_tags": []
+      },
+      "tag_order": [
+        2,
+        48,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 48,
+      "value_length_octets": "30"
+    }
+  ],
+  "payload": {
+    "octets": 65,
+    "packet_count": 1
+  }
+}

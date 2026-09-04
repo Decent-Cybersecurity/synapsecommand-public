@@ -680,8 +680,13 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # TEN until the park 2 round of 2026-09-04, which added the seven `security_*` payloads
     # when ST 0102.12's element table was read into item 48. The count is asserted rather
     # than derived for the reason it always was: a fixture that appears without this number
+    # SEVENTEEN until the text-pins round of the same day, which added SIX
+    # `security_object_country_codes_*` payloads once RFC 2781 was held and tag 13's byte
+    # order could be read off a document instead of guessed: a BOM in each direction, the
+    # no-BOM default, `-24`'s semi-colon split, and the two refusals — an odd octet count
+    # and a lone surrogate.
     # moving is a fixture nobody decided to add.
-    assert len(module.ADAPTER_FIXTURES) == 17
+    assert len(module.ADAPTER_FIXTURES) == 23
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (
@@ -887,6 +892,21 @@ def test_the_element_values_carry_pointers_and_not_prose():
                         f"{path.name}: {key} carries a label under the wrong §6.8 subsection"
                     )
                 if element["tag"] == 13:
-                    assert element["value_form"] == "carried_octets", (
+                    # MOVED 2026-09-04 FROM `carried_octets`, when RFC 2781 became a held document
+                    # and the byte order stopped being a guess. The assertion is kept as a LITERAL
+                    # rather than re-derived from `security.ELEMENTS[13].kind`, deliberately: this
+                    # is a golden check, `value_form` is the field that names the rule a consumer
+                    # received, and comparing a golden against the live constant would make both
+                    # sides move together and assert nothing.
+                    assert element["value_form"] == "utf16_country_codes", (
                         f"{path.name}: tag 13's value form is not the one §6.7's row states"
                     )
+                    assert element["byte_order"] in ("big", "little"), (
+                        f"{path.name}: tag 13 carries no byte order, and RFC 2781 §4.3 requires "
+                        "one to be determined before the text is read"
+                    )
+                    assert element["codes"] == element["value"].split(";"), (
+                        f"{path.name}: tag 13's `codes` is not its `value` split on `ST "
+                        "0102.10-24`'s semi-colon"
+                    )
+                    assert element["byte_order_clause"] == security.TAG_13_BYTE_ORDER_RULE

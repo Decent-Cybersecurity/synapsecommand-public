@@ -45,13 +45,52 @@ certifies nothing, so any non-empty line is a legitimate value for it. An unknow
 rather than ignored: widening the vocabulary is a decision, and a vocabulary widened by a typo is
 exactly the failure above.
 
-WHAT THIS MODULE IS NOT
------------------------
-It is not a hook and it cannot be one that anybody would receive: this repository ships no
-`.git/hooks`, and a hook that lives in one clone is a rule that applies to one person. It is a
-check, runnable on a message before the commit and over the whole history afterwards.
-`tests/test_cdm_commit_message.py` runs it both ways and holds it to both directions — a message
-with a mid-body sign-off must be refused, and a clean message must pass.
+THE SIGN-OFF ITSELF, RULED 2026-09-04 AFTER A SECOND INCIDENT
+------------------------------------------------------------
+Until that day this module checked the SHAPE of a trailer block and never asked whether a sign-off
+was there at all. `41d3d2d` is why it now does: an unsigned commit reached `origin/main`. It was
+replaced by `94ae929` — identical tree, the only delta a `Signed-off-by` trailer — and
+PUBLICATION.md entries 2 and 7 carry the record.
+
+**THE RULE IS THREE CLAUSES AND THE THIRD IS THE ONE THE HISTORY FORCED:**
+
+1. **At least one `Signed-off-by` trailer.** Zero is a defect. That is `41d3d2d`'s class.
+2. **Every value under a person-certifying key is a well-formed `Name <email>` identity.** Prose
+   under such a key is a defect. That is `c4a1071f`'s class, and it was already caught.
+3. **Two well-formed identities are NOT a defect. They are an OBSERVATION.** The round that
+   specified this rule asked for "exactly one" and the history refuted it: `9fcfbadf`, `431b0c55`
+   and `7c27ac1d` each carry two well-formed sign-offs, one person at two addresses
+   (`m@decent.ch` and `m@decentcybersecurity.eu`). Under "exactly one" the rule would have named
+   seven commits where PUBLICATION.md accounts for four, so **the rule was wrong and the history
+   was not**. A duplicate sign-off certifies the same person twice, which is redundant and true;
+   `c4a1071f`'s defect was never the COUNT but that one of the two values was a sentence.
+
+`observations()` is therefore a second return channel and not a softened defect: `defects()`
+stays the thing that fails a build, and an observation is reported and exits `0`.
+
+WHAT THIS MODULE IS NOT — AND `41d3d2d` CONFIRMS IT RATHER THAN REFUTING IT
+--------------------------------------------------------------------------
+It is not a hook, it cannot be one that anybody would receive, and the 2026-09-04 incident is
+evidence FOR that position and not against it. This repository ships no `.git/hooks`, and a hook
+that lives in one clone is a rule that applies to one person — so a hook would have protected
+whoever installed it and nobody else, on a repository whose whole point is that its gates travel
+with the tree.
+
+**AND A HOOK WOULD NOT HAVE CAUGHT `41d3d2d` ANYWAY, WHICH IS THE PART WORTH BEING PRECISE
+ABOUT.** The layer that failed was not the commit: it was the PUSH. The suite caught the unsigned
+tip after the fact — `tests/test_cdm_publication.py` recomputes the unsigned set from the actual
+history and requires it to equal entry 2's three commits, so a fourth failed the build exactly as
+designed — and what was missing was a check between the commit and `git push`. A `commit-msg` hook
+sits at the wrong end of that gap. What closes it is the rule every round's brief now carries:
+`python3 gates/commit_message.py --rev HEAD` clean before pushing. CONTRIBUTING.md documents
+`git commit -s` and gets no hook line.
+
+It is a check, runnable on a message before the commit and over the whole history afterwards —
+`--file` has read a message from a path since this module was written, which is what a hook would
+have called anyway, so no flag was added for one. `tests/test_cdm_commit_message.py` runs it every
+way and holds it to every direction: a message with a mid-body sign-off must be refused, an
+unsigned message must be refused, a clean message must pass, and two identities must pass while
+being reported.
 
 USAGE
 
@@ -63,6 +102,9 @@ Exit `0` if the message is clean, `1` if it is not, and the defects are printed 
 the offending text quoted. Over a range:
 
     python gates/commit_message.py --range origin/main..HEAD
+
+**OBSERVATIONS ARE PRINTED AND DO NOT MOVE THE EXIT CODE**, marked `~` where a defect is marked
+`-`. `defects()` decides whether a build fails; `observations()` decides what a reader is told.
 """
 from __future__ import annotations
 
@@ -198,7 +240,72 @@ def defects(message: str) -> list[str]:
             "trailers in the last paragraph only, so this line is body text to git, to the DCO "
             "app and to every check that asks whether the commit is signed"
         )
+
+    # 3. THE SIGN-OFF IS PRESENT AT ALL — `41d3d2d`'s class, ruled 2026-09-04. Read through the
+    #    same `git interpret-trailers` parse as everything above, so this check and the DCO app
+    #    and the unsigned-commit ledger cannot disagree about what a sign-off is. Deliberately
+    #    LAST: a message with a malformed block should hear about the malformation first, and a
+    #    message with a stranded sign-off gets BOTH complaints, which is correct — it is unsigned
+    #    to git AND it has a line pretending otherwise.
+    if not sign_offs(message):
+        found.append(
+            "the message carries no `Signed-off-by:` trailer in its trailer block. The DCO "
+            "requires one on every commit — CONTRIBUTING.md's DCO section and the `DCO` file — "
+            "and `git commit -s` appends it from your git configuration. THIS IS `41d3d2d`'s "
+            "CLASS: an unsigned commit reached origin/main on 2026-09-04 and had to be replaced "
+            "by a force-push under a temporary ruleset bypass, which is recorded in "
+            "PUBLICATION.md entry 2. A `Signed-off-by:` line ANYWHERE BUT THE LAST PARAGRAPH does "
+            "not count and is reported separately above"
+        )
     return found
+
+
+def sign_offs(message: str) -> list[str]:
+    """Every `Signed-off-by` VALUE git parses in the trailer block, in order.
+
+    Git's own parse and not a regex of our own, for the reason `trailers_git_parses` gives: a
+    check that disagreed with git about which lines are trailers would be checking something
+    nobody else applies.
+    """
+    values = []
+    for line in trailers_git_parses(message):
+        shaped = ANY_TRAILER_LINE.match(line)
+        if shaped and shaped.group("key").lower() == "signed-off-by":
+            values.append(shaped.group("value").strip())
+    return values
+
+
+def observations(message: str) -> list[str]:
+    """What is worth SAYING about a message without refusing it. Empty means nothing to say.
+
+    **THIS CHANNEL EXISTS BECAUSE THE HISTORY REFUTED A RULE.** The round that specified the
+    sign-off check asked for *exactly one* trailer and made two a defect. Three commits in this
+    repository carry two well-formed sign-offs — `9fcfbadf`, `431b0c55` and `7c27ac1d`, each one
+    person at two addresses — so "exactly one" would have named seven commits where PUBLICATION.md
+    accounts for four. A duplicate sign-off certifies the same person twice: redundant, and true.
+    `c4a1071f`'s defect was never the count but that one of its two values was a sentence, and
+    clause 2 of `defects` catches that on its own.
+
+    So a second sign-off is REPORTED and not refused. Refusing it would fail three commits of real
+    history to satisfy a sentence in a brief; saying nothing would let a genuine mistake — two
+    different people's sign-offs where one meant to amend the other's — pass unremarked.
+    """
+    said: list[str] = []
+    values = sign_offs(message)
+    identities = [v for v in values if IDENTITY.match(v)]
+    if len(identities) > 1:
+        addresses = [v.rsplit("<", 1)[-1].rstrip(">") for v in identities]
+        same = "one person at two addresses" if len({
+            v.rsplit("<", 1)[0].strip() for v in identities}) == 1 else "more than one person"
+        said.append(
+            f"{len(identities)} well-formed `Signed-off-by` identities: {identities}. NOT A "
+            f"DEFECT — {same} ({', '.join(addresses)}). `git commit -s` appends one per "
+            "invocation, so a second usually means an amend or a rebase added another; three "
+            "commits in this history carry two and are accepted, which is why this is an "
+            "observation. Worth a look only if the two are different PEOPLE and one of them did "
+            "not mean to certify this commit"
+        )
+    return said
 
 
 def check(message: str) -> None:
@@ -223,7 +330,16 @@ def revisions(rng: str) -> list[str]:
 
 
 def _report(label: str, message: str) -> bool:
+    """Print what is wrong and what is merely notable. Returns whether the message is CLEAN.
+
+    An observation never moves the return value. That is the whole distinction between the two
+    channels: `defects` decides the exit code and `observations` decides what a reader is told.
+    """
     found = defects(message)
+    noted = observations(message)
+    for reason in noted:
+        print(f"{label}: observation")
+        print(f"  ~ {reason}")
     if not found:
         return True
     print(f"{label}: {len(found)} defect(s)")

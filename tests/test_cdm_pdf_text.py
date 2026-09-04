@@ -36,7 +36,8 @@ import re
 
 import pytest
 
-from gates.pdf_text import Match, count, findall, locate, normalized, per_page
+from gates.pdf_text import (Match, RFC_FOOTER, RFC_HEADER, count, findall, locate, normalized,
+                            per_page, text_pages)
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 SPEC = REPO / "packages" / "cdm" / "synapse_cdm" / "fixtures" / "klv" / "spec"
@@ -230,3 +231,147 @@ def test_the_repaired_figure_re_derives_from_the_pinned_document():
         "the naive method must still return the wrong answer on the real document — if it does "
         "not, this document is no longer the witness this module claims it is"
     )
+
+
+# ------------------------------------------------------- paginated text, the third incident shape
+#
+# Added 2026-09-04 by the text-pins round. RFC 2781 is served as `text/plain` and paginated by the
+# publisher: 14 form feeds, a `[Page N]` footer on every page, a running header on all but the
+# first. A phrase that crosses a page boundary is separated from itself by five lines of furniture,
+# so `normalized` alone welds the furniture's words INTO the sentence — which is worse than the
+# wrap it was built to fix, because the result reads as prose and is not.
+
+#: RFC 2781's page 5 / page 6 boundary, verbatim from the pinned copy. The sentence "the resulting
+#: string may contain an unintended "ZERO WIDTH NON-BREAKING SPACE" at the connection point" is
+#: split across it, with the footer, the form feed and the running header in between.
+RFC_PAGE_BREAK = (
+    "   strings, it is important to strip out those signatures, because\n"
+    "   otherwise the resulting string may contain an unintended \"ZERO WIDTH\n"
+    "\n\n\n"
+    "Hoffman & Yergeau            Informational                      [Page 5]\n"
+    "\f\n"
+    "RFC 2781            UTF-16, an encoding of ISO 10646       February 2000\n"
+    "\n\n"
+    "   NON-BREAKING SPACE\" at the connection point. Also, some\n"
+    "   specifications mandate an initial 0xFEFF character in objects\n"
+)
+
+RFC_SPANNING_PHRASE = ('the resulting string may contain an unintended "ZERO WIDTH '
+                       'NON-BREAKING SPACE" at the connection point')
+
+
+def test_the_page_break_fixture_defeats_the_unrouted_method():
+    """The witness, and it must fail the naive way before the helper is allowed to mean anything.
+
+    This is the same discipline `test_every_incident_fixture_actually_defeats_the_naive_method`
+    applies to the two PDF incidents: a fixture that the plain method already handles proves
+    nothing about the fix.
+    """
+    assert normalized(RFC_PAGE_BREAK).count(RFC_SPANNING_PHRASE) == 0, (
+        "the raw text already yields the phrase, so this fixture is not the incident it claims to "
+        "be — check that the furniture is still between the two halves"
+    )
+    # And the specific way it fails: the furniture's words are welded into the sentence.
+    assert "ZERO WIDTH Hoffman & Yergeau" in normalized(RFC_PAGE_BREAK), (
+        "the failure mode has changed shape. The point of routing paginated text is that collapsing "
+        "it puts the footer and the header INSIDE the sentence"
+    )
+
+
+def test_text_pages_recovers_a_phrase_split_across_a_page_boundary():
+    """The fix, on the fixture the test above proved is a real witness."""
+    pages = text_pages(RFC_PAGE_BREAK)
+    assert count(pages, RFC_SPANNING_PHRASE) == 1
+    found = locate(pages, RFC_SPANNING_PHRASE)
+    assert [(m.page, m.spans_pages) for m in found] == [(1, True)], (
+        f"attribution is {[(m.page, m.spans_pages) for m in found]}. A match that begins on the "
+        "first of the two pages is reported there and flagged as spanning — the honest half of the "
+        "attribution, exactly as for a PDF page boundary"
+    )
+
+
+def test_text_pages_strips_furniture_and_nothing_else():
+    """The line between removing layout and editing prose, asserted in both directions."""
+    pages = text_pages(RFC_PAGE_BREAK)
+    joined = "\n".join(pages)
+    assert "[Page 5]" not in joined and "Hoffman & Yergeau" not in joined, "footer survived"
+    assert "UTF-16, an encoding of ISO 10646" not in joined, "running header survived"
+    assert "\f" not in joined, "form feed survived"
+    # Not stripped: indentation, blank runs inside a page, and every word of the prose.
+    assert "   strings, it is important to strip out those signatures" in joined, (
+        "indentation was altered. Removing furniture is not reflowing text"
+    )
+    assert "specifications mandate an initial 0xFEFF character" in joined
+
+
+def test_an_unpaginated_text_document_comes_back_as_one_page_rather_than_raising():
+    """The honest answer for a text file with no page breaks, and it is why this does not raise."""
+    pages = text_pages("one line\nand another")
+    assert len(pages) == 1, f"an unpaginated document came back as {len(pages)} pages"
+    assert count(pages, "one line and another") == 1
+    # A trailing form feed must not manufacture a final empty page: `locate`'s numbering has to
+    # agree with the document's own footers, and a phantom page shifts every attribution after it.
+    assert len(text_pages("page one\n\fpage two\n\f")) == 2
+
+
+def test_a_running_header_is_stripped_by_POSITION_and_not_by_SHAPE():
+    """The prospective guard, and the reason it is position and not pattern.
+
+    `RFC_HEADER` matches a line beginning `RFC <digits>`. An RFC that cites another RFC at the
+    start of a reference-list line has such a line as CONTENT, and a stripper keyed on shape alone
+    would delete it. RFC 2781 itself contains no such line — measured, and recorded in
+    `text_pages`'s docstring as a prospective case rather than a witnessed one — so the guard is
+    checked here on a synthetic document that does have one.
+    """
+    document = ("RFC 9999            A Title                                  January 2030\n"
+                "\n"
+                "   The following is cited:\n"
+                "RFC 2781 UTF-16, an encoding of ISO 10646, February 2000.\n")
+    pages = text_pages(document)
+    joined = "\n".join(pages)
+    assert "A Title" not in joined, (
+        "the running header in first position was not stripped"
+    )
+    assert "RFC 2781 UTF-16, an encoding of ISO 10646, February 2000." in joined, (
+        "a content line matching RFC_HEADER was deleted. The running header is distinguished from "
+        "content by POSITION, and a shape-only stripper eats the document's own citations"
+    )
+
+
+def test_the_furniture_patterns_are_not_vacuous():
+    """A pattern that matches everything is as useless as one that matches nothing."""
+    assert RFC_FOOTER.match("Hoffman & Yergeau            Informational           [Page 12]")
+    assert RFC_HEADER.match("RFC 2781            UTF-16, an encoding of ISO 10646   February 2000")
+    for negative in ("   NON-BREAKING SPACE at the connection point.",
+                     "3.2 Byte order mark (BOM)",
+                     "   the page number is 5",
+                     ""):
+        assert not RFC_FOOTER.match(negative), f"RFC_FOOTER wrongly matched {negative!r}"
+        assert not RFC_HEADER.match(negative), f"RFC_HEADER wrongly matched {negative!r}"
+
+
+@pytest.mark.skipif(not (SPEC / "rfc2781.txt").exists(),
+                    reason="no pinned RFC 2781 in this working tree; .gitignore excludes *.txt, "
+                           "so a fresh clone has the record and not the document")
+def test_the_pinned_rfc_routes_through_the_helper_and_the_raw_text_does_not():
+    """THE LIVE SUBJECT, on the real 29 870 bytes rather than on a fixture cut out of them.
+
+    Both directions, because only the pair is evidence: the phrase must be absent from the served
+    text and present through `text_pages`. And the page count the helper derives must equal the
+    14 the pin records, or the helper and `page_count_method`'s paginated-text variant disagree
+    about what a page is.
+    """
+    raw = (SPEC / "rfc2781.txt").read_text()
+    pages = text_pages(raw)
+    assert len(pages) == 14, (
+        f"`text_pages` finds {len(pages)} pages and `klv_pin.json`'s `rfc_2781.pages` records 14"
+    )
+    assert normalized(raw).count(RFC_SPANNING_PHRASE) == 0, (
+        "the served text already yields the cross-page phrase, so this document is no longer the "
+        "witness this module claims it is"
+    )
+    assert count(pages, RFC_SPANNING_PHRASE) == 1
+    assert not any("[Page" in page for page in pages), "a footer survived on the real document"
+    # The byte-order rule the tag 13 ruling quotes, findable because it does NOT cross a boundary —
+    # asserted so the quotation in `klv_security_codec` is checkable against the pinned copy.
+    assert count(pages, "the text SHOULD be interpreted as being big-endian") == 1

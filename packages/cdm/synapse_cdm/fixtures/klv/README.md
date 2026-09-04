@@ -241,11 +241,20 @@ What is here:
 | `spec/ST0601.19.pdf` | `e53c1e7bfdda888d5946610f89a8146a3f339394e1b127807302676c0cfb92b1` | 4 700 978 | 226 |
 | `spec/ST0102.12.pdf` | `20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267` | 514 842 | 18 |
 | `spec/ST0107.3.pdf` | `500d67522269e5fcbc39bec2521849dffdf2698ff40132552f3fd28998b69794` | 656 949 | 6 |
+| `spec/rfc2781.txt` | `e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502` | 29 870 | 14 |
 
-Those six rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVERAGE.md`, and
+Those seven rows are also stated in `spec/klv_pin.json` and in `../../FORMAT_COVERAGE.md`, and
 `tests/test_cdm_format_coverage.py` checks **every** occurrence rather than any one of them — the
 80b38d1 finding, which was that an `in` check is satisfied by one site while a fact stated at three
 sites can drift at two.
+
+**The seventh is text and not a PDF, and its `Pages` column is a different measurement.** `RFC 2781`
+is served by the RFC Editor as `text/plain` — there is no PDF of it to hold — so its page count is
+not a walk of a PDF page tree but the document's own pagination: 14 form feeds, 14 `[Page N]`
+footers, and a highest footer number of 14, all three required to agree. Its pin additionally
+carries `lines` (787, the count of `\n` bytes) and `format` (`"text/plain"`; a pin node without that
+field is a PDF). Ruled at `spec/klv_pin.json`'s `text_pin_ruling`, and the count of six above was
+corrected to seven in the same commit that added the row.
 
 ## What `framing/` is, and what it is not
 

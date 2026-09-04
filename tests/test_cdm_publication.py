@@ -118,9 +118,37 @@ def _record_section(heading: str) -> str:
     return rest[:nxt.start()] if nxt else rest
 
 
+def _before_the_dated_notes(section: str) -> str:
+    """A ledger entry with its appended dated notes cut off. The entry's own claim, in other words.
+
+    **WHY THIS EXISTS, AND IT IS A DEFECT THIS ROUND CAUSED AND CAUGHT IN ONE RUN.** The two
+    parsers below extract a SET OF COMMITS from a ledger entry by scanning it for backticked 8-hex
+    strings. That was exact while an entry was a heading, a statement of its set, and prose about
+    that set. On 2026-09-04 both entry 2 and entry 7 gained a dated note recording the `41d3d2d`
+    incident, and those notes name other commits for good reasons — the replaced tip, the commit
+    that replaced it, and the three carrying two well-formed sign-offs. **Every one was
+    immediately read as a member of the set.** The gates failed instantly and by name, which is
+    the only reason this is a footnote rather than an entry of its own.
+
+    THE RULE, AND IT IS THE ONE THIS REPOSITORY ALREADY APPLIES TO APPEND-ONLY LOGS. A ledger entry
+    states its set once and then accretes dated notes underneath, exactly as `klv_pin.json`'s
+    header log does — and `tests/test_cdm_pin_header.py` reads the LAST clause of that log for the
+    same reason this reads the FIRST part of an entry: each convention puts the current claim in a
+    known place. So the set is whatever the entry says before its first `**DATED NOTE`, and a note
+    may name as many commits as it needs to without being mistaken for the subject.
+
+    A section with no dated note comes back unchanged, which is what every other entry is.
+    """
+    marker = "**DATED NOTE"
+    return section.split(marker)[0] if marker in section else section
+
+
 def stated_unsigned_commits() -> list[str]:
-    """The abbreviated SHAs the record names, in the order it names them."""
-    section = _record_section(UNSIGNED_HEADING)
+    """The abbreviated SHAs the record names as unsigned, in the order it names them.
+
+    Read from the entry above its dated notes — see `_before_the_dated_notes`.
+    """
+    section = _before_the_dated_notes(_record_section(UNSIGNED_HEADING))
     found = re.findall(r"`([0-9a-f]{8})`", section)
     assert found, (
         f"no backticked 8-hex commit id found under {UNSIGNED_HEADING!r} in {RECORD}. Either the "

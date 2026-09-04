@@ -54,11 +54,18 @@ from gates.commit_message import (
     check,
     defects,
     message_of,
+    observations,
+    revisions,
+    sign_offs,
     trailer_block,
     trailers_git_parses,
 )
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
+
+#: Shared with `tests/test_cdm_publication.py`, which owns the reasoning. Two modules read
+#: two ledger entries under the same convention and one function is what keeps them agreeing.
+from tests.test_cdm_publication import _before_the_dated_notes  # noqa: E402
 
 RECORD = "PUBLICATION.md"
 
@@ -142,16 +149,185 @@ def test_an_unknown_trailer_key_is_refused_rather_than_ignored():
     assert any("unknown key" in reason for reason in found), f"wrong reason: {found}"
 
 
-def test_a_message_with_no_sign_off_at_all_is_not_this_modules_business():
-    """The unsigned-commit ledger owns that, and two checks on one fact is how they disagree.
+def test_a_message_with_no_sign_off_at_all_is_REFUSED_and_this_test_used_to_assert_the_opposite():
+    """**INVERTED 2026-09-04, AND THE OLD ARGUMENT DESERVES AN ANSWER RATHER THAN A DELETION.**
 
-    Asserted positively rather than left implied: a module that also refused unsigned messages
-    would duplicate `tests/test_cdm_publication.py` and the two would drift.
+    This test used to assert `defects(unsigned) == []`, on a real argument: *the unsigned-commit
+    ledger owns sign-off PRESENCE, and two checks on one fact is how they disagree.* It named
+    `tests/test_cdm_publication.py` as the owner and warned that duplicating it would let the two
+    drift.
+
+    **`41d3d2d` IS WHAT THAT DIVISION OF LABOUR COST.** An unsigned commit reached `origin/main`
+    on 2026-09-04 and had to be removed by a force-push under a temporary ruleset bypass —
+    PUBLICATION.md entry 2 carries the record. The ledger did its job: it recomputes the unsigned
+    set from the actual history and requires it to equal entry 2's three commits, so the fourth
+    failed the build exactly as designed. **It just did it AFTERWARDS.**
+
+    So the old argument was wrong in its premise, not its logic. These are not two checks on one
+    fact; they are two checks at two MOMENTS. The ledger asks *is the history what the record
+    says* and answers it at suite time, over commits that already exist. This module asks *is
+    this message signed* and answers it about a message, before `git push` — which is where
+    `41d3d2d` needed an answer and got none. Neither can substitute for the other, and the drift
+    the old docstring feared is guarded against directly by
+    `test_the_defect_set_over_the_history_is_exactly_the_recorded_one` below, which requires this
+    module's verdict over the whole history to equal PUBLICATION.md's two entries.
     """
     unsigned = "Subject\n\nBody with no trailer block at all.\n"
-    assert defects(unsigned) == [], (
-        "this module refused an unsigned message. Sign-off PRESENCE belongs to the unsigned-commit "
-        "ledger; what belongs here is whether the trailer block says what it appears to say"
+    found = defects(unsigned)
+    assert len(found) == 1 and "no `Signed-off-by:` trailer" in found[0], (
+        f"an unsigned message produced {found}. Since 2026-09-04 this module requires a sign-off: "
+        "the check that would have caught 41d3d2d before it reached origin/main is a check on the "
+        "MESSAGE, and the ledger's check on the history necessarily runs later"
+    )
+    # A subject line alone has no trailer block at all, and that is still unsigned rather than
+    # exempt — git will not parse a subject as a trailer and neither does this.
+    assert defects("Subject only, no body\n"), "a subject-only message read as signed"
+
+
+def test_a_sign_off_stranded_in_the_body_is_refused_TWICE_and_both_complaints_are_right():
+    """The interaction the two clauses have with each other, asserted because it looks like a bug.
+
+    A message whose only sign-off sits mid-body earns both complaints: the stranded-trailer
+    complaint, because a line reads as a sign-off and is not one to git, AND the missing-sign-off
+    complaint, because the trailer block genuinely has none. **That is not double-counting.** It
+    is the two true things about such a message, and a reader needs both: the first says what to
+    move and the second says what the commit currently is.
+    """
+    stranded = f"Subject\n\n{SIGNOFF}\n\nBody prose, so the sign-off is not in the last paragraph.\n"
+    found = defects(stranded)
+    assert len(found) == 2, f"expected both complaints, got {found}"
+    assert any("reads as a sign-off and is not one" in f for f in found)
+    assert any("no `Signed-off-by:` trailer" in f for f in found)
+
+
+def test_two_identities_for_one_person_are_ACCEPTED_and_REPORTED():
+    """RULING 3's third clause, and the history is what forced it.
+
+    The round that specified this rule asked for *exactly one* sign-off and made two a defect.
+    Three commits here carry two well-formed sign-offs, one person at two addresses, so "exactly
+    one" would have failed real history to satisfy a sentence in a brief.
+    """
+    two = (f"Subject\n\nBody.\n\nSigned-off-by: Ada Lovelace <ada@example.org>\n"
+           f"Signed-off-by: Ada Lovelace <ada@other.example.org>\n")
+    assert defects(two) == [], (
+        f"two well-formed sign-offs were refused: {defects(two)}. A duplicate sign-off certifies "
+        "the same person twice — redundant and true — and three commits in this history carry one"
+    )
+    noted = observations(two)
+    assert len(noted) == 1 and "NOT A DEFECT" in noted[0], noted
+    assert "one person at two addresses" in noted[0], noted
+
+
+def test_two_identities_for_two_people_are_ACCEPTED_and_the_observation_says_which():
+    """The case the observation exists to make visible, as opposed to the benign duplicate.
+
+    Two different people's sign-offs on one commit is legitimate — a pair programming session, a
+    patch carried forward — and is also what an accidental rebase looks like. This channel cannot
+    tell those apart and does not try; it says which shape it found and leaves the judgement to a
+    reader, which is the difference between an observation and a gate.
+    """
+    two = ("Subject\n\nBody.\n\nSigned-off-by: Ada Lovelace <ada@example.org>\n"
+           "Signed-off-by: Grace Hopper <grace@example.org>\n")
+    assert defects(two) == []
+    noted = observations(two)
+    assert len(noted) == 1 and "more than one person" in noted[0], noted
+
+
+def test_one_sign_off_produces_no_observation_which_is_what_makes_the_others_mean_anything():
+    """The negative control on the second channel."""
+    assert observations(CLEAN) == [], observations(CLEAN)
+    assert sign_offs(CLEAN) == ["Ada Lovelace <ada@example.org>"]
+
+
+def test_a_prose_value_beside_a_real_identity_is_still_a_DEFECT_and_not_an_observation():
+    """`c4a1071f` EXACTLY, and the assertion that keeps clause 3 from swallowing clause 2.
+
+    This is the shape that makes the two channels worth separating. `c4a1071f` carries two lines
+    git parses as `Signed-off-by`, one of them a sentence. Its defect was never the COUNT — if it
+    had been, clause 3 would now excuse it — but that a value under a person-certifying key was
+    prose. So it must still fail, and it must NOT be reported as a benign duplicate.
+    """
+    incident = ("Subject\n\nBody.\n\n"
+                "Signed-off-by: nothing else changed; the suite is unmoved at 3151 passed.\n"
+                f"{SIGNOFF}\n")
+    found = defects(incident)
+    assert len(found) == 1 and "takes a name and an address" in found[0], found
+    assert observations(incident) == [], (
+        f"the incident was reported as a benign duplicate: {observations(incident)}. Only "
+        "WELL-FORMED identities count toward the observation, or clause 3 would launder clause 2's "
+        "defect into a note"
+    )
+
+
+def test_the_defect_set_over_the_history_is_exactly_the_recorded_one():
+    """**THE CALIBRATION, AND IT IS THE ASSERTION THAT MAKES THE RULE TRUE RATHER THAN PLAUSIBLE.**
+
+    A sign-off rule can be wrong in a way no synthetic message reveals: too strict, and it
+    condemns history the record has already accepted. The round that wrote RULING 3 carried this
+    as a STOP — *if the rule names any commit outside the four defects and three observations, the
+    rule is wrong and the history is not* — and it fired once already, on "exactly one".
+
+    So both channels are recomputed over every commit and required to equal the record:
+
+    * DEFECTS — the three commits PUBLICATION.md entry 2 accepts as unsigned, plus `c4a1071f`
+      from entry 7. Four, and no more.
+    * OBSERVATIONS — the three commits carrying two well-formed sign-offs. Three, and no more.
+    * The two sets are DISJOINT, which is not implied by either count.
+    """
+    expected_defects = {"d7986017", "2a51871f", "965e939d", "c4a1071f"}
+    expected_observations = {"9fcfbadf", "431b0c55", "7c27ac1d"}
+    got_defects, got_observations = set(), set()
+    revs = revisions("HEAD")
+    for rev in revs:
+        message = message_of(rev)
+        short = rev[:8]
+        if defects(message):
+            got_defects.add(short)
+        if observations(message):
+            got_observations.add(short)
+    assert len(revs) >= 190, f"only {len(revs)} commits reached this check"
+    assert got_defects == expected_defects, (
+        f"the sign-off rule names {sorted(got_defects)} as defective and the record accounts for "
+        f"{sorted(expected_defects)}. A commit in one set and not the other means the RULE is "
+        "wrong, not the history — that is the round's own stop rule. Extra: "
+        f"{sorted(got_defects - expected_defects)}; missing: "
+        f"{sorted(expected_defects - got_defects)}"
+    )
+    assert got_observations == expected_observations, (
+        f"the observation channel names {sorted(got_observations)} and the three commits carrying "
+        f"two well-formed sign-offs are {sorted(expected_observations)}"
+    )
+    assert not (got_defects & got_observations), (
+        f"{sorted(got_defects & got_observations)} is both a defect and an observation. The two "
+        "channels answer different questions and a commit in both means one of them is confused"
+    )
+
+
+def test_the_module_ships_no_hook_and_says_why():
+    """RULING 3's second half, asserted because it is a decision and not an omission.
+
+    The 2026-09-04 incident is the obvious argument FOR a `commit-msg` hook, and the ruling
+    declines one on two grounds the docstring has to keep making: a hook lives in one clone, and
+    the layer that actually failed was the PUSH rather than the commit. A round that quietly added
+    a hook later would be reversing a ruling by forgetting it, so the position is checked.
+    """
+    import gates.commit_message as module
+    doc = module.__doc__
+    assert "a rule that applies to one person" in doc, (
+        "the no-hook argument has left the docstring"
+    )
+    assert "41d3d2d" in doc, "the incident that tested the no-hook position is not named"
+    assert not (REPO / ".githooks").exists() and not (REPO / "hooks").exists(), (
+        "a tracked hooks directory has appeared. RULING 3 declines a hook; if that has been "
+        "reversed, reverse it in the docstring too"
+    )
+    contributing = (REPO / "CONTRIBUTING.md").read_text()
+    assert "core.hooksPath" not in contributing, (
+        "CONTRIBUTING.md now documents a hook install. RULING 3 says it gets none: enforcement is "
+        "this gate plus `python3 gates/commit_message.py --rev HEAD` clean before push"
+    )
+    assert "gates/commit_message.py --rev HEAD" in contributing, (
+        "CONTRIBUTING.md does not name the pre-push check that stands in for a hook"
     )
 
 
@@ -268,7 +444,16 @@ def stated_malformed_commits() -> list[str]:
     rest = text[start:]
     nxt = re.search(r"\n#{2,3} ", rest)
     section = rest[:nxt.start()] if nxt else rest
-    found = re.findall(r"`([0-9a-f]{8})`", section)
+    # SCOPED ABOVE THE ENTRY'S DATED NOTES ON 2026-09-04, for the reason
+    # `tests/test_cdm_publication.py::_before_the_dated_notes` records at length: the note added
+    # to entry 7 that day names the three commits carrying two well-formed sign-offs, and a
+    # section-wide scan read all three as members of the malformed set. An entry states its set
+    # once, above its notes; a note may name whatever it needs to.
+    #
+    # THE HELPER IS IMPORTED AND NOT REIMPLEMENTED. Two modules parse two ledger entries the same
+    # way, and the reason to share one function rather than copy four lines is the reason this
+    # repository shares `gates/pin_paths.py`: the copy that drifts is the one nobody is looking at.
+    found = re.findall(r"`([0-9a-f]{8})`", _before_the_dated_notes(section))
     assert found, (
         f"no backticked 8-hex commit id found under {MALFORMED_HEADING!r} in {RECORD}. Either the "
         "table changed shape — re-anchor deliberately — or the entry was emptied, which is a "
@@ -278,8 +463,32 @@ def stated_malformed_commits() -> list[str]:
 
 
 def actual_malformed_commits() -> list[str]:
-    """Every commit reachable from HEAD whose message this module refuses, abbreviated to 8."""
-    return [rev[:8] for rev in _git("rev-list", "HEAD").split() if defects(message_of(rev))]
+    """Every commit HEAD reaches whose message this module refuses for a MALFORMED BLOCK.
+
+    **PARTITIONED 2026-09-04, AND THE PARTITION IS THE POINT.** `defects()` used to refuse exactly
+    one class — a trailer block that does not say what it appears to say — so "every commit this
+    module refuses" and "entry 7's malformed set" were the same set and this helper could be the
+    whole of it. RULING 3 added a second class: a message with no sign-off at all. Those commits
+    are accounted for by entry 2 and not by entry 7, so a helper that returned all refusals would
+    now compare a two-class set against a one-class ledger and fail for the right reason at the
+    wrong site.
+
+    The two classes are told apart by the ABSENCE OF A SIGN-OFF rather than by matching the defect
+    string: a message is unsigned or it is not, which is a property of the message, and keying on
+    the prose of an error message would make this helper break when somebody improves the wording.
+    """
+    out = []
+    for rev in _git("rev-list", "HEAD").split():
+        message = message_of(rev)
+        if defects(message) and sign_offs(message):
+            out.append(rev[:8])
+    return out
+
+
+def actual_unsigned_commits() -> list[str]:
+    """Every commit HEAD reaches whose trailer block carries no sign-off. Entry 2's class."""
+    return [rev[:8] for rev in _git("rev-list", "HEAD").split()
+            if not sign_offs(message_of(rev))]
 
 
 def test_the_malformed_set_in_the_record_is_the_malformed_set_in_the_history():
@@ -288,6 +497,11 @@ def test_the_malformed_set_in_the_record_is_the_malformed_set_in_the_history():
     A commit in the history and not in the record is a defect nobody accepted. A commit in the
     record and not in the history means the history was rewritten, which the record forbids in its
     own terms.
+
+    SCOPED TO THE MALFORMED CLASS SINCE 2026-09-04 — see `actual_malformed_commits`. The unsigned
+    class is asserted against entry 2 by the test below, and
+    `test_the_defect_set_over_the_history_is_exactly_the_recorded_one` asserts that the two
+    classes TOGETHER are the whole of what this module refuses, so nothing falls between them.
     """
     stated = set(stated_malformed_commits())
     actual = set(actual_malformed_commits())
@@ -297,6 +511,33 @@ def test_the_malformed_set_in_the_record_is_the_malformed_set_in_the_history():
         f"  named in the record, not malformed in the history: {sorted(stated - actual)}\n"
         "A new one is a message to fix BEFORE it is committed — `python gates/commit_message.py "
         "--file .git/COMMIT_EDITMSG` — not an entry to add."
+    )
+
+
+def test_the_two_refused_classes_together_are_the_whole_of_what_this_module_refuses():
+    """THE SEAM BETWEEN THE TWO LEDGER ENTRIES, asserted so nothing can fall down it.
+
+    Entry 7 accounts for malformed blocks and entry 2 for unsigned commits. Two helpers partition
+    the refused set between them — but a partition is only a partition if it is exhaustive and
+    disjoint, and neither is implied by the two tests above passing. A third class of defect added
+    later, accounted for by neither entry, would leave both of those tests green.
+    """
+    refused = {rev[:8] for rev in _git("rev-list", "HEAD").split() if defects(message_of(rev))}
+    malformed = set(actual_malformed_commits())
+    unsigned = set(actual_unsigned_commits())
+    assert not (malformed & unsigned), (
+        f"{sorted(malformed & unsigned)} is in both classes. A commit cannot be unsigned and have "
+        "a sign-off, so this means the two helpers disagree about what `sign_offs` returns"
+    )
+    assert malformed | unsigned == refused, (
+        f"the two classes do not exhaust the refused set. Refused and in neither class: "
+        f"{sorted(refused - (malformed | unsigned))}. Every commit this module refuses must be "
+        "accounted for by PUBLICATION.md entry 2 or entry 7 — a third class needs a third entry, "
+        "which is a decision and not something a passing suite should hide"
+    )
+    assert unsigned == {"d7986017", "2a51871f", "965e939d"}, (
+        f"the unsigned set is {sorted(unsigned)} and PUBLICATION.md entry 2 accepts exactly three "
+        "named commits. A fourth is 41d3d2d's class and must not reach origin/main"
     )
 
 

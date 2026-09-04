@@ -3042,6 +3042,14 @@ KLV_PINNED_DOCUMENTS = (
     ("ST0102.12.pdf",
      "20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267", 514842, 18,
      ("delegated_specifications_held", "st_0102_12")),
+    # THE FIRST ROSTER ROW THAT IS NOT A PDF, added 2026-09-04 by the text-pins round. Nothing in
+    # the parametrised check below reads the extension — it composes a path from the filename and
+    # asserts four statements of one fact — so the row needed no code change to be admitted, which
+    # is worth a comment because the surface round predicted the opposite. What DID have to move
+    # was the discovery side: see `PIN_SUFFIXES` in `tests/test_cdm_pins.py`.
+    ("rfc2781.txt",
+     "e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502", 29870, 14,
+     ("delegated_specifications_held", "rfc_2781")),
 )
 
 #: The delegation map, exactly as the profile pins it. `document` is how the row names it,
@@ -4855,10 +4863,13 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 17, (
-        f"{len(expected)} adapter fixtures, expected seventeen — ten from the witnessed-set "
-        "round and the seven `security_*` payloads the park 2 round added for ST 0102.12's "
-        "seventeen elements inside item 48"
+    assert len(expected) == 23, (
+        f"{len(expected)} adapter fixtures, expected twenty-three — ten from the witnessed-set "
+        "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
+        "seventeen elements inside item 48, and the six `security_object_country_codes_*` "
+        "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held: a byte-order "
+        "mark in each direction, the no-BOM default, `ST 0102.10-24`'s semi-colon split, and the "
+        "two refusals — an odd octet count and a lone surrogate"
     )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (

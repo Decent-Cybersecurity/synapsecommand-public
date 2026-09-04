@@ -248,6 +248,52 @@ guaranteed expiry date. The set does not move, and
 to be exactly these three: a fourth unsigned commit fails the build, and so does removing one of
 these three from this table while it is still unsigned.
 
+**DATED NOTE, 2026-09-04 — A FOURTH UNSIGNED COMMIT REACHED `origin/main`, AND THE SET ABOVE IS
+STILL THREE.** `41d3d2dc75e08c6cf3a92ff5c13644d144c1cde5` was pushed to `origin/main` carrying no
+`Signed-off-by` trailer. It was replaced by **`94ae929`**, and the two commits have the **identical
+tree `90a4c873f7ee3d968925ee0206c88b669e2fb991`** — `git diff 41d3d2d 94ae929` is empty, and the
+only delta between them is the trailer. So the content was never in question; the certification
+was.
+
+**HOW IT WAS REMOVED, STATED IN FULL BECAUSE IT USED A MECHANISM THIS FILE ELSEWHERE SAYS IS NOT
+RELAXED.** `git push --force-with-lease`, under a **temporary admin bypass actor added to ruleset
+`main-protection` (id 21205830)** and removed again within the same minutes. GitHub's audit log
+carries the bypassed violation, which is the durable record that the bypass happened and what it
+was for. The `non_fast_forward` rule that section describes is intact and was not edited; a bypass
+actor was added and taken away, which is a different act and is recorded here as one.
+
+**WHAT THIS WAS NOT, ITEM BY ITEM, BECAUSE A FORCE-PUSH INVITES EVERY ONE OF THESE READINGS:**
+
+- **No history before the tip moved.** Exactly one commit was replaced, the one at the tip.
+  `acb6295` and everything under it are byte-identical to what they were.
+- **No tag moved**, and none was created. `v1.4.1` points where it pointed.
+- **The three accepted unsigned commits above are unchanged.** They were not touched, not
+  rewritten, and are still the whole of the unsigned set — which is why the table did not move and
+  the gate that recomputes it still passes.
+- **Not a precedent for rewriting the three.** Entry 7's disposition and this entry's own
+  reasoning both stand: those three are left in place because rewriting them would falsify the
+  record of how this repository was built. `41d3d2d` was different in kind — it was **minutes
+  old**, it was the tip, and the commit that replaced it carries the same tree, so nothing about
+  the project's history was altered by removing it.
+
+**AND THE MECHANIZATION IT PRODUCED IS THE PART THAT MATTERS.** The suite caught the unsigned tip
+— `tests/test_cdm_publication.py` recomputes the unsigned set and a fourth member fails the build,
+exactly as this entry says it does — but it caught it **after the commit and after the push**. The
+layer that was missing sat between the two. `gates/commit_message.py` now requires a sign-off in
+the trailer block, so `python3 gates/commit_message.py --rev HEAD` refuses this class before a push
+rather than after one, and every round's brief carries that command. **No hook was installed**, and
+the reasoning is in that module's docstring: a hook lives in one clone, and the gap here was at the
+push and not at the commit.
+
+**A SECOND FINDING, FROM CALIBRATING THAT RULE AGAINST THE HISTORY.** The rule was first specified
+as *exactly one* `Signed-off-by` trailer, and the history refused it. **Three commits carry two
+well-formed sign-offs** — `9fcfbadf`, `431b0c55` and `7c27ac1d`, each one person at two addresses,
+`m@decent.ch` and `m@decentcybersecurity.eu`. Under "exactly one" the rule would have named seven
+commits where this file accounts for four, so **the rule was wrong and the history was not**. Those
+three are reported as an **observation** and not a defect: a duplicate sign-off certifies the same
+person twice, which is redundant and true. `c4a1071f`'s defect was never the count — see entry 7 —
+but that one of its two values was a sentence, and that is still refused.
+
 ### 3. Five distribution statements, pending a human read
 
 Five pinned documents yield **no distribution statement** from their extractable text, so none has
@@ -812,6 +858,27 @@ derived from git's parse of all 95 messages rather than decided, and it is `Sign
 `Co-Authored-By` (51) and **`Suite` (1)** — a one-line result summary, used once, declared nowhere.
 It is a legitimate trailer and it is now declared; an undeclared key used once is how the next one
 gets in by typo, which is what happened here.
+
+**DATED NOTE, 2026-09-04 — THIS ENTRY IS STILL ONE COMMIT, AND THE ROUND THAT WIDENED THE GATE
+PROVED IT RATHER THAN ASSUMING IT.** `gates/commit_message.py` gained a sign-off requirement that
+day, for the `41d3d2d` incident recorded at entry 2. Calibrating it against the whole history
+turned up **three commits carrying two well-formed `Signed-off-by` trailers** — `9fcfbadf`,
+`431b0c55` and `7c27ac1d`, each one person at two addresses — and the obvious reading was that
+this entry had understated itself by three.
+
+**IT HAD NOT, AND THE DISTINCTION IS THIS ENTRY'S WHOLE SUBJECT.** What is recorded here is a
+trailer block that **does not say what it appears to say**: a sentence of prose wearing a
+`Signed-off-by:` key, which is a false statement about provenance. The three commits above carry
+two *identities*, both well-formed, both the same person. That is redundant and it is **true** —
+nothing in either line claims something that is not so. So the defect was never the COUNT of
+sign-offs, and a rule keyed on the count would have condemned three commits of clean history to
+catch one malformed one. `defects()` refuses a prose value under a person-certifying key, which is
+`c4a1071f` and nothing else; `observations()` reports a second identity without failing anything.
+
+**`c4a1071f` REMAINS THE SOLE MEMBER**, and `tests/test_cdm_commit_message.py` now asserts the
+partition rather than the set alone: every commit the gate refuses is accounted for by this entry
+(a malformed block) or by entry 2 (no sign-off at all), the two classes are disjoint, and together
+they are exhaustive — so a third class of defect cannot appear without a third entry to hold it.
 
 ### 8. The deployment record, reconciled — and it starts existing here
 

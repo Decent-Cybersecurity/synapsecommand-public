@@ -173,7 +173,7 @@ every prose site states the same count       the RECORD                  **runs,
 
 The two repairs, because neither is "add a skip and move on":
 
-* `test_the_derived_pin_set_equals_the_pdfs_in_spec_directories` compares the record against the
+* `test_the_derived_pin_set_equals_the_pin_format_files_in_spec_directories` compares the record against the
   disk, so half of it is genuinely about bytes. It now skips **only when the tree holds no
   specification document at all** — not per missing pin. A tree holding SOME is a maintainer's
   tree, and "recorded and not on disk" is exactly the 80b38d1 defect (a file moved out from under
@@ -242,11 +242,39 @@ def _full(recorded: str) -> pathlib.Path:
 def _repo_rel(recorded: str) -> str:
     return str(pin_paths.resolve(recorded).relative_to(REPO))
 
+#: THE PIN FORMATS, DECLARED ONCE SO THE THREE SITES BELOW CANNOT DRIFT APART. Added 2026-09-04
+#: by the text-pins round, which ruled that a pin may be TEXT where the publisher issues no PDF —
+#: see `klv_pin.json`'s `text_pin_ruling`.
+#:
+#: WHY A SET AND NOT A DROPPED CHECK, which is the whole design of this widening. The `.pdf` filter
+#: in `discover_pins` was doing load-bearing work that READ as an extension preference:
+#: `gates/pin_paths.py`'s docstring records three reproductions of what happens when a transport
+#: stream's `local_path` reaches a package-relative resolver, and the answer is that the artefact
+#: reads as ABSENT — which every pin check here turns into a `pytest.skip`, deliberately, because a
+#: fresh clone genuinely has the record and not the bytes. **So a wrong base is indistinguishable
+#: from a fresh clone and the check goes green while measuring nothing.** The filter is what kept
+#: the two `.klv`/`.mpg` stream artefacts and the nineteen fetched provenance files out of that
+#: corpus, and NINE OF THE PROVENANCE FILES ARE `.txt`. Dropping the extension test to admit one
+#: text pin would therefore have admitted nine files that are pinned, digested, byte-counted and
+#: emphatically not pins.
+#:
+#: A new format joins by being added HERE, once, which is a deliberate act and a one-line diff.
+PIN_SUFFIXES = (".pdf", ".txt")
+
+
 #: A pin row in FORMAT_COVERAGE.md. The byte count is written with thin grouping — `558 866` — and
 #: the path is the last backticked cell, so both are read rather than assumed.
+#:
+#: WIDENED 2026-09-04 TO ADMIT `.txt` BESIDE `.pdf`, and the alternation is a SET rather than
+#: a dropped extension. The group used to read `fixtures/[^`]+\.pdf`, and a reader told that a
+#: text pin now exists will reach first for `fixtures/[^`]+` — which is the change this comment
+#: refuses. `fixtures/klv/streams/day_flight.klv` and the nine `.txt` captures under
+#: `fixtures/klv/provenance/` every one match `fixtures/[^`]+`, every one is stated in
+#: `klv_pin.json` with a SHA-256 and a byte count, and not one is a pin. An extension set is a
+#: vocabulary a new format joins deliberately; `[^`]+` is a hole. See `PIN_SUFFIXES`.
 DOC_PIN_ROW = re.compile(
     r"`(?P<sha>[0-9a-f]{64})`,\s*(?P<bytes>[\d  ]+?)\s*bytes,\s*(?P<pages>\d+)\s*pages,\s*"
-    r"`(?P<path>fixtures/[^`]+\.pdf)`"
+    r"`(?P<path>fixtures/[^`]+\.(?:pdf|txt))`"
 )
 
 
@@ -280,7 +308,7 @@ def discover_pins() -> dict[str, dict]:
             if not isinstance(node, dict):
                 continue
             path, sha, size = node.get("local_path"), node.get("sha256"), node.get("bytes")
-            if isinstance(path, str) and path.endswith(".pdf") and sha and size:
+            if isinstance(path, str) and path.endswith(PIN_SUFFIXES) and sha and size:
                 record(path, sha, int(size), node.get("pages"), rel_pin)
 
     for m in DOC_PIN_ROW.finditer(DOC.read_text()):
@@ -312,7 +340,14 @@ CITED_FORBIDDEN = ("sha256", "bytes", "pages", "local_path")
 
 #: A cited entry names a path in the same shape a pin does, and only there: a citation is a
 #: statement about a document that has a home in this layout and is deliberately not in it.
-CITED_PATH = re.compile(r"fixtures/[^/]+/spec/[^/]+\.pdf\Z")
+#:
+#: WIDENED 2026-09-04 with the rest, and this site is the one where widening BUYS something rather
+#: than merely keeping up. The cited class is a document this repository declares it may not carry;
+#: a `.pdf`-only pattern meant a citation naming a text document could not even be SPELLED, so the
+#: class was silently unavailable for exactly the publishers whose documents are text. The `spec/`
+#: anchoring is kept and is what still refuses `fixtures/klv/provenance/anything.txt`.
+CITED_PATH = re.compile(
+    r"fixtures/[^/]+/spec/[^/]+\.(?:" + "|".join(x.lstrip(".") for x in PIN_SUFFIXES) + r")\Z")
 
 
 def citations_in(node, source: str):
@@ -542,8 +577,16 @@ CLASSIFIED = classify()
 MEMBERS = CLASSIFIED["member"]
 
 
-def spec_pdfs_on_disk() -> set[str]:
-    """PDFs sitting DIRECTLY in a `fixtures/*/spec/` directory — not in a subdirectory of one.
+def spec_pin_files_on_disk() -> set[str]:
+    """Pin-format files sitting DIRECTLY in a `fixtures/*/spec/` directory — not in a subdirectory.
+
+    RENAMED FROM `spec_pdfs_on_disk` ON 2026-09-04 and the rename is the point rather than tidiness.
+    The old name said PDFs and the function's job was always "the files a pin may be", which were
+    the same set for as long as every publisher issued a PDF. RFC 2781 separated them. A function
+    whose name states a format and whose contract states a role is the same defect
+    `page_count_method` records about its own `how` field — a sentence naming one method and
+    defining another, self-contradictory from the day it was written and invisible while the two
+    agree.
 
     Non-recursive on purpose: the FIVE `spec/history/` directories hold 33 edition PDFs between
     them and none is a pin, so a recursive glob would sweep them into the set this module says must
@@ -559,8 +602,9 @@ def spec_pdfs_on_disk() -> set[str]:
     """
     out = set()
     for spec in sorted(FIXTURES.glob("*/spec")):
-        for pdf in sorted(spec.glob("*.pdf")):
-            out.add(str(pdf.relative_to(PKG)))
+        for suffix in PIN_SUFFIXES:
+            for found in sorted(spec.glob(f"*{suffix}")):
+                out.add(str(found.relative_to(PKG)))
     return out
 
 
@@ -572,7 +616,7 @@ def tracked_files() -> set[str]:
 
 PINS = discover_pins()
 CITED = discover_citations()
-DISK = spec_pdfs_on_disk()
+DISK = spec_pin_files_on_disk()
 TRACKED = tracked_files()
 
 
@@ -604,7 +648,7 @@ def test_the_pin_set_was_actually_discovered():
     by four documents. It was not caught by this assertion, because a floor cannot catch its own
     slack; it was caught by re-deriving the number while moving it. THE REASON IT COST NOTHING is
     that the floor is the weaker of two gates on the same fact -
-    `test_the_derived_pin_set_equals_the_pdfs_in_spec_directories` asserts EQUALITY in both
+    `test_the_derived_pin_set_equals_the_pin_format_files_in_spec_directories` asserts EQUALITY in both
     directions and would have failed the moment a pin went unrecorded, which is precisely what it
     did when EG 0601.1 landed before its record did. The floor is kept anyway, and kept exact,
     because the closure test skips on a tree holding no documents and this one does not.
@@ -630,8 +674,13 @@ def test_the_pin_set_was_actually_discovered():
     )
 
 
-def test_the_derived_pin_set_equals_the_pdfs_in_spec_directories():
+def test_the_derived_pin_set_equals_the_pin_format_files_in_spec_directories():
     """THE CLOSURE PROPERTY. Equality in both directions, which is what the enumeration lost.
+
+    RENAMED 2026-09-04 from `..._equals_the_pdfs_in_spec_directories`. Both halves now range over
+    `PIN_SUFFIXES` rather than over `.pdf`, so the equality reaches the text pin from both sides —
+    a recorded text pin with no file on disk is the moved-file defect, and a `.txt` in a `spec/`
+    that no record names is the eight-versus-nine drift in its new clothes.
 
     The push gate that named eight pins while the tree held nine failed in exactly one direction: a
     PDF present and unlisted. An enumeration cannot catch that, because it is the enumeration that
@@ -645,7 +694,7 @@ def test_the_derived_pin_set_equals_the_pdfs_in_spec_directories():
     if not DISK:
         pytest.skip(f"no specification document is in this working tree at all, so the {len(PINS)} "
                     "recorded pins cannot be compared against a disk (a fresh clone has the "
-                    "record, not the PDF). The equality runs as soon as one document is held")
+                    "record, not the bytes). The equality runs as soon as one document is held")
     missing_from_disk = sorted(set(PINS) - DISK)
     unrecorded_on_disk = sorted(DISK - set(PINS))
     assert not missing_from_disk, (
@@ -655,8 +704,9 @@ def test_the_derived_pin_set_equals_the_pdfs_in_spec_directories():
     assert not unrecorded_on_disk, (
         f"on disk in a spec/ directory and recorded as a pin NOWHERE: {unrecorded_on_disk}.\n"
         "This is the eight-versus-nine drift, caught from the disk side. Either add it to a pin "
-        "record and to FORMAT_COVERAGE.md's pin table, or move it out of spec/ — a PDF in spec/ "
-        "that no record names is a document nobody can identify"
+        "record and to FORMAT_COVERAGE.md's pin table, or move it out of spec/ — a document in "
+        f"spec/ carrying one of {PIN_SUFFIXES} that no record names is a document nobody can "
+        "identify"
     )
 
 
@@ -953,10 +1003,25 @@ def test_the_citation_parser_is_not_vacuous():
     for key in CITED_FORBIDDEN:
         with pytest.raises(AssertionError, match="measures a COPY"):
             list(citations_in(dict(good, **{key: "anything"}), "synthetic"))
+    # THE FOURTH NEGATIVE CHANGED SIDES ON 2026-09-04 AND THE SWAP IS RECORDED RATHER THAN QUIET.
+    # It used to be `fixtures/fft/spec/a-document.txt`, and the text-pins round made that a
+    # WELL-FORMED pin path — so leaving it here would have been a test asserting the opposite of
+    # the ruling, and deleting it would have dropped the extension check this list is here to
+    # prove. It is replaced by `.klv`, which is a real path shape in this tree (the transport-stream
+    # artefacts under `fixtures/klv/streams/`) and is emphatically not a pin format. The other
+    # three are untouched: a bare filename, a path outside a `spec/`, and a path inside a
+    # `history/`. So the list still proves all three anchorings AND the extension set, with the
+    # extension case witnessed by a format that is genuinely outside it.
     for bad in ("a-document-not-carried.pdf", "fixtures/fft/a-document.pdf",
-                "fixtures/fft/spec/history/a-document.pdf", "fixtures/fft/spec/a-document.txt"):
+                "fixtures/fft/spec/history/a-document.pdf", "fixtures/fft/spec/a-document.klv"):
         with pytest.raises(AssertionError, match="must_not_appear_at"):
             list(citations_in(dict(good, must_not_appear_at=bad), "synthetic"))
+    # And the positive that the swap above turns on: a `.txt` under a `spec/` IS a citable shape now.
+    text_cite = dict(good, must_not_appear_at="fixtures/fft/spec/a-document.txt")
+    assert list(dict(citations_in(text_cite, "synthetic"))) == ["fixtures/fft/spec/a-document.txt"], (
+        "`CITED_PATH` refuses a `.txt` under a `spec/`, so the cited class cannot be spelled for a "
+        "document whose publisher issues text — which is the gap the text-pins round closed"
+    )
 
 
 #: The pin records that state how a page count was produced. Derived rather than typed by the
@@ -1166,7 +1231,8 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
     # `not_committed.a_derived_count_in_gitignore_had_gone_stale_and_is_corrected`.
     package = PKG.relative_to(REPO)
     recorded = {str(package / path) for path in PINS}
-    held = {str(p.relative_to(REPO)) for p in FIXTURES.rglob("*.pdf")}
+    held = {str(f.relative_to(REPO))
+            for suffix in PIN_SUFFIXES for f in FIXTURES.rglob(f"*{suffix}")}
     documents = sorted(recorded | held)
     assert documents, (
         "neither a pin record nor the disk yields a single specification document, so this check "
@@ -1174,9 +1240,9 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
         "means discovery is broken rather than that the tree is clean — see "
         "test_the_pin_set_was_actually_discovered"
     )
-    assert len(recorded) >= 14, (
+    assert len(recorded) >= 15, (
         f"only {len(recorded)} recorded pin path(s) reached this check. It is keyed on the record "
-        "precisely so that a fresh clone checks fourteen paths instead of none"
+        "precisely so that a fresh clone checks fifteen paths instead of none"
     )
     # THE PREFIX IS CHECKED, on a tracked directory, because an unignored PDF and a nonexistent
     # one are indistinguishable to `check-ignore` — both come back ignored. Every pin sits beside
@@ -1194,11 +1260,18 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
     assert not not_ignored, (
         f"{len(not_ignored)} specification document(s) are NOT ignored by git: {not_ignored[:3]}. "
         "`git add -A` would stage them, and the only thing left between that and a commit is a "
-        "suite run. Restore the `*.pdf` rule in .gitignore"
+        f"suite run. Restore the rules in .gitignore for {PIN_SUFFIXES}"
     )
     # An archive, because that is how a lineage arrives — cat048_pin.json records `bundle_url`
     # pointing at EUROCONTROL's `archive_download/all`.
     assert ignored("packages/cdm/synapse_cdm/fixtures/klv/spec/anything.zip")
+    # A text document that does not exist yet, because the rule is on the extension and the next
+    # text-issuing publisher should not get to be the test case — the argument `.gitignore`'s own
+    # archive block makes about itself, applied to the format this round admitted.
+    assert ignored("packages/cdm/synapse_cdm/fixtures/klv/spec/anything.txt"), (
+        "a `.txt` under a spec/ directory is not ignored, so the next text pin stages itself. "
+        "The rule is `.gitignore:43`"
+    )
     # THE POSITIVE CONTROL, both directions. These must still stage.
     for keep in ("packages/cdm/synapse_cdm/fixtures/klv/spec/klv_pin.json",
                  "packages/cdm/synapse_cdm/fixtures/cat034/spec/build_fixtures.py"):
@@ -1209,12 +1282,118 @@ def test_gitignore_refuses_a_specification_document_before_the_gate_has_to():
         )
 
 
+def test_a_stream_or_a_provenance_capture_under_a_pin_path_is_still_refused():
+    """THE TEETH THE WIDENING HAD TO KEEP, checked by mutation rather than argued from the code.
+
+    The text-pins round's own stop rule: *a widened gate that stops refusing a stream or a
+    provenance file under a pin path is not a widening.* This is that check, and it is not
+    hypothetical — the artefacts it uses are real, are stated in `klv_pin.json` with a SHA-256 and
+    a byte count, and would every one of them be discovered as a pin if the extension test had been
+    dropped instead of widened.
+
+    **THE PROVENANCE CAPTURES ARE THE SHARP CASE AND THEY ARE `.txt`.** Nine of the nineteen files
+    under `fixtures/klv/provenance/` are Wayback CDX dumps with a `.txt` suffix. Before this round
+    they were excluded from the pin corpus by an extension filter that read like a preference for
+    PDFs; after it, `.txt` is a pin format. So what refuses them now has to be something else, and
+    this test names the two things:
+
+    1. `spec_pin_files_on_disk()` globs `*/spec` and not `*/provenance`, so location refuses them;
+    2. no pin record states a `local_path` under `provenance/`, so the record refuses them too.
+
+    Both are asserted, in both directions, because either alone would be a single point of failure
+    on a corpus that `gates/pin_paths.py` resolves against the PACKAGE base — and its docstring
+    records three reproductions of what a wrong base does: the artefact reads as ABSENT, every pin
+    check turns an absent subject into a `pytest.skip`, and the gate goes green while measuring
+    nothing.
+    """
+    # 1. LOCATION. The disk half of the closure property must not reach either directory, whatever
+    #    the extension is — asserted by construction over the real trees.
+    disk = spec_pin_files_on_disk()
+    assert disk, "the disk half is empty, so every assertion below is vacuous"
+    strays = sorted(d for d in disk if "/streams/" in d or "/provenance/" in d)
+    assert not strays, (
+        f"{strays} reached the pin corpus from a streams/ or provenance/ directory. The glob is "
+        "`*/spec` and it must stay non-recursive and spec-anchored: these artefacts carry digests "
+        "and byte counts in klv_pin.json and are emphatically not pins"
+    )
+    # 2. THE RECORD. No discovered pin names a path outside a `spec/`, so a widened filter cannot
+    #    have swept one in from the record side either.
+    outside = sorted(path for path in PINS if "/spec/" not in path)
+    assert not outside, (
+        f"{outside} is recorded as a pin and does not live in a spec/ directory. The stream and "
+        "provenance artefacts are pinned by digest in klv_pin.json under their own nodes, and "
+        "`discover_pins` must not confuse a pinned artefact with a pinned DOCUMENT"
+    )
+    # 3. THE MUTATION ITSELF, which is the half the two assertions above cannot perform: feed the
+    #    real artefacts to the real recogniser and require a refusal. `CITED_PATH` is the narrowest
+    #    of the three widened sites and the only one that is a pure predicate on a path.
+    for refused in ("fixtures/klv/streams/day_flight.klv",
+                    "fixtures/klv/streams/day_flight.mpg",
+                    "fixtures/klv/provenance/cdx_gwg_nga_mil_host.txt",
+                    "fixtures/klv/provenance/samples_ffmpeg_org_allsamples.txt"):
+        assert not CITED_PATH.search(refused), (
+            f"`CITED_PATH` accepts {refused!r} as a pin-shaped path. The `spec/` anchoring is what "
+            "carries this now that `.txt` is a pin format, and without it a fetched capture and a "
+            "held standard are the same shape to every gate in this module"
+        )
+    # 4. And the positive control, so 3 is not a predicate that refuses everything.
+    for accepted in ("fixtures/klv/spec/rfc2781.txt", "fixtures/klv/spec/ST0102.12.pdf"):
+        assert CITED_PATH.search(accepted), (
+            f"`CITED_PATH` refuses {accepted!r}, so the refusals above prove nothing"
+        )
+
+
 def test_no_pdf_is_tracked_anywhere_in_the_repository():
     """The repo-wide half, which covers the history PDFs and anything else nobody has recorded."""
     tracked_pdfs = sorted(p for p in TRACKED if p.endswith(".pdf"))
     assert tracked_pdfs == [], (
         f"{len(tracked_pdfs)} PDFs are tracked: {tracked_pdfs}. No specification PDF has ever been "
         "committed here and the pin records say so in as many words"
+    )
+
+
+def test_a_spec_directory_tracks_nothing_but_its_pin_records_and_its_generators():
+    """THE SIBLING THE TEXT PIN NEEDED, AND IT IS DERIVED RATHER THAN COPIED. Added 2026-09-04.
+
+    The round that ruled a pin may be text asked for one of two things here: a `.txt` twin of the
+    test above, or nothing at all if `test_every_pin_is_present_intact_and_untracked` already
+    covered the ground. **Neither, and the derivation is short.**
+
+    THE PER-PIN INVARIANT DOES NOT COVER IT. That test is parametrised over `sorted(PINS)`, so it
+    asserts untrackedness of every pin the records NAME. The whole failure class the test above
+    exists for is the file nobody named — its docstring says so: "the repo-wide half, which covers
+    the history PDFs and anything else nobody has recorded." A `.txt` dropped into a `spec/` with
+    no record is invisible to a per-pin sweep for the same reason it is invisible to an enumeration.
+
+    AND A `.txt` TWIN WOULD BE THE WRONG CLAIM, WHICH IS THE MORE INTERESTING HALF. "No `.pdf` is
+    tracked anywhere" is safe because a PDF is never an artefact of this repository, in any
+    directory, for any purpose. `.txt` has no such property: a `requirements.txt`, a fixture, a
+    third-party `LICENSE.txt` are all ordinary things for a Python repository to track, and a gate
+    forbidding them repo-wide would be a gate that is wrong rather than a tree that is.
+
+    SO THE PROPERTY IS STATED WHERE IT IS ACTUALLY TRUE, positively and format-blind: a `spec/`
+    directory tracks its pin records and its generators and NOTHING else. That is stronger than
+    either option the round offered — it refuses a `.klv`, a `.zip`, an extensionless dump and a
+    format nobody has thought of yet, all without naming one — and it is the invariant the round's
+    own untouchable table states in prose.
+    """
+    committed = {".json", ".py"}
+    offenders = sorted(
+        path for path in TRACKED
+        if "/spec/" in path and pathlib.PurePosixPath(path).suffix not in committed
+    )
+    assert offenders == [], (
+        f"tracked under a spec/ directory and not a pin record or a generator: {offenders}. The "
+        f"only committed artefacts of a spec/ are {sorted(committed)} — every held document stays "
+        "in the working tree and out of the index, whatever its format, and `.gitignore` refuses "
+        "the staging before this gate has to"
+    )
+    # The positive control: the property must be non-vacuous, or it is a check over an empty set.
+    kept = sorted(p for p in TRACKED if "/spec/" in p)
+    assert len(kept) >= 17, (
+        f"only {len(kept)} files are tracked under a spec/ directory, and there are nine pin "
+        "records and nine generators — so this assertion has stopped finding the corpus it is "
+        "supposed to be filtering and would pass over almost anything"
     )
 
 
@@ -1372,14 +1551,21 @@ def test_the_klv_0601_edition_history_is_covered_but_is_not_a_pin():
 def test_every_history_directory_is_one_a_pin_record_declares(capsys):
     """AN ABSENCE over the NAME rather than over the two directories that currently have one.
 
-    `spec_pdfs_on_disk()` is non-recursive, so ANY subdirectory of a `spec/` is invisible to the
-    closure property — which is exactly what makes `history/` safe and exactly what would make an
-    undeclared `spec/drafts/` a place to hide a PDF from this gate. So the sweep is inverted: every
-    subdirectory of every `spec/` that holds PDFs must be a `history/` whose format's pin record
-    declares it, with a matching count.
+    `spec_pin_files_on_disk()` is non-recursive, so ANY subdirectory of a `spec/` is invisible to
+    the closure property — which is exactly what makes `history/` safe and exactly what would make
+    an undeclared `spec/drafts/` a place to hide a document from this gate. So the sweep is
+    inverted: every subdirectory of every `spec/` that holds pin-format files must be a `history/`
+    whose format's pin record declares it, with a matching count.
 
     Written as a rule about the shape rather than about CAT048 and CAT034, because the third
     lineage should land against a gate that already covers it.
+
+    WIDENED TO `PIN_SUFFIXES` ON 2026-09-04, and this site was not on the round's list. It globbed
+    `*.pdf`, so the moment a text pin became possible an undeclared `spec/drafts/rfc9999.txt` was
+    invisible to BOTH gates on that ground — the closure property, because the glob feeding it is
+    non-recursive, and this sweep, because its own glob named a format. That is the shape of hole a
+    widening leaves behind when it follows a list instead of the property, so the count below is
+    over pin-format files and the message no longer says PDF.
     """
     declared, found = {}, {}
     for pin_file in sorted(FIXTURES.rglob("*_pin.json")):
@@ -1388,15 +1574,15 @@ def test_every_history_directory_is_one_a_pin_record_declares(capsys):
             declared[hist["home"].rstrip("/")] = hist["count"]
     for spec in sorted(FIXTURES.glob("*/spec")):
         for sub in sorted(p for p in spec.iterdir() if p.is_dir()):
-            pdfs = sorted(sub.glob("*.pdf"))
-            if pdfs:
-                found[str(sub.relative_to(PKG))] = len(pdfs)
+            documents = sorted(f for suffix in PIN_SUFFIXES for f in sub.glob(f"*{suffix}"))
+            if documents:
+                found[str(sub.relative_to(PKG))] = len(documents)
     undeclared = sorted(set(found) - set(declared))
     assert not undeclared, (
-        f"these subdirectories of a fixtures/*/spec/ hold PDFs and no pin record declares them: "
-        f"{undeclared}. spec_pdfs_on_disk() is non-recursive, so a PDF in one is invisible to the "
-        "closure property — which is what makes a declared history/ safe and an undeclared "
-        "subdirectory a blind spot"
+        f"these subdirectories of a fixtures/*/spec/ hold pin-format files and no pin record "
+        f"declares them: {undeclared}. spec_pin_files_on_disk() is non-recursive, so a document in "
+        "one is invisible to the closure property — which is what makes a declared history/ safe "
+        "and an undeclared subdirectory a blind spot"
     )
     for home, count in sorted(declared.items()):
         if home in found:
@@ -1657,31 +1843,60 @@ def test_the_disk_holds_no_provenance_file_the_roster_does_not_name():
 def test_the_cited_gitignore_line_for_the_provenance_rule_is_the_line_it_cites():
     """A citation to a LINE is only worth having if the line holds still.
 
-    `klv_pin.json` cites `.gitignore:42` five times and now cites `.gitignore:121` too, and
-    `FORMAT_COVERAGE.md` cites 121 as well. The `.gitignore` comment block says in its own words why
+    `klv_pin.json` cites `.gitignore:42` many times and `.gitignore:173` too, and
+    `FORMAT_COVERAGE.md` cites 173 as well. The `.gitignore` comment block says in its own words why
     that is fragile: a rule inserted ABOVE an existing one silently re-points every citation at a
     different line. So this asserts the two facts a citation promises — that the line holds the rule
     named, and that `check-ignore` attributes the ignore to THAT line and not to some other rule
     that happens to cover the same path.
 
-    Line 42 is asserted alongside it, unasked, because this round appended below it and the cheapest
-    proof that the append did not disturb it is to check.
+    Line 42 is asserted alongside it, unasked, because rounds keep appending below it and the
+    cheapest proof that an append did not disturb it is to check.
+
+    THE PROVENANCE RULE MOVED FROM 121 TO 173 ON 2026-09-04 AND THE MOVE IS THE INTERESTING PART.
+    The text-pins round added a global `*.txt` beside `*.pdf`, fifty-two lines above here, and it
+    had to go above rather than below: **git resolves a path to its LAST matching pattern**, so a
+    `*.txt` placed after the provenance rule would answer this very `check-ignore` with `*.txt`
+    instead of `fixtures/klv/provenance/` — the same file reported against a different rule, and
+    this assertion is what would have caught it. The ordering is therefore load-bearing in a
+    direction the block's own comment did not anticipate, and the second assertion below is the
+    one that pins it down.
     """
     lines = (REPO / ".gitignore").read_text().splitlines()
     assert lines[41] == "*.pdf", (
-        f".gitignore line 42 is {lines[41]!r}. Five citations in klv_pin.json point at it by number"
+        f".gitignore line 42 is {lines[41]!r}. Citations in klv_pin.json point at it by number"
     )
-    assert lines[120] == "fixtures/klv/provenance/", (
-        f".gitignore line 121 is {lines[120]!r}. `klv_pin.json` and `FORMAT_COVERAGE.md` both cite "
-        "121 by number for the provenance rule"
+    assert lines[42] == "*.txt", (
+        f".gitignore line 43 is {lines[42]!r}. `klv_pin.json`'s `rfc_2781.why_not_committed` cites "
+        "43 by number for the rule that keeps the text pin out of the index"
+    )
+    assert lines[172] == "fixtures/klv/provenance/", (
+        f".gitignore line 173 is {lines[172]!r}. `klv_pin.json` and `FORMAT_COVERAGE.md` both cite "
+        "173 by number for the provenance rule"
+    )
+    assert lines.index("*.txt") < lines.index("fixtures/klv/provenance/"), (
+        "`*.txt` now sits BELOW `fixtures/klv/provenance/`, and git resolves a path to its last "
+        "matching pattern — so the nine `.txt` captures under that directory are now attributed to "
+        "the extension rule and every sentence citing 173 for them is false. The ordering is the "
+        "mechanism, not a formatting preference"
     )
     reported = subprocess.run(
         ["git", "check-ignore", "-v", "--no-index", f"{PROVENANCE_DIR}/cdx_gwg_nga_mil_host.txt"],
         cwd=REPO, capture_output=True, text=True).stdout.strip()
-    assert reported.startswith(".gitignore:121:fixtures/klv/provenance/"), (
+    assert reported.startswith(".gitignore:173:fixtures/klv/provenance/"), (
         f"check-ignore attributes the ignore to {reported!r}. Both prose sites state that this path "
-        "is refused by line 121, and an ignore that comes from a different rule makes those "
+        "is refused by line 173, and an ignore that comes from a different rule makes those "
         "sentences false even though the file still is not staged"
+    )
+    # And the text pin's own rule, by the same standard: the rule that refuses it is the rule the
+    # record says refuses it.
+    text_pin = subprocess.run(
+        ["git", "check-ignore", "-v", "--no-index",
+         "packages/cdm/synapse_cdm/fixtures/klv/spec/rfc2781.txt"],
+        cwd=REPO, capture_output=True, text=True).stdout.strip()
+    assert text_pin.startswith(".gitignore:43:*.txt"), (
+        f"check-ignore attributes the text pin's ignore to {text_pin!r}, and "
+        "`klv_pin.json`'s `rfc_2781.why_not_committed` states `.gitignore:43:*.txt`"
     )
 
 

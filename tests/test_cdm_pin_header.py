@@ -35,14 +35,21 @@ file**, so the check needs no network, no PDF library and no bytes on disk:
 The equality is `stated == derived`. A round that adds a pin and does not append moves one side
 and not the other, and the next `pytest` run says so.
 
-WHY THE PDFs' ABSENCE DOES NOT WEAKEN THIS
--------------------------------------------
-No PDF is tracked — `git ls-files | grep -c '\\.pdf$'` is 0 — so in a fresh clone none of the
-fifteen documents this header counts is on disk. **This module never looks at the disk.** It
-counts pin NODES, not files, which is why it is a real check in a fresh clone and in the installed
-wheel rather than a check that quietly skips wherever the working tree is thin.
-`tests/test_cdm_pins.py` is the module that digests the bytes when they are present; this one is
-about the record's internal agreement with itself, and the two are deliberately different jobs.
+WHY THE DOCUMENTS' ABSENCE DOES NOT WEAKEN THIS
+-----------------------------------------------
+Nothing under a `fixtures/*/spec/` is tracked but the pin records and the generators — so in a
+fresh clone none of the eighteen documents this header counts is on disk. **This module never
+looks at the disk.** It counts pin NODES, not files, which is why it is a real check in a fresh
+clone and in the installed wheel rather than a check that quietly skips wherever the working tree
+is thin. `tests/test_cdm_pins.py` is the module that digests the bytes when they are present; this
+one is about the record's internal agreement with itself, and the two are deliberately different
+jobs.
+
+THIS HEADING SAID "THE PDFs' ABSENCE" UNTIL 2026-09-04 and cited `git ls-files | grep -c '\\.pdf$'`
+as the reason. Both were true and both were narrower than the property: the text-pins round pinned
+a document its publisher issues as text, so the thing that is absent from a clone is no longer a
+set of PDFs. The load-bearing half — that this module reads NODES and never the disk — was true
+throughout and is why the rewording changes no assertion.
 
 FAILING LOUDLY WHEN THE SENTENCE MOVES
 --------------------------------------
@@ -328,6 +335,18 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     Every mutation above asserts that a broken record is REFUSED. That is only evidence if the
     unbroken record is ACCEPTED — otherwise the mutations would pass against a guard that refuses
     everything.
+
+    THE PAIR MOVED FROM (17, 14) TO (18, 15) ON 2026-09-04 and the move is what a control is FOR.
+    The text-pins round pinned IETF RFC 2781 as a text document, which added one node carrying a
+    `sha256` under `delegated_specifications_held` — so the derived pin count went to fifteen and
+    the derived document count to eighteen, and the header gained an APPENDED dated clause saying
+    so. **The number here had to move with it, and that is the whole hazard this test carries.** A
+    control whose expectation is a literal goes stale in exactly one direction: somebody adds a pin,
+    the equality assertion above fails, they append the clause, the equality passes, and THIS test
+    still fails against the old literal — which is the good case, because it is loud. The bad case
+    is the one where a maintainer reads the literal as the authority and edits the header to match
+    it. It is not the authority; `derived_counts` is, and this line is a witness that the two agree
+    at a number a human has read.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (17, 14)
+    assert stated_counts(record) == derived_counts(record) == (18, 15)

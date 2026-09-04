@@ -1,0 +1,81 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 43263,
+        "stored": 43263,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "a8ff",
+        "2": "000459f4a6aa4aa8",
+        "48": "01010102010103042f2f47420c010e0d060043d80000451602000c",
+        "65": "0d"
+      },
+      "security": {
+        "advisories": [],
+        "element_octets": {
+          "1": "01",
+          "12": "0e",
+          "13": "0043d8000045",
+          "2": "01",
+          "22": "000c",
+          "3": "2f2f4742"
+        },
+        "element_order": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          22
+        ],
+        "partial": true,
+        "refusals": [
+          {
+            "class": "utf16_sequence_is_in_error",
+            "clause": "tag 13 Object Country Codes carries 0043d8000045 and its 16-bit units are not a well-formed UTF-16 sequence read as big-endian: illegal UTF-16 surrogate at octet 2. RFC 2781 \u00a72.2 steps 2 and 3 name both errors \u2014 a value between 0xD800 and 0xDBFF with no following value between 0xDC00 and 0xDFFF, or a sequence that ends on the first of such a pair \u2014 and say 'the sequence is in error'. \u00a72.2 adds that error recovery is not specified by that document, so none is invented here. THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
+            "name": "Object Country Codes",
+            "observed_length": 6,
+            "octets": "0043d8000045",
+            "presence": "Required",
+            "section": "ST 0102.12 \u00a76.1.13",
+            "stated_length": "Variable",
+            "tag": 13,
+            "tag_offset": 44,
+            "value_offset": 46
+          }
+        ],
+        "required_absent": [
+          13
+        ],
+        "required_present": [
+          1,
+          2,
+          3,
+          12,
+          22
+        ],
+        "unlisted_tags": []
+      },
+      "tag_order": [
+        2,
+        48,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 46,
+      "value_length_octets": "2e"
+    }
+  ],
+  "payload": {
+    "octets": 63,
+    "packet_count": 1
+  }
+}

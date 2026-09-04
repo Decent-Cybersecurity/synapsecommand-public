@@ -584,7 +584,13 @@ _SECURITY_VALUES: tuple[tuple[int, bytes], ...] = (
     (10, "20301231".encode("ascii")),                      # -22's YYYYMMDD, stated Length 8
     (11, "SYNTHETIC MARKING SYSTEM".encode("ascii")),      # -21, free text
     (12, bytes([0x0E])),                                   # GENC Three Letter, tag 12's own table
-    (13, "CZE;ZZZ".encode("utf-16-be")),                   # -24's semicolon; octets only, see note
+    (13, "CZE;ZZZ".encode("utf-16-be")),                   # -24's semicolon; UTF-16BE, no BOM
+    #        ^ the octets were always UTF-16BE and were CARRIED as hex until 2026-09-04, when
+    #          RFC 2781 became a held document. They now DECODE, under §4.3's no-BOM default,
+    #          which is why this fixture regenerated rather than being retired: the bytes are
+    #          unchanged and the reading of them is what moved. `CZE` is §6.1.3's own printed
+    #          code and `ZZZ` is in ISO 3166's user-assigned range, so neither names a real
+    #          country claim.
     (14, "SYNTHETIC CLASSIFICATION COMMENT".encode("ascii")),
     (22, (12).to_bytes(2, "big")),                         # §6.1.15: this document's version, 12
     (23, "2016-07-08".encode("ascii")),                    # ref [6]'s own GENC 3.0.1 date
@@ -769,12 +775,11 @@ ADAPTER_FIXTURES: tuple[dict, ...] = (
             "ALL SEVENTEEN ST 0102.12 elements in one Security Metadata Local Set, carried in ST "
             "0601 item 48. Every row of §6.7's Table 2 decodes once here — the three uint8 "
             "enumerations through their own tables, the uint16 Version, twelve ISO/IEC 646 "
-            "strings, and tag 13's octets CARRIED AND NOT DECODED because RFC 2781 is not held. "
+            "strings, and tag 13 DECODED AS UTF-16 since 2026-09-04, when RFC 2781 became a "
+            "held document. "
             "It is the fixture the confidentiality ruling is checked on: every value is either a "
             "code the document prints or a string beginning SYNTHETIC, and tag 1 is 0x01 "
-            "UNCLASSIFIED//, which is the one classification §6.3 itself names in prose. **The "
-            "octets of tag 13 assert nothing about their encoding** — the fixture states them and "
-            "the codec carries them, which is exactly what a decoder without RFC 2781 can do"),
+            "UNCLASSIFIED//, which is the one classification §6.3 itself names in prose. **TAG 13'S OCTETS DID NOT MOVE AND THIS FIXTURE STILL REGENERATED**, which is the whole shape of what the text-pins round did: the bytes were UTF-16BE from the day they were written, they were carried as hex because no held document said which end came first, and they now read as `CZE;ZZZ` split into two codes. A fixture whose input is unchanged and whose golden moved is a reading that changed, and that is the only thing that changed here"),
         citation=("ST 0102.12 §6.7 Table 2 (all 17 rows), §6.1.1-§6.1.17, §6.8's three "
                   "conversions; §6.9's own Tag 2 value 0x0C; §6.1.3's own //CZE; ST 0601.14a "
                   "§8.48 and ST 0601.14-31 for the carrier"),
@@ -920,6 +925,182 @@ ADAPTER_FIXTURES: tuple[dict, ...] = (
             "be the RIGHT one for this document — the most dangerous possible near-miss, and the "
             "reason this fixture uses 0x0C rather than an arbitrary octet"),
         citation="ST 0102.12 §6.7 Table 2 tag 22 Data Type = uint16, Length (Bytes) = 2; §6.1.15",
+    ),
+    # ---------------------------------------------- tag 13's byte order, one fixture per clause
+    #
+    # Added 2026-09-04 by the text-pins round, once RFC 2781 was held and pinned. Each of the five
+    # cites the clause it witnesses, and between them they cover every branch
+    # `read_object_country_codes` has: a BOM in each direction, the no-BOM default, `-24`'s split,
+    # and the two refusals. The codes are §6.1.3's own printed examples — `//CZE (Example of GENC
+    # code)` and `//GB (Example of ISO-3166 code)` — so no fixture here asserts a country claim
+    # this repository invented.
+    dict(
+        name="security_object_country_codes_big_endian_bom_is_honoured_and_stripped",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x0E])),                       # GENC Three Letter, tag 12's own table
+                (13, b"\xfe\xff" + "CZE".encode("utf-16-be")),
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RFC 2781 §4.3's FIRST BRANCH.** Tag 13 carries `0xFEFF` then `CZE` in UTF-16BE. "
+            "What must happen: the byte order is read as big-endian FROM THE MARK rather than "
+            "from the default, the mark is STRIPPED — §3.2's rationale, the signature is not part "
+            "of the object — and `value` reads `CZE` with `byte_order_mark` naming which "
+            "signature was found. What must NOT happen: the mark surviving into the value as a "
+            "zero-width non-breaking space, which is what a decoder that honours §4.3 and ignores "
+            "§3.2 produces, and which is invisible in every rendering a human will look at. THE "
+            "FIXTURE IS NOT REDUNDANT WITH THE UNMARKED ONE even though both are big-endian: "
+            "there the order comes from a default and here from the bytes, and only one of the "
+            "two can be got wrong by assuming"),
+        citation="RFC 2781 §4.3 first branch and §3.2; ST 0102.12 §6.7 Table 2 tag 13 Data Type",
+    ),
+    dict(
+        name="security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x0E])),
+                (13, b"\xff\xfe" + "CZE".encode("utf-16-le")),
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE ONE CASE WHERE THE TWO HELD DOCUMENTS PULL APART, AND THE FIXTURE THAT DECIDES "
+            "IT.** Tag 13 carries `0xFFFE` then `CZE` in UTF-16LE. RFC 2781 §4.3 says such text "
+            "can be interpreted as little-endian and MUST NOT be assumed otherwise without "
+            "reading the first two octets; `ST 0107.2-02` says byte order shall be big-endian "
+            "across all MISB documents. What must happen: the value DECODES to `CZE` under §4.3, "
+            "and an advisory of class `byte_order_contradicts_st_0107_2_02` records that the "
+            "producer broke the MISB baseline — the `ST 0102.10-57` precedent at tag 22, where a "
+            "clause is recorded and not applied. What must NOT happen: a refusal, which would "
+            "discard a value the packet carried because its producer broke a rule; or a "
+            "big-endian read, which turns `CZE` into two ideographs and calls them country "
+            "codes — the most dangerous outcome here, because it is a plausible-looking string"),
+        citation="RFC 2781 §4.3 second branch; MISB ST 0107.3 §6.1 `ST 0107.2-02` and §1's scope",
+    ),
+    dict(
+        name="security_object_country_codes_with_no_bom_are_big_endian_by_two_documents",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x0E])),
+                (13, "CZE".encode("utf-16-be")),           # no BOM: §4.3's third branch
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RFC 2781 §4.3's THIRD BRANCH, WHICH IS THE ORDINARY CASE AND THE ONE THAT WAS "
+            "UNREADABLE FOR AS LONG AS RFC 2781 WAS UNHELD.** Tag 13 carries `CZE` in UTF-16BE "
+            "with no mark. What must happen: `byte_order` reads `big` and `byte_order_mark` is "
+            "null, so the object distinguishes an order that was DETERMINED from one that was "
+            "DEFAULTED. **The default is not this layer's choice**: §4.3 says such text SHOULD be "
+            "big-endian and `ST 0107.2-02` says it SHALL be, so two held documents agree and the "
+            "second is the custodian of the document that cites the first. That agreement is the "
+            "finding this fixture exists to fix in place — the round expected the byte order to "
+            "rest on one SHOULD"),
+        citation=("RFC 2781 §4.3 third branch; MISB ST 0107.3 §6.1 `ST 0107.2-02`; ST 0102.12 "
+                  "§6.1.13, which states no byte order in its own voice"),
+    ),
+    dict(
+        name="security_object_country_codes_multiple_are_split_on_the_semicolon",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x0E])),
+                (13, "CZE;GB".encode("utf-16-be")),
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**`ST 0102.10-24` AND `-25`, APPLIED FOR THE FIRST TIME.** Tag 13 carries `CZE;GB` — "
+            "both codes §6.1.3 prints as its own examples, one GENC and one ISO-3166. What must "
+            "happen: `value` is the whole string, because `-25` makes multiple codes ONE entry, "
+            "and `codes` is `[\"CZE\", \"GB\"]`, because `-24` makes the semi-colon the separator. "
+            "Both are emitted, which is not redundancy: the entry is what the packet sent and the "
+            "split is what the clause says it means. What must NOT happen: splitting on blanks — "
+            "§6.1.13's own Note says the semi-colon was chosen 'instead of blanks or other "
+            "characters' precisely so automated tools can split it — or validating either code, "
+            "which would require registers this repository does not hold. **`-26` IS NOT "
+            "APPLIED**: nothing here computes a country from a frame centre, so the ORDER of the "
+            "two codes carries no claim about which region is under the centre"),
+        citation=("ST 0102.12 §6.1.13's `ST 0102.10-24`, `-25` and `-26`, and its Note on the "
+                  "separator; §6.1.3's own //CZE and //GB"),
+    ),
+    dict(
+        name="security_object_country_codes_at_an_odd_octet_count_is_refused",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x0E])),
+                (13, "CZE".encode("utf-16-be")[:-1]),      # five octets: a code unit cut in half
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**AN OCTET COUNT UTF-16 CANNOT CARRY, AND THE LENGTH CELL FORBIDS NOTHING.** Tag 13 "
+            "carries five octets. §6.7's Length (Bytes) cell for this element reads `Variable`, "
+            "so unlike tag 1 and tag 22 there is NO stated length to disagree with — the refusal "
+            "comes from the ENCODING: RFC 2781 §3.1 serialises each 16-bit code unit as two "
+            "octets, so an odd count is not a sequence of code units under either byte order. "
+            "What must happen: refusal class `utf16_cannot_carry_an_odd_octet_count`, the five "
+            "octets parked verbatim, and the other five elements decode. What must NOT happen: "
+            "dropping the trailing octet and decoding four, which produces `CZ` — a shorter, "
+            "entirely plausible country code that the packet did not send. That is the near-miss "
+            "this fixture exists for, and it is the tag 22 zero-extension trap in a second place"),
+        citation=("RFC 2781 §3.1 and §2.2; ST 0102.12 §6.7 Table 2 tag 13 Length (Bytes) = "
+                  "Variable; §6.4 and §6.5 for why refusing one element is safe"),
+    ),
+    dict(
+        name="security_object_country_codes_with_a_lone_surrogate_is_refused",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (48, _security_set((
+                (1, bytes([0x01])),
+                (2, bytes([0x01])),
+                (3, "//GB".encode("ascii")),
+                (12, bytes([0x0E])),
+                (13, bytes.fromhex("0043d8000045")),       # 'C', a high surrogate alone, 'E'
+                (22, (12).to_bytes(2, "big")),
+            ))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**RFC 2781 §2.2's ERROR CASES, WHICH ARE A SEPARATE REFUSAL FROM THE ODD COUNT AND "
+            "ARE HERE SO THE SECOND CLASS IS NOT AN UNWITNESSED BRANCH.** Tag 13 carries six "
+            "octets — a well-formed count — whose middle code unit is `0xD800`, a high surrogate "
+            "with no low surrogate after it. §2.2 step 3: 'If there is no W2 ... or if W2 is not "
+            "between 0xDC00 and 0xDFFF, the sequence is in error.' What must happen: refusal "
+            "class `utf16_sequence_is_in_error`, distinct from the odd-count class because the "
+            "REPAIRS differ — an odd count is a framing fault upstream and this is a content "
+            "fault — and the octets parked verbatim. What must NOT happen: a replacement "
+            "character, which is what a non-strict decode produces and which would put `\ufffd` "
+            "into a country code; or error recovery of any kind, since §2.2 says 'Error recovery "
+            "is not specified by this document' and inventing one would be reading a rule off "
+            "nothing"),
+        citation="RFC 2781 §2.2 steps 2 and 3; ST 0102.12 §6.7 Table 2 tag 13 Data Type",
     ),
 )
 

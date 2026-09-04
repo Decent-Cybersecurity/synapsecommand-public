@@ -7,9 +7,9 @@
       "identity_basis": "uuid5 over (UAS-LS-PACKET, '1224807209913000|0') \u2014 the Precision Time Stamp and the packet's index in its payload. PACKET-SCOPED, and it claims exactly that: THIS OBSERVATION. Nothing in the witnessed set identifies anything \u2014 tag 3 Mission ID, tag 4 Platform Tail Number, tag 10 Platform Designation, tag 59 Platform Call Sign and tag 94's MIIS Core Identifier are the five items that would, and the pinned stream carries none of them. Tag 11 Image Source Sensor is the one witnessed item that looks like a name and it is disqualified BY THE BYTES: it reads 'EON' in five of the six packets and 'IR' in the sixth, so keying on it would split one aircraft into two entities inside a three-minute clip. WHAT THIS COSTS, stated rather than hidden: consecutive packets from one platform get DIFFERENT entity_id values, so the continuity a real feed has is continuity the CDM cannot express from this format. Park 11 \u2014 MISB ST 1204.1, the MIIS Core Identifier \u2014 is what closes it, and reading the stream turned that park from a prediction into a measurement",
       "integrity_basis": {
         "checksum_item": "tag 1 Checksum",
-        "computed": 1977,
+        "computed": 53593,
         "range": "ST 0601.14a \u00a76.6 and \u00a78.1: 'Performed on entire LS packet, including 16-byte US key and 1-byte checksum length' \u2014 so the summation runs from the first octet of the Universal Label up to and including tag 1's own length octet, and the two octets of the stored value are outside it. Computed by klv_codec.bcc_16, which is a transcription of the C the document prints in \u00a78.1.1.1 and is checked against the eight-octet worked vector in \u00a78.1.1.2",
-        "stored": 1977,
+        "stored": 53593,
         "valid": true,
         "what_this_is_NOT": "the four sibling ASTERIX adapters and the GMTIF one all had to record that their format defines no checksum at any level. This one does, `ST 0601.14-32` makes it mandatory in every packet, and a validating 16-bit summation over the whole packet is a materially stronger gate than a structural parse \u2014 it is what ruled out corruption as an explanation for the length divergence at tag 22",
         "why_a_failure_is_not_a_refusal": "a packet whose checksum does not validate is TRANSLATED and flagged. The stored checksum is one item among 26, and discarding 25 items that each satisfied their own Required Length because a 16-bit sum disagrees would destroy the evidence a consumer needs to decide what happened \u2014 the same reasoning that makes the length policy skip an ITEM rather than a packet. `valid: false` on an object is a statement, and a missing object is not"
@@ -21,19 +21,19 @@
         "speed_item": null
       },
       "klv_item_octets": {
-        "1": "07b9",
+        "1": "d159",
         "2": "000459f4a6aa4aa8",
-        "48": "0102010002010103042f2f47420c01010d04004700421602000c",
+        "48": "01010102010103042f2f47420c010e0d060043005a00451602000c",
         "65": "0d"
       },
       "klv_items": {
         "1": {
           "klv_format": "uint16",
           "name": "Checksum",
-          "octets": "07b9",
+          "octets": "d159",
           "section": "ST 0601.14a \u00a78.1",
           "units": "None",
-          "value": 1977
+          "value": 53593
         },
         "2": {
           "klv_format": "uint64",
@@ -58,11 +58,11 @@
         "offset": 0,
         "universal_label": "060e2b34020b01010e01030101000000",
         "universal_label_crc": 56773,
-        "value_length": 45,
-        "value_length_octets": "2d"
+        "value_length": 46,
+        "value_length_octets": "2e"
       },
       "klv_payload": {
-        "octets": 62,
+        "octets": 63,
         "packet_count": 1
       },
       "klv_tag_order": [
@@ -127,24 +127,34 @@
           "byte_order_clause": "The byte order is read under RFC 2781 \u00a74.3, which is the clause for the unlabelled `UTF-16` charset the Data Type cell names. ST 0102.12 states no byte order anywhere in its own voice \u2014 \u00a76.1.13 states presence, the semi-colon separator, concatenation and the frame-centre rule, and nothing about the encoding. MISB ST 0107.3's `ST 0107.2-02` independently requires big-endian across all MISB documents, so the no-BOM default and the MISB requirement agree. A leading BOM is honoured per \u00a74.3 and stripped per \u00a73.2; a 0xFEFF anywhere else is a zero-width non-breaking space and is kept. A little-endian BOM is honoured and raises an advisory against `ST 0107.2-02` rather than a refusal",
           "byte_order_mark": null,
           "codes": [
-            "GB"
+            "CZE"
           ],
-          "length_octets": 4,
-          "octets": "00470042",
+          "length_octets": 6,
+          "octets": "0043005a0045",
           "presence": "Required",
           "section": "ST 0102.12 \u00a76.1.13",
           "tag": 13,
-          "value": "GB",
+          "value": "CZE",
           "value_form": "utf16_country_codes"
         },
         "object_country_coding_method": {
-          "label": "ISO-3166 Two Letter",
+          "label": "GENC Three Letter",
           "label_clause": "MISB ST 0102.12 \u00a76.8.3",
           "length_octets": 1,
-          "octets": "01",
+          "octets": "0e",
           "presence": "Required",
           "section": "ST 0102.12 \u00a76.1.12",
           "tag": 12,
+          "value": 14
+        },
+        "security_classification": {
+          "label": "UNCLASSIFIED//",
+          "label_clause": "MISB ST 0102.12 \u00a76.8.1",
+          "length_octets": 1,
+          "octets": "01",
+          "presence": "Required",
+          "section": "ST 0102.12 \u00a76.1.1",
+          "tag": 1,
           "value": 1
         },
         "version": {
@@ -165,54 +175,38 @@
           "ST 0601.14-31"
         ],
         "clauses": [
-          "MISB ST 0102.12 \u00a76.4",
-          "MISB ST 0102.12 \u00a76.5",
-          "MISB ST 0102.12 \u00a76.7"
+          "MISB ST 0102.12 \u00a76.7",
+          "MISB ST 0102.12 \u00a76.4"
         ],
         "confidentiality_ruling": "CARRIED AND NEVER INVENTED",
         "element_layer": "MISB ST 0102.12, SHA-256 20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267, fixtures/klv/spec/ST0102.12.pdf",
-        "refusals": [
-          {
-            "class": "format_cannot_carry_the_octets",
-            "clause": "\u00a76.7's Table 2 states a Length (Bytes) of '1' for tag 1 Security Classification, Data Type 'uint8', and this element carries 2. THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
-            "name": "Security Classification",
-            "observed_length": 2,
-            "octets": "0100",
-            "presence": "Required",
-            "section": "ST 0102.12 \u00a76.1.1",
-            "stated_length": "1",
-            "tag": 1,
-            "tag_offset": 29,
-            "value_offset": 31
-          }
-        ],
-        "required_absent": [
-          1
-        ],
+        "refusals": [],
+        "required_absent": [],
         "required_present": [
+          1,
           2,
           3,
           12,
           13,
           22
         ],
-        "state": "PARTIAL"
+        "state": "COMPLETE-ON-REQUIRED"
       },
       "source_extras": {
         "advisories": [],
         "at": 0,
         "checksum": {
-          "computed": 1977,
-          "stored": 1977,
+          "computed": 53593,
+          "stored": 53593,
           "valid": true
         },
         "defects": [],
         "security": {
           "advisories": [],
           "element_octets": {
-            "1": "0100",
-            "12": "01",
-            "13": "00470042",
+            "1": "01",
+            "12": "0e",
+            "13": "0043005a0045",
             "2": "01",
             "22": "000c",
             "3": "2f2f4742"
@@ -225,26 +219,11 @@
             13,
             22
           ],
-          "partial": true,
-          "refusals": [
-            {
-              "class": "format_cannot_carry_the_octets",
-              "clause": "\u00a76.7's Table 2 states a Length (Bytes) of '1' for tag 1 Security Classification, Data Type 'uint8', and this element carries 2. THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
-              "name": "Security Classification",
-              "observed_length": 2,
-              "octets": "0100",
-              "presence": "Required",
-              "section": "ST 0102.12 \u00a76.1.1",
-              "stated_length": "1",
-              "tag": 1,
-              "tag_offset": 29,
-              "value_offset": 31
-            }
-          ],
-          "required_absent": [
-            1
-          ],
+          "partial": false,
+          "refusals": [],
+          "required_absent": [],
           "required_present": [
+            1,
             2,
             3,
             12,
@@ -254,7 +233,7 @@
           "unlisted_tags": []
         },
         "unknown_tags": [],
-        "value_length": 45
+        "value_length": 46
       },
       "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every STANAG 4609 platform is an UNKNOWN glyph. ST 0601.14a carries no symbology of any kind; tag 63 Sensor Field of View Name is the nearest thing to a rendering hint and it names a lens, not an icon",
       "time_basis": {
@@ -322,8 +301,8 @@
         "why_frame_centre_and_not_target_location": "tags 40 and 41 carry the Target Location and \u00a78.40 makes them CONDITIONAL on their own face \u2014 'This is the crosshair location if different from frame center' \u2014 while the frame centre is stated unconditionally as the geometric centre of the imagery this packet's metadata describes. Choosing between them per packet, on whether they happen to differ, would be this adapter deciding which point the operator meant. So the frame centre is the geometry and the target location is carried in the payload beside it, both verbatim, neither reconciled. In the pinned stream they are BYTE-IDENTICAL at all six sites, which is the emitter reporting them as not different \u2014 and is exactly the case where a merge would look free and would still be a merge"
       },
       "integrity": {
-        "checksum_computed": 1977,
-        "checksum_stored": 1977,
+        "checksum_computed": 53593,
+        "checksum_stored": 53593,
         "checksum_valid": true
       },
       "klv_advisories": [],
@@ -331,7 +310,7 @@
       "klv_item_count": 4,
       "packet_count": 1,
       "packet_index": 0,
-      "payload_octets": 62,
+      "payload_octets": 63,
       "platform_attitude": {
         "basis": "the platform half. Heading is NOT course \u2014 see attributes.kinematics_basis \u2014 and pitch and roll reach no CDM field because the CDM models a contact's motion and not an airframe's attitude. All three carry the '~610 micro degrees' class of stated resolution and all three are within their items' stated Min/Max",
         "ground_speed_mps": null,

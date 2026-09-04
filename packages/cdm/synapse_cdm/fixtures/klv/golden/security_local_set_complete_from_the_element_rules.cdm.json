@@ -198,13 +198,20 @@
           "value": "SYNTHETIC SOURCE DOCUMENT"
         },
         "object_country_codes": {
+          "byte_order": "big",
+          "byte_order_clause": "The byte order is read under RFC 2781 \u00a74.3, which is the clause for the unlabelled `UTF-16` charset the Data Type cell names. ST 0102.12 states no byte order anywhere in its own voice \u2014 \u00a76.1.13 states presence, the semi-colon separator, concatenation and the frame-centre rule, and nothing about the encoding. MISB ST 0107.3's `ST 0107.2-02` independently requires big-endian across all MISB documents, so the no-BOM default and the MISB requirement agree. A leading BOM is honoured per \u00a74.3 and stripped per \u00a73.2; a 0xFEFF anywhere else is a zero-width non-breaking space and is kept. A little-endian BOM is honoured and raises an advisory against `ST 0107.2-02` rather than a refusal",
+          "byte_order_mark": null,
+          "codes": [
+            "CZE",
+            "ZZZ"
+          ],
           "length_octets": 14,
           "octets": "0043005a0045003b005a005a005a",
           "presence": "Required",
           "section": "ST 0102.12 \u00a76.1.13",
           "tag": 13,
-          "value": "0043005a0045003b005a005a005a",
-          "value_form": "carried_octets"
+          "value": "CZE;ZZZ",
+          "value_form": "utf16_country_codes"
         },
         "object_country_coding_method": {
           "label": "GENC Three Letter",

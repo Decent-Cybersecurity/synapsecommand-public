@@ -36,10 +36,62 @@ docs/.cache-loader/
 # the same direction and neither is load-bearing alone.
 #
 # THE EXTENSION SET IS DERIVED, NOT GUESSED. Every file under a `fixtures/*/spec/` directory is a
-# `.pdf` (52), a `.json` pin record (8) or a `.py` generator (8), and the last two are exactly the
-# committed artefacts — which is why this ignores an EXTENSION and not the `spec/` directory. A
-# `spec/` rule would hide the pin records, and the pin record is the whole point of pinning.
+# `.pdf` (60), a `.txt` (1), a `.json` pin record (9) or a `.py` generator (9) — FOUR members since
+# 2026-09-04, and the note below the rules says why that is a first. The last two are exactly the
+# committed artefacts, which is why this ignores an EXTENSION and not the `spec/` directory.
 *.pdf
+*.txt
+
+# THE EXTENSION SET GAINED A FOURTH MEMBER ON 2026-09-04 AND THAT IS A FIRST. Every earlier
+# correction to the derived-set paragraph above moved only the ARITHMETIC and said so, in the same
+# words each time — "the load-bearing half, that the extension set is exactly those three and no
+# other, was and is true, so the RULE never stopped working". **That half is what changed this
+# time.** The text-pins round pinned a document whose publisher issues it as text, so the set is now
+# four and the rule below is the consequence rather than a precaution. The three figures had ALSO
+# drifted again, from 52 / 8 / 8 to 60 / 9 / 9, as the later lineages landed and nothing sent
+# anybody back to a comment in this file — that is the fourth time, it is corrected in the same
+# commit as the substantive change, and it is the less interesting of the two corrections.
+#
+# AND THE PARAGRAPH ABOVE WAS KEPT TO FOUR LINES ON PURPOSE, which is the reason this note is here
+# and not there. `*.pdf` is cited as `.gitignore:42` at twenty-four places in this tree; a fifth line above the rule
+# would have re-pointed every one of them at a comment. The foot of this block states that rule for
+# comments and this round found it applies to a REWRITE of an existing comment just as much.
+#
+# `*.txt` JOINS `*.pdf` ON THE SAME ARGUMENT AND NOT ON A LICENCE ONE, added 2026-09-04 by the
+# text-pins round. IETF RFC 2781 is the first document this repository pins that its publisher
+# issues as TEXT AND NOT AS A PDF — the RFC Editor's info page names exactly two formats, TXT and
+# HTML, and there is no PDF route — so `fixtures/klv/spec/rfc2781.txt` is a pin, and without this
+# rule it is the first held document since this block was written that `git add -A` would stage.
+#
+# STATED BECAUSE THE RULE READS BACKWARDS OTHERWISE: THIS IS NOT A LICENCE CLAIM. RFC 2781's own
+# Full Copyright Statement permits copying it "without restriction of any kind" provided the notice
+# travels with the copy, so committing it would have been ALLOWED — which is exactly what STANAG
+# 4609 Edition 5 does not allow, and that restriction is the one `klv_pin.json`'s
+# `not_committed.why` quotes. The ground here is ONE MECHANISM FOR EVERY PINNED DOCUMENT: a tree
+# that vendored what it may and pinned what it may not would need two, and a reader could not tell
+# from a pin record which one governed a given row. Ruled at `klv_pin.json`'s `text_pin_ruling`.
+#
+# GLOBAL RATHER THAN PATH-ANCHORED, DERIVED THE WAY THE `*.pdf` RULE ARGUES FOR ITSELF ABOVE:
+# `git ls-files '*.txt'` is 0, so a global rule strands nothing in the index, and an extension rule
+# needs no edit when the next `spec/` directory arrives. The three `.txt` populations already in the
+# working tree keep the rules they already had — `*.egg-info/` at line 8, `docs/.gitignore` for
+# `node_modules`, and the provenance directory rule at the foot of this file.
+#
+# AND ITS POSITION IS FORCED RATHER THAN PREFERRED, which is the one thing about this rule that is
+# not obvious from reading it. Git resolves a path to its LAST matching pattern. A global `*.txt`
+# placed BELOW `fixtures/klv/provenance/` would answer `git check-ignore -v` for the nine `.txt`
+# CDX dumps under that directory with THIS line instead of that one — the same file reported
+# against a different rule, and `tests/test_cdm_pins.py` asserts that directory's rule by line
+# number. So this sits above it and loses to it on purpose.
+#
+# THE TWO CITED LINE NUMBERS BELOW MOVED BY FIFTY-TWO AND WERE RE-POINTED IN THIS COMMIT.
+# `fixtures/klv/streams/` was `.gitignore:97` and is now `.gitignore:149`; `fixtures/klv/provenance/`
+# was `.gitignore:121` and is now `.gitignore:173`. Both are cited BY LINE in `klv_pin.json`,
+# `FORMAT_COVERAGE.md` and `tests/test_cdm_pins.py`, and the note at the foot of this block explains
+# why a citation to a line is only worth having if the line holds still. Inserting here moved both,
+# so every citation to either was updated in the same commit that moved it rather than left to a
+# later sweep — the discipline this block asks of a derived COUNT, applied to a derived LINE NUMBER.
+# `*.pdf` is untouched at line 42 and every citation to it still resolves.
 
 #
 # THOSE THREE COUNTS WERE 36 / 6 / 5 AND WERE STALE, corrected 2026-08-26 by the STANAG 4609

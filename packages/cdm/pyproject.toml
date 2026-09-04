@@ -173,7 +173,25 @@ synapse_cdm = [
 # path with `glob(recursive=True)`. The gate asserts the RESULT — no PDF, and nothing under any
 # `spec/` that is not a generator or a pin record — so a pattern that stopped matching would fail
 # a build rather than quietly widen the wheel.
+#
+# `*.txt` JOINED 2026-09-04 AND THE GATE IS WHAT FOUND IT, WHICH IS THE POINT OF ASSERTING THE
+# RESULT. The text-pins round pinned IETF RFC 2781 as `fixtures/klv/spec/rfc2781.txt` and added a
+# global `*.txt` to `.gitignore`, so git never tracks it and every check that reads `git ls-files`
+# was satisfied. **The wheel is built from the GLOBS ABOVE and not from the index**, and
+# `fixtures/**/*` matched it — so a document this repository takes care never to redistribute
+# would have shipped inside the distribution, with nothing in the git-facing half of the tree to
+# show it. `tests/test_cdm_packaging.py::test_no_specification_document_is_shippable` failed on
+# exactly that, by name, on the first run after the file landed. That test asks what the globs
+# SELECT rather than what they say, and this is the case it was written for.
+#
+# THE ROUND'S OWN SITE LIST DID NOT INCLUDE THIS FILE, and it is recorded because the omission is
+# instructive: the round enumerated the gates that RECOGNISE a pin, and this one does not
+# recognise anything — it excludes. A widening that follows a list of recognisers leaves every
+# excluder untouched, and an excluder keyed on `.pdf` silently stops excluding the moment a pin is
+# not a PDF.
 synapse_cdm = [
     "fixtures/*/spec/*.pdf",
     "fixtures/*/spec/history/*.pdf",
+    "fixtures/*/spec/*.txt",
+    "fixtures/*/spec/history/*.txt",
 ]

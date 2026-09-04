@@ -31,6 +31,30 @@ By adding that line you are stating that you have read the [DCO](DCO) and that y
 contribution satisfies it — clause (a), (b) or (c) — and that you accept clause (d): the
 contribution and the personal information in your sign-off are public and kept indefinitely.
 
+### Check the message before you push, and there is deliberately no hook
+
+`gates/commit_message.py` checks a commit message against the two rules this repository has
+learned the hard way — the trailer block must say what it appears to say, and a sign-off must
+actually be there. Run it on your commit before pushing:
+
+```bash
+python3 gates/commit_message.py --rev HEAD
+```
+
+It also reads a message straight from a file, which is useful while you are still writing one:
+
+```bash
+python3 gates/commit_message.py --file .git/COMMIT_EDITMSG
+```
+
+**There is no hook, and that is a decision rather than something nobody got round to.** A hook
+lives in one clone, so installing one would protect whoever ran the command and no one else — and
+every other gate in this repository travels with the tree. The `DCO` GitHub App checks every
+commit in a pull request regardless, so a missing sign-off cannot reach `main` through the normal
+route; the command above is what closes the gap for anyone pushing directly, which is where a
+missing sign-off actually got through on 2026-09-04. That incident is recorded in
+[`PUBLICATION.md`](PUBLICATION.md) entry 2, and the reasoning is in the gate's own docstring.
+
 ### The name and email must be real, and must match the commit author
 
 The sign-off is a statement of provenance, so it has to identify a person who can stand behind

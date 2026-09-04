@@ -212,13 +212,19 @@ measured off the index afterwards, and which step of it did not run.
 
 ### Unreleased
 
-**What moved inside the distribution: 66 files.** The largest arc this record has carried, and
-the shape is one round's: **park 2 closed by writing the row set MISB ST 0102.12 supports**, which
-took a new module, two modified ones, seven new fixture payloads with their twins and goldens, and
-every existing KLV golden re-generated because two attribute keys now ride on every object this
-adapter emits. The count and the set are `gates/bump_derivation.py`'s, re-derived **after** this
-record was written rather than before it — the fixed point the 1.4.0 arc's own repair note insists
-on, and the reason the number above is not a quotation of a derivation that has since moved.
+**What moved inside the distribution: 91 files.** The largest arc this record has carried, and
+the shape is three rounds': **park 2 closed by writing the row set MISB ST 0102.12 supports**,
+which took a new module, two modified ones, seven new fixture payloads with their twins and
+goldens, and every existing KLV golden re-generated because two attribute keys now ride on every
+object this adapter emits. The count and the set are `gates/bump_derivation.py`'s, re-derived
+**after** this record was written rather than before it — the fixed point the 1.4.0 arc's own
+repair note insists on, and the reason the number above is not a quotation of a derivation that
+has since moved.
+
+**THAT FIGURE READ 66 UNTIL 2026-09-04 AND THE PARAGRAPH ABOVE STILL DESCRIBES THE PARK 2 ROUND**,
+which is deliberate: the sentence names the shape of the arc's largest round and the arc has since
+gained two more. The surface round moved the count by nothing and the text-pins round moved it by
+twenty-five, each recorded in its own paragraph below rather than by editing this one.
 
 **THE SURFACE ROUND OF 2026-09-04 IS THE ARC'S SECOND ROUND AND IT MOVES THE COUNT BY NOTHING.**
 It touched eight distribution files and **all eight were already in the 66** — the two shipped
@@ -229,6 +235,30 @@ gives. What the round changes is not WHICH files moved but **what the objects sa
 surface round* below, which is the section the 1.5.0 notes have to be derived from, because a
 consumer's `security_metadata_basis` goes from six kilobytes of prose to a token and six
 pointers.
+
+**THE TEXT-PINS ROUND OF 2026-09-04 IS THE ARC'S THIRD ROUND AND IT MOVES THE COUNT FROM 66 TO
+91.** Twenty-five files it touched were NOT already in the 66: `packages/cdm/pyproject.toml`, and
+twenty-four fixture files — six new payloads with their parsed twins and their two goldens each.
+The number and the set are `gates/bump_derivation.py`'s, re-derived **after** this record was
+written, which is the fixed point the 1.4.0 arc's repair note insists on and the third round in
+this arc to honour it.
+
+**WHAT THE ROUND ADDED TO THE DISTRIBUTION, NAMED:**
+
+- `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.klv` + `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.json`, with goldens `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json` and `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`
+- `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.klv` + `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.json`, with goldens `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json` and `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`
+- `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.klv` + `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.json`, with goldens `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json` and `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`
+- `security_object_country_codes_multiple_are_split_on_the_semicolon.klv` + `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.json`, with goldens `security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json` and `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`
+- `security_object_country_codes_at_an_odd_octet_count_is_refused.klv` + `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.json`, with goldens `security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json` and `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`
+- `security_object_country_codes_with_a_lone_surrogate_is_refused.klv` + `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.json`, with goldens `security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json` and `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`
+
+`pyproject.toml` is the twenty-fifth, and it is the one worth a sentence: its
+`exclude-package-data` globs named `.pdf` and nothing else, so the newly pinned
+`fixtures/klv/spec/rfc2781.txt` — a document this repository never redistributes — matched
+`fixtures/**/*` and **would have shipped inside the wheel**, invisible to every check that reads
+`git ls-files` because `.gitignore` keeps it out of the index. `tests/test_cdm_packaging.py`
+caught it by name on the first run after the file landed, because that test asks what the globs
+SELECT rather than what they say. See *The text-pins round* below.
 
 **THREE shipped documents** — `MIGRATIONS.md`, `FORMAT_COVERAGE.md` and `fixtures/klv/README.md`.
 **ONE pin record**, `klv_pin.json`, which gained `tag_table_st_0102_12` and
@@ -386,6 +416,135 @@ and 12. **Park 2 is the first park here closed without acquiring anything**: its
 held since 2026-08-26 and what was missing was the artefact, which is the state park 2 was this
 table's own precedent FOR. The delegation count does not move either — fourteen delegations in
 scope and **nine** held, unchanged, because this round fetched nothing.
+
+#### The text-pins round, 2026-09-04 — a pin may be text, and tag 13 is read from three documents
+
+**WHAT A CONSUMER RECEIVES CHANGES AT EXACTLY ONE KEY, AND THIS IS THE PARAGRAPH THE 1.5.0 NOTES
+HAVE TO BE DERIVED FROM.** `Entity.attributes.security_metadata.object_country_codes` stops
+carrying hex and starts carrying text. Before this round:
+
+    "value":      "0043005a0045003b005a005a005a"
+    "value_form": "carried_octets"
+
+After it:
+
+    "value":              "CZE;ZZZ"
+    "codes":              ["CZE", "ZZZ"]
+    "byte_order":         "big"
+    "byte_order_mark":    null
+    "byte_order_clause":  "The byte order is read under RFC 2781 §4.3, …"
+    "value_form":         "utf16_country_codes"
+
+`octets`, `length_octets`, `tag`, `presence` and `section` are unchanged, and **the input bytes did
+not move**: they were UTF-16BE from the day the fixture was written. What moved is that this
+repository can now say so from a document it holds.
+
+**THE STRUCTURAL DIFF IS ONE KEY WIDE, MEASURED RATHER THAN CLAIMED.** All 22 pre-existing goldens
+were parsed before and after and compared leaf by leaf: **every differing leaf path lies under
+`attributes/security_metadata/object_country_codes`** — its `value`, `value_form`, and the four
+keys added beside them. Nothing else in any object changed, which is what the round required and
+what a whole-file diff of eleven regenerated goldens cannot tell you.
+
+##### The blocker was a schema question, and the surface round is what turned it into one
+
+The section below records Act 2 of the surface round stopping at its own stop rule: RFC 2781 is
+free, stable, erratum-free and served over a route that answered 200 on the first ask, **and the
+RFC Editor issues no PDF for it**, while every pin gate here recognised a pin by `.pdf`. It named
+four sites and said *any one of those is a ruling; four of them together are a round*. This is that
+round, and the acquisition it unblocked was one `GET`.
+
+**TWO RULINGS, recorded in full at `fixtures/klv/spec/klv_pin.json`'s `text_pin_ruling`:**
+
+**A PIN MAY BE TEXT WHERE THE PUBLISHER ISSUES NO PDF.** The copy that is read is the publisher's
+`.txt` as served. A text pin's node keeps `pages` and gains `format` (`"text/plain"`; **a node
+without the field is a PDF**, which is what let one document be admitted without rewriting twelve
+records to describe bytes that did not move) and `lines`. `pages` comes from a **second ruled
+method** with three terms that must agree — form feeds, `[Page N]` footers, and the highest footer
+number — and RFC 2781 gives 14, 14 and 14. `lines` is **defined** as the count of `\n` bytes, which
+is `wc -l` semantics, and is 787; `str.splitlines()` gives **801**, because Python treats the form
+feed as a line terminator, so the two differ by exactly the page count with no error anywhere.
+Both figures are recorded wherever one is.
+
+**NOT COMMITTED, UNIFORMLY WITH EVERY PIN — AND THE GROUND IS NOT LICENCE.** RFC 2781's own Full
+Copyright Statement permits copying it "without restriction of any kind" provided the notice
+travels along, so committing it would have been *allowed* — unlike STANAG 4609 Edition 5, whose
+prohibition is what `not_committed.why` quotes. It is kept out anyway: a tree that vendored what it
+may and pinned what it may not would hold documents two ways, and a reader could not tell from a
+pin record which way governed a row. `.gitignore` gained a global `*.txt` beside its `*.pdf`,
+commented so nobody reads the rule backwards into a restriction the Internet Society did not
+impose.
+
+##### The pin
+
+**IETF RFC 2781, UTF-16, an encoding of ISO 10646, February 2000**
+(`e3fed703…ae75b502`, 29 870 bytes, 14 pages) at `fixtures/klv/spec/rfc2781.txt`, 787 lines,
+`format` `"text/plain"`, retrieved
+2026-09-04T11:36:15Z from `https://www.rfc-editor.org/rfc/rfc2781.txt` — the route read off the
+publisher's own info page, whose Formats block names exactly `TXT` and `HTML`. Neither obsoleted
+nor updated nor erratum-bearing, read off the publisher's pages rather than assumed. Magic-checked
+before it was treated as text: 0 NUL bytes and 0 octets above 0x7F. **It is a held document and not
+a delegation** — the encoding reference of ONE element of ONE held delegation — so the delegation
+tally is unchanged at fourteen in scope and nine held, while the held-document count moves to
+thirteen.
+
+##### Tag 13, and the third document is the round's finding
+
+**THE ROUND EXPECTED A TWO-DOCUMENT COMPOSITION AND THE TREE HAS THREE.**
+
+- **ST 0102.12 supplies none of the byte order**, and that is a measurement. §6.1.13 states
+  presence, the semi-colon separator, concatenation and the frame-centre rule. Across all eighteen
+  pages `UTF` occurs once and `10646` once, both inside reference [26]'s title; `BOM`, `byte
+  order`, `endian`, `Unicode` and `little` occur **zero** times in the document's own voice. The
+  encoding reaches the element only through §6.7's Data Type cell reading `RFC 2781 [26] [27]`.
+- **RFC 2781 supplies the rule.** §4.3 for the unlabelled `UTF-16` charset — `0xFEFF` means
+  big-endian, `0xFFFE` means little-endian, neither means big-endian, and an application `MUST
+  NOT` assume the serialization without reading the first two octets. §3.2 for what a leading
+  `0xFEFF` is and what one anywhere else is not. §2.2 for the decode and its two error cases.
+- **MISB ST 0107.3 supplies the agreement, and it was already held.** ST 0102.12's own reference
+  [9] is *MISB ST 0107.2 Bit and Byte Order for Metadata in Motion Imagery Files and Streams* — a
+  document pinned here since 2026-08-26, because it closed park 4 — whose `ST 0107.2-02` reads
+  "Byte order shall be big-endian or MSB", scoped by §1 to apply "retroactively to all documents
+  approved by the Motion Imagery Standards Board". **So §4.3's no-BOM default and the MISB
+  baseline agree by two independent held statements**, and the ordinary case is not a `SHOULD` this
+  layer chose to follow.
+
+`ST 0102.10-24` and `-25` are now **applied**: the element is one entry and its codes are split on
+the semi-colon. `-26` stays a producer's rule — nothing here computes a country from a geometry.
+Codes are **carried and never validated**, on the standing coding-method ruling: GEC, ISO 3166,
+STANAG 1059 and GENC are registers this repository does not hold.
+
+**WHERE THE TWO DOCUMENTS PULL APART, AND WHAT HAPPENS THEN.** A little-endian BOM. §4.3 makes the
+text little-endian and forbids assuming otherwise; `ST 0107.2-02` says big-endian. The value
+**decodes** under §4.3 and an advisory of class `byte_order_contradicts_st_0107_2_02` records that
+the producer broke the MISB baseline — the `ST 0102.10-57` precedent at tag 22, where a clause is
+recorded and not applied. Refusing would discard a value the packet carried because its producer
+broke a rule; big-endian-decoding it would turn `CZE` into two ideographs and call them country
+codes.
+
+**TWO REFUSAL CLASSES, kept separate because the repairs differ.**
+`utf16_cannot_carry_an_odd_octet_count` is a framing fault upstream — and note that §6.7's Length
+cell for this element reads `Variable`, so unlike tags 1 and 22 there is no stated length to
+disagree with and the refusal comes from the encoding itself. `utf16_sequence_is_in_error` is a
+content fault: a surrogate without its partner, which §2.2 calls an error and declines to specify
+recovery for, so none is invented.
+
+**Tag 13's row moves off `not yet` and the ST 0102.12 row set reads SEVENTEEN of seventeen**, dated
+2026-09-04. `DECODING_RULES["carried_octets"]` is **retired and kept** as the rule that was, because
+it is what four goldens said and what every release up to 1.4.1 delivered.
+
+##### Outside the distribution, and stated so a reader of this section does not go looking
+
+`gates/`, `tests/`, `.gitignore`, `CONTRIBUTING.md` and `PUBLICATION.md` all moved and **none of
+them ships**. What changed there: three `.pdf`-shaped recognition sites in `tests/test_cdm_pins.py`
+widened to a declared `PIN_SUFFIXES` vocabulary rather than to a dropped extension check — the
+filter was keeping nineteen fetched provenance files and two transport-stream artefacts out of a
+corpus resolved against the package base, and **nine of those provenance files are `.txt`**;
+`gates/pdf_text.py` gained `text_pages`, because RFC pagination breaks a sentence exactly the way
+PDF extraction does and then inserts four lines of furniture into the break; and
+`gates/commit_message.py` gained a sign-off requirement for the `41d3d2d` incident, with the
+history-wide calibration that refuted its first specification. `gates/parks_table.py` needed **no
+change** — its `held_series()` globs `*.pdf`, so `2781` never enters `FILE_SERIES` and cannot be
+mistaken for a MISB four-digit series.
 
 #### The surface round, 2026-09-04 — the wire carries facts and pointers, and one document that is free but not holdable
 

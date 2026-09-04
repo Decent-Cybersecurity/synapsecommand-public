@@ -180,25 +180,44 @@ DECODING_RULES = {
         "Classifying Country and Releasing Instructions Country Code, §6.8.3 Object Country "
         "Coding Method, which are tags 1, 2 and 12 — so tag 3's two forms do not differ and the "
         "Universal Set row's data type governs. Decoded exactly as `iso646`"),
+    "utf16_country_codes": (
+        "TAG 13 ONLY, AND IT IS THE COMPOSITION OF THREE HELD DOCUMENTS. §6.7's Data Type cell "
+        "reads `RFC 2781 [26] [27]`, reference [26] being 'IETF RFC 2781 UTF-16, and encoding of "
+        "ISO 10646, Feb 2000' — a UTF-16 encoding, where every other text element in this row set "
+        "is ISO/IEC 646. **RFC 2781 IS NOW HELD**: pinned 2026-09-04 as text, at "
+        "`fixtures/klv/spec/rfc2781.txt`, SHA-256 "
+        "e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502, 29 870 bytes, 14 pages. "
+        "**SO THE BYTE ORDER IS READ OFF A DOCUMENT AND IS NO LONGER A GUESS.** Which document "
+        "supplies which half: ST 0102.12 supplies NONE of it — §6.1.13 states presence, the "
+        "semi-colon separator, concatenation and the frame-centre rule, and the strings `BOM`, "
+        "`byte order`, `endian` and `Unicode` occur zero times in its own voice across all "
+        "eighteen pages. RFC 2781 §4.3 supplies the rule for the unlabelled `UTF-16` charset the "
+        "Data Type cell names, §3.2 supplies what a leading 0xFEFF is and what a later one is not, "
+        "and §2.2 supplies the decode and its two error cases. MISB ST 0107.3's `ST 0107.2-02` "
+        "independently requires big-endian across all MISB documents, so the no-BOM default and "
+        "the MISB baseline AGREE by two held statements rather than by one SHOULD. `-24` and `-25` "
+        "are now APPLIED — the element is one entry and its codes are split on the semi-colon — "
+        "and `-26` remains a producer's rule nothing here computes. The codes are carried and "
+        "never validated: GEC, ISO 3166, STANAG 1059 and GENC are external registers this "
+        "repository does not hold. See `TAG_13_BYTE_ORDER_RULE`, `RFC_2781_SECTION_4_3`, "
+        "`RFC_2781_SECTION_3_2`, `ST_0107_2_02` and `SPLIT_CLAUSES`"),
     "carried_octets": (
-        "TAG 13 ONLY. The Data Type cell reads `RFC 2781 [26] [27]`, reference [26] being 'IETF "
-        "RFC 2781 UTF-16, and encoding of ISO 10646, Feb 2000'. **RFC 2781 IS NOT HELD BY THIS "
-        "REPOSITORY**, so the octets are CARRIED VERBATIM and no string is produced: decoding "
-        "UTF-16 requires a byte order, a byte order is what RFC 2781 states, and guessing one "
-        "would be a rule read off a reference rather than off a document. This is the one element "
-        "of the seventeen whose row is `not yet`, and the reason is an unheld document rather "
-        "than unwritten code. **PROBED 2026-09-04 AND THE ROW DID NOT MOVE, BUT THE REASON "
-        "NARROWED, AND THIS DATED CLAUSE IS THE CLOSE THIS NOTE WAS OWED.** The RFC Editor serves "
-        "RFC 2781 free at https://www.rfc-editor.org/info/rfc2781, which answered 200 and names "
-        "exactly two formats, TXT and HTML. THERE IS NO PDF ROUTE — the expected "
-        "/rfc/pdfrfc/rfc2781.txt.pdf is 404 — and every pin gate in this repository is PDF-shaped, "
-        "from gates/pin_paths.py to the `pages` field on all fourteen held nodes, so pinning a "
-        "text-only document needs a schema ruling that has not been made. The text was READ and "
-        "hashed rather than pinned: 29 870 bytes, SHA-256 "
-        "e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502, no obsoleting or "
-        "updating RFC, zero errata. SO THE DOCUMENT IS NOT UNOBTAINABLE AND THIS SENTENCE NO "
-        "LONGER SAYS IT IS: it is unholdable in this tree's current shape, which is a smaller and "
-        "more tractable blocker than the one this note was written against"),
+        "RETIRED 2026-09-04 AND KEPT AS THE RULE THAT WAS, because it is what four goldens said "
+        "and what a consumer of every release up to 1.4.1 received. It read that RFC 2781 IS NOT "
+        "HELD BY THIS REPOSITORY, so tag 13's octets were CARRIED VERBATIM as hex and no string "
+        "was produced: decoding UTF-16 requires a byte order, a byte order is what RFC 2781 "
+        "states, and guessing one would have been a rule read off a reference rather than off a "
+        "document. That was the one element of the seventeen whose row read `not yet`, and the "
+        "reason was always an unheld document rather than unwritten code. **THE SURFACE ROUND OF "
+        "2026-09-04 NARROWED THE BLOCKER AND THE TEXT-PINS ROUND OF THE SAME DAY CLOSED IT.** The "
+        "surface round found the document free, stable, erratum-free and served over a route that "
+        "answered 200 on the first ask, and found that what stood in the way was not acquisition "
+        "but this repository's own gates: every one of them recognised a pin by `.pdf`. That was a "
+        "schema question, it was ruled, and the acquisition was one GET. **THE HONEST SHAPE OF THE "
+        "WHOLE EPISODE, RECORDED HERE BECAUSE THIS IS WHERE A READER MEETS IT:** the row said "
+        "'unheld document' for as long as it did because nobody had asked the publisher, and when "
+        "somebody did the answer was a 200 and a missing PDF. The rule that replaced this one is "
+        "`utf16_country_codes` above"),
 }
 
 #: §6.1.1's enumeration, from Table 2's Allowed Values cell for tag 1. The five strings are the
@@ -420,7 +439,7 @@ ELEMENTS: dict[int, _Element] = {
             "The Object Country Codes metadata element contains a value identifying the country "
             "(or countries), which is the object of the Motion Imagery Data."),
         requirements=("ST 0102.10-23", "ST 0102.10-24", "ST 0102.10-25", "ST 0102.10-26"),
-        kind="carried_octets"),
+        kind="utf16_country_codes"),
     14: _Element(
         tag=14, name="Classification Comments", data_type="ISO/IEC 646 [18]",
         allowed_values="N/A", length="Variable", presence="Optional", section="6.1.14",
@@ -644,6 +663,13 @@ REFUSAL_STATED_LENGTH = "stated_length_disagrees"
 REFUSAL_FORMAT_CANNOT_CARRY = "format_cannot_carry_the_octets"
 #: An `ISO/IEC 646 [18]` element carrying an octet at or above 0x80.
 REFUSAL_NOT_ISO_646 = "octet_outside_iso_646"
+#: A `RFC 2781` element carrying an odd number of octets. UTF-16 serialises 16-bit code units as
+#: two octets each, so an odd count cannot be a sequence of them — a fact about the encoding rather
+#: than about the length cell, which for tag 13 reads `Variable` and forbids nothing.
+REFUSAL_ODD_OCTET_COUNT = "utf16_cannot_carry_an_odd_octet_count"
+#: A `RFC 2781` element whose 16-bit units are not a well-formed UTF-16 sequence — a high surrogate
+#: with no low surrogate after it, or a low surrogate with no high surrogate before it.
+REFUSAL_UTF16_SEQUENCE = "utf16_sequence_is_in_error"
 #: A tag Table 2 does not draw a row for.
 UNLISTED_TAG = "tag_not_in_table_2"
 
@@ -660,6 +686,114 @@ ELEMENT_REFUSAL_POLICY = (
     "dropping a malformed Security Classification cannot be mistaken for a claim about the data. "
     "WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value "
     "the packet did not carry"
+)
+
+
+# ------------------------------------- tag 13's byte order, and it is a COMPOSITION OF THREE
+
+#: RFC 2781 §4.3 VERBATIM, and it is the clause that decides tag 13's byte order.
+#:
+#: WHY §4.3 AND NOT §4.1 OR §4.2. Sections 4.1 and 4.2 govern text LABELLED `UTF-16BE` and
+#: `UTF-16LE`, and a label is an external declaration this element does not carry: §6.7's Table 2
+#: gives tag 13's Data Type as `RFC 2781 [26] [27]` and nothing narrower. The unlabelled case —
+#: the plain `UTF-16` charset — is §4.3, so §4.3 is the clause that applies. Reading §4.1 into this
+#: element would be assuming a label the document does not print.
+RFC_2781_SECTION_4_3 = (
+    "RFC 2781 §4.3, 'Interpreting text labelled as UTF-16': \"Text labelled with the 'UTF-16' "
+    "charset might be serialized in either big-endian or little-endian order. If the first two "
+    "octets of the text is 0xFE followed by 0xFF, then the text can be interpreted as being "
+    "big-endian. If the first two octets of the text is 0xFF followed by 0xFE, then the text can "
+    "be interpreted as being little-endian. If the first two octets of the text is not 0xFE "
+    "followed by 0xFF, and is not 0xFF followed by 0xFE, then the text SHOULD be interpreted as "
+    "being big-endian.\" And the obligation, same section: \"All applications that process text "
+    "with the 'UTF-16' charset label MUST be able to read at least the first two octets of the "
+    "text and be able to process those octets in order to determine the serialization order of "
+    "the text. Applications that process text with the 'UTF-16' charset label MUST NOT assume the "
+    "serialization without first checking the first two octets to see if they are a big-endian "
+    "BOM, a little-endian BOM, or not a BOM. All applications that process text with the 'UTF-16' "
+    "charset label MUST be able to interpret both big-endian and little-endian text.\""
+)
+
+#: RFC 2781 §3.2 VERBATIM, on where a BOM may be and what 0xFEFF means anywhere else. This is what
+#: makes stripping a leading 0xFEFF legitimate and stripping any other 0xFEFF wrong.
+RFC_2781_SECTION_3_2 = (
+    "RFC 2781 §3.2, 'Byte order mark (BOM)': \"In serialized UTF-16 prepended with such a "
+    "signature, the order is big-endian if the first two octets are 0xFE followed by 0xFF; if "
+    "they are 0xFF followed by 0xFE, the order is little-endian.\" And the limit: \"It is "
+    "important to understand that the character 0xFEFF appearing at any position other than the "
+    "beginning of a stream MUST be interpreted with the semantics for the zero-width non-breaking "
+    "space, and MUST NOT be interpreted as a byte-order mark.\""
+)
+
+#: MISB ST 0107.3 §6.1 VERBATIM — the SECOND held document that speaks to this, and the one that
+#: makes the unmarked case a requirement here rather than only a SHOULD.
+ST_0107_2_02 = (
+    "MISB ST 0107.3 §6.1 'Bit and Byte Order', requirement `ST 0107.2-02`: \"Byte order shall be "
+    "big-endian or MSB.\" Its scope is §1: \"This Standard defines the baseline requirements for "
+    "all implementations of KLV within Motion Imagery files and streams. It applies retroactively "
+    "to all documents approved by the Motion Imagery Standards Board (MISB).\""
+)
+
+#: **THE COMPOSITION, AND WHICH DOCUMENT SUPPLIES WHICH HALF.** This is the note the tag 13 row
+#: was owed from the day it was written, and the reason it could not be written until 2026-09-04.
+#:
+#: **ST 0102.12 SUPPLIES NO HALF OF IT, AND THAT IS A MEASUREMENT RATHER THAN AN IMPRESSION.**
+#: §6.1.13 was read in full and says nothing about UTF-16, a BOM or a byte order: it states what
+#: the element carries (a country or countries), and four requirements — `-23` presence, `-24` the
+#: semi-colon separator, `-25` concatenation in one entry, `-26` the frame-centre rule. Across all
+#: eighteen pages the string `UTF` occurs ONCE and `10646` ONCE, both inside reference [26]'s title
+#: on page 2; `BOM`, `byte order`, `endian`, `Unicode` and `little` occur ZERO times in the
+#: document's own voice. So the encoding reaches this element ONLY through §6.7's Data Type cell
+#: reading `RFC 2781 [26] [27]`, and every byte-order term has to come from somewhere else.
+#:
+#: **RFC 2781 SUPPLIES THE RULE**: §4.3 for the unlabelled `UTF-16` case, §3.2 for what a leading
+#: 0xFEFF is and what it is not, §2.2 for the decode itself and its two error cases.
+#:
+#: **ST 0107.3 SUPPLIES THE AGREEMENT, AND IT IS THE FINDING OF THIS ROUND.** The round expected a
+#: two-document composition and the tree has three. ST 0102.12's own reference [9] is
+#: "MISB ST 0107.2 Bit and Byte Order for Metadata in Motion Imagery Files and Streams" — a
+#: document this repository has held and pinned since 2026-08-26, because it closed park 4 — and
+#: `ST 0107.2-02` says byte order shall be big-endian, retroactively across all MISB documents.
+#: **So RFC 2781 §4.3's no-BOM default and ST 0107.2-02 AGREE, by two independent held statements**,
+#: and the unmarked case is not a `SHOULD` this layer is choosing to follow: it is a `SHOULD` from
+#: the IETF standing on a `shall` from the custodian of the document that cites it.
+#:
+#: WHERE THEY COULD DISAGREE, AND WHAT HAPPENS THEN. A packet carrying a little-endian BOM. RFC
+#: 2781 §4.3 says such text CAN be interpreted as little-endian and MUST NOT be assumed otherwise
+#: without reading the first two octets; ST 0107.2-02 says byte order shall be big-endian. **The
+#: octets are decoded under §4.3 and an ADVISORY records that `ST 0107.2-02` was not met** — the
+#: tag 22 precedent exactly, where `ST 0102.10-57`'s assumed version is recorded and not applied.
+#: Refusing would discard a value the packet carried on the strength of a rule the PRODUCER broke;
+#: silently big-endian-decoding it would produce mojibake and call it a country code.
+TAG_13_BYTE_ORDER_RULE = (
+    "The byte order is read under RFC 2781 §4.3, which is the clause for the unlabelled `UTF-16` "
+    "charset the Data Type cell names. ST 0102.12 states no byte order anywhere in its own voice — "
+    "§6.1.13 states presence, the semi-colon separator, concatenation and the frame-centre rule, "
+    "and nothing about the encoding. MISB ST 0107.3's `ST 0107.2-02` independently requires "
+    "big-endian across all MISB documents, so the no-BOM default and the MISB requirement agree. A "
+    "leading BOM is honoured per §4.3 and stripped per §3.2; a 0xFEFF anywhere else is a "
+    "zero-width non-breaking space and is kept. A little-endian BOM is honoured and raises an "
+    "advisory against `ST 0107.2-02` rather than a refusal"
+)
+
+#: `ST 0102.10-24` and `-25` VERBATIM, the two clauses that make one element several codes.
+SPLIT_CLAUSES = (
+    "`ST 0102.10-24`: \"Multiple Object Country Codes shall be separated by a semi-colon "
+    "\u201c;\u201d (no spaces).\" `ST 0102.10-25`: \"Multiple Object Country Codes shall be "
+    "concatenated in one Object Country Code metadata element entry.\" §6.1.13's Note gives the "
+    "reason: \"The use of the semi-colon to separate country codes, instead of blanks or other "
+    "characters, is to allow processing by current, automated imagery processing and management "
+    "tools.\""
+)
+
+#: `ST 0102.10-26` is a PRODUCER's rule and is not applied, on the standing pattern.
+NOT_APPLIED_MINUS_26 = (
+    "`ST 0102.10-26` — \"The object country code of the geographic region lying under the center "
+    "of the image frame shall populate the Object Country Code metadata element\" — is a "
+    "PRODUCER's obligation and is neither applied nor checked. Nothing here computes a country "
+    "from a geometry, and the clause says which code should come FIRST rather than what any octet "
+    "means. A consumer holding the codes and the frame centre can check it; this layer cannot, and "
+    "asserting it would be inventing a fact about the ground"
 )
 
 
@@ -818,6 +952,90 @@ def _decode_iso646(element: _Element, value: bytes) -> str:
         ) from exc
 
 
+class ObjectCountryCodes(NamedTuple):
+    """Tag 13, read. One reading, used by both the decoder and the adapter so neither re-derives.
+
+    `text` is the whole element as one string — `-25`'s "one entry". `codes` is that string split
+    on `-24`'s semi-colon. `byte_order` is `"big"` or `"little"`, and `bom` names which of the two
+    signatures was found or is `None` where there was none.
+    """
+
+    text: str
+    codes: tuple[str, ...]
+    byte_order: str
+    bom: str | None
+
+
+#: The two signatures, as §3.2 gives them.
+BOM_BIG = b"\xfe\xff"
+BOM_LITTLE = b"\xff\xfe"
+
+
+def read_object_country_codes(octets: bytes) -> ObjectCountryCodes:
+    """Tag 13's Value octets to codes, under the composition `TAG_13_BYTE_ORDER_RULE` states.
+
+    THE ORDER OF OPERATIONS IS THE RULE AND IS NOT INTERCHANGEABLE:
+
+    1. **The octet count.** UTF-16 serialises 16-bit units as two octets each — RFC 2781 §3.1 —
+       so an odd count cannot be a sequence of them and is refused before anything is decoded.
+       This is a fact about the ENCODING and not about the Length cell, which reads `Variable` for
+       this element and forbids no count at all.
+    2. **The first two octets, read before any assumption.** §4.3's MUST. `0xFEFF` means
+       big-endian, `0xFFFE` means little-endian, anything else means no BOM — and only in FIRST
+       position, per §3.2.
+    3. **The default.** No BOM means big-endian: §4.3's SHOULD, standing on `ST 0107.2-02`'s
+       shall.
+    4. **Strip the BOM if there was one.** §3.2's rationale — the signature is not part of the
+       object. A `0xFEFF` at any other position is a zero-width non-breaking space and survives.
+    5. **Decode strictly**, so RFC 2781 §2.2's two error cases surface as refusals instead of
+       replacement characters.
+    6. **Split on the semi-colon**, per `-24`, into what `-25` calls one entry's codes.
+
+    **THE CODES ARE NOT VALIDATED**, and that is the standing coding-method ruling rather than a
+    gap here: GEC, ISO 3166, STANAG 1059 and GENC are all external registers this repository does
+    not hold, so a code is carried exactly as the packet spelled it. An empty code between two
+    semi-colons is carried as an empty string for the same reason — the packet said it.
+    """
+    if len(octets) % 2:
+        raise SecurityItemError(
+            f"tag 13 Object Country Codes declares Data Type 'RFC 2781 [26] [27]' and carries "
+            f"{len(octets)} octet(s): {octets.hex()}. UTF-16 serialises each 16-bit code unit as "
+            "two octets — RFC 2781 §3.1 — so an odd count is not a sequence of code units and no "
+            "byte order makes it one. This is a property of the ENCODING and not of the Length "
+            "cell, which reads 'Variable' for this element"
+        )
+    body, order, bom = octets, "big", None
+    if octets[:2] == BOM_BIG:
+        body, order, bom = octets[2:], "big", "big_endian_0xFEFF"
+    elif octets[:2] == BOM_LITTLE:
+        body, order, bom = octets[2:], "little", "little_endian_0xFFFE"
+    codec = "utf-16-be" if order == "big" else "utf-16-le"
+    try:
+        text = body.decode(codec)
+    except UnicodeDecodeError as exc:
+        raise SecurityItemError(
+            f"tag 13 Object Country Codes carries {octets.hex()} and its 16-bit units are not a "
+            f"well-formed UTF-16 sequence read as {order}-endian: {exc.reason} at octet "
+            f"{exc.start}. RFC 2781 §2.2 steps 2 and 3 name both errors — a value between 0xD800 "
+            "and 0xDBFF with no following value between 0xDC00 and 0xDFFF, or a sequence that "
+            "ends on the first of such a pair — and say 'the sequence is in error'. §2.2 adds "
+            "that error recovery is not specified by that document, so none is invented here"
+        ) from exc
+    return ObjectCountryCodes(text=text, codes=tuple(text.split(";")), byte_order=order, bom=bom)
+
+
+def _utf16_refusal_class(observed_length: int) -> str:
+    """Which of tag 13's two refusal grounds fired, from the octet count alone.
+
+    The two are worth separating because the repairs are different and a consumer acts on them
+    differently. **An odd count is a framing question**: something upstream truncated or padded a
+    value, and no byte order and no error recovery can help. **A malformed sequence is a content
+    question**: the count is right, the units are there, and one of them is a surrogate without
+    its partner — which RFC 2781 §2.2 calls an error and declines to specify recovery for.
+    """
+    return REFUSAL_ODD_OCTET_COUNT if observed_length % 2 else REFUSAL_UTF16_SEQUENCE
+
+
 def _decode_element(element: _Element, value: bytes) -> tuple[Any, str | None]:
     """One element's Value octets to (value, label). The label is None where none is stated."""
     if element.kind == "uint8_enum":
@@ -840,9 +1058,10 @@ def _decode_element(element: _Element, value: bytes) -> tuple[Any, str | None]:
                 f"{value.hex()} — which cannot form a two-octet unsigned integer"
             )
         return int.from_bytes(value, "big"), None
-    if element.kind == "carried_octets":
-        # Tag 13. The octets ARE the value here, and no string is produced: see DECODING_RULES.
-        return value.hex(), None
+    if element.kind == "utf16_country_codes":
+        # Tag 13. WAS `carried_octets` until 2026-09-04, when RFC 2781 became a held document and
+        # the byte order stopped being a guess: see DECODING_RULES and TAG_13_BYTE_ORDER_RULE.
+        return read_object_country_codes(value).text, None
     return _decode_iso646(element, value), None
 
 
@@ -927,6 +1146,8 @@ def decode_set(value: bytes, *, base_offset: int = 0) -> DecodedSecuritySet:
                 tag=tag, name=element.name,
                 refusal_class=(REFUSAL_NOT_ISO_646
                                if element.kind in ("iso646", "iso646_by_derivation")
+                               else _utf16_refusal_class(length)
+                               if element.kind == "utf16_country_codes"
                                else REFUSAL_FORMAT_CANNOT_CARRY),
                 observed_length=length, stated_length=element.length,
                 presence=element.presence, octets=raw.hex(),
@@ -947,6 +1168,26 @@ def decode_set(value: bytes, *, base_offset: int = 0) -> DecodedSecuritySet:
                     "which the standing confidentiality ruling forbids: a classification is "
                     "carried and never invented"),
             })
+        elif element.tag == 13:
+            reading = read_object_country_codes(raw)
+            if reading.byte_order == "little":
+                advisories.append({
+                    "tag": 13, "name": element.name,
+                    "class": "byte_order_contradicts_st_0107_2_02",
+                    "value": reading.text, "section": "ST 0102.12 §6.1.13",
+                    "basis": (
+                        "This element carries a little-endian byte-order mark, so RFC 2781 §4.3 "
+                        "makes it little-endian text and it is decoded as such — that section's "
+                        "MUST NOT is explicit that the serialization may not be assumed without "
+                        "reading the first two octets. **AND `ST 0107.2-02` SAYS BYTE ORDER SHALL "
+                        "BE BIG-ENDIAN**, retroactively across all MISB documents per ST 0107.3 "
+                        "§1, so this packet meets RFC 2781 and breaks the MISB baseline. THE "
+                        "VALUE IS CARRIED AND THE DISAGREEMENT IS RECORDED, on the `ST "
+                        "0102.10-57` precedent at tag 22: refusing would discard a value the "
+                        "packet carried because its PRODUCER broke a rule, and big-endian-decoding "
+                        "it anyway would produce mojibake and call it a country code. " +
+                        ST_0107_2_02),
+                })
         elif element.tag in (2, 12) and label is None:
             advisories.append({
                 "tag": element.tag, "name": element.name,
