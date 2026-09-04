@@ -8140,7 +8140,7 @@ with Table 2 open can find every key in it.
 | `10` | Declassification Date | `ISO/IEC 646 [18]` | YYYYMMDD | `8` | **Context** | `Entity.attributes` | `stanag4609 1.0.0` | §6.1.10, and `ST 0102.10-22`: "The Declassification Date metadata element format shall be YYYYMMDD." A STATED length of 8, so an element of any other count is refused. **The digits are not validated** — a wrong-shaped date is still a marking the packet carried, and dropping it would lose it. Rides at `attributes.security_metadata.declassification_date`. |
 | `11` | Classification and Marking System | `ISO/IEC 646 [18]` | N/A | `Variable` | **Context** | `Entity.attributes` | `stanag4609 1.0.0` | §6.1.11, and `ST 0102.10-21`: "The Classification or Marking System metadata element shall be free text." Rides at `attributes.security_metadata.classification_and_marking_system`. |
 | `12` | Object Country Coding Method | `uint8` | the sixteen values of §6.7's cell | `1` | **Required** | `Entity.attributes` | `stanag4609 1.0.0` | §6.1.12. **ITS ENUMERATION IS NOT TAG 2'S.** §6.1.12 allows "GENC two-letter, three-letter, three-digit numeric or administrative subdivisions" where §6.1.2 says of tag 2 that "GENC administrative subdivision codes are not applicable" — the prose stating the same asymmetry the tables do. Also: "Use of this element in version 6 of this Standard and later is mandatory. In version 5 and earlier, it was optional; its absence indicates the default GENC two-letter coding method was used" — **that default is NOT applied**, because it describes a version-5 stream and applying it would state a coding method a packet did not send. Rides at `attributes.security_metadata.object_country_coding_method`. |
-| `13` | Object Country Codes | `RFC 2781 [26] [27]` | Refs [15] [16] [28] [29] | `Variable` | **Required** | `Entity.attributes` | `not yet` | §6.1.13. **THE ONE ROW OF THE SEVENTEEN THAT IS `not yet`, AND THE REASON IS AN UNHELD DOCUMENT RATHER THAN UNWRITTEN CODE.** Its Data Type cell reads `RFC 2781 [26] [27]`, reference [26] being "IETF RFC 2781 UTF-16, and encoding of ISO 10646" — a UTF-16 encoding, where every other text element here is ISO/IEC 646. **RFC 2781 is not held**, decoding UTF-16 requires a byte order, and guessing one would be a rule read off a reference rather than off a document. **So the OCTETS are carried verbatim under `object_country_codes.value` as hex and no string is produced.** `-24` requires multiple codes separated by a semi-colon and `-25` requires them in one entry; neither is applied, because splitting octets whose encoding is unknown is not splitting text. `-26` — the code of the region under the frame centre — is a PRODUCER's rule and nothing here computes a country from a geometry. Rides at `attributes.security_metadata.object_country_codes`. |
+| `13` | Object Country Codes | `RFC 2781 [26] [27]` | Refs [15] [16] [28] [29] | `Variable` | **Required** | `Entity.attributes` | `not yet` | §6.1.13. **THE ONE ROW OF THE SEVENTEEN THAT IS `not yet`, AND THE REASON IS AN UNHELD DOCUMENT RATHER THAN UNWRITTEN CODE.** Its Data Type cell reads `RFC 2781 [26] [27]`, reference [26] being "IETF RFC 2781 UTF-16, and encoding of ISO 10646" — a UTF-16 encoding, where every other text element here is ISO/IEC 646. **RFC 2781 is not held**, decoding UTF-16 requires a byte order, and guessing one would be a rule read off a reference rather than off a document. **So the OCTETS are carried verbatim under `object_country_codes.value` as hex and no string is produced.** `-24` requires multiple codes separated by a semi-colon and `-25` requires them in one entry; neither is applied, because splitting octets whose encoding is unknown is not splitting text. `-26` — the code of the region under the frame centre — is a PRODUCER's rule and nothing here computes a country from a geometry. Rides at `attributes.security_metadata.object_country_codes`, with `value_form` reading `carried_octets` since 2026-09-04. **PROBED 2026-09-04 AND THE ROW DOES NOT MOVE, BUT ITS BLOCKER NARROWS.** The RFC Editor's info page answered 200 and names two formats, `TXT` and `HTML`; **there is no PDF route** — the expected `/rfc/pdfrfc/rfc2781.txt.pdf` is 404 — and every pin gate here is PDF-shaped, so pinning it needs a schema ruling. The text was read and hashed as a READING and not a pin: 29 870 bytes, SHA-256 `e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502`, `https://www.rfc-editor.org/rfc/rfc2781.txt`, no obsoleting or updating RFC, zero errata. **The document is not unobtainable; it is unholdable in this tree's current shape** — see the RFC 2781 subsection below the table. |
 | `14` | Classification Comments | `ISO/IEC 646 [18]` | N/A | `Variable` | **Optional** | `Entity.attributes` | `stanag4609 1.0.0` | §6.1.14: "allows for security related comments and format changes necessary in the future ... and is optional." `-27` restricts it to non-essential information, which is a producer's obligation and unverifiable from octets. Rides at `attributes.security_metadata.classification_comments`. |
 | `22` | Version | `uint16` | §6.7's cell | `2` | **Required** | `Entity.attributes` | `stanag4609 1.0.0` | §6.1.15: "indicates the version number of MISB ST 0102 referenced", with §6.7's Allowed Values cell giving the rule — "for ST 0102.10, this value is 0x000A". So this document's own value is `0x000C`. `ST 0102.10-57` says version three "shall be assumed" when the element is absent: **RECORDED AS AN ADVISORY AND NOT APPLIED** — the assumed version is never written into the decoded elements, because the packet did not carry it. Fixtures `security_local_set_partial_is_carried_as_partial` and `security_uint16_that_the_format_cannot_carry_is_refused`, the second being the near-miss where zero-extending one octet would produce `0x000C`, the RIGHT answer, from octets that do not state it. Rides at `attributes.security_metadata.version`. |
 | `23` | Classifying Country and Releasing Instructions Country Coding Method Version Date | `ISO/IEC 646 [18]` | YYYY-MM-DD | `10` | **Optional** | `Entity.attributes` | `stanag4609 1.0.0` | §6.1.16: "the effective date (promulgation date) of the source (FIPS 10-4, ISO 3166, GENC 2.0, or STANAG 1059) used for the Classifying Country and Releasing Instructions Country Coding Method. As ISO 3166 is updated by dated circulars, not by version revision, the ISO 8601 YYYY-MM-DD formatted date is used." A stated length of 10. Rides at `attributes.security_metadata.classifying_country_and_releasing_instructions_country_coding_method_version_date`. |
@@ -8204,7 +8204,13 @@ the first being allowed to imply the second.
 carries **no `security_metadata` key at all** — not a null classification, not an empty object a
 reader could take for an empty marking — and it carries `attributes.security_metadata_basis` with
 §6.5's sentence, so a consumer meets the document's own statement of what the absence does not mean
-instead of supplying one. **§6.3 is the contrast that makes this precise**: `ST 0102.10-51` puts a
+instead of supplying one. **DATED NOTE, 2026-09-04, AND THE SENTENCE ABOVE IS LEFT IN ITS OWN
+TENSE:** the surface round of that day moved the SENTENCE into the record and left the POINTER on
+the wire — `state` reads `UNLABELLED`, `clauses` names `MISB ST 0102.12 §6.5`, and §6.5's own words
+are at `spec/klv_pin.json`'s `security_basis_ruling.relocated_from_the_wire.absence`. The
+behaviour the paragraph decides is unchanged in every term; what changed is whether the consumer
+meets the document's statement inline or one dereference away. See the surface-round subsection
+below. **§6.3 is the contrast that makes this precise**: `ST 0102.10-51` puts a
 VALUE on the wire for unclassified data — *"the Security Metadata Set value shall be
 `UNCLASSIFIED//` for Security Classification"*, `0x01` by §6.8.1 — so *unclassified* and
 *unlabelled* are two different states and an absent set is the second one. Fixture
@@ -8255,6 +8261,100 @@ the narrow reading a packet with no item 48 may be conformant and under the wide
 be, and in neither case may this adapter say anything about the data's classification. So KLV 7
 bounds a **conformance claim about somebody else's producer** and bounds nothing this repository
 emits — which is why it can stay open without blocking a row, and why **park 2 could close over it**.
+
+#### The surface round, 2026-09-04 — the wire carries facts and pointers, the record carries the argument
+
+**WHAT AN OBJECT SAYS ABOUT ITS OWN MARKING WAS 6 146 BYTES AND IS NOW 486.** The park 2 round, four
+commits earlier the same day, emitted every ruling on this page inside
+`attributes.security_metadata_basis` on **every Entity** — the carrier basis, the confidentiality
+ruling argued in full, the external code lists ruling, `ST 0102.12-65`/`-66` on ST 336, §6.2's
+repetition rate, §6.5 quoted, §6.4 quoted, the element refusal policy — whether or not the packet
+carried a security set at all. Measured as compact UTF-8 JSON across the 34 goldens: **229 864
+bytes over 36 occurrences, average 6 385**.
+
+**The precedent is `length_divergence_policy`,** the 1.2.0 annotation that also rides on every
+object: 299 bytes clean, four keys, one sentence of justification. Measured in the same goldens on
+the same day it is 299 clean, 818 with one advisory and 1 622 with one defect. **The reshaped basis
+lands at 486, 1 106 and 1 773** — the same three scales, which is the scope ruling of the round
+stated as a measurement rather than as a preference. **204 570 bytes came off the wire, 89% of the
+key**, and the goldens on disk fell from 1 111 888 to 871 610.
+
+**WHAT STAYED, AND EVERY ITEM IS A FACT OR A POINTER.** A machine-comparable `state` token from a
+closed set of three — `UNLABELLED`, `PARTIAL`, `COMPLETE-ON-REQUIRED`, held at
+`klv_security_codec.BASIS_STATES`; the confidentiality ruling's NAME as a token,
+*CARRIED AND NEVER INVENTED*; what carried the set and the two ST 0601 clauses that put it there;
+`element_layer`, which names the copy of ST 0102.12 that decoded it by SHA-256 and local path; the
+clause pointers that govern **this** case; and **one** pointer to where the argument lives. For a
+present set, `required_present` and `required_absent` unchanged, and the structured `refusals` and
+`advisories` unchanged — those fire on 2 of 34 goldens rather than on all 34, and the named
+precedent carries prose in exactly those positions.
+
+**NOTHING WAS DELETED. EVERY SENTENCE WAS RELOCATED, UNDER THE KEY IT WAS EMITTED AS**, to
+`spec/klv_pin.json`'s **`security_basis_ruling`** — sixteen entries, each with `emitted_as`,
+`bytes_on_the_wire`, `still_in_code_at` and the text itself, lifted out of the acb6295 goldens by a
+script rather than retyped. That node also states the new shape: every key, its type, its condition,
+the closed token set and the three pointer forms. **The codec constants all remain in code**;
+`CARRIER_BASIS`, `ABSENCE_OF_SETS`, `PARTIAL_SETS`, `ELEMENT_REFUSAL_POLICY`,
+`EXTERNAL_CODE_LISTS_NOT_HELD`, `ST_336_CONFORMANCE`, `REPETITION_RATE`,
+`CONVERSION_BETWEEN_SET_FORMS` and `ABSENT_TAGS_BASIS` are unchanged and are simply no longer
+emitted.
+
+**THE STANDING CONFIDENTIALITY RULING IS UNCHANGED IN EVERY TERM** — carried and never invented, no
+default, no nearest match, no marking on an unlabelled packet. Only where its text lives moved.
+**And no consumer ever received the shape this replaced**: `git ls-tree v1.4.1` over this
+package's `adapters/` directory lists no security codec, so both the codec and this key are
+unreleased work in `MIGRATIONS.md`'s `### Unreleased`. A consumer of 1.5.0 meets the token shape as
+the **first** shape this key ever had.
+
+**THE CHECK THAT MADE IT SAFE.** All 34 goldens were parsed before and after, `security_metadata_basis`
+and the six relocated prose keys deleted from both, and the remainder compared: **byte-identical on
+all 34**. Not one element value, octet string, offset, refusal fact or advisory fact moved. **And
+the guard the round found missing is now built**: `grep -rn security_metadata_basis tests/` returned
+nothing before this round — the goldens were the only guard, and a golden guards a value while
+`tests/test_cdm_stanag4609_adapter.py` now guards the SHAPE, drawing the token from the codec's own
+closed set and requiring the record to name every key the wire stopped carrying.
+
+**Inside `security_metadata`, element VALUES are exactly as decoded and only the prose beside them
+moved.** `label_basis` was §6.8 quoted under all three labelled elements — the same 890 bytes three
+times — and is now `label_clause`, the ONE subsection that governs that element (§6.8.1, §6.8.2,
+§6.8.3), which is strictly more than the paragraph said. `_local_set_key_basis` became
+`_local_set_key_clauses`, the two clauses whose agreement is the ground. Tag 13's
+`value_is_octets_not_text` became `value_form`, that decoding rule's own name.
+
+#### RFC 2781, 2026-09-04 — the RFC Editor serves it, and tag 13 stays `not yet` on a PIN GATE and not on the document
+
+**THE DOCUMENT IS FREE, REACHABLE AND WAS READ. IT IS NOT PINNED, AND THE REASON IS THIS
+REPOSITORY'S OWN SHAPE RATHER THAN THE RFC EDITOR'S.** `https://www.rfc-editor.org/info/rfc2781`
+answers `302` to `/info/rfc2781/` and then `200`, at 2026-09-04T10:01:19Z. **Its `Details` block
+names its formats and there are two: `TXT` and `HTML`.** No PDF is offered — the string `pdf` does
+not occur anywhere in the 177 626-byte page — and the route the round expected to verify,
+`https://www.rfc-editor.org/rfc/pdfrfc/rfc2781.txt.pdf`, answers **404**, as does
+`https://www.rfc-editor.org/rfc/rfc2781.pdf`. Both probed at 2026-09-04T10:02:42Z.
+
+**Every pin gate in this repository is PDF-shaped**: `gates/pin_paths.py` resolves `local_path` +
+`sha256` pairs, `.gitignore` excludes `*.pdf`, `page_count_method` rules how a page count is
+produced, and every one of the fourteen `delegated_specifications_held` nodes carries `pages`. A
+text file has no pages. **Pinning a text-only document needs a schema ruling this round was not
+given**, so the round stopped Act 2 at its own stop rule rather than inventing one.
+
+**WHAT WAS READ AND RECORDED ANYWAY, SO THE NEXT ROUND STARTS FROM BYTES.** `GET
+https://www.rfc-editor.org/rfc/rfc2781.txt` at 2026-09-04T10:02:53Z returned **200**,
+`text/plain;charset=utf-8`, **29 870 bytes**, SHA-256
+`e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502`. It is **RFC 2781, "UTF-16, an
+encoding of ISO 10646", P. Hoffman and F. Yergeau, February 2000, Informational**. The info page
+records **no obsoleting and no updating RFC**, and `https://errata.rfc-editor.org/search/?rfc_number=2781`
+returns *"No matching errata found."* — **zero errata**. The copy is in a scratch directory outside
+this tree and is **not committed and not pinned**; the digest above is a reading, not a pin, and
+`pin_paths` still counts **23**.
+
+**SO TAG 13 IS UNCHANGED AND SO IS ITS REASON**, which is worth stating precisely because the reason
+narrowed. The octets are still carried verbatim as hex under
+`attributes.security_metadata.object_country_codes.value`, `-24` and `-25` are still not applied,
+and `-26` is still a producer's rule. What is no longer true is that RFC 2781 is *unobtainable* —
+it is a free, stable, erratum-free IETF route that answered on the first ask. **What blocks the row
+is that this repository cannot yet HOLD a document that is not a PDF**, and that is a smaller and
+more tractable blocker than the one the row was written against. The row set therefore still reads
+**sixteen of seventeen**.
 
 #### What this row set does NOT check, said here rather than left to be noticed
 

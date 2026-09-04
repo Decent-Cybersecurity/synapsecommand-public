@@ -2734,6 +2734,316 @@
       "what_it_does_NOT_settle": "What a country code MEANS. Every code list the country elements are written against — GENC, the GEC register, ISO 3166-1 and -2, STANAG 1059 — and the UTF-16 encoding tag 13's Data Type names, RFC 2781, are documents this repository does not hold. See the_external_code_lists_ruling. And it does not settle the ST 0601 side of anything: all 115 unwitnessed ST 0601 rows still read `not yet` and item 48 is the only one that moved."
     }
   },
+  "security_basis_ruling": {
+    "what_this_is": "THE SURFACE ROUND OF 2026-09-04, ACT 1. The ruling in one sentence: THE WIRE CARRIES FACTS AND POINTERS; THE RECORD CARRIES THE ARGUMENT. Until this round `stanag4609._security_basis` emitted every paragraph `adapters/klv_security_codec.py` holds — quoted clauses and commentary — inside `Entity.attributes.security_metadata_basis` on EVERY object, at 6 146 bytes for a packet carrying no security set at all and up to 7 498 for one carrying a refused element. This node is where those sentences now live, EACH UNDER THE KEY IT WAS EMITTED AS, so the record shows exactly what a consumer used to receive. It also states the shape that replaced them: every key, its type, the closed set of state tokens and the pointer form.",
+    "nothing_was_deleted_and_that_is_the_rule": "RULING 1 RELOCATES; IT DOES NOT DELETE. Every string below was lifted out of a golden file generated at commit acb6295 by a script rather than retyped, so the text here is the text a consumer would have received, character for character. The one exception is `basis.unlisted_tags_basis`, which no fixture ever tripped — no golden carried it, so it is taken from the emitting expression itself (`klv_security_codec.ABSENT_TAGS_BASIS`), which is unchanged and still a module constant. The codec constants ALL remain in code; they are simply no longer emitted.",
+    "no_consumer_ever_received_the_shape_this_replaced": "AND THIS IS WHY THE ROUND IS SAFE RATHER THAN MERELY CAREFUL. `adapters/klv_security_codec.py` and `attributes.security_metadata_basis` DO NOT EXIST AT TAG v1.4.1 — `git ls-tree v1.4.1` over this package's `adapters/` directory lists no security codec, and `git show` of `adapters/stanag4609.py` at that tag, grepped for `security_metadata_basis`, counts 0. Both landed in the park 2 round of 2026-09-04, which is in `MIGRATIONS.md`'s `### Unreleased` section and has never shipped. So the ~6 KB shape was published to nobody, the reshaping is not a migration, and no consumer has to be told their objects changed. A consumer of 1.5.0 will meet the token shape as the FIRST shape this key ever had.",
+    "the_precedent_and_its_measured_scale": "`klv_uas_codec.LENGTH_DIVERGENCE_POLICY`, shipped in 1.2.0, is the precedent for a policy that rides on every object: four keys — `policy`, `stated_on_every_object`, `defects`, `advisories` — measuring 299 bytes as compact UTF-8 JSON when both arrays are empty. Measured in the same goldens on the same day it is 299 clean, 818 with one advisory and 1 622 with one defect, because its per-instance annotations carry their own prose. THE RESHAPED BASIS LANDS AT THE SAME THREE SCALES: 486 clean, 1 106 with one advisory, 1 773 with one refusal. THAT SYMMETRY IS THE SCOPE RULING OF THIS ACT, STATED RATHER THAN ASSUMED — the ruling's target is the STANDING keys that rode on every Entity, and the per-instance `refusals[].clause` and `advisories[].basis` fields are left as the named precedent leaves its own `defects[].factual_basis` and `defects[].normative_basis`: they fire on 2 of 34 goldens rather than on all 34, and cutting them would depart from the precedent the ruling itself holds up as the scale to reach.",
+    "the_wire_shape": {
+      "what_this_is": "`Entity.attributes.security_metadata_basis` as `stanag4609._security_basis` emits it from 2026-09-04. Types are JSON types. `always` means the key is on every object this adapter writes; the rest state their condition.",
+      "keys": [
+        {
+          "key": "state",
+          "type": "string",
+          "present": "always",
+          "carries": "one token from the closed set below. THE MACHINE-COMPARABLE STATE TOKEN.",
+          "replaces": "basis.state, which was the token followed by an em dash and a sentence"
+        },
+        {
+          "key": "confidentiality_ruling",
+          "type": "string",
+          "present": "always",
+          "carries": "the standing ruling's NAME, 'CARRIED AND NEVER INVENTED', as a token a consumer compares by equality",
+          "replaces": "basis.confidentiality_ruling, which was the ruling argued in full"
+        },
+        {
+          "key": "carried_in",
+          "type": "string",
+          "present": "always",
+          "carries": "WHAT CARRIED THE SET: 'ST 0601 item 48, Security Local Set'. Unchanged — it was already a fact and not a paragraph"
+        },
+        {
+          "key": "carrier_clauses",
+          "type": "array of string",
+          "present": "always",
+          "carries": "the two ST 0601 clauses that put the set inside item 48 and make it the LOCAL set",
+          "replaces": "basis.carrier_basis, which was those clauses quoted"
+        },
+        {
+          "key": "element_layer",
+          "type": "string",
+          "present": "always",
+          "carries": "WHICH DOCUMENT'S ELEMENT LAYER DECODED IT, by name, SHA-256 and local path — `klv_security_codec.SOURCE_ST_0102_12`. Unchanged: it names a copy, which is a fact and a pointer, not an argument"
+        },
+        {
+          "key": "clauses",
+          "type": "array of string",
+          "present": "always",
+          "carries": "THE CLAUSE POINTERS THAT GOVERN THIS CASE, one list per state token — see `klv_security_codec.BASIS_CLAUSES`",
+          "replaces": "basis.absence, basis.partial_sets, basis.absence_clause_still_applies, basis.what_the_document_asks_of_a_consumer and basis.what_is_NOT_emitted, which were those clauses quoted and argued"
+        },
+        {
+          "key": "argument",
+          "type": "string",
+          "present": "always",
+          "carries": "ONE POINTER TO WHERE THE ARGUMENT LIVES IN THE TREE: 'fixtures/klv/spec/klv_pin.json → security_basis_ruling', which is this node. One pointer and not a list, because this node carries the onward pointers and the wire does not have to grow a directory"
+        },
+        {
+          "key": "required_present",
+          "type": "array of integer",
+          "present": "a set is present",
+          "carries": "the tags §6.7 marks Required that this set carried. Unchanged"
+        },
+        {
+          "key": "required_absent",
+          "type": "array of integer",
+          "present": "a set is present",
+          "carries": "the tags §6.7 marks Required that this set did not carry. Unchanged"
+        },
+        {
+          "key": "refusals",
+          "type": "array of object",
+          "present": "a set is present",
+          "carries": "one structured refusal per element this layer declined, `stanag4609._refusal_dict`'s twelve fields. Unchanged, on the scope ruling above"
+        },
+        {
+          "key": "advisories",
+          "type": "array of object",
+          "present": "a set is present",
+          "carries": "one structured advisory per clause recorded and not applied. Unchanged, on the scope ruling above"
+        },
+        {
+          "key": "unlisted_tags",
+          "type": "array of integer",
+          "present": "a set is present AND carried a tag §6.7 draws no row for",
+          "carries": "those tag numbers",
+          "replaces": "basis.unlisted_tags_basis, the paragraph that rode beside them"
+        }
+      ],
+      "the_closed_set_of_state_tokens": {
+        "what_this_is": "`state` is one of exactly these three and never anything else, because `_security_basis` distinguishes exactly three cases and has no default branch — which is the confidentiality ruling's own shape: what the packet stated, or that it stated nothing. Held in code at `klv_security_codec.BASIS_STATES` so a test can draw from the tuple rather than from a golden, which is the guard `grep -rn security_metadata_basis tests/` showed was missing.",
+        "tokens": [
+          {
+            "token": "UNLABELLED",
+            "when": "the packet carried no ST 0601 item 48",
+            "clauses": [
+              "MISB ST 0102.12 §6.5",
+              "MISB ST 0102.12 §6.3",
+              "MISB ST 0601.14a §8.48"
+            ],
+            "note": "unlabelled is NOT unclassified and is not a value of a field, so `attributes` carries no `security_metadata` key at all for this packet — not an empty one"
+          },
+          {
+            "token": "PARTIAL",
+            "when": "a set is present and does not carry every element §6.7 marks Required",
+            "clauses": [
+              "MISB ST 0102.12 §6.4",
+              "MISB ST 0102.12 §6.5",
+              "MISB ST 0102.12 §6.7"
+            ],
+            "note": "§6.4 makes such a set legitimate, so this token reports a shape and does not judge it"
+          },
+          {
+            "token": "COMPLETE-ON-REQUIRED",
+            "when": "a set is present and carries all six elements §6.7 marks Required",
+            "clauses": [
+              "MISB ST 0102.12 §6.7",
+              "MISB ST 0102.12 §6.4"
+            ],
+            "note": "'COMPLETE-ON-REQUIRED' and not 'COMPLETE': §6.4 declines to say which sets must be complete, so the token claims the Table 2 column and nothing beyond it"
+          }
+        ]
+      },
+      "the_pointer_form": {
+        "clause_pointer": "'<document> §<section>' — the document as the delegating profile names it and the section as the document numbers it, e.g. 'MISB ST 0102.12 §6.5', 'MISB ST 0601.14a §8.48'. A REQUIREMENT ID stands alone in the same list where the rule is stated as one, e.g. 'ST 0601.14-31'. No prose, no quotation, no explanation: a reader with the document open finds the sentence, and a reader without it finds the sentence in this node.",
+        "tree_pointer": "'<path from the package root> → <node path>' for a JSON record, e.g. 'fixtures/klv/spec/klv_pin.json → security_basis_ruling'; a bare path for a file. The arrow is the separator because a JSON-pointer syntax would suggest the file is addressable by one, and these nodes are read by a person.",
+        "copy_pointer": "'<document>, SHA-256 <digest>, <local path>' — `element_layer`'s form, and it is `klv_security_codec.SOURCE_ST_0102_12` verbatim. A module that cites sections without naming the copy is citing a memory; so is an object."
+      },
+      "no_keys_value_is_a_paragraph": "The rule this shape is checked against. Every value above is a token, an integer, a list of pointers, a list of integers, or a list of structured annotations. The longest string on the wire is `element_layer` at 122 bytes, and it is a document name, a digest and a path."
+    },
+    "relocated_from_the_wire": {
+      "what_this_is": "EVERY SENTENCE THIS RULING TOOK OFF THE WIRE, UNDER THE KEY IT WAS EMITTED AS. `emitted_as` is the JSON path a consumer would have read it at, rooted at the Entity. `still_in_code_at` names the module constant the text is generated from where there is one — those constants are unchanged and are simply no longer emitted.",
+      "carrier_basis": {
+        "emitted_as": "attributes.security_metadata_basis.carrier_basis",
+        "bytes_on_the_wire": 1079,
+        "still_in_code_at": "klv_security_codec.CARRIER_BASIS, reached through klv_uas_codec.NESTED_SET_BASIS",
+        "note": "Replaced on the wire by `carrier_clauses`: ['MISB ST 0601.14a §8.48', 'ST 0601.14-31'].",
+        "text": "ST 0601.14a §8.48 Tag 48 Security Local Set, Description 'MISB ST 0102 local let Security Metadata items' (the document's own typo for 'local set', preserved), Format 'KLV set', Length 'Variable', Max Length 'Not Limited', Required in LS? 'Optional'. Its two bullets: 'Use the MISB ST 0102 Local Set tags within the MISB ST 0601 item 48' and 'The length field is the size of all MISB ST 0102 metadata items to be packaged within item 48'. Its §8.48.1 Details: 'MISB ST 0102 [14] allows for the use of either Universal Set or Local Set methods. However, to minimize bandwidth when incorporating MISB ST 0102 into an instance of the UAS Datalink LS, the Local Set method is required.' And `ST 0601.14-31`: 'When incorporating the ST 0102 Security Metadata set into an instance of the UAS Datalink Local Set, the ST 0102 format shall use the Local Set format.' §8.48's Example KLV Item row prints Tag 30 (hex for 48), a Len of '-' and a Value of 'N/A' — SO THE DELEGATING DOCUMENT PRINTS NO WORKED EXAMPLE EITHER, and neither of the two documents behind this codec supplies one"
+      },
+      "confidentiality_ruling": {
+        "emitted_as": "attributes.security_metadata_basis.confidentiality_ruling",
+        "bytes_on_the_wire": 466,
+        "still_in_code_at": "stanag4609._security_basis's docstring, where the ruling is now argued rather than emitted",
+        "note": "THE RULING IS UNCHANGED IN EVERY TERM. Replaced on the wire by its own NAME, the token 'CARRIED AND NEVER INVENTED' at `klv_security_codec.CONFIDENTIALITY_RULING`. What moved is where the text lives, and nothing else.",
+        "text": "CARRIED AND NEVER INVENTED. Every value below is an octet the packet sent, decoded by a rule this repository can cite in a held document, or it is absent. No marking is defaulted, inferred from context, completed from a partial set, or converted to a nearest listed value. Where the CDM has no field for a security element it goes into Entity.attributes AS THE DOCUMENT NAMES IT — which is why the keys below are ST 0102.12's element names and not a CDM vocabulary"
+      },
+      "external_code_lists": {
+        "emitted_as": "attributes.security_metadata_basis.external_code_lists",
+        "bytes_on_the_wire": 958,
+        "still_in_code_at": "klv_security_codec.EXTERNAL_CODE_LISTS_NOT_HELD",
+        "note": "THE CODING-METHOD RULING IS UNCHANGED: a country code is carried as its Data Type cell says to carry it and is never validated against a list this repository does not hold. It is no longer restated on every object; it is here, at `tag_table_st_0102_12.the_external_code_lists_ruling`, and in FORMAT_COVERAGE.md's row set.",
+        "text": "GENC (NGA.STND.0033_3.0.1, ref [6]), the GEC register (ref [8]), ISO 3166-1 and -2:2013 (refs [15] [16]), STANAG 1059 Ed 8 (ref [17]) and IETF RFC 2781 (ref [26]) are the code lists and encodings ST 0102.12's country elements are written against. **NONE IS HELD BY THIS REPOSITORY.** THE RULING: this codec CARRIES a country code as the element's own Data Type cell says to carry it and DOES NOT VALIDATE it against a list it cannot read. A decoder that rejected '//XX' because no held file lists XX would be refusing a value on the authority of a document nobody here has opened; one that accepted it while claiming conformance would be worse. So the code is carried verbatim, the coding METHOD the packet declared is carried beside it, and what the code denotes is the consumer's lookup. This is a RULING and not an omission — the same shape as klv_codec's refusal to enforce X.690's 126-octet ceiling from an informative annex quoting an unheld standard"
+      },
+      "st_336_conformance": {
+        "emitted_as": "attributes.security_metadata_basis.st_336_conformance",
+        "bytes_on_the_wire": 723,
+        "still_in_code_at": "klv_security_codec.ST_336_CONFORMANCE",
+        "note": "Also at `tag_table_st_0102_12.st_336_conformance_and_KLV_11` and in ambiguity register entry KLV 11, which is where park 8's resolution is argued rather than cited.",
+        "text": "`ST 0102.12-65`: 'The Security Metadata Universal Set shall conform to SMPTE ST 336 KLV encoding rules.' `ST 0102.12-66`: 'The Security Metadata Local Set shall conform to SMPTE ST 336 [3] KLV encoding rules.' Reference [3] is 'SMPTE ST 336:2007', a DIFFERENT edition from the ST 336:2017 MISP-2019.1 pins — register entry KLV 11. **RESOLVED 2026-09-03, SHAPE (a), AND CITED HERE RATHER THAN RE-ARGUED:** both editions are held and were read against each other clause by clause, and the two differences that reach a key form, a length octet or a UL structure reach no octet a conforming stream can carry. So this module's use of `klv_codec` — which is written against ST 336:2017 and ST 0107.3 — satisfies -66 as well"
+      },
+      "repetition_rate": {
+        "emitted_as": "attributes.security_metadata_basis.repetition_rate",
+        "bytes_on_the_wire": 716,
+        "still_in_code_at": "klv_security_codec.REPETITION_RATE",
+        "note": "§6.2 binds a PRODUCER across packets and reaches no decode, which is why an object that cannot see thirty seconds no longer carries thirty seconds' worth of clause.",
+        "text": "§6.2 Security Metadata Repetition Rate. `ST 0102.10-49`: 'A Security Metadata set shall be repeated / updated whenever classification, special handling instructions, releasability, or other mandatory fields change value.' `ST 0102.10-50`: 'Security Metadata Sets shall be repeated no less than every thirty (30) seconds.' Followed by: 'Applications producing short Motion Imagery Data clips or segments of a few seconds in duration may need to repeat Security Metadata Sets as often as every frame.' BOTH ARE OBLIGATIONS ON A PRODUCER ACROSS PACKETS. This adapter states in its own docstring that no state crosses a packet boundary, so it neither checks nor enforces them and says so rather than implying compliance"
+      },
+      "state": {
+        "emitted_as": "attributes.security_metadata_basis.state",
+        "bytes_on_the_wire": 217,
+        "still_in_code_at": "klv_security_codec.BASIS_STATES for the tokens; the sentences are in `the_wire_shape.the_closed_set_of_state_tokens` above",
+        "note": "THE THREE VARIANTS, ONE PER LINE, EXACTLY AS EMITTED. Each was a token, an em dash and a sentence; the token is what stayed.",
+        "text": "COMPLETE-ON-REQUIRED — the set carries all six elements §6.7 marks Required\nPARTIAL — the set is present and does not carry every element §6.7 marks Required\nUNLABELLED — this packet carried no ST 0601 item 48"
+      },
+      "absence": {
+        "emitted_as": "attributes.security_metadata_basis.absence",
+        "bytes_on_the_wire": 849,
+        "still_in_code_at": "klv_security_codec.ABSENCE_OF_SETS",
+        "note": "§6.5 quoted. Replaced on the wire by the pointer 'MISB ST 0102.12 §6.5', which the UNLABELLED state always carries and the PARTIAL state carries too.",
+        "text": "§6.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet — not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one"
+      },
+      "what_is_NOT_emitted": {
+        "emitted_as": "attributes.security_metadata_basis.what_is_NOT_emitted",
+        "bytes_on_the_wire": 530,
+        "note": "Written inline in `_security_basis`. THE BEHAVIOUR IT DESCRIBES IS UNCHANGED and is now stated in that method's docstring and in `the_closed_set_of_state_tokens`'s UNLABELLED note: no classification, no country code, no coding method, no version, and NO `security_metadata` key at all — not an empty one. §6.3 is the contrast and is in `clauses`.",
+        "text": "no classification, no country code, no coding method, no version. NOT 'null meaning unclassified' and not an empty security_metadata object: attributes carries NO security_metadata key at all for this packet, because a key present with empty contents is a reader's invitation to treat emptiness as a value. §6.3 is the contrast that makes this precise — an unclassified packet is a MARKED packet whose Security Classification octet is 0x01, so 'unclassified' and 'unlabelled' are two different states and this is the second one"
+      },
+      "what_the_document_asks_of_a_consumer": {
+        "emitted_as": "attributes.security_metadata_basis.what_the_document_asks_of_a_consumer",
+        "bytes_on_the_wire": 371,
+        "note": "Written inline in `_security_basis`. §6.5's 'continual checks' sentence; the check is still performed per packet and its result is still exactly what `state` reports.",
+        "text": "§6.5: 'Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications.' This adapter performs that check per packet and reports its result; deciding what to do about an unlabelled packet is the consumer's, and it is a decision this object gives them the evidence to make rather than one made here"
+      },
+      "partial_sets": {
+        "emitted_as": "attributes.security_metadata_basis.partial_sets",
+        "bytes_on_the_wire": 709,
+        "still_in_code_at": "klv_security_codec.PARTIAL_SETS",
+        "note": "§6.4 quoted. Replaced on the wire by the pointer 'MISB ST 0102.12 §6.4', which both present-set states carry.",
+        "text": "§6.4 Partial Security Metadata Universal and Local Sets: 'For some operational situations or applications not all metadata elements in Section 6.1 may be required. The originator and his cognizant Security official are responsible to ensure all appropriate security entries are populated.' SO A SET MISSING A `Required` ELEMENT IS NOT MALFORMED. The Table 2 column reading Required states the element's status in a COMPLETE set, and §6.4 says which sets must be complete is decided outside this document by a person. A decoder that refused a partial set would be enforcing a rule ST 0102.12 explicitly declines to state — so a partial set decodes, and which elements arrived is reported rather than judged"
+      },
+      "absence_clause_still_applies": {
+        "emitted_as": "attributes.security_metadata_basis.absence_clause_still_applies",
+        "bytes_on_the_wire": 231,
+        "note": "Written inline in `_security_basis`. Its content is WHY 'MISB ST 0102.12 §6.5' is in the PARTIAL state's `clauses` list and not only the UNLABELLED one: §6.5 governs the ELEMENTS a present set does not carry as well as the sets a packet does not carry.",
+        "text": "§6.5 governs the ELEMENTS this set does not carry as well as the sets a packet does not carry: an absent Security Classification inside a present set is unlabelled and not unclassified, for the same reason and by the same sentence"
+      },
+      "element_refusal_policy": {
+        "emitted_as": "attributes.security_metadata_basis.element_refusal_policy",
+        "bytes_on_the_wire": 839,
+        "still_in_code_at": "klv_security_codec.ELEMENT_REFUSAL_POLICY",
+        "note": "THE POLICY IS UNCHANGED — the element is refused and the set is not. It no longer rides on every object; it is still reached PER INSTANCE, because the codec generates it into each entry of `refusals`, which is the precedent's own arrangement for a per-instance annotation.",
+        "text": "THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) §6.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) §6.5 makes the resulting gap unambiguous — an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry"
+      },
+      "unlisted_tags_basis": {
+        "emitted_as": "attributes.security_metadata_basis.unlisted_tags_basis",
+        "bytes_on_the_wire": 635,
+        "still_in_code_at": "klv_security_codec.ABSENT_TAGS_BASIS",
+        "note": "THE ONE ENTRY NOT LIFTED FROM A GOLDEN, because no fixture carries an ST 0102 tag outside Table 2 and so no golden ever held this key. Taken from the emitting expression instead. The incompleteness it records — four deleted keys named against seven absent tag numbers — is unchanged and is also at `tag_table_st_0102_12.the_absent_tags_15_to_21`.",
+        "text": "Table 2 carries no row between tag 14 and tag 22. ST 0102.12's Revision History states what this edition removed — 'Eliminated linking of security set to transport stream, elementary stream and individual metadata items' and 'Deleted keys: UMID, Stream ID, Transport Stream ID, Item Designator' — and Appendix A carries ST 0102.10-32 through -48 as the deprecated linking requirements naming those carriers. THE ACCOUNT IS INCOMPLETE AND IS RECORDED AS SUCH: four keys are named and seven tag numbers are absent, and the document never prints the tag number any deleted key occupied. MISB ST 0102.11 would settle it and is not held"
+      },
+      "label_basis": {
+        "emitted_as": "attributes.security_metadata.<element>.label_basis",
+        "bytes_on_the_wire": 890,
+        "still_in_code_at": "klv_security_codec.CONVERSION_BETWEEN_SET_FORMS",
+        "note": "Rode under EVERY labelled element — tags 1, 2 and 12 — as the same 890 bytes three times. Replaced by `label_clause`, the ONE §6.8 subsection that governs that element: §6.8.1, §6.8.2, §6.8.3. That is STRICTLY MORE than the paragraph carried, at 25 bytes.",
+        "text": "§6.8 Conversion of Security Metadata Elements between Universal and Local Sets: 'For bandwidth efficiency, some elements in the Local Set are formatted differently than the Universal Set equivalent. This section provides conversion information for the differing items.' §6.8.1 Security Classification, §6.8.2 Classifying Country and Releasing Instructions Country Code and §6.8.3 Object Country Coding Method each state the same pair: 'From Universal Set to Local Set: Convert string to corresponding unsigned integer. From Local Set to Universal Set: Convert unsigned integer to corresponding uppercase string.' THREE SUBSECTIONS FOR THREE ELEMENTS, and they are exactly tags 1, 2 and 12 — the three rows whose Local Set Data Type is uint8. That is where this module's labels come from, and it is why producing one is CARRYING a string the document states rather than naming a number"
+      },
+      "value_is_octets_not_text": {
+        "emitted_as": "attributes.security_metadata.object_country_codes.value_is_octets_not_text",
+        "bytes_on_the_wire": 536,
+        "still_in_code_at": "klv_security_codec.DECODING_RULES['carried_octets']",
+        "note": "TAG 13 ONLY. Replaced by `value_form`, that rule's own name — 'carried_octets' — which is the `kind` field of §6.7's row for tag 13. The reason the octets are carried rather than decoded is unchanged and is Act 2's subject: RFC 2781 is not held. NOTE ON THE SOURCE CONSTANT: `text` above is the 536 bytes as EMITTED at acb6295, lifted from a golden. The constant it was generated from has since gained the dated clause Act 2 of this round owed it — see `surface_round_2026_09_04` — so the constant is longer than this record's text, deliberately and in one direction only.",
+        "text": "TAG 13 ONLY. The Data Type cell reads `RFC 2781 [26] [27]`, reference [26] being 'IETF RFC 2781 UTF-16, and encoding of ISO 10646, Feb 2000'. **RFC 2781 IS NOT HELD BY THIS REPOSITORY**, so the octets are CARRIED VERBATIM and no string is produced: decoding UTF-16 requires a byte order, a byte order is what RFC 2781 states, and guessing one would be a rule read off a reference rather than off a document. This is the one element of the seventeen whose row is `not yet`, and the reason is an unheld document rather than unwritten code"
+      },
+      "_local_set_key_basis": {
+        "emitted_as": "attributes.security_metadata._local_set_key_basis",
+        "bytes_on_the_wire": 376,
+        "note": "Written inline in `_security_metadata`. Replaced by `_local_set_key_clauses`, the two clauses whose agreement is the ground: ['MISB ST 0102.12 §6.7', 'MISB ST 0601.14a §8.48']. The key and its CRC 40980 stay on the wire as the facts they always were, and the key is still recorded as the set's IDENTITY rather than as an octet a conforming item 48 carries.",
+        "text": "§6.7's registered key, stated here as the set's IDENTITY. It is NOT an octet this packet carried: inside ST 0601 item 48 the key is not on the wire, because §8.48 makes the item's own length 'the size of all MISB ST 0102 metadata items'. ST 0601.14a §8.48 prints the same sixteen octets and the same CRC 40980, which is the two-document agreement item 48's reading rests on"
+      }
+    },
+    "what_did_NOT_change": "STATED AS A LIST, BECAUSE A ROUND THAT CUTS 89% OF A KEY HAS TO SAY WHAT IT LEFT ALONE. (1) The standing confidentiality ruling, in every term. (2) EVERY DECODED VALUE: the structural diff run over all 34 goldens before and after — delete `security_metadata_basis` and the six relocated prose keys from both, compare the remainder — is byte-identical on all 34, so not one element value, octet string, offset, refusal fact or advisory fact moved. (3) The coding-method ruling: codes carried, never validated against lists this repository does not hold. (4) The element refusal policy and its four refusal classes. (5) Tag 13's status: `not yet`, on Act 2's finding. (6) The seventeen-element transcription and its four checks.",
+    "the_measurement": {
+      "method": "`security_metadata_basis` serialised as compact UTF-8 JSON — json.dumps(separators=(',',':'), ensure_ascii=False).encode() — which is the smallest honest figure for what rides on the wire. 36 occurrences across 34 goldens; `two_packets_one_payload_are_two_statements` carries two.",
+      "before_total_bytes": 229864,
+      "after_total_bytes": 25294,
+      "removed_bytes": 204570,
+      "removed_share": "89.0%",
+      "per_occurrence_average": "6 385.1 before, 702.6 after",
+      "the_absent_case": "6 146 before, 486 after. The precedent measures 299 in the same goldens by the same method, so the reshaped basis is 1.6x the precedent and no longer 21x.",
+      "goldens_on_disk": "1 111 888 bytes before, 871 610 after — 240 278 removed, the larger figure because the goldens are stored indented.",
+      "a_reading_that_did_not_reproduce": "RECORDED RATHER THAN SMOOTHED OVER. The round's brief gave the before-figures as an average of 6 490 and an absent case of 6 222. Six serialisations of the acb6295 goldens were tried — compact, default separators, indent=2 with and without ensure_ascii, the raw on-disk span, and the file-shrink delta — and the absent case reads 6 146, 6 167, 6 191, 6 246, 6 318 and 6 298 respectively, with averages from 6 385 to 6 999. NONE reproduces the stated pair, no measurement method is pinned anywhere in this tree, and every reading falls inside the brief's own stated band of '~6.2-6.5 KB'. Treated as a disagreement between rulers and not between trees, and the method above is fixed here so the next round has one to use."
+    },
+    "where_the_argument_lives_now": "THREE PLACES, AND THE WIRE POINTS AT ONE OF THEM. (1) This node, for every sentence that left the wire, under the key it was emitted as. (2) `tag_table_st_0102_12` in this file, for the table, the rules around it and the four transcription checks. (3) FORMAT_COVERAGE.md's *The ST 0102.12 Security Metadata Local Set — the row set nested under item 48*, for the row set itself and the rulings a reader meets before the rows. `security_metadata_basis.argument` names (1), and (1) names (2) and (3)."
+  },
+  "surface_round_2026_09_04": {
+    "what_this_is": "THE SURFACE ROUND OF 2026-09-04, ACT 2, AND IT STOPPED AT ITS OWN STOP RULE. The round was sent to acquire IETF RFC 2781, pin it as this repository pins documents, read the byte-order rule off it and move ST 0102.12's tag 13 row off `not yet`. THE DOCUMENT IS FREE, REACHABLE AND WAS READ. IT IS NOT PINNED. The blocker is not the RFC Editor and is not the document: the RFC Editor offers no PDF for RFC 2781, and every pin gate in this repository is PDF-shaped. Act 1 is unaffected — the two acts were separable by the round's own terms.",
+    "act_1_is_not_affected_by_this": "STATED FIRST, BECAUSE A STOP IN ONE ACT READS LIKE A STOP IN THE ROUND. Act 1 — the basis brought to the precedent's scale — is complete, its structural diff is clean on all 34 goldens, and its record is at `security_basis_ruling`. This node records only what Act 2 found before it stopped.",
+    "the_info_page": {
+      "url": "https://www.rfc-editor.org/info/rfc2781",
+      "readings": "GET at 2026-09-04T10:01:12Z answered 302 with `location: /info/rfc2781/`. GET following the redirect, begun 2026-09-04T10:01:19Z, answered 200, `text/html;charset=utf-8`, 177 626 bytes, one redirect. Served through Cloudflare; no `content-length` on the 200.",
+      "the_formats_it_names": "READ OFF THE PAGE AND NOT GUESSED, which was the round's instruction. The `Details` block reads: `Date published February 2000`, `Authors P. Hoffman, F. Yergeau`, `DOI https://doi.org/10.17487/RFC2781`, **`Formats TXT, HTML.`**, `Cite this RFC TXT, XML, BibTeX`. The anchor hrefs are `/rfc/rfc2781.txt` and `/rfc/rfc2781.html`. **THERE IS NO PDF**: the case-insensitive string `pdf` does not occur anywhere in the 177 626 bytes of the page.",
+      "obsoleted_or_updated": "THE PAGE STATES NEITHER. Its `Details` block carries no `Obsoleted by` and no `Updated by` row, and no `Obsoletes`/`Updates` row. RFC 2781 is Informational, Network Working Group, February 2000, and RFCs are not revised — a successor would be a different number.",
+      "errata": "ZERO. `https://errata.rfc-editor.org/search/?rfc_number=2781` answered 200 and its result table reads 'No matching errata found.'"
+    },
+    "the_routes_each_with_its_reading": [
+      {
+        "route": "https://www.rfc-editor.org/rfc/rfc2781.txt",
+        "read_off": "the info page's Formats block, anchor href",
+        "head_at": "2026-09-04T10:02:42Z",
+        "head_status": "200",
+        "head_content_type": "text/plain;charset=utf-8",
+        "head_content_length": "NOT SERVED — Cloudflare answers the HEAD without one, which is why the byte count below is the received length and not a declared one. The other headers: etag W/'2b00b2e2d3d7b425fe0ed647cd201dbd', cache-control 'public, max-age=86400', link '<https://www.rfc-editor.org/info/rfc2781/>; rel=canonical', cf-r2-served 1.",
+        "get_at": "2026-09-04T10:02:53Z",
+        "get_status": "200",
+        "bytes": 29870,
+        "sha256": "e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502",
+        "what_this_reading_is": "A SECOND READING OF THE SAME DOCUMENT'S TEXT AND NOT A PIN, which is the round's own instruction for this route. The file is in a scratch directory outside this tree; it is not committed, not under `fixtures/klv/spec/`, and `gates/pin_paths.py` still counts 23.",
+        "title_lines_verbatim": "'Network Working Group / P. Hoffman', 'Request for Comments: 2781 / Internet Mail Consortium', 'Category: Informational / F. Yergeau', 'Alis Technologies', 'February 2000', 'UTF-16, an encoding of ISO 10646'. Recorded as the identity a pin would have carried."
+      },
+      {
+        "route": "https://www.rfc-editor.org/rfc/rfc2781.html",
+        "read_off": "the info page's Formats block, anchor href",
+        "head_at": "2026-09-04T10:02:17Z",
+        "head_status": "200",
+        "head_content_type": "text/html",
+        "what_this_reading_is": "Probed for completeness. Not fetched: an HTML rendering is no more pinnable under the PDF-shaped gates than the text is."
+      },
+      {
+        "route": "https://www.rfc-editor.org/rfc/pdfrfc/rfc2781.txt.pdf",
+        "read_off": "NOT read off the page — this is the route the round named as an EXPECTATION TO VERIFY, and verifying it is what refuted it",
+        "head_at": "2026-09-04T10:02:42Z",
+        "head_status": "404",
+        "head_content_type": "text/plain;charset=utf-8"
+      },
+      {
+        "route": "https://www.rfc-editor.org/rfc/rfc2781.pdf",
+        "read_off": "not read off the page; probed as the other plausible PDF shape so the negative is about the DOCUMENT and not about one guessed path",
+        "head_at": "2026-09-04T10:02:18Z",
+        "head_status": "404"
+      }
+    ],
+    "why_the_act_stopped_and_it_is_this_repositorys_shape": "THE STOP RULE THE ROUND CARRIED: 'If the info page offers no PDF -> STOP THIS ACT ONLY (the pin gates are PDF-shaped; pinning a text-only document needs a schema ruling), record what was found, and leave tag 13 not yet with the route recorded.' The info page offers no PDF, so the clause fires on its first term and the two-hour re-probe rule — which governs a non-200 on a route that EXISTS — is never reached. **THE GATES THE RULE MEANS, NAMED**: `gates/pin_paths.py` resolves every `local_path` + `sha256` pair under `fixtures/*/spec/`; `.gitignore` excludes `*.pdf`, so a `.txt` under `fixtures/klv/spec/` would be COMMITTED, which is a redistribution question this round was not sent to answer; `page_count_method` in this file rules how a page count is produced and a text file has none; and all fourteen `delegated_specifications_held` nodes carry `pages`, so a fifteenth without it changes the node schema. **Any one of those is a ruling; four of them together are a round.**",
+    "what_the_stop_costs_and_what_it_does_not": "COSTS: tag 13 stays `not yet`, the row set stays SIXTEEN OF SEVENTEEN, `-24` and `-25` stay unapplied, and the byte-order rule is not read into the codec — deliberately, because reading a rule off a copy this repository has not pinned is the exact move the tag 13 note refuses in the first place, and doing it from an unpinned copy would be worse than doing it from a reference. DOES NOT COST: no park moves (tag 13 is a ROW and not a park), no tally moves, `delegated_specifications_held` is unchanged at FOURTEEN pins and the delegation count is unchanged at fourteen in scope, `FILE_SERIES` gains no `2781`, and `gates/pin_paths.py` reads 23 copies exactly as it did at acb6295.",
+    "what_the_next_round_inherits_and_it_is_smaller_than_what_this_one_was_given": "THE BLOCKER NARROWED FROM AN ACQUISITION TO A SCHEMA RULING, AND THAT IS THE FINDING. The tag 13 note and the row both said the reason was 'an unheld document', which reads as 'unobtained'. It is not: RFC 2781 is free, stable, served by the RFC Editor over a route that answered 200 on the first ask, carries zero errata and is neither obsoleted nor updated. What a future round needs is a decision — may `delegated_specifications_held` hold a node with no `pages`, and may a text artefact be committed where a PDF may not — and once that is ruled the acquisition is one GET. The digest above is what such a round should expect to reproduce. **Both the tag 13 row in FORMAT_COVERAGE.md and `klv_security_codec.DECODING_RULES['carried_octets']` were amended on 2026-09-04 to say this in their own words**, which is the dated close the TAG 13 ONLY note was owed.",
+    "what_this_act_did_NOT_do": [
+      "Did not pin RFC 2781, or commit any byte of it.",
+      "Did not read the byte-order rule into `klv_security_codec`, and did not quote RFC 2781's BOM clause anywhere in this tree — a rule read off an unpinned copy is the defect tag 13's own note exists to refuse.",
+      "Did not read ST 0102.12 §6.1.13 for a byte-order or BOM statement. That reading is the SECOND half of a composition whose first half cannot be held, and running it would produce a half-rule with nowhere to land. It is the next round's first step and is named here as such.",
+      "Did not move tag 13, did not touch the row set's 'sixteen of seventeen' statements, and did not apply `-24` or `-25`.",
+      "Did not add a fixture. The five the round specified — a BOM-marked value, an unmarked value under the no-BOM rule, a multi-code value split per `-24`, an odd octet count, and the existing hex-carrying fixture — all take their expected values from RFC 2781 clauses, so writing them without the pinned document would be writing a fixture from a reading of a reference."
+    ]
+  },
   "framing_ruling_st_0601_14": {
     "what_this_is": "THE FRAMING RULING, 2026-08-26. Parks 4 and 8 own how a key, a tag and a length are written, and this round asked the pinned copy of ST 0601.14 whether it states those rules itself. It states two of the three and delegates the third, so this node records each rule as ESTABLISHED with its section, or as UNDERIVABLE with the sentence that delegates it - and parks 4 and 8 both STAY OPEN. Nothing here flips a tag_table_st_0601_14 row: all 141 remain 'not yet', because a framing layer says where an item begins and never what it means.",
     "the_document_rule_this_round_worked_under": "Where ST 0601.14a's own text and worked examples state a rule completely enough to implement and test against, the rule is recorded as established from the pinned copy with its sections cited. Where a rule exists only by reference to SMPTE ST 336 or MISB ST 0107, it is NOT reconstructed from memory or from third-party sources: it is named as underivable and the park's closure stops there. Partial closure was a permitted outcome and partial closure is what happened - and 'partial' here means the tag half of the framing, not a fraction of a park.",

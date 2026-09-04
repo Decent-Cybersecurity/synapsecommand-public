@@ -48,6 +48,7 @@ import synapse_cdm
 from synapse_cdm import lossless, times
 from synapse_cdm.adapters import klv_codec as framing
 from synapse_cdm.adapters import klv_uas_codec as uas
+from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters.stanag4609 import (
     EPOCH,
     OBSERVATION_SYSTEM,
@@ -700,3 +701,192 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
 
 def test_the_epoch_constant_is_the_one_the_document_states():
     assert EPOCH == dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
+
+
+# ---------------------------------------------------------------- the security basis's SHAPE
+
+#: Every key `_security_basis` may emit, and the condition each one is emitted under. Written out
+#: rather than derived from the method, because a test that derives its expectation from the code
+#: it checks asserts that the code equals itself. `grep -rn security_metadata_basis tests/`
+#: returned NOTHING before the surface round of 2026-09-04 — the goldens were the only guard, and
+#: a golden guards a VALUE while this guards a SHAPE, which is what the reshaping needed.
+_BASIS_ALWAYS = {
+    "state",
+    "confidentiality_ruling",
+    "carried_in",
+    "carrier_clauses",
+    "element_layer",
+    "clauses",
+    "argument",
+}
+_BASIS_WHEN_A_SET_IS_PRESENT = {
+    "required_present",
+    "required_absent",
+    "refusals",
+    "advisories",
+}
+#: Emitted only where the set carried a tag §6.7 draws no row for. No fixture trips it, which is
+#: why it is OPTIONAL here and why the record notes that no golden ever held its predecessor.
+_BASIS_OPTIONAL = {"unlisted_tags"}
+
+
+def _every_basis_emitted():
+    """One `security_metadata_basis` per Entity across every golden, with its file for the message."""
+    seen = []
+    for path in sorted(GOLDEN.glob("*.cdm.json")):
+        for obj in json.loads(path.read_text()):
+            attributes = obj.get("attributes") or {}
+            if "security_metadata_basis" in attributes:
+                seen.append((path.name, attributes))
+    return seen
+
+
+def test_the_basis_state_is_drawn_from_the_closed_set():
+    """The token compares by EQUALITY against `klv_security_codec.BASIS_STATES` and nothing else.
+
+    `_security_basis` distinguishes exactly three cases and has no default branch, which is the
+    confidentiality ruling's own shape — what the packet stated, or that it stated nothing. This
+    asserts the emitted token is one of the three the codec declares, so a fourth state cannot
+    arrive by a golden being regenerated.
+    """
+    emitted = _every_basis_emitted()
+    assert emitted, "no golden carries a security_metadata_basis; the fixtures moved"
+    assert set(security.BASIS_STATES) == {"UNLABELLED", "PARTIAL", "COMPLETE-ON-REQUIRED"}, (
+        "the closed set itself moved. A token is a wire contract: renaming one is a change to "
+        "what a consumer compares against, not a refactor"
+    )
+    for name, attributes in emitted:
+        state = attributes["security_metadata_basis"]["state"]
+        assert state in security.BASIS_STATES, (
+            f"{name} emits state {state!r}, which is not one of "
+            f"{list(security.BASIS_STATES)}"
+        )
+
+
+def test_the_basis_carries_the_state_its_own_object_earns():
+    """UNLABELLED exactly where no `security_metadata` key is emitted, and the converse."""
+    for name, attributes in _every_basis_emitted():
+        basis = attributes["security_metadata_basis"]
+        unlabelled = basis["state"] == security.STATE_UNLABELLED
+        assert unlabelled == ("security_metadata" not in attributes), (
+            f"{name}: state is {basis['state']!r} and security_metadata is "
+            f"{'absent' if 'security_metadata' not in attributes else 'present'}. §6.5 makes an "
+            "absent set UNLABELLED and unlabelled is not a value, so the two have to agree — an "
+            "empty or defaulted marking beside an UNLABELLED token is the failure this whole "
+            "row set exists to prevent"
+        )
+
+
+def test_the_basis_emits_exactly_the_keys_its_case_allows():
+    """The key SET, per case. A key added to the wire without a ruling fails here."""
+    for name, attributes in _every_basis_emitted():
+        basis = attributes["security_metadata_basis"]
+        keys = set(basis)
+        expected = set(_BASIS_ALWAYS)
+        if basis["state"] != security.STATE_UNLABELLED:
+            expected |= _BASIS_WHEN_A_SET_IS_PRESENT
+        assert expected <= keys, f"{name} is missing {sorted(expected - keys)}"
+        assert keys <= expected | _BASIS_OPTIONAL, (
+            f"{name} emits {sorted(keys - expected - _BASIS_OPTIONAL)}, which no ruling put "
+            "there. THE WIRE CARRIES FACTS AND POINTERS — a new key needs a ruling and a row in "
+            "klv_pin.json's security_basis_ruling.the_wire_shape before it needs a golden"
+        )
+        if basis["state"] == security.STATE_UNLABELLED:
+            assert not (keys & _BASIS_WHEN_A_SET_IS_PRESENT), (
+                f"{name} is UNLABELLED and carries {sorted(keys & _BASIS_WHEN_A_SET_IS_PRESENT)}. "
+                "There is no set to report elements of"
+            )
+
+
+def test_no_basis_key_carries_a_paragraph():
+    """RULING 1's own bound, mechanized: the wire carries facts and pointers.
+
+    The threshold is 160 bytes and the reason it is not tighter is `element_layer`, which names a
+    document, its SHA-256 and its local path in 122 — a copy pointer, and the longest legitimate
+    string on the wire. The per-instance `refusals` and `advisories` entries are exempt for the
+    reason `klv_pin.json`'s `security_basis_ruling.the_precedent_and_its_measured_scale` states:
+    the named precedent, `length_divergence_policy`, carries prose in exactly those positions.
+    """
+    for name, attributes in _every_basis_emitted():
+        for key, value in attributes["security_metadata_basis"].items():
+            if key in ("refusals", "advisories"):
+                continue
+            for text in ([value] if isinstance(value, str) else
+                         [v for v in value if isinstance(v, str)] if isinstance(value, list)
+                         else []):
+                assert len(text.encode()) <= 160, (
+                    f"{name}: security_metadata_basis.{key} carries {len(text.encode())} bytes. "
+                    "That is a paragraph, and a paragraph belongs in klv_pin.json's "
+                    "security_basis_ruling with the key it was emitted under named"
+                )
+
+
+def test_the_basis_clause_pointers_are_the_codecs_own():
+    """`clauses` is the codec's list for that state, verbatim — not a golden's transcription."""
+    for name, attributes in _every_basis_emitted():
+        basis = attributes["security_metadata_basis"]
+        assert basis["clauses"] == list(security.BASIS_CLAUSES[basis["state"]]), (
+            f"{name}: the clause pointers on the wire are not "
+            f"klv_security_codec.BASIS_CLAUSES[{basis['state']!r}]"
+        )
+        assert basis["confidentiality_ruling"] == security.CONFIDENTIALITY_RULING
+        assert basis["argument"] == security.BASIS_ARGUMENT_POINTER
+        assert basis["carrier_clauses"] == list(security.CARRIER_CLAUSES)
+
+
+def test_the_record_names_every_key_the_wire_stopped_carrying():
+    """RULING 1 RELOCATES; IT DOES NOT DELETE — and this is that rule as an assertion.
+
+    Reads the pin's `security_basis_ruling.relocated_from_the_wire` and requires an entry for
+    every prose key the park 2 round emitted. A future round that drops another key from the wire
+    without landing it in the record fails here rather than in a reader's memory.
+    """
+    pin = json.loads((FIXTURES / "spec" / "klv_pin.json").read_text())
+    node = pin["security_basis_ruling"]
+    relocated = node["relocated_from_the_wire"]
+    for key in (
+        "carrier_basis", "confidentiality_ruling", "external_code_lists", "st_336_conformance",
+        "repetition_rate", "state", "absence", "what_is_NOT_emitted",
+        "what_the_document_asks_of_a_consumer", "partial_sets", "absence_clause_still_applies",
+        "element_refusal_policy", "unlisted_tags_basis", "label_basis",
+        "value_is_octets_not_text", "_local_set_key_basis",
+    ):
+        assert key in relocated, f"{key} left the wire and did not land in the record"
+        entry = relocated[key]
+        assert entry["emitted_as"].startswith("attributes."), key
+        assert entry["text"].strip(), f"{key} is recorded with no text"
+        assert entry["bytes_on_the_wire"] == len(entry["text"].encode()), (
+            f"{key}'s recorded byte count is not its own text's length"
+        )
+    declared = {row["key"] for row in node["the_wire_shape"]["keys"]}
+    assert declared == _BASIS_ALWAYS | _BASIS_WHEN_A_SET_IS_PRESENT | _BASIS_OPTIONAL, (
+        "the pin's declared wire shape and this module's expectation disagree about the key set"
+    )
+    assert [row["token"] for row in
+            node["the_wire_shape"]["the_closed_set_of_state_tokens"]["tokens"]] == \
+        list(security.BASIS_STATES), "the pin's token list is not the codec's closed set"
+
+
+def test_the_element_values_carry_pointers_and_not_prose():
+    """`security_metadata` keeps the decoded VALUES and the prose that rode beside them is gone."""
+    for path in sorted(GOLDEN.glob("*.cdm.json")):
+        for obj in json.loads(path.read_text()):
+            metadata = (obj.get("attributes") or {}).get("security_metadata")
+            if metadata is None:
+                continue
+            assert "_local_set_key_basis" not in metadata, path.name
+            assert metadata["_local_set_key_clauses"] == list(security.LOCAL_SET_KEY_CLAUSES)
+            assert metadata["_local_set_key_crc"] == security.LOCAL_SET_KEY_CRC
+            for key, element in metadata.items():
+                if not isinstance(element, dict):
+                    continue
+                assert "label_basis" not in element, f"{path.name}: {key}"
+                assert "value_is_octets_not_text" not in element, f"{path.name}: {key}"
+                if "label" in element:
+                    assert element["label_clause"] == security.LABEL_CLAUSES[element["tag"]], (
+                        f"{path.name}: {key} carries a label under the wrong §6.8 subsection"
+                    )
+                if element["tag"] == 13:
+                    assert element["value_form"] == "carried_octets", (
+                        f"{path.name}: tag 13's value form is not the one §6.7's row states"
+                    )

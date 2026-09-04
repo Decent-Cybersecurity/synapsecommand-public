@@ -99,7 +99,10 @@
           22
         ],
         "_local_set_key": "060e2b34020301010e01030302000000",
-        "_local_set_key_basis": "\u00a76.7's registered key, stated here as the set's IDENTITY. It is NOT an octet this packet carried: inside ST 0601 item 48 the key is not on the wire, because \u00a78.48 makes the item's own length 'the size of all MISB ST 0102 metadata items'. ST 0601.14a \u00a78.48 prints the same sixteen octets and the same CRC 40980, which is the two-document agreement item 48's reading rests on",
+        "_local_set_key_clauses": [
+          "MISB ST 0102.12 \u00a76.7",
+          "MISB ST 0601.14a \u00a78.48"
+        ],
         "_local_set_key_crc": 40980,
         "classifying_country": {
           "length_octets": 4,
@@ -111,7 +114,7 @@
         },
         "classifying_country_and_releasing_instructions_country_coding_method": {
           "label": "ISO-3166 Two Letter",
-          "label_basis": "\u00a76.8 Conversion of Security Metadata Elements between Universal and Local Sets: 'For bandwidth efficiency, some elements in the Local Set are formatted differently than the Universal Set equivalent. This section provides conversion information for the differing items.' \u00a76.8.1 Security Classification, \u00a76.8.2 Classifying Country and Releasing Instructions Country Code and \u00a76.8.3 Object Country Coding Method each state the same pair: 'From Universal Set to Local Set: Convert string to corresponding unsigned integer. From Local Set to Universal Set: Convert unsigned integer to corresponding uppercase string.' THREE SUBSECTIONS FOR THREE ELEMENTS, and they are exactly tags 1, 2 and 12 \u2014 the three rows whose Local Set Data Type is uint8. That is where this module's labels come from, and it is why producing one is CARRYING a string the document states rather than naming a number",
+          "label_clause": "MISB ST 0102.12 \u00a76.8.2",
           "length_octets": 1,
           "octets": "01",
           "presence": "Required",
@@ -126,11 +129,11 @@
           "section": "ST 0102.12 \u00a76.1.13",
           "tag": 13,
           "value": "00470042",
-          "value_is_octets_not_text": "TAG 13 ONLY. The Data Type cell reads `RFC 2781 [26] [27]`, reference [26] being 'IETF RFC 2781 UTF-16, and encoding of ISO 10646, Feb 2000'. **RFC 2781 IS NOT HELD BY THIS REPOSITORY**, so the octets are CARRIED VERBATIM and no string is produced: decoding UTF-16 requires a byte order, a byte order is what RFC 2781 states, and guessing one would be a rule read off a reference rather than off a document. This is the one element of the seventeen whose row is `not yet`, and the reason is an unheld document rather than unwritten code"
+          "value_form": "carried_octets"
         },
         "object_country_coding_method": {
           "label": "ISO-3166 Two Letter",
-          "label_basis": "\u00a76.8 Conversion of Security Metadata Elements between Universal and Local Sets: 'For bandwidth efficiency, some elements in the Local Set are formatted differently than the Universal Set equivalent. This section provides conversion information for the differing items.' \u00a76.8.1 Security Classification, \u00a76.8.2 Classifying Country and Releasing Instructions Country Code and \u00a76.8.3 Object Country Coding Method each state the same pair: 'From Universal Set to Local Set: Convert string to corresponding unsigned integer. From Local Set to Universal Set: Convert unsigned integer to corresponding uppercase string.' THREE SUBSECTIONS FOR THREE ELEMENTS, and they are exactly tags 1, 2 and 12 \u2014 the three rows whose Local Set Data Type is uint8. That is where this module's labels come from, and it is why producing one is CARRYING a string the document states rather than naming a number",
+          "label_clause": "MISB ST 0102.12 \u00a76.8.3",
           "length_octets": 1,
           "octets": "01",
           "presence": "Required",
@@ -148,15 +151,20 @@
         }
       },
       "security_metadata_basis": {
-        "absence_clause_still_applies": "\u00a76.5 governs the ELEMENTS this set does not carry as well as the sets a packet does not carry: an absent Security Classification inside a present set is unlabelled and not unclassified, for the same reason and by the same sentence",
         "advisories": [],
+        "argument": "fixtures/klv/spec/klv_pin.json \u2192 security_basis_ruling",
         "carried_in": "ST 0601 item 48, Security Local Set",
-        "carrier_basis": "ST 0601.14a \u00a78.48 Tag 48 Security Local Set, Description 'MISB ST 0102 local let Security Metadata items' (the document's own typo for 'local set', preserved), Format 'KLV set', Length 'Variable', Max Length 'Not Limited', Required in LS? 'Optional'. Its two bullets: 'Use the MISB ST 0102 Local Set tags within the MISB ST 0601 item 48' and 'The length field is the size of all MISB ST 0102 metadata items to be packaged within item 48'. Its \u00a78.48.1 Details: 'MISB ST 0102 [14] allows for the use of either Universal Set or Local Set methods. However, to minimize bandwidth when incorporating MISB ST 0102 into an instance of the UAS Datalink LS, the Local Set method is required.' And `ST 0601.14-31`: 'When incorporating the ST 0102 Security Metadata set into an instance of the UAS Datalink Local Set, the ST 0102 format shall use the Local Set format.' \u00a78.48's Example KLV Item row prints Tag 30 (hex for 48), a Len of '-' and a Value of 'N/A' \u2014 SO THE DELEGATING DOCUMENT PRINTS NO WORKED EXAMPLE EITHER, and neither of the two documents behind this codec supplies one",
-        "confidentiality_ruling": "CARRIED AND NEVER INVENTED. Every value below is an octet the packet sent, decoded by a rule this repository can cite in a held document, or it is absent. No marking is defaulted, inferred from context, completed from a partial set, or converted to a nearest listed value. Where the CDM has no field for a security element it goes into Entity.attributes AS THE DOCUMENT NAMES IT \u2014 which is why the keys below are ST 0102.12's element names and not a CDM vocabulary",
+        "carrier_clauses": [
+          "MISB ST 0601.14a \u00a78.48",
+          "ST 0601.14-31"
+        ],
+        "clauses": [
+          "MISB ST 0102.12 \u00a76.4",
+          "MISB ST 0102.12 \u00a76.5",
+          "MISB ST 0102.12 \u00a76.7"
+        ],
+        "confidentiality_ruling": "CARRIED AND NEVER INVENTED",
         "element_layer": "MISB ST 0102.12, SHA-256 20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267, fixtures/klv/spec/ST0102.12.pdf",
-        "element_refusal_policy": "THE ELEMENT IS REFUSED AND THE SET IS NOT. A refused element yields no value, its octets are parked verbatim, and a structured refusal names the clause it failed. The other elements decode. THREE GROUNDS, and the third is this document's own: (1) the ST 0601 length policy already rules that discarding well-formed items over one malformed one destroys the evidence a consumer needs; (2) \u00a76.4 makes a set missing elements a legitimate set, so a set that loses one to a refusal is a shape the document already contemplates; (3) \u00a76.5 makes the resulting gap unambiguous \u2014 an absent classification does not read as UNCLASSIFIED, so dropping a malformed Security Classification cannot be mistaken for a claim about the data. WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value the packet did not carry",
-        "external_code_lists": "GENC (NGA.STND.0033_3.0.1, ref [6]), the GEC register (ref [8]), ISO 3166-1 and -2:2013 (refs [15] [16]), STANAG 1059 Ed 8 (ref [17]) and IETF RFC 2781 (ref [26]) are the code lists and encodings ST 0102.12's country elements are written against. **NONE IS HELD BY THIS REPOSITORY.** THE RULING: this codec CARRIES a country code as the element's own Data Type cell says to carry it and DOES NOT VALIDATE it against a list it cannot read. A decoder that rejected '//XX' because no held file lists XX would be refusing a value on the authority of a document nobody here has opened; one that accepted it while claiming conformance would be worse. So the code is carried verbatim, the coding METHOD the packet declared is carried beside it, and what the code denotes is the consumer's lookup. This is a RULING and not an omission \u2014 the same shape as klv_codec's refusal to enforce X.690's 126-octet ceiling from an informative annex quoting an unheld standard",
-        "partial_sets": "\u00a76.4 Partial Security Metadata Universal and Local Sets: 'For some operational situations or applications not all metadata elements in Section 6.1 may be required. The originator and his cognizant Security official are responsible to ensure all appropriate security entries are populated.' SO A SET MISSING A `Required` ELEMENT IS NOT MALFORMED. The Table 2 column reading Required states the element's status in a COMPLETE set, and \u00a76.4 says which sets must be complete is decided outside this document by a person. A decoder that refused a partial set would be enforcing a rule ST 0102.12 explicitly declines to state \u2014 so a partial set decodes, and which elements arrived is reported rather than judged",
         "refusals": [
           {
             "class": "format_cannot_carry_the_octets",
@@ -172,7 +180,6 @@
             "value_offset": 31
           }
         ],
-        "repetition_rate": "\u00a76.2 Security Metadata Repetition Rate. `ST 0102.10-49`: 'A Security Metadata set shall be repeated / updated whenever classification, special handling instructions, releasability, or other mandatory fields change value.' `ST 0102.10-50`: 'Security Metadata Sets shall be repeated no less than every thirty (30) seconds.' Followed by: 'Applications producing short Motion Imagery Data clips or segments of a few seconds in duration may need to repeat Security Metadata Sets as often as every frame.' BOTH ARE OBLIGATIONS ON A PRODUCER ACROSS PACKETS. This adapter states in its own docstring that no state crosses a packet boundary, so it neither checks nor enforces them and says so rather than implying compliance",
         "required_absent": [
           1
         ],
@@ -183,8 +190,7 @@
           13,
           22
         ],
-        "st_336_conformance": "`ST 0102.12-65`: 'The Security Metadata Universal Set shall conform to SMPTE ST 336 KLV encoding rules.' `ST 0102.12-66`: 'The Security Metadata Local Set shall conform to SMPTE ST 336 [3] KLV encoding rules.' Reference [3] is 'SMPTE ST 336:2007', a DIFFERENT edition from the ST 336:2017 MISP-2019.1 pins \u2014 register entry KLV 11. **RESOLVED 2026-09-03, SHAPE (a), AND CITED HERE RATHER THAN RE-ARGUED:** both editions are held and were read against each other clause by clause, and the two differences that reach a key form, a length octet or a UL structure reach no octet a conforming stream can carry. So this module's use of `klv_codec` \u2014 which is written against ST 336:2017 and ST 0107.3 \u2014 satisfies -66 as well",
-        "state": "PARTIAL \u2014 the set is present and does not carry every element \u00a76.7 marks Required"
+        "state": "PARTIAL"
       },
       "source_extras": {
         "advisories": [],

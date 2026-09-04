@@ -837,8 +837,9 @@ ADAPTER_FIXTURES: tuple[dict, ...] = (
             "Security Metadata does not signify Motion Imagery Data as Unclassified', so what "
             "must happen is that the object carries NO `security_metadata` key at all — not an "
             "empty one, not a null classification — and carries "
-            "`security_metadata_basis.state` reading UNLABELLED with §6.5's own sentence beside "
-            "it. What must NOT happen is any of the three ways a decoder can quietly say "
+            "`security_metadata_basis.state` reading UNLABELLED with §6.5 CITED beside it in "
+            "`clauses` — the surface round of 2026-09-04 moved the sentence itself into the "
+            "record and left the pointer on the wire. What must NOT happen is any of the three ways a decoder can quietly say "
             "unclassified: a default value, an empty object a reader can take for an empty "
             "marking, or silence. Item 48 is `Optional` in ST 0601.14a §8.48, so this packet is "
             "fully conformant and the absence is not a defect"),

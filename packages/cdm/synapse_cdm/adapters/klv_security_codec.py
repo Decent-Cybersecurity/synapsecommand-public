@@ -187,7 +187,18 @@ DECODING_RULES = {
         "UTF-16 requires a byte order, a byte order is what RFC 2781 states, and guessing one "
         "would be a rule read off a reference rather than off a document. This is the one element "
         "of the seventeen whose row is `not yet`, and the reason is an unheld document rather "
-        "than unwritten code"),
+        "than unwritten code. **PROBED 2026-09-04 AND THE ROW DID NOT MOVE, BUT THE REASON "
+        "NARROWED, AND THIS DATED CLAUSE IS THE CLOSE THIS NOTE WAS OWED.** The RFC Editor serves "
+        "RFC 2781 free at https://www.rfc-editor.org/info/rfc2781, which answered 200 and names "
+        "exactly two formats, TXT and HTML. THERE IS NO PDF ROUTE — the expected "
+        "/rfc/pdfrfc/rfc2781.txt.pdf is 404 — and every pin gate in this repository is PDF-shaped, "
+        "from gates/pin_paths.py to the `pages` field on all fourteen held nodes, so pinning a "
+        "text-only document needs a schema ruling that has not been made. The text was READ and "
+        "hashed rather than pinned: 29 870 bytes, SHA-256 "
+        "e3fed703a962e1e8a1740fef500d1908df3eca2d80de8bad012835f0ae75b502, no obsoleting or "
+        "updating RFC, zero errata. SO THE DOCUMENT IS NOT UNOBTAINABLE AND THIS SENTENCE NO "
+        "LONGER SAYS IT IS: it is unholdable in this tree's current shape, which is a smaller and "
+        "more tractable blocker than the one this note was written against"),
 }
 
 #: §6.1.1's enumeration, from Table 2's Allowed Values cell for tag 1. The five strings are the
@@ -650,6 +661,82 @@ ELEMENT_REFUSAL_POLICY = (
     "WHAT IS NEVER DONE: reinterpreting the octets under another rule, or substituting a value "
     "the packet did not carry"
 )
+
+
+# ------------------------------------- the basis's wire shape, and it is TOKENS AND POINTERS
+
+#: **THE SURFACE RULING OF 2026-09-04, IN ONE SENTENCE: THE WIRE CARRIES FACTS AND POINTERS AND
+#: THE RECORD CARRIES THE ARGUMENT.** Until that day `stanag4609._security_basis` emitted every
+#: paragraph in this module — `CARRIER_BASIS`, `EXTERNAL_CODE_LISTS_NOT_HELD`, `ST_336_CONFORMANCE`,
+#: `REPETITION_RATE`, `PARTIAL_SETS`, `ABSENCE_OF_SETS`, `ELEMENT_REFUSAL_POLICY`,
+#: `ABSENT_TAGS_BASIS`, `CONVERSION_BETWEEN_SET_FORMS` and `DECODING_RULES["carried_octets"]` —
+#: on EVERY Entity, at roughly six kilobytes an object. They are still here, still the reasoning
+#: every map in this module rests on, and they are **no longer emitted**: the 1.2.0 precedent for a
+#: policy that rides on every object is `klv_uas_codec.LENGTH_DIVERGENCE_POLICY`, which is one
+#: token and one sentence. Every sentence that left the wire was RELOCATED and not deleted — to
+#: `fixtures/klv/spec/klv_pin.json`'s `security_basis_ruling`, which names the key each paragraph
+#: was emitted under so the record shows what a consumer used to receive. **THE STANDING
+#: CONFIDENTIALITY RULING IS UNCHANGED IN EVERY TERM**; only where its text lives moved.
+BASIS_RULING = "the wire carries facts and pointers; the record carries the argument"
+
+#: The ruling's NAME, emitted as a token so a consumer can compare it by equality. Its text is at
+#: `klv_pin.json`'s `security_basis_ruling.relocated_from_the_wire.confidentiality_ruling`.
+CONFIDENTIALITY_RULING = "CARRIED AND NEVER INVENTED"
+
+#: A packet that carried no ST 0601 item 48. §6.5: unlabelled, and unlabelled is not a value.
+STATE_UNLABELLED = "UNLABELLED"
+#: A set present and missing at least one element §6.7 marks `Required`. Legitimate under §6.4.
+STATE_PARTIAL = "PARTIAL"
+#: A set carrying all six elements §6.7 marks `Required`. Not "complete" — §6.4 declines to say
+#: which sets must be complete, so this token claims the column and nothing beyond it.
+STATE_COMPLETE_ON_REQUIRED = "COMPLETE-ON-REQUIRED"
+
+#: **THE CLOSED SET.** `security_metadata_basis.state` is one of these three and never anything
+#: else, because `_security_basis` distinguishes exactly three cases and has no default branch.
+#: A test draws from this tuple rather than from the goldens — see `tests/test_cdm_stanag4609_adapter.py`.
+BASIS_STATES: tuple[str, ...] = (STATE_UNLABELLED, STATE_PARTIAL, STATE_COMPLETE_ON_REQUIRED)
+
+#: The one pointer the basis carries to where its argument lives. One pointer and not a list: the
+#: node it names carries the onward pointers, so the wire does not have to grow a directory.
+BASIS_ARGUMENT_POINTER = "fixtures/klv/spec/klv_pin.json → security_basis_ruling"
+
+#: What carried the set, and the two ST 0601 clauses that put it there and make it the LOCAL set.
+#: `CARRIER_BASIS` is these two clauses quoted; this is them pointed at.
+CARRIED_IN = "ST 0601 item 48, Security Local Set"
+CARRIER_CLAUSES: tuple[str, ...] = ("MISB ST 0601.14a §8.48", "ST 0601.14-31")
+
+#: The ST 0102.12 clauses that govern each of the three states. `ABSENCE_OF_SETS`,
+#: `PARTIAL_SETS` and `UNCLASSIFIED_MOTION_IMAGERY_DATA` are these clauses quoted; a consumer
+#: reading an object gets the pointers and reads the quotations in the record.
+BASIS_CLAUSES: dict[str, tuple[str, ...]] = {
+    STATE_UNLABELLED: (
+        "MISB ST 0102.12 §6.5",          # the absence does not signify unclassified
+        "MISB ST 0102.12 §6.3",          # the contrast: unclassified is a MARKED state, 0x01
+        "MISB ST 0601.14a §8.48",        # Required in LS? Optional, so the absence is conformant
+    ),
+    STATE_PARTIAL: (
+        "MISB ST 0102.12 §6.4",          # a set missing Required elements is a legitimate set
+        "MISB ST 0102.12 §6.5",          # an absent element inside a present set is unlabelled
+        "MISB ST 0102.12 §6.7",          # the Required/Context/Optional column itself
+    ),
+    STATE_COMPLETE_ON_REQUIRED: (
+        "MISB ST 0102.12 §6.7",
+        "MISB ST 0102.12 §6.4",
+    ),
+}
+
+#: §6.8's three conversion subsections, by the tag each one governs. `CONVERSION_BETWEEN_SET_FORMS`
+#: is the section quoted; this is the per-element pointer that replaced it on the wire, and it is
+#: STRICTLY MORE than the paragraph was — the paragraph was the same text under all three labels.
+LABEL_CLAUSES: dict[int, str] = {
+    1: "MISB ST 0102.12 §6.8.1",
+    2: "MISB ST 0102.12 §6.8.2",
+    12: "MISB ST 0102.12 §6.8.3",
+}
+
+#: The two clauses that state the Local Set's registered key, one per document. Their agreement is
+#: the ground item 48's reading rests on and it is a POINTER PAIR, not a paragraph.
+LOCAL_SET_KEY_CLAUSES: tuple[str, ...] = ("MISB ST 0102.12 §6.7", "MISB ST 0601.14a §8.48")
 
 
 class RefusedElement(NamedTuple):

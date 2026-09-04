@@ -801,69 +801,54 @@ class Stanag4609Adapter(Adapter):
     def _security_basis(self, packet: uas.DecodedPacket) -> dict:
         """What this object says about its own security marking, in every case including absence.
 
-        **THE STANDING CONFIDENTIALITY RULING, WHICH IS WHY THIS METHOD IS SHAPED THE WAY IT IS.**
-        A classification is CARRIED AND NEVER INVENTED — the NITS precedent, reached here by a
-        second format. So there are exactly two things this adapter can say about a packet's
-        classification: what the packet's own item 48 stated, or that the packet stated nothing.
-        There is no third branch and in particular no default.
+        **THE SURFACE RULING OF 2026-09-04: THE WIRE CARRIES FACTS AND POINTERS AND THE RECORD
+        CARRIES THE ARGUMENT.** This method used to emit every paragraph
+        `klv_security_codec` holds — roughly six kilobytes of quoted clauses and commentary on
+        EVERY Entity, present set or not. The 1.2.0 precedent for a policy that rides on every
+        object is `length_divergence_policy` a few lines above: one token, three machine-readable
+        fields and one sentence. What rides here now is a state token from a closed set, what
+        carried the set, which copy of which document decoded it, which clauses govern this case,
+        and ONE pointer to where the argument lives. Every sentence that left was RELOCATED to
+        `fixtures/klv/spec/klv_pin.json`'s `security_basis_ruling`, which names the key each
+        paragraph was emitted under, so the record shows what a consumer used to receive.
 
-        **§6.5 IS WHAT MAKES THE ABSENT CASE A STATEMENT RATHER THAN A GAP.** "The absence of
-        Security Metadata does not signify Motion Imagery Data as Unclassified." A packet with no
-        item 48 is UNLABELLED. Unlabelled is not a value of a field, so no classification field is
-        emitted for it — and the document's own sentence is, so that a consumer reading the object
-        meets ST 0102.12's statement of what the absence does not mean instead of supplying one.
+        **THE STANDING CONFIDENTIALITY RULING IS UNCHANGED IN EVERY TERM.** A classification is
+        CARRIED AND NEVER INVENTED — the NITS precedent, reached here by a second format. There
+        are exactly two things this adapter can say about a packet's classification: what the
+        packet's own item 48 stated, or that the packet stated nothing. There is no third branch
+        and in particular no default. What moved is where the ruling's TEXT lives; on the wire it
+        is now its own name, emitted as a token a consumer can compare by equality.
+
+        **§6.5 IS STILL WHAT MAKES THE ABSENT CASE A STATEMENT RATHER THAN A GAP**, and it is now
+        cited rather than quoted: `state` reads `UNLABELLED`, `clauses` names `MISB ST 0102.12
+        §6.5`, and the sentence itself — "The absence of Security Metadata does not signify Motion
+        Imagery Data as Unclassified" — is at `klv_security_codec.ABSENCE_OF_SETS` and in the
+        record. A packet with no item 48 is UNLABELLED; unlabelled is not a value of a field, so no
+        classification field is emitted for it and `attributes` carries no `security_metadata` key
+        at all. That behaviour did not change and neither did the reason.
         """
+        state = (
+            security.STATE_UNLABELLED if packet.security is None
+            else security.STATE_PARTIAL if packet.security.is_partial
+            else security.STATE_COMPLETE_ON_REQUIRED)
         basis: dict[str, Any] = {
-            "carried_in": "ST 0601 item 48, Security Local Set",
-            "carrier_basis": uas.NESTED_SET_BASIS,
+            "state": state,
+            "confidentiality_ruling": security.CONFIDENTIALITY_RULING,
+            "carried_in": security.CARRIED_IN,
+            "carrier_clauses": list(security.CARRIER_CLAUSES),
             "element_layer": security.SOURCE_ST_0102_12,
-            "confidentiality_ruling": (
-                "CARRIED AND NEVER INVENTED. Every value below is an octet the packet sent, "
-                "decoded by a rule this repository can cite in a held document, or it is absent. "
-                "No marking is defaulted, inferred from context, completed from a partial set, or "
-                "converted to a nearest listed value. Where the CDM has no field for a security "
-                "element it goes into Entity.attributes AS THE DOCUMENT NAMES IT — which is why "
-                "the keys below are ST 0102.12's element names and not a CDM vocabulary"),
-            "external_code_lists": security.EXTERNAL_CODE_LISTS_NOT_HELD,
-            "st_336_conformance": security.ST_336_CONFORMANCE,
-            "repetition_rate": security.REPETITION_RATE,
+            "clauses": list(security.BASIS_CLAUSES[state]),
+            "argument": security.BASIS_ARGUMENT_POINTER,
         }
         if packet.security is None:
-            basis["state"] = "UNLABELLED — this packet carried no ST 0601 item 48"
-            basis["absence"] = security.ABSENCE_OF_SETS
-            basis["what_is_NOT_emitted"] = (
-                "no classification, no country code, no coding method, no version. NOT 'null "
-                "meaning unclassified' and not an empty security_metadata object: attributes "
-                "carries NO security_metadata key at all for this packet, because a key present "
-                "with empty contents is a reader's invitation to treat emptiness as a value. "
-                "§6.3 is the contrast that makes this precise — an unclassified packet is a "
-                "MARKED packet whose Security Classification octet is 0x01, so 'unclassified' and "
-                "'unlabelled' are two different states and this is the second one")
-            basis["what_the_document_asks_of_a_consumer"] = (
-                "§6.5: 'Bit stream originators and system developers are responsible to "
-                "incorporate continual checks for Security Metadata in their applications.' This "
-                "adapter performs that check per packet and reports its result; deciding what to "
-                "do about an unlabelled packet is the consumer's, and it is a decision this "
-                "object gives them the evidence to make rather than one made here")
             return basis
         decoded = packet.security
-        basis["state"] = (
-            "PARTIAL — the set is present and does not carry every element §6.7 marks Required"
-            if decoded.is_partial else
-            "COMPLETE-ON-REQUIRED — the set carries all six elements §6.7 marks Required")
-        basis["partial_sets"] = security.PARTIAL_SETS
         basis["required_present"] = list(decoded.required_present)
         basis["required_absent"] = list(decoded.required_absent)
-        basis["absence_clause_still_applies"] = (
-            "§6.5 governs the ELEMENTS this set does not carry as well as the sets a packet does "
-            "not carry: an absent Security Classification inside a present set is unlabelled and "
-            "not unclassified, for the same reason and by the same sentence")
-        basis["element_refusal_policy"] = security.ELEMENT_REFUSAL_POLICY
         basis["refusals"] = [_refusal_dict(refusal) for refusal in decoded.refusals]
         basis["advisories"] = [dict(advisory) for advisory in decoded.advisories]
         if decoded.unlisted_tags:
             basis["unlisted_tags"] = list(decoded.unlisted_tags)
-            basis["unlisted_tags_basis"] = security.ABSENT_TAGS_BASIS
         return basis
 
     def _security_metadata(self, decoded: security.DecodedSecuritySet) -> dict:
@@ -879,6 +864,17 @@ class Stanag4609Adapter(Adapter):
         converts it to, under two keys, because they are two different claims: the integer is what
         arrived and the label is what a held clause says it means. A label is absent where the
         integer is not one the element's own enumeration lists.
+
+        **ELEMENT VALUES ARE EXACTLY AS DECODED AND THAT IS WHAT THE SURFACE RULING OF 2026-09-04
+        LEFT ALONE.** What it moved is the prose that used to ride BESIDE them: `label_basis` was
+        §6.8 quoted in full under all three labelled elements and is now `label_clause`, the ONE
+        subsection that governs that element — §6.8.1, §6.8.2 or §6.8.3 — which is strictly more
+        than the paragraph said, because the paragraph was the same text three times. Tag 13's
+        `value_is_octets_not_text` was `DECODING_RULES["carried_octets"]` quoted and is now
+        `value_form`, that rule's own name. `_local_set_key_basis` was the two-document agreement
+        argued and is now `_local_set_key_clauses`, the two clauses pointed at. All three
+        paragraphs are in the record at `klv_pin.json`'s `security_basis_ruling`, under the keys
+        they were emitted as.
         """
         out: dict[str, Any] = {}
         for tag in decoded.order:
@@ -896,19 +892,13 @@ class Stanag4609Adapter(Adapter):
             }
             if entry.label is not None:
                 out[key]["label"] = entry.label
-                out[key]["label_basis"] = security.CONVERSION_BETWEEN_SET_FORMS
+                out[key]["label_clause"] = security.LABEL_CLAUSES[tag]
             if tag == 13:
-                out[key]["value_is_octets_not_text"] = (
-                    security.DECODING_RULES["carried_octets"])
+                out[key]["value_form"] = security.ELEMENTS[13].kind
         out["_element_order"] = list(decoded.order)
         out["_local_set_key"] = security.LOCAL_SET_KEY.hex()
         out["_local_set_key_crc"] = security.LOCAL_SET_KEY_CRC
-        out["_local_set_key_basis"] = (
-            "§6.7's registered key, stated here as the set's IDENTITY. It is NOT an octet this "
-            "packet carried: inside ST 0601 item 48 the key is not on the wire, because §8.48 "
-            "makes the item's own length 'the size of all MISB ST 0102 metadata items'. ST "
-            "0601.14a §8.48 prints the same sixteen octets and the same CRC 40980, which is the "
-            "two-document agreement item 48's reading rests on")
+        out["_local_set_key_clauses"] = list(security.LOCAL_SET_KEY_CLAUSES)
         return out
 
     def _integrity_basis(self, packet: uas.DecodedPacket) -> dict:

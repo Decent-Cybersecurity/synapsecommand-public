@@ -782,6 +782,12 @@ WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(ITEMS))
 NESTED_SETS: dict[int, str] = {48: "MISB ST 0102.12 Security Metadata Local Set"}
 
 #: What ST 0601.14a says item 48 carries, quoted, so the delegation is readable from this module.
+#: **NO LONGER EMITTED, 2026-09-04.** The surface round took it off the wire —
+#: `stanag4609._security_basis` carried it under `security_metadata_basis.carrier_basis` on every
+#: object — and replaced it with the two clause pointers at `klv_security_codec.CARRIER_CLAUSES`.
+#: It stays here because a reader of THIS module still needs the delegation readable without
+#: opening a second file, which is what this constant was for; the relocated text and the key it
+#: rode under are at `klv_pin.json`'s `security_basis_ruling.relocated_from_the_wire.carrier_basis`.
 NESTED_SET_BASIS = security.CARRIER_BASIS
 
 #: The three items ST 0601.14a makes Mandatory in every packet, derived from the table's own

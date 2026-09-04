@@ -220,6 +220,16 @@ adapter emits. The count and the set are `gates/bump_derivation.py`'s, re-derive
 record was written rather than before it — the fixed point the 1.4.0 arc's own repair note insists
 on, and the reason the number above is not a quotation of a derivation that has since moved.
 
+**THE SURFACE ROUND OF 2026-09-04 IS THE ARC'S SECOND ROUND AND IT MOVES THE COUNT BY NOTHING.**
+It touched eight distribution files and **all eight were already in the 66** — the two shipped
+documents, the fixture README, `klv_pin.json`, `build_fixtures.py` and three modules — plus the
+34 goldens the park 2 round had already re-generated. **So the set is unchanged and the number
+is unchanged**, re-derived after this record was written for the same reason the paragraph above
+gives. What the round changes is not WHICH files moved but **what the objects say**: see *The
+surface round* below, which is the section the 1.5.0 notes have to be derived from, because a
+consumer's `security_metadata_basis` goes from six kilobytes of prose to a token and six
+pointers.
+
 **THREE shipped documents** — `MIGRATIONS.md`, `FORMAT_COVERAGE.md` and `fixtures/klv/README.md`.
 **ONE pin record**, `klv_pin.json`, which gained `tag_table_st_0102_12` and
 `parks.the_ones_that_closed.park_2`. **FOUR modules**, of which **one is new**:
@@ -377,6 +387,86 @@ held since 2026-08-26 and what was missing was the artefact, which is the state 
 table's own precedent FOR. The delegation count does not move either — fourteen delegations in
 scope and **nine** held, unchanged, because this round fetched nothing.
 
+#### The surface round, 2026-09-04 — the wire carries facts and pointers, and one document that is free but not holdable
+
+**WHAT A CONSUMER RECEIVES CHANGES, AND THIS PARAGRAPH IS WHY THE 1.5.0 NOTES HAVE TO SAY SO.**
+`Entity.attributes.security_metadata_basis` goes from **prose to tokens**. Until this round it
+carried every ruling in `klv_security_codec` — the carrier basis, the confidentiality ruling argued
+in full, the external code lists ruling, `ST 0102.12-65`/`-66` on ST 336, §6.2's repetition rate,
+§6.5 and §6.4 quoted, the element refusal policy — on **every object**, whether or not the packet
+carried a security set. It now carries a state token from a closed set, the ruling's NAME as a
+token, what carried the set, the copy that decoded it, the clause pointers that govern this case,
+and **one** pointer to where the argument lives. A consumer that read a sentence out of this key now
+reads a pointer; a consumer that compared a state now compares a token instead of an em-dashed
+sentence.
+
+**THE MEASUREMENT.** Compact UTF-8 JSON across all 34 goldens, 36 occurrences: **229 864 bytes
+before, 25 294 after — 204 570 removed, 89%**. Per occurrence, 6 385 to 703. The absent case, which
+is the one that rides on a packet carrying no security metadata at all, goes from **6 146 to 486**.
+The precedent is `length_divergence_policy`, the 1.2.0 annotation that also rides on every object:
+**299 bytes clean**, and measured in the same goldens on the same day it is 299 clean, 818 with one
+advisory, 1 622 with one defect. The reshaped basis is **486, 1 106, 1 773** — the same three
+scales, which is this round's scope ruling stated as a measurement.
+
+**NOTHING WAS DELETED.** Sixteen prose values came off the wire and every one landed in
+`klv_pin.json`'s new **`security_basis_ruling`** node **under the key it was emitted as**, with its
+byte count and the module constant it was generated from, lifted out of the acb6295 goldens by a
+script rather than retyped. That node also states the replacing shape: every key, its type, its
+condition, the closed token set `UNLABELLED` / `PARTIAL` / `COMPLETE-ON-REQUIRED`, and the three
+pointer forms. **The codec constants all remain in code** and are simply no longer emitted.
+
+**THE STANDING CONFIDENTIALITY RULING IS UNCHANGED IN EVERY TERM** — carried and never invented, no
+default, no nearest match, no marking on an unlabelled packet, no `security_metadata` key at all for
+a packet that carried no item 48. Only where its text lives moved.
+
+**AND NO CONSUMER EVER RECEIVED THE SHAPE THIS REPLACES**, which is why this is not a migration and
+why it was done now. `klv_security_codec.py` and `security_metadata_basis` do not exist at tag
+v1.4.1 — both landed in the park 2 round four commits earlier the same day, in this same pending
+section (the heading token itself is elided here, because `tests/test_cdm_release.py` reads the
+literal as evidence that a pending section EXISTS and a sentence spelling it would answer for one
+that a release had absorbed). A consumer of 1.5.0 meets the token shape as the **first** shape
+this key ever had.
+
+**THE CHECK THAT MADE IT SAFE, AND THE GUARD THAT WAS MISSING.** All 34 goldens were parsed before
+and after, `security_metadata_basis` and the six relocated prose keys deleted from both, and the
+remainder compared: **byte-identical on all 34**, so not one decoded value, octet string, offset,
+refusal fact or advisory fact moved. And `grep -rn security_metadata_basis tests/` returned
+**nothing** before this round — the goldens were the only guard, and a golden guards a VALUE.
+`tests/test_cdm_stanag4609_adapter.py` gained **seven tests** that guard the SHAPE: the token is
+drawn from the codec's own closed set, the key set is checked per case, no basis key may carry more
+than 160 bytes of string, the clause pointers must be the codec's own, `UNLABELLED` and the absence
+of a `security_metadata` key must agree, and **the record must name every key the wire stopped
+carrying**.
+
+**Inside `security_metadata` the element VALUES are untouched and only the prose beside them moved.**
+`label_basis` — §6.8 quoted, the same 890 bytes under all three labelled elements — became
+`label_clause`, the ONE subsection that governs that element, which is strictly more than the
+paragraph said. `_local_set_key_basis` became `_local_set_key_clauses`. Tag 13's
+`value_is_octets_not_text` became `value_form`.
+
+**Bump ruling.** Not required, and this states why rather than leaving the absence to be read as an
+oversight. `gates/bump_derivation.py --json` reports `pending.unruled` as **empty** after this
+round's files were staged: every unit it classified, it classified, so the arc still derives
+**MINOR** with a floor of **1.5.0** on `klv_security_codec.py` being a new module — unchanged by
+this round, which adds no importable name and removes none. The eight **Bump ruling** paragraphs the
+park 2 round wrote are untouched and still stand.
+
+**ACT 2 STOPPED, AND THE STOP IS THE FINDING.** The round was also sent to acquire **IETF RFC
+2781**, pin it, read UTF-16's byte-order rule off it and move ST 0102.12's tag 13 row off `not yet`.
+**The document is free, reachable, and was read; it is not pinned.** The RFC Editor's info page
+answered 200 at 2026-09-04T10:01:19Z and its `Details` block names **two** formats, `TXT` and
+`HTML` — the string `pdf` does not occur anywhere in its 177 626 bytes, and the expected
+`/rfc/pdfrfc/rfc2781.txt.pdf` answers **404**. Every pin gate here is PDF-shaped, so pinning a
+text-only document needs a schema ruling this round was not given, and the round stopped at its own
+stop rule rather than inventing one. The text was read and hashed as a **reading and not a pin**:
+29 870 bytes, SHA-256 `e3fed703…ae75b502`, no obsoleting or updating RFC, **zero errata**.
+`gates/pin_paths.py` still counts **23**, `delegated_specifications_held` still holds **fourteen**
+pins, fourteen delegations are still in scope, and **tag 13 stays `not yet`** — but its blocker
+narrowed from *an unheld document* to *a document this tree cannot yet hold*, which is smaller and
+more tractable, and the tag 13 row, the codec's TAG 13 ONLY note and
+`klv_pin.json`'s `surface_round_2026_09_04` all now say so with the routes and the digest recorded.
+**No park moved**: tag 13 is a row.
+
 #### The park 2 round, 2026-09-04 — the row set MISB ST 0102.12 supports, and a park that closed by writing rather than by obtaining
 
 **WHAT CLOSED, AND ON WHAT.** Park 2 closed on **both halves of `shared_exit_condition`**. The
@@ -428,7 +518,14 @@ empty object a reader could take for an empty marking.
 absence of Security Metadata does not signify Motion Imagery Data as Unclassified."* So a packet
 without item 48 is **UNLABELLED**, unlabelled is not a value of a field, and what the object
 carries instead is §6.5's own sentence at `attributes.security_metadata_basis` — so a consumer
-meets the document's statement of what the absence does not mean rather than supplying one. **§6.3
+meets the document's statement of what the absence does not mean rather than supplying one. **DATED
+NOTE, 2026-09-04, ADDED BY THE SURFACE ROUND AND NOT A REWRITE OF THE SENTENCE ABOVE:** the
+object now carries §6.5's *pointer* rather than §6.5's sentence — `state` reads `UNLABELLED`,
+`clauses` names `MISB ST 0102.12 §6.5`, and the sentence itself is at `klv_pin.json`'s
+`security_basis_ruling.relocated_from_the_wire.absence`. **The reasoning above is untouched and
+so is the behaviour it decides**; what moved is whether the consumer meets the document's
+statement inline or one dereference away, and the paragraph is left in its own tense because it
+records what the park 2 round chose on the day it chose it. **§6.3
 is the contrast that makes it precise**: `ST 0102.10-51` puts a VALUE on the wire for unclassified
 data, so *unclassified* and *unlabelled* are two different states.
 
