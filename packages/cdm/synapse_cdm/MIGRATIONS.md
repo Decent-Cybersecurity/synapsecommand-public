@@ -233,16 +233,32 @@ measured off the index afterwards, and which step of it did not run.
 
 ### Unreleased
 
-**What moved inside the distribution: 91 files.** Three records — `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md` — the
+**What moved inside the distribution: 111 files.** Three records — `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, `README.md` — the 5 source files `imapb_codec.py`, `klv_pack_codec.py`, `klv_uas_codec.py`, `stanag4609.py`, `build_fixtures.py`, the pin `klv_pin.json`, 14 new payloads `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.klv`, `a_course_of_360_degrees_is_the_documents_own_zero.klv`, `a_negative_time_adjustment_is_read_signed.klv`, `a_short_wavelength_record_is_refused_and_the_packet_translates.klv`, `a_wavelengths_list_from_the_documents_own_example.klv`, `a_zero_length_imapb_item_is_an_explicit_unknown.klv`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.klv`, `an_imapb_item_past_its_max_length_is_an_advisory.klv`, `hae_is_tag_104_and_never_tag_15s_msl.klv`, `imapb_items_from_the_documents_own_examples.klv`, `imapb_special_values_are_signals_and_not_measurements.klv`, `leap_seconds_alone_convert_the_stamp_toward_utc.klv`, `tag_104_carrying_a_signal_emits_no_altitude.klv`, `the_time_adjustments_from_the_documents_own_examples.klv`, their 14 parsed twins `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.json`, `a_negative_time_adjustment_is_read_signed.parsed.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.json`, `imapb_items_from_the_documents_own_examples.parsed.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.parsed.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.json`, `the_time_adjustments_from_the_documents_own_examples.parsed.json`, and all 74 goldens `a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`, `a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`, `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.cdm.json`, `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`, `a_negative_time_adjustment_is_read_signed.cdm.json`, `a_negative_time_adjustment_is_read_signed.parsed.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.cdm.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`, `imapb_items_from_the_documents_own_examples.cdm.json`, `imapb_items_from_the_documents_own_examples.parsed.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.cdm.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.parsed.cdm.json`, `length_divergence_at_a_required_length.cdm.json`, `length_divergence_at_a_required_length.parsed.cdm.json`, `mandatory_items_only.cdm.json`, `mandatory_items_only.parsed.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`, `over_recommended_max_length_is_an_advisory.cdm.json`, `over_recommended_max_length_is_an_advisory.parsed.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`, `security_local_set_complete_from_the_element_rules.cdm.json`, `security_local_set_complete_from_the_element_rules.parsed.cdm.json`, `security_local_set_minimal_required_only.cdm.json`, `security_local_set_minimal_required_only.parsed.cdm.json`, `security_local_set_partial_is_carried_as_partial.cdm.json`, `security_local_set_partial_is_carried_as_partial.parsed.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`, `special_values_are_signals_and_not_measurements.cdm.json`, `special_values_are_signals_and_not_measurements.parsed.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`, `the_time_adjustments_from_the_documents_own_examples.cdm.json`, `the_time_adjustments_from_the_documents_own_examples.parsed.cdm.json`, `two_packets_one_payload_are_two_statements.cdm.json`, `two_packets_one_payload_are_two_statements.parsed.cdm.json`, `witnessed_set_from_the_documents_own_examples.cdm.json`, `witnessed_set_from_the_documents_own_examples.parsed.cdm.json`, `zero_length_item_is_an_explicit_unknown.cdm.json`, `zero_length_item_is_an_explicit_unknown.parsed.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`.
 five source files `imapb_codec.py`, `klv_pack_codec.py`, `klv_uas_codec.py`, `stanag4609.py`, `build_fixtures.py`, the pin `klv_pin.json`, nine new payloads
 `a_course_of_360_degrees_is_the_documents_own_zero.klv`, `a_short_wavelength_record_is_refused_and_the_packet_translates.klv`, `a_wavelengths_list_from_the_documents_own_example.klv`, `a_zero_length_imapb_item_is_an_explicit_unknown.klv`, `an_imapb_item_past_its_max_length_is_an_advisory.klv`, `hae_is_tag_104_and_never_tag_15s_msl.klv`, `imapb_items_from_the_documents_own_examples.klv`, `imapb_special_values_are_signals_and_not_measurements.klv`, `tag_104_carrying_a_signal_emits_no_altitude.klv`, their nine parsed twins `a_course_of_360_degrees_is_the_documents_own_zero.parsed.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.json`, `imapb_items_from_the_documents_own_examples.parsed.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.json`, and all sixty-four goldens
 `a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`, `a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`, `imapb_items_from_the_documents_own_examples.cdm.json`, `imapb_items_from_the_documents_own_examples.parsed.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`, `length_divergence_at_a_required_length.cdm.json`, `length_divergence_at_a_required_length.parsed.cdm.json`, `mandatory_items_only.cdm.json`, `mandatory_items_only.parsed.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`, `over_recommended_max_length_is_an_advisory.cdm.json`, `over_recommended_max_length_is_an_advisory.parsed.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`, `security_local_set_complete_from_the_element_rules.cdm.json`, `security_local_set_complete_from_the_element_rules.parsed.cdm.json`, `security_local_set_minimal_required_only.cdm.json`, `security_local_set_minimal_required_only.parsed.cdm.json`, `security_local_set_partial_is_carried_as_partial.cdm.json`, `security_local_set_partial_is_carried_as_partial.parsed.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`, `special_values_are_signals_and_not_measurements.cdm.json`, `special_values_are_signals_and_not_measurements.parsed.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`, `two_packets_one_payload_are_two_statements.cdm.json`, `two_packets_one_payload_are_two_statements.parsed.cdm.json`, `witnessed_set_from_the_documents_own_examples.cdm.json`, `witnessed_set_from_the_documents_own_examples.parsed.cdm.json`, `zero_length_item_is_an_explicit_unknown.cdm.json`, `zero_length_item_is_an_explicit_unknown.parsed.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`.
 
-**Why the golden set moves whole when nine fixtures were added.** Every object this adapter emits
-carries `attributes.position_basis` and `attributes.kinematics_basis`, and both of those basis
-paragraphs were rewritten — so the prose inside all forty-six pre-existing goldens changed even
-where not one decoded value did. **That distinction is measured rather than asserted**: see the
-structural diff below.
+**Why the golden set moves whole when fourteen fixtures were added.** Every object this adapter
+emits carries `attributes.position_basis` and `attributes.kinematics_basis`, and both of those
+basis paragraphs were rewritten by the park 5 round — so the prose inside all forty-six goldens
+that pre-dated it changed even where not one decoded value did. **The park 3 round did the same
+thing again through two more basis paths**: `attributes.time_basis`, rewritten whole under RULING
+2, and `attributes.document_witnessed_basis`, whose `tags_read` and `how_many` are derived from
+`DOCUMENT_WITNESSED_TAGS` and therefore move on every object when a tag is promoted. **That
+distinction is measured rather than asserted, and measured the same way both times**: see the
+structural diffs below, which compare by JSON path and report which paths moved.
+
+**A CONSUMER-VISIBLE CHANGE TO AN EMITTED STRING, SAID PLAINLY BECAUSE IT IS EASY TO FILE AS
+PROSE.** `attributes.time_basis` is on the wire. Its `timescale` key is GONE and three keys
+replace it — `scale`, `relation_to_TAI` and `relation_to_UTC` — alongside four new ones:
+`the_POSIX_rule_is_SUPERSEDED`, `leap_second_adjustment`, `correction_offset` and
+`applied_microseconds`. A consumer reading `attributes.time_basis["timescale"]` gets a `KeyError`
+after this arc. **`SCHEMA_VERSION` does not move and that is correct rather than convenient**:
+`MIGRATIONS.md`'s table governs the wire CONTRACT, and `attributes` is a free-form mapping whose
+contract is that it is free-form — the same reading under which every other basis paragraph in
+this package has been rewritten without a schema bump. What the reading costs is stated instead
+of being left implicit: a consumer keying on a basis path has no version to check, which is why
+the string is named here rather than counted among the prose.
 
 **Nothing here is in a release.** `PACKAGE_VERSION` is unmoved at 1.5.0, `SCHEMA_VERSION` at
 1.0.0, `RELEASE_NOTES.md` still opens 1.5.0, and no tag was created. `python
@@ -250,6 +266,151 @@ gates/bump_derivation.py`, re-run after this section was written, derives **MINO
 since v1.5.0 — so the next release is at least **1.6.0** — and it derived it with **no human
 ruling**: the arc adds a public importable module and public top-level names, which is the MINOR
 row's own shape, and the gate reports `1 check, 0 failed`.
+
+#### The park 3 round, 2026-09-04 — a park narrowed to a name is not a park narrowed to nothing
+
+**PARK 3 IS CLOSED.** The thirteen parks now read **eight closed and five open**, which is the
+THIRD closure of one day and the first of the three that obtained a document: park 2 closed that
+morning on ST 0102.12's row set, park 5 that evening on ST 1201.3's, and this one on **MISB ST
+0603.5**, fetched, pinned and read. So the day contains both kinds of closure and neither is this
+table's new normal. The delegation tally moves for the first time since 2026-09-03: the profile
+still delegates to **fourteen** documents and **ten** are now held, up from nine.
+
+**THE ACQUISITION, BY THE RECORDED METHOD AND IN THE RECORDED ORDER.** Both official routes were
+asked FIRST and their **bodies** read, which is the rule a 200 exists to defeat: `gwg.nga.mil`
+answered HTTP 403 with an S3 `AccessDenied` XML body, and `nsgreg.nga.mil/misb.jsp` answered
+**HTTP 200** whose 46 460 bytes are the F5 JavaScript interstitial, carrying the `bobcmn` marker.
+A third official URL was asked because the held `cdx_nsgreg_nga_mil_host.txt` names it —
+`nsgreg.nga.mil/NSGDOC/files/doc/Document/ST0603.5.pdf`, the registry's own document route — and
+it answered with a **connection reset: no headers, no body, no TLS session**. That is a refusal
+shape rule 12's own test cannot be applied to, and it is recorded as such rather than as "the
+registry does not serve it". Then the CDX index, then the **pin-as-control**: the byte-exact
+archived `ST0601.4.pdf` URL served 1 268 558 bytes digesting to `1485e578…25c58c5a`, equal to the
+pin in both terms, before one new byte was fetched.
+
+**THE DOCUMENT.** `e83fa525…11ed53d0`, 1 021 618 bytes, **10 pages**, cover *'MISB ST 0603.5' /
+'STANDARD' / 'MISP Time System and Timestamps' / '5 October 2017'*. Its edition date is stated
+three times inside it — cover, the running footer of all ten pages, and the section 5 revision
+history's `10/05/2017` — and both held citations of it say "Oct 2017", so the **KLV 9 / KLV 10
+cover-versus-changelog hazard was looked for in a fifth document and found in none**. The archive
+index is a second party to the identity: the capture's CDX `digest`, the base32 SHA-1 of the
+payload, recomputed on the fetched bytes and matched.
+
+**WHAT THE DOCUMENT TURNED OUT TO BE, AND IT DECIDED WHAT THE ARTEFACT HALF IS.** ST 0603.5 has
+**no tag table**. Section 6 defines the MISP Time System, section 7 defines three representations
+of it and a Time Status byte, section 8 lists six deprecated requirements, and Appendix A is
+informative rationale. So `shared_exit_condition`'s second half — *the artefact this document
+makes writable* — took a **third shape**, after park 4's codec for a framing standard and park 2's
+row set for a field dictionary: **the named scale in every object's basis, plus the two rows whose
+semantics this document supplies.** Both were required and neither would have closed it alone.
+
+**RULING 2 — TIME IS CARRIED AND NEVER INVENTED, AND THE SCALE IS NAMED AS THE DOCUMENT NAMES IT.**
+`attributes.time_basis` now carries the **MISP Time System** by name, with §6's definition in three
+lines — an "Epoch of 1970-01-01T00:00:00.0Z (starting point for time scale)", "Based on the SI
+Second", "Strictly monotonically increasing (no skips, no repeats in count)" — and its two scale
+relations in the document's own words. ST 0601.14a §8.2.1 had already said the item is an instance
+of it, *"This metadata item is an implementation of the MISP Time System"*, so **the name was half
+in a held document all along and the DEFINITION was not**. That is the distinction park 3 was
+holding open and it is worth stating plainly: naming a system is not defining one.
+
+**THE POSIX RULE IS SUPERSEDED AND THE ARITHMETIC DID NOT MOVE, WHICH IS THE ROUND'S SHARPEST
+RESULT.** This adapter converted "by the POSIX rule … because it is the only conversion either
+held document describes" for nine days, citing edition 1's Table 1 note. ST 0603.5's Appendix A
+records POSIX derivation as the guidance in force *"Prior to MISB ST 0603.3"* and lists four
+issues with it, two of which reach arithmetic — POSIX "is not a linear scale of time" and "does
+not define the second to be based on the International System of Units (SI) second" — and the MISP
+Time System is defined as both linear and SI-based. **What did not change is the division**: the
+same appendix says the POSIX Epoch *"is the same Epoch in the MISP Time System"*. So a nine-day-old
+citation was refuted and not one emitted instant moved, which is the whole argument for citing a
+conversion's authority separately from performing it. Register entry **KLV 22**.
+
+**RULING 3 — ITEMS 136 AND 137 PROMOTE ON THE SAME DOCUMENT-SIDE WITNESS PARK 5 USED**, the scope
+contract's second condition: §8.136 prints `30 seconds` against `1E` and §8.137 prints
+`1:23:45.678901` against `012B8DC635`, and `check_against_the_documents_own_examples()` decodes
+both on every suite run — **43 examples now, up from 41**. They needed a table of their own,
+`klv_uas_codec.TIME_ADJUSTMENT_ITEMS`, because neither is an IMAPB value nor a pack: both state
+the identity map over a signed big-endian integer, so there is no layer below to delegate them to.
+`DOCUMENT_WITNESSED_TAGS` is now the union of three tables and **`WITNESSED_TAGS` is still 26**,
+which is the park 5 round's decision applied unchanged.
+
+**THE ARITHMETIC IS §6.4's, STATED AS TWO EQUATIONS, AND EACH TERM IS APPLIED ONLY WHEN THE PACKET
+CARRIES IT.** `TCorrected = TPrecision + TCorrection` and `TCorrected = TPrecision + TCorrection +
+(LSeconds * 1,000,000)`. When tag 136 is absent, `time_basis` records that the adjustment was **not
+available** rather than substituting a zero, and §6.4's own alternative — *"or from a current leap
+second table"* — is **declined**, because a leap-second table is a second document that changes
+over time and this adapter is a pure function of one payload. **A Zero-Length Item counts as
+absent**, which is the case with its own fixture: `ST 0601.14-33` makes a ZLI an explicit unknown,
+so adding +0 on the producer's behalf would assert the number they just withdrew.
+
+**THREE REGISTER ENTRIES, ALL THREE OUT OF ONE TEN-PAGE DOCUMENT, AND THE THIRD WAS FOUND BY
+WIRING RATHER THAN BY READING.** **KLV 21**: ST 0603.5 §6 derives UTC from the MISP Time System
+*"using its correct offset and inclusion of leap seconds"* — two terms — and ST 0601.14a §6.4's
+Equation 2 has one, so every instant here carries the 82-microsecond residue of `MISP Time = TAI –
+8.000082 seconds`, which ST 0603.5's own footnote 2 licenses ignoring. The KLV 11 shape, registered
+rather than reconciled. **KLV 22**: the POSIX supersession above, and the delegated standard names
+ST 0601 by series as the family that carried the confusion. **KLV 23**: §8.137 states its own
+format as signed twice in its drawn table — `int64` and `int`, both with a Min of `-(2^63)` — and
+as `Softval = KLVuint` in the conversion line one row below, while §8.136, the sibling item with
+the identical shape, prints `Softval = KLVint`. **Its printed example cannot adjudicate it**:
+`012B8DC635` has a clear top bit and decodes the same either way. Ruled SIGNED on two drawn cells
+against one conversion line, and the fixture `a_negative_time_adjustment_is_read_signed` is what
+makes the ruling checkable rather than asserted — under the wrong reading its instant is an hour
+and eleven minutes late on one term and four thousand years late on the other, and **neither is a
+shape any structural check can see**.
+
+**A SECOND SLIP IN THE SAME BLOCK, filed with the first**: §8.137's Example Software Value reads
+`1:23:45.678901 (5025678901 ms)` while the item's Units cell reads **microseconds** and the h:m:s
+rendering is 5 025 678 901 **microseconds**. The number is right, the rendering is right, and the
+unit label between them is out by a factor of a thousand. The codec's check computes its expected
+value from the rendering and never from the parenthetical.
+
+**THE STRUCTURAL DIFF, AND IT IS THE ROUND'S STOP CONDITION MADE MEASURABLE.** The pinned stream
+carries **neither tag 136 nor tag 137** — 26 distinct tags, highest 65, re-derived from its bytes
+this round — so no golden's `observed_at` was allowed to move. All 64 pre-existing goldens were
+compared against their `HEAD` versions **leaf by leaf, keyed by JSON path**: **zero** undeclared
+leaves changed, added or removed, and the 2 178 that did change all sit under
+`attributes.time_basis`, `payload.time_basis` or `attributes.document_witnessed_basis`.
+`attributes.klv_items` and `attributes.document_witnessed_items` moved on **no** pre-existing
+golden, and the **198** `observed_at`, `valid_from` and `precision_time_stamp_us` leaves were
+compared and are byte-equal. The pinned stream's own six instants re-derive unchanged, first
+`2009-06-17T16:53:05.099Z` and last `16:56:35.443Z`.
+
+**TWO SUITE GUARDS WERE WIDENED AND EACH CARRIES ITS REASON, WHICH IS THE PART WORTH READING.**
+`test_no_epoch_is_stated_anywhere_in_the_section` admitted `1970` beside two anchors — the
+profile-absence finding, and a citation of ST 0601.14 — and now admits a **third**, a citation of
+ST 0603.5. That is not a loosening: the rule was always *"do not write an epoch from memory"*, and
+ST 0603.5 is the document that defines this one normatively, so quoting it is the strongest form of
+the thing the test protects. And `KLV_HELD_NOT_PINNED` gained a **fifth kind** of admitted
+revision — one the **pinned delegation's own text** names. ST 0603.5's Appendix A names `0603.3`
+and `0603.4` in sentences this record quotes; neither is on disk and neither is a text any row is
+read against. They are admitted separately, because `.3` is the revision the POSIX guidance was
+withdrawn AT and `.4` is the one the field dictionaries were re-based ON, and one phrase licensing
+both would license the load-bearing one on the other's reason.
+
+**THE PARKS GATE FIRED ON EXACTLY THE FOUR SET-CLAIMS NAMING 3, AND CLOSING THEM ALL EMPTIED THE
+GATE'S OWN SUBJECT.** `gates/parks_table.py` reported `CLOSED MEMBER` four times — park 2's
+*"parks 3, 6 and 11"* and park 12's three — and every one is the failure the gate is named for:
+nothing in those rows changed when park 3 closed. Each was rewritten in its own row with a dated
+note. **Then the gate's `--mutation-check` failed on an empty domain.** Its first mutation closes
+a park some claim names, and it asserts the domain is non-empty before mutating — the lesson
+`gates/pin_paths.py` records — so with every remaining set-claim rewritten as a quotation spelling
+`rows`, there was nothing left to derive. **The repair is a distinction the park 5 round did not
+have to draw**: a QUOTATION of a superseded claim must not spell `parks`, because the pattern
+cannot read a tense, and a LIVE claim must, or the gate has no subject. Park 12's two live
+corrections now read `parks 11 and 12`; the historical ones stay quoted. The gate reads **13 rows,
+8 closed [1, 2, 3, 4, 5, 8, 9, 13], 5 open, 2 set-claims, 0 failed**, and 8 mutations with no
+survivors.
+
+**WHAT THIS ROUND DID NOT DO.** No schema change and `SCHEMA_VERSION` unmoved at 1.0.0. No release:
+`version.py`, `RELEASE_NOTES.md` and `PUBLICATION.md` are byte-identical to their `HEAD` state and
+no tag was created. **No park opened**, and none of the five still open moved: parks 6, 7, 10 and
+12 want documents nobody has fetched and park 11 wants an artefact nobody has written. **No held
+octet is newly understood** — items 136 and 137 ship against printed examples and against no wire
+anybody here has met, which is the sentence both their rows carry. And **three of ST 0603.5's four
+subjects reach no row at all**: `Nano Precision`, `Time Status` and the Commercial Time Stamp are
+each absent from ST 0601.14a's 218 pages, re-derived from the pinned bytes, so there is nothing for
+them to be written into and their absence is a fact about the field dictionary rather than a gap
+here.
 
 #### The park 5 round, 2026-09-04 — fifteen of sixteen rows promote on a document-side witness, and the sixteenth is what shows the reading has teeth
 

@@ -45,27 +45,50 @@ continuity the CDM cannot express from this format. Park 11 — MISB ST 1204.1, 
 Identifier — is what would fix it, and this round's contribution to that park is to have turned a
 prediction into a measurement.
 
-TIME: THE EPOCH IS IN A HELD DOCUMENT AND THE TIMESCALE'S NAME IS STILL PARK 3'S
---------------------------------------------------------------------------------
-Tag 2 is mandatory in every packet (§6.4, §8.2, `ST 0601.14-32`) and ST 0601.14a states its epoch
-on its own account, which is why `observed_at` is not blocked: §8.2.1, "This item represents time
-as the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z) using an
-unsigned eight (8) byte integer."
+TIME: THE SCALE HAS A NAME NOW, AND IT IS THE MISP TIME SYSTEM
+---------------------------------------------------------------
+**CHANGED 2026-09-04 BY THE park 3 ROUND (RULING 2).** This section read "THE EPOCH IS IN A HELD
+DOCUMENT AND THE TIMESCALE'S NAME IS STILL PARK 3'S" from 2026-08-26 until MISB ST 0603.5 was
+obtained and pinned. It is held now, and the thing park 3 owned — what to CALL a count of SI
+seconds since 1970 that is not UTC — has an answer in a document rather than a park number.
 
-**Two things about that are carried into every object rather than smoothed over.**
+Tag 2 is mandatory in every packet (§6.4, §8.2, `ST 0601.14-32`) and ST 0601.14a §8.2.1 says what
+it is an instance of: "This metadata item is an implementation of the MISP Time System."
+**MISB ST 0603.5 §6 defines that system in three lines** — an "Epoch of 1970-01-01T00:00:00.0Z
+(starting point for time scale)", "Based on the SI Second (constant counting increment of time)",
+"Strictly monotonically increasing (no skips, no repeats in count)" — and places it against the
+two scales a reader will ask about: "The MISP Time System is locked … with International Atomic
+Time (TAI); however, there is a fixed offset of 8.0000822 seconds between the MISP Time System and
+TAI", and "UTC can be derived from the MISP Time System using its correct offset and inclusion of
+leap seconds."
 
-* §8.2.1 also says "The Precision Time Stamp does not include leap seconds and therefore the
-  Precision Time Stamp does not represent UTC", and the CDM's `Timestamp` is UTC. A count of
-  seconds since 1970 that excludes leap seconds is POSIX time — which edition 1 says outright, in
-  its own Table 1 note: "Derived from the POSIX IEEE 1003.1 standard" — and converting POSIX to a
-  UTC calendar instant by the POSIX rule is what this adapter does, because it is the only
-  conversion either document describes and `Event.observed_at` is required. The residue is a
-  leap-second-boundary ambiguity, and **park 3 (MISB ST 0603.5) still owns the normative
-  definition of the scale**. `attributes.time_basis` says all of this on every object.
-* The stamp has **microsecond** resolution and `times.render` emits **milliseconds**, so the
+**Four things are carried into every object rather than smoothed over.**
+
+* **The scale is named and it is not UTC.** ST 0601.14a §8.2.1's negative half agrees with the
+  definition: "The Precision Time Stamp does not include leap seconds and therefore the Precision
+  Time Stamp does not represent UTC." The CDM's `Timestamp` is UTC, and `attributes.time_basis`
+  says on every object which of the three instants that object carries.
+* **The POSIX rule is SUPERSEDED and the arithmetic is unchanged.** This adapter used to convert
+  "by the POSIX rule … because it is the only conversion either held document describes", citing
+  edition 1's Table 1 note, "Derived from the POSIX IEEE 1003.1 standard". ST 0603.5's Appendix A
+  is that guidance's obituary — POSIX derivation is what MISB advised "Prior to MISB ST 0603.3",
+  and the appendix lists four issues with it, including that "POSIX is not a linear scale of time"
+  and "POSIX does not define the second to be based on the International System of Units (SI)
+  second". The MISP Time System is both. **What did not move is the division**: the appendix says
+  the POSIX Epoch "is the same Epoch in the MISP Time System", so the same arithmetic now runs on
+  a definition instead of on an analogy.
+* **Leap seconds and the correction offset are APPLIED WHEN THE PACKET CARRIES THEM and invented
+  never.** §6.4 states the arithmetic as two equations — `TCorrected = TPrecision + TCorrection`,
+  and `TCorrected = TPrecision + TCorrection + (LSeconds * 1,000,000)` for UTC — and items 136 and
+  137 are their two terms. Both are optional in the Local Set; when one is absent, `time_basis`
+  says the term was not available rather than substituting a zero, and §6.4's own alternative —
+  "or from a current leap second table" — is declined, because a leap-second table is a second
+  document that changes over time and this adapter is a pure function of one payload.
+* **The stamp has microsecond resolution and `times.render` emits milliseconds**, so the
   serialised timestamp is the instant truncated to a millisecond. The exact integer is parked at
-  `attributes.precision_time_stamp_us`, which is the CAT021 treatment of its own high-precision
-  items: "The high-precision items do not fit a CDM `Timestamp`, and that is not a defect."
+  `attributes.precision_time_stamp_us` — the RAW stamp, before either equation — which is the
+  CAT021 treatment of its own high-precision items: "The high-precision items do not fit a CDM
+  `Timestamp`, and that is not a defect."
 
 `received_at` comes from the injected clock and this adapter never reads the wall clock — the seam
 FORMAT_COVERAGE.md called "NAMED AND NOT BUILT" for two rounds, because "closing park 4 did not
@@ -276,6 +299,98 @@ def _measured(value: Any) -> float | int | None:
     if isinstance(value, (str, list)):
         return None
     return value
+
+
+def _time_term(items: dict[int, uas.DecodedItem], tag: int) -> bool:
+    """Does this packet supply tag `tag` as a number §6.4's equations may use?
+
+    RULING 2 OF THE park 3 ROUND, 2026-09-04: **time is carried and never invented.** A term is
+    applied WHEN THE PACKET CARRIES IT and never otherwise — no leap-second table is consulted, no
+    count is assumed, and an absent item does not become a zero. A Zero-Length Item is `ST
+    0601.14-33`'s explicit unknown and is therefore ALSO an absence for this purpose, which is the
+    one case worth spelling out: a producer sending a ZLI for tag 136 is saying "the leap-second
+    count is now unknown", and treating that as +0 seconds would be inventing exactly the value
+    the producer just withdrew.
+    """
+    entry = items.get(tag)
+    return entry is not None and _measured(entry.value) is not None
+
+
+def _leap_basis(leap_seconds: int | None) -> dict:
+    """What happened to tag 136 on this packet, and the clause it happened under."""
+    if leap_seconds is None:
+        return {
+            "applied": False,
+            "item": "tag 136 Leap Seconds",
+            "why_not": (
+                "the packet carries no usable tag 136, so the leap-second count is NOT AVAILABLE "
+                "to apply and none is assumed. MISB ST 0603.5 §6 — 'UTC can be derived from the "
+                "MISP Time System using its correct offset and inclusion of leap seconds' — is "
+                "therefore not satisfied on this object, and observed_at is the MISP Time System "
+                "instant rather than UTC. ST 0601.14a §6.4 offers the alternative and this "
+                "adapter declines it: 'The number of leap seconds may be represented by the Leap "
+                "Seconds item (Tag 136) or from a current leap second table.' A leap-second table "
+                "is a second document that changes over time, and an adapter contracted to be a "
+                "pure function of one payload may not hold one"),
+        }
+    return {
+        "applied": True,
+        "item": "tag 136 Leap Seconds",
+        "value_seconds": leap_seconds,
+        "microseconds_added": leap_seconds * 1_000_000,
+        "clause": (
+            "ST 0601.14a §6.4 Equation 2, 'TCorrected = TPrecision + TCorrection + (LSeconds * "
+            "1,000,000)', and §8.136's own bullets: 'Add this value to Precision Time Stamp (Tag "
+            "2) to convert to UTC' and 'When adjusting Precision Time Stamp to UTC multiply this "
+            "leap second value by 1,000,000 to convert it to microseconds'"),
+        "the_sign_is_the_PRODUCER's": (
+            "the value is ADDED as the equation and the bullet both say, and the item is signed — "
+            "§8.136's Format cells read int32 with a Min of -(2^31) — so a producer that needs a "
+            "subtraction sends a negative. §6.4's prose says 'To convert the Precision Time Stamp "
+            "to UTC, add or subtract leap seconds', which is that same signed addition described "
+            "in words. Nothing here decides a sign, and nothing here checks the magnitude against "
+            "a table: a count this adapter could second-guess is a count it would have to hold a "
+            "leap-second table to second-guess"),
+        "what_it_does_NOT_supply": (
+            "the 82-microsecond residue. ST 0603.5 §6 needs 'its correct offset and inclusion of "
+            "leap seconds' and this is the second term only — see time_basis.relation_to_UTC and "
+            "FORMAT_COVERAGE.md's KLV 21"),
+    }
+
+
+def _correction_basis(correction_us: int | None) -> dict:
+    """What happened to tag 137 on this packet, and the clause that licensed it."""
+    if correction_us is None:
+        return {
+            "applied": False,
+            "item": "tag 137 Correction Offset",
+            "why_not": "the packet carries no usable tag 137 and no correction is assumed",
+        }
+    return {
+        "applied": True,
+        "item": "tag 137 Correction Offset",
+        "value_microseconds": correction_us,
+        "clause": (
+            "ST 0601.14a §6.4 Equation 1, 'TCorrected = TPrecision + TCorrection', introduced by "
+            "'To compute the Corrected Time (TCorrected) for display or other uses, add the "
+            "Correction Offset (TCorrection) to the Precision Time Stamp (TPrecision)', and "
+            "§8.137's own bullet 'Add value to Precision Time Stamp (Tag 2) to correct time'"),
+        "why_it_is_APPLIED_and_not_merely_carried": (
+            "RULING 2(c) of the park 3 round applies it to the instant ONLY IF a held document "
+            "states that the receiver applies it, and ST 0601.14a §6.4 does: the sentence above "
+            "is addressed to whoever computes a time 'for display or other uses', which is this "
+            "adapter's whole job, and §6.4 gives the reason the correction exists rather than a "
+            "rewritten stamp — 'The Correction Offset eliminates the need to do a post-mission "
+            "change of the Precision Time Stamp value, which if changed can cause synchronization "
+            "issues with the Motion Imagery frames.' So the raw stamp stays raw at "
+            "attributes.precision_time_stamp_us and the corrected instant is what observed_at "
+            "carries"),
+        "it_carries_no_leap_seconds": (
+            "§8.137's own bullet: 'This value DOES NOT INCLUDE leap seconds offset. See Leap "
+            "Seconds (Tag 136) to add leap second offset.' The two terms are independent and "
+            "Equation 2 adds both"),
+        "signedness": uas.TIME_ADJUSTMENT_SIGNEDNESS,
+    }
 
 
 def _octets_from_parsed(packet: dict) -> bytes:
@@ -536,25 +651,95 @@ class Stanag4609Adapter(Adapter):
                 "refusal reached a second time"
             )
         stamp_us = int(value)
-        observed_at = EPOCH + _dt.timedelta(microseconds=stamp_us)
+        # ------------------------------------------------------ §6.4's two equations, in order
+        #
+        # RULING 2 OF THE park 3 ROUND, 2026-09-04. Time is CARRIED and never invented: each term
+        # below is applied only when the packet supplies it, and nothing supplies a default.
+        # ST 0601.14a §6.4 states the arithmetic twice, as two equations:
+        #
+        #     Equation 1   TCorrected = TPrecision + TCorrection
+        #     Equation 2   TCorrected = TPrecision + TCorrection + (LSeconds * 1,000,000)
+        #
+        # so the correction is applied to reach the corrected instant and the leap seconds are
+        # applied to reach UTC. Both are §8.136's and §8.137's own bullets said again as algebra.
+        correction_us = int(_measured(items[137].value)) if _time_term(items, 137) else None
+        leap_seconds = int(_measured(items[136].value)) if _time_term(items, 136) else None
+        applied_us = stamp_us
+        if correction_us is not None:
+            applied_us += correction_us
+        if leap_seconds is not None:
+            applied_us += leap_seconds * 1_000_000
+        observed_at = EPOCH + _dt.timedelta(microseconds=applied_us)
         basis = {
             "item": "tag 2 Precision Time Stamp",
             "raw_microseconds": stamp_us,
             "epoch": (
-                "1970-01-01T00:00:00Z, read from ST 0601.14a §8.2.1: 'This item represents time as "
-                "the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z) "
-                "using an unsigned eight (8) byte integer.' The epoch is in a HELD document, which "
-                "is why this field is filled at all — the profile MISP-2019.1 states none"),
-            "timescale": (
-                "NOT UTC, on the document's own statement: §8.2.1, 'The Precision Time Stamp does "
-                "not include leap seconds and therefore the Precision Time Stamp does not "
-                "represent UTC.' A count of seconds since 1970 that excludes leap seconds is POSIX "
-                "time, which is what EDITION 1 calls it in its own Table 1 note — 'Derived from "
-                "the POSIX IEEE 1003.1 standard' — and this adapter converts by the POSIX rule "
-                "because it is the only conversion either held document describes and "
-                "Event.observed_at is required. The residue is an ambiguity at a leap-second "
-                "boundary and it is NOT resolved here: park 3, MISB ST 0603.5, owns the normative "
-                "definition of the MISP Time System and of what to CALL this scale"),
+                "1970-01-01T00:00:00Z, and THREE held documents now state it. MISB ST 0603.5 §6 "
+                "defines the MISP Time System with an 'Epoch of 1970-01-01T00:00:00.0Z (starting "
+                "point for time scale)' and §3 glosses it as 'the MISP Time System Epoch is "
+                "1970-01-01T00:00:00.0Z (i.e. midnight January 1, 1970)'. ST 0601.14a §8.2.1: "
+                "'This item represents time as the number of microseconds elapsed since January "
+                "1, 1970 (1970-01-01T00:00:00Z) using an unsigned eight (8) byte integer.' And "
+                "ST 0603.5's own Appendix A closes the question against every earlier edition of "
+                "itself: 'Nothing has changed across all ST 0603 versions regarding the Epoch.' "
+                "The profile MISP-2019.1 still states none, which is why this field was ever in "
+                "doubt"),
+            "scale": (
+                "THE MISP TIME SYSTEM, named as MISB ST 0603.5 names it, and ST 0601.14a §8.2.1 "
+                "says the item is one: 'This metadata item is an implementation of the MISP Time "
+                "System.' §6 of ST 0603.5 defines it in three lines — 'Epoch of "
+                "1970-01-01T00:00:00.0Z (starting point for time scale)', 'Based on the SI Second "
+                "(constant counting increment of time)', 'Strictly monotonically increasing (no "
+                "skips, no repeats in count)' — and calls it a 'Level 3' time system exemplifying "
+                "'Total Order of data', 'Relative Differencing' and 'Absolute Time reference'. "
+                "**This is what park 3 owned and what closing it supplies**: the scale had no name "
+                "here until 2026-09-04 because the document that names it was not held"),
+            "relation_to_TAI": (
+                "ST 0603.5 §6, in the document's own words: 'The MISP Time System is locked (i.e. "
+                "same clock-period and zero delay, see Motion Imagery Handbook [2]) with "
+                "International Atomic Time (TAI); however, there is a fixed offset of 8.0000822 "
+                "seconds between the MISP Time System and TAI (i.e. MISP Time = TAI - 8.000082 "
+                "seconds).' The footnote marker sits inside the first figure as the document "
+                "prints it; footnote 2 reads 'Many systems may not need to account for the 82 "
+                "microseconds; those with sensitive timing requirements may.' So the scale is "
+                "locked to TAI and is NOT TAI"),
+            "relation_to_UTC": (
+                "ST 0603.5 §6: 'UTC can be derived from the MISP Time System using its correct "
+                "offset and inclusion of leap seconds.' TWO TERMS, and ST 0601.14a §6.4's "
+                "Equation 2 supplies ONE of them — the leap seconds — so a UTC instant built here "
+                "carries the 82-microsecond residue §6's offset names and ST 0603.5's own "
+                "footnote 2 licenses ignoring. Registered as a divergence rather than reconciled: "
+                "FORMAT_COVERAGE.md's KLV 21. ST 0601.14a §8.2.1 states the negative half and "
+                "agrees: 'The Precision Time Stamp does not include leap seconds and therefore "
+                "the Precision Time Stamp does not represent UTC.'"),
+            "the_POSIX_rule_is_SUPERSEDED": (
+                "SUPERSEDED BY THE NORMATIVE DOCUMENT, 2026-09-04, and this field used to assert "
+                "it. It read that a count of seconds since 1970 excluding leap seconds 'is POSIX "
+                "time, which is what EDITION 1 calls it in its own Table 1 note — Derived from "
+                "the POSIX IEEE 1003.1 standard — and this adapter converts by the POSIX rule "
+                "because it is the only conversion either held document describes'. ST 0603.5's "
+                "Appendix A is that conversion's obituary: POSIX derivation is the guidance "
+                "'Prior to MISB ST 0603.3', and the appendix lists four issues with it, two of "
+                "which reach this arithmetic — 'POSIX time does not include leap seconds; "
+                "however, POSIX is not a linear scale of time. At leap second boundaries POSIX "
+                "time may add (or subtract) one second of time', and 'POSIX does not define the "
+                "second to be based on the International System of Units (SI) second'. The MISP "
+                "Time System is SI-based and strictly monotonic, so it is precisely NOT POSIX "
+                "time. WHAT DID NOT MOVE IS THE ARITHMETIC: the appendix also says the POSIX "
+                "Epoch 'is the same Epoch in the MISP Time System', and a strictly monotonic "
+                "SI-second count from that epoch is rendered to a calendar label by the same "
+                "division this adapter already performed. So the conversion is unchanged and its "
+                "AUTHORITY has moved from an analogy to a definition. Registered at KLV 22"),
+            "leap_second_adjustment": _leap_basis(leap_seconds),
+            "correction_offset": _correction_basis(correction_us),
+            "applied_microseconds": applied_us,
+            "what_observed_at_IS": (
+                "the instant EPOCH + applied_microseconds. With neither tag 136 nor tag 137 in "
+                "the packet that is the raw MISP Time System instant and NOT UTC; with tag 136 it "
+                "is §6.4 Equation 2's UTC less the 82-microsecond residue; with tag 137 it is the "
+                "corrected time §6.4 Equation 1 defines. The CDM's Timestamp is UTC and this "
+                "adapter does not pretend the difference away — it states which of the three this "
+                "object carries, on the object"),
             "precision": (
                 "the stamp is microseconds and times.render emits milliseconds, so the serialised "
                 "timestamp is this instant truncated to a millisecond. The exact integer is at "
@@ -922,6 +1107,10 @@ class Stanag4609Adapter(Adapter):
             elif tag in uas.PACK_ITEM_TAGS:
                 units, klv_format, section = None, "vlp", str(packs.PACK_ITEMS[tag]["section"])
                 name, witness = str(packs.PACK_ITEMS[tag]["name"]), _WITNESS_DOCUMENT
+            elif tag in uas.TIME_ADJUSTMENT_ITEMS:
+                spec = uas.TIME_ADJUSTMENT_ITEMS[tag]
+                units, klv_format, section = spec.units, spec.klv_format, spec.section
+                name, witness = spec.name, _WITNESS_DOCUMENT
             else:
                 item_name, units, _a, _b, _max = imapb.IMAPB_ITEMS[tag]
                 klv_format, section = "IMAPB", f"8.{tag}"
@@ -939,15 +1128,23 @@ class Stanag4609Adapter(Adapter):
 
         # ---------------------------------------------------------- the document-witnessed items
         #
-        # THE TWELVE THAT REACH NO CANONICAL FIELD, PLUS THE ONE PACK, "as the document names
-        # them" — which is this round's brief in its own words and is why the keys below are the
-        # §8.x item names lowercased with their units appended rather than names of this
-        # repository's choosing. Two of the fifteen are NOT here: tag 104 fills
-        # `Position.alt_m` and tag 112 fills `Kinematics.course_deg`, and each is stated in its
-        # own basis paragraph instead. The other thirteen have no CDM field to reach — a radar
-        # altimeter, a storage percentage and a transmit frequency are facts about an airframe and
-        # its payload, not about a contact's identity, position or motion — so they are carried
-        # whole and nothing is derived from them.
+        # THE TWELVE THAT REACH NO CANONICAL FIELD, PLUS THE ONE PACK, PLUS THE TWO TIME
+        # ADJUSTMENTS, "as the document names them" — which is the park 5 round's brief in its own
+        # words and is why the keys below are the §8.x item names lowercased with their units
+        # appended rather than names of this repository's choosing. Two of the seventeen are NOT
+        # here: tag 104 fills `Position.alt_m` and tag 112 fills `Kinematics.course_deg`, and each
+        # is stated in its own basis paragraph instead. Thirteen have no CDM field to reach — a
+        # radar altimeter, a storage percentage and a transmit frequency are facts about an
+        # airframe and its payload, not about a contact's identity, position or motion — so they
+        # are carried whole and nothing is derived from them.
+        #
+        # **THE TWO ADDED 2026-09-04 BY THE park 3 ROUND ARE A THIRD CASE and it is neither of the
+        # other two.** Tags 136 and 137 are here, under their §8.x names, AND they reach a
+        # canonical field: `Event.observed_at`, through §6.4's two equations rather than by filling
+        # it. Their rows' `cdm_field` cell reads `Entity.attributes` and stays that way, because
+        # what lands in a canonical field is the INSTANT and not either item's value — so the
+        # honest place for the values is here and the honest place for the arithmetic is
+        # `time_basis`, which states both terms whether or not the packet carried them.
         witnessed_by_document = {}
         for tag in uas.DOCUMENT_WITNESSED_TAGS:
             if tag not in items or tag in (104, 112):
@@ -955,6 +1152,10 @@ class Stanag4609Adapter(Adapter):
             if tag in uas.PACK_ITEM_TAGS:
                 key = "wavelengths_list"
                 units = None
+            elif tag in uas.TIME_ADJUSTMENT_ITEMS:
+                spec = uas.TIME_ADJUSTMENT_ITEMS[tag]
+                units = spec.units
+                key = spec.name.lower().replace(" ", "_")
             else:
                 item_name, units, _a, _b, _max = imapb.IMAPB_ITEMS[tag]
                 key = item_name.lower().replace("-", "_").replace(" ", "_")
@@ -967,6 +1168,10 @@ class Stanag4609Adapter(Adapter):
                 "section": ("ST 0601.14a §"
                             + (str(packs.PACK_ITEMS[tag]["section"])
                                if tag in uas.PACK_ITEM_TAGS else f"8.{tag}")),
+                **({"applied_to_observed_at": True,
+                    "how": "see attributes.time_basis — §6.4's Equation "
+                           + ("2" if tag == 136 else "1")}
+                   if tag in uas.TIME_ADJUSTMENT_ITEMS else {}),
             }
         if witnessed_by_document:
             attributes["document_witnessed_items"] = witnessed_by_document
@@ -978,14 +1183,21 @@ class Stanag4609Adapter(Adapter):
                 "read the reopen condition this record's scope contract has stated since "
                 "2026-08-26: 'a second pinned stream, OR a document-side check as strong as a "
                 "worked example — and ST 0601.14a prints one per item'. "
-                "`klv_uas_codec.check_against_the_documents_own_examples()` runs all fifteen "
-                "alongside the 26 on every suite run, 41 in total"),
+                "`klv_uas_codec.check_against_the_documents_own_examples()` runs all "
+                f"{len(uas.DOCUMENT_WITNESSED_TAGS)} alongside the 26 on every suite run, "
+                f"{len(uas.DOCUMENT_WITNESSED_TAGS) + len(uas.WITNESSED_TAGS)} in total. "
+                "Fifteen were admitted by RULING 1 of the park 5 round and two — items 136 and "
+                "137, the terms §6.4's UTC arithmetic needs — by RULING 3 of the park 3 round, "
+                "the same day and on the same condition"),
             "what_it_is_not": (
-                "NOT a claim that any of these fifteen has been met on a wire. The pinned stream "
-                "carries 26 items whose highest tag is 65 and not one of the fifteen is among "
-                "them, so every value here is decoded by a codec checked against a printed "
+                "NOT a claim that any of these seventeen has been met on a wire. The pinned "
+                "stream carries 26 items whose highest tag is 65 and not one of the seventeen is "
+                "among them, so every value here is decoded by a codec checked against a printed "
                 "example and against no held octet — a weaker footing than the 26 have, and the "
-                "reason `klv_uas_codec.WITNESSED_TAGS` was left at 26 rather than widened"),
+                "reason `klv_uas_codec.WITNESSED_TAGS` was left at 26 rather than widened. **It "
+                "is what keeps this round's goldens honest**: the pinned stream carries neither "
+                "tag 136 nor tag 137, so not one of its six packets' observed_at values moved "
+                "when §6.4's equations landed"),
             "declined": {
                 "130": packs.AIRBASE_LOCATIONS_NOT_DECODED,
             },

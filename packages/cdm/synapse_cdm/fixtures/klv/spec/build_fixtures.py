@@ -1345,11 +1345,156 @@ _PARK_5_FIXTURES: tuple[dict, ...] = (
 )
 
 
+
+
+# ======================================================================================
+# THE PARK 3 FIXTURES — items 136 and 137, and the arithmetic §6.4 states as two equations
+# ======================================================================================
+#
+# **THE OCTETS ARE THE DOCUMENT'S OWN, THE SAME ARRANGEMENT THE PARK 5 BLOCK USES**, and the same
+# limit applies: no held stream carries either tag, so these fixtures are as strong as the 26-item
+# block on the axis of who chose the octets and weaker on the axis of who has met them on a wire.
+# §8.136 prints `30 seconds` against `8108 01 1E`; §8.137 prints `1:23:45.678901` against
+# `8109 05 012B 8DC6 35`. Both are read out of `klv_uas_codec.TIME_ADJUSTMENT_ITEMS` rather than
+# re-typed, so a fixture cannot carry octets the worked-example check has not already reproduced.
+#
+# **WHAT THIS BLOCK EXISTS TO PIN IS AN ARITHMETIC AND NOT A DECODE.** Two of the five carry a
+# value the document does not print — a negative adjustment, and an explicit unknown — and each is
+# there because the document's own printed example cannot reach the case: `012B8DC635` has a clear
+# top bit, so it decodes to the same integer signed or unsigned and cannot witness §8.137's
+# contradiction between its Format cells and its `Softval = KLVuint` conversion line (KLV 23); and
+# no printed example is zero-length, so nothing else here would catch a round that let an absent
+# leap-second count become a silent `+0`.
+
+#: §8.136's and §8.137's own printed Example KLV Values, keyed by tag, read from the codec's table.
+_TIME_EXAMPLE = {tag: spec.example_octets
+                 for tag, spec in uas.TIME_ADJUSTMENT_ITEMS.items()}
+
+_PARK_3_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="the_time_adjustments_from_the_documents_own_examples",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (136, _TIME_EXAMPLE[136]),           # 30 seconds, §8.136's own example
+            (137, _TIME_EXAMPLE[137]),           # 1:23:45.678901, §8.137's own example
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**BOTH TERMS OF ST 0601.14a §6.4 EQUATION 2 IN ONE PACKET, each carrying the Example "
+            "KLV Value its own §8.x block prints.** Equation 2 reads `TCorrected = TPrecision + "
+            "TCorrection + (LSeconds * 1,000,000)`, and with §8.2's printed stamp of "
+            "1 224 807 209 913 000 µs, §8.137's 5 025 678 901 µs and §8.136's 30 s the instant is "
+            "1 224 812 265 591 901 µs — 2008-10-24T01:37:45.591Z once times.render truncates to a "
+            "millisecond. What must happen: observed_at is that instant, "
+            "attributes.precision_time_stamp_us is still the RAW 1 224 807 209 913 000 because "
+            "§6.4's own reason for the Correction Offset is that the stamp is NOT rewritten, and "
+            "attributes.time_basis records both terms as applied with the clause each came from. "
+            "What must NOT happen: either term applied twice, the correction multiplied by "
+            "1 000 000 (which is the leap-second term's rule and not its own), or the raw stamp "
+            "moved"),
+        citation=("ST 0601.14a §6.4 Equations 1 and 2, §8.136 and §8.137 Example KLV Item rows; "
+                  "MISB ST 0603.5 §6"),
+    ),
+    dict(
+        name="leap_seconds_alone_convert_the_stamp_toward_utc",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (136, _TIME_EXAMPLE[136]),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**EQUATION 2 WITH ITS CORRECTION TERM ABSENT, which is the case a real packet is far "
+            "likeliest to be.** Tag 137 is a post-mission item and tag 136 is not, so a live feed "
+            "carrying one carries this one. What must happen: observed_at is "
+            "2008-10-24T00:13:59.913Z, thirty seconds past the raw stamp; "
+            "time_basis.leap_second_adjustment says applied with §8.136's bullet quoted; and "
+            "time_basis.correction_offset says NOT applied because the packet carries no tag 137 "
+            "— not applied as zero, which is the distinction RULING 2 of the park 3 round exists "
+            "to hold. **And what the object still does not claim**: MISB ST 0603.5 §6 derives UTC "
+            "'using its correct offset and inclusion of leap seconds', and this is the leap "
+            "seconds only, so time_basis.relation_to_UTC names the 82-microsecond residue rather "
+            "than letting the object read as UTC on the nose"),
+        citation="ST 0601.14a §6.4 Equation 2 and §8.136; MISB ST 0603.5 §6 and its footnote 2",
+    ),
+    dict(
+        name="a_correction_offset_is_applied_and_the_raw_stamp_is_kept",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (137, _TIME_EXAMPLE[137]),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**EQUATION 1 ALONE, and it is the fixture RULING 2(c) turns on.** That ruling applies "
+            "the Correction Offset to the instant ONLY IF a held document says the receiver "
+            "applies it, and §6.4 does: 'To compute the Corrected Time (TCorrected) for display or "
+            "other uses, add the Correction Offset (TCorrection) to the Precision Time Stamp "
+            "(TPrecision)'. What must happen: observed_at is 2008-10-24T01:37:15.591Z and "
+            "attributes.precision_time_stamp_us is unchanged at 1 224 807 209 913 000. **The two "
+            "together are the point**, and §6.4 gives the reason in its own words — 'The "
+            "Correction Offset eliminates the need to do a post-mission change of the Precision "
+            "Time Stamp value, which if changed can cause synchronization issues with the Motion "
+            "Imagery frames' — so an adapter that corrected the stamp instead of the instant would "
+            "break the correlation the item exists to preserve. **And this object is still not "
+            "UTC**: §8.137's own bullet says 'This value DOES NOT INCLUDE leap seconds offset', "
+            "there is no tag 136 here, and time_basis says the adjustment was not available"),
+        citation="ST 0601.14a §6.4 Equation 1 and §8.137; ST 0601.14a §8.2.1",
+    ),
+    dict(
+        name="a_negative_time_adjustment_is_read_signed",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (136, "FF"),                         # -1 second,  int32 per §8.136's Format cells
+            (137, "FFF85EE0"),                   # -500 000 µs, int64 per §8.137's Format cells
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE CASE THE DOCUMENT'S OWN EXAMPLES CANNOT WITNESS, and it is a live disagreement "
+            "inside one §8.x block.** §8.137 states Format `int64` / `int` with a Min of -(2^63) "
+            "in its drawn table and then prints 'KLV Value To Software Value: Softval = KLVuint' "
+            "one line below — while §8.136, the sibling item with the identical shape, prints "
+            "'Softval = KLVint'. The printed example cannot separate the two readings: "
+            "`012B8DC635` has a clear top bit. This fixture does. What must happen: tag 136 "
+            "decodes to -1 and tag 137 to -500 000, and observed_at is "
+            "2008-10-24T00:13:28.413Z — 1.5 s BEFORE the raw stamp. Under the `KLVuint` reading "
+            "the same octets would give 255 and 4 294 467 296, putting the instant more than an "
+            "hour and four minutes late and four thousand years past that on the leap term. "
+            "Registered at **KLV 23** and decided on the Format cells, which is two of the "
+            "block's drawn facts against one of its conversion lines"),
+        citation=("ST 0601.14a §8.136 and §8.137 Format rows and conversion lines; "
+                  "FORMAT_COVERAGE.md register entry KLV 23"),
+    ),
+    dict(
+        name="a_zero_length_leap_seconds_item_is_not_a_zero_adjustment",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (136, ""),                           # ST 0601.14-33's explicit unknown
+            (137, ""),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**AN EXPLICIT UNKNOWN IS NOT A ZERO, and on a time term the difference is a wrong "
+            "instant rather than a missing one.** `ST 0601.14-33` says a consumer shall interpret "
+            "a zero-length item's value as 'unknown', and §6.5 makes a ZLI the producer's way of "
+            "saying a value has become Unknown 'immediately'. So a producer sending a ZLI for tag "
+            "136 has WITHDRAWN the leap-second count, and adding zero seconds on its behalf would "
+            "assert the very number it just withdrew. What must happen: neither term is applied, "
+            "observed_at is the raw stamp's instant 2008-10-24T00:13:29.913Z, time_basis says for "
+            "each term that the packet carries no usable item, and both zero-length items are "
+            "carried as themselves. What must NOT happen: a defect — neither tag is among the "
+            "three `ST 0601.14-32` forbids a ZLI on — or a +0 recorded as an applied adjustment"),
+        citation="ST 0601.14a §6.5, ST 0601.14-33 and ST 0601.14-32; §8.136, §8.137",
+    ),
+)
+
+
 #: The park 5 fixtures are APPENDED rather than interleaved, so every fixture that existed before
 #: 2026-09-04 keeps the index `enumerate` gives it and therefore the UUID-v8 identity
 #: `fixtures/klv/README.md` records for it. Inserting in tag order would renumber sixteen
-#: fixtures to no purpose.
-ADAPTER_FIXTURES = ADAPTER_FIXTURES + _PARK_5_FIXTURES
+#: fixtures to no purpose. **The park 3 fixtures are appended after them for the same reason and
+#: it now holds twice over**: park 3's round is later in the day than park 5's, so its five go
+#: after park 5's nine and both the twenty-three that existed before 2026-09-04 and those nine
+#: keep the indices they had. 23 + 9 + 5 = 37.
+ADAPTER_FIXTURES = ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:

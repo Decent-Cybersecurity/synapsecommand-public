@@ -20,25 +20,36 @@ the same order every time: 1, 2, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 a schedule: an item this repository has never seen on a wire is an item whose decoder nothing here
 could check against anything but itself.
 
-**THE CONTRACT HAS A STATED REOPEN CONDITION AND IT HAS NOW BEEN EXERCISED TWICE, SO THIS MODULE
-DECODES 42 TAGS AND NOT 26.** The condition, written into `FORMAT_COVERAGE.md`'s "Not witnessed"
+**THE CONTRACT HAS A STATED REOPEN CONDITION AND IT HAS NOW BEEN EXERCISED THREE TIMES, SO THIS
+MODULE DECODES 44 TAGS AND NOT 26.** The condition, written into `FORMAT_COVERAGE.md`'s "Not witnessed"
 ledger row on 2026-08-26, is *"a second pinned stream, OR a document-side check as strong as a
 worked example"*. **The first half has never been met** — one stream is held and one only.
-The second has been met twice, by two different kinds of document evidence, and each crossing has
-its own table beside `ITEMS` rather than an entry inside it:
+The second has been met three times, by two different kinds of document evidence, and each crossing
+has its own table beside `ITEMS` rather than an entry inside it:
 
 * **item 48**, `NESTED_SETS`, 2026-09-04 (the park 2 round). Ground: a SECOND DOCUMENT. ST 0601.14a
   §8.48 and MISB ST 0102.12 §6.7 state the same sixteen Universal Label octets and the same CRC.
   Its Value is a nested Local Set and `klv_security_codec` is that document's item layer.
-* **fifteen items**, `DOCUMENT_WITNESSED_TAGS`, 2026-09-04 (the park 5 round). Ground: THIS
-  document's own printed worked examples — tags 96, 103, 104, 105, 109, 112, 113, 114, 117, 118,
-  119, 120, 132 and 134, whose values `imapb_codec` maps, plus tag 128, whose Value is a pack read
-  by `klv_pack_codec`. `check_against_the_documents_own_examples()` runs all fifteen examples
-  alongside the 26 on every suite run: 41 in total.
+* **fifteen items**, `IMAPB_ITEM_TAGS` and `PACK_ITEM_TAGS`, 2026-09-04 (the park 5 round, RULING
+  1). Ground: THIS document's own printed worked examples — tags 96, 103, 104, 105, 109, 112, 113,
+  114, 117, 118, 119, 120, 132 and 134, whose values `imapb_codec` maps, plus tag 128, whose Value
+  is a pack read by `klv_pack_codec`.
+* **two items**, `TIME_ADJUSTMENT_ITEMS`, 2026-09-04 (the park 3 round, RULING 3). Ground: the SAME
+  as the fifteen's — §8.136 prints `30 seconds` against `1E` and §8.137 prints `1:23:45.678901`
+  against `012B8DC635` — and they have a table of their own because neither is an IMAPB value nor
+  a pack: both state the identity map, `KLVval = SoftVal`, over a signed big-endian integer, so
+  there is no layer below this one to delegate them to. **What they are FOR is why the round wrote
+  them**: MISB ST 0603.5 §6 says UTC is derived from the MISP Time System "using its correct offset
+  and inclusion of leap seconds", and these two are the terms ST 0601.14a §6.4's Equations 1 and 2
+  put in that arithmetic.
 
-**The remaining 99 rows of the 141 stay absent, and tag 130 is one of them** — §8.130 prints no
+`DOCUMENT_WITNESSED_TAGS` is the union of the second and third of those — seventeen tags — and
+`check_against_the_documents_own_examples()` runs all seventeen examples alongside the 26 on every
+suite run: **43 in total**.
+
+**The remaining 97 rows of the 141 stay absent, and tag 130 is one of them** — §8.130 prints no
 worked example at all, so the reopen condition's second half has nothing to be as strong as. What
-is true of all 42 tags this module now reads and is not softened anywhere: **only 26 of them have
+is true of all 44 tags this module now reads and is not softened anywhere: **only 26 of them have
 ever been met on a wire.**
 
 WHERE EVERY NUMBER BELOW COMES FROM, AND THE CHECK THAT MAKES IT TRUSTWORTHY
@@ -848,10 +859,136 @@ IMAPB_ITEM_TAGS: tuple[int, ...] = tuple(sorted(imapb.IMAPB_ITEMS))
 #: `klv_pack_codec.AIRBASE_LOCATIONS_NOT_DECODED`, which is the same sentence its row carries.
 PACK_ITEM_TAGS: tuple[int, ...] = packs.PACK_TAGS_READ
 
+
+class _TimeAdjustment(NamedTuple):
+    """One §8.x block for a SIGNED INTEGER TIME ADJUSTMENT, transcribed the same way `_Item` is.
+
+    A third record type rather than a widening of `_Item`, for the reason `_Item` is not widened
+    anywhere else: `_Item` carries an affine map — `klv_min`, `klv_max`, `offset`, `scale` — and
+    these two items have none. Their §8.x blocks state the identity, `KLVval = SoftVal`, and the
+    Value is the software value itself. A record with five map fields permanently set to the
+    identity would invite a reader to look for a scale factor that the document does not state.
+    """
+
+    tag: int
+    name: str
+    units: str
+    description: str
+    klv_format: str
+    software_format: str
+    software_min: int
+    software_max: int
+    length: str
+    max_length: int
+    required_length: None
+    resolution: str
+    special_values: str
+    required_in_ls: str
+    sdcc_allowed: str
+    multiples_allowed: str
+    klv_key: str
+    section: str
+    page: int
+    example_value: str
+    example_value_units: int
+    example_octets: str
+    bullets: tuple[str, ...]
+
+
+#: **THE THIRD CROSSING OF THE SCOPE CONTRACT, 2026-09-04 (the park 3 round), AND ITS GROUND IS
+#: THE SAME AS THE FIFTEEN'S — this document's own printed worked example — SO IT IS RULING 1's
+#: CONDITION AND NOT A NEW ONE.** RULING 3 of the park 3 round promotes items 136 and 137 on the
+#: scope contract's second condition, *"a second pinned stream, OR a document-side check as strong
+#: as a worked example"*, exercised by the park 5 round for fifteen items and by this one for two.
+#: §8.136 prints `30 seconds` against `8108 01 1E` and §8.137 prints `1:23:45.678901` against
+#: `8109 05 012B 8DC6 35`, and `check_against_the_documents_own_examples()` decodes both on every
+#: suite run: 43 examples in total, up from 41.
+#:
+#: **WHY THEY NEEDED A TABLE OF THEIR OWN RATHER THAN A ROW IN EITHER EXISTING ONE.** `ITEMS` is
+#: the 26 the pinned stream attests and does not move; `IMAPB_ITEM_TAGS` and `PACK_ITEM_TAGS` are
+#: derived from the tables of the layers that decode those items, and neither layer decodes a bare
+#: signed integer. So this is a fourth table beside three, on the pattern `NESTED_SETS` set: a
+#: crossing has to be declared somewhere countable, and the declaration says which layer owns the
+#: octets.
+#:
+#: **WHAT THEY ARE FOR, WHICH IS THE ONLY REASON THIS ROUND WROTE THEM.** They are the two items
+#: MISB ST 0603.5's UTC rule needs. §6 of that standard: *"UTC can be derived from the MISP Time
+#: System using its correct offset and inclusion of leap seconds."* ST 0601.14a §6.4 states the
+#: arithmetic as two equations — `TCorrected = TPrecision + TCorrection` and
+#: `TCorrected = TPrecision + TCorrection + (LSeconds * 1,000,000)` — and `stanag4609._observed_at`
+#: applies exactly those, only on the terms a packet actually carries.
+#:
+#: **AND WHAT IS NOT SOFTENED: neither is in the pinned stream.** Its 26 items stop at tag 65, so
+#: both ship against a printed example and against no held octet, which is the sentence each
+#: promoted row carries in its own description.
+TIME_ADJUSTMENT_ITEMS: dict[int, _TimeAdjustment] = {
+    136: _TimeAdjustment(
+        tag=136, name="Leap Seconds", units="Seconds (s)",
+        description="Number of leap seconds to adjust Precision Time Stamp (Tag 2) to UTC",
+        klv_format="int", software_format="int32",
+        software_min=-(2 ** 31), software_max=(2 ** 31) - 1,
+        length="Variable", max_length=4, required_length=None,
+        resolution="1 Second", special_values="None",
+        required_in_ls="Optional", sdcc_allowed="No", multiples_allowed="No",
+        klv_key="06.0E.2B.34.01.01.01.01.0E.01.01.02.0A.00.00.00 (CRC 41450)",
+        section="8.136", page=204,
+        example_value="30 seconds", example_value_units=30,
+        example_octets="1E",
+        bullets=(
+            "Add this value to Precision Time Stamp (Tag 2) to convert to UTC",
+            "When adjusting Precision Time Stamp to UTC multiply this leap second value by "
+            "1,000,000 to convert it to microseconds",
+            "See handbook for more details on Leap Seconds and the MISP Time System",
+            'See "Packet Timestamp" section for more information on the use of this item',
+        ),
+    ),
+    137: _TimeAdjustment(
+        tag=137, name="Correction Offset", units="microseconds (µs)",
+        description="Post-flight time adjustment to correct Precision Time Stamp (Tag 2) as "
+                    "needed",
+        klv_format="int", software_format="int64",
+        software_min=-(2 ** 63), software_max=(2 ** 63) - 1,
+        length="Variable", max_length=8, required_length=None,
+        resolution="1 microsecond", special_values="None",
+        required_in_ls="Optional", sdcc_allowed="No", multiples_allowed="No",
+        klv_key="06.0E.2B.34.01.01.01.01.0E.01.01.02.0A.17.00.00 (CRC 26393)",
+        section="8.137", page=205,
+        example_value="1:23:45.678901", example_value_units=5025678901,
+        example_octets="012B8DC635",
+        bullets=(
+            "Add value to Precision Time Stamp (Tag 2) to correct time",
+            "This value DOES NOT INCLUDE leap seconds offset. See Leap Seconds (Tag 136) to add "
+            "leap second offset",
+            'See "Packet Timestamp" section for more information on the use of this item',
+        ),
+    ),
+}
+
+#: **THE VALUE IS READ SIGNED, AND THE DOCUMENT CONTRADICTS ITSELF ABOUT ONE OF THEM.** §8.136's
+#: "KLV Value To Software Value" line reads `Softval = KLVint` and §8.137's reads `Softval =
+#: KLVuint` — while §8.137's own Format rows state `int64` and `int` with a Min of `-(2^63)`, which
+#: an unsigned read cannot produce. Two of the block's drawn cells against one of its conversion
+#: lines, and the sibling item with the identical shape prints the signed form. **Read signed**,
+#: and the divergence is registered rather than reconciled: FORMAT_COVERAGE.md's **KLV 23**. The
+#: printed example cannot discriminate — `012B8DC635` has a clear top bit and decodes to
+#: 5 025 678 901 either way — which is why the reading rests on the Format cells and on §8.137's
+#: own Description, a *"post-flight time adjustment"* that could not correct a fast clock if it
+#: could only ever add.
+TIME_ADJUSTMENT_SIGNEDNESS = (
+    "signed big-endian over the octets the wire supplies, on the Format cells of both blocks "
+    "(int32 Min -(2^31) at §8.136, int64 Min -(2^63) at §8.137) rather than on §8.137's "
+    "'Softval = KLVuint' conversion line, which contradicts them and which §8.136 prints as "
+    "'Softval = KLVint'. Registered at KLV 23, not reconciled"
+)
+
+#: The tags of the two, derived from the table so a caller cannot name one the table does not hold.
+TIME_ADJUSTMENT_TAGS: tuple[int, ...] = tuple(sorted(TIME_ADJUSTMENT_ITEMS))
+
 #: The tags this module reads on a DOCUMENT-side witness rather than a stream-side one.
 #: `WITNESSED_TAGS` is NOT widened and NOT renamed — see the decision recorded below it — so the
 #: two sets stay separately derivable, which is what the module docstring's scope argument needs.
-DOCUMENT_WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(IMAPB_ITEM_TAGS + PACK_ITEM_TAGS))
+DOCUMENT_WITNESSED_TAGS: tuple[int, ...] = tuple(
+    sorted(IMAPB_ITEM_TAGS + PACK_ITEM_TAGS + TIME_ADJUSTMENT_TAGS))
 
 #: **THE DECISION THE park 5 ROUND WAS ASKED TO MAKE AND RECORD, 2026-09-04.** The brief offered
 #: two shapes: widen `WITNESSED_TAGS` and rename it, or leave it meaning "stream-witnessed" and
@@ -874,10 +1011,15 @@ DOCUMENT_WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(IMAPB_ITEM_TAGS + PACK_I
 #:   document, one printed worked example from this document.
 WITNESS_KINDS = (
     "stream-witnessed: 26 tags, WITNESSED_TAGS, attested by fixtures/klv/streams/day_flight.klv; "
-    "document-witnessed: 15 tags, DOCUMENT_WITNESSED_TAGS, attested by ST 0601.14a's own printed "
-    "worked examples under RULING 1 of 2026-09-04; and item 48, whose ground is neither — a second "
-    "document, MISB ST 0102.12, registering the same Universal Label. Three grounds, three tables, "
-    "no tag in two of them"
+    f"document-witnessed: {len(DOCUMENT_WITNESSED_TAGS)} tags, DOCUMENT_WITNESSED_TAGS, attested "
+    "by ST 0601.14a's own printed worked examples — under RULING 1 of 2026-09-04 for fifteen of "
+    "them and RULING 3 of the park 3 round, the same day, for items 136 and 137; and item 48, "
+    "whose ground is neither — a second "
+    "document, MISB ST 0102.12, registering the same Universal Label. THREE GROUNDS AND FOUR "
+    "TABLES, and the mismatch is not an untidiness: the document-witnessed ground is carried by "
+    "three tables — IMAPB_ITEM_TAGS, PACK_ITEM_TAGS and TIME_ADJUSTMENT_ITEMS — because a ground "
+    "is a kind of evidence and a table is a layer that decodes octets, and one kind of evidence "
+    "can stand behind items three different layers read. No tag is in two of them"
 )
 
 
@@ -1055,24 +1197,36 @@ def _length_verdict(item: _Item, observed: int, entry) -> tuple[str | None, str 
 
 def _decode_document_witnessed(entry, advisories: list[dict],
                                refusals: list[dict]) -> DecodedItem | None:
-    """One `DOCUMENT_WITNESSED_TAGS` item: an IMAPB value or a pack, decoded by its own layer.
+    """One `DOCUMENT_WITNESSED_TAGS` item: an IMAPB value, a pack, or a signed time adjustment.
+
+    Each is decoded by its own layer — `imapb_codec`, `klv_pack_codec`, and for the two time
+    adjustments this module itself, because a signed big-endian integer with no map has no layer
+    below it to delegate to.
 
     Returns None where the item is refused, having appended the refusal — the ST 0102.12 element
     precedent, stated at `DecodedPacket.pack_refusals`.
 
-    **THE LENGTH POLICY IS THE SAME POLICY AND IS NOT RE-DECIDED HERE.** All fifteen state
+    **THE LENGTH POLICY IS THE SAME POLICY AND IS NOT RE-DECIDED HERE.** All seventeen state
     `Length` = `Variable` and `Required Length` = `N/A`, so `ST 0601.13-29` — the only clause that
     makes a length a `shall` — reaches none of them, and `_length_verdict`'s first two branches are
     unreachable for them by construction. What is left of the policy is its third branch: a length
     past the item's Max Length is an ADVISORY and the value is still decoded, because §7 defines
     Max Length as "the recommended maximum length". And a length of ZERO is `ST 0601.14-33`'s
-    explicit unknown, exactly as it is for the 26 — none of the fifteen is in `ZLI_FORBIDDEN`,
+    explicit unknown, exactly as it is for the 26 — none of the seventeen is in `ZLI_FORBIDDEN`,
     which holds only the three items §8's `ST 0601.14-32` names.
+
+    **RE-READ FOR THE TWO ADDED 2026-09-04 BY THE park 3 ROUND rather than assumed from the
+    fifteen**: §8.136 states `Length` Variable, `Max Length` 4, `Required Length` N/A, and §8.137
+    states Variable, 8 and N/A. So the third branch reaches them and the first two do not, which
+    is the same verdict the fifteen get and is checked here rather than inherited.
     """
     tag = entry.tag
     if tag in PACK_ITEM_TAGS:
         name, section = "Wavelengths List", "8.128"
         max_length = None
+    elif tag in TIME_ADJUSTMENT_ITEMS:
+        spec = TIME_ADJUSTMENT_ITEMS[tag]
+        name, section, max_length = spec.name, spec.section, spec.max_length
     else:
         name, _units, _a, _b, max_length = imapb.IMAPB_ITEMS[tag]
         section = f"8.{tag}"
@@ -1090,12 +1244,19 @@ def _decode_document_witnessed(entry, advisories: list[dict],
             if tag in PACK_ITEM_TAGS:
                 value = packs.decode_wavelengths_list(
                     entry.value, base_offset=entry.value_offset)
+            elif tag in TIME_ADJUSTMENT_ITEMS:
+                # SIGNED, and the reading is ruled at `TIME_ADJUSTMENT_SIGNEDNESS` rather than
+                # decided here: §8.137's own conversion line says otherwise and its Format cells
+                # win. No map, no scale — both blocks state `KLVval = SoftVal`.
+                value = int.from_bytes(entry.value, "big", signed=True)
             else:
                 value = imapb.decode_item(tag, entry.value)
         except (packs.PackError, framing.UnderivableFromPinnedCopy, ValueError) as e:
             refusals.append({
                 "tag": tag, "name": name, "section": section,
-                "class": "pack_refused" if tag in PACK_ITEM_TAGS else "imapb_value_refused",
+                "class": ("pack_refused" if tag in PACK_ITEM_TAGS
+                          else "time_adjustment_value_refused"
+                          if tag in TIME_ADJUSTMENT_ITEMS else "imapb_value_refused"),
                 "observed_length": entry.length,
                 "octets": entry.value.hex(),
                 "tag_offset": entry.tag_offset,
@@ -1305,19 +1466,20 @@ def check_against_the_documents_own_examples() -> list[str]:
     a tag's resolution, so programmers can verify they are using the right formulas". **That
     sentence is stated of every tag's summary table and not of a subset**, in the same §7 prose
     that introduces `IMAPB` and `RIMAPB` as the Software-to-KLV method — re-read from the pinned
-    copy on 2026-09-04 and quoted here for that reason — so it covers the fifteen
-    document-witnessed items exactly as it covers the 26. This runs all 41.
+    copy on 2026-09-04 and quoted here for that reason — so it covers the seventeen
+    document-witnessed items exactly as it covers the 26. This runs all 43.
 
     Returns a list of disagreements, empty when they all agree. Called by
     `tests/test_cdm_stanag4609_codec.py` on every suite run, and by edition 1's examples too — for
     which the tolerance is one quantisation step rather than the printed precision, because
     edition 1 prints round decimals and ST 0601.14a prints full precision.
 
-    **IT RUNS 41 EXAMPLES AND NOT 26, SINCE 2026-09-04.** The park 5 round added the fifteen
-    document-witnessed items, and for them this function is not a corroboration of a transcription
-    but **the whole of the witness basis their rows cite** — RULING 1 promotes them on "a
-    document-side check as strong as a worked example", and this is that check. The three groups
-    and what each compares:
+    **IT RUNS 43 EXAMPLES AND NOT 26, SINCE 2026-09-04.** The park 5 round added fifteen
+    document-witnessed items and the park 3 round, the same day, added two more; for all
+    seventeen this function is not a corroboration of a transcription but **the whole of the
+    witness basis their rows cite** — RULING 1 and RULING 3 promote them on "a document-side
+    check as strong as a worked example", and this is that check. The four groups and what each
+    compares:
 
     * **26 stream-witnessed items**, `ITEMS` — one printed Software Value against the octets that
       encode it, to the printed precision of the block's stated Software format;
@@ -1327,11 +1489,17 @@ def check_against_the_documents_own_examples() -> list[str]:
       dropped `Zoffset` or a little-endian conversion, each of which round-trips perfectly and is
       wrong against every other reader in the world;
     * **1 pack**, delegated to `klv_pack_codec.check_against_the_documents_own_example()`, which
-      compares all four members of §8.128's printed record.
+      compares all four members of §8.128's printed record;
+    * **2 time adjustments**, `TIME_ADJUSTMENT_ITEMS` — the printed octets decode to the printed
+      value EXACTLY, because there is no map between them to lose precision in. That makes it the
+      easiest of the four checks to pass and the only one that admits no tolerance at all, and
+      both halves are worth saying: what it can catch is a transposed octet, a wrong signedness
+      on a negative example the document does not print, and a wrong tag; what it cannot catch is
+      anything about a map, because there is none.
 
-    **41 = 26 + 14 + 1, and the sixteenth of park 5's sixteen is not here because the document
-    prints no example for it.** Tag 130's block reads `N/A` in both example cells, so it is absent
-    from `DOCUMENT_WITNESSED_TAGS` and its row stays `not yet`.
+    **43 = 26 + 14 + 1 + 2, and the sixteenth of park 5's sixteen is still not here because the
+    document prints no example for it.** Tag 130's block reads `N/A` in both example cells, so it
+    is absent from `DOCUMENT_WITNESSED_TAGS` and its row stays `not yet`.
     """
     problems: list[str] = []
     for tag, item in sorted(ITEMS.items()):
@@ -1396,6 +1564,26 @@ def check_against_the_documents_own_examples() -> list[str]:
                 f"tag {tag} ({name}): §8.{tag}'s example octets {octets_hex} decode to {back!r} "
                 f"and the block prints {printed!r} — a difference of {abs(back - printed):.3g}, "
                 f"further than the one step ({step:.3g}) IMAPB({a:g}, {b:g}, {length}) allows")
+
+    # THE TWO TIME ADJUSTMENTS, 2026-09-04 (the park 3 round). Their check is the simplest in
+    # this function and it is exactly as strong as the ground their rows claim: the block prints a
+    # Software Value and the octets that encode it, and the octets decode to that value with no
+    # map in between. §8.136: `30 seconds` <-> `1E`. §8.137: `1:23:45.678901` <-> `012B8DC635`,
+    # which is 5 025 678 901 MICROSECONDS — the block's own parenthetical says "ms" and is wrong
+    # by a factor of a thousand against its own Units cell, registered at KLV 22 and NOT used as
+    # the expected value here; the expected value is computed from the printed h:m:s.µs rendering.
+    for tag, spec in sorted(TIME_ADJUSTMENT_ITEMS.items()):
+        raw = bytes.fromhex(spec.example_octets)
+        if len(raw) > spec.max_length:
+            problems.append(
+                f"tag {tag}: §{spec.section}'s own example is {len(raw)} octets and its Max "
+                f"Length cell says {spec.max_length}")
+        value = int.from_bytes(raw, "big", signed=True)
+        if value != spec.example_value_units:
+            problems.append(
+                f"tag {tag} ({spec.name}): §{spec.section}'s example octets {spec.example_octets} "
+                f"decode to {value} and the block prints {spec.example_value!r}, which is "
+                f"{spec.example_value_units} {spec.units}")
 
     problems += packs.check_against_the_documents_own_example()
     return problems

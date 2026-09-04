@@ -1361,15 +1361,20 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    6 -> 7 and open 7 -> 6, and the delegations-held count does NOT move for the second time
     #    running. Note the sixteenth row, tag 130, did not move and the park closed anyway: its
     #    blocker is the scope contract and §8.130's own self-contradiction, not ST 1201.3.
+    #    PARK 3 CLOSED 2026-09-04 AS WELL — the THIRD of that day — and it is the one that
+    #    broke the day's pattern: parks 2 and 5 moved no acquisition term and this one did. MISB
+    #    ST 0603.5 was obtained and pinned, so closures 7 -> 8, open 6 -> 5, and the
+    #    DELEGATIONS-HELD count moves 9 -> 10 for the first time since 2026-09-03. `n_downloads`
+    #    still tracks `n_open` for park 8's reason, unchanged.
     parks = pin["parks"]
     closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
-    assert closed == ["park_1", "park_13", "park_2", "park_4", "park_5", "park_8",
+    assert closed == ["park_1", "park_13", "park_2", "park_3", "park_4", "park_5", "park_8",
                       "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
-    assert (n_closed, n_open, n_downloads) == (7, 6, 6)
-    words = {6: "six", 7: "seven"}
+    assert (n_closed, n_open, n_downloads) == (8, 5, 5)
+    words = {5: "five", 8: "eight"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"

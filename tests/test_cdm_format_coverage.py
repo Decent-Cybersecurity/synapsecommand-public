@@ -3089,6 +3089,22 @@ KLV_PINNED_DOCUMENTS = (
 #: licensed all three on one reason, and three of those reasons are different. So each number now
 #: names the sentence that admits it, and admitting a number means finding that sentence.
 KLV_HELD_NOT_PINNED = {
+    # A FIFTH KIND, ADDED 2026-09-04 BY THE PARK 3 ROUND, and it is the narrowest one in this
+    # table: a revision named because THE PINNED DELEGATION'S OWN TEXT names it. MISB ST 0603.5 is
+    # held, pinned and quoted in register entry KLV 22, and two of the sentences quoted there name
+    # its predecessors — its Appendix A says the POSIX-derived guidance was in force "Prior to MISB
+    # ST 0603.3", and that earlier ST 0601 editions "have been updated to use terminology
+    # consistent with ST 0603.4". Neither is a text any row is read against and neither is on disk;
+    # the profile pins .5 and the section states .5 everywhere it states a delegation. **They could
+    # not be one entry** for the same reason the ST 0601 five could not: .3 is the revision the
+    # POSIX guidance was withdrawn AT, which is what makes edition 1's Table 1 note a superseded
+    # claim rather than a disagreement, and .4 is the revision the field dictionaries were
+    # re-based ON, which is what makes ST 0601.14a's silence about POSIX evidence rather than
+    # absence. One phrase licensing both would license the load-bearing one on the other's reason.
+    "MISB ST 0603": {
+        "3": "Prior to MISB ST 0603.3",
+        "4": "consistent with ST 0603.4",
+    },
     "MISB ST 0601": {
         "19": "context only",
         # PARK 13, opened by the walk round and CLOSED THE SAME DAY by the adjudication round. The
@@ -3286,13 +3302,15 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
         "crossing of the scope contract is declared in its own table so that it can be counted "
         "here; a promotion with no table behind it fails this assertion"
     )
-    # 99 SINCE 2026-09-04, DOWN FROM 114 THAT MORNING AND 115 THE DAY BEFORE, AND WHAT MOVED IS
-    # NAMED AT EACH STEP: item 48 left for the nested-set ruling (park 2), then fifteen left for
-    # the document-side witness (park 5). Every remaining row is blocked on the scope contract,
-    # and tag 130 is the one that is ALSO one of park 5's sixteen — it stays because §8.130 prints
-    # no worked example, which is the condition RULING 1 measures against.
-    assert len(not_yet) >= 99, (
-        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 99 of the 141 rows "
+    # 97 SINCE 2026-09-04, DOWN FROM 99 EARLIER THE SAME DAY, 114 THAT MORNING AND 115 THE DAY
+    # BEFORE, AND WHAT MOVED IS NAMED AT EACH STEP: item 48 left for the nested-set ruling (park
+    # 2), fifteen left for the document-side witness (park 5), and items 136 and 137 left on the
+    # same witness (park 3, RULING 3) once MISB ST 0603.5 gave the MISP Time System a definition
+    # here and §6.4's two equations had terms to put in them. Every remaining row is blocked on
+    # the scope contract, and tag 130 is the one that is ALSO one of park 5's sixteen — it stays
+    # because §8.130 prints no worked example, which is the condition RULING 1 measures against.
+    assert len(not_yet) >= 97, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 97 of the 141 rows "
         "are outside all three witness grounds and each is blocked on the scope contract; a round "
         "that promoted them wrote decoders nothing can check, which is the trap this section "
         "exists to avoid"
@@ -3961,13 +3979,23 @@ def test_no_epoch_is_stated_anywhere_in_the_section():
     for match in re.finditer("1970", section):
         window = _flat(section[max(0, match.start() - 220):match.end() + 220])
         wide = _flat(section[max(0, match.start() - 600):match.end() + 600])
+        # A THIRD ANCHOR SINCE 2026-09-04, AND IT IS THE ONE THE OTHER TWO WERE STANDING IN
+        # FOR. The rule is "do not write an epoch from memory", and the document that DEFINES this
+        # epoch normatively — MISB ST 0603.5, whose §6 gives the MISP Time System an "Epoch of
+        # 1970-01-01T00:00:00.0Z" and whose Appendix A closes the question with "Nothing has
+        # changed across all ST 0603 versions regarding the Epoch" — was not held when this test
+        # was written. It is held and pinned now, so quoting it is the strongest form of the thing
+        # this test protects rather than an exception to it. The first two anchors stay: the
+        # profile-absence finding is still a finding, and ST 0601.14's statement is still quoted
+        # where the row set needs it.
         licensed = ("do not occur anywhere" in window or "occur zero times" in window
-                    or "ST 0601.14" in wide)
+                    or "ST 0601.14" in wide or "ST 0603.5" in wide)
         assert licensed, (
-            "the section states an epoch with neither of its two anchors nearby. An epoch is "
-            "admitted beside the statement that the profile does NOT contain one, or beside a "
-            "citation of ST 0601.14, which does — see settlement 3. With neither, this value came "
-            f"from somewhere other than the documents this phase read: ...{window[:160]}..."
+            "the section states an epoch with none of its three anchors nearby. An epoch is "
+            "admitted beside the statement that the profile does NOT contain one, beside a "
+            "citation of ST 0601.14, or beside a citation of ST 0603.5 — see settlement 3. With "
+            "none, this value came from somewhere other than the documents this phase read: "
+            f"...{window[:160]}..."
         )
     flat = _flat(section)
     assert "do not occur anywhere in the 73 pages" in flat, (
@@ -4321,10 +4349,24 @@ def test_the_klv_ambiguity_register_is_numbered_by_its_own_convention():
     # octets the same row prints are reproducible only after a conversion the row does not mention.
     # It was found by running both mappings, not by noticing the units — which is why it is filed
     # under this round and not under any of the three that read this document before it.
-    for n in range(1, 21):
+    # THE BOUND MOVED 20 -> 23 ON 2026-09-04, in the park 3 round, and all three come from
+    # holding MISB ST 0603.5 — the first entries here filed against a document obtained the same
+    # day the entries were written since the pins round. KLV 21: ST 0603.5 §6 derives UTC from the
+    # MISP Time System with TWO terms, "its correct offset and inclusion of leap seconds", and ST
+    # 0601.14a §6.4's Equation 2 has one, leaving the 82-microsecond residue the standard's own
+    # footnote 2 licenses ignoring. The KLV 11 shape: a divergence between a profile's delegation
+    # and its field dictionary, registered rather than reconciled. KLV 22: ST 0603.5's Appendix A
+    # deprecates the POSIX derivation EG 0601.1's Table 1 note states, and names ST 0601 by series
+    # as the family that carried the confusion — which is the authority this adapter's conversion
+    # rested on until that appendix could be read. KLV 23: §8.137 states its Format as signed
+    # twice in its drawn table and as `Softval = KLVuint` in its conversion line, and its printed
+    # example has a clear top bit so it cannot separate the two readings. The third is the only
+    # one of the three that changes a decoded value, and it was found by WIRING the item rather
+    # than by reading its block — the round that promoted 136 and 137 had to pick a signedness.
+    for n in range(1, 24):
         assert f"**KLV {n} —" in section, f"register entry KLV {n} is missing"
-    assert "**KLV 21 —" not in section, (
-        "the register has grown past KLV 20 without this test being updated"
+    assert "**KLV 24 —" not in section, (
+        "the register has grown past KLV 23 without this test being updated"
     )
     # Every `KLV n` this section CITES has an entry in it. The numbers come out of the prose
     # rather than out of a list here, so a citation of KLV 14 fails without anybody maintaining a
@@ -4911,8 +4953,8 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 32, (
-        f"{len(expected)} adapter fixtures, expected thirty-two — ten from the witnessed-set "
+    assert len(expected) == 37, (
+        f"{len(expected)} adapter fixtures, expected thirty-seven — ten from the witnessed-set "
         "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
         "seventeen elements inside item 48, the six `security_object_country_codes_*` "
         "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held (a byte-order "
@@ -4921,7 +4963,11 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "added the same day for the fifteen document-witnessed items: the fourteen IMAPB items "
         "from their own printed examples, RULING 4's pair, all eight of ST 1201.3 Table 2's "
         "special patterns, tag 128's printed pack example, a short pack refused, a course of "
-        "exactly 360 degrees, a zero-length IMAPB item and one past its Max Length"
+        "exactly 360 degrees, a zero-length IMAPB item and one past its Max Length; and the FIVE "
+        "the park 3 round added the same day for items 136 and 137 — both §8.x printed examples "
+        "in one packet, each of §6.4's two equations alone, a NEGATIVE pair the document prints "
+        "no example for, and a zero-length pair proving an explicit unknown is not a +0 "
+        "adjustment"
     )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (
@@ -4941,7 +4987,7 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "kept: a directory that fills up and loses the record of having been empty loses the "
         "evidence a reader could check the parks against"
     )
-    assert "There are THIRTY-TWO" in readme, "the README does not state the new count"
+    assert "There are THIRTY-SEVEN" in readme, "the README does not state the new count"
     # **THE COUNT SENTENCE HAD DECAYED AND THIS ASSERTION IS WHY NOTHING CAUGHT IT.** It read
     # `assert "There are SEVENTEEN" in readme` from the park 2 round until 2026-09-04, and the
     # text-pins round of the same day added six fixtures without re-dating the sentence — so the
@@ -4951,6 +4997,11 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
     # derived — `len(expected)` — and the historical strings below are asserted as QUOTATIONS,
     # which is what they are, so the same failure cannot recur silently: a round that adds a
     # fixture and does not re-date the sentence fails on the derived count, not on a literal.
+    assert "There were THIRTY-TWO" in readme, (
+        "the README no longer records that the count was THIRTY-TWO between the park 5 round and "
+        "the park 3 round of 2026-09-04. FOUR rounds moved this count in one day and every "
+        "intermediate value is kept, for the reason the note below gives"
+    )
     assert "There were TWENTY-THREE" in readme, (
         "the README no longer records that the count was TWENTY-THREE between the text-pins round "
         "and the park 5 round of 2026-09-04. Both moved it on the same day and the middle value is "

@@ -383,8 +383,15 @@ def test_the_identity_is_packet_scoped_and_says_so_on_every_object():
     assert first.source.adapter == "stanag4609"
 
 
-def test_time_comes_from_item_2_and_carries_its_own_caveats():
-    """The epoch is a held document's; the timescale's NAME is still park 3's."""
+def test_time_comes_from_item_2_and_the_scale_is_named_from_st_0603_5():
+    """The epoch is a held document's, and since 2026-09-04 so is the SCALE'S NAME.
+
+    **CHANGED BY THE park 3 ROUND, RULING 2.** This test asserted `"park 3" in
+    basis["timescale"]` — that the scale had no name here and a park owned the question. MISB
+    ST 0603.5 is held and pinned now, so the assertion that would keep passing on a stale basis is
+    exactly the one to invert: the basis must NAME the MISP Time System and state its relation to
+    TAI and to UTC in the document's own words.
+    """
     entity, event = adapter().to_cdm(
         (FIXTURES / "witnessed_set_from_the_documents_own_examples.klv").read_bytes())
     # §8.2's own worked example: "Oct. 24, 2008. 00:13:29.913" <-> 0004 59F4 A6AA 4AA8
@@ -393,9 +400,24 @@ def test_time_comes_from_item_2_and_carries_its_own_caveats():
     assert entity.attributes["precision_time_stamp_us"] == 1224807209913000
     basis = entity.attributes["time_basis"]
     assert "1970-01-01T00:00:00Z" in basis["epoch"]
-    assert "does not represent UTC" in basis["timescale"]
-    assert "POSIX" in basis["timescale"]
-    assert "park 3" in basis["timescale"]
+    # THE SCALE, NAMED. ST 0603.5 §6 and ST 0601.14a §8.2.1 both call it the MISP Time System.
+    assert "MISP Time System" in basis["scale"]
+    assert "Strictly monotonically increasing" in basis["scale"]
+    assert "SI Second" in basis["scale"]
+    # TAI AND UTC, IN THE DOCUMENT'S WORDS, which RULING 2(a) requires and which is the half of
+    # park 3 no held document could answer before ST 0603.5 arrived.
+    assert "8.000082" in basis["relation_to_TAI"]
+    assert "International Atomic Time (TAI)" in basis["relation_to_TAI"]
+    assert "using its correct offset and inclusion of leap seconds" in basis["relation_to_UTC"]
+    assert "does not represent UTC" in basis["relation_to_UTC"]
+    # THE POSIX RULE IS SUPERSEDED AND SAYS SO. Asserted positively rather than by forbidding the
+    # word: the record's job is to say what happened to the old reading, not to erase it.
+    assert "SUPERSEDED" in basis["the_POSIX_rule_is_SUPERSEDED"]
+    assert "Prior to MISB ST 0603.3" in basis["the_POSIX_rule_is_SUPERSEDED"]
+    # NEITHER TERM APPLIED, because this packet carries neither item — and the basis says which.
+    assert basis["leap_second_adjustment"]["applied"] is False
+    assert basis["correction_offset"]["applied"] is False
+    assert basis["applied_microseconds"] == entity.attributes["precision_time_stamp_us"]
     assert "milliseconds" in basis["precision"]
     # The injected clock, and nothing else, decides received_at.
     assert times.render(event.received_at) == times.render(times.FROZEN_NOW)
@@ -717,7 +739,11 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # printed pack example, a short pack refused, a course of exactly 360 degrees, a zero-length
     # IMAPB item and one past its Max Length. **The count is 32 and not 33: park 5's sixteenth
     # item, tag 130, has no fixture because §8.130 prints no worked example to build one from.**
-    assert len(module.ADAPTER_FIXTURES) == 32
+    # THIRTY-TWO until the park 3 round of the same day, which added FIVE for items 136 and 137:
+    # both §8.x printed examples in one packet, each equation of §6.4 alone, a NEGATIVE pair the
+    # document prints no example for and whose reading §8.137 contradicts itself about (KLV 23),
+    # and a zero-length pair proving an explicit unknown is not a +0 adjustment. 23 + 9 + 5 = 37.
+    assert len(module.ADAPTER_FIXTURES) == 37
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (

@@ -336,7 +336,8 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     unbroken record is ACCEPTED — otherwise the mutations would pass against a guard that refuses
     everything.
 
-    THE PAIR MOVED FROM (17, 14) TO (18, 15) ON 2026-09-04 and the move is what a control is FOR.
+    THE PAIR MOVED FROM (17, 14) TO (18, 15) TO (19, 16) ON 2026-09-04, twice in one day, and
+    each move is what a control is FOR.
     The text-pins round pinned IETF RFC 2781 as a text document, which added one node carrying a
     `sha256` under `delegated_specifications_held` — so the derived pin count went to fifteen and
     the derived document count to eighteen, and the header gained an APPENDED dated clause saying
@@ -347,6 +348,12 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     is the one where a maintainer reads the literal as the authority and edits the header to match
     it. It is not the authority; `derived_counts` is, and this line is a witness that the two agree
     at a number a human has read.
+
+    **AND IT MOVED A SECOND TIME THE SAME DAY**, in the park 3 round, which pinned MISB ST
+    0603.5 — an ordinary PDF pin of a delegated document, so both counts moved by one and
+    neither moved for a reason peculiar to its kind. Two moves in one day is the loudest
+    argument available for the literal being a witness rather than the authority: a pair
+    that moves twice between two commits is a pair nobody could have carried in their head.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (18, 15)
+    assert stated_counts(record) == derived_counts(record) == (19, 16)
