@@ -3,7 +3,7 @@
 WHY THIS MODULE EXISTS
 ----------------------
 `PUBLICATION.md` records what became true when this repository went public: the protections, the
-probes that witnessed them, and twelve ledger entries — nine settled, three still open. Most of it
+probes that witnessed them, and thirteen ledger entries — ten settled, three still open. Most of it
 is a *witness statement* — a force-push was refused, a check ran and failed and then passed — and
 a witness statement is not gateable. The suite cannot reach GitHub, must not hold a token, and a test that needed one would
 fail for every outsider and turn green only for whoever holds it.
