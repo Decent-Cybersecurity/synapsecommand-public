@@ -970,7 +970,19 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # and two VTarget Packs sharing one Target ID Number, which ST 0903.4-28's "to the extent
     # possible" permits and which a mapping keyed on that number would silently collapse to one.
     # 23 + 9 + 5 + 5 + 6 + 5 = 53.
-    assert len(module.ADAPTER_FIXTURES) == 53
+    # FIFTY-THREE until the park 12 round of 2026-09-05, which added THREE for MISB ST 0902.8's
+    # minimum metadata set — and the three are chosen to witness the annotation's STATE VOCABULARY
+    # rather than its 33 rows, which `tests/test_cdm_mismms.py` re-derives from the document's own
+    # Table 2 footer on every suite run: a packet carrying every one of the 33 rows, which is the
+    # only place `present_not_decoded` can be seen (tags 3 and 10 are on the wire and outside this
+    # adapter's 44-tag tables, and reporting either as `absent` would let a gap in this repository
+    # read as a gap in a producer's stream); ST 0902.8 Annex C's own "Dynamic Only" packet, which
+    # the document prints as a legal MISMMS transmission while it carries 19 of the 33 rows, and
+    # which is therefore the document's own argument that this annotation is an advisory; and a
+    # zero-length Image Source Sensor, which `ST 0902.8-05` declines to count as reporting while
+    # `klv_uas_codec` still decodes it as ST 0601.14-33's explicit unknown.
+    # 23 + 9 + 5 + 5 + 6 + 5 + 3 = 56.
+    assert len(module.ADAPTER_FIXTURES) == 56
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (

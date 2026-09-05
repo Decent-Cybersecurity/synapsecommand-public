@@ -129,6 +129,436 @@
         "policy": "skip_the_item_and_record_a_structured_defect_annotation",
         "stated_on_every_object": "the policy rides on every object and not only on the ones that tripped it, because a consumer needs to know that a clean object is clean UNDER A RULE and not merely unflagged"
       },
+      "mismms_conformance": {
+        "advisory_and_never_a_refusal": "A PER-PACKET READING IS NOT A CONFORMANCE VERDICT AND THIS ANNOTATION IS NOT ONE. ST 0902.3-04 states the obligation as a rate \u2014 'All metadata items contained in the MISMMS shall be reported no less than once every thirty (30) seconds under all circumstances' \u2014 and ST 0902.8's Annex A states the converse directly: 'It is not mandatory that each metadata packet contain every metadata item'. So `absent` here means THIS PACKET DID NOT CARRY IT and never 'the stream does not conform'. The question the document asks is answered by aggregating these readings over thirty seconds of packets, which is a consumer's arithmetic and not this adapter's",
+        "exclusive_or_violation": null,
+        "not_decoded_basis": "The minimum set names five ST 0601 items this adapter's tag tables do not cover \u2014 3 Mission ID, 10 Platform Designation, 78 Frame Center Height Above Ellipsoid, 90 Platform Pitch Angle (Full) and 91 Platform Roll Angle (Full). THIS IS A FACT ABOUT THIS REPOSITORY AND NOT ABOUT THE STREAM, which is why `present_not_decoded` is a state of its own: the framing layer walks every triplet in the Local Set under ST 0107.3-04, so whether the tag was on the wire is always readable and only its VALUE is out of reach. Reporting either state as the other would let a gap in this repository read as a gap in a producer's stream",
+        "not_decoded_by_this_adapter": [
+          3,
+          10,
+          78,
+          90,
+          91
+        ],
+        "profile": "MISB ST 0902.8 Motion Imagery Sensor Minimum Metadata Set (MISMMS)",
+        "requirement": "All metadata items contained in the MISMMS shall be reported no less than once every thirty (30) seconds under all circumstances.",
+        "rows": {
+          "1": {
+            "recommended_interval": "Fast",
+            "state": "reported",
+            "tags": {
+              "1": {
+                "name": "Checksum",
+                "octet_length": 2,
+                "state": "present"
+              }
+            }
+          },
+          "10": {
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "10": {
+                "name": "Platform Designation",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "11": {
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "11": {
+                "name": "Image Source Sensor",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "12": {
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "12": {
+                "name": "Image Coordinate System",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "13": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "13": {
+                "name": "Sensor Latitude",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "14": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "14": {
+                "name": "Sensor Longitude",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "15|75|104": {
+            "alternates_basis": "Note 1: 'Platform Pitch Angle (Tag 6 | 90), Platform Roll Angle (Tag 7 | 91), Sensor True Altitude as MSL (Tag 15) | Sensor Ellipsoid Height as HAE (Tag 75) | Sensor Ellipsoid Height Extended as HAE (Tag 104), Frame Center Elevation as MSL (Tag 25) | Frame Center Height Above Ellipsoid (Tag 78), and Target Width (Tag 22) | Target Width Extended (Tag 96) are governed by an \u201cinclusive or\u201d within MISB ST 0601 with one exception.  The use of Tag 75 and Tag 104 is governed by an \u201cexclusive OR.\u201d' \u2014 so a row with alternates is reported when ANY of its members is, and the 15|75|104 row carries the one place the document narrows that: 75 and 104 together are the exception, which this module records at `exclusive_or_violation` and does not refuse",
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "104": {
+                "name": "Sensor Ellipsoid Height Extended (HAE)",
+                "octet_length": null,
+                "state": "absent"
+              },
+              "15": {
+                "name": "Sensor True Altitude (MSL)",
+                "octet_length": null,
+                "state": "absent"
+              },
+              "75": {
+                "name": "Sensor Ellipsoid Height (HAE)",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "16": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "16": {
+                "name": "Sensor Horizontal FoV",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "17": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "17": {
+                "name": "Sensor Vertical FoV",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "18": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "18": {
+                "name": "Sensor Relative Azimuth Angle",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "19": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "19": {
+                "name": "Sensor Relative Elevation Angle",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "2": {
+            "recommended_interval": "Fast",
+            "state": "reported",
+            "tags": {
+              "2": {
+                "name": "Precision Time Stamp",
+                "octet_length": 8,
+                "state": "present"
+              }
+            }
+          },
+          "20": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "20": {
+                "name": "Sensor Relative Roll Angle",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "21": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "21": {
+                "name": "Slant Range",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "22|96": {
+            "alternates_basis": "Note 1: 'Platform Pitch Angle (Tag 6 | 90), Platform Roll Angle (Tag 7 | 91), Sensor True Altitude as MSL (Tag 15) | Sensor Ellipsoid Height as HAE (Tag 75) | Sensor Ellipsoid Height Extended as HAE (Tag 104), Frame Center Elevation as MSL (Tag 25) | Frame Center Height Above Ellipsoid (Tag 78), and Target Width (Tag 22) | Target Width Extended (Tag 96) are governed by an \u201cinclusive or\u201d within MISB ST 0601 with one exception.  The use of Tag 75 and Tag 104 is governed by an \u201cexclusive OR.\u201d' \u2014 so a row with alternates is reported when ANY of its members is, and the 15|75|104 row carries the one place the document narrows that: 75 and 104 together are the exception, which this module records at `exclusive_or_violation` and does not refuse",
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "22": {
+                "name": "Target Width",
+                "octet_length": null,
+                "state": "absent"
+              },
+              "96": {
+                "name": "Target Width Extended",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "23": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "23": {
+                "name": "Frame Center Latitude",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "24": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "24": {
+                "name": "Frame Center Longitude",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "25|78": {
+            "alternates_basis": "Note 1: 'Platform Pitch Angle (Tag 6 | 90), Platform Roll Angle (Tag 7 | 91), Sensor True Altitude as MSL (Tag 15) | Sensor Ellipsoid Height as HAE (Tag 75) | Sensor Ellipsoid Height Extended as HAE (Tag 104), Frame Center Elevation as MSL (Tag 25) | Frame Center Height Above Ellipsoid (Tag 78), and Target Width (Tag 22) | Target Width Extended (Tag 96) are governed by an \u201cinclusive or\u201d within MISB ST 0601 with one exception.  The use of Tag 75 and Tag 104 is governed by an \u201cexclusive OR.\u201d' \u2014 so a row with alternates is reported when ANY of its members is, and the 15|75|104 row carries the one place the document narrows that: 75 and 104 together are the exception, which this module records at `exclusive_or_violation` and does not refuse",
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "25": {
+                "name": "Frame Center Elevation (MSL)",
+                "octet_length": null,
+                "state": "absent"
+              },
+              "78": {
+                "name": "Frame Center Height Above Ellipsoid (HAE)",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "3": {
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "3": {
+                "name": "Mission ID",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/1": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "1": {
+                "name": "Security Classification",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/12": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "12": {
+                "name": "Object Country Coding Method",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/13": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "13": {
+                "name": "Object Country Codes",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/2": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "2": {
+                "name": "Classifying Country & Releasing Instructions Country Coding Method",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/22": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "22": {
+                "name": "Security Metadata Version",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/3": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "3": {
+                "name": "Classifying Country",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/4": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "4": {
+                "name": "Security-SCI/SHI Information",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/5": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "5": {
+                "name": "Caveats",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "48/6": {
+            "not_reported_because": "\u00a76.5 Absence of Security Metadata Universal or Local Sets: 'The proper insertion/extraction of Security Metadata sets into/from Motion Imagery is the responsibility of system developers. Bit stream originators and system developers are responsible to incorporate continual checks for Security Metadata in their applications. THE ABSENCE OF SECURITY METADATA DOES NOT SIGNIFY MOTION IMAGERY DATA AS UNCLASSIFIED.' (Capitals this record's; the sentence is the document's.) WHAT IT DECIDES: a packet with no item 48 is UNLABELLED, and unlabelled is not a value. No classification field is emitted for such a packet \u2014 not 'UNCLASSIFIED', not null-meaning-unclassified, not a default. What IS emitted is this sentence, so that a consumer reading the object meets the document's own statement of what the absence does not mean rather than inferring one",
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "6": {
+                "name": "Releasing Instructions",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "5": {
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "5": {
+                "name": "Platform Heading Angle",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "65": {
+            "recommended_interval": "Fast",
+            "state": "reported",
+            "tags": {
+              "65": {
+                "name": "UAS Local Set Version",
+                "octet_length": 1,
+                "state": "present"
+              }
+            }
+          },
+          "6|90": {
+            "alternates_basis": "Note 1: 'Platform Pitch Angle (Tag 6 | 90), Platform Roll Angle (Tag 7 | 91), Sensor True Altitude as MSL (Tag 15) | Sensor Ellipsoid Height as HAE (Tag 75) | Sensor Ellipsoid Height Extended as HAE (Tag 104), Frame Center Elevation as MSL (Tag 25) | Frame Center Height Above Ellipsoid (Tag 78), and Target Width (Tag 22) | Target Width Extended (Tag 96) are governed by an \u201cinclusive or\u201d within MISB ST 0601 with one exception.  The use of Tag 75 and Tag 104 is governed by an \u201cexclusive OR.\u201d' \u2014 so a row with alternates is reported when ANY of its members is, and the 15|75|104 row carries the one place the document narrows that: 75 and 104 together are the exception, which this module records at `exclusive_or_violation` and does not refuse",
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "6": {
+                "name": "Platform Pitch Angle (Short)",
+                "octet_length": null,
+                "state": "absent"
+              },
+              "90": {
+                "name": "Platform Pitch Angle (Full)",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "7|91": {
+            "alternates_basis": "Note 1: 'Platform Pitch Angle (Tag 6 | 90), Platform Roll Angle (Tag 7 | 91), Sensor True Altitude as MSL (Tag 15) | Sensor Ellipsoid Height as HAE (Tag 75) | Sensor Ellipsoid Height Extended as HAE (Tag 104), Frame Center Elevation as MSL (Tag 25) | Frame Center Height Above Ellipsoid (Tag 78), and Target Width (Tag 22) | Target Width Extended (Tag 96) are governed by an \u201cinclusive or\u201d within MISB ST 0601 with one exception.  The use of Tag 75 and Tag 104 is governed by an \u201cexclusive OR.\u201d' \u2014 so a row with alternates is reported when ANY of its members is, and the 15|75|104 row carries the one place the document narrows that: 75 and 104 together are the exception, which this module records at `exclusive_or_violation` and does not refuse",
+            "recommended_interval": "Fast",
+            "state": "not_reported",
+            "tags": {
+              "7": {
+                "name": "Platform Roll Angle (Short)",
+                "octet_length": null,
+                "state": "absent"
+              },
+              "91": {
+                "name": "Platform Roll Angle (Full)",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          },
+          "94": {
+            "recommended_interval": "10 s",
+            "state": "not_reported",
+            "tags": {
+              "94": {
+                "name": "Motion Imagery Core Identifier",
+                "octet_length": null,
+                "state": "absent"
+              }
+            }
+          }
+        },
+        "rows_not_reported": 30,
+        "rows_reported": 3,
+        "rows_total": 33,
+        "source": "MISB ST 0902.8, Motion Imagery Sensor Minimum Metadata Set, 1 November 2018 \u2014 fixtures/klv/spec/ST0902.8.pdf, pinned at klv_pin.json delegated_specifications_held.st_0902_8. MISP-2019.1 Appendix B reference [73] reads 'MISB ST 0902.8 Motion Imagery Sensor Minimum Metadata Set, Nov 2018.', and \u00a74.4.4 of the profile calls the set 'a prerequisite for MISP conformance'",
+        "stated_on_every_object": "the reading rides on every object this packet produced and not only on the packets that fell short, because a consumer needs to know that a complete packet is complete UNDER A RULE and not merely unflagged \u2014 klv_uas_codec.LENGTH_DIVERGENCE_POLICY's precedent, applied to a second rule",
+        "tags_total": 39,
+        "zero_length_rule": "ST 0902.8-05: 'No Zero-Length items (ZLI) shall be used to meet minimum reporting requirements.' A ZLI is ST 0601.14's explicit unknown and this adapter decodes it as one everywhere else \u2014 see klv_uas_codec.ZeroLength \u2014 so the item is READ and is not COUNTED. The requirement is new in this edition: ST 0902.8's Revision History row reads 'Added Requirement -05'"
+      },
       "pack_refusals": [
         {
           "class": "pack_refused",

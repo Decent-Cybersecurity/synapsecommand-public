@@ -68,12 +68,32 @@ def test_the_set_claim_guard_is_not_vacuous_in_either_direction(parks):
 
 
 def test_self_membership_is_an_observation_and_never_a_problem(parks):
-    """The formulation the table refuted: park 12's partition names park 12, and means to."""
-    observed = parks_table.self_members(parks)
-    assert observed, "park 12's partition names its own row; if that changed, revisit the refusal"
-    for claim in observed:
+    """The formulation the table refuted: a partition may name its own row, and one did.
+
+    **THE SUBJECT MOVED 2026-09-05 AND THE REFUSAL DID NOT.** This test was written when park 12's
+    live claim read "the open members of this table are parks 7, 10 and 12" — a claim in park 12's
+    row naming park 12 — and it asserted that `self_members` found it. Park 12 then CLOSED, its
+    claim was re-quoted with `rows` and the live one replacing it names 7 and 10, so the table has
+    no self-member today and `observed` is legitimately empty.
+
+    So the assertion is inverted rather than deleted: what this module has to keep proving is that
+    self-membership, WHEN IT OCCURS, is reported as an observation and never as a problem. That is
+    now checked over whatever `self_members` returns — vacuously on today's table — plus a
+    synthetic claim that guarantees the branch runs. Deleting the test would retire a refusal the
+    table earned; asserting `observed` is non-empty would tie a rule about a shape to one row's
+    passing membership.
+    """
+    for claim in parks_table.self_members(parks):
         assert not any(f"park {claim.in_row}" in p and "SELF" in p
                        for p in parks_table.check_set_claims(parks))
+    # The branch, forced. A row whose claim names itself is not a complaint, whatever else is.
+    victim = parks.set_claims[0]
+    forged = parks_table.SetClaim(**{**victim._asdict(),
+                                     "members": tuple(sorted({*victim.members, victim.in_row}))})
+    forced = parks._replace(set_claims=(forged,))
+    assert forced.set_claims[0].in_row in forced.set_claims[0].members
+    assert parks_table.self_members(forced) == (forged,)
+    assert not any("SELF" in p for p in parks_table.check_set_claims(forced))
 
 
 def test_the_held_document_check_reads_filenames_and_not_word_boundaries():
@@ -82,7 +102,13 @@ def test_the_held_document_check_reads_filenames_and_not_word_boundaries():
     if not held:
         pytest.skip("no pinned PDFs in this working tree — a fresh clone tracks none by design")
     assert "0102" in held, f"ST0102.12.pdf is on disk and its series is missing from {sorted(held)}"
-    assert "0902" not in held, "ST 0902 is park 12's blocker and is NOT held; see its row"
+    # **MOVED 2026-09-05 BY THE PARK 12 ROUND, WHICH IS THE ROUND THAT MADE IT HELD.** This line
+    # read `assert "0902" not in held` and named ST 0902 as park 12's blocker. It was the last
+    # unheld series in this repository's own spec directory; ST0902.8.pdf is on disk now and park
+    # 12 is closed. The line is kept and inverted rather than dropped, because its job was never
+    # the absence — it is the second half of the filename check, and a series that IS present is
+    # the stronger witness that `held_series` reads filenames rather than word boundaries.
+    assert "0902" in held, f"ST0902.8.pdf is on disk and its series is missing from {sorted(held)}"
 
 
 def test_every_open_row_reports_its_blocker_as_derived_or_as_a_human_read(parks):

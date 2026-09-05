@@ -107,7 +107,21 @@ NUMBER_WORDS = {
     # which would turn a positive control into a silent pass. The header has never used this word
     # and is not expected to; when the real count reaches 21 the clause that states it will need
     # this entry to be re-decided rather than inherited.
+    #
+    # **RE-DECIDED 2026-09-05 BY THE PARK 12 ROUND, WHICH IS THE ROUND THAT REACHED 21**, later
+    # the same day: ST 0902.8 was acquired and the header's live clause now spells this word for
+    # real. THE SPELLING IS KEPT AND THE DECISION IS THE COMMENT ABOVE'S OWN CONSTRAINT RATHER
+    # THAN ITS INHERITANCE — `COUNT_CLAUSE` reads `[A-Z]+`, so `TWENTY-ONE` and `TWENTY ONE` are
+    # both unreadable to the pattern that has to read the live clause, and an unreadable live
+    # clause would make `stated_counts` fall back to an EARLIER clause and pass over a stale
+    # figure. One unbroken run of letters is the only spelling that works here, so the mutation's
+    # word and the log's are the same word by necessity and not by convenience.
     "TWENTYONE": 21,
+    # TWENTYTWO is the mutation's number now, on exactly the reasoning TWENTYONE was added under:
+    # `test_an_EDITED_last_clause_...` adds one synthetic pin to a record of 21 documents and asks
+    # for the word for 22. The header has never used it. When the real count reaches 22 this entry
+    # is re-decided the way TWENTYONE just was.
+    "TWENTYTWO": 22,
 }
 
 
@@ -374,6 +388,13 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     neither moved for a reason peculiar to its kind. Two moves in one day is the loudest
     argument available for the literal being a witness rather than the authority: a pair
     that moves twice between two commits is a pair nobody could have carried in their head.
+
+    **AND TO (21, 18) ON 2026-09-05, THE FOURTH MOVE IN THREE DAYS**, when the park 12 round
+    pinned MISB ST 0902.8 — a third consecutive ordinary PDF pin of a delegated document, both
+    counts moving by one. This move is the first that also cost a change OUTSIDE this line:
+    twenty-one is the first count the header has had to spell as `TWENTYONE`, one unbroken word,
+    because `COUNT_CLAUSE` reads `[A-Z]+` and a hyphen or a space would make the live clause
+    unreadable to the pattern — see the re-decision recorded at `NUMBER_WORDS`.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (20, 17)
+    assert stated_counts(record) == derived_counts(record) == (21, 18)

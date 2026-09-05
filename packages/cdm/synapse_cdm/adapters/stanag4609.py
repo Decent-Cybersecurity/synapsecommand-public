@@ -132,6 +132,7 @@ from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
 from synapse_cdm.adapters import klv_miis_codec as miis
+from synapse_cdm.adapters import klv_mismms as mismms
 from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_uas_codec as uas
@@ -1494,6 +1495,14 @@ class Stanag4609Adapter(Adapter):
             "defects": [_defect_dict(defect) for defect in packet.defects],
             "advisories": [dict(advisory) for advisory in packet.advisories],
         }
+
+        # MISB ST 0902.8's minimum set, read against this packet. THE SAME PRECEDENT ONE LINE UP
+        # AND DELIBERATELY ADJACENT TO IT: `length_divergence_policy` rides on every object so a
+        # clean object is known to be clean UNDER A RULE, and this is the second rule that wants
+        # the same treatment. It is an ADVISORY — ST 0902.8 states its obligation as a thirty-
+        # second reporting rate and its Annex A says in terms that a packet need not carry every
+        # item, so a per-packet absence is a reading and never a defect. See `klv_mismms`.
+        attributes["mismms_conformance"] = mismms.read_packet(packet)
 
         parked = {}
         for tag, entry in sorted(items.items()):

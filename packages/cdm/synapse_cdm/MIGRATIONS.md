@@ -263,7 +263,7 @@ measured off the index afterwards, and which step of it did not run.
 Nothing here is in a release. The distribution on the index is **1.6.0**, and a reader who ran
 `pip install synapse-cdm` has that and not this.
 
-**What moved inside the distribution: 138 files.**
+**What moved inside the distribution: 151 files.**
 
 **AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
 `gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `tests/test_cdm_release.py`,
@@ -289,6 +289,12 @@ Four modules under `adapters/` — two new, two extended:
 * `synapse_cdm/adapters/klv_miis_codec.py`
 * `synapse_cdm/adapters/klv_uas_codec.py`
 * `synapse_cdm/adapters/stanag4609.py`
+* `synapse_cdm/adapters/klv_mismms.py` — **new, 2026-09-05, the park 12 round.** MISB ST 0902.8's
+  minimum metadata set, transcribed, and one function that reads a decoded packet against it. **It
+  decodes nothing**: ST 0902.8 is a profile of ST 0601 and defines no items, so every tag it names
+  was already decodable here. What the module adds is the statement of WHICH items a conforming
+  producer owes and whether a packet carried them, and `stanag4609.py` rides that on every `Entity`
+  as `attributes.mismms_conformance`.
 * `synapse_cdm/adapters/klv_vmti_codec.py` — **new, 2026-09-05, the park 6 round.** The MISB
   ST 0903.4 VMTI layer: ST 0601 item 74's Value, its VTargetSeries and VTarget Packs, and the five
   nested Local Sets and four packs under them. **It is wired into nothing** — `klv_uas_codec` is
@@ -340,6 +346,17 @@ And the five park 6 fixtures, added 2026-09-05 by part 2 of that round:
 * `synapse_cdm/fixtures/klv/an_offset_target_with_no_frame_centre_emits_no_position.parsed.json`
 * `synapse_cdm/fixtures/klv/two_vtargets_sharing_one_target_id_number_are_two_detections.klv`
 * `synapse_cdm/fixtures/klv/two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.json`
+
+And three more, added 2026-09-05 by the park 12 round, chosen to witness the annotation's state
+vocabulary rather than its 33 rows — the second of the three is the document's own Annex C packet,
+transcribed from its complete-packet hex:
+
+* `synapse_cdm/fixtures/klv/a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.klv`
+* `synapse_cdm/fixtures/klv/a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.parsed.json`
+* `synapse_cdm/fixtures/klv/every_row_of_the_minimum_set_reported_in_one_packet.klv`
+* `synapse_cdm/fixtures/klv/every_row_of_the_minimum_set_reported_in_one_packet.parsed.json`
+* `synapse_cdm/fixtures/klv/the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.klv`
+* `synapse_cdm/fixtures/klv/the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.parsed.json`
 
 And one hundred and six goldens — the eighty-four that already existed, every one of which gained
 the same two paths, twelve new ones for the six park 11 payloads, and **ten more, added 2026-09-05 by
@@ -454,6 +471,18 @@ so the ten below are additions and the arc's golden set grew without moving:
 * `synapse_cdm/fixtures/klv/golden/an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`
 * `synapse_cdm/fixtures/klv/golden/two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json`
 * `synapse_cdm/fixtures/klv/golden/two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`
+
+**AND SIX MORE, ADDED 2026-09-05 BY THE PARK 12 ROUND, WHICH ALSO MOVED ALL 106 ABOVE AND MOVED
+THEM AT EXACTLY ONE PATH.** Every pre-existing golden gained `attributes.mismms_conformance` and
+nothing else — a structural diff by JSON path against `492a326`, excluding only that declared path,
+shows zero differences across all 106:
+
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/every_row_of_the_minimum_set_reported_in_one_packet.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/every_row_of_the_minimum_set_reported_in_one_packet.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.parsed.cdm.json`
 
 #### The housekeeping round, 2026-09-05 — five bounded items, a procedure that now says what its own pre-check is read for, and one live figure that went stale again in the round after it was swept
 
@@ -679,6 +708,122 @@ created, are each ruled in a `**Bump ruling.**` paragraph under M's ruling of 20
 `gates/bump_derivation.py --json` reads `pending.unruled` as `[]` with `pending.kind` MINOR and
 `pending.number` 1.7.0.
 
+
+#### The park 12 round, 2026-09-05 — the last unacquired document of the smallest Phase 2, and the first artefact in this arc that decodes nothing
+
+**WHAT AN INSTALLED READER GETS THAT THEY DID NOT HAVE.** Every `Entity` this adapter emits now
+carries `attributes.mismms_conformance`: MISB ST 0902.8's Motion Imagery Sensor Minimum Metadata
+Set, read against the packet that produced the object. It states, per packet, which of the
+standard's **33 rows** were reported and which were not, and it is an **ADVISORY and never a
+refusal** — a packet short of the set translates exactly as it did yesterday.
+
+**THE DOCUMENT IS WHAT MAKES IT AN ADVISORY, AND THAT IS NOT A HEDGE.** ST 0902.8 puts its
+obligation on the STREAM, twice. `ST 0902.3-04`: *"All metadata items contained in the MISMMS shall
+be reported no less than once every thirty (30) seconds under all circumstances."* And Annex A's
+closing Note: *"It is not mandatory that each metadata packet contain every metadata item; Annex B
+demonstrates the viability of transmitting the MISMMS in a bandwidth-constrained environment."* So
+one packet cannot answer the question the document asks, and an adapter that refused a short packet
+would be refusing a transmission the document goes on to print an example of. The annotation says
+so on its own face at `klv_mismms.PER_PACKET_IS_NOT_A_VERDICT`; a consumer aggregating the readings
+across thirty seconds of packets is the party who can answer it.
+
+**FOUR MEMBER STATES, AND TWO OF THEM EXIST BECAUSE COLLAPSING THEM WOULD BE A LIE ABOUT SOMEBODY
+ELSE'S STREAM.** `absent` says the packet's octets carry no such tag — a statement about the wire,
+readable for all **39 tag numbers** because `klv_codec` walks every triplet of the Local Set under
+`ST 0107.3-04` whether or not this repository can decode it. `present_not_decoded` says the tag IS
+on the wire and `klv_uas_codec` has no block for it — a statement about **this repository**. Five
+of the minimum set's tags are in that state (**3, 10, 78, 90, 91**), and the list is DERIVED at
+import from the codec's own 44-tag tables rather than typed, so wiring one of them retires it with
+no edit. `zero_length` is the third, on `ST 0902.8-05` — *"No Zero-Length items (ZLI) shall be used
+to meet minimum reporting requirements"* — so a ZLI is read by the codec as ST 0601.14-33's
+explicit unknown and is **not counted** as reported: two readings of one item that disagree and are
+both right. `present` is the fourth and the ordinary one.
+
+**THE TRANSCRIPTION IS CHECKED AGAINST THE DOCUMENT'S OWN ARITHMETIC AND NOT AGAINST ITSELF.**
+Table 1 draws 33 rows and Table 2 draws the same 33 in the same order, and Table 2 carries a footer
+row reading **`39 Tags  Total 797`**. Both figures re-derive from `klv_mismms.ROWS` on every suite
+run: 39 tag numbers exceed the 33 rows by exactly the eleven extra members of the five alternates
+rows (`6|90`, `7|91`, `15|75|104`, `22|96`, `25|78`), and 797 is the sum of the Max Length column
+with its four starred cells read as the numbers they qualify. Nine of the 33 rows are not ST 0601
+items at all — they are ST 0102.12 elements inside the set nested at item 48, written `48/n` — and
+**the two tag-number spaces collide**: an unqualified membership test read row `48/3` Classifying
+Country as ST 0601 tag 3 Mission ID and reported a decoded element as undecodable. Caught on the
+full-set fixture, guarded at `test_a_security_sub_tag_is_never_read_through_the_top_level_not_decoded_set`.
+
+**THE DOCUMENT PRINTS ITS OWN EXAMPLE PACKET TWICE AND THE TWO DISAGREE, AND NOTHING HAD TO BE
+RULED BECAUSE THE DOCUMENT ADJUDICATES IT.** Annex C's "Dynamic Only" packet appears as Table 11, a
+row per item, and as a complete packet in hex. Table 11's Tag 20 row reads `14 04 7D C5 5E CE`; the
+complete-packet hex reads `14 04 00 00 00 00`. Both printings state the same Tag 1 Checksum,
+`0xC850`. ST 0601.14a §6.6's sum recomputes to **`0xC850` over the complete-packet hex** and to
+`0x5C2B` over Table 11's value, and the stated BER length `0x61` — 97 octets — agrees with both. So
+the complete packet is self-consistent and the table row is the misprint. **This is NOT a fourth
+instance of M's tables-beat-examples ruling** and must not be read as one: that ruling settles a
+normative table against an illustration, and Annex C is titled *Informative* throughout, so both
+printings are illustrations and nothing normative is in tension. The packet is carried as printed.
+
+**THE PINNED STREAM, READ AGAINST IT — a reading about ONE stream and not a claim about the
+profile.** All six packets of `day_flight.klv` read identically: **21 of the 33 rows reported, 12
+not**, and every one of the twelve is `absent` rather than `present_not_decoded`. The twelve are
+rows 3, 10, 94 and the whole nine-row security group `48/1`–`48/22`, the packets carrying no item
+48 at all. One interaction is recorded and deliberately not folded in: row `22|96` reads `reported`
+on a tag 22 the length policy **skipped** — the stream sends Target Width at four octets where
+§8.22 requires two — because `ST 0902.3-04` asks whether the item was reported and `ST 0902.3-03`
+asks whether it was populated per ST 0601, and those are two questions. The second is recorded and
+**not adjudicated**.
+
+**WHAT MOVED IN A GOLDEN: ONE PATH, ON EVERY OBJECT THAT HAS ATTRIBUTES.** All 106 pre-existing
+goldens gained `attributes.mismms_conformance` and **nothing else**: a structural diff by JSON path
+against `492a326`, excluding only that declared path, shows **zero** differences across all 106.
+Six goldens are new, from the three new fixtures. The annotation rides on every `Entity` and not
+only on the packets that fell short, which is `klv_uas_codec.LENGTH_DIVERGENCE_POLICY`'s precedent
+applied to a second rule — a complete packet is known to be complete UNDER A RULE and not merely
+unflagged.
+
+**THE PARK ARITHMETIC, RE-DERIVED FROM THE GATE AND NOT INCREMENTED.** `gates/parks_table.py` reads
+**eleven closed** — parks 1, 2, 3, 4, 5, 6, 8, 9, 11, 12 and 13 — and **two open**, parks 7 and 10,
+both of them public downloads. Park 12 closed on both halves in one round, and it is the **fourth
+closure of one day**. It is also the first closure since park 3 on 2026-09-04 to move a delegation
+term: the round fetched its own document, so **fourteen delegations in scope and twelve now held**,
+up from eleven. The document span does not move — the thirteen rows still name **fifteen**
+documents, and ST 0902 has been one of the fifteen since the table was written. The preamble in
+`FORMAT_COVERAGE.md`, park 12's set-claim, the `MISP-2015.1-75` ledger row, `klv_pin.json`'s
+`parks.how_many`, `parks.honest_strength` and `parks.the_ones_that_closed`, and the pin header's
+own document/pin pair all moved in this commit.
+
+**AND THE SET-CLAIM DECAYED FOR THE SIXTH TIME, ON THE CLOSURE OF THE ROW IT IS WRITTEN IN.** Park
+12's live claim read *"the open members of this table are rows 7, 10 and 12"*, and
+`gates/parks_table.py` fired `CLOSED MEMBER` the instant this row's own title cell gained its
+strikethrough and date — nothing in the row had changed. That is the one case the sentence did not
+anticipate, and the fifth of the six decays the gate caught rather than a person. **The
+smallest-Phase-2 partition the row was written about is now empty**: all seven parks it named have
+closed. It is kept rather than retired, on park 8's precedent — a partition that quietly becomes
+nothing loses the record of having been a partition.
+
+**THE DOCUMENT.** MISB ST 0902.8, *Motion Imagery Sensor Minimum Metadata Set*, 1 November 2018 —
+SHA-256 `c864c579…166f6005`, 604 319 bytes, 17 pages, pinned at
+`delegated_specifications_held.st_0902_8`. Obtained from the Internet Archive's 2020-01-11 capture
+of `gwg.nga.mil`'s own copy after **all three** official routes were asked first and their bodies
+read: a 403 `AccessDenied` XML, an F5 `bobcmn` interstitial at HTTP 200, and — at the registry's
+own document route — a **403 with a readable body**, *"The requested URL was rejected"*, which is a
+refusal shape this record had not met at that URL (park 3 got a bare connection reset there the
+previous day). The edition date is stated three times and all three agree: the cover, the running
+footer on all seventeen pages, and the single Revision History row `ST 0902.8 / 11/01/2018`.
+Requirement identifiers carry **two** edition prefixes — four read `ST 0902.3-` and only `-05`,
+the one this edition's Revision History records as added, reads `ST 0902.8-` — which is the
+`ST 0107.3` finding met a third time.
+
+**NO SCHEMA CHANGE.** `SCHEMA_VERSION` unmoved at 1.0.0; `git diff v1.6.0..HEAD -- schemas/` is
+empty. The annotation rides at `Entity.attributes`, an open mapping, which is the route park 3's
+time basis and park 6's VMTI basis both took.
+
+**THE BUMP DERIVATION, RE-RUN AFTER THIS SECTION WAS WRITTEN AND NOT BEFORE.**
+`gates/bump_derivation.py --json` reads `pending.kind` **MINOR**, `pending.number` **1.7.0** and
+`pending.unruled` **`[]`**. The round's own units are MINOR by shape and needed no ruling: a new
+importable module appears (`klv_mismms`), an existing public surface gains a key
+(`attributes.mismms_conformance`), and nothing that worked before stopped working — no signature
+narrowed, no field disappeared, no schema moved. `--mutation-check` reads `1 check, 0 failed`. The
+order matters and is the point of this sentence: the derivation reads the tree this file is part
+of, so quoting it from before the file was written would state a figure about a different tree.
 
 #### The park 6 round, part 2 — item 74 becomes objects, 2026-09-05
 

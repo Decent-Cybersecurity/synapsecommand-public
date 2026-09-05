@@ -964,6 +964,9 @@ MULTIPLIED_FACTS = (
     ("ST 0903.4's own /CreationDate — 48 days after its 23 October 2014 cover",
      "D:20141210141859",
      ("fixtures/klv/spec/klv_pin.json",)),
+    ("ST 0902.8's own /CreationDate — 69 days after its 1 November 2018 cover",
+     "D:20190109083635",
+     ("fixtures/klv/spec/klv_pin.json",)),
 )
 
 
@@ -1393,13 +1396,21 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    `Track` with its `Entity` where a VTracker LS Track ID guarantees an identity. So closures
     #    9 -> 10 and open 4 -> 3, and the delegations-held count stays where part 1 left it.
     #    `n_downloads` still tracks `n_open`.
-    assert closed == ["park_1", "park_11", "park_13", "park_2", "park_3", "park_4", "park_5",
-                      "park_6", "park_8", "park_9"], closed
+    #    PARK 12 CLOSED 2026-09-05 TOO, THE FOURTH OF THE DAY, AND IT BREAKS THE RUN OF TWO THAT
+    #    MOVED NEITHER DELEGATION TERM: its round FETCHED MISB ST 0902.8, so the delegations-held
+    #    count moves 11 -> 12 — the first move since park 3 on 2026-09-04. What closed it is the
+    #    sixth shape of the artefact half and the first that DECODES NOTHING: ST 0902.8 is a
+    #    profile of ST 0601 and defines no items, so `adapters/klv_mismms.py` is a READING of
+    #    items already decodable — Table 1's 33 rows, annotated onto every `Entity` as an advisory
+    #    that never refuses a packet. So closures 10 -> 11 and open 3 -> 2. `n_downloads` still
+    #    tracks `n_open`, and the two rows left are 7 and 10.
+    assert closed == ["park_1", "park_11", "park_12", "park_13", "park_2", "park_3", "park_4",
+                      "park_5", "park_6", "park_8", "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
-    assert (n_closed, n_open, n_downloads) == (10, 3, 3)
-    words = {3: "three", 10: "ten"}
+    assert (n_closed, n_open, n_downloads) == (11, 2, 2)
+    words = {2: "two", 11: "eleven"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"

@@ -129,6 +129,14 @@ PACKAGE_ONLY_TESTS = (
     # from the document's own printed examples on every run — so it is a real check against an
     # installed wheel rather than one that would skip there.
     "test_cdm_vmti_codec.py",
+    # `test_cdm_mismms.py` is package-only on the same reading, with one difference worth naming:
+    # it reads FIXTURE BYTES as well as module source — `fixtures/klv/*.klv` and
+    # `fixtures/klv/golden/*.cdm.json`, both of which ship in the wheel — and it resolves them off
+    # `klv_mismms.__file__` rather than off the repository root, so the paths are the installed
+    # ones wherever the package sits. The PDF whose tables it re-derives, ST 0902.8, is never
+    # opened: the transcription is literals in `klv_mismms.ROWS` and the document's own footer
+    # figures are the constants it checks them against.
+    "test_cdm_mismms.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason

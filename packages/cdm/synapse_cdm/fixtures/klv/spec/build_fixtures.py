@@ -2029,9 +2029,139 @@ _PARK_6_FIXTURES: tuple[dict, ...] = (
     ),
 )
 
+
+# ------------------------------------------------------- park 12, the ST 0902.8 minimum set
+#
+# **THE ANNEX C PACKET IS TRANSCRIBED AND NOT BUILT, and the document's own checksum is what says
+# it may be.** ST 0902.8 §10 prints its "Dynamic Only" example twice — once as Table 11, a row per
+# item with a `TLV Hex Bytes` cell, and once as a complete packet, seven lines of hex under a
+# legend. **THE TWO DISAGREE IN EXACTLY ONE VALUE.** Table 11's Tag 20 row reads
+# `14 04 7D C5 5E CE` (Sensor Rel. Roll Angle 0x7DC55ECE, 176.86543764939194 Degrees); the
+# complete-packet hex reads `14 04 00 00 00 00`. **ST 0601.14a §6.6's checksum adjudicates it and
+# the answer is not a judgment call**: recomputed over the whole packet, the value that yields the
+# `0xC850` BOTH printings state for Tag 1 is `00 00 00 00`, and Table 11's own value yields
+# `0x5C2B`. So the complete-packet hex is self-consistent and the Table 11 row is the misprint,
+# and the fixture below carries the packet as printed rather than as tabulated. The stated length
+# `0x61` — 97 octets — is a second party to the same conclusion and agrees with both.
+#
+# THIS IS NOT M's TABLES-BEAT-EXAMPLES RULING BEING APPLIED. That ruling settles a normative table
+# against an illustration; here BOTH printings are inside an annex whose title reads "Informative",
+# so nothing normative is in tension and nothing in this repository rests on either. The
+# disagreement is recorded because it is checkable, and it was checked.
+
+#: ST 0902.8 §10's complete-packet hex, exactly as the document prints it — the sixteen-octet UL,
+#: the BER short-form length `0x61`, and the 97 octets of TLV data. Transcribed from the page and
+#: then VERIFIED three ways before use: the tag sequence walks cleanly, the octet count is the
+#: stated 97, and §6.6's checksum over it is the printed `0xC850`.
+_ANNEX_C_DYNAMIC_ONLY = bytes.fromhex(
+    "060E2B34020B01010E01030101000000"
+    "61"
+    "020800046050584E0180"   # 2  Precision Time Stamp, 1 231 798 102 000 000 us
+    "050271C2"               # 5  Platform Heading Angle
+    "0602FD3D"               # 6  Platform Pitch Angle (Short)
+    "070208B8"               # 7  Platform Roll Angle (Short)
+    "0D045595B66D"           # 13 Sensor Latitude
+    "0E045B5360C4"           # 14 Sensor Longitude
+    "0F02C221"               # 15 Sensor True Altitude (MSL)
+    "1002CD9C"               # 16 Sensor Horizontal FoV
+    "1102D917"               # 17 Sensor Vertical FoV
+    "1204724A0A20"           # 18 Sensor Relative Azimuth Angle
+    "130487F84B86"           # 19 Sensor Relative Elevation Angle
+    "140400000000"           # 20 Sensor Relative Roll Angle — see the note above
+    "150403830926"           # 21 Slant Range
+    "16021281"               # 22 Target Width
+    "1704F101A229"           # 23 Frame Center Latitude
+    "180414BC082B"           # 24 Frame Center Longitude
+    "190234F3"               # 25 Frame Center Elevation (MSL)
+    "410106"                 # 65 UAS Local Set Version, 0x06 — "MISB Standard 0601.6"
+    "0102C850"               # 1  Checksum
+)
+
+#: The nine ST 0102.12 elements Table 1 names, drawn from `_SECURITY_VALUES` so the minimum-set
+#: fixture states no marking this file does not already state. `48/1` through `48/6`, `48/12`,
+#: `48/13` and `48/22` — the six §6.4 Required elements plus the two object-country elements and
+#: the version, which is the exact set ST 0902.8's Tag cells spell.
+_MISMMS_SECURITY_TAGS = (1, 2, 3, 4, 5, 6, 12, 13, 22)
+_MISMMS_SECURITY = _security_set(
+    tuple((tag, value) for tag, value in _SECURITY_VALUES if tag in _MISMMS_SECURITY_TAGS))
+
+#: Tags 3 and 10 are ISO 646 free text and this adapter has no block for either, so their values
+#: are SYNTHETIC and unmistakably so. They exist to make `present_not_decoded` a witnessed state
+#: rather than an argued one: the framing layer sees the triplet, `klv_uas_codec` declines to say
+#: what it means, and the annotation must not report that as absence.
+_SYNTHETIC_MISSION_ID = "SYNTHETIC-MISSION".encode("ascii").hex()
+_SYNTHETIC_PLATFORM_DESIGNATION = "SYNTHETIC-PLATFORM".encode("ascii").hex()
+
+_PARK_12_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="every_row_of_the_minimum_set_reported_in_one_packet",
+        octets=_payload(_packet(
+            [(2, _EXAMPLE[2]), (3, _SYNTHETIC_MISSION_ID)]
+            + [(tag, _EXAMPLE[tag]) for tag in (5, 6, 7)]
+            + [(10, _SYNTHETIC_PLATFORM_DESIGNATION)]
+            + [(tag, _EXAMPLE[tag]) for tag in
+               (11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25)]
+            + [(22, "1281")]                       # §8.22's two octets, not the stream's four
+            + [(48, _MISMMS_SECURITY), (65, _EXAMPLE[65]),
+               (94, "0102" + _SYNTHETIC_MINOR), (1, _EXAMPLE[1])])),
+        what_it_is_for=(
+            "**THE FULL MINIMUM SET, AND THE ONLY FIXTURE HERE WHERE EVERY ONE OF ST 0902.8's 33 "
+            "ROWS READS `reported`.** `attributes.mismms_conformance.rows_reported` is 33 of 33. "
+            "It is also the fixture that witnesses the state ruling 4 exists for: tags 3 Mission "
+            "ID and 10 Platform Designation are ON THE WIRE and are outside this adapter's 44-tag "
+            "tables, so their rows read `reported` with a member state of `present_not_decoded` "
+            "and NEVER `absent` — the framing layer saw them and only the value is out of reach. "
+            "The five alternates rows are each satisfied by their decodable member (6, 7, 15, 22, "
+            "25) under Note 1's inclusive or, so 90, 91, 75, 104, 96 and 78 read `absent` inside "
+            "rows that read `reported`, which is the distinction between a ROW's state and a "
+            "TAG's. Tag 22 carries §8.22's two octets rather than the pinned stream's four, so "
+            "`length_policy_skipped` does NOT appear here and the clean case is on record beside "
+            "the divergent one"),
+        citation=("ST 0902.8 §6, §6.1, Table 1, Note 1 and Note 2, ST 0902.3-03/-04; "
+                  "ST 0601.14a §8.x Example KLV Value rows; ST 0102.12 §6.4 and §6.7; "
+                  "ST 1204.1 §6.2"),
+    ),
+    dict(
+        name="the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows",
+        octets=_ANNEX_C_DYNAMIC_ONLY,
+        what_it_is_for=(
+            "**THE DOCUMENT'S OWN EXAMPLE OF A PACKET THAT DOES NOT CARRY THE MINIMUM SET, WHICH "
+            "IS WHY THE ANNOTATION IS AN ADVISORY.** ST 0902.8 §10 prints this packet as a legal "
+            "MISMMS transmission and Annex A says why: 'It is not mandatory that each metadata "
+            "packet contain every metadata item'. It reports 19 of the 33 rows. The fourteen it "
+            "does not are 3, 10, 11, 12, 94 and the nine 48/n rows — every one `absent`, none of "
+            "them a defect, and the packet translates in full. `exclusive_or_violation` is null. "
+            "The octets are the document's, transcribed from its complete-packet hex rather than "
+            "from Table 11, because §6.6's checksum recomputes to the printed 0xC850 over the "
+            "former and to 0x5C2B over the latter — see the note above this fixture"),
+        citation=("ST 0902.8 §10, Table 11 and the complete-packet hex beneath it; "
+                  "ST 0902.8 §8 Annex A's closing Note; ST 0601.14a §6.6"),
+    ),
+    dict(
+        name="a_zero_length_minimum_item_does_not_meet_the_reporting_requirement",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (11, ""), (13, _EXAMPLE[13]), (14, _EXAMPLE[14]),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**ST 0902.8-05, THE REQUIREMENT THIS EDITION ADDED**: 'No Zero-Length items (ZLI) "
+            "shall be used to meet minimum reporting requirements.' Tag 11 Image Source Sensor "
+            "arrives at a length of zero. `klv_uas_codec` decodes it as ST 0601.14-33's explicit "
+            "unknown and the item is READ — `attributes.klv_items` carries it — while row `11` of "
+            "`mismms_conformance` reads `not_reported` with the member state `zero_length` and "
+            "`not_reported_because` naming -05. TWO READINGS OF ONE ITEM THAT DO NOT AGREE AND "
+            "ARE BOTH RIGHT: the producer said the value is unknown, and the document declines to "
+            "accept that as reporting. Tag 11 is chosen because it is NOT one of the three ZLI-"
+            "forbidden items (1, 2, 65), so the packet has no length defect and the ZLI here is a "
+            "MISMMS finding and nothing else"),
+        citation=("ST 0902.8 §6 Requirement ST 0902.8-05 and §4's Revision History row "
+                  "'Added Requirement -05'; ST 0601.14a §8.11, ST 0601.14-33"),
+    ),
+)
+
 ADAPTER_FIXTURES = (ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
                     + _PRE_RELEASE_FIXTURES
-                    + _PARK_11_FIXTURES + _PARK_6_FIXTURES)
+                    + _PARK_11_FIXTURES + _PARK_6_FIXTURES + _PARK_12_FIXTURES)
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:

@@ -5076,8 +5076,21 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 53, (
-        f"{len(expected)} adapter fixtures, expected fifty-three — ten from the witnessed-set "
+    assert len(expected) == 56, (
+        f"{len(expected)} adapter fixtures, expected fifty-six — and the THREE that took it from "
+        "fifty-three were added 2026-09-05 by the park 12 round for MISB ST 0902.8's minimum "
+        "metadata set, chosen to witness the annotation's state vocabulary rather than its 33 "
+        "rows: a packet carrying every one of the 33 rows, which is the only place "
+        "`present_not_decoded` can be seen, tags 3 and 10 being on the wire and outside this "
+        "adapter's 44-tag tables; ST 0902.8 Annex C's own 'Dynamic Only' packet, transcribed from "
+        "the document's complete-packet hex rather than from its Table 11 — the two printings "
+        "disagree at Tag 20 and ST 0601.14a §6.6's checksum, printed identically in both, "
+        "recomputes to the stated 0xC850 over the former and 0x5C2B over the latter — which the "
+        "document prints as a legal MISMMS transmission while it carries 19 of the 33 rows, and "
+        "is therefore the document's own argument that this annotation is an advisory; and a "
+        "zero-length Image Source Sensor, which `ST 0902.8-05` declines to count as reporting "
+        "while `klv_uas_codec` still decodes it as ST 0601.14-33's explicit unknown — ten from "
+        "the witnessed-set "
         "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
         "seventeen elements inside item 48, the six `security_object_country_codes_*` "
         "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held (a byte-order "
