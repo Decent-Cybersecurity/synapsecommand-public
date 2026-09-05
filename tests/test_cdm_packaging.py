@@ -272,7 +272,7 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     get wrong and impossible to notice: any expression that derived one from the other would
     produce the right answer on every run until the first release that moved them apart."
 
-    1.1.0 is that release. `PACKAGE_VERSION` is now `1.6.0` and `SCHEMA_VERSION` is `1.0.0`,
+    1.1.0 is that release. `PACKAGE_VERSION` is now `1.7.0` and `SCHEMA_VERSION` is `1.0.0`,
     because every entry in both releases added a surface and touched no schema. So the sweep below
     has teeth it did not have when it was written: a derivation of either number from the other now
     produces a WRONG answer at runtime rather than a right one by coincidence, and would be caught
@@ -310,9 +310,9 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("1.6.0", "1.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("1.7.0", "1.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "1.6.0 and 1.0.0. They are no longer equal and have not been since 1.1.0, which is the "
+        "1.7.0 and 1.0.0. They are no longer equal and have not been since 1.1.0, which is the "
         "release that made their independence a measured fact rather than an argument. If you are "
         "reading this because you bumped one of them: that is the expected event, and the fix is "
         "to update this assertion to the two numbers you now mean, not to re-link them"

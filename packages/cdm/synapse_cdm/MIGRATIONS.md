@@ -181,7 +181,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.6.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.7.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -258,12 +258,19 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.7.0 — 2026-09-05 — three parks close: item 74 becomes detections and tracks, item 94 becomes an identity, and the minimum metadata set rides every object as an advisory
 
-Nothing here is in a release. The distribution on the index is **1.6.0**, and a reader who ran
-`pip install synapse-cdm` has that and not this.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: 151 files.**
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `1.7.0` at this
+commit and the tag `v1.7.0` names it. What the index actually serves is a measured fact about an
+upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s ledger by the round
+that watched the upload and is not asserted here before it has happened.
+
+**What moved inside the distribution: 152 files.** The count and the set are
+`gates/bump_derivation.py`'s, re-derived AFTER this section was written rather than before it. Two
+of the 152 are this `MIGRATIONS.md` and `version.py`, whose only changed unit at the release commit
+is the `PACKAGE_VERSION` declaration the gate refuses to read as evidence for itself.
 
 **AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
 `gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `tests/test_cdm_release.py`,
@@ -271,13 +278,15 @@ Nothing here is in a release. The distribution on the index is **1.6.0**, and a 
 `tests/test_cdm_klv_framing.py` (added to this list 2026-09-05 by the park 6 round, part 2, which
 moved it),
 `.github/workflows/publish.yml`, `RELEASE_NOTES.md` and `PUBLICATION.md` all moved and **none of
-them is in the distribution**: the packaged contents are `pyproject.toml` and the `synapse_cdm/`
+them is in the distribution** — and the release round added three more of the same class,
+`tests/test_cdm_packaging.py`, the repository-root `README.md` and `docs/docs/changelog.mdx`, each
+of which states this tree's package version and none of which an installed reader receives: the packaged contents are `pyproject.toml` and the `synapse_cdm/`
 tree, so a gate, a test module, a workflow file, the repository-root notes and the publication
 record reach no installed reader and are not part of the arc this section accounts for. That is
 the same boundary `gates/bump_derivation.py` measures the bump over, and stating it here is what
 stops the next round from reading a five-file arc as the round's size.
 
-**The 138, by what they are.** The figure read **117** until 2026-09-05, when the park 6 round added one module to the arc, and **118** until later the same day, when **the park 6 round, part 2, added twenty**: five payloads, their five parsed twins and their ten goldens. Both earlier figures are kept because each was right on its own reading; the list below is amended at the entries that moved and nowhere else. Four shipped documents:
+**The 138, by what they are.** The figure read **117** until 2026-09-05, when the park 6 round added one module to the arc, and **118** until later the same day, when **the park 6 round, part 2, added twenty**: five payloads, their five parsed twins and their ten goldens. Both earlier figures are kept because each was right on its own reading; the list below is amended at the entries that moved and nowhere else. **RE-DERIVED 2026-09-05 BY THE 1.7.0 RELEASE ROUND, AND THIS HEADING IS THE STALE ONE OF THE TWO: the arc's size is 152**, which is the number the count sentence above states and `gates/bump_derivation.py` derives at the release commit. 138 was right on the reading that wrote it and was never re-taken after the park 12 round's own files and this release's `version.py` joined the arc; it is kept here beside the derived figure rather than overwritten, on the same ground as the two before it. Four shipped documents:
 
 * `synapse_cdm/fixtures/klv/README.md`
 * `synapse_cdm/FORMAT_COVERAGE.md`
@@ -936,6 +945,38 @@ harvests for the lossless check and what `_agree` cross-checks, so a new key is 
 not a corrected value. Not MAJOR — the key is CONDITIONAL, so every twin written before this
 commit parses unchanged and every golden built from one is byte-identical. CHECK taken: a twin for
 `mandatory_items_only.klv` has no `vmti` key and its golden is unmoved.
+
+
+#### The 1.7.0 release round, 2026-09-05 — the number is the gate's, and three parks ship together
+
+**WHAT THIS ROUND ADDS TO THE DISTRIBUTION IS ONE DECLARATION.** `version.py`'s `PACKAGE_VERSION`
+moves from `1.6.0` to `1.7.0`, and the docstring paragraph that states the pair moves with it.
+Everything else in this section was written by the four rounds above it and is being RELEASED here
+rather than made here. The four other sites that state this tree's package version —
+`RELEASE_NOTES.md`, the repository-root `README.md`'s tag example, `docs/docs/changelog.mdx` and
+`tests/test_cdm_packaging.py`'s pinned pair — are outside the distribution and moved in the same
+commit, which is why the arc's size is 152 and not 156.
+
+**THE NUMBER IS THE GATE'S.** `gates/bump_derivation.py` classifies the diff over the distribution
+between `v1.6.0` and this tree and reports **MINOR** with **312 signals** across
+**151 distribution files**, so the floor is **1.7.0**. `pending.unruled` is the empty list,
+which is the pre-step condition 5 requires before a version number is typed — and it is empty
+because the park 11 and park 6 rounds ruled their own units when they made them, not because this
+round ruled anything. Twelve units in this arc carry a person's ruling and none of the twelve is
+this round's: the park 11 round ruled `stanag4609.py:Stanag4609Adapter` and named ten it left, and
+the park 6 round's second part ruled those ten plus the eleventh its own diff made. The gate reads
+all twelve back out of this section and refuses one that outlives its case.
+
+**WHAT DID NOT MOVE, PROVED RATHER THAN ASSERTED.** `SCHEMA_VERSION` stays `1.0.0` and
+`git diff v1.6.0..HEAD -- schemas/` is empty, which is the check that decided it. The roster is
+fourteen adapters in both directions, unchanged since `stanag4586` landed. `gates/wheel_install.py`
+reads `13 checks, 0 failed` and its `--mutation-check` still catches five of thirteen, so the gate
+that proves the artefact can still fail.
+
+**THE THREE PARKS THIS RELEASE SHIPS, NAMED BY THE GATE AND NOT BY THIS PARAGRAPH.**
+`gates/parks_table.py` reads **thirteen rows, eleven closed** — 1, 2, 3, 4, 5, 6, 8, 9, 11, 12 and
+13 — and **two open**, parks 7 and 10. Parks 6, 11 and 12 closed inside this arc; parks 7 and 10
+are the two rounds this release does not carry.
 
 
 ### 1.6.0 — 2026-09-05 — eighteen ST 0601 items promoted on the document's own worked examples, the time scale named as ST 0603.5 names it, and alt_m is HAE

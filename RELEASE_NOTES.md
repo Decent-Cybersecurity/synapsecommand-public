@@ -1,191 +1,162 @@
-# synapse-cdm 1.6.0
+# synapse-cdm 1.7.0
 
-A minor release, and the whole of it is the `stanag4609` adapter reading more of the document it
-was already reading: **eighteen ST 0601.14a items are promoted on the document's own printed worked
-examples** where 1.5.0 promoted only what one pinned stream attested, the **time scale is named as
-MISB ST 0603.5 names it**, `Position.alt_m` is filled from the two ellipsoid-height items and never
-from mean sea level, and `Kinematics.course_deg` is filled at all.
+A minor release, and what it adds is one thing said three ways: the `stanag4609` adapter now emits
+objects **about something other than the platform that sent the packet**. MISB ST 0601 item 74
+becomes `DETECTION` events and `Track` objects; item 94 becomes entries in `Entity.source_ids` that
+name the sensor and the platform as devices rather than as a packet; and every object carries a
+per-packet reading of MISB ST 0902.8's minimum metadata set. Three parks closed for it — 6, 11 and
+12 — and the adapter roster did not move.
 
-**Package version 1.6.0 · CDM `schema_version` 1.0.0.** If you consume CDM objects, no schema
-moved: no field was added, removed or retyped, and the diff over `schemas/` since 1.5.0 is empty —
-`git diff v1.5.0..HEAD -- schemas/` returns nothing, which is the check that decided
+**Package version 1.7.0 · CDM `schema_version` 1.0.0.** If you consume CDM objects, no schema
+moved: no field was added, removed or retyped, and the diff over `schemas/` since 1.6.0 is empty —
+`git diff v1.6.0..HEAD -- schemas/` returns nothing, which is the check that decided
 `SCHEMA_VERSION` stays where it is rather than an assumption that it would. Everything new reaches a
-consumer either in a field the models already declare (`alt_m`, `course_deg`) or inside
-`Entity.attributes`, which the published `entity` schema declares `additionalProperties: true` — the
-1.2.0 ruling, applied a third time and checked against the schema files rather than recalled.
+consumer either in a field the models already declare (`source_ids`, and `Track` and `Event`
+themselves) or inside `Entity.attributes`, which the published `entity` schema declares
+`additionalProperties: true` — the 1.2.0 ruling, applied a fourth time and checked against the
+schema files rather than recalled.
 
-**If you ingest STANAG 4609 / MISB KLV, read the next section.** One key you may have been reading
-is gone from every object this adapter emits, and two fields that were always `None` now carry
-values when a packet supplies them.
+**If you ingest STANAG 4609 / MISB KLV, read the next section.** Nothing is removed and no key
+changes shape, but a payload that used to yield one `Entity` and one `Event` can now yield several
+objects, and code that assumes one packet is one pair will see more than it expects.
 
-For what 1.5.0 was — the ST 0102.12 security metadata local set, read seventeen of seventeen — see
-[the 1.5.0 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.5.0)
+For what 1.6.0 was — eighteen ST 0601 items promoted on the document's own printed worked examples,
+the time scale named as MISB ST 0603.5 names it, and `alt_m` filled from ellipsoid height — see
+[the 1.6.0 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.6.0)
 and the previous notes in this file's git history. This document does not restate them.
 
 ## What changed on the wire for a `stanag4609` consumer
 
-Six things, each stated as what a consumer receives.
+Four things, each stated as what a consumer receives.
 
-**1. `attributes.time_basis` lost its `timescale` key and gained eight.** This is the one change in
-this release that can raise an exception in a consumer: code reading
-`attributes.time_basis["timescale"]` gets a `KeyError` from 1.6.0 on. The key is not renamed — the
-claim it carried is superseded. Its place is taken by `scale`, `relation_to_TAI` and
-`relation_to_UTC`, and the record also gains `the_POSIX_rule_is_SUPERSEDED`,
-`leap_second_adjustment`, `correction_offset`, `applied_microseconds` and `what_observed_at_IS` —
-eight keys, derived by comparing the same golden's `time_basis` at `v1.5.0` (six keys) and here
-(thirteen). What `scale` now says: tag 2 is **the MISP Time System**, named as MISB ST 0603.5 names
-it, and defined by that document's §6 as an SI-second count from its stated epoch that is strictly
-monotonic — no skips, no repeats. Its relation to TAI, in the document's own words: *"The MISP Time
-System is locked … with International Atomic Time (TAI); however, there is a fixed offset of
-8.0000822 seconds between the MISP Time System and TAI"*. Its relation to UTC: *"UTC can be derived
-from the MISP Time System using its correct offset and inclusion of leap seconds"*. The scale is
-locked to TAI and is not TAI, and it is not UTC either — ST 0601.14a §8.2.1 says so of the item
-itself. The POSIX derivation this adapter cited for nine days is what ST 0603.5's Appendix A
-records as the guidance in force before the edition that superseded it; the arithmetic did not move,
-because the same appendix says the epochs are the same, so not one emitted instant changed.
+**1. A packet carrying item 74 now yields a `DETECTION` `Event` per VTarget Pack and a `Track` with
+its `Entity` for every VTarget that carries a VTracker Track ID.** This is the first `Event` this
+adapter has ever emitted about a third party. The twenty-six items the pinned stream witnesses are a
+platform reporting itself, which is why the packet's own event is a `STATUS_CHANGE`; item 74 is the
+item that reports something else, and `adapters/klv_vmti_codec.py` reads MISB ST 0903.4's VMTI Local
+Set, its VTargetSeries and VTarget Packs, and the five nested Local Sets and four packs under them.
+The packet's own `Entity`/`Event` pair is unchanged and still emitted beside the new objects.
 
-**2. `Event.observed_at` and `Entity.valid_from` apply items 136 and 137 when a packet carries them,
-and are otherwise unchanged.** ST 0601.14a §6.4 states the arithmetic as two equations —
-`TCorrected = TPrecision + TCorrection`, and `+ (LSeconds * 1,000,000)` for UTC — and tag 137
-(Correction Offset) and tag 136 (Leap Seconds) are their two terms. Each is applied only when the
-packet supplies it; an absent term is recorded in `time_basis` as not available rather than
-substituted with a zero, and a Zero-Length Item counts as absent. **The proof that nothing else
-moved is the park 3 round's structural diff**, quoted from `MIGRATIONS.md`'s 1.6.0 section: *"All
-64 pre-existing goldens were compared against their `HEAD` versions leaf by leaf, keyed by JSON
-path: zero undeclared leaves changed, added or removed, and the 2 178 that did change all sit under
-`attributes.time_basis`, `payload.time_basis` or `attributes.document_witnessed_basis`.
-`attributes.klv_items` and `attributes.document_witnessed_items` moved on no pre-existing golden,
-and the 198 `observed_at`, `valid_from` and `precision_time_stamp_us` leaves were compared and are
-byte-equal."* The pinned stream carries neither item, so every instant it ever produced is the
-instant it produces now.
+**What identifies a track is a ruling and not a reading, and it is stated here because a consumer
+keys on it.** The identifier used is **VTracker LS Tag 1**, which ST 0903.4 defines as *"[a] value
+that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID)
+as standardized by the Open Software Foundation in ISO/IEC 9834-8"*. The VTarget Pack's **Target ID
+Number** is deliberately **not** a key: §11.15 scopes it *"until the identification number is reset
+by the New Detection Flag (Tag 6 within the VTarget Pack)"*, §9.4 makes every triplet including that
+flag optional so the reset need not be observable at all, and `ST 0903.4-28` requires uniqueness only
+*"[t]o the extent possible"*. It is carried as a `source_ids` entry under the system
+`VMTI-VTARGET-TARGET-ID-NUMBER`, which is a different id space from `VMTI-VTRACKER-TRACK-ID`, so
+nothing can join the two by accident. The whole ruling with its clauses is readable at
+`stanag4609.VMTI_IDENTITY_RULING`.
 
-**3. `Entity.position.alt_m` is filled from tag 104 or tag 75 — both ellipsoid heights — and never
-from tag 15, which is mean sea level.** `Position.alt_m` is documented as metres HAE, and the two
-HAE items are "measured from the reference WGS84 ellipsoid" in their own Descriptions, so there is
-no conversion and no geoid model. Where a packet carries both, 104 is taken, on range (40 000 m
-against 19 000 m) and resolution (0.0078125 m at three octets against 0.30365 m) — a preference of
-this repository's, labelled as such, because the document orders 75 against 104 nowhere. Where the
-two are carried as measurements and differ by more than tag 75's own step, an advisory of class
-**`hae_items_disagree`** carries both values, their difference and the step, at
-`attributes.position_basis.hae_disagreement` on the Entity and in the Event payload's
-`klv_advisories`; the selected value is still emitted. Packets carrying neither item — the pinned
-stream's among them — emit `alt_m` as `None`, exactly as before.
+**And the carrier this adapter uses is one the document discourages**, recorded rather than argued
+away. §10: *"Use of VTracker is discouraged (although not forbidden). Use of VTrack LS is
+recommended, because it maps more directly to NATO STANAG 4676."* The recommended carrier is
+unreachable from ST 0601 — §9.1 makes VTrack LS independent of it, and item 74 is an ST 0601 tag — so
+the discouraged carrier is the only one in reach.
 
-**4. `Entity.kinematics.course_deg` is filled from tag 112, Platform Course Angle**, degrees
-clockwise from true north over `IMAPB(0, 360, Length)`, which is what the field is documented as, so
-it lands with no conversion. A course of exactly 360° — decodable at two octets — is emitted as
-`0.0`, because the document states the two as one direction and the field is `[0, 360)`. Tag 5,
-Platform Heading Angle, fills nothing: a heading is not a course. Packets without tag 112 emit
-`None`, as before.
+**2. `Entity.source_ids` gains one entry per Identifier Component of item 94, the MIIS Core
+Identifier.** MISB ST 1204.1 defines the whole structure of that item's binary value, and each
+component becomes its own `SourceId` under a system naming the component's role and its quality —
+`MIIS-SENSOR-PHYSICAL`, `MIIS-PLATFORM-VIRTUAL` and their siblings — with the UUID as the
+`external_id`. **The composite was refused by the standard before this repository could propose
+it**, ST 1204.1 §8: *"Since the Core ID can change over time, combining the three identifiers into
+one UUID is not used as a method for Enterprise UUIDs."* So the three are independent entries, which
+is what `SourceId` being a list has been for since 1.0.0 and what `adapters/ais.py` already does with
+an MMSI and an IMO number.
 
-**5. Fourteen IMAPB items and the Wavelengths List pack ride in `attributes` under the names the
-document gives them, each promoted on a document-side witness.** Twelve of the fourteen appear under
-`attributes.document_witnessed_items` — `radar_altimeter_m`, `altitude_agl_m`, `zoom_percentage`,
-`sensor_azimuth_rate_dps` and their siblings — the other two are items 104 and 112 above, which fill
-CDM fields; the pack appears as `wavelengths_list`, its members decoded from §8.128's grammar with
-wavelengths in nanometres; and items 136 and 137 appear as `leap_seconds` and `correction_offset`.
-**What "promoted on a document-side witness" means**: no held stream carries any of these tags. Each
-row was promoted because ST 0601.14a's own §8.x block prints one Software Value beside the KLV octets
-that encode it, and `klv_uas_codec.check_against_the_documents_own_examples()` reproduces that
-example — in both directions for the IMAPB items — on every suite run, 44 examples in total. The
-scope contract's second condition, *"a second pinned stream, OR a document-side check as strong as
-a worked example"*, is met by the second clause. Tag 130 is the row that shows it is a condition:
-its block prints no example, so it is not promoted and the object's `document_witnessed_basis`
-says so under `declined`. **How a reader tells the two kinds apart**: in `FORMAT_COVERAGE.md`'s
-ST 0601 tag table, a document-witnessed row's Notes open with *Promoted … on the document-side
-witness* and end *No held stream carries this tag*, while a stream-witnessed row reads *Promoted*
-and cites the pinned stream; on every object, `attributes.document_witnessed_basis` lists the
-eighteen tags read on that footing (`tags_read`, `how_many`), and those items ride under
-`document_witnessed_items` rather than under `klv_items`, so the two grounds never share a key.
-`klv_uas_codec.WITNESS_KINDS` states the arrangement: 26 stream-witnessed tags, 18 document-witnessed,
-and item 48 on a third ground.
+**`source_ids[0]` is still the packet key and `entity_id` is still derived from it.** The new
+entries APPEND. `UAS-LS-PACKET` over `<stamp>|<index>` is what keeps an `Entity` addressable when
+item 94 is absent, which is every packet of the only stream this repository holds.
 
-**6. Two parks closed, one document pinned, and a roster corrected.** Park 5 closed on ST 1201.3's
-row set and park 3 on MISB ST 0603.5, fetched, pinned and read — `gates/parks_table.py` reads
-thirteen rows, **eight closed and five open**, and `gates/pin_paths.py` reads **25 pinned copies, 25
-matched**. The profile still delegates to fourteen documents and ten are held. `MIGRATIONS.md`'s
-list of adapters that landed with no schema change holds **thirteen** entries: `stanag4586` was
-missing and is now recorded there, and `pntmap` is correctly absent because it landed with the 1.0.0
-schema.
+**3. Every `Entity` now carries `attributes.mismms_conformance`: MISB ST 0902.8's Motion Imagery
+Sensor Minimum Metadata Set, read against the packet that produced the object.** It states, per
+packet, which of the standard's **33 rows** were reported and which were not — `rows_total`,
+`rows_reported`, `rows_not_reported` and a `rows` map — and it is an **advisory and never a
+refusal**: a packet short of the set translates exactly as it did in 1.6.0.
+
+**The document is what makes it an advisory.** ST 0902.8 puts its obligation on the STREAM, twice.
+`ST 0902.3-04`: *"All metadata items contained in the MISMMS shall be reported no less than once
+every thirty (30) seconds under all circumstances."* And Annex A's closing Note: *"It is not
+mandatory that each metadata packet contain every metadata item; Annex B demonstrates the viability
+of transmitting the MISMMS in a bandwidth-constrained environment."* One packet cannot answer the
+question the document asks, and a consumer aggregating these readings across thirty seconds of
+packets is the party who can. The annotation says so on its own face, at
+`klv_mismms.PER_PACKET_IS_NOT_A_VERDICT`.
+
+**Four member states, and two of them exist because collapsing them would be a claim about somebody
+else's stream.** `absent` says the packet's octets carry no such tag — a statement about the wire,
+readable for all **39 tag numbers** the set names. `present_not_decoded` says the tag IS on the wire
+and this repository has no block for it — a statement about this software, true of five of the set's
+tags (3, 10, 78, 90 and 91) and DERIVED at import from the codec's own tables, so wiring one of them
+retires it with no edit here. `zero_length` is the third, on `ST 0902.8-05` — *"No Zero-Length items
+(ZLI) shall be used to meet minimum reporting requirements"* — so a zero-length item is read as
+ST 0601's explicit unknown and is not counted as reported. `present` is the fourth.
+
+**4. Nothing was removed, and the objects the pinned stream produces did not change in any value it
+already had.** The one stream this repository holds carries neither item 74 nor item 94, so it emits
+no detections, no tracks and no MIIS entries; what it gained is the conformance annotation, which
+reads identically on all six of its packets — **21 of the 33 rows reported and 12 not**, the twelve
+being Mission ID, Platform Designation, the Core Identifier itself and the whole nine-row security
+group. The ninety-six goldens that pre-dated the item 74 work are byte-identical across it, measured
+by JSON path; the eighty-four that pre-dated the ST 0902.8 work changed at exactly one added path,
+`attributes.mismms_conformance`, and nowhere else.
 
 ## Why this is a MINOR, and the gate derived it rather than being told
 
-`gates/bump_derivation.py` classifies the diff over the distribution's own contents between `v1.5.0`
-and this tree against `version.py`'s `PACKAGE_VERSION` table. It reports **MINOR** over **184
-signals** across **135 distribution files**, and the floor is **1.6.0** — the release gate's moved set
-is 136, the one file apart being `version.py`, whose only changed unit at this commit is the
-declaration the gate refuses to read as evidence for itself. The kind needed no ruling:
-`adapters/klv_pack_codec.py` is a **new importable module**, `imapb_codec.py`'s `__all__` grew by six
-public names, and `fixtures/klv/` gains nineteen payloads that extend a fixture set, all of which sit
-on the MINOR list. No importable name is removed and no signature moves, so no MAJOR row is reached.
-The one removed *emitted key* — `timescale` — is not a MAJOR-row event, because that row is about
-importable names; it is named in section 1 above instead, on the precedent of the 1.4.1 notes naming
-a refusal's changed exception class.
+`gates/bump_derivation.py` classifies the diff over the distribution's own contents between `v1.6.0`
+and this tree against `version.py`'s `PACKAGE_VERSION` table. It reports **MINOR** over
+**312 signals** across **151 distribution files**, and the floor is **1.7.0** — the
+release gate's moved set is 152, the one file apart being `version.py`, whose only changed unit at
+this commit is the declaration the gate refuses to read as evidence for itself. The kind needed no
+argument: `adapters/klv_vmti_codec.py` and `adapters/klv_miis_codec.py` and `adapters/klv_mismms.py`
+are three **new importable modules**, and `fixtures/klv/` gains fourteen payloads that extend a
+fixture set, all of which sit on the MINOR list. No importable name is removed and no signature
+moves, so no MAJOR row is reached, and no emitted key was removed either — which is the one thing
+1.6.0 had to say and this release does not.
 
-**Fifteen units the table could not decide, and a person ruled each one.** The gate's PATCH row and
-its MAJOR row both reach a function whose body moved and whose name did not, so it names the unit and
-stops rather than guessing. All fifteen rulings are in `MIGRATIONS.md`'s 1.6.0 section, and the gate
-reads them back and refuses one that outlives its case. By class, as the gate parses them — **five
-MINOR and ten PATCH**:
+**Twelve units the table could not decide carry a person's ruling, and not one of them is this
+release round's.** The gate's PATCH row and its MAJOR row both reach a function whose body moved and
+whose name did not, so it names the unit and stops rather than guessing. Every ruling in this arc was
+written by the round that made the unit: the park 11 round ruled one and left ten it named, and the
+park 6 round's second part made an eleventh and ruled all eleven. Each is in `MIGRATIONS.md`'s 1.7.0
+section in the form the gate parses, with the check that was taken recorded beside it — **eight of
+the twelve are PATCH and four MINOR**, and all eight PATCH units are top-level statements the gate
+names by POSITION — six of them import lines renumbered by an inserted import, two of them
+module-level statements modified in place with no name added or removed. That is a property of
+positional unit naming rather than a change to anything a caller can see. `pending.unruled` is the
+empty list at this commit, which is the pre-step the release procedure's condition 5 requires before
+a version number is typed.
 
-* **five MINOR rulings, on surfaces that grew.** `imapb_codec.__all__` gained six names and lost
-  none; `DecodedPacket` gained a trailing `pack_refusals` field with a default, so every positional
-  unpack and every index is unchanged; `decode_packet` keeps its signature and decodes more tags with
-  every previously decoded value unchanged — new emitted content, not a corrected value;
-  `check_against_the_documents_own_examples` runs 44 examples where it ran 26 with the same return
-  shape; and `Stanag4609Adapter` keeps both its signatures, adds one class attribute and removes
-  nothing, while emitting the fields and attributes above;
-* **ten PATCH rulings, eight of them on two insertions.** `_measured` and `_rendered` are
-  module-private with no importer outside the module. The other eight name `<statement 2>` and
-  `<statement 3>` of `adapters/klv_uas_codec.py` and `<statement 5>` through `<statement 10>` of
-  `adapters/stanag4609.py`, and **none of those statements changed**: imports were inserted above
-  them, and the gate names an unnamed top-level statement by its position, so eight imports were
-  renamed and read as modified — a property of positional unit naming, and the cost of a scheme that
-  cannot be fooled into silence.
-
-**The first attempt at this release stopped before writing a number, and that is worth a
-paragraph.** The pending section said the gate derived MINOR "with no human ruling", and the gate
-exited `0 failed`, and both were true — of the KIND. The gate's exit code judges the last released
-arc and only reports the pending one, so fifteen unruled units sat in its JSON output under
-`pending.unruled` while the console read clean. They were ruled in a separate commit before any
-version string moved, which is the order the release procedure's condition 5 asks for.
-
-The number is the gate's and not a judgement: run `.venv/bin/python gates/bump_derivation.py` on
-this tree and it prints the same classification, the same signals and the same floor. It reads the
+The number is the gate's and not a judgement: run `.venv/bin/python gates/bump_derivation.py` on this
+tree and it prints the same classification, the same signals and the same floor. It reads the
 distribution **through `git`**, so it classifies what is committed rather than what is on disk.
 
 ## What else moved
 
-* **The fixture set grew by nineteen payloads and every KLV golden was regenerated.** Nineteen new
-  payloads with their parsed twins, and **84 goldens of which 38 are new and 46 regenerated** — the
-  KLV fixture set is now 42 payloads. **The 46 regenerated goldens are evidence and not noise**: two
-  rounds each rewrote a basis paragraph that rides on every object (`position_basis` and
-  `kinematics_basis`, then `time_basis` and `document_witnessed_basis`), and each round measured by
-  JSON path that the rewrite moved no value position. `stanag4609`'s fixture verdicts move from
-  forty-six to **eighty-four**; the roster's total moves to **496**.
-* **Three defects in the governing document are recorded rather than worked around.** Three printed
-  `Resolution` cells of ST 0601.14a are wrong — §8.104 and §8.105 by a factor of ten, §8.112 by a
-  digit slip — proved from those sections' own example octets and recorded at
-  `imapb_codec.PRINTED_RESOLUTION_DISAGREEMENTS`; the codec computes every step from `(a, b, L)` and
-  reads no Resolution cell. §8.137 states its format as signed in two drawn cells and unsigned in one
-  conversion line; it is read **signed**, and a fixture makes that checkable. §8.130 states its HAE
-  member's range twice and differently, which is one of the two reasons tag 130 is not promoted.
+* **Three documents were obtained and pinned, and three parks closed on them.** MISB ST 0903.4
+  (park 6), MISB ST 0902.8 (park 12) and the artefact half of park 11's already-held ST 1204.1 and
+  ST 1301.2. `gates/parks_table.py` reads **thirteen rows, eleven closed and two open** — parks 7
+  and 10, both public downloads — and `gates/pin_paths.py` reads **27 pinned copies, 27 present, 27
+  matched, 0 failed**. The profile still delegates to fourteen documents and **twelve are held**.
+  The pinned documents themselves are gitignored, as they have always been: nothing in this release
+  redistributes a standard.
+* **The KLV fixture set grew by fourteen payloads and their fourteen parsed twins, and the golden
+  set by twenty-eight**, to 56 payloads and 112 goldens. `stanag4609`'s fixture verdicts move from
+  eighty-four to **112**, and the roster's total from 496 to **524**.
+* **Two document defects are recorded rather than worked around.** ST 0902.8's Annex C prints its
+  "Dynamic Only" example packet twice — as a per-item table and as seven lines of complete-packet
+  hex — and the two disagree in exactly one value; the document adjudicates its own disagreement,
+  because the checksum SS 6.6 prints over the packet matches the complete-packet form and not the
+  table row. And ST 1204.1's Appendix B ends its check-value definition with *"Please see the
+  reference code for complete details of the algorithm"* in a document that carries no such code;
+  the loop's first index is the one thing its prose does not fix, so both candidates are computed on
+  every suite run and the one that reproduces the document's own printed check byte is the one used.
 * **The shipped documents.** `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, the package `README.md` and
-  `fixtures/klv/README.md` carry the arc; `klv_pin.json` gains the ST 0603.5 node and the closure
-  entries for parks 3 and 5. **The ST 0601 row set reads 45 of 141 rows promoted** — 26
-  stream-witnessed and 19 document-witnessed — and 96 `not yet`. **RE-DERIVED 2026-09-05 BY THE PARK 11 ROUND AND MOVED ONE STEP: 46 of the 141 are promoted and the other 95 read `not yet`** — 26 stream-witnessed and **20** document-witnessed, the twentieth being item 94, the MIIS Core Identifier, admitted on a FOURTH ground: MISB ST 1204.1 defines its Value's whole structure, two held documents state its key identically at CRC 30280, and both print the same worked example. Counted off the Status column, not carried. **CORRECTED 2026-09-05 by the
-  housekeeping round, and it was wrong when it shipped rather than having gone stale**: this bullet
-  kept the step before this release's own pre-release round, which promoted tag 75 and moved the
-  ledger row. The figures above are counted off the 141 rows' Status column. Note that the second
-  of the three is the ledger row's count of rows witnessed by a document and not the size of
-  `klv_uas_codec.DOCUMENT_WITNESSED_TAGS`, which is 18 and is what the paragraph above cites: item
-  48's witness is a second document rather than a printed worked example, so it is inside the one
-  count and outside the other. The two statements in this file were the same number by accident
-  and are different numbers on purpose.
+  `fixtures/klv/README.md` carry the arc; `klv_pin.json` gains the ST 0903.4 and ST 0902.8 nodes and
+  the closure entries for parks 6, 11 and 12.
 
-**No schema, model, harness flag or dependency moved**, no adapter was added or removed, and the
-pinned specification documents are gitignored as they have always been — nothing in this release
-redistributes a standard.
+**No schema, model, harness flag or dependency moved**, and no adapter was added or removed.
 
 ## Fourteen adapters, all harness-verified
 
@@ -210,21 +181,21 @@ totals below were summed from the harness on this tree.
 | `legion` | ingest | 6 |
 | `pntmap` | ingest | 4 |
 | `stanag4586` | ingest | 24 |
-| `stanag4609` | bidirectional | 84 |
+| `stanag4609` | bidirectional | 112 |
 | `stanag4676` | bidirectional | 34 |
 | `tak` | bidirectional | 12 |
 
-**496 fixture verdicts, 0 failed** across the fourteen adapters, against the published schemas.
-The whole of the increase is `stanag4609`'s: thirty-eight more verdicts than 1.5.0 shipped, from the
-nineteen new payloads and their parsed twins. `gates/wheel_install.py` reports **992** over the
-same roster, which is these 496 run in each of two schema modes.
+**524 fixture verdicts, 0 failed** across the fourteen adapters, against the published schemas.
+The whole of the increase is `stanag4609`'s: twenty-eight more verdicts than 1.6.0 shipped, from the
+fourteen new payloads and their parsed twins. `gates/wheel_install.py` reports **1048** over the
+same roster, which is these 524 run in each of two schema modes.
 
 The six published schemas — `cdm_object`, `entity`, `event`, `plan_object`, `track`,
 `payload_gnss_interference` — regenerate byte-identical from the models, and
 `python -m synapse_cdm.schemas --check --out schemas` reports `CURRENT: schemas vs models at
 1.0.0`.
 
-## Published by CI over OIDC, as 1.1.0, 1.2.0, 1.2.1, 1.3.0, 1.4.0, 1.4.1 and 1.5.0 were
+## Published by CI over OIDC, as 1.1.0, 1.2.0, 1.2.1, 1.3.0, 1.4.0, 1.4.1, 1.5.0 and 1.6.0 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
@@ -248,6 +219,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==1.6.0
+pip install synapse-cdm==1.7.0
 python -m synapse_cdm.harness --list-adapters
 ```
