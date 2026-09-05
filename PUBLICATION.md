@@ -148,8 +148,8 @@ reading the check's conclusion today has to know.
 
 ## Open ledger
 
-Fifteen entries, and the set does not move — entries change **state**, they are not deleted. Twelve
-are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11, 12, 13, 14 and 15 are closed by acts, entry 7
+Sixteen entries, and the set does not move — entries change **state**, they are not deleted. Thirteen
+are **settled**: entry 1 is a ruling, entries 5, 6, 10, 11, 12, 13, 14, 15 and 16 are closed by acts, entry 7
 is a disposition, entry 8 is a reconciliation, and entry 9 is a correction. Entry 5 records the 1.0.0 upload a human performed, what was measured
 off the index afterwards, and which step of its own sequence was skipped. Entry 6 is the one that
 retired the way entry 5 worked: it was written open, before the configuration it specified existed,
@@ -183,7 +183,13 @@ file has reconciled since entry 12 stopped being bookkeeping and decided a relea
 re-tags before a single push, no tag moved on origin, and every one of its six digest readings agreed
 — so its subject is the reading taken beside them: the served-version witness the maintenance sweep
 had written that same morning read its first DISAGREE against the site, and AGREE forty minutes
-later once this round had deployed the tagged tree. Entries 2, 3 and 4 are open. None blocks
+later once this round had deployed the tagged tree. Entry 16 is the 1.7.0 release, the ninth
+closed by an act and the first whose upload no person approved: under the maintainer's autonomy
+ruling of 2026-09-05 the release round's own reviewer returned GO on the release commit and the
+runner then took the `pypi` environment's approval itself, so the twenty-one and a half minutes this
+entry measures as a hold are a hold on a *verdict* and not on somebody's attention — and its second
+subject is the one reading that had to be taken twice, the simple index's stale 200, which entry 14
+met once and entry 15 did not reproduce. Entries 2, 3 and 4 are open. None blocks
 anything.
 
 ### 1. `DCO` stays advisory — RULED, and the wiring is deliberately not done
@@ -903,6 +909,7 @@ Every recorded source commit resolves in this repository's history; none is from
 
 | Deployment | UTC | Source | Recorded, before this round |
 | --- | --- | --- | --- |
+| `6ec27291` | 2026-09-05 22:26:51 | `8d0d1bdf` | **did not exist** — deployed by this round from the `v1.7.0` tree, on ledger entry 16 |
 | `5a908754` | 2026-09-05 11:08:42 | `069cd7f2` | **did not exist** — deployed by this round from the `v1.6.0` tree, on ledger entry 15 |
 | `d26d83f7` | 2026-09-04 17:45:33 | `541b4bc9` | **did not exist** — deployed by the 1.5.0 witness round from the `v1.5.0` tree, on ledger entry 14 |
 | `e2d3bec5` | 2026-09-04 08:03:16 | `8e3dc2a3` | **did not exist** — deployed by the docs deploy round, on ledger entry 13's finding |
@@ -922,7 +929,7 @@ were **true when written** by commit `7544880`, whose table carried five rows ab
 below them, and whose second sentence balanced its pair over that same set. What falsified them is this
 repository's own later act rather than any error in the reading: commit `1fc35e8` appended the
 `222a55be` row when the 1.2.1 release deployed at `12:37:06Z`, and **the enumeration grew while the
-prose count did not**. The list this entry accounts for is **twenty deployments — nine carrying a
+prose count did not**. The list this entry accounts for is **twenty-one deployments — ten carrying a
 row and eleven covered by the naming paragraph below**, derived at writing time from
 [`gates/deploy_record.py`](gates/deploy_record.py)'s own reconciliation rather than counted by hand.
 **Only the total is restated, and the split it is restated by is the gate's.** The second sentence's
@@ -955,18 +962,20 @@ hides.** `ccfa7476` went up at `07:01:45` — ninety-two seconds *after* the `e4
 Nothing rested on the ordering; it is recorded because the phrase was doing work it could not do.
 
 **The alias, and which deployment serves it.** `docs.synapsecommand.com` is served by deployment
-`5a908754`. Witnessed **2026-09-05 at 11:15:33–11:15:37Z** by bytes and not read off a settings field:
-five pages fetched from the domain are byte-identical to `5a908754`'s own `pages.dev` URL and
+`6ec27291`. Witnessed **2026-09-05 at 22:31:04–22:31:13Z** by bytes and not read off a settings field:
+five pages fetched from the domain are byte-identical to `6ec27291`'s own `pages.dev` URL and
 **differ** from the deployment before it on all five. **The pin moved in the same commit as the
-deploy**, which is what this paragraph is for; it named `d26d83f7` for seventeen hours and
-twenty-three minutes until the 1.6.0 witness round superseded it at `11:08:42Z`, before that
+deploy**, which is what this paragraph is for; it named `5a908754` for eleven hours and eighteen
+minutes until the 1.7.0 witness round superseded it at `22:26:51Z`, before that `d26d83f7` for
+seventeen hours and twenty-three minutes until the 1.6.0 witness round superseded it at `11:08:42Z`,
+before that
 `e2d3bec5` for nine and three-quarter hours until the 1.5.0 witness round superseded it at
 `17:45:33Z`, before that `222a55be` for eight days until the docs deploy round superseded it at
 `08:03:16Z`, and before that `5ed34cd8` until the 1.2.1 release superseded it at `12:37:06Z` — every
 superseded reading is ledger entry 8's table rather than a struck sentence here, because the id is
 the claim and a paragraph carrying two live ones is a paragraph a parser has to guess at.
-**`gates/deploy_record.py` refused this paragraph before it was rewritten**, naming `d26d83f7`
-against bytes that said `5a908754`, which is the fifth time the gate has caught its own round's
+**`gates/deploy_record.py` refused this paragraph before it was rewritten**, naming `5a908754`
+against bytes that said `6ec27291`, which is the sixth time the gate has caught its own round's
 upload and the reason the id here is never edited from memory. Identical to one deployment and
 different from the one before it is the pair that distinguishes "serving what was deployed" from
 "serving something", which is the shape every deploy measurement in this file has used. The reason
@@ -2155,6 +2164,255 @@ the correction lives in the release commit's message and in `MIGRATIONS.md`. And
 the docs site is gated: the served-version witness reports and cannot fail, so the next gap will be
 *reported* by whoever runs the gate — which is one step better than entry 14's "found by somebody
 looking", and is not a red build.
+
+### 16. `synapse-cdm` 1.7.0 is on the index — CLOSED, and it is the first release whose upload was approved on a reviewer's verdict rather than on a person's attention
+
+**Published 2026-09-05** by
+[run 33994319036](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/33994319036),
+triggered by the `v1.7.0` tag at `8d0d1bd` — tag object `1e74c62`, annotated, tagger Matej Michalko,
+created **21:50:18Z**. The build job ran 21:53:15–21:57:48Z, four minutes and thirty-three seconds;
+the `pypi` environment then held the upload for **twenty-one minutes and thirty-five seconds** until
+it was approved at **22:19:24Z**, and the publish job ran 22:19:26–22:19:52Z, twenty-six seconds.
+Deployment `6286269829` carries the sequence: `waiting` at 21:57:49Z, `queued` at 22:19:24Z,
+`in_progress` at 22:19:26Z, `success` at 22:19:53Z. **The second act, tag push to `success`, took
+twenty-six minutes and forty-one seconds** — the run was created at 21:53:11Z by the push — of which
+the hold was twenty-one minutes and thirty-five.
+
+**WHAT APPROVED IT WAS A VERDICT, AND THAT IS THIS ENTRY'S SUBJECT.** Every upload before this one
+waited on a person deciding to click; this one waited on a *review of the release commit*. Under the
+maintainer's ruling of 2026-09-05 the release round ran to the publish hold and stopped there, a
+second session re-derived every figure the round's report stated against the tree at `8d0d1bd` and
+returned `GO`, and only then did the runner `POST` to the run's `pending_deployments` — at
+**22:19:23Z**, one second before the deployment's `queued` stamp, with the comment *"1.7.0, approved
+by the runner after round-reviewer GO"* naming the verdict file. **The account is unchanged and the
+mechanism is unchanged**: the `pypi` environment still has exactly one required reviewer,
+`decentcybersecurity`, the approval is still that reviewer's, and GitHub cannot tell — and this
+entry does not claim — that anything about the *protection* is different. What changed is who did
+the reading the click stands for, and the safeguard is that a `STOP` on the release commit would
+have left the tag on origin naming a release that never uploaded, which is the state 1.5.0's first
+tag was in and a person's to resolve. The two sessions coordinate through files in an untracked
+directory that is excluded from git and is in neither the commit nor a fresh clone; nothing in it is
+a claim about this repository, and the verdict this paragraph names is named the way a run URL is —
+as the thing that was read, not as a record the tree keeps.
+
+**NO TAG MOVED ON ORIGIN, AND ONE WAS REMADE LOCALLY BEFORE ANYTHING WAS PUSHED.**
+`git ls-remote --tags origin v1.7.0` answers `1e74c62`, which is the object this tree holds; `gh run
+list --branch v1.7.0` lists **one** run; the `pypi` environment holds **one** deployment for the tag,
+`6286269829`, at `8d0d1bd`. The remade tag is the shape entry 15 met and it was met for the same
+reason: `tests/test_cdm_bump_derivation.py` reads the arc `v1.6.0 → v1.7.0` under a released heading
+the moment the tag exists, so the row naming that arc as one no round ruled cannot be written before
+the tag and cannot be missing after it. The release commit is `383383c` and moves six paths —
+`version.py`, `MIGRATIONS.md`, `RELEASE_NOTES.md`, the repository `README.md`,
+`docs/docs/changelog.mdx` and `tests/test_cdm_packaging.py`, `208 insertions(+), 196 deletions(-)`;
+`8d0d1bd` adds the one row to `tests/test_cdm_bump_derivation.py` and moves nothing else, and
+`git diff 383383c 8d0d1bd -- packages/cdm` is empty, so **the tagged commit's distribution is the
+release commit's distribution**. `v1.7.0` is the tenth tag.
+
+**The number was the gate's before it was typed, and none of the twelve rulings is this release's.**
+`gates/bump_derivation.py` classifies the diff over the distribution between `v1.6.0` and this tree
+as **MINOR** and puts the floor at 1.7.0; `pending.unruled` was the empty list at the release commit,
+which is the pre-step the procedure requires before a version number is typed, and it was empty
+because the park 11 and park 6 rounds ruled their own units when they made them. At the tag the gate
+reads **12 unit(s) ruled by a person** for the arc it now judges, and `1 check, 0 failed` with the
+mutation check.
+
+**The digests, in six readings, and all six were reachable.** What the gate hashed after building
+and gating, what the publish job hashed immediately before uploading, what the in-toto attestation
+names as its subject, what the simple index declares, what the legacy JSON metadata states, and
+what a recomputation over the downloaded bytes yields:
+
+```
+aea8852f1353c4ef073670588ba4e2064d8202fb753502f702cc16b76bfae250  synapse_cdm-1.7.0-py3-none-any.whl
+1f717b61223f9506f859b8581c2e4f597af1cdc5c4830c7033f655c1b92377d5  synapse_cdm-1.7.0.tar.gz
+```
+
+**All six agree, and the sizes agree with them** — 6 472 220 bytes for the wheel and 4 527 937 for
+the sdist, identical in the CI listing that preceded `twine check`, in the legacy JSON, in the simple
+index's JSON form, and in the files downloaded from the index on **2026-09-05 at 22:23:37.832Z and
+22:23:38.543Z**. The gate hashed them at **21:56:08.038Z** in the Condition 2 step, in the same
+output that reports `harness PASS 14 adapters x 2 schema modes, 1048 fixture verdicts, 0 failed`, and
+the publish job hashed the same two values at **22:19:29.115Z** and **22:19:29.118Z**, across the
+hold. The in-toto statements were read twice: in the publish job's own log as the DSSE payloads it
+signed at 22:19:39.883Z and 22:19:41.620Z, and from the bundles the simple index links, fetched at
+**22:23:52.305Z** and **22:23:52.498Z**. The runner saw `200 OK` at **22:23:37.832Z**, which is not
+comparable to entries 13, 14 and 15's sub-two-second readings and is not offered as one: this round
+took its download after the provenance bundles rather than in the seconds after the upload, so
+PyPI's own receipt stamps of **22:19:47.357220Z** and **22:19:49.297367Z** are recorded here without
+a latency figure beside them. **A seventh reading exists and it is new**: the Condition 4 step now
+echoes its derivations to the run's log as well as to the step summary — the change the housekeeping
+round made and proved with a `workflow_dispatch` run — so the two digests appear again at
+**21:56:08.876Z** and **21:56:08.880Z**, under `### Artefacts, with digests`, and agree. Entry 15
+recorded that those derivations were unreachable to these probes; that is no longer true, and the
+adapter roster and schema list this round quotes for the Release body came off the log rather than
+off a re-derivation on the tree. **The comparison basis is the WORKFLOW's build and never a local
+rebuild**, on entry 11's demonstration, inherited rather than re-argued.
+
+**FOUR DIGESTS IN THIS RUN ARE NOT READINGS OF EITHER FILE, and they are named so a reader does not
+count them among the six.** `sha256:62379b22733913d04364201a2c144423f44c703ad623fd3afcb421787ccd2454`
+is the digest of **GitHub's artifact bundle** — 8 837 092 bytes, artifact `9977638184`, uploaded by
+the build job at 21:57:45Z and downloaded unchanged by the publish job at 22:19:28Z; it is a property
+of a container and appears in no PyPI metadata. `a8d9f9b7…89a8e74e` and `47b59798…16b58258c` are the
+two `.publish.attestation` files uploaded alongside the distributions. And
+`a68d0551…c4e3ab2d5` is the digest of the **container image** the publish action ran,
+`ghcr.io/pypa/gh-action-pypi-publish` at `dc37677b2e1c63e2034f94d8a5b11f265b73ba33` — the same image,
+to the digest, that entries 14 and 15 pulled.
+
+**The probe protocol was applied rather than assumed.** Every request carried a declared
+`User-Agent`, non-200 raised before any body was touched, and each downloaded file was checked for
+its archive magic — `PK\x03\x04` for the wheel, `\x1f\x8b` for the sdist — **before** it was hashed.
+Both checks passed. No non-200 was met at all this time, including at the changelog URL, which was
+requested with its trailing slash throughout and therefore never issued entry 14's and entry 15's
+`308`.
+
+**ENTRY 14'S STALE 200 REPRODUCED, AND THIS TIME IT IS BOUNDED FROM BOTH SIDES.** `GET
+/simple/synapse-cdm/` at **22:23:15.717Z**, three minutes and twenty-six seconds after the upload,
+returned **eighteen** anchors whose last two are **1.6.0's** and a trailing serial of **40757988** —
+which is, to the digit, the serial entry 15 recorded eleven hours earlier. A well-formed, current-
+looking `200` that predates the release by a release: the JSON form read forty-eight milliseconds
+later agreed with it and reported `1.7.0` absent from `versions`. Read again at **22:30:12.188Z**,
+ten minutes and twenty-three seconds after the upload, the page carries **twenty** anchors, the last
+two 1.7.0's with `data-provenance` URLs and the two digests above, and a serial of **40774328**. So
+the lag entry 14 caught at four and a half minutes and entry 15 did not reproduce at eight is real,
+was still there at three and a half minutes, and was gone by ten and a half; nothing here says where
+between the two it turned over. **The serial is the only thing that distinguished the first reading
+from the second's page**, which is why entry 15 recorded it and why a round that reads this endpoint
+once, early, and calls it current would have published a false agreement. The integrity endpoint did
+not lag with it: the per-file provenance bundles answered `200` with 1.7.0's subjects at 22:23:52Z,
+while the index was still serving the 1.6.0 page.
+
+**THE PyPI PROVENANCE TRAP, SEVENTH READING, AND IT READS AS THE FIFTH AND SIXTH DID.** Read
+**2026-09-05T22:30:12.348Z**, the two per-file objects for 1.7.0 in `GET /pypi/synapse-cdm/1.7.0/json`
+carry **no `provenance` key at all** — sixteen keys each, and `provenance` not among them. Only 1.7.0
+was read this time; entry 14's sweep of every release and a control package is the reading that makes
+this a property of the endpoint, and this entry adds one dated point to it rather than repeating the
+sweep. The attestations are where they have been for seven releases: the simple index's per-file
+`provenance` URL, `https://pypi.org/integrity/synapse-cdm/1.7.0/<file>/provenance`, and the bundles
+fetched from them at 22:23:52.305Z and 22:23:52.498Z state the four trusted-publisher values — `kind`
+**GitHub**, `repository` **Decent-Cybersecurity/synapsecommand-public**, `workflow` **publish.yml**,
+`environment` **pypi** — with in-toto subjects carrying the two digests above and predicate type
+`https://docs.pypi.org/attestations/publish/v1`. Look for the key, not for its value.
+
+**THREE SUITE TOTALS THAT DIFFER, AND ALL THREE TOTAL 3720.** Reconciled 2026-09-05:
+
+| reading | passed | skipped | failed | total |
+| --- | --- | --- | --- | --- |
+| CI, at the tag, 21:55:13Z | 3645 | 75 | 0 | 3720 |
+| fresh clone at `v1.7.0`, this machine, 22:24:11–22:25:23Z | 3646 | 74 | 0 | 3720 |
+| maintainer's tree at `8d0d1bd`, 22:26:00–22:27:16Z | 3711 | 8 | **1** | 3720 |
+
+**The one failure is not in the distribution, is not in the clone, and is not in the commit.**
+`tests/test_cdm_changelog_claim.py:136` walks the filesystem rather than the git index, and its
+eighteen offender sites are all files inside the untracked directory the two sessions of this round
+used to pass work between them — reports and verdicts, none of them tracked, none of them in the
+tarball or the wheel. The same test at the same commit passes in the fresh clone, which is the proof
+that the tree it judges and the artefact this entry is about are not the same tree. **A gate that
+walks the filesystem sees a working directory; a gate that walks the index sees a release** — and
+this is the second round in which that distinction decided a reading rather than merely existing.
+
+**Clone versus maintainer is 66 tests, and the passed counts differ by 65.** Sixty-seven tests skip
+in the clone and run here — 39 in `test_cdm_pins.py`, 10 in `test_cdm_format_coverage.py`, 7 in
+`test_cdm_pin_paths.py`, 6 in `test_cdm_stanag4609_adapter.py`, 2 in `test_cdm_pdf_text.py`, and one
+each in `test_cdm_parks_table.py`, `test_cdm_stanag4586_adapter.py` and `test_cdm_version_floor.py` —
+while **one test skips here and runs in the clone**: `test_cdm_pdf_text.py:221`, *"no PDF reader in
+this environment"*. Sixty-six of the sixty-seven are the gitignored bytes — the pinned specification
+documents and the KLV streams — and the sixty-seventh is `test_cdm_version_floor.py:368`, which skips
+because there is no virtualenv inside the clone. Entry 15's table read 37 in `test_cdm_pins.py` and
+this one reads 39: the arc pinned ST 0903.4 and ST 0902.8. **The passed difference is 65 rather than
+66 because one of the tests that runs in both did not pass here**, which is the paragraph above; net
+of it the arithmetic is entry 15's. Seven skips are common to all three readings —
+`test_cdm_ordinals.py:495`, `test_cdm_pins.py:756`, and the five `test_cdm_release.py` gates that
+skip when the package tree is identical to its tag — the same seven, at the same lines, entry 15
+found.
+
+**CI's 3645/75 against the clone's 3646/74 on the SAME tree is one test, and it is environment.**
+`test_cdm_version_floor.py:662` skips when the machine has no CPython 3.11; the CI image carries none
+and this one has a `uv`-managed 3.11 the test can find. The two skip lists were compared as sets and
+are otherwise identical line for line — the same one test entries 14 and 15 found, third
+reproduction.
+
+**THE GITHUB RELEASE DID NOT EXIST AND WAS CREATED BY THIS ROUND, AS IT WAS FOR 1.4.1, 1.5.0 AND
+1.6.0.** Checked before anything was made: `gh release view v1.7.0` answered **release not found**
+and `GET /releases/tags/v1.7.0` answered **404** at **22:24:16Z**, with `releases/latest` still naming
+v1.6.0. Four of the last five releases have needed one made by hand. Created at
+**2026-09-05T22:25:47Z** by `decentcybersecurity`, not a draft, not a prerelease, now `Latest`, target
+`main`, with a body derived from `RELEASE_NOTES.md` and the run's own derivations — fourteen adapters,
+524 fixture verdicts, six schemas, 3645 passed and 75 skipped at the tag, and the two digests. **Its
+`created_at` field reads 21:50:18Z and that is not when it was made** — it is `1e74c62`'s tagger time
+to the second, on the mechanism entry 13 records, so `published_at` **22:25:47Z** is the instant that
+matters. Fourth reproduction.
+
+**THE DOCUMENTATION SITE WAS ONE RELEASE BEHIND AND THE WITNESS READ IT, WHICH IS NOW THE ORDINARY
+COURSE.** Measured **2026-09-05T22:22:20.998Z**: <https://docs.synapsecommand.com/changelog/>
+returned HTTP 200, 58 817 bytes, and read *"the package is at 1.6.0 and the schema stays at 1.0.0"*
+while the index served 1.7.0. `gates/deploy_record.py`, run 22:22:09Z, reconciled clean — twenty
+deployments, 0 unaccounted for, alias on `5a908754` — **and its served-version witness read `states
+1.6.0 and version.py declares 1.7.0 — DISAGREE` at 22:22:09Z**, its second DISAGREE and its second
+release. It cannot fail the gate — `2 checks, 0 failed; 1 witness, which cannot fail` — and did not.
+
+**Built from the clean tree at `8d0d1bd` before any record was written, so the stamp is the tag's
+commit.** `docs/build` and `docs/.docusaurus` were removed first, and the block in
+[`docs/README.md`](docs/README.md) was run as written, 22:26:09–22:26:11Z: `check-schema-docs`
+reported *CURRENT — 9 generated files match the schemas*, the generator *0 written, 9 already
+current*, and `check:admonitions` *15 directives in the sources, 15 admonitions rendered, 0 literal
+':::' in 16 built pages*. The tree was still clean afterwards — `git status --porcelain` empty — and
+`docs/package-lock.json` was not rewritten. The built `docs/build/changelog/index.html` reads **"the
+package is at 1.7.0 and the schema stays at 1.0.0"**, once, and **"thirteen adapters have shipped so
+far without a single change to `schema_version`"**, once; `1.6.0` appears nowhere in its text. **The
+built page and the page it replaced are both 58 817 bytes and they are not the same bytes** —
+`75f7552d…21ca1` against `bf66ccb5…96e97` — which is the clearest statement this file can make of a
+rule it has been applying since entry 8: a matching size is not a matching artefact, and every
+comparison here is by digest for that reason.
+
+**Deployment `6ec27291`, source `8d0d1bd`, uploaded 22:26:38–22:26:51Z** — 19 files of 46 new, 27
+already held, wrangler 4.129.0 — preview <https://6ec27291.synapsecommand-docs.pages.dev>. **The two
+instants are client-side and are said to be**: Cloudflare's list reports ages rather than timestamps
+through the CLI, so what is written here is when this machine started and finished the upload. The
+deployment's own source commit is not client-side and is not taken on trust — `gates/deploy_record.py`
+read it back off Cloudflare as `8d0d1bd` at 22:27:00Z, in the act of refusing the deployment this
+file could not yet name, *"12 seconds ago"*.
+
+**The alias served the new page three seconds after the upload, which is the fastest of the four
+readings this file holds.** At **22:26:54.915Z** <https://docs.synapsecommand.com/changelog/> was
+**byte-identical** to the local build — same 58 817 bytes, same `75f7552d…21ca1` — and the
+deployment's own `pages.dev` URL at 22:26:55.082Z read the same. Entry 14 caught the alias still
+answering from cache eight seconds after its upload and entry 15's first reading was twenty seconds
+after and current; three seconds and current is the third point and it does not settle the question
+either, because none of the three readings was taken twice. What the three do settle is that a first
+reading is worth keeping whichever way it comes out: it is the one a round could mistake for a failed
+deploy.
+
+**The gate refused twice on the way to reconciling, and both refusals are the record working.** At
+**22:27:00Z**, with no edit made, it named the deployment this file could not name. After the row and
+the count moved and the alias paragraph was rewritten it read, at **22:31:04–22:31:13Z**, **twenty-one
+deployments, 0 unaccounted for, alias `6ec27291`, source `8d0d1bd`, and the served-version witness
+`states 1.7.0 and version.py declares 1.7.0 — AGREE`** — the same witness that read DISAGREE at
+22:22:09Z, nine minutes earlier, on the same tree. The second refusal entry 15 recorded, where the
+paragraph still named the previous deployment while the table already carried the new row, did not
+happen here only because the paragraph and the row moved in one edit; the gate would have caught it,
+and its catching it is the sixth time it has caught its own round's upload.
+
+**The four untouchables hold, each by its own command, and none of them moved.** The pinned phrase
+derives to **35** over the git index; `scripted_edit`'s contract is green at **9**, with `pytest -k
+scripted_edit` collecting **11** because two `version_floor` parametrizations match the name — the
+recorded trap, reproduced; `git ls-files` matches **no** PDF and **no** zip, and `fixtures/*/spec/`
+tracks only `.json` and `.py`; and `klv_pin.json`'s delegation tally still reads fourteen. **This
+round writes two files** — this one and the test module that states the ledger count, whose docstring
+and whose number vocabulary both had to move, the vocabulary because it ended at fifteen and the
+entry this round adds is the sixteenth. Entry 15's round wrote three, the third being the
+prose-count sweep's ruling list; this one needed no row there, because the two changelog sentences it
+quotes are the same bytes entry 15's rows already rule. Nothing under `packages/cdm/` moved at all. `version.py`,
+`RELEASE_NOTES.md`, `klv_pin.json` and `FORMAT_COVERAGE.md` are byte-identical to `8d0d1bd` at the
+close, verified by digest rather than by intent.
+
+**What this entry does not claim.** That the approval says anything about token state: the row
+reading **UNDATABLE from held evidence** stands untouched, and this upload is the ninth dated witness
+that the tokenless mechanism works and the ninth that is silent about what else would be accepted.
+It does not claim the simple index's lag has a length: two readings bound it and do not measure it.
+It does not claim PyPI's `provenance` key is absent on any release but 1.7.0 today. It does not claim
+the docs site is gated: the served-version witness reports and cannot fail. And it does not claim
+that a reviewing session is a person — it claims only what the record can hold, which is that the
+release commit was independently re-derived before the environment was approved, that the verdict was
+`GO`, and that a `STOP` would have stopped the upload.
 
 ## The deployment was not affected
 
