@@ -93,6 +93,38 @@ UNRULED_HISTORICAL_ARCS = {
                            "synapse_cdm/adapters/stanag4609.py:<statement 7>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 8>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 9>"},
+    # `v1.5.0 → v1.6.0` is the fourth entry and the largest the set holds, at FIFTEEN units. It
+    # arrives by the second entry's route: every one of the fifteen WAS ruled, in `MIGRATIONS.md`'s
+    # 1.6.0 section, by the rulings round of 2026-09-05 — a round that exists because the release
+    # round's first issue stopped on these fifteen after its brief had called them zero, reading
+    # the gate's clean exit code (which judges the RELEASED arc) as a statement about the pending
+    # one. This test derives the arc RAW and never calls `apply_rulings()`, so the fifteen belong
+    # here whatever the section says about them.
+    #
+    # EIGHT OF THE FIFTEEN ARE ONE CAUSE READ EIGHT WAYS, and they stay at full width for the
+    # reason the entry above gives. `<statement 2>` and `<statement 3>` of `klv_uas_codec.py` and
+    # `<statement 5>` through `<statement 10>` of `stanag4609.py` are `import` lines that DID NOT
+    # CHANGE: `imapb_codec` was inserted above the first pair and `imapb_codec` and
+    # `klv_pack_codec` above the six, and the gate names an unnamed top-level statement by its
+    # position. Two insertions, eight refusals. The other seven are real modifications in place:
+    # `__all__` grew, `DecodedPacket` gained a trailing field, `decode_packet` and
+    # `check_against_the_documents_own_examples` decode and check more than they did, the adapter
+    # class emits more, and `_measured` / `_rendered` are private helpers whose bodies moved.
+    ("v1.5.0", "v1.6.0"): {"synapse_cdm/adapters/imapb_codec.py:__all__",
+                           "synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket",
+                           "synapse_cdm/adapters/klv_uas_codec.py:decode_packet",
+                           "synapse_cdm/adapters/klv_uas_codec.py:check_against_the_documents_own_examples",
+                           "synapse_cdm/adapters/klv_uas_codec.py:<statement 2>",
+                           "synapse_cdm/adapters/klv_uas_codec.py:<statement 3>",
+                           "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+                           "synapse_cdm/adapters/stanag4609.py:_measured",
+                           "synapse_cdm/adapters/stanag4609.py:_rendered",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 5>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 6>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 7>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 8>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 9>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 10>"},
 }
 
 

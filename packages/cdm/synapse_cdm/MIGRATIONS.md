@@ -154,7 +154,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.5.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.6.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -231,7 +231,9 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.6.0 — 2026-09-05 — eighteen ST 0601 items promoted on the document's own worked examples, the time scale named as ST 0603.5 names it, and alt_m is HAE
+
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
 **What moved inside the distribution: 136 files.** The count and the set are `gates/bump_derivation.py`'s, re-derived AFTER this section was written rather than before it. **Five records** — `FORMAT_COVERAGE.md`, `MIGRATIONS.md`, the package `README.md`, the KLV fixture `README.md` and the distribution metadata `pyproject.toml` — the **8 source files** `asterix_cat062.py`, `imapb_codec.py`, `klv_pack_codec.py`, `klv_security_codec.py`, `klv_uas_codec.py`, `stanag4609.py`, `build_fixtures.py`, `version.py`, the pin `klv_pin.json`, **19 payloads** `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.klv`, `a_course_of_360_degrees_is_the_documents_own_zero.klv`, `a_negative_time_adjustment_is_read_signed.klv`, `a_short_wavelength_record_is_refused_and_the_packet_translates.klv`, `a_wavelengths_list_from_the_documents_own_example.klv`, `a_zero_length_imapb_item_is_an_explicit_unknown.klv`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.klv`, `an_imapb_item_past_its_max_length_is_an_advisory.klv`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.klv`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.klv`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.klv`, `hae_is_tag_104_and_never_tag_15s_msl.klv`, `hae_is_tag_75_and_never_tag_15s_msl.klv`, `imapb_items_from_the_documents_own_examples.klv`, `imapb_special_values_are_signals_and_not_measurements.klv`, `leap_seconds_alone_convert_the_stamp_toward_utc.klv`, `tag_104_carrying_a_signal_emits_no_altitude.klv`, `tag_75_from_the_documents_own_example.klv`, `the_time_adjustments_from_the_documents_own_examples.klv`, their **19 parsed twins** `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.json`, `a_negative_time_adjustment_is_read_signed.parsed.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.json`, `hae_is_tag_75_and_never_tag_15s_msl.parsed.json`, `imapb_items_from_the_documents_own_examples.parsed.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.parsed.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.json`, `tag_75_from_the_documents_own_example.parsed.json`, `the_time_adjustments_from_the_documents_own_examples.parsed.json`, and all **84 goldens** `a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`, `a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`, `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.cdm.json`, `a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`, `a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`, `a_negative_time_adjustment_is_read_signed.cdm.json`, `a_negative_time_adjustment_is_read_signed.parsed.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`, `a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.cdm.json`, `a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`, `a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.cdm.json`, `a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`, `an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`, `an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.cdm.json`, `both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.cdm.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.cdm.json`, `both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.cdm.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.cdm.json`, `hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`, `hae_is_tag_75_and_never_tag_15s_msl.cdm.json`, `hae_is_tag_75_and_never_tag_15s_msl.parsed.cdm.json`, `imapb_items_from_the_documents_own_examples.cdm.json`, `imapb_items_from_the_documents_own_examples.parsed.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.cdm.json`, `imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.cdm.json`, `leap_seconds_alone_convert_the_stamp_toward_utc.parsed.cdm.json`, `length_divergence_at_a_required_length.cdm.json`, `length_divergence_at_a_required_length.parsed.cdm.json`, `mandatory_items_only.cdm.json`, `mandatory_items_only.parsed.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.cdm.json`, `no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`, `over_recommended_max_length_is_an_advisory.cdm.json`, `over_recommended_max_length_is_an_advisory.parsed.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.cdm.json`, `security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`, `security_local_set_complete_from_the_element_rules.cdm.json`, `security_local_set_complete_from_the_element_rules.parsed.cdm.json`, `security_local_set_minimal_required_only.cdm.json`, `security_local_set_minimal_required_only.parsed.cdm.json`, `security_local_set_partial_is_carried_as_partial.cdm.json`, `security_local_set_partial_is_carried_as_partial.parsed.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`, `security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`, `security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`, `security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`, `security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`, `security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`, `security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.cdm.json`, `security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`, `security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`, `special_values_are_signals_and_not_measurements.cdm.json`, `special_values_are_signals_and_not_measurements.parsed.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.cdm.json`, `tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`, `tag_75_from_the_documents_own_example.cdm.json`, `tag_75_from_the_documents_own_example.parsed.cdm.json`, `the_time_adjustments_from_the_documents_own_examples.cdm.json`, `the_time_adjustments_from_the_documents_own_examples.parsed.cdm.json`, `two_packets_one_payload_are_two_statements.cdm.json`, `two_packets_one_payload_are_two_statements.parsed.cdm.json`, `witnessed_set_from_the_documents_own_examples.cdm.json`, `witnessed_set_from_the_documents_own_examples.parsed.cdm.json`, `zero_length_item_is_an_explicit_unknown.cdm.json`, `zero_length_item_is_an_explicit_unknown.parsed.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.cdm.json`, `zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`.
 
@@ -257,14 +259,174 @@ this package has been rewritten without a schema bump. What the reading costs is
 of being left implicit: a consumer keying on a basis path has no version to check, which is why
 the string is named here rather than counted among the prose.
 
-**Nothing here is in a release.** `PACKAGE_VERSION` is unmoved at 1.5.0, `SCHEMA_VERSION` at
-1.0.0, `RELEASE_NOTES.md` still opens 1.5.0, and no tag was created. `python
-gates/bump_derivation.py`, re-run after this section was written, derives **MINOR** over the arc
-since v1.5.0 — so the next release is at least **1.6.0** — and it derived the KIND with **no human
+**THIS SECTION IS 1.6.0**, and the sentences that stood here while it was pending said the opposite:
+nothing in it was in any release and the version a reader who ran `pip install synapse-cdm`
+actually had was 1.5.0. The release round below is what changed that — `PACKAGE_VERSION` moved to
+**1.6.0**, the tag names it, and a reader who installs the package receives everything described
+above. `python gates/bump_derivation.py`, re-run after this record was written, derives **MINOR**
+over the arc since v1.5.0 — the floor is **1.6.0** — and it derived the KIND with **no human
 ruling**: the arc adds a public importable module and public top-level names, which is the MINOR
-row's own shape, and the gate reports `1 check, 0 failed`. **What that sentence does not say is that
-the arc holds fifteen units the table cannot decide**, and the rulings round of 2026-09-05 below
-rules each one.
+row's own shape. **What that sentence does not say is that the arc held fifteen units the table
+could not decide**; the rulings round of 2026-09-05 below rules each one, and the gate reads all
+fifteen back. `SCHEMA_VERSION` is unmoved at **1.0.0** and had to be: `git diff v1.5.0..HEAD --
+schemas/` is empty, `Entity.attributes` is `additionalProperties: true`, and the two fields that
+newly carry values, `alt_m` and `course_deg`, were declared by the models all along.
+
+#### The release round, 2026-09-05 — the number was the gate's over the largest arc this file records, the first issue stopped on fifteen units its brief had called zero, and two of the second issue's own figures did not survive derivation
+
+**THIS IS THE SECOND ISSUE OF THE RELEASE ROUND, AND THE FIRST IS WHY THE RULINGS ROUND ABOVE
+EXISTS.** The first issue stopped at Act 0.5 on a reading its brief had not predicted: `python
+gates/bump_derivation.py --json` carried **fifteen** units under `pending.unruled` while the brief
+said zero, on the strength of the pending section's *"no human ruling"* sentence and the gate's clean
+exit code — both true of the KIND and neither of the units. The rulings round ruled the fifteen in
+their own commit, `21221db`, before any version string moved, and this round begins from that
+commit. Its record above says why the exit code could not have shown them.
+
+**Act 0, and every figure was measured rather than inherited.** Tree clean. `HEAD` and `origin/main`
+both at `21221db`, one `Signed-off-by` identity on that commit. **EIGHT tags**, newest `v1.5.0` at
+`541b4bc`, tag object `ba1d57e`, annotated. `PACKAGE_VERSION` `1.5.0` at its two sites,
+`SCHEMA_VERSION` `1.0.0`. The pending arc, derived directly: **185 signals over 136 distribution
+files, MINOR, fifteen ambiguities before the rulings and zero after them**, fifteen rulings read and
+none refused as outliving its case; `pending.unruled` in the JSON an empty list, and the `pending`
+line naming 1.6.0. `git diff v1.5.0..HEAD -- schemas/` empty. `RELEASE_NOTES.md` opened
+`# synapse-cdm 1.5.0` with its mechanism heading naming the six prior OIDC releases, exactly one
+`## Artefacts` section, and **zero** occurrences of the pinned phrase. The pending section was first
+under `## History`, opened on its 136-file count, carried five round headings — the rulings round
+and the four before it — and said in its own words that nothing in it was in a release. Suite
+**3603 passed, 3 skipped** at `21221db`; the harness over `stanag4609` **84 passed, 0 failed**. `gh`
+authenticated; `publish.yml` triggers on a pushed `v*` tag and on dispatch, its publish job on the
+`pypi` environment, and **the environment's protection rule was read off the platform rather than
+off the workflow's comment about it**: one `required_reviewers` rule, one reviewer.
+`gates/commit_message.py --rev HEAD` clean. `gates/parks_table.py`: **13 rows, 8 closed, 5 open, 2
+set-claims, 0 failed**; `gates/pin_paths.py`: **25 copies, 25 matched, 0 failed**. **The
+untouchables, each by its own command**: the pinned phrase derives to **35** over the git index
+across 26 files, `scripted_edit`'s contract is green at **9** while a bare `-k` collects **11** (the
+recorded trap), `git ls-files` matches **no** PDF and **no** zip, `fixtures/*/spec/` tracks **nine
+`.json` and nine `.py` and nothing else**, `klv_pin.json` still reads fourteen delegations in scope,
+and the three untouchable files were digested before anything moved — `a90f532c…0d2c1b5b`,
+`5d662250…b6833c44` and `8fae3dbd…b4ecc317` for `klv_pin.json`, `FORMAT_COVERAGE.md` and
+`PUBLICATION.md`.
+
+**TWO OF THIS ISSUE'S OWN BRIEF FIGURES FAILED DERIVATION, AND BOTH ARE CORRECTED HERE RATHER THAN
+CARRIED — the fourth consecutive round in which a brief bookkeeping figure is the only Act 0 reading
+that fails.** (1) The brief classed the fifteen rulings as *six MINOR, nine PATCH*; the gate's own
+`rulings()` over the section parses **five MINOR and ten PATCH** — `__all__`, `DecodedPacket`,
+`decode_packet`, `check_against_the_documents_own_examples` and `Stanag4609Adapter` are the five.
+The rulings round's lead paragraph copied the brief's split and is corrected above with a dated
+clause, and the rulings round's own commit message carries the wrong split and cannot be edited, so
+this sentence is its correction. (2) The brief said *fifteen IMAPB items and the Wavelengths List
+pack*; `imapb_codec.IMAPB_ITEMS` holds **fourteen**, and `DOCUMENT_WITNESSED_TAGS` is eighteen as
+14 + 1 + 2 + 1 — fourteen IMAPB items, the pack, items 136 and 137, tag 75. The park 5 round's
+"fifteen of sixteen rows" is fourteen IMAPB rows and the pack row. Two of the fifteen ruling
+paragraphs above carried the brief's *fifteen IMAPB items* in their reasons and now read *fourteen*
+— one word each, their units and categories untouched, recorded here because the brief asked that
+the rulings be kept verbatim and a count a gate can derive is not kept wrong on that instruction.
+(3) Not a brief figure but a pending-section one, found while deriving the notes: the
+consumer-visible paragraph above says `time_basis` gained *three keys … alongside four new ones*;
+the same golden's `time_basis` at `v1.5.0` has six keys and here thirteen, so the arc **removed one
+and added eight** — `what_observed_at_IS` is the one the paragraph does not name. The notes state
+eight and say how the eight were derived.
+
+**The bump gate decided the number, and it needed no human ruling for the KIND.** The arc since
+`v1.5.0` derives **MINOR**, floor **1.6.0**, with **zero** unruled units, over **184 signals**
+spanning **135 distribution files** at this commit — **185 over 136 at Act 0**, and the one that
+left is `version.py`, by a route the 1.5.0 record did not have to describe. At `21221db` the file's
+functional AST was unchanged since the tag and its roster sentence had moved, so it emitted one
+whole-file PATCH signal, *"comments and docstrings only"*. Moving `PACKAGE_VERSION` changes the
+functional AST, so that signal is gone; the only changed unit is then the declaration itself, which
+the gate skips by name as the thing under judgement; and the file emits nothing. The release gate's
+moved set is **136** throughout, because it counts files that differ and not signals. So the two
+counts sit one apart at a release commit for the second release running, and this time the file was
+IN the signal set before the bump and OUT after it — recorded so the next round meets the shape
+before the arithmetic. `klv_pack_codec.py` is a new
+importable module, `imapb_codec.__all__` gained six public names and `fixtures/klv/` gains nineteen
+payloads, all on `version.py`'s MINOR list, so the gate reached the floor by itself. **The fifteen
+`Bump ruling` paragraphs are what make the arc reportable rather than what decides it**, and the
+gate read all fifteen and refused none as outliving its case. `--mutation-check` exercised five
+synthetic arcs: UNDERSHOOT, EXCEED and UNRULED all refused, both PASS cases classified.
+
+**Condition 2 was run locally before any version string moved.** `gates/wheel_install.py
+--mutation-check` reported **13 checks, 0 failed** — 14 adapters against 2 schema modes for **992
+fixture verdicts, 0 failed**, a manifest of **1240 files equal to git in both directions**, 63
+shipped prose files, six schemas regenerated byte-identical from outside the repository, and the
+package slice at **2497 passed, 1 skipped** — and the mutant wheel with `package-data` emptied was
+refused by **five** checks, so the gate can still fail. The exported wheel and sdist were opened and
+enumerated: **eighteen entries under `fixtures/*/spec/` in each, nine `.json` and nine `.py`, zero
+offenders**; **zero `.pdf` and zero `.zip` in either archive**; the only `.txt` in either is
+packaging metadata the build generates; and nothing under `fixtures/klv/streams/`. The exported
+digests are a local build's and are recorded nowhere, for the reason the notes' Artefacts section
+gives.
+
+**Condition 4's three derivations were read off the tree and copied into the notes from the
+output.** `adapter.discover()` returns **14** and `adapter.roster()` returns **14**, the same
+fourteen names in the same two directions — the roster did not move this arc. The harness over the
+registry sums **496 fixture verdicts, 0 failed**; the whole of the increase is `stanag4609`'s,
+forty-six to **eighty-four**, and every other adapter's total is unchanged from the 1.5.0 notes.
+`python -m synapse_cdm.schemas --check --out schemas` reports `CURRENT: schemas vs models at 1.0.0`
+over six schemas.
+
+**`SCHEMA_VERSION` was checked and not assumed.** `git diff v1.5.0..HEAD -- schemas/` is empty, and
+it had to be: `alt_m` and `course_deg` are fields the models declared before this arc and had
+always emitted as `None` for this adapter, and everything else new rides in `Entity.attributes`,
+which `entity.schema.json` declares `additionalProperties: true`. It stays **1.0.0** and the release
+is a package MINOR with no wire movement in the CONTRACT — while the notes name, in their first
+numbered point, the one movement in the CONTENT that can raise an exception in a consumer.
+
+**THE SUITE AT THE RELEASE COMMIT, AND THE 1.5.0 RECORD'S FINDING HELD.** The seven live version
+sites were moved first — `version.py` at both sites, `RELEASE_NOTES.md`, the repository `README.md`'s
+tag command, this file's own sequence example, `docs/docs/changelog.mdx` and the packaging
+assertion with its docstring — and re-run green, so the roll's consequence stands alone: **exactly
+FOUR red, all in `tests/test_cdm_bump_derivation.py`, all one cause.** `measure()` resolves rulings
+under the heading `declared if released else` the pending token, and with no `v1.6.0` tag it looks
+in a section this commit no longer has, so the arc reads UNRULED with all fifteen units named.
+**Proven rather than argued, at the commit and before the tag**: `rulings("1.6.0")` returns all
+fifteen units with their categories and the pending heading returns zero, so the gate resolves them
+the instant a tag names the declared version. Every other test in the suite is green, which is the
+STOP condition this round was given and did not meet. The figures: **4 failed, 3593 passed, 9
+skipped**, a total of 3606 that reconciles with `21221db`'s 3603 + 3; the six new skips are the
+`tests/test_cdm_release.py` gates that read the pending section and skip while no tag names the
+declared version, and every one of them returns at the tag.
+
+**The fresh-clone pre-check ran before any tag existed, AND A TAG-LESS CLONE OF A RELEASE COMMIT
+CANNOT BE GREEN, WHICH THE PROCEDURE'S BLOCK DOES NOT YET SAY.** A full `--no-local` clone of the
+release commit, run with the repository's own interpreter: **4 failed, 3529 passed, 73 skipped** —
+the four being exactly the tag-conditional set named above, re-run in the clone by module to prove
+it, and every other test green. The brief expected `0 failed` here and the 1.5.0 record explains
+why that cannot happen: the clone has no `v1.6.0` tag either. So the clone was made again once the
+tag existed, which is the tree CI actually reads, and ran **3534 passed, 72 skipped, 0 failed** —
+a total of 3606 in both clones and in the maintainer tree, reconciling on the total and not on the
+split, the skip delta being the gitignored pinned documents and streams plus the interpreter-floor
+skip the procedure describes. **This paragraph was corrected after the tag was first remade**: it
+had been written as a prediction of a green pre-tag clone, the reading came back as the four, and a
+record that keeps a prediction over a reading is the defect the parks gate exists for. Correcting a
+distribution file after a tag moves the tag, so the tag was remade a second time locally, still
+before anything was pushed — one more re-tag than the brief allowed for, on the procedure's own
+ground that a tag may move while nothing has been pushed.
+
+**AND THE ONE CHECK THAT GOES RED ONLY ONCE THE TAG EXISTS WENT RED, AS THE 1.5.0 RECORD PREDICTED
+IT WOULD.** With `v1.6.0` present the four above went green and
+`test_every_released_arc_derives_the_number_it_shipped` went red: `v1.5.0 → v1.6.0` was not in
+`UNRULED_HISTORICAL_ARCS`. The row was added — the fourth entry, **fifteen units at full width**, the
+largest the set holds — and the tag was remade, the point in the procedure where a tag may be
+moved, because nothing had been pushed. It arrives by the second entry's route: the arc WAS ruled and
+belongs in the set anyway, because that check derives the arc RAW and never calls `apply_rulings()`.
+Eight of the fifteen are the positional-import artefact read eight ways, and the comment beside the
+row says why they are not collapsed.
+
+**The roll, and the grep that no gate can replace was run anyway.** The pending section became the
+1.6.0 section and its opening sentence describes the heading it absorbed rather than spelling it.
+The literal occurs **zero** times in this file, confirmed by grep after the roll and independently by
+the carrier gate — the seventh roll to do this. **The fixed point was respected**: writing this record
+moves `MIGRATIONS.md`, which is a shipped document already in the arc, so the moved set stays at
+**136** and the classification stays **MINOR** — verified by re-running the derivation after this
+file was written, not before it.
+
+**What this round did not do**, each because it is somebody else's: it did not approve the `pypi`
+environment, did not create the GitHub release, did not write `PUBLICATION.md` entry 15, and did
+not deploy the documentation site — all of which are the witness round's once PyPI serves 1.6.0 and
+the workflow's digests exist. No park, pin or ledger row moved: `klv_pin.json`,
+`FORMAT_COVERAGE.md` and `PUBLICATION.md` are byte-identical to `21221db`, verified by SHA-256
+before and after.
 
 #### The rulings round, 2026-09-05 — the first issue of the release round stopped at 0.5 on fifteen unruled units a brief had called zero, and the exit code is why
 
@@ -287,8 +449,10 @@ suggestion and not an implementation, because a gate is not corrected in passing
 summary could print `pending.unruled`'s count beside the pending kind, so the console reads the
 same as the JSON.
 
-**FIFTEEN units the gate REFUSED to classify.** Six are ruled MINOR and nine PATCH. As in the 1.5.0
-arc, most of the PATCH rulings are one cause read several ways: the gate names an unnamed top-level
+**FIFTEEN units the gate REFUSED to classify.** Five are ruled MINOR and ten PATCH — **this
+sentence read six and nine when the rulings round wrote it, copying its brief, and the release
+round the same day corrected it to the gate's own parse of the fifteen paragraphs below.** As in
+the 1.5.0 arc, most of the PATCH rulings are one cause read several ways: the gate names an unnamed top-level
 statement by its POSITION, so inserting an `import` renumbers every unnamed statement below it, and
 eight unchanged import lines report as eight modifications — two in `klv_uas_codec.py`, where
 `imapb_codec` was inserted above them, and six in `stanag4609.py`, where `imapb_codec` and
@@ -308,7 +472,7 @@ is unchanged and every existing attribute is reachable under its old name. CHECK
 prior fields identical, one appended last with its default.
 
 **Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:decode_packet` — MINOR: the signature is
-unchanged; the same inputs decode more tags (fifteen IMAPB items, the Wavelengths List pack, items
+unchanged; the same inputs decode more tags (fourteen IMAPB items, the Wavelengths List pack, items
 136 and 137) and every tag decoded before decodes to the same value — the park 5 record (zero value
 positions moved across 46 goldens) and the park 3 record (zero undeclared leaves across 64 goldens)
 are the measurement. New emitted content and not a corrected value, so PATCH is refused on its own
@@ -335,7 +499,7 @@ CHECK taken: the v1.5.0 text is verbatim at statement 5.
 **Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — MINOR: `to_cdm` and
 `from_cdm` signatures unchanged; one public class attribute added (`HAE_DISAGREEMENT`), nothing
 removed; the adapter emits fields it did not (`Position.alt_m` from items 104/75,
-`Kinematics.course_deg` from 112) and attributes it did not (fifteen IMAPB items, the Wavelengths
+`Kinematics.course_deg` from 112) and attributes it did not (fourteen IMAPB items, the Wavelengths
 List pack, items 136/137), and a reshaped `time_basis` whose `timescale` key is gone; no previously
 emitted VALUE moved (the two structural diffs are the measurement). The removed emitted key is not
 an event on the MAJOR row — that row is about importable names — but it is the consumer-facing
