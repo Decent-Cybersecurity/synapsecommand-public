@@ -263,7 +263,7 @@ measured off the index afterwards, and which step of it did not run.
 Nothing here is in a release. The distribution on the index is **1.6.0**, and a reader who ran
 `pip install synapse-cdm` has that and not this.
 
-**What moved inside the distribution: 117 files.**
+**What moved inside the distribution: 118 files.**
 
 **AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
 `gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `tests/test_cdm_release.py`,
@@ -275,18 +275,26 @@ record reach no installed reader and are not part of the arc this section accoun
 the same boundary `gates/bump_derivation.py` measures the bump over, and stating it here is what
 stops the next round from reading a five-file arc as the round's size.
 
-**The 117, by what they are.** Four shipped documents:
+**The 118, by what they are.** The figure read **117** until 2026-09-05, when the park 6 round added one module to the arc; the list below is amended at the entry that moved and nowhere else. Four shipped documents:
 
 * `synapse_cdm/fixtures/klv/README.md`
 * `synapse_cdm/FORMAT_COVERAGE.md`
 * `synapse_cdm/MIGRATIONS.md`
 * `synapse_cdm/README.md`
 
-Three modules under `adapters/` — one new, two extended:
+Four modules under `adapters/` — two new, two extended:
 
 * `synapse_cdm/adapters/klv_miis_codec.py`
 * `synapse_cdm/adapters/klv_uas_codec.py`
 * `synapse_cdm/adapters/stanag4609.py`
+* `synapse_cdm/adapters/klv_vmti_codec.py` — **new, 2026-09-05, the park 6 round.** The MISB
+  ST 0903.4 VMTI layer: ST 0601 item 74's Value, its VTargetSeries and VTarget Packs, and the five
+  nested Local Sets and four packs under them. **It is wired into nothing** — `klv_uas_codec` is
+  untouched by that round and no CDM object is built from item 74 anywhere — so an installed reader
+  gains an importable module and no change to what any adapter emits. That is why the module is a
+  MINOR signal on its own (a public surface appears, existing code keeps working) and why no row of
+  `FORMAT_COVERAGE.md`'s ST 0601 tag table moved with it: row 74 still reads `not yet`, and what
+  keeps it there is the mapping, which is park 6's remaining half.
 
 The fixture generator and the pin record:
 

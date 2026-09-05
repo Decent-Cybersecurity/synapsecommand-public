@@ -953,6 +953,17 @@ MULTIPLIED_FACTS = (
     ("ST 1301.2's own /CreationDate — 288 days after its 27 February 2014 cover",
      "D:20141212132252",
      ("fixtures/klv/spec/klv_pin.json",)),
+    # ONE ROW ADDED BY THE PARK 6 ROUND, 2026-09-05, with MISB ST 0903.4 — park 6's document. Stated
+    # at ONE site, so it asserts nothing across sites; what it buys is the same thing the four rows
+    # above buy, which is that the closure direction below stops treating a real measurement as an
+    # unknown timestamp. THE LAG IS 48 DAYS after the 23 October 2014 cover, which lands inside the
+    # 0-to-462 band the four rows above established and one day off ST 1402.2's and ST 1204.1's 47
+    # — so it neither widens the band nor rehabilitates the method, and the pin says so rather than
+    # quoting the field as if it dated the edition. The timezone suffix is not part of the value, as
+    # above: the pin writes `-05'00'` after it.
+    ("ST 0903.4's own /CreationDate — 48 days after its 23 October 2014 cover",
+     "D:20141210141859",
+     ("fixtures/klv/spec/klv_pin.json",)),
 )
 
 

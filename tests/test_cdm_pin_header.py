@@ -98,6 +98,16 @@ NUMBER_WORDS = {
     "ONE": 1, "TWO": 2, "THREE": 3, "FOUR": 4, "FIVE": 5, "SIX": 6, "SEVEN": 7, "EIGHT": 8,
     "NINE": 9, "TEN": 10, "ELEVEN": 11, "TWELVE": 12, "THIRTEEN": 13, "FOURTEEN": 14,
     "FIFTEEN": 15, "SIXTEEN": 16, "SEVENTEEN": 17, "EIGHTEEN": 18, "NINETEEN": 19, "TWENTY": 20,
+    # TWENTYONE, ONE WORD, ADDED 2026-09-05 BY THE PARK 6 ROUND, and it is a MUTATION's number
+    # rather than the log's. The record reached twenty documents that day, so
+    # `test_an_EDITED_last_clause_...` — which adds one synthetic pin and rewrites the last clause
+    # with `inverse[documents]` — began asking for the word for 21 and raised `KeyError: 21`. The
+    # spelling is unhyphenated and unspaced because `COUNT_CLAUSE` reads `[A-Z]+`: a hyphen or a
+    # space would make the rewritten clause unreadable to the very pattern the mutation is testing,
+    # which would turn a positive control into a silent pass. The header has never used this word
+    # and is not expected to; when the real count reaches 21 the clause that states it will need
+    # this entry to be re-decided rather than inherited.
+    "TWENTYONE": 21,
 }
 
 
@@ -344,7 +354,10 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     everything.
 
     THE PAIR MOVED FROM (17, 14) TO (18, 15) TO (19, 16) ON 2026-09-04, twice in one day, and
-    each move is what a control is FOR.
+    each move is what a control is FOR. **AND TO (20, 17) ON 2026-09-05**, when the park 6 round
+    pinned MISB ST 0903.4 — again an ordinary PDF pin of a delegated document, so again both
+    counts moved by one. Three moves in two days, each of them loud in exactly the way the
+    paragraph below predicts.
     The text-pins round pinned IETF RFC 2781 as a text document, which added one node carrying a
     `sha256` under `delegated_specifications_held` — so the derived pin count went to fifteen and
     the derived document count to eighteen, and the header gained an APPENDED dated clause saying
@@ -363,4 +376,4 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     that moves twice between two commits is a pair nobody could have carried in their head.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (19, 16)
+    assert stated_counts(record) == derived_counts(record) == (20, 17)

@@ -122,6 +122,13 @@ PACKAGE_ONLY_TESTS = (
     # counts pin NODES rather than files on disk — so it is a real check against an installed
     # distribution, where none of the fifteen PDFs it counts is present.
     "test_cdm_pin_header.py",
+    # `test_cdm_vmti_codec.py` is package-only on `test_cdm_imapb_codec.py`'s reading exactly: the
+    # only paths it touches are `adapters/klv_vmti_codec.py` and the module's own source text,
+    # both inside the package and both reached through `synapse_cdm.adapters`. Its authority is a
+    # PDF it never opens — MISB ST 0903.4, transcribed into the codec as literals and re-derived
+    # from the document's own printed examples on every run — so it is a real check against an
+    # installed wheel rather than one that would skip there.
+    "test_cdm_vmti_codec.py",
 )
 
 #: The other half, each with the repository fact it is about. Not "the rest" — naming the reason
