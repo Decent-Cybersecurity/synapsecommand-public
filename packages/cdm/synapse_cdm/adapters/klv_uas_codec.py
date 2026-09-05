@@ -917,7 +917,8 @@ class _TimeAdjustment(NamedTuple):
 #: as a worked example"*, exercised by the park 5 round for fifteen items and by this one for two.
 #: §8.136 prints `30 seconds` against `8108 01 1E` and §8.137 prints `1:23:45.678901` against
 #: `8109 05 012B 8DC6 35`, and `check_against_the_documents_own_examples()` decodes both on every
-#: suite run: 43 examples in total, up from 41.
+#: suite run: 44 examples in total since the pre-release round of 2026-09-05 added tag 75 — this
+#: note read 43, up from 41, when the park 3 round wrote it on 2026-09-04.
 #:
 #: **WHY THEY NEEDED A TABLE OF THEIR OWN RATHER THAN A ROW IN EITHER EXISTING ONE.** `ITEMS` is
 #: the 26 the pinned stream attests and does not move; `IMAPB_ITEM_TAGS` and `PACK_ITEM_TAGS` are

@@ -260,9 +260,122 @@ the string is named here rather than counted among the prose.
 **Nothing here is in a release.** `PACKAGE_VERSION` is unmoved at 1.5.0, `SCHEMA_VERSION` at
 1.0.0, `RELEASE_NOTES.md` still opens 1.5.0, and no tag was created. `python
 gates/bump_derivation.py`, re-run after this section was written, derives **MINOR** over the arc
-since v1.5.0 — so the next release is at least **1.6.0** — and it derived it with **no human
+since v1.5.0 — so the next release is at least **1.6.0** — and it derived the KIND with **no human
 ruling**: the arc adds a public importable module and public top-level names, which is the MINOR
-row's own shape, and the gate reports `1 check, 0 failed`.
+row's own shape, and the gate reports `1 check, 0 failed`. **What that sentence does not say is that
+the arc holds fifteen units the table cannot decide**, and the rulings round of 2026-09-05 below
+rules each one.
+
+#### The rulings round, 2026-09-05 — the first issue of the release round stopped at 0.5 on fifteen unruled units a brief had called zero, and the exit code is why
+
+**THE RELEASE ROUND'S FIRST ISSUE STOPPED AT ACT 0.5, AND THE READING IT STOPPED ON WAS TRUE ALL
+ALONG.** Its brief said the pending arc needed no ruling, on the strength of two facts that are both
+true and not the fact at issue: the paragraph above says the gate derived MINOR with no human ruling,
+and `python gates/bump_derivation.py --mutation-check` exits `1 check, 0 failed`. Both are claims
+about the KIND. Neither is a claim about the units. `measure()` derives the pending arc and only
+REPORTS it — `refuse_unless_clean` runs on the judged arc, which is the last tag's, so the exit code
+never sees a pending ambiguity, and the console prints the fifteen indented under the `pending` line
+where they are easy to skim past. The JSON does not hide them: `--json` carries them as
+`pending.unruled`, and that field read **fifteen** at `c857163`. The moment `PACKAGE_VERSION` moves
+the pending arc becomes the judged one and the FIRST refusal is UNRULED, checked before the kind
+comparison — so a release commit written on the brief's reading would have been red in a way no tag
+could cure, because the rulings would then be read under the released heading, which would hold
+none. **This commit rules the fifteen**, in the gate's form and in the order the gate names them,
+each with its CHECK reading appended; fourteen CHECK readings were taken by the first issue and
+stand, and the fourth is re-taken here because its unit's count moved between the issues. A
+suggestion and not an implementation, because a gate is not corrected in passing: the gate's human
+summary could print `pending.unruled`'s count beside the pending kind, so the console reads the
+same as the JSON.
+
+**FIFTEEN units the gate REFUSED to classify.** Six are ruled MINOR and nine PATCH. As in the 1.5.0
+arc, most of the PATCH rulings are one cause read several ways: the gate names an unnamed top-level
+statement by its POSITION, so inserting an `import` renumbers every unnamed statement below it, and
+eight unchanged import lines report as eight modifications — two in `klv_uas_codec.py`, where
+`imapb_codec` was inserted above them, and six in `stanag4609.py`, where `imapb_codec` and
+`klv_pack_codec` were. The 1.5.0 record explains the artefact once for its four; the eight below are
+still ruled one by one, at full width, because a set that summarises causes is a set that can be
+argued smaller.
+
+**Bump ruling.** `synapse_cdm/adapters/imapb_codec.py:__all__` — MINOR: six exported names added
+(`IMAPB_WORKED_EXAMPLES`, `PRINTED_RESOLUTION_DISAGREEMENTS`, `resolution`, `decode_item`,
+`encode_item`, `encode_special`), none removed; a surface a caller can reach grew, which is the
+MINOR row's own shape. CHECK taken: exactly those six added, none removed.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket` — MINOR, consistent with the
+1.4.1→1.5.0 ruling for this unit: one field appended last (`pack_refusals`, default `()`), the
+thirteen prior fields identical in name, type and order, so every positional unpack and every index
+is unchanged and every existing attribute is reachable under its old name. CHECK taken: thirteen
+prior fields identical, one appended last with its default.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:decode_packet` — MINOR: the signature is
+unchanged; the same inputs decode more tags (fifteen IMAPB items, the Wavelengths List pack, items
+136 and 137) and every tag decoded before decodes to the same value — the park 5 record (zero value
+positions moved across 46 goldens) and the park 3 record (zero undeclared leaves across 64 goldens)
+are the measurement. New emitted content and not a corrected value, so PATCH is refused on its own
+row's terms; no importable name is removed, so MAJOR is refused. CHECK taken: signature unchanged,
+zero previously decoded values moved.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:check_against_the_documents_own_examples`
+— MINOR: the self-check covers 44 worked examples where it covered 26 (26 stream items plus tag 75,
+14 IMAPB examples, 1 pack, 2 time adjustments: 44 = 27 + 14 + 1 + 2); its return shape is unchanged
+and it returns no disagreements at HEAD. CHECK re-taken in this round: the docstring states 44 at
+three sites, the function's live tables total 44 (`ITEMS` 26, `AFFINE_DOCUMENT_ITEMS` 1,
+`IMAPB_WORKED_EXAMPLES` 14, one pack, `TIME_ADJUSTMENT_ITEMS` 2), and a run returns an empty list.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 2>` — PATCH: an import line
+whose v1.5.0 text sits verbatim at statement 3 in HEAD, renumbered by the insertion of `imapb_codec`
+above it (the gate counts the module docstring as statement 0); the 1.5.0 record's precedent for
+statements 6–9 of `stanag4609.py`. No importable name of this module is added, removed or changed in
+meaning by an import's index. CHECK taken: the v1.5.0 text is verbatim at statement 3.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 3>` — PATCH: the same, an import
+line whose v1.5.0 text sits verbatim at statement 5 in HEAD, renumbered by the same insertion.
+CHECK taken: the v1.5.0 text is verbatim at statement 5.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — MINOR: `to_cdm` and
+`from_cdm` signatures unchanged; one public class attribute added (`HAE_DISAGREEMENT`), nothing
+removed; the adapter emits fields it did not (`Position.alt_m` from items 104/75,
+`Kinematics.course_deg` from 112) and attributes it did not (fifteen IMAPB items, the Wavelengths
+List pack, items 136/137), and a reshaped `time_basis` whose `timescale` key is gone; no previously
+emitted VALUE moved (the two structural diffs are the measurement). The removed emitted key is not
+an event on the MAJOR row — that row is about importable names — but it is the consumer-facing
+change the 1.6.0 release notes must name, on the 1.4.1 exception-class precedent. CHECK taken:
+signatures unchanged, one attribute added, none removed, zero previously emitted values moved.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:_measured` — PATCH: module-private by its
+leading underscore; no importer outside the module (the same-named functions in `cat062` and
+`legion` are unrelated); the 1.4.1 ruling on `klv_codec.py`'s private ceiling constant is the
+precedent. CHECK taken: no importer outside the module.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:_rendered` — PATCH: the same ground —
+module-private, no importer outside the module, the same precedent. CHECK taken: no importer
+outside the module.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 5>` — PATCH: an unchanged import
+line whose v1.5.0 text sits verbatim at statement 6 in HEAD, renumbered by the insertion of
+`imapb_codec` and `klv_pack_codec` above it; the 1.5.0 precedent for statements 6–9 of this same
+module. CHECK taken: the v1.5.0 text is verbatim at statement 6.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 6>` — PATCH: the same, verbatim at
+statement 8 in HEAD. CHECK taken.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 7>` — PATCH: the same, verbatim at
+statement 9 in HEAD. CHECK taken.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 8>` — PATCH: the same, verbatim at
+statement 10 in HEAD. CHECK taken.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 9>` — PATCH: the same, verbatim at
+statement 11 in HEAD. CHECK taken.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 10>` — PATCH: the same, verbatim at
+statement 12 in HEAD. CHECK taken.
+
+**One live count in a shipped module moved with this round, and it is a comment.** The note above
+`TIME_ADJUSTMENT_ITEMS` in `klv_uas_codec.py` read *43 examples in total, up from 41* — true when
+the park 3 round wrote it and stale since the pre-release round added tag 75. It now reads 44, dated,
+in the same commit as the rulings, because it is a live count this round found; the function's own
+docstring already read 44 at three sites and the live tables agree.
 
 #### The pre-release round, 2026-09-05 — a roster entry six days late, a guard that was answered by prose, a registry field filled by machine, and the base HAE item
 
