@@ -173,7 +173,7 @@ distribution **through `git`**, so it classifies what is committed rather than w
 * **The shipped documents.** `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, the package `README.md` and
   `fixtures/klv/README.md` carry the arc; `klv_pin.json` gains the ST 0603.5 node and the closure
   entries for parks 3 and 5. **The ST 0601 row set reads 45 of 141 rows promoted** — 26
-  stream-witnessed and 19 document-witnessed — and 96 `not yet`. **CORRECTED 2026-09-05 by the
+  stream-witnessed and 19 document-witnessed — and 96 `not yet`. **RE-DERIVED 2026-09-05 BY THE PARK 11 ROUND AND MOVED ONE STEP: 46 of the 141 are promoted and the other 95 read `not yet`** — 26 stream-witnessed and **20** document-witnessed, the twentieth being item 94, the MIIS Core Identifier, admitted on a FOURTH ground: MISB ST 1204.1 defines its Value's whole structure, two held documents state its key identically at CRC 30280, and both print the same worked example. Counted off the Status column, not carried. **CORRECTED 2026-09-05 by the
   housekeeping round, and it was wrong when it shipped rather than having gone stale**: this bullet
   kept the step before this release's own pre-release round, which promoted tag 75 and moved the
   ledger row. The figures above are counted off the 141 rows' Status column. Note that the second

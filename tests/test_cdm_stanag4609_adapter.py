@@ -752,7 +752,19 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # tag 15, whose two values are deliberately NOT the printed pair, because §8.15 and §8.75
     # print the SAME example and a fixture carrying both at their printed values could not tell a
     # right reading from a wrong one. 23 + 9 + 5 + 5 = 42.
-    assert len(module.ADAPTER_FIXTURES) == 42
+    # FORTY-TWO until the park 11 round of 2026-09-05, which added SIX for item 94, the MIIS Core
+    # Identifier — one per production of ST 1204.1 §6.1's own grammar plus the two cases the
+    # grammar does not cover: the document's printed Foundational Core Identifier, which ST 1204.1
+    # and ST 0601.14a both print and which is the only fixture here whose octets nobody chose; a
+    # Minor Core Identifier, §6.1's other alternative and the one §5.1.2 calls 'inadequate to
+    # satisfy the four problems listed in Section 1'; a windowed 48-octet FCID, whose three
+    # deliberately distinguishable UUIDs are what prove the EBNF's ORDER is read rather than
+    # guessed; a Platform-only FCID, §6.1's second production and Table 11's compliance level 18;
+    # a pre-filled nil Platform Identifier, which is decoded, annotated under `ST 1204.1-32` and
+    # NOT promoted to an identity; and a usage byte naming two UUIDs with one following, which is
+    # refused per Table 4's valid lengths while the packet's other three items translate.
+    # 23 + 9 + 5 + 5 + 6 = 48.
+    assert len(module.ADAPTER_FIXTURES) == 48
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (

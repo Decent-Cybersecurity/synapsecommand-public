@@ -1,0 +1,36 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 50847,
+        "stored": 50847,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "c69f",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "94": "0102d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4"
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        65,
+        94,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 37,
+      "value_length_octets": "25"
+    }
+  ],
+  "payload": {
+    "octets": 54,
+    "packet_count": 1
+  }
+}

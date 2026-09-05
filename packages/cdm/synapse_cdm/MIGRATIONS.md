@@ -263,21 +263,151 @@ measured off the index afterwards, and which step of it did not run.
 Nothing here is in a release. The distribution on the index is **1.6.0**, and a reader who ran
 `pip install synapse-cdm` has that and not this.
 
-**What moved inside the distribution: four shipped documents.**
-`synapse_cdm/MIGRATIONS.md` — the release procedure gains an amended reading for condition 1's
-pre-check and a pre-step before a number is typed, and this record; `synapse_cdm/README.md` and
-`synapse_cdm/FORMAT_COVERAGE.md` — the `stanag4609` register and roster cells, whose ST 0601 split
-had kept the step before this repository's own pre-release round; and
-`synapse_cdm/fixtures/klv/README.md`, the same figures at their third site.
+**What moved inside the distribution: 117 files.**
 
-**AND WHAT MOVED OUTSIDE IT, WHICH IS MOST OF THE ROUND AND IS DELIBERATELY NOT LISTED ABOVE.**
-`gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `.github/workflows/publish.yml`,
-`RELEASE_NOTES.md` and `PUBLICATION.md` all moved and **none of them is in the distribution**: the
-packaged contents are `pyproject.toml` and the `synapse_cdm/` tree, so a gate, a test module, a
-workflow file, the repository-root notes and the publication record reach no installed reader and
-are not part of the arc this section accounts for. That is the same boundary
-`gates/bump_derivation.py` measures the bump over, and stating it here is what stops the next round
-from reading a four-file arc as the round's size.
+**AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
+`gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `tests/test_cdm_release.py`,
+`tests/test_cdm_format_coverage.py`, `tests/test_cdm_stanag4609_adapter.py`,
+`.github/workflows/publish.yml`, `RELEASE_NOTES.md` and `PUBLICATION.md` all moved and **none of
+them is in the distribution**: the packaged contents are `pyproject.toml` and the `synapse_cdm/`
+tree, so a gate, a test module, a workflow file, the repository-root notes and the publication
+record reach no installed reader and are not part of the arc this section accounts for. That is
+the same boundary `gates/bump_derivation.py` measures the bump over, and stating it here is what
+stops the next round from reading a five-file arc as the round's size.
+
+**The 117, by what they are.** Four shipped documents:
+
+* `synapse_cdm/fixtures/klv/README.md`
+* `synapse_cdm/FORMAT_COVERAGE.md`
+* `synapse_cdm/MIGRATIONS.md`
+* `synapse_cdm/README.md`
+
+Three modules under `adapters/` — one new, two extended:
+
+* `synapse_cdm/adapters/klv_miis_codec.py`
+* `synapse_cdm/adapters/klv_uas_codec.py`
+* `synapse_cdm/adapters/stanag4609.py`
+
+The fixture generator and the pin record:
+
+* `synapse_cdm/fixtures/klv/spec/build_fixtures.py`
+* `synapse_cdm/fixtures/klv/spec/klv_pin.json` — `parks.the_ones_that_closed` gains `park_11`, and
+  `parks.how_many` and `parks.honest_strength` gain their dated clause
+
+Twelve payloads and parsed twins, the six park 11 fixtures:
+
+* `synapse_cdm/fixtures/klv/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.klv`
+* `synapse_cdm/fixtures/klv/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.parsed.json`
+* `synapse_cdm/fixtures/klv/a_platform_only_core_identifier_names_one_of_the_two_devices.klv`
+* `synapse_cdm/fixtures/klv/a_platform_only_core_identifier_names_one_of_the_two_devices.parsed.json`
+* `synapse_cdm/fixtures/klv/a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.klv`
+* `synapse_cdm/fixtures/klv/a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.parsed.json`
+* `synapse_cdm/fixtures/klv/a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.klv`
+* `synapse_cdm/fixtures/klv/a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.parsed.json`
+* `synapse_cdm/fixtures/klv/a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.klv`
+* `synapse_cdm/fixtures/klv/a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.parsed.json`
+* `synapse_cdm/fixtures/klv/the_miis_core_identifier_from_the_documents_own_example.klv`
+* `synapse_cdm/fixtures/klv/the_miis_core_identifier_from_the_documents_own_example.parsed.json`
+
+And ninety-six goldens — the eighty-four that already existed, every one of which gained the same
+two paths, and twelve new ones for the six new payloads:
+
+* `synapse_cdm/fixtures/klv/golden/a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_correction_offset_is_applied_and_the_raw_stamp_is_kept.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_negative_time_adjustment_is_read_signed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_negative_time_adjustment_is_read_signed.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_platform_only_core_identifier_names_one_of_the_two_devices.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_platform_only_core_identifier_names_one_of_the_two_devices.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_wavelengths_list_from_the_documents_own_example.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_agreeing_take_tag_104_and_raise_nothing.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_disagreeing_raise_an_advisory_and_still_emit.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_from_tag_75_when_it_is_the_only_ellipsoid_item.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_104_and_never_tag_15s_msl.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_75_and_never_tag_15s_msl.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_75_and_never_tag_15s_msl.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_items_from_the_documents_own_examples.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_items_from_the_documents_own_examples.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_special_values_are_signals_and_not_measurements.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/leap_seconds_alone_convert_the_stamp_toward_utc.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/leap_seconds_alone_convert_the_stamp_toward_utc.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/length_divergence_at_a_required_length.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/length_divergence_at_a_required_length.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/mandatory_items_only.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/mandatory_items_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/no_security_local_set_is_unlabelled_not_unclassified.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/over_recommended_max_length_is_an_advisory.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/over_recommended_max_length_is_an_advisory.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_classification_outside_the_enumeration_carries_no_label.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_complete_from_the_element_rules.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_complete_from_the_element_rules.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_minimal_required_only.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_minimal_required_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_partial_is_carried_as_partial.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_partial_is_carried_as_partial.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_required_element_at_a_forbidden_length_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/special_values_are_signals_and_not_measurements.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/special_values_are_signals_and_not_measurements.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_104_carrying_a_signal_emits_no_altitude.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_75_from_the_documents_own_example.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_75_from_the_documents_own_example.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_miis_core_identifier_from_the_documents_own_example.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_miis_core_identifier_from_the_documents_own_example.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_time_adjustments_from_the_documents_own_examples.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_time_adjustments_from_the_documents_own_examples.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_packets_one_payload_are_two_statements.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_packets_one_payload_are_two_statements.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/witnessed_set_from_the_documents_own_examples.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/witnessed_set_from_the_documents_own_examples.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_is_an_explicit_unknown.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_is_an_explicit_unknown.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_on_a_required_item_is_a_defect.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`
 
 #### The housekeeping round, 2026-09-05 — five bounded items, a procedure that now says what its own pre-check is read for, and one live figure that went stale again in the round after it was swept
 
@@ -384,6 +514,116 @@ re-read `v1.6.0` afterwards. Each has a dated note beside its ledger entry, plac
 parsers already stop reading. **The brief said six days after the fact and the derivation says ten
 and nine**: the tags are 2026-08-26 and 2026-08-27.
 
+
+#### The park 11 round, 2026-09-05 — item 94 decoded, `Entity.source_ids` gains the identity the format guarantees, and the smaller of the two documents turns out to define nothing
+
+**PARK 11 IS CLOSED, AND WHAT CLOSED IT IS AN ARTEFACT RATHER THAN A DOCUMENT.** Both its
+documents have been held and pinned since 2026-08-27 — the acquisition half was discharged then and
+the record has said so since. What remained was the source change under `packages/`, and this round
+wrote it: `adapters/klv_miis_codec.py`, 470 lines, reading MISB ST 1204.1's Core Identifier Binary
+Value out of ST 0601.14a item 94 and putting every Identifier Component it states into
+`Entity.source_ids`.
+
+**THE KEYING QUESTION WAS ANSWERED BY THE DOCUMENT AND NOT BY THIS REPOSITORY.** The open fork was
+whether the sensor identity, the platform identity or some combination of them is what a consumer
+keys on. ST 1204.1 §8, verbatim: "For FCIDs up to three enterprise identifiers can be constructed:
+(1) an identifier from the FCID's Sensor ID, (2) an identifier from the FCID's Platform ID and (3)
+an identifier from the FCID's Window ID. These three enterprise identifiers can be used
+independently or together. **Since the Core ID can change over time, combining the three
+identifiers into one UUID is not used as a method for Enterprise UUIDs.**" So the composite was
+refused by the standard before anyone here proposed it, and each component is its own entry —
+which is what `SourceId` being a list has been for since 1.0.0 and what `adapters/ais.py` already
+does with an MMSI and an IMO number.
+
+**THE PACKET KEY IS KEPT AND THE NEW ENTRIES APPEND BESIDE IT.** `source_ids[0]` is still
+`UAS-LS-PACKET` over `<stamp>|<index>`, and `entity_id` is still derived from it. That is the shape
+`FORMAT_COVERAGE.md`'s bump cell ruled MINOR on 2026-08-29 and the shape it said the ruling covers;
+the shape that DROPS the packet key was left unruled there and is not what shipped. The ground is
+unchanged: the packet key is what keeps an `Entity` addressable when item 94 is absent, which is
+every packet of the only stream held.
+
+**THE CHECK VALUE IS THE ROUND'S SHARPEST READING, AND IT WAS MEASURED RATHER THAN ASSUMED.**
+ST 1204.1 Appendix B defines a two-permutation check byte over the identifier's hex digits and ends
+"Please see the reference code for complete details of the algorithm." **The 36 pages carry no
+reference code.** The permutations are fixed by the prose — `p([a,b,c,d]) = [a^b,c,d,a]` and
+`q([a,b,c,d]) = [d,a^d,b,c]` — and one thing is not: the loop's first index. `k` from **1** yields
+`D3`, which is what §6.2.2.1's Table 9 prints against its own 68 hex digits; `k` from **0** yields
+`A6`. Both are computed on every suite run by
+`klv_miis_codec.check_against_the_documents_own_examples()`, so the alternative that was rejected is
+re-derived rather than remembered.
+
+**ONE DISAGREEMENT BETWEEN THE TWO DOCUMENTS, REPORTED AND NOT RECONCILED.** ST 1204.1 §6.2.1.1
+Table 7 prints the KLV Length of its worked example as `22` and glosses it "Value is 34 bytes".
+ST 0601.14a §8.94 prints the SAME 34-octet value with its `Len` cell reading `24`. Counted from the
+printed octets the value is 34, which is `0x22`; `0x24` is 36, which is 34 plus the two octets of
+Tag and Len that §8.94's own row prints beside it. **The arithmetic that fits is stated and the
+cause is not**: this record does not know what the editor intended, and `§8.94`'s Len cell is a
+figure in a document this repository does not own. The self-check reports it as a DISAGREE line on
+every suite run rather than silently taking ST 1204.1's number, which is the shape
+`check_against_the_documents_own_examples()` already uses for a divergence it cannot settle. It is
+also a candidate finding for the erratum note round B drafted, and it is recorded here so whoever
+sends that note does not have to rediscover it.
+
+**ST 1301.2 IS THE HALF THAT CLOSES ON AN ABSENCE, AND THE ABSENCE IS DOUBLE.** The park's second
+document defines the Augmentation Identifiers Local Set — `ST 1301.2-01` gives its key as
+`06.0E.2B.34.02.0B.01.01.0E.01.03.05.03.00.00.00` (CRC 47531, symbol `miis_lds`) — and then defines
+**no augmentation identifier to put in it**: Appendix A's Table 2, which its own §6.1.1 calls the
+table of "the MISB defined identifiers", prints `8 <Name> <Key> <Supporting Documentation>`,
+`9 <Name> <Key> <Supporting Documentation>`, `10 <Name> <Key> <Supporting Documentation>` and
+`11 …` — four placeholder rows under the note "Additional items are added per MISB approved updates
+to this document". **And ST 0601.14a does not carry the set at all**: over the pinned 218 pages,
+joined and collapsed by `gates/pdf_text.py`'s rule, `1301` occurs **zero** times and so does
+`Augmentation`. Either fact alone would read as the other's cause, so both are recorded, at
+`klv_miis_codec.AUGMENTATION_IDENTIFIERS_ABSENT` and on every emitted object. This is the ST 1303
+shape: a delegated document held, read, and found to delegate nothing this adapter can act on.
+
+**WHAT THE GOLDENS DID, COMPARED BY JSON PATH.** Eighty-four pre-existing goldens moved and the
+structural diff is **exactly two paths and no third**: `attributes.core_identifier` added, and
+`attributes.identity_basis` changed. `attributes.identity_basis` gained a dated paragraph rather
+than losing its old one — the packet-scoped cost it describes is now conditional instead of
+universal, and the sentence that said park 11 "is what closes it" is answered beside itself rather
+than deleted. Twelve new goldens landed for the six new payloads. No path was removed anywhere.
+
+**THE PARK ARITHMETIC, RE-DERIVED FROM THE GATE AND NOT INCREMENTED.** `gates/parks_table.py`
+reads **nine closed** — parks 1, 2, 3, 4, 5, 8, 9, 11 and 13 — and **four open**, parks 6, 7, 10
+and 12, all four of them public downloads. Park 11 closed on this round's artefact and it is the
+first closure in this record that moved **neither** delegation term: the profile still delegates
+to fourteen documents and ten are still held, because both of park 11's documents were pinned on
+2026-08-27 and this round fetched nothing. The preamble in `FORMAT_COVERAGE.md`, `klv_pin.json`'s
+`parks.how_many` and `parks.honest_strength`, and this paragraph all moved in the same commit as
+the row — which is the thing that preamble records itself failing to do for a day across the
+three closures of 2026-09-04.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — MINOR: the adapter emits
+an identity it has never emitted. Not PATCH — that row is "a translation fix, a message, a
+docstring. No surface change", and all three leave the meaning of the output where it was, whereas
+nothing this adapter emitted before was WRONG: the packet-scoped key was correct and
+`attributes.identity_basis` stated exactly what it claimed. Not MAJOR — every MAJOR row is about
+the importable surface, and no name is removed, no signature moves, the `Adapter` contract is
+untouched and every object still validates at `SCHEMA_VERSION` 1.0.0 with `min_length=1` satisfied.
+MINOR on its own governing clause, "Existing code keeps working": it does, because the packet key
+stays at `source_ids[0]` and the new entries append after it. **This paragraph is the one drafted
+in `FORMAT_COVERAGE.md`'s bump cell on 2026-08-29 and held there until its case existed** — that
+cell records that the gate "refuses a ruling that PRECEDES its case exactly as it refuses one that
+OUTLIVES it", and says in as many words that the ruling moves to the pending section — the
+heading token itself is elided here, because four checks in this module ask only whether the
+literal is present — "in the round that writes the artefact". This is that round, and the shape that shipped is the appending one the
+draft conditions itself on.
+
+**TEN UNITS OF THE PENDING ARC ARE UNRULED AND THIS ROUND DID NOT RULE THEM.**
+`gates/bump_derivation.py` finds eleven ambiguities in the arc since 1.6.0; the paragraph above
+rules one. The other ten are
+`klv_uas_codec.py:<statement 4>`, `klv_uas_codec.py:<statement 5>`,
+`klv_uas_codec.py:DecodedPacket`, `klv_uas_codec.py:decode_packet`,
+`stanag4609.py:<statement 7>`, `stanag4609.py:<statement 8>`, `stanag4609.py:<statement 9>`,
+`stanag4609.py:<statement 10>`, `stanag4609.py:<statement 11>` and
+`stanag4609.py:<statement 12>`. Each is a modification in place, which is the branch the gate
+refuses to classify rather than defaulting to PATCH. **They are left for a person on purpose**: the
+1.6.0 section rules the same units for the same shapes — `DecodedPacket` MINOR for a `NamedTuple`
+gaining a field, `decode_packet` MINOR, the `<statement N>` units PATCH for import lines — so the
+precedent is legible and writing it out is still somebody's judgement rather than this record's.
+`pending.unruled` is therefore **not** the empty list, which is the release procedure's own
+pre-step before a version number is typed: **1.7.0 cannot be derived until they are ruled.**
 
 ### 1.6.0 — 2026-09-05 — eighteen ST 0601 items promoted on the document's own worked examples, the time scale named as ST 0603.5 names it, and alt_m is HAE
 

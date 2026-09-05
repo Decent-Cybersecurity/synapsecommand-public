@@ -3295,12 +3295,20 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # than widening `WITNESSED_TAGS` is the whole point and is the decision
     # `klv_uas_codec.WITNESS_KINDS` records: the scope contract's number does not move, and each
     # crossing has to be declared in its own table to be counted.
+    # FOUR TERMS SINCE 2026-09-05, AND THE FOURTH IS ONE TAG WIDE. `CORE_IDENTIFIER_TAG` is item
+    # 94, whose Value is MISB ST 1204.1's Core Identifier Binary Value — a fourth claim again,
+    # because its ground is item 48's AND the fifteen's at once and neither alone: TWO held
+    # documents state its key identically (ST 1204.1 §6.2.1.1 and ST 0601.14a §8.94, both
+    # `...0E.01.04.05.03.00.00.00`, both CRC 30280), and BOTH print the same worked example, which
+    # item 48 has none of. Summed rather than merged, on the same rule as the other three: the
+    # scope contract's number does not move and a crossing must be declared in its own table.
     expected = (len(uas_codec.WITNESSED_TAGS) + len(uas_codec.NESTED_SETS)
-                + len(uas_codec.DOCUMENT_WITNESSED_TAGS))
+                + len(uas_codec.DOCUMENT_WITNESSED_TAGS) + 1)
     assert len(promoted) == expected, (
         f"{len(promoted)} rows carry a stanag4609 marker and the codec covers "
         f"{len(uas_codec.WITNESSED_TAGS)} witnessed tags plus {len(uas_codec.NESTED_SETS)} nested "
-        f"set(s) plus {len(uas_codec.DOCUMENT_WITNESSED_TAGS)} document-witnessed tags. Each "
+        f"set(s) plus {len(uas_codec.DOCUMENT_WITNESSED_TAGS)} document-witnessed tags plus item "
+        f"{uas_codec.CORE_IDENTIFIER_TAG}, the MIIS Core Identifier. Each "
         "crossing of the scope contract is declared in its own table so that it can be counted "
         "here; a promotion with no table behind it fails this assertion"
     )
@@ -3314,9 +3322,12 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # not reach it. Every remaining row is blocked on the scope contract, and tag 130 is the one
     # that is ALSO one of park 5's sixteen — it stays because §8.130 prints no worked example,
     # which is the condition RULING 1 measures against.
-    assert len(not_yet) >= 96, (
-        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 96 of the 141 rows "
-        "are outside all three witness grounds and each is blocked on the scope contract; a round "
+    # 95 SINCE 2026-09-05, DOWN FROM 96 THE SAME DAY: item 94 left on the fourth ground, the park
+    # 11 round's — MISB ST 1204.1 defines its Value's whole structure, TWO held documents state
+    # its key identically, and BOTH print the same worked example.
+    assert len(not_yet) >= 95, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 95 of the 141 rows "
+        "are outside all four witness grounds and each is blocked on the scope contract; a round "
         "that promoted them wrote decoders nothing can check, which is the trap this section "
         "exists to avoid"
     )
@@ -3539,6 +3550,17 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
         # the check is asserted mechanically below rather than described: the admission holds only
         # while `check_against_the_documents_own_examples()` actually reproduces each one.
         document_witnessed = tag in uas_codec.DOCUMENT_WITNESSED_TAGS
+        # AND A FOURTH GROUND SINCE 2026-09-05, WHICH IS THE STRONGEST OF THE FOUR AND IS ONE TAG
+        # WIDE. Item 94's Value is a whole structure MISB ST 1204.1 defines, so it is not an
+        # `ITEMS` row for the reason item 48 is not; and unlike item 48 it has BOTH of the other
+        # two grounds at once. TWO held documents state its key identically — ST 1204.1 §6.2.1.1's
+        # "The Key for a stand-alone value is 0x060E-2B34-0101-0101-0E01-0405-0300-0000 (CRC
+        # 30280)" and ST 0601.14a §8.94's "KLV Key
+        # 06.0E.2B.34.01.01.01.01.0E.01.04.05.03.00.00.00 (CRC 30280)" — AND both print the same
+        # worked example, which is the document-side check item 48 does not have at all. The
+        # admission is one tag wide and is asserted so: a second entry needs its own document and
+        # its own paragraph here.
+        core_identifier = tag == uas_codec.CORE_IDENTIFIER_TAG
         if witnessed:
             assert b["status"].startswith("stanag4609 1.0.0"), (
                 f"item {tag} is in klv_uas_codec.WITNESSED_TAGS — the pinned stream attests it and "
@@ -3575,12 +3597,35 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
                 "stream-versus-document distinction is this record's whole argument and a "
                 "promotion that stops stating it is indistinguishable from one made on a wire"
             )
+        elif core_identifier:
+            assert uas_codec.CORE_IDENTIFIER_TAG == 94, (
+                "klv_uas_codec.CORE_IDENTIFIER_TAG is not 94. The one item admitted on this "
+                "fourth ground is the MIIS Core Identifier; a different tag needs its own two "
+                "documents and its own ruling"
+            )
+            assert b["status"].startswith("stanag4609 1.0.0"), (
+                f"item {tag} is the MIIS Core Identifier, read by klv_miis_codec under MISB "
+                f"ST 1204.1, and its row reads {b['status']!r}. The codec reads it, so the row "
+                "says so"
+            )
+            assert "ST 1204.1" in b["notes"] and "§8" in b["notes"], (
+                "item 94's row no longer names the document whose structure it carries. That "
+                "document IS the ground for crossing the scope contract, and a row that stops "
+                "stating it is a promotion with no argument left"
+            )
+            assert "worked example" in b["notes"] or "FOUR TIMES" in b["notes"], (
+                "item 94's row no longer states its witness basis. Its admission rests on a "
+                "worked example printed by BOTH documents, and a promotion that stops saying so "
+                "is indistinguishable from one made on a wire — which no held stream supplies, "
+                "the pinned stream's items stopping at tag 65"
+            )
         else:
             assert b["status"] == "not yet", (
-                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's three witness "
-                "tables — WITNESSED_TAGS, NESTED_SETS, DOCUMENT_WITNESSED_TAGS. The scope "
-                "contract: a row promoted past all three is a decoder checkable only against a "
-                "fixture written from the same reading of the same table"
+                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's four witness "
+                "tables — WITNESSED_TAGS, NESTED_SETS, DOCUMENT_WITNESSED_TAGS, "
+                "CORE_IDENTIFIER_TAG. The scope contract: a row promoted past all four is a "
+                "decoder checkable only against a fixture written from the same reading of the "
+                "same table"
             )
 
 
@@ -4981,8 +5026,8 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 42, (
-        f"{len(expected)} adapter fixtures, expected forty-two — ten from the witnessed-set "
+    assert len(expected) == 48, (
+        f"{len(expected)} adapter fixtures, expected forty-eight — ten from the witnessed-set "
         "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
         "seventeen elements inside item 48, the six `security_object_country_codes_*` "
         "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held (a byte-order "
@@ -5000,7 +5045,14 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "tag 75 alone filling `Position.alt_m`, both HAE items agreeing inside tag 75's own LSB "
         "and raising nothing, both disagreeing by 9 265 m and raising `hae_items_disagree`, and "
         "tag 75 beside tag 15 at values that are deliberately NOT the printed pair, because "
-        "§8.15 and §8.75 print the same one"
+        "§8.15 and §8.75 print the same one; and the SIX the park 11 round added on 2026-09-05 "
+        "for item 94, the MIIS Core Identifier — ST 1204.1's own printed Foundational Core "
+        "Identifier, which ST 0601.14a §8.94 prints too; a Minor Core Identifier, §6.1's other "
+        "alternative; a windowed 48-octet FCID whose three distinguishable UUIDs prove the EBNF's "
+        "order is read and not guessed; a Platform-only FCID, §6.1's second production; a "
+        "pre-filled nil Platform Identifier, decoded and annotated under `ST 1204.1-32` and not "
+        "promoted to an identity; and a usage byte naming two UUIDs with one following, refused "
+        "per Table 4's valid lengths while the packet's other items translate"
     )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (

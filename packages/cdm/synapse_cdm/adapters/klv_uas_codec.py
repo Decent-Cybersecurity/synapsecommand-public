@@ -107,6 +107,7 @@ from typing import Any, NamedTuple
 
 from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
+from synapse_cdm.adapters import klv_miis_codec as miis
 from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
 
@@ -839,6 +840,28 @@ NESTED_SETS: dict[int, str] = {48: "MISB ST 0102.12 Security Metadata Local Set"
 #: rode under are at `klv_pin.json`'s `security_basis_ruling.relocated_from_the_wire.carrier_basis`.
 NESTED_SET_BASIS = security.CARRIER_BASIS
 
+#: **THE THIRD ITEM WHOSE VALUE IS ANOTHER DOCUMENT'S STRUCTURE, AND THE FIRST WHOSE DOCUMENT IS
+#: NOT A LOCAL SET.** Item 94's Value is a MISB ST 1204.1 Core Identifier Binary Value, read by
+#: `klv_miis_codec` and never by a row here. It sits beside `NESTED_SETS` rather than in `ITEMS`
+#: on that table's own second ground — `ITEMS` answers "what does this integer mean under one
+#: affine map", and a version, a bit-mapped usage byte and up to three UUIDs are not one integer —
+#: and beside it rather than in it because a Core Identifier is NOT a Local Set: it carries no
+#: tags, and §6.1's EBNF fixes its members by ORDER. `NESTED_SETS`'s value is a run of triplets
+#: `klv_security_codec` walks; this one is a fixed layout whose length the usage byte decides.
+#:
+#: **AND ITS WITNESS IS THE STRONGEST IN THIS FILE, WHICH IS WORTH STATING BECAUSE ITEM 48'S IS THE
+#: WEAKEST.** `NESTED_SETS` ships against no worked example and no held octet — ST 0102.12 prints
+#: no set. Item 94 ships against a worked example printed FOUR TIMES ACROSS TWO DOCUMENTS: ST
+#: 1204.1's Table 6, Table 7 and Table 9, and ST 0601.14a's own §8.94 block, all one identifier.
+#: `klv_miis_codec.check_against_the_documents_own_examples()` runs every comparison on each suite
+#: run. What it does NOT have is a held octet: the pinned stream's 26 items stop at tag 65, so this
+#: is a document-side witness in the sense `WITNESS_KINDS` defines and is not a stream-side one.
+CORE_IDENTIFIER_TAG: int = 94
+
+#: What ST 0601.14a says item 94 carries, quoted, so the delegation is readable from this module —
+#: the arrangement `NESTED_SET_BASIS` was written for, applied to the second delegating item.
+CORE_IDENTIFIER_BASIS = miis.CARRIER_BASIS
+
 #: **THE SECOND CROSSING OF THE SCOPE CONTRACT, 2026-09-04, AND ITS GROUND IS DIFFERENT FROM
 #: `NESTED_SETS`'.** Item 48 crossed on a SECOND DOCUMENT agreeing with this one about sixteen
 #: octets. These fifteen cross on THIS document's own printed worked examples, under RULING 1
@@ -1239,6 +1262,18 @@ class DecodedPacket(NamedTuple):
     #: failed is named. Discarding 25 well-formed items over one malformed pack is the thing the
     #: length-divergence ruling already refused to do.
     pack_refusals: tuple[dict, ...] = ()
+    #: The decoded ST 1204.1 Core Identifier from item 94, or None where the packet carried no item
+    #: 94 — which is every packet of the only stream held. **None means UNIDENTIFIED and never
+    #: "no such platform"**: `ST 1204.1-01` requires "All MIIS Compliant Digital Motion Imagery
+    #: data shall contain a Core identifier", so an absent item 94 is a fact about the producer's
+    #: compliance and not about the aircraft, and the caller keys on its packet-scoped identifier
+    #: exactly as it did before this field existed.
+    core_identifier: miis.CoreIdentifier | None = None
+    #: Item 94 refused, as a structured refusal, or None. **THE ITEM IS REFUSED AND THE PACKET IS
+    #: NOT** — `pack_refusals`' ruling, which is `klv_security_codec`'s element precedent, applied
+    #: to a third layer: the octets stay parked at `raw_items`, the clause that decided it is
+    #: named, and the other twenty-five items are untouched.
+    core_identifier_refusal: dict | None = None
 
     @property
     def checksum_valid(self) -> bool | None:
@@ -1366,6 +1401,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
     pack_refusals: list[dict] = []
     checksum_stored = checksum_computed = None
     security_set = None
+    core_identifier = None
+    core_identifier_refusal: dict | None = None
 
     for entry in framing.walk_local_set(buf, offset):
         order.append(entry.tag)
@@ -1389,6 +1426,22 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
                 # refusal inside the nested set points at an octet of the PACKET.
                 security_set = security.decode_set(
                     entry.value, base_offset=entry.value_offset)
+                continue
+            if entry.tag == CORE_IDENTIFIER_TAG:
+                # ST 0601 item 94. §8.94.1: "Tag 94's value does not include MISB ST 1204's
+                # 16-byte Key or length, only the value portion" — so, as with item 48, the Value
+                # is handed over bare and there is no second key to strip. A refusal is STRUCTURED
+                # and local to the item: `klv_miis_codec` raises with the clause that decided it,
+                # and the packet goes on being decoded.
+                try:
+                    core_identifier = miis.decode_core_identifier(entry.value)
+                except miis.CoreIdentifierError as refusal:
+                    core_identifier_refusal = {
+                        "tag": entry.tag, "name": "MIIS Core Identifier",
+                        "class": refusal.refusal_class, "reason": str(refusal),
+                        "octets": entry.value.hex(), "value_offset": entry.value_offset,
+                        "section": "8.94", "source": miis.SOURCE_ST_1204_1,
+                    }
                 continue
             if entry.tag in DOCUMENT_WITNESSED_TAGS:
                 # The second crossing of the scope contract — see `IMAPB_ITEM_TAGS` above. These
@@ -1437,7 +1490,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
         items=items, order=tuple(order), defects=tuple(defects),
         advisories=tuple(advisories), unknown_tags=tuple(unknown), raw_items=raw_items,
         checksum_stored=checksum_stored, checksum_computed=checksum_computed,
-        security=security_set, pack_refusals=tuple(pack_refusals))
+        security=security_set, pack_refusals=tuple(pack_refusals),
+        core_identifier=core_identifier, core_identifier_refusal=core_identifier_refusal)
 
 
 def decode_stream(buf: bytes) -> list[DecodedPacket]:

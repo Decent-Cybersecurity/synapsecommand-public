@@ -131,6 +131,7 @@ from synapse_cdm import ids, lossless, symbology, times
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
+from synapse_cdm.adapters import klv_miis_codec as miis
 from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_uas_codec as uas
@@ -289,6 +290,33 @@ def _refusal_dict(refusal: security.RefusedElement) -> dict:
         "section": refusal.section,
         "clause": refusal.clause,
     }
+
+
+def _core_identity_clause(packet: uas.DecodedPacket) -> str:
+    """The one sentence `identity_basis` needs about THIS packet's item 94.
+
+    Three cases and each names its own ground, because "no MIIS identity" is three different facts:
+    the producer sent none, the producer sent one this layer refused, or the producer sent one and
+    it is in `source_ids`. A single sentence covering all three would be the thing
+    `security_metadata_basis` was written to avoid — an absence that reads like a value.
+    """
+    if packet.core_identifier_refusal is not None:
+        return ("THIS PACKET STATED AN ITEM 94 AND IT WAS REFUSED: "
+                f"{packet.core_identifier_refusal['class']}. The octets are parked at "
+                "attributes.core_identifier.refused with the clause that decided it, and this "
+                "object is keyed on the packet key alone.")
+    decoded = packet.core_identifier
+    if decoded is None:
+        return ("THIS PACKET CARRIES NO ITEM 94, so the packet key is the whole of its identity "
+                "and the paragraph above stands unchanged for it.")
+    identities = decoded.identities
+    if not identities:
+        return ("THIS PACKET STATED AN ITEM 94 WHOSE EVERY COMPONENT IS A PLACEHOLDER, so it "
+                "names nothing; see attributes.core_identifier.defects for the clause.")
+    named = ", ".join(f"{c.quality} {c.role}" for c in identities)
+    return (f"THIS PACKET STATES A {decoded.kind} NAMING {named}, and "
+            f"{'that identifier is' if len(identities) == 1 else 'those identifiers are'} in "
+            "source_ids beside the packet key.")
 
 
 def _defect_dict(defect: uas.LengthDivergence) -> dict:
@@ -625,6 +653,7 @@ class Stanag4609Adapter(Adapter):
         external_id = f"{stamp_us}|{index}"
         entity_id = ids.derive(OBSERVATION_SYSTEM, external_id, kind="entity")
         source_ids = [SourceId(system=OBSERVATION_SYSTEM, external_id=external_id)]
+        source_ids.extend(self._core_identity_source_ids(packet))
 
         position, position_basis = self._position(items, unavailable, adapter_advisories)
         kinematics, kinematics_basis = self._kinematics(items, unavailable)
@@ -1184,6 +1213,7 @@ class Stanag4609Adapter(Adapter):
                     kinematics_basis: dict, unavailable: list[str]) -> dict:
         items = packet.items
         attributes: dict[str, Any] = {}
+        core_identity_clause = _core_identity_clause(packet)
 
         attributes["klv_payload"] = dict(payload)
         attributes["klv_packet"] = {
@@ -1223,7 +1253,15 @@ class Stanag4609Adapter(Adapter):
             "consecutive packets from one platform get DIFFERENT entity_id values, so the "
             "continuity a real feed has is continuity the CDM cannot express from this format. "
             "Park 11 — MISB ST 1204.1, the MIIS Core Identifier — is what closes it, and reading "
-            "the stream turned that park from a prediction into a measurement")
+            "the stream turned that park from a prediction into a measurement. **2026-09-05: "
+            "PARK 11 IS CLOSED AND THE COST ABOVE IS NOW CONDITIONAL RATHER THAN UNIVERSAL.** "
+            "Item 94 is decoded by `klv_miis_codec` and every Identifier Component it states is "
+            "appended to source_ids beside the packet key — see `attributes.core_identifier`, "
+            "which is on every object and says which of the two cases this one is. "
+            f"{core_identity_clause} THE entity_id ITSELF IS STILL THE PACKET KEY'S, on the "
+            "never-drop ground the bump ruling for this change rests on: a consumer keying on it "
+            "keeps working, and a consumer that wants the platform's own identity now has it, "
+            "under the system name ST 1204.1's Table 1 quality ranking gives it")
         attributes["entity_type_basis"] = (
             "PLATFORM, from the standard's own subject rather than from any item. §1: 'MISB ST "
             "0601 defines the Unmanned Air System (UAS) Datalink Local Set (LS) for UAS platforms. "
@@ -1247,6 +1285,8 @@ class Stanag4609Adapter(Adapter):
         attributes["precision_time_stamp_us"] = time_basis["raw_microseconds"]
         attributes["position_basis"] = position_basis
         attributes["kinematics_basis"] = kinematics_basis
+
+        attributes["core_identifier"] = self._core_identifier_attributes(packet)
 
         attributes["security_metadata_basis"] = self._security_basis(packet)
         if packet.security is not None:
@@ -1407,6 +1447,101 @@ class Stanag4609Adapter(Adapter):
         attributes["unavailable_fields"] = sorted(unavailable)
         attributes["source_extras"] = lossless.residual(parsed, self.CONSUMED)
         return attributes
+
+    # ------------------------------------------- ST 1204.1 MIIS Core Identifier, item 94
+
+    def _core_identity_source_ids(self, packet: uas.DecodedPacket) -> list[SourceId]:
+        """The identities item 94 states, one `SourceId` per Identifier Component.
+
+        **ONE ENTRY PER COMPONENT, AND THE DOCUMENT IS WHAT REFUSES THE COMPOSITE.** ST 1204.1 §8:
+        "For FCIDs up to three enterprise identifiers can be constructed: (1) an identifier from
+        the FCID's Sensor ID, (2) an identifier from the FCID's Platform ID and (3) an identifier
+        from the FCID's Window ID. These three enterprise identifiers can be used independently or
+        together. Since the Core ID can change over time, combining the three identifiers into one
+        UUID is not used as a method for Enterprise UUIDs." `SourceId`'s own docstring already says
+        why a list — "the same vessel is an MMSI to AIS, a track number to STANAG 4676 and a UID to
+        TAK" — and `adapters/ais.py` sets the precedent in code, emitting an MMSI and an IMO number
+        as two entries of one list.
+
+        **THE PACKET KEY IS KEPT AND THIS APPENDS BESIDE IT.** The caller builds
+        `[SourceId(OBSERVATION_SYSTEM, "<stamp>|<index>")]` first and extends it with this. That is
+        deliberate and it is what the bump ruling for this change covers: the packet key is what
+        keeps an `Entity` addressable when item 94 is ABSENT, which is every packet of the only
+        stream held, so removing it would take an identifier a consumer may key on out of shipped
+        output in exchange for one that is usually not there.
+
+        **A NIL PLATFORM IDENTIFIER IS DECODED AND IS NOT AN IDENTITY.** `CoreIdentifier.identities`
+        drops it and `klv_miis_codec.DEFECT_CLASSES['temporary_platform_identifier']` says why with
+        the clause: §5.1.4 defines the nil UUID as the pre-fill placeholder and `ST 1204.1-32`
+        requires a Core Identifier that has left the platform to be "fully formed with no temporary
+        Identifiers". The octets are still carried — `attributes.core_identifier` below has the
+        component and the defect — so nothing is dropped from the record; what is withheld is the
+        claim that it names something. Every consumer that pre-filled would otherwise agree with
+        every other one.
+
+        The VALUE is Table 8's UUID String Value, which is ST 1204.1's own text representation of
+        one component: "39 character value composed of: hex value of the UUID, plus separator
+        characters". The whole-identifier text format — version, usage byte, every UUID and the
+        Appendix B check value — names the COMBINATION rather than any one identity, so it rides in
+        `attributes.core_identifier.text` instead of being repeated into each entry.
+        """
+        decoded = packet.core_identifier
+        if decoded is None:
+            return []
+        return [SourceId(system=component.system, external_id=component.text)
+                for component in decoded.identities]
+
+    def _core_identifier_attributes(self, packet: uas.DecodedPacket) -> dict:
+        """Item 94 as a record: the octets, both text renderings, the components, the defects.
+
+        Carried on every object and not only on the ones that have an item 94, for
+        `length_divergence_policy`'s reason: a consumer needs to know that an object without a MIIS
+        identity is without one UNDER A RULE. The `absent` case names `ST 1204.1-01` — "All MIIS
+        Compliant Digital Motion Imagery data shall contain a Core identifier in either the imagery
+        frames or metadata or both" — because an absent item 94 is a fact about what the producer
+        sent and never about the aircraft.
+        """
+        decoded = packet.core_identifier
+        record: dict[str, Any] = {
+            "carrier_basis": uas.CORE_IDENTIFIER_BASIS,
+            "source": miis.SOURCE_ST_1204_1,
+        }
+        if packet.core_identifier_refusal is not None:
+            record["refused"] = dict(packet.core_identifier_refusal)
+            record["stated"] = False
+            return record
+        if decoded is None:
+            record["stated"] = False
+            record["absence_basis"] = (
+                "the packet carries no item 94. `ST 1204.1-01`: 'All MIIS Compliant Digital "
+                "Motion Imagery data shall contain a Core identifier in either the imagery frames "
+                "or metadata or both' — so this is a statement about the producer's compliance and "
+                "not about the platform, and the packet-scoped key in `source_ids` is what "
+                "addresses this object. The pinned stream carries none: its 26 items stop at "
+                "tag 65")
+            record["augmentation_identifiers"] = miis.AUGMENTATION_IDENTIFIERS_ABSENT
+            return record
+        record["stated"] = True
+        record["kind"] = decoded.kind
+        record["version"] = decoded.version
+        record["usage_byte"] = f"0x{decoded.usage_byte:02X}"
+        record["octets"] = decoded.octets_hex
+        record["text"] = decoded.text
+        record["check_value"] = decoded.check_value_hex
+        record["components"] = [
+            {
+                "role": component.role,
+                "quality": component.quality,
+                "text": component.text,
+                "canonical_uuid": component.canonical,
+                "system": component.system,
+                "is_an_identity": not component.is_nil,
+            }
+            for component in decoded.components
+        ]
+        record["defects"] = [dict(defect) for defect in decoded.defects]
+        record["augmentation_identifiers"] = miis.AUGMENTATION_IDENTIFIERS_ABSENT
+        return record
 
     # ------------------------------------------------ ST 0102.12 security metadata, item 48
 

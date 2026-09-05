@@ -1368,13 +1368,19 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    still tracks `n_open` for park 8's reason, unchanged.
     parks = pin["parks"]
     closed = sorted(k for k in parks["the_ones_that_closed"] if k.startswith("park_"))
-    assert closed == ["park_1", "park_13", "park_2", "park_3", "park_4", "park_5", "park_8",
-                      "park_9"], closed
+    #    PARK 11 CLOSED 2026-09-05, AND IT IS THE FIRST CLOSURE IN THIS RECORD THAT MOVED NEITHER
+    #    DELEGATION TERM. Both its documents — ST 1204.1 and ST 1301.2 — had been held since
+    #    2026-08-27, so the acquisition half was discharged nine days before the park was, and what
+    #    closed it is the artefact alone: `adapters/klv_miis_codec.py` reading item 94's MIIS Core
+    #    Identifier into `Entity.source_ids`. So closures 8 -> 9 and open 5 -> 4, and the
+    #    delegations-held count stays at ten. `n_downloads` still tracks `n_open`.
+    assert closed == ["park_1", "park_11", "park_13", "park_2", "park_3", "park_4", "park_5",
+                      "park_8", "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
-    assert (n_closed, n_open, n_downloads) == (8, 5, 5)
-    words = {5: "five", 8: "eight"}
+    assert (n_closed, n_open, n_downloads) == (9, 4, 4)
+    words = {4: "four", 9: "nine"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"

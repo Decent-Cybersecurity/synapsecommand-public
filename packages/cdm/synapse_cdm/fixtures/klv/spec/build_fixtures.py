@@ -77,6 +77,7 @@ sys.path.insert(0, str(FIXTURES.parent.parent.parent))
 
 from synapse_cdm.adapters import imapb_codec as imapb              # noqa: E402
 from synapse_cdm.adapters import klv_codec as codec                # noqa: E402
+from synapse_cdm.adapters import klv_miis_codec as miis             # noqa: E402
 from synapse_cdm.adapters import klv_pack_codec as packs           # noqa: E402
 from synapse_cdm.adapters import klv_security_codec as security   # noqa: E402
 from synapse_cdm.adapters import klv_uas_codec as uas               # noqa: E402
@@ -1651,8 +1652,154 @@ _PRE_RELEASE_FIXTURES: tuple[dict, ...] = (
     ),
 )
 
+# --------------------------------------------------------------- park 11, the MIIS Core Identifier
+
+#: ST 1204.1 §6.2.2.1's printed Core Identifier, whole. The SAME octets ST 0601.14a §8.94 prints as
+#: item 94's Example KLV Item — four printings across two documents, one value — so this constant
+#: is read off `klv_miis_codec.DOCUMENT_EXAMPLE` rather than typed a fifth time here.
+_CORE_ID_DOCUMENT_EXAMPLE = str(miis.DOCUMENT_EXAMPLE["octets"])
+
+#: Two synthetic UUIDs, and they are SYNTHETIC ON PURPOSE and say so. Every fixture below that is
+#: not the document's own example carries values no emitter produced, because a UUID in a golden
+#: file that looked like a real device identifier would be a claim about a device.
+_SYNTHETIC_SENSOR = "A1" * 16
+_SYNTHETIC_PLATFORM = "B2" * 16
+_SYNTHETIC_WINDOW = "C3" * 16
+_SYNTHETIC_MINOR = "D4" * 16
+
+_PARK_11_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="the_miis_core_identifier_from_the_documents_own_example",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (94, _CORE_ID_DOCUMENT_EXAMPLE),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE ONE FIXTURE IN THIS SET WHOSE OCTETS NOBODY HERE CHOSE.** Item 94 carries "
+            "ST 1204.1 §6.2.1's printed Foundational Core Identifier verbatim — Version 1, Usage "
+            "Value Byte 0x70, a Physical Sensor ID and a Virtual Platform ID — which is also the "
+            "value ST 0601.14a §8.94 prints in its own Example KLV Item. What must happen: TWO "
+            "entries appear in source_ids BESIDE the packet key, never instead of it, under "
+            "MIIS-SENSOR-PHYSICAL and MIIS-PLATFORM-VIRTUAL, each carrying Table 8's 39-character "
+            "UUID String Value; attributes.core_identifier.text reads the whole "
+            "`0170:...:D3` string with Appendix B's check value, which the codec COMPUTES and does "
+            "not transcribe. **The check value is the fixture's sharpest edge**: Appendix B ends "
+            "'Please see the reference code for complete details of the algorithm' and the "
+            "document ships no reference code, so `D3` appearing here is the algorithm read out "
+            "of prose and measured against the document's own printed answer"),
+        citation="ST 1204.1 §6.1, §6.2.1 Table 6, §6.2.2.1 Table 9, Appendix B; ST 0601.14a §8.94",
+    ),
+    dict(
+        name="a_minor_core_identifier_is_one_uuid_and_no_foundational_claim",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (94, "0102" + _SYNTHETIC_MINOR),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE OTHER HALF OF §6.1's ALTERNATION, and the document says what it is worth.** "
+            "Usage Value Byte 0x02 sets the Minor ID bit alone, so the Value is Version, Usage and "
+            "ONE UUID. §5.1.2: Minor Core Identifiers 'support a low level of identification when "
+            "a Foundational Core Identifiers are not used ... they are considered inadequate to "
+            "satisfy the four problems listed in Section 1'. What must happen: exactly one "
+            "appended source_id, under MIIS-MINOR-INCLUDED, and "
+            "attributes.core_identifier.kind reads MCID — the consumer is told which of the two "
+            "kinds it has, because the document prices them differently and the CDM must not "
+            "flatten that into 'an identifier'"),
+        citation="ST 1204.1 §5.1.2, §6.1, `ST 1204.1-27`, `ST 1204.1-28`, `ST 1204.1-30`",
+    ),
+    dict(
+        name="a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (94, "0174" + _SYNTHETIC_SENSOR + _SYNTHETIC_PLATFORM + _SYNTHETIC_WINDOW),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE 48-OCTET FCID, AND THE FIXTURE THAT PROVES THE ORDER IS READ AND NOT GUESSED.** "
+            "Usage Value Byte 0x74: bits 6,5 = 11 Physical Sensor, bits 4,3 = 10 Virtual Platform, "
+            "bit 2 = 1 Window Included. Three UUIDs follow, in §6.1's order — `FCID = (Sensor ID, "
+            "[Platform ID], [Window ID])` — and Table 4 says the order 'is important and should "
+            "follow the EBNF in Section 6.1'. **Nothing in a UUID says which role it holds**, so "
+            "the three synthetic values are deliberately distinguishable (0xA1…, 0xB2…, 0xC3…) and "
+            "a decoder that read them in any other order would put the wrong bytes under the wrong "
+            "system name and still emit three well-formed entries. §5.1.1.1.1 is why a window is "
+            "here at all: a WAMI system extracting a sub-frame 'shall contain a copy of the "
+            "original Foundational Identifier, if one exists, with a Window Identifier included' "
+            "(`ST 1204.1-26`)"),
+        citation="ST 1204.1 §6.1, §6.2.1 Table 4, Table 5, §5.1.1.1.1, `ST 1204.1-26`",
+    ),
+    dict(
+        name="a_platform_only_core_identifier_names_one_of_the_two_devices",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (94, "0108" + _SYNTHETIC_PLATFORM),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**§6.1's SECOND FCID PRODUCTION, WHICH IS NOT A DEGRADED FIRST ONE.** Usage Value "
+            "Byte 0x08: Sensor ID Type 00 = None, Platform ID Type 01 = Managed, no window, no "
+            "minor. The grammar has a production for exactly this — `FCID = ... | (Platform ID, "
+            "[Window ID]) | ...` — and Table 11 gives it compliance level 18, 'None / Managed'. "
+            "What must happen: ONE appended source_id under MIIS-PLATFORM-MANAGED and no sensor "
+            "entry invented to sit beside it. **The quality is in the system name for a reason "
+            "this fixture is the cheapest place to state**: §5.1.1 says a Managed Identifier "
+            "'will only serve users after the control station', so two feeds agreeing on this "
+            "value agree about what one ground station was told, not about a device — and a "
+            "consumer fusing on it needs that difference legible without opening ST 1204.1"),
+        citation="ST 1204.1 §6.1, §5.1.1, §10 Table 11 level 18, Table 5",
+    ),
+    dict(
+        name="a_prefilled_platform_identifier_is_a_defect_and_never_an_identity",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (94, "0170" + _SYNTHETIC_SENSOR + "00" * 16),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE NIL UUID, AND THE ONE CASE WHERE A WELL-FORMED COMPONENT IS NOT PROMOTED.** "
+            "§5.1.4 defines pre-fill: 'a sensor produces a Foundational Core Identifier with a "
+            "temporary ID for the Platform ID ... The value for the temporary ID is the nil UUID "
+            "[3], which is 16 bytes of the hex value 0x00', and `ST 1204.1-32` requires a Core "
+            "Identifier that has left the platform to be 'fully formed with no temporary "
+            "Identifiers'. So these octets are a MIIS-compliant sensor's output that a "
+            "MIIS-compliant platform failed to complete. What must happen: ONE appended source_id "
+            "— the Physical Sensor ID — a defect of class temporary_platform_identifier at "
+            "attributes.core_identifier.defects, and the nil component still PRESENT in "
+            "attributes.core_identifier.components with is_an_identity false. **Nothing is "
+            "dropped and nothing is repaired**: the octets are in the record, and what is withheld "
+            "is only the claim that they name something. Promoting it would make every pre-filling "
+            "emitter on earth agree with every other one"),
+        citation="ST 1204.1 §5.1.4, `ST 1204.1-31`, `ST 1204.1-32`; RFC 4122 as its reference [3]",
+    ),
+    dict(
+        name="a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (65, _EXAMPLE[65]),
+            (94, "0170" + _SYNTHETIC_SENSOR),
+            (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE REFUSAL, AND THE RULING IS THE LENGTH-DIVERGENCE ONE APPLIED A THIRD TIME.** "
+            "Usage Value Byte 0x70 names a Physical Sensor ID and a Virtual Platform ID — Table 4: "
+            "'Each UUID value is 16 bytes so valid lengths of FMIC are 16, 32 or 48 bytes' — and "
+            "only 16 octets follow it. What must happen: item 94 is REFUSED with class "
+            "length_does_not_match_the_usage_value, its octets stay parked at "
+            "attributes.klv_item_octets, attributes.core_identifier.refused names the clause, and "
+            "**the other three items translate normally** — the Precision Time Stamp, the UAS LS "
+            "Version Number and the Checksum all come out. **WHY IT IS NOT RECONCILED**: the usage "
+            "byte is the ONLY statement of how many UUIDs follow, so believing the length instead "
+            "would mean this layer choosing which half of a malformed identifier is the true one, "
+            "with no third witness to break the tie"),
+        citation="ST 1204.1 §6.2.1 Table 4, Table 5; klv_uas_codec.LENGTH_DIVERGENCE_POLICY; "
+                 "klv_security_codec's element refusal precedent",
+    ),
+)
+
 ADAPTER_FIXTURES = (ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
-                    + _PRE_RELEASE_FIXTURES)
+                    + _PRE_RELEASE_FIXTURES
+                    + _PARK_11_FIXTURES)
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:
