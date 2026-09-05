@@ -3302,13 +3302,21 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # `...0E.01.04.05.03.00.00.00`, both CRC 30280), and BOTH print the same worked example, which
     # item 48 has none of. Summed rather than merged, on the same rule as the other three: the
     # scope contract's number does not move and a crossing must be declared in its own table.
+    # FIVE TERMS SINCE 2026-09-05, AND THE FIFTH IS ITEM 74. `VMTI_TAG` is the ST 0903.4 VMTI
+    # Local Set, and its ground is the fifteen's rather than item 48's or item 94's: ONE document
+    # checking itself, and doing so 70 times — `klv_vmti_codec.WORKED_EXAMPLES` runs every printed
+    # example on every suite run and 68 reproduce, the two that do not being M's ruled printed
+    # defects. No held stream carries an item 74, so there is no stream-side witness at all and
+    # this term is the widest document-side one in the file. Summed rather than merged, on the
+    # same rule as the other four.
     expected = (len(uas_codec.WITNESSED_TAGS) + len(uas_codec.NESTED_SETS)
-                + len(uas_codec.DOCUMENT_WITNESSED_TAGS) + 1)
+                + len(uas_codec.DOCUMENT_WITNESSED_TAGS) + 2)
     assert len(promoted) == expected, (
         f"{len(promoted)} rows carry a stanag4609 marker and the codec covers "
         f"{len(uas_codec.WITNESSED_TAGS)} witnessed tags plus {len(uas_codec.NESTED_SETS)} nested "
         f"set(s) plus {len(uas_codec.DOCUMENT_WITNESSED_TAGS)} document-witnessed tags plus item "
-        f"{uas_codec.CORE_IDENTIFIER_TAG}, the MIIS Core Identifier. Each "
+        f"{uas_codec.CORE_IDENTIFIER_TAG}, the MIIS Core Identifier, plus item "
+        f"{uas_codec.VMTI_TAG}, the ST 0903.4 VMTI Local Set. Each "
         "crossing of the scope contract is declared in its own table so that it can be counted "
         "here; a promotion with no table behind it fails this assertion"
     )
@@ -3325,9 +3333,13 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # 95 SINCE 2026-09-05, DOWN FROM 96 THE SAME DAY: item 94 left on the fourth ground, the park
     # 11 round's — MISB ST 1204.1 defines its Value's whole structure, TWO held documents state
     # its key identically, and BOTH print the same worked example.
-    assert len(not_yet) >= 95, (
-        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 95 of the 141 rows "
-        "are outside all four witness grounds and each is blocked on the scope contract; a round "
+    # 94 SINCE 2026-09-05, DOWN FROM 95 THE SAME DAY: item 74 left on the fifth ground, the park 6
+    # round part 2's — MISB ST 0903.4 defines its Value's whole structure and prints seventy worked
+    # examples of the elements inside it, 68 of which reproduce on every suite run. It is the
+    # fifteen's kind of witness rather than item 48's or item 94's, and the widest of that kind.
+    assert len(not_yet) >= 94, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 94 of the 141 rows "
+        "are outside all five witness grounds and each is blocked on the scope contract; a round "
         "that promoted them wrote decoders nothing can check, which is the trap this section "
         "exists to avoid"
     )
@@ -3492,6 +3504,7 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
     keeps "the witnessed set" one set rather than a phrase two files each interpret.
     """
     from synapse_cdm.adapters import klv_uas_codec as uas_codec
+    from synapse_cdm.adapters import klv_vmti_codec as vmti_codec
 
     pin = json.loads(KLV_PIN.read_text())
     node = pin["tag_table_st_0601_14"]
@@ -3561,6 +3574,17 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
         # admission is one tag wide and is asserted so: a second entry needs its own document and
         # its own paragraph here.
         core_identifier = tag == uas_codec.CORE_IDENTIFIER_TAG
+        # AND A FIFTH GROUND SINCE 2026-09-05, WHICH IS THE WIDEST DOCUMENT-SIDE ONE HERE AND HAS
+        # NO STREAM BEHIND IT AT ALL. Item 74's Value is the whole ST 0903.4 VMTI Local Set — a
+        # VTargetSeries of packs carrying five further nested sets — so it is not an `ITEMS` row
+        # for the reason item 48 is not. Its witness is the fifteen's kind and not item 48's: ONE
+        # document checking itself, and doing so seventy times, which is why the check below is
+        # mechanical. `klv_vmti_codec.check_against_the_documents_own_examples()` decodes every
+        # printed example on every suite run; 68 of 70 reproduce and the two that do not are the
+        # printed defects M ruled on 2026-09-05, at `PRINTED_EXAMPLE_DISAGREEMENTS`. The pinned
+        # stream carries no item 74 — its items stop at tag 65 — so nothing here is stream-
+        # witnessed and the row must say so.
+        vmti_set = tag == uas_codec.VMTI_TAG
         if witnessed:
             assert b["status"].startswith("stanag4609 1.0.0"), (
                 f"item {tag} is in klv_uas_codec.WITNESSED_TAGS — the pinned stream attests it and "
@@ -3619,13 +3643,39 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
                 "is indistinguishable from one made on a wire — which no held stream supplies, "
                 "the pinned stream's items stopping at tag 65"
             )
+        elif vmti_set:
+            assert uas_codec.VMTI_TAG == 74, (
+                "klv_uas_codec.VMTI_TAG is not 74. The one item admitted on this fifth ground is "
+                "the VMTI Local Set; a different tag needs its own document and its own ruling"
+            )
+            assert b["status"].startswith("stanag4609 1.0.0"), (
+                f"item {tag} is the VMTI Local Set, read by klv_vmti_codec under MISB ST 0903.4, "
+                f"and its row reads {b['status']!r}. The codec reads it, so the row says so"
+            )
+            assert "ST 0903.4" in b["notes"], (
+                "item 74's row no longer names the document whose structure it carries. That "
+                "document IS the ground for crossing the scope contract, and a row that stops "
+                "stating it is a promotion with no argument left"
+            )
+            assert "70" in b["notes"] and "68" in b["notes"], (
+                "item 74's row no longer states its witness basis — 70 of ST 0903.4's own printed "
+                "examples decoded, 68 reproducing. It is a document-side witness and nothing "
+                "else, the pinned stream carrying no item 74, and a promotion that stops saying "
+                "so is indistinguishable from one made on a wire"
+            )
+            examples = vmti_codec.check_against_the_documents_own_examples()
+            assert sum(line.startswith("AGREE") for line in examples) == 68, (
+                "klv_vmti_codec no longer reproduces 68 of the document's printed examples. This "
+                "row's admission past the scope contract holds only while it does — the witness "
+                "IS the check, so the check runs here rather than being cited"
+            )
         else:
             assert b["status"] == "not yet", (
-                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's four witness "
+                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's five witness "
                 "tables — WITNESSED_TAGS, NESTED_SETS, DOCUMENT_WITNESSED_TAGS, "
-                "CORE_IDENTIFIER_TAG. The scope contract: a row promoted past all four is a "
-                "decoder checkable only against a fixture written from the same reading of the "
-                "same table"
+                "CORE_IDENTIFIER_TAG, VMTI_TAG. The scope contract: a row promoted past all five "
+                "is a decoder checkable only against a fixture written from the same reading of "
+                "the same table"
             )
 
 
@@ -5026,8 +5076,8 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 48, (
-        f"{len(expected)} adapter fixtures, expected forty-eight — ten from the witnessed-set "
+    assert len(expected) == 53, (
+        f"{len(expected)} adapter fixtures, expected fifty-three — ten from the witnessed-set "
         "round, the seven `security_*` payloads the park 2 round added for ST 0102.12's "
         "seventeen elements inside item 48, the six `security_object_country_codes_*` "
         "payloads the text-pins round added on 2026-09-04 once RFC 2781 was held (a byte-order "
@@ -5052,7 +5102,16 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "order is read and not guessed; a Platform-only FCID, §6.1's second production; a "
         "pre-filled nil Platform Identifier, decoded and annotated under `ST 1204.1-32` and not "
         "promoted to an identity; and a usage byte naming two UUIDs with one following, refused "
-        "per Table 4's valid lengths while the packet's other items translate"
+        "per Table 4's valid lengths while the packet's other items translate; and the FIVE "
+        "the park 6 round, part 2, added on 2026-09-05 for item 74, the ST 0903.4 VMTI Local "
+        "Set — a VTarget carrying §11.15.24.1's printed VTracker UUID, the only case that "
+        "yields a Track and an Entity under M's identity ruling; a VTarget with no VTracker, "
+        "which yields a DETECTION and nothing else; a Tag 17 Target Location pack in a packet "
+        "with no Frame Center, which is a position all the same because §11.15 Tag 17 is "
+        "absolute; the same Tag 10/11 offsets with no Frame Center, which is the refusal those "
+        "Notes ask for and the case that separates an Entity from a Track; and two VTarget "
+        "Packs sharing one Target ID Number, which ST 0903.4-28's 'to the extent possible' "
+        "permits and which a mapping keyed on that number would collapse to one"
     )
     for name in sorted(expected):
         assert (KLV_FIXTURES / f"{name}.parsed.json").is_file(), (

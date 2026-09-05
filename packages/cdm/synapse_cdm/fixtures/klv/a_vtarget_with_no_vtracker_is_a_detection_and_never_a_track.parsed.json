@@ -1,0 +1,255 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 51114,
+        "stored": 51114,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "c7aa",
+        "2": "000459f4a6aa4aa8",
+        "23": "f101a229",
+        "24": "14bc082b",
+        "65": "0d",
+        "74": "02080003824430f6ce40030e4453544f5f414453535f564d544904010405011c06010e07030130b008020780090204380a07454f204e6f736565201f89520103064000050150080355883309023354130203681402047115020203"
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        23,
+        24,
+        74,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 122,
+      "value_length_octets": "7a",
+      "vmti": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          101
+        ],
+        "elements": {
+          "10": {
+            "kind": "utf8",
+            "name": "VMTI Source Sensor",
+            "octets": "454f204e6f7365",
+            "value": "EO Nose"
+          },
+          "101": {
+            "kind": "vtarget_series",
+            "name": "VTargetSeries",
+            "octets": "1f89520103064000050150080355883309023354130203681402047115020203",
+            "value": [
+              {
+                "element_order": [
+                  1,
+                  5,
+                  8,
+                  9,
+                  19,
+                  20,
+                  21
+                ],
+                "elements": {
+                  "1": {
+                    "kind": "uint",
+                    "name": "Target Centroid Pixel Number",
+                    "octets": "064000",
+                    "value": 409600
+                  },
+                  "19": {
+                    "kind": "uint",
+                    "name": "Target Centroid Pixel Row",
+                    "octets": "0368",
+                    "value": 872
+                  },
+                  "20": {
+                    "kind": "uint",
+                    "name": "Target Centroid Pixel Column",
+                    "octets": "0471",
+                    "value": 1137
+                  },
+                  "21": {
+                    "kind": "fpa_index",
+                    "name": "FPA Index",
+                    "octets": "0203",
+                    "value": {
+                      "column": 3,
+                      "row": 2
+                    }
+                  },
+                  "5": {
+                    "kind": "uint",
+                    "name": "Target Confidence Level",
+                    "octets": "50",
+                    "value": 80
+                  },
+                  "8": {
+                    "kind": "rgb",
+                    "name": "Target Color",
+                    "octets": "558833",
+                    "value": {
+                      "blue": 51,
+                      "green": 136,
+                      "red": 85
+                    }
+                  },
+                  "9": {
+                    "kind": "uint",
+                    "name": "Target Intensity",
+                    "octets": "3354",
+                    "value": 13140
+                  }
+                },
+                "refusals": [],
+                "target_id": 1234,
+                "unlisted_tags": []
+              }
+            ]
+          },
+          "2": {
+            "kind": "timestamp",
+            "name": "Precision Time Stamp",
+            "octets": "0003824430f6ce40",
+            "value": {
+              "microseconds": 987654321000000,
+              "utc": "2001-04-19T04:25:21Z"
+            }
+          },
+          "3": {
+            "kind": "utf8",
+            "name": "VMTI System Name / Description",
+            "octets": "4453544f5f414453535f564d5449",
+            "value": "DSTO_ADSS_VMTI"
+          },
+          "4": {
+            "kind": "uint",
+            "name": "VMTI LS Version Number",
+            "octets": "04",
+            "value": 4
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Total Number of Targets Detected in the Frame",
+            "octets": "1c",
+            "value": 28
+          },
+          "6": {
+            "kind": "uint",
+            "name": "Number of Reported Targets",
+            "octets": "0e",
+            "value": 14
+          },
+          "7": {
+            "kind": "uint",
+            "name": "Motion Imagery Frame Number",
+            "octets": "0130b0",
+            "value": 78000
+          },
+          "8": {
+            "kind": "uint",
+            "name": "Frame Width",
+            "octets": "0780",
+            "value": 1920
+          },
+          "9": {
+            "kind": "uint",
+            "name": "Frame Height",
+            "octets": "0438",
+            "value": 1080
+          }
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "targets": [
+          {
+            "element_order": [
+              1,
+              5,
+              8,
+              9,
+              19,
+              20,
+              21
+            ],
+            "elements": {
+              "1": {
+                "kind": "uint",
+                "name": "Target Centroid Pixel Number",
+                "octets": "064000",
+                "value": 409600
+              },
+              "19": {
+                "kind": "uint",
+                "name": "Target Centroid Pixel Row",
+                "octets": "0368",
+                "value": 872
+              },
+              "20": {
+                "kind": "uint",
+                "name": "Target Centroid Pixel Column",
+                "octets": "0471",
+                "value": 1137
+              },
+              "21": {
+                "kind": "fpa_index",
+                "name": "FPA Index",
+                "octets": "0203",
+                "value": {
+                  "column": 3,
+                  "row": 2
+                }
+              },
+              "5": {
+                "kind": "uint",
+                "name": "Target Confidence Level",
+                "octets": "50",
+                "value": 80
+              },
+              "8": {
+                "kind": "rgb",
+                "name": "Target Color",
+                "octets": "558833",
+                "value": {
+                  "blue": 51,
+                  "green": 136,
+                  "red": 85
+                }
+              },
+              "9": {
+                "kind": "uint",
+                "name": "Target Intensity",
+                "octets": "3354",
+                "value": 13140
+              }
+            },
+            "refusals": [],
+            "target_id": 1234,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      }
+    }
+  ],
+  "payload": {
+    "octets": 139,
+    "packet_count": 1
+  }
+}

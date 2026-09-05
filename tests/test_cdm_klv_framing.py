@@ -1385,13 +1385,21 @@ def test_every_count_this_round_states_twice_agrees_at_both_sites():
     #    closed it is the artefact alone: `adapters/klv_miis_codec.py` reading item 94's MIIS Core
     #    Identifier into `Entity.source_ids`. So closures 8 -> 9 and open 5 -> 4, and the
     #    delegations-held count stays at ten. `n_downloads` still tracks `n_open`.
+    #    PARK 6 CLOSED 2026-09-05 TOO, A FEW HOURS AFTER PARK 11, AND IT IS THE SECOND CLOSURE
+    #    RUNNING THAT MOVED NEITHER DELEGATION TERM — ST 0903.4 was pinned earlier the same day by
+    #    part 1 of park 6's own round, so part 2 fetched nothing. What closed it is the artefact
+    #    alone, and it is the first in this record whose output is a new KIND of object rather
+    #    than a new field: `adapters/stanag4609.py` emits a `DETECTION` `Event` per VTarget and a
+    #    `Track` with its `Entity` where a VTracker LS Track ID guarantees an identity. So closures
+    #    9 -> 10 and open 4 -> 3, and the delegations-held count stays where part 1 left it.
+    #    `n_downloads` still tracks `n_open`.
     assert closed == ["park_1", "park_11", "park_13", "park_2", "park_3", "park_4", "park_5",
-                      "park_8", "park_9"], closed
+                      "park_6", "park_8", "park_9"], closed
     n_closed, n_total = len(closed), 13
     n_open = n_total - n_closed
     n_downloads = n_open                     # every open park is a download; park 8 was the last one that was not
-    assert (n_closed, n_open, n_downloads) == (9, 4, 4)
-    words = {4: "four", 9: "nine"}
+    assert (n_closed, n_open, n_downloads) == (10, 3, 3)
+    words = {3: "three", 10: "ten"}
     how_many, honest = _flat(parks["how_many"]).lower(), _flat(parks["honest_strength"]).lower()
     assert words[n_closed] in how_many and "closed" in how_many, (
         f"parks.how_many does not state {words[n_closed]!r} closures"

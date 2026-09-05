@@ -1,0 +1,445 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 49776,
+        "stored": 49776,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "c270",
+        "2": "000459f4a6aa4aa8",
+        "23": "f101a229",
+        "24": "14bc082b",
+        "65": "0d",
+        "74": "02080003824430f6ce40030e4453544f5f414453535f564d544904010405011c06010e07030130b008020780090204380a07454f204e6f73656581a881a68952010306400004011b05015006020acd0a033a66670b033a66670c022a94664e0127687474703a2f2f73796e7468657469632e696e76616c69642f766d74692f6f6e746f6c6f67792302234469736d6f756e742f4e6f6e2d636f6d626174616e742f46656d616c652f4368696c6468350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b"
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        23,
+        24,
+        74,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 260,
+      "value_length_octets": "820104",
+      "vmti": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          101
+        ],
+        "elements": {
+          "10": {
+            "kind": "utf8",
+            "name": "VMTI Source Sensor",
+            "octets": "454f204e6f7365",
+            "value": "EO Nose"
+          },
+          "101": {
+            "kind": "vtarget_series",
+            "name": "VTargetSeries",
+            "octets": "81a68952010306400004011b05015006020acd0a033a66670b033a66670c022a94664e0127687474703a2f2f73796e7468657469632e696e76616c69642f766d74692f6f6e746f6c6f67792302234469736d6f756e742f4e6f6e2d636f6d626174616e742f46656d616c652f4368696c6468350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": [
+              {
+                "element_order": [
+                  1,
+                  4,
+                  5,
+                  6,
+                  10,
+                  11,
+                  12,
+                  102,
+                  104
+                ],
+                "elements": {
+                  "1": {
+                    "kind": "uint",
+                    "name": "Target Centroid Pixel Number",
+                    "octets": "064000",
+                    "value": 409600
+                  },
+                  "10": {
+                    "kind": "imapb",
+                    "name": "Target Location Latitude Offset",
+                    "octets": "3a6667",
+                    "value": 10.0
+                  },
+                  "102": {
+                    "kind": "vobject",
+                    "name": "VObject LS",
+                    "octets": "0127687474703a2f2f73796e7468657469632e696e76616c69642f766d74692f6f6e746f6c6f67792302234469736d6f756e742f4e6f6e2d636f6d626174616e742f46656d616c652f4368696c64",
+                    "value": {
+                      "element_order": [
+                        1,
+                        2
+                      ],
+                      "elements": {
+                        "1": {
+                          "kind": "utf8",
+                          "name": "Ontology",
+                          "octets": "687474703a2f2f73796e7468657469632e696e76616c69642f766d74692f6f6e746f6c6f677923",
+                          "value": "http://synthetic.invalid/vmti/ontology#"
+                        },
+                        "2": {
+                          "kind": "utf8",
+                          "name": "Ontology_Class",
+                          "octets": "4469736d6f756e742f4e6f6e2d636f6d626174616e742f46656d616c652f4368696c64",
+                          "value": "Dismount/Non-combatant/Female/Child"
+                        }
+                      },
+                      "refusals": [],
+                      "set_name": "VObject LS",
+                      "unlisted_tags": []
+                    }
+                  },
+                  "104": {
+                    "kind": "vtracker",
+                    "name": "VTracker LS",
+                    "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                    "value": {
+                      "element_order": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        6,
+                        7,
+                        8
+                      ],
+                      "elements": {
+                        "1": {
+                          "kind": "uuid",
+                          "name": "Track ID",
+                          "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                          "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                        },
+                        "2": {
+                          "kind": "detection_status",
+                          "name": "Detection Status",
+                          "octets": "01",
+                          "value": {
+                            "code": 1,
+                            "status": "Active"
+                          }
+                        },
+                        "3": {
+                          "kind": "timestamp",
+                          "name": "Start Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "4": {
+                          "kind": "timestamp",
+                          "name": "End Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "6": {
+                          "kind": "utf8",
+                          "name": "Algorithm",
+                          "octets": "74657374",
+                          "value": "test"
+                        },
+                        "7": {
+                          "kind": "uint",
+                          "name": "Confidence",
+                          "octets": "32",
+                          "value": 50
+                        },
+                        "8": {
+                          "kind": "uint",
+                          "name": "Number of Track Points",
+                          "octets": "1b",
+                          "value": 27
+                        }
+                      },
+                      "refusals": [],
+                      "set_name": "VTracker LS",
+                      "unlisted_tags": []
+                    }
+                  },
+                  "11": {
+                    "kind": "imapb",
+                    "name": "Target Location Longitude Offset",
+                    "octets": "3a6667",
+                    "value": 10.0
+                  },
+                  "12": {
+                    "kind": "imapb",
+                    "name": "Target Height",
+                    "octets": "2a94",
+                    "value": 10000.0
+                  },
+                  "4": {
+                    "kind": "uint",
+                    "name": "Target Priority",
+                    "octets": "1b",
+                    "value": 27
+                  },
+                  "5": {
+                    "kind": "uint",
+                    "name": "Target Confidence Level",
+                    "octets": "50",
+                    "value": 80
+                  },
+                  "6": {
+                    "kind": "uint",
+                    "name": "New Detection Flag / Target History",
+                    "octets": "0acd",
+                    "value": 2765
+                  }
+                },
+                "refusals": [],
+                "target_id": 1234,
+                "unlisted_tags": []
+              }
+            ]
+          },
+          "2": {
+            "kind": "timestamp",
+            "name": "Precision Time Stamp",
+            "octets": "0003824430f6ce40",
+            "value": {
+              "microseconds": 987654321000000,
+              "utc": "2001-04-19T04:25:21Z"
+            }
+          },
+          "3": {
+            "kind": "utf8",
+            "name": "VMTI System Name / Description",
+            "octets": "4453544f5f414453535f564d5449",
+            "value": "DSTO_ADSS_VMTI"
+          },
+          "4": {
+            "kind": "uint",
+            "name": "VMTI LS Version Number",
+            "octets": "04",
+            "value": 4
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Total Number of Targets Detected in the Frame",
+            "octets": "1c",
+            "value": 28
+          },
+          "6": {
+            "kind": "uint",
+            "name": "Number of Reported Targets",
+            "octets": "0e",
+            "value": 14
+          },
+          "7": {
+            "kind": "uint",
+            "name": "Motion Imagery Frame Number",
+            "octets": "0130b0",
+            "value": 78000
+          },
+          "8": {
+            "kind": "uint",
+            "name": "Frame Width",
+            "octets": "0780",
+            "value": 1920
+          },
+          "9": {
+            "kind": "uint",
+            "name": "Frame Height",
+            "octets": "0438",
+            "value": 1080
+          }
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "targets": [
+          {
+            "element_order": [
+              1,
+              4,
+              5,
+              6,
+              10,
+              11,
+              12,
+              102,
+              104
+            ],
+            "elements": {
+              "1": {
+                "kind": "uint",
+                "name": "Target Centroid Pixel Number",
+                "octets": "064000",
+                "value": 409600
+              },
+              "10": {
+                "kind": "imapb",
+                "name": "Target Location Latitude Offset",
+                "octets": "3a6667",
+                "value": 10.0
+              },
+              "102": {
+                "kind": "vobject",
+                "name": "VObject LS",
+                "octets": "0127687474703a2f2f73796e7468657469632e696e76616c69642f766d74692f6f6e746f6c6f67792302234469736d6f756e742f4e6f6e2d636f6d626174616e742f46656d616c652f4368696c64",
+                "value": {
+                  "element_order": [
+                    1,
+                    2
+                  ],
+                  "elements": {
+                    "1": {
+                      "kind": "utf8",
+                      "name": "Ontology",
+                      "octets": "687474703a2f2f73796e7468657469632e696e76616c69642f766d74692f6f6e746f6c6f677923",
+                      "value": "http://synthetic.invalid/vmti/ontology#"
+                    },
+                    "2": {
+                      "kind": "utf8",
+                      "name": "Ontology_Class",
+                      "octets": "4469736d6f756e742f4e6f6e2d636f6d626174616e742f46656d616c652f4368696c64",
+                      "value": "Dismount/Non-combatant/Female/Child"
+                    }
+                  },
+                  "refusals": [],
+                  "set_name": "VObject LS",
+                  "unlisted_tags": []
+                }
+              },
+              "104": {
+                "kind": "vtracker",
+                "name": "VTracker LS",
+                "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                "value": {
+                  "element_order": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    6,
+                    7,
+                    8
+                  ],
+                  "elements": {
+                    "1": {
+                      "kind": "uuid",
+                      "name": "Track ID",
+                      "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                      "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                    },
+                    "2": {
+                      "kind": "detection_status",
+                      "name": "Detection Status",
+                      "octets": "01",
+                      "value": {
+                        "code": 1,
+                        "status": "Active"
+                      }
+                    },
+                    "3": {
+                      "kind": "timestamp",
+                      "name": "Start Time Stamp",
+                      "octets": "0003824430f6ce40",
+                      "value": {
+                        "microseconds": 987654321000000,
+                        "utc": "2001-04-19T04:25:21Z"
+                      }
+                    },
+                    "4": {
+                      "kind": "timestamp",
+                      "name": "End Time Stamp",
+                      "octets": "0003824430f6ce40",
+                      "value": {
+                        "microseconds": 987654321000000,
+                        "utc": "2001-04-19T04:25:21Z"
+                      }
+                    },
+                    "6": {
+                      "kind": "utf8",
+                      "name": "Algorithm",
+                      "octets": "74657374",
+                      "value": "test"
+                    },
+                    "7": {
+                      "kind": "uint",
+                      "name": "Confidence",
+                      "octets": "32",
+                      "value": 50
+                    },
+                    "8": {
+                      "kind": "uint",
+                      "name": "Number of Track Points",
+                      "octets": "1b",
+                      "value": 27
+                    }
+                  },
+                  "refusals": [],
+                  "set_name": "VTracker LS",
+                  "unlisted_tags": []
+                }
+              },
+              "11": {
+                "kind": "imapb",
+                "name": "Target Location Longitude Offset",
+                "octets": "3a6667",
+                "value": 10.0
+              },
+              "12": {
+                "kind": "imapb",
+                "name": "Target Height",
+                "octets": "2a94",
+                "value": 10000.0
+              },
+              "4": {
+                "kind": "uint",
+                "name": "Target Priority",
+                "octets": "1b",
+                "value": 27
+              },
+              "5": {
+                "kind": "uint",
+                "name": "Target Confidence Level",
+                "octets": "50",
+                "value": 80
+              },
+              "6": {
+                "kind": "uint",
+                "name": "New Detection Flag / Target History",
+                "octets": "0acd",
+                "value": 2765
+              }
+            },
+            "refusals": [],
+            "target_id": 1234,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      }
+    }
+  ],
+  "payload": {
+    "octets": 279,
+    "packet_count": 1
+  }
+}

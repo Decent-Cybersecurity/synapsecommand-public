@@ -1,0 +1,327 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 39363,
+        "stored": 39363,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "99c3",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "74": "02080003824430f6ce40030e4453544f5f414453535f564d544904010405011c06010e07030130b008020780090204380a07454f204e6f736565474689520501500a033a66670b033a666768350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b"
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        74,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 150,
+      "value_length_octets": "8196",
+      "vmti": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          101
+        ],
+        "elements": {
+          "10": {
+            "kind": "utf8",
+            "name": "VMTI Source Sensor",
+            "octets": "454f204e6f7365",
+            "value": "EO Nose"
+          },
+          "101": {
+            "kind": "vtarget_series",
+            "name": "VTargetSeries",
+            "octets": "4689520501500a033a66670b033a666768350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": [
+              {
+                "element_order": [
+                  5,
+                  10,
+                  11,
+                  104
+                ],
+                "elements": {
+                  "10": {
+                    "kind": "imapb",
+                    "name": "Target Location Latitude Offset",
+                    "octets": "3a6667",
+                    "value": 10.0
+                  },
+                  "104": {
+                    "kind": "vtracker",
+                    "name": "VTracker LS",
+                    "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                    "value": {
+                      "element_order": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        6,
+                        7,
+                        8
+                      ],
+                      "elements": {
+                        "1": {
+                          "kind": "uuid",
+                          "name": "Track ID",
+                          "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                          "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                        },
+                        "2": {
+                          "kind": "detection_status",
+                          "name": "Detection Status",
+                          "octets": "01",
+                          "value": {
+                            "code": 1,
+                            "status": "Active"
+                          }
+                        },
+                        "3": {
+                          "kind": "timestamp",
+                          "name": "Start Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "4": {
+                          "kind": "timestamp",
+                          "name": "End Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "6": {
+                          "kind": "utf8",
+                          "name": "Algorithm",
+                          "octets": "74657374",
+                          "value": "test"
+                        },
+                        "7": {
+                          "kind": "uint",
+                          "name": "Confidence",
+                          "octets": "32",
+                          "value": 50
+                        },
+                        "8": {
+                          "kind": "uint",
+                          "name": "Number of Track Points",
+                          "octets": "1b",
+                          "value": 27
+                        }
+                      },
+                      "refusals": [],
+                      "set_name": "VTracker LS",
+                      "unlisted_tags": []
+                    }
+                  },
+                  "11": {
+                    "kind": "imapb",
+                    "name": "Target Location Longitude Offset",
+                    "octets": "3a6667",
+                    "value": 10.0
+                  },
+                  "5": {
+                    "kind": "uint",
+                    "name": "Target Confidence Level",
+                    "octets": "50",
+                    "value": 80
+                  }
+                },
+                "refusals": [],
+                "target_id": 1234,
+                "unlisted_tags": []
+              }
+            ]
+          },
+          "2": {
+            "kind": "timestamp",
+            "name": "Precision Time Stamp",
+            "octets": "0003824430f6ce40",
+            "value": {
+              "microseconds": 987654321000000,
+              "utc": "2001-04-19T04:25:21Z"
+            }
+          },
+          "3": {
+            "kind": "utf8",
+            "name": "VMTI System Name / Description",
+            "octets": "4453544f5f414453535f564d5449",
+            "value": "DSTO_ADSS_VMTI"
+          },
+          "4": {
+            "kind": "uint",
+            "name": "VMTI LS Version Number",
+            "octets": "04",
+            "value": 4
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Total Number of Targets Detected in the Frame",
+            "octets": "1c",
+            "value": 28
+          },
+          "6": {
+            "kind": "uint",
+            "name": "Number of Reported Targets",
+            "octets": "0e",
+            "value": 14
+          },
+          "7": {
+            "kind": "uint",
+            "name": "Motion Imagery Frame Number",
+            "octets": "0130b0",
+            "value": 78000
+          },
+          "8": {
+            "kind": "uint",
+            "name": "Frame Width",
+            "octets": "0780",
+            "value": 1920
+          },
+          "9": {
+            "kind": "uint",
+            "name": "Frame Height",
+            "octets": "0438",
+            "value": 1080
+          }
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "targets": [
+          {
+            "element_order": [
+              5,
+              10,
+              11,
+              104
+            ],
+            "elements": {
+              "10": {
+                "kind": "imapb",
+                "name": "Target Location Latitude Offset",
+                "octets": "3a6667",
+                "value": 10.0
+              },
+              "104": {
+                "kind": "vtracker",
+                "name": "VTracker LS",
+                "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                "value": {
+                  "element_order": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    6,
+                    7,
+                    8
+                  ],
+                  "elements": {
+                    "1": {
+                      "kind": "uuid",
+                      "name": "Track ID",
+                      "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                      "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                    },
+                    "2": {
+                      "kind": "detection_status",
+                      "name": "Detection Status",
+                      "octets": "01",
+                      "value": {
+                        "code": 1,
+                        "status": "Active"
+                      }
+                    },
+                    "3": {
+                      "kind": "timestamp",
+                      "name": "Start Time Stamp",
+                      "octets": "0003824430f6ce40",
+                      "value": {
+                        "microseconds": 987654321000000,
+                        "utc": "2001-04-19T04:25:21Z"
+                      }
+                    },
+                    "4": {
+                      "kind": "timestamp",
+                      "name": "End Time Stamp",
+                      "octets": "0003824430f6ce40",
+                      "value": {
+                        "microseconds": 987654321000000,
+                        "utc": "2001-04-19T04:25:21Z"
+                      }
+                    },
+                    "6": {
+                      "kind": "utf8",
+                      "name": "Algorithm",
+                      "octets": "74657374",
+                      "value": "test"
+                    },
+                    "7": {
+                      "kind": "uint",
+                      "name": "Confidence",
+                      "octets": "32",
+                      "value": 50
+                    },
+                    "8": {
+                      "kind": "uint",
+                      "name": "Number of Track Points",
+                      "octets": "1b",
+                      "value": 27
+                    }
+                  },
+                  "refusals": [],
+                  "set_name": "VTracker LS",
+                  "unlisted_tags": []
+                }
+              },
+              "11": {
+                "kind": "imapb",
+                "name": "Target Location Longitude Offset",
+                "octets": "3a6667",
+                "value": 10.0
+              },
+              "5": {
+                "kind": "uint",
+                "name": "Target Confidence Level",
+                "octets": "50",
+                "value": 80
+              }
+            },
+            "refusals": [],
+            "target_id": 1234,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      }
+    }
+  ],
+  "payload": {
+    "octets": 168,
+    "packet_count": 1
+  }
+}

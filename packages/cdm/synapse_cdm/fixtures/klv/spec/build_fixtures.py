@@ -81,6 +81,7 @@ from synapse_cdm.adapters import klv_miis_codec as miis             # noqa: E402
 from synapse_cdm.adapters import klv_pack_codec as packs           # noqa: E402
 from synapse_cdm.adapters import klv_security_codec as security   # noqa: E402
 from synapse_cdm.adapters import klv_uas_codec as uas               # noqa: E402
+from synapse_cdm.adapters import klv_vmti_codec as vmti             # noqa: E402
 
 #: UUID-v8, `f1c7` namespace, with the document this round read written into the second and third
 #: groups. Version nibble `8` and RFC 9562 variant bits, so nothing issuing v4 or v7 can collide.
@@ -1797,9 +1798,240 @@ _PARK_11_FIXTURES: tuple[dict, ...] = (
     ),
 )
 
+
+# ======================================================================================
+# THE ST 0903.4 VMTI LOCAL SET FIXTURES — item 74, park 6, and every octet is the document's
+# ======================================================================================
+#
+# **THIS BLOCK IS THE OPPOSITE OF THE ST 0102.12 ONE.** That block had to build from element rules
+# because ST 0102.12 prints no worked example. ST 0903.4 prints one for nearly every element it
+# defines — `klv_vmti_codec.WORKED_EXAMPLES` holds 70 of them and reproduces 68 on every suite run
+# — so every VMTI octet below is taken from `WORKED_EXAMPLES` or from `PACK_WORKED_EXAMPLES` by
+# LOOKUP rather than typed, and a fixture cannot drift from the document without the codec's own
+# example check failing first.
+#
+# **THE ONE VALUE THAT IS NOT THE DOCUMENT'S, AND WHY IT HAD TO BE INVENTED.** VObject LS Tag 1
+# Ontology has no printed Example KLV Value in ST 0903.4 while Tag 2 Ontology_Class does, and
+# `ST 0903.4-46` requires "[t]he VObject LS Ontology (Tag 1) element shall appear in the KLV stream
+# prior to any appearance of a VObject Class (Tag 2) element". A fixture carrying the printed Class
+# with no Ontology would therefore be a non-conforming stream. The URI below is in the `.invalid`
+# TLD RFC 2606 reserves for exactly this — a name guaranteed never to resolve — so no fixture in
+# this repository points a consumer at a register that might one day exist.
+#
+# **AND THE IDENTITY MODEL THESE FIXTURES EXIST TO PIN IS A RULING AND NOT A READING.** See
+# `stanag4609.VMTI_IDENTITY_RULING`: the VTracker UUID keys, the Target ID Number never does. Two
+# of the five fixtures below are the negative cases that would pass under any other mapping.
+
+_VMTI_EXAMPLE = {(w.owner, w.tag): w.octets for w in vmti.WORKED_EXAMPLES}
+
+#: The §11.16 Location Truncation Pack, all nine members, from the document's own printed figures:
+#: 43.00\u00b0, 110.00\u00b0, 10 000 m, then the three sigmas and the three rhos.
+_LOCATION_PACK = "".join(octets for _clause, label, _index, octets, _printed, _value
+                         in vmti.PACK_WORKED_EXAMPLES if label == "Location Truncation Pack")
+
+#: RFC 2606's reserved TLD. See the block comment above: `ST 0903.4-46` forces an Ontology to be
+#: present and the document prints none.
+_SYNTHETIC_ONTOLOGY = "http://synthetic.invalid/vmti/ontology#"
+
+
+def _vmti_element(tag: int, octets: bytes) -> bytes:
+    """One VMTI triplet: BER-OID tag, BER length, Value. `ST 0903.4-11`'s TLV encoding."""
+    return codec.encode_ber_oid(tag) + codec.encode_ber_length(len(octets)) + octets
+
+
+def _vmti_series(members) -> bytes:
+    """`ST 0903.4-06`'s Series: `[L][V] [L][V] \u2026`, footnote 5's "No key is required"."""
+    return b"".join(codec.encode_ber_length(len(member)) + member for member in members)
+
+
+def _vtarget(target_id: int, elements) -> bytes:
+    """One VTarget Pack: the tagless BER-OID Target ID Number, then TLV triplets.
+
+    \u00a79.1: "The first, mandatory, element in the value field of each VTarget Pack is a BER-OID
+    encoded value to convey the Target ID Number of the target. The following elements form an
+    LS-like structure containing one or more Tag-Length-Value (TLV) triplets."
+    """
+    return codec.encode_ber_oid(target_id) + b"".join(
+        _vmti_element(tag, bytes.fromhex(octets)) for tag, octets in elements)
+
+
+def _vmti_ls(elements) -> str:
+    """A whole item 74 Value as hex, for `_packet`'s overrides.
+
+    NO KEY AND NO OUTER LENGTH, which is item 48's shape and not item 94's: ST 0601.14a \u00a78.74,
+    "The length field is the size of all VMTI LS metadata items to be packaged within Tag 74".
+    """
+    return b"".join(_vmti_element(tag, bytes.fromhex(octets))
+                    for tag, octets in elements).hex()
+
+
+def _nested(owner: str, tags) -> str:
+    """One nested Local Set under a VTarget Pack, from the document's own printed examples."""
+    return b"".join(_vmti_element(tag, bytes.fromhex(_VMTI_EXAMPLE[(owner, tag)]))
+                    for tag in tags).hex()
+
+
+#: The VMTI LS's own frame elements, every one of them a printed example: the set's Precision Time
+#: Stamp, the system name, the LS version, the totals, the frame number, the frame width and height
+#: and the source sensor. Tags 8 and 9 are here in every fixture on purpose \u2014 `ST 0903.4-24`
+#: requires them wherever a target reports a pixel-based location, and every VTarget below does.
+_VMTI_FRAME = tuple((tag, _VMTI_EXAMPLE[("VMTI LS", tag)])
+                    for tag in (2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+#: VTracker LS as the document prints it: the Track ID UUID of \u00a711.15.24.1, Detection Status
+#: 1 (Active, Table 16), the Start and End Time Stamps, the Algorithm string, Confidence 50 % and
+#: the Number of Track Points. Tag 5 Bounding Box and Tags 9\u201311 have no printed example and are
+#: absent rather than invented.
+_VTRACKER = _nested("VTracker LS", (1, 2, 3, 4, 6, 7, 8))
+
+#: The one VObject LS this file builds, and half of it is the document's: \u00a711.15.22.2's printed
+#: Ontology_Class 'Dismount/Non-combatant/Female/Child' under a `.invalid` Ontology URI.
+_VOBJECT = (_vmti_element(1, _SYNTHETIC_ONTOLOGY.encode("utf-8"))
+            + _vmti_element(2, bytes.fromhex(_VMTI_EXAMPLE[("VObject LS", 2)]))).hex()
+
+_PARK_6_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="a_vtracker_uuid_is_the_only_key_a_vmti_track_gets",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (23, _EXAMPLE[23]), (24, _EXAMPLE[24]),
+            (74, _vmti_ls(_VMTI_FRAME + ((101, _vmti_series([_vtarget(1234, (
+                (1, _VMTI_EXAMPLE[("VTarget Pack", 1)]),
+                (4, _VMTI_EXAMPLE[("VTarget Pack", 4)]),
+                (5, _VMTI_EXAMPLE[("VTarget Pack", 5)]),
+                (6, _VMTI_EXAMPLE[("VTarget Pack", 6)]),
+                (10, _VMTI_EXAMPLE[("VTarget Pack", 10)]),
+                (11, _VMTI_EXAMPLE[("VTarget Pack", 11)]),
+                (12, _VMTI_EXAMPLE[("VTarget Pack", 12)]),
+                (102, _VOBJECT),
+                (104, _VTRACKER),
+            ))]).hex()),))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE FIXTURE M'S RULING OF 2026-09-05 IS ABOUT.** One VTarget carrying a VTracker "
+            "LS whose Tag 1 is \u00a711.15.24.1's own printed UUID "
+            "F81D4FAE7DEC11D0A76500A0C91E6BF6. What must happen: THREE objects beside the packet's "
+            "own Entity and Event \u2014 a DETECTION Event, an Entity and a Track, the last two "
+            "keyed on that UUID under VMTI-VTRACKER-TRACK-ID and on nothing else. The Target ID "
+            "Number 1234 (\u00a711.15's own BER-OID example 0x89 0x52) appears in source_ids under "
+            "VMTI-VTARGET-TARGET-ID-NUMBER and NEVER as a key. The position is Tags 10 and 11's "
+            "printed +10.00\u00b0 offsets added to \u00a78.23/\u00a78.24's Frame Center pair, "
+            "PositionSource ESTIMATED, alt_m from Tag 12's printed 10 000 m. entity_type is "
+            "UNKNOWN even though VObject Tag 2 reads 'Dismount/Non-combatant/Female/Child', which "
+            "is M's amended default 3 and gap 20's answer. track_quality is 0.5, from Tag 7's "
+            "printed 50 %"),
+        citation=("ST 0903.4 \u00a79.1, \u00a711.1\u2013\u00a711.12, \u00a711.15, "
+                  "\u00a711.15.22.2, \u00a711.15.24.1\u2013.8, ST 0903.4-06/-07/-09/-10/-11/-24/-46, "
+                  "Table 16; ST 0601.14a \u00a78.74"),
+    ),
+    dict(
+        name="a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (23, _EXAMPLE[23]), (24, _EXAMPLE[24]),
+            (74, _vmti_ls(_VMTI_FRAME + ((101, _vmti_series([_vtarget(1234, (
+                (1, _VMTI_EXAMPLE[("VTarget Pack", 1)]),
+                (5, _VMTI_EXAMPLE[("VTarget Pack", 5)]),
+                (8, _VMTI_EXAMPLE[("VTarget Pack", 8)]),
+                (9, _VMTI_EXAMPLE[("VTarget Pack", 9)]),
+                (19, _VMTI_EXAMPLE[("VTarget Pack", 19)]),
+                (20, _VMTI_EXAMPLE[("VTarget Pack", 20)]),
+                (21, _VMTI_EXAMPLE[("VTarget Pack", 21)]),
+            ))]).hex()),))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE HALF OF THE RULING THAT WOULD PASS UNDER ANY MAPPING BUT THIS ONE.** A VTarget "
+            "with a Target ID Number and no VTracker LS. What must happen: ONE DETECTION Event "
+            "and NOTHING ELSE \u2014 no Entity, no Track \u2014 because \u00a711.15 scopes the "
+            "Target ID Number 'until the identification number is reset by the New Detection Flag "
+            "(Tag 6 within the VTarget Pack)', \u00a79.4 makes tag 6 optional (it is absent here) "
+            "and ST 0903.4-28 requires uniqueness only 'to the extent possible'. The event's "
+            "geometry is None: the pack states a centroid PIXEL and pixel rows and columns, and no "
+            "geolocation is computed from a pixel because ST 0903.4 defines none. This is the "
+            "shipped `asterix_cat048.py` / `legion.py` shape, reached by a third format"),
+        citation=("ST 0903.4 \u00a79.4, \u00a711.15, \u00a711.15.1, \u00a711.15.5, "
+                  "\u00a711.15.8\u2013.9, \u00a711.15.19\u2013.21, ST 0903.4-09/-10/-24/-28"),
+    ),
+    dict(
+        name="a_target_location_pack_is_absolute_and_needs_no_frame_centre",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (74, _vmti_ls(_VMTI_FRAME + ((101, _vmti_series([_vtarget(1234, (
+                (5, _VMTI_EXAMPLE[("VTarget Pack", 5)]),
+                (17, _LOCATION_PACK),
+                (104, _VTRACKER),
+            ))]).hex()),))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE PRECEDENCE, AND THE PACKET DELIBERATELY CARRIES NO FRAME CENTRE.** VTarget Tag "
+            "17 Target Location is \u00a711.16's whole printed Location Truncation Pack \u2014 "
+            "43.00\u00b0, 110.00\u00b0, 10 000 m, three sigmas and three rhos \u2014 and the ST "
+            "0601 packet around it carries neither item 23 nor item 24. What must happen: a "
+            "Position at (43.0, 110.0) with alt_m 10 000 all the same, because \u00a711.15 Tag 17 "
+            "is ABSOLUTE: 'even if the VMTI LS is embedded within a MISB ST 0601 LS, Target "
+            "Location may still be used'. accuracy_m stays None with the three sigmas carried "
+            "verbatim: combining them into one number is a statistic the document does not define"),
+        citation="ST 0903.4 \u00a711.15 Tag 17, \u00a711.16, \u00a711.19, ST 0903.4-62/-63/-65/-67",
+    ),
+    dict(
+        name="an_offset_target_with_no_frame_centre_emits_no_position",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (74, _vmti_ls(_VMTI_FRAME + ((101, _vmti_series([_vtarget(1234, (
+                (5, _VMTI_EXAMPLE[("VTarget Pack", 5)]),
+                (10, _VMTI_EXAMPLE[("VTarget Pack", 10)]),
+                (11, _VMTI_EXAMPLE[("VTarget Pack", 11)]),
+                (104, _VTRACKER),
+            ))]).hex()),))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE REFUSAL M RULED ON, AND THE CASE THAT SEPARATES AN ENTITY FROM A TRACK.** The "
+            "same +10.00\u00b0 offsets as the first fixture and NO item 23 or 24 to add them to. "
+            "\u00a711.15 Tag 10: the offsets have 'meaning only if the VMTI LS is embedded within "
+            "a MISB ST 0601 LS' and are 'added to the Frame Center Latitude metadata item from the "
+            "parent MISB ST 0601 packet'; target locations off the earth or outside the mapped "
+            "range 'should either not be reported, or be reported as an \"error\"'. What must "
+            "happen: NO Position is computed, the DETECTION Event's geometry is None, the Entity "
+            "IS still emitted because the VTracker UUID is present and guarantees the identity "
+            "regardless \u2014 and NO Track, because `Track.samples` requires at least one "
+            "position at an instant and there is none. The reason is on the object, in "
+            "position_basis"),
+        citation="ST 0903.4 \u00a711.15 Tags 10 and 11; ST 0601.14a \u00a78.23; models.Track.samples",
+    ),
+    dict(
+        name="two_vtargets_sharing_one_target_id_number_are_two_detections",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]), (23, _EXAMPLE[23]), (24, _EXAMPLE[24]),
+            (74, _vmti_ls(_VMTI_FRAME + ((101, _vmti_series([
+                _vtarget(1234, (
+                    (1, _VMTI_EXAMPLE[("VTarget Pack", 1)]),
+                    (5, _VMTI_EXAMPLE[("VTarget Pack", 5)]),
+                )),
+                _vtarget(1234, (
+                    (1, _VMTI_EXAMPLE[("VTarget Pack", 2)]),
+                    (5, _VMTI_EXAMPLE[("VTarget Pack", 4)]),
+                )),
+            ]).hex()),))),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "**THE FIXTURE THAT IS ONLY BUILDABLE BECAUSE ST 0903.4-28 SAYS 'TO THE EXTENT "
+            "POSSIBLE'.** Two VTarget Packs in one VTargetSeries carrying the SAME Target ID "
+            "Number 1234. \u00a711.15 adds the deliberate case: 'Sophisticated VMTI systems may "
+            "use the same Target ID Number to identify a common target detected by different "
+            "sensors'. What must happen: TWO DETECTION Events with DIFFERENT event_ids, because "
+            "the detection key is the packet's stamp and index plus the target's ORDINAL in the "
+            "series and only then the Target ID Number. A mapping that keyed on the id alone "
+            "would emit one event here and silently drop a detection"),
+        citation="ST 0903.4 \u00a79.1, \u00a711.15, ST 0903.4-07/-28",
+    ),
+)
+
 ADAPTER_FIXTURES = (ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
                     + _PRE_RELEASE_FIXTURES
-                    + _PARK_11_FIXTURES)
+                    + _PARK_11_FIXTURES + _PARK_6_FIXTURES)
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:

@@ -263,11 +263,13 @@ measured off the index afterwards, and which step of it did not run.
 Nothing here is in a release. The distribution on the index is **1.6.0**, and a reader who ran
 `pip install synapse-cdm` has that and not this.
 
-**What moved inside the distribution: 118 files.**
+**What moved inside the distribution: 138 files.**
 
 **AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
 `gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `tests/test_cdm_release.py`,
 `tests/test_cdm_format_coverage.py`, `tests/test_cdm_stanag4609_adapter.py`,
+`tests/test_cdm_klv_framing.py` (added to this list 2026-09-05 by the park 6 round, part 2, which
+moved it),
 `.github/workflows/publish.yml`, `RELEASE_NOTES.md` and `PUBLICATION.md` all moved and **none of
 them is in the distribution**: the packaged contents are `pyproject.toml` and the `synapse_cdm/`
 tree, so a gate, a test module, a workflow file, the repository-root notes and the publication
@@ -275,7 +277,7 @@ record reach no installed reader and are not part of the arc this section accoun
 the same boundary `gates/bump_derivation.py` measures the bump over, and stating it here is what
 stops the next round from reading a five-file arc as the round's size.
 
-**The 118, by what they are.** The figure read **117** until 2026-09-05, when the park 6 round added one module to the arc; the list below is amended at the entry that moved and nowhere else. Four shipped documents:
+**The 138, by what they are.** The figure read **117** until 2026-09-05, when the park 6 round added one module to the arc, and **118** until later the same day, when **the park 6 round, part 2, added twenty**: five payloads, their five parsed twins and their ten goldens. Both earlier figures are kept because each was right on its own reading; the list below is amended at the entries that moved and nowhere else. Four shipped documents:
 
 * `synapse_cdm/fixtures/klv/README.md`
 * `synapse_cdm/FORMAT_COVERAGE.md`
@@ -295,14 +297,23 @@ Four modules under `adapters/` — two new, two extended:
   MINOR signal on its own (a public surface appears, existing code keeps working) and why no row of
   `FORMAT_COVERAGE.md`'s ST 0601 tag table moved with it: row 74 still reads `not yet`, and what
   keeps it there is the mapping, which is park 6's remaining half.
+  **DATED CORRECTION, 2026-09-05, BY PART 2 OF THE SAME ROUND: it is wired into something now, and
+  row 74 has moved.** The paragraph above is left in its own tense because it was true of the tree
+  part 1 committed. What is true of this one: `klv_uas_codec` reads item 74's Value through this
+  module, `stanag4609.py` maps it, row 74 reads `stanag4609 1.0.0 · mapped`, and the module's
+  public surface gains `CARRIER_BASIS`. An installed reader now gains three new object kinds from a
+  payload carrying an item 74 — a `DETECTION` `Event`, a `Track` and its `Entity` — and nothing at all
+  from one that does not.
 
 The fixture generator and the pin record:
 
 * `synapse_cdm/fixtures/klv/spec/build_fixtures.py`
 * `synapse_cdm/fixtures/klv/spec/klv_pin.json` — `parks.the_ones_that_closed` gains `park_11`, and
-  `parks.how_many` and `parks.honest_strength` gain their dated clause
+  `parks.how_many` and `parks.honest_strength` gain their dated clause, and
+  then `park_6` and a second pair of dated clauses later the same day; `tag_table_st_0601_14`'s item 74
+  entry moves its `cdm_field` from `Entity.attributes` to `Event (DETECTION), Track, Entity`
 
-Twelve payloads and parsed twins, the six park 11 fixtures:
+Twenty-two payloads and parsed twins. The six park 11 fixtures:
 
 * `synapse_cdm/fixtures/klv/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.klv`
 * `synapse_cdm/fixtures/klv/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.parsed.json`
@@ -317,8 +328,25 @@ Twelve payloads and parsed twins, the six park 11 fixtures:
 * `synapse_cdm/fixtures/klv/the_miis_core_identifier_from_the_documents_own_example.klv`
 * `synapse_cdm/fixtures/klv/the_miis_core_identifier_from_the_documents_own_example.parsed.json`
 
-And ninety-six goldens — the eighty-four that already existed, every one of which gained the same
-two paths, and twelve new ones for the six new payloads:
+And the five park 6 fixtures, added 2026-09-05 by part 2 of that round:
+
+* `synapse_cdm/fixtures/klv/a_target_location_pack_is_absolute_and_needs_no_frame_centre.klv`
+* `synapse_cdm/fixtures/klv/a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.json`
+* `synapse_cdm/fixtures/klv/a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.klv`
+* `synapse_cdm/fixtures/klv/a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.json`
+* `synapse_cdm/fixtures/klv/a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.klv`
+* `synapse_cdm/fixtures/klv/a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.json`
+* `synapse_cdm/fixtures/klv/an_offset_target_with_no_frame_centre_emits_no_position.klv`
+* `synapse_cdm/fixtures/klv/an_offset_target_with_no_frame_centre_emits_no_position.parsed.json`
+* `synapse_cdm/fixtures/klv/two_vtargets_sharing_one_target_id_number_are_two_detections.klv`
+* `synapse_cdm/fixtures/klv/two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.json`
+
+And one hundred and six goldens — the eighty-four that already existed, every one of which gained
+the same two paths, twelve new ones for the six park 11 payloads, and **ten more, added 2026-09-05 by
+part 2 of the park 6 round, which moved NOT ONE of the ninety-six before them**. That is worth a
+sentence rather than a number: the pinned stream carries no item 74, part 2 declared no per-object
+annotation for a packet without one, and every golden written before it is byte-identical after it —
+so the ten below are additions and the arc's golden set grew without moving:
 
 * `synapse_cdm/fixtures/klv/golden/a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`
 * `synapse_cdm/fixtures/klv/golden/a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`
@@ -416,6 +444,16 @@ two paths, and twelve new ones for the six new payloads:
 * `synapse_cdm/fixtures/klv/golden/zero_length_item_is_an_explicit_unknown.parsed.cdm.json`
 * `synapse_cdm/fixtures/klv/golden/zero_length_item_on_a_required_item_is_a_defect.cdm.json`
 * `synapse_cdm/fixtures/klv/golden/zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_offset_target_with_no_frame_centre_emits_no_position.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`
 
 #### The housekeeping round, 2026-09-05 — five bounded items, a procedure that now says what its own pre-check is read for, and one live figure that went stale again in the round after it was swept
 
@@ -632,6 +670,128 @@ gaining a field, `decode_packet` MINOR, the `<statement N>` units PATCH for impo
 precedent is legible and writing it out is still somebody's judgement rather than this record's.
 `pending.unruled` is therefore **not** the empty list, which is the release procedure's own
 pre-step before a version number is typed: **1.7.0 cannot be derived until they are ruled.**
+
+**DATED CORRECTION, 2026-09-05, BY THE PARK 6 ROUND, PART 2: they are ruled, and there are
+eleven.** The paragraph above is left in its own tense — it was true of the tree the park 11 round
+committed, and its list of ten is that tree's. What is true of this one is in *The park 6 round,
+part 2* below: the same ten plus `stanag4609.py:_parsed_packet`, which this round's own diff
+created, are each ruled in a `**Bump ruling.**` paragraph under M's ruling of 2026-09-05, and
+`gates/bump_derivation.py --json` reads `pending.unruled` as `[]` with `pending.kind` MINOR and
+`pending.number` 1.7.0.
+
+
+#### The park 6 round, part 2 — item 74 becomes objects, 2026-09-05
+
+**WHAT AN INSTALLED READER GETS THAT THEY DID NOT HAVE.** A payload carrying ST 0601 item 74 now
+yields, beside the packet's own `Entity`/`Event` pair, **one `DETECTION` `Event` per VTarget Pack
+per packet**, and **a `Track` with its `Entity` for every VTarget that carries a VTracker LS Track
+ID**. That is the first `Event` this adapter has ever emitted about a third party: the twenty-six
+witnessed items are a platform reporting itself, which is why the packet event is a
+`STATUS_CHANGE`, and item 74 is the item that reports something else. `adapters/klv_vmti_codec.py`
+was written by part 1 and wired into nothing; `klv_uas_codec` now reads item 74's Value through it
+under §8.74's bare-triplets shape — "The length field is the size of all VMTI LS metadata items to
+be packaged within Tag 74", which is item 48's arrangement and not item 94's — and
+`adapters/stanag4609.py` maps the result.
+
+**THE MAPPING IS M'S RULING OF 2026-09-05 AND NOT A READING OF THE DOCUMENT, WHICH IS THE ONE THING
+A LATER READER MUST NOT LOSE.** Part 1 of this round stopped rather than choose, and its report is
+the record of why: ST 0903.4 narrows every candidate identity model and settles none. The refused
+identifier is the VTarget Pack **Target ID Number**, on three clauses — §11.15 scopes it *"until
+the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack)"*;
+§9.4 with `ST 0903.4-09`/`-10` makes every TLV triplet including tag 6 optional, so the reset need
+not be observable at all; and `ST 0903.4-28` requires uniqueness only *"[t]o the extent possible"*,
+with §11.15 adding that systems *"may use the same Target ID Number to identify a common target
+detected by different sensors"*. The identifier used is **VTracker LS Tag 1**, *"[a] value that
+uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID) as
+standardized by the Open Software Foundation in ISO/IEC 9834-8"* — no reset clause, no best-effort
+qualifier. The Target ID Number is carried in `source_ids` under `VMTI-VTARGET-TARGET-ID-NUMBER`
+and is never a key. The whole ruling with its clauses is at `stanag4609.VMTI_IDENTITY_RULING`.
+
+**AND THE CARRIER THIS ADAPTER USES IS ONE THE DOCUMENT DISCOURAGES.** §10: *"Use of VTracker is
+discouraged (although not forbidden). Use of VTrack LS is recommended, because it maps more
+directly to NATO STANAG 4676."* The recommended carrier is unreachable from here — §9.1 makes
+VTrack LS independent of ST 0601, and item 74 is an ST 0601 tag — so the discouraged carrier is the
+only one in reach. Both halves are recorded rather than one of them argued away.
+
+**WHAT MOVED IN A GOLDEN: NOTHING THAT EXISTED BEFORE.** The pinned stream carries no item 74, and
+this round declared **no per-object annotation for a packet without one** — so the ninety-six
+goldens the arc already held are byte-identical, and the ten new ones are additions. `_vmti_twin`'s
+docstring says why that differs from item 48, whose absence ST 0102.12 §6.5 makes a claim: there is
+no reading of an absent item 74 that a null block would prevent, and `attributes.klv_tag_order`
+already states tag 74 is not there. `VMTI_ABSENT_BASIS` carries the sentence.
+
+**THE PARK ARITHMETIC, RE-DERIVED FROM THE GATE AND NOT INCREMENTED.** `gates/parks_table.py` reads
+**ten closed** — parks 1, 2, 3, 4, 5, 6, 8, 9, 11 and 13 — and **three open**, parks 7, 10 and 12,
+all three of them public downloads. Park 6 closed on this round's artefact and it is the **second
+closure running** that moved neither delegation term: ST 0903.4 was pinned earlier the same day by
+part 1, so part 2 fetched nothing. The preamble in `FORMAT_COVERAGE.md`, park 12's set-claim,
+`klv_pin.json`'s `parks.how_many`, `parks.honest_strength` and `parks.the_ones_that_closed`, and
+this paragraph all moved in the same commit as the row.
+
+**ELEVEN UNITS RULED, AND THE PARAGRAPH ABOVE THIS SECTION IS THE ONE THEY ANSWER.** The park 11
+round left ten unruled and said so; this round's own diff makes an eleventh
+(`stanag4609.py:_parsed_packet`) and rules all eleven under M's ruling of 2026-09-05, which gives
+the rule by SHAPE rather than unit by unit: a NamedTuple or function whose declared surface gains a
+field or a case → MINOR, a `<statement N>` unit → PATCH, a new module or public name → MINOR,
+anything removed or renamed → a STOP not taken here because nothing was. `pending.unruled` is the
+empty list at this commit, which is the release procedure's pre-step before a version number is
+typed.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket` — MINOR, consistent with the
+1.4.1→1.5.0 and the 1.6.0 rulings for this same unit: two fields appended last (`vmti`, default
+`None`, and `vmti_refusal`, default `None`), the prior fields identical in name, type and order, so
+every positional unpack and every index is unchanged and every existing attribute is reachable
+under its old name. Not PATCH — the declared surface gains two fields a caller can read. Not MAJOR
+— nothing is removed and nothing moves. CHECK taken: `DecodedPacket._fields[-2:]` is
+`('vmti', 'vmti_refusal')` and the fields before them are v1.6.0's in order.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:decode_packet` — MINOR: the signature is
+unchanged and the same inputs decode one more tag, item 74, whose Value was previously reported in
+`unknown_tags` and parked. Every tag decoded before decodes to the same value — the measurement is
+that all ninety-six pre-existing goldens are byte-identical at this commit. New emitted content and
+not a corrected value, so PATCH is refused on its own row's terms; no importable name is removed,
+so MAJOR is refused. CHECK taken: signature unchanged, zero pre-existing goldens moved.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 4>` — PATCH: an import line,
+renumbered in place by the insertion of `klv_vmti_codec` above it. The gate names an unnamed
+top-level statement by its POSITION, so an inserted import reports every statement below it as a
+modification; the 1.6.0 section rules the same shape for statements 2 and 3 of this module. No
+importable name of this module is added, removed or changed in meaning by an import's index.
+CHECK taken: the v1.6.0 text of statement 4 is verbatim in HEAD, one position lower.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 5>` — PATCH: the same, an import
+line renumbered by the same insertion. CHECK taken: the v1.6.0 text is verbatim in HEAD, one
+position lower.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 7>` — PATCH: an import line
+renumbered in place by the insertion of `klv_vmti_codec`, the shape the 1.6.0 section rules six
+times for this module's statements 5–10. CHECK taken: the v1.6.0 text is verbatim in HEAD.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 8>` — PATCH: the same, an import
+line renumbered by the same insertion. CHECK taken: the v1.6.0 text is verbatim in HEAD.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 9>` — PATCH: the same, an import
+line renumbered by the same insertion. CHECK taken: the v1.6.0 text is verbatim in HEAD.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 10>` — PATCH: the same, an import
+line renumbered by the same insertion. CHECK taken: the v1.6.0 text is verbatim in HEAD.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 11>` — PATCH: a module-level
+statement modified in place and renumbered by the same insertion; no name is added or removed by
+it. CHECK taken: no importable name of this module disappears between v1.6.0 and HEAD.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 12>` — PATCH: the same, a
+module-level statement modified in place with no name added or removed. CHECK taken: as above.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:_parsed_packet` — MINOR: the signature is
+unchanged and the parsed twin it returns gains a `vmti` key for a packet carrying item 74, and
+nothing at all for a packet that does not. A function whose declared surface gains a case is
+MINOR by the same shape as `decode_packet` above. Not PATCH — a twin's key set is what the harness
+harvests for the lossless check and what `_agree` cross-checks, so a new key is new content and
+not a corrected value. Not MAJOR — the key is CONDITIONAL, so every twin written before this
+commit parses unchanged and every golden built from one is byte-identical. CHECK taken: a twin for
+`mandatory_items_only.klv` has no `vmti` key and its golden is unmoved.
+
 
 ### 1.6.0 — 2026-09-05 — eighteen ST 0601 items promoted on the document's own worked examples, the time scale named as ST 0603.5 names it, and alt_m is HAE
 

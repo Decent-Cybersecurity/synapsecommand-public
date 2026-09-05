@@ -110,6 +110,7 @@ from synapse_cdm.adapters import klv_codec as framing
 from synapse_cdm.adapters import klv_miis_codec as miis
 from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
+from synapse_cdm.adapters import klv_vmti_codec as vmti
 
 #: The pinned copies every citation in this module is read from. Stated here as well as in
 #: `klv_pin.json` because a module that cites sections without naming the copy is citing a memory.
@@ -862,6 +863,27 @@ CORE_IDENTIFIER_TAG: int = 94
 #: the arrangement `NESTED_SET_BASIS` was written for, applied to the second delegating item.
 CORE_IDENTIFIER_BASIS = miis.CARRIER_BASIS
 
+#: **THE FOURTH ITEM WHOSE VALUE IS ANOTHER DOCUMENT'S STRUCTURE, AND THE SECOND THAT IS A BARE RUN
+#: OF TRIPLETS.** Item 74's Value is a MISB ST 0903.4 VMTI Local Set, read by `klv_vmti_codec` and
+#: never by a row here, for `NESTED_SETS`' own reason: `ITEMS` answers "what does this integer mean
+#: under one affine map", and a set carrying a VTargetSeries of packs carrying five further nested
+#: sets is not one integer. It sits beside `NESTED_SETS` rather than in it because that table's
+#: value is walked by `klv_security_codec` and this one's by a different module; §8.74's second
+#: bullet — "The length field is the size of all VMTI LS metadata items to be packaged within Tag
+#: 74" — is nonetheless item 48's shape exactly, so the Value is handed over bare.
+#:
+#: **ITS WITNESS IS DOCUMENT-SIDE AND IT IS THE LARGEST IN THIS FILE.** The pinned stream carries
+#: no item 74 — `WITNESSED_TAGS` stops at 65 — so nothing here is stream-witnessed. What stands
+#: behind it is `klv_vmti_codec.check_against_the_documents_own_examples()`, 70 of ST 0903.4's own
+#: printed examples run on every suite run, of which 68 reproduce and 2 are the ruled printed
+#: defects. That is the `WITNESS_KINDS` sense of a document-side witness and it is not a stream one.
+VMTI_TAG: int = 74
+
+#: What ST 0601.14a says item 74 carries, quoted, so the delegation is readable from this module —
+#: the arrangement `NESTED_SET_BASIS` was written for and `CORE_IDENTIFIER_BASIS` re-used, applied
+#: to the third delegating item.
+VMTI_BASIS = vmti.CARRIER_BASIS
+
 #: **THE SECOND CROSSING OF THE SCOPE CONTRACT, 2026-09-04, AND ITS GROUND IS DIFFERENT FROM
 #: `NESTED_SETS`'.** Item 48 crossed on a SECOND DOCUMENT agreeing with this one about sixteen
 #: octets. These fifteen cross on THIS document's own printed worked examples, under RULING 1
@@ -1274,6 +1296,19 @@ class DecodedPacket(NamedTuple):
     #: to a third layer: the octets stay parked at `raw_items`, the clause that decided it is
     #: named, and the other twenty-five items are untouched.
     core_identifier_refusal: dict | None = None
+    #: The decoded ST 0903.4 VMTI Local Set from item 74, or None where the packet carried no item
+    #: 74 — which is every packet of the only stream held. **None means THIS PACKET REPORTED NO
+    #: MOVING TARGETS AND NEVER "there were none"**: §8.74 makes item 74 Optional and ST 0903.4-32
+    #: makes the report itself conditional, so an absent item 74 is a fact about what the emitter
+    #: sent and not about the scene. The caller says that sentence rather than emitting an empty
+    #: detection list.
+    vmti: vmti.VmtiLocalSet | None = None
+    #: Item 74 refused, as a structured refusal, or None. **THE ITEM IS REFUSED AND THE PACKET IS
+    #: NOT** — `pack_refusals`' ruling, which is `klv_security_codec`'s element precedent, applied
+    #: to a fourth layer. Note the asymmetry this inherits from `klv_vmti_codec`: a refusal INSIDE
+    #: the set (a bad element, a bad VTarget) is carried by the set's own `refusals` and the set
+    #: still decodes; only a failure to walk the set at all lands here.
+    vmti_refusal: dict | None = None
 
     @property
     def checksum_valid(self) -> bool | None:
@@ -1403,6 +1438,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
     security_set = None
     core_identifier = None
     core_identifier_refusal: dict | None = None
+    vmti_set = None
+    vmti_refusal: dict | None = None
 
     for entry in framing.walk_local_set(buf, offset):
         order.append(entry.tag)
@@ -1441,6 +1478,22 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
                         "class": refusal.refusal_class, "reason": str(refusal),
                         "octets": entry.value.hex(), "value_offset": entry.value_offset,
                         "section": "8.94", "source": miis.SOURCE_ST_1204_1,
+                    }
+                continue
+            if entry.tag == VMTI_TAG:
+                # ST 0601 item 74. §8.74: "The length field is the size of all VMTI LS metadata
+                # items to be packaged within Tag 74" — item 48's shape, so the Value is handed
+                # over bare and there is no second key to strip. A refusal is STRUCTURED and local
+                # to the item: `klv_vmti_codec` raises with the clause that decided it, and the
+                # packet goes on being decoded.
+                try:
+                    vmti_set = vmti.decode_vmti_local_set(entry.value)
+                except (vmti.VmtiError, ValueError) as refusal:
+                    vmti_refusal = {
+                        "tag": entry.tag, "name": "VMTI Local Set",
+                        "class": type(refusal).__name__, "reason": str(refusal),
+                        "octets": entry.value.hex(), "value_offset": entry.value_offset,
+                        "section": "8.74", "source": vmti.SOURCE_ST_0903_4,
                     }
                 continue
             if entry.tag in DOCUMENT_WITNESSED_TAGS:
@@ -1491,7 +1544,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
         advisories=tuple(advisories), unknown_tags=tuple(unknown), raw_items=raw_items,
         checksum_stored=checksum_stored, checksum_computed=checksum_computed,
         security=security_set, pack_refusals=tuple(pack_refusals),
-        core_identifier=core_identifier, core_identifier_refusal=core_identifier_refusal)
+        core_identifier=core_identifier, core_identifier_refusal=core_identifier_refusal,
+        vmti=vmti_set, vmti_refusal=vmti_refusal)
 
 
 def decode_stream(buf: bytes) -> list[DecodedPacket]:

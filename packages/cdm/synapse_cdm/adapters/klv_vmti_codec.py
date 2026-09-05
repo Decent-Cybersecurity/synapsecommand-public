@@ -117,6 +117,7 @@ __all__ = [
     "VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH", "EXTERNAL_ONTOLOGIES_NOT_RESOLVED",
     "PRINTED_EXAMPLE_DISAGREEMENTS", "VMASK_BIT_MASK_FROM_THE_DERIVATION",
     "VTRACKER_TRACK_ID_FROM_THE_DERIVATION", "WORKED_EXAMPLES",
+    "CARRIER_BASIS",
     "Element", "RefusedElement", "MaskRun", "FpaIndex", "Location", "Kinematics",
     "VTargetPack", "VmtiLocalSet",
     "decode_vmti_local_set", "decode_vtarget_series", "decode_vtarget_pack", "decode_series",
@@ -132,6 +133,25 @@ SOURCE_ST_0903_4: Final[str] = (
     "MISB ST 0903.4, SHA-256 "
     "da46ba5eb8b07bc319cf2ba600c9f24344e3a288651e993d6e373d0ac57e442b, "
     "fixtures/klv/spec/ST0903.4.pdf"
+)
+
+#: What ST 0601.14a says item 74 carries, quoted, so the delegation is readable from this module —
+#: `klv_security_codec.CARRIER_BASIS`' arrangement, applied to the third delegating item, and the
+#: constant `klv_uas_codec.VMTI_BASIS` re-exports. §8.74's second bullet is the sentence that makes
+#: item 74's Value a BARE run of ST 0903 triplets with no key and no second length to strip, which
+#: is item 48's shape and not item 94's; and §8.74.1 is the sentence that makes the PARENT packet
+#: part of this set's meaning, which is what tags 10 and 11 later depend on.
+CARRIER_BASIS: Final[str] = (
+    "MISB ST 0601.14a \u00a78.74, page 120: 'MISB ST 0903 VMTI Local Set metadata items', Length "
+    "Variable, Max Length Not Limited, Required in LS? Optional, Multiples Allowed? No, KLV Key "
+    "06.0E.2B.34.02.0B.01.01.0E.01.03.03.06.00.00.00 (CRC 51307) \u2014 the same UL and CRC this "
+    "module records at LOCAL_SET_KEYS['VMTI LS'] from ST 0903.4's own Table 1 key row. "
+    "\u00a78.74's bullets: 'Use the MISB ST 0903 Local Set within the MISB ST 0601 Tag 74' and "
+    "'The length field is the size of all VMTI LS metadata items to be packaged within Tag 74'. "
+    "\u00a78.74.1: 'The VMTI Local Set allows users to include, or nest, VMTI LS (MISB ST 0903 "
+    "[15]) metadata items within MISB ST 0601. This provides users who are required to use the "
+    "VMTI LS a method to leverage the items within MISB ST 0601 (like platform location, and "
+    "sensor pointing angles, or frame center).'"
 )
 
 #: The six registered Universal Labels of the sets and packs this module reads, from the key row of

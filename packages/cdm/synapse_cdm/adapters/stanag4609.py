@@ -135,6 +135,7 @@ from synapse_cdm.adapters import klv_miis_codec as miis
 from synapse_cdm.adapters import klv_pack_codec as packs
 from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_uas_codec as uas
+from synapse_cdm.adapters import klv_vmti_codec as vmti
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
 from synapse_cdm.models import (
     CDMBase,
@@ -143,6 +144,8 @@ from synapse_cdm.models import (
     Kinematics,
     Position,
     SourceId,
+    Track,
+    TrackSample,
 )
 from synapse_cdm.geo import Point
 
@@ -157,6 +160,95 @@ OBSERVATION_SYSTEM = "UAS-LS-PACKET"
 
 #: §8.2.1: "the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z)".
 EPOCH = _dt.datetime(1970, 1, 1, tzinfo=_dt.timezone.utc)
+
+#: `SourceId.system` for a VMTI TRACK identity, and it is deliberately not `OBSERVATION_SYSTEM`.
+#: `OBSERVATION_SYSTEM` is packet-scoped by construction — its external id is "<stamp>|<index>" —
+#: and a VTracker Track ID is the one identifier in ST 0903.4 that is NOT scoped to a packet: it
+#: is a UUID, so its namespace is the world's. Keying it under the packet system would put a
+#: global identifier in a per-packet id space and make two packets' reports of one track two
+#: entities, which is the failure this ruling exists to avoid.
+VMTI_TRACK_SYSTEM = "VMTI-VTRACKER-TRACK-ID"
+
+#: `SourceId.system` for one DETECTION, which is packet-scoped and says so. A detection is an
+#: event at an instant and this adapter never claims two of them are the same target, so the
+#: external id is the packet's own key plus the target's ORDINAL IN THE VTargetSeries and then its
+#: Target ID Number: the ordinal is what makes it unique unconditionally, because `ST 0903.4-28`
+#: requires the Target ID Number to be unique only "[t]o the extent possible" and two packs in one
+#: series carrying one id is therefore a stream this adapter must not collapse.
+VMTI_DETECTION_SYSTEM = "VMTI-VTARGET"
+
+#: `attributes.klv_object_role` on an Entity this adapter derived from inside item 74, so egress
+#: can tell it from a PACKET Entity without inspecting which attributes it happens to carry.
+#: `from_cdm` replays the octets ingest parked and a target Entity has none to replay — its octets
+#: are already inside item 74 of the packet Entity beside it.
+VMTI_TARGET_ROLE = "vmti_target"
+
+#: **M'S RULING OF 2026-09-05, WHICH IS WHY THIS ADAPTER KEYS AN IDENTITY ON THE VTracker UUID AND
+#: ON NOTHING ELSE.** Recorded here as data because the mapping is not derivable from ST 0903.4:
+#: the document narrows every candidate and settles none, so the choice is a ruling and a reader
+#: is owed the clauses it was ruled against.
+#:
+#: **THE IDENTIFIER THAT IS NOT USED, AND THE THREE CLAUSES THAT DISQUALIFY IT.** The VTarget
+#: Pack's Target ID Number is the obvious key and it is refused. §11.15's Notes: it "[u]niquely
+#: identifies a target across multiple frames UNTIL THE IDENTIFICATION NUMBER IS RESET BY THE NEW
+#: DETECTION FLAG (Tag 6 within the VTarget Pack)" — so two appearances of one id are two targets
+#: across a reset. §9.4 and `ST 0903.4-09`/`-10`: "No particular TLV triplet is mandatory, but at
+#: least one must be present" — tag 6 is a TLV triplet, so a fully conforming pack may omit the
+#: flag entirely and the reset is then not observable at all. `ST 0903.4-28`: "To the extent
+#: possible a VTarget Pack Target ID Number shall uniquely identify a given target" — best effort,
+#: not a guarantee — and §11.15 adds that "[s]ophisticated VMTI systems may use the same Target ID
+#: Number to identify a common target detected by different sensors". The number is therefore
+#: CARRIED, in `source_ids` and in the attributes, and is never a key.
+#:
+#: **THE IDENTIFIER THAT IS USED.** VTracker LS Tag 1, Track ID, page 90: "A value that uniquely
+#: identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID) as
+#: standardized by the Open Software Foundation in ISO/IEC 9834-8." No reset clause and no "to the
+#: extent possible". Where it is present, this adapter emits a `Track` and its `Entity` keyed on
+#: it; where it is absent it emits `DETECTION` `Event`s and nothing else. That is
+#: `stanag4676.py`'s convention — key on what the source guarantees, refuse where it does not,
+#: `stanag4676.py:1517` — and where VTracker is absent it coincides with the shipped
+#: `asterix_cat048.py` and `legion.py` shape, `DETECTION` with no `Track` at all.
+#:
+#: **AND THE CARRIER THIS ADAPTER USES IS ONE THE DOCUMENT DISCOURAGES, WHICH IS RECORDED RATHER
+#: THAN ARGUED AWAY.** §10: "Note that the VMTI LS contains an element, VTracker, which could be
+#: used as an alternative to VTrack LS to specify track metadata. ... Use of VTracker is
+#: discouraged (although not forbidden). Use of VTrack LS is recommended, because it maps more
+#: directly to NATO STANAG 4676, the NATO ISR Tracking Standard." The recommended carrier is
+#: unreachable from here: §9.1 makes VTrack LS independent of ST 0601, and item 74 is an ST 0601
+#: tag, so no item 74 ever carries one — `klv_vmti_codec.VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH`. The
+#: discouraged carrier is the only one in reach, and this repository's STANAG 4676 adapter is
+#: where the recommended one would land.
+VMTI_IDENTITY_RULING = (
+    "M's ruling, 2026-09-05 (rounds/briefs/H2-park6-cdm.md): identity objects are keyed only on "
+    "the identifier ST 0903.4 guarantees unconditionally, VTracker LS Tag 1's UUID \u2014 'A value "
+    "that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification "
+    "(UUID) as standardized by the Open Software Foundation in ISO/IEC 9834-8' (page 90). Where "
+    "VTracker LS is present a Track and its Entity are emitted and keyed on that UUID; where it "
+    "is absent, no Track and no Entity \u2014 DETECTION Events only, one per VTarget per packet. "
+    "The VTarget Pack Target ID Number is carried and is NEVER a key: \u00a711.15 scopes it "
+    "'until the identification number is reset by the New Detection Flag (Tag 6 within the "
+    "VTarget Pack)', \u00a79.4 and ST 0903.4-09/-10 make every TLV triplet including tag 6 "
+    "optional so the reset need not be observable, and ST 0903.4-28 requires uniqueness only "
+    "'[t]o the extent possible'. \u00a710 discourages VTracker in favour of VTrack LS, which "
+    "\u00a79.1 puts outside item 74's reach entirely; the discouragement is carried at "
+    "klv_vmti_codec.VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH rather than acted on."
+)
+
+#: What an absent item 74 means, stated once. **NOT EMITTED ON AN OBJECT, AND THAT IS THIS ROUND'S
+#: DECLARATION**: the brief allows the pinned stream's goldens to move for "any per-object
+#: annotation the round declares", and this round declares none, so a packet without item 74
+#: produces exactly the bytes it produced before item 74 was decoded. The sentence lives here and
+#: in `FORMAT_COVERAGE.md`'s row 74 because it is a fact about the format and not about an object:
+#: unlike ST 0102.12 \u00a76.5, where the absence of a marking is a claim a reader could misread as
+#: "unclassified", there is no reading of an absent item 74 that a null block would prevent, and
+#: the packet's own `attributes.klv_tag_order` already says tag 74 is not there.
+VMTI_ABSENT_BASIS = (
+    "no ST 0601 item 74: this packet reported no VMTI Local Set. \u00a78.74 makes item 74 "
+    "'Required in LS? Optional', so its absence is a fact about what the emitter sent and not "
+    "about the scene \u2014 it is not a statement that nothing was moving, and no empty detection "
+    "list is emitted for it."
+)
+
 
 #: **THE HAE PRECEDENCE, AND IT IS THIS REPOSITORY'S AND SAYS SO (RULING 4, 2026-09-05).**
 #: `Position.alt_m` is documented "Metres HAE" and ST 0601.14a carries TWO items measured from the
@@ -250,7 +342,85 @@ def _parsed_packet(index: int, packet: uas.DecodedPacket, raw: bytes) -> dict:
         "advisories": [dict(advisory) for advisory in packet.advisories],
         "unknown_tags": list(packet.unknown_tags),
         "security": _security_dict(packet.security),
+        **_vmti_twin(packet),
     }
+
+
+def _vmti_twin(packet: uas.DecodedPacket) -> dict:
+    """`{"vmti": …}` for a packet that carries item 74, and `{}` for one that does not.
+
+    **THE KEY IS CONDITIONAL AND `_security_dict`'s IS NOT, AND THE DIFFERENCE IS THE TWO
+    DOCUMENTS'.** ST 0102.12 §6.5 — "The absence of Security Metadata does not signify Motion
+    Imagery Data as Unclassified" — makes an absent marking a claim, so a twin for an unlabelled
+    packet must carry `security: null` rather than nothing, or a reader could take the silence for
+    a marking that was read and found empty. There is no corresponding misreading of an absent
+    item 74: §8.74 makes it Optional, `attributes.klv_tag_order` already states that tag 74 is not
+    in the packet, and `VMTI_ABSENT_BASIS` says the rest. So a packet without one carries no key
+    at all — which is also what keeps every golden written before item 74 was decoded byte-exact.
+    """
+    if packet.vmti is None and packet.vmti_refusal is None:
+        return {}
+    return {"vmti": {
+        "element_order": list(packet.vmti.order) if packet.vmti else [],
+        "elements": _vmti_elements(packet.vmti.elements) if packet.vmti else {},
+        "targets": [_vmti_target(target) for target in packet.vmti.targets] if packet.vmti else [],
+        "refusals": [_vmti_refusal(r) for r in packet.vmti.refusals] if packet.vmti else [],
+        "unlisted_tags": list(packet.vmti.unlisted) if packet.vmti else [],
+        "item_refusal": packet.vmti_refusal,
+    }}
+
+
+def _vmti_target(target: vmti.VTargetPack) -> dict:
+    """One VTarget Pack as the twin states it. The tagless Target ID Number is a field, not a tag.
+
+    §9.1: "The first, mandatory, element in the value field of each VTarget Pack is a BER-OID
+    encoded value to convey the Target ID Number of the target", so it has no tag to key on and
+    `klv_vmti_codec.VTargetPack` gives it a field of its own. It is reproduced here in the same
+    shape for the same reason.
+    """
+    return {
+        "target_id": target.target_id,
+        "element_order": list(target.order),
+        "elements": _vmti_elements(target.elements),
+        "refusals": [_vmti_refusal(r) for r in target.refusals],
+        "unlisted_tags": list(target.unlisted),
+    }
+
+
+def _vmti_elements(elements: dict[int, vmti.DecodedElement]) -> dict:
+    return {str(tag): {"name": element.name, "kind": element.kind, "octets": element.octets,
+                       "value": _vmti_value(element.value)}
+            for tag, element in sorted(elements.items())}
+
+
+def _vmti_refusal(refusal: vmti.RefusedElement) -> dict:
+    return {"tag": refusal.tag, "name": refusal.name, "class": refusal.refusal_class,
+            "observed_length": refusal.observed_length, "octets": refusal.octets,
+            "clause": refusal.clause}
+
+
+def _vmti_value(value: Any) -> Any:
+    """A decoded VMTI value to JSON, structure preserved and nothing flattened.
+
+    `Location`, `Kinematics`, `MaskRun` and `FpaIndex` are slotted frozen dataclasses and a
+    `DecodedSet` is one too, so the walk is over `__slots__` rather than `__dict__`. A truncated
+    Location's absent members stay `None` — `ST 0903.4-63` forbids filler and a JSON `null` is the
+    only rendering that keeps "the pack ended before this group" distinct from a value of zero.
+    """
+    if isinstance(value, vmti.DecodedSet):
+        return {"set_name": value.set_name, "element_order": list(value.order),
+                "elements": _vmti_elements(value.elements),
+                "refusals": [_vmti_refusal(r) for r in value.refusals],
+                "unlisted_tags": list(value.unlisted)}
+    if isinstance(value, vmti.VTargetPack):
+        return _vmti_target(value)
+    if isinstance(value, (vmti.Location, vmti.Kinematics, vmti.MaskRun, vmti.FpaIndex)):
+        return {slot: _vmti_value(getattr(value, slot)) for slot in value.__slots__}
+    if isinstance(value, dict):
+        return {key: _vmti_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_vmti_value(item) for item in value]
+    return value
 
 
 def _security_dict(decoded) -> dict | None:
@@ -559,6 +729,7 @@ class Stanag4609Adapter(Adapter):
             entity, event = self._translate(index, packet, parsed_packet, payload,
                                             received_at, source)
             objects.extend((entity, event))
+            objects.extend(self._vmti_objects(index, packet, entity, event, received_at, source))
         return objects
 
     def _packets(self, raw: bytes | dict
@@ -639,6 +810,28 @@ class Stanag4609Adapter(Adapter):
                 raise Stanag4609ParseError(
                     f"parsed packet {entry.get('index')} states ST 0102.12 elements "
                     f"{stated_order} and its own item 48 octets carry {derived_order}"
+                )
+        # AND THE SAME ARRANGEMENT FOR ITEM 74, ON THE TARGETS RATHER THAN ON THE ELEMENTS. A
+        # twin's VTargetSeries is what decides how many DETECTION Events a fixture produces, so a
+        # twin stating a different series from the one its own octets carry would teach a golden
+        # file a target count. The Target ID Numbers are compared in order because the ordinal is
+        # part of every detection's key — ST 0903.4-28 makes the number itself best-effort.
+        stated_vmti = entry.get("vmti")
+        if (stated_vmti is None) != (packet.vmti is None):
+            raise Stanag4609ParseError(
+                f"parsed packet {entry.get('index')} "
+                f"{'states' if stated_vmti is not None else 'states no'} ST 0903.4 VMTI metadata "
+                f"and its own octets {'carry' if packet.vmti is not None else 'carry no'} ST 0601 "
+                "item 74"
+            )
+        if stated_vmti is not None and packet.vmti is not None:
+            stated_targets = [target.get("target_id")
+                              for target in stated_vmti.get("targets") or []]
+            derived_targets = [target.target_id for target in packet.vmti.targets]
+            if stated_targets != derived_targets:
+                raise Stanag4609ParseError(
+                    f"parsed packet {entry.get('index')} states VTarget Pack Target ID Numbers "
+                    f"{stated_targets} and its own item 74 octets carry {derived_targets}"
                 )
 
     # ------------------------------------------------------------------ translation
@@ -1427,6 +1620,14 @@ class Stanag4609Adapter(Adapter):
         }
         if packet.pack_refusals:
             attributes["pack_refusals"] = [dict(refusal) for refusal in packet.pack_refusals]
+        # ITEM 74, AND ONLY WHERE THERE IS ONE. `_vmti_twin`'s note applies here for the same
+        # reason: a packet that carries no VMTI Local Set gets no key, so every golden written
+        # before this round is byte-exact and `VMTI_ABSENT_BASIS` is a fact about the format
+        # rather than an annotation on an object.
+        if packet.vmti is not None or packet.vmti_refusal is not None:
+            attributes["vmti_local_set"] = _vmti_twin(packet)["vmti"]
+            attributes["vmti_basis"] = uas.VMTI_BASIS
+            attributes["vmti_identity_ruling"] = VMTI_IDENTITY_RULING
 
         if 15 in items:
             attributes["sensor_true_altitude_msl_m"] = _rendered(items[15].value)
@@ -1447,6 +1648,438 @@ class Stanag4609Adapter(Adapter):
         attributes["unavailable_fields"] = sorted(unavailable)
         attributes["source_extras"] = lossless.residual(parsed, self.CONSUMED)
         return attributes
+
+    # --------------------------------------------- ST 0903.4 VMTI Local Set, item 74
+
+    def _vmti_objects(self, index: int, packet: uas.DecodedPacket, platform: Entity,
+                      platform_event: Event, received_at: _dt.datetime,
+                      source: Any) -> list[CDMBase]:
+        """Item 74's targets as CDM objects, under `VMTI_IDENTITY_RULING`.
+
+        One `DETECTION` `Event` per VTarget per packet, always. A `Track` and its `Entity` only
+        where that VTarget carries a VTracker LS with a Track ID, keyed on that UUID and on
+        nothing else. A packet with no item 74 produces nothing here and no annotation anywhere,
+        which is what leaves every golden written before this round byte-exact.
+
+        **THE TIME IS THE PARENT PACKET'S AND NOT THE VMTI LS's, AND BOTH ARE READ.** Default 1 of
+        M's ruling times a detection by "the packet's Precision Time Stamp (item 2, under the park
+        3 time basis)", which is the ST 0601 item this adapter already converts through
+        `_observed_at` — leap seconds, §6.4's corrections and all. VMTI LS Tag 2 is the VMTI LS's
+        OWN Precision Time Stamp and is a different statement by a different emitter; it is
+        carried in the payload beside the value used, never substituted for it, and where the two
+        disagree that is the producer's fact and not this adapter's to reconcile.
+        """
+        if packet.vmti is None:
+            return []
+        observed_at = platform_event.observed_at
+        objects: list[CDMBase] = []
+        frame = self._vmti_frame(packet.vmti)
+        for ordinal, target in enumerate(packet.vmti.targets):
+            objects.extend(self._vmti_target_objects(
+                index, ordinal, target, packet, platform, frame, observed_at, received_at,
+                source))
+        return objects
+
+    def _vmti_frame(self, decoded: vmti.VmtiLocalSet) -> dict:
+        """The VMTI LS's own elements, which are the frame every VTarget's pixels are relative to.
+
+        Kept whole and separate from the targets: Table 1's elements describe the FRAME (its
+        number, its width and height in pixels, the sensor and its fields of view) and a pixel
+        number means nothing without them. `ST 0903.4-24`: "The Frame Width and Frame Height are
+        required when any target reports a pixel-based location."
+        """
+        elements = _vmti_elements(decoded.elements)
+        return {
+            "element_order": list(decoded.order),
+            "elements": elements,
+            "refusals": [_vmti_refusal(refusal) for refusal in decoded.refusals],
+            "unlisted_tags": list(decoded.unlisted),
+            "target_count": len(decoded.targets),
+            "frame_width_px": self._vmti_scalar(decoded.elements, 8),
+            "frame_height_px": self._vmti_scalar(decoded.elements, 9),
+            "vmti_precision_time_stamp": (elements.get("2") or {}).get("value"),
+            "pixel_basis": (
+                "a pixel number is a position in the FRAME and never on the earth. \u00a711.15 "
+                "Tag 1: the Target Centroid Pixel Number counts 'in raster order from the upper "
+                "left corner', so it is meaningless without Frame Width (Tag 8) and Frame Height "
+                "(Tag 9), which are carried above. NO GEOLOCATION IS COMPUTED FROM IT: converting "
+                "a pixel to a ground point needs the sensor model \u2014 pointing angles, slant "
+                "range, a terrain surface \u2014 and ST 0903.4 defines no such conversion, so the "
+                "pixel rides as a pixel"),
+        }
+
+    @staticmethod
+    def _vmti_scalar(elements: dict[int, vmti.DecodedElement], tag: int) -> Any:
+        element = elements.get(tag)
+        return None if element is None else _vmti_value(element.value)
+
+    def _vmti_target_objects(self, index: int, ordinal: int, target: vmti.VTargetPack,
+                             packet: uas.DecodedPacket, platform: Entity, frame: dict,
+                             observed_at: _dt.datetime, received_at: _dt.datetime,
+                             source: Any) -> list[CDMBase]:
+        stamp_us = platform.attributes.get("precision_time_stamp_us")
+        detection_key = f"{stamp_us}|{index}|{ordinal}|{target.target_id}"
+        position, position_basis = self._vmti_position(target, packet.items)
+        track_uuid = self._vmti_track_uuid(target)
+
+        entity_id = (ids.derive(VMTI_TRACK_SYSTEM, track_uuid, kind="entity")
+                     if track_uuid is not None else None)
+        record = _vmti_target(target)
+        objects: list[CDMBase] = []
+
+        event = Event(
+            source=source,
+            source_ids=self._vmti_source_ids(target, detection_key, track_uuid),
+            event_id=ids.derive(VMTI_DETECTION_SYSTEM, detection_key, kind="event"),
+            # DETECTION, and it is the first one this adapter has ever emitted. The 26 witnessed
+            # items are a platform reporting its own state, which is why the packet Event is a
+            # STATUS_CHANGE; a VTarget is the platform reporting something ELSE. \u00a71: the VMTI
+            # LS delivers "Video Moving Target Indicator (VMTI) metadata and related Track
+            # metadata", and a moving-target indication is a detection in the CDM's sense exactly.
+            event_type=EventType.DETECTION,
+            # INFO. Nothing in a VTarget Pack declares an alert. Tag 4 Target Priority is the one
+            # element that ranks targets and \u00a711.15 makes it a bandwidth-shedding order
+            # ("Priority allows systems to reduce the amount of data"), not a severity \u2014 it
+            # rides in the payload with that sentence rather than raising this field.
+            severity=Severity.INFO,
+            # The target's own Entity where the document guarantees an identity, and EMPTY where
+            # it does not. Empty is the model's own documented case ("Empty when this event
+            # concerns no specific entity") and it is the honest one here: without a VTracker
+            # UUID there is no object this detection can be said to be OF, only a detection.
+            # The platform that reported it is named in the payload, not here: it is the reporter
+            # and never the subject.
+            related_entities=[entity_id] if entity_id is not None else [],
+            geometry=Point(coordinates=[position.lon, position.lat]) if position else None,
+            payload=self._vmti_payload(index, ordinal, target, record, frame, platform,
+                                       position_basis, track_uuid, detection_key),
+            observed_at=observed_at,
+            received_at=received_at,
+        )
+        objects.append(event)
+
+        if track_uuid is None or entity_id is None:
+            return objects
+
+        vtracker = self._vmti_vtracker(target)
+        entity = Entity(
+            source=source,
+            source_ids=self._vmti_source_ids(target, detection_key, track_uuid),
+            entity_id=entity_id,
+            # UNKNOWN, always, and this is M's amended default 3 rather than a reading of the
+            # target's class. ST 0903.4's typing fields are VObject LS Tag 1 Ontology, "A URI
+            # constructed from UTF-8 characters, which refers to a valid OWL ontology", and Tag 2
+            # Ontology_Class, a free string in that ontology's vocabulary \u2014 whose printed
+            # example is 'Dismount/Non-combatant/Female/Child'. Resolving either would mean this
+            # repository supplying a register the document delegates to
+            # (`klv_vmti_codec.EXTERNAL_ONTOLOGIES_NOT_RESOLVED`), and `EntityType` has no member
+            # for a person in any case, which is gap 20's divergence met by a third adapter. Both
+            # strings are carried in the attributes verbatim.
+            entity_type=EntityType.UNKNOWN,
+            # UNKNOWN. ST 0903.4 carries no allegiance element at all \u2014 no table in the
+            # document has one \u2014 so there is nothing to read and nothing to infer.
+            affiliation=Affiliation.UNKNOWN,
+            symbol=symbology.sidc_from_affiliation(Affiliation.UNKNOWN,
+                                                   synthetic=self._synthetic),
+            position=position,
+            # None. A VTracker LS carries Velocity (Tag 10) and Acceleration (Tag 11) as
+            # East/North/Up components, and `Kinematics` is speed, course and climb. Deriving a
+            # course from two components is a conversion ST 0903.4 does not define and which
+            # would be wrong at the poles; the pack is carried whole in the attributes instead.
+            kinematics=None,
+            attributes=self._vmti_target_attributes(index, ordinal, target, record, frame,
+                                                    platform, position_basis, vtracker,
+                                                    track_uuid, detection_key),
+            valid_from=observed_at,
+            # None. A VTracker LS states a Start Time Stamp and an End Time Stamp for the TRACK
+            # and neither is a horizon on this state; they are carried in the attributes.
+            valid_to=None,
+            # None. VTracker Tag 7 Confidence is "an estimation of the certainty or correctness
+            # that the track described by the sequence of VMTI movement detections corresponds to
+            # the same object" \u2014 a statement about the TRACK, which is `Track.track_quality`,
+            # and not about this object's identity. VTarget Tag 5 Target Confidence Level is a
+            # detection's confidence and not an identity's either. Both are carried.
+            confidence=None,
+        )
+        objects.append(entity)
+
+        if position is None:
+            return objects
+        objects.append(Track(
+            source=source,
+            source_ids=self._vmti_source_ids(target, detection_key, track_uuid),
+            track_id=ids.derive(VMTI_TRACK_SYSTEM, track_uuid, kind="track"),
+            entity_id=entity_id,
+            # ONE SAMPLE, THIS PACKET'S, AND THE LOCUS IS NOT SAMPLES. VTracker Tag 9 Locus is "A
+            # Series of points that represent the locations of entity VMTI detections. … The
+            # points must be ordered chronologically from start to end of the VMTI detections" \u2014
+            # ordered, and carrying NO time of their own. `TrackSample` requires an instant per
+            # point, and the only instants the document gives are Tag 3 Start Time Stamp and Tag 4
+            # End Time Stamp for the whole series. Spreading n points between two stamps is
+            # interpolation the document does not define, so the locus is carried whole in the
+            # Entity's attributes and the samples are what this packet actually witnessed.
+            samples=[TrackSample(position=position, observed_at=observed_at)],
+            track_quality=self._vmti_track_quality(vtracker),
+        ))
+        return objects
+
+    @staticmethod
+    def _vmti_vtracker(target: vmti.VTargetPack) -> vmti.DecodedSet | None:
+        element = target.elements.get(104)
+        value = None if element is None else element.value
+        return value if isinstance(value, vmti.DecodedSet) else None
+
+    def _vmti_track_uuid(self, target: vmti.VTargetPack) -> str | None:
+        """VTracker LS Tag 1's UUID as 32 hex characters, or None. The ONLY key in this mapping."""
+        vtracker = self._vmti_vtracker(target)
+        if vtracker is None:
+            return None
+        element = vtracker.elements.get(1)
+        return element.value if element is not None and isinstance(element.value, str) else None
+
+    @staticmethod
+    def _vmti_track_quality(vtracker: vmti.DecodedSet | None) -> float | None:
+        """VTracker Tag 7 Confidence, 0..100 percent, as `Track.track_quality`'s 0..1.
+
+        A division by 100 and nothing else. \u00a711.15.24: "Confidence level, expressed as a
+        percentage. … Value 0 percent indicates no confidence; value 100 percent indicates
+        absolute certainty", over "[t]he set of all integers from 0 to 100 inclusive" \u2014 the
+        same range and the same meaning as `track_quality`'s "0..1. None = not assessed, never 0",
+        and the zero is carried as a zero because the document says zero means something.
+        """
+        if vtracker is None:
+            return None
+        element = vtracker.elements.get(7)
+        if element is None or not isinstance(element.value, int):
+            return None
+        return element.value / 100.0
+
+    def _vmti_source_ids(self, target: vmti.VTargetPack, detection_key: str,
+                         track_uuid: str | None) -> list[SourceId]:
+        """The detection's key, the Target ID Number, and the Track ID where there is one.
+
+        **THE TARGET ID NUMBER IS IN HERE AND IT IS NOT A KEY**, which is M's ruling stated in the
+        one place a consumer will look for an identifier. `SourceId` is "that system's own
+        identifier" and the Target ID Number IS one \u2014 a consumer holding the producer's own
+        logs can join on it. What it may not do is decide which CDM object this is, and the
+        `system` names why: `VMTI-VTARGET-TARGET-ID-NUMBER` is a different id space from
+        `VMTI-VTRACKER-TRACK-ID`, so nothing can join the two by accident.
+        """
+        ids_out = [SourceId(system=VMTI_DETECTION_SYSTEM, external_id=detection_key),
+                   SourceId(system="VMTI-VTARGET-TARGET-ID-NUMBER",
+                            external_id=str(target.target_id))]
+        if track_uuid is not None:
+            ids_out.append(SourceId(system=VMTI_TRACK_SYSTEM, external_id=track_uuid))
+        return ids_out
+
+    #: The two ways a VTarget states where it is, in the order this adapter tries them, each with
+    #: the clause that licenses it. Tag 17 first because it is ABSOLUTE and needs nothing from the
+    #: parent packet; the offsets second because \u00a711.15 Tag 10 says they have "meaning only if
+    #: the VMTI LS is embedded within a MISB ST 0601 LS" and must be "added to the Frame Center
+    #: Latitude metadata item from the parent MISB ST 0601 packet".
+    VMTI_POSITION_PRECEDENCE = (
+        "VTarget Pack Tag 17 Target Location \u2014 a Location Truncation Pack carrying absolute "
+        "Latitude, Longitude and Height. \u00a711.15 Tag 17: 'Provides detailed geopositioning "
+        "information for a target' and 'even if the VMTI LS is embedded within a MISB ST 0601 LS, "
+        "Target Location may still be used'",
+        "VTarget Pack Tags 10 and 11, the Target Location Latitude/Longitude Offsets, added to ST "
+        "0601 items 23 and 24 (Frame Center Latitude/Longitude). \u00a711.15 Tag 10: 'The Target "
+        "Location Latitude Offset is added to the Frame Center Latitude metadata item from the "
+        "parent MISB ST 0601 packet to determine the Latitude of the target. Both KLV data items "
+        "must be converted to decimal prior to addition'",
+    )
+
+    def _vmti_position(self, target: vmti.VTargetPack,
+                       items: dict[int, uas.DecodedItem]) -> tuple[Position | None, dict]:
+        """A target's position, or None with the reason. Nothing is computed that is not defined.
+
+        **WHERE THIS ADAPTER REFUSES, AND M's RULING IS WHAT MAKES IT A REFUSAL RATHER THAN A
+        GAP.** \u00a711.15's Notes on Tags 10 and 11 say the same sentence twice: "Target locations
+        that lie above the horizon do not correspond to a point on the earth. Also, target
+        locations may lie outside of the mapped range. Both cases should either not be reported,
+        or be reported as an 'error'." An offset is only a position when the frame centre is one,
+        and \u00a78.23's '0x80000000 = "N/A (Off-Earth)"' signal is the parent packet saying its
+        frame centre is not on the earth's surface \u2014 which is the above-the-horizon case
+        stated by the carrier. So an absent or off-earth frame centre yields NO position, and a
+        sum outside the CDM's own latitude/longitude range yields none either. `gmtif.py`'s
+        convention, applied to a second format.
+        """
+        basis: dict[str, Any] = {"precedence": list(self.VMTI_POSITION_PRECEDENCE)}
+        location = target.elements.get(17)
+        if location is not None and isinstance(location.value, vmti.Location):
+            pack = location.value
+            basis["taken_from"] = "VTarget Pack Tag 17 Target Location"
+            basis["accuracy_m"] = (
+                "None. The Location pack carries Sigma_East, Sigma_North and Sigma_Up as three "
+                "separate standard deviations and `Position.accuracy_m` is one number; combining "
+                "them is a statistic ST 0903.4 does not define. All three are carried verbatim "
+                "in the payload and the attributes")
+            return self._vmti_point(pack.latitude, pack.longitude, pack.height, basis)
+
+        lat_offset = target.elements.get(10)
+        lon_offset = target.elements.get(11)
+        if lat_offset is None or lon_offset is None:
+            basis["reason"] = (
+                "no position: the pack carries neither Tag 17 Target Location nor both of Tags 10 "
+                "and 11. A pixel location is not a position \u2014 see payload.vmti_frame."
+                "pixel_basis \u2014 and half an offset pair is not one either")
+            return None, basis
+        centre_lat = _measured(items[23].value) if 23 in items else None
+        centre_lon = _measured(items[24].value) if 24 in items else None
+        basis["taken_from"] = (
+            "VTarget Pack Tags 10 and 11 added to ST 0601 items 23 and 24")
+        basis["frame_centre"] = {"lat": centre_lat, "lon": centre_lon}
+        if centre_lat is None or centre_lon is None:
+            basis["reason"] = (
+                "no position: \u00a711.15 Tag 10 gives the offsets 'meaning only if the VMTI LS is "
+                "embedded within a MISB ST 0601 LS' and requires the parent packet's Frame Center "
+                "Latitude/Longitude to add them to, and this packet carries no usable pair \u2014 "
+                "item 23 and/or 24 is absent or carries \u00a78.23's '0x80000000 = \"N/A "
+                "(Off-Earth)\"' signal, which is the document saying the frame centre is not on "
+                "the earth's surface. That is the above-the-horizon case Tags 10 and 11 say "
+                "'should either not be reported, or be reported as an \"error\"', so nothing is "
+                "reported")
+            return None, basis
+        height = target.elements.get(12)
+        alt = height.value if height is not None and isinstance(height.value, float) else None
+        basis["accuracy_m"] = (
+            "None. Neither offset carries an uncertainty and the frame centre's own accuracy is "
+            "not stated by ST 0601 either")
+        return self._vmti_point(centre_lat + lat_offset.value, centre_lon + lon_offset.value,
+                                alt, basis)
+
+    @staticmethod
+    def _vmti_point(lat: float, lon: float, alt: float | None, basis: dict
+                    ) -> tuple[Position | None, dict]:
+        basis["position_source"] = (
+            "ESTIMATED. A VMTI target's location is derived by a processor from imagery \u2014 "
+            "\u00a71 calls the content 'Video Moving Target Indicator (VMTI) metadata' \u2014 and "
+            "not received from the target. GNSS would claim the target carried a receiver; "
+            "INERTIAL and MANUAL are plainly not it. ESTIMATED is the member that says what "
+            "happened, and it is the platform Entity's GNSS that the estimate was made from")
+        basis["altitude"] = (
+            "VTarget Pack Tag 12 Target Height where present, and it is HAE: \u00a711.15 Tag 12, "
+            "'Height of the target, expressed as height in meters above the WGS84 ellipsoid "
+            "(HAE)' \u2014 the same datum `Position.alt_m` takes, so there is no conversion. Tag "
+            "17's Location pack carries its Height on the same definition"
+            if alt is not None else
+            "None. The pack states no height, and a height of zero is a real surface")
+        if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
+            basis["reason"] = (
+                f"no position: the sum is ({lat}, {lon}), which is off the earth. \u00a711.15 Tags "
+                "10 and 11: target locations that 'lie outside of the mapped range … should "
+                "either not be reported, or be reported as an \"error\"'. Reported here as the "
+                "absence of a Position and this sentence")
+            return None, basis
+        return Position(lat=lat, lon=lon, alt_m=alt,
+                        position_source=PositionSource.ESTIMATED, accuracy_m=None), basis
+
+    def _vmti_payload(self, index: int, ordinal: int, target: vmti.VTargetPack, record: dict,
+                      frame: dict, platform: Entity, position_basis: dict,
+                      track_uuid: str | None, detection_key: str) -> dict:
+        """One detection's whole VTarget Pack, its frame, and who reported it."""
+        return {
+            "vmti_target": record,
+            "vmti_frame": frame,
+            "vmti_target_ordinal": ordinal,
+            "vmti_packet_index": index,
+            "position_basis": position_basis,
+            "identity_basis": self._vmti_identity_basis(target, track_uuid),
+            "reported_by": {
+                "entity_id": str(platform.entity_id),
+                "what_it_is": (
+                    "the PLATFORM Entity of the ST 0601 packet this item 74 arrived in \u2014 the "
+                    "reporter, never the subject. It is named here and not in related_entities "
+                    "because a DETECTION is about the thing detected: putting the reporter there "
+                    "would make every consumer that reads related_entities as 'what this event is "
+                    "about' wrong on every VMTI event"),
+            },
+            "detection_key": detection_key,
+            "target_priority_is_not_severity": (
+                "\u00a711.15 Tag 4 Target Priority: 'Provides a means to distinguish between "
+                "targets' and 'allows systems to reduce the amount of data transmitted' \u2014 an "
+                "ordering for bandwidth, not an alarm. Severity stays INFO and the priority is in "
+                "vmti_target.elements"),
+        }
+
+    def _vmti_identity_basis(self, target: vmti.VTargetPack, track_uuid: str | None) -> dict:
+        return {
+            "ruling": VMTI_IDENTITY_RULING,
+            "key": ("VTracker LS Tag 1 Track ID (UUID)" if track_uuid is not None else None),
+            "target_id_number": target.target_id,
+            "target_id_number_scope": (
+                "CARRIED, NEVER A KEY. \u00a711.15, VTarget Pack Target ID Number: 'Uniquely "
+                "identifies a target across multiple frames until the identification number is "
+                "reset by the New Detection Flag (Tag 6 within the VTarget Pack).'"),
+            "new_detection_flag": self._vmti_scalar(target.elements, 6),
+            "no_track": (None if track_uuid is not None else
+                         "no Track and no Entity: this VTarget carries no VTracker LS Tag 1, so "
+                         "the document guarantees no identity for it and this adapter claims "
+                         "none. The detection stands on its own \u2014 the shipped "
+                         "`asterix_cat048.py` and `legion.py` shape"),
+        }
+
+    def _vmti_target_attributes(self, index: int, ordinal: int, target: vmti.VTargetPack,
+                                record: dict, frame: dict, platform: Entity,
+                                position_basis: dict, vtracker: vmti.DecodedSet | None,
+                                track_uuid: str, detection_key: str) -> dict:
+        """A tracked target's attributes. Everything the pack carried, none of it resolved."""
+        elements = {} if vtracker is None else vtracker.elements
+        vobject = target.elements.get(102)
+        return {
+            "klv_object_role": VMTI_TARGET_ROLE,
+            "vmti_track_id": track_uuid,
+            "vmti_target": record,
+            "vmti_frame": frame,
+            "vmti_target_ordinal": ordinal,
+            "vmti_packet_index": index,
+            "position_basis": position_basis,
+            "identity_basis": self._vmti_identity_basis(target, track_uuid),
+            "reported_by_entity_id": str(platform.entity_id),
+            "detection_key": detection_key,
+            "vmti_track_status": self._vmti_scalar(elements, 2),
+            "vmti_track_status_basis": (
+                "VTracker LS Tag 2 Detection Status, Table 16: Inactive, Active, Dropped, "
+                "Stopped. **NO PERSISTENCE IS CLAIMED BEYOND THE UUID, AND THIS IS THE ELEMENT "
+                "THAT SAYS WHY.** Table 16's Inactive row: 'The VMTI detections for the entity "
+                "have ended. The entity may have merged with one or more other entities, to have "
+                "split into two or more new entities, or to have ceased to exist because no VMTI "
+                "detection can be correlated with it.' A merge and a split are in the document's "
+                "own identity model and no one-UUID-one-Track mapping can express either, so the "
+                "status is CARRIED as the producer's statement and this adapter draws no "
+                "consequence from it"),
+            "vmti_track_start_time": self._vmti_scalar(elements, 3),
+            "vmti_track_end_time": self._vmti_scalar(elements, 4),
+            "vmti_track_locus": self._vmti_scalar(elements, 9),
+            "vmti_track_locus_basis": (
+                "VTracker LS Tag 9 Locus, carried and NOT turned into Track.samples. \u00a711.15.24 "
+                "Tag 9: 'A Series of points that represent the locations of entity VMTI "
+                "detections. Each point is an element of type Location. The points must be "
+                "ordered chronologically from start to end of the VMTI detections.' Chronological "
+                "ORDER and no per-point time; a TrackSample needs an instant each. Spreading the "
+                "points between Tag 3 and Tag 4 would be interpolation the document does not "
+                "define, so Track.samples holds what this packet witnessed and the locus is here"),
+            "vmti_track_velocity": self._vmti_scalar(elements, 10),
+            "vmti_track_acceleration": self._vmti_scalar(elements, 11),
+            "vmti_track_algorithm": self._vmti_scalar(elements, 6),
+            "vmti_track_confidence_percent": self._vmti_scalar(elements, 7),
+            "vmti_number_of_track_points": self._vmti_scalar(elements, 8),
+            "vmti_ontology": _vmti_value(vobject.value) if vobject is not None else None,
+            "vmti_ontology_basis": vmti.EXTERNAL_ONTOLOGIES_NOT_RESOLVED,
+            "entity_type_basis": (
+                "UNKNOWN, by M's amended default 3 of 2026-09-05 and by two standing rulings it "
+                "rests on. ST 0903.4's only typing fields are VObject LS Tag 1 Ontology (a URI "
+                "'which refers to a valid OWL ontology') and Tag 2 Ontology_Class (a free string "
+                "'as defined in the VObject Ontology', printed example "
+                "'Dismount/Non-combatant/Female/Child'); `ST 0903.4-46` requires the Ontology to "
+                "appear before any Class and the .4 changelog lets it 'carry forward over "
+                "subsequent VObject instances', so a Class is not even readable without holding "
+                "ontology state across packets. This repository resolves no external register "
+                "(klv_vmti_codec.EXTERNAL_ONTOLOGIES_NOT_RESOLVED), and `EntityType` has no "
+                "member for a person in any case \u2014 gap 20's divergence, met here by a third "
+                "adapter, and answered UNKNOWN as gmtif.py answers it rather than PLATFORM as "
+                "asterix_cat021.py does"),
+            "vmti_identity_ruling": VMTI_IDENTITY_RULING,
+        }
 
     # ------------------------------------------- ST 1204.1 MIIS Core Identifier, item 94
 
@@ -1822,12 +2455,19 @@ class Stanag4609Adapter(Adapter):
         records on the object that it does not validate, and computing a correct one is the
         consumer's decision rather than this adapter's.
         """
-        entities = [obj for obj in objects if isinstance(obj, Entity)]
+        entities = [obj for obj in objects
+                    if isinstance(obj, Entity)
+                    and obj.attributes.get("klv_object_role") != VMTI_TARGET_ROLE]
         if not entities:
             raise Stanag4609ParseError(
-                "from_cdm needs at least one Entity; got "
+                "from_cdm needs at least one packet Entity; got "
                 f"{[type(o).__name__ for o in objects]}. A STANAG 4609 payload is a sequence of "
-                "UAS Datalink LS packets and each packet is one Entity's worth of state"
+                "UAS Datalink LS packets and each packet is one Entity's worth of state. "
+                f"Entities carrying attributes.klv_object_role == {VMTI_TARGET_ROLE!r} are "
+                "EXCLUDED before this check and are not an error: a VMTI target identity is an "
+                "object this adapter DERIVES from inside item 74's octets, and those octets are "
+                "already replayed verbatim as item 74 of the packet Entity that carried them, so "
+                "re-emitting one would duplicate a target into the payload"
             )
         out = bytearray()
         for entity in sorted(entities, key=_packet_index):

@@ -1,0 +1,1725 @@
+[
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "affiliation_basis": "UNKNOWN, always, and here it is barely a decision: ST 0601.14a carries no item stating an allegiance at all. A UAS Datalink LS describes one's own aircraft to one's own ground station, which is a context in which the question does not arise on the wire \u2014 and inferring FRIENDLY from that context would be this adapter reasoning about who deployed the sensor",
+      "core_identifier": {
+        "absence_basis": "the packet carries no item 94. `ST 1204.1-01`: 'All MIIS Compliant Digital Motion Imagery data shall contain a Core identifier in either the imagery frames or metadata or both' \u2014 so this is a statement about the producer's compliance and not about the platform, and the packet-scoped key in `source_ids` is what addresses this object. The pinned stream carries none: its 26 items stop at tag 65",
+        "augmentation_identifiers": "MISB ST 1301.2 (27 February 2014, 4 pages, SHA-256 3d08d35d\u2026e509f9a6) defines the Augmentation Identifiers Local Set \u2014 `ST 1301.2-01` gives its key as 06.0E.2B.34.02.0B.01.01.0E.01.03.05.03.00.00.00 (CRC 47531, symbol 'miis_lds') \u2014 and defines NO augmentation identifier to put in it: Appendix A's Table 2, the table its own \u00a76.1.1 sends the reader to for 'the MISB defined identifiers', prints four rows reading '8 <Name> <Key> <Supporting Documentation>', '9 <Name> <Key> <Supporting Documentation>', '10 <Name> <Key> <Supporting Documentation>' and '11 \u2026' \u2014 placeholders, with the note 'Additional items are added per MISB approved updates to this document'. AND ST 0601.14a DOES NOT CARRY THE SET: over the pinned 218 pages, joined and collapsed by `gates/pdf_text.py`'s rule, the string '1301' occurs ZERO times and so does 'Augmentation'. So there is no carrier in the document this adapter reads, and had there been one there would be nothing defined to decode inside it. Both halves are recorded because either alone would read like the other's cause",
+        "carrier_basis": "MISB ST 0601.14a \u00a78.94, page 147: 'MISB ST 1204 MIIS Core Identifier binary value', Format byte, Length Variable, Max Length 50. \u00a78.94.1: \"Tag 94's value does not include MISB ST 1204's 16-byte Key or length, only the value portion\"",
+        "source": "MISB ST 1204.1, SHA-256 2503960a0af92b73fe329663b2538b87fbdcca4823c968885a26978d61d9f1c5, fixtures/klv/spec/ST1204.1.pdf",
+        "stated": false
+      },
+      "document_witnessed_basis": {
+        "declined": {
+          "130": "tag 130 Airbase Locations is NOT decoded, on two grounds. (1) \u00a78.130 PRINTS NO WORKED EXAMPLE \u2014 its Example Software Value cell reads 'N/A' and its Example KLV Item row reads '8102 - N/A' \u2014 so the document-side witness RULING 1 requires, 'a document-side check as strong as a worked example', does not exist for this item, and no held stream carries it either. (2) THE SECTION CONTRADICTS ITSELF ON THE HAE MEMBER'S RANGE: Figures 60 and 61 both label it IMAPB(-900, 9000,3) while \u00a78.130.1's prose says 'a range from -600 to 9000 meters' and 'Using IMAPB(-600, 9000, 3) provides 0.19 cm of precision'. The two readings put every decoded HAE 300 m apart, and the precision figure cannot arbitrate them because 1/sF is 1/512 m on both \u2014 9600 and 9900 fall in the same power-of-two bracket, so the document's one checkable number is equal under both. Latitude and longitude are stated consistently and would decode; a pack decoded as far as its optional third member and then refused is not a row this file's status vocabulary can express, so the whole item stays `not yet`. See AIRBASE_LOCATIONS_LAYOUT for everything the section does state"
+        },
+        "how_many": 18,
+        "tags_read": [
+          75,
+          96,
+          103,
+          104,
+          105,
+          109,
+          112,
+          113,
+          114,
+          117,
+          118,
+          119,
+          120,
+          128,
+          132,
+          134,
+          136,
+          137
+        ],
+        "what_it_is_not": "NOT a claim that any of these seventeen has been met on a wire. The pinned stream carries 26 items whose highest tag is 65 and not one of the seventeen is among them, so every value here is decoded by a codec checked against a printed example and against no held octet \u2014 a weaker footing than the 26 have, and the reason `klv_uas_codec.WITNESSED_TAGS` was left at 26 rather than widened. **It is what keeps this round's goldens honest**: the pinned stream carries neither tag 136 nor tag 137, so not one of its six packets' observed_at values moved when \u00a76.4's equations landed",
+        "witness": "ST 0601.14a's own printed worked examples, under RULING 1 of 2026-09-04, which read the reopen condition this record's scope contract has stated since 2026-08-26: 'a second pinned stream, OR a document-side check as strong as a worked example \u2014 and ST 0601.14a prints one per item'. `klv_uas_codec.check_against_the_documents_own_examples()` runs all 18 alongside the 26 on every suite run, 44 in total. Fifteen were admitted by RULING 1 of the park 5 round and two \u2014 items 136 and 137, the terms \u00a76.4's UTC arithmetic needs \u2014 by RULING 3 of the park 3 round, the same day and on the same condition"
+      },
+      "entity_type_basis": "PLATFORM, from the standard's own subject rather than from any item. \u00a71: 'MISB ST 0601 defines the Unmanned Air System (UAS) Datalink Local Set (LS) for UAS platforms. The UAS Datalink LS is typically produced on-board a UAS airborne platform'. Tag 10 Platform Designation is the item that would say WHICH platform and it is not in the witnessed set, so the type is the format's and the model is nobody's \u2014 the CAT034 reading, where the object's type is a property of the format",
+      "identity_basis": "uuid5 over (UAS-LS-PACKET, '1224807209913000|0') \u2014 the Precision Time Stamp and the packet's index in its payload. PACKET-SCOPED, and it claims exactly that: THIS OBSERVATION. Nothing in the witnessed set identifies anything \u2014 tag 3 Mission ID, tag 4 Platform Tail Number, tag 10 Platform Designation, tag 59 Platform Call Sign and tag 94's MIIS Core Identifier are the five items that would, and the pinned stream carries none of them. Tag 11 Image Source Sensor is the one witnessed item that looks like a name and it is disqualified BY THE BYTES: it reads 'EON' in five of the six packets and 'IR' in the sixth, so keying on it would split one aircraft into two entities inside a three-minute clip. WHAT THIS COSTS, stated rather than hidden: consecutive packets from one platform get DIFFERENT entity_id values, so the continuity a real feed has is continuity the CDM cannot express from this format. Park 11 \u2014 MISB ST 1204.1, the MIIS Core Identifier \u2014 is what closes it, and reading the stream turned that park from a prediction into a measurement. **2026-09-05: PARK 11 IS CLOSED AND THE COST ABOVE IS NOW CONDITIONAL RATHER THAN UNIVERSAL.** Item 94 is decoded by `klv_miis_codec` and every Identifier Component it states is appended to source_ids beside the packet key \u2014 see `attributes.core_identifier`, which is on every object and says which of the two cases this one is. THIS PACKET CARRIES NO ITEM 94, so the packet key is the whole of its identity and the paragraph above stands unchanged for it. THE entity_id ITSELF IS STILL THE PACKET KEY'S, on the never-drop ground the bump ruling for this change rests on: a consumer keying on it keeps working, and a consumer that wants the platform's own identity now has it, under the system name ST 1204.1's Table 1 quality ranking gives it",
+      "integrity_basis": {
+        "checksum_item": "tag 1 Checksum",
+        "computed": 53876,
+        "range": "ST 0601.14a \u00a76.6 and \u00a78.1: 'Performed on entire LS packet, including 16-byte US key and 1-byte checksum length' \u2014 so the summation runs from the first octet of the Universal Label up to and including tag 1's own length octet, and the two octets of the stored value are outside it. Computed by klv_codec.bcc_16, which is a transcription of the C the document prints in \u00a78.1.1.1 and is checked against the eight-octet worked vector in \u00a78.1.1.2",
+        "stored": 53876,
+        "valid": true,
+        "what_this_is_NOT": "the four sibling ASTERIX adapters and the GMTIF one all had to record that their format defines no checksum at any level. This one does, `ST 0601.14-32` makes it mandatory in every packet, and a validating 16-bit summation over the whole packet is a materially stronger gate than a structural parse \u2014 it is what ruled out corruption as an explanation for the length divergence at tag 22",
+        "why_a_failure_is_not_a_refusal": "a packet whose checksum does not validate is TRANSLATED and flagged. The stored checksum is one item among 26, and discarding 25 items that each satisfied their own Required Length because a 16-bit sum disagrees would destroy the evidence a consumer needs to decide what happened \u2014 the same reasoning that makes the length policy skip an ITEM rather than a packet. `valid: false` on an object is a statement, and a missing object is not"
+      },
+      "kinematics_basis": {
+        "climb_mps": "None on every object. Tag 51 Platform Vertical Speed is the item and it is not in the witnessed set; deriving a climb rate from two packets' altitudes would be differentiating across records, which is the accumulation this adapter refuses",
+        "course_deg": "TAG 112's VALUE WHEN THE PACKET CARRIES TAG 112, AND None OTHERWISE \u2014 changed 2026-09-04 by the park 5 round. Tag 112 is the Platform Course Angle, \u00a78.112, 'Direction the aircraft is moving relative to True North', IMAPB(0, 360, Length) with the bullets '0 (or 360) is true north, east is 90, south is 180, west is 270' \u2014 degrees clockwise from true north, which is what Kinematics.course_deg is documented as, so it lands with no conversion. Decoded by `imapb_codec` at the wire's length per ST 1201.3 \u00a77.4, and promoted on the document-side witness RULING 1 names: \u00a78.112 prints 125 degrees against octets 1F40 and `klv_uas_codec.check_against_the_documents_own_examples()` reproduces it both ways on every suite run. **Tag 112 is NOT in the pinned stream**, whose 26 items stop at tag 65, so this field is filled against a printed example and against no held octet \u2014 which is the sentence every one of the fifteen promoted rows carries. **AND TAG 5 IS STILL NOT A COURSE, WHICH IS THE HALF OF THIS BASIS THAT DID NOT MOVE.** Tag 5 is the Platform HEADING Angle \u2014 \u00a78.5, 'the angle between longitudinal axis (line made by the fuselage) and true north' \u2014 and a course is the direction of travel. On an aircraft in wind those differ by the drift angle, and the standard keeps them apart in two items rather than one. The heading still parks at attributes.platform_heading_deg and is NEVER substituted for a missing course: a packet with tag 5 and no tag 112 emits course_deg None, which is the AIS heading/course distinction reached by an airborne format. **A \u00a77.2.3 SIGNAL EMITS NO COURSE.** \u00a78.112's Special Values cell reads 'None', so the document declares no reserved integer for this item \u2014 but IMAPB reserves the top two bits for every item it maps, per ST 1201.3 \u00a77.2.3 Table 1, so a conforming emitter can still send +QNaN here. It is carried as the signal it is and course_deg stays None, the same ruling item 13's 0x80000000 got",
+        "course_item": null,
+        "speed_basis": "\u00a78.56, 'Speed projected to the ground of an airborne platform passing overhead', Units Meters/Second, KLV format uint8 over 0..255 with the Software format also uint8 \u2014 so the document's own formula is the identity `KLV = Soft` and there is no conversion to get wrong. A speed over GROUND, which is what Kinematics.speed_mps documents itself as, so this is the one kinematic figure in the witnessed set that lands without an argument",
+        "speed_item": null
+      },
+      "klv_item_octets": {
+        "1": "d274",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "74": "02080003824430f6ce40030e4453544f5f414453535f564d544904010405011c06010e07030130b008020780090204380a07454f204e6f73656555548952050150111642800000488000002a94258019000c8070006000500068350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b"
+      },
+      "klv_items": {
+        "1": {
+          "klv_format": "uint16",
+          "name": "Checksum",
+          "octets": "d274",
+          "section": "ST 0601.14a \u00a78.1",
+          "units": "None",
+          "value": 53876,
+          "witness": "stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, six packets of this item"
+        },
+        "2": {
+          "klv_format": "uint64",
+          "name": "Precision Time Stamp",
+          "octets": "000459f4a6aa4aa8",
+          "section": "ST 0601.14a \u00a78.2",
+          "units": "Micro-seconds (\u00b5s)",
+          "value": 1224807209913000,
+          "witness": "stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, six packets of this item"
+        },
+        "65": {
+          "klv_format": "uint8",
+          "name": "UAS Datalink LS Version Number",
+          "octets": "0d",
+          "section": "ST 0601.14a \u00a78.65",
+          "units": "Number (None)",
+          "value": 13,
+          "witness": "stream: fixtures/klv/streams/day_flight.klv, SHA-256 a810e4b6...e51, six packets of this item"
+        }
+      },
+      "klv_packet": {
+        "index": 0,
+        "item_count": 4,
+        "offset": 0,
+        "universal_label": "060e2b34020b01010e01030101000000",
+        "universal_label_crc": 56773,
+        "value_length": 164,
+        "value_length_octets": "81a4"
+      },
+      "klv_payload": {
+        "octets": 182,
+        "packet_count": 1
+      },
+      "klv_tag_order": [
+        2,
+        74,
+        65,
+        1
+      ],
+      "klv_unknown_items": {},
+      "klv_unknown_tags": [],
+      "length_divergence_policy": {
+        "advisories": [],
+        "defects": [],
+        "policy": "skip_the_item_and_record_a_structured_defect_annotation",
+        "stated_on_every_object": "the policy rides on every object and not only on the ones that tripped it, because a consumer needs to know that a clean object is clean UNDER A RULE and not merely unflagged"
+      },
+      "position_basis": {
+        "accuracy_m": "None on every object. ST 0601.14a carries CE90/LE90 error estimates at tags 45 and 46 and a Standard Deviation Cross Correlation pack at tag 102, and none of the three is in the witnessed set. The item's stated Resolution \u2014 '~42 nano degrees' for tag 13 \u2014 is a QUANTISATION STEP and not an accuracy, and writing it here would claim the platform knows where it is to within millimetres. The CAT034 quantisation note, reached a second time",
+        "alt_item": null,
+        "alt_m": "AN HAE ITEM'S VALUE WHEN THE PACKET CARRIES ONE, AND None OTHERWISE \u2014 tag 104's where both are carried and tag 75's where only 75 is, per HAE_PRECEDENCE, changed 2026-09-05 by the pre-release round and 2026-09-04 by the park 5 round before it; this field is HAE by construction. Position.alt_m is documented as 'Metres HAE'. Tag 104 Sensor Ellipsoid Height Extended is 'measured from the reference WGS84 ellipsoid' (\u00a78.104), which is the same datum, so it lands with no conversion at all; its value is IMAPB(-900, 40000, Length) per \u00a78.104 and is decoded by `imapb_codec` at the length the wire supplies, per ST 1201.3 \u00a77.4. Its row promoted on the document-side witness RULING 1 names \u2014 \u00a78.104 prints a worked example, 23,456.24 m against octets 2F921E, and `klv_uas_codec.check_against_the_documents_own_examples()` reproduces it on every suite run \u2014 and tag 104 is NOT in the pinned stream, whose 26 items stop at tag 65, so this field is filled against a printed example and against no held octet. **THE HAE-OVER-MSL RULE IS HONOURED BY CONSTRUCTION AND NEEDS NO PRECEDENCE LOGIC HERE (RULING 4, 2026-09-04).** `ST 0601.8-17` requires a decoder that understands HAE to 'use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS Datalink LS packet', and \u00a78.104.1, \u00a78.75.1 and \u00a78.15.1 each state the same preference in the document's own words: 'For legacy systems, Tag 15 and Tag 75 | Tag 104 are allowed with preference for Tag 75 | Tag 104.' There is nothing to arbitrate: tag 15 Sensor True Altitude is measured 'from Mean Sea Level (MSL)' (\u00a78.15) and is therefore NEVER a candidate for an HAE field \u2014 it was not one before tag 104 was decoded and it is not one now. So a packet carrying BOTH 15 and 104 fills alt_m from 104 because 104 is the only HAE item read, not because a rule chose between them, and no code here compares a document-witnessed item against a stream-witnessed one. The MSL figure stays parked at attributes.sensor_true_altitude_msl_m, converting nothing: a geoid separation is a model this repository does not hold. **TAG 75 IS NO LONGER OUTSTANDING \u2014 READ 2026-09-05 (RULING 4), AND THIS PARAGRAPH'S PREDICTION IS WHAT HAPPENED.** It read 'It is UNREAD as of 2026-09-04 and is the one row standing between alt_m and the base HAE item; the same document-side witness would promote it ... in a round scoped to it', and a round scoped to it promoted it on that witness: \u00a78.75 prints 14,190.7195 m against octets C221, which check_against_the_documents_own_examples() now reproduces alongside the other 43. So alt_m has TWO sources and a precedence between them, and the precedence is at HAE_PRECEDENCE rather than here because it is a decision and not a clause \u2014 the same \u00a78.104.1 sentence this paragraph quoted as 'a reason to prefer 104 where both appear and not a rule the document writes' is exactly the footing it is stated on. Short form: 104 when a packet carries both, 75 when it carries only 75, never 15; and where both are carried and differ by more than tag 75's own LSB of 0.30365 m, an advisory hae_items_disagree carries both values while the selected one is still emitted. One more fact, read off the two sections together and unchanged: \u00a78.75 and \u00a78.104 print the SAME KLV Key, 06.0E.2B.34.01.01.01.01.0E.01.02.01.82.47.00.00 (CRC 16670) \u2014 the extended item reuses the base item's Universal Label, so the UL does not distinguish them and only the tag does",
+        "datum": "WGS 84, and the packet says so about itself: tag 12 Image Coordinate System carries the name of the datum every geographic angle in the Local Set is expressed in \u2014 \u00a78.12.1 lists the items it governs, 13 and 14 among them \u2014 and \u00a78.13's own bullet says 'Based on WGS84 ellipsoid'. Two statements, one datum, and the CDM's Position is WGS 84 as well, so there is no transform here at all",
+        "hae_items_carried": [],
+        "hae_precedence": "TAG 104 WHEN A PACKET CARRIES BOTH, TAG 75 WHEN IT CARRIES ONLY 75, AND NEVER TAG 15. THE DOCUMENT DOES NOT DECIDE THE FIRST OF THOSE AND THIS REPOSITORY DOES. \u00a78.15.1, \u00a78.75.1 and \u00a78.104.1 each print 'For legacy systems, Tag 15 and Tag 75 | Tag 104 are allowed with preference for Tag 75 | Tag 104' \u2014 a preference for the PAIR over tag 15, written as a disjunction, stating no ordering between 75 and 104 \u2014 and ST 0601.8-17 requires a decoder that understands HAE to 'use the HAE representation and ignore the Mean Sea Level (MSL) representation when both exist in the same UAS Datalink LS packet'. Both settle tag 15 and neither settles this. TWO GROUNDS FOR PREFERRING 104, both read off the blocks rather than argued from taste: RANGE, because \u00a78.104.1 states 104's own purpose as 'to increase the range of altitude values currently defined in Tag 75 Sensor Ellipsoid Height to support all CONOPs for airborne systems' \u2014 40 000 m against 19 000 m, so a packet above 19 000 m can be stated by one item and not the other; and RESOLUTION, because \u00a78.75's uint16 over -900..19000 at a Required Length of 2 is one step of 0.30365 m, computed from the block's own Min, Max and integer span, while \u00a78.104's IMAPB(-900, 40000, Length) is 0.0078125 m at three octets. WHAT THIS IS NOT: it is not a claim that the standard requires it, and a reader who needs the standard's own answer will not find one. Tag 15 is excluded on a different footing entirely - it is MSL, so it was never a candidate for an HAE field and no precedence had to reach it.",
+        "lat_item": null,
+        "lon_item": null,
+        "reason": "no Position is emitted: a Position needs both angles and this packet does not carry both as measurements. A Position holding a zero for the missing half is a real point in the Gulf of Guinea",
+        "what_this_position_IS": "the SENSOR's location, on an entity whose type is PLATFORM, and the document is what licenses the join: \u00a78.13.1, 'In a realized system, this item accounts for the lever arm distance between a platform's GPS antenna (or known central platform position) to a sensor's general location (like the center of a gimbaled sensor).' So it is the platform's position adjusted by a lever arm on the same airframe, not a second object's fix. Tag 67 Alternate Platform Latitude is the item that would state a platform position separately and it is NOT in the witnessed set \u2014 so this is named rather than smoothed over: to within one airframe's dimensions, this IS where the platform is, and the residue is a distance the document declines to state"
+      },
+      "precision_time_stamp_us": 1224807209913000,
+      "security_metadata_basis": {
+        "argument": "fixtures/klv/spec/klv_pin.json \u2192 security_basis_ruling",
+        "carried_in": "ST 0601 item 48, Security Local Set",
+        "carrier_clauses": [
+          "MISB ST 0601.14a \u00a78.48",
+          "ST 0601.14-31"
+        ],
+        "clauses": [
+          "MISB ST 0102.12 \u00a76.5",
+          "MISB ST 0102.12 \u00a76.3",
+          "MISB ST 0601.14a \u00a78.48"
+        ],
+        "confidentiality_ruling": "CARRIED AND NEVER INVENTED",
+        "element_layer": "MISB ST 0102.12, SHA-256 20d40b5237cdcd2f486547add8eee238e37d5a6b11b7e0aca306be0785eca267, fixtures/klv/spec/ST0102.12.pdf",
+        "state": "UNLABELLED"
+      },
+      "source_extras": {
+        "advisories": [],
+        "at": 0,
+        "checksum": {
+          "computed": 53876,
+          "stored": 53876,
+          "valid": true
+        },
+        "defects": [],
+        "security": null,
+        "unknown_tags": [],
+        "value_length": 164,
+        "vmti": {
+          "element_order": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            101
+          ],
+          "elements": {
+            "10": {
+              "kind": "utf8",
+              "name": "VMTI Source Sensor",
+              "octets": "454f204e6f7365",
+              "value": "EO Nose"
+            },
+            "101": {
+              "kind": "vtarget_series",
+              "name": "VTargetSeries",
+              "octets": "548952050150111642800000488000002a94258019000c8070006000500068350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+              "value": [
+                {
+                  "element_order": [
+                    5,
+                    17,
+                    104
+                  ],
+                  "elements": {
+                    "104": {
+                      "kind": "vtracker",
+                      "name": "VTracker LS",
+                      "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                      "value": {
+                        "element_order": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          6,
+                          7,
+                          8
+                        ],
+                        "elements": {
+                          "1": {
+                            "kind": "uuid",
+                            "name": "Track ID",
+                            "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                            "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                          },
+                          "2": {
+                            "kind": "detection_status",
+                            "name": "Detection Status",
+                            "octets": "01",
+                            "value": {
+                              "code": 1,
+                              "status": "Active"
+                            }
+                          },
+                          "3": {
+                            "kind": "timestamp",
+                            "name": "Start Time Stamp",
+                            "octets": "0003824430f6ce40",
+                            "value": {
+                              "microseconds": 987654321000000,
+                              "utc": "2001-04-19T04:25:21Z"
+                            }
+                          },
+                          "4": {
+                            "kind": "timestamp",
+                            "name": "End Time Stamp",
+                            "octets": "0003824430f6ce40",
+                            "value": {
+                              "microseconds": 987654321000000,
+                              "utc": "2001-04-19T04:25:21Z"
+                            }
+                          },
+                          "6": {
+                            "kind": "utf8",
+                            "name": "Algorithm",
+                            "octets": "74657374",
+                            "value": "test"
+                          },
+                          "7": {
+                            "kind": "uint",
+                            "name": "Confidence",
+                            "octets": "32",
+                            "value": 50
+                          },
+                          "8": {
+                            "kind": "uint",
+                            "name": "Number of Track Points",
+                            "octets": "1b",
+                            "value": 27
+                          }
+                        },
+                        "refusals": [],
+                        "set_name": "VTracker LS",
+                        "unlisted_tags": []
+                      }
+                    },
+                    "17": {
+                      "kind": "location",
+                      "name": "Target Location",
+                      "octets": "42800000488000002a94258019000c80700060005000",
+                      "value": {
+                        "height": 10000.0,
+                        "latitude": 43.0,
+                        "longitude": 110.0,
+                        "rho_east_north": 0.75,
+                        "rho_east_up": 0.5,
+                        "rho_north_up": 0.25,
+                        "sigma_east": 300.0,
+                        "sigma_north": 200.0,
+                        "sigma_up": 100.0
+                      }
+                    },
+                    "5": {
+                      "kind": "uint",
+                      "name": "Target Confidence Level",
+                      "octets": "50",
+                      "value": 80
+                    }
+                  },
+                  "refusals": [],
+                  "target_id": 1234,
+                  "unlisted_tags": []
+                }
+              ]
+            },
+            "2": {
+              "kind": "timestamp",
+              "name": "Precision Time Stamp",
+              "octets": "0003824430f6ce40",
+              "value": {
+                "microseconds": 987654321000000,
+                "utc": "2001-04-19T04:25:21Z"
+              }
+            },
+            "3": {
+              "kind": "utf8",
+              "name": "VMTI System Name / Description",
+              "octets": "4453544f5f414453535f564d5449",
+              "value": "DSTO_ADSS_VMTI"
+            },
+            "4": {
+              "kind": "uint",
+              "name": "VMTI LS Version Number",
+              "octets": "04",
+              "value": 4
+            },
+            "5": {
+              "kind": "uint",
+              "name": "Total Number of Targets Detected in the Frame",
+              "octets": "1c",
+              "value": 28
+            },
+            "6": {
+              "kind": "uint",
+              "name": "Number of Reported Targets",
+              "octets": "0e",
+              "value": 14
+            },
+            "7": {
+              "kind": "uint",
+              "name": "Motion Imagery Frame Number",
+              "octets": "0130b0",
+              "value": 78000
+            },
+            "8": {
+              "kind": "uint",
+              "name": "Frame Width",
+              "octets": "0780",
+              "value": 1920
+            },
+            "9": {
+              "kind": "uint",
+              "name": "Frame Height",
+              "octets": "0438",
+              "value": 1080
+            }
+          },
+          "item_refusal": null,
+          "refusals": [],
+          "targets": [
+            {
+              "element_order": [
+                5,
+                17,
+                104
+              ],
+              "elements": {
+                "104": {
+                  "kind": "vtracker",
+                  "name": "VTracker LS",
+                  "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                  "value": {
+                    "element_order": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      6,
+                      7,
+                      8
+                    ],
+                    "elements": {
+                      "1": {
+                        "kind": "uuid",
+                        "name": "Track ID",
+                        "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                        "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                      },
+                      "2": {
+                        "kind": "detection_status",
+                        "name": "Detection Status",
+                        "octets": "01",
+                        "value": {
+                          "code": 1,
+                          "status": "Active"
+                        }
+                      },
+                      "3": {
+                        "kind": "timestamp",
+                        "name": "Start Time Stamp",
+                        "octets": "0003824430f6ce40",
+                        "value": {
+                          "microseconds": 987654321000000,
+                          "utc": "2001-04-19T04:25:21Z"
+                        }
+                      },
+                      "4": {
+                        "kind": "timestamp",
+                        "name": "End Time Stamp",
+                        "octets": "0003824430f6ce40",
+                        "value": {
+                          "microseconds": 987654321000000,
+                          "utc": "2001-04-19T04:25:21Z"
+                        }
+                      },
+                      "6": {
+                        "kind": "utf8",
+                        "name": "Algorithm",
+                        "octets": "74657374",
+                        "value": "test"
+                      },
+                      "7": {
+                        "kind": "uint",
+                        "name": "Confidence",
+                        "octets": "32",
+                        "value": 50
+                      },
+                      "8": {
+                        "kind": "uint",
+                        "name": "Number of Track Points",
+                        "octets": "1b",
+                        "value": 27
+                      }
+                    },
+                    "refusals": [],
+                    "set_name": "VTracker LS",
+                    "unlisted_tags": []
+                  }
+                },
+                "17": {
+                  "kind": "location",
+                  "name": "Target Location",
+                  "octets": "42800000488000002a94258019000c80700060005000",
+                  "value": {
+                    "height": 10000.0,
+                    "latitude": 43.0,
+                    "longitude": 110.0,
+                    "rho_east_north": 0.75,
+                    "rho_east_up": 0.5,
+                    "rho_north_up": 0.25,
+                    "sigma_east": 300.0,
+                    "sigma_north": 200.0,
+                    "sigma_up": 100.0
+                  }
+                },
+                "5": {
+                  "kind": "uint",
+                  "name": "Target Confidence Level",
+                  "octets": "50",
+                  "value": 80
+                }
+              },
+              "refusals": [],
+              "target_id": 1234,
+              "unlisted_tags": []
+            }
+          ],
+          "unlisted_tags": []
+        }
+      },
+      "symbol_basis": "derived from the affiliation through symbology.sidc_from_affiliation, so every STANAG 4609 platform is an UNKNOWN glyph. ST 0601.14a carries no symbology of any kind; tag 63 Sensor Field of View Name is the nearest thing to a rendering hint and it names a lens, not an icon",
+      "time_basis": {
+        "applied_microseconds": 1224807209913000,
+        "correction_offset": {
+          "applied": false,
+          "item": "tag 137 Correction Offset",
+          "why_not": "the packet carries no usable tag 137 and no correction is assumed"
+        },
+        "epoch": "1970-01-01T00:00:00Z, and THREE held documents now state it. MISB ST 0603.5 \u00a76 defines the MISP Time System with an 'Epoch of 1970-01-01T00:00:00.0Z (starting point for time scale)' and \u00a73 glosses it as 'the MISP Time System Epoch is 1970-01-01T00:00:00.0Z (i.e. midnight January 1, 1970)'. ST 0601.14a \u00a78.2.1: 'This item represents time as the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z) using an unsigned eight (8) byte integer.' And ST 0603.5's own Appendix A closes the question against every earlier edition of itself: 'Nothing has changed across all ST 0603 versions regarding the Epoch.' The profile MISP-2019.1 still states none, which is why this field was ever in doubt",
+        "item": "tag 2 Precision Time Stamp",
+        "leap_second_adjustment": {
+          "applied": false,
+          "item": "tag 136 Leap Seconds",
+          "why_not": "the packet carries no usable tag 136, so the leap-second count is NOT AVAILABLE to apply and none is assumed. MISB ST 0603.5 \u00a76 \u2014 'UTC can be derived from the MISP Time System using its correct offset and inclusion of leap seconds' \u2014 is therefore not satisfied on this object, and observed_at is the MISP Time System instant rather than UTC. ST 0601.14a \u00a76.4 offers the alternative and this adapter declines it: 'The number of leap seconds may be represented by the Leap Seconds item (Tag 136) or from a current leap second table.' A leap-second table is a second document that changes over time, and an adapter contracted to be a pure function of one payload may not hold one"
+        },
+        "precision": "the stamp is microseconds and times.render emits milliseconds, so the serialised timestamp is this instant truncated to a millisecond. The exact integer is at attributes.precision_time_stamp_us \u2014 the CAT021 treatment of its own high-precision items, where the mismatch is named as a mismatch and not as a defect",
+        "raw_microseconds": 1224807209913000,
+        "received_at": "the injected clock, never the wall clock. FORMAT_COVERAGE.md called this seam 'NAMED AND NOT BUILT' for two rounds because closing park 4 created no adapter to hang it on",
+        "relation_to_TAI": "ST 0603.5 \u00a76, in the document's own words: 'The MISP Time System is locked (i.e. same clock-period and zero delay, see Motion Imagery Handbook [2]) with International Atomic Time (TAI); however, there is a fixed offset of 8.0000822 seconds between the MISP Time System and TAI (i.e. MISP Time = TAI - 8.000082 seconds).' The footnote marker sits inside the first figure as the document prints it; footnote 2 reads 'Many systems may not need to account for the 82 microseconds; those with sensitive timing requirements may.' So the scale is locked to TAI and is NOT TAI",
+        "relation_to_UTC": "ST 0603.5 \u00a76: 'UTC can be derived from the MISP Time System using its correct offset and inclusion of leap seconds.' TWO TERMS, and ST 0601.14a \u00a76.4's Equation 2 supplies ONE of them \u2014 the leap seconds \u2014 so a UTC instant built here carries the 82-microsecond residue \u00a76's offset names and ST 0603.5's own footnote 2 licenses ignoring. Registered as a divergence rather than reconciled: FORMAT_COVERAGE.md's KLV 21. ST 0601.14a \u00a78.2.1 states the negative half and agrees: 'The Precision Time Stamp does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.'",
+        "scale": "THE MISP TIME SYSTEM, named as MISB ST 0603.5 names it, and ST 0601.14a \u00a78.2.1 says the item is one: 'This metadata item is an implementation of the MISP Time System.' \u00a76 of ST 0603.5 defines it in three lines \u2014 'Epoch of 1970-01-01T00:00:00.0Z (starting point for time scale)', 'Based on the SI Second (constant counting increment of time)', 'Strictly monotonically increasing (no skips, no repeats in count)' \u2014 and calls it a 'Level 3' time system exemplifying 'Total Order of data', 'Relative Differencing' and 'Absolute Time reference'. **This is what park 3 owned and what closing it supplies**: the scale had no name here until 2026-09-04 because the document that names it was not held",
+        "the_POSIX_rule_is_SUPERSEDED": "SUPERSEDED BY THE NORMATIVE DOCUMENT, 2026-09-04, and this field used to assert it. It read that a count of seconds since 1970 excluding leap seconds 'is POSIX time, which is what EDITION 1 calls it in its own Table 1 note \u2014 Derived from the POSIX IEEE 1003.1 standard \u2014 and this adapter converts by the POSIX rule because it is the only conversion either held document describes'. ST 0603.5's Appendix A is that conversion's obituary: POSIX derivation is the guidance 'Prior to MISB ST 0603.3', and the appendix lists four issues with it, two of which reach this arithmetic \u2014 'POSIX time does not include leap seconds; however, POSIX is not a linear scale of time. At leap second boundaries POSIX time may add (or subtract) one second of time', and 'POSIX does not define the second to be based on the International System of Units (SI) second'. The MISP Time System is SI-based and strictly monotonic, so it is precisely NOT POSIX time. WHAT DID NOT MOVE IS THE ARITHMETIC: the appendix also says the POSIX Epoch 'is the same Epoch in the MISP Time System', and a strictly monotonic SI-second count from that epoch is rendered to a calendar label by the same division this adapter already performed. So the conversion is unchanged and its AUTHORITY has moved from an analogy to a definition. Registered at KLV 22",
+        "what_observed_at_IS": "the instant EPOCH + applied_microseconds. With neither tag 136 nor tag 137 in the packet that is the raw MISP Time System instant and NOT UTC; with tag 136 it is \u00a76.4 Equation 2's UTC less the 82-microsecond residue; with tag 137 it is the corrected time \u00a76.4 Equation 1 defines. The CDM's Timestamp is UTC and this adapter does not pretend the difference away \u2014 it states which of the three this object carries, on the object"
+      },
+      "uas_ls_version_number": {
+        "basis": "\u00a78.65: '1..255 corresponds to document revisions MISB ST 0601.1 thru MISB ST 0601.255'. Carried and NOT trusted as provenance, and register entry KLV 15 is why: there is no MISB ST 0601.1 \u2014 edition 1 was published as MISB EG 0601.1, an Engineering Guideline, and the standard has renamed its own history. Edition 1's own \u00a77.65.1 adds that the item 'is not required in every packet of metadata', so at the edition a value of 1 declares, the stamp was OPTIONAL; `ST 0601.8-12` made it mandatory",
+        "value": 13
+      },
+      "unavailable_fields": [
+        "Kinematics (tag 56 absent or zero-length, and tag 112 absent or not a measurement \u2014 a Kinematics with every field None states nothing)",
+        "Position (tag 13 and/or tag 14 absent or reserved \u2014 an absent Position is the honest statement, never a Position holding zeros)"
+      ],
+      "vmti_basis": "MISB ST 0601.14a \u00a78.74, page 120: 'MISB ST 0903 VMTI Local Set metadata items', Length Variable, Max Length Not Limited, Required in LS? Optional, Multiples Allowed? No, KLV Key 06.0E.2B.34.02.0B.01.01.0E.01.03.03.06.00.00.00 (CRC 51307) \u2014 the same UL and CRC this module records at LOCAL_SET_KEYS['VMTI LS'] from ST 0903.4's own Table 1 key row. \u00a78.74's bullets: 'Use the MISB ST 0903 Local Set within the MISB ST 0601 Tag 74' and 'The length field is the size of all VMTI LS metadata items to be packaged within Tag 74'. \u00a78.74.1: 'The VMTI Local Set allows users to include, or nest, VMTI LS (MISB ST 0903 [15]) metadata items within MISB ST 0601. This provides users who are required to use the VMTI LS a method to leverage the items within MISB ST 0601 (like platform location, and sensor pointing angles, or frame center).'",
+      "vmti_identity_ruling": "M's ruling, 2026-09-05 (rounds/briefs/H2-park6-cdm.md): identity objects are keyed only on the identifier ST 0903.4 guarantees unconditionally, VTracker LS Tag 1's UUID \u2014 'A value that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID) as standardized by the Open Software Foundation in ISO/IEC 9834-8' (page 90). Where VTracker LS is present a Track and its Entity are emitted and keyed on that UUID; where it is absent, no Track and no Entity \u2014 DETECTION Events only, one per VTarget per packet. The VTarget Pack Target ID Number is carried and is NEVER a key: \u00a711.15 scopes it 'until the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack)', \u00a79.4 and ST 0903.4-09/-10 make every TLV triplet including tag 6 optional so the reset need not be observable, and ST 0903.4-28 requires uniqueness only '[t]o the extent possible'. \u00a710 discourages VTracker in favour of VTrack LS, which \u00a79.1 puts outside item 74's reach entirely; the discouragement is carried at klv_vmti_codec.VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH rather than acted on.",
+      "vmti_local_set": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          101
+        ],
+        "elements": {
+          "10": {
+            "kind": "utf8",
+            "name": "VMTI Source Sensor",
+            "octets": "454f204e6f7365",
+            "value": "EO Nose"
+          },
+          "101": {
+            "kind": "vtarget_series",
+            "name": "VTargetSeries",
+            "octets": "548952050150111642800000488000002a94258019000c8070006000500068350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": [
+              {
+                "element_order": [
+                  5,
+                  17,
+                  104
+                ],
+                "elements": {
+                  "104": {
+                    "kind": "vtracker",
+                    "name": "VTracker LS",
+                    "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                    "value": {
+                      "element_order": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        6,
+                        7,
+                        8
+                      ],
+                      "elements": {
+                        "1": {
+                          "kind": "uuid",
+                          "name": "Track ID",
+                          "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                          "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                        },
+                        "2": {
+                          "kind": "detection_status",
+                          "name": "Detection Status",
+                          "octets": "01",
+                          "value": {
+                            "code": 1,
+                            "status": "Active"
+                          }
+                        },
+                        "3": {
+                          "kind": "timestamp",
+                          "name": "Start Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "4": {
+                          "kind": "timestamp",
+                          "name": "End Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "6": {
+                          "kind": "utf8",
+                          "name": "Algorithm",
+                          "octets": "74657374",
+                          "value": "test"
+                        },
+                        "7": {
+                          "kind": "uint",
+                          "name": "Confidence",
+                          "octets": "32",
+                          "value": 50
+                        },
+                        "8": {
+                          "kind": "uint",
+                          "name": "Number of Track Points",
+                          "octets": "1b",
+                          "value": 27
+                        }
+                      },
+                      "refusals": [],
+                      "set_name": "VTracker LS",
+                      "unlisted_tags": []
+                    }
+                  },
+                  "17": {
+                    "kind": "location",
+                    "name": "Target Location",
+                    "octets": "42800000488000002a94258019000c80700060005000",
+                    "value": {
+                      "height": 10000.0,
+                      "latitude": 43.0,
+                      "longitude": 110.0,
+                      "rho_east_north": 0.75,
+                      "rho_east_up": 0.5,
+                      "rho_north_up": 0.25,
+                      "sigma_east": 300.0,
+                      "sigma_north": 200.0,
+                      "sigma_up": 100.0
+                    }
+                  },
+                  "5": {
+                    "kind": "uint",
+                    "name": "Target Confidence Level",
+                    "octets": "50",
+                    "value": 80
+                  }
+                },
+                "refusals": [],
+                "target_id": 1234,
+                "unlisted_tags": []
+              }
+            ]
+          },
+          "2": {
+            "kind": "timestamp",
+            "name": "Precision Time Stamp",
+            "octets": "0003824430f6ce40",
+            "value": {
+              "microseconds": 987654321000000,
+              "utc": "2001-04-19T04:25:21Z"
+            }
+          },
+          "3": {
+            "kind": "utf8",
+            "name": "VMTI System Name / Description",
+            "octets": "4453544f5f414453535f564d5449",
+            "value": "DSTO_ADSS_VMTI"
+          },
+          "4": {
+            "kind": "uint",
+            "name": "VMTI LS Version Number",
+            "octets": "04",
+            "value": 4
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Total Number of Targets Detected in the Frame",
+            "octets": "1c",
+            "value": 28
+          },
+          "6": {
+            "kind": "uint",
+            "name": "Number of Reported Targets",
+            "octets": "0e",
+            "value": 14
+          },
+          "7": {
+            "kind": "uint",
+            "name": "Motion Imagery Frame Number",
+            "octets": "0130b0",
+            "value": 78000
+          },
+          "8": {
+            "kind": "uint",
+            "name": "Frame Width",
+            "octets": "0780",
+            "value": 1920
+          },
+          "9": {
+            "kind": "uint",
+            "name": "Frame Height",
+            "octets": "0438",
+            "value": 1080
+          }
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "targets": [
+          {
+            "element_order": [
+              5,
+              17,
+              104
+            ],
+            "elements": {
+              "104": {
+                "kind": "vtracker",
+                "name": "VTracker LS",
+                "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                "value": {
+                  "element_order": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    6,
+                    7,
+                    8
+                  ],
+                  "elements": {
+                    "1": {
+                      "kind": "uuid",
+                      "name": "Track ID",
+                      "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                      "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                    },
+                    "2": {
+                      "kind": "detection_status",
+                      "name": "Detection Status",
+                      "octets": "01",
+                      "value": {
+                        "code": 1,
+                        "status": "Active"
+                      }
+                    },
+                    "3": {
+                      "kind": "timestamp",
+                      "name": "Start Time Stamp",
+                      "octets": "0003824430f6ce40",
+                      "value": {
+                        "microseconds": 987654321000000,
+                        "utc": "2001-04-19T04:25:21Z"
+                      }
+                    },
+                    "4": {
+                      "kind": "timestamp",
+                      "name": "End Time Stamp",
+                      "octets": "0003824430f6ce40",
+                      "value": {
+                        "microseconds": 987654321000000,
+                        "utc": "2001-04-19T04:25:21Z"
+                      }
+                    },
+                    "6": {
+                      "kind": "utf8",
+                      "name": "Algorithm",
+                      "octets": "74657374",
+                      "value": "test"
+                    },
+                    "7": {
+                      "kind": "uint",
+                      "name": "Confidence",
+                      "octets": "32",
+                      "value": 50
+                    },
+                    "8": {
+                      "kind": "uint",
+                      "name": "Number of Track Points",
+                      "octets": "1b",
+                      "value": 27
+                    }
+                  },
+                  "refusals": [],
+                  "set_name": "VTracker LS",
+                  "unlisted_tags": []
+                }
+              },
+              "17": {
+                "kind": "location",
+                "name": "Target Location",
+                "octets": "42800000488000002a94258019000c80700060005000",
+                "value": {
+                  "height": 10000.0,
+                  "latitude": 43.0,
+                  "longitude": 110.0,
+                  "rho_east_north": 0.75,
+                  "rho_east_up": 0.5,
+                  "rho_north_up": 0.25,
+                  "sigma_east": 300.0,
+                  "sigma_north": 200.0,
+                  "sigma_up": 100.0
+                }
+              },
+              "5": {
+                "kind": "uint",
+                "name": "Target Confidence Level",
+                "octets": "50",
+                "value": 80
+              }
+            },
+            "refusals": [],
+            "target_id": 1234,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      }
+    },
+    "confidence": null,
+    "entity_id": "97a501bb-20a1-53b3-9ba7-1a697784bd42",
+    "entity_type": "PLATFORM",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": null,
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0",
+        "system": "UAS-LS-PACKET"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2008-10-24T00:13:29.913Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "ebf58298-a59c-500b-8df0-71c7f02ddc78",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2008-10-24T00:13:29.913Z",
+    "payload": {
+      "frame_centre": {
+        "basis": "the point Event.geometry is built from, carried in full because the geometry is 2-D and the elevation is MSL",
+        "elevation_msl_m": null,
+        "lat": null,
+        "lon": null
+      },
+      "geometry_basis": {
+        "elevation": "2-D, [lon, lat], and the third element is deliberately absent. Tag 25 Frame Center Elevation is witnessed and is 'Terrain elevation at frame center relative to Mean Sea Level (MSL)' \u2014 the same MSL-against-HAE decline Position.alt_m carries, in a field that would not even be labelled. Parked at payload.frame_centre.elevation_msl_m",
+        "items": [
+          "tag 23 Frame Center Latitude",
+          "tag 24 Frame Center Longitude"
+        ],
+        "reason": "no geometry: tag 23 and/or 24 is absent or carries the '0x80000000 = \"N/A (Off-Earth)\"' signal \u00a78.23 declares, which is the document saying the frame centre is not on the earth's surface. A Point built over that signal would be a position at the south pole",
+        "why_frame_centre_and_not_target_location": "tags 40 and 41 carry the Target Location and \u00a78.40 makes them CONDITIONAL on their own face \u2014 'This is the crosshair location if different from frame center' \u2014 while the frame centre is stated unconditionally as the geometric centre of the imagery this packet's metadata describes. Choosing between them per packet, on whether they happen to differ, would be this adapter deciding which point the operator meant. So the frame centre is the geometry and the target location is carried in the payload beside it, both verbatim, neither reconciled. In the pinned stream they are BYTE-IDENTICAL at all six sites, which is the emitter reporting them as not different \u2014 and is exactly the case where a merge would look free and would still be a merge"
+      },
+      "integrity": {
+        "checksum_computed": 53876,
+        "checksum_stored": 53876,
+        "checksum_valid": true
+      },
+      "klv_advisories": [],
+      "klv_defects": [],
+      "klv_item_count": 4,
+      "packet_count": 1,
+      "packet_index": 0,
+      "payload_octets": 182,
+      "platform_attitude": {
+        "basis": "the platform half. Heading is NOT course \u2014 see attributes.kinematics_basis \u2014 and pitch and roll reach no CDM field because the CDM models a contact's motion and not an airframe's attitude. All three carry the '~610 micro degrees' class of stated resolution and all three are within their items' stated Min/Max",
+        "ground_speed_mps": null,
+        "heading_deg": null,
+        "pitch_deg": null,
+        "roll_deg": null
+      },
+      "sensor": {
+        "active_sensor_name": null,
+        "basis": "the sensor half of the witnessed set, parked whole. The three relative angles are the gimbal's orientation with respect to the airframe and the CDM has no field for a sensor's pointing at all; deriving where the sensor is LOOKING from them plus the platform attitude at tags 5/6/7 would be a photogrammetric computation the standard itself delegates \u2014 \u00a78.13.1 recommends 'the use of Photogrammetric metadata sets (i.e. MISB ST 0801)' for exactly this, and ST 0801.6 is not held",
+        "ground_range_m": null,
+        "horizontal_field_of_view_deg": null,
+        "image_coordinate_system": null,
+        "relative_azimuth_deg": null,
+        "relative_elevation_deg": null,
+        "relative_roll_deg": null,
+        "slant_range_m": null,
+        "true_altitude_msl_m": null,
+        "vertical_field_of_view_deg": null
+      },
+      "target_location": {
+        "basis": "\u00a78.40/\u00a78.41/\u00a78.42, 'This is the crosshair location if different from frame center'. Carried beside the frame centre and NEVER reconciled with it, not even where the two are byte-identical \u2014 which they are at all six sites of the pinned stream. Choosing between two stated points is a decision, and a decision made inside a translator is one nobody can find later",
+        "elevation_msl_m": null,
+        "lat": null,
+        "lon": null
+      },
+      "target_width_m": {
+        "basis": "tag 22 Target Width. In the PINNED stream this item is the length-divergence defect and this field is therefore null there, with the octets at attributes.klv_item_octets['22'] and the ruling at attributes.length_divergence_policy \u2014 see FORMAT_COVERAGE.md, 'Park 13 adjudicated and CLOSED'. In a conformant packet it is a width in metres",
+        "value": null
+      },
+      "time_basis": {
+        "applied_microseconds": 1224807209913000,
+        "correction_offset": {
+          "applied": false,
+          "item": "tag 137 Correction Offset",
+          "why_not": "the packet carries no usable tag 137 and no correction is assumed"
+        },
+        "epoch": "1970-01-01T00:00:00Z, and THREE held documents now state it. MISB ST 0603.5 \u00a76 defines the MISP Time System with an 'Epoch of 1970-01-01T00:00:00.0Z (starting point for time scale)' and \u00a73 glosses it as 'the MISP Time System Epoch is 1970-01-01T00:00:00.0Z (i.e. midnight January 1, 1970)'. ST 0601.14a \u00a78.2.1: 'This item represents time as the number of microseconds elapsed since January 1, 1970 (1970-01-01T00:00:00Z) using an unsigned eight (8) byte integer.' And ST 0603.5's own Appendix A closes the question against every earlier edition of itself: 'Nothing has changed across all ST 0603 versions regarding the Epoch.' The profile MISP-2019.1 still states none, which is why this field was ever in doubt",
+        "item": "tag 2 Precision Time Stamp",
+        "leap_second_adjustment": {
+          "applied": false,
+          "item": "tag 136 Leap Seconds",
+          "why_not": "the packet carries no usable tag 136, so the leap-second count is NOT AVAILABLE to apply and none is assumed. MISB ST 0603.5 \u00a76 \u2014 'UTC can be derived from the MISP Time System using its correct offset and inclusion of leap seconds' \u2014 is therefore not satisfied on this object, and observed_at is the MISP Time System instant rather than UTC. ST 0601.14a \u00a76.4 offers the alternative and this adapter declines it: 'The number of leap seconds may be represented by the Leap Seconds item (Tag 136) or from a current leap second table.' A leap-second table is a second document that changes over time, and an adapter contracted to be a pure function of one payload may not hold one"
+        },
+        "precision": "the stamp is microseconds and times.render emits milliseconds, so the serialised timestamp is this instant truncated to a millisecond. The exact integer is at attributes.precision_time_stamp_us \u2014 the CAT021 treatment of its own high-precision items, where the mismatch is named as a mismatch and not as a defect",
+        "raw_microseconds": 1224807209913000,
+        "received_at": "the injected clock, never the wall clock. FORMAT_COVERAGE.md called this seam 'NAMED AND NOT BUILT' for two rounds because closing park 4 created no adapter to hang it on",
+        "relation_to_TAI": "ST 0603.5 \u00a76, in the document's own words: 'The MISP Time System is locked (i.e. same clock-period and zero delay, see Motion Imagery Handbook [2]) with International Atomic Time (TAI); however, there is a fixed offset of 8.0000822 seconds between the MISP Time System and TAI (i.e. MISP Time = TAI - 8.000082 seconds).' The footnote marker sits inside the first figure as the document prints it; footnote 2 reads 'Many systems may not need to account for the 82 microseconds; those with sensitive timing requirements may.' So the scale is locked to TAI and is NOT TAI",
+        "relation_to_UTC": "ST 0603.5 \u00a76: 'UTC can be derived from the MISP Time System using its correct offset and inclusion of leap seconds.' TWO TERMS, and ST 0601.14a \u00a76.4's Equation 2 supplies ONE of them \u2014 the leap seconds \u2014 so a UTC instant built here carries the 82-microsecond residue \u00a76's offset names and ST 0603.5's own footnote 2 licenses ignoring. Registered as a divergence rather than reconciled: FORMAT_COVERAGE.md's KLV 21. ST 0601.14a \u00a78.2.1 states the negative half and agrees: 'The Precision Time Stamp does not include leap seconds and therefore the Precision Time Stamp does not represent UTC.'",
+        "scale": "THE MISP TIME SYSTEM, named as MISB ST 0603.5 names it, and ST 0601.14a \u00a78.2.1 says the item is one: 'This metadata item is an implementation of the MISP Time System.' \u00a76 of ST 0603.5 defines it in three lines \u2014 'Epoch of 1970-01-01T00:00:00.0Z (starting point for time scale)', 'Based on the SI Second (constant counting increment of time)', 'Strictly monotonically increasing (no skips, no repeats in count)' \u2014 and calls it a 'Level 3' time system exemplifying 'Total Order of data', 'Relative Differencing' and 'Absolute Time reference'. **This is what park 3 owned and what closing it supplies**: the scale had no name here until 2026-09-04 because the document that names it was not held",
+        "the_POSIX_rule_is_SUPERSEDED": "SUPERSEDED BY THE NORMATIVE DOCUMENT, 2026-09-04, and this field used to assert it. It read that a count of seconds since 1970 excluding leap seconds 'is POSIX time, which is what EDITION 1 calls it in its own Table 1 note \u2014 Derived from the POSIX IEEE 1003.1 standard \u2014 and this adapter converts by the POSIX rule because it is the only conversion either held document describes'. ST 0603.5's Appendix A is that conversion's obituary: POSIX derivation is the guidance 'Prior to MISB ST 0603.3', and the appendix lists four issues with it, two of which reach this arithmetic \u2014 'POSIX time does not include leap seconds; however, POSIX is not a linear scale of time. At leap second boundaries POSIX time may add (or subtract) one second of time', and 'POSIX does not define the second to be based on the International System of Units (SI) second'. The MISP Time System is SI-based and strictly monotonic, so it is precisely NOT POSIX time. WHAT DID NOT MOVE IS THE ARITHMETIC: the appendix also says the POSIX Epoch 'is the same Epoch in the MISP Time System', and a strictly monotonic SI-second count from that epoch is rendered to a calendar label by the same division this adapter already performed. So the conversion is unchanged and its AUTHORITY has moved from an analogy to a definition. Registered at KLV 22",
+        "what_observed_at_IS": "the instant EPOCH + applied_microseconds. With neither tag 136 nor tag 137 in the packet that is the raw MISP Time System instant and NOT UTC; with tag 136 it is \u00a76.4 Equation 2's UTC less the 82-microsecond residue; with tag 137 it is the corrected time \u00a76.4 Equation 1 defines. The CDM's Timestamp is UTC and this adapter does not pretend the difference away \u2014 it states which of the three this object carries, on the object"
+      }
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "97a501bb-20a1-53b3-9ba7-1a697784bd42"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0",
+        "system": "UAS-LS-PACKET"
+      }
+    ]
+  },
+  {
+    "event_id": "2850f564-8d33-5ab6-b8bd-8a05882b6d61",
+    "event_type": "DETECTION",
+    "geometry": {
+      "coordinates": [
+        110.0,
+        43.0
+      ],
+      "type": "Point"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2008-10-24T00:13:29.913Z",
+    "payload": {
+      "detection_key": "1224807209913000|0|0|1234",
+      "identity_basis": {
+        "key": "VTracker LS Tag 1 Track ID (UUID)",
+        "new_detection_flag": null,
+        "no_track": null,
+        "ruling": "M's ruling, 2026-09-05 (rounds/briefs/H2-park6-cdm.md): identity objects are keyed only on the identifier ST 0903.4 guarantees unconditionally, VTracker LS Tag 1's UUID \u2014 'A value that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID) as standardized by the Open Software Foundation in ISO/IEC 9834-8' (page 90). Where VTracker LS is present a Track and its Entity are emitted and keyed on that UUID; where it is absent, no Track and no Entity \u2014 DETECTION Events only, one per VTarget per packet. The VTarget Pack Target ID Number is carried and is NEVER a key: \u00a711.15 scopes it 'until the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack)', \u00a79.4 and ST 0903.4-09/-10 make every TLV triplet including tag 6 optional so the reset need not be observable, and ST 0903.4-28 requires uniqueness only '[t]o the extent possible'. \u00a710 discourages VTracker in favour of VTrack LS, which \u00a79.1 puts outside item 74's reach entirely; the discouragement is carried at klv_vmti_codec.VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH rather than acted on.",
+        "target_id_number": 1234,
+        "target_id_number_scope": "CARRIED, NEVER A KEY. \u00a711.15, VTarget Pack Target ID Number: 'Uniquely identifies a target across multiple frames until the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack).'"
+      },
+      "position_basis": {
+        "accuracy_m": "None. The Location pack carries Sigma_East, Sigma_North and Sigma_Up as three separate standard deviations and `Position.accuracy_m` is one number; combining them is a statistic ST 0903.4 does not define. All three are carried verbatim in the payload and the attributes",
+        "altitude": "VTarget Pack Tag 12 Target Height where present, and it is HAE: \u00a711.15 Tag 12, 'Height of the target, expressed as height in meters above the WGS84 ellipsoid (HAE)' \u2014 the same datum `Position.alt_m` takes, so there is no conversion. Tag 17's Location pack carries its Height on the same definition",
+        "position_source": "ESTIMATED. A VMTI target's location is derived by a processor from imagery \u2014 \u00a71 calls the content 'Video Moving Target Indicator (VMTI) metadata' \u2014 and not received from the target. GNSS would claim the target carried a receiver; INERTIAL and MANUAL are plainly not it. ESTIMATED is the member that says what happened, and it is the platform Entity's GNSS that the estimate was made from",
+        "precedence": [
+          "VTarget Pack Tag 17 Target Location \u2014 a Location Truncation Pack carrying absolute Latitude, Longitude and Height. \u00a711.15 Tag 17: 'Provides detailed geopositioning information for a target' and 'even if the VMTI LS is embedded within a MISB ST 0601 LS, Target Location may still be used'",
+          "VTarget Pack Tags 10 and 11, the Target Location Latitude/Longitude Offsets, added to ST 0601 items 23 and 24 (Frame Center Latitude/Longitude). \u00a711.15 Tag 10: 'The Target Location Latitude Offset is added to the Frame Center Latitude metadata item from the parent MISB ST 0601 packet to determine the Latitude of the target. Both KLV data items must be converted to decimal prior to addition'"
+        ],
+        "taken_from": "VTarget Pack Tag 17 Target Location"
+      },
+      "reported_by": {
+        "entity_id": "97a501bb-20a1-53b3-9ba7-1a697784bd42",
+        "what_it_is": "the PLATFORM Entity of the ST 0601 packet this item 74 arrived in \u2014 the reporter, never the subject. It is named here and not in related_entities because a DETECTION is about the thing detected: putting the reporter there would make every consumer that reads related_entities as 'what this event is about' wrong on every VMTI event"
+      },
+      "target_priority_is_not_severity": "\u00a711.15 Tag 4 Target Priority: 'Provides a means to distinguish between targets' and 'allows systems to reduce the amount of data transmitted' \u2014 an ordering for bandwidth, not an alarm. Severity stays INFO and the priority is in vmti_target.elements",
+      "vmti_frame": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          101
+        ],
+        "elements": {
+          "10": {
+            "kind": "utf8",
+            "name": "VMTI Source Sensor",
+            "octets": "454f204e6f7365",
+            "value": "EO Nose"
+          },
+          "101": {
+            "kind": "vtarget_series",
+            "name": "VTargetSeries",
+            "octets": "548952050150111642800000488000002a94258019000c8070006000500068350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": [
+              {
+                "element_order": [
+                  5,
+                  17,
+                  104
+                ],
+                "elements": {
+                  "104": {
+                    "kind": "vtracker",
+                    "name": "VTracker LS",
+                    "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                    "value": {
+                      "element_order": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        6,
+                        7,
+                        8
+                      ],
+                      "elements": {
+                        "1": {
+                          "kind": "uuid",
+                          "name": "Track ID",
+                          "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                          "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                        },
+                        "2": {
+                          "kind": "detection_status",
+                          "name": "Detection Status",
+                          "octets": "01",
+                          "value": {
+                            "code": 1,
+                            "status": "Active"
+                          }
+                        },
+                        "3": {
+                          "kind": "timestamp",
+                          "name": "Start Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "4": {
+                          "kind": "timestamp",
+                          "name": "End Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "6": {
+                          "kind": "utf8",
+                          "name": "Algorithm",
+                          "octets": "74657374",
+                          "value": "test"
+                        },
+                        "7": {
+                          "kind": "uint",
+                          "name": "Confidence",
+                          "octets": "32",
+                          "value": 50
+                        },
+                        "8": {
+                          "kind": "uint",
+                          "name": "Number of Track Points",
+                          "octets": "1b",
+                          "value": 27
+                        }
+                      },
+                      "refusals": [],
+                      "set_name": "VTracker LS",
+                      "unlisted_tags": []
+                    }
+                  },
+                  "17": {
+                    "kind": "location",
+                    "name": "Target Location",
+                    "octets": "42800000488000002a94258019000c80700060005000",
+                    "value": {
+                      "height": 10000.0,
+                      "latitude": 43.0,
+                      "longitude": 110.0,
+                      "rho_east_north": 0.75,
+                      "rho_east_up": 0.5,
+                      "rho_north_up": 0.25,
+                      "sigma_east": 300.0,
+                      "sigma_north": 200.0,
+                      "sigma_up": 100.0
+                    }
+                  },
+                  "5": {
+                    "kind": "uint",
+                    "name": "Target Confidence Level",
+                    "octets": "50",
+                    "value": 80
+                  }
+                },
+                "refusals": [],
+                "target_id": 1234,
+                "unlisted_tags": []
+              }
+            ]
+          },
+          "2": {
+            "kind": "timestamp",
+            "name": "Precision Time Stamp",
+            "octets": "0003824430f6ce40",
+            "value": {
+              "microseconds": 987654321000000,
+              "utc": "2001-04-19T04:25:21Z"
+            }
+          },
+          "3": {
+            "kind": "utf8",
+            "name": "VMTI System Name / Description",
+            "octets": "4453544f5f414453535f564d5449",
+            "value": "DSTO_ADSS_VMTI"
+          },
+          "4": {
+            "kind": "uint",
+            "name": "VMTI LS Version Number",
+            "octets": "04",
+            "value": 4
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Total Number of Targets Detected in the Frame",
+            "octets": "1c",
+            "value": 28
+          },
+          "6": {
+            "kind": "uint",
+            "name": "Number of Reported Targets",
+            "octets": "0e",
+            "value": 14
+          },
+          "7": {
+            "kind": "uint",
+            "name": "Motion Imagery Frame Number",
+            "octets": "0130b0",
+            "value": 78000
+          },
+          "8": {
+            "kind": "uint",
+            "name": "Frame Width",
+            "octets": "0780",
+            "value": 1920
+          },
+          "9": {
+            "kind": "uint",
+            "name": "Frame Height",
+            "octets": "0438",
+            "value": 1080
+          }
+        },
+        "frame_height_px": 1080,
+        "frame_width_px": 1920,
+        "pixel_basis": "a pixel number is a position in the FRAME and never on the earth. \u00a711.15 Tag 1: the Target Centroid Pixel Number counts 'in raster order from the upper left corner', so it is meaningless without Frame Width (Tag 8) and Frame Height (Tag 9), which are carried above. NO GEOLOCATION IS COMPUTED FROM IT: converting a pixel to a ground point needs the sensor model \u2014 pointing angles, slant range, a terrain surface \u2014 and ST 0903.4 defines no such conversion, so the pixel rides as a pixel",
+        "refusals": [],
+        "target_count": 1,
+        "unlisted_tags": [],
+        "vmti_precision_time_stamp": {
+          "microseconds": 987654321000000,
+          "utc": "2001-04-19T04:25:21Z"
+        }
+      },
+      "vmti_packet_index": 0,
+      "vmti_target": {
+        "element_order": [
+          5,
+          17,
+          104
+        ],
+        "elements": {
+          "104": {
+            "kind": "vtracker",
+            "name": "VTracker LS",
+            "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": {
+              "element_order": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "elements": {
+                "1": {
+                  "kind": "uuid",
+                  "name": "Track ID",
+                  "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                  "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                },
+                "2": {
+                  "kind": "detection_status",
+                  "name": "Detection Status",
+                  "octets": "01",
+                  "value": {
+                    "code": 1,
+                    "status": "Active"
+                  }
+                },
+                "3": {
+                  "kind": "timestamp",
+                  "name": "Start Time Stamp",
+                  "octets": "0003824430f6ce40",
+                  "value": {
+                    "microseconds": 987654321000000,
+                    "utc": "2001-04-19T04:25:21Z"
+                  }
+                },
+                "4": {
+                  "kind": "timestamp",
+                  "name": "End Time Stamp",
+                  "octets": "0003824430f6ce40",
+                  "value": {
+                    "microseconds": 987654321000000,
+                    "utc": "2001-04-19T04:25:21Z"
+                  }
+                },
+                "6": {
+                  "kind": "utf8",
+                  "name": "Algorithm",
+                  "octets": "74657374",
+                  "value": "test"
+                },
+                "7": {
+                  "kind": "uint",
+                  "name": "Confidence",
+                  "octets": "32",
+                  "value": 50
+                },
+                "8": {
+                  "kind": "uint",
+                  "name": "Number of Track Points",
+                  "octets": "1b",
+                  "value": 27
+                }
+              },
+              "refusals": [],
+              "set_name": "VTracker LS",
+              "unlisted_tags": []
+            }
+          },
+          "17": {
+            "kind": "location",
+            "name": "Target Location",
+            "octets": "42800000488000002a94258019000c80700060005000",
+            "value": {
+              "height": 10000.0,
+              "latitude": 43.0,
+              "longitude": 110.0,
+              "rho_east_north": 0.75,
+              "rho_east_up": 0.5,
+              "rho_north_up": 0.25,
+              "sigma_east": 300.0,
+              "sigma_north": 200.0,
+              "sigma_up": 100.0
+            }
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Target Confidence Level",
+            "octets": "50",
+            "value": 80
+          }
+        },
+        "refusals": [],
+        "target_id": 1234,
+        "unlisted_tags": []
+      },
+      "vmti_target_ordinal": 0
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "49cab8c5-856d-5920-af40-42b901c2b4fe"
+    ],
+    "schema_version": "1.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0|0|1234",
+        "system": "VMTI-VTARGET"
+      },
+      {
+        "external_id": "1234",
+        "system": "VMTI-VTARGET-TARGET-ID-NUMBER"
+      },
+      {
+        "external_id": "f81d4fae7dec11d0a76500a0c91e6bf6",
+        "system": "VMTI-VTRACKER-TRACK-ID"
+      }
+    ]
+  },
+  {
+    "affiliation": "UNKNOWN",
+    "attributes": {
+      "detection_key": "1224807209913000|0|0|1234",
+      "entity_type_basis": "UNKNOWN, by M's amended default 3 of 2026-09-05 and by two standing rulings it rests on. ST 0903.4's only typing fields are VObject LS Tag 1 Ontology (a URI 'which refers to a valid OWL ontology') and Tag 2 Ontology_Class (a free string 'as defined in the VObject Ontology', printed example 'Dismount/Non-combatant/Female/Child'); `ST 0903.4-46` requires the Ontology to appear before any Class and the .4 changelog lets it 'carry forward over subsequent VObject instances', so a Class is not even readable without holding ontology state across packets. This repository resolves no external register (klv_vmti_codec.EXTERNAL_ONTOLOGIES_NOT_RESOLVED), and `EntityType` has no member for a person in any case \u2014 gap 20's divergence, met here by a third adapter, and answered UNKNOWN as gmtif.py answers it rather than PLATFORM as asterix_cat021.py does",
+      "identity_basis": {
+        "key": "VTracker LS Tag 1 Track ID (UUID)",
+        "new_detection_flag": null,
+        "no_track": null,
+        "ruling": "M's ruling, 2026-09-05 (rounds/briefs/H2-park6-cdm.md): identity objects are keyed only on the identifier ST 0903.4 guarantees unconditionally, VTracker LS Tag 1's UUID \u2014 'A value that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID) as standardized by the Open Software Foundation in ISO/IEC 9834-8' (page 90). Where VTracker LS is present a Track and its Entity are emitted and keyed on that UUID; where it is absent, no Track and no Entity \u2014 DETECTION Events only, one per VTarget per packet. The VTarget Pack Target ID Number is carried and is NEVER a key: \u00a711.15 scopes it 'until the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack)', \u00a79.4 and ST 0903.4-09/-10 make every TLV triplet including tag 6 optional so the reset need not be observable, and ST 0903.4-28 requires uniqueness only '[t]o the extent possible'. \u00a710 discourages VTracker in favour of VTrack LS, which \u00a79.1 puts outside item 74's reach entirely; the discouragement is carried at klv_vmti_codec.VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH rather than acted on.",
+        "target_id_number": 1234,
+        "target_id_number_scope": "CARRIED, NEVER A KEY. \u00a711.15, VTarget Pack Target ID Number: 'Uniquely identifies a target across multiple frames until the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack).'"
+      },
+      "klv_object_role": "vmti_target",
+      "position_basis": {
+        "accuracy_m": "None. The Location pack carries Sigma_East, Sigma_North and Sigma_Up as three separate standard deviations and `Position.accuracy_m` is one number; combining them is a statistic ST 0903.4 does not define. All three are carried verbatim in the payload and the attributes",
+        "altitude": "VTarget Pack Tag 12 Target Height where present, and it is HAE: \u00a711.15 Tag 12, 'Height of the target, expressed as height in meters above the WGS84 ellipsoid (HAE)' \u2014 the same datum `Position.alt_m` takes, so there is no conversion. Tag 17's Location pack carries its Height on the same definition",
+        "position_source": "ESTIMATED. A VMTI target's location is derived by a processor from imagery \u2014 \u00a71 calls the content 'Video Moving Target Indicator (VMTI) metadata' \u2014 and not received from the target. GNSS would claim the target carried a receiver; INERTIAL and MANUAL are plainly not it. ESTIMATED is the member that says what happened, and it is the platform Entity's GNSS that the estimate was made from",
+        "precedence": [
+          "VTarget Pack Tag 17 Target Location \u2014 a Location Truncation Pack carrying absolute Latitude, Longitude and Height. \u00a711.15 Tag 17: 'Provides detailed geopositioning information for a target' and 'even if the VMTI LS is embedded within a MISB ST 0601 LS, Target Location may still be used'",
+          "VTarget Pack Tags 10 and 11, the Target Location Latitude/Longitude Offsets, added to ST 0601 items 23 and 24 (Frame Center Latitude/Longitude). \u00a711.15 Tag 10: 'The Target Location Latitude Offset is added to the Frame Center Latitude metadata item from the parent MISB ST 0601 packet to determine the Latitude of the target. Both KLV data items must be converted to decimal prior to addition'"
+        ],
+        "taken_from": "VTarget Pack Tag 17 Target Location"
+      },
+      "reported_by_entity_id": "97a501bb-20a1-53b3-9ba7-1a697784bd42",
+      "vmti_frame": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          101
+        ],
+        "elements": {
+          "10": {
+            "kind": "utf8",
+            "name": "VMTI Source Sensor",
+            "octets": "454f204e6f7365",
+            "value": "EO Nose"
+          },
+          "101": {
+            "kind": "vtarget_series",
+            "name": "VTargetSeries",
+            "octets": "548952050150111642800000488000002a94258019000c8070006000500068350110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": [
+              {
+                "element_order": [
+                  5,
+                  17,
+                  104
+                ],
+                "elements": {
+                  "104": {
+                    "kind": "vtracker",
+                    "name": "VTracker LS",
+                    "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+                    "value": {
+                      "element_order": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        6,
+                        7,
+                        8
+                      ],
+                      "elements": {
+                        "1": {
+                          "kind": "uuid",
+                          "name": "Track ID",
+                          "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                          "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                        },
+                        "2": {
+                          "kind": "detection_status",
+                          "name": "Detection Status",
+                          "octets": "01",
+                          "value": {
+                            "code": 1,
+                            "status": "Active"
+                          }
+                        },
+                        "3": {
+                          "kind": "timestamp",
+                          "name": "Start Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "4": {
+                          "kind": "timestamp",
+                          "name": "End Time Stamp",
+                          "octets": "0003824430f6ce40",
+                          "value": {
+                            "microseconds": 987654321000000,
+                            "utc": "2001-04-19T04:25:21Z"
+                          }
+                        },
+                        "6": {
+                          "kind": "utf8",
+                          "name": "Algorithm",
+                          "octets": "74657374",
+                          "value": "test"
+                        },
+                        "7": {
+                          "kind": "uint",
+                          "name": "Confidence",
+                          "octets": "32",
+                          "value": 50
+                        },
+                        "8": {
+                          "kind": "uint",
+                          "name": "Number of Track Points",
+                          "octets": "1b",
+                          "value": 27
+                        }
+                      },
+                      "refusals": [],
+                      "set_name": "VTracker LS",
+                      "unlisted_tags": []
+                    }
+                  },
+                  "17": {
+                    "kind": "location",
+                    "name": "Target Location",
+                    "octets": "42800000488000002a94258019000c80700060005000",
+                    "value": {
+                      "height": 10000.0,
+                      "latitude": 43.0,
+                      "longitude": 110.0,
+                      "rho_east_north": 0.75,
+                      "rho_east_up": 0.5,
+                      "rho_north_up": 0.25,
+                      "sigma_east": 300.0,
+                      "sigma_north": 200.0,
+                      "sigma_up": 100.0
+                    }
+                  },
+                  "5": {
+                    "kind": "uint",
+                    "name": "Target Confidence Level",
+                    "octets": "50",
+                    "value": 80
+                  }
+                },
+                "refusals": [],
+                "target_id": 1234,
+                "unlisted_tags": []
+              }
+            ]
+          },
+          "2": {
+            "kind": "timestamp",
+            "name": "Precision Time Stamp",
+            "octets": "0003824430f6ce40",
+            "value": {
+              "microseconds": 987654321000000,
+              "utc": "2001-04-19T04:25:21Z"
+            }
+          },
+          "3": {
+            "kind": "utf8",
+            "name": "VMTI System Name / Description",
+            "octets": "4453544f5f414453535f564d5449",
+            "value": "DSTO_ADSS_VMTI"
+          },
+          "4": {
+            "kind": "uint",
+            "name": "VMTI LS Version Number",
+            "octets": "04",
+            "value": 4
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Total Number of Targets Detected in the Frame",
+            "octets": "1c",
+            "value": 28
+          },
+          "6": {
+            "kind": "uint",
+            "name": "Number of Reported Targets",
+            "octets": "0e",
+            "value": 14
+          },
+          "7": {
+            "kind": "uint",
+            "name": "Motion Imagery Frame Number",
+            "octets": "0130b0",
+            "value": 78000
+          },
+          "8": {
+            "kind": "uint",
+            "name": "Frame Width",
+            "octets": "0780",
+            "value": 1920
+          },
+          "9": {
+            "kind": "uint",
+            "name": "Frame Height",
+            "octets": "0438",
+            "value": 1080
+          }
+        },
+        "frame_height_px": 1080,
+        "frame_width_px": 1920,
+        "pixel_basis": "a pixel number is a position in the FRAME and never on the earth. \u00a711.15 Tag 1: the Target Centroid Pixel Number counts 'in raster order from the upper left corner', so it is meaningless without Frame Width (Tag 8) and Frame Height (Tag 9), which are carried above. NO GEOLOCATION IS COMPUTED FROM IT: converting a pixel to a ground point needs the sensor model \u2014 pointing angles, slant range, a terrain surface \u2014 and ST 0903.4 defines no such conversion, so the pixel rides as a pixel",
+        "refusals": [],
+        "target_count": 1,
+        "unlisted_tags": [],
+        "vmti_precision_time_stamp": {
+          "microseconds": 987654321000000,
+          "utc": "2001-04-19T04:25:21Z"
+        }
+      },
+      "vmti_identity_ruling": "M's ruling, 2026-09-05 (rounds/briefs/H2-park6-cdm.md): identity objects are keyed only on the identifier ST 0903.4 guarantees unconditionally, VTracker LS Tag 1's UUID \u2014 'A value that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification (UUID) as standardized by the Open Software Foundation in ISO/IEC 9834-8' (page 90). Where VTracker LS is present a Track and its Entity are emitted and keyed on that UUID; where it is absent, no Track and no Entity \u2014 DETECTION Events only, one per VTarget per packet. The VTarget Pack Target ID Number is carried and is NEVER a key: \u00a711.15 scopes it 'until the identification number is reset by the New Detection Flag (Tag 6 within the VTarget Pack)', \u00a79.4 and ST 0903.4-09/-10 make every TLV triplet including tag 6 optional so the reset need not be observable, and ST 0903.4-28 requires uniqueness only '[t]o the extent possible'. \u00a710 discourages VTracker in favour of VTrack LS, which \u00a79.1 puts outside item 74's reach entirely; the discouragement is carried at klv_vmti_codec.VTRACK_LS_IS_OUT_OF_ITEM_74S_REACH rather than acted on.",
+      "vmti_number_of_track_points": 27,
+      "vmti_ontology": null,
+      "vmti_ontology_basis": "VObject LS Tag 1 (Ontology) and VFeature LS Tag 1 (Schema) are URIs POINTING AT a document this repository does not hold, and VObject LS Tag 2 (Ontology_Class) and VFeature LS Tag 2 (Schema_Feature) are free-form strings in the vocabulary those documents define \u2014 the Ontology_Class worked example is 'Dismount/Non-combatant/Female/Child', a path in an unbounded namespace and not a member of any enumeration this document prints. So all four are decoded as text and NO class is resolved, on klv_security_codec.EXTERNAL_CODE_LISTS_NOT_HELD's ground: resolving one would mean this repository supplying the register the document delegates to, which is a different act from decoding an octet.",
+      "vmti_packet_index": 0,
+      "vmti_target": {
+        "element_order": [
+          5,
+          17,
+          104
+        ],
+        "elements": {
+          "104": {
+            "kind": "vtracker",
+            "name": "VTracker LS",
+            "octets": "0110f81d4fae7dec11d0a76500a0c91e6bf602010103080003824430f6ce4004080003824430f6ce4006047465737407013208011b",
+            "value": {
+              "element_order": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "elements": {
+                "1": {
+                  "kind": "uuid",
+                  "name": "Track ID",
+                  "octets": "f81d4fae7dec11d0a76500a0c91e6bf6",
+                  "value": "f81d4fae7dec11d0a76500a0c91e6bf6"
+                },
+                "2": {
+                  "kind": "detection_status",
+                  "name": "Detection Status",
+                  "octets": "01",
+                  "value": {
+                    "code": 1,
+                    "status": "Active"
+                  }
+                },
+                "3": {
+                  "kind": "timestamp",
+                  "name": "Start Time Stamp",
+                  "octets": "0003824430f6ce40",
+                  "value": {
+                    "microseconds": 987654321000000,
+                    "utc": "2001-04-19T04:25:21Z"
+                  }
+                },
+                "4": {
+                  "kind": "timestamp",
+                  "name": "End Time Stamp",
+                  "octets": "0003824430f6ce40",
+                  "value": {
+                    "microseconds": 987654321000000,
+                    "utc": "2001-04-19T04:25:21Z"
+                  }
+                },
+                "6": {
+                  "kind": "utf8",
+                  "name": "Algorithm",
+                  "octets": "74657374",
+                  "value": "test"
+                },
+                "7": {
+                  "kind": "uint",
+                  "name": "Confidence",
+                  "octets": "32",
+                  "value": 50
+                },
+                "8": {
+                  "kind": "uint",
+                  "name": "Number of Track Points",
+                  "octets": "1b",
+                  "value": 27
+                }
+              },
+              "refusals": [],
+              "set_name": "VTracker LS",
+              "unlisted_tags": []
+            }
+          },
+          "17": {
+            "kind": "location",
+            "name": "Target Location",
+            "octets": "42800000488000002a94258019000c80700060005000",
+            "value": {
+              "height": 10000.0,
+              "latitude": 43.0,
+              "longitude": 110.0,
+              "rho_east_north": 0.75,
+              "rho_east_up": 0.5,
+              "rho_north_up": 0.25,
+              "sigma_east": 300.0,
+              "sigma_north": 200.0,
+              "sigma_up": 100.0
+            }
+          },
+          "5": {
+            "kind": "uint",
+            "name": "Target Confidence Level",
+            "octets": "50",
+            "value": 80
+          }
+        },
+        "refusals": [],
+        "target_id": 1234,
+        "unlisted_tags": []
+      },
+      "vmti_target_ordinal": 0,
+      "vmti_track_acceleration": null,
+      "vmti_track_algorithm": "test",
+      "vmti_track_confidence_percent": 50,
+      "vmti_track_end_time": {
+        "microseconds": 987654321000000,
+        "utc": "2001-04-19T04:25:21Z"
+      },
+      "vmti_track_id": "f81d4fae7dec11d0a76500a0c91e6bf6",
+      "vmti_track_locus": null,
+      "vmti_track_locus_basis": "VTracker LS Tag 9 Locus, carried and NOT turned into Track.samples. \u00a711.15.24 Tag 9: 'A Series of points that represent the locations of entity VMTI detections. Each point is an element of type Location. The points must be ordered chronologically from start to end of the VMTI detections.' Chronological ORDER and no per-point time; a TrackSample needs an instant each. Spreading the points between Tag 3 and Tag 4 would be interpolation the document does not define, so Track.samples holds what this packet witnessed and the locus is here",
+      "vmti_track_start_time": {
+        "microseconds": 987654321000000,
+        "utc": "2001-04-19T04:25:21Z"
+      },
+      "vmti_track_status": {
+        "code": 1,
+        "status": "Active"
+      },
+      "vmti_track_status_basis": "VTracker LS Tag 2 Detection Status, Table 16: Inactive, Active, Dropped, Stopped. **NO PERSISTENCE IS CLAIMED BEYOND THE UUID, AND THIS IS THE ELEMENT THAT SAYS WHY.** Table 16's Inactive row: 'The VMTI detections for the entity have ended. The entity may have merged with one or more other entities, to have split into two or more new entities, or to have ceased to exist because no VMTI detection can be correlated with it.' A merge and a split are in the document's own identity model and no one-UUID-one-Track mapping can express either, so the status is CARRIED as the producer's statement and this adapter draws no consequence from it",
+      "vmti_track_velocity": null
+    },
+    "confidence": null,
+    "entity_id": "49cab8c5-856d-5920-af40-42b901c2b4fe",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "position": {
+      "accuracy_m": null,
+      "alt_m": 10000.0,
+      "lat": 43.0,
+      "lon": 110.0,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0|0|1234",
+        "system": "VMTI-VTARGET"
+      },
+      {
+        "external_id": "1234",
+        "system": "VMTI-VTARGET-TARGET-ID-NUMBER"
+      },
+      {
+        "external_id": "f81d4fae7dec11d0a76500a0c91e6bf6",
+        "system": "VMTI-VTRACKER-TRACK-ID"
+      }
+    ],
+    "symbol": "10210000000000000000",
+    "valid_from": "2008-10-24T00:13:29.913Z",
+    "valid_to": null
+  },
+  {
+    "entity_id": "49cab8c5-856d-5920-af40-42b901c2b4fe",
+    "integrity": null,
+    "object_kind": "track",
+    "samples": [
+      {
+        "observed_at": "2008-10-24T00:13:29.913Z",
+        "position": {
+          "accuracy_m": null,
+          "alt_m": 10000.0,
+          "lat": 43.0,
+          "lon": 110.0,
+          "position_source": "ESTIMATED"
+        }
+      }
+    ],
+    "schema_version": "1.0.0",
+    "source": {
+      "adapter": "stanag4609",
+      "adapter_version": "1.0.0",
+      "synthetic": true,
+      "system": "STANAG4609"
+    },
+    "source_ids": [
+      {
+        "external_id": "1224807209913000|0|0|1234",
+        "system": "VMTI-VTARGET"
+      },
+      {
+        "external_id": "1234",
+        "system": "VMTI-VTARGET-TARGET-ID-NUMBER"
+      },
+      {
+        "external_id": "f81d4fae7dec11d0a76500a0c91e6bf6",
+        "system": "VMTI-VTRACKER-TRACK-ID"
+      }
+    ],
+    "track_id": "43e69628-d100-5138-9768-adc7980a1de1",
+    "track_quality": 0.5
+  }
+]

@@ -53,12 +53,15 @@ from synapse_cdm.adapters.stanag4609 import (
     EPOCH,
     OBSERVATION_SYSTEM,
     SYSTEM,
+    VMTI_DETECTION_SYSTEM,
+    VMTI_TARGET_ROLE,
+    VMTI_TRACK_SYSTEM,
     Stanag4609Adapter,
     Stanag4609ParseError,
     parse_payload,
 )
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
-from synapse_cdm.models import Entity, Event
+from synapse_cdm.models import Entity, Event, Track
 from gates import pin_paths
 
 PACKAGE = pathlib.Path(synapse_cdm.__file__).resolve().parent
@@ -581,8 +584,199 @@ def test_egress_refuses_an_entity_that_did_not_come_from_this_adapter():
     stripped = entity.model_copy(update={"attributes": {}})
     with pytest.raises(Stanag4609ParseError, match="did not come from this adapter"):
         adapter().from_cdm([stripped])
-    with pytest.raises(Stanag4609ParseError, match="at least one Entity"):
+    with pytest.raises(Stanag4609ParseError, match="at least one packet Entity"):
         adapter().from_cdm([])
+    # AND A VMTI TARGET ENTITY IS EXCLUDED RATHER THAN REFUSED, WHICH IS A DIFFERENT ANSWER FOR A
+    # DIFFERENT REASON. A stripped packet Entity is an object that did not come from here; a target
+    # Entity did come from here and has no octets of its own to replay, because its octets are
+    # already inside item 74 of the packet Entity beside it. Re-emitting one would duplicate a
+    # target into the payload, so egress drops it — and a list holding ONLY target entities is
+    # still the "no packet Entity" error, not an empty payload.
+    objects = adapter().to_cdm(
+        (FIXTURES / "a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.klv").read_bytes())
+    targets = [obj for obj in objects if isinstance(obj, Entity)
+               and obj.attributes.get("klv_object_role") == VMTI_TARGET_ROLE]
+    assert len(targets) == 1
+    with pytest.raises(Stanag4609ParseError, match="at least one packet Entity"):
+        adapter().from_cdm(targets)
+    packets = [obj for obj in objects if isinstance(obj, Entity) and obj not in targets]
+    assert adapter().from_cdm(packets + targets) == adapter().from_cdm(packets)
+
+
+# ------------------------------------------------------------------ item 74, the VMTI LS
+
+
+def _by_kind(objects):
+    return ([o for o in objects if isinstance(o, Entity)],
+            [o for o in objects if isinstance(o, Event)],
+            [o for o in objects if isinstance(o, Track)])
+
+
+def _vmti(name):
+    return adapter().to_cdm((FIXTURES / f"{name}.klv").read_bytes())
+
+
+def test_a_vtracker_uuid_keys_a_track_and_an_entity_and_the_target_id_number_never_does():
+    """M's ruling of 2026-09-05, asserted where it would break: the KEY.
+
+    The ruling is not derivable from ST 0903.4 — the document narrows every candidate and settles
+    none — so what this test pins is a decision, and it pins it at the two places a later round
+    could undo it without noticing: which `system` the identity id spaces are derived under, and
+    whether the Target ID Number is anywhere near one.
+    """
+    entities, events, tracks = _by_kind(
+        _vmti("a_vtracker_uuid_is_the_only_key_a_vmti_track_gets"))
+    assert len(entities) == 2 and len(events) == 2 and len(tracks) == 1
+    detection = next(e for e in events if e.event_type is EventType.DETECTION)
+    target = next(e for e in entities if e.attributes.get("klv_object_role") == VMTI_TARGET_ROLE)
+    track = tracks[0]
+
+    uuid_hex = "f81d4fae7dec11d0a76500a0c91e6bf6"
+    assert target.attributes["vmti_track_id"] == uuid_hex
+    assert target.entity_id == synapse_cdm.ids.derive(VMTI_TRACK_SYSTEM, uuid_hex, kind="entity")
+    assert track.track_id == synapse_cdm.ids.derive(VMTI_TRACK_SYSTEM, uuid_hex, kind="track")
+    assert track.entity_id == target.entity_id
+    assert detection.related_entities == [target.entity_id]
+
+    # THE TARGET ID NUMBER IS CARRIED AND IS NOT A KEY. Both halves, because carrying it without
+    # keying on it is the whole of the ruling and dropping it would be a different failure.
+    systems = {sid.system: sid.external_id for sid in target.source_ids}
+    assert systems["VMTI-VTARGET-TARGET-ID-NUMBER"] == "1234"
+    assert systems[VMTI_TRACK_SYSTEM] == uuid_hex
+    assert target.entity_id != synapse_cdm.ids.derive(
+        "VMTI-VTARGET-TARGET-ID-NUMBER", "1234", kind="entity")
+    assert track.track_id != synapse_cdm.ids.derive(
+        "VMTI-VTARGET-TARGET-ID-NUMBER", "1234", kind="track")
+
+    # The scope sentence rides with it, so a reader meeting the number knows what it is worth.
+    scope = target.attributes["identity_basis"]["target_id_number_scope"]
+    assert "until the identification number is reset by the New Detection Flag" in scope
+
+    # §11.15.24.7's printed 50 %, and the type ruling.
+    assert track.track_quality == 0.5
+    assert target.entity_type is EntityType.UNKNOWN
+    assert target.affiliation is Affiliation.UNKNOWN
+    assert "Dismount/Non-combatant/Female/Child" in json.dumps(target.attributes["vmti_ontology"])
+
+
+def test_a_vtarget_with_no_vtracker_is_a_detection_and_nothing_else():
+    """The negative case, and it is the one that fails under the mapping the brief defaulted to.
+
+    A mapping keyed on the Target ID Number would emit an Entity here. The document is why one is
+    not emitted: §11.15 resets the number on tag 6, §9.4 makes tag 6 optional, ST 0903.4-28 asks
+    for uniqueness only "[t]o the extent possible".
+    """
+    entities, events, tracks = _by_kind(
+        _vmti("a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track"))
+    assert tracks == []
+    assert [e for e in entities if e.attributes.get("klv_object_role") == VMTI_TARGET_ROLE] == []
+    detection = next(e for e in events if e.event_type is EventType.DETECTION)
+    assert detection.related_entities == []
+    assert detection.geometry is None
+    basis = detection.payload["identity_basis"]
+    assert basis["key"] is None
+    assert "no Track and no Entity" in basis["no_track"]
+    # The pixel is carried and is not a position, which is the other half of "no geometry".
+    assert "NO GEOLOCATION IS COMPUTED FROM IT" in detection.payload["vmti_frame"]["pixel_basis"]
+
+
+def test_a_target_location_pack_is_absolute_and_an_offset_without_a_frame_centre_is_refused():
+    """The precedence, and the refusal §11.15 Tags 10 and 11 ask for, in one test.
+
+    Both fixtures carry the same packet shape — no item 23, no item 24 — so the only thing that
+    differs is which element the VTarget states its location in. That is the point: Tag 17 needs
+    nothing from the parent packet and the offsets need everything.
+    """
+    _e, events, tracks = _by_kind(
+        _vmti("a_target_location_pack_is_absolute_and_needs_no_frame_centre"))
+    detection = next(e for e in events if e.event_type is EventType.DETECTION)
+    assert detection.geometry.coordinates == [110.0, 43.0]
+    assert len(tracks) == 1 and tracks[0].samples[0].position.alt_m == 10000.0
+    assert tracks[0].samples[0].position.position_source is PositionSource.ESTIMATED
+
+    entities, events, tracks = _by_kind(
+        _vmti("an_offset_target_with_no_frame_centre_emits_no_position"))
+    detection = next(e for e in events if e.event_type is EventType.DETECTION)
+    assert detection.geometry is None
+    # THE ENTITY SURVIVES AND THE TRACK DOES NOT, and the two refusals have different grounds: the
+    # UUID guarantees an identity whatever the geometry does, and `Track.samples` needs a position
+    # at an instant to exist at all.
+    target = next(e for e in entities if e.attributes.get("klv_object_role") == VMTI_TARGET_ROLE)
+    assert target.position is None
+    assert tracks == []
+    reason = target.attributes["position_basis"]["reason"]
+    assert "should either not be reported, or be reported as an" in reason
+
+
+def test_two_vtargets_sharing_one_target_id_number_are_two_distinct_detections():
+    """`ST 0903.4-28`'s "to the extent possible", turned into the one thing it can break."""
+    _entities, events, _tracks = _by_kind(
+        _vmti("two_vtargets_sharing_one_target_id_number_are_two_detections"))
+    detections = [e for e in events if e.event_type is EventType.DETECTION]
+    assert len(detections) == 2
+    assert detections[0].event_id != detections[1].event_id
+    assert [d.payload["vmti_target"]["target_id"] for d in detections] == [1234, 1234]
+    assert [d.payload["vmti_target_ordinal"] for d in detections] == [0, 1]
+    keys = [next(s.external_id for s in d.source_ids if s.system == VMTI_DETECTION_SYSTEM)
+            for d in detections]
+    assert len(set(keys)) == 2
+
+
+def test_a_packet_with_no_item_74_carries_no_vmti_annotation_at_all():
+    """The round's own declaration, asserted rather than described.
+
+    The brief let this round move the pinned stream's goldens "for any per-object annotation the
+    round declares"; it declared none. That is only checkable as an ABSENCE, so it is checked
+    here: no `vmti_*` key on an object from a packet without item 74, and no `vmti` key in the
+    parsed twin either. `_security_dict` does the opposite for item 48 and `_vmti_twin`'s
+    docstring says why the two documents differ.
+    """
+    objects = adapter().to_cdm((FIXTURES / "mandatory_items_only.klv").read_bytes())
+    for obj in objects:
+        attributes = getattr(obj, "attributes", {})
+        assert not [key for key in attributes if key.startswith("vmti")]
+    twin = parse_payload((FIXTURES / "mandatory_items_only.klv").read_bytes())
+    assert "vmti" not in twin["packets"][0]
+    assert "vmti" in parse_payload(
+        (FIXTURES / "a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.klv").read_bytes()
+    )["packets"][0]
+
+
+def test_the_twin_and_the_octets_must_agree_about_the_vtarget_series():
+    """`_agree`'s fourth cross-check. A twin that states a different series states a target count.
+
+    The three before it — the checksum, the length defects and item 48's presence — each guard a
+    fact a golden file would otherwise learn from the twin rather than from the octets. This one
+    guards how many DETECTION Events a fixture produces.
+    """
+    raw = (FIXTURES / "a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.klv").read_bytes()
+    twin = parse_payload(raw)
+    assert adapter().to_cdm(twin) == adapter().to_cdm(raw)
+    twin["packets"][0]["vmti"]["targets"][0]["target_id"] = 4321
+    with pytest.raises(Stanag4609ParseError, match="Target ID Numbers"):
+        adapter().to_cdm(twin)
+    twin = parse_payload(raw)
+    twin["packets"][0].pop("vmti")
+    with pytest.raises(Stanag4609ParseError, match="states no ST 0903.4 VMTI metadata"):
+        adapter().to_cdm(twin)
+
+
+def test_the_vmti_ruling_names_the_clauses_it_was_ruled_against():
+    """A ruling with no clauses beside it is an assertion. Both halves are pinned.
+
+    The refused identifier's three disqualifying clauses and the chosen one's guarantee — if a
+    later round changes the mapping, this fails and the ruling has to be rewritten rather than
+    edited around.
+    """
+    from synapse_cdm.adapters.stanag4609 import VMTI_IDENTITY_RULING
+    for clause in (
+        "uniquely identifies a track",
+        "until the identification number is reset by the New Detection Flag",
+        "ST 0903.4-09/-10",
+        "[t]o the extent possible",
+        "discourages VTracker",
+    ):
+        assert clause in VMTI_IDENTITY_RULING, clause
 
 
 # ------------------------------------------------------------------ the pinned real stream
@@ -764,7 +958,19 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # NOT promoted to an identity; and a usage byte naming two UUIDs with one following, which is
     # refused per Table 4's valid lengths while the packet's other three items translate.
     # 23 + 9 + 5 + 5 + 6 = 48.
-    assert len(module.ADAPTER_FIXTURES) == 48
+    # FORTY-EIGHT until the park 6 round, part 2, of 2026-09-05, which added FIVE for item 74, the
+    # ST 0903.4 VMTI Local Set — and the five are chosen to pin M's identity ruling rather than to
+    # cover the element tables, which `klv_vmti_codec`'s own 70 worked examples already do on every
+    # suite run: a VTarget carrying §11.15.24.1's printed VTracker UUID, which is the only case
+    # that yields a Track and an Entity; a VTarget with no VTracker, which yields a DETECTION and
+    # NOTHING else and would yield an Entity under any mapping keyed on the Target ID Number; a
+    # Tag 17 Target Location pack in a packet with no Frame Center, which is a position all the
+    # same because §11.15 Tag 17 is absolute; the same offsets with no Frame Center, which is the
+    # refusal §11.15 Tags 10 and 11 ask for and the case that separates an Entity from a Track;
+    # and two VTarget Packs sharing one Target ID Number, which ST 0903.4-28's "to the extent
+    # possible" permits and which a mapping keyed on that number would silently collapse to one.
+    # 23 + 9 + 5 + 5 + 6 + 5 = 53.
+    assert len(module.ADAPTER_FIXTURES) == 53
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (
