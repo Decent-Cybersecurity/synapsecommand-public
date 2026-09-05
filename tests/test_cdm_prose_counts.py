@@ -1743,6 +1743,12 @@ TREE_EXEMPT: tuple[tuple[str, str, str], ...] = (
     # --- pinned by another section of this module: cross-references, not second guards ---
     ("docs/docs/changelog.mdx", "thirteen adapters have shipped so far",
      "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
+    ("PUBLICATION.md", "thirteen adapters have shipped so far",
+     "the no-schema-change count, quoted by ledger entry 15 off the built and the served changelog "
+     "page it deployed; pinned by NO_SCHEMA_CHANGE_SITES above"),
+    ("PUBLICATION.md", "twelve adapters have shipped so far",
+     "the no-schema-change count the site served from 541b4bc until entry 15's deploy — a dated "
+     "reading of a superseded page, quoted and not restated"),
     ("packages/cdm/synapse_cdm/version.py", "entries — thirteen adapters, each of which",
      "the no-schema-change count, pinned by NO_SCHEMA_CHANGE_SITES above"),
     ("tests/test_cdm_changelog_claim.py", "\"Thirteen adapters landed with no schema change",
