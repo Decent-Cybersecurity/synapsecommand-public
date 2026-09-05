@@ -125,6 +125,40 @@ UNRULED_HISTORICAL_ARCS = {
                            "synapse_cdm/adapters/stanag4609.py:<statement 8>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 9>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 10>"},
+    # `v1.6.0 → v1.7.0` is the fifth entry, at TWELVE units, and it arrives by the second entry's
+    # route like the two above it: every one of the twelve WAS ruled, in `MIGRATIONS.md`'s 1.7.0
+    # section — one (`stanag4609.py:Stanag4609Adapter`) by the park 11 round, which also named the
+    # ten it left, and eleven by the park 6 round's second part, which ruled those ten plus the
+    # one its own diff made. This test derives the arc RAW and never calls `apply_rulings()`, so
+    # the twelve belong here whatever the section says about them.
+    #
+    # EIGHT OF THE TWELVE ARE POSITIONAL AND THEY STAY AT FULL WIDTH for the reason the two entries
+    # above give. `<statement 4>` and `<statement 5>` of `klv_uas_codec.py` and `<statement 7>`
+    # through `<statement 10>` of `stanag4609.py` are `import` lines that DID NOT CHANGE:
+    # `klv_vmti_codec` was inserted above them and the gate names an unnamed top-level statement by
+    # its position. `<statement 11>` and `<statement 12>` of `stanag4609.py` are module-level
+    # statements modified in place with no name added or removed. The other four are real
+    # modifications: `DecodedPacket` gained two trailing fields, `decode_packet` decodes item 74,
+    # the adapter class emits detections and tracks, and `_parsed_packet`'s twin gains a
+    # conditional `vmti` key.
+    #
+    # AND THE ROW WAS ADDED AFTER THE TAG EXISTED, WHICH IS WHY THE 1.7.0 ROUND RE-TAGGED ONCE.
+    # The key is a pair of tags, so no entry for an arc can be written before its head tag is
+    # created — the release round tags, reads this test red, writes the row and moves the tag onto
+    # the commit carrying it. That is the one local re-tag a release round is allowed, and it
+    # happens before anything is pushed.
+    ("v1.6.0", "v1.7.0"): {"synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket",
+                           "synapse_cdm/adapters/klv_uas_codec.py:decode_packet",
+                           "synapse_cdm/adapters/klv_uas_codec.py:<statement 4>",
+                           "synapse_cdm/adapters/klv_uas_codec.py:<statement 5>",
+                           "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+                           "synapse_cdm/adapters/stanag4609.py:_parsed_packet",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 7>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 8>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 9>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 10>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 11>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 12>"},
 }
 
 
