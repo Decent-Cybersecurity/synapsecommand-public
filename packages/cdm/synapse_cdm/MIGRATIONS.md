@@ -356,6 +356,24 @@ a terminal is a reading that gets remembered instead. Condition 4 is unchanged a
 The prose that described the old destination moved with it, at both of its sites — this file's
 condition 4 and its sequence paragraph, and the workflow's own header.
 
+**AND IT IS PROVEN BY A RUN AND NOT BY READING THE FILE**, which is the half of ruling 4 that could
+not be done before the change was pushed. `workflow_dispatch` against `main` at commit `d1c3d43`,
+**run 33973039420**, started **2026-09-05T14:51:19Z** and concluded **14:55:33Z**, conclusion
+**success**. The `build` job is green at every step it ran: condition 1 **3542 passed, 68 skipped**,
+condition 2's gate **13 checks, 0 failed** with its mutation half reporting **13 checks, 5 failed**
+on the deliberately fixture-less wheel, `twine check --strict` **PASSED** on both artefacts, and the
+schemas current. Conditions 3 and the annotated-tag check are **skipped**, which is what a dispatch
+is for; the `publish` job is **skipped**, so **no tag was made and nothing was uploaded**. Condition
+4's block came back out of `gh run view --log` in full — the heading, the two artefact digests, the
+roster of **14** adapters, the **6** schemas and the suite's tail — which is the reading that was
+impossible before and is the whole point of the change. **The three suite figures for this one tree
+reconcile on the TOTAL and not on the split**, as the 1.4.0 close-out records for the same reason:
+CI **3542 passed, 68 skipped**, a full `--no-local` clone on this machine **3543 passed, 67 skipped**,
+and the maintainer tree **3606 passed, 3 skipped** with the one failure named in the Act 0 paragraph
+above — **3610 in all three**. CI and the clone differ by one skip and not by a tree: the runner
+image carries no interpreter at the declared floor and the clone's environment sits outside it, so
+each of the two environment-conditional corroborations skips in a different one of them.
+
 **Ruling 5 — the two historical Releases did not exist and now do.** Entries 10 and 11 of
 `PUBLICATION.md` were read first, which is what the ruling conditioned the authorisation on: neither
 says anything at all about a Release object for `v1.2.0` or `v1.2.1`, so the absence was never
