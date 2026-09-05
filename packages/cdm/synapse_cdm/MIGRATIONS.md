@@ -88,6 +88,17 @@ behind it.
    pre-check is a clone, and it stands beside condition 5's `--mutation-check` in the block below
    — the two things this repository can check locally before a tag exists.
 
+   **WHAT THE PRE-CHECK IS READ FOR IS `0 failed outside the tag-conditional set`, and not a green
+   run**, amended 2026-09-05 by the housekeeping round after the 1.6.0 release round took the
+   reading. **A tag-less clone of a release commit cannot be fully green by construction**: the
+   guards in `tests/test_cdm_release.py` and `tests/test_cdm_bump_derivation.py` that compare the
+   declared version against the tag naming it have no such tag to read in a clone made before the
+   tag exists, so they fail there and go green on the tag rather than on an edit. The 1.6.0 release
+   round's clone reported four of them and every other test green; the same clone made once the tag
+   existed reported `0 failed`. So the pre-check is read by SUBTRACTING that set: name the failures,
+   show each one is a member of it, and require nothing else to have failed. A clone that reports a
+   failure outside the set is the finding this pre-check exists to arrive before the tag.
+
    1.5.0's first tag is the case that put it here. `tests/test_cdm_pins.py` carried a guard
    asserting the pin corpus was on disk, which is right on the tree that wrote it and is the
    ORDINARY state of a clone, where `.gitignore` keeps every pinned document out of the index.
@@ -120,7 +131,10 @@ behind it.
    from memory are how a release claims a capability that slipped. **This one stays a person's**,
    and the workflow cannot take it: "derived" is a claim about what the writer read, and a
    generated file does not satisfy it. What the workflow does is print all three derivations into
-   the run summary, so the notes are copied off a run rather than recalled.
+   the run summary AND into the job log, so the notes are copied off a run rather than recalled.
+   **Both destinations, since 2026-09-05, and the log is the one that was missing**: a step summary
+   renders on the run's page and is absent from `gh run view --log`, so a later round reconciling
+   the notes against the run had no route to the derivations that did not go through a browser.
 5. **The number is derived from the packaged diff, not from the brief.**
    `gates/bump_derivation.py` classifies the diff over the distribution's own contents between the
    previous tag and the tree being released, against `version.py`'s `PACKAGE_VERSION` table, and
@@ -130,10 +144,23 @@ behind it.
    condition 1's fresh-clone pre-check, which is the other check that does not wait for one:
 
    ```bash
+   python gates/bump_derivation.py --json                        # the pre-step: no unruled unit
    python gates/bump_derivation.py --mutation-check              # condition 5, this one
    git clone --no-local . /tmp/precheck && \
      (cd /tmp/precheck && pytest -q -rs)                         # condition 1, on the tree CI reads
    ```
+
+   **THE PRE-STEP BEFORE A NUMBER IS TYPED, added 2026-09-05 by the housekeeping round: the JSON
+   route's `pending.unruled` must be the empty list.** If it is not, a rulings round precedes the
+   release round and rules every unit it names, in the form this condition describes, before any
+   version is moved. **The ground is that the exit code does not see this.** `measure()` derives
+   the pending arc and only REPORTS it; the refusal above runs on the JUDGED arc, which is the last
+   tag's, so a pending ambiguity leaves `1 check, 0 failed` untouched and the units print indented
+   under the pending line where they are easy to skim past. The 1.6.0 release round stopped at its
+   own Act 0 on fifteen such units after a brief had read the clean exit code as a statement about
+   them. It is a pre-step and not a sixth condition for the same reason the clone is not: the moment
+   `PACKAGE_VERSION` moves, the pending arc BECOMES the judged one and the refusal fires — so this
+   is a check that moves the finding before the number rather than one that adds a requirement.
 
    **Where the table needs judgment the gate refuses rather than guessing.** Its PATCH row ("a
    translation fix, a message, a docstring. No surface change") and its MAJOR row ("an importable
@@ -160,8 +187,8 @@ git push origin main --follow-tags                   # this is the whole of it
 
 The tag is the release. `.github/workflows/publish.yml` takes it from there: conditions 1, 2 and 3,
 `twine check --strict`, then a wait for a reviewer on the `pypi` environment, then an upload over
-OIDC with no token anywhere in the process. Condition 4's derivations are in the run summary; the
-GitHub release itself is still made by a person, with `gh release create`, from those.
+OIDC with no token anywhere in the process. Condition 4's derivations are in the run summary and in the
+job log; the GitHub release itself is still made by a person, with `gh release create`, from those.
 
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
@@ -230,6 +257,115 @@ Three things are still deliberately a person's:
 measured off the index afterwards, and which step of it did not run.
 
 ## History
+
+### Unreleased
+
+Nothing here is in a release. The distribution on the index is **1.6.0**, and a reader who ran
+`pip install synapse-cdm` has that and not this.
+
+**What moved inside the distribution: four shipped documents.**
+`synapse_cdm/MIGRATIONS.md` — the release procedure gains an amended reading for condition 1's
+pre-check and a pre-step before a number is typed, and this record; `synapse_cdm/README.md` and
+`synapse_cdm/FORMAT_COVERAGE.md` — the `stanag4609` register and roster cells, whose ST 0601 split
+had kept the step before this repository's own pre-release round; and
+`synapse_cdm/fixtures/klv/README.md`, the same figures at their third site.
+
+**AND WHAT MOVED OUTSIDE IT, WHICH IS MOST OF THE ROUND AND IS DELIBERATELY NOT LISTED ABOVE.**
+`gates/bump_derivation.py`, `tests/test_cdm_bump_derivation.py`, `.github/workflows/publish.yml`,
+`RELEASE_NOTES.md` and `PUBLICATION.md` all moved and **none of them is in the distribution**: the
+packaged contents are `pyproject.toml` and the `synapse_cdm/` tree, so a gate, a test module, a
+workflow file, the repository-root notes and the publication record reach no installed reader and
+are not part of the arc this section accounts for. That is the same boundary
+`gates/bump_derivation.py` measures the bump over, and stating it here is what stops the next round
+from reading a four-file arc as the round's size.
+
+#### The housekeeping round, 2026-09-05 — five bounded items, a procedure that now says what its own pre-check is read for, and one live figure that went stale again in the round after it was swept
+
+**THE ROUND'S FINDING IS THAT THE SWEEP THAT REPAIRED SEVEN CARRIERS OF A RETIRED FIGURE LEFT FOUR
+CARRIERS OF THE FIGURE THAT REPLACED IT.** The maintenance round of 2026-09-05 moved the ST 0601
+`not yet` count to **97** at every site it could find and wrote up the class. The pre-release round
+of the same day then promoted tag 75, moved the ledger row to **96**, and the four sites the sweep
+had just corrected went stale by one step within hours: `FORMAT_COVERAGE.md`'s roster cell for
+adapter #10, the package `README.md`'s register entry, `fixtures/klv/README.md`'s opener and
+`RELEASE_NOTES.md`'s shipped-documents bullet. **Each of the four CITES the ledger row that derives
+the split and then restates it**, which is sweep rule 7's whole claim — a citation cannot drift and
+a second statement will — met four times inside one day by the round that had just written the rule
+down. The repair is at each site, dated, with the arc kept.
+
+**Act 0, and every value the brief carried was re-taken.** Tree clean, `HEAD` equal to `origin/main`
+at `5da5668`, one `Signed-off-by` on it. `gates/parks_table.py`: **13 rows, 5 open [6, 7, 10, 11,
+12], 8 closed [1, 2, 3, 4, 5, 8, 9, 13], 2 set-claims on park 12's row, 0 failed**.
+`gates/pin_paths.py`: **25 copies, 25 matched, 0 failed** — 23 under the spec base and 2 under the
+streams base. `python3 gates/bump_derivation.py --mutation-check`: **1 check, 0 failed**, the
+pending arc **NONE** with the floor at **1.6.0**, and `--json`'s `pending.unruled` the **empty
+list** — which is the reading ruling 2 below turns into a pre-step. `PACKAGE_VERSION` **1.6.0**,
+`SCHEMA_VERSION` **1.0.0**, `RELEASE_NOTES.md` opening `# synapse-cdm 1.6.0`, and the pending-arc
+heading absent from this file. Untouchables unmoved: the pinned phrase **35** over `git ls-files`,
+`scripted_edit` **9 passed** under the name filter the standing rules give, **no** PDF and **no**
+zip tracked, `fixtures/*/spec/` tracking only `.json` and `.py`, the delegated node's opener stating
+fourteen delegations in scope, and `git diff v1.6.0..HEAD -- schemas/` empty.
+
+**AND ONE ACT 0 READING DID NOT MATCH, FOR A REASON THAT IS NOT IN THE TREE.** The suite reported
+**1 failed, 3599 passed, 8 skipped** where the brief's figure was 3600 passed and 8 skipped — the
+same total of 3608. The failure is
+`tests/test_cdm_version_floor.py::test_no_python_file_in_this_repository_escapes_the_gate`, which
+walks the FILESYSTEM for `*.py` and knows nothing about `git`; it named one stray, a driver script
+the round-running scaffolding had written into the working directory after the brief's reading was
+taken. `git cat-file -e` reports that path as *"exists on disk, but not in `5da5668`"*, `git
+ls-files` tracks nothing under that directory, and a full `--no-local` clone of `5da5668` runs that
+module **116 passed, 1 skipped**. So the committed tree gives the briefed reading and the working
+directory does not, and the whole of the difference is one untracked file outside the tree the gates
+judge. **Recorded here and not repaired**: the repair would be an edit to a test module's exclusion
+set for the benefit of something no commit contains, which is a decision for whoever owns the
+scaffolding rather than for this round.
+
+**Ruling 1 — condition 1's pre-check now says what it is read FOR.** It had said the pre-check is a
+fresh-clone suite run and stopped there, which reads as a requirement for a green clone; the 1.6.0
+release round then took the reading and got four failures at a release commit that had none of its
+own. The block now states the target as `0 failed outside the tag-conditional set` and gives the
+reason in one sentence: the guards that compare a declared version against the tag naming it have no
+tag to read in a clone made before the tag exists, so they go green on the tag rather than on an
+edit. The pre-check is read by naming the failures and showing each is a member of that set.
+
+**Ruling 2 — a pre-step before a number is typed, and the ground is an exit code that was right.**
+`python gates/bump_derivation.py --json` must report `pending.unruled` as the empty list; where it
+does not, a rulings round precedes the release round. The 1.6.0 release round's first issue stopped
+at its own Act 0 on **fifteen** units after a brief had read `1 check, 0 failed` as a statement about
+them. It never was one: `refuse_unless_clean` runs on the JUDGED arc, which is the last tag's, so a
+pending ambiguity cannot reach the exit code — and the moment `PACKAGE_VERSION` moves, the pending
+arc becomes the judged one and the first refusal raised is UNRULED. The pre-step moves that finding
+before the number instead of adding a requirement, which is why it is not a sixth condition.
+
+**Ruling 3 — the gate's console now reads the same as its JSON.** `gates/bump_derivation.py`'s human
+summary prints the pending arc's unruled count beside the kind, rendered by a new `pending_summary()`
+so that something other than `main()` can read the line. The mutation check gained
+`summary_check()`, which renders the line over a settled arc and over one the table refuses and
+requires the count to differ — because `0 unruled` is what every clean tree shows, so a line printing
+a constant is green exactly where it matters. `tests/test_cdm_bump_derivation.py` gained two cases:
+one asserts the live console's count against the length of `--json`'s `pending.unruled` for the same
+tree rather than against a literal, and one asserts the mutation check witnesses the non-zero
+direction. On this tree the line reads the arc since 1.6.0 as **PATCH with 0 unruled**, the floor at
+**1.6.1** — PATCH and not NONE because this file is a shipped document and writing this record moves
+it.
+
+**Ruling 4 — condition 4's derivations go to the job log as well as the step summary.** `tee -a`
+in place of `>>`, and that is the whole of the change to `.github/workflows/publish.yml`. A step
+summary renders on a run's page and is absent from `gh run view --log`, so the one route a later
+round can read the derivations back through did not carry them, and a reading nobody can take from
+a terminal is a reading that gets remembered instead. Condition 4 is unchanged and still a person's.
+The prose that described the old destination moved with it, at both of its sites — this file's
+condition 4 and its sequence paragraph, and the workflow's own header.
+
+**Ruling 5 — the two historical Releases did not exist and now do.** Entries 10 and 11 of
+`PUBLICATION.md` were read first, which is what the ruling conditioned the authorisation on: neither
+says anything at all about a Release object for `v1.2.0` or `v1.2.1`, so the absence was never
+recorded as deliberate. `GET /releases/tags/…` answered **404** for both at
+**2026-09-05T14:44:13Z**; both were created at **2026-09-05T14:44:21Z** and **…:22Z** from the notes
+at their own tags, `--latest=false` so that `v1.6.0` keeps the front page, and `releases/latest`
+re-read `v1.6.0` afterwards. Each has a dated note beside its ledger entry, placed where the ledger
+parsers already stop reading. **The brief said six days after the fact and the derivation says ten
+and nine**: the tags are 2026-08-26 and 2026-08-27.
+
 
 ### 1.6.0 — 2026-09-05 — eighteen ST 0601 items promoted on the document's own worked examples, the time scale named as ST 0603.5 names it, and alt_m is HAE
 

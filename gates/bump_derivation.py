@@ -1291,9 +1291,59 @@ def run_fixture(before: dict[str, bytes], after: dict[str, bytes],
     return None
 
 
+def pending_summary(declared: str, kind: str, number: str, unruled: int) -> str:
+    """The `pending` line of the human summary, as one string, so a check can read it.
+
+    **IT PRINTS THE UNRULED COUNT BESIDE THE KIND, and the console said less than the JSON until
+    2026-09-05.** `measure()` derives the pending arc and only reports it, so `refuse_unless_clean`
+    — which runs on the JUDGED arc — never sees a pending ambiguity and the exit code stays `0`.
+    The units were always printed, indented under this line, and the 1.6.0 release round's first
+    issue read the clean exit code as a statement about them and skimmed past the indented block.
+    The JSON never hid them: `pending.unruled` carried every one. So the fix is not a new refusal,
+    which would fire on an arc nobody is releasing; it is that this line now says HOW MANY, in the
+    place a reader is already looking, and the two routes read the same.
+
+    Separated from `main()` because a line nothing can render twice is a line nothing can check —
+    `summary_check()` renders it over synthetic verdicts and proves the count is not a constant.
+    """
+    return (f"pending       the arc since {declared} derives {kind} with {unruled} unruled, "
+            f"so the next release is at least {number}")
+
+
+#: What `summary_check()` renders: `(name, unruled_count, what the line must carry)`. The empty
+#: case and a populated one, because a renderer that hard-codes either reads correctly on the other
+#: half of its input and this gate's whole subject is a figure that was right by accident.
+SUMMARY_FIXTURES = (
+    ("a pending arc with nothing left to rule", 0, "with 0 unruled"),
+    ("a pending arc the table refuses to decide", 3, "with 3 unruled"),
+)
+
+
+def summary_check() -> int:
+    """Prove the human summary's unruled count is read from the arc and not written into the line.
+
+    Both directions, for the reason `mutation_check()` runs both: a line that prints `0 unruled`
+    unconditionally passes the empty case, and the empty case is the one every clean release round
+    sees.
+    """
+    failed = 0
+    for name, unruled, needle in SUMMARY_FIXTURES:
+        line = pending_summary("1.0.0", "NONE", "1.0.0", unruled)
+        if needle in line:
+            print(f"summary   {needle:<10} {name}")
+        else:
+            failed += 1
+            print(f"FAIL      expected {needle!r} in the pending line, got {line!r}: {name}",
+                  file=sys.stderr)
+    if failed:
+        print(f"FAIL  the human summary did not state the unruled count as measured, so the "
+              f"console reading of a pending arc proves nothing", file=sys.stderr)
+    return 1 if failed else 0
+
+
 def mutation_check() -> int:
     """Every fixture, both directions. A gate nobody has seen fail is a gate nobody has seen."""
-    failed = 0
+    failed = summary_check()
     for name, before, after, base, declared, expected in FIXTURES:
         got = run_fixture(before, after, base, declared)
         want = expected or "PASS"
@@ -1340,9 +1390,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ruled         {len(verdict.ruled)} unit(s) ruled by a person: "
               f"{sorted(verdict.ruled)}")
     if verdict.pending_kind is not None:
-        print(f"pending       the arc since {verdict.declared} derives "
-              f"{verdict.pending_kind}, so the next release is at least "
-              f"{verdict.pending_number}")
+        print(pending_summary(verdict.declared, verdict.pending_kind, verdict.pending_number,
+                              len(verdict.pending_ambiguities)))
         for ambiguity in verdict.pending_ambiguities:
             print(f"              UNRULED  {ambiguity.unit}")
     print("1 check, 0 failed")

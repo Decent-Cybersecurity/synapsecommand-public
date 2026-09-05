@@ -33,11 +33,13 @@ opened with the sentence
 forgot" from the day the directory was created until the witnessed-set round of 2026-08-26, and
 that sentence is quoted here rather than deleted because what replaced it is the interesting part: **adapter `stanag4609` has
 shipped**, and the pinned stream witnesses **26 of ST 0601.14a's 141 items** — the distinct tags the
-one real stream this repository holds actually carries. **RE-DERIVED 2026-09-05: the adapter covers 44
-of the 141 and the other 97 read `not yet`** in `../../FORMAT_COVERAGE.md`, and that is a scope
+one real stream this repository holds actually carries. **RE-DERIVED 2026-09-05 BY THE HOUSEKEEPING ROUND: the adapter covers 45
+of the 141 and the other 96 read `not yet`** in `../../FORMAT_COVERAGE.md`, and that is a scope
 contract rather than a backlog — **with the contract crossed on two grounds, each ruled rather than
-waived**: item 48, whose value is a nested Local Set another held document defines, and seventeen
-items promoted on ST 0601.14a's own printed worked examples. This sentence said *the other 115* and
+waived**: item 48, whose value is a nested Local Set another held document defines, and eighteen
+items promoted on ST 0601.14a's own printed worked examples. **All three figures here kept the step
+before the pre-release round of 2026-09-05, which promoted tag 75**, and this is the second time
+this passage has gone stale between a round that moved the ledger row and a round that read it. This sentence said *the other 115* and
 *one crossing* until the maintenance sweep moved it, and both halves went stale on 2026-09-04 in the
 same four rounds — which is why the counts and the grounds are now cited to the ledger row that
 derives them instead of stated a second time here. See "The ten payload fixtures, and the plan they replaced" below, and the

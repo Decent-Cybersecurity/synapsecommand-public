@@ -75,7 +75,9 @@
 #      generating one — "derived" means the human writing the notes read the derivation off the
 #      tree rather than off memory. What this workflow does instead is make the derivation FREE:
 #      the `derivations` step prints the roster, the fixture counts and the schema list into the
-#      run summary, so the notes can be copied from a run rather than recalled. That is the same
+#      run summary AND into the job log — both, since 2026-09-05, because only the log is readable
+#      through `gh run view --log` and a witness round reads runs from a terminal — so the notes can
+#      be copied from a run rather than recalled. That is the same
 #      move entry 5 wishes had been made about its own skipped TestPyPI step: make the cheap thing
 #      cheap instead of recording, afterwards, that nobody did it.
 #
@@ -243,6 +245,16 @@ jobs:
         run: python -m synapse_cdm.schemas --check --out schemas
 
       - name: Condition 4 — the derivations, for notes that are derived and not remembered
+        # THE BLOCK GOES TO THE JOB LOG AS WELL AS THE STEP SUMMARY, and `tee -a` rather than `>>`
+        # is the whole of the change (2026-09-05). A step summary is rendered on the run's page and
+        # is NOT part of `gh run view --log`, so the one route a later round can read the
+        # derivations back through did not carry them: a witness round reconciling what the notes
+        # claim against what the run derived had to be a person looking at a web page, and a
+        # reading nobody can take from a terminal is a reading that gets remembered instead. The
+        # log already carries the digests twice over — the gate's `--export-dist` line and the
+        # publish job's pre-upload hashes — and this makes the roster, the schema list and the
+        # suite's own tail readable the same way. Nothing about condition 4 changes: it is still a
+        # person's, and the workflow still only makes the derivation free.
         run: |
           set -euo pipefail
           {
@@ -279,7 +291,7 @@ jobs:
             echo '```'
             python -m pytest -q -rs 2>&1 | tail -1
             echo '```'
-          } >> "${GITHUB_STEP_SUMMARY}"
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
 
       - name: Hand the gated artefacts to the publish job
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1

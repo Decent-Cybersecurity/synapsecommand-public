@@ -172,8 +172,16 @@ distribution **through `git`**, so it classifies what is committed rather than w
   member's range twice and differently, which is one of the two reasons tag 130 is not promoted.
 * **The shipped documents.** `MIGRATIONS.md`, `FORMAT_COVERAGE.md`, the package `README.md` and
   `fixtures/klv/README.md` carry the arc; `klv_pin.json` gains the ST 0603.5 node and the closure
-  entries for parks 3 and 5. **The ST 0601 row set now reads 44 of 141 rows promoted** — 26
-  stream-witnessed and 18 document-witnessed — and 97 `not yet`.
+  entries for parks 3 and 5. **The ST 0601 row set reads 45 of 141 rows promoted** — 26
+  stream-witnessed and 19 document-witnessed — and 96 `not yet`. **CORRECTED 2026-09-05 by the
+  housekeeping round, and it was wrong when it shipped rather than having gone stale**: this bullet
+  kept the step before this release's own pre-release round, which promoted tag 75 and moved the
+  ledger row. The figures above are counted off the 141 rows' Status column. Note that the second
+  of the three is the ledger row's count of rows witnessed by a document and not the size of
+  `klv_uas_codec.DOCUMENT_WITNESSED_TAGS`, which is 18 and is what the paragraph above cites: item
+  48's witness is a second document rather than a printed worked example, so it is inside the one
+  count and outside the other. The two statements in this file were the same number by accident
+  and are different numbers on purpose.
 
 **No schema, model, harness flag or dependency moved**, no adapter was added or removed, and the
 pinned specification documents are gitignored as they have always been — nothing in this release

@@ -1241,6 +1241,22 @@ the PATCH number says so. And not that the four corrected sentences were the onl
 the 1.2.0 artefacts; they are the four the sweep that found them could see, and the sweep that
 replaced it derives the roster and reads `git ls-files` rather than an allowlist.
 
+**DATED NOTE, 2026-09-05 — THE GITHUB RELEASE FOR `v1.2.0` DID NOT EXIST AND WAS CREATED BY THE
+HOUSEKEEPING ROUND, TEN DAYS AFTER THE TAG.** Neither this entry nor entry 11 had ever said anything
+about a Release object for `v1.2.0` or `v1.2.1` — not that one existed, not that one was withheld —
+and the round was authorised to create them only on that reading, having taken it first. Checked
+before anything was made: `GET /releases/tags/v1.2.0` answered **404** at **2026-09-05T14:44:13Z**,
+with `releases/latest` naming `v1.6.0`. Created at **2026-09-05T14:44:21Z** by
+`decentcybersecurity`, not a draft, not a prerelease, target `main`, and **explicitly NOT Latest** —
+`--latest=false`, because a Release created today for a tag from 2026-08-26 would otherwise displace
+`v1.6.0` on the repository's front page and falsify a row of the claim table below. `releases/latest`
+re-read **`v1.6.0`** afterwards. The body is `git show v1.2.0:RELEASE_NOTES.md` — the notes at the
+tag and not notes written now — verified equal to those bytes after the fact, ignoring only a
+trailing newline. **The tag's own date is what `created_at` reports** (2026-08-26T23:27:25Z) and
+`published_at` is today's instant, so the API itself records that the object is retrospective. **The
+brief for this round said six days and the derivation says ten**: `v1.2.0` was tagged 2026-08-26 and
+this note is 2026-09-05.
+
 ### 11. `synapse-cdm` 1.3.0 is on the index — CLOSED, and it is the release a refusal did not stop
 
 **Published 2026-08-29** by
@@ -1351,6 +1367,19 @@ of the ST 0601 rows that would consume it has moved: none of the fourteen is wit
 octet, the pinned stream's 26 items stop at tag 65, and all fourteen still read `not yet`. A
 release that adds a capability nothing on a wire has exercised is what this is, and
 `RELEASE_NOTES.md` says so in the release's own voice rather than leaving it here.
+
+**DATED NOTE, 2026-09-05 — THE GITHUB RELEASE FOR `v1.2.1` DID NOT EXIST AND WAS CREATED BY THE
+HOUSEKEEPING ROUND, NINE DAYS AFTER THE TAG, ON THE SAME READING AS ENTRY 10's NOTE.** This entry
+records the 1.3.0 upload and says nothing about a Release object for either 1.2.x tag; entry 10 says
+nothing either, and that absence is what authorised the creation rather than a claim that the
+omission had been deliberate. Checked first: `GET /releases/tags/v1.2.1` answered **404** at
+**2026-09-05T14:44:13Z**. Created at **2026-09-05T14:44:22Z** by `decentcybersecurity`, not a draft,
+not a prerelease, target `main`, `--latest=false`, body equal to `git show v1.2.1:RELEASE_NOTES.md`.
+`created_at` reports the tag's date, 2026-08-27T10:03:37Z. After both creations every tag in this
+repository's history has a Release object and `releases/latest` still reads `v1.6.0`, re-read at
+**2026-09-05T14:44:22Z**. **What this note does not claim**: that the two Releases add any evidence
+about the artefacts on the index. A Release object carries the notes at a tag and nothing else here
+attached files to it; the index claims are the ones in this entry and in entry 10, unchanged.
 
 ### 12. `synapse-cdm` 1.4.0 is on the index — CLOSED, and the reading that was called stale was true when it was taken
 

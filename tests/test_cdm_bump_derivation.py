@@ -423,6 +423,70 @@ def test_the_gate_runs_clean_from_the_command_line_with_its_mutation_check():
         )
 
 
+def test_the_human_summary_states_the_pending_arcs_unruled_count():
+    """THE CONSOLE AND THE JSON READ THE SAME, and until 2026-09-05 they did not.
+
+    The gate's exit code judges the RELEASED arc, so a pending ambiguity leaves it at `0` — that is
+    correct and is not the defect. The defect was that the human summary named the pending KIND and
+    not how many units the table had refused to decide, while `--json` carried every one of them
+    under `pending.unruled`. The 1.6.0 release round's first issue stopped on fifteen of them after
+    a brief read the clean exit code as a statement about the units; the units were on the console
+    all along, indented, and the line above them said nothing about their number.
+
+    Both halves are asserted against each other rather than against a literal: the line must state
+    the count, and the count it states must be the length of the list the JSON route reports for the
+    same tree. A test that pinned today's number would pass on a line that prints a constant, which
+    is exactly the failure `summary_check()`'s two fixtures exist to refuse.
+    """
+    _require_git()
+    console = subprocess.run([sys.executable, str(GATE_PATH)],
+                             cwd=REPO, capture_output=True, text=True)
+    assert console.returncode == 0, console.stderr
+    measured = subprocess.run([sys.executable, str(GATE_PATH), "--json"],
+                              cwd=REPO, capture_output=True, text=True)
+    assert measured.returncode == 0, measured.stderr
+    unruled = json.loads(measured.stdout)["pending"]["unruled"]
+
+    pending = [line for line in console.stdout.splitlines() if line.startswith("pending")]
+    assert len(pending) == 1, (
+        "the human summary has no single `pending` line to read. Either the pending arc stopped "
+        f"being reported or the line was renamed:\n{console.stdout}"
+    )
+    assert f"{len(unruled)} unruled" in pending[0], (
+        f"the pending line does not state the unruled count the JSON route derives for this same "
+        f"tree. The line reads {pending[0]!r} and `pending.unruled` holds {len(unruled)} unit(s). "
+        "A console that reports the kind and not the number is what let a release round read a "
+        "clean exit code as a statement about the units"
+    )
+
+
+def test_the_mutation_check_witnesses_a_non_zero_unruled_count_in_the_summary(gate):
+    """The renderer, proven to be reading rather than printing a constant.
+
+    `0 unruled` is what every clean tree shows, so a line that hard-codes it is green here and on
+    the arc that matters. `summary_check()` therefore renders both a settled arc and one the table
+    refuses, and this asserts the second appears in the invocation the release procedure names —
+    the same reason the three refusal directions are asserted in the test above rather than trusted.
+    """
+    _require_git()
+    out = subprocess.run([sys.executable, str(GATE_PATH), "--mutation-check"],
+                         cwd=REPO, capture_output=True, text=True)
+    assert out.returncode == 0, f"stdout:\n{out.stdout}\nstderr:\n{out.stderr}"
+    rendered = [line for line in out.stdout.splitlines() if line.startswith("summary")]
+    assert len(rendered) == len(gate.SUMMARY_FIXTURES), (
+        f"the mutation check rendered {len(rendered)} summary fixture(s) and the gate declares "
+        f"{len(gate.SUMMARY_FIXTURES)}:\n{out.stdout}"
+    )
+    assert any("with 0 unruled" in line for line in rendered), (
+        f"no settled pending arc was rendered, which is the case every release round meets:"
+        f"\n{out.stdout}"
+    )
+    assert not all("with 0 unruled" in line for line in rendered), (
+        f"every rendered summary states a count of zero, so the renderer could be printing a "
+        f"constant and this check would not know:\n{out.stdout}"
+    )
+
+
 def test_the_json_measurement_is_what_a_round_would_quote():
     """`--json`, because a round that has to quote a verdict should not re-derive it by hand."""
     _require_git()
