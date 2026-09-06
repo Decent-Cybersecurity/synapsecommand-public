@@ -1,0 +1,119 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "MISSION-41",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T15:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "a6d9e7c1-bf7a-5a0b-9ef1-ae2e0e4e5e56",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Route"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "ROUTE-DELTA",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T15:55:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "45cde356-25c4-5afe-9fde-32599e862f16",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T15:55:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        },
+        {
+          "entity_id": "a6d9e7c1-bf7a-5a0b-9ef1-ae2e0e4e5e56",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Uses"
+        }
+      ],
+      "event_class": "ACTION",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.decision.action_authorized.v1",
+      "verification": null
+    },
+    "payload": {
+      "action": "re-route to ROUTE-DELTA",
+      "authorization_reference": "AUTH-41-07",
+      "authorized_by": "COMMANDER-ALPHA",
+      "mission": "MISSION-41"
+    },
+    "received_at": "2026-04-29T15:55:01.000Z",
+    "related_entities": [
+      "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+      "a6d9e7c1-bf7a-5a0b-9ef1-ae2e0e4e5e56"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-ACTION-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

@@ -1,0 +1,121 @@
+[
+  {
+    "affiliation": "NEUTRAL",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "fe9fa377-77c6-54bf-b208-0a8dc9a1cf1a",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:air:Airspace"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "AREA-ALPHA",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T09:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "4df9b557-1416-521c-a3a1-98f262b23657",
+    "event_type": "STATUS_CHANGE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            16.9,
+            48.2
+          ],
+          [
+            17.4,
+            48.2
+          ],
+          [
+            17.4,
+            48.5
+          ],
+          [
+            16.9,
+            48.5
+          ],
+          [
+            16.9,
+            48.2
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T09:00:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": "2026-04-29T10:00:00.000Z",
+      "effective_to": "2026-04-29T18:00:00.000Z",
+      "entity_relations": [
+        {
+          "entity_id": "fe9fa377-77c6-54bf-b208-0a8dc9a1cf1a",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "CONSTRAINT",
+      "event_relations": [],
+      "evidence": [
+        {
+          "description": "the fictional notice this restriction was published in",
+          "event_id": null,
+          "hash": null,
+          "kind": "EXTERNAL_ARTIFACT",
+          "media_type": "text/plain",
+          "source_id": null,
+          "uri": "urn:example:notam:SYNTHETIC-A0417-26"
+        }
+      ],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.air.airspace_restriction_changed.v1",
+      "verification": null
+    },
+    "payload": {
+      "airspace": "AREA-ALPHA",
+      "lower_limit_m": 0,
+      "previous_restriction": "NONE",
+      "restriction": "RESTRICTED",
+      "upper_limit_m": 3000
+    },
+    "received_at": "2026-04-29T09:00:06.000Z",
+    "related_entities": [
+      "fe9fa377-77c6-54bf-b208-0a8dc9a1cf1a"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-AIRSPACE-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

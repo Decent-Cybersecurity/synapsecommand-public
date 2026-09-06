@@ -172,6 +172,8 @@ REPO_BOUND_TESTS = {
     "test_cdm_conformance_spec.py": "spec/sc-oes/13-conformance.md, 00-conventions.md, the seven profile documents and docs/adr/0009 — the normative tree the conformance module implements, none of which ships in the wheel",
     "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",
+    "test_cdm_examples.py": "examples/ at the repository root — the fourteen committed SC-OES examples, which are documentation rather than distribution and do not ship in the wheel",
+    "test_cdm_profiles.py": "spec/sc-oes/profiles/ — the seven normative profile documents against the packaged registry they describe; the documents are at the repository root and none of them ships",
     "test_cdm_deploy_record.py": "gates/deploy_record.py and the deployment ledger",
     "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
     "test_cdm_commit_message.py": "gates/commit_message.py and this history's messages",

@@ -1,0 +1,523 @@
+[
+  {
+    "affiliation": "HOSTILE",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "6ab3a8e0-b92f-58d5-a35b-d87c274be31c",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:pnt:InterferenceSource",
+      "tag:synapsecommand.com,2026-09-06:ontology:core:ThreatSource"
+    ],
+    "position": {
+      "accuracy_m": 2500.0,
+      "alt_m": null,
+      "lat": 57.512,
+      "lon": 21.884,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-INTERFERENCE-SOURCE-BRAVO",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T06:12:44.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "entity_type_basis": "the CDM's structural vocabulary has no member for a mission; what it IS is carried in ontology_types"
+    },
+    "confidence": null,
+    "entity_id": "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-MISSION-41",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T05:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "6f27d016-39a0-5162-ad36-06c4bfbc10c7",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Route"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-ROUTE-DELTA",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T15:55:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "1f0aa6eb-86be-5482-8dc5-8ad64f97d2c7",
+    "event_type": "GNSS_INTERFERENCE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.6,
+            57.3
+          ],
+          [
+            22.15,
+            57.3
+          ],
+          [
+            22.15,
+            57.72
+          ],
+          [
+            21.6,
+            57.72
+          ],
+          [
+            21.6,
+            57.3
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:12:44.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "6ab3a8e0-b92f-58d5-a35b-d87c274be31c",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "OBSERVATION",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.pnt.gnss_interference.v1",
+      "verification": null
+    },
+    "payload": {
+      "frequency_band": "L1",
+      "interference_type": "JAMMING",
+      "signal_strength_dbm": -68.0
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "6ab3a8e0-b92f-58d5-a35b-d87c274be31c"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-41-OBSERVATION",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  },
+  {
+    "event_id": "1165bceb-0221-5671-ad19-113108ec22f8",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:41:00.000Z",
+    "oes": {
+      "confidence": 0.72,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "6ab3a8e0-b92f-58d5-a35b-d87c274be31c",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Threatens"
+        }
+      ],
+      "event_class": "ASSESSMENT",
+      "event_relations": [
+        {
+          "event_id": "1f0aa6eb-86be-5482-8dc5-8ad64f97d2c7",
+          "predicate": "DERIVED_FROM"
+        }
+      ],
+      "evidence": [
+        {
+          "description": null,
+          "event_id": "1f0aa6eb-86be-5482-8dc5-8ad64f97d2c7",
+          "hash": null,
+          "kind": "EVENT",
+          "media_type": null,
+          "source_id": null,
+          "uri": null
+        }
+      ],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.isr.threat_assessment_updated.v1",
+      "verification": "CORROBORATED"
+    },
+    "payload": {
+      "assessed_by": "ISR-CELL-ALPHA",
+      "assessed_level": "HIGH",
+      "previous_level": "MODERATE",
+      "threat": "GNSS denial over the Gulf approach"
+    },
+    "received_at": "2026-04-29T06:41:02.000Z",
+    "related_entities": [
+      "6ab3a8e0-b92f-58d5-a35b-d87c274be31c"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-41-ASSESSMENT",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  },
+  {
+    "event_id": "3d3d29b4-e317-58e7-a7da-238475c6502d",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T07:05:00.000Z",
+    "oes": {
+      "confidence": 0.6,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Affects"
+        }
+      ],
+      "event_class": "IMPACT",
+      "event_relations": [
+        {
+          "event_id": "1165bceb-0221-5671-ad19-113108ec22f8",
+          "predicate": "DERIVED_FROM"
+        }
+      ],
+      "evidence": [
+        {
+          "description": null,
+          "event_id": "1165bceb-0221-5671-ad19-113108ec22f8",
+          "hash": null,
+          "kind": "EVENT",
+          "media_type": null,
+          "source_id": null,
+          "uri": null
+        }
+      ],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.mission.operational_impact_assessed.v1",
+      "verification": null
+    },
+    "payload": {
+      "assessed_by": "MISSION-CELL-ALPHA",
+      "assessed_severity": "HIGH",
+      "impact": "planned low-level leg cannot be flown on GNSS alone",
+      "mission": "MISSION-41"
+    },
+    "received_at": "2026-04-29T07:05:02.000Z",
+    "related_entities": [
+      "eeb03ae0-2902-5a68-a8b3-b4999f60ee50"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-41-IMPACT",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  },
+  {
+    "event_id": "91479923-98c8-5a74-9895-8f9d7c007a3b",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T07:22:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        },
+        {
+          "entity_id": "6f27d016-39a0-5162-ad36-06c4bfbc10c7",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Uses"
+        }
+      ],
+      "event_class": "RECOMMENDATION",
+      "event_relations": [
+        {
+          "event_id": "3d3d29b4-e317-58e7-a7da-238475c6502d",
+          "predicate": "DERIVED_FROM"
+        }
+      ],
+      "evidence": [
+        {
+          "description": null,
+          "event_id": "3d3d29b4-e317-58e7-a7da-238475c6502d",
+          "hash": null,
+          "kind": "EVENT",
+          "media_type": null,
+          "source_id": null,
+          "uri": null
+        }
+      ],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.decision.recommendation_created.v1",
+      "verification": null
+    },
+    "payload": {
+      "alternatives_considered": 2,
+      "mission": "MISSION-41",
+      "proposed_by": "MISSION-CELL-ALPHA",
+      "recommendation": "re-route MISSION-41 via ROUTE-DELTA"
+    },
+    "received_at": "2026-04-29T07:22:01.000Z",
+    "related_entities": [
+      "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+      "6f27d016-39a0-5162-ad36-06c4bfbc10c7"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "ADVISORY",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-41-RECOMMENDATION",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  },
+  {
+    "event_id": "e61d7c30-c090-5e2e-87a4-a65bb7dae71b",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T07:40:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "DECISION",
+      "event_relations": [
+        {
+          "event_id": "91479923-98c8-5a74-9895-8f9d7c007a3b",
+          "predicate": "DERIVED_FROM"
+        }
+      ],
+      "evidence": [
+        {
+          "description": null,
+          "event_id": "91479923-98c8-5a74-9895-8f9d7c007a3b",
+          "hash": null,
+          "kind": "EVENT",
+          "media_type": null,
+          "source_id": null,
+          "uri": null
+        }
+      ],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.decision.decision_recorded.v1",
+      "verification": null
+    },
+    "payload": {
+      "decided_by": "COMMANDER-ALPHA",
+      "decision": "ACCEPTED",
+      "decision_forum": "MISSION-BRIEF-41-B",
+      "mission": "MISSION-41"
+    },
+    "received_at": "2026-04-29T07:40:01.000Z",
+    "related_entities": [
+      "eeb03ae0-2902-5a68-a8b3-b4999f60ee50"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-41-DECISION",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  },
+  {
+    "event_id": "fa2346fd-784f-5d24-8a37-292c4364e032",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T07:52:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        },
+        {
+          "entity_id": "6f27d016-39a0-5162-ad36-06c4bfbc10c7",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Uses"
+        }
+      ],
+      "event_class": "ACTION",
+      "event_relations": [
+        {
+          "event_id": "e61d7c30-c090-5e2e-87a4-a65bb7dae71b",
+          "predicate": "DERIVED_FROM"
+        }
+      ],
+      "evidence": [
+        {
+          "description": null,
+          "event_id": "e61d7c30-c090-5e2e-87a4-a65bb7dae71b",
+          "hash": null,
+          "kind": "EVENT",
+          "media_type": null,
+          "source_id": null,
+          "uri": null
+        }
+      ],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.decision.action_authorized.v1",
+      "verification": null
+    },
+    "payload": {
+      "action": "re-route to ROUTE-DELTA",
+      "authorization_reference": "AUTH-41-07",
+      "authorized_by": "COMMANDER-ALPHA",
+      "mission": "MISSION-41"
+    },
+    "received_at": "2026-04-29T07:52:01.000Z",
+    "related_entities": [
+      "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
+      "6f27d016-39a0-5162-ad36-06c4bfbc10c7"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "CHAIN-41-ACTION",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

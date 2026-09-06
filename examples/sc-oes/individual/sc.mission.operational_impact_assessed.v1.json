@@ -1,0 +1,84 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "MISSION-41",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T15:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "e7f18de2-5727-5a71-9ab3-47c5741a2e26",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T15:20:00.000Z",
+    "oes": {
+      "confidence": 0.6,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Affects"
+        }
+      ],
+      "event_class": "IMPACT",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.mission.operational_impact_assessed.v1",
+      "verification": null
+    },
+    "payload": {
+      "assessed_by": "MISSION-CELL-ALPHA",
+      "assessed_severity": "HIGH",
+      "impact": "navigation accuracy insufficient for the planned low-level leg",
+      "mission": "MISSION-41"
+    },
+    "received_at": "2026-04-29T15:20:02.000Z",
+    "related_entities": [
+      "64bebfce-ab5d-56ba-8b12-f88b9f42bb87"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-IMPACT-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

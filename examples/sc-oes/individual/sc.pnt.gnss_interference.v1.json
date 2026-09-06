@@ -1,0 +1,117 @@
+[
+  {
+    "affiliation": "HOSTILE",
+    "attributes": {
+      "interference_type": "jamming"
+    },
+    "confidence": null,
+    "entity_id": "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:pnt:InterferenceSource"
+    ],
+    "position": {
+      "accuracy_m": 2500.0,
+      "alt_m": null,
+      "lat": 57.512,
+      "lon": 21.884,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "INTERFERENCE-SOURCE-BRAVO",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T06:12:44.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "61d0b924-6f8e-5536-85c6-2cdc04299ba5",
+    "event_type": "GNSS_INTERFERENCE",
+    "geometry": {
+      "coordinates": [
+        [
+          [
+            21.6,
+            57.3
+          ],
+          [
+            22.15,
+            57.3
+          ],
+          [
+            22.15,
+            57.72
+          ],
+          [
+            21.6,
+            57.72
+          ],
+          [
+            21.6,
+            57.3
+          ]
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T06:12:44.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "OBSERVATION",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.pnt.gnss_interference.v1",
+      "verification": null
+    },
+    "payload": {
+      "frequency_band": "L1",
+      "interference_type": "JAMMING",
+      "signal_strength_dbm": -71.5
+    },
+    "received_at": "2026-04-29T06:15:00.000Z",
+    "related_entities": [
+      "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-GNSS-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

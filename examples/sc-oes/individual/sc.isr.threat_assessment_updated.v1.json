@@ -1,0 +1,115 @@
+[
+  {
+    "affiliation": "HOSTILE",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d",
+    "entity_type": "INTERFERENCE_SOURCE",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:pnt:InterferenceSource",
+      "tag:synapsecommand.com,2026-09-06:ontology:core:ThreatSource"
+    ],
+    "position": {
+      "accuracy_m": 2500.0,
+      "alt_m": null,
+      "lat": 57.512,
+      "lon": 21.884,
+      "position_source": "ESTIMATED"
+    },
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "INTERFERENCE-SOURCE-BRAVO",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T06:12:44.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "66df6665-d594-57a6-9f4c-4e0164415ba3",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T13:04:00.000Z",
+    "oes": {
+      "confidence": 0.72,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Threatens"
+        }
+      ],
+      "event_class": "ASSESSMENT",
+      "event_relations": [],
+      "evidence": [
+        {
+          "description": null,
+          "event_id": null,
+          "hash": null,
+          "kind": "SOURCE_RECORD",
+          "media_type": null,
+          "source_id": {
+            "external_id": "SYNTHETIC-THREAT-001-WORKING",
+            "system": "SC-OES-EXAMPLES"
+          },
+          "uri": null
+        }
+      ],
+      "extensions": {
+        "x.example.assessment_method": "analyst review, two sources"
+      },
+      "security": {
+        "caveats": [],
+        "classification": "EXERCISE-UNCLASSIFIED",
+        "marking_extras": {},
+        "originator": "ISR-CELL-ALPHA",
+        "releasability": [
+          "EXERCISE-ALL"
+        ],
+        "scheme": "SYNTHETIC-EXAMPLE-SCHEME"
+      },
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.isr.threat_assessment_updated.v1",
+      "verification": "CORROBORATED"
+    },
+    "payload": {
+      "assessed_by": "ISR-CELL-ALPHA",
+      "assessed_level": "HIGH",
+      "previous_level": "MODERATE",
+      "threat": "GNSS denial over AREA-ALPHA"
+    },
+    "received_at": "2026-04-29T13:04:02.000Z",
+    "related_entities": [
+      "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-THREAT-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

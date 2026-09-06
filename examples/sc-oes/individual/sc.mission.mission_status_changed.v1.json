@@ -1,0 +1,85 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {
+      "entity_type_basis": "the CDM's structural vocabulary has no member for a mission; what it IS is carried in ontology_types"
+    },
+    "confidence": null,
+    "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "MISSION-41",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T15:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "7de7fd9b-afec-56cf-bb33-8502cf1b9ada",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T15:00:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "STATE_CHANGE",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.mission.mission_status_changed.v1",
+      "verification": null
+    },
+    "payload": {
+      "mission": "MISSION-41",
+      "previous_status": "PLANNED",
+      "status": "EXECUTING"
+    },
+    "received_at": "2026-04-29T15:00:01.000Z",
+    "related_entities": [
+      "64bebfce-ab5d-56ba-8b12-f88b9f42bb87"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "INFO",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-MISSION-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

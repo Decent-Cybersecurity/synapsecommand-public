@@ -1,0 +1,100 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "09f50854-1dea-5ce5-9f36-52019bfe9712",
+    "entity_type": "OVERLAY_OBJECT",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:logistics:LogisticsRoute"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "ROUTE-CHARLIE",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T12:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "77716881-3b59-5339-879c-21e8dadb0ee9",
+    "event_type": "STATUS_CHANGE",
+    "geometry": {
+      "coordinates": [
+        [
+          18.44,
+          49.02
+        ],
+        [
+          17.9,
+          48.7
+        ],
+        [
+          17.21,
+          48.17
+        ]
+      ],
+      "type": "LineString"
+    },
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T12:00:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "09f50854-1dea-5ce5-9f36-52019bfe9712",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "STATE_CHANGE",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.logistics.route_availability_changed.v1",
+      "verification": null
+    },
+    "payload": {
+      "availability": "DEGRADED",
+      "previous_availability": "OPEN",
+      "route": "ROUTE-CHARLIE",
+      "segment": "SEG-3"
+    },
+    "received_at": "2026-04-29T12:00:05.000Z",
+    "related_entities": [
+      "09f50854-1dea-5ce5-9f36-52019bfe9712"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "WARNING",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-ROUTE-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

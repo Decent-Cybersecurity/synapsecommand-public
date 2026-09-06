@@ -1,0 +1,84 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+    "entity_type": "UNKNOWN",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
+    ],
+    "position": null,
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "MISSION-41",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T15:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "64d06ffc-2354-5579-b5bb-6da77be59633",
+    "event_type": "ALERT",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T15:35:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "RECOMMENDATION",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.decision.recommendation_created.v1",
+      "verification": null
+    },
+    "payload": {
+      "alternatives_considered": 2,
+      "mission": "MISSION-41",
+      "proposed_by": "MISSION-CELL-ALPHA",
+      "recommendation": "route MISSION-41 via ROUTE-DELTA"
+    },
+    "received_at": "2026-04-29T15:35:01.000Z",
+    "related_entities": [
+      "64bebfce-ab5d-56ba-8b12-f88b9f42bb87"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "ADVISORY",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-RECOMMENDATION-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

@@ -1,0 +1,91 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "ff57d7ee-0ebf-58b3-b436-7f88b8641eef",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyNode"
+    ],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 49.02,
+      "lon": 18.44,
+      "position_source": "MANUAL"
+    },
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SUPPLY-NODE-BRAVO",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T11:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "2ee40118-a745-55e2-a780-96dc53098e51",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T11:00:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "ff57d7ee-0ebf-58b3-b436-7f88b8641eef",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "STATE_CHANGE",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.logistics.supply_threshold_reached.v1",
+      "verification": null
+    },
+    "payload": {
+      "node": "SUPPLY-NODE-BRAVO",
+      "quantity": 41800.0,
+      "supply_item": "FUEL-F34",
+      "threshold_name": "REORDER",
+      "unit": "litre"
+    },
+    "received_at": "2026-04-29T11:00:03.000Z",
+    "related_entities": [
+      "ff57d7ee-0ebf-58b3-b436-7f88b8641eef"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "ADVISORY",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-SUPPLY-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]

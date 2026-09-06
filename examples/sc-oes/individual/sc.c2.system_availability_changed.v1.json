@@ -1,0 +1,90 @@
+[
+  {
+    "affiliation": "FRIENDLY",
+    "attributes": {},
+    "confidence": null,
+    "entity_id": "0dbb1012-c9fa-5b29-bc90-ea1c1f1afba3",
+    "entity_type": "FACILITY",
+    "integrity": null,
+    "kinematics": null,
+    "object_kind": "entity",
+    "ontology_types": [
+      "tag:synapsecommand.com,2026-09-06:ontology:c2:C2System"
+    ],
+    "position": {
+      "accuracy_m": null,
+      "alt_m": null,
+      "lat": 48.15,
+      "lon": 17.11,
+      "position_source": "MANUAL"
+    },
+    "schema_version": "2.0.0",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "C2-NODE-ECHO",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ],
+    "symbol": null,
+    "valid_from": "2026-04-29T14:00:00.000Z",
+    "valid_to": null
+  },
+  {
+    "event_id": "47c57730-a091-5a62-94dc-447cca4eba20",
+    "event_type": "STATUS_CHANGE",
+    "geometry": null,
+    "integrity": null,
+    "object_kind": "event",
+    "observed_at": "2026-04-29T14:00:00.000Z",
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [
+        {
+          "entity_id": "0dbb1012-c9fa-5b29-bc90-ea1c1f1afba3",
+          "predicate": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns"
+        }
+      ],
+      "event_class": "STATE_CHANGE",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": "ACTIVE",
+      "type_id": "sc.c2.system_availability_changed.v1",
+      "verification": null
+    },
+    "payload": {
+      "affected_service": "voice",
+      "availability": "DEGRADED",
+      "previous_availability": "AVAILABLE",
+      "system": "C2-NODE-ECHO"
+    },
+    "received_at": "2026-04-29T14:00:02.000Z",
+    "related_entities": [
+      "0dbb1012-c9fa-5b29-bc90-ea1c1f1afba3"
+    ],
+    "schema_version": "2.0.0",
+    "severity": "ADVISORY",
+    "source": {
+      "adapter": "sc-oes-examples",
+      "adapter_version": "0.1.0",
+      "synthetic": true,
+      "system": "SC-OES-EXAMPLES"
+    },
+    "source_ids": [
+      {
+        "external_id": "SYNTHETIC-C2-001",
+        "system": "SC-OES-EXAMPLES"
+      }
+    ]
+  }
+]
