@@ -4,6 +4,12 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 and §67 and **nothing in this ADR moves**.
+Apache-2.0, the untouched `LICENSE`, repository-level licensing with no per-file SPDX headers, no
+copied protected standards definitions, conformance-is-not-certification and the separate trademark
+rights are SA.1 §9 and §94 locked decisions. This ADR carries no ontology identifier example, so
+SA.1 §14's dated prefix requires no edit here. Still Accepted.
+
 ## Context
 
 §42 rules the licensing arrangement in four sentences and one list:

@@ -4,6 +4,12 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 and §65 and **nothing in this ADR moves**.
+No interchange canonical byte form, no JCS implementation, no crypto, no hashing implementation and
+`Integrity` as a future boundary are SA.1 §94 locked decisions. This ADR states no identifier, no
+grammar and no depth rule; the extension-depth bound is a structural conformance and
+resource-safety constraint (SA.1 §44) and belongs to ADR 0008, not here. Still Accepted.
+
 ## Context
 
 §25 retains this ADR's decision as it stood and fixes the documentation minimum. It is explicit

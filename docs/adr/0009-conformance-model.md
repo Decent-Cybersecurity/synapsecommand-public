@@ -4,6 +4,13 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06 (SA.1 §30–§43, §61, §83). The model is unchanged: five dimensions,
+`PASS`/`FAIL`/`SKIP`, no aggregate score, four exit codes, required-dimension mechanism. What SA.1
+fixes is the two places dimension E and dimension C had no stated answer — an object carrying only
+valid third-party ontology terms, and an object whose `type_id` is syntactically invalid — and it
+adds the normative dimension E truth table below. The governed ontology prefix is dated
+`2026-09-06` (SA.1 §14, ADR 0003). Still Accepted.
+
 ## Context
 
 §34 retains five separately reportable dimensions — **A** CDM Conformance, **B** SC-OES Core
@@ -65,17 +72,60 @@ without collapsing the report.**
      the registry; a registered payload model validates where one exists; a non-null
      `legacy_event_type` matches (ADR 0007). For a valid unknown `x.*`, `C = SKIP`. **For an
      unknown `sc.*`, `C = FAIL`** — this is where §14's namespace reservation is enforced, and the
-     message says so.
+     message says so. **A `type_id` that satisfies neither event-type grammar (ADR 0003 decision 9)
+     is a *syntax* defect, so `B = FAIL` and `C = SKIP`** with the detail "semantic type not
+     evaluated because core type identifier syntax failed" (SA.1 §31). C does not invent a semantic
+     finding about a string it cannot parse: one defect produces one failure, in the dimension whose
+     subject it is, and a producer reading the report is not left choosing between two complaints
+     about the same character.
    - **D — profile conformance** (§38). Checked against the profile the caller explicitly names —
      `PNT`, `Air`, `Logistics` and the rest. `SKIP` when none is requested, and §38's closing rule
      is binding: "Do not infer which profile the producer 'probably meant'."
-   - **E — ontology conformance** (§39). `SKIP` when no ontology identifiers occur. For governed
-     SynapseCommand ontology IDs: syntax valid, and the term present in the packaged generated
-     ontology-term registry (ADR 0002, ADR 0004). **An unknown identifier in the reserved
-     `tag:synapsecommand.com,2026:ontology:` family is `FAIL`.** A valid third-party absolute
-     semantic identifier is preserved, not governed, and reported in detailed output as
-     `UNASSESSED_THIRD_PARTY_TERM` — never converted into a guessed SynapseCommand class. Syntax
-     and lookup only; no reasoning (§100, ADR 0002).
+   - **E — ontology conformance** (§39, and SA.1 §32–§42 completes it). `SKIP` when no ontology
+     identifiers occur. For governed SynapseCommand ontology IDs: syntax valid, and the term
+     present in the packaged generated ontology-term registry (ADR 0002, ADR 0004). **An unknown
+     identifier in the reserved `tag:synapsecommand.com,2026-09-06:ontology:` family is `FAIL`.** A
+     valid third-party absolute semantic identifier is preserved, not governed, and reported in
+     detailed output as `UNASSESSED_THIRD_PARTY_TERM` — never converted into a guessed
+     SynapseCommand class. Syntax and lookup only; no reasoning (§100, ADR 0002).
+
+     **The complete truth table is normative** (SA.1 §42). §39 left one input with no stated
+     verdict — an object carrying ontology identifiers, all of them valid and all third-party —
+     and an unstated verdict is where two implementations disagree without either reading the
+     specification wrongly:
+
+     | Input | E | Detail |
+     |---|---|---|
+     | no ontology identifiers | `SKIP` | none present |
+     | only valid third-party identifiers | `SKIP` | each listed as `UNASSESSED_THIRD_PARTY_TERM` |
+     | valid governed identifiers only | `PASS` | governed terms recognised |
+     | valid governed + valid third-party | `PASS` | third-party terms separately unassessed |
+     | unknown identifier in the reserved family | `FAIL` | reserved namespace, unknown term |
+     | malformed governed identifier | `FAIL` | invalid syntax |
+     | malformed third-party identifier | `FAIL` | invalid syntax |
+
+     Three readings of that table are the ones worth stating outright. **Third-party-only is
+     `SKIP`, not `PASS` and not `FAIL`** (SA.1 §35): the terms are present and this repository
+     governs none of them, so there is nothing it can honestly grade — the same sentence
+     `harness.py:230` already applies to an unrun check, applied to an unassessable one. **A valid
+     third-party term never downgrades a governed result** (SA.1 §37): governed-plus-third-party is
+     `PASS`, with the third-party terms listed as unassessed beside it, because "not assessed" and
+     "assessed and wanting" are different facts and only the second is a defect. **A malformed
+     third-party identifier is `FAIL`, not an unassessed term** (SA.1 §39): preserving a malformed
+     string as though it were valid third-party semantics is how a defect acquires the same
+     treatment as a legitimate extension. Duplicates are reported, never silently deduplicated and
+     never transformed away (SA.1 §40); the owning model may also refuse them, which is dimension
+     A's business, not E's.
+
+     **The four things E may inspect** are `Entity.ontology_types`, SC-OES entity relation
+     predicates, governed ontology references carried directly on the event, and any field a
+     profile explicitly defines as an ontology-ID field (SA.1 §33). Arbitrary strings inside
+     `payload`, `attributes` or `extensions` are **not** ontology identifiers, and E does not go
+     looking for them there — a dimension that scanned open bags for things that look like
+     identifiers would be inferring, which is what §62 and decision 2 exist to prevent.
+     Third-party identifiers stay opaque: no fetch, no DNS, no filesystem, no redirect, no RDF
+     load, no automatic mapping, no inference from the string (SA.1 §41, §87). Validation is local
+     syntax plus namespace classification, and nothing else.
 4. **Exit codes, per §40, using this repository's constant-per-code convention.** The
    multidimensional report remains authoritative; the process status is for CI.
    - `0` — the run completed and no requested dimension `FAIL`ed.
@@ -92,6 +142,15 @@ without collapsing the report.**
    asked — *did the dimensions I required come back `PASS`?* — while the report still says what
    every dimension did. §40 leaves the spelling to repository convention, and the repository's
    convention is `argparse` long options with a one-line help string (`harness.py:532`–`:534`).
+
+   **The two layers do not leak into each other, and dimension E is where that could go wrong**
+   (SA.1 §43, §81). `--require E` on an object with no ontology identifiers, or with only
+   third-party ones, makes the *invocation* unsuccessful; the report still reads `E = SKIP`. The
+   verdict is not rewritten to `FAIL` to make the exit code follow from it. A dimension verdict
+   records what could be assessed about the object; the process status records whether the caller
+   got the assessment they asked for. Collapsing the first into the second would put the caller's
+   command line into the conformance record, where a later reader would have no way to tell an
+   object that failed E from one nobody could evaluate.
 6. **Two outputs, and the machine one is keyed by name** (§41). A rendered table for a person, in
    the shape `render_report` (`harness.py:476`) already produces, and a JSON report for a machine,
    in the shape `--json` (`harness.py:534`) already offers. §41 is explicit about the JSON: "named
@@ -195,7 +254,8 @@ set is the thing most likely to grow.
   required-but-skipped dimension unsuccessful rather than quietly green.
 - **Dimensions C and E are namespace enforcement**, and §127 names the threat: "reserved-namespace
   impersonation" and "malicious third-party ontology terms". An `sc.*` type identifier or a
-  `tag:synapsecommand.com,2026:ontology:` term that this project did not govern is caught offline,
+  `tag:synapsecommand.com,2026-09-06:ontology:` term that this project did not govern is caught
+  offline,
   by a consumer, without asking anybody.
 - **A third-party term is reported, not graded.** `UNASSESSED_THIRD_PARTY_TERM` says exactly what
   is true: this repository has no basis for a verdict. Grading it either way would be an

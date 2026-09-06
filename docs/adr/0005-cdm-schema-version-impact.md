@@ -4,6 +4,12 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 and §64 and **nothing in this ADR moves**.
+`SCHEMA_VERSION` 2.0.0 and the independently derived `PACKAGE_VERSION` 2.0.0 are SA.1 §4–§5 locked
+decisions, and SA.1 §64 is explicit that they are not reopened because SA.1 changes identifier
+wording. The equality of the two numbers stays coincidental and stays derived rather than copied.
+Still Accepted.
+
 ## Context
 
 ADR 0001 adds two optional fields to the canonical models: `Event.oes` and

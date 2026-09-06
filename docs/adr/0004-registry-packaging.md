@@ -4,6 +4,14 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 and §63 and **nothing in this ADR moves**.
+`registry/sc_oes/event_types.json` and `registry/sc_oes/ontology_terms.json`, both shipped and both
+read through `importlib.resources`, are SA.1 §8 locked decisions. This ADR names the registry files
+and their helpers and carries no ontology identifier literal, so SA.1 §14's dated prefix reaches it
+through ADR 0003; what the registry's *keys* look like is ADR 0003 decision 9's frozen grammar, and
+the lookup this ADR packages is the recognition half of SA.1 §36 and §76 — syntax validity is not
+governance recognition. Still Accepted.
+
 ## Context
 
 §16 fixes the runtime registry's location and forbids one alternative by name: "Do not package

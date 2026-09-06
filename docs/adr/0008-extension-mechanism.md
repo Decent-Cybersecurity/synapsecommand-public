@@ -4,6 +4,14 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06 (SA.1 §13, §24–§29, §44–§57, §60, §83). The mechanism is unchanged:
+one bag, `x.<namespace>.<name>` keys, `sc.*` reserved and undefined in v0.1, `MAX_EXTENSION_DEPTH =
+16`, no universal list caps, extensions never interpreted. What SA.1 fixes is three things this ADR
+left to interpretation — the exact key grammar (decision 3), the exact depth-counting algorithm
+(decision 7), and the *description* of the depth limit, which is a normative structural
+conformance and resource-safety constraint and is no longer called operational semantics
+(decision 8). Still Accepted.
+
 ## Context
 
 §29 fixes the mechanism in three lines: one declared extension bag, `oes.extensions`, typed
@@ -26,7 +34,9 @@ under an individual extension value", with raising it compatible and lowering it
 breaking. §33 forbids the bound's obvious generalisation: no universal maximum counts for
 `event_relations`, `entity_relations` or `evidence` in v0.1, because deployment limits "are
 resource policies, not universal operational semantics" and "the specification must distinguish
-the two."
+the two." *(SA.1 §44–§45 keeps that distinction and corrects the term on the other side of it: the
+depth bound is a normative structural conformance and resource-safety constraint, not operational
+semantics. §33 is quoted here as M wrote it; decision 8 carries the corrected wording.)*
 
 **This repository has already made the strict-with-one-hatch decision once, for the CDM, and wrote
 down why.** `models.py:10`–`:15`: "A canonical model whose objects accept unknown keys is not
@@ -73,10 +83,33 @@ universal list caps.**
    extensions; §30 forbids creating that registry — "Do not create an extension registry merely to
    represent an empty governed set. Create one only when the first governed extension exists" —
    and a v0.1 validator therefore has nothing to look one up in and nothing to allow.
+
+   **The grammar is exact (SA.1 §25, §28), not a shape.** `namespace` and `name` are each a
+   `lower_label`, `[a-z][a-z0-9_]*` — ASCII lowercase, first character a letter, no dot, hyphen,
+   slash, colon, whitespace or uppercase — so the whole key is
+
+   ```text
+   ^x\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$
+   ```
+
+   Exactly three dot-separated parts. `x.acme.radar_quality` and `x.a.value1` are keys;
+   `x.acme`, `x..quality`, `x.Acme.radar_quality`, `x.acme.radar-quality`, `acme.radar_quality`
+   and a bare `radar_quality` are not. ADR 0003 decision 9 carries the same `lower_label`
+   production for the event-type identifiers, deliberately: one production for every namespaced
+   surface in SC-OES, so a producer learns the rule once. The character ranges are written out
+   rather than spelled `\w`, which in Python would silently admit non-ASCII (SA.1 §86), and
+   nothing is case-folded, hyphen-folded or trimmed on the producer's behalf (SA.1 §84–§85) — a
+   key with whitespace around it is invalid, not a value to be tidied. **A syntactically
+   well-formed `sc.*` key still fails**, because the reservation is about the namespace and not
+   about the spelling.
 4. **Values are never interpreted.** Nothing in the package reads inside an extension value, maps
    it, normalises it or promotes it to a core field. §31's six properties are satisfied by
    transporting: survive validation, survive serialization, survive round-trip, not interpreted,
-   not promoted, ignorable.
+   not promoted, ignorable. SA.1 §57 states the same list with two edges made explicit, and both
+   are properties of transporting rather than checks to add: a valid unknown `x.*` extension is
+   **never normalised into a core field** and is **never silently discarded**. Silently is the
+   operative word — a consumer that drops an extension it does not understand produces a record
+   that disagrees with what was sent, and nothing in the record says so.
 5. **"An extension may not redefine a core field" is enforced by NON-INTERPRETATION, not by
    refusing the key.** §31's example is `x.acme.confidence`, which "must not be interpreted as a
    replacement for `oes.confidence`" — and that same section requires unknown valid `x.*`
@@ -91,14 +124,36 @@ universal list caps.**
    within the depth bound (§36 lists "extension namespace" and "extension nesting bound"); it
    asserts nothing about extension *content*. A profile may require an extension, and then it is
    dimension D that says so, against the profile the caller named (§38).
-7. **One universal structural bound: `MAX_EXTENSION_DEPTH = 16`.** §32 fixes the value and the
-   counting rule — nested JSON containers under an individual extension value — and §32 permits
-   the constant to "follow repository style", which it already does: an upper-case module-level
-   constant, in the manner of `SCHEMA_VERSION` (`version.py:114`) and `KINDS` (`models.py:434`).
-   An extension whose value nests beyond 16 fails validation, and the refusal message names the
-   key and the depth reached. §32's asymmetry is recorded with it: raising the limit later is
-   compatible, lowering it is potentially breaking, so the bound ships with the block rather than
-   arriving after producers exist.
+7. **One universal structural bound: `MAX_EXTENSION_DEPTH = 16`, with the counting algorithm
+   frozen.** §32 fixes the value and the counting *rule* — nested JSON containers under an
+   individual extension value — and §32 permits the constant to "follow repository style", which
+   it already does: an upper-case module-level constant, in the manner of `SCHEMA_VERSION`
+   (`version.py:114`) and `KINDS` (`models.py:434`). §32's asymmetry is recorded with it: raising
+   the limit later is compatible, lowering it is potentially breaking, so the bound ships with the
+   block rather than arriving after producers exist.
+
+   **A rule is not an algorithm, and two implementations counting differently is the same defect
+   as two implementations parsing differently.** SA.1 §46–§54 freezes the count:
+
+   ```text
+   scalar (null, boolean, number, string)   depth 0
+   object or array as the extension value   depth 1
+   each further nested object or array      +1
+   object property names                    contribute nothing
+   empty {} or []                           still a container, so still 1
+   accepted                                 depth <= 16
+   rejected                                 depth >= 17
+   ```
+
+   Worked: `"x.acme.quality": 0.95` is 0. `"x.acme.data": {}` and `"x.acme.data": []` are both 1.
+   `{"sensor": {"quality": 0.9}}` is 2 — outer object 1, `sensor` object 2, the scalar adds
+   nothing. `[{"samples": [1, 2, 3]}]` is 3 — array 1, object 2, `samples` array 3. **The depth is
+   the maximum over the value's container paths, and it is computed per extension key, never once
+   across the bag** (SA.1 §54): `{"x.a.one": {"a": {"b": 1}}, "x.b.two": {"c": {"d": 2}}}` is two
+   values of depth 2, not one of depth 3. An extension whose value reaches 17 fails validation,
+   and the refusal names the key, the depth calculated and the maximum accepted — "extension
+   x.acme.data has nesting depth 17; maximum permitted depth is 16" is the shape (SA.1 §51, §83),
+   deterministic and with no stack trace and no internal detail in it.
 8. **No universal list-size caps, and the distinction is normative text rather than a silence.**
    §33 forbids arbitrary maximum counts for `event_relations`, `entity_relations` and `evidence`
    in v0.1. **This removes a clause from the proposed decision**, which extended the depth bound
@@ -106,9 +161,20 @@ universal list caps.**
    `11-extensions.md` and `14-security-considerations.md` (§117): implementations MAY enforce a
    maximum message size, a maximum list length, memory limits and processing limits, and those are
    *resource policies* — local, deployment-specific, not part of the interoperability contract —
-   whereas the depth bound is *universal operational semantics* and every implementation applies
-   it identically. A document that stated a list cap would make an implementation that accepted
-   one more entry non-conformant, which is a claim v0.1 has no basis for.
+   whereas the depth bound is a **normative SC-OES structural conformance and resource-safety
+   constraint** that every implementation applies identically. A document that stated a list cap
+   would make an implementation that accepted one more entry non-conformant, which is a claim v0.1
+   has no basis for.
+
+   **The depth bound is not operational semantics, and SA.1 §44–§45 corrects the word this ADR
+   used for it.** Nesting depth is not meaning: what an event *means* is carried by `EventClass`,
+   `type_id`, the event and entity relations, the lifecycle, the effective interval and the
+   ontology relationships. `MAX_EXTENSION_DEPTH` says nothing about any of them; it says how much
+   structure a conformant implementation must be willing to walk. Both are universal and both are
+   normative, which is why the two were easy to conflate and why keeping them apart matters — a
+   reader who takes the depth limit for a semantic rule will look for the meaning of 16, and there
+   is none to find. §33's own sentence, quoted above, draws the same contrast with the older word;
+   SA.1 replaces the word, not the contrast.
 9. **Typed SC-OES payloads follow `_payload_shape` exactly.** `OES_PAYLOAD_MODELS` is keyed by
    `type_id` (§111); validation is a check and never a transformation; the payload dict stays as
    the producer wrote it; an unregistered `type_id` leaves the payload free-form and transportable.

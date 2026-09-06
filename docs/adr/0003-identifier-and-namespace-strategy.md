@@ -4,6 +4,13 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06 (SA.1 §14–§20, §24–§28, §59, §84–§86). The decision is unchanged:
+the `tag:` family for ontology terms, the existing CDM schema URNs untouched as legacy. What SA.1
+fixes is the two things this ADR left a reader to interpret — the RFC 4151 authority date, now the
+explicit `2026-09-06` rather than the year `2026`, and the exact ASCII grammar of `<namespace>`,
+`<domain>`, `<event_name>`, `<module>`, `<Term>` and `<major>`, now frozen in decision 9. Still
+Accepted.
+
 ## Context
 
 SC-OES introduces identifier spaces that become public API on first publication. §13 says so
@@ -50,35 +57,48 @@ schema URNs untouched as legacy identifiers; `SC_OES_VERSION` in `version.py`.**
 
 1. **Event type identifiers** are `sc.<domain>.<event_name>.v<major>` for governed semantics and
    `x.<namespace>.<domain>.<event_name>.v<major>` for third parties, validated in the package by
-   a regex over §14's grammar: `module`/`domain` lowercase, event name lowercase snake case, an
-   explicit `v<number>` major. Validation is checked in **both directions**: a well-formed
-   identifier is accepted, and a malformed one is refused with a message naming which rule it
-   broke.
+   a regex over §14's grammar: `domain` and `event_name` lowercase snake case, an explicit
+   `v<number>` major. **Decision 9 freezes exactly what each of those admits**, because §14 did
+   not. Validation is checked in **both directions**: a well-formed identifier is accepted, and a
+   malformed one is refused with a message naming which rule it broke.
 2. **`sc.*` is reserved, and an unknown one is not a governed type.** §14: "The `sc.*` namespace
    is reserved. An unknown `sc.*` identifier is not treated as a valid governed type. An unknown
    `x.*` identifier is transportable." Concretely, a `type_id` in the `sc.` namespace that is not
    in the packaged governed registry (ADR 0004) fails dimension C of the conformance model (ADR
    0009), and a well-formed unknown `x.*` is `SKIP` there rather than `FAIL` (§37). This is
    enforceable offline because the registry ships.
-3. **Ontology terms are `tag:synapsecommand.com,2026:ontology:<module>:<Term>`.** This replaces
-   the `urn:synapsecommand:ontology:<module>:<Term>` form this ADR carried while proposed. §13's
-   rules: `module` lowercase, `Term` UpperCamelCase — which is what §13's own examples show
-   (`core:OperationalObject`, `core:Capability`, `air:Runway`, `pnt:PNTService`) and what §101's
-   worked `Entity` example uses (`tag:synapsecommand.com,2026:ontology:air:Runway`). **No new
-   public term is minted under `urn:synapsecommand:`**, which §13 forbids by name.
+3. **Ontology terms are `tag:synapsecommand.com,2026-09-06:ontology:<module>:<Term>`.** This
+   replaces the `urn:synapsecommand:ontology:<module>:<Term>` form this ADR carried while
+   proposed. §13's rules: `module` lowercase, `Term` UpperCamelCase — which is what §13's own
+   examples show (`core:OperationalObject`, `core:Capability`, `air:Runway`, `pnt:PNTService`) and
+   what §101's worked `Entity` example uses
+   (`tag:synapsecommand.com,2026-09-06:ontology:air:Runway`). **No new public term is minted under
+   `urn:synapsecommand:`**, which §13 forbids by name.
+
+   **The authority date is one explicit date, `2026-09-06`, and SA.1 §14 replaces §13's year-only
+   `,2026`.** RFC 4151's date segment is the specific-date form of "the authority name was under
+   the minter's control then"; a year-only date says something narrower than "during 2026" and
+   leaves the reader to work out which, which is avoidable uncertainty in the one part of an
+   identifier a consumer cannot renegotiate. One date is fixed for the lifetime of the SC-OES
+   v0.1 ontology namespace — the date this public identifier architecture was finalised. It is
+   **not shortened later, not derived dynamically, and not changed for later ontology versions**
+   (SA.1 §14): a term minted in 2027 still carries `,2026-09-06`, because the segment records when
+   the *authority* was asserted, not when the term was written. `tag:synapsecommand.com,2026:`
+   therefore survives in this repository only as a superseded form, named as one (SA.1 §20).
 4. **The existing CDM schema URNs are not changed by this work.** §13: "The repository's existing
    CDM schema URNs remain legacy identifiers and are not changed by this work." `BASE_ID`
    (`schemas.py:67`) stays `urn:synapsecommand:cdm`; the `$id`s built from it at `schemas.py:76`
    keep their form. Two identifier families therefore coexist in this repository **deliberately
    and by ruling**, and the boundary between them is stated rather than left to be discovered:
    `urn:synapsecommand:cdm:*` identifies published JSON Schema documents and is legacy;
-   `tag:synapsecommand.com,2026:ontology:*` identifies governed ontology terms and is the space
-   new terms are minted in.
+   `tag:synapsecommand.com,2026-09-06:ontology:*` identifies governed ontology terms and is the
+   space new terms are minted in.
 5. **Third-party ontology identifiers are admitted under §15's three tests.** A third-party
    identifier must be an absolute URI/IRI-like identifier with a valid scheme; must contain no
    control characters and no whitespace; and must not impersonate the governed
-   `tag:synapsecommand.com,2026:ontology:` namespace. Unknown third-party identifiers "must be
-   preserved. They must never be guessed or mapped to a SynapseCommand term automatically" (§15).
+   `tag:synapsecommand.com,2026-09-06:ontology:` namespace. Unknown third-party identifiers
+   "must be preserved. They must never be guessed or mapped to a SynapseCommand term
+   automatically" (§15).
    Dimension E reports them as `UNASSESSED_THIRD_PARTY_TERM` (§39, ADR 0009); it does not grade
    them.
 6. **Identifier validation is syntax only at runtime**, with recognition by registry lookup —
@@ -104,6 +124,64 @@ schema URNs untouched as legacy identifiers; `SC_OES_VERSION` in `version.py`.**
    in its own normative document and registry representation (§48); the semantic type major is a
    segment of the `type_id` itself (§49). The reason is the same one `SCHEMA_VERSION` and
    `PACKAGE_VERSION` are separate: an axis belongs where the thing it versions is authored.
+9. **The identifier grammars are frozen as exact ASCII grammars (SA.1 §15–§18, §24–§28).** §14 and §13
+   wrote `<namespace>`, `<domain>`, `<event_name>`, `<module>`, `<Term>` and `<major>` without
+   saying what each admits, which is six chances for two independent implementations to disagree
+   about the same string. One shared production settles four of them:
+
+   ```text
+   lower_label = [a-z][a-z0-9_]*
+   ```
+
+   ASCII lowercase only; the first character `a`–`z`; later characters `a`–`z`, `0`–`9` or `_`;
+   no whitespace, dot, hyphen, slash, colon or uppercase, and no dependency on Unicode
+   normalisation. `domain`, `event_name`, `namespace`, `name` and `module` are each a
+   `lower_label`; `major` is a positive base-10 integer with no leading zero; `Term` matches
+   `[A-Z][A-Za-z0-9]*`. The five identifier families in full:
+
+   ```text
+   governed event type     sc.<domain>.<event_name>.v<major>
+   third-party event type  x.<namespace>.<domain>.<event_name>.v<major>
+   third-party extension   x.<namespace>.<name>
+   governed ontology term  tag:synapsecommand.com,2026-09-06:ontology:<module>:<Term>
+   legacy JSON Schema $id  urn:synapsecommand:cdm:...            (unchanged, decision 4)
+   ```
+
+   Equivalently, and normatively:
+
+   ```text
+   ^sc\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*\.v[1-9][0-9]*$
+   ^x\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*\.v[1-9][0-9]*$
+   ^x\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$
+   ^tag:synapsecommand\.com,2026-09-06:ontology:[a-z][a-z0-9_]*:[A-Z][A-Za-z0-9]*$
+   ```
+
+   An implementation MAY parse structurally rather than apply these expressions; the accepted
+   language must be the same one (SA.1 §18). **The character classes are written out rather than
+   spelled `\w`** — in Python `\w` matches non-ASCII word characters by default, so a grammar
+   written with it would silently admit identifiers this one refuses, and the two implementations
+   would differ without either being obviously wrong (SA.1 §86). `v0` and `v01` are refused by the
+   `v[1-9][0-9]*` production itself rather than by a second check, which is why there is one place
+   to read the rule and one place for it to be wrong.
+
+   **`$` is the wrong anchor in Python, and the reading is worth recording where the grammar is.**
+   `re.match(r"...v[1-9][0-9]*$", "sc.pnt.gnss_interference.v1\n")` matches — `$` accepts a single
+   trailing newline — so a validator written straight from the expressions above would admit an
+   identifier with whitespace on the end, which SA.1 §85 says is invalid. Reading taken on this
+   tree's interpreter: with `$` the trailing-newline form matches, with `\Z` it does not, and
+   `re.fullmatch` without an anchor does not. The implementing round uses `re.fullmatch` or `\Z`;
+   the expressions are written with `^…$` here because that is how a grammar reads, and this note
+   is why it is not how one is compiled. It is the same class of defect as `\w` — a Python regex
+   convenience that silently widens the accepted language — and both belong beside the grammar
+   rather than in the module that will implement it.
+10. **Nothing is normalised, folded or trimmed on the producer's behalf (SA.1 §84–§85).** A
+    validator does not turn `ACME` into `acme`, `radar-quality` into `radar_quality`, `v01` into
+    `v1`, `Air` into `air` or `runway` into `Runway`, and it does not strip the whitespace around
+    an identifier: `" sc.pnt.gnss_interference.v1 "` is invalid, not a value to be tidied. A
+    malformed identifier fails and the producer fixes it. This is the rule that makes the grammar
+    worth freezing at all — a validator that repairs input silently makes the *repair* the
+    contract, and two implementations repairing differently is exactly the interoperability defect
+    decision 9 exists to prevent.
 
 ## Alternatives considered
 
@@ -122,9 +200,10 @@ generalising it.
 **B — the `tag:` form, on the ground that `schemas.py:56`–`:57` already called it "the most
 formally correct non-dereferenceable choice".** Chosen. The obscurity objection recorded there
 was weighed against `urn:`'s familiarity to *JSON Schema* tooling and readers; in RDF, `tag:` is
-neither obscure nor unexplained, and the date segment (`,2026`) carries exactly the "minted by
-this owner, from this date" claim RFC 4151 is for. §13 rules it, and this ADR records the ground
-so that the earlier ruling reads as scoped rather than reversed.
+neither obscure nor unexplained, and the date segment (`,2026-09-06`, per SA.1 §14) carries
+exactly the "minted by this owner, from this date" claim RFC 4151 is for — with the full date, so
+that "this date" is a date and not a year the reader has to interpret. §13 rules it, and this ADR
+records the ground so that the earlier ruling reads as scoped rather than reversed.
 
 **C — HTTP/HTTPS ontology identifiers (`https://synapsecommand.com/ontology/core#Runway`).** The
 conventional RDF choice, and rejected on `schemas.py:38`–`:42`'s already-recorded ground: an
@@ -153,8 +232,11 @@ axes". ADR 0007 governs the relationship between the two.
 ## Consequences
 
 - A regex and a validator in the package for each of the two event-type grammars, one for the
-  governed ontology term grammar, and the three §15 tests for a third-party ontology identifier.
-  No dependency.
+  extension-key grammar, one for the governed ontology term grammar, and the three §15 tests for a
+  third-party ontology identifier. No dependency. **Decision 9 is the source those are written
+  from**, and the acceptance vectors for them are recorded in
+  `docs/sc-oes-implementation-plan.md`'s item 12 rather than left for the implementing round to
+  invent — a grammar with no refusal cases in the record is a grammar only its author can check.
 - `version.py` gains `SC_OES_VERSION` and its docstring gains a third axis. That edit touches the
   file `tests/test_cdm_packaging.py:266` sweeps for a derivation of one version from another; the
   new constant must be an independent literal, not computed from either existing one (§46 says so
@@ -207,7 +289,9 @@ materially different meaning requires a new identifier with a new semantic major
 
 **Low, and deliberately so — this is the least reversible decision in the set.** Once an
 identifier is published, §13 makes it permanent public API and §49 forbids redefining a semantic
-major. Changing the *grammar* later would orphan every identifier minted under the old one.
+major. Changing the *grammar* later would orphan every identifier minted under the old one, and
+changing the authority date would orphan every ontology term — which is why SA.1 §14 fixes
+`2026-09-06` for the lifetime of the namespace rather than leaving a year to be narrowed later.
 
 Three things reduce the exposure. First, nothing has been published: no ontology term exists yet
 in this tree, which is why the correction from `urn:` to `tag:` is free now and would not have

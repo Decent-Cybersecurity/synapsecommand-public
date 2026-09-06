@@ -1,9 +1,16 @@
 # SC-OES v0.1 — implementation plan
 
-**Date:** 2026-09-06, written in round S0 and **updated in round SA** against the governing
-specification. **Written against:** `23ec65d5a80b1393e8f5c69edb0f2877a5f45d55` (`origin/main`'s
-tip); the S0 form of this document is the first commit on the local branch `sc-oes/0.1` and this
-form is round SA's.
+**Date:** 2026-09-06, written in round S0, **updated in round SA** against the governing
+specification, and **corrected in round SA1** against M's final architecture brief. **Written
+against:** `23ec65d5a80b1393e8f5c69edb0f2877a5f45d55` (`origin/main`'s tip); the S0 form of this
+document is the first commit on the local branch `sc-oes/0.1`, the SA form is the third, and this
+form is round SA1's.
+
+**A third citation prefix, added in round SA1.** M's final architecture correction brief is cited
+as **`SA.1 §N`**. It governs where it and v2 differ — v2's §13 authority date, the namespace
+grammar v2 left open, dimension E's unstated third-party case and v2's word for the extension
+depth limit — and v2 governs everywhere else. Where a section below carries both, the `SA.1 §N`
+citation is the operative one.
 
 This plan executes §9 of the SC-OES **Final Standalone Implementation Specification** and nothing
 after it. Every figure below is a reading taken from this tree and cited to `file:line`; where a
@@ -377,7 +384,8 @@ add, §143 requires the boundary tests to keep an RDF reasoner out of the runtim
 
 The consequence for representation: **nothing at runtime may parse Turtle** — §102 says so
 outright. Ontology identifiers reaching the CDM are validated as *strings* against the syntax of
-§13 (`tag:synapsecommand.com,2026:ontology:<module>:<Term>`), by a regex in the package with no
+§13 as SA.1 §15 dates it (`tag:synapsecommand.com,2026-09-06:ontology:<module>:<Term>`), by a
+regex in the package with no
 RDF library behind it; a governed term that must be *recognised* is looked up in the packaged
 `ontology_terms.json`, which §102 requires be generated from the ontology. *(S0 wrote the
 identifier form as `urn:synapsecommand:ontology:<module>:<Term>` on §v1 73; §13 replaces it — see
@@ -401,10 +409,16 @@ Four identifier spaces, three of them new, and one of them already ruled in this
 - **Event type IDs** — `sc.<domain>.<event_name>.v<major>` (§v1 24), third parties on
   `x.<namespace>.<domain>.<event_name>.v<major>` (§v1 25). A regex in the package, checked in both
   directions, and the `sc.*` prefix refused from a producer that is not the governed registry.
-- **Ontology terms** — `tag:synapsecommand.com,2026:ontology:<module>:<Term>` (§13). **This
-  reverses S0's entry**, which read `urn:synapsecommand:ontology:<module>:<Term>` on §v1 73. §13
-  forbids minting new public terms under `urn:synapsecommand:` and rules the `tag:` family
-  instead; ADR 0003 records the ground, which is that `schemas.py:57`–`:60` accepted an
+  **SA.1 §24–§28 freezes what each angle bracket admits** and ADR 0003 decision 9 carries it:
+  `domain`, `event_name` and `namespace` are each `lower_label` = `[a-z][a-z0-9_]*`, and `major`
+  is `[1-9][0-9]*`, so `v0` and `v01` are refused by the production rather than by a second check.
+- **Ontology terms** — `tag:synapsecommand.com,2026-09-06:ontology:<module>:<Term>` (§13, dated
+  by SA.1 §14–§15). **This reverses S0's entry**, which read
+  `urn:synapsecommand:ontology:<module>:<Term>` on §v1 73. §13 forbids minting new public terms
+  under `urn:synapsecommand:` and rules the `tag:` family instead; **SA.1 §14 then replaces §13's
+  year-only `,2026` with the explicit `,2026-09-06`**, one date fixed for the lifetime of the v0.1
+  ontology namespace, never shortened, never derived at runtime and never moved for a later
+  ontology version. `module` is `lower_label` and `Term` is `[A-Z][A-Za-z0-9]*` (SA.1 §16–§18); ADR 0003 records the ground, which is that `schemas.py:57`–`:60` accepted an
   unregistered URN NID *because* that is "common practice for JSON Schema `$id`s" — an excuse
   scoped to `$id`s and not to a permanent public vocabulary.
 - **Schema `$id`s** — already ruled, and **unchanged by this work** (§13: "The repository's
@@ -417,7 +431,9 @@ Four identifier spaces, three of them new, and one of them already ruled in this
   (`schemas.py:49`–`:51`), which is the concrete mistake that ruling exists to prevent repeating.
 - **Third-party ontology terms** — §15's three tests: an absolute URI/IRI-like identifier with a
   valid scheme, no control characters or whitespace, and no impersonation of the governed
-  `tag:synapsecommand.com,2026:ontology:` namespace. Preserved, never guessed, never mapped.
+  `tag:synapsecommand.com,2026-09-06:ontology:` namespace. Preserved, never guessed, never mapped —
+  and never fetched, resolved, dereferenced or inferred from, because the conformance layer treats
+  a third-party identifier as an identifier and never as a location (SA.1 §41, §87).
 - **Version axes** — `SCHEMA_VERSION`, `PACKAGE_VERSION`, `SC_OES_VERSION`, an ontology version
   and per-profile versions. `version.py`'s whole docstring is the argument for the first two being
   separate facts, and `tests/test_cdm_packaging.py:266` sweeps for a derivation of either from the
@@ -431,6 +447,26 @@ Four identifier spaces, three of them new, and one of them already ruled in this
   (`version.py:1`), so a third moves that sentence; moving it is the correct cost. The other three
   axes are not Python constants: the ontology version is ontology metadata (§47), profile versions
   live in their own documents (§48), and the semantic major is a segment of the `type_id` (§49).
+
+**Acceptance vectors, recorded in round SA1 for the rounds that write the validators** (SA.1
+§72–§75). A grammar with no refusal cases in the record is one only its author can check, and SF
+and SD are the rounds that will need them. Each column is exhaustive of the rule it is testing, not
+of the grammar.
+
+| Family | Accepted | Refused, and by which rule |
+|---|---|---|
+| governed event type | `sc.pnt.gnss_interference.v1`, `sc.air.runway_availability_changed.v1`, `sc.c2.system_availability_changed.v2` | `sc.PNT.gnss_interference.v1` (uppercase domain), `sc.pnt.GnssInterference.v1` (uppercase event name), `sc.pnt.gnss-interference.v1` (hyphen), `sc.pnt.gnss_interference.v0` (zero major), `sc.pnt.gnss_interference.v01` (leading zero), `sc..gnss_interference.v1` (empty label) |
+| third-party event type | `x.acme.air.sensor_health_changed.v1`, `x.vendor_name.pnt.receiver_quality_changed.v3` | `x.Acme.air.sensor_health_changed.v1`, `x.acme-labs.air.sensor_health_changed.v1`, `x.acme.air.sensor-health-changed.v1`, `x.acme.air.sensor_health_changed.v01`, `x.acme.air.sensor_health_changed.v0` |
+| extension key | `x.acme.radar_quality`, `x.vendor_name.sensor_state`, `x.a.value1` | `radar_quality` (no namespace), `acme.radar_quality` (no `x.`), `x.Acme.radar_quality`, `x.acme.radar-quality`, `x.acme` (two parts), `x..quality` (empty label); and any well-formed `sc.*` key, which fails on the reservation rather than on syntax |
+| governed ontology term | `tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject`, `…:air:Runway`, `…:pnt:PNTService`, `…:c2:C2System` | `…:ontology:Air:Runway` (uppercase module), `…:ontology:air:runway` (lowercase term), `…:ontology:air:Runway_Type` (underscore in term), `tag:synapsecommand.com,2026:ontology:air:Runway` (year-only authority date) |
+
+Two vectors are about *recognition* rather than syntax and belong to dimension E rather than to a
+regex: `tag:synapsecommand.com,2026-09-06:ontology:air:ImaginaryThing` is syntactically valid and
+`E = FAIL` when the generated registry does not carry `ImaginaryThing` (SA.1 §76, §79), because
+syntax validity is not governance recognition; and `https://example.org/ontology/Runway` alone is
+`E = SKIP` with the term reported `UNASSESSED_THIRD_PARTY_TERM` (SA.1 §77). The depth fixtures —
+one value at depth 16 accepted, one at 17 refused — are generated in the model round, SD, rather
+than written out here (SA.1 §82).
 
 ## 13. Event registry strategy
 
@@ -529,8 +565,10 @@ strict-with-one-declared-hatch arrangement `models.py:10`–`:15` already descri
 canonical objects, one level down. Four rules decide the implementation and ADR 0008 carries all
 of them:
 
-- **Keys are namespaced.** `x.<namespace>.<name>` for third parties (§30). A bare unnamespaced key
-  is refused, because it is the one shape that cannot be attributed to anybody.
+- **Keys are namespaced.** `x.<namespace>.<name>` for third parties (§30), with `namespace` and
+  `name` each `lower_label` = `[a-z][a-z0-9_]*` and exactly three dot-separated parts (SA.1 §25,
+  §28). A bare unnamespaced key is refused, because it is the one shape that cannot be attributed
+  to anybody; nothing is case-folded or trimmed to rescue a malformed one (SA.1 §84–§85).
 - **`sc.*` is refused outright in v0.1** as "reserved but undefined" (§30's v0.1 rule), and no
   extension registry is created to represent an empty governed set — §30 forbids that too.
 - **Values are never interpreted** (§31): they survive validation, serialization and round-trip,
@@ -538,7 +576,12 @@ of them:
   core field" is therefore enforced by *not reading* the value rather than by refusing the key —
   refusing `x.acme.confidence` would contradict §31's own survival requirement.
 - **One universal bound and no universal list caps**: `MAX_EXTENSION_DEPTH = 16` (§32), nothing for
-  `event_relations`, `entity_relations` or `evidence` (§33). Item 24 states why.
+  `event_relations`, `entity_relations` or `evidence` (§33). Item 24 states why. **SA.1 §46–§54
+  freezes the count** and ADR 0008 decision 7 carries it: a scalar is 0, an object or array as the
+  extension value is 1, every further nested container adds 1, property names contribute nothing,
+  an empty `{}` or `[]` is still a container, and the depth is computed **per extension key** and
+  never once across the bag. 16 is accepted, 17 is refused, and the refusal names the key, the
+  depth calculated and the maximum (SA.1 §51, §83).
 
 ## 17. Conformance strategy
 
@@ -574,9 +617,23 @@ first three — `harness.py:588` returns `1 if report["failed"] else 0` and `har
 **Three per-dimension rules v2 states outright**, because each is a place a tool could quietly
 overclaim: an unknown `x.*` type is `C = SKIP` and an unknown `sc.*` is `C = FAIL` (§37); a
 profile is never inferred, so `D = SKIP` when the caller names none (§38); and an unknown
-identifier in the reserved `tag:synapsecommand.com,2026:ontology:` family is `E = FAIL`, while a
-valid third-party absolute identifier is reported as `UNASSESSED_THIRD_PARTY_TERM` rather than
-graded (§39). ADR 0009 carries all of them.
+identifier in the reserved `tag:synapsecommand.com,2026-09-06:ontology:` family is `E = FAIL`,
+while a valid third-party absolute identifier is reported as `UNASSESSED_THIRD_PARTY_TERM` rather
+than graded (§39). ADR 0009 carries all of them.
+
+**Two more that SA.1 adds, because v2 left them unstated and an unstated verdict is where
+independent implementations diverge.** First, **dimension E's complete truth table** (SA.1
+§32–§42), now normative in ADR 0009: no identifiers → `SKIP`; only valid third-party identifiers →
+`SKIP`, each listed `UNASSESSED_THIRD_PARTY_TERM`; valid governed only, or valid governed plus
+valid third-party → `PASS`, third-party terms listed separately as unassessed; an unknown term in
+the reserved family, a malformed governed identifier or a malformed third-party identifier →
+`FAIL`. Third-party-only is the case v2 did not answer, and it is `SKIP` rather than `PASS`, on the
+same ground `harness.py:230` gives for an unrun check. Second, **a `type_id` that satisfies neither
+event-type grammar is a syntax defect**: `B = FAIL`, `C = SKIP` with the detail that the semantic
+type was not evaluated because the syntax failed (SA.1 §31), so one defect produces one finding.
+And `--require E` on a `SKIP` makes the *invocation* unsuccessful without rewriting the verdict to
+`FAIL` (SA.1 §43) — the report records what could be assessed, the exit code records whether the
+caller got what they asked for.
 
 ## 18. Governance strategy
 
@@ -812,11 +869,15 @@ derivation over a literal.
   `extensions` is a `dict[str, Any]` like `Attributes` (`models.py:74`) and therefore recursive by
   type, so the bound is a validation rule to write rather than a property to inherit. **v2 fixes
   exactly one universal bound and forbids the obvious generalisation**: §32 sets
-  `MAX_EXTENSION_DEPTH = 16`, counted over nested JSON containers under an individual extension
-  value, while §33 forbids universal maximum counts for `event_relations`, `entity_relations` and
-  `evidence` — a deployment may cap message size, list length, memory and processing time, but
-  those are "resource policies, not universal operational semantics", and §33 requires the
-  specification to distinguish the two. ADR 0008 carries both halves.
+  `MAX_EXTENSION_DEPTH = 16`, counted by SA.1 §46–§54's frozen algorithm over nested JSON
+  containers under an individual extension value, while §33 forbids universal maximum counts for
+  `event_relations`, `entity_relations` and `evidence` — a deployment may cap message size, list
+  length, memory and processing time, but those are "resource policies, not universal operational
+  semantics", and §33 requires the specification to distinguish the two. **SA.1 §44–§45 keeps the
+  distinction and corrects the term on the bound's side of it**: the depth limit is a *normative
+  SC-OES structural conformance and resource-safety constraint*, not operational semantics —
+  nesting depth is not meaning, and a reader who takes it for a semantic rule will look for the
+  meaning of 16 and find none. ADR 0008 carries both halves and the corrected wording.
 - **Semantic poisoning and unknown-type handling** (§v1 27, §v1 98, §v1 99) — the defence is the same
   mechanism as `PAYLOAD_MODELS`' free-form fallback (item 16): preserve, do not guess, do not map
   to a "similar" known type.
@@ -855,12 +916,13 @@ checked for licence compatibility before it lands, which is ADR 0010's business.
 
 ## 26. Implementation rounds
 
-*Rewritten in round SA against v2; §N below cites v2. This is §9's item 19.*
+*Rewritten in round SA against v2, extended in round SA1; §N below cites v2. This is §9's item
+19.*
 
 §151 replaces §v1 136's eighteen phases with ten lettered rounds, A–J, and adds the rule that
 governs all of them: "Use isolated local signed commits per round." The campaign's own round ids
 are the S-series in `rounds/PLAN.md`; the table below is that table's content, with each row's
-governing section named. **Rounds S0, S1 and SA are done**; SB onwards is what remains.
+governing section named. **Rounds S0, S1, SA and SA1 are done**; SB onwards is what remains.
 
 | Round | §151 round | Governing §§ | Exit criterion, in one line |
 |---|---|---|---|
@@ -868,6 +930,7 @@ governing section named. **Rounds S0, S1 and SA are done**; SB onwards is what r
 | **S1** | — | §10 | `docs/adr/0001…0010`, eight sections each, mutually consistent, every decision cited to this plan or to a reading |
 | — | *M reviews the ADRs* | — | settled by the second specification, which is M's ruling on them |
 | **SA** | A | §11–§45, §151 | the ten ADRs revised to record v2's decisions and moved to an accepted state; this plan updated per §9's nineteen items; no other tracked file changed |
+| **SA1** | — | SA.1 §1–§97 | the four final ambiguities closed — RFC 4151 authority date, exact namespace grammar, complete dimension E truth table, extension-depth algorithm and terminology — across the ten ADRs, the master specification and this plan; SA.1 §92's criteria A–U each shown with the reading that decides it; no substantive SB–SJ work |
 | **SB** | B | §152 | governance documents, specification skeleton, EventClass definitions, event relationship semantics, versioning semantics, extension policy, security considerations, conformance definitions — "No major CDM code yet" |
 | **SC** | C | §153 | core Turtle plus seven domain modules, identifier rules, relationships, JSON-LD context, **generated** ontology-term registry, ontology validation tests |
 | **SD** | D | §154 | `Event.oes` and `Entity.ontology_types` land with `OesMetadata`, relations, evidence, security metadata and extension validation; **schema 2.0.0**; migration documentation; regenerated schemas; the 538-golden diff read by JSON path (§142) and the version pin re-pinned |
@@ -887,6 +950,14 @@ attention rather than about procedure.
 pending", which is the same gate §10 sets for the ADRs themselves: the specification is M's ruling
 on the ADR drafts, and SA's revision of them is what M confirms before the normative tree is
 written against them.
+
+**The architecture gate closes at SA1, not at SA.** SA.1 §93 makes SA1's acceptance criteria the
+condition for "no further architecture review is required before SB–SJ", and SA.1 §88 says why the
+gate sits here rather than one round later: the tag authority, the four identifier grammars, the
+conformance result meanings and the CLI exit-code meanings all become low-reversibility public
+commitments the moment an ontology term or a registry entry is emitted, and SC is the first round
+that emits one. Everything SB–SJ implement is by then a decision to apply rather than a decision to
+take.
 
 **Release is not in this decomposition.** §8 forbids pushing, creating a remote branch, opening a
 PR, merging, tagging, publishing a package and creating a release — "Final push, PR, merge, tag

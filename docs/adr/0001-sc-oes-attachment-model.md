@@ -4,6 +4,13 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 for implications of the four corrections
+(authority date, namespace grammar, dimension E, extension depth) and **nothing in this ADR moves**.
+`Event.oes`, `Entity.ontology_types` and the four canonical kinds are SA.1 §2–§3 locked decisions;
+this ADR mints no identifier and states no depth rule, and its one depth sentence (Consequences,
+"bounded structure is a validation rule, not an inherited property") already says what SA.1 §44–§45
+requires and delegates the bound to ADR 0008. Still Accepted.
+
 ## Context
 
 SC-OES needs somewhere to put operational-event semantics — event class, governed type

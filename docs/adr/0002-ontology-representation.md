@@ -4,6 +4,14 @@
 
 Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
 
+Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 and §62 and **nothing in this ADR moves**.
+Turtle authority, generated JSON-LD, generated `ontology_terms.json`, no runtime RDF, a test-only
+parser and no reasoning are all SA.1 §7 locked decisions. The reading that settles the review:
+this ADR carries no ontology identifier literal at all — it names the registry file and delegates
+the identifier form to ADR 0003 — so SA.1 §14's authority-date correction reaches it through that
+delegation rather than through an edit. The terms the generator emits carry the dated prefix
+`tag:synapsecommand.com,2026-09-06:ontology:`. Still Accepted.
+
 ## Context
 
 §12 rules the representation of the Operational Ontology as a hybrid and states each half
