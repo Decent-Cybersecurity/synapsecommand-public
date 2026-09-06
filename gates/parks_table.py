@@ -330,6 +330,17 @@ SHAPES: dict[str, Callable[[Parks], bool]] = {
         lambda p: bool(p.set_claims),
     "an open row with a filename-derivable blocker":
         lambda p: any(SERIES.search(p.rows[n].title) for n in p.open_parks),
+    # THE FIFTH SHAPE, ADDED 2026-09-06 ON M's RULING, AND IT IS THE ONE THE OTHER FOUR ASSUME.
+    # Each of them asks for a PROPERTY of an open row; this one asks whether there is an open row
+    # at all. It was not needed while the table had one, and park 10's closure — the last row —
+    # is what made it needed: `test_the_table_is_found_and_has_the_shape_a_row_check_needs`
+    # asserted `open_parks` truthy directly, which is a guard against a parser that finds nothing
+    # AND, at the table's own end state, an assertion that the work is not finished. The ruling
+    # names the string; the option of leaving the assertion alone was refused, because a park that
+    # can never be struck through by construction is a defect in the guard and not a property of
+    # the table.
+    "an open row exists at all":
+        lambda p: bool(p.open_parks),
 }
 
 
@@ -361,10 +372,18 @@ def reversed_to(shape: str, p: Parks | None = None) -> Reversal:
     **WHY THIS EXISTS, AND IT IS A ROW CLOSING RATHER THAN A PRINCIPLE.** Every guard over this
     table is exercised BY MUTATING THE REAL TABLE, and each needs some shape to mutate: a set-claim
     naming an open park, a `MISSING` that can fire, a set-claim to observe, an open row whose
-    blocker a filename derives. The table's whole purpose is to empty, and each closure takes one
+    blocker a filename derives, and — the fifth, added the same day this table reached it — an
+    open row existing at all. The table's whole purpose is to empty, and each closure takes one
     of those shapes away — park 7's closure on 2026-09-06 took the last multi-member live claim
-    with it, because a claim naming one open park is not a set, and the table ends all-closed,
-    where none of the four shapes exists at all.
+    with it, because a claim naming one open park is not a set, and park 10's closure later the
+    same day took the last open row, so the table is all-closed and not one of the five shapes
+    exists in it.
+
+    **THE FIFTH SHAPE NEEDED NO BRANCH HERE, WHICH IS THE WHOLE POINT OF THE DICT.** `SHAPES` is
+    looked up by name and the loop below reverses closures until the predicate holds, so "an open
+    row exists at all" is answered by reversing exactly one closure — the most recent, park 10 —
+    the same way and by the same code the other four are answered. A fifth branch would have been
+    a second place to spell a shape, which the note above `SHAPES` refuses.
 
     **THE REPAIR THAT IS REFUSED.** A synthetic claim spelling the shape is what
     `test_the_set_claim_guard_is_not_vacuous_in_either_direction`'s own docstring rules out, citing

@@ -28,10 +28,29 @@ def parks():
 
 
 def test_the_table_is_found_and_has_the_shape_a_row_check_needs(parks):
-    """A parser that finds no rows passes every row check vacuously."""
+    """A parser that finds no rows passes every row check vacuously.
+
+    **THE OPEN-ROW ASSERTION WAS INVERTED ON 2026-09-06 AND NOT DELETED (M's ruling).** It read
+    `assert parks.open_parks, "a table with no open parks makes the blocker check vacuous"`, and
+    that sentence is true of two different tables: one a parser found nothing in, and one that has
+    FINISHED. This table is built to finish, and park 10's closure that day is where it did. The
+    park 7 ruling had already said the guards "must hold at zero open rows too, since the table
+    ends all-closed"; this is the sixth guard that ruling did not list, and the same rule applies
+    to it.
+
+    So the assertion asks the two things it was actually for. The table is well-formed — thirteen
+    contiguous rows, above — and the machinery that keeps every OTHER guard exercisable at an
+    emptied table reaches this shape too: `reversed_to("an open row exists at all")` hands back a
+    copy carrying a real row this table really closed, derived at run time, with the sentence
+    naming that closure carried into the failure message exactly as the other four shapes carry
+    theirs. What is refused is the alternative M refused by name: leaving the assertion as a guard
+    against an ill-formed table would make the last park impossible to strike through by
+    construction, which is a defect in the guard and not a property of the table.
+    """
     assert len(parks.rows) >= 13, parks.rows
     assert set(parks.rows) == set(range(1, len(parks.rows) + 1)), "park numbers must be contiguous"
-    assert parks.open_parks, "a table with no open parks makes the blocker check vacuous"
+    restored = parks_table.reversed_to("an open row exists at all", parks)
+    assert restored.parks.open_parks, restored.why
     assert parks.closed_parks, "a table with no closed parks makes the CLOSED MEMBER check vacuous"
 
 

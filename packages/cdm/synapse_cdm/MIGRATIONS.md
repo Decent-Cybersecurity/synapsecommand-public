@@ -395,6 +395,39 @@ move. The gate reads **13 rows, 1 open [10], 12 closed, 0 set-claims, 0 failed**
 `--mutation-check` **8 mutations, no survivors** with two reversals named in its output. One park
 stays open, park 10, whose document is not held.
 
+**DATED CORRECTION, 2026-09-06, LATER THE SAME DAY — THE TWO FIGURES IN THE PARAGRAPH ABOVE ARE
+NOW FALSE AND ARE CORRECTED HERE RATHER THAN EDITED THERE.** Park 10's document *is* held: it was
+acquired by hand and pinned the same day, and the MISP-2019.2 edition was pinned beside it as
+context only. And park 10 does not stay open: **it CLOSED 2026-09-06**, so the gate reads
+**13 rows, 0 open, 13 closed, 0 set-claims, 0 failed** where the paragraph above reads one open.
+The paragraph is left in its own tense because what it records — why the park 7 round left five
+guards repaired and one park standing — was true when it was written, and rewriting it would leave
+the reversal's justification resting on a state this file no longer states anywhere.
+
+**THE SIXTH GUARD, WHICH THE PARK 7 RULING DID NOT LIST, AND THE FIFTH SHAPE.** That ruling said
+the guards must hold at zero open rows too, since this table ends all-closed, and named five. There
+was a sixth: `test_the_table_is_found_and_has_the_shape_a_row_check_needs` asserted `open_parks`
+truthy outright — one sentence covering two different tables, one a parser found nothing in and one
+that had FINISHED. `reversed_to` could not answer it as it answered the other five, because `SHAPES`
+held four predicates and every one of them asked for a PROPERTY of an open row rather than for an
+open row. So the park 10 round pinned the Handbook, ruled register entry KLV 8 and then stopped
+before the strikethrough rather than inventing a reading of that assertion, and M ruled it: the
+assertion is INVERTED, not reversed. It now asserts the two things it was for — the table is
+well-formed, thirteen contiguous rows, and the reversal machinery reaches the all-closed shape —
+and `SHAPES` gains its fifth entry, *"an open row exists at all"*, which needs no branch in
+`reversed_to` at all: the dict is looked up by name and the loop reverses the most recent recorded
+closure until the predicate holds, which for this shape is exactly one closure, park 10's own. The
+option of leaving the assertion alone was refused by name, because it would have made the last park
+impossible to strike through by construction. `--mutation-check` reads **8 mutations, no survivors**
+with both of its reversals now naming two closures instead of one.
+
+**NOTHING IN THIS PARAGRAPH MOVED THE COUNT ABOVE, AND THAT IS CHECKED RATHER THAN ASSUMED.**
+`gates/parks_table.py` and `tests/test_cdm_parks_table.py` are the two files the guard repair
+touches and both are outside the distribution and already named in the list of what moved outside
+it; `FORMAT_COVERAGE.md` and this file are both already inside the count. So the arc's distribution
+figure is unchanged by the closure of the last park, which is the second time this section has had
+to say that a park closing is a shipped-document event and its machinery is not.
+
 **THE TWELVE UNITS THIS ARC LEFT UNRULED ARE RULED HERE, BY SHAPE, ON M's RULING OF 2026-09-06.**
 The park 7 round's first half derived them and did not rule them — `gates/bump_derivation.py`
 refuses to classify a body that moved with no name added or removed, and `rounds/RUNNER.md`'s hard
