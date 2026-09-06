@@ -135,7 +135,26 @@ NUMBER_WORDS = {
     # handover: `test_an_EDITED_last_clause_...` adds one synthetic pin to a record of 22 documents
     # and asks for the word for 23. The header has never used it. When the real count reaches 23
     # this entry is re-decided the way TWENTYONE and TWENTYTWO were, and the next one added.
+    #
+    # **RE-DECIDED 2026-09-06 BY THE PARK 10 ROUND, AND IT IS THE FIRST TURN OF THIS HANDOVER THAT
+    # DID NOT GO THE WAY THE COMMENT ABOVE PREDICTED.** Every previous turn moved the live count by
+    # one, so the mutation's word became the log's word and the next word was added behind it. This
+    # round pinned TWO documents in one commit — the MISP-2019.1 Motion Imagery Handbook and the
+    # MISP-2019.2 edition beside it as context only — so the live count went from 22 straight to
+    # 24. TWENTYTHREE WAS NEVER SPELLED IN THE LOG AND NOW NEVER WILL BE: it is kept because
+    # deleting it would make this dict's history unreadable and because a mutation over a
+    # 22-document record is still a thing a test can construct, but it is no longer on the path the
+    # live clause takes. THE SPELLING RULE IS THE SAME CONSTRAINT RE-APPLIED rather than inherited:
+    # `COUNT_CLAUSE` reads `[A-Z]+`, so `TWENTY-FOUR` and `TWENTY FOUR` are both unreadable to the
+    # pattern that has to read the LIVE clause, and an unreadable live clause would make
+    # `stated_counts` fall back to an earlier clause and pass over a stale figure.
     "TWENTYTHREE": 23,
+    "TWENTYFOUR": 24,
+    # TWENTYFIVE is the mutation's number now, on the reasoning every entry above was added under:
+    # `test_an_EDITED_last_clause_...` adds one synthetic pin to a record of 24 documents and asks
+    # for the word for 25. The header has never used it. When the real count reaches 25 this entry
+    # is re-decided rather than inherited, and the next one added behind it.
+    "TWENTYFIVE": 25,
 }
 
 
@@ -419,6 +438,18 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     what it demonstrates is the thing this control exists to demonstrate: the literal below is a
     witness and never the authority, because a pair that has moved five times in four days is a
     pair nobody has been carrying in their head.
+
+    **AND TO (24, 21) ON 2026-09-06, THE SIXTH MOVE IN FOUR DAYS AND THE FIRST THAT MOVED BY TWO**,
+    when the park 10 round acquired the MISP-2019.1 Motion Imagery Handbook by hand and pinned the
+    MISP-2019.2 edition beside it as context only. **Every move before this one was by one, and
+    five consecutive single steps are exactly the conditions under which somebody starts predicting
+    the next literal instead of reading it** — a maintainer who assumed the increment here would
+    have written (23, 20), which is a pair this record has never held and never will. It also broke
+    the `NUMBER_WORDS` handover the clause above had just called a pattern: the live count jumped
+    from 22 straight to 24, so `TWENTYTHREE` went from being the mutation's number to being a word
+    the log will now never spell, and `TWENTYFOUR` and `TWENTYFIVE` were both added at once. The
+    pattern held for two turns and then did not, which is the ordinary fate of a pattern read off
+    two data points.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (22, 19)
+    assert stated_counts(record) == derived_counts(record) == (24, 21)
