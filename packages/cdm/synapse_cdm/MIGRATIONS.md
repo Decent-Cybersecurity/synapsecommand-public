@@ -270,7 +270,19 @@ the index is **1.7.0**, and a reader who ran `pip install synapse-cdm` has that 
 `tests/test_cdm_pin_header.py` and `rounds/` (excluded from git entirely) all moved and **none of
 them is in the distribution**: the packaged contents are `pyproject.toml` and the `synapse_cdm/`
 tree, so a test module reaches no installed reader and is not part of the arc this section accounts
-for. That is the same boundary `gates/bump_derivation.py` measures the bump over.
+for. That is the same boundary `gates/bump_derivation.py` measures the bump over. **RE-DERIVED
+2026-09-06 BY THE SECOND HALF OF THE SAME ROUND, AND THE LIST HAD GROWN BY FOUR — TWO OF THEM NOT
+THIS ROUND'S**: `git diff v1.7.0..HEAD` plus the working tree, everything outside `packages/cdm/`,
+gives `gates/parks_table.py` and `tests/test_cdm_parks_table.py`, which this round moved, and
+`PUBLICATION.md` and `tests/test_cdm_publication.py`, which the 1.7.0 witness round moved at
+`99e6180` — the arc since the tag holds two commits and not one, so the sentence above saying ONE
+round moved all of them is true of the 37 inside the distribution and was never true of the files
+outside it. `PUBLICATION.md` moves again here, for one authorised dated correction beside its own
+line 2384. **The count above did not move with
+them and that is the point of stating both**: park 7's closure is written in a shipped document, a
+shipped pin record and this file, all three already inside the 37, while the machinery that makes
+the closure safe — the reversal a guard performs when the table stops carrying its shape — is a
+gate and a test module, and an installed reader receives neither.
 
 **The 37, by what they are.** One round moved all of them — **the park 7 round, 2026-09-06**,
 which pinned MISB ST 0806.4 and wrote the RVT item layer.
@@ -358,6 +370,121 @@ because `stanag4609.py` emits the `rvt_local_set` key only on a packet that carr
 the pinned stream carries none — the conditional-key rule `_vmti_twin` set, applied to a fifth
 layer. The structural diff by JSON path is empty for every pre-existing golden, and the only paths
 this round adds are the `rvt` ones on its own seven fixtures.
+
+**PARK 7 IS CLOSED, 2026-09-06, BY THE SECOND HALF OF THE SAME ROUND, AND WHAT HELD THE
+STRIKETHROUGH BACK WAS NOT THE DOCUMENT.** The first half pinned MISB ST 0806.4, transcribed its
+four tables, wrote and wired `klv_rvt_codec` and promoted row 73, and then left the parks-table row
+NARROWED AND OPEN, because closing it takes that table to one open row and **five guards stop being
+exercisable against the real table there**: two need a set-claim naming an open park, and after this
+closure no honest one can exist — a claim about one park is not a claim about a set, and any second
+member would be a closed row the gate would fail the sentence on; one needs a `MISSING` that cannot
+fire when a single open row is claimed by both halves of a partition; one needs a set-claim to
+observe; and one needs an open row whose blocker a filename derives, which the last open row's is
+not. The obvious repair — a synthetic claim spelling the shape — is what the vacuity guard's own
+docstring rules out, citing `synapse_cdm/README.md`'s sweep rule 1, so the fork went to a person.
+**THE RULING PUTS THE ANSWER IN THE GUARDS AND NOT IN THE TABLE**: a guard that finds its shape gone
+reverses, in its own copy only, the most recent recorded closure that restores it — a real row, its
+real claim read back through this record's `rows`-for-`parks` withdrawal convention, its real
+blocker — and plants its mutation on that, exactly as before. Which closure is reversed is derived
+from the table at run time and never typed; the guard's message names it; and it holds at ZERO open
+rows as well as at one, which is the state the table is built to reach and which
+`test_the_reversal_still_restores_every_shape_when_no_row_is_open_at_all` demonstrates on a copy.
+`gates/parks_table.py` gains `RETIRED_CLAIM`, `Parks.retired`, `SHAPES`, `Reversal` and
+`reversed_to`; **none of it is in the distribution**, which is why the file count above does not
+move. The gate reads **13 rows, 1 open [10], 12 closed, 0 set-claims, 0 failed** and
+`--mutation-check` **8 mutations, no survivors** with two reversals named in its output. One park
+stays open, park 10, whose document is not held.
+
+**THE TWELVE UNITS THIS ARC LEFT UNRULED ARE RULED HERE, BY SHAPE, ON M's RULING OF 2026-09-06.**
+The park 7 round's first half derived them and did not rule them — `gates/bump_derivation.py`
+refuses to classify a body that moved with no name added or removed, and `rounds/RUNNER.md`'s hard
+limit forbids a runner writing a ruling nobody gave it — so the twelve went up as a fork and came
+back as a rule rather than as twelve decisions: **a NamedTuple, dataclass or function whose declared
+surface gains a field or a case is MINOR; a `<statement N>` unit modified in place with no name
+added or removed is PATCH; a new module or a new public name is MINOR; anything removed or renamed
+is a STOP and is not ruled by shape.** Nothing in this arc is removed or renamed — checked in both
+modules before any ruling below was written, `functional_units` at `v1.7.0` against HEAD: names
+removed, none in either; names added, `RVT_TAG` and `RVT_BASIS` in `klv_uas_codec`, and
+`RVT_ABSENT_BASIS`, `_rvt_set` and `_rvt_twin` in `stanag4609`, every one of them already
+classified MINOR by the gate's own new-name row and none of them ambiguous. So the STOP arm of the
+rule is unused and it is stated anyway, because a rule quoted only where it fires is a rule whose
+other arm nobody can check.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 6>` — PATCH: an import line,
+renumbered in place by the insertion of `from synapse_cdm.adapters import klv_rvt_codec as rvt`
+above it. The gate names an unnamed top-level statement by its POSITION, so one inserted import
+reports every statement below it as a modification; the 1.6.0 and 1.7.0 sections rule this same
+shape eight times between them, for the insertion of `klv_vmti_codec`. CHECK taken: at `v1.7.0`
+statement 6 is `klv_security_codec as security` and at HEAD it is `klv_rvt_codec as rvt`, and the
+security import is present at both revisions one position lower — an index moved, not a surface.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 7>` — PATCH: the same, an import
+line renumbered by the same insertion. CHECK taken: v1.7.0's statement 6 text is verbatim at HEAD
+as statement 7.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket` — MINOR, consistent with the
+1.5.0, 1.6.0 and 1.7.0 rulings for this same unit: two fields appended last (`rvt`, default `None`,
+and `rvt_refusal`, default `None`), the prior fields identical in name, type and order, so every
+positional unpack and every index is unchanged and every existing attribute is reachable under its
+old name. Not PATCH — the declared surface gains two fields a caller can read. Not MAJOR — nothing
+is removed and nothing moves. CHECK taken: eighteen fields at `v1.7.0` and twenty at HEAD, the
+first eighteen identical in order, the two appended being `rvt` and `rvt_refusal`.
+
+**Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:decode_packet` — MINOR: the signature is
+unchanged and the same inputs decode one more tag, item 73, whose Value was previously handed to no
+reader at all. Every tag decoded before decodes to the same value. New emitted content and not a
+corrected value, so PATCH is refused on its own row's terms; no importable name is removed, so
+MAJOR is refused. CHECK taken: `(buf: bytes, offset: int = 0) -> DecodedPacket` at both revisions,
+and of the 126 goldens at HEAD the 112 that existed at `v1.7.0` appear in this arc's diff not once
+— `git diff v1.7.0..HEAD --diff-filter=M` over `fixtures/klv/golden/` is empty and all fourteen
+golden paths in the diff are additions.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 10>` — PATCH: an import line
+renumbered in place by the insertion of `klv_rvt_codec` at this position, the shape the 1.6.0
+section rules six times for this module's statements 5–10 and the 1.7.0 section six more. CHECK
+taken: at `v1.7.0` statement 10 is `klv_security_codec as security` and at HEAD it is
+`klv_rvt_codec as rvt`; statement 9, `klv_pack_codec as packs`, is byte-identical at both
+revisions, which locates the insertion exactly.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 11>` — PATCH: the same, an import
+line renumbered by the same insertion. CHECK taken: v1.7.0's statement 10 is verbatim at HEAD as
+statement 11.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 12>` — PATCH: the same. CHECK
+taken: v1.7.0's statement 11, `klv_uas_codec as uas`, is verbatim at HEAD as statement 12.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 13>` — PATCH: the same. CHECK
+taken: v1.7.0's statement 12, `klv_vmti_codec as vmti`, is verbatim at HEAD as statement 13.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 14>` — PATCH: the same. CHECK
+taken: v1.7.0's statement 13, the `synapse_cdm.enums` import, is verbatim at HEAD as statement 14.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:<statement 15>` — PATCH: the same, and it is
+the last statement the insertion pushes down before the module's named units resume. CHECK taken:
+v1.7.0's statement 14, the `synapse_cdm.models` import, is verbatim at HEAD as statement 15.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — MINOR: the adapter emits
+a key it has never emitted, `attributes.rvt_local_set`, and emits it only on a packet that carries
+ST 0601 item 73. Not PATCH — that row is "a translation fix, a message, a docstring. No surface
+change", and nothing this adapter emitted before was WRONG: a packet with no item 73 gets exactly
+the object it got at `v1.7.0`, byte for byte. Not MAJOR — no name is removed, no signature moves,
+the `Adapter` contract is untouched and every object still validates at `SCHEMA_VERSION` 1.0.0.
+MINOR on its own governing clause, "Existing code keeps working": it does, because the new key is
+added beside the others and the pinned stream carries no item 73 at all. CHECK taken: no method of
+this class is added or removed between `v1.7.0` and HEAD.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:_parsed_packet` — MINOR: the signature is
+unchanged and the parsed twin it returns gains an `rvt` key for a packet carrying item 73, and
+nothing at all for a packet that does not — the same shape as the `vmti` key this unit was ruled
+MINOR for in the 1.7.0 section. A twin's key set is what the harness harvests for the lossless
+check, so a new key is new content rather than a corrected value. CHECK taken:
+`(index: int, packet: uas.DecodedPacket, raw: bytes) -> dict` at both revisions.
+
+**`pending.unruled` IS THE EMPTY LIST AT THIS COMMIT**, re-derived after these paragraphs were
+written and not before — a derivation quoted into the file it reads has to be re-run after the
+write, which is the discipline the file-count sentence at the top of this section records having
+learned twice in one round. That empty list is the release procedure's pre-step before a version
+number is typed, and it is what round I's first act reads.
 
 ### 1.7.0 — 2026-09-05 — three parks close: item 74 becomes detections and tracks, item 94 becomes an identity, and the minimum metadata set rides every object as an advisory
 

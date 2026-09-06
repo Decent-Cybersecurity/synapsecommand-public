@@ -2381,7 +2381,7 @@ either, because none of the three readings was taken twice. What the three do se
 reading is worth keeping whichever way it comes out: it is the one a round could mistake for a failed
 deploy.
 
-**The gate refused twice on the way to reconciling, and both refusals are the record working.** At
+**The gate refused twice on the way to reconciling, and both refusals are the record working.** **Corrected 2026-09-06: the gate refused once in the 1.7.0 round, at 22:27:00Z; the lead sentence is entry 15's and was carried unchanged.** At
 **22:27:00Z**, with no edit made, it named the deployment this file could not name. After the row and
 the count moved and the alias paragraph was rewritten it read, at **22:31:04–22:31:13Z**, **twenty-one
 deployments, 0 unaccounted for, alias `6ec27291`, source `8d0d1bd`, and the served-version witness

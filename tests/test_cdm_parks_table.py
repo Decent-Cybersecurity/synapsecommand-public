@@ -51,14 +51,28 @@ def test_the_set_claim_guard_is_not_vacuous_in_either_direction(parks):
     Mutating the real table rather than a synthetic one, because a fixture that spells the shape
     is a fixture that can drift away from it — and `synapse_cdm/README.md`'s sweep rule 1 records
     that a synthetic fixture stating a fact is itself a live site.
+
+    **AND WHEN THE REAL TABLE NO LONGER CARRIES THE SHAPE, IT IS RESTORED FROM THE TABLE AND NOT
+    FROM A FIXTURE (M's ruling, 2026-09-06).** Park 7 closed on 2026-09-06 and took the last
+    multi-member live claim with it — a claim naming one open park is not a set — so the domain
+    this test mutates is empty on the table as it stands. `parks_table.reversed_to` reverses the
+    most recent recorded closure in a copy, putting a real row back with the real claim this table
+    withdrew when it closed; the mutation is then planted exactly as before. The refusal above is
+    untouched: what is put back is this table's own sentence, derived at run time, and the reason
+    is carried into every assertion below.
     """
-    named = sorted({m for c in parks.set_claims for m in c.members if m in parks.open_parks})
-    assert named, "no set-claim names an open park; this test would prove nothing"
-    rows = dict(parks.rows)
+    restored = parks_table.reversed_to("a set-claim naming an open park", parks)
+    live = restored.parks
+    named = sorted({m for c in live.set_claims for m in c.members if m in live.open_parks})
+    assert named, restored.why
+    assert parks_table.check_set_claims(live) == [], (restored.why, "the copy must start clean")
+    for claim in restored.reinstated:
+        assert claim in parks.retired, (claim, "a claim not withdrawn by this table")
+    rows = dict(live.rows)
     victim = named[0]
     rows[victim] = rows[victim]._replace(closed=True, closed_on="2026-01-01")
-    problems = parks_table.check_set_claims(parks._replace(rows=rows))
-    assert any("CLOSED MEMBER" in p for p in problems), problems
+    problems = parks_table.check_set_claims(live._replace(rows=rows))
+    assert any("CLOSED MEMBER" in p for p in problems), (restored.why, problems)
 
     ghost = max(parks.rows) + 7
     claim = parks_table.SetClaim(in_row=min(parks.rows), line=0,
@@ -87,7 +101,14 @@ def test_self_membership_is_an_observation_and_never_a_problem(parks):
         assert not any(f"park {claim.in_row}" in p and "SELF" in p
                        for p in parks_table.check_set_claims(parks))
     # The branch, forced. A row whose claim names itself is not a complaint, whatever else is.
-    victim = parks.set_claims[0]
+    # **THE CLAIM IT IS FORCED FROM IS THE TABLE'S, and after park 7's closure of 2026-09-06 the
+    # table has no live one** — `reversed_to` reverses the closure that took it and hands back the
+    # withdrawn claim beside its reopened row (M's ruling, 2026-09-06), which is the same refusal
+    # this module's vacuity test states: a synthetic claim would be a fixture that can drift.
+    restored = parks_table.reversed_to("a set-claim to observe", parks)
+    assert restored.parks.set_claims, restored.why
+    victim = restored.parks.set_claims[0]
+    parks = restored.parks
     forged = parks_table.SetClaim(**{**victim._asdict(),
                                      "members": tuple(sorted({*victim.members, victim.in_row}))})
     forced = parks._replace(set_claims=(forged,))
@@ -135,10 +156,16 @@ def test_an_empty_spec_directory_reports_unverifiable_and_never_absence(parks, t
     empty = tmp_path / "spec"
     empty.mkdir()
     assert parks_table.held_series(empty) == frozenset()
-    states = [state for _, _, state in parks_table.blocker_existence(parks, empty)]
+    # **THE OPEN ROW THIS NEEDS IS ONE WHOSE BLOCKER A FILENAME DERIVES**, and park 7's closure on
+    # 2026-09-06 left only park 10 open, whose blocker this table itself records as NOT DERIVABLE
+    # — against which `UNVERIFIABLE HERE` can never fire, so the case would pass without running.
+    # `reversed_to` reverses that closure in a copy and the row brings its own real blocker back
+    # (M's ruling, 2026-09-06).
+    restored = parks_table.reversed_to("an open row with a filename-derivable blocker", parks)
+    states = [state for _, _, state in parks_table.blocker_existence(restored.parks, empty)]
     assert states, "no open rows would make this vacuous"
-    assert not any("NOT held" in s for s in states), states
-    assert any("UNVERIFIABLE HERE" in s for s in states), states
+    assert not any("NOT held" in s for s in states), (restored.why, states)
+    assert any("UNVERIFIABLE HERE" in s for s in states), (restored.why, states)
 
 
 def test_the_set_claim_half_needs_no_bytes_at_all(parks, tmp_path):
@@ -160,15 +187,75 @@ def test_check_stated_refuses_a_partition_the_table_refutes(parks):
     problems = parks_table.check_stated({"g": [ghost]}, parks)
     assert any("PHANTOM" in p for p in problems), problems
 
-    first = parks.open_parks[0]
-    problems = parks_table.check_stated({"a": [first], "b": [first]}, parks)
-    assert any("OVERLAP" in p for p in problems), problems
-    assert any("MISSING" in p for p in problems), problems
+    # MISSING needs a SECOND open row to be left out of the stated groups, and park 7's closure on
+    # 2026-09-06 left one. The copy `reversed_to` hands back reverses that closure (M's ruling,
+    # 2026-09-06); the partition below is then a partition and not one group and one empty group.
+    restored = parks_table.reversed_to("a MISSING to fire", parks)
+    live = restored.parks
+    first = live.open_parks[0]
+    problems = parks_table.check_stated({"a": [first], "b": [first]}, live)
+    assert any("OVERLAP" in p for p in problems), (restored.why, problems)
+    assert any("MISSING" in p for p in problems), (restored.why, problems)
 
-    half = len(parks.open_parks) // 2
-    whole = {"read": list(parks.open_parks[:half]),
-             "translate": list(parks.open_parks[half:])}
-    assert parks_table.check_stated(whole, parks) == []
+    half = len(live.open_parks) // 2
+    whole = {"read": list(live.open_parks[:half]),
+             "translate": list(live.open_parks[half:])}
+    assert all(whole.values()), (restored.why, whole)
+    assert parks_table.check_stated(whole, live) == []
+
+
+# ------------------------------------------- the reversal, which is what a guard does at an
+# emptying table. M's ruling, 2026-09-06, taken after round F put the fork up rather than guessing
+# it: a guard whose shape the table no longer carries reverses the most recent recorded closure in
+# its own copy — a real row, its real claim, its real blocker — and mutates that. The tests above
+# each ask for one shape; these two are about the mechanism, and the second is the case the four
+# above cannot reach today: THE TABLE ENDS ALL-CLOSED, and a repair that works at one open row and
+# not at zero is a repair that has to be made twice.
+
+
+def test_the_reversal_puts_back_this_tables_own_rows_and_its_own_withdrawn_claims(parks):
+    """Nothing invented: every reopened row and every reinstated claim comes from the table."""
+    for shape in parks_table.SHAPES:
+        restored = parks_table.reversed_to(shape, parks)
+        assert parks_table.SHAPES[shape](restored.parks), restored.why
+        assert shape in restored.why, restored.why
+        for number in restored.reopened:
+            assert parks.rows[number].closed, f"park {number} was not a recorded closure"
+            assert f"park {number}" in restored.why, restored.why
+        for claim in restored.reinstated:
+            assert claim in parks.retired, claim
+            assert set(claim.members) <= set(restored.parks.open_parks), claim
+        # A copy carrying the complaint already is a copy that witnesses nothing.
+        assert parks_table.check_set_claims(restored.parks) == [], restored.why
+
+
+def test_the_reversal_still_restores_every_shape_when_no_row_is_open_at_all(parks):
+    """The table's own end state, which is the one no live reading can take yet.
+
+    Every park closes eventually — that is what the table is for — and at zero open rows not one
+    of the four shapes exists: no open park for a claim to name, no second open row for `MISSING`
+    to be about, no multi-member live claim to observe, no open row to derive a blocker for. The
+    closing dates here are the only invented thing and they are invented in a COPY, to order
+    closures that have not happened; the rows, the claims and the blockers are the table's.
+    """
+    ended = parks._replace(
+        rows={n: r._replace(closed=True, closed_on=r.closed_on or "2026-12-31")
+              for n, r in parks.rows.items()},
+        # A live set-claim cannot survive an all-closed table: every member it named would be a
+        # closed row and `check_set_claims` would fail the sentence on its face, so this file's
+        # `rows`-for-`parks` convention would have withdrawn it — which is where the copy puts it.
+        set_claims=(),
+        retired=parks.retired + parks.set_claims,
+    )
+    assert not ended.open_parks, ended.open_parks
+    assert not ended.set_claims, ended.set_claims
+    for shape, holds in parks_table.SHAPES.items():
+        restored = parks_table.reversed_to(shape, ended)
+        assert holds(restored.parks), restored.why
+        assert restored.reopened, restored.why
+        assert parks_table.check_set_claims(restored.parks) == [], restored.why
+        for claim in restored.reinstated:
+            assert claim in ended.retired, claim
 
 
 # ------------------------------------------- the ROW pattern's SCOPE, which was the whole file

@@ -70,7 +70,7 @@ import argparse
 import pathlib
 import re
 import sys
-from typing import Iterator, NamedTuple
+from typing import Callable, Iterator, NamedTuple
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 PKG = REPO / "packages" / "cdm" / "synapse_cdm"
@@ -111,6 +111,15 @@ SERIES = re.compile(r"\b(?:ST|EG|RP)\s*(\d{4})\b")
 #: this tree is prefixed. It reported every held document as absent and the mutation check caught
 #: it, which is the whole reason that check exists.
 FILE_SERIES = re.compile(r"\d{4}")
+#: A RETIRED claim: the same sentence, spelled with `rows` where it wrote `parks`. **THIS IS THE
+#: TABLE'S OWN CONVENTION, READ BACK, AND NOT A NEW ONE.** Park 12's row states it: the `SET_CLAIM`
+#: pattern "cannot read a tense, so a QUOTATION of a superseded claim must not spell it — but a LIVE
+#: claim must, or the gate has nothing to derive", and "the one word that makes the string a claim
+#: is the one word the quotation changes; the numbers, which are the part a reader checks, are
+#: verbatim". Nothing read here is ever a problem or a green: a retired claim is a claim this table
+#: once made, and `reversed_to` below needs exactly that — a REAL claim to put back beside a REAL
+#: row when a closure has emptied a guard's domain.
+RETIRED_CLAIM = re.compile(r"\brows (\d+(?:\s*,\s*\d+)*(?:\s*,?\s*and\s+\d+)?)\b")
 
 
 class ParksTableNotFound(Exception):
@@ -156,6 +165,9 @@ class Parks(NamedTuple):
     """
     rows: dict[int, Row]
     set_claims: tuple[SetClaim, ...]
+    #: The claims this table has WITHDRAWN, re-quoted with `rows` where they wrote `parks`. Never
+    #: checked — a withdrawn claim cannot be stale — and read only by `reversed_to`.
+    retired: tuple[SetClaim, ...] = ()
 
     @property
     def open_parks(self) -> tuple[int, ...]:
@@ -239,14 +251,17 @@ def derive(path: pathlib.Path | None = None) -> Parks:
     text = (path or COVERAGE).read_text(encoding="utf-8")
     rows = {r.number: r for r in _rows(text)}
     claims: list[SetClaim] = []
+    retired: list[SetClaim] = []
     for row in rows.values():
         for cell in (row.reason, row.reopen):
-            for m in SET_CLAIM.finditer(cell):
-                members = _members(m.group(1))
-                if len(members) > 1:
-                    claims.append(SetClaim(in_row=row.number, line=row.line,
-                                           members=members, text=m.group(0)))
-    return Parks(rows=dict(sorted(rows.items())), set_claims=tuple(claims))
+            for pattern, into in ((SET_CLAIM, claims), (RETIRED_CLAIM, retired)):
+                for m in pattern.finditer(cell):
+                    members = _members(m.group(1))
+                    if len(members) > 1:
+                        into.append(SetClaim(in_row=row.number, line=row.line,
+                                             members=members, text=m.group(0)))
+    return Parks(rows=dict(sorted(rows.items())), set_claims=tuple(claims),
+                 retired=tuple(retired))
 
 
 def held_series(spec: pathlib.Path | None = None) -> frozenset[str]:
@@ -300,6 +315,100 @@ def self_members(p: Parks | None = None) -> tuple[SetClaim, ...]:
     """Claims naming their own row. An OBSERVATION — see `check_set_claims`'s refusal note."""
     p = derive() if p is None else p
     return tuple(c for c in p.set_claims if c.in_row in c.members)
+
+
+#: The shapes the guards need FROM THE TABLE, each a predicate over a derived `Parks`, and the
+#: strings are M's ruling's own words for them (2026-09-06). **NAMED RATHER THAN INLINE BECAUSE A
+#: GUARD AND ITS REPAIR MAY NOT SPELL THE SHAPE TWICE**: this module's `--mutation-check` and
+#: `tests/test_cdm_parks_table.py` both ask for them by name, so a shape that changes changes once.
+SHAPES: dict[str, Callable[[Parks], bool]] = {
+    "a set-claim naming an open park":
+        lambda p: any(m in p.open_parks for c in p.set_claims for m in c.members),
+    "a MISSING to fire":
+        lambda p: len(p.open_parks) > 1,
+    "a set-claim to observe":
+        lambda p: bool(p.set_claims),
+    "an open row with a filename-derivable blocker":
+        lambda p: any(SERIES.search(p.rows[n].title) for n in p.open_parks),
+}
+
+
+class Reversal(NamedTuple):
+    """A temporary copy of the table with recorded closures reversed, and the sentence naming them.
+
+    `why` is not decoration: every guard that asks for a reversal puts it in its own failure
+    message, because a check that quietly re-shapes its subject is a check whose green means
+    something other than it appears to.
+    """
+    parks: Parks
+    reopened: tuple[int, ...]
+    reinstated: tuple[SetClaim, ...]
+    why: str
+
+
+def _reinstate(p: Parks) -> tuple[Parks, tuple[SetClaim, ...]]:
+    """Retired claims every member of which is open in THIS COPY, live again in this copy only."""
+    open_now = set(p.open_parks)
+    live = {(c.in_row, c.members) for c in p.set_claims}
+    back = tuple(c for c in p.retired
+                 if set(c.members) <= open_now and (c.in_row, c.members) not in live)
+    return p._replace(set_claims=tuple(p.set_claims) + back), back
+
+
+def reversed_to(shape: str, p: Parks | None = None) -> Reversal:
+    """The table with its most recent recorded closures reversed, until `shape` holds again.
+
+    **WHY THIS EXISTS, AND IT IS A ROW CLOSING RATHER THAN A PRINCIPLE.** Every guard over this
+    table is exercised BY MUTATING THE REAL TABLE, and each needs some shape to mutate: a set-claim
+    naming an open park, a `MISSING` that can fire, a set-claim to observe, an open row whose
+    blocker a filename derives. The table's whole purpose is to empty, and each closure takes one
+    of those shapes away — park 7's closure on 2026-09-06 took the last multi-member live claim
+    with it, because a claim naming one open park is not a set, and the table ends all-closed,
+    where none of the four shapes exists at all.
+
+    **THE REPAIR THAT IS REFUSED.** A synthetic claim spelling the shape is what
+    `test_the_set_claim_guard_is_not_vacuous_in_either_direction`'s own docstring rules out, citing
+    `synapse_cdm/README.md`'s sweep rule 1: a fixture stating a fact is itself a live site, and it
+    can drift away from the table it stands for.
+
+    **WHAT IS DONE INSTEAD (M's ruling, 2026-09-06).** A guard that finds its shape gone reverses,
+    IN ITS OWN COPY ONLY, the most recent recorded closure — and then the next-most-recent, until
+    the shape is back. A reopened row is a real row; the claims put back beside it are this table's
+    own withdrawn claims, re-quoted with `rows` under the convention park 12's row records, and put
+    back only when EVERY member of the claim is open again in the copy; the blocker is the one the
+    row's own title carries. Nothing is invented, and which closure is reversed is derived here at
+    run time — never typed in a guard, which would be the drifting fixture one level up.
+
+    The copy is required to be CLEAN (`check_set_claims` empty) before it is handed back, because a
+    copy that already carries the complaint a guard is about to provoke witnesses nothing.
+    """
+    p = derive() if p is None else p
+    holds = SHAPES[shape]
+    if holds(p):
+        return Reversal(p, (), (), f"the table as it stands carries {shape}; no closure reversed")
+    order = sorted((r for r in p.rows.values() if r.closed),
+                   key=lambda r: (r.closed_on or "", r.number), reverse=True)
+    rows = dict(p.rows)
+    reopened: list[int] = []
+    for row in order:
+        rows[row.number] = row._replace(closed=False, closed_on=None)
+        reopened.append(row.number)
+        trial, back = _reinstate(p._replace(rows=dict(rows)))
+        if holds(trial) and not check_set_claims(trial):
+            named = "; ".join(f"park {n} (CLOSED {p.rows[n].closed_on})" for n in reopened)
+            claims = ", ".join(f"{c.text!r} in row {c.in_row}" for c in back)
+            return Reversal(trial, tuple(reopened), back, (
+                f"the table as it stands does not carry {shape}, so this check reversed the most "
+                f"recent recorded closure(s) in its own copy — {named}"
+                + (f", putting back this table's own withdrawn claim(s) {claims}" if back else "")
+                + ". The row, its claim and its blocker are the table's; nothing is invented, and "
+                  "which closure this is was derived from the table just now, not typed here"))
+    trial, back = _reinstate(p._replace(rows=rows))
+    return Reversal(trial, tuple(reopened), back, (
+        f"NO reversal of this table's recorded closures restores {shape}: every closed row was "
+        f"reopened ({sorted(reopened)}) and the shape still does not hold. The guard asking for it "
+        f"cannot be exercised against this table and is to be rewritten or retired with its "
+        f"reason, never weakened into a synthetic fixture"))
 
 
 def check_stated(stated: dict[str, list[int]], p: Parks | None = None) -> list[str]:
@@ -409,16 +518,24 @@ def _mutation_check() -> int:
     """
     p = derive()
     cases = 0
+    reversals: list[str] = []
 
-    # 1. CLOSED MEMBER — reopen nothing, but close a park some claim names.
-    named = sorted({m for c in p.set_claims for m in c.members if m in p.open_parks})
-    assert named, "no set-claim names an open park; the mutation's domain is empty"
+    # 1. CLOSED MEMBER — reopen nothing, but close a park some claim names. The domain is asserted
+    #    non-empty AFTER the reversal, because at one open row the table has no live set-claim at
+    #    all and the reversal is what makes this case exercisable — see `reversed_to`.
+    one = reversed_to("a set-claim naming an open park", p)
+    q = one.parks
+    named = sorted({m for c in q.set_claims for m in c.members if m in q.open_parks})
+    assert named, one.why
     victim = named[0]
-    rows = dict(p.rows)
+    rows = dict(q.rows)
     rows[victim] = rows[victim]._replace(closed=True, closed_on="2026-01-01")
-    problems = check_set_claims(p._replace(rows=rows))
-    assert any("CLOSED MEMBER" in x and f"park {victim}," in x for x in problems), problems
+    problems = check_set_claims(q._replace(rows=rows))
+    assert any("CLOSED MEMBER" in x and f"park {victim}," in x for x in problems), (one.why,
+                                                                                   problems)
     cases += 1
+    if one.reopened:
+        reversals.append(f"case 1: {one.why}")
 
     # 2. PHANTOM MEMBER — a claim naming a row the table does not have.
     ghost = max(p.rows) + 7
@@ -433,18 +550,27 @@ def _mutation_check() -> int:
     assert check_set_claims(p) == [], check_set_claims(p)
     cases += 1
 
-    # 4. check_stated — OVERLAP and MISSING, on the axis a partition fails on.
-    groups = {"a": [p.open_parks[0]], "b": [p.open_parks[0]]}
-    problems = check_stated(groups, p)
-    assert any("OVERLAP" in x for x in problems), problems
-    assert any("MISSING" in x for x in problems), problems
+    # 4. check_stated — OVERLAP and MISSING, on the axis a partition fails on. MISSING needs a
+    #    SECOND open row to be left out; one open row is claimed by both halves and nothing is
+    #    missing, so the reversal supplies the shape rather than the case going quiet.
+    four = reversed_to("a MISSING to fire", p)
+    r = four.parks
+    groups = {"a": [r.open_parks[0]], "b": [r.open_parks[0]]}
+    problems = check_stated(groups, r)
+    assert any("OVERLAP" in x for x in problems), (four.why, problems)
+    assert any("MISSING" in x for x in problems), (four.why, problems)
     cases += 1
 
-    # 5. check_stated accepts the table's own open set partitioned once.
-    half = len(p.open_parks) // 2
-    whole = {"read": list(p.open_parks[:half]), "translate": list(p.open_parks[half:])}
-    assert check_stated(whole, p) == [], check_stated(whole, p)
+    # 5. check_stated accepts the table's own open set partitioned once. On the same copy as case
+    #    4: a partition of one row is two groups one of which is empty, which accepts for the wrong
+    #    reason.
+    half = len(r.open_parks) // 2
+    whole = {"read": list(r.open_parks[:half]), "translate": list(r.open_parks[half:])}
+    assert all(whole.values()), (four.why, whole)
+    assert check_stated(whole, r) == [], (four.why, check_stated(whole, r))
     cases += 1
+    if four.reopened:
+        reversals.append(f"cases 4 and 5: {four.why}")
 
     # 6. THE SCOPE, witnessed against the defect it closes: a SECOND bold-numbered table in the
     #    same file. The unscoped scan absorbs its rows and says nothing; the scoped one does not
@@ -484,6 +610,8 @@ def _mutation_check() -> int:
             raise AssertionError(f"the scope resolved with {why} header(s) instead of refusing")
     cases += 1
 
+    for note in reversals:
+        print(f"reversal      {note}")
     print(f"{cases} mutations, no survivors")
     return 0
 
