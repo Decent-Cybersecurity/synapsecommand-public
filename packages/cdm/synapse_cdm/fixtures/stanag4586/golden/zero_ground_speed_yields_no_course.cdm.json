@@ -129,6 +129,7 @@
       "speed_mps": 0.0
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 1500.0,
@@ -136,7 +137,7 @@
       "lon": 21.88400002196431,
       "position_source": "INERTIAL"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4586",
       "adapter_version": "1.0.0",
@@ -169,7 +170,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4586",
       "adapter_version": "1.0.0",

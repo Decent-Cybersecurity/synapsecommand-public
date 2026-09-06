@@ -28,6 +28,7 @@
       "speed_mps": 247.2
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": 180.0,
       "alt_m": 7620.0,
@@ -35,7 +36,7 @@
       "lon": 24.0553,
       "position_source": "INERTIAL"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
@@ -59,6 +60,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:09:55.000Z",
+    "oes": null,
     "payload": {
       "cot_how": "m-i",
       "cot_type": "a-h-A-M-F-Q",
@@ -69,7 +71,7 @@
     "related_entities": [
       "dbffc473-afdd-5d98-b14a-50ba86c678df"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",

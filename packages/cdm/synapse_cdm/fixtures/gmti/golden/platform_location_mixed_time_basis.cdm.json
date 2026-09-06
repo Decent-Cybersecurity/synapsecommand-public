@@ -169,6 +169,7 @@
       "speed_mps": 118.0
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 8600.0,
@@ -176,7 +177,7 @@
       "lon": 24.78999998420477,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -229,7 +230,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -288,6 +289,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -295,7 +297,7 @@
       "lon": 24.440000038594007,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -325,6 +327,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T08:30:00.000Z",
+    "oes": null,
     "payload": {
       "geometry_basis": "a Point, in [lon, lat] order. A GMTI target report IS a position measurement \u2014 the detection's location is the payload's primary content, and Event.geometry is the CDM's field for where an event happened, so leaving it None would put the one thing the report is about somewhere a consumer holding the Event alone cannot reach. Height is deliberately NOT the third coordinate: D32.6 is Optional and a two-element Point is the honest shape when the source stated no height, while a Point that sometimes has three elements makes every consumer branch. alt_m on the Entity carries it. This follows stanag4676.py, which sets geometry on a Detection event; asterix_cat021.py and adsb.py leave it None, and that divergence is recorded in gap 20 rather than resolved here",
       "gmti_dwell": {
@@ -354,7 +357,7 @@
     "related_entities": [
       "9bd19044-63ca-5e40-89ea-bf3f8e812a49"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",

@@ -88,6 +88,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": -12.0,
@@ -95,7 +96,7 @@
       "lon": 21.560003757476807,
       "position_source": "MANUAL"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat034",
       "adapter_version": "1.0.0",
@@ -119,6 +120,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "message_type": {
         "basis": "the raw value AND its name, parked, because the collapse onto event_type is 7 -> 2 and must stay recoverable \u2014 and because egress re-emits FROM HERE rather than re-deriving a type from an EventType that four types share",
@@ -145,7 +147,7 @@
     "related_entities": [
       "62650095-2e7e-522b-9e65-1a0aa64fc315"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat034",

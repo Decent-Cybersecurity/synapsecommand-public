@@ -236,7 +236,7 @@
       "type": "object"
     }
   },
-  "$id": "urn:synapsecommand:cdm:1.0.0:entity",
+  "$id": "urn:synapsecommand:cdm:2.0.0:entity",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Anything that exists on the map, at a stated time, with stated confidence.",
@@ -303,6 +303,14 @@
       "title": "Object Kind",
       "type": "string"
     },
+    "ontology_types": {
+      "description": "Optional SC-OES semantic types \u2014 absolute ontology identifiers saying what this thing IS in operational terms. Empty = the producer asserted none. Never derived from entity_type, and entity_type is never derived from it.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Ontology Types",
+      "type": "array"
+    },
     "position": {
       "anyOf": [
         {
@@ -316,7 +324,7 @@
       "description": "None = position unknown. NEVER a Position holding zeros."
     },
     "schema_version": {
-      "default": "1.0.0",
+      "default": "2.0.0",
       "description": "Semver of the CDM this object was written against.",
       "title": "Schema Version",
       "type": "string"
@@ -379,5 +387,5 @@
   ],
   "title": "Entity",
   "type": "object",
-  "x-cdm-schema-version": "1.0.0"
+  "x-cdm-schema-version": "2.0.0"
 }

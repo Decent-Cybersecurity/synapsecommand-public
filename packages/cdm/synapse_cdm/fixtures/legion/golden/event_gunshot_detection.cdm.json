@@ -6,6 +6,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:12:44.000Z",
+    "oes": null,
     "payload": {
       "event_type_basis": "DETECTION. Legion's own event_type names the detected CLASS ('GUNSHOT'), not the kind of report, so the CDM's axis is supplied here and the source value is parked",
       "legion_actor_id": "f1c70000-0001-8000-8000-000000000001",
@@ -36,7 +37,7 @@
     "related_entities": [
       "f44cfe73-bd44-5120-a7da-c9794fde918c"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "legion",

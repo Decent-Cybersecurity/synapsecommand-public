@@ -15,9 +15,9 @@ description: "An entity's position history, in time order. The order is a contra
 | | |
 | --- | --- |
 | Source file | `schemas/track.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:1.0.0:track` |
-| CDM schema version | `1.0.0` |
-| SHA-256 of source | `24a0ee1d0ce925a0337a1b43c645c4bf190e57086e0ca84c2abbb9b151bb7e3a` |
+| `$id` | `urn:synapsecommand:cdm:2.0.0:track` |
+| CDM schema version | `2.0.0` |
+| SHA-256 of source | `673c3119a9385bf9d37364a3853f372dac6eee35d1534353ad2ae354ec1d4fb1` |
 
 An entity's position history, in time order. The order is a contract, not a hope.
 
@@ -37,7 +37,7 @@ rejecting it would refuse legitimate multi-source data.
 | `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
 | `object_kind` | `"track"` | no |  |
 | `samples` | array&lt;[TrackSample](#tracksample)&gt; | **yes** | Time-ordered, non-decreasing. At least one. (min items 1) |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"1.0.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.0.0"`. |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `track_id` | string (uuid) | **yes** |  |

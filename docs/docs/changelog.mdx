@@ -17,8 +17,15 @@ The `synapse-cdm` distribution carries its own version, ordinary semver over the
 and the two are allowed to diverge: thirteen adapters have shipped so far without a single
 change to `schema_version`, and each of them would have been a release of the package. They were
 both `1.0.0` at first release, by coincidence of two first releases, and they parted at 1.1.0: the
-package is at `1.8.0` and the schema stays at `1.0.0`. `version.py` in the package is where the
-distinction is argued.
+package is at `1.8.0`, and the schema stayed at `1.0.0` through eight package releases.
+`version.py` in the package is where the distinction is argued.
+
+**Updated 2026-09-06.** The wire contract has moved for the first time. On the working branch
+the schema stays at `2.0.0` from the SC-OES model round onward, while the package is still at
+`1.8.0` and no release carries the change yet. The two numbers therefore now differ in the *other*
+direction — the contract is a major ahead of where a mechanical derivation from the package number
+would put it — which is the same argument this note has always made, arriving from the opposite
+side.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

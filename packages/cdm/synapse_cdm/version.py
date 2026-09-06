@@ -1,8 +1,13 @@
-"""Two version numbers, what each one governs, and why they are not one number.
+"""Three version numbers, what each one governs, and why they are not one number.
 
 THE DISTINCTION, STATED ONCE
 ----------------------------
-This package carries two semver strings and they answer different questions.
+This package carries three semver strings and they answer different questions.
+
+**THIS FILE OPENED "Two version numbers" UNTIL 2026-09-06, and the sentence moved rather than
+being footnoted**, because a third axis arrived and a docstring that still said two would have
+been wrong in its first line. What did NOT move is the argument: nothing below is weakened by
+there being three, and the reason each is separate is the reason it was already.
 
 ``SCHEMA_VERSION`` is the **wire contract's** version. It is carried in EVERY serialised
 object as ``schema_version``, because a consumer that reads an object off a queue has no
@@ -15,11 +20,29 @@ resolves and what ``importlib.metadata.version("synapse-cdm")`` returns. It is o
 semver over the Python surface: the importable names, the ``Adapter`` contract, the harness
 CLI and its exit codes, the fixture set. It follows the general rule and not MIGRATIONS.md.
 
+``SC_OES_VERSION`` is the **SynapseCommand Operational Event Specification's** version — the
+wire-semantic contract in ``spec/sc-oes/``, carried by a producer in ``Event.oes.spec_version``
+to say which semantics it is claiming. It is a THIRD axis and not a restatement of either
+number above: it moves when what ``event_class``, ``confidence``, a relationship predicate or the
+effective interval MEAN changes, and it does not move when a field is added to a CDM object or
+when an adapter ships. ADR 0003 decision 7 places it here and §46 forbids deriving it from
+either of the other two. Three further axes exist and are deliberately NOT Python constants: the
+Operational Ontology's version lives in the ontology's own metadata, each profile declares its
+own version in its own document, and an event type's semantic major is a segment of the
+``type_id`` itself. An axis belongs where the thing it versions is authored, which is the same
+rule that keeps the two numbers below apart.
+
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``1.8.0`` and ``SCHEMA_VERSION`` is ``1.0.0``, and this paragraph is the
-third version of itself that does not have to reason about a hypothetical. Every entry in
+``PACKAGE_VERSION`` is ``1.8.0`` and ``SCHEMA_VERSION`` is ``2.0.0``, and this paragraph is the
+third version of itself that does not have to reason about a hypothetical. **Corrected
+2026-09-06:** it read "``SCHEMA_VERSION`` is ``1.0.0``" for eight package releases, and the
+SC-OES model round moved the wire contract for the first time. The gap did not close and it did
+not merely widen — it reversed direction on one axis, which is worth stating plainly because it
+is the first evidence in this file that runs the other way. The schema is now a MAJOR AHEAD of
+where a mechanical derivation from the package number would put it, and the package number has
+not moved at all: a schema bump obliges a package release, it does not perform one. Every entry in
 ``MIGRATIONS.md``'s 1.1.0 and 1.2.0 sections says the same two things — an added surface, no
 schema touched — so each release moved one number and not the other, which is exactly what two
 numbers are FOR.
@@ -106,17 +129,46 @@ For ``PACKAGE_VERSION`` — semver over the Python surface:
     A ``SCHEMA_VERSION`` bump is ALWAYS at least a package MINOR, because the objects this
     package emits change shape. The reverse does not hold, and that is the whole point.
 
+    **AT LEAST is the operative phrase and 2.0.0 is where it stops being cheap.** A schema
+    MAJOR is not a package MINOR by this rule; the rule states a FLOOR and says so. What the
+    package number owes a schema MAJOR is derived from the package table above, on the package
+    table's own words — ADR 0005 records that derivation, and the release that types the number
+    is the one that writes the ruling. This paragraph fixes no number.
+
+For ``SC_OES_VERSION`` — semver over the wire-semantic contract in ``spec/sc-oes/``:
+
+    MAJOR  a semantic rule changes so that a conformant producer's existing events mean
+           something different, or a conformant consumer's existing handling becomes wrong.
+    MINOR  an optional concept a consumer may ignore is added.
+    PATCH  wording, rationale, a corrected example. No rule changes.
+
+    A breaking change to ONE governed event type's semantics is none of these: it takes a new
+    semantic major inside that type's own identifier and leaves this number alone. That is what
+    versioning inside the identifier buys — a consumer that knows ``v1`` and meets ``v2`` cannot
+    fail to notice, because the string it matches on has changed.
+
 ``SCHEMA_VERSION`` is compared with ``compatible()`` rather than by equality, because an
 object written by 1.2.0 is readable by a 1.0.0 consumer and refusing it would be a
 self-inflicted outage. ``PACKAGE_VERSION`` needs no such helper: ``pip`` resolves it.
 """
 #: The wire contract. Governed by MIGRATIONS.md. Carried in every serialised object.
-SCHEMA_VERSION = "1.0.0"
+#: Moved 1.0.0 -> 2.0.0 on 2026-09-06, a MAJOR: `Event` gained `oes` and `Entity` gained
+#: `ontology_types`, and the canonical objects are `additionalProperties: false`, so a 1.x
+#: strict reader REFUSES an object carrying either key rather than ignoring it. That is
+#: MIGRATIONS.md's MAJOR row read by its consequence column — "breaks readers" — and it is why
+#: this is not a forward-compatible 1.1. ADR 0005 is the decision.
+SCHEMA_VERSION = "2.0.0"
 
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
 #: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
 PACKAGE_VERSION = "1.8.0"
+
+#: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
+#: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written
+#: against a later specification version must stay transportable. NOT derived from either number
+#: above, and not equal to them by anything but coincidence — see the docstring.
+SC_OES_VERSION = "0.1.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:

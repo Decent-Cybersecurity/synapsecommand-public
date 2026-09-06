@@ -15,9 +15,9 @@ description: "Anything that exists on the map, at a stated time, with stated con
 | | |
 | --- | --- |
 | Source file | `schemas/entity.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:1.0.0:entity` |
-| CDM schema version | `1.0.0` |
-| SHA-256 of source | `f5d86870e642980719acd0015e4f5eab14894a171a2fdbb2f3e4df3930ed44a1` |
+| `$id` | `urn:synapsecommand:cdm:2.0.0:entity` |
+| CDM schema version | `2.0.0` |
+| SHA-256 of source | `a891c9c81a08ca21e326cd30af74d418d749cb9a4abf8fe9bbd88fd8d1c098e9` |
 
 Anything that exists on the map, at a stated time, with stated confidence.
 
@@ -33,8 +33,9 @@ Anything that exists on the map, at a stated time, with stated confidence.
 | `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
 | `kinematics` | [Kinematics](#kinematics) \| null | no | Default `null`. |
 | `object_kind` | `"entity"` | no |  |
+| `ontology_types` | array&lt;string&gt; | no | Optional SC-OES semantic types — absolute ontology identifiers saying what this thing IS in operational terms. Empty = the producer asserted none. Never derived from entity_type, and entity_type is never derived from it. |
 | `position` | [Position](#position) \| null | no | None = position unknown. NEVER a Position holding zeros. Default `null`. |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"1.0.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.0.0"`. |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `symbol` | string \| null | no | MIL-STD-2525D SIDC, 20 digits. None when the source states no symbol — see symbology.sidc_from_affiliation() for deriving one. Default `null`. |

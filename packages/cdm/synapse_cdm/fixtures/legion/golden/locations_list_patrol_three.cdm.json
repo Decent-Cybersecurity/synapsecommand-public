@@ -98,6 +98,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 52.0,
@@ -105,7 +106,7 @@
       "lon": 23.6912,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
@@ -158,7 +159,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",

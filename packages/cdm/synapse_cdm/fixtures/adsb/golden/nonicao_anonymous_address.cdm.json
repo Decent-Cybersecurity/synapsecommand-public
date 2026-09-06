@@ -41,8 +41,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
@@ -66,6 +67,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:15:00.000Z",
+    "oes": null,
     "payload": {
       "adsb_frame_kind": "airborne_position",
       "adsb_type_code": 11,
@@ -80,7 +82,7 @@
     "related_entities": [
       "76d84ce6-88a1-533c-a74d-919784eaea59"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "adsb",

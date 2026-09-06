@@ -50,6 +50,7 @@
       "speed_mps": 0.0
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -57,7 +58,7 @@
       "lon": 23.978991508483887,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
@@ -81,6 +82,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:15:00.000Z",
+    "oes": null,
     "payload": {
       "adsb_frame_kind": "surface_position",
       "adsb_type_code": 5,
@@ -95,7 +97,7 @@
     "related_entities": [
       "46efb1af-549d-561e-98e3-66b35a8e738b"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "adsb",

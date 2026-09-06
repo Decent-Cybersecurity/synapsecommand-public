@@ -115,8 +115,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
@@ -140,6 +141,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-28T23:59:59.000Z",
+    "oes": null,
     "payload": {
       "emergency_basis": {
         "preferred": null,
@@ -164,7 +166,7 @@
     "related_entities": [
       "57594170-4fcc-5d8f-b3ee-14028f307119"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat062",
@@ -295,8 +297,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
@@ -320,6 +323,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T00:00:01.000Z",
+    "oes": null,
     "payload": {
       "emergency_basis": {
         "preferred": null,
@@ -344,7 +348,7 @@
     "related_entities": [
       "05eeae99-fd81-5b7c-97f9-fe1e17e4ba34"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat062",

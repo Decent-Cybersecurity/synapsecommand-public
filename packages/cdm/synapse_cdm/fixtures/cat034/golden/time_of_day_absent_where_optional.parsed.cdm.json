@@ -76,8 +76,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat034",
       "adapter_version": "1.0.0",
@@ -101,6 +102,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:15:00.000Z",
+    "oes": null,
     "payload": {
       "generic_polar_window": {
         "geometry_basis": "NO Event.geometry IS DERIVED, AND TABLE 2 IS THE REASON RATHER THAN EFFORT. A polar window is range and azimuth FROM THE STATION, so a WGS-84 polygon needs the station's position \u2014 which this category does carry, in I034/120. Table 2 makes the two items MUTUALLY EXCLUSIVE: I034/120 is O for message type 001 and X for the other six, I034/100 is X for 001 and 002 and M or O for the other five, and there is no message type for which both are permitted. So in a conformant record the position could only ever come from a DIFFERENT record, which is the cross-payload state this adapter refuses; and in a non-conformant one it would make the output depend on the malformation. Phase 1 left this open as an adapter-behaviour question and Phase 2 rules it CLOSED, on the document rather than on preference. The four raw fields are here, always, and a consumer holding a station position may do the geodesy visibly",
@@ -137,7 +139,7 @@
     "related_entities": [
       "62650095-2e7e-522b-9e65-1a0aa64fc315"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "WARNING",
     "source": {
       "adapter": "cat034",

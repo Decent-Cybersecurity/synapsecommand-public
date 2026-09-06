@@ -96,7 +96,14 @@ PACKAGE_ONLY_TESTS = (
     "test_cdm_asterix_cat034_adapter.py", "test_cdm_asterix_cat048_adapter.py",
     "test_cdm_asterix_cat062_adapter.py", "test_cdm_gmtif_adapter.py", "test_cdm_gmtif_codec.py",
     "test_cdm_harness.py", "test_cdm_legion_adapter.py", "test_cdm_list_adapters.py",
-    "test_cdm_lossless.py", "test_cdm_models.py", "test_cdm_pntmap_adapter.py",
+    "test_cdm_lossless.py", "test_cdm_models.py",
+    # `test_cdm_oes.py` is package-only, and the classification is the same one
+    # `test_cdm_models.py` earns: every path it touches is an importable name under
+    # `synapse_cdm`, it reads no file at all, and the SC-OES block it exercises ships in the
+    # wheel exactly as the four canonical objects do. The normative documents it cites are cited
+    # in prose, not opened — a test that opened `spec/sc-oes/` would belong in the other list.
+    "test_cdm_oes.py",
+    "test_cdm_pntmap_adapter.py",
     "test_cdm_schemas.py", "test_cdm_stanag4586_adapter.py", "test_cdm_stanag4609_adapter.py",
     "test_cdm_stanag4676_adapter.py",
     "test_cdm_tak_adapter.py",

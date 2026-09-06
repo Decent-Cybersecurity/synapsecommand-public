@@ -201,6 +201,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -208,7 +209,7 @@
       "lon": 24.6,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -245,7 +246,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",

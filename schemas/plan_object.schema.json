@@ -183,7 +183,7 @@
       "type": "object"
     }
   },
-  "$id": "urn:synapsecommand:cdm:1.0.0:plan_object",
+  "$id": "urn:synapsecommand:cdm:2.0.0:plan_object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "What we push OUT: a drawing a commander's plan puts on someone else's map.\n\nGeometry is REQUIRED here, unlike on Event. An overlay with no geometry cannot be drawn,\nso an egress adapter would have to either invent a location or silently drop the object \u2014\nand a COA sketch that quietly fails to appear on the TAK client is the worst of the three\noutcomes, because everyone assumes it arrived.",
@@ -267,7 +267,7 @@
       "$ref": "#/$defs/ObjectType"
     },
     "schema_version": {
-      "default": "1.0.0",
+      "default": "2.0.0",
       "description": "Semver of the CDM this object was written against.",
       "title": "Schema Version",
       "type": "string"
@@ -301,5 +301,5 @@
   ],
   "title": "PlanObject",
   "type": "object",
-  "x-cdm-schema-version": "1.0.0"
+  "x-cdm-schema-version": "2.0.0"
 }

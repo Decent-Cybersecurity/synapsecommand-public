@@ -100,6 +100,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 25.002,
@@ -107,7 +108,7 @@
       "lon": 23.9711,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
@@ -131,6 +132,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:14:00.000Z",
+    "oes": null,
     "payload": {
       "entity_block_embedded": true,
       "event_type_basis": "TRACK_UPDATE. A location document reports where something was at an instant, which is what that member means",
@@ -145,7 +147,7 @@
     "related_entities": [
       "f44cfe73-bd44-5120-a7da-c9794fde918c"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "legion",

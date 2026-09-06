@@ -1007,8 +1007,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
@@ -1038,6 +1039,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2008-10-24T00:13:29.913Z",
+    "oes": null,
     "payload": {
       "frame_centre": {
         "basis": "the point Event.geometry is built from, carried in full because the geometry is 2-D and the elevation is MSL",
@@ -1122,7 +1124,7 @@
     "related_entities": [
       "97a501bb-20a1-53b3-9ba7-1a697784bd42"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",
@@ -1144,6 +1146,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2008-10-24T00:13:29.913Z",
+    "oes": null,
     "payload": {
       "detection_key": "1224807209913000|0|0|1234",
       "identity_basis": {
@@ -1330,7 +1333,7 @@
     },
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",
@@ -1356,6 +1359,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2008-10-24T00:13:29.913Z",
+    "oes": null,
     "payload": {
       "detection_key": "1224807209913000|0|1|1234",
       "identity_basis": {
@@ -1542,7 +1546,7 @@
     },
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",

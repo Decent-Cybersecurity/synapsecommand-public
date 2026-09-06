@@ -147,6 +147,7 @@
       "speed_mps": 118.0
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 8600.0,
@@ -154,7 +155,7 @@
       "lon": 24.759999979287386,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -197,7 +198,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",

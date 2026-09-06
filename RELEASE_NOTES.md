@@ -15,6 +15,18 @@ a consumer inside `Entity.attributes`, which the published `entity` schema decla
 `additionalProperties: true` — the 1.2.0 ruling, applied a fifth time and checked against the
 schema files rather than recalled.
 
+**UNRELEASED, ADDED 2026-09-06 — the wire contract has since moved, and these notes are still
+1.8.0's.** The sentences above describe the distribution on the index and stay exactly true of it:
+1.8.0 shipped at CDM `schema_version` 1.0.0 and nothing in it moved the wire contract. On the
+working branch the SC-OES model round has taken `SCHEMA_VERSION` to **`schema_version` 2.0.0**, a
+MAJOR — `Event` gains an optional SC-OES block and `Entity` an optional list of ontology types, and
+the canonical objects forbid undeclared keys, so a 1.x strict reader refuses an object carrying
+either. **No release carries that yet.** `pip install synapse-cdm` still resolves 1.8.0 and 1.8.0
+still emits 1.0.0 objects; this paragraph is here because these notes are one of the few documents
+that states both numbers, which makes them one of the few places the two could be made to disagree
+without anybody noticing. `packages/cdm/synapse_cdm/MIGRATIONS.md`'s `### Unreleased` section
+carries the migration statement and the derivation.
+
 **If you ingest STANAG 4609 / MISB KLV, read the next section.** Nothing is removed and no key
 changes shape. A packet that carries no item 73 yields exactly the object 1.7.0 yielded, byte for
 byte; a packet that carries one yields the same object with four more keys on it.

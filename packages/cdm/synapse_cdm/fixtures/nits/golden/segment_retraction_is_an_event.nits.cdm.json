@@ -228,6 +228,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -235,7 +236,7 @@
       "lon": 24.5,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -272,7 +273,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
@@ -299,6 +300,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "confidentiality_label": {
         "originatorConfidentialityLabel": "<slab:originatorConfidentialityLabel xmlns:slab=\"urn:nato:stanag:4774:confidentialitymetadatalabel:1:0\"><slab:ConfidentialityInformation><slab:PolicyIdentifier>NATO</slab:PolicyIdentifier><slab:Classification>NATO UNCLASSIFIED</slab:Classification><slab:Category Type=\"PERMISSIVE\" TagName=\"Releasable to\"><slab:GenericValue>NATO</slab:GenericValue></slab:Category></slab:ConfidentialityInformation><slab:CreationDateTime>2026-04-29T06:00:00Z</slab:CreationDateTime></slab:originatorConfidentialityLabel>"
@@ -421,7 +423,7 @@
     "related_entities": [
       "c83ceddb-9acd-5ebc-89b1-b25ad1887ff1"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4676",

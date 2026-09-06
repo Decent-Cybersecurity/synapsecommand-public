@@ -72,14 +72,38 @@ from synapse_cdm.models import (
     Track,
     TrackSample,
 )
+from synapse_cdm.oes import (
+    MAX_EXTENSION_DEPTH,
+    EntityRelation,
+    EvidenceKind,
+    EvidenceRef,
+    EventClass,
+    EventRelation,
+    EventRelationPredicate,
+    LifecycleStatus,
+    OesMetadata,
+    SecurityMarking,
+    Verification,
+    find_relation_cycles,
+    is_governed_event_type,
+    is_governed_ontology_term,
+    validate_event_bundle,
+    validate_ontology_identifier,
+    validate_type_id,
+)
 from synapse_cdm.adapter import Adapter, REGISTRY, load_adapter
-from synapse_cdm.version import SCHEMA_VERSION
+from synapse_cdm.version import SCHEMA_VERSION, SC_OES_VERSION
 
 __all__ = [
-    "SCHEMA_VERSION",
+    "SCHEMA_VERSION", "SC_OES_VERSION",
     "Adapter", "REGISTRY", "load_adapter",
     "Affiliation", "EntityType", "EventType", "InterferenceType", "ObjectType",
     "PositionSource", "Severity",
     "CDMObject", "Entity", "Event", "GnssInterferencePayload", "Integrity", "Kinematics",
     "PlanObject", "Position", "SourceId", "SourceRef", "Track", "TrackSample",
+    "MAX_EXTENSION_DEPTH", "EntityRelation", "EventClass", "EventRelation",
+    "EventRelationPredicate", "EvidenceKind", "EvidenceRef", "LifecycleStatus", "OesMetadata",
+    "SecurityMarking", "Verification",
+    "find_relation_cycles", "is_governed_event_type", "is_governed_ontology_term",
+    "validate_event_bundle", "validate_ontology_identifier", "validate_type_id",
 ]

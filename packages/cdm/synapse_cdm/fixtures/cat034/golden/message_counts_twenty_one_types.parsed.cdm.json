@@ -165,8 +165,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat034",
       "adapter_version": "1.0.0",
@@ -190,6 +191,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "message_counts": {
         "basis": "an ORDERED list with duplicates preserved \u2014 order is data and egress is byte-exact only if the counters go back out as they came in. A COUNT IS NOT A DETECTION: none of the twenty-one TYPs produces an Event per counted item, which would invent target reports this document does not carry",
@@ -355,7 +357,7 @@
     "related_entities": [
       "62650095-2e7e-522b-9e65-1a0aa64fc315"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat034",

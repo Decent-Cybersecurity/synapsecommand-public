@@ -87,6 +87,19 @@ class SourceId(BaseModel):
     external_id: str = Field(min_length=1, description="That system's own identifier.")
 
 
+# IMPORTED HERE, NOT AT THE TOP, AND THE PLACEMENT IS THE POINT.
+# `oes.py` carries the SC-OES block, and that block reuses two things declared above —
+# `SourceId`, because `07-provenance-and-evidence.md` requires a SOURCE_RECORD citation to use
+# the canonical source-identifier representation rather than a second one, and `Timestamp`,
+# because `effective_from`/`effective_to` publish the same strict RFC 3339 pattern every other
+# instant in this repository publishes. `Event` in turn needs `OesMetadata`. The two modules are
+# therefore mutually dependent by construction, and one of the imports has to stand below the
+# names it needs. It is this one, because `synapse_cdm/__init__.py` imports `models` before
+# `oes` and a submodule import runs the package `__init__` first, so the cycle is only ever
+# entered from this side.
+from synapse_cdm.oes import OesMetadata, validate_ontology_identifier  # noqa: E402
+
+
 class SourceRef(BaseModel):
     """Which adapter produced this object, from which system, and whether it is real.
 
@@ -241,6 +254,12 @@ class Entity(CDMBase):
         description="Source-specific fields the CDM has no home for. The never-drop bag: "
                     "park data here rather than discarding it.",
     )
+    ontology_types: list[str] = Field(
+        default_factory=list,
+        description="Optional SC-OES semantic types — absolute ontology identifiers saying what "
+                    "this thing IS in operational terms. Empty = the producer asserted none. "
+                    "Never derived from entity_type, and entity_type is never derived from it.",
+    )
     valid_from: Timestamp = Field(description="When this state began.")
     valid_to: Timestamp | None = Field(
         default=None, description="When it ceased. None = still current / open-ended."
@@ -266,6 +285,30 @@ class Entity(CDMBase):
                 f"symbol must be a 20-digit MIL-STD-2525D SIDC, got {v!r} "
                 f"(length {len(v)}) — 2525C 15-character codes belong in attributes"
             )
+        return v
+
+    @field_validator("ontology_types")
+    @classmethod
+    def _ontology_types(cls, v: list[str]) -> list[str]:
+        """Each identifier valid and absolute; no duplicates; nothing rewritten.
+
+        `entity_type` stays the closed structural classification the map renders and this stays
+        the open semantic one — `09-entity-semantics.md` forbids deriving either from the other,
+        so a FACILITY that is also a runway says both and neither is inferred from the other.
+
+        Duplicates are REJECTED rather than deduplicated, on §101's rule. Silently collapsing
+        them would make the record disagree with what was sent, and a producer emitting the same
+        term twice has a defect it would never be shown.
+        """
+        seen: set[str] = set()
+        for term in v:
+            validate_ontology_identifier(term)
+            if term in seen:
+                raise ValueError(
+                    f"duplicate ontology type {term!r}: identifiers are rejected rather than "
+                    "deduplicated, because a set silently repaired is a defect never reported"
+                )
+            seen.add(term)
         return v
 
     @model_validator(mode="after")
@@ -332,6 +375,14 @@ class Event(CDMBase):
     )
     observed_at: Timestamp = Field(description="When the SOURCE saw it. Never receipt time.")
     received_at: Timestamp = Field(description="When WE took delivery. Never source time.")
+    oes: OesMetadata | None = Field(
+        default=None,
+        description="The SC-OES wire-semantic block. None = the producer made no SC-OES "
+                    "assertion, which is NOT the producer asserting defaults. Optional so that "
+                    "every object written before SC-OES existed stays structurally valid and "
+                    "every producer that knows nothing about SC-OES keeps emitting objects "
+                    "these models accept.",
+    )
 
     @model_validator(mode="after")
     def _payload_shape(self) -> "Event":
@@ -346,6 +397,42 @@ class Event(CDMBase):
         model = PAYLOAD_MODELS.get(self.event_type)
         if model is not None:
             model.model_validate(self.payload)
+        return self
+
+    @model_validator(mode="after")
+    def _oes_relations(self) -> "Event":
+        """The two SC-OES rules that need the EVENT, not just the block.
+
+        Both are §80's and both are invisible one level down. A self-reference is a relation
+        whose target is the citing event, which needs `event_id`; and every `entity_relations`
+        subject must also appear in `related_entities`, which needs that list. The membership
+        rule is the load-bearing one: `related_entities` remains the single answer to "which
+        entities does this event concern", so a consumer that reads only the CDM sees every
+        entity involved and a consumer that reads SC-OES sees the same set with roles attached.
+        A role naming an entity the event does not otherwise relate to would make the two lists
+        disagree about the event's own scope.
+
+        References to events that are NOT locally available stay permitted, deliberately — a
+        consumer holds a subset of the history by definition, and rejecting an event because its
+        antecedent has not arrived would make delivery order part of the contract.
+        """
+        if self.oes is None:
+            return self
+        for relation in self.oes.event_relations:
+            if relation.event_id == self.event_id:
+                raise ValueError(
+                    f"event relation {relation.predicate.value} points at the citing event "
+                    f"{self.event_id}: an event cannot stand in a relation to itself"
+                )
+        related = set(self.related_entities)
+        for entity_relation in self.oes.entity_relations:
+            if entity_relation.entity_id not in related:
+                raise ValueError(
+                    f"entity relation {entity_relation.predicate} names entity "
+                    f"{entity_relation.entity_id}, which is not in related_entities. A role for "
+                    "an entity the event does not otherwise relate to would make the two lists "
+                    "disagree about what the event concerns"
+                )
         return self
 
     def typed_payload(self) -> BaseModel | None:

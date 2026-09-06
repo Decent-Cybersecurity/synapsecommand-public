@@ -805,6 +805,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -812,7 +813,7 @@
       "lon": 128.42675904204452,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
@@ -842,6 +843,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2009-01-12T22:08:22.000Z",
+    "oes": null,
     "payload": {
       "frame_centre": {
         "basis": "the point Event.geometry is built from, carried in full because the geometry is 2-D and the elevation is MSL",
@@ -926,7 +928,7 @@
     "related_entities": [
       "e736fa50-cc0a-54fd-8faa-203f4f6dbc64"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",

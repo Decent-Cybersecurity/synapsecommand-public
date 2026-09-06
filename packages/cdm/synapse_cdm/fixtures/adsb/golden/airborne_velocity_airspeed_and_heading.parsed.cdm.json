@@ -48,8 +48,9 @@
       "speed_mps": null
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
@@ -73,6 +74,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:15:00.000Z",
+    "oes": null,
     "payload": {
       "adsb_frame_kind": "airborne_velocity_air",
       "adsb_type_code": 19,
@@ -87,7 +89,7 @@
     "related_entities": [
       "489fe8ad-dc34-5097-bab3-e86b4b8e7e28"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "adsb",

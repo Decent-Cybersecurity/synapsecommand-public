@@ -215,6 +215,7 @@
       "speed_mps": 120.0
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 8500.0,
@@ -222,7 +223,7 @@
       "lon": 24.72000002861023,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -255,7 +256,7 @@
         }
       }
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -325,6 +326,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 40.0,
@@ -332,7 +334,7 @@
       "lon": 24.419999979436398,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -362,6 +364,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T08:30:00.000Z",
+    "oes": null,
     "payload": {
       "geometry_basis": "a Point, in [lon, lat] order. A GMTI target report IS a position measurement \u2014 the detection's location is the payload's primary content, and Event.geometry is the CDM's field for where an event happened, so leaving it None would put the one thing the report is about somewhere a consumer holding the Event alone cannot reach. Height is deliberately NOT the third coordinate: D32.6 is Optional and a two-element Point is the honest shape when the source stated no height, while a Point that sometimes has three elements makes every consumer branch. alt_m on the Entity carries it. This follows stanag4676.py, which sets geometry on a Detection event; asterix_cat021.py and adsb.py leave it None, and that divergence is recorded in gap 20 rather than resolved here",
       "gmti_dwell": {
@@ -418,7 +421,7 @@
     "related_entities": [
       "6f1ead77-e588-5084-bfac-676ec0f25c5c"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
@@ -487,6 +490,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": 40.0,
@@ -494,7 +498,7 @@
       "lon": 24.440000038594007,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
@@ -524,6 +528,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T08:30:00.000Z",
+    "oes": null,
     "payload": {
       "geometry_basis": "a Point, in [lon, lat] order. A GMTI target report IS a position measurement \u2014 the detection's location is the payload's primary content, and Event.geometry is the CDM's field for where an event happened, so leaving it None would put the one thing the report is about somewhere a consumer holding the Event alone cannot reach. Height is deliberately NOT the third coordinate: D32.6 is Optional and a two-element Point is the honest shape when the source stated no height, while a Point that sometimes has three elements makes every consumer branch. alt_m on the Entity carries it. This follows stanag4676.py, which sets geometry on a Detection event; asterix_cat021.py and adsb.py leave it None, and that divergence is recorded in gap 20 rather than resolved here",
       "gmti_dwell": {
@@ -580,7 +585,7 @@
     "related_entities": [
       "d0806d3a-8699-5e49-9389-b87c8fafdac3"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",

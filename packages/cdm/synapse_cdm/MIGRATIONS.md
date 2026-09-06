@@ -264,22 +264,82 @@ Nothing here is in a release — every line below is in **no release** at all. T
 the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
 this.
 
-**What moved inside the distribution: three shipped files.**
+**What moved inside the distribution: 553 files.**
 
-**AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.** The SC-OES ontology round
-also added `ontology/` at the repository root (eight Turtle modules, a README and a generated
-JSON-LD context), `gates/ontology_terms.py` and `tests/test_cdm_ontology.py`, and amended
+**THE COUNT READ `three` UNTIL 2026-09-06, AND BOTH READINGS WERE RIGHT WHEN THEY WERE TAKEN.**
+The sentence above said "three shipped files" and described the SC-OES ontology round's arc alone;
+the SC-OES model round then moved the wire contract and every golden with it. The earlier figure is
+kept here rather than overwritten, on the same ground the 1.7.0 section keeps its own two: a record
+that quietly restates its history is a record nobody can date.
+
+**THE WIRE CONTRACT MOVED, AND IT IS A MAJOR.** `SCHEMA_VERSION` `1.0.0` -> `2.0.0`. `Event` gained
+an optional `oes` block and `Entity` gained an optional `ontology_types` list, and by this table's
+*change* column an optional field added is a MINOR. **By its consequence column it is not**, and the
+consequence column is what a row means: MINOR promises "old readers keep working", and a 1.x reader
+does not. The canonical objects are `extra="forbid"` (`models.py`) and the published schemas are
+`additionalProperties: false` (`tests/test_cdm_schemas.py`), so a 1.0.0 consumer meeting either new
+key REJECTS the object rather than ignoring it. MAJOR's consequence column — "breaks readers; needs a
+migration entry below and a coordinated deployment" — is exactly what happens.
+`docs/adr/0005-cdm-schema-version-impact.md` is the decision and carries the derivation.
+
+**A DATED CLARIFICATION TO THE TABLE ABOVE, 2026-09-06, and it is a clarification and not an edit.**
+The MINOR row still reads "an optional field added", and that stays the ordinary case. What it does
+not say, and now does here, is that the row is read by its *consequence*: where the objects forbid
+undeclared keys, an added optional field breaks a strict reader and the MAJOR row governs instead.
+The change column is a list of the cases that were in view when the table was written, and a strict
+reader was not one of them. No row is rewritten; this paragraph stands beside them.
+
+**Migration, per the MAJOR row's obligation.** There is no migrator in the package and none is
+introduced for this — the repository's mechanism for a major is this document, and what it carries is
+two statements rather than a field mapping, because nothing was removed, renamed or narrowed:
+
+* **`1.x` reader + `2.x` object = not contract-compatible.** No claim is made that an old consumer
+  can parse a new object. `version.compatible("2.0.0", "1.0.0")` is `False`, and a 1.x reader that
+  skipped the version gate meets the unknown keys and refuses on those.
+* **`2.x` reader + legacy `1.x` object.** The 2.0.0 models accept a legacy object structurally
+  unchanged: both new fields are optional with defaults, so **no field mapping exists and none is
+  needed**. What refuses it is the version gate — `version.compatible("1.0.0", "2.0.0")` is also
+  `False` — so a 2.x consumer that wants legacy data takes an explicit decision: branch on the
+  major, or re-emit the object at 2.0.0, where the only value that moves is `schema_version` itself.
+  That is the whole migration, and it is documented rather than coded.
+
+**AND WHAT MOVED OUTSIDE THE DISTRIBUTION, WHICH IS DELIBERATELY NOT COUNTED ABOVE.** The SC-OES
+ontology round added `ontology/` at the repository root (eight Turtle modules, a README and a
+generated JSON-LD context), `gates/ontology_terms.py` and `tests/test_cdm_ontology.py`, and amended
 `docs/adr/0002-ontology-representation.md` and
-`docs/adr/0010-open-source-packaging-and-licensing.md`. **None of those is in the distribution**:
-the packaged contents are `pyproject.toml` and the `synapse_cdm/` tree, so the ontology's Turtle
-authority reaches no installed reader and is not part of the arc this section accounts for. That
-is the same boundary `gates/bump_derivation.py` measures the bump over, and it is deliberate — the
-runtime never parses Turtle, and the generated registry below is what it reads instead.
+`docs/adr/0010-open-source-packaging-and-licensing.md`. The SC-OES model round added
+`tests/test_cdm_oes.py`, regenerated the six published documents under `schemas/`, corrected one
+worked example under `spec/sc-oes/`, and re-pinned the two version literals
+`tests/test_cdm_packaging.py` asserts. **None of those is in the distribution**: the packaged
+contents are `pyproject.toml` and the `synapse_cdm/` tree, so the ontology's Turtle authority
+reaches no installed reader and `schemas/` is a publication of the models rather than a shipped
+file. That is the same boundary `gates/bump_derivation.py` measures the bump over.
 
-**The three, by what they are.** One round moved all of them — **the SC-OES ontology round,
-2026-09-06**, which wrote the Operational Ontology and generated its two derived artefacts.
+**The 553, by what they are.** Two rounds moved them — **the SC-OES ontology round, 2026-09-06**,
+which wrote the Operational Ontology and generated its two derived artefacts, and **the SC-OES model
+round, 2026-09-06**, which attached the wire-semantic block to the canonical `Event`.
 
-1 new shipped data file:
+4 shipped Python modules:
+
+* `synapse_cdm/oes.py` — **new.** The SC-OES wire-semantic block: `OesMetadata` and the five models
+  beneath it (`EventRelation`, `EntityRelation`, `EvidenceRef`, `SecurityMarking`), the five closed
+  vocabularies (`EventClass`, `LifecycleStatus`, `Verification`, `EventRelationPredicate`,
+  `EvidenceKind`), the four frozen identifier grammars, `MAX_EXTENSION_DEPTH = 16` with its counting
+  algorithm, and the bundle-scoped cycle check. Every model beneath the block is strict; the one
+  declared open bag is `oes.extensions`.
+* `synapse_cdm/models.py` — `Event` gains `oes: OesMetadata | None = None` and a validator for the
+  two rules that need the event rather than the block (no self-referential event relation; every
+  `entity_relations` subject also in `related_entities`). `Entity` gains
+  `ontology_types: list[str]` and a validator that refuses a duplicate or a malformed identifier.
+  Nothing is removed, renamed or narrowed.
+* `synapse_cdm/version.py` — `SCHEMA_VERSION` `1.0.0` -> `2.0.0`; a third axis,
+  `SC_OES_VERSION = "0.1.0"`, which is not derived from either of the other two; and the docstring
+  that argues the distinction, which opened "Two version numbers" and now opens with three.
+  `PACKAGE_VERSION` is **unmoved at 1.8.0** — a schema bump obliges a release, it does not perform
+  one, and the number is the release round's to type.
+* `synapse_cdm/__init__.py` — the SC-OES public names join the hand-written `__all__`.
+
+1 shipped data file:
 
 * `synapse_cdm/registry/sc_oes/ontology_terms.json` — the governed ontology-term registry, 73
   records, **generated** from `ontology/*.ttl` by `gates/ontology_terms.py` and never
@@ -299,15 +359,616 @@ runtime never parses Turtle, and the generated registry below is what it reads i
 1 shipped document:
 
 * `synapse_cdm/MIGRATIONS.md` — **this file, and it is in its own arc.** The count above read two
-  until this section was written, because the section is what puts `MIGRATIONS.md` into the diff
-  it describes. A derivation quoted into the file it reads has to be re-run after the write, and
-  it was.
+  until this section was first written, because the section is what puts `MIGRATIONS.md` into the
+  diff it describes. A derivation quoted into the file it reads has to be re-run after the write,
+  and it was — twice, once for each round that has written here.
 
-**What a consumer sees.** Nothing in this arc changes an object on the wire: `SCHEMA_VERSION` does
-not move, no model gains a field, and no golden changes. The registry is a new data file a
-consumer may read and nothing yet requires them to. `Event.oes` and `Entity.ontology_types` — the
-model changes that would move `SCHEMA_VERSION` to 2.0.0 — belong to a later round and are not
-here.
+And 546 goldens, every one of them a CDM document and not one of them an external wire format.
+**Every hunk in all 546 is one of exactly three shapes** — the version string moving to `2.0.0`, a
+`"ontology_types": []` line appearing inside an object whose `object_kind` is `entity`, or an
+`"oes": null` line appearing inside an object whose `object_kind` is `event`. That is not a claim
+made by reading the diff: it is a structural comparison by JSON path between the committed blob and
+the regenerated file, over all of them, and the moved-path set is exactly
+`{schema_version, ontology_types, oes}` with nothing else in it. `schema_version` moves in 538 of
+them, `ontology_types` appears in 537 and `oes` in 484 — the files carrying at least one entity and
+at least one event respectively — and the eight that are not goldens of the harness are the ADS-B
+adapter's `local/` set, which its own tests hold because the harness cannot construct that adapter
+with a reference position.
+
+**The nine that did NOT change are the point of naming the 546.** They are the three egress
+adapters' external-format outputs — `fixtures/adsb/egress/golden/*.adsb`,
+`fixtures/ais/egress/golden/*.ais.nmea` and `fixtures/tak/egress/golden/*.cot.xml`. Not one byte of
+any non-CDM wire format moves, which is what a major to the *canonical* contract ought to cost a
+consumer of a foreign format: nothing.
+
+*fixtures — 546:*
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_baro_gulf_of_riga.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_baro_gulf_of_riga.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_gillham_above_50175.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_gillham_above_50175.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_gnss_height_odd.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_gnss_height_odd.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_no_position_information.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_no_position_information.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_permanent_alert.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_position_permanent_alert.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_velocity_airspeed_and_heading.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_velocity_airspeed_and_heading.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_velocity_all_unavailable.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_velocity_all_unavailable.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_velocity_ground_speed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/airborne_velocity_ground_speed.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/aircraft_status_unlawful_interference.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/aircraft_status_unlawful_interference.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/identification_light_aircraft.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/identification_light_aircraft.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/identification_point_obstacle.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/identification_point_obstacle.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/nonicao_anonymous_address.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/nonicao_anonymous_address.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/operational_status_magnetic_heading.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/operational_status_magnetic_heading.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/surface_position_riga_taxiway.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/surface_position_riga_taxiway.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/surface_position_stopped_no_track.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/surface_position_stopped_no_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/tisb_fine_format_relayed_track.cdm.json`
+* `synapse_cdm/fixtures/adsb/golden/tisb_fine_format_relayed_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/airborne_position_baro_gulf_of_riga.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/airborne_position_gillham_above_50175.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/airborne_position_gnss_height_odd.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/airborne_position_permanent_alert.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/nonicao_anonymous_address.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/surface_position_riga_taxiway.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/surface_position_stopped_no_track.cdm.json`
+* `synapse_cdm/fixtures/adsb/local/tisb_fine_format_relayed_track.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/aid_to_navigation_off_position.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/aid_to_navigation_off_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/aid_to_navigation_virtual.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/aid_to_navigation_virtual.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/base_station_liepaja.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/base_station_liepaja.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_a_assigned_schedule_moored.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_a_assigned_schedule_moored.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_a_sentinels_no_position.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_a_sentinels_no_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_a_underway_gulf_of_riga.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_a_underway_gulf_of_riga.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_b_extended_named.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_b_extended_named.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_b_own_station_ventspils.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/class_b_own_station_ventspils.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/equator_zero_meridian.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/equator_zero_meridian.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/sart_active_distress.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/sart_active_distress.parsed.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/static_voyage_two_fragments.cdm.json`
+* `synapse_cdm/fixtures/ais/golden/static_voyage_two_fragments.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/airborne_position_coarse_and_high_resolution.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/airborne_position_coarse_and_high_resolution.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/airborne_position_time_of_applicability.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/airborne_position_time_of_applicability.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/duplicate_address.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/duplicate_address.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/emergency_unlawful_interference.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/emergency_unlawful_interference.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/icao24_shared_with_adsb.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/icao24_shared_with_adsb.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/midnight_rollover_after.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/midnight_rollover_after.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/midnight_rollover_before.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/midnight_rollover_before.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/mode_five_authenticated.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/mode_five_authenticated.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/obstacle_line.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/obstacle_line.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/position_time_of_message_reception_high_precision.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/position_time_of_message_reception_high_precision.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/quality_indicators_without_mops_version.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/quality_indicators_without_mops_version.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/range_check_failed_still_translated.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/range_check_failed_still_translated.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/reserved_full_second_indication.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/reserved_full_second_indication.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/spare_bits_nonzero.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/spare_bits_nonzero.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/special_purpose_field_opaque.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/special_purpose_field_opaque.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/surface_stopped_track_invalid.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/surface_stopped_track_invalid.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/surface_vehicle_with_ref_ground_vector.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/surface_vehicle_with_ref_ground_vector.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/trajectory_intent_two_points.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/trajectory_intent_two_points.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/two_records_one_block.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/two_records_one_block.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/version_three_emergency_in_ref.cdm.json`
+* `synapse_cdm/fixtures/cat021/golden/version_three_emergency_in_ref.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/all_three_service_types.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/all_three_service_types.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/data_driven_report_period.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/data_driven_report_period.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/ground_station_status_full.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/ground_station_status_full.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/ground_station_status_minimal.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/ground_station_status_minimal.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/midnight_rollover_nearest.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/midnight_rollover_nearest.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/non_minimal_fspec.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/non_minimal_fspec.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/operational_range_at_maximum.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/operational_range_at_maximum.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/report_type_004.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/report_type_004.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/reserved_and_special_purpose.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/reserved_and_special_purpose.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_statistics_report.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_statistics_report.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_statistics_reserved_type.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_statistics_reserved_type.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_status_degraded.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_status_degraded.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_status_report.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_status_report.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_status_unknown.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/service_status_unknown.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/spare_bits_nonzero.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/spare_bits_nonzero.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/table_2_x_item_present.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/table_2_x_item_present.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/time_of_day_absent.cdm.json`
+* `synapse_cdm/fixtures/cat023/golden/time_of_day_absent.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/geographical_filter_polar_window.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/geographical_filter_polar_window.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/jamming_strobe_is_not_gnss.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/jamming_strobe_is_not_gnss.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/message_counts_twenty_one_types.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/message_counts_twenty_one_types.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/message_type_008.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/message_type_008.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/midnight_rollover_nearest.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/midnight_rollover_nearest.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/mode_s_jamming_strobe.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/mode_s_jamming_strobe.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/non_minimal_fspec.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/non_minimal_fspec.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/north_marker_minimal.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/north_marker_minimal.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/processing_mode_reduction_steps.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/processing_mode_reduction_steps.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/re_and_sp_carried.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/re_and_sp_carried.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/sector_crossing_with_rotation.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/sector_crossing_with_rotation.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/solar_storm_message.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/solar_storm_message.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/spare_bits_nonzero.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/spare_bits_nonzero.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/station_position_three_dimensional.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/station_position_three_dimensional.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/system_status_all_four_subfields.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/system_status_all_four_subfields.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/time_of_day_absent_where_optional.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/time_of_day_absent_where_optional.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/two_records_one_block.cdm.json`
+* `synapse_cdm/fixtures/cat034/golden/two_records_one_block.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/acas_ra_active_undecoded.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/acas_ra_active_undecoded.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/bds_registers_comm_b_broadcast.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/bds_registers_comm_b_broadcast.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/derived_position_inverts_to_the_polar_values.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/derived_position_inverts_to_the_polar_values.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/end_of_track_full_items.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/end_of_track_full_items.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/end_of_track_items_omitted.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/end_of_track_items_omitted.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/field_monitor_report.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/field_monitor_report.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/flight_level_negative.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/flight_level_negative.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/fspec_longer_than_necessary.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/fspec_longer_than_necessary.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/ghost_target_still_translated.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/ghost_target_still_translated.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/helicopter_classification_not_read_as_a_type.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/helicopter_classification_not_read_as_a_type.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/ic_conflict_codes.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/ic_conflict_codes.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/icao24_shared_with_cat021.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/icao24_shared_with_cat021.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/injected_site_no_height_item.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/injected_site_no_height_item.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/injected_site_pressure_height_only.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/injected_site_pressure_height_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/injected_site_range_at_maximum.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/injected_site_range_at_maximum.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/midnight_rollover_after.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/midnight_rollover_after.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/midnight_rollover_before.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/midnight_rollover_before.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/military_emergency.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/military_emergency.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_1_and_mode_2_with_confidence.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_1_and_mode_2_with_confidence.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_4_result_in_ref.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_4_result_in_ref.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_s_alert_is_not_an_emergency.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_s_alert_is_not_an_emergency.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_s_roll_call_track.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/mode_s_roll_call_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/no_detection_track_only.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/no_detection_track_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/no_time_item_at_all.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/no_time_item_at_all.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/plot_and_track_one_block.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/plot_and_track_one_block.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/plot_characteristics_all_subfields.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/plot_characteristics_all_subfields.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/psr_only_plot_no_identity.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/psr_only_plot_no_identity.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/psr_plot_with_track_number_only.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/psr_plot_with_track_number_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/psr_track_two_scans_same_track_number.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/psr_track_two_scans_same_track_number.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/radial_ambiguity_rad_invalid.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/radial_ambiguity_rad_invalid.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/radial_doppler_both_subfields.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/radial_doppler_both_subfields.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/radial_doppler_calculated.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/radial_doppler_calculated.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/reserved_expansion_field_carried.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/reserved_expansion_field_carried.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/spare_bits_nonzero.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/spare_bits_nonzero.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/special_purpose_field_opaque.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/special_purpose_field_opaque.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/three_altitudes_disagreeing.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/three_altitudes_disagreeing.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/time_of_day_exactly_86400.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/time_of_day_exactly_86400.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/track_quality_vector.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/track_quality_vector.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/two_stations_one_block.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/two_stations_one_block.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/warning_error_code_37.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/warning_error_code_37.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/warning_error_code_series.cdm.json`
+* `synapse_cdm/fixtures/cat048/golden/warning_error_code_series.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/ads_c_age_two_octets.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/ads_c_age_two_octets.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/adsb_version_3_emergency.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/adsb_version_3_emergency.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/both_altitudes_disagreeing.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/both_altitudes_disagreeing.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/cartesian_position_parked.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/cartesian_position_parked.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/composed_track_number_three_units.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/composed_track_number_three_units.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/contributing_sensors.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/contributing_sensors.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/emergency_disagreement.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/emergency_disagreement.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/emitter_category_and_fleet.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/emitter_category_and_fleet.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/estimated_accuracies_full.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/estimated_accuracies_full.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/flight_plan_correlated.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/flight_plan_correlated.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/full_mask_track.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/full_mask_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/midnight_rollover_nearest.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/midnight_rollover_nearest.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/minimum_fspec_track.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/minimum_fspec_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/mode5_time_offset.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/mode5_time_offset.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/mode_s_address_present.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/mode_s_address_present.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/non_minimal_fspec.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/non_minimal_fspec.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/pre_emergency_pair.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/pre_emergency_pair.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/reserved_and_extension_fields.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/reserved_and_extension_fields.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/spare_bits_nonzero.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/spare_bits_nonzero.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/target_identification_forbidden.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/target_identification_forbidden.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/target_size_length_only.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/target_size_length_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/three_altitudes_and_a_measured_height.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/three_altitudes_and_a_measured_height.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_begin.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_begin.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_data_ages.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_data_ages.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_end.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_end.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_number_only.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/track_number_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/trajectory_intent_three_points.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/trajectory_intent_three_points.parsed.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/two_records_one_block.cdm.json`
+* `synapse_cdm/fixtures/cat062/golden/two_records_one_block.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/delta_targets_across_the_prime_meridian.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/delta_targets_across_the_prime_meridian.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/dwell_with_no_targets_and_target_bits_set.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/dwell_with_no_targets_and_target_bits_set.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/free_text_and_test_status.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/free_text_and_test_status.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/full_mask_every_optional_group.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/full_mask_every_optional_group.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/hrr_signature_parked_both_time_branches.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/hrr_signature_parked_both_time_branches.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/mission_dwell_hi_res_targets.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/mission_dwell_hi_res_targets.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/multi_day_dwell_time.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/multi_day_dwell_time.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/platform_location_mixed_time_basis.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/platform_location_mixed_time_basis.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/processing_history_chain.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/processing_history_chain.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/repeated_mission_segment.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/repeated_mission_segment.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/reserved_and_extension_segments_recorded.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/reserved_and_extension_segments_recorded.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/simulated_classifications_never_flip_synthetic.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/simulated_classifications_never_flip_synthetic.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/sparse_mask_minimum_dwell.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/sparse_mask_minimum_dwell.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/synthesized_data_parks_without_refusal.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/synthesized_data_parks_without_refusal.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/tagging_device_beside_simulated_targets.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/tagging_device_beside_simulated_targets.parsed.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/tasking_segments_parked_with_job_id_zero.cdm.json`
+* `synapse_cdm/fixtures/gmti/golden/tasking_segments_parked_with_job_id_zero.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_checksum_that_does_not_validate_is_flagged_not_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_correction_offset_is_applied_and_the_raw_stamp_is_kept.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_course_of_360_degrees_is_the_documents_own_zero.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_course_of_360_degrees_is_the_documents_own_zero.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_negative_time_adjustment_is_read_signed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_negative_time_adjustment_is_read_signed.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_platform_only_core_identifier_names_one_of_the_two_devices.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_platform_only_core_identifier_names_one_of_the_two_devices.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_missing_a_mandatory_element_is_carried_and_reported.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_missing_a_mandatory_element_is_carried_and_reported.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_short_wavelength_record_is_refused_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_wavelengths_list_from_the_documents_own_example.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_wavelengths_list_from_the_documents_own_example.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_imapb_item_is_an_explicit_unknown.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_imapb_item_is_an_explicit_unknown.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_imapb_item_past_its_max_length_is_an_advisory.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_imapb_item_past_its_max_length_is_an_advisory.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_offset_target_with_no_frame_centre_emits_no_position.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unwitnessed_tag_is_skipped_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_agreeing_take_tag_104_and_raise_nothing.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_disagreeing_raise_an_advisory_and_still_emit.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/every_row_of_the_minimum_set_reported_in_one_packet.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/every_row_of_the_minimum_set_reported_in_one_packet.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_from_tag_75_when_it_is_the_only_ellipsoid_item.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_104_and_never_tag_15s_msl.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_104_and_never_tag_15s_msl.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_75_and_never_tag_15s_msl.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/hae_is_tag_75_and_never_tag_15s_msl.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_items_from_the_documents_own_examples.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_items_from_the_documents_own_examples.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_special_values_are_signals_and_not_measurements.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/imapb_special_values_are_signals_and_not_measurements.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/leap_seconds_alone_convert_the_stamp_toward_utc.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/leap_seconds_alone_convert_the_stamp_toward_utc.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/length_divergence_at_a_required_length.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/length_divergence_at_a_required_length.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/mandatory_items_only.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/mandatory_items_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/no_security_local_set_is_unlabelled_not_unclassified.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/no_security_local_set_is_unlabelled_not_unclassified.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/over_recommended_max_length_is_an_advisory.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/over_recommended_max_length_is_an_advisory.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/rvt_local_set_complete_from_the_element_rules.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/rvt_local_set_complete_from_the_element_rules.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_classification_outside_the_enumeration_carries_no_label.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_classification_outside_the_enumeration_carries_no_label.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_complete_from_the_element_rules.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_complete_from_the_element_rules.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_minimal_required_only.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_minimal_required_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_partial_is_carried_as_partial.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_local_set_partial_is_carried_as_partial.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_at_an_odd_octet_count_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_big_endian_bom_is_honoured_and_stripped.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_multiple_are_split_on_the_semicolon.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_a_lone_surrogate_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_required_element_at_a_forbidden_length_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_required_element_at_a_forbidden_length_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_uint16_that_the_format_cannot_carry_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/security_uint16_that_the_format_cannot_carry_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/special_values_are_signals_and_not_measurements.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/special_values_are_signals_and_not_measurements.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_104_carrying_a_signal_emits_no_altitude.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_104_carrying_a_signal_emits_no_altitude.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_75_from_the_documents_own_example.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/tag_75_from_the_documents_own_example.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_miis_core_identifier_from_the_documents_own_example.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_miis_core_identifier_from_the_documents_own_example.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_time_adjustments_from_the_documents_own_examples.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/the_time_adjustments_from_the_documents_own_examples.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_packets_one_payload_are_two_statements.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_packets_one_payload_are_two_statements.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/witnessed_set_from_the_documents_own_examples.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/witnessed_set_from_the_documents_own_examples.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_is_an_explicit_unknown.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_is_an_explicit_unknown.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_on_a_required_item_is_a_defect.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/zero_length_item_on_a_required_item_is_a_defect.parsed.cdm.json`
+* `synapse_cdm/fixtures/legion/golden/entity_exercise_affiliation_and_nulls.cdm.json`
+* `synapse_cdm/fixtures/legion/golden/entity_location_ecef_gulf_of_riga.cdm.json`
+* `synapse_cdm/fixtures/legion/golden/entity_location_lla_ventspils.cdm.json`
+* `synapse_cdm/fixtures/legion/golden/entity_sensor_mast_riga.cdm.json`
+* `synapse_cdm/fixtures/legion/golden/event_gunshot_detection.cdm.json`
+* `synapse_cdm/fixtures/legion/golden/locations_list_patrol_three.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/amplification_zombie_beside_friend.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/amplification_zombie_beside_friend.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/cooperative_modality_is_a_gnss_fix.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/cooperative_modality_is_a_gnss_fix.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/datastream_unresolved_references.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/datastream_unresolved_references.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/detection_evidence_tree.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/detection_evidence_tree.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/ecef_track_with_velocity.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/ecef_track_with_velocity.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/exercise_faker_is_friendly.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/exercise_faker_is_friendly.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/fractional_increment_parks_raw_integers.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/fractional_increment_parks_raw_integers.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/linkage_processed_track_carried.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/linkage_processed_track_carried.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/local_cartesian_with_complete_cft.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/local_cartesian_with_complete_cft.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/local_spherical_is_attributes_only.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/local_spherical_is_attributes_only.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/motion_event_complex_polygon.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/motion_event_complex_polygon.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/motion_event_tripwire.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/motion_event_tripwire.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/segment_retraction_is_an_event.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/segment_retraction_is_an_event.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/standalone_basic_track.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/standalone_basic_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/three_contiguous_segments_one_track.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/three_contiguous_segments_one_track.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/wgs84_velocity_with_height.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/wgs84_velocity_with_height.parsed.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/wgs84_velocity_without_height.nits.cdm.json`
+* `synapse_cdm/fixtures/nits/golden/wgs84_velocity_without_height.parsed.cdm.json`
+* `synapse_cdm/fixtures/pntmap/golden/equator_emitter_l5.cdm.json`
+* `synapse_cdm/fixtures/pntmap/golden/jamming_gulf_of_riga.cdm.json`
+* `synapse_cdm/fixtures/pntmap/golden/spoofing_no_geolocation.cdm.json`
+* `synapse_cdm/fixtures/pntmap/golden/unknown_type_vendor_fields.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/a_checksum_that_does_not_validate_is_flagged.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/a_checksum_that_does_not_validate_is_flagged.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/altitude_type_baro_never_reaches_alt_m.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/altitude_type_baro_never_reaches_alt_m.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/an_idd_version_that_is_not_edition_3.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/an_idd_version_that_is_not_edition_3.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/an_undecoded_message_type_is_parked.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/an_undecoded_message_type_is_parked.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/four_decoded_messages_one_vehicle.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/four_decoded_messages_one_vehicle.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/four_octet_checksum.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/four_octet_checksum.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/inertial_states_wgs84_altitude.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/inertial_states_wgs84_altitude.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/longitude_absent_from_the_presence_vector.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/longitude_absent_from_the_presence_vector.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/no_checksum_is_not_a_failing_checksum.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/no_checksum_is_not_a_failing_checksum.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/two_inertial_states_leave_the_entity_unpositioned.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/two_inertial_states_leave_the_entity_unpositioned.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/two_vehicles_are_two_entities.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/two_vehicles_are_two_entities.parsed.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/zero_ground_speed_yields_no_course.cdm.json`
+* `synapse_cdm/fixtures/stanag4586/golden/zero_ground_speed_yields_no_course.parsed.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/air_track_due_north.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/air_track_due_north.parsed.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/bridge_installation.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/bridge_installation.parsed.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/degraded_no_position.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/degraded_no_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/equator_zero_meridian.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/equator_zero_meridian.parsed.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/narva_patrol.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/narva_patrol.parsed.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/suspect_vessel_sentinels.cdm.json`
+* `synapse_cdm/fixtures/tak/golden/suspect_vessel_sentinels.parsed.cdm.json`
+
+**Bump ruling.** `synapse_cdm/models.py:Event` — MINOR: the declared surface gained a field. `oes`
+is added optional with a default of `None`, no field is removed, renamed or narrowed, and every
+object written against the 1.x models still validates against these. This is the shape rule for a
+declared surface that gains a field, and it is a ruling about the PYTHON surface only — the wire
+contract's own bump is `SCHEMA_VERSION`'s and is stated above as a MAJOR. The two are different
+facts about the same edit, which is what two version axes are for.
+
+**Bump ruling.** `synapse_cdm/models.py:Entity` — MINOR: the same shape, one class over.
+`ontology_types` is added optional with an empty default; nothing is removed and nothing narrows.
+
+**Bump ruling.** `synapse_cdm/__init__.py:__all__` — MINOR: seventeen exported names added and none
+removed. `__all__` is the hand-written statement of what a consumer may import, so adding to it is
+an addition of importable surface — the MINOR row's "Existing code keeps working" holds literally,
+because no existing name moved.
+
+**Bump ruling.** `synapse_cdm/__init__.py:<statement 2>` — PATCH: an import line. The unit is keyed
+by position, and what changed at this position is that a new `from synapse_cdm.oes import …` block
+took it and pushed the two below it down. No name is added or removed by the statement itself; the
+names it binds are ruled in the `__all__` paragraph above, where a consumer can find them.
+
+**Bump ruling.** `synapse_cdm/__init__.py:<statement 3>` — PATCH: the same, one position further
+down, and for the same reason.
+
+**Bump ruling.** `synapse_cdm/registry/sc_oes/ontology_terms.json` — MINOR: a new shipped data file
+under the package is a new public surface a consumer can read, which is the MINOR row's shape for a
+file rather than for a name. Ruled by M on 2026-09-06 after the gate refused to classify it
+silently — it called the unit "a shipped file this gate has no class for" — and the ruling is a
+class rather than a single case: a new shipped registry or schema under the package is MINOR;
+adding entries to one is MINOR; editing one without adding or removing an entry is PATCH; removing
+or renaming an entry is a release-policy question and is nobody's to take mechanically.
+
+**What a consumer sees, and this paragraph reverses its own earlier form.** It read: "Nothing in
+this arc changes an object on the wire: `SCHEMA_VERSION` does not move, no model gains a field, and
+no golden changes… `Event.oes` and `Entity.ontology_types` — the model changes that would move
+`SCHEMA_VERSION` to 2.0.0 — belong to a later round and are not here." **That was true of the
+ontology round's arc and this is the later round it named.** What a consumer sees now: every object
+this package emits carries `schema_version` `2.0.0`; every entity carries `ontology_types`, empty
+unless a producer asserted a semantic type; every event carries `oes`, `null` unless a producer made
+an SC-OES assertion. A 1.x consumer is refused, deliberately and at the version gate, and that
+refusal is the message the major exists to carry.
 
 ### 1.8.0 — 2026-09-06 — the last two parks close: MISB ST 0806.4's RVT Local Set rides item 73 into `Entity.attributes`, and the Motion Imagery Handbook settles KLV 8 as a companion
 

@@ -29,8 +29,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
@@ -54,6 +55,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:13:07.000Z",
+    "oes": null,
     "payload": {
       "cot_how": "h-t",
       "cot_type": "a-f-G-U-C-I",
@@ -64,7 +66,7 @@
     "related_entities": [
       "b56a20b9-6b8f-57a5-8bce-e65086440d4d"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",

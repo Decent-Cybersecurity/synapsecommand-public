@@ -129,8 +129,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
@@ -154,6 +155,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "observed_at_basis": {
         "date_from": "the receipt date, which was the nearest of the three candidate days",
@@ -184,7 +186,7 @@
     "related_entities": [
       "62650095-2e7e-522b-9e65-1a0aa64fc315"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat023",

@@ -135,6 +135,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -142,7 +143,7 @@
       "lon": 21.559998393058777,
       "position_source": "ESTIMATED"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
@@ -166,6 +167,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "cartesian_position": {
         "basis": "\u00a75.2.7, parked as metres and NEVER CONVERTED TO A COORDINATE. \u00a74.3.2 states the projection: 'a projection is performed on a plane tangential to the WGS-84 Ellipsoid at the location of the reference point. The Y-axis points to the geographical north at that position. The X-axis is perpendicular to the Y-axis and points to the east. The X, Y co-ordinates are calculated using a suitable projection technique for the final 3D to 2D conversion (e.g. a stereographical projection). It is slant range corrected, the source of altitude being indicated in I062/080 Track Status, Octet 1, bit 6 (MRH).' TWO INDEPENDENT UNKNOWNS, either of them fatal: the reference point is not in any CAT062 item \u2014 Appendix A \u00a72.5's NOTE says it is 'available in the Reserved Expansion Field of CATEGORY 065' \u2014 and the projection is named only by example, so two conforming SDPSs can emit different X for one aircraft and nothing in the record distinguishes them. This is a STRONGER decline than CAT048 settlement 3's, where the geodesy was absent from the document but the inputs were on the wire and a caller could inject the missing one. A consumer holding a CAT065 reference point may invert it visibly",
@@ -198,7 +200,7 @@
     "related_entities": [
       "2bd2849a-e97f-52eb-ab6f-471b6c8361c0"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat062",

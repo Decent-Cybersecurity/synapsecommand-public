@@ -54,6 +54,7 @@
       "speed_mps": 3.2924
     },
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -61,7 +62,7 @@
       "lon": 21.5388,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "ais",
       "adapter_version": "1.0.0",
@@ -85,6 +86,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:14:44.000Z",
+    "oes": null,
     "payload": {
       "ais_message_type": 18,
       "event_id_basis": "message MMSI + observed_at",
@@ -97,7 +99,7 @@
     "related_entities": [
       "1a29e60e-e3da-51b3-901e-3387b827d3fb"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "ais",

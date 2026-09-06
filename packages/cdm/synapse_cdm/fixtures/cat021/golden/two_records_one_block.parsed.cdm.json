@@ -97,6 +97,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -104,7 +105,7 @@
       "lon": 23.8412000611,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat021",
       "adapter_version": "1.0.0",
@@ -128,6 +129,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:13:00.000Z",
+    "oes": null,
     "payload": {
       "cat021_record_count": 2,
       "cat021_record_index": 0,
@@ -140,7 +142,7 @@
     "related_entities": [
       "038ab388-034d-5e38-816c-fc869985eab9"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat021",
@@ -253,6 +255,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -260,7 +263,7 @@
       "lon": 21.5000000596,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat021",
       "adapter_version": "1.0.0",
@@ -284,6 +287,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:13:01.000Z",
+    "oes": null,
     "payload": {
       "cat021_record_count": 2,
       "cat021_record_index": 1,
@@ -296,7 +300,7 @@
     "related_entities": [
       "46efb1af-549d-561e-98e3-66b35a8e738b"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat021",

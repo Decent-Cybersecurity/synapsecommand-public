@@ -1,5 +1,80 @@
 {
   "$defs": {
+    "EntityRelation": {
+      "additionalProperties": false,
+      "description": "What ROLE an entity already related to this event plays in it.\n\n`Event.related_entities` remains the single answer to \"which entities does this event\nconcern\"; this adds the role. The membership rule that keeps the two lists agreeing lives on\n`Event` (`models.py`), because it is the only place both lists are visible.",
+      "properties": {
+        "entity_id": {
+          "description": "Must also appear in the event's related_entities \u2014 see Event._oes_entities.",
+          "format": "uuid",
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "predicate": {
+          "description": "An absolute semantic identifier: a governed ontology term or a valid third-party one. A bare word or a local name is refused.",
+          "minLength": 1,
+          "title": "Predicate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_id",
+        "predicate"
+      ],
+      "title": "EntityRelation",
+      "type": "object"
+    },
+    "EventClass": {
+      "description": "What KIND of assertion an event is \u2014 the coarsest semantic distinction SC-OES makes.\n\nEight members, and a consumer that understands no event type at all can still act on this\none. It is asserted by the producer and never inferred: `02-event-classes.md` forbids\nderiving it from `type_id`, from the payload or from the producer's identity, because the\nwhole value of the field is that somebody took responsibility for the claim.",
+      "enum": [
+        "OBSERVATION",
+        "STATE_CHANGE",
+        "CONSTRAINT",
+        "ASSESSMENT",
+        "IMPACT",
+        "RECOMMENDATION",
+        "DECISION",
+        "ACTION"
+      ],
+      "title": "EventClass",
+      "type": "string"
+    },
+    "EventRelation": {
+      "additionalProperties": false,
+      "description": "One typed reference from this event to another event.\n\nBoth halves are required: a predicate with no target says nothing, and a target with no\npredicate is the association `CORRELATES_WITH` exists to spell honestly.",
+      "properties": {
+        "event_id": {
+          "description": "The event this relation points at. It need not be locally available \u2014 rejecting an event because its antecedent has not arrived would make delivery order part of the contract.",
+          "format": "uuid",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "predicate": {
+          "$ref": "#/$defs/EventRelationPredicate",
+          "description": "One of the seven governed predicates. An unrecognised predicate is refused rather than read as a nearby one."
+        }
+      },
+      "required": [
+        "predicate",
+        "event_id"
+      ],
+      "title": "EventRelation",
+      "type": "object"
+    },
+    "EventRelationPredicate": {
+      "description": "The seven governed relationship predicates. Direction is part of the meaning.\n\nFive are carried by the LATER event and point at the earlier one; `CONTRADICTS` and\n`CORRELATES_WITH` are conceptually symmetric. An unrecognised predicate is a failure and\nmust not be interpreted as a nearby one \u2014 `08-event-relationships.md` is explicit, because\nthe nearby predicate is always a stronger claim than the one the producer could support.",
+      "enum": [
+        "DERIVED_FROM",
+        "UPDATES",
+        "SUPERSEDES",
+        "RESOLVES",
+        "RETRACTS",
+        "CONTRADICTS",
+        "CORRELATES_WITH"
+      ],
+      "title": "EventRelationPredicate",
+      "type": "string"
+    },
     "EventType": {
       "enum": [
         "DETECTION",
@@ -12,6 +87,111 @@
       ],
       "title": "EventType",
       "type": "string"
+    },
+    "EvidenceKind": {
+      "description": "What an evidence reference points at: another assertion, a source record, or the outside.",
+      "enum": [
+        "EVENT",
+        "SOURCE_RECORD",
+        "EXTERNAL_ARTIFACT"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "description": "What stands behind an assertion. Descriptive: nothing here is fetched or verified.\n\nOne model with a declared `kind` rather than three, because `evidence[]` is a heterogeneous\nlist and a discriminated union in the wire form would make a non-Python consumer negotiate a\ndiscriminator to read a citation. The per-kind field rules are a validator instead, so the\npublished schema stays readable and the refusal names the kind and the field.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "EVENT only. The cited event need not resolve locally, and a consumer that cannot find it must not reject the citing event for that reason.",
+          "title": "Event Id"
+        },
+        "hash": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DESCRIPTIVE METADATA ONLY. Not an integrity guarantee, not a signature and not evidence of authenticity; no conformance dimension asserts anything about its value. SC-OES v0.1.0 implements no signing and no verification.",
+          "title": "Hash"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind",
+          "description": "Which of the three kinds of reference this is."
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Type"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SOURCE_RECORD only. The CDM's own source-identifier representation, reused rather than re-invented \u2014 never the pair flattened into one opaque string."
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "EXTERNAL_ARTIFACT only. Never retrieved, at validation time or any other.",
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
     },
     "Integrity": {
       "additionalProperties": false,
@@ -43,6 +223,20 @@
       "title": "Integrity",
       "type": "object"
     },
+    "LifecycleStatus": {
+      "description": "The lifecycle state of the represented CONDITION \u2014 not of the message, not of a workflow.\n\nOptional, and absence is the ordinary case: most sensor sources report occurrences rather\nthan managed conditions. `05-lifecycle.md` forbids defaulting it to `ACTIVE` or to anything\nelse, and forbids deriving it from the effective interval \u2014 an event whose `effective_to`\nhas passed is not thereby `EXPIRED`, because the interval is what the producer said about\nthe world and this is what the producer says about the assertion's own standing.",
+      "enum": [
+        "PLANNED",
+        "ACTIVE",
+        "RESOLVED",
+        "EXPIRED",
+        "CANCELLED",
+        "RETRACTED",
+        "SUPERSEDED"
+      ],
+      "title": "LifecycleStatus",
+      "type": "string"
+    },
     "LineString": {
       "additionalProperties": false,
       "properties": {
@@ -68,6 +262,144 @@
         "coordinates"
       ],
       "title": "LineString",
+      "type": "object"
+    },
+    "OesMetadata": {
+      "additionalProperties": false,
+      "description": "The wire-semantic block. \u00a752's thirteen fields, and `maturity` is not among them.\n\nMaturity is a property of a governed semantic DEFINITION, not of an occurrence: it lives in\nthe event registry, in ontology-term metadata and in profile documents. Putting it on the\nwire would duplicate registry governance metadata on every message and give it a second\nauthority, which would then go stale (`12-versioning.md`).\n\nThree states are distinguished throughout and are not collapsed (`01-core.md`): a field\npresent with a value is ASSERTED, an absent field or a null `confidence` is UNKNOWN, and a\nvalue whose meaning is \"none\" is ASSERTED-ABSENT. An unknown value is never represented as a\nzero, an empty string or a default enumeration member \u2014 which is why every optional field\nhere defaults to `None` and none of the enumerations carries an UNKNOWN member the way the\nCDM's own vocabularies do (`enums.py:3`). The CDM's rule is right for a closed structural\nclassification a map has to render; SC-OES's optional fields are assertions a producer either\nmade or did not, and \"not asserted\" is exactly what absence already says.",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0..1 on the producer's own scale. None = unknown, never 0.0, and this specification defines no universal confidence algorithm.",
+          "title": "Confidence"
+        },
+        "effective_from": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the represented condition begins. NEVER defaulted to observed_at, received_at or the time of validation.",
+          "title": "Effective From"
+        },
+        "effective_to": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When it ceases. None = the producer did not state an end; it does not mean the condition is permanent and it does not mean it is still in force.",
+          "title": "Effective To"
+        },
+        "entity_relations": {
+          "description": "Roles for entities already in related_entities.",
+          "items": {
+            "$ref": "#/$defs/EntityRelation"
+          },
+          "title": "Entity Relations",
+          "type": "array"
+        },
+        "event_class": {
+          "$ref": "#/$defs/EventClass",
+          "description": "Asserted by the producer. Never inferred from type_id or from the payload."
+        },
+        "event_relations": {
+          "description": "Empty or absent asserts nothing. No universal cap.",
+          "items": {
+            "$ref": "#/$defs/EventRelation"
+          },
+          "title": "Event Relations",
+          "type": "array"
+        },
+        "evidence": {
+          "description": "What stands behind the assertion. No universal cap.",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "extensions": {
+          "additionalProperties": true,
+          "description": "The one declared open bag. Keys are x.<namespace>.<name>; sc.* is reserved and rejected in v0.1; values are preserved and never interpreted.",
+          "title": "Extensions",
+          "type": "object"
+        },
+        "security": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecurityMarking"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transported markings. Absence is never a conformance failure and is never proof of unclassified status."
+        },
+        "spec_version": {
+          "description": "The SC-OES version whose semantics the producer is claiming. Semver, on the same rule CDMBase applies to schema_version; NOT derived from SCHEMA_VERSION or PACKAGE_VERSION, and not required to equal this package's SC_OES_VERSION \u2014 a producer at a later spec version stays transportable.",
+          "title": "Spec Version",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LifecycleStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = the source says nothing about lifecycle."
+        },
+        "type_id": {
+          "description": "The governed or third-party semantic type identifier, under one of the two frozen grammars. Syntax here; recognition is dimension C's.",
+          "title": "Type Id",
+          "type": "string"
+        },
+        "verification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Verification"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = nothing is asserted about corroboration."
+        }
+      },
+      "required": [
+        "spec_version",
+        "event_class",
+        "type_id"
+      ],
+      "title": "OesMetadata",
       "type": "object"
     },
     "Point": {
@@ -121,6 +453,75 @@
         "coordinates"
       ],
       "title": "Polygon",
+      "type": "object"
+    },
+    "SecurityMarking": {
+      "additionalProperties": false,
+      "description": "Handling markings, TRANSPORTED. SC-OES does not interpret or enforce them.\n\nThree propositions `10-security-markings.md` states because each is routinely assumed away:\npresence of a marking is not authorization, absence is not proof of unclassified status, and\ntransport is not enforcement. SC-OES is not a cross-domain guard and must not be represented\nas one; nothing in this package could enforce a marking, and a deployment that enforces one\ndoes so with its own accredited mechanism, which knows the scheme and is answerable for the\ndecision.\n\nEvery value here is interpreted ONLY relative to `scheme`, which is why `scheme` is the one\nrequired field: two markings from different schemes are not comparable, and a classification\nwith no scheme beside it is a string somebody will compare anyway.",
+      "properties": {
+        "caveats": {
+          "description": "As that scheme spells them.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Caveats",
+          "type": "array"
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "As that scheme spells it. Transported verbatim.",
+          "title": "Classification"
+        },
+        "marking_extras": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Scheme-specific values with no generic counterpart. Strings, because dimension B checks that marking values are strings and because the block has exactly one generic open bag and it is oes.extensions.",
+          "title": "Marking Extras",
+          "type": "object"
+        },
+        "originator": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "As that scheme identifies them.",
+          "title": "Originator"
+        },
+        "releasability": {
+          "description": "As that scheme spells them. Never reordered.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Releasability",
+          "type": "array"
+        },
+        "scheme": {
+          "description": "Which marking system these values belong to. Required.",
+          "minLength": 1,
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme"
+      ],
+      "title": "SecurityMarking",
       "type": "object"
     },
     "Severity": {
@@ -193,9 +594,20 @@
       ],
       "title": "SourceRef",
       "type": "object"
+    },
+    "Verification": {
+      "description": "How corroborated the assertion is. NOT confidence \u2014 `06-verification-and-confidence.md`.\n\nThey vary independently and every combination is meaningful: a single high-grade sensor can\nbe highly confident and entirely uncorroborated, and three weak sources can corroborate each\nother and leave the producer unsure. Absence means nothing is asserted about corroboration;\n`UNVERIFIED` is the positive claim that the question was asked and the answer was \"no\", which\nis a different and more informative fact. `DISPUTED` records that a disagreement exists and\nis not a verdict on it.",
+      "enum": [
+        "UNVERIFIED",
+        "CORROBORATED",
+        "VALIDATED",
+        "DISPUTED"
+      ],
+      "title": "Verification",
+      "type": "string"
     }
   },
-  "$id": "urn:synapsecommand:cdm:1.0.0:event",
+  "$id": "urn:synapsecommand:cdm:2.0.0:event",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Anything that happens. The audit-bearing object: two timestamps and a source, always.",
@@ -263,6 +675,18 @@
       "title": "Observed At",
       "type": "string"
     },
+    "oes": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OesMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The SC-OES wire-semantic block. None = the producer made no SC-OES assertion, which is NOT the producer asserting defaults. Optional so that every object written before SC-OES existed stays structurally valid and every producer that knows nothing about SC-OES keeps emitting objects these models accept."
+    },
     "payload": {
       "additionalProperties": true,
       "description": "Event-specific fields. Validated against PAYLOAD_MODELS[event_type] when one is registered; free-form otherwise. Also the never-drop bag for events.",
@@ -285,7 +709,7 @@
       "type": "array"
     },
     "schema_version": {
-      "default": "1.0.0",
+      "default": "2.0.0",
       "description": "Semver of the CDM this object was written against.",
       "title": "Schema Version",
       "type": "string"
@@ -318,5 +742,5 @@
   ],
   "title": "Event",
   "type": "object",
-  "x-cdm-schema-version": "1.0.0"
+  "x-cdm-schema-version": "2.0.0"
 }

@@ -18,6 +18,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": 120.0,
       "alt_m": null,
@@ -25,7 +26,7 @@
       "lon": 6.7,
       "position_source": "MANUAL"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "pntmap",
       "adapter_version": "1.0.0",
@@ -49,6 +50,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T05:58:00.000Z",
+    "oes": null,
     "payload": {
       "frequency_band": "L5",
       "interference_type": "JAMMING",
@@ -59,7 +61,7 @@
     "related_entities": [
       "84db0e50-bc3b-5f30-9d66-338c0fbd883a"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "pntmap",

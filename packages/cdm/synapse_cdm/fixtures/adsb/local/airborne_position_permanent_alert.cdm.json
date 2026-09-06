@@ -44,6 +44,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": null,
       "alt_m": null,
@@ -51,7 +52,7 @@
       "lon": 23.450140183971776,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
@@ -75,6 +76,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:15:00.000Z",
+    "oes": null,
     "payload": {
       "adsb_frame_kind": "airborne_position",
       "adsb_type_code": 11,
@@ -89,7 +91,7 @@
     "related_entities": [
       "0f3b829e-baea-592f-b150-3bf4e7f6ee88"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "CRITICAL",
     "source": {
       "adapter": "adsb",

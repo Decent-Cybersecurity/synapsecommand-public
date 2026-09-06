@@ -15,9 +15,9 @@ description: "What we push OUT: a drawing a commander's plan puts on someone els
 | | |
 | --- | --- |
 | Source file | `schemas/plan_object.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:1.0.0:plan_object` |
-| CDM schema version | `1.0.0` |
-| SHA-256 of source | `b4474e5f595f33ac8ea1412fa9233aa9e44fe8fa291b1eb78dd193a7fe737e9d` |
+| `$id` | `urn:synapsecommand:cdm:2.0.0:plan_object` |
+| CDM schema version | `2.0.0` |
+| SHA-256 of source | `39f17bae5ad8a98edb083a7d6d06ecdb4fa758cd2dd63c51d8735c32f63e519f` |
 
 What we push OUT: a drawing a commander's plan puts on someone else's map.
 
@@ -37,7 +37,7 @@ outcomes, because everyone assumes it arrived.
 | `object_id` | string (uuid) | **yes** |  |
 | `object_kind` | `"plan_object"` | no |  |
 | `object_type` | [ObjectType](#objecttype) | **yes** |  |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"1.0.0"`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.0.0"`. |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
 | `style` | object | no | Rendering HINTS, not requirements — stroke, fill, opacity, dash. A receiving client is free to ignore them, so nothing that changes MEANING may live here (an affiliation belongs on the entity, not in a colour). |

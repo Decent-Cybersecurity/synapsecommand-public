@@ -248,8 +248,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "cat048",
       "adapter_version": "1.0.0",
@@ -273,6 +274,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "cat048_acas_resolution_advisory": {
         "acas_ra": "3141592653589a"
@@ -306,7 +308,7 @@
     "related_entities": [
       "ad697527-c90b-59c5-bb5b-a2a01297b8b2"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat048",

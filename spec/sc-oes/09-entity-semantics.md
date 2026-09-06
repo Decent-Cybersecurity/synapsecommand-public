@@ -34,7 +34,7 @@ event does not otherwise relate to would make the two lists disagree about the e
 
 ```text
 entity_id:  AIRBASE-ALPHA
-predicate:  tag:synapsecommand.com,2026-09-06:ontology:core:affects
+predicate:  tag:synapsecommand.com,2026-09-06:ontology:core:Affects
 ```
 
 ## Ontology annotations on the entity

@@ -23,6 +23,7 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": {
       "accuracy_m": 25.0,
       "alt_m": 0.0,
@@ -30,7 +31,7 @@
       "lon": 0.0,
       "position_source": "GNSS"
     },
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
@@ -54,6 +55,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:00:00.000Z",
+    "oes": null,
     "payload": {
       "cot_how": "m-g",
       "cot_type": "a-u-S-X-M",
@@ -64,7 +66,7 @@
     "related_entities": [
       "879a2e43-45e9-5512-a917-15ca4cdd6af5"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",

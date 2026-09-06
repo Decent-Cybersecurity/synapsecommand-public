@@ -54,8 +54,9 @@
     "integrity": null,
     "kinematics": null,
     "object_kind": "entity",
+    "ontology_types": [],
     "position": null,
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "source": {
       "adapter": "ais",
       "adapter_version": "1.0.0",
@@ -79,6 +80,7 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T06:15:00.000Z",
+    "oes": null,
     "payload": {
       "ais_message_type": 3,
       "event_id_basis": "message MMSI + observed_at",
@@ -91,7 +93,7 @@
     "related_entities": [
       "8cf23745-abe1-5d5c-b126-3fc211c59a7c"
     ],
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "ais",
