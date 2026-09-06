@@ -35,6 +35,22 @@ external format ──▶ Adapter.to_cdm() ──▶ Entity | Event | Track | Pl
 consumer        ──▶ Adapter.from_cdm() ─▶ external format          (egress, e.g. TAK)
 ```
 
+## Where this sits
+
+The CDM is one of five things, and each answers a different question. Keeping them apart is what
+makes any of them usable on its own.
+
+| Layer | Answers | Where |
+| --- | --- | --- |
+| **Canonical Data Model** | what shape is this record | this page, and [the four objects](./cdm/index.mdx) |
+| **Operational Ontology** | what does this term mean | [Operational Ontology](./sc-oes/ontology.mdx) |
+| **SC-OES** | what kind of operational assertion is this | [SC-OES](./sc-oes/index.mdx) |
+| **Adapters** | how does a source format become a canonical record | [Writing an Adapter](./writing-an-adapter.mdx) |
+| **SynapseCommand private runtime** | what should be done about it | not published — [the public boundary](./sc-oes/boundary.mdx) |
+
+SC-OES and the Operational Ontology are both **v0.1.0 drafts**, published from this repository
+and not submitted to or approved by any external standards body.
+
 ## The four objects
 
 Everything an adapter emits is one of four kinds. The split is by **what a thing is**, not by
@@ -129,6 +145,10 @@ hashes: `...:44Z`, `...:44.0Z` and `...:44.000000Z` are one instant and three st
   schemas, which is what a non-Python consumer validates against.
 - **[Writing an Adapter](./writing-an-adapter.mdx)** — the tutorial, built on the PNTMAP
   reference adapter, with a real fixture and its real golden output side by side.
+- **[SC-OES](./sc-oes/index.mdx)** — the draft event-semantics layer that applies *after*
+  translation, its thirteen governed types and its five conformance dimensions.
+- **[The public boundary](./sc-oes/boundary.mdx)** — what is published here, what is not, and the
+  tests that hold the line.
 - **[Changelog](./changelog.mdx)** — what `schema_version` means and what has changed.
 
 ## Installing it

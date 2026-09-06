@@ -1,0 +1,155 @@
+---
+title: "SC-OES"
+sidebar_label: "Overview"
+sidebar_position: 0
+description: "The Operational Event Specification — a draft semantics layer applied after a source format has been translated into the CDM."
+---
+
+# SC-OES — the Operational Event Specification
+
+**SC-OES v0.1.0 — Draft.** It is published from this repository as a draft. It has not been
+submitted to, reviewed by, or approved by any external standards body, and nothing on this site
+should be read as implying that it has.
+
+**SC-OES is a lightweight operational-event semantics layer applied after source-format
+translation into the SynapseCommand Canonical Data Model.**
+
+The CDM answers *what shape is this record*. SC-OES answers the question a consumer asks next and
+the CDM deliberately does not: **what kind of operational assertion is this, and how much weight
+does it carry?** What kind of claim the producer is making, which governed type it claims, how
+confident and how verified it is, over what interval the represented condition applies, what it
+was derived from or supersedes, what evidence stands behind it, and what handling markings travel
+with it.
+
+## What it replaces: nothing
+
+ASTERIX, STANAG 4676, STANAG 4607, TAK, AIS, AIXM, MIP / JC3IEDM and every sensor-native and
+C2-native message format remain the source of record for their own wire semantics. This
+repository *translates* them — that is what an [adapter](../writing-an-adapter.mdx) is — and
+SC-OES applies afterwards, to the canonical record the adapter produced. A format that says how
+a radar reports a plot and a layer that says whether a claim is an observation or an assessment
+are not competing for the same job.
+
+## Where it attaches
+
+One optional block on the CDM's existing [`Event`](../cdm/event.mdx), and no second envelope:
+
+```json
+{
+  "event_type": "GNSS_INTERFERENCE",
+  "oes": {
+    "spec_version": "0.1.0",
+    "event_class": "OBSERVATION",
+    "type_id": "sc.pnt.gnss_interference.v1",
+    "verification": "CORROBORATED",
+    "confidence": 0.82,
+    "effective_from": "2026-04-29T01:17:00Z"
+  }
+}
+```
+
+An event with no `oes` block is still a valid CDM event, and every consumer that ignores the
+block keeps working. That is the property the attachment model was chosen for; the reasoning,
+and the alternatives it beat, are in `docs/adr/0001-sc-oes-attachment-model.md` in the
+repository.
+
+## The eight event classes
+
+Every governed type belongs to exactly one class, and the class is what tells a consumer how to
+read the claim.
+
+| Class | The claim |
+| --- | --- |
+| `OBSERVATION` | a sensor or source reports something it detected |
+| `STATE_CHANGE` | something that was in one state is now in another |
+| `CONSTRAINT` | a restriction applies |
+| `ASSESSMENT` | a judgement, formed from observations, that the observations do not themselves state |
+| `IMPACT` | a consequence for an operation |
+| `RECOMMENDATION` | a proposed course of action |
+| `DECISION` | a decision that was taken |
+| `ACTION` | an action that was authorised |
+
+The line between `OBSERVATION` and `ASSESSMENT` is the one the specification spends the most
+words on, because it is the one that decays first: an assessment recorded as an observation
+launders a judgement into a measurement.
+
+## The governed type registry
+
+Thirteen governed event types are published in v0.1.0, across seven domains. They are not a list
+in a document that code copies: the machine-readable registry ships inside the package, is read
+with `importlib.resources`, needs no checkout and no network, and is treated as data.
+
+```python
+from synapse_cdm import oes_registry
+
+record = oes_registry.get_event_type("sc.pnt.gnss_interference.v1")
+record.event_class          # 'OBSERVATION'
+record.maturity             # 'DRAFT'
+oes_registry.list_event_types()
+```
+
+A second registry carries the governed ontology terms, and it is **generated from the ontology**
+rather than hand-maintained — see [the Operational Ontology](./ontology.mdx).
+
+## The seven profiles
+
+A profile scopes SC-OES to a domain: which governed types are in scope, which classes they span,
+and what a producer in that domain is expected to emit. Seven are published — **air, C2,
+decision, ISR, logistics, mission and PNT** — and they live under `spec/sc-oes/profiles/` in the
+repository.
+
+One of them, **PNT**, has a reference producer behind it: the `pntmap` adapter emits the SC-OES
+block on real fixtures, which is what makes the profile something you can run rather than
+something you can read. The other six are specification-only, and each says so in its own words.
+
+Ten further domains are **future work and are not implemented here**: maritime, land, space,
+cyber, medical, fires, IAMD, exercise, weather and infrastructure.
+
+## Conformance, in five dimensions and no score
+
+```bash
+python -m synapse_cdm.conformance --input event.json --profile PNT
+cdm-conformance --input - --require A,B --json      # same tool, installed entry point
+```
+
+| Dimension | Assesses |
+| --- | --- |
+| **A** | CDM Conformance |
+| **B** | SC-OES Core Syntax Conformance |
+| **C** | SC-OES Semantic Type Conformance |
+| **D** | SC-OES Profile Conformance |
+| **E** | Ontology Conformance |
+
+Each dimension carries its own verdict — `PASS`, `FAIL` or `SKIP` — and there is no aggregate.
+
+:::warning[`SKIP` is not a weak `PASS`]
+`SKIP` means *this was not assessed*: not requested, or nothing present to assess. The
+specification forbids displaying, reporting, exporting or aggregating it as `PASS`, and forbids
+producing any single combined score, grade or percentage. A score would have to encode a
+judgement about which dimension matters, and the honest answer is that it depends on what the
+consumer is doing — at which point the number gets quoted as though it had a meaning.
+:::
+
+The tool runs offline. Nothing in its import closure can reach a network, and a test proves that
+by walking the closure as well as by removing the socket layer underneath it.
+
+## Terminology, and what may not be claimed
+
+`SC-OES Conformant` and `SC-OES PNT Profile Conformant` are the permitted claims, and each means
+exactly what `spec/sc-oes/13-conformance.md` says it means. There is no certification programme
+and this work does not create one; `spec/sc-oes/00-conventions.md` carries the list of claims
+that may not be made, and a test sweeps the repository for them.
+
+SC-OES is an open interoperability specification maintained within the SynapseCommand project by
+Decent Cybersecurity. The open-source licence governing these materials does not grant rights to
+use Decent Cybersecurity or SynapseCommand trademarks except as necessary for accurate
+descriptive reference.
+
+## Where the normative text is
+
+The rendered pages here are an orientation. The specification itself is sixteen documents under
+`spec/sc-oes/` in the repository, and they are normative: conventions, core, event classes, event
+types, temporality, lifecycle, verification and confidence, provenance and evidence, event
+relationships, entity semantics, security markings, extensions, versioning, conformance, security
+considerations and governance. Governance — how a type or term is proposed, reviewed, versioned
+and deprecated — is under `spec/governance/`.

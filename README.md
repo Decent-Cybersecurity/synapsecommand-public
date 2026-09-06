@@ -1,8 +1,10 @@
 # synapsecommand — public
 
-SynapseCommand's integration layer: the **Canonical Data Model**, its published JSON Schema,
-and the adapter SDK and validation harness that go with it. Apache 2.0 — see [`LICENSE`](LICENSE)
-and [`NOTICE`](NOTICE), the latter for the attribution and for what the licence does *not* cover:
+SynapseCommand's open integration and semantic contract layer: the **Canonical Data Model**,
+the **Operational Event Specification** (SC-OES), the **Operational Ontology**, the published JSON
+Schemas, the adapters, and the validation and conformance tooling that go with them. Apache 2.0 —
+see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE), the latter for the attribution and for what the
+licence does *not* cover:
 the specification documents this repository pins are recorded by hash and remain under their own
 publishers' terms. [`PUBLICATION.md`](PUBLICATION.md) records when this repository became public,
 which protections are enforced on it and how each was verified, and its ledger of what publication
@@ -27,14 +29,70 @@ consumer        ──▶ Adapter.from_cdm() ─▶ external format          (eg
 ```
 packages/cdm/       the synapse-cdm distribution — models, adapter SDK, harness, fixtures
 schemas/            published JSON Schema, GENERATED from the models — never hand-edited
+spec/               SC-OES and its governance — normative prose, human-readable, DRAFT
+ontology/           the Operational Ontology — Turtle is the authority, everything else derived
+examples/           synthetic SC-OES events, validated by the suite
 tests/              the suite; bare `pytest` from this directory runs all of it
 gates/              checks too slow or too networked for the suite; each is a protocol act
 docs/               the documentation site (Docusaurus, deployed to Cloudflare Pages)
 ```
 
+`spec/`, `ontology/` and `examples/` are human-readable and repository-bound; the machine-readable
+artefacts the runtime actually reads — the governed event registry and the generated ontology-term
+registry — live under `packages/cdm/synapse_cdm/registry/sc_oes/` and ship in the wheel. The three
+are kept visibly distinct on purpose, and a fourth thing that looks like all of them is
+`fixtures/*/spec/`, which holds the pin records for third-party standards this repository does not
+redistribute.
+
 `schemas/` is at the root deliberately: it is the artefact for consumers that are not Python,
 and a Go or TypeScript reader should not have to understand a Python package layout to find it.
 It is generated, and a test fails the build if it drifts from the models.
+
+## The layers, and the boundary this repository is drawn around
+
+**SC-OES v0.1.0 — Draft.** **SynapseCommand Operational Ontology v0.1.0 — Draft.** Both are
+published from this repository as drafts. Neither has been submitted to, reviewed by, or approved
+by any external standards body, and nothing here should be read as implying that it has.
+
+Five things are kept apart, because each answers a different question and conflating any two of
+them is the failure mode the separation exists to prevent:
+
+| Layer | Answers | Where |
+|---|---|---|
+| **Canonical Data Model** | what shape is this record | [`packages/cdm/`](packages/cdm), [`schemas/`](schemas) |
+| **Operational Ontology** | what does this term mean | [`ontology/`](ontology) |
+| **SC-OES** | what kind of operational assertion is this | [`spec/sc-oes/`](spec/sc-oes) |
+| **Adapters** | how does a source format become a canonical record | [`packages/cdm/synapse_cdm/adapters/`](packages/cdm/synapse_cdm/adapters) |
+| **SynapseCommand private runtime** | what should be done about it | not here, and not published |
+
+The last row is the boundary. Reasoning, inference rules, correlation and fusion, scoring, and
+course-of-action generation are the product and are not in this repository; the language that
+product reads is. That is a property enforced over the package sources by
+`tests/test_cdm_boundary.py` rather than a promise made by this paragraph — no import of private
+code, no reasoner, no graph database, no message broker, no model SDK, and no crypto.
+
+**SC-OES is a lightweight operational-event semantics layer applied after source-format
+translation into the SynapseCommand Canonical Data Model.** It replaces nothing: ASTERIX, STANAG
+4676, STANAG 4607, TAK, AIS, AIXM, MIP / JC3IEDM and every sensor-native and C2-native message
+format remain the source of record for their own wire semantics, and this repository translates
+them rather than competing with them. What SC-OES adds sits on the CDM's existing `Event` as one
+optional block: what kind of assertion this is, which governed type it claims, how confident and
+how verified the producer is, over what interval it applies, what it was derived from, and what
+evidence stands behind it.
+
+Seven domain profiles are published — air, C2, decision, ISR, logistics, mission and PNT — and one
+of them, PNT, has a reference producer behind it in this repository. Ten further domains are
+**future work and are not implemented here**: maritime, land, space, cyber, medical, fires, IAMD,
+exercise, weather and infrastructure.
+
+**Trademark.** SC-OES is an open interoperability specification maintained within the
+SynapseCommand project by Decent Cybersecurity. The open-source licence governing these materials
+does not grant rights to use Decent Cybersecurity or SynapseCommand trademarks except as necessary
+for accurate descriptive reference. There is no certification programme and this work does not
+create one: `SC-OES Conformant` and `SC-OES PNT Profile Conformant` are the permitted claims, each
+meaning exactly what `spec/sc-oes/13-conformance.md` says it means, and
+[`spec/sc-oes/00-conventions.md`](spec/sc-oes/00-conventions.md) carries the list of claims that
+may not be made.
 
 ## Using it
 
@@ -198,6 +256,10 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 | [`packages/cdm/synapse_cdm/FORMAT_COVERAGE.md`](packages/cdm/synapse_cdm/FORMAT_COVERAGE.md) | field-by-field CoT / STANAG 4676 / GeoJSON mappings and the named gaps |
 | [`packages/cdm/synapse_cdm/MIGRATIONS.md`](packages/cdm/synapse_cdm/MIGRATIONS.md) | what MAJOR/MINOR/PATCH mean for `schema_version`, the procedure for changing the schema, and what a release requires |
 | [`PUBLICATION.md`](PUBLICATION.md) | what became true when this repository went public, and the open ledger — including what still has to be configured on PyPI before the publish workflow can upload anything |
+| [`spec/sc-oes/README.md`](spec/sc-oes/README.md) | SC-OES: the sixteen normative documents, what the specification is and is not, and the profiles |
+| [`ontology/README.md`](ontology/README.md) | the Operational Ontology: the eight Turtle modules, the two derived artefacts, and the drift gate |
+| [`examples/README.md`](examples/README.md) | the synthetic examples, one per governed event type, and the linked decision chain |
+| [`spec/governance/`](spec/governance) | how a governed type or term is proposed, reviewed, versioned and deprecated |
 
 ## Dependencies, and what is deliberately absent
 

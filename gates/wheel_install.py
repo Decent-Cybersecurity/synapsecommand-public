@@ -189,6 +189,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_ordinals.py": "adapter ordinals across repository prose",
     "test_cdm_packaging.py": "pyproject.toml's globs against git's index",
     "test_cdm_pins.py": "pinned specification documents, which the wheel does not carry",
+    "test_cdm_positioning.py": "README.md, the rendered SC-OES pages and the normative spec documents, swept over `git ls-files` — the repository's prose about itself, none of which ships in the wheel",
     "test_cdm_prose_counts.py": "the adapter count in README, docs and CONTRIBUTING",
     "test_cdm_publication.py": "git history and the publication ledger",
     "test_cdm_release.py": "release tags against PACKAGE_VERSION",

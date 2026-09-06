@@ -1,0 +1,78 @@
+---
+title: "Operational Ontology"
+sidebar_label: "Operational Ontology"
+sidebar_position: 1
+description: "The governed semantic vocabulary — eight Turtle modules, two derived artefacts, and the drift gate between them."
+---
+
+# The Operational Ontology
+
+**SynapseCommand Operational Ontology v0.1.0 — Draft.** Published from this repository as a
+draft; not submitted to, reviewed by, or approved by any external standards body.
+
+The ontology answers **what does this term mean**. It is a *terminological* vocabulary — classes,
+relationships, hierarchy, labels, definitions and stable identifiers — and nothing else. No
+operational instances, no inference rules, no reasoning.
+
+That restriction is the point rather than an omission. A term is not an event type and an event
+type is not a record shape:
+
+| | Answers | Governed by |
+| --- | --- | --- |
+| **CDM** | what shape is this record | the canonical objects and their schemas |
+| **Operational Ontology** | what does this term mean | the governed term space, here |
+| **SC-OES** | what kind of assertion is this | [the specification](./index.mdx) and the event registry |
+
+## One authority, two derived files
+
+```text
+ontology/*.ttl                                  AUTHORITY — eight Turtle modules
+ontology/context.jsonld                         derived — the developer projection
+…/synapse_cdm/registry/sc_oes/ontology_terms.json   derived — what the runtime reads
+```
+
+Neither derived file is hand-maintained. Both are written by a generator, and a test in the suite
+fails the build if either has drifted from the Turtle. **The runtime never parses Turtle and
+never loads the JSON-LD context**: it reads the packaged JSON, which requires no network and no
+RDF library. `rdflib` exists in the `test` extra and nowhere else.
+
+The eight modules are `core`, `pnt`, `air`, `logistics`, `isr`, `c2`, `mission` and `decision`.
+No module imports another; a parent in another module is referred to by identifier, which keeps
+each file readable on its own and keeps an import closure out of the derived artefacts.
+
+## Identifiers
+
+```text
+tag:synapsecommand.com,2026-09-06:ontology:<module>:<Term>
+```
+
+A `tag:` URI, because a term identifier is not a location and should not imply that resolving it
+over HTTP is meaningful. `module` matches `[a-z][a-z0-9_]*`, `Term` matches `[A-Z][A-Za-z0-9]*`,
+and the authority date is **fixed for the lifetime of the v0.1 namespace** — it is not derived
+from a clock and does not move for a later version.
+
+```python
+from synapse_cdm import oes_registry
+
+oes_registry.get_ontology_term(
+    "tag:synapsecommand.com,2026-09-06:ontology:pnt:GNSSReceiver")
+oes_registry.list_ontology_terms()
+```
+
+## Third-party terms are allowed, and are not silently adopted
+
+A producer may attach an identifier from somebody else's vocabulary. SC-OES neither maps it onto
+a governed term nor infers anything from it: dimension E reports what it found, and mapping a
+third party's vocabulary onto this one is a decision a person makes in a governance process, not
+something a validator does on the wire.
+
+## Maturity
+
+Every term in v0.1.0 is `EXPERIMENTAL` — the entry maturity the governance process sets for a new
+definition. No term claims `STABLE`. This axis is the ontology's own and is independent of the
+event registry's: an event *type* may be `DRAFT` while the ontology *class* its registry entry
+points at is `EXPERIMENTAL`, because the two govern different things.
+
+Adding a term is a governance act: add it to its module, regenerate both derived files, and
+commit all three together. The registry may never be hand-edited to carry a term the ontology
+does not define — and cannot be, because the drift gate would fail the build.

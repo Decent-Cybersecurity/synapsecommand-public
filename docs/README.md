@@ -1,6 +1,7 @@
 # Documentation site
 
-Docusaurus 3 (TypeScript) for the Canonical Data Model. Deployed to Cloudflare Pages.
+Docusaurus 3 (TypeScript) for the Canonical Data Model and the semantic layer above it —
+SC-OES and the Operational Ontology. Deployed to Cloudflare Pages.
 
 ```bash
 cd docs
@@ -133,6 +134,8 @@ docs/
   cdm/                         one page per canonical object
     index.mdx  entity.mdx  event.mdx  track.mdx  plan-object.mdx
   schema-reference/            GENERATED from /schemas
+  sc-oes/                      the semantic layer, hand-written
+    index.mdx  ontology.mdx  boundary.mdx
   writing-an-adapter.mdx       the tutorial, with the worked example
   changelog.mdx                curated summary of packages/cdm/synapse_cdm/MIGRATIONS.md
 scripts/

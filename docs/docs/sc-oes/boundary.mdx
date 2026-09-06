@@ -1,0 +1,100 @@
+---
+title: "The public boundary"
+sidebar_label: "The public boundary"
+sidebar_position: 2
+description: "What is published here, what is deliberately not, and the tests that keep the line where it is."
+---
+
+# The public boundary
+
+This repository is the **interoperability contract**. It is public because that is what a
+contract is for. What it does not contain is the decision intelligence that reads the contract —
+and that absence is enforced by tests over the package sources rather than asserted by this page.
+
+```text
+          EXTERNAL OPERATIONAL SYSTEMS
+   ASTERIX   STANAG   TAK   AIS   PNTMAP   Logistics
+       \        |      |     |       |         /
+        +-------+------+--+--+-------+--------+
+                          |
+                          v
+                       ADAPTERS            translation only
+                          |
+                          v
+                 SYNAPSECOMMAND CDM
+                          |
+              +-----------+-----------+
+              |                       |
+              v                       v
+     OPERATIONAL ONTOLOGY          SC-OES
+       "what it means"          "what happened"
+              |                       |
+              +-----------+-----------+
+                          |
+                          v
+                  PUBLIC CONSUMERS
+                          |
+              +-----------+-----------+
+              |                       |
+              v                       v
+    third-party systems      SynapseCommand private
+                             reasoning / agents / C2
+```
+
+Everything above the last row is here. The last row is not.
+
+## Published
+
+The Canonical Data Model; the SC-OES specification; the Operational Ontology; the semantic
+registries; the JSON Schemas; the public models and SDK helpers; the validators and conformance
+tooling; the conformance tests; the governance process; synthetic examples; the reference
+adapters; and the migration documentation.
+
+## Not published, and not by accident
+
+The reasoning engine and its operational inference rules; the private knowledge graph and any
+customer operational graph; agent implementations and their prompts; fusion, correlation,
+impact-propagation and confidence-fusion algorithms; threat and mission scoring; course-of-action
+generation and ranking; planning heuristics; doctrine and rules of engagement; customer-specific
+ontology instances and customer infrastructure; classification-policy and cross-domain
+enforcement; federation implementation; private model orchestration; and proprietary evaluation
+datasets.
+
+The principle in one line: **open the language, own the intelligence.** A third-party developer
+must be able to implement SC-OES correctly using only this repository, without access to any
+proprietary code — and that is the property the rest of this page is about keeping true.
+
+## How the line is held
+
+Not by review. `tests/test_cdm_boundary.py` parses every module in the package with the AST and
+fails the build on an import of:
+
+| Class | Why it would mean the line had moved |
+| --- | --- |
+| private SynapseCommand code | the contract layer would stop being liftable out of the product |
+| LLM frameworks and model SDKs | reasoning had started happening inside the translation layer |
+| graph databases | a knowledge graph had arrived where a vocabulary belongs |
+| message brokers | transport had been decided for the consumer |
+| RDF reasoners | inference had entered a *terminological* ontology |
+| crypto implementations | a signature was being computed where no key material is audited |
+
+The same closure is enforced a second time, separately, over the conformance tool, because that
+tool is the thing a consumer runs against content it did not write.
+
+:::note[Why the crypto row is there when there is an `integrity` field]
+The post-quantum signature block on every canonical object is **designed and deliberately
+unpopulated**. A signature computed inside a translator is held by nothing that audits it. The
+field exists from day one so that turning signing on later is a *value* change rather than a
+schema change.
+:::
+
+## The dependency budget
+
+The installed package depends on `pydantic` and `jsonschema`. Nothing else — no Kafka, no Redis,
+no Neo4j, no RDF parser, no OWL reasoner, no model SDK, no AI framework, no crypto package, and
+no network registry client. The registries are packaged JSON read with `importlib.resources`, so
+a consumer who installs the distribution has the governed contract on disk with no service to
+call and no cache to invalidate.
+
+`rdflib` is a **test** dependency: it is how the ontology's own tests read the Turtle authority,
+and no module under `synapse_cdm/` imports it.

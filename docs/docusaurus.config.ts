@@ -103,6 +103,7 @@ const config: Config = {
           items: [
             {label: 'Canonical Data Model', to: '/cdm/entity'},
             {label: 'JSON Schema Reference', to: '/schema-reference/'},
+            {label: 'SC-OES', to: '/sc-oes/'},
             {label: 'Changelog', to: '/changelog'},
           ],
         },

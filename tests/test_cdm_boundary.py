@@ -12,6 +12,7 @@ translation layer — where the key material has no business being and where not
 """
 import ast
 import pathlib
+import re
 
 import pytest
 
@@ -143,3 +144,159 @@ def test_the_forbidden_roots_are_the_real_ones_and_every_site_agrees():
         "Sanitised names make this gate unfailable, which is a worse exposure than the five "
         "directory names it was hiding — the ruling above is explicit about that trade"
     )
+
+
+# ==================================================================== §143 and §144
+#
+# THE SECOND HALF OF THE BOUNDARY, AND WHY IT ARRIVED THREE ROUNDS AFTER THE FIRST
+# -------------------------------------------------------------------------------
+# The two gates above are about the product this package was lifted out of, and about crypto.
+# SC-OES added a semantic layer with its own gravity: an ontology invites an RDF reasoner, a
+# governed registry invites a network client to fetch it, a conformance verdict invites a model
+# to explain itself, and a "knowledge graph" invites a graph database. None of those would be an
+# absurd thing for a developer to reach for; each of them would move the line this repository is
+# drawn around, because each is a piece of the reasoning that is deliberately NOT published.
+#
+# `tests/test_cdm_conformance.py` already guards the conformance module's own import closure
+# against the same names — it is the tool a consumer runs against content it did not write, so it
+# earns a second, narrower gate. What was missing is the WIDE one: the same classes over every
+# module in the package. The closure test at the bottom of this section keeps the two in step,
+# because a fact stated in two places and compared in none is this repository's standard defect.
+#
+# The names are real for the reason FORBIDDEN_ROOTS's names are real: a negative test is satisfied
+# vacuously by any name nobody would import, so a sanitised list is a gate that cannot fail.
+
+#: §143's classes, by the reason each one would mean the line had moved. Beyond the private roots
+#: and the crypto set above, which are the same section's first two classes.
+FORBIDDEN_BY_CLASS: dict[str, frozenset[str]] = {
+    "LLM frameworks and model SDKs": frozenset({
+        "openai", "anthropic", "langchain", "langchain_core", "llama_index", "transformers",
+        "torch", "tensorflow", "cohere", "mistralai", "ollama", "huggingface_hub"}),
+    "graph databases": frozenset({
+        "neo4j", "py2neo", "neomodel", "gremlin_python", "arango", "networkx"}),
+    "message brokers": frozenset({
+        "kafka", "confluent_kafka", "pika", "redis", "nats", "zmq", "celery", "paho"}),
+    "RDF parsers and reasoners": frozenset({"rdflib", "owlrl", "pyshacl"}),
+}
+
+FORBIDDEN_RUNTIME = frozenset().union(*FORBIDDEN_BY_CLASS.values())
+
+
+@pytest.mark.parametrize("path", SOURCES, ids=lambda p: p.name)
+def test_no_reasoning_infrastructure_in_the_contract_layer(path):
+    """§143, over every module in the package rather than over the conformance closure alone."""
+    reached = _imported_roots(path)
+    for label, roots in sorted(FORBIDDEN_BY_CLASS.items()):
+        offending = reached & roots
+        assert not offending, (
+            f"{path.relative_to(ROOT)} imports {sorted(offending)} — {label} belong to the "
+            "SynapseCommand runtime and not to the contract layer. The ontology is "
+            "TERMINOLOGICAL: it carries classes, labels and definitions, and the reasoning it "
+            "would be written over is not published here"
+        )
+
+
+def test_the_ontology_is_read_by_the_runtime_as_data_and_never_parsed_as_turtle():
+    """The concrete case the RDF row exists for, asserted on the artefact rather than the class.
+
+    `rdflib` is a TEST dependency: the ontology's own tests read `ontology/*.ttl` with it. What
+    the installed package reads is the GENERATED `registry/sc_oes/ontology_terms.json`, with
+    `importlib.resources` — no network, no checkout, no RDF library. An import of `rdflib` under
+    `synapse_cdm/` would mean the runtime had started parsing the authority, which is the one
+    thing the derived artefact exists to make unnecessary.
+    """
+    importers = [p.relative_to(ROOT) for p in SOURCES if "rdflib" in _imported_roots(p)]
+    assert not importers, f"{importers} import rdflib; the runtime reads the generated registry"
+
+
+def test_the_wide_gate_guards_everything_the_conformance_closure_guards():
+    """The two statements of one fact, compared — see the block at the top of this section.
+
+    `test_cdm_conformance.py` guards the conformance module's closure against §125's network
+    roots AND §143's classes. The network roots are that gate's own business; the §143 classes are
+    this one's, and every one of them must be guarded here too. Otherwise a name could be dropped
+    from the wide gate and the narrow one would keep passing, which is how a boundary shrinks
+    without anybody deciding to shrink it.
+    """
+    from tests.test_cdm_conformance import FORBIDDEN_ROOTS as NARROW
+
+    guarded = FORBIDDEN_RUNTIME | FORBIDDEN_CRYPTO | FORBIDDEN_ROOTS
+    #: §125's network roots are the narrow gate's alone: reaching a network is a property of the
+    #: TOOL a consumer runs, and the package legitimately holds none of these either way.
+    network = {"socket", "ssl", "http", "urllib", "urllib2", "urllib3", "requests", "httpx",
+               "aiohttp", "ftplib", "smtplib", "telnetlib", "webbrowser", "xmlrpc", "asyncio"}
+    missing = sorted((NARROW - network) - guarded)
+    assert not missing, (
+        f"the conformance closure guards {missing} and this gate does not. The narrow gate covers "
+        "one module; this one covers the package, so a name in the first and not the second is a "
+        "class of import the rest of the package is free to make"
+    )
+
+
+def test_every_class_the_boundary_page_names_is_a_class_this_module_guards():
+    """The rendered documentation and the gate, compared. The page makes the claim; this is it.
+
+    `docs/docs/sc-oes/boundary.mdx` tabulates the classes and says the build fails on each. A page
+    that claims a gate exists is exactly as good as the comparison between the two — this
+    repository has repaired that shape often enough to write the check first.
+    """
+    page = (REPO / "docs" / "docs" / "sc-oes" / "boundary.mdx").read_text()
+    assert page, "the boundary page is missing; this module's site list is stale"
+    for phrase in ("private SynapseCommand code", "LLM frameworks and model SDKs",
+                   "graph databases", "message brokers", "RDF reasoners",
+                   "crypto implementations"):
+        assert phrase in page, f"{phrase!r} is guarded here and the boundary page no longer names it"
+
+
+# --------------------------------------------------------------- §144, the dependency budget
+
+
+#: §144's list, spelled the way a `dependencies` entry would spell it. A runtime dependency on any
+#: of them would make the public contract heavier than the thing it is a contract for.
+BUDGET_FORBIDDEN = ("kafka", "confluent-kafka", "redis", "neo4j", "rdflib", "owlrl", "pyshacl",
+                    "openai", "anthropic", "langchain", "transformers", "torch", "cryptography",
+                    "pynacl", "requests", "httpx", "aiohttp")
+
+
+def _pyproject() -> dict:
+    import tomllib
+    return tomllib.loads((REPO / "packages" / "cdm" / "pyproject.toml").read_text())
+
+
+def test_the_runtime_dependencies_are_the_two_the_documents_promise():
+    """`README.md`, the package README and the rendered site all say two. Here they are counted."""
+    declared = _pyproject()["project"]["dependencies"]
+    names = sorted(re.split(r"[<>=!~\[ ]", entry, maxsplit=1)[0].lower() for entry in declared)
+    assert names == ["jsonschema", "pydantic"], (
+        f"the distribution now declares {names} as RUNTIME dependencies. Two is a promise made in "
+        "`README.md`, in the package README and on the documentation site; a third is a decision "
+        "those three documents have to be told about"
+    )
+
+
+def test_no_forbidden_runtime_dependency_is_declared():
+    """§144, read off the declaration rather than off the import graph.
+
+    The import gates above catch a module that reaches for one of these. This catches the other
+    order — a dependency declared and not yet imported — which is what an abandoned experiment
+    looks like in a `pyproject.toml`, and which a `pip install` still pays for.
+    """
+    declared = " ".join(_pyproject()["project"]["dependencies"]).lower()
+    offending = [name for name in BUDGET_FORBIDDEN if name in declared]
+    assert not offending, f"the distribution declares {offending} at RUNTIME; §144 forbids each"
+
+
+def test_the_rdf_parser_is_declared_in_the_test_extra_and_only_there():
+    """The one place `rdflib` is allowed to be, stated as a positive so it cannot drift upward."""
+    project = _pyproject()["project"]
+    extras = project["optional-dependencies"]
+    assert sorted(extras) == ["test"], f"unexpected extras: {sorted(extras)}"
+    test_extra = " ".join(extras["test"]).lower()
+    assert "rdflib" in test_extra, "rdflib left the test extra; the ontology's graph tests need it"
+    assert "rdflib" not in " ".join(project["dependencies"]).lower()
+
+
+def test_the_import_walk_sees_third_party_imports_at_all():
+    """A negative test that cannot fail is worse than none, so this one proves the walk works."""
+    assert "pydantic" in _imported_roots(PACKAGE / "models.py")
+    assert FORBIDDEN_RUNTIME & {"rdflib"}
