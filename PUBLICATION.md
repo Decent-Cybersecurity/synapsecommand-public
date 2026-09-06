@@ -2564,8 +2564,22 @@ fetched from them at 09:51:40.630Z and 09:51:40.827Z state the four trusted-publ
 | reading | passed | skipped | failed | total |
 | --- | --- | --- | --- | --- |
 | CI, at the tag, 09:32:13Z | 3671 | 78 | 0 | 3749 |
-| fresh clone at `v1.8.0`, this machine, 09:51:11–09:52:29Z | 3672 | 77 | 0 | 3749 |
-| maintainer's tree at `f18c4ef`, 09:56:34–09:58:01Z | 3740 | 8 | **1** | 3749 |
+| fresh clone at `v1.8.0`, this machine, 09:51:55–09:53:13Z | 3672 | 77 | 0 | 3749 |
+| maintainer's tree at `f18c4ef`, 09:54:42–09:56:09Z | 3740 | 8 | **1** | 3749 |
+
+**The two local windows were corrected 2026-09-06 before this entry was reviewed, and they were
+wrong when written.** The first draft of this table carried `09:51:11–09:52:29Z` and
+`09:56:34–09:58:01Z`, neither of them a reading: the two runs were backgrounded and their
+console output carries no wall-clock stamp, so the instants had been estimated. What is above is
+derived — the end of each run from its log file's mtime, the start from that end less the duration
+`pytest` itself printed, 78.41s for the clone and 87.25s for the tree. **CI's stamp and every other
+instant in this entry were always readings**; these two were the only estimates, and an estimate
+in a column of measurements is the failure entry 12 named when it found readings carried across
+three days without their dates.
+
+**The maintainer's reading is identical before and after this round's edits** — `1 failed, 3740
+passed, 8 skipped` both times, the second run 10:05:00–10:06:27Z over the written entry — which is
+what proves this round added no offender to the failure below.
 
 **The one failure is not in the distribution, is not in the clone, and is not in the commit.**
 `tests/test_cdm_changelog_claim.py:136` walks the filesystem rather than the git index, and its
