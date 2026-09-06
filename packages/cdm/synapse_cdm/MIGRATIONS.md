@@ -264,13 +264,16 @@ Nothing here is in a release — every line below is in **no release** at all. T
 the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
 this.
 
-**What moved inside the distribution: 553 files.**
+**What moved inside the distribution: 555 files.**
 
 **THE COUNT READ `three` UNTIL 2026-09-06, AND BOTH READINGS WERE RIGHT WHEN THEY WERE TAKEN.**
 The sentence above said "three shipped files" and described the SC-OES ontology round's arc alone;
 the SC-OES model round then moved the wire contract and every golden with it. The earlier figure is
 kept here rather than overwritten, on the same ground the 1.7.0 section keeps its own two: a record
-that quietly restates its history is a record nobody can date.
+that quietly restates its history is a record nobody can date. It read `553` between then and the SC-OES
+registry round, also on 2026-09-06, which added the governed event registry and the module that
+reads both registries: two files, and the third reading of a count that has been right three
+times.
 
 **THE WIRE CONTRACT MOVED, AND IT IS A MAJOR.** `SCHEMA_VERSION` `1.0.0` -> `2.0.0`. `Event` gained
 an optional `oes` block and `Entity` gained an optional `ontology_types` list, and by this table's
@@ -315,11 +318,13 @@ contents are `pyproject.toml` and the `synapse_cdm/` tree, so the ontology's Tur
 reaches no installed reader and `schemas/` is a publication of the models rather than a shipped
 file. That is the same boundary `gates/bump_derivation.py` measures the bump over.
 
-**The 553, by what they are.** Two rounds moved them — **the SC-OES ontology round, 2026-09-06**,
-which wrote the Operational Ontology and generated its two derived artefacts, and **the SC-OES model
-round, 2026-09-06**, which attached the wire-semantic block to the canonical `Event`.
+**The 555, by what they are.** Three rounds moved them — **the SC-OES ontology round,
+2026-09-06**, which wrote the Operational Ontology and generated its two derived artefacts, **the
+SC-OES model round, 2026-09-06**, which attached the wire-semantic block to the canonical `Event`,
+and **the SC-OES registry round, 2026-09-06**, which added the governed event contract the block's
+`type_id` names and the helpers that read it.
 
-4 shipped Python modules:
+5 shipped Python modules:
 
 * `synapse_cdm/oes.py` — **new.** The SC-OES wire-semantic block: `OesMetadata` and the five models
   beneath it (`EventRelation`, `EntityRelation`, `EvidenceRef`, `SecurityMarking`), the five closed
@@ -338,8 +343,25 @@ round, 2026-09-06**, which attached the wire-semantic block to the canonical `Ev
   `PACKAGE_VERSION` is **unmoved at 1.8.0** — a schema bump obliges a release, it does not perform
   one, and the number is the release round's to type.
 * `synapse_cdm/__init__.py` — the SC-OES public names join the hand-written `__all__`.
+  **A second time, in the registry round:** eleven more names — `OES_PAYLOAD_MODELS`, `PROFILES`,
+  `EventTypeRecord`, `Maturity`, `OntologyTermRecord` and §126's six registry helpers — so the
+  hand-written list is 52 names. Nothing is removed at either step.
+* `synapse_cdm/oes_registry.py` — **new.** The loader for both packaged registries and the helper
+  surface ADR 0004 decision 7 names: `get_event_type`, `list_event_types`,
+  `get_profile_event_types`, `get_legacy_event_type`, `get_ontology_term`, `list_ontology_terms`
+  — and `is_governed_ontology_term`, §126's seventh, which is NOT redefined here because
+  `oes.py` already exports it as the grammar check ADR 0003 decision 6 makes it. Recognition and
+  syntax stay two questions with two answers: `get_event_type` returns `None` for a well-formed
+  `sc.*` identifier the registry does not carry, and that is a conformance finding rather than a
+  validation error. The registry models (`EventTypeRecord`, `EventTypeRegistry`,
+  `OntologyTermRecord`, `OntologyTermRegistry`) validate what is read; `Maturity` is the closed
+  §51 vocabulary, which lives here rather than in `oes.py` because §50 makes maturity a property
+  of the TYPE and not of an occurrence of it; and `OES_PAYLOAD_MODELS` is the one typed payload
+  of §112, `GnssInterferencePayload` reused rather than copied. **It is not called
+  `registry.py`**: `synapse_cdm/registry/` is a data directory, and a module of that name beside
+  it would make one import path mean two things.
 
-1 shipped data file:
+2 shipped data files:
 
 * `synapse_cdm/registry/sc_oes/ontology_terms.json` — the governed ontology-term registry, 73
   records, **generated** from `ontology/*.ttl` by `gates/ontology_terms.py` and never
@@ -347,6 +369,16 @@ round, 2026-09-06**, which attached the wire-semantic block to the canonical `Ev
   the machine-readable runtime artefacts. Each record carries `id`, `label`, `module`, `kind`,
   `parent`, `maturity`, `deprecated` and `replacement`; every key is present on every record even
   where the value is null, because a missing key and an explicit null are different facts.
+* `synapse_cdm/registry/sc_oes/event_types.json` — **new.** The governed event contract: thirteen
+  entries, each carrying the fourteen fields §110 lists, and **hand-authored** under
+  `spec/governance/EVENT-TYPE-PROCESS.md` rather than generated — which is the difference between
+  the two files in this directory and the reason ADR 0004 refused to combine them. Eight types are
+  `DRAFT` and five `EXPERIMENTAL`; seven carry a legacy `EventType` mapping and six carry an
+  explicit `null`, which `docs/adr/0007-legacy-eventtype-mapping.md` rules and §27 defines as "no
+  meaningful legacy category is governed for this semantic type. It does not mean unfinished."
+  `legacy_event_type` is present on all thirteen, null included, for the same reason every key is
+  present on every ontology-term record. `payload_model` names a model rather than an import
+  path: the registry is data and nothing in it is ever imported or executed (ADR 0004 decision 8).
 
 1 packaging declaration:
 
@@ -354,7 +386,9 @@ round, 2026-09-06**, which attached the wire-semantic block to the canonical `Ev
   `pydantic>=2.6` and `jsonschema>=4.0` and nothing else. The `test` extra gains `rdflib>=7.0`,
   the test/development RDF parser the ontology's own tests read Turtle with; and
   `[tool.setuptools.package-data]` gains a recursive `registry/**/*`, without which the new
-  registry would be tracked and not shipped.
+  registry would be tracked and not shipped. **The registry round changed nothing here**, and
+  that is what a recursive glob is for: `event_types.json` shipped because the pattern reaches for
+  the directory rather than for a list of names somebody has to remember to extend.
 
 1 shipped document:
 
@@ -959,6 +993,12 @@ silently — it called the unit "a shipped file this gate has no class for" — 
 class rather than a single case: a new shipped registry or schema under the package is MINOR;
 adding entries to one is MINOR; editing one without adding or removing an entry is PATCH; removing
 or renaming an entry is a release-policy question and is nobody's to take mechanically.
+
+**Bump ruling.** `synapse_cdm/registry/sc_oes/event_types.json` — MINOR: a new shipped data file
+under the package, which is the class M ruled above and not a second decision. It is the second
+file under `synapse_cdm/registry/` and the first the ruling was written in advance of; the gate
+still names it, because the ruling is a paragraph naming a unit and not a pattern the gate infers.
+Nothing is removed or renamed by it: thirteen entries arrive where there were none.
 
 **What a consumer sees, and this paragraph reverses its own earlier form.** It read: "Nothing in
 this arc changes an object on the wire: `SCHEMA_VERSION` does not move, no model gains a field, and

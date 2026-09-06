@@ -104,6 +104,14 @@ PACKAGE_ONLY_TESTS = (
     # in prose, not opened — a test that opened `spec/sc-oes/` would belong in the other list.
     "test_cdm_oes.py",
     "test_cdm_pntmap_adapter.py",
+    # `test_cdm_registry.py` is package-only, and the boundary is the same one `test_cdm_oes.py`
+    # is on the other side of nothing: both registries it reads — `registry/sc_oes/*.json` — ship
+    # in the wheel and are reached through `importlib.resources.files("synapse_cdm")`, so against
+    # an installed distribution this module checks the artefacts a consumer actually got. The
+    # Turtle authority those terms are GENERATED from is at the repository root and does not
+    # ship, which is why the drift half of the same subject is `test_cdm_ontology.py` in the
+    # other list.
+    "test_cdm_registry.py",
     "test_cdm_schemas.py", "test_cdm_stanag4586_adapter.py", "test_cdm_stanag4609_adapter.py",
     "test_cdm_stanag4676_adapter.py",
     "test_cdm_tak_adapter.py",
@@ -666,7 +674,13 @@ def mutated_source(workdir: pathlib.Path) -> pathlib.Path:
         "__pycache__", "*.egg-info", "build", "dist"))
     pyproject = target / "pyproject.toml"
     text = pyproject.read_text()
-    marker = "[tool.setuptools.package-data]\nsynapse_cdm = [\n    \"fixtures/**/*\",\n    \"*.md\",\n]"
+    # RE-ANCHORED 2026-09-06, and the re-anchor is what this refusal asks for rather than a
+    # repair of it. The block gained `registry/**/*` when ADR 0004 put the machine-readable
+    # runtime registries under `synapse_cdm/registry/`, so the three-glob form below is the
+    # current block and the two-glob form this read until then would silently stop mutating.
+    # The mutation itself is unchanged: package-data emptied, the code with none of its data.
+    marker = ("[tool.setuptools.package-data]\nsynapse_cdm = [\n    \"fixtures/**/*\",\n"
+              "    \"registry/**/*\",\n    \"*.md\",\n]")
     if marker not in text:
         raise SystemExit("gates/wheel_install.py: the package-data block this mutation edits has "
                          "been reworded. Re-anchor the mutation deliberately — a mutation that "
