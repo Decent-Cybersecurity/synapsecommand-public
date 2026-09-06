@@ -3309,14 +3309,26 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # defects. No held stream carries an item 74, so there is no stream-side witness at all and
     # this term is the widest document-side one in the file. Summed rather than merged, on the
     # same rule as the other four.
+    # SIX TERMS SINCE 2026-09-06, AND THE SIXTH IS ITEM 73. `RVT_TAG` is the ST 0806.4 RVT Local
+    # Set, and its ground is ITEM 48's rather than the fifteen's or item 94's: TWO held documents
+    # state its key identically — ST 0601.14a §8.73 and `ST 0806.4-06`, both
+    # `06.0E.2B.34.02.0B.01.01.0E.01.03.01.02.00.00.00`, both CRC 17945 — and NEITHER prints a
+    # worked example, ST 0806.4's one packet illustration being a raster image and §8.73's Example
+    # KLV Item row reading `49 - N/A`. **SO THE SECOND-DOCUMENT GROUND HAS NOW BEEN REACHED TWICE
+    # AND IS NO LONGER UNIQUE TO ITEM 48**, which falsified a sentence in two modules; each carries
+    # a dated correction beside it. What stands in place of examples is
+    # `klv_rvt_codec.check_transcription_cross_check()`, twelve INTERNAL agreements run on every
+    # suite run, which is weaker than any other term here and is labelled as such. Summed rather
+    # than merged, on the same rule as the other five.
     expected = (len(uas_codec.WITNESSED_TAGS) + len(uas_codec.NESTED_SETS)
-                + len(uas_codec.DOCUMENT_WITNESSED_TAGS) + 2)
+                + len(uas_codec.DOCUMENT_WITNESSED_TAGS) + 3)
     assert len(promoted) == expected, (
         f"{len(promoted)} rows carry a stanag4609 marker and the codec covers "
         f"{len(uas_codec.WITNESSED_TAGS)} witnessed tags plus {len(uas_codec.NESTED_SETS)} nested "
         f"set(s) plus {len(uas_codec.DOCUMENT_WITNESSED_TAGS)} document-witnessed tags plus item "
         f"{uas_codec.CORE_IDENTIFIER_TAG}, the MIIS Core Identifier, plus item "
-        f"{uas_codec.VMTI_TAG}, the ST 0903.4 VMTI Local Set. Each "
+        f"{uas_codec.VMTI_TAG}, the ST 0903.4 VMTI Local Set, plus item "
+        f"{uas_codec.RVT_TAG}, the ST 0806.4 RVT Local Set. Each "
         "crossing of the scope contract is declared in its own table so that it can be counted "
         "here; a promotion with no table behind it fails this assertion"
     )
@@ -3337,9 +3349,16 @@ def test_the_klv_row_set_is_partly_promoted_and_the_partition_is_the_witnessed_s
     # round part 2's — MISB ST 0903.4 defines its Value's whole structure and prints seventy worked
     # examples of the elements inside it, 68 of which reproduce on every suite run. It is the
     # fifteen's kind of witness rather than item 48's or item 94's, and the widest of that kind.
-    assert len(not_yet) >= 94, (
-        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 94 of the 141 rows "
-        "are outside all five witness grounds and each is blocked on the scope contract; a round "
+    # 93 SINCE 2026-09-06, DOWN FROM 94: item 73 left on the SIXTH ground, the park 7 round's —
+    # and it is item 48's ground and not item 74's, which matters here because this floor is a
+    # statement about what CAN be checked. MISB ST 0806.4 defines item 73's Value's whole
+    # structure and prints NO worked example of any of it, so what admits the row is two documents
+    # agreeing about sixteen octets and a CRC, plus twelve agreements internal to ST 0806.4. That
+    # is the weakest admission this floor has ever moved for, and it is recorded as such rather
+    # than counted the same as the seventy examples item 74 brought.
+    assert len(not_yet) >= 93, (
+        f"only {len(not_yet)} `not yet` rows left in the ST 0601 tag table. 93 of the 141 rows "
+        "are outside all six witness grounds and each is blocked on the scope contract; a round "
         "that promoted them wrote decoders nothing can check, which is the trap this section "
         "exists to avoid"
     )
@@ -3505,6 +3524,7 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
     """
     from synapse_cdm.adapters import klv_uas_codec as uas_codec
     from synapse_cdm.adapters import klv_vmti_codec as vmti_codec
+    from synapse_cdm.adapters import klv_rvt_codec as rvt_codec
 
     pin = json.loads(KLV_PIN.read_text())
     node = pin["tag_table_st_0601_14"]
@@ -3585,6 +3605,16 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
         # stream carries no item 74 — its items stop at tag 65 — so nothing here is stream-
         # witnessed and the row must say so.
         vmti_set = tag == uas_codec.VMTI_TAG
+        # AND A SIXTH GROUND SINCE 2026-09-06, WHICH IS THE WEAKEST IN THIS FILE AND SAYS SO.
+        # Item 73's Value is the whole ST 0806.4 RVT Local Set — three further nested sets under
+        # Table 8-1's tags 11, 12 and 13 — so it is not an `ITEMS` row for the reason item 48 is
+        # not. Its witness is ITEM 48's kind and not the fifteen's: TWO held documents state its
+        # key identically (ST 0601.14a §8.73 and `ST 0806.4-06`, both CRC 17945) and NEITHER prints
+        # a worked example. So the mechanical check below cannot be a re-run of the document's own
+        # examples, because there are none; it is `check_transcription_cross_check()`, twelve
+        # agreements INTERNAL to ST 0806.4, which establishes that four tables were transcribed
+        # consistently and establishes nothing about any value map.
+        rvt_set = tag == uas_codec.RVT_TAG
         if witnessed:
             assert b["status"].startswith("stanag4609 1.0.0"), (
                 f"item {tag} is in klv_uas_codec.WITNESSED_TAGS — the pinned stream attests it and "
@@ -3669,13 +3699,40 @@ def test_the_st_0601_tag_table_agrees_between_the_pin_record_and_the_document():
                 "row's admission past the scope contract holds only while it does — the witness "
                 "IS the check, so the check runs here rather than being cited"
             )
+        elif rvt_set:
+            assert uas_codec.RVT_TAG == 73, (
+                "klv_uas_codec.RVT_TAG is not 73. The one item admitted on this sixth ground is "
+                "the RVT Local Set; a different tag needs its own document and its own ruling"
+            )
+            assert b["status"].startswith("stanag4609 1.0.0"), (
+                f"item {tag} is the RVT Local Set, read by klv_rvt_codec under MISB ST 0806.4, "
+                f"and its row reads {b['status']!r}. The codec reads it, so the row says so"
+            )
+            assert "ST 0806.4" in b["notes"], (
+                "item 73's row no longer names the document whose structure it carries. That "
+                "document IS the ground for crossing the scope contract, and a row that stops "
+                "stating it is a promotion with no argument left"
+            )
+            assert "no worked example" in b["notes"].lower() or "NO worked example" in b["notes"], (
+                "item 73's row no longer states that ST 0806.4 prints NO worked example. That "
+                "absence is the whole reason its witness is item 48's second-document ground "
+                "rather than the fifteen's, and a promotion that stops saying so reads as though "
+                "a printed example stood behind it. None does"
+            )
+            checks = rvt_codec.check_transcription_cross_check()
+            assert checks["checks"] == 12, (
+                f"klv_rvt_codec now runs {checks['checks']} internal cross-checks and not 12. "
+                "This row's admission past the scope contract holds only while they pass — with "
+                "no worked example anywhere in ST 0806.4, they are the entire mechanical witness, "
+                "so they run here rather than being cited"
+            )
         else:
             assert b["status"] == "not yet", (
-                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's five witness "
+                f"item {tag} reads {b['status']!r} and is in none of klv_uas_codec's six witness "
                 "tables — WITNESSED_TAGS, NESTED_SETS, DOCUMENT_WITNESSED_TAGS, "
-                "CORE_IDENTIFIER_TAG, VMTI_TAG. The scope contract: a row promoted past all five "
-                "is a decoder checkable only against a fixture written from the same reading of "
-                "the same table"
+                "CORE_IDENTIFIER_TAG, VMTI_TAG, RVT_TAG. The scope contract: a row promoted past "
+                "all six is a decoder checkable only against a fixture written from the same "
+                "reading of the same table"
             )
 
 
@@ -5076,8 +5133,28 @@ def test_the_klv_fixture_directory_holds_the_generators_payloads_and_says_what_e
         "a hand-written one is a byte nobody cites, which is the rule this directory could not "
         "break for six rounds and must not break now that it can"
     )
-    assert len(expected) == 56, (
-        f"{len(expected)} adapter fixtures, expected fifty-six — and the THREE that took it from "
+    assert len(expected) == 63, (
+        f"{len(expected)} adapter fixtures, expected sixty-three — and the SEVEN that took it "
+        "from fifty-six were added 2026-09-06 by the park 7 round for MISB ST 0806.4's RVT "
+        "Local Set inside ST 0601 item 73, and they are built from the ELEMENT RULES and not "
+        "from printed examples because THE DOCUMENT PRINTS NONE — Figure 7-1, its one packet "
+        "illustration, is a raster image, and §8.73's Example KLV Item row reads `49 - N/A`. "
+        "So this block is the ST 0102.12 block's kind and not the ST 0903.4 block's, and it "
+        "is labelled as the weaker arrangement it is: every row of all four tables in one "
+        "packet, with the three subordinate sets sent OUT of tag order so `element_order` "
+        "witnesses the wire and not a sort; tag 12 twice in one RVT LS, which `ST 0806.4-25` "
+        "explicitly allows and which is the only proof that `subordinate_sets` is a list "
+        "rather than a dict that would collapse two points of interest into one; a POI "
+        "missing both coordinates `ST 0806.4-09` and `-10` require, carried with "
+        "`required_absent` reading `[2, 3]` rather than refused; two elements at widths their "
+        "own Length in Bytes cells forbid, refused as elements while the set decodes, which "
+        "is also where a stated MAXIMUM is shown not to be enforced; a `String ISO-7` "
+        "carrying `0xFF`; a POI whose latitude and longitude both carry `0x80000000`, the "
+        "\"error\" indicator every coordinate Notes cell names, decoding to no value and a "
+        "signal — and `required_absent` stays EMPTY there, because a producer saying it does "
+        "not know is a different state from not sending the item; and an unlisted tag 22, one "
+        "past the twenty-one Table 8-1 draws, carried and not read. NOT ONE OF THE SEVEN "
+        "carries a `Frag Circle Radius`, deliberately — and the THREE that took it from "
         "fifty-three were added 2026-09-05 by the park 12 round for MISB ST 0902.8's minimum "
         "metadata set, chosen to witness the annotation's state vocabulary rather than its 33 "
         "rows: a packet carrying every one of the 33 rows, which is the only place "

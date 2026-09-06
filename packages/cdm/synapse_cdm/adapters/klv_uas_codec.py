@@ -109,6 +109,7 @@ from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
 from synapse_cdm.adapters import klv_miis_codec as miis
 from synapse_cdm.adapters import klv_pack_codec as packs
+from synapse_cdm.adapters import klv_rvt_codec as rvt
 from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_vmti_codec as vmti
 
@@ -818,6 +819,12 @@ WITNESSED_TAGS: tuple[int, ...] = tuple(sorted(ITEMS))
 #: agreement. **No unwitnessed ST 0601 item has a second document behind it**, which is why this
 #: one crossed the contract when it did and no other row crossed on THIS ground.
 #:
+#: **THAT SENTENCE STOPPED BEING TRUE ON 2026-09-06 AND IS CORRECTED BESIDE ITSELF, NOT IN PLACE.**
+#: The park 7 round pinned MISB ST 0806.4, and item 73 now stands on the same ground: ST 0601.14a
+#: §8.73 prints ``06.0E.2B.34.02.0B.01.01.0E.01.03.01.02.00.00.00 (CRC 17945)`` and `ST 0806.4-06`
+#: states the same sixteen octets and the same CRC. Two pairs of documents, two crossings — see
+#: `RVT_TAG` below and `klv_rvt_codec`. What stays true of item 48 is why it crossed WHEN IT DID.
+#:
 #: **THAT CLAUSE USED TO END "which is why the other 115 rows stay `not yet`", AND THE SECOND HALF OF
 #: IT STOPPED BEING TRUE ON 2026-09-04** — seventeen rows have since crossed on a DIFFERENT ground,
 #: this document's own printed worked examples, so a second-document ground being unique to item 48
@@ -883,6 +890,29 @@ VMTI_TAG: int = 74
 #: the arrangement `NESTED_SET_BASIS` was written for and `CORE_IDENTIFIER_BASIS` re-used, applied
 #: to the third delegating item.
 VMTI_BASIS = vmti.CARRIER_BASIS
+
+#: **THE FIFTH ITEM WHOSE VALUE IS ANOTHER DOCUMENT'S STRUCTURE, AND THE SECOND TO CROSS THE SCOPE
+#: CONTRACT ON A SECOND DOCUMENT.** Item 73's Value is a MISB ST 0806.4 RVT Local Set, read by
+#: `klv_rvt_codec` and never by a row here, for `NESTED_SETS`' own reason: `ITEMS` answers "what
+#: does this integer mean under one affine map", and a set carrying three further nested sets is
+#: not one integer. §8.73's second bullet — "The length field is the size of all RVT LS metadata
+#: items to be packaged within Tag 73" — is item 48's shape exactly, so the Value is handed over
+#: bare.
+#:
+#: **ITS GROUND IS ITEM 48's AND NOT ITEM 74's, WHICH IS WHY IT SITS HERE RATHER THAN BESIDE
+#: `VMTI_TAG`.** Item 74 crossed on ST 0903.4's seventy printed worked examples. ST 0806.4 prints
+#: NONE — its one packet illustration, Figure 7-1, is a raster image — so item 73 has no
+#: document-side example behind it at all. What it has is the two-document agreement about sixteen
+#: octets that put item 48 across: ST 0601.14a §8.73 and `ST 0806.4-06` state the same key and the
+#: same CRC 17945. That is the weaker of the two grounds this file admits, it is the SAME ground
+#: `NESTED_SETS` names, and `klv_rvt_codec.TRANSCRIPTION_CROSS_CHECK` says what stands in place of
+#: the examples: twelve internal agreements, run on every suite run, which establish that the four
+#: tables were transcribed consistently and establish nothing about any value map.
+RVT_TAG: int = 73
+
+#: What ST 0601.14a says item 73 carries, quoted, so the delegation is readable from this module —
+#: `NESTED_SET_BASIS`' arrangement applied to the fourth delegating item.
+RVT_BASIS = rvt.CARRIER_BASIS
 
 #: **THE SECOND CROSSING OF THE SCOPE CONTRACT, 2026-09-04, AND ITS GROUND IS DIFFERENT FROM
 #: `NESTED_SETS`'.** Item 48 crossed on a SECOND DOCUMENT agreeing with this one about sixteen
@@ -1309,6 +1339,18 @@ class DecodedPacket(NamedTuple):
     #: the set (a bad element, a bad VTarget) is carried by the set's own `refusals` and the set
     #: still decodes; only a failure to walk the set at all lands here.
     vmti_refusal: dict | None = None
+    #: The decoded ST 0806.4 RVT Local Set from item 73, or None where the packet carried no item
+    #: 73 — which is every packet of the only stream held. **None means THIS PACKET CARRIED NO RVT
+    #: METADATA AND NEVER "there were no points of interest"**: §8.73 makes item 73 Optional and
+    #: ST 0806.4 §5 says the set exists for users "required to use the RVT LS metadata items", so
+    #: an absent item 73 is a fact about the emitter's programme and not about the scene.
+    rvt: rvt.DecodedSet | None = None
+    #: Item 73 refused, as a structured refusal, or None. **THE ITEM IS REFUSED AND THE PACKET IS
+    #: NOT** — `pack_refusals`' ruling applied to a fifth layer, with `klv_vmti_codec`'s asymmetry
+    #: inherited: a refusal INSIDE the set (a bad element, a bad subordinate set) is carried by the
+    #: set's own `refusals` and the set still decodes; only a failure to walk the set at all lands
+    #: here.
+    rvt_refusal: dict | None = None
 
     @property
     def checksum_valid(self) -> bool | None:
@@ -1440,6 +1482,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
     core_identifier_refusal: dict | None = None
     vmti_set = None
     vmti_refusal: dict | None = None
+    rvt_set = None
+    rvt_refusal: dict | None = None
 
     for entry in framing.walk_local_set(buf, offset):
         order.append(entry.tag)
@@ -1496,6 +1540,23 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
                         "section": "8.74", "source": vmti.SOURCE_ST_0903_4,
                     }
                 continue
+            if entry.tag == RVT_TAG:
+                # ST 0601 item 73. §8.73: "The length field is the size of all RVT LS metadata
+                # items to be packaged within Tag 73" — item 48's shape, so the Value is handed
+                # over bare and there is no second key to strip. A refusal is STRUCTURED and local
+                # to the item: `klv_rvt_codec` raises with the clause that decided it, and the
+                # packet goes on being decoded.
+                try:
+                    rvt_set = rvt.decode_rvt_local_set(
+                        entry.value, base_offset=entry.value_offset)
+                except (rvt.RvtError, ValueError) as refusal:
+                    rvt_refusal = {
+                        "tag": entry.tag, "name": "RVT Local Set",
+                        "class": type(refusal).__name__, "reason": str(refusal),
+                        "octets": entry.value.hex(), "value_offset": entry.value_offset,
+                        "section": "8.73", "source": rvt.SOURCE_ST_0806_4,
+                    }
+                continue
             if entry.tag in DOCUMENT_WITNESSED_TAGS:
                 # The second crossing of the scope contract — see `IMAPB_ITEM_TAGS` above. These
                 # tags are absent from `ITEMS` on purpose: `ITEMS` is the 26 the pinned stream
@@ -1545,7 +1606,8 @@ def decode_packet(buf: bytes, offset: int = 0) -> DecodedPacket:
         checksum_stored=checksum_stored, checksum_computed=checksum_computed,
         security=security_set, pack_refusals=tuple(pack_refusals),
         core_identifier=core_identifier, core_identifier_refusal=core_identifier_refusal,
-        vmti=vmti_set, vmti_refusal=vmti_refusal)
+        vmti=vmti_set, vmti_refusal=vmti_refusal,
+        rvt=rvt_set, rvt_refusal=rvt_refusal)
 
 
 def decode_stream(buf: bytes) -> list[DecodedPacket]:

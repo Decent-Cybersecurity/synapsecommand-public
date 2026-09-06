@@ -1,0 +1,96 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 56823,
+        "stored": 56823,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "ddf7",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "73": "0c2701020007062153594e54484554494320504f492057495448204e4f20434f4f5244494e41544553"
+      },
+      "rvt": {
+        "element_order": [
+          12
+        ],
+        "elements": {},
+        "independent_set_conformance": {
+          "ST 0806.4-01": false,
+          "ST 0806.4-02": false,
+          "ST 0806.4-03": false,
+          "ST 0806.4-04": false
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "required_absent": [],
+        "set_name": "RVT Local Set",
+        "subordinate_sets": [
+          {
+            "element_order": [
+              1,
+              6
+            ],
+            "elements": {
+              "1": {
+                "name": "POI/AOI Number",
+                "octets": "0007",
+                "requirements": [
+                  "ST 0806.4-08"
+                ],
+                "signal": null,
+                "units": "Number",
+                "value": 7
+              },
+              "6": {
+                "name": "POI/AOI Text",
+                "octets": "53594e54484554494320504f492057495448204e4f20434f4f5244494e41544553",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC POI WITH NO COORDINATES"
+              }
+            },
+            "independent_set_conformance": {
+              "ST 0806.4-01": null,
+              "ST 0806.4-02": null,
+              "ST 0806.4-03": null,
+              "ST 0806.4-04": null
+            },
+            "refusals": [],
+            "required_absent": [
+              2,
+              3
+            ],
+            "set_name": "Point of Interest Local Set",
+            "subordinate_sets": [],
+            "tag": 12,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        73,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 60,
+      "value_length_octets": "3c"
+    }
+  ],
+  "payload": {
+    "octets": 77,
+    "packet_count": 1
+  }
+}

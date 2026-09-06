@@ -1,0 +1,192 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 25530,
+        "stored": 25530,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "63ba",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "73": "020800046050584e01800c10010200010204000000000304000000000c2201020002020400b60b610304005b05b0091053594e5448455449432d504f492d3032010411223344"
+      },
+      "rvt": {
+        "element_order": [
+          2,
+          12,
+          12,
+          1
+        ],
+        "elements": {
+          "1": {
+            "name": "CRC 32",
+            "octets": "11223344",
+            "requirements": [
+              "ST 0806.4-03",
+              "ST 0806.4-04"
+            ],
+            "signal": null,
+            "units": "None",
+            "value": 287454020
+          },
+          "2": {
+            "name": "User Defined Time Stamp -Microseconds Since 1970",
+            "octets": "00046050584e0180",
+            "requirements": [
+              "ST 0806.4-01",
+              "ST 0806.4-02"
+            ],
+            "signal": null,
+            "units": "Micro-seconds",
+            "value": 1231798102000000
+          }
+        },
+        "independent_set_conformance": {
+          "ST 0806.4-01": true,
+          "ST 0806.4-02": true,
+          "ST 0806.4-03": true,
+          "ST 0806.4-04": true
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "required_absent": [],
+        "set_name": "RVT Local Set",
+        "subordinate_sets": [
+          {
+            "element_order": [
+              1,
+              2,
+              3
+            ],
+            "elements": {
+              "1": {
+                "name": "POI/AOI Number",
+                "octets": "0001",
+                "requirements": [
+                  "ST 0806.4-08"
+                ],
+                "signal": null,
+                "units": "Number",
+                "value": 1
+              },
+              "2": {
+                "name": "POI Latitude",
+                "octets": "00000000",
+                "requirements": [
+                  "ST 0806.4-09"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.0
+              },
+              "3": {
+                "name": "POI Longitude",
+                "octets": "00000000",
+                "requirements": [
+                  "ST 0806.4-10"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.0
+              }
+            },
+            "independent_set_conformance": {
+              "ST 0806.4-01": null,
+              "ST 0806.4-02": null,
+              "ST 0806.4-03": null,
+              "ST 0806.4-04": null
+            },
+            "refusals": [],
+            "required_absent": [],
+            "set_name": "Point of Interest Local Set",
+            "subordinate_sets": [],
+            "tag": 12,
+            "unlisted_tags": []
+          },
+          {
+            "element_order": [
+              1,
+              2,
+              3,
+              9
+            ],
+            "elements": {
+              "1": {
+                "name": "POI/AOI Number",
+                "octets": "0002",
+                "requirements": [
+                  "ST 0806.4-08"
+                ],
+                "signal": null,
+                "units": "Number",
+                "value": 2
+              },
+              "2": {
+                "name": "POI Latitude",
+                "octets": "00b60b61",
+                "requirements": [
+                  "ST 0806.4-09"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.5000000123400241
+              },
+              "3": {
+                "name": "POI Longitude",
+                "octets": "005b05b0",
+                "requirements": [
+                  "ST 0806.4-10"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.49999997043050826
+              },
+              "9": {
+                "name": "POI/AOI Label",
+                "octets": "53594e5448455449432d504f492d3032",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-POI-02"
+              }
+            },
+            "independent_set_conformance": {
+              "ST 0806.4-01": null,
+              "ST 0806.4-02": null,
+              "ST 0806.4-03": null,
+              "ST 0806.4-04": null
+            },
+            "refusals": [],
+            "required_absent": [],
+            "set_name": "Point of Interest Local Set",
+            "subordinate_sets": [],
+            "tag": 12,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        73,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 89,
+      "value_length_octets": "59"
+    }
+  ],
+  "payload": {
+    "octets": 106,
+    "packet_count": 1
+  }
+}

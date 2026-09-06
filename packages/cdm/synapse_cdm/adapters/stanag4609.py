@@ -134,6 +134,7 @@ from synapse_cdm.adapters import klv_codec as framing
 from synapse_cdm.adapters import klv_miis_codec as miis
 from synapse_cdm.adapters import klv_mismms as mismms
 from synapse_cdm.adapters import klv_pack_codec as packs
+from synapse_cdm.adapters import klv_rvt_codec as rvt
 from synapse_cdm.adapters import klv_security_codec as security
 from synapse_cdm.adapters import klv_uas_codec as uas
 from synapse_cdm.adapters import klv_vmti_codec as vmti
@@ -251,6 +252,17 @@ VMTI_ABSENT_BASIS = (
 )
 
 
+#: The same sentence for item 73, and it is NOT emitted either, for `VMTI_ABSENT_BASIS`' reason:
+#: the packet's own `attributes.klv_tag_order` already says tag 73 is not there.
+RVT_ABSENT_BASIS = (
+    "no ST 0601 item 73: this packet carried no RVT Local Set. \u00a78.73 makes item 73 "
+    "'Required in LS? Optional' and MISB ST 0806.4 \u00a75 says the set exists for users "
+    "'required to use the RVT LS metadata items', so its absence is a fact about the emitter's "
+    "programme and not about the scene \u2014 it is not a statement that no point of interest "
+    "was nominated, and no empty POI list is emitted for it."
+)
+
+
 #: **THE HAE PRECEDENCE, AND IT IS THIS REPOSITORY'S AND SAYS SO (RULING 4, 2026-09-05).**
 #: `Position.alt_m` is documented "Metres HAE" and ST 0601.14a carries TWO items measured from the
 #: WGS84 ellipsoid — tag 75 Sensor Ellipsoid Height and tag 104 Sensor Ellipsoid Height Extended.
@@ -344,6 +356,54 @@ def _parsed_packet(index: int, packet: uas.DecodedPacket, raw: bytes) -> dict:
         "unknown_tags": list(packet.unknown_tags),
         "security": _security_dict(packet.security),
         **_vmti_twin(packet),
+        **_rvt_twin(packet),
+    }
+
+
+def _rvt_twin(packet: uas.DecodedPacket) -> dict:
+    """`{"rvt": …}` for a packet that carries item 73, and `{}` for one that does not.
+
+    `_vmti_twin`'s rule and its reason, applied to a fifth layer: the key is CONDITIONAL, so every
+    golden written before this round stays byte-exact and `RVT_ABSENT_BASIS` is a fact about the
+    format rather than an annotation this adapter puts on every object.
+    """
+    if packet.rvt is None and packet.rvt_refusal is None:
+        return {}
+    return {"rvt": {
+        **(_rvt_set(packet.rvt) if packet.rvt else
+           {"set_name": rvt.RVT_SET_NAME, "element_order": [], "elements": {},
+            "subordinate_sets": [], "refusals": [], "unlisted_tags": [],
+            "independent_set_conformance": {}}),
+        "item_refusal": packet.rvt_refusal,
+    }}
+
+
+def _rvt_set(decoded: rvt.DecodedSet) -> dict:
+    """One ST 0806.4 Local Set to JSON, structure preserved and nothing flattened.
+
+    Recursive, because a subordinate set is the same shape as the set that carries it —
+    `klv_rvt_codec.decode_set` walks all four tables with one function and this mirrors it. The
+    subordinate sets are a LIST of `{tag, …}` and never a dict keyed on the tag, for
+    `DecodedSet.subordinate_sets`' own reason: `ST 0806.4-25` lets tag 12 appear many times in one
+    RVT LS, so keying on it would collapse two points of interest into one.
+    """
+    return {
+        "set_name": decoded.set_name,
+        "element_order": list(decoded.order),
+        "elements": {str(tag): {
+            "name": element.name,
+            "value": _rendered(element.value),
+            "signal": element.signal,
+            "units": element.units,
+            "octets": element.raw.hex(),
+            "requirements": list(element.requirements),
+        } for tag, element in sorted(decoded.elements.items())},
+        "subordinate_sets": [{"tag": tag, **_rvt_set(nested)}
+                             for tag, nested in decoded.subordinate_sets],
+        "refusals": [dict(refusal._asdict()) for refusal in decoded.refusals],
+        "unlisted_tags": list(decoded.unlisted_tags),
+        "required_absent": list(decoded.required_absent),
+        "independent_set_conformance": dict(decoded.independent_set_conformance),
     }
 
 
@@ -1637,6 +1697,18 @@ class Stanag4609Adapter(Adapter):
             attributes["vmti_local_set"] = _vmti_twin(packet)["vmti"]
             attributes["vmti_basis"] = uas.VMTI_BASIS
             attributes["vmti_identity_ruling"] = VMTI_IDENTITY_RULING
+        # ITEM 73, AND ONLY WHERE THERE IS ONE. The same conditional key for the same reason.
+        # **THE VALUES RIDE HERE AND NOWHERE ELSE, WHICH IS A RULING AND NOT A SHORTFALL.**
+        # `FORMAT_COVERAGE.md` row 73's CDM field cell reads `Entity.attributes`; a POI is a point
+        # on the ground the aircrew nominated rather than the platform this packet is about, and
+        # emitting it as a second Entity or an AOI as a geometry is a modelling decision no clause
+        # of either document makes. `klv_rvt_codec.CDM_MAPPING_NOT_TAKEN` names the eight elements
+        # that have a CDM home and says the same thing from the codec's side.
+        if packet.rvt is not None or packet.rvt_refusal is not None:
+            attributes["rvt_local_set"] = _rvt_twin(packet)["rvt"]
+            attributes["rvt_basis"] = uas.RVT_BASIS
+            attributes["rvt_mapping_not_taken"] = rvt.CDM_MAPPING_NOT_TAKEN
+            attributes["rvt_embedded_set_policy"] = rvt.EMBEDDED_SET_POLICY
 
         if 15 in items:
             attributes["sensor_true_altitude_msl_m"] = _rendered(items[15].value)

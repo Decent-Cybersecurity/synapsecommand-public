@@ -2159,9 +2159,279 @@ _PARK_12_FIXTURES: tuple[dict, ...] = (
     ),
 )
 
+
+# ======================================================================================
+# THE PARK 7 FIXTURES — ST 0806.4's RVT Local Set inside ST 0601 item 73
+# ======================================================================================
+#
+# **THE DOCUMENT SUPPLIES NO WORKED EXAMPLE, SO THIS BLOCK IS BUILT LIKE THE ST 0102.12 ONE AND
+# NOT LIKE THE ST 0903.4 ONE.** ST 0806.4's only illustration of a packet is Figure 7-1 at §7.3.4,
+# and it is a raster image — page 5 of the pinned copy carries `/XObject<</Image73 73 0 R>>` and its
+# text layer yields the caption alone. ST 0601.14a §8.73's own Example KLV Item row reads `49 - N/A`.
+# So `check_against_the_documents_own_examples` has no analogue here and is NOT simulated: every
+# fixture below is built from the ELEMENT RULES, each citing the clause it exercises, which is the
+# weaker arrangement the security block is labelled with and this one is labelled with too.
+#
+# **NO FIXTURE CARRIES A REAL-WORLD PLACE, CALLSIGN OR TARGET.** Every string begins `SYNTHETIC`;
+# every coordinate is a round number in the open ocean off West Africa at 0°N 0°E or within a
+# degree of it, which is the null island convention and unmistakably not a nomination; the
+# `Digital Video File Format` value is `H.264`, which §8-1 tag 10's own Notes cell prints as one of
+# its examples. **NOT ONE FIXTURE CARRIES A `Frag Circle Radius`** — Table 8-1 tag 6, "Size of
+# fragmentation circle selected by the aircrew" — and that is a deliberate omission rather than an
+# oversight: the element is transcribed in `klv_rvt_codec.ELEMENTS` because a transcription that
+# drops a row is not a transcription, and its decoder is the same `uint` path tags 3, 4 and 9
+# exercise, so nothing goes unchecked by leaving it out of a fixture.
+
+def _rvt(elements) -> str:
+    """A whole item 73 Value from `[(tag, bytes), ...]`, as hex for `_packet`'s overrides.
+
+    NO KEY AND NO OUTER LENGTH: ST 0601.14a §8.73, "The length field is the size of all RVT LS
+    metadata items to be packaged within Tag 73". What item 73 carries is the triplets.
+    """
+    from synapse_cdm.adapters import klv_rvt_codec as rvtc            # noqa: PLC0415
+    return rvtc.encode_set(tuple(elements)).hex()
+
+
+def _rvt_sub(elements) -> bytes:
+    """A subordinate set's Value — the same triplets one layer down, as BYTES for nesting."""
+    from synapse_cdm.adapters import klv_rvt_codec as rvtc            # noqa: PLC0415
+    return rvtc.encode_set(tuple(elements))
+
+
+def _deg(value: float, limit: float) -> bytes:
+    """A degree value under the map every POI/AOI coordinate cell states: -(2^31-1)..(2^31-1)."""
+    return round(value * (2 ** 31 - 1) / limit).to_bytes(4, "big", signed=True)
+
+
+#: A complete Point of Interest, one value per row of Table 8-2. Kept as a named table so the
+#: fixtures below draw from the same values and a reader can see at one site that nothing here
+#: names a real place.
+_POI_COMPLETE: tuple[tuple[int, bytes], ...] = (
+    (1, (1).to_bytes(2, "big")),                     # POI/AOI Number, -08's required item
+    (2, _deg(0.0, 90.0)),                            # POI Latitude, -09
+    (3, _deg(0.0, 180.0)),                           # POI Longitude, -10
+    (4, (30000).to_bytes(2, "big")),                 # POI Altitude, the 0..65535 → -900..19000 map
+    (5, bytes([0x01])),                              # POI/AOI Type — UNENUMERATED, carried bare
+    (6, b"SYNTHETIC POINT OF INTEREST TEXT"),        # POI/AOI Text, Max. 2048
+    (7, b"SYNTHETIC-ICON"),                          # POI Source Icon, Max. 127
+    (8, b"SYNTHETIC-SOURCE"),                        # POI/AOI Source ID, Max. 255
+    (9, b"SYNTHETIC-POI-01"),                        # POI/AOI Label, EXACTLY 16 — a stated width
+    (10, b"SYNTHETIC-OPERATION"),                    # Operation ID, Max. 127
+)
+
+#: A complete Area of Interest, one value per row of Table 8-3. The two corners are NW and SE, per
+#: the document's own four footnotes, and points 2 and 4 do not exist in this document.
+_AOI_COMPLETE: tuple[tuple[int, bytes], ...] = (
+    (1, (2).to_bytes(2, "big")),                     # POI/AOI Number, -13
+    (2, _deg(1.0, 90.0)),                            # Corner Latitude Point 1 (NW), -14
+    (3, _deg(-1.0, 180.0)),                          # Corner Longitude Point 1 (NW), -15
+    (4, _deg(-1.0, 90.0)),                           # Corner Latitude Point 3 (SE), -16
+    (5, _deg(1.0, 180.0)),                           # Corner Longitude Point 3 (SE), -17
+    (6, bytes([0x02])),                              # POI/AOI Type, -18 REQUIRED and unenumerated
+    (7, b"SYNTHETIC AREA OF INTEREST TEXT"),         # POI/AOI Text
+    (8, b"SYNTHETIC-SOURCE"),                        # POI/AOI Source ID
+    (9, b"SYNTHETIC-AOI-01"),                        # POI/AOI Label, exactly 16
+    (10, b"SYNTHETIC-OPERATION"),                    # Operation ID
+)
+
+_PARK_7_FIXTURES: tuple[dict, ...] = (
+    dict(
+        name="rvt_local_set_complete_from_the_element_rules",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (2, (1_231_798_102_000_000).to_bytes(8, "big")),
+                (3, (120).to_bytes(2, "big")),
+                (4, (115).to_bytes(2, "big")),
+                (5, bytes([0x00])),
+                (7, (3600).to_bytes(4, "big")),
+                (8, bytes([0x02])),
+                (9, (4_000_000).to_bytes(4, "big")),
+                (10, b"H.264"),
+                (14, bytes([31])),
+                (15, b"NAA"),
+                (16, (12345).to_bytes(3, "big")),
+                (17, (67890).to_bytes(3, "big")),
+                (18, bytes([31])),
+                (19, b"NAA"),
+                (20, (12350).to_bytes(3, "big")),
+                (21, (67895).to_bytes(3, "big")),
+                (12, _rvt_sub(_POI_COMPLETE)),
+                (13, _rvt_sub(_AOI_COMPLETE)),
+                (11, _rvt_sub((
+                    (1, bytes([0b01_000101])),        # INT, numeric id 5
+                    (2, (1234).to_bytes(2, "big")),
+                ))),
+                (1, (0x11223344).to_bytes(4, "big")),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "EVERY ROW OF ALL FOUR ST 0806.4 TABLES IN ONE PACKET, carried in ST 0601 item 73 — "
+            "sixteen of Table 8-1's twenty-one elements plus its three subordinate-set tags, all "
+            "ten of Table 8-2's, all ten of Table 8-3's and both of Table 8-4's. Every decoding "
+            "rule in `klv_rvt_codec` runs once here: the five uint widths including the uint24 no "
+            "other document in this repository uses, the two degree maps, the POI altitude's "
+            "unsigned map with a negative offset, the unenumerated int8, the ISO-7 strings at both "
+            "a stated exact width (tag 9, exactly 16) and a stated maximum, the User Defined LS's "
+            "bit-field, and the opaque User Data. **THE SUBORDINATE SETS ARE SENT OUT OF TAG "
+            "ORDER, 12 then 13 then 11**, because `DecodedSet.order` is the wire order and a "
+            "fixture that always sorts would never show that. The five Table 8-1 rows NOT here are "
+            "tag 6 Frag Circle Radius, omitted deliberately (see this block's header), and none "
+            "other — 11, 12 and 13 are the subordinate tags and are present as sets"),
+        citation=("MISB ST 0806.4 §8 Tables 8-1, 8-2, 8-3 and 8-4 (all 43 rows), §7.1's "
+                  "ST 0806.4-06, §7.3.1's -07 through -11, §7.3.2's -12 through -19, §7.3.3's -20 "
+                  "through -24; ST 0601.14a §8.73 for the carrier"),
+    ),
+    dict(
+        name="an_rvt_local_set_carrying_two_points_of_interest_is_two_pois",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (2, (1_231_798_102_000_000).to_bytes(8, "big")),
+                (12, _rvt_sub((
+                    (1, (1).to_bytes(2, "big")),
+                    (2, _deg(0.0, 90.0)),
+                    (3, _deg(0.0, 180.0)),
+                ))),
+                (12, _rvt_sub((
+                    (1, (2).to_bytes(2, "big")),
+                    (2, _deg(0.5, 90.0)),
+                    (3, _deg(0.5, 180.0)),
+                    (9, b"SYNTHETIC-POI-02"),
+                ))),
+                (1, (0x11223344).to_bytes(4, "big")),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "TAG 12 TWICE IN ONE RVT LS, which `ST 0806.4-25` explicitly allows: 'Tag ID 12, "
+            "representing a Point of Interest Local Set instance, can appear multiple times to "
+            "convey information for multiple points of interest.' This is the fixture that proves "
+            "`DecodedSet.subordinate_sets` is a LIST and not a dict keyed on the tag — a dict "
+            "would carry one POI where the wire carried two, and the two here differ in every "
+            "element they share. Each carries only the three `ST 0806.4-08/-09/-10` mandatory "
+            "items plus, for the second, a label"),
+        citation="MISB ST 0806.4 §7.4 ST 0806.4-25, §7.3.1 ST 0806.4-08/-09/-10, Table 8-2",
+    ),
+    dict(
+        name="a_poi_missing_a_mandatory_element_is_carried_and_reported",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (12, _rvt_sub((
+                    (1, (7).to_bytes(2, "big")),
+                    (6, b"SYNTHETIC POI WITH NO COORDINATES"),
+                ))),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "a POI carrying its Number but neither its Latitude nor its Longitude, which "
+            "`ST 0806.4-09` and `-10` both require. IT IS CARRIED, and the subordinate set's "
+            "`required_absent` reads `[2, 3]`. Nothing is refused: `klv_security_codec`'s element "
+            "refusal policy reasoning is that discarding well-formed elements over a missing one "
+            "destroys evidence, and a set that is non-conforming is a FACT a consumer needs rather "
+            "than a set that did not arrive. **AND THE RVT LS ITSELF SATISFIES NONE OF "
+            "`ST 0806.4-01`..`-04` HERE** — no timestamp, no checksum — which is reported at "
+            "`independent_set_conformance` and refused for the reason "
+            "`klv_rvt_codec.EMBEDDED_SET_POLICY` states: an RVT LS inside item 73 is not an "
+            "independent one and draws its time and integrity from the ST 0601 packet"),
+        citation=("MISB ST 0806.4 §7.3.1 ST 0806.4-08/-09/-10, §6 ST 0806.4-01 through -04, §5; "
+                  "ST 0601.14a §8.73.1"),
+    ),
+    dict(
+        name="an_rvt_element_at_a_stated_length_it_does_not_have_is_refused",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (2, (1_231_798_102_000_000).to_bytes(8, "big")),
+                (3, (120).to_bytes(3, "big")),                # Length cell says 2
+                (15, b"NA"),                                  # Length cell says 3
+                (16, (12345).to_bytes(3, "big")),             # correct, and still decodes
+                (1, (0x11223344).to_bytes(4, "big")),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "two elements at widths their own Length in Bytes cells forbid — tag 3 Platform True "
+            "Airspeed at three octets where Table 8-1 says 2, and tag 15 MGRS Latitude Band and "
+            "Grid Square at two where it says 3. BOTH ARE REFUSED AS ELEMENTS AND THE SET IS NOT: "
+            "the two refusals name the cell they failed, their octets stay parked at "
+            "`raw_elements`, and tags 2, 16 and 1 decode beside them. This is also the fixture "
+            "that shows a MAXIMUM is not enforced: tag 15's `3` is an exact width and tag 10's "
+            "`Max. 127` is not, and `_stated_length` is where the two are told apart"),
+        citation="MISB ST 0806.4 Table 8-1, the Length in Bytes column for tags 3 and 15",
+    ),
+    dict(
+        name="an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (2, (1_231_798_102_000_000).to_bytes(8, "big")),
+                (10, bytes([0x48, 0x2E, 0x32, 0x36, 0x34, 0xFF])),
+                (1, (0x11223344).to_bytes(4, "big")),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "a `String ISO-7` element carrying `0xFF`, which is not an ISO-7 character. The "
+            "element is refused with the position of the offending octet named and the packet "
+            "translates — `klv_security_codec._decode_iso646`'s ruling reached by a third "
+            "document. The value is `H.264` followed by one impossible octet, so a reader can see "
+            "that the refusal is about the last byte and not about the string"),
+        citation="MISB ST 0806.4 Table 8-1 tag 10, Format 'String ISO-7'",
+    ),
+    dict(
+        name="a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (12, _rvt_sub((
+                    (1, (9).to_bytes(2, "big")),
+                    (2, bytes.fromhex("80000000")),
+                    (3, bytes.fromhex("80000000")),
+                    (4, (0).to_bytes(2, "big")),
+                ))),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "a POI whose latitude and longitude both carry `0x80000000`, which every coordinate "
+            "Notes cell in ST 0806.4 names in terms: 'Use -(2^31) as an \"error\" indicator. "
+            "-(2^31) = 0x80000000.' Both elements decode to NO value and the signal `error`, on "
+            "`klv_uas_codec`'s special-values precedent — a signal is not a measurement and is "
+            "never averaged with one. **THE ELEMENTS ARE PRESENT, SO `required_absent` IS EMPTY**: "
+            "`ST 0806.4-09` and `-10` require the ITEM and the producer sent it saying it does not "
+            "know, which is a different state from not sending it, and the two are kept apart. Tag "
+            "4 carries the altitude map's own zero, which is -900 metres and not sea level"),
+        citation="MISB ST 0806.4 Table 8-2 tags 2, 3 and 4, the Notes column",
+    ),
+    dict(
+        name="an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it",
+        octets=_payload(_packet([
+            (2, _EXAMPLE[2]),
+            (73, _rvt([
+                (2, (1_231_798_102_000_000).to_bytes(8, "big")),
+                (22, bytes.fromhex("ABCD")),
+                (1, (0x11223344).to_bytes(4, "big")),
+            ])),
+            (65, _EXAMPLE[65]), (1, _EXAMPLE[1]),
+        ])),
+        what_it_is_for=(
+            "tag 22 inside an RVT LS, one past the twenty-one Table 8-1 draws. It is carried at "
+            "`raw_elements`, listed at `unlisted_tags`, and refused with the clause that says why "
+            "— the same treatment `klv_uas_codec` gives an unwitnessed ST 0601 tag under "
+            "`ST 0107.3-04`, one layer down. This layer declines to say what the octets MEAN and "
+            "does not drop them"),
+        citation="MISB ST 0806.4 Table 8-1, which draws rows for tags 1 through 21",
+    ),
+)
+
 ADAPTER_FIXTURES = (ADAPTER_FIXTURES + _PARK_5_FIXTURES + _PARK_3_FIXTURES
                     + _PRE_RELEASE_FIXTURES
-                    + _PARK_11_FIXTURES + _PARK_6_FIXTURES + _PARK_12_FIXTURES)
+                    + _PARK_11_FIXTURES + _PARK_6_FIXTURES + _PARK_12_FIXTURES
+                    + _PARK_7_FIXTURES)
 
 
 def build_adapter_fixtures() -> list[pathlib.Path]:

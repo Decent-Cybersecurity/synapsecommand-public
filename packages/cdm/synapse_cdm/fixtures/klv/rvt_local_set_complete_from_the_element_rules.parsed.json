@@ -1,0 +1,495 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 15441,
+        "stored": 15441,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "3c51",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "73": "020800046050584e01800302007804020073050100070400000e100801020904003d09000a05482e3236340e011f0f034e41411003003039110301093212011f13034e4141140300303e15030109370c81820102000102040000000003040000000004027530050101062053594e54484554494320504f494e54204f4620494e5445524553542054455854070e53594e5448455449432d49434f4e081053594e5448455449432d534f55524345091053594e5448455449432d504f492d30310a1353594e5448455449432d4f5045524154494f4e0d79010200020204016c16c10304ff49f49f0404fe93e93f050400b60b61060102071f53594e5448455449432041524541204f4620494e5445524553542054455854081053594e5448455449432d534f55524345091053594e5448455449432d414f492d30310a1353594e5448455449432d4f5045524154494f4e0b07010145020204d2010411223344"
+      },
+      "rvt": {
+        "element_order": [
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          12,
+          13,
+          11,
+          1
+        ],
+        "elements": {
+          "1": {
+            "name": "CRC 32",
+            "octets": "11223344",
+            "requirements": [
+              "ST 0806.4-03",
+              "ST 0806.4-04"
+            ],
+            "signal": null,
+            "units": "None",
+            "value": 287454020
+          },
+          "10": {
+            "name": "Digital Video File Format",
+            "octets": "482e323634",
+            "requirements": [],
+            "signal": null,
+            "units": "String ISO-7",
+            "value": "H.264"
+          },
+          "14": {
+            "name": "MGRS Zone",
+            "octets": "1f",
+            "requirements": [],
+            "signal": null,
+            "units": "None",
+            "value": 31
+          },
+          "15": {
+            "name": "MGRS Latitude Band  and Grid Square",
+            "octets": "4e4141",
+            "requirements": [],
+            "signal": null,
+            "units": "String ISO-7",
+            "value": "NAA"
+          },
+          "16": {
+            "name": "MGRS Easting",
+            "octets": "003039",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters",
+            "value": 12345
+          },
+          "17": {
+            "name": "MGRS Northing",
+            "octets": "010932",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters",
+            "value": 67890
+          },
+          "18": {
+            "name": "MGRS Zone Second Value",
+            "octets": "1f",
+            "requirements": [],
+            "signal": null,
+            "units": "None",
+            "value": 31
+          },
+          "19": {
+            "name": "MGRS Latitude Band  and Grid Square  Second Value",
+            "octets": "4e4141",
+            "requirements": [],
+            "signal": null,
+            "units": "String ISO-7",
+            "value": "NAA"
+          },
+          "2": {
+            "name": "User Defined Time Stamp -Microseconds Since 1970",
+            "octets": "00046050584e0180",
+            "requirements": [
+              "ST 0806.4-01",
+              "ST 0806.4-02"
+            ],
+            "signal": null,
+            "units": "Micro-seconds",
+            "value": 1231798102000000
+          },
+          "20": {
+            "name": "MGRS Easting Second Value",
+            "octets": "00303e",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters",
+            "value": 12350
+          },
+          "21": {
+            "name": "MGRS Northing  Second Value",
+            "octets": "010937",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters",
+            "value": 67895
+          },
+          "3": {
+            "name": "Platform True Airspeed",
+            "octets": "0078",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters / Second",
+            "value": 120
+          },
+          "4": {
+            "name": "Platform Indicated Airspeed",
+            "octets": "0073",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters / Second",
+            "value": 115
+          },
+          "5": {
+            "name": "Telemetry Accuracy Indicator",
+            "octets": "00",
+            "requirements": [],
+            "signal": null,
+            "units": "None",
+            "value": 0
+          },
+          "7": {
+            "name": "Frame Code",
+            "octets": "00000e10",
+            "requirements": [],
+            "signal": null,
+            "units": "None",
+            "value": 3600
+          },
+          "8": {
+            "name": "UAS LS Version Number",
+            "octets": "02",
+            "requirements": [],
+            "signal": null,
+            "units": "Number",
+            "value": 2
+          },
+          "9": {
+            "name": "Video Data rate",
+            "octets": "003d0900",
+            "requirements": [],
+            "signal": null,
+            "units": "bps or Hz",
+            "value": 4000000
+          }
+        },
+        "independent_set_conformance": {
+          "ST 0806.4-01": true,
+          "ST 0806.4-02": true,
+          "ST 0806.4-03": true,
+          "ST 0806.4-04": true
+        },
+        "item_refusal": null,
+        "refusals": [],
+        "required_absent": [],
+        "set_name": "RVT Local Set",
+        "subordinate_sets": [
+          {
+            "element_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "elements": {
+              "1": {
+                "name": "POI/AOI Number",
+                "octets": "0001",
+                "requirements": [
+                  "ST 0806.4-08"
+                ],
+                "signal": null,
+                "units": "Number",
+                "value": 1
+              },
+              "10": {
+                "name": "Operation ID",
+                "octets": "53594e5448455449432d4f5045524154494f4e",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-OPERATION"
+              },
+              "2": {
+                "name": "POI Latitude",
+                "octets": "00000000",
+                "requirements": [
+                  "ST 0806.4-09"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.0
+              },
+              "3": {
+                "name": "POI Longitude",
+                "octets": "00000000",
+                "requirements": [
+                  "ST 0806.4-10"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.0
+              },
+              "4": {
+                "name": "POI Altitude",
+                "octets": "7530",
+                "requirements": [],
+                "signal": null,
+                "units": "Meters",
+                "value": 8209.636072327763
+              },
+              "5": {
+                "name": "POI/AOI Type",
+                "octets": "01",
+                "requirements": [],
+                "signal": null,
+                "units": "None",
+                "value": 1
+              },
+              "6": {
+                "name": "POI/AOI Text",
+                "octets": "53594e54484554494320504f494e54204f4620494e5445524553542054455854",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC POINT OF INTEREST TEXT"
+              },
+              "7": {
+                "name": "POI Source Icon",
+                "octets": "53594e5448455449432d49434f4e",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-ICON"
+              },
+              "8": {
+                "name": "POI/AOI Source ID",
+                "octets": "53594e5448455449432d534f55524345",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-SOURCE"
+              },
+              "9": {
+                "name": "POI/AOI Label",
+                "octets": "53594e5448455449432d504f492d3031",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-POI-01"
+              }
+            },
+            "independent_set_conformance": {
+              "ST 0806.4-01": null,
+              "ST 0806.4-02": null,
+              "ST 0806.4-03": null,
+              "ST 0806.4-04": null
+            },
+            "refusals": [],
+            "required_absent": [],
+            "set_name": "Point of Interest Local Set",
+            "subordinate_sets": [],
+            "tag": 12,
+            "unlisted_tags": []
+          },
+          {
+            "element_order": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "elements": {
+              "1": {
+                "name": "POI/AOI Number",
+                "octets": "0002",
+                "requirements": [
+                  "ST 0806.4-13"
+                ],
+                "signal": null,
+                "units": "Number",
+                "value": 2
+              },
+              "10": {
+                "name": "Operation ID",
+                "octets": "53594e5448455449432d4f5045524154494f4e",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-OPERATION"
+              },
+              "2": {
+                "name": "Corner Latitude Point 1 (Decimal Degrees)",
+                "octets": "016c16c1",
+                "requirements": [
+                  "ST 0806.4-14"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 0.9999999827705324
+              },
+              "3": {
+                "name": "Corner Longitude Point 1 (Decimal Degrees)",
+                "octets": "ff49f49f",
+                "requirements": [
+                  "ST 0806.4-15"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": -1.0000000246800482
+              },
+              "4": {
+                "name": "Corner Latitude Point 3 (Decimal Degrees)",
+                "octets": "fe93e93f",
+                "requirements": [
+                  "ST 0806.4-16"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": -0.9999999827705324
+              },
+              "5": {
+                "name": "Corner Longitude Point 3 (Decimal Degrees)",
+                "octets": "00b60b61",
+                "requirements": [
+                  "ST 0806.4-17"
+                ],
+                "signal": null,
+                "units": "Degrees",
+                "value": 1.0000000246800482
+              },
+              "6": {
+                "name": "POI/AOI Type",
+                "octets": "02",
+                "requirements": [
+                  "ST 0806.4-18"
+                ],
+                "signal": null,
+                "units": "None",
+                "value": 2
+              },
+              "7": {
+                "name": "POI/AOI Text",
+                "octets": "53594e5448455449432041524541204f4620494e5445524553542054455854",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC AREA OF INTEREST TEXT"
+              },
+              "8": {
+                "name": "POI/AOI Source ID",
+                "octets": "53594e5448455449432d534f55524345",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-SOURCE"
+              },
+              "9": {
+                "name": "POI/AOI Label",
+                "octets": "53594e5448455449432d414f492d3031",
+                "requirements": [],
+                "signal": null,
+                "units": "String ISO-7",
+                "value": "SYNTHETIC-AOI-01"
+              }
+            },
+            "independent_set_conformance": {
+              "ST 0806.4-01": null,
+              "ST 0806.4-02": null,
+              "ST 0806.4-03": null,
+              "ST 0806.4-04": null
+            },
+            "refusals": [],
+            "required_absent": [],
+            "set_name": "Area of Interest Local Set",
+            "subordinate_sets": [],
+            "tag": 13,
+            "unlisted_tags": []
+          },
+          {
+            "element_order": [
+              1,
+              2
+            ],
+            "elements": {
+              "1": {
+                "name": "Numeric ID for Data Type",
+                "octets": "45",
+                "requirements": [
+                  "ST 0806.4-21"
+                ],
+                "signal": null,
+                "units": "N/A",
+                "value": {
+                  "data_type": "INT",
+                  "data_type_bits": 1,
+                  "numeric_id": 5
+                }
+              },
+              "2": {
+                "name": "User Data",
+                "octets": "04d2",
+                "requirements": [
+                  "ST 0806.4-22"
+                ],
+                "signal": null,
+                "units": "N/A",
+                "value": "04d2"
+              }
+            },
+            "independent_set_conformance": {
+              "ST 0806.4-01": null,
+              "ST 0806.4-02": null,
+              "ST 0806.4-03": null,
+              "ST 0806.4-04": null
+            },
+            "refusals": [],
+            "required_absent": [],
+            "set_name": "User Defined Local Set",
+            "subordinate_sets": [],
+            "tag": 11,
+            "unlisted_tags": []
+          }
+        ],
+        "unlisted_tags": []
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        73,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 371,
+      "value_length_octets": "820173"
+    }
+  ],
+  "payload": {
+    "octets": 390,
+    "packet_count": 1
+  }
+}

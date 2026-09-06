@@ -258,6 +258,107 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+Nothing here is in a release — every line below is in **no release** at all. The distribution on
+the index is **1.7.0**, and a reader who ran `pip install synapse-cdm` has that and not this.
+
+**What moved inside the distribution: 37 files.**
+
+**AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
+`tests/test_cdm_format_coverage.py`, `tests/test_cdm_stanag4609_adapter.py`,
+`tests/test_cdm_pin_header.py` and `rounds/` (excluded from git entirely) all moved and **none of
+them is in the distribution**: the packaged contents are `pyproject.toml` and the `synapse_cdm/`
+tree, so a test module reaches no installed reader and is not part of the arc this section accounts
+for. That is the same boundary `gates/bump_derivation.py` measures the bump over.
+
+**The 37, by what they are.** One round moved all of them — **the park 7 round, 2026-09-06**,
+which pinned MISB ST 0806.4 and wrote the RVT item layer.
+
+3 shipped documents:
+
+* `synapse_cdm/FORMAT_COVERAGE.md`
+* `synapse_cdm/fixtures/klv/README.md` — the seven new fixtures' rows, each with its
+  purpose, its citation and its UUID-v8 identity
+* `synapse_cdm/MIGRATIONS.md` — **this file, and it is in its own arc.** The count
+  above read 35 until this section was written, because the section is what puts
+  `MIGRATIONS.md` into the diff it describes. A derivation quoted into the file it
+  reads has to be re-run after the write, and it was — twice, because adding the
+  fixtures' README rows put a second document into the same diff and took 36 to 37
+
+4 modules under `adapters/` — one new, three extended:
+
+* `synapse_cdm/adapters/klv_rvt_codec.py`
+* `synapse_cdm/adapters/klv_security_codec.py`
+* `synapse_cdm/adapters/klv_uas_codec.py`
+* `synapse_cdm/adapters/stanag4609.py`
+
+`synapse_cdm/adapters/klv_rvt_codec.py` is the new one: the MISB ST 0806.4 item layer, **four**
+element tables — Table 8-1's RVT LS at 21 tags, Table 8-2's POI LS at 10, Table 8-3's AOI LS at 10,
+Table 8-4's User Defined LS at 2 — walked by ONE recursive `decode_set`, because a subordinate set's
+Value is a bare run of triplets exactly as ST 0601 item 73's is. **It is WIRED, which is where this
+differs from `klv_vmti_codec`'s first round**: `klv_uas_codec` delegates item 73 to it through the
+new `RVT_TAG`, `stanag4609.py` carries the decoded set into `Entity.attributes.rvt_local_set`, and
+row 73 is promoted. The two extensions that are not about wiring are **dated corrections**:
+`klv_uas_codec.NESTED_SETS` and `klv_security_codec`'s module docstring both said "No unwitnessed
+ST 0601 item has a second document behind it", which this round falsified — item 73 stands on the
+same two-document ground item 48 does — and each site gained a correction beside the claim rather
+than an edit of it.
+
+2 files under `fixtures/klv/spec/`:
+
+* `synapse_cdm/fixtures/klv/spec/build_fixtures.py`
+* `synapse_cdm/fixtures/klv/spec/klv_pin.json`
+
+`klv_pin.json` gains the `st_0806_4` node and sets the ST 0806 delegation row's `held` flag; the
+record now holds **twenty-two** documents of which **nineteen** are pins, and **thirteen** of the
+fourteen delegations are held. `build_fixtures.py` gains the park 7 block. **The pinned PDF itself is
+NOT in this list and never will be**: `fixtures/klv/spec/*.pdf` is git-ignored, so it reaches no
+installed reader.
+
+7 new payloads, 7 parsed twins and 14 goldens — the seven park 7
+fixtures. **They are built from the ELEMENT RULES and not from printed examples, because ST 0806.4
+prints none**: its one packet illustration, Figure 7-1, is a raster image, and ST 0601.14a §8.73's
+Example KLV Item row reads `49 - N/A`. So this block is the ST 0102.12 block's kind and not the
+ST 0903.4 block's, and `check_against_the_documents_own_examples` has no twin in the new module.
+
+* `synapse_cdm/fixtures/klv/a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.klv`
+* `synapse_cdm/fixtures/klv/a_poi_missing_a_mandatory_element_is_carried_and_reported.klv`
+* `synapse_cdm/fixtures/klv/an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.klv`
+* `synapse_cdm/fixtures/klv/an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.klv`
+* `synapse_cdm/fixtures/klv/an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.klv`
+* `synapse_cdm/fixtures/klv/an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.klv`
+* `synapse_cdm/fixtures/klv/rvt_local_set_complete_from_the_element_rules.klv`
+
+* `synapse_cdm/fixtures/klv/a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.parsed.json`
+* `synapse_cdm/fixtures/klv/a_poi_missing_a_mandatory_element_is_carried_and_reported.parsed.json`
+* `synapse_cdm/fixtures/klv/an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.parsed.json`
+* `synapse_cdm/fixtures/klv/an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.parsed.json`
+* `synapse_cdm/fixtures/klv/an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.parsed.json`
+* `synapse_cdm/fixtures/klv/an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.parsed.json`
+* `synapse_cdm/fixtures/klv/rvt_local_set_complete_from_the_element_rules.parsed.json`
+
+* `synapse_cdm/fixtures/klv/golden/a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_missing_a_mandatory_element_is_carried_and_reported.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/a_poi_missing_a_mandatory_element_is_carried_and_reported.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.parsed.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/rvt_local_set_complete_from_the_element_rules.cdm.json`
+* `synapse_cdm/fixtures/klv/golden/rvt_local_set_complete_from_the_element_rules.parsed.cdm.json`
+
+**AND NO GOLDEN WRITTEN BEFORE THIS ROUND MOVED.** All 112 of them are byte-identical after it,
+because `stanag4609.py` emits the `rvt_local_set` key only on a packet that carries an item 73 and
+the pinned stream carries none — the conditional-key rule `_vmti_twin` set, applied to a fifth
+layer. The structural diff by JSON path is empty for every pre-existing golden, and the only paths
+this round adds are the `rvt` ones on its own seven fixtures.
+
 ### 1.7.0 — 2026-09-05 — three parks close: item 74 becomes detections and tracks, item 94 becomes an identity, and the minimum metadata set rides every object as an advisory
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

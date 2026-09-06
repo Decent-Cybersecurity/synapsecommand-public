@@ -41,6 +41,15 @@ Two documents, obtained on different days from different routes, state the same 
 the same CRC. **No unwitnessed ST 0601 item has a second document behind it**, which is exactly why
 this one crossed the contract when it did and why no other row has crossed on THIS ground.
 
+**AND THAT SENTENCE STOPPED BEING TRUE ON 2026-09-06, WHICH IS RECORDED HERE RATHER THAN EDITED
+ABOVE.** The park 7 round pinned MISB ST 0806.4 and item 73 now has a second document behind it on
+exactly this ground: ST 0601.14a §8.73 prints ``06.0E.2B.34.02.0B.01.01.0E.01.03.01.02.00.00.00
+(CRC 17945)`` and `ST 0806.4-06` states the same sixteen octets and the same CRC. So the
+second-document ground is no longer unique to item 48 — it has been reached TWICE, by two
+different pairs of documents — and what the sentence above still records correctly is why item 48
+crossed WHEN IT DID, which was the only such pair at the time. `klv_rvt_codec` is the second
+module standing on it.
+
 **THIS PARAGRAPH USED TO SAY THAT IS WHY "THE OTHER 115 STAY `not yet`", AND IT WAS OVERTAKEN ON
 2026-09-04**: seventeen rows crossed on a different ground — ST 0601.14a's own printed worked
 examples — so a unique second document explains item 48's promotion and no longer explains anybody

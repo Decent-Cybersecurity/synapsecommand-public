@@ -1,0 +1,114 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 10789,
+        "stored": 10789,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "2a25",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "73": "020800046050584e018003030000780f024e411003003039010411223344"
+      },
+      "rvt": {
+        "element_order": [
+          2,
+          3,
+          15,
+          16,
+          1
+        ],
+        "elements": {
+          "1": {
+            "name": "CRC 32",
+            "octets": "11223344",
+            "requirements": [
+              "ST 0806.4-03",
+              "ST 0806.4-04"
+            ],
+            "signal": null,
+            "units": "None",
+            "value": 287454020
+          },
+          "16": {
+            "name": "MGRS Easting",
+            "octets": "003039",
+            "requirements": [],
+            "signal": null,
+            "units": "Meters",
+            "value": 12345
+          },
+          "2": {
+            "name": "User Defined Time Stamp -Microseconds Since 1970",
+            "octets": "00046050584e0180",
+            "requirements": [
+              "ST 0806.4-01",
+              "ST 0806.4-02"
+            ],
+            "signal": null,
+            "units": "Micro-seconds",
+            "value": 1231798102000000
+          }
+        },
+        "independent_set_conformance": {
+          "ST 0806.4-01": true,
+          "ST 0806.4-02": true,
+          "ST 0806.4-03": true,
+          "ST 0806.4-04": true
+        },
+        "item_refusal": null,
+        "refusals": [
+          {
+            "clause": "ST 0806.4's table for the RVT Local Set states a Length in Bytes of '2' for tag 3 Platform True Airspeed, Format 'uint16', and this element carries 3. The element is refused and the SET is not. Discarding a well-formed POI because one of its ten elements is malformed destroys the evidence a consumer needs; the octets stay parked at `raw_elements`, the clause the element failed is named, and every other element decodes. This is klv_security_codec.ELEMENT_REFUSAL_POLICY's reasoning reached by a third document",
+            "name": "Platform True Airspeed",
+            "observed_length": 3,
+            "octets": "000078",
+            "refusal_class": "stated_length",
+            "set_name": "RVT Local Set",
+            "stated_length": "2",
+            "tag": 3,
+            "tag_offset": 39,
+            "value_offset": 41
+          },
+          {
+            "clause": "ST 0806.4's table for the RVT Local Set states a Length in Bytes of '3' for tag 15 MGRS Latitude Band  and Grid Square, Format 'String ISO-7', and this element carries 2. The element is refused and the SET is not. Discarding a well-formed POI because one of its ten elements is malformed destroys the evidence a consumer needs; the octets stay parked at `raw_elements`, the clause the element failed is named, and every other element decodes. This is klv_security_codec.ELEMENT_REFUSAL_POLICY's reasoning reached by a third document",
+            "name": "MGRS Latitude Band  and Grid Square",
+            "observed_length": 2,
+            "octets": "4e41",
+            "refusal_class": "stated_length",
+            "set_name": "RVT Local Set",
+            "stated_length": "3",
+            "tag": 15,
+            "tag_offset": 44,
+            "value_offset": 46
+          }
+        ],
+        "required_absent": [],
+        "set_name": "RVT Local Set",
+        "subordinate_sets": [],
+        "unlisted_tags": []
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        73,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 49,
+      "value_length_octets": "31"
+    }
+  ],
+  "payload": {
+    "octets": 66,
+    "packet_count": 1
+  }
+}

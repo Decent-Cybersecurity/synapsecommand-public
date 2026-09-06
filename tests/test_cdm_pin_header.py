@@ -121,7 +121,21 @@ NUMBER_WORDS = {
     # `test_an_EDITED_last_clause_...` adds one synthetic pin to a record of 21 documents and asks
     # for the word for 22. The header has never used it. When the real count reaches 22 this entry
     # is re-decided the way TWENTYONE just was.
+    #
+    # **RE-DECIDED 2026-09-06 BY THE PARK 7 ROUND, WHICH IS THE ROUND THAT REACHED 22.** ST 0806.4
+    # was pinned and the header's live clause now spells this word for real, exactly as TWENTYONE's
+    # comment predicted would happen to it one day. THE SPELLING IS KEPT AND THE DECISION IS THE
+    # SAME CONSTRAINT RE-APPLIED rather than inherited from the line above: `COUNT_CLAUSE` reads
+    # `[A-Z]+`, so `TWENTY-TWO` and `TWENTY TWO` are both unreadable to the pattern that has to
+    # read the LIVE clause, and an unreadable live clause would make `stated_counts` fall back to
+    # an earlier clause and pass over a stale figure. One unbroken run of letters is the only
+    # spelling that works, so the mutation's word and the log's are the same word by necessity.
     "TWENTYTWO": 22,
+    # TWENTYTHREE is the mutation's number now, and this entry is the third turn of the same
+    # handover: `test_an_EDITED_last_clause_...` adds one synthetic pin to a record of 22 documents
+    # and asks for the word for 23. The header has never used it. When the real count reaches 23
+    # this entry is re-decided the way TWENTYONE and TWENTYTWO were, and the next one added.
+    "TWENTYTHREE": 23,
 }
 
 
@@ -395,6 +409,16 @@ def test_the_guard_passes_on_the_real_record_which_is_what_makes_the_mutations_m
     twenty-one is the first count the header has had to spell as `TWENTYONE`, one unbroken word,
     because `COUNT_CLAUSE` reads `[A-Z]+` and a hyphen or a space would make the live clause
     unreadable to the pattern — see the re-decision recorded at `NUMBER_WORDS`.
+
+    **AND TO (22, 19) ON 2026-09-06, THE FIFTH MOVE IN FOUR DAYS**, when the park 7 round pinned
+    MISB ST 0806.4 — a fourth consecutive ordinary PDF pin of a delegated document, both counts
+    moving by one. It cost the same change outside this line that the fourth did, one word further
+    along: `TWENTYTWO` was the mutation's number and is now the log's, so `NUMBER_WORDS` carries a
+    second re-decision and `TWENTYTHREE` takes over as the mutation's. **THAT HANDOVER IS NOW A
+    PATTERN RATHER THAN AN INCIDENT** — twice at consecutive counts, by two different rounds — and
+    what it demonstrates is the thing this control exists to demonstrate: the literal below is a
+    witness and never the authority, because a pair that has moved five times in four days is a
+    pair nobody has been carrying in their head.
     """
     record = load()
-    assert stated_counts(record) == derived_counts(record) == (21, 18)
+    assert stated_counts(record) == derived_counts(record) == (22, 19)

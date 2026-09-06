@@ -1,0 +1,94 @@
+{
+  "packets": [
+    {
+      "advisories": [],
+      "at": 0,
+      "checksum": {
+        "computed": 15349,
+        "stored": 15349,
+        "valid": true
+      },
+      "defects": [],
+      "index": 0,
+      "item_octets": {
+        "1": "3bf5",
+        "2": "000459f4a6aa4aa8",
+        "65": "0d",
+        "73": "020800046050584e01801602abcd010411223344"
+      },
+      "rvt": {
+        "element_order": [
+          2,
+          22,
+          1
+        ],
+        "elements": {
+          "1": {
+            "name": "CRC 32",
+            "octets": "11223344",
+            "requirements": [
+              "ST 0806.4-03",
+              "ST 0806.4-04"
+            ],
+            "signal": null,
+            "units": "None",
+            "value": 287454020
+          },
+          "2": {
+            "name": "User Defined Time Stamp -Microseconds Since 1970",
+            "octets": "00046050584e0180",
+            "requirements": [
+              "ST 0806.4-01",
+              "ST 0806.4-02"
+            ],
+            "signal": null,
+            "units": "Micro-seconds",
+            "value": 1231798102000000
+          }
+        },
+        "independent_set_conformance": {
+          "ST 0806.4-01": true,
+          "ST 0806.4-02": true,
+          "ST 0806.4-03": true,
+          "ST 0806.4-04": true
+        },
+        "item_refusal": null,
+        "refusals": [
+          {
+            "clause": "ST 0806.4's table for the RVT Local Set draws rows for tags [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] and for no others. The octets are carried and this layer declines to say what they mean",
+            "name": null,
+            "observed_length": 2,
+            "octets": "abcd",
+            "refusal_class": "unlisted_tag",
+            "set_name": "RVT Local Set",
+            "stated_length": null,
+            "tag": 22,
+            "tag_offset": 39,
+            "value_offset": 41
+          }
+        ],
+        "required_absent": [],
+        "set_name": "RVT Local Set",
+        "subordinate_sets": [],
+        "unlisted_tags": [
+          22
+        ]
+      },
+      "security": null,
+      "tag_order": [
+        2,
+        73,
+        65,
+        1
+      ],
+      "universal_label": "060e2b34020b01010e01030101000000",
+      "unknown_tags": [],
+      "value_length": 39,
+      "value_length_octets": "27"
+    }
+  ],
+  "payload": {
+    "octets": 56,
+    "packet_count": 1
+  }
+}

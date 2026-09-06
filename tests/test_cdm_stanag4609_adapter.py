@@ -981,8 +981,18 @@ def test_the_generator_is_the_only_thing_that_writes_these_payloads():
     # which is therefore the document's own argument that this annotation is an advisory; and a
     # zero-length Image Source Sensor, which `ST 0902.8-05` declines to count as reporting while
     # `klv_uas_codec` still decodes it as ST 0601.14-33's explicit unknown.
-    # 23 + 9 + 5 + 5 + 6 + 5 + 3 = 56.
-    assert len(module.ADAPTER_FIXTURES) == 56
+    # AND SEVEN ADDED 2026-09-06 BY THE PARK 7 ROUND, for MISB ST 0806.4's RVT Local Set inside
+    # ST 0601 item 73. They are the ST 0102.12 block's kind and not the ST 0903.4 block's, because
+    # ST 0806.4 PRINTS NO WORKED EXAMPLE — Figure 7-1 is a raster image and §8.73's Example KLV
+    # Item row reads `49 - N/A` — so every one is built from the element rules and cites the clause
+    # it exercises: every row of all four tables in one packet with the subordinate sets sent out
+    # of tag order; tag 12 twice, which `ST 0806.4-25` allows and which is the only proof that
+    # `subordinate_sets` is a list rather than a collapsing dict; a POI missing both required
+    # coordinates, carried rather than refused; two elements at forbidden widths; a `String ISO-7`
+    # carrying `0xFF`; a coordinate pair at the `0x80000000` "error" indicator, which yields a
+    # signal and no value while `required_absent` stays empty; and an unlisted tag 22.
+    # 23 + 9 + 5 + 5 + 6 + 5 + 3 + 7 = 63.
+    assert len(module.ADAPTER_FIXTURES) == 63
     for spec in module.ADAPTER_FIXTURES:
         payload = FIXTURES / f"{spec['name']}.klv"
         assert payload.read_bytes() == spec["octets"], (
