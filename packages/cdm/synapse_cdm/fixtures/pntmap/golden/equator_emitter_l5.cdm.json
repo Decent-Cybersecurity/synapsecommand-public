@@ -50,7 +50,21 @@
     "integrity": null,
     "object_kind": "event",
     "observed_at": "2026-04-29T05:58:00.000Z",
-    "oes": null,
+    "oes": {
+      "confidence": null,
+      "effective_from": null,
+      "effective_to": null,
+      "entity_relations": [],
+      "event_class": "OBSERVATION",
+      "event_relations": [],
+      "evidence": [],
+      "extensions": {},
+      "security": null,
+      "spec_version": "0.1.0",
+      "status": null,
+      "type_id": "sc.pnt.gnss_interference.v1",
+      "verification": null
+    },
     "payload": {
       "frequency_band": "L5",
       "interference_type": "JAMMING",

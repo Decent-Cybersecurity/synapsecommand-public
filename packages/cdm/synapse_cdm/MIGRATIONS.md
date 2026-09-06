@@ -264,7 +264,7 @@ Nothing here is in a release — every line below is in **no release** at all. T
 the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
 this.
 
-**What moved inside the distribution: 556 files.**
+**What moved inside the distribution: 557 files.**
 
 **THE COUNT READ `three` UNTIL 2026-09-06, AND BOTH READINGS WERE RIGHT WHEN THEY WERE TAKEN.**
 The sentence above said "three shipped files" and described the SC-OES ontology round's arc alone;
@@ -275,7 +275,10 @@ registry round, also on 2026-09-06, which added the governed event registry and 
 reads both registries: two files, and the third reading of a count that has been right three
 times. It read `555` between then and the SC-OES conformance round, also on 2026-09-06, which
 added the five-dimension conformance tool: one file, and the fourth reading of a count that has
-now been right four times.
+now been right four times. It read `556` between then and the SC-OES producer round, also on
+2026-09-06, which made the PNTMAP adapter emit the wire-semantic block: **one file, and not five**
+— the adapter's four goldens were already inside the count, because the model round had already
+moved every golden in the package. The fifth reading of a count that has now been right five times.
 
 **THE WIRE CONTRACT MOVED, AND IT IS A MAJOR.** `SCHEMA_VERSION` `1.0.0` -> `2.0.0`. `Event` gained
 an optional `oes` block and `Entity` gained an optional `ontology_types` list, and by this table's
@@ -324,15 +327,17 @@ contents are `pyproject.toml` and the `synapse_cdm/` tree, so the ontology's Tur
 reaches no installed reader and `schemas/` is a publication of the models rather than a shipped
 file. That is the same boundary `gates/bump_derivation.py` measures the bump over.
 
-**The 556, by what they are.** Four rounds moved them — **the SC-OES ontology round,
+**The 557, by what they are.** Five rounds moved them — **the SC-OES ontology round,
 2026-09-06**, which wrote the Operational Ontology and generated its two derived artefacts, **the
 SC-OES model round, 2026-09-06**, which attached the wire-semantic block to the canonical `Event`,
 **the SC-OES registry round, 2026-09-06**, which added the governed event contract the block's
-`type_id` names and the helpers that read it, and **the SC-OES conformance round, 2026-09-06**,
+`type_id` names and the helpers that read it, **the SC-OES conformance round, 2026-09-06**,
 which added the tool that assesses an object against all of it in five separately reportable
-dimensions.
+dimensions, and **the SC-OES producer round, 2026-09-06**, which made one adapter fill the block
+in — the first object this package emits that carries SC-OES semantics rather than merely being
+able to.
 
-6 shipped Python modules:
+7 shipped Python modules:
 
 * `synapse_cdm/oes.py` — **new.** The SC-OES wire-semantic block: `OesMetadata` and the five models
   beneath it (`EventRelation`, `EntityRelation`, `EvidenceRef`, `SecurityMarking`), the five closed
@@ -404,6 +409,27 @@ dimensions.
   module — `from synapse_cdm.conformance import assess` — and are deliberately not added to the
   package's `__all__`; the `__init__.py` bullet above records why, and it is the same standing
   `harness` and `schemas` have.
+* `synapse_cdm/adapters/pntmap.py` — the reference SC-OES producer, and **the only adapter in this
+  package that emits the block**. Its `Event` now carries `oes` with **three fields and no others**:
+  `spec_version` (`SC_OES_VERSION`, because a producer inside this repository claims this
+  repository's specification), `event_class` `OBSERVATION` written as a LITERAL — `spec/sc-oes/
+  02-event-classes.md` forbids deriving the class from `type_id`, so reading it out of the packaged
+  event registry would have been the one implementation the document rules out — and `type_id`
+  `sc.pnt.gnss_interference.v1`, the governed type the PNT profile scopes. Nothing else in the
+  block is filled, and each refusal is a reading of the source rather than a default: **the one
+  worth naming is `confidence`, which PNTMAP does supply on every alert** (`interference.confidence`,
+  0.31–0.87 across the four fixtures) and which is still not asserted here, because that number is
+  already carried unchanged at `Entity.confidence` on the emitter the event relates to and
+  restating it would put one producer number under two subjects. `verification`, `status`,
+  `effective_from`, `effective_to`, `security`, `event_relations`, `entity_relations`, `evidence`
+  and `extensions` are absent because the source establishes none of them —
+  `06-verification-and-confidence.md` forbids defaulting `verification` to `UNVERIFIED`,
+  `05-lifecycle.md` forbids defaulting `status` to `ACTIVE`, and `valid_until` is how long the
+  ALERT stands rather than when the interference ceases, so reading it as `effective_to` would put
+  a statement about a message onto the world. §116 is why no other adapter moved: an existing
+  adapter stays **CDM Conformant** without becoming an **SC-OES semantic producer**, and
+  `tests/test_cdm_pntmap_adapter.py` holds that boundary by reading the registered roster rather
+  than a list somebody maintains.
 
 2 shipped data files:
 
@@ -458,6 +484,20 @@ them, `ontology_types` appears in 537 and `oes` in 484 — the files carrying at
 at least one event respectively — and the eight that are not goldens of the harness are the ADS-B
 adapter's `local/` set, which its own tests hold because the harness cannot construct that adapter
 with a reference position.
+
+**A DATED CORRECTION TO THE PARAGRAPH ABOVE, 2026-09-06, standing beside it and not editing it.**
+"Every hunk in all 546 is one of exactly three shapes" was right when it was taken and is no longer
+right for four of them. The SC-OES producer round replaced the `"oes": null` line in
+`fixtures/pntmap/golden/*.cdm.json` — four files, one hunk each — with a filled block, so a fourth
+shape exists: an `"oes"` object carrying three asserted fields and ten defaults. The structural
+comparison was re-run over the same 546 at that commit and the moved-path set for the round is
+`{oes, oes.spec_version, oes.event_class, oes.type_id, oes.status, oes.verification,
+oes.confidence, oes.effective_from, oes.effective_to, oes.security}` — **every path inside `oes`
+and none outside it**, in four files and no others, with the remaining 542 CDM goldens and all nine
+non-CDM wire outputs byte-identical. Six of those ten paths moved from ABSENT to `null`, which
+asserts exactly what the absent block asserted: nothing (`01-core.md`). Three carry the round's
+whole content. `schema_version` still moves in 538 and `ontology_types` still appears in 537; what
+`oes` in 484 now means is 480 nulls and four blocks.
 
 **The nine that did NOT change are the point of naming the 546.** They are the three egress
 adapters' external-format outputs — `fixtures/adsb/egress/golden/*.adsb`,
@@ -1049,6 +1089,27 @@ under the package, which is the class M ruled above and not a second decision. I
 file under `synapse_cdm/registry/` and the first the ruling was written in advance of; the gate
 still names it, because the ruling is a paragraph naming a unit and not a pattern the gate infers.
 Nothing is removed or renamed by it: thirteen entries arrive where there were none.
+
+**Bump ruling.** `synapse_cdm/adapters/pntmap.py:PntmapAdapter` — MINOR: **the adapter emits a key
+it has never emitted**, `oes`, and it emits it on every alert. This is the shape ruled for
+`synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` in the 1.8.0 section below and it is that
+class applied, not a second decision. Not PATCH — that row is "a translation fix, a message, a
+docstring. No surface change", and nothing this adapter emitted before was WRONG: every other path
+of every one of its four goldens is byte-identical to `v1.8.0`. Not MAJOR — no name is removed, no
+signature moves, the `Adapter` contract is untouched, and the block is an optional field the models
+already declared, so a consumer that ignores it reads exactly what it read before. MINOR on its own
+governing clause, "Existing code keeps working". CHECK taken: no method of this class is added or
+removed between `v1.8.0` and HEAD, and `to_cdm` still returns `[entity, event]` in that order.
+
+**Bump ruling.** `synapse_cdm/adapters/pntmap.py:<statement 7>` — PATCH: an import line. The unit is
+keyed by position, and what changed at this position is that a new `from synapse_cdm.oes import …`
+line took it and pushed the one below it down — the same thing that happened to
+`synapse_cdm/__init__.py:<statement 2>`, ruled above, and by coincidence to the same import. No name
+is added or removed by the statement itself; the two names it binds are `EventClass` and
+`OesMetadata`, both already public surface of `synapse_cdm/oes.py` since the model round. The two
+statements this round ADDS at the end of the import block are classified by the gate without a
+ruling, and so is the new module constant `OES_TYPE_ID`, which is a public top-level name appearing
+— the MINOR row's shape, derived rather than ruled.
 
 **What a consumer sees, and this paragraph reverses its own earlier form.** It read: "Nothing in
 this arc changes an object on the wire: `SCHEMA_VERSION` does not move, no model gains a field, and

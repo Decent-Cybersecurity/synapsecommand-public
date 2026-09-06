@@ -26,6 +26,45 @@ CDM cares about shows up here at least once:
   `attributes`, because an id keyed on a per-alert field is NOT stable across alerts and a
   consumer accumulating a track needs to know that.
 
+THE SC-OES REFERENCE PRODUCER, AND WHAT IT REFUSES TO SAY
+---------------------------------------------------------
+This is the one adapter in this repository that emits SC-OES wire semantics. Every other adapter
+stays CDM Conformant without being an SC-OES semantic producer, and that distinction is
+deliberate (`spec/sc-oes/profiles/pnt.md`, "Implementation status").
+
+The block carries THREE fields:
+
+    oes.spec_version  the SC-OES version whose semantics this producer claims — SC_OES_VERSION,
+                      because a producer inside this repository claims this repository's spec
+    oes.event_class   OBSERVATION, ASSERTED as a literal. `02-event-classes.md` forbids deriving
+                      the class from `type_id`, from the payload or from the producer's identity,
+                      so it is written here rather than looked up in the event registry
+    oes.type_id       sc.pnt.gnss_interference.v1, the governed type the PNT profile scopes
+
+and every remaining field of `OesMetadata` is left at its "nothing is asserted" default. Each one
+was decided by reading the source, not by reading this list:
+
+- `confidence` — THE ONE THAT IS NOT OBVIOUS. PNTMAP does supply `interference.confidence` on
+  every alert, so emitting it would not be fabrication. It is not emitted because that number is
+  already carried, unchanged, at `Entity.confidence` on the emitter this event relates to: the
+  producer states one confidence and the CDM already has it, and restating it under a second
+  subject would put one source number in two places with two meanings. Nothing is lost, and the
+  field stays available to a later round that decides the observation is where the number belongs.
+- `verification` — the source never says whether anything corroborated the alert.
+  `06-verification-and-confidence.md`: an implementation MUST NOT default it to `UNVERIFIED`.
+- `status` — PNTMAP reports an occurrence, not a managed condition, and never names a lifecycle
+  state. `05-lifecycle.md` forbids defaulting it to `ACTIVE`.
+- `effective_from` — the only candidate is `alert_time`, which is already `observed_at`, and
+  `04-temporality.md` forbids defaulting the effective interval to the observation time.
+- `effective_to` — `valid_until` is how long the ALERT stands, not when the interference ceases.
+  Reading one as the other would put a statement about a message onto the world.
+- `security` — no marking of any kind appears anywhere in the source.
+- `entity_relations` — the emitter is already in `related_entities`; what the source does not give
+  is a ROLE, and a role here has to be a governed ontology term. Choosing one would be the
+  intelligence judgement the second bullet above refuses.
+- `event_relations`, `evidence`, `extensions` — one alert, no cited artefact, and every vendor
+  field already rides through into `source_extras` losslessly.
+
 PAYLOAD SHAPE (synthetic, representative — no real PNTMAP data in this repository)
 ---------------------------------------------------------------------------------
     {
@@ -63,9 +102,18 @@ from synapse_cdm.enums import (
     Severity,
 )
 from synapse_cdm.models import CDMBase, Entity, Event, Position
+from synapse_cdm.oes import EventClass, OesMetadata
 from synapse_cdm.symbology import sidc_from_affiliation
+from synapse_cdm.version import SC_OES_VERSION
 
 SYSTEM = "PNTMAP"
+
+# The governed SC-OES semantic type this producer claims. A LITERAL, and deliberately so: it is
+# the producer's own assertion about what it is emitting, and reading it out of the packaged
+# registry would make the claim depend on the registry rather than stand beside it. The registry
+# is the authority on what the identifier MEANS; a test checks the two agree, which is a
+# consistency check and not a derivation.
+OES_TYPE_ID = "sc.pnt.gnss_interference.v1"
 
 # The source's vocabulary -> ours. A value absent from a table is NOT silently defaulted: it
 # raises for severity (an alert whose urgency we cannot read must not arrive labelled INFO)
@@ -220,6 +268,14 @@ class PntmapAdapter(Adapter):
             payload=payload,
             observed_at=alert["alert_time"],
             received_at=self.now(),
+            # THREE FIELDS AND NOT ONE MORE. See the SC-OES section of the module docstring for
+            # the field-by-field reading; the short form is that every other field of the block
+            # is an assertion PNTMAP does not make, and the block's absent value is what says so.
+            oes=OesMetadata(
+                spec_version=SC_OES_VERSION,
+                event_class=EventClass.OBSERVATION,
+                type_id=OES_TYPE_ID,
+            ),
         )
         return [entity, event]
 
