@@ -1,0 +1,47 @@
+# SC-OES Operational Ontology — decision module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix decision:<tag:synapsecommand.com,2026-09-06:ontology:decision:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:decision>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — decision" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "decision" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §99: "These classes describe semantic records. They do not define how decisions are produced."
+# That boundary is §2's public/private split seen from the vocabulary's side — the ontology names
+# the record of a decision and says nothing about the reasoning that reached it.
+
+decision:RecommendationCreatedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:RecommendationEvent ;
+    rdfs:label "RecommendationCreatedEvent" ;
+    skos:definition "An event recording that a course of action was proposed." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+decision:DecisionRecordedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:DecisionEvent ;
+    rdfs:label "DecisionRecordedEvent" ;
+    skos:definition "An event recording that a decision was taken, and by whom." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+decision:ActionAuthorizedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:ActionEvent ;
+    rdfs:label "ActionAuthorizedEvent" ;
+    skos:definition "An event recording that an operational action was authorised." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

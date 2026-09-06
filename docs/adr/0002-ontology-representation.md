@@ -12,6 +12,22 @@ the identifier form to ADR 0003 — so SA.1 §14's authority-date correction rea
 delegation rather than through an edit. The terms the generator emits carry the dated prefix
 `tag:synapsecommand.com,2026-09-06:ontology:`. Still Accepted.
 
+Lineage — round SC, 2026-09-06: decision 6's test-only RDF parser is chosen and is **rdflib
+7.6.0, BSD-3-Clause**, with one non-optional transitive dependency, **pyparsing 3.3.2, MIT**. Both
+licences were read from the installed distributions' own metadata rather than recalled. It is
+declared in `packages/cdm/pyproject.toml`'s `test` extra and nowhere else; no module under
+`synapse_cdm/` imports it, and `gates/wheel_install.py` is what keeps that true rather than a
+convention: its `import` and `test slice` checks install the built wheel into a fresh virtual
+environment carrying only the wheel's own declared runtime dependencies, so a module that reached
+for the parser would fail there. The reading, taken rather than assumed: `rdflib` appears nowhere
+under `packages/cdm/synapse_cdm/`, and the environment that gate builds holds `pydantic`,
+`jsonschema` and nothing else of ours. The three artefacts of
+this decision now exist: `ontology/*.ttl` (eight modules, 73 governed terms), the generated
+`ontology/context.jsonld`, and the generated
+`packages/cdm/synapse_cdm/registry/sc_oes/ontology_terms.json`; `gates/ontology_terms.py` is the
+one generator and `tests/test_cdm_ontology.py` is decision 4's drift test. `ontology/README.md`
+records the three points the specification left to the implementing round. Still Accepted.
+
 ## Context
 
 §12 rules the representation of the Operational Ontology as a hybrid and states each half

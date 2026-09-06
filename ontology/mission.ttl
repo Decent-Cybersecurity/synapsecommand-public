@@ -1,0 +1,38 @@
+# SC-OES Operational Ontology — mission module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix mission: <tag:synapsecommand.com,2026-09-06:ontology:mission:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:mission>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — mission" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "mission" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §98: "`Mission` itself remains core." This module defines the two mission event classes and no
+# object class, which is why nothing here subclasses `core:Mission`.
+
+mission:MissionStatusChangedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:StateChangeEvent ;
+    rdfs:label "MissionStatusChangedEvent" ;
+    skos:definition "An event reporting that the represented status of a mission has changed." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+mission:OperationalImpactAssessedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:ImpactEvent ;
+    rdfs:label "OperationalImpactAssessedEvent" ;
+    skos:definition "An event stating an assessed operational consequence for a mission or an activity." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

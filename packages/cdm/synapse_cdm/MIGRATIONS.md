@@ -258,6 +258,57 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+Nothing here is in a release — every line below is in **no release** at all. The distribution on
+the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
+this.
+
+**What moved inside the distribution: three shipped files.**
+
+**AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.** The SC-OES ontology round
+also added `ontology/` at the repository root (eight Turtle modules, a README and a generated
+JSON-LD context), `gates/ontology_terms.py` and `tests/test_cdm_ontology.py`, and amended
+`docs/adr/0002-ontology-representation.md` and
+`docs/adr/0010-open-source-packaging-and-licensing.md`. **None of those is in the distribution**:
+the packaged contents are `pyproject.toml` and the `synapse_cdm/` tree, so the ontology's Turtle
+authority reaches no installed reader and is not part of the arc this section accounts for. That
+is the same boundary `gates/bump_derivation.py` measures the bump over, and it is deliberate — the
+runtime never parses Turtle, and the generated registry below is what it reads instead.
+
+**The three, by what they are.** One round moved all of them — **the SC-OES ontology round,
+2026-09-06**, which wrote the Operational Ontology and generated its two derived artefacts.
+
+1 new shipped data file:
+
+* `synapse_cdm/registry/sc_oes/ontology_terms.json` — the governed ontology-term registry, 73
+  records, **generated** from `ontology/*.ttl` by `gates/ontology_terms.py` and never
+  hand-edited. It is the first file under `synapse_cdm/registry/`, which is where ADR 0004 puts
+  the machine-readable runtime artefacts. Each record carries `id`, `label`, `module`, `kind`,
+  `parent`, `maturity`, `deprecated` and `replacement`; every key is present on every record even
+  where the value is null, because a missing key and an explicit null are different facts.
+
+1 packaging declaration:
+
+* `pyproject.toml` — two changes, neither of them to `[project].dependencies`, which still reads
+  `pydantic>=2.6` and `jsonschema>=4.0` and nothing else. The `test` extra gains `rdflib>=7.0`,
+  the test/development RDF parser the ontology's own tests read Turtle with; and
+  `[tool.setuptools.package-data]` gains a recursive `registry/**/*`, without which the new
+  registry would be tracked and not shipped.
+
+1 shipped document:
+
+* `synapse_cdm/MIGRATIONS.md` — **this file, and it is in its own arc.** The count above read two
+  until this section was written, because the section is what puts `MIGRATIONS.md` into the diff
+  it describes. A derivation quoted into the file it reads has to be re-run after the write, and
+  it was.
+
+**What a consumer sees.** Nothing in this arc changes an object on the wire: `SCHEMA_VERSION` does
+not move, no model gains a field, and no golden changes. The registry is a new data file a
+consumer may read and nothing yet requires them to. `Event.oes` and `Entity.ontology_types` — the
+model changes that would move `SCHEMA_VERSION` to 2.0.0 — belong to a later round and are not
+here.
+
 ### 1.8.0 — 2026-09-06 — the last two parks close: MISB ST 0806.4's RVT Local Set rides item 73 into `Entity.attributes`, and the Motion Imagery Handbook settles KLV 8 as a companion
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

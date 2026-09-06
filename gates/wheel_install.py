@@ -158,6 +158,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_generator_loading.py": "how three test modules load a generator",
     "test_cdm_getting_started.py": "README.md and CONTRIBUTING.md against pyproject.toml",
     "test_cdm_landing_next.py": "the 'landing next' claim across repository documents",
+    "test_cdm_ontology.py": "ontology/*.ttl and gates/ontology_terms.py — the Turtle authority and its generator are at the repository root and neither ships, so against an installed wheel this module would have no authority to compare the packaged registry against",
     "test_cdm_ordinals.py": "adapter ordinals across repository prose",
     "test_cdm_packaging.py": "pyproject.toml's globs against git's index",
     "test_cdm_pins.py": "pinned specification documents, which the wheel does not carry",

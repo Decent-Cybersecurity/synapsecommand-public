@@ -1,0 +1,39 @@
+# SC-OES Operational Ontology — isr module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix isr:     <tag:synapsecommand.com,2026-09-06:ontology:isr:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:isr>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — isr" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "isr" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §96: "Keep deliberately small." Two concepts, and `ISRSource` is left at `core:OperationalObject`
+# because an ISR source is as legitimately an organisation or a unit as it is an asset — the parent
+# rule in ontology/README.md refuses to choose one of those on the specification's behalf.
+
+isr:ISRSource
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "ISRSource" ;
+    skos:definition "An object from which intelligence, surveillance or reconnaissance information is obtained." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+isr:ThreatAssessmentUpdatedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:AssessmentEvent ;
+    rdfs:label "ThreatAssessmentUpdatedEvent" ;
+    skos:definition "An event carrying a revised judgement about a threat." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

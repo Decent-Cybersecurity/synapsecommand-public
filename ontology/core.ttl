@@ -1,0 +1,440 @@
+# SC-OES Operational Ontology — core module
+#
+# Authoritative source. `ontology/context.jsonld` and
+# `packages/cdm/synapse_cdm/registry/sc_oes/ontology_terms.json` are GENERATED from this file and
+# its seven sibling modules, and are drift-tested against them (ADR 0002, decision 4).
+#
+# Constructs are limited to the list SC-OES-SPEC-v2 §88 permits. Nothing here declares a
+# restriction, a property chain, a cardinality, a disjointness axiom or an inference rule: §100
+# forbids publishing the reasoning, and this file publishes only the vocabulary the reasoning
+# would be written over.
+#
+# Identifiers follow docs/adr/0003-identifier-and-namespace-strategy.md decision 9. See
+# ontology/README.md for the three derivations this module could not read off the specification:
+# the casing of the fifteen §92 relationships, the parent of a class §93–§99 left unparented, and
+# the metadata namespace that carries maturity.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:core>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — core" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "core" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# ---------------------------------------------------------------------------- the two branches
+
+core:OperationalConcept
+    a owl:Class ;
+    rdfs:label "OperationalConcept" ;
+    skos:definition "Anything this vocabulary can name. The root of the ontology, and the only class with no parent." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:OperationalObject
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalConcept ;
+    rdfs:label "OperationalObject" ;
+    skos:definition "A thing in the operational picture that persists between the events which mention it." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:OperationalEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalConcept ;
+    rdfs:label "OperationalEvent" ;
+    skos:definition "Something asserted to have happened, at an instant or over an interval, by a producer that says so." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# ------------------------------------------------------------------------------------- actors
+
+core:Actor
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Actor" ;
+    skos:definition "An operational object that can act, or to which acting can be attributed." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Organisation
+    a owl:Class ;
+    rdfs:subClassOf core:Actor ;
+    rdfs:label "Organisation" ;
+    skos:definition "An actor constituted as a standing body with an identity of its own, independent of any task it is given." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Unit
+    a owl:Class ;
+    rdfs:subClassOf core:Actor ;
+    rdfs:label "Unit" ;
+    skos:definition "An actor organised for operational tasking and directed as one." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Group
+    a owl:Class ;
+    rdfs:subClassOf core:Actor ;
+    rdfs:label "Group" ;
+    skos:definition "An actor consisting of several objects treated together for an operational purpose, with no standing constitution of its own." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# ------------------------------------------------------------------------------------- assets
+
+core:Asset
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Asset" ;
+    skos:definition "A thing employed to do operational work." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Platform
+    a owl:Class ;
+    rdfs:subClassOf core:Asset ;
+    rdfs:label "Platform" ;
+    skos:definition "An asset that carries other assets, materiel or people, and whose position can change." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Sensor
+    a owl:Class ;
+    rdfs:subClassOf core:Asset ;
+    rdfs:label "Sensor" ;
+    skos:definition "An asset whose operational purpose is to detect or measure something and report what it found." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:System
+    a owl:Class ;
+    rdfs:subClassOf core:Asset ;
+    rdfs:label "System" ;
+    skos:definition "An asset made of interdependent parts operated as one, whether or not those parts are in one place." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# --------------------------------------------------------------------------------- facilities
+
+core:Facility
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Facility" ;
+    skos:definition "A fixed place equipped and used for an operational purpose." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:FacilityComponent
+    a owl:Class ;
+    rdfs:subClassOf core:Facility ;
+    rdfs:label "FacilityComponent" ;
+    skos:definition "A part of a facility whose state can be reported, and whose availability can change, separately from the facility that contains it." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# ------------------------------------------------------------------- the remaining object roots
+
+core:Mission
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Mission" ;
+    skos:definition "A task assigned to one or more actors, with an intent, a scope and an end state." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Activity
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Activity" ;
+    skos:definition "Operational work being carried out, named as a thing other assertions can refer to rather than as an occurrence." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Capability
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Capability" ;
+    skos:definition "The ability to achieve an operational effect, named apart from whatever happens to provide it." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Service
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Service" ;
+    skos:definition "A capability made available to others under stated conditions." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Resource
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Resource" ;
+    skos:definition "Something allocable or consumable that operational work draws on." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Supply
+    a owl:Class ;
+    rdfs:subClassOf core:Resource ;
+    rdfs:label "Supply" ;
+    skos:definition "A resource held in quantity, issued and consumed, whose remaining quantity is itself operationally significant." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Route
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Route" ;
+    skos:definition "A way between places that can be used, restricted or denied." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Area
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "Area" ;
+    skos:definition "A bounded region referred to as a single thing." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:ThreatSource
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "ThreatSource" ;
+    skos:definition "An object to which harm, or the capacity to do harm, is attributed by an assessment. The attribution belongs to the assessment that makes it, not to this term." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:InformationObject
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "InformationObject" ;
+    skos:definition "A thing whose operational significance is what it records, carries or conveys." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# ------------------------------------------------------------------------------- event classes
+#
+# `scmeta:eventClass` carries the `event_class` value of spec/sc-oes/02-event-classes.md that this
+# ontology class corresponds to. It is metadata, not an axiom: it lets a test derive the mapping
+# between the two vocabularies from this file instead of restating it as a literal, which is the
+# check spec §140 asks for when it says an event ontology class must subclass the correct core
+# event class.
+
+core:ObservationEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "ObservationEvent" ;
+    skos:definition "An event in which a producer reports what it observed, measured or directly detected, and asserts nothing about what the observation means." ;
+    scmeta:eventClass "OBSERVATION" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:StateChangeEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "StateChangeEvent" ;
+    skos:definition "An event reporting that the represented operational state of something has changed." ;
+    scmeta:eventClass "STATE_CHANGE" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:ConstraintEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "ConstraintEvent" ;
+    skos:definition "An event reporting an operational condition that limits behaviour." ;
+    scmeta:eventClass "CONSTRAINT" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:AssessmentEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "AssessmentEvent" ;
+    skos:definition "An event carrying an interpreted judgement, drawn from information or evidence, about something not itself directly observed." ;
+    scmeta:eventClass "ASSESSMENT" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:ImpactEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "ImpactEvent" ;
+    skos:definition "An event stating an assessed operational consequence — what some condition means for an activity." ;
+    scmeta:eventClass "IMPACT" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:RecommendationEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "RecommendationEvent" ;
+    skos:definition "An event proposing a course of action or response. It asserts that something should be done; it does not assert that it was decided or done." ;
+    scmeta:eventClass "RECOMMENDATION" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:DecisionEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "DecisionEvent" ;
+    skos:definition "An event recording that a decision was taken, and by whom." ;
+    scmeta:eventClass "DECISION" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:ActionEvent
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalEvent ;
+    rdfs:label "ActionEvent" ;
+    skos:definition "An event recording that an operational action was authorised, initiated or completed." ;
+    scmeta:eventClass "ACTION" ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# ------------------------------------------------------------------------ the §92 relationships
+#
+# Fifteen object properties, in the order SC-OES-SPEC-v2 §92 lists them. Each carries §92's own
+# spelling as its `rdfs:label`; the identifier is the UpperCamelCase form the frozen governed
+# grammar admits (ADR 0003 decision 9, SA.1 §17–§18). ontology/README.md records that derivation
+# and why the label is where §92's spelling belongs.
+#
+# `rdfs:domain` and `rdfs:range` produce inference, and §92 says to be conservative with them. The
+# rule this module applies, uniformly: a domain or a range is declared only where EVERY use of the
+# property — in the seven v0.1.0 modules and in any extension of them a reader could foresee — has
+# that class on that side. Where the honest answer is "several unrelated classes", the constraint
+# is omitted. An omitted range says nothing; a wrong range silently reclassifies a consumer's data.
+
+core:PartOf
+    a owl:ObjectProperty ;
+    rdfs:label "partOf" ;
+    skos:definition "The subject is a constituent of the object, and loses its separate operational standing when considered as part of it." ;
+    rdfs:domain core:OperationalObject ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+# The one inverse pair §88 calls unquestionably correct, declared once rather than on both sides:
+# two declarations of one fact are two places for it to be edited apart.
+core:HasPart
+    a owl:ObjectProperty ;
+    rdfs:label "hasPart" ;
+    skos:definition "The object is a constituent of the subject. The inverse of partOf." ;
+    rdfs:domain core:OperationalObject ;
+    rdfs:range core:OperationalObject ;
+    owl:inverseOf core:PartOf ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:LocatedAt
+    a owl:ObjectProperty ;
+    rdfs:label "locatedAt" ;
+    skos:definition "The subject is at, or within, the place the object names. No range is declared: a facility, an area and a route are all places something is legitimately located at." ;
+    rdfs:domain core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:AssignedTo
+    a owl:ObjectProperty ;
+    rdfs:label "assignedTo" ;
+    skos:definition "The subject has been allocated to the object by a decision, for as long as that allocation stands." ;
+    rdfs:domain core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Uses
+    a owl:ObjectProperty ;
+    rdfs:label "uses" ;
+    skos:definition "The subject draws on the object to do what it does, without the object being part of it." ;
+    rdfs:domain core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Requires
+    a owl:ObjectProperty ;
+    rdfs:label "requires" ;
+    skos:definition "The subject cannot do what it is for unless the object is available to it." ;
+    rdfs:domain core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Provides
+    a owl:ObjectProperty ;
+    rdfs:label "provides" ;
+    skos:definition "The subject makes the object available to others." ;
+    rdfs:domain core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Supports
+    a owl:ObjectProperty ;
+    rdfs:label "supports" ;
+    skos:definition "The subject contributes to the object achieving what it is for, without the object depending on it." ;
+    rdfs:domain core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:DependsOn
+    a owl:ObjectProperty ;
+    rdfs:label "dependsOn" ;
+    skos:definition "The subject's operational state is a function of the object's, so a change in the object can change the subject." ;
+    rdfs:domain core:OperationalObject ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Observes
+    a owl:ObjectProperty ;
+    rdfs:label "observes" ;
+    skos:definition "The subject reports what it perceived of the object. No domain is declared: both an asset and an event legitimately observe something." ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Detects
+    a owl:ObjectProperty ;
+    rdfs:label "detects" ;
+    skos:definition "The subject establishes the presence of the object. Narrower than observes: detection is about presence, observation is about what was perceived." ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Affects
+    a owl:ObjectProperty ;
+    rdfs:label "affects" ;
+    skos:definition "The subject bears on the object's operational state or freedom of action. It does not say how, or that the effect is adverse." ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Threatens
+    a owl:ObjectProperty ;
+    rdfs:label "threatens" ;
+    skos:definition "The subject is assessed to be capable of harming the object. Like ThreatSource, the attribution belongs to the assessment that makes it." ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:CommunicatesWith
+    a owl:ObjectProperty ;
+    rdfs:label "communicatesWith" ;
+    skos:definition "The subject exchanges information with the object. Declared as an ordinary property: this ontology does not publish a symmetry axiom, because a link that works in one direction is a real operational case." ;
+    rdfs:domain core:OperationalObject ;
+    rdfs:range core:OperationalObject ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+core:Concerns
+    a owl:ObjectProperty ;
+    rdfs:label "concerns" ;
+    skos:definition "The subject is about the object. The weakest relationship in this module, and the one to use when a stronger one would assert more than the source does. Neither a domain nor a range is declared, because anything may be about anything." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

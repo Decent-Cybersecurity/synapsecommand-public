@@ -1,0 +1,86 @@
+# SC-OES Operational Ontology — air module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix air:     <tag:synapsecommand.com,2026-09-06:ontology:air:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:air>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — air" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "air" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §94 states this module's object hierarchy in full — Aircraft -> Platform, UAV -> Aircraft,
+# Airfield -> Facility, Runway -> FacilityComponent, Airspace -> Area — and it is taken exactly.
+
+air:Aircraft
+    a owl:Class ;
+    rdfs:subClassOf core:Platform ;
+    rdfs:label "Aircraft" ;
+    skos:definition "A platform that operates in the air." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:UAV
+    a owl:Class ;
+    rdfs:subClassOf air:Aircraft ;
+    rdfs:label "UAV" ;
+    skos:definition "An aircraft flown without a person aboard it." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:Airfield
+    a owl:Class ;
+    rdfs:subClassOf core:Facility ;
+    rdfs:label "Airfield" ;
+    skos:definition "A facility from which aircraft operate." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:Runway
+    a owl:Class ;
+    rdfs:subClassOf core:FacilityComponent ;
+    rdfs:label "Runway" ;
+    skos:definition "A prepared strip of an airfield used for take-off and landing, whose availability changes independently of the airfield's." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:Airspace
+    a owl:Class ;
+    rdfs:subClassOf core:Area ;
+    rdfs:label "Airspace" ;
+    skos:definition "A bounded volume of air referred to as a single thing, within which use can be permitted or restricted." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:AirTrackObservedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:ObservationEvent ;
+    rdfs:label "AirTrackObservedEvent" ;
+    skos:definition "An event reporting an observed air track." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:RunwayAvailabilityChangedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:StateChangeEvent ;
+    rdfs:label "RunwayAvailabilityChangedEvent" ;
+    skos:definition "An event reporting that the represented availability of a runway has changed." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+air:AirspaceRestrictionChangedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:ConstraintEvent ;
+    rdfs:label "AirspaceRestrictionChangedEvent" ;
+    skos:definition "An event reporting that a restriction on the use of an airspace has been imposed, altered or lifted." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

@@ -10,6 +10,17 @@ copied protected standards definitions, conformance-is-not-certification and the
 rights are SA.1 §9 and §94 locked decisions. This ADR carries no ontology identifier example, so
 SA.1 §14's dated prefix requires no edit here. Still Accepted.
 
+Lineage — round SC, 2026-09-06: decision 5's licence criterion is applied and satisfied. The
+test-only RDF parser is **rdflib 7.6.0, BSD-3-Clause**; its one non-optional transitive dependency
+is **pyparsing 3.3.2, MIT**. Both are permissive and both are compatible with Apache-2.0, which is
+the criterion this decision states for a `test` extra; neither is copyleft, so no licence
+obligation reaches the distribution whose `LICENSE` decision 2 may not edit. The licences were
+read from each installed distribution's own metadata, not recalled. Recorded here and in the
+`test` extra's own comment in `packages/cdm/pyproject.toml`, as decision 5 requires. Decision 4's
+independent-authorship rule was applied to round SC's own output: every one of the 73 ontology
+definitions is written in this repository's words, and none is transcribed from a pinned document.
+Still Accepted.
+
 ## Context
 
 §42 rules the licensing arrangement in four sentences and one list:

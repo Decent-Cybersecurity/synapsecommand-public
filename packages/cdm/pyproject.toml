@@ -76,8 +76,17 @@ dependencies = [
     "jsonschema>=4.0",
 ]
 
+# `rdflib` is the RDF parser the ontology's own tests read `ontology/*.ttl` with, and it is a
+# TEST dependency and nothing else. SC-OES-SPEC-v2 §136 fixes all four conditions and this extra
+# is where the first of them lands: test/development only, licence confirmed compatible before it
+# landed, no RDF runtime dependency, the choice recorded in ADR 0002/0010 lineage. rdflib 7.6.0 is
+# BSD-3-Clause and its one non-optional dependency, pyparsing, is MIT — both permissive and both
+# compatible with Apache-2.0, which is the criterion `docs/adr/0010-...md` decision 5 states for a
+# test extra. Nothing under `synapse_cdm/` imports it: `tests/test_cdm_boundary.py` is the check,
+# and §102 is the reason — the runtime reads the GENERATED `registry/sc_oes/ontology_terms.json`
+# and never parses Turtle.
 [project.optional-dependencies]
-test = ["pytest>=8.0"]
+test = ["pytest>=8.0", "rdflib>=7.0"]
 
 [project.urls]
 Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
@@ -161,9 +170,17 @@ include = ["synapse_cdm*"]
 # So the enumeration is gone, the same way `tests/test_cdm_pins.py` deleted its list of pins. One
 # recursive glob ships every fixture whatever it is called, and the two things that must NOT be
 # shipped are named positively below.
+#   registry/**/*                      the machine-readable runtime artefacts of ADR 0004 —
+#                                      `registry/sc_oes/ontology_terms.json` today, the governed
+#                                      event registry beside it later. §17 requires them to ship
+#                                      in the wheel, load with `importlib.resources`, need no
+#                                      checkout and no network, and be read as DATA. A recursive
+#                                      glob for the same reason the fixtures one is recursive: the
+#                                      second artefact must not depend on somebody remembering.
 [tool.setuptools.package-data]
 synapse_cdm = [
     "fixtures/**/*",
+    "registry/**/*",
     "*.md",
 ]
 

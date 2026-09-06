@@ -1,0 +1,58 @@
+# SC-OES Operational Ontology — pnt module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix pnt:     <tag:synapsecommand.com,2026-09-06:ontology:pnt:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:pnt>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — pnt" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "pnt" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §93 names four concepts and stops there deliberately: "Do not create a full EW ontology." Three
+# of them are objects with no parent stated in the specification, so each takes the most general
+# core class it cannot fail to satisfy (ontology/README.md, the parent rule) rather than the most
+# specific one a reader might guess. `InterferenceSource` is the case that shows the rule has
+# teeth: interference is often unintentional, so a faulty transmitter is an interference source
+# and is not a `core:ThreatSource`.
+
+pnt:PNTService
+    a owl:Class ;
+    rdfs:subClassOf core:Service ;
+    rdfs:label "PNTService" ;
+    skos:definition "A positioning, navigation or timing service made available to users." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+pnt:GNSSReceiver
+    a owl:Class ;
+    rdfs:subClassOf core:Asset ;
+    rdfs:label "GNSSReceiver" ;
+    skos:definition "An asset that receives global navigation satellite system signals and derives position, navigation or timing from them." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+pnt:InterferenceSource
+    a owl:Class ;
+    rdfs:subClassOf core:OperationalObject ;
+    rdfs:label "InterferenceSource" ;
+    skos:definition "An object to which degradation of a received signal is attributed. Intent is not part of this term: an unintentional emitter is an interference source." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+pnt:GNSSInterferenceEvent
+    a owl:Class ;
+    rdfs:subClassOf core:ObservationEvent ;
+    rdfs:label "GNSSInterferenceEvent" ;
+    skos:definition "An event reporting observed interference with the reception of global navigation satellite system signals." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

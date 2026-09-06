@@ -1,0 +1,750 @@
+{
+  "artefact": "sc-oes-ontology-terms",
+  "artefact_version": "1",
+  "ontology_version": "0.1.0",
+  "namespace": "tag:synapsecommand.com,2026-09-06:ontology:",
+  "generated_by": "gates/ontology_terms.py",
+  "source_modules": [
+    "air",
+    "c2",
+    "core",
+    "decision",
+    "isr",
+    "logistics",
+    "mission",
+    "pnt"
+  ],
+  "generated": "derived from the Turtle ontology; do not hand-edit",
+  "terms": [
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:AirTrackObservedEvent",
+      "label": "AirTrackObservedEvent",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:ObservationEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:Aircraft",
+      "label": "Aircraft",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Platform",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:Airfield",
+      "label": "Airfield",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Facility",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:Airspace",
+      "label": "Airspace",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Area",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:AirspaceRestrictionChangedEvent",
+      "label": "AirspaceRestrictionChangedEvent",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:ConstraintEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:Runway",
+      "label": "Runway",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:FacilityComponent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:RunwayAvailabilityChangedEvent",
+      "label": "RunwayAvailabilityChangedEvent",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:air:UAV",
+      "label": "UAV",
+      "module": "air",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:air:Aircraft",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:c2:C2System",
+      "label": "C2System",
+      "module": "c2",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:System",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:c2:CommunicationSystem",
+      "label": "CommunicationSystem",
+      "module": "c2",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:System",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:c2:SystemAvailabilityChangedEvent",
+      "label": "SystemAvailabilityChangedEvent",
+      "module": "c2",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:ActionEvent",
+      "label": "ActionEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Activity",
+      "label": "Activity",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Actor",
+      "label": "Actor",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Affects",
+      "label": "affects",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Area",
+      "label": "Area",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:AssessmentEvent",
+      "label": "AssessmentEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Asset",
+      "label": "Asset",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:AssignedTo",
+      "label": "assignedTo",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Capability",
+      "label": "Capability",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:CommunicatesWith",
+      "label": "communicatesWith",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns",
+      "label": "concerns",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:ConstraintEvent",
+      "label": "ConstraintEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:DecisionEvent",
+      "label": "DecisionEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:DependsOn",
+      "label": "dependsOn",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Detects",
+      "label": "detects",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Facility",
+      "label": "Facility",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:FacilityComponent",
+      "label": "FacilityComponent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Facility",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Group",
+      "label": "Group",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Actor",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:HasPart",
+      "label": "hasPart",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:ImpactEvent",
+      "label": "ImpactEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:InformationObject",
+      "label": "InformationObject",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:LocatedAt",
+      "label": "locatedAt",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Mission",
+      "label": "Mission",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:ObservationEvent",
+      "label": "ObservationEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Observes",
+      "label": "observes",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalConcept",
+      "label": "OperationalConcept",
+      "module": "core",
+      "kind": "class",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "label": "OperationalEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalConcept",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "label": "OperationalObject",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalConcept",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Organisation",
+      "label": "Organisation",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Actor",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:PartOf",
+      "label": "partOf",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Platform",
+      "label": "Platform",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Asset",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Provides",
+      "label": "provides",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:RecommendationEvent",
+      "label": "RecommendationEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Requires",
+      "label": "requires",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Resource",
+      "label": "Resource",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Route",
+      "label": "Route",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Sensor",
+      "label": "Sensor",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Asset",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Service",
+      "label": "Service",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+      "label": "StateChangeEvent",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Supply",
+      "label": "Supply",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Resource",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Supports",
+      "label": "supports",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:System",
+      "label": "System",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Asset",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:ThreatSource",
+      "label": "ThreatSource",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Threatens",
+      "label": "threatens",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Unit",
+      "label": "Unit",
+      "module": "core",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Actor",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:core:Uses",
+      "label": "uses",
+      "module": "core",
+      "kind": "property",
+      "parent": null,
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:decision:ActionAuthorizedEvent",
+      "label": "ActionAuthorizedEvent",
+      "module": "decision",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:ActionEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:decision:DecisionRecordedEvent",
+      "label": "DecisionRecordedEvent",
+      "module": "decision",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:DecisionEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:decision:RecommendationCreatedEvent",
+      "label": "RecommendationCreatedEvent",
+      "module": "decision",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:RecommendationEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:isr:ISRSource",
+      "label": "ISRSource",
+      "module": "isr",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:isr:ThreatAssessmentUpdatedEvent",
+      "label": "ThreatAssessmentUpdatedEvent",
+      "module": "isr",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:AssessmentEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:logistics:LogisticsRoute",
+      "label": "LogisticsRoute",
+      "module": "logistics",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Route",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:logistics:RouteAvailabilityChangedEvent",
+      "label": "RouteAvailabilityChangedEvent",
+      "module": "logistics",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyItem",
+      "label": "SupplyItem",
+      "module": "logistics",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Supply",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyNode",
+      "label": "SupplyNode",
+      "module": "logistics",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Facility",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyThresholdReachedEvent",
+      "label": "SupplyThresholdReachedEvent",
+      "module": "logistics",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:mission:MissionStatusChangedEvent",
+      "label": "MissionStatusChangedEvent",
+      "module": "mission",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:mission:OperationalImpactAssessedEvent",
+      "label": "OperationalImpactAssessedEvent",
+      "module": "mission",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:ImpactEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:pnt:GNSSInterferenceEvent",
+      "label": "GNSSInterferenceEvent",
+      "module": "pnt",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:ObservationEvent",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:pnt:GNSSReceiver",
+      "label": "GNSSReceiver",
+      "module": "pnt",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Asset",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:pnt:InterferenceSource",
+      "label": "InterferenceSource",
+      "module": "pnt",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    },
+    {
+      "id": "tag:synapsecommand.com,2026-09-06:ontology:pnt:PNTService",
+      "label": "PNTService",
+      "module": "pnt",
+      "kind": "class",
+      "parent": "tag:synapsecommand.com,2026-09-06:ontology:core:Service",
+      "maturity": "EXPERIMENTAL",
+      "deprecated": false,
+      "replacement": null
+    }
+  ]
+}

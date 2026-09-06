@@ -1,0 +1,130 @@
+{
+  "@context": {
+    "air": "tag:synapsecommand.com,2026-09-06:ontology:air:",
+    "c2": "tag:synapsecommand.com,2026-09-06:ontology:c2:",
+    "core": "tag:synapsecommand.com,2026-09-06:ontology:core:",
+    "decision": "tag:synapsecommand.com,2026-09-06:ontology:decision:",
+    "isr": "tag:synapsecommand.com,2026-09-06:ontology:isr:",
+    "logistics": "tag:synapsecommand.com,2026-09-06:ontology:logistics:",
+    "mission": "tag:synapsecommand.com,2026-09-06:ontology:mission:",
+    "pnt": "tag:synapsecommand.com,2026-09-06:ontology:pnt:",
+    "AirTrackObservedEvent": "tag:synapsecommand.com,2026-09-06:ontology:air:AirTrackObservedEvent",
+    "Aircraft": "tag:synapsecommand.com,2026-09-06:ontology:air:Aircraft",
+    "Airfield": "tag:synapsecommand.com,2026-09-06:ontology:air:Airfield",
+    "Airspace": "tag:synapsecommand.com,2026-09-06:ontology:air:Airspace",
+    "AirspaceRestrictionChangedEvent": "tag:synapsecommand.com,2026-09-06:ontology:air:AirspaceRestrictionChangedEvent",
+    "Runway": "tag:synapsecommand.com,2026-09-06:ontology:air:Runway",
+    "RunwayAvailabilityChangedEvent": "tag:synapsecommand.com,2026-09-06:ontology:air:RunwayAvailabilityChangedEvent",
+    "UAV": "tag:synapsecommand.com,2026-09-06:ontology:air:UAV",
+    "C2System": "tag:synapsecommand.com,2026-09-06:ontology:c2:C2System",
+    "CommunicationSystem": "tag:synapsecommand.com,2026-09-06:ontology:c2:CommunicationSystem",
+    "SystemAvailabilityChangedEvent": "tag:synapsecommand.com,2026-09-06:ontology:c2:SystemAvailabilityChangedEvent",
+    "ActionEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:ActionEvent",
+    "Activity": "tag:synapsecommand.com,2026-09-06:ontology:core:Activity",
+    "Actor": "tag:synapsecommand.com,2026-09-06:ontology:core:Actor",
+    "Affects": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Affects",
+      "@type": "@id"
+    },
+    "Area": "tag:synapsecommand.com,2026-09-06:ontology:core:Area",
+    "AssessmentEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:AssessmentEvent",
+    "Asset": "tag:synapsecommand.com,2026-09-06:ontology:core:Asset",
+    "AssignedTo": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:AssignedTo",
+      "@type": "@id"
+    },
+    "Capability": "tag:synapsecommand.com,2026-09-06:ontology:core:Capability",
+    "CommunicatesWith": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:CommunicatesWith",
+      "@type": "@id"
+    },
+    "Concerns": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Concerns",
+      "@type": "@id"
+    },
+    "ConstraintEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:ConstraintEvent",
+    "DecisionEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:DecisionEvent",
+    "DependsOn": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:DependsOn",
+      "@type": "@id"
+    },
+    "Detects": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Detects",
+      "@type": "@id"
+    },
+    "Facility": "tag:synapsecommand.com,2026-09-06:ontology:core:Facility",
+    "FacilityComponent": "tag:synapsecommand.com,2026-09-06:ontology:core:FacilityComponent",
+    "Group": "tag:synapsecommand.com,2026-09-06:ontology:core:Group",
+    "HasPart": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:HasPart",
+      "@type": "@id"
+    },
+    "ImpactEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:ImpactEvent",
+    "InformationObject": "tag:synapsecommand.com,2026-09-06:ontology:core:InformationObject",
+    "LocatedAt": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:LocatedAt",
+      "@type": "@id"
+    },
+    "Mission": "tag:synapsecommand.com,2026-09-06:ontology:core:Mission",
+    "ObservationEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:ObservationEvent",
+    "Observes": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Observes",
+      "@type": "@id"
+    },
+    "OperationalConcept": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalConcept",
+    "OperationalEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalEvent",
+    "OperationalObject": "tag:synapsecommand.com,2026-09-06:ontology:core:OperationalObject",
+    "Organisation": "tag:synapsecommand.com,2026-09-06:ontology:core:Organisation",
+    "PartOf": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:PartOf",
+      "@type": "@id"
+    },
+    "Platform": "tag:synapsecommand.com,2026-09-06:ontology:core:Platform",
+    "Provides": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Provides",
+      "@type": "@id"
+    },
+    "RecommendationEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:RecommendationEvent",
+    "Requires": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Requires",
+      "@type": "@id"
+    },
+    "Resource": "tag:synapsecommand.com,2026-09-06:ontology:core:Resource",
+    "Route": "tag:synapsecommand.com,2026-09-06:ontology:core:Route",
+    "Sensor": "tag:synapsecommand.com,2026-09-06:ontology:core:Sensor",
+    "Service": "tag:synapsecommand.com,2026-09-06:ontology:core:Service",
+    "StateChangeEvent": "tag:synapsecommand.com,2026-09-06:ontology:core:StateChangeEvent",
+    "Supply": "tag:synapsecommand.com,2026-09-06:ontology:core:Supply",
+    "Supports": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Supports",
+      "@type": "@id"
+    },
+    "System": "tag:synapsecommand.com,2026-09-06:ontology:core:System",
+    "ThreatSource": "tag:synapsecommand.com,2026-09-06:ontology:core:ThreatSource",
+    "Threatens": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Threatens",
+      "@type": "@id"
+    },
+    "Unit": "tag:synapsecommand.com,2026-09-06:ontology:core:Unit",
+    "Uses": {
+      "@id": "tag:synapsecommand.com,2026-09-06:ontology:core:Uses",
+      "@type": "@id"
+    },
+    "ActionAuthorizedEvent": "tag:synapsecommand.com,2026-09-06:ontology:decision:ActionAuthorizedEvent",
+    "DecisionRecordedEvent": "tag:synapsecommand.com,2026-09-06:ontology:decision:DecisionRecordedEvent",
+    "RecommendationCreatedEvent": "tag:synapsecommand.com,2026-09-06:ontology:decision:RecommendationCreatedEvent",
+    "ISRSource": "tag:synapsecommand.com,2026-09-06:ontology:isr:ISRSource",
+    "ThreatAssessmentUpdatedEvent": "tag:synapsecommand.com,2026-09-06:ontology:isr:ThreatAssessmentUpdatedEvent",
+    "LogisticsRoute": "tag:synapsecommand.com,2026-09-06:ontology:logistics:LogisticsRoute",
+    "RouteAvailabilityChangedEvent": "tag:synapsecommand.com,2026-09-06:ontology:logistics:RouteAvailabilityChangedEvent",
+    "SupplyItem": "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyItem",
+    "SupplyNode": "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyNode",
+    "SupplyThresholdReachedEvent": "tag:synapsecommand.com,2026-09-06:ontology:logistics:SupplyThresholdReachedEvent",
+    "MissionStatusChangedEvent": "tag:synapsecommand.com,2026-09-06:ontology:mission:MissionStatusChangedEvent",
+    "OperationalImpactAssessedEvent": "tag:synapsecommand.com,2026-09-06:ontology:mission:OperationalImpactAssessedEvent",
+    "GNSSInterferenceEvent": "tag:synapsecommand.com,2026-09-06:ontology:pnt:GNSSInterferenceEvent",
+    "GNSSReceiver": "tag:synapsecommand.com,2026-09-06:ontology:pnt:GNSSReceiver",
+    "InterferenceSource": "tag:synapsecommand.com,2026-09-06:ontology:pnt:InterferenceSource",
+    "PNTService": "tag:synapsecommand.com,2026-09-06:ontology:pnt:PNTService"
+  }
+}

@@ -1,0 +1,62 @@
+# SC-OES Operational Ontology — logistics module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix logistics:<tag:synapsecommand.com,2026-09-06:ontology:logistics:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:logistics>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — logistics" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "logistics" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §95 states the object hierarchy — SupplyItem -> Supply, SupplyNode -> Facility,
+# LogisticsRoute -> Route — and it is taken exactly.
+
+logistics:SupplyItem
+    a owl:Class ;
+    rdfs:subClassOf core:Supply ;
+    rdfs:label "SupplyItem" ;
+    skos:definition "A kind of supply held, issued and consumed as countable quantity." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+logistics:SupplyNode
+    a owl:Class ;
+    rdfs:subClassOf core:Facility ;
+    rdfs:label "SupplyNode" ;
+    skos:definition "A facility at which supply is held, issued or transferred." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+logistics:LogisticsRoute
+    a owl:Class ;
+    rdfs:subClassOf core:Route ;
+    rdfs:label "LogisticsRoute" ;
+    skos:definition "A route used to move supply between supply nodes." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+logistics:SupplyThresholdReachedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:StateChangeEvent ;
+    rdfs:label "SupplyThresholdReachedEvent" ;
+    skos:definition "An event reporting that a held quantity of supply has reached a threshold that the holder tracks." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+logistics:RouteAvailabilityChangedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:StateChangeEvent ;
+    rdfs:label "RouteAvailabilityChangedEvent" ;
+    skos:definition "An event reporting that the represented availability of a route has changed." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .

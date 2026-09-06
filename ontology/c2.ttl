@@ -1,0 +1,46 @@
+# SC-OES Operational Ontology — c2 module
+#
+# Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
+# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# a parent in another module is referenced by its identifier.
+
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix scmeta: <tag:synapsecommand.com,2026-09-06:ontology-metadata:> .
+@prefix core:   <tag:synapsecommand.com,2026-09-06:ontology:core:> .
+@prefix c2:      <tag:synapsecommand.com,2026-09-06:ontology:c2:> .
+
+<tag:synapsecommand.com,2026-09-06:ontology:c2>
+    a owl:Ontology ;
+    rdfs:label "SynapseCommand Operational Ontology — c2" ;
+    owl:versionInfo "0.1.0" ;
+    scmeta:module "c2" ;
+    scmeta:maturity "EXPERIMENTAL" .
+
+# §97 states the hierarchy — C2System -> System, CommunicationSystem -> System — and it is taken
+# exactly.
+
+c2:C2System
+    a owl:Class ;
+    rdfs:subClassOf core:System ;
+    rdfs:label "C2System" ;
+    skos:definition "A system used to exercise command and control." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+c2:CommunicationSystem
+    a owl:Class ;
+    rdfs:subClassOf core:System ;
+    rdfs:label "CommunicationSystem" ;
+    skos:definition "A system used to carry information between actors." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
+
+c2:SystemAvailabilityChangedEvent
+    a owl:Class ;
+    rdfs:subClassOf core:StateChangeEvent ;
+    rdfs:label "SystemAvailabilityChangedEvent" ;
+    skos:definition "An event reporting that the represented availability of a system has changed." ;
+    scmeta:maturity "EXPERIMENTAL" ;
+    owl:versionInfo "0.1.0" .
