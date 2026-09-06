@@ -99,9 +99,13 @@ Issues = "https://github.com/Decent-Cybersecurity/synapsecommand-public/issues"
 Changelog = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/MIGRATIONS.md"
 
 [project.scripts]
-# The two entry points the README documents as `python -m ...`; both stay importable that way.
+# The three entry points the README documents as `python -m ...`; all three stay importable that
+# way. `cdm-conformance` joined 2026-09-06 with the SC-OES conformance tool: §40 requires a
+# process status a CI system can branch on, and a console script is how this repository has
+# always spelled "runnable without knowing where the package is installed".
 cdm-harness = "synapse_cdm.harness:main"
 cdm-schemas = "synapse_cdm.schemas:main"
+cdm-conformance = "synapse_cdm.conformance:main"
 
 [tool.setuptools.dynamic]
 version = { attr = "synapse_cdm.version.PACKAGE_VERSION" }

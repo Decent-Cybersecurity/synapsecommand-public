@@ -37,7 +37,7 @@ repository. Every check below is a property of the installed artefact:
     schemas    the published schemas can be regenerated and re-checked from anywhere
     harness    every adapter the tree registers replays green with no --fixtures argument
                at all — the roster derived, never a count typed here
-    scripts    the cdm-harness and cdm-schemas console entry points work
+    scripts    the cdm-harness, cdm-schemas and cdm-conformance entry points work
     prose      no shipped file hands the reader a repo-relative path
     slice      the package-only half of the suite passes against the INSTALLED package
 
@@ -112,6 +112,15 @@ PACKAGE_ONLY_TESTS = (
     # ship, which is why the drift half of the same subject is `test_cdm_ontology.py` in the
     # other list.
     "test_cdm_registry.py",
+    # `test_cdm_conformance.py` is package-only on `test_cdm_registry.py`'s reading exactly: the
+    # conformance tool reads both packaged registries and generates the schemas from the models,
+    # so against an installed distribution this module assesses objects with the artefacts a
+    # consumer actually got — which is the only place §125's "no repository checkout" is really
+    # tested. Every object it judges is built in the test; the only files it opens are ones it
+    # writes into `tmp_path` itself. Its repository-bound half is
+    # `test_cdm_conformance_spec.py`, which reads the normative documents under `spec/sc-oes/`,
+    # and those do not ship.
+    "test_cdm_conformance.py",
     "test_cdm_schemas.py", "test_cdm_stanag4586_adapter.py", "test_cdm_stanag4609_adapter.py",
     "test_cdm_stanag4676_adapter.py",
     "test_cdm_tak_adapter.py",
@@ -160,6 +169,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_boundary.py": "AST over the package sources as files in the tree",
     "test_cdm_bump_derivation.py": "gates/bump_derivation.py, release tags and git blobs",
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
+    "test_cdm_conformance_spec.py": "spec/sc-oes/13-conformance.md, 00-conventions.md, the seven profile documents and docs/adr/0009 — the normative tree the conformance module implements, none of which ships in the wheel",
     "test_cdm_consumer_path.py": "README, docs and the fixture READMEs — prose outside the wheel",
     "test_cdm_deploy_workflow.py": "wrangler.toml and docs/README.md",
     "test_cdm_deploy_record.py": "gates/deploy_record.py and the deployment ledger",
@@ -531,7 +541,19 @@ def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
          "cdm-harness")
     must(run([str(scripts / "cdm-schemas"), "--check", "--out", str(schema_dir)], cwd=outside),
          "cdm-schemas --check")
-    return "cdm-harness and cdm-schemas both run"
+    # `cdm-conformance` is exercised against a golden the WHEEL carries rather than against a
+    # document written here: the point of the check is that the installed distribution can assess
+    # an object with no repository on its path (§125), and a literal typed into this gate would
+    # prove only that argparse works. The path is asked of the installed package rather than
+    # assembled from `scripts`, so it is right wherever the venv put it.
+    golden = must(run([str(scripts / "python"), "-c",
+                       "import pathlib, synapse_cdm; print(pathlib.Path(synapse_cdm.__file__)"
+                       ".parent / 'fixtures' / 'pntmap' / 'golden' / "
+                       "'jamming_gulf_of_riga.cdm.json')"], cwd=outside),
+                  "locating a packaged golden for cdm-conformance").strip()
+    must(run([str(scripts / "cdm-conformance"), "--input", golden, "--json"], cwd=outside),
+         "cdm-conformance")
+    return "cdm-harness, cdm-schemas and cdm-conformance all run"
 
 
 def check_slice_closure() -> str:

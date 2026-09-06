@@ -264,7 +264,7 @@ Nothing here is in a release — every line below is in **no release** at all. T
 the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
 this.
 
-**What moved inside the distribution: 555 files.**
+**What moved inside the distribution: 556 files.**
 
 **THE COUNT READ `three` UNTIL 2026-09-06, AND BOTH READINGS WERE RIGHT WHEN THEY WERE TAKEN.**
 The sentence above said "three shipped files" and described the SC-OES ontology round's arc alone;
@@ -273,7 +273,9 @@ kept here rather than overwritten, on the same ground the 1.7.0 section keeps it
 that quietly restates its history is a record nobody can date. It read `553` between then and the SC-OES
 registry round, also on 2026-09-06, which added the governed event registry and the module that
 reads both registries: two files, and the third reading of a count that has been right three
-times.
+times. It read `555` between then and the SC-OES conformance round, also on 2026-09-06, which
+added the five-dimension conformance tool: one file, and the fourth reading of a count that has
+now been right four times.
 
 **THE WIRE CONTRACT MOVED, AND IT IS A MAJOR.** `SCHEMA_VERSION` `1.0.0` -> `2.0.0`. `Event` gained
 an optional `oes` block and `Entity` gained an optional `ontology_types` list, and by this table's
@@ -313,18 +315,24 @@ generated JSON-LD context), `gates/ontology_terms.py` and `tests/test_cdm_ontolo
 `docs/adr/0010-open-source-packaging-and-licensing.md`. The SC-OES model round added
 `tests/test_cdm_oes.py`, regenerated the six published documents under `schemas/`, corrected one
 worked example under `spec/sc-oes/`, and re-pinned the two version literals
-`tests/test_cdm_packaging.py` asserts. **None of those is in the distribution**: the packaged
+`tests/test_cdm_packaging.py` asserts. The SC-OES conformance round added
+`tests/test_cdm_conformance.py` and `tests/test_cdm_conformance_spec.py` — the two halves of one
+subject, one judging the installed package and one judging the normative documents at the
+repository root — and extended `gates/wheel_install.py` with both of their classifications and a
+third console-script check. **None of those is in the distribution**: the packaged
 contents are `pyproject.toml` and the `synapse_cdm/` tree, so the ontology's Turtle authority
 reaches no installed reader and `schemas/` is a publication of the models rather than a shipped
 file. That is the same boundary `gates/bump_derivation.py` measures the bump over.
 
-**The 555, by what they are.** Three rounds moved them — **the SC-OES ontology round,
+**The 556, by what they are.** Four rounds moved them — **the SC-OES ontology round,
 2026-09-06**, which wrote the Operational Ontology and generated its two derived artefacts, **the
 SC-OES model round, 2026-09-06**, which attached the wire-semantic block to the canonical `Event`,
-and **the SC-OES registry round, 2026-09-06**, which added the governed event contract the block's
-`type_id` names and the helpers that read it.
+**the SC-OES registry round, 2026-09-06**, which added the governed event contract the block's
+`type_id` names and the helpers that read it, and **the SC-OES conformance round, 2026-09-06**,
+which added the tool that assesses an object against all of it in five separately reportable
+dimensions.
 
-5 shipped Python modules:
+6 shipped Python modules:
 
 * `synapse_cdm/oes.py` — **new.** The SC-OES wire-semantic block: `OesMetadata` and the five models
   beneath it (`EventRelation`, `EntityRelation`, `EvidenceRef`, `SecurityMarking`), the five closed
@@ -346,6 +354,19 @@ and **the SC-OES registry round, 2026-09-06**, which added the governed event co
   **A second time, in the registry round:** eleven more names — `OES_PAYLOAD_MODELS`, `PROFILES`,
   `EventTypeRecord`, `Maturity`, `OntologyTermRecord` and §126's six registry helpers — so the
   hand-written list is 52 names. Nothing is removed at either step.
+
+  **THE CONFORMANCE ROUND, 2026-09-06, ADDED NOTHING HERE, AND THAT IS A DECISION** rather than an
+  omission — a note beside the two paragraphs above, not an edit to them. The eight conformance
+  names were put into `__all__`, and `python -m synapse_cdm.conformance` then emitted
+  `RuntimeWarning: 'synapse_cdm.conformance' found in sys.modules after import of package
+  'synapse_cdm', but prior to execution` on every invocation, because a module the package
+  `__init__` imports has already been imported by the time `runpy` executes it. `python -m
+  synapse_cdm.schemas` acquired the same warning at one remove, through `conformance`'s own
+  import of it. The names were withdrawn on that reading: `harness` and `schemas` are the two
+  runnable-as-a-command modules this package already ships and NEITHER is on the `__all__`
+  surface, `conformance` is the third, and `from synapse_cdm.conformance import assess` is the
+  same import `from synapse_cdm.harness import run` already is. `__all__` therefore still reads
+  **52 names**, unchanged since the registry round.
 * `synapse_cdm/oes_registry.py` — **new.** The loader for both packaged registries and the helper
   surface ADR 0004 decision 7 names: `get_event_type`, `list_event_types`,
   `get_profile_event_types`, `get_legacy_event_type`, `get_ontology_term`, `list_ontology_terms`
@@ -360,6 +381,29 @@ and **the SC-OES registry round, 2026-09-06**, which added the governed event co
   of §112, `GnssInterferencePayload` reused rather than copied. **It is not called
   `registry.py`**: `synapse_cdm/registry/` is a data directory, and a module of that name beside
   it would make one import path mean two things.
+* `synapse_cdm/conformance.py` — **new.** The five-dimension conformance assessment and its CLI:
+  `DIMENSIONS` (A CDM, B SC-OES core syntax, C SC-OES semantic type, D SC-OES profile, E
+  ontology), the three verdicts `PASS`/`FAIL`/`SKIP` with `SKIP` never rendered as `PASS`, four
+  exit-code constants, a `--require` mechanism, a rendered table, and a JSON report whose
+  dimensions are keyed by NAME rather than by position. No aggregate verdict, score, grade or
+  percentage is produced anywhere in either output — `docs/adr/0009-conformance-model.md` is the
+  decision and `spec/sc-oes/13-conformance.md` the normative statement. **Three readings in it
+  are worth naming here**, because each is a place where the obvious implementation would have
+  said something untrue. **Dimension A is assessed with the `oes` block removed**, because
+  13-conformance.md requires that A's verdict not depend on the block's content and the block is
+  part of the canonical model — so a malformed block is one finding in B rather than two findings
+  in A and B. **Dimension D is `SKIP` for all seven profiles**, because every profile document
+  under `spec/sc-oes/profiles/` says in as many words that a D assessment against it has no rules
+  to check; a `PASS` drawn from an empty rule set would be exactly the claim those documents say
+  is not yet available, and the registry's own statement about which profile owns a type is
+  reported as an observation instead. **`spec_version` is checked for shape and not for value**,
+  on the ruling `OesMetadata._spec_version` already carries: requiring equality with this
+  package's `SC_OES_VERSION` would refuse an event written against a later specification version,
+  which `12-versioning.md` requires stay transportable. The tool opens no socket, resolves no
+  name and reads no path a caller did not give it. Its public names are reached through the
+  module — `from synapse_cdm.conformance import assess` — and are deliberately not added to the
+  package's `__all__`; the `__init__.py` bullet above records why, and it is the same standing
+  `harness` and `schemas` have.
 
 2 shipped data files:
 
@@ -382,13 +426,19 @@ and **the SC-OES registry round, 2026-09-06**, which added the governed event co
 
 1 packaging declaration:
 
-* `pyproject.toml` — two changes, neither of them to `[project].dependencies`, which still reads
+* `pyproject.toml` — three changes, none of them to `[project].dependencies`, which still reads
   `pydantic>=2.6` and `jsonschema>=4.0` and nothing else. The `test` extra gains `rdflib>=7.0`,
   the test/development RDF parser the ontology's own tests read Turtle with; and
   `[tool.setuptools.package-data]` gains a recursive `registry/**/*`, without which the new
   registry would be tracked and not shipped. **The registry round changed nothing here**, and
   that is what a recursive glob is for: `event_types.json` shipped because the pattern reaches for
   the directory rather than for a list of names somebody has to remember to extend.
+  **The third change is the conformance round's, 2026-09-06:** `[project.scripts]` gains
+  `cdm-conformance = "synapse_cdm.conformance:main"`, a third console entry point beside
+  `cdm-harness` and `cdm-schemas`, because §40 requires a process status a CI system can branch
+  on and a console script is how this package has always spelled "runnable without knowing where
+  it is installed". `gates/bump_derivation.py` reads a new entry point as a MINOR signal by name,
+  which is why it needs no ruling: the arc since 1.8.0 still derives MINOR with 0 unruled.
 
 1 shipped document:
 
