@@ -159,6 +159,45 @@ UNRULED_HISTORICAL_ARCS = {
                            "synapse_cdm/adapters/stanag4609.py:<statement 10>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 11>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 12>"},
+    # `v1.7.0 → v1.8.0` is the sixth entry, at TWELVE units, and it arrives by the second entry's
+    # route like the three above it: every one of the twelve WAS ruled, in `MIGRATIONS.md`'s 1.8.0
+    # section, by the park 7 round's second half on M's ruling-by-shape of 2026-09-06 — the first
+    # half derived them and left them, because a runner may not write a ruling nobody gave it.
+    # This test derives the arc RAW and never calls `apply_rulings()`, so the twelve belong here
+    # whatever the section says about them.
+    #
+    # EIGHT OF THE TWELVE ARE POSITIONAL AND THEY STAY AT FULL WIDTH for the reason the entries
+    # above give, and this arc's cause is the same shape as the last one's with a different module
+    # inserted: `<statement 6>` and `<statement 7>` of `klv_uas_codec.py` and `<statement 10>`
+    # through `<statement 13>` of `stanag4609.py` are `import` lines that DID NOT CHANGE —
+    # `klv_rvt_codec` was inserted above them and the gate names an unnamed top-level statement by
+    # its position. `<statement 14>` and `<statement 15>` of `stanag4609.py` are module-level
+    # statements modified in place with no name added or removed. The other four are real
+    # modifications: `DecodedPacket` gained two trailing fields, `decode_packet` decodes item 73,
+    # the adapter class emits `attributes.rvt_local_set`, and `_parsed_packet`'s twin gains a
+    # conditional `rvt` key.
+    #
+    # THE STATEMENT NUMBERS MOVED FOUR PLACES BETWEEN THIS ENTRY AND THE ONE ABOVE IT, and the two
+    # entries are kept side by side without collapsing them for exactly that reason: `<statement 7>`
+    # names a `klv_vmti_codec` import line in the 1.7.0 arc and a `klv_uas_codec` import line here.
+    # A set keyed by position is only readable next to the arc that produced it.
+    #
+    # AND THIS ROW TOO WAS ADDED AFTER THE TAG EXISTED, by the one local re-tag a release round is
+    # allowed. The key is a pair of tags, so no entry for an arc can be written before its head tag
+    # is created; the 1.8.0 round tagged, read this test red, wrote the row and moved the tag onto
+    # the commit carrying it, all before anything was pushed.
+    ("v1.7.0", "v1.8.0"): {"synapse_cdm/adapters/klv_uas_codec.py:DecodedPacket",
+                           "synapse_cdm/adapters/klv_uas_codec.py:decode_packet",
+                           "synapse_cdm/adapters/klv_uas_codec.py:<statement 6>",
+                           "synapse_cdm/adapters/klv_uas_codec.py:<statement 7>",
+                           "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+                           "synapse_cdm/adapters/stanag4609.py:_parsed_packet",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 10>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 11>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 12>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 13>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 14>",
+                           "synapse_cdm/adapters/stanag4609.py:<statement 15>"},
 }
 
 
