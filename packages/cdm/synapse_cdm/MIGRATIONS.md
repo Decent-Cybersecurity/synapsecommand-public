@@ -181,7 +181,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.7.0 -m "..."                           # annotated, never lightweight
+git tag -a v1.8.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -258,12 +258,25 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 1.8.0 — 2026-09-06 — the last two parks close: MISB ST 0806.4's RVT Local Set rides item 73 into `Entity.attributes`, and the Motion Imagery Handbook settles KLV 8 as a companion
 
-Nothing here is in a release — every line below is in **no release** at all. The distribution on
-the index is **1.7.0**, and a reader who ran `pip install synapse-cdm` has that and not this.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: 37 files.**
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `1.8.0` at this
+commit, in `version.py`, and the tag `v1.8.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened.
+
+**THE PARKS TABLE IS EMPTY AT THIS RELEASE, AND THAT IS THE THING THIS SECTION EXISTS TO SAY.**
+`gates/parks_table.py` reads **13 rows, 0 open, 13 closed** at this commit. Every document
+MISP-2019.1 delegates to is on disk, pinned by digest and by byte count, and no row of that table
+is waiting on an acquisition any more. The two closures in this arc are the last two: park 7, MISB
+ST 0806.4's RVT Local Set, and park 10, the MISP-2019.1 Motion Imagery Handbook.
+
+**What moved inside the distribution: 38 files.** The count and the set are
+`gates/bump_derivation.py`'s, re-derived AFTER this section was written rather than before it. Two
+of the 38 are this `MIGRATIONS.md` and `version.py`, whose only changed unit at the release commit
+is the `PACKAGE_VERSION` declaration the gate refuses to read as evidence for itself.
 
 **AND WHAT MOVED OUTSIDE IT, WHICH IS DELIBERATELY NOT COUNTED ABOVE.**
 `tests/test_cdm_format_coverage.py`, `tests/test_cdm_stanag4609_adapter.py`,
@@ -278,7 +291,12 @@ gives `gates/parks_table.py` and `tests/test_cdm_parks_table.py`, which this rou
 `99e6180` — the arc since the tag holds two commits and not one, so the sentence above saying ONE
 round moved all of them is true of the 37 inside the distribution and was never true of the files
 outside it. `PUBLICATION.md` moves again here, for one authorised dated correction beside its own
-line 2384. **The count above did not move with
+line 2384. **AND THE 1.8.0 RELEASE ROUND ADDED FOUR MORE OF THE SAME CLASS, 2026-09-06**:
+`RELEASE_NOTES.md`, `tests/test_cdm_packaging.py`, the repository-root `README.md` and
+`docs/docs/changelog.mdx`, each of which states this tree's package version and none of which an
+installed reader receives — the packaged contents are `pyproject.toml` and the `synapse_cdm/` tree,
+so a gate, a test module, the repository-root notes and the publication record all reach no
+installed reader. **The count above did not move with
 them and that is the point of stating both**: park 7's closure is written in a shipped document, a
 shipped pin record and this file, all three already inside the 37, while the machinery that makes
 the closure safe — the reversal a guard performs when the table stops carrying its shape — is a
@@ -286,6 +304,18 @@ gate and a test module, and an installed reader receives neither.
 
 **The 37, by what they are.** One round moved all of them — **the park 7 round, 2026-09-06**,
 which pinned MISB ST 0806.4 and wrote the RVT item layer.
+
+**DATED CORRECTION, 2026-09-06, BY THE 1.8.0 RELEASE ROUND — BOTH CLAUSES OF THE SENTENCE ABOVE
+ARE NOW FALSE, AND THE HEADING IS THE STALE ONE OF THE TWO FIGURES.** The arc's size is **38**,
+which is the number the count sentence above states and `gates/bump_derivation.py` derives at the
+release commit; the thirty-eighth file is `version.py`, whose `PACKAGE_VERSION` declaration this
+round moved and which is named in this section's opening paragraph rather than in the list below,
+because the list is grouped by what a file IS and a version declaration is its own kind. And three
+rounds moved the 37, not one: the park 7 round moved all of them, and the park 10 round then moved
+two that were already inside the count — `FORMAT_COVERAGE.md` and this file — which is exactly what
+the paragraph on the sixth guard says it checked rather than assumed. 37 was right on the reading
+that wrote it and is kept here beside the derived figure rather than overwritten, on the same
+ground as the 117, 118 and 138 the 1.7.0 section keeps.
 
 3 shipped documents:
 
@@ -518,6 +548,40 @@ written and not before — a derivation quoted into the file it reads has to be 
 write, which is the discipline the file-count sentence at the top of this section records having
 learned twice in one round. That empty list is the release procedure's pre-step before a version
 number is typed, and it is what round I's first act reads.
+
+#### The 1.8.0 release round, 2026-09-06
+
+The round that typed the number, and it moved one file inside the distribution — `version.py` — and
+four outside it: `RELEASE_NOTES.md`, `tests/test_cdm_packaging.py`, the repository-root `README.md`
+and `docs/docs/changelog.mdx`. It also moved this file, which was already inside the arc it
+describes.
+
+**Every figure below was read from a gate on this tree at the release commit, not carried from a
+brief.** The bump is `gates/bump_derivation.py`'s: **MINOR over `v1.7.0`, floor 1.8.0**, from
+**100 signals** across **37 distribution files that carry one** — the release gate's moved set is
+**38**, the one file apart being `version.py`, whose only changed unit here is the declaration the
+gate refuses to read as evidence for itself. **Twelve units the table could not decide carry a
+person's ruling**, all twelve written above by the round that made them, **eight PATCH and four
+MINOR**, and `pending.unruled` is the empty list.
+
+**The roster did not move and the fixture set did.** `adapter.discover()` and `adapter.roster()`
+each return **fourteen**, the same fourteen names in the same two directions. Summed from the
+harness on this tree with no `--fixtures`, the roster returns **538 fixture verdicts, 0 failed**;
+`stanag4609`'s own figure moves from 112 to **126**, which is the whole of the increase and is the
+seven new payloads and their seven parsed twins. `gates/wheel_install.py` reads **13 checks, 0
+failed** and its `--mutation-check` refuses a fixture-less wheel on five of them.
+
+**No schema moved.** `python -m synapse_cdm.schemas --check --out schemas` reads `CURRENT: schemas
+vs models at 1.0.0` and `git diff v1.7.0..HEAD -- schemas/` returns nothing, so `SCHEMA_VERSION`
+stays at 1.0.0 on a reading rather than on an assumption.
+
+**And the two gates this arc is actually about.** `gates/parks_table.py` reads **13 rows, 0 open,
+13 closed, 0 set-claims, 0 failed**, with `--mutation-check` at **8 mutations, no survivors** —
+the first release this package has made with an empty parks table. `gates/pin_paths.py` reads
+**30 present, 30 matched, 30 copies, 0 failed**, two more than 1.7.0 shipped, which are the two
+Motion Imagery Handbook editions. Neither gate is in the distribution and neither pinned document
+is either: `fixtures/klv/spec/*.pdf` is gitignored and no release of this package has ever
+redistributed a standard.
 
 ### 1.7.0 — 2026-09-05 — three parks close: item 74 becomes detections and tracks, item 94 becomes an identity, and the minimum metadata set rides every object as an advisory
 
