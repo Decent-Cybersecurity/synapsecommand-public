@@ -2624,6 +2624,28 @@ the two digests. **Its `created_at` field reads 09:27:35Z and that is not when i
 `f2b8ba7d`'s tagger time to the second, on the mechanism entry 13 records, so `published_at`
 **09:52:39Z** is the instant that matters. Fifth reproduction.
 
+**THE RELEASE BODY STATED A PIN COMPARATIVE THE TREE REFUTES, AND IT WAS CORRECTED 2026-09-06;
+THE PARAGRAPH ABOVE IS LEFT AS IT WAS WRITTEN.** Under the heading *"Derived from the tree at the
+tag, not remembered"*, the body as published read *"**Thirty pinned specification documents**,
+`pin_paths` reading `30 present, 30 matched, 30 copies, 0 failed` — two more than 1.7.0, both Motion
+Imagery Handbooks"*, and both halves of that comparative are false. Re-derived by running the gate on
+each tag in its own worktree: `gates/pin_paths.py` reads **27 copies** at `v1.7.0` and **30** at
+`v1.8.0`, and the set difference is **three** documents — `spec/ST0806.4.pdf`,
+`spec/misb-misp-2019.1-motion-imagery-handbook.pdf` and
+`spec/misb-misp-2019.2-motion-imagery-handbook.pdf` — so it is three more and not two, and one of the
+three is ST 0806.4 rather than a Handbook. **The count thirty in the sentence above was a reading and
+is untouched**; what was wrong was the comparative, and it was wrong only on the Release page —
+`RELEASE_NOTES.md` lines 124–128 at the tag and this entry's own suite paragraph both say three, and
+they agree with each other. The body now reads *"— three more than 1.7.0 shipped: MISB ST 0806.4 and
+both editions of the Motion Imagery Handbook"*, the wording the notes use. The edit was issued
+**13:41:05Z** and re-issued **13:41:23Z** to drop a trailing newline the CLI appended, after which the
+published body was byte-identical to the intended one and its diff against what was published at
+09:52:39Z is **that one line and nothing else**; the tag, the (zero) assets, `created_at`,
+`published_at` and the `Latest` flag were read before and after and are unmoved. That a round may
+amend a Release it created in the same release round, to correct a figure the tree refutes and to
+record the amendment here rather than by editing what it said, is the maintainer's ruling of
+2026-09-06.
+
 **THE DOCUMENTATION SITE WAS ONE RELEASE BEHIND AND THE WITNESS READ IT, WHICH IS NOW THE ORDINARY
 COURSE.** Measured **2026-09-06T09:50:30.062Z**: <https://docs.synapsecommand.com/changelog/> returned
 HTTP 200, 58 817 bytes, digest `75f7552d…21ca1` — the bytes the 1.7.0 witness round deployed — while
