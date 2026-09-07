@@ -198,6 +198,47 @@ UNRULED_HISTORICAL_ARCS = {
                            "synapse_cdm/adapters/stanag4609.py:<statement 13>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 14>",
                            "synapse_cdm/adapters/stanag4609.py:<statement 15>"},
+    # `v1.8.0 → v2.0.0` is the seventh entry, at TEN units, and it arrives by the second entry's
+    # route like the four above it: every one of the ten WAS ruled, in `MIGRATIONS.md`'s 2.0.0
+    # section, by the SC-OES rounds that made them — the model round ruled `Event`, `Entity` and
+    # the two `__init__.py` statements, the ontology and registry rounds ruled the three shipped
+    # registries (a new shipped data file under the package is a MINOR by M's shape ruling of
+    # 2026-09-06), and the producer round ruled the adapter and its import line. This test derives
+    # the arc RAW and never calls `apply_rulings()`, so the ten belong here whatever the section
+    # says about them.
+    #
+    # IT IS THE FIRST ENTRY IN THIS SET WITH NO KLV MODULE IN IT, and the first whose members are
+    # not mostly positional. Three of the ten are `import` lines the gate names by position —
+    # `<statement 2>` and `<statement 3>` of `__init__.py` and `<statement 7>` of `pntmap.py` —
+    # and in all three cases a `from synapse_cdm.oes import …` line took the position and pushed
+    # the ones below it down, which is the same cause the four entries above record with a
+    # different module inserted. The other SEVEN are real modifications: `Event` gained an
+    # optional `oes` block and `Entity` an optional `ontology_types` list, `__all__` grew by
+    # seventeen names and later by eleven more, the adapter emits a key it did not emit before,
+    # and the three registry JSON files are shipped data the table has no row for at all — which
+    # is why they refuse rather than classify, and why the shape ruling exists.
+    #
+    # THE ARC'S NUMBER IS NOT DERIVED FROM ITS DIFF, AND THIS SET DOES NOT RECORD THAT. The
+    # `found_unruled` branch below skips the floor comparison whenever an arc has unruled units, so
+    # this entry never asks whether `v1.8.0 → v2.0.0` derives a MAJOR — it does not; the gate
+    # derives MINOR and calls it a floor, and the MAJOR is a person's ruling over it, argued in
+    # `docs/adr/0005-cdm-schema-version-impact.md`. The distinction lives in `version_ruling()` and
+    # in the section, not here.
+    #
+    # AND THIS ROW TOO WAS ADDED AFTER THE TAG EXISTED, by the one local re-tag a release round is
+    # allowed. The key is a pair of tags, so no entry for an arc can be written before its head tag
+    # is created; the 2.0.0 round tagged, read this test red, wrote the row and moved the tag onto
+    # the commit carrying it, all before anything was pushed.
+    ("v1.8.0", "v2.0.0"): {"synapse_cdm/models.py:Event",
+                           "synapse_cdm/models.py:Entity",
+                           "synapse_cdm/__init__.py:__all__",
+                           "synapse_cdm/__init__.py:<statement 2>",
+                           "synapse_cdm/__init__.py:<statement 3>",
+                           "synapse_cdm/registry/sc_oes/ontology_terms.json",
+                           "synapse_cdm/registry/sc_oes/event_types.json",
+                           "synapse_cdm/registry/sc_oes/profiles.json",
+                           "synapse_cdm/adapters/pntmap.py:PntmapAdapter",
+                           "synapse_cdm/adapters/pntmap.py:<statement 7>"},
 }
 
 
