@@ -203,6 +203,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_release.py": "release tags against PACKAGE_VERSION",
     "test_cdm_trusted_publishing.py": ".github/workflows against PUBLICATION.md entry 6",
     "test_cdm_version_floor.py": "every Python file in the repository, gates included",
+    "test_cdm_architecture_docs.py": "ARCHITECTURE.md, VERSIONING.md and INTEROPERABILITY.md at the repository root against version.py, the registry and the harness — the three documents are the framework's contracts and none of them ships in the wheel, so an installed wheel has nothing for this module to read",
 }
 
 def source_roster() -> tuple[str, ...]:

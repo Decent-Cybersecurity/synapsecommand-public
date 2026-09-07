@@ -35,6 +35,9 @@ examples/           synthetic SC-OES events, validated by the suite
 tests/              the suite; bare `pytest` from this directory runs all of it
 gates/              checks too slow or too networked for the suite; each is a protocol act
 docs/               the documentation site (Docusaurus, deployed to Cloudflare Pages)
+ARCHITECTURE.md     the adapter contract — API v2, directions, metadata, the six core rules
+VERSIONING.md       the version axes, what moves each of them, and where each is authored
+INTEROPERABILITY.md what this is and is not, and how an adapter is built against it
 ```
 
 `spec/`, `ontology/` and `examples/` are human-readable and repository-bound; the machine-readable
