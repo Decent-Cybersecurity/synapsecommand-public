@@ -258,13 +258,23 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
-### Unreleased
+### 2.0.0 — 2026-09-07 — SC-OES v0.1.0 Draft ships: `Event.oes` and `Entity.ontology_types` carry a wire-semantic layer, the contract moves to 2.0.0, and the package takes its first MAJOR on a third party's consumer
 
-Nothing here is in a release — every line below is in **no release** at all. The distribution on
-the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
-this. `PACKAGE_VERSION` in this tree now reads **2.0.0**, which is the number the next release
-would carry and not a number anything serves: no `v2.0.0` tag exists, nothing has been published,
-and `pip install synapse-cdm` still resolves 1.8.0.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `2.0.0` at this
+commit, in `version.py`, and the tag `v2.0.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said the opposite in the pending tense — the index serves 1.8.0, no tag
+names 2.0.0, nothing has been published — and every clause of it was true until this commit.
+
+**THIS IS THE FIRST RELEASE OF THIS PACKAGE WHOSE SUBJECT IS NOT A FORMAT.** Every release from
+1.1.0 to 1.8.0 added an adapter, a codec, a row set or a pinned document — something that reads
+somebody else's wire. This one adds a layer of MEANING over objects already translated, and it
+ships a specification of its own (`spec/sc-oes/`, v0.1.0 Draft) which is not in the distribution
+and is not versioned with it: `SC_OES_VERSION` is a third axis at `0.1.0`, and §46 forbids
+deriving it from either number beside it.
 
 **THE PACKAGE VERSION MOVED 1.8.0 -> 2.0.0 ON 2026-09-07, AND IT IS A SECOND MAJOR ON A SECOND
 AXIS.** `SCHEMA_VERSION` moved 1.0.0 -> 2.0.0 the day before, on this table, for the reason the
@@ -296,8 +306,11 @@ down that "the rule states a FLOOR and says so" and that "the release that types
 one that writes the ruling". This paragraph is that ruling, and it is refused by the gate the
 moment it names any arc but this one. The bump algorithm is unchanged and still derives MINOR.
 
-**No release date is invented here.** This section is the established convention for work that is
-in no release; the date belongs to the release action and is written when the release is cut.
+**THE RELEASE DATE IS WRITTEN NOW, BY THE RELEASE ACTION, WHICH IS WHAT THE PARAGRAPH THIS
+REPLACES SAID WOULD HAPPEN.** That paragraph recorded the convention — no date is invented while
+an arc is pending, because the date belongs to the action and not to the writing — and named the
+release action as the thing that would supply one. This is that action; the heading carries
+**2026-09-07**, the date the tag was cut, and no other date in this section moves.
 
 **What moved inside the distribution: 558 files.**
 
@@ -379,6 +392,27 @@ which added the tool that assesses an object against all of it in five separatel
 dimensions, and **the SC-OES producer round, 2026-09-06**, which made one adapter fill the block
 in — the first object this package emits that carries SC-OES semantics rather than merely being
 able to.
+
+**A DATED CORRECTION TO THE BREAKDOWN, 2026-09-07, BY THE 2.0.0 RELEASE ROUND. IT STANDS BESIDE
+THE PARAGRAPH ABOVE AND THE SUB-HEADINGS BELOW RATHER THAN EDITING EITHER, AND THE FIGURE IT
+CORRECTS IS THE BREAKDOWN'S AND NOT THE ANCHOR'S.** The anchor at the top of this section reads
+**558** and is right; the paragraph above opens on **557** and names **five** rounds, and the
+sub-heading below it reads `2 shipped data files` where the directory now ships **three**. The
+whole of the difference is one file and one round: the release-readiness round of 2026-09-07 added
+`synapse_cdm/registry/sc_oes/profiles.json`, the packaged profile registry, which this section
+does name — in the conformance module's entry above and at its own bump ruling below — so the
+naming gate this section answers to was satisfied while the arithmetic was one short. The dated
+readings above the anchor already record that step ("It read `557` … which added the packaged
+profile registry: **one file, and not four**"), which is why the anchor moved and the breakdown
+did not. **Derived here, at the release commit, rather than carried from a brief:**
+`git diff --name-only v1.8.0 -- packages/cdm` returns **558** paths, `gates/bump_derivation.py`'s
+signal-bearing set over the same arc is the **same 558** paths — equal in both directions, no
+path in one and not the other — and the breakdown reconciles as 7 shipped Python modules + 3
+shipped data files + 1 packaging declaration + 1 shipped document + 546 goldens = **558**. Six
+rounds moved them, not five; the sixth is named in the sentence this paragraph quotes. Nothing
+below is rewritten to agree with this, on this file's own convention: a figure that has become
+false gets a dated correction beside it, and a reader who wants to know when the count was what
+needs both readings to still be there.
 
 7 shipped Python modules:
 
@@ -1181,6 +1215,57 @@ this package emits carries `schema_version` `2.0.0`; every entity carries `ontol
 unless a producer asserted a semantic type; every event carries `oes`, `null` unless a producer made
 an SC-OES assertion. A 1.x consumer is refused, deliberately and at the version gate, and that
 refusal is the message the major exists to carry.
+
+#### The 2.0.0 release round, 2026-09-07
+
+The round that typed the number, and **it moved exactly one file: this one.** `version.py`,
+`RELEASE_NOTES.md`, `README.md`'s tag example and `tests/test_cdm_packaging.py`'s two pinned
+literals had all already been moved by the rounds that made the change, so this is the smallest
+release commit this package has cut — a date, a heading and a tense, with every figure below
+derived rather than typed. This file was already inside the arc it describes.
+
+**`docs/docs/changelog.mdx` is deliberately NOT in this commit, and every previous release round
+moved it.** Its two remaining 1.8.0 sentences are claims about what the INDEX serves, not about
+this tree, and they are still true at this commit: a release is a tag plus an artefact, the tag
+exists from here and the artefact does not exist until the publish job has run. The paragraph at
+the top of this section is the rule being followed — what the index serves is a measured fact
+about an upload — so those two sentences move in the witness round that watches it, beside the
+ledger entry that records the digests. The page's claims about the TREE already read `2.0.0`, in
+its own dated note of 2026-09-07, and `tests/test_cdm_changelog_claim.py` holds both halves of
+that sentence to `version.py`.
+
+**Every figure below was read from a gate on this tree at the release commit, not carried from a
+brief.** The bump is `gates/bump_derivation.py`'s: **declared 2.0.0, a MAJOR over `v1.8.0`;
+derived MINOR**, the floor, from **697 signals** across **558 distribution files that carry one**
+— and the release gate's moved set is the **same 558**, with no file in one set and not the other,
+which is the first arc where those two numbers are equal rather than off by `version.py`. The
+gate does not refuse the MAJOR: it reads the ruling written above and prints `version rule MAJOR
+over the derived MINOR floor, ruled by a person for 1.8.0 → 2.0.0`, and `1 check, 0 failed`.
+**Ten units the table could not decide carry a person's ruling**, all ten written above by the
+rounds that made them, **seven MINOR and three PATCH**, and `pending.unruled` is the empty list —
+re-derived after this section was written, not before.
+
+**The roster did not move and neither did the fixture set.** `adapter.discover()` and
+`adapter.roster()` each return **fourteen**. `gates/wheel_install.py` reads **13 checks, 0
+failed** — a manifest of **1334 files, equal to git in both directions**, **14 adapters, 538
+fixture files**, and **1076 fixture verdicts, 0 failed** over fourteen adapters in two schema
+modes — and its `--mutation-check` refuses a fixture-less wheel on five of the thirteen.
+
+**A schema DID move, and this is the first release section that can say so.**
+`python -m synapse_cdm.schemas --check --out schemas` reads `CURRENT: schemas vs models at 2.0.0`,
+and `git diff v1.8.0..HEAD -- schemas/` returns **six files, 884 insertions and 20 deletions** —
+all six published documents, `event` and `entity` gaining one optional property each. Every other
+release round in this file recorded that diff as empty; this one records what it holds, because
+`SCHEMA_VERSION` moved on 2026-09-06 and a release is the first tree at which that is publishable.
+
+**And the two gates that were the whole subject of 1.8.0 are unmoved, which is the point of
+reading them again.** `gates/parks_table.py` reads **13 rows, 0 open, 13 closed, 0 set-claims, 0
+failed**, with `--mutation-check` at **8 mutations, no survivors** — the second release with an
+empty parks table, and this arc neither closed a park nor opened one, because what it adds is
+meaning over objects rather than another delegated document. `gates/pin_paths.py` reads **30
+present, 30 matched, 30 copies, 0 failed**, unchanged from 1.8.0. Neither gate is in the
+distribution and no pinned document is either: no release of this package has ever redistributed
+a standard, and that is as true of the SC-OES release as of the eight before it.
 
 ### 1.8.0 — 2026-09-06 — the last two parks close: MISB ST 0806.4's RVT Local Set rides item 73 into `Entity.attributes`, and the Motion Imagery Handbook settles KLV 8 as a companion
 
