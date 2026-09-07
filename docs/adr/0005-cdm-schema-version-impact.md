@@ -10,6 +10,25 @@ decisions, and SA.1 §64 is explicit that they are not reopened because SA.1 cha
 wording. The equality of the two numbers stays coincidental and stays derived rather than copied.
 Still Accepted.
 
+**Implementation note — round SK, 2026-09-07. The decision has been applied.** This ADR's
+independently derived package-major decision is now in the tree. The authoritative implemented
+state after SK is:
+
+```text
+PACKAGE_VERSION = "2.0.0"
+SCHEMA_VERSION  = "2.0.0"
+```
+
+Their numerical equality remains coincidental. `PACKAGE_VERSION` and `SCHEMA_VERSION` remain
+independent axes, and no code derives one from the other — `tests/test_cdm_packaging.py` sweeps
+every module in the package for an assignment that would.
+
+Round SK also completed the release-readiness and version documentation this ADR asks for; it is
+`docs/sc-oes-release-readiness-report.md`. **Historical readings below that mention
+`PACKAGE_VERSION` 1.8.0 or `SCHEMA_VERSION` 1.0.0 are intentionally preserved as observations of
+the repository at the time this ADR was decided. They are not statements of current repository
+state**, and the section that carries them says so at the section. Still Accepted.
+
 ## Context
 
 ADR 0001 adds two optional fields to the canonical models: `Event.oes` and
@@ -56,10 +75,16 @@ bullets by ``tests/test_cdm_prose_counts.py`` rather than stated here on trust",
 tracked file. `tests/test_cdm_packaging.py:266` sweeps for any code deriving one number from the
 other.
 
-**Readings at this commit, taken rather than carried.** `SCHEMA_VERSION = "1.0.0"`
-(`version.py:114`); `PACKAGE_VERSION = "1.8.0"` (`version.py:119`); `compatible()`
+**Historical readings at the ADR-decision commit, taken rather than carried.** `SCHEMA_VERSION =
+"1.0.0"` (`version.py:114`); `PACKAGE_VERSION = "1.8.0"` (`version.py:119`); `compatible()`
 (`version.py:127`) returns `w_major == r_major`, and executed: `compatible("2.0.0", "1.0.0")` →
 **False**, `compatible("1.0.0", "2.0.0")` → **False**, `compatible("1.0.0", "1.1.0")` → **True**.
+
+**These values are intentionally historical and were superseded by the implementation recorded in
+the SK lineage note above.** They are not rewritten to `2.0.0`, because the comparison between what
+the tree read then and what this ADR decided is the evidence for the decision, and deleting it
+would leave the decision looking like an assertion. The line references in this paragraph are the
+decision commit's too.
 
 ## Decision
 
@@ -227,9 +252,14 @@ Measured at this commit, each figure derived by walking the tree rather than quo
   `SCHEMA_VERSION` is a segment of it (`schemas.py:76`). `schemas.py:62` records that a `$id` is a
   consumer-visible identifier; here it moves as the version moves, which is what the version
   segment is for, and no `$ref` crosses a file, so nothing dangles.
-- **`tests/test_cdm_packaging.py:313` goes red the moment either constant moves.** It asserts the
-  literal pair `(PACKAGE_VERSION, SCHEMA_VERSION) == ("1.8.0", "1.0.0")`, and its own message says
-  the fix is to re-pin and not to re-link. A round that meets it should not treat it as a surprise.
+- **`tests/test_cdm_packaging.py` goes red the moment either constant moves.** At the
+  ADR-decision commit, its literal pair at `:313` was `(PACKAGE_VERSION, SCHEMA_VERSION) ==
+  ("1.8.0", "1.0.0")`, and its own message says the fix is to re-pin and not to re-link. A round
+  that meets it should not treat it as a surprise. **The implementation rounds did meet it and
+  re-pinned the assertion to the new independently derived version state**: read in the current
+  tree, the pair is `("2.0.0", "2.0.0")` at `tests/test_cdm_packaging.py:320` — the number moved,
+  the two constants stayed two constants, and the sweep above the assertion is what keeps them
+  that way.
 - **`MIGRATIONS.md`'s bump table needs a dated clarification, and this round does not write it.**
   Decision 1 rests on reading the table by its consequence column; the table itself still lists
   "an optional field added" under MINOR with no note that a strict reader changes the answer.

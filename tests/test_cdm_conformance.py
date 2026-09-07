@@ -3,8 +3,10 @@
 The module under test is `synapse_cdm/conformance.py`; the normative documents are
 `spec/sc-oes/13-conformance.md` and `docs/adr/0009-conformance-model.md`. This module is
 PACKAGE-ONLY (`gates/wheel_install.py`): every path it touches is an importable name under
-`synapse_cdm` or a file it writes into `tmp_path` itself, and both registries it reads through
-the module ship in the wheel. The half of the same subject that reads the normative documents at
+`synapse_cdm` or a file it writes into `tmp_path` itself, and the packaged SC-OES registry
+artefacts it reads through the module ship in the wheel. It read "both registries" until
+2026-09-07, when the count stopped being two: `conformance.py` reaches `event_types.json` for
+dimension C, `profiles.json` for D and `ontology_terms.json` for E. The half of the same subject that reads the normative documents at
 the repository root is `tests/test_cdm_conformance_spec.py`, in the other list, for the reason
 `test_cdm_registry.py` and `test_cdm_ontology.py` are split the same way.
 

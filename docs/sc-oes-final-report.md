@@ -118,7 +118,7 @@ Four relationships, stated rather than implied:
 
 | Number | Value | Where read |
 |---|---|---|
-| `PACKAGE_VERSION` | `1.8.0` | `packages/cdm/synapse_cdm/version.py:165` |
+| `PACKAGE_VERSION` | `1.8.0` — **historical; see the note below the table** | `packages/cdm/synapse_cdm/version.py:165` |
 | `SCHEMA_VERSION` | `2.0.0` | `version.py:160` |
 | `SC_OES_VERSION` | `0.1.0` | `version.py:171` |
 | ontology version | `0.1.0` | `registry/sc_oes/ontology_terms.json`, `ontology_version` |
@@ -128,6 +128,13 @@ Four relationships, stated rather than implied:
 Three independent axes, and the independence is asserted rather than assumed:
 `tests/test_cdm_packaging.py` fails the build if anything derives one number from another.
 `PACKAGE_VERSION` is deliberately unmoved by this campaign — see **Remaining limitations**.
+
+**`PACKAGE_VERSION` 1.8.0 is a historical reading, not the current state** (dated note,
+2026-09-07). Every figure in this table was taken at commit `1282897`, as this report's opening
+says of all of its figures. The release-readiness round of 2026-09-07 moved `PACKAGE_VERSION` to
+`2.0.0`; the table is left in its own tense because this report is the record of what the audit
+found, and the **Addendum** at the end of this document is where the closure is recorded.
+`docs/sc-oes-release-readiness-report.md` carries the current readings.
 
 ---
 
@@ -512,6 +519,15 @@ branch is unmerged and unpublished) are unchanged and are recorded again in
 `docs/sc-oes-release-readiness-report.md`. **Limitation 7 is also closed**: the docstring count in
 `tests/test_cdm_positioning.py` said five where its tuple held seven, and the round that next
 touched profile prose corrected it where it was stated.
+
+**A third packaged registry artefact exists, and this report was written when there were two.**
+Where a sentence above says "both registries" — criterion G's answer among them — it is describing
+the tree at `1282897`, which packaged `event_types.json` and `ontology_terms.json`. The
+release-readiness round added `synapse_cdm/registry/sc_oes/profiles.json`, the executable
+profile-conformance metadata. All three are original work in this repository, all three ship under
+the same repository-level Apache-2.0 terms, and criterion G's substance — that nothing here needs
+an additional grant and nothing is withheld from the public tree — is unchanged by the count. ADR
+0004 carries the current artefact-by-artefact statement.
 
 The full evidence for this addendum, with the reading that decides each of twenty acceptance
 criteria, is `docs/sc-oes-release-readiness-report.md`.

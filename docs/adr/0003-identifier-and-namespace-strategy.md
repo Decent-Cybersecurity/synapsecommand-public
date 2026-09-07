@@ -11,6 +11,32 @@ explicit `2026-09-06` rather than the year `2026`, and the exact ASCII grammar o
 `<domain>`, `<event_name>`, `<module>`, `<Term>` and `<major>`, now frozen in decision 9. Still
 Accepted.
 
+**Authority-date verification — round SL, 2026-09-07. The date the prefix names is now evidenced,
+and the identifier decision is unchanged.** The governed ontology prefix is
+`tag:synapsecommand.com,2026-09-06:ontology:`, and RFC 4151's date segment is a claim about the
+authority name rather than decoration: it asserts that `synapsecommand.com` was assigned to or
+under the control of the tagging entity on the date the segment carries. **The tagging entity is
+Decent Cybersecurity**, the maintainer of the SynapseCommand project, and naming it here is the
+point of this note — the authority name in the identifier is a domain and a domain does not say
+whose it is.
+
+Maintainers separately verified, from authoritative administrative and registrar records held by
+Decent Cybersecurity, that `synapsecommand.com` was assigned to and under Decent Cybersecurity's
+control from a date earlier than 2026-09-06 and continuously through 2026-09-06. That satisfies
+RFC 4151's authority requirement for the date this prefix names.
+
+**The underlying registrar and administrative evidence is intentionally not committed**, because it
+carries private account information — account identifiers, billing records and administrative
+contact data — none of which belongs in a public repository, and none of which is needed by a
+consumer to use the identifiers. What a reader can check here is the claim, its date and who made
+it; what a reader cannot check here is the account. That asymmetry is deliberate and is the
+ordinary shape of an authority attestation.
+
+The date is not derived and does not move. It is not shortened, not recomputed from the current
+date, not derived from a package or ontology version, and not changed when ontology terms are added
+or when SC-OES reaches 0.2 — decision 3 above and SA.1 §14 already rule that, and this note adds
+only the evidence for the one date they fix. Still Accepted.
+
 ## Context
 
 SC-OES introduces identifier spaces that become public API on first publication. §13 says so

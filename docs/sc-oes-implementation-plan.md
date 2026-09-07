@@ -12,6 +12,15 @@ grammar v2 left open, dimension E's unstated third-party case and v2's word for 
 depth limit — and v2 governs everywhere else. Where a section below carries both, the `SA.1 §N`
 citation is the operative one.
 
+**Every version figure in this plan is a reading at the commit named above, and several are now
+historical** (dated note, 2026-09-07). Where a section below says `PACKAGE_VERSION` is `1.8.0`, or
+that a test pins `("1.8.0", "1.0.0")` "today", it is describing `23ec65d5` — the tree this plan was
+written against — and not the current branch. The implemented state after the campaign's
+release-readiness round is `PACKAGE_VERSION` `2.0.0`, `SCHEMA_VERSION` `2.0.0`, `SC_OES_VERSION`
+`0.1.0`, with the packaging test's pair re-pinned accordingly. The plan is not rewritten: what it
+expected and what the tree gave is the evidence a plan is kept for. Current readings are in
+`docs/sc-oes-release-readiness-report.md`.
+
 This plan executes §9 of the SC-OES **Final Standalone Implementation Specification** and nothing
 after it. Every figure below is a reading taken from this tree and cited to `file:line`; where a
 reading refutes the specification, the section says so and the

@@ -32,6 +32,24 @@ validated as data and never executed (decision 8), and is reached by helpers rat
 a consumer writes down (decision 7). Offline, no network, no remote profile service: unchanged.
 Still Accepted.
 
+**Implementation note — round SL, 2026-09-07. The current state, stated once, in one place.** The
+sections below are the original decision and are left in their own tense; this is the paragraph a
+reader should be sent to for what ships today. SC-OES packages three runtime metadata artefacts in
+`packages/cdm/synapse_cdm/registry/sc_oes/`:
+
+- `event_types.json` — the governed semantic event registry. Hand-authored under the governed
+  proposal process, and load-bearing for conformance dimension C.
+- `ontology_terms.json` — the generated governed ontology-term lookup, projected from the Turtle
+  modules and kept in step with them by a drift gate. Load-bearing for dimension E.
+- `profiles.json` — the executable profile-conformance metadata for the seven profiles. Load-bearing
+  for dimension D.
+
+All three are packaged, loaded offline through `importlib.resources`, treated as data and never
+executed, and reached through the §126 helpers rather than by a path a consumer writes down. The
+count is recorded here because this note is about the lineage; **prose elsewhere should say "the
+SC-OES runtime registry artefacts" rather than a number**, so that a later governed artefact does
+not oblige an edit to an unrelated sentence. Still Accepted.
+
 ## Context
 
 §16 fixes the runtime registry's location and forbids one alternative by name: "Do not package
@@ -41,9 +59,9 @@ the runtime registry under a package directory called `spec`. Use
 the generated lookup ADR 0002 owns. §17 states what packaging them has to achieve: ship in the
 wheel; be loadable with `importlib.resources`; require no repository checkout; require no
 network; be "treated as data, never executed as code". §125 requires validation to work offline.
-§126 exposes seven helpers over the two registries and asks that consumers not be made to depend
-on internal packaged file paths, and ADR 0003 makes both registries load-bearing for refusing
-impersonated identifiers.
+§126 exposes seven helpers over the two registries §18 names and asks that consumers not be made
+to depend on internal packaged file paths, and ADR 0003 makes those two original registries
+load-bearing for refusing impersonated identifiers.
 
 So the registries must be readable at runtime from an installed wheel, with no repository checkout
 and no network.
@@ -184,11 +202,13 @@ regeneration rewrites something a proposal process owns.
 
 None to the wire contract; this decision adds no field to any canonical model.
 
-The distribution grows by the two registries. That is a package-version consequence, not a schema
+The distribution grows by the two registries this decision packages — and, since round SK, by
+`profiles.json` as well, on the same reasoning. That is a package-version consequence, not a schema
 one: `version.py:102` makes a fixture set added a package MINOR, and a shipped data artefact is
 the same kind of change. It is subordinate to ADR 0005's bump in any case.
 
-Consumers gain two packaged files they may read directly. Decision 7 is what keeps that from
+Consumers gain the packaged SC-OES runtime registry artefacts, which they may read directly — two
+by this decision and three as the package ships today. Decision 7 is what keeps that from
 becoming a commitment: the §126 helpers exist so that the path can move without a consumer
 noticing, and documentation and examples should use them from the first release rather than
 showing a path. A consumer that reads by path anyway has taken a dependency this ADR declines to
@@ -196,7 +216,7 @@ promise.
 
 ## Security impact
 
-- **Offline enforcement is the point.** Because both registries ship, refusing an impersonated
+- **Offline enforcement is the point.** Because the SC-OES runtime registry artefacts ship, refusing an impersonated
   `sc.*` type identifier or an impersonated governed ontology term (ADR 0003, §127's
   "reserved-namespace impersonation") needs no network and no service, which is what §125
   requires.

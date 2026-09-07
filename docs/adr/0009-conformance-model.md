@@ -32,6 +32,22 @@ the tool, so that the rules a profile declares and the rules the tool checks can
 This ADR is unchanged and Accepted; the note records when the first `PASS` became reachable, which
 is the date this model stopped being declarable-only.
 
+**Implementation note — round SL, 2026-09-07. Which packaged artefact each dimension reads, stated
+once.** After SK the ownership is one artefact per governed dimension, and the dimensions are not
+combined:
+
+```text
+event_types.json    load-bearing for C
+profiles.json       load-bearing for D
+ontology_terms.json load-bearing for E
+```
+
+**B remains structural** — SC-OES core syntax, checked against the specification's own rules and
+against no registry — and **A remains CDM**, checked against the generated JSON Schemas and the
+models. No dimension is merged into another and no dimension acquires a second authority. Nothing
+decided in this ADR moves; the note records where each verdict's evidence now comes from. Still
+Accepted.
+
 ## Context
 
 §34 retains five separately reportable dimensions — **A** CDM Conformance, **B** SC-OES Core
@@ -179,8 +195,8 @@ without collapsing the report.**
    stable names." The report is emitted as a mapping for that reason, and a sixth dimension could
    not silently shift a fifth column's meaning.
 7. **Offline, and asserted rather than promised.** The conformance path imports nothing outside
-   the two runtime dependencies, reads both registries through `importlib.resources`, and opens no
-   socket. A test asserts the import closure, in the manner `tests/test_cdm_boundary.py` already
+   the two runtime dependencies, reads the applicable packaged SC-OES registry artefacts through
+   `importlib.resources`, and opens no socket. A test asserts the import closure, in the manner `tests/test_cdm_boundary.py` already
    asserts the crypto and consumer-import boundaries, and §143 requires exactly that preservation.
 8. **Terminology.** Output uses §45's permitted forms — "SC-OES Conformant", "SC-OES PNT Profile
    Conformant" — and never "SC-OES Certified", "Official SynapseCommand Partner", "Approved by
@@ -239,8 +255,9 @@ set is the thing most likely to grow.
   (`gates/bump_derivation.py:73`, "a console entry point appears"), and the exit-code constants
   are another (`:68`). Both are subordinate to ADR 0005's MAJOR, and neither should surprise the
   round that reads the gate's output.
-- Both registries become load-bearing for dimensions C and E, which is a further reason they must
-  ship (ADR 0004).
+- `event_types.json` and `ontology_terms.json` are load-bearing for dimensions C and E
+  respectively; after round SK, `profiles.json` is additionally load-bearing for dimension D. That
+  is a further reason all of them must ship (ADR 0004).
 - Five columns is a number stated in tool output and in documentation; it is derived from the
   dimension list in the code rather than written as a literal, so that a sixth dimension cannot
   arrive while the prose still says five.

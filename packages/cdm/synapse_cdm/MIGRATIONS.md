@@ -444,7 +444,14 @@ able to.
   under `spec/sc-oes/profiles/` says in as many words that a D assessment against it has no rules
   to check; a `PASS` drawn from an empty rule set would be exactly the claim those documents say
   is not yet available, and the registry's own statement about which profile owns a type is
-  reported as an observation instead. **`spec_version` is checked for shape and not for value**,
+  reported as an observation instead. **CORRECTED 2026-09-07, IN THE SAME ARC: THAT SENTENCE WAS
+  TRUE WHEN IT WAS WRITTEN AND IS NOW TRUE OF SIX PROFILES, NOT SEVEN.** The release-readiness
+  round gave the PNT profile its first conformance rule of its own and shipped
+  `synapse_cdm/registry/sc_oes/profiles.json` to carry it, so dimension D against PNT is `PASS`
+  for an event in the profile and `FAIL` for a governed event outside it. The reasoning above is
+  not weakened and is the reason the other six are still `SKIP`: they still declare no rules, and
+  the rule that arrived arrived with its check in the same commit, which is what those documents
+  promised. See the profile registry's own bump ruling below. **`spec_version` is checked for shape and not for value**,
   on the ruling `OesMetadata._spec_version` already carries: requiring equality with this
   package's `SC_OES_VERSION` would refuse an event written against a later specification version,
   which `12-versioning.md` requires stay transportable. The tool opens no socket, resolves no

@@ -13,8 +13,9 @@ SA.1 §14's dated prefix requires no edit here. Still Accepted.
 Lineage — round SC, 2026-09-06: decision 5's licence criterion is applied and satisfied. The
 test-only RDF parser is **rdflib 7.6.0, BSD-3-Clause**; its one non-optional transitive dependency
 is **pyparsing 3.3.2, MIT**. Both are permissive and both are compatible with Apache-2.0, which is
-the criterion this decision states for a `test` extra; neither is copyleft, so no licence
-obligation reaches the distribution whose `LICENSE` decision 2 may not edit. The licences were
+the criterion this decision states for a `test` extra; **both are accepted under repository
+policy**. Neither is copyleft, so neither raises the additional licensing analysis that decision 5
+declines to take on for a test dependency. The licences were
 read from each installed distribution's own metadata, not recalled. Recorded here and in the
 `test` extra's own comment in `packages/cdm/pyproject.toml`, as decision 5 requires. Decision 4's
 independent-authorship rule was applied to round SC's own output: every one of the 73 ontology
@@ -92,11 +93,18 @@ document and swept.**
 5. **The test-only RDF parser must be licence-checked before it lands**, and §136 fixes both the
    criterion and the record: "confirm its license is compatible with repository policy … record
    the choice in ADR 0002/0010 lineage." The criterion applied here is Apache-2.0 compatibility
-   for a `test` extra. A copyleft parser is refused — not because a test dependency propagates in
-   the way a runtime one might, but because it would put a licence obligation on a distribution
-   whose licence file may not be edited (decision 2). Permissively licensed parsers exist; the
-   round that chooses one records the licence in this ADR's lineage and in the `test` extra's own
-   comment.
+   for a `test` extra. **A copyleft parser is refused as a conservative repository policy**, and the
+   policy is worth stating in its own terms rather than as a legal conclusion. The project declines
+   copyleft test dependencies in order to avoid introducing additional licensing analysis,
+   compatibility questions or distribution obligations into the development and verification
+   environment — and because `LICENSE` may not be edited (decision 2), which leaves no place to
+   record an obligation if one were ever found to arise. **This is a project-policy decision. It is
+   not a claim that every copyleft test dependency would relicense the distributed runtime package
+   or impose identical obligations on it**; whether any obligation attaches at all depends on the
+   particular licence, on how the works are combined and on what is distributed, and the
+   architecture does not need that question answered. Declining the dependency is cheaper than
+   answering it. Permissively licensed parsers exist; the round that chooses one records the licence
+   in this ADR's lineage and in the `test` extra's own comment.
 6. **Trademark: a statement, not a licence.** §44's own words, adopted substantially as given, in
    `README.md` and the conformance document:
 
@@ -151,10 +159,11 @@ revisiting it is cheap while the specification tree is small.
 support obligation with no offsetting benefit while the ontology is at 0.1.0 and `EXPERIMENTAL` or
 `DRAFT` maturity (§50, §51).
 
-**D — vendor a copyleft RDF parser for tests and accept the obligation as test-only.** Rejected on
-decision 5's reasoning: the obligation would attach to a distribution whose `LICENSE` may not be
-edited, and the analysis needed to be confident it does not propagate costs more than choosing a
-permissive parser.
+**D — vendor a copyleft RDF parser for tests and treat any obligation as test-only.** Rejected on
+decision 5's policy rather than on a legal conclusion: the analysis needed to be confident about
+what does and does not reach the distributed package costs more than choosing a permissive parser,
+and `LICENSE` may not be edited (decision 2), so there would be nowhere to record an obligation if
+the analysis found one. The rejection is not an assertion that the obligation would in fact attach.
 
 **E — create a trademark and certification programme now, so "SC-OES Conformant" has a defined
 owner.** Rejected by §44 in as many words — "Do not create a certification or trademark licensing
@@ -173,9 +182,15 @@ programme exists.
 - **A new prose sweep for six forbidden phrases**, up from three while this ADR was proposed:
   §45's v2 list adds the three NATO formulations. It is written in the shape of the prose bans this
   repository already enforces.
-- Newly created files under `ontology/` and the root `spec/` are repository-only; both registries
-  are packaged (ADR 0004). All are covered by the same repository-level licensing, so the
-  packaging split has no licensing consequence.
+- Newly created files under `ontology/` and the root `spec/` are repository-only; the SC-OES
+  runtime registry artefacts are packaged (ADR 0004). All are covered by the same repository-level
+  licensing, so the packaging split has no licensing consequence.
+- **`profiles.json` inherits the same arrangement, and needed nothing new to do so** (round SL,
+  2026-09-07). The third packaged artefact — `packages/cdm/synapse_cdm/registry/sc_oes/profiles.json`,
+  added in round SK — is original work authored in this repository and is covered by the same
+  repository-level Apache-2.0 licensing as `event_types.json` and `ontology_terms.json`. No new
+  licence, no new legal mechanism, no per-file licence header, and no edit to `LICENSE`: the
+  absence of those four is the consequence, exactly as it was for the first two.
 
 ## Compatibility impact
 

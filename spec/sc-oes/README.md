@@ -68,12 +68,20 @@ Governance process documents live in `../governance/`.
 
 A document is never the machine authority for something a program has to agree about. In v0.1.0:
 
-| Contract | Machine authority | Written by |
+| Contract | Machine authority | State |
 |---|---|---|
-| governed event types | `synapse_cdm/registry/sc_oes/event_types.json` | a later round |
-| governed ontology terms | the generated ontology-term registry | a later round |
-| ontology vocabulary | the Turtle modules and the JSON-LD context | a later round |
-| canonical record shape | the CDM models and the generated JSON Schemas | already in this repository |
+| governed event types | `synapse_cdm/registry/sc_oes/event_types.json` | packaged and shipping |
+| governed ontology terms | `synapse_cdm/registry/sc_oes/ontology_terms.json`, generated from the Turtle | packaged and shipping |
+| executable profile conformance | `synapse_cdm/registry/sc_oes/profiles.json` | packaged and shipping |
+| ontology vocabulary | the Turtle modules and the JSON-LD context | in this repository, not packaged |
+| canonical record shape | the CDM models and the generated JSON Schemas | packaged and shipping |
+
+**The third column read "a later round" for the first three rows until 2026-09-07**, which was
+true when this document was written and is not now: every machine authority named above exists,
+and the three under `synapse_cdm/registry/sc_oes/` are the SC-OES runtime registry artefacts, all
+loaded offline through package resources with no repository checkout and no network. ADR 0004
+carries the artefact-by-artefact statement and which conformance dimension each one is
+load-bearing for.
 
 Where a document and a machine authority disagree about a governed type's class, maturity or
 mapping, the machine authority is correct and the document is a defect to be repaired at the

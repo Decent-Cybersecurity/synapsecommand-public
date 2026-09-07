@@ -459,3 +459,74 @@ Security/IP boundary:                   READY
 Full regression:                        PASS
 Remote publication:                     NOT PERFORMED - OWNER DECISION REQUIRED
 ```
+
+---
+
+## SL Documentation Closure — 2026-09-07
+
+The publication-consistency round. It changed no architecture, no model, no ontology, no example and
+no conformance behaviour; it made the accepted decision record say what the tree says. Each line
+below is a check that was actually run, with what it found.
+
+**ADR 0005 historical/current state clarified.** A lineage note records the implemented state —
+`PACKAGE_VERSION = "2.0.0"`, `SCHEMA_VERSION = "2.0.0"`, their equality still coincidental and still
+underived. The section carrying the pre-implementation figures is now headed *Historical readings at
+the ADR-decision commit* and says in its own words that those values were superseded; they are not
+rewritten to `2.0.0`, because the comparison is the evidence for the decision. The consequence
+bullet about the packaging test's pinned pair is qualified to the decision commit and records the
+current reading beside it: `("2.0.0", "2.0.0")` at `tests/test_cdm_packaging.py:320`, read from the
+file rather than assumed.
+
+**Registry-count terminology reconciled.** ADR 0004 carries the current-state statement of the three
+packaged runtime artefacts and which conformance dimension each is load-bearing for; ADR 0009 states
+the same ownership as `event_types.json` → C, `profiles.json` → D, `ontology_terms.json` → E, with B
+structural and A CDM, and its offline sentence now reads *the applicable packaged SC-OES registry
+artefacts* rather than a count; ADR 0010's packaging consequence reads the same way. Original-decision
+sentences that say "two" are qualified as the original pair rather than deleted. The specification
+README's machine-authority table names all three and no longer says a later round will write them.
+Where prose does not need a number it does not carry one, so a future governed artefact will not
+oblige an edit to an unrelated sentence.
+
+**RFC 4151 authority evidence verified.** ADR 0003 records that the authority for
+`tag:synapsecommand.com,2026-09-06:` was verified against authoritative administrative and registrar
+records, naming the tagging entity as Decent Cybersecurity, and records that the evidence itself is
+intentionally not committed because it carries private account information. The prefix is unchanged,
+so nothing in the ontology, the registries, the examples, the models or the conformance
+implementation moved.
+
+**ADR 0010 licensing-policy wording tightened.** Declining copyleft test dependencies is stated as
+conservative repository policy — avoiding additional licensing analysis, compatibility questions and
+distribution obligations in the development and verification environment — and states in as many
+words that it is not a claim that every copyleft test dependency would relicense the distributed
+package or impose identical obligations on it. The verified finding is retained unchanged: rdflib
+7.6.0 BSD-3-Clause, pyparsing 3.3.2 MIT, both accepted under repository policy. `profiles.json` is
+recorded as inheriting the same repository-level Apache-2.0 arrangement as the other two artefacts:
+no new licence, no new mechanism, no per-file header, no `LICENSE` edit.
+
+**All ten ADRs cross-reviewed.** 0001–0010 read for the current/historical/future distinction. All
+ten remain **Accepted**; none was returned to Proposed and none was created. 0001, 0002, 0006, 0007
+and 0008 needed no change: their implementation-specific statements are already either dated lineage
+notes or compatibility readings marked as such.
+
+**No architecture changes and no code behaviour changes.** No canonical object, no attachment model,
+no version axis, no ontology term, no event type, no profile and no dimension moved. Readings taken: `git diff`
+against the previous commit is **empty** for `schemas/`, `ontology/`, `examples/`, every golden
+file, `packages/cdm/synapse_cdm/adapters/`, `packages/cdm/synapse_cdm/registry/` and every `.py`
+file under `packages/cdm/synapse_cdm/`. The one Python file this round touched at all is a test
+module's docstring, `tests/test_cdm_conformance.py`, where a registry count had gone stale.
+
+**All gates green.** The full suite, the parks, pin-path, ontology-drift, schema-drift,
+bump-derivation, commit-message, wheel-install and deploy-record gates, the documentation site's own
+CI target, and the conformance proofs — the canonical PNT reference event returning A/B/C/D/E all
+`PASS` at exit `0` from the source tree and again from the installed wheel, the four negative profile
+cases returning what they returned before. The bump gate derives no new pending unit: this round is
+documentation and its `pending.unruled` is empty.
+
+**One thing this round did not fix, and it is the owner's call.**
+`packages/cdm/synapse_cdm/oes_registry.py`'s comment above the registry constants opens "Where the
+two artefacts live inside the package" while the three constants directly beneath it name
+`event_types.json`, `ontology_terms.json` and `profiles.json`. It is a stale count in a comment, it
+changes no behaviour, and correcting it is a one-word edit — but it is a change to a file this
+round was instructed to leave alone, so it is recorded here rather than made. It is the only
+surviving place in the tree where a current-state sentence still implies two runtime SC-OES registry
+artefacts.
