@@ -474,3 +474,44 @@ Genuine ones, each with the reading or the document that leaves it open.
 9. **The branch is not merged and nothing has been published.** `sc-oes/0.1` is 12 commits ahead of
    `origin/main`, which is unmoved; the branch is not on the remote; no tag was created. Pushing,
    opening a pull request, merging, tagging and releasing are deliberately outside this campaign.
+
+---
+
+## Addendum, 2026-09-07 — limitations 1 and 2 are closed, and the record of finding them stands
+
+**Nothing above is edited.** This report is the record of what the campaign's audit found on
+2026-09-06, and it found nine open limitations. The release-readiness round of 2026-09-07 closed
+the first two of them. They are left written above, in the tense they were found in, because a
+report that quietly deletes what it once found is a report nobody can date; this section says what
+changed and where the evidence is.
+
+**Limitation 1 — `PACKAGE_VERSION` unmoved at 1.8.0 — CLOSED.** `PACKAGE_VERSION` is `2.0.0`
+(`packages/cdm/synapse_cdm/version.py`, reading taken). The limitation's own analysis was right and
+is unchanged: `gates/bump_derivation.py` still derives a **MINOR floor** for this arc, because
+every signal it can prove is an addition and what actually breaks is a third party's consumer,
+which no file in this distribution records. The gate is unmodified in its derivation and now
+distinguishes the two facts in its own output — `derived MINOR` and `version rule MAJOR over the
+derived MINOR floor` — reading the ruling from a dated paragraph in
+`packages/cdm/synapse_cdm/MIGRATIONS.md`'s section for this arc that names both of its ends. ADR
+0005 remains the deciding document. The sentence that closed it was already in the tree:
+`version.py`'s "the release that types the number is the one that writes the ruling".
+
+**Limitation 2 — dimension D is SKIP for all seven profiles — CLOSED for one profile, and
+deliberately not for the other six.** The **PNT Profile 0.1.0** declares one executable
+conformance rule and `conformance.PROFILE_RULES` no longer maps every profile to `()`: it is read
+from the packaged profile registry `synapse_cdm/registry/sc_oes/profiles.json`, and it maps `PNT`
+to one rule and the other six to none. The canonical GNSS reference event assessed against PNT
+returns A, B, C, D and E all `PASS` and exits `0`. The six specification-only profiles stay `SKIP`
+by their own documents' words, which is a scope boundary and not a defect — and the
+repository-bound test that fails when a profile stops saying so is still armed for them.
+
+**Limitations 3 to 9 stand as written.** 3 (no governed type is STABLE), 4 (the producer leaves
+`oes.confidence` null), 5 (five decision-domain examples take the null legacy branch), 6 (ten
+domains named as future work), 8 (three working-tree failures a clone does not have) and 9 (the
+branch is unmerged and unpublished) are unchanged and are recorded again in
+`docs/sc-oes-release-readiness-report.md`. **Limitation 7 is also closed**: the docstring count in
+`tests/test_cdm_positioning.py` said five where its tuple held seven, and the round that next
+touched profile prose corrected it where it was stated.
+
+The full evidence for this addendum, with the reading that decides each of twenty acceptance
+criteria, is `docs/sc-oes-release-readiness-report.md`.

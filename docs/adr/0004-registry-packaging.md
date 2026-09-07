@@ -12,6 +12,26 @@ through ADR 0003; what the registry's *keys* look like is ADR 0003 decision 9's 
 the lookup this ADR packages is the recognition half of SA.1 §36 and §76 — syntax validity is not
 governance recognition. Still Accepted.
 
+**Implementation note — round SK, 2026-09-07. A THIRD artefact ships, and the decision below is
+not rewritten to pretend it always did.** §18 named two artefacts in that directory and this ADR
+was written about two. `registry/sc_oes/profiles.json` joins them: the executable conformance
+metadata for the seven profiles — each one's identifier, version, maturity, implementation status,
+governed event-type membership and the rules dimension D can run against it.
+
+Why it has to be packaged rather than read from the normative tree: executable offline dimension D
+evaluation must answer "does this profile exist, does it have rules, is this event in it" with no
+repository checkout and no network (§17, §125), and the seven normative profile documents under
+`spec/sc-oes/profiles/` are prose and do not ship. Parsing Markdown at runtime to reach a
+conformance verdict is precisely the arrangement this registry directory exists to avoid.
+
+Nothing about the architecture moves. The file is ADDITIVE: it lands under the same
+`registry/sc_oes/` path §16 fixes, ships through the same recursive `registry/**/*` glob this ADR
+already established — no glob was widened for it, which is a property the closure test asserts
+rather than assumes — is read through `importlib.resources` by the same `_read()` helper, is
+validated as data and never executed (decision 8), and is reached by helpers rather than by a path
+a consumer writes down (decision 7). Offline, no network, no remote profile service: unchanged.
+Still Accepted.
+
 ## Context
 
 §16 fixes the runtime registry's location and forbids one alternative by name: "Do not package

@@ -272,11 +272,18 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     get wrong and impossible to notice: any expression that derived one from the other would
     produce the right answer on every run until the first release that moved them apart."
 
-    1.1.0 is that release. `PACKAGE_VERSION` is now `1.8.0` and `SCHEMA_VERSION` is `1.0.0`,
+    1.1.0 is that release. `PACKAGE_VERSION` was then `1.8.0` and `SCHEMA_VERSION` `1.0.0`,
     because every entry in both releases added a surface and touched no schema. So the sweep below
-    has teeth it did not have when it was written: a derivation of either number from the other now
-    produces a WRONG answer at runtime rather than a right one by coincidence, and would be caught
+    had teeth it did not have when it was written: a derivation of either number from the other
+    produced a WRONG answer at runtime rather than a right one by coincidence, and would be caught
     by the schema tests, the packaging metadata and this sweep at once.
+
+    **AND ON 2026-09-07 THE WINDOW REOPENED, EXACTLY AS THE LAST PARAGRAPH OF THIS DOCSTRING SAID
+    IT WOULD.** Both numbers are `2.0.0`. The schema moved first, on `MIGRATIONS.md`'s table; the
+    package followed on ADR 0005's, a day later and by a separate argument. Two independently
+    justified major changes that landed on one number — which is precisely the state in which a
+    derivation of either from the other reads as correct on every run. The sweep below is
+    load-bearing again and is the reason it was never deleted for being quiet.
 
     **1.2.0 is the release that put the arrangement to a real test**, which is worth a line because
     the first parting was almost free — 1.1.0 added two adapters and nobody thought a schema had
@@ -310,12 +317,13 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("1.8.0", "2.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.0.0", "2.0.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "1.8.0 and 2.0.0. They are no longer equal and have not been since 1.1.0, which is the "
-        "release that made their independence a measured fact rather than an argument. If you are "
-        "reading this because you bumped one of them: that is the expected event, and the fix is "
-        "to update this assertion to the two numbers you now mean, not to re-link them"
+        "2.0.0 and 2.0.0. They are EQUAL and that is a coincidence of two independently argued "
+        "major changes — MIGRATIONS.md's for the schema, ADR 0005's for the package — and not a "
+        "derivation. If you are reading this because you bumped one of them: that is the expected "
+        "event, and the fix is to update this assertion to the two numbers you now mean, not to "
+        "re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

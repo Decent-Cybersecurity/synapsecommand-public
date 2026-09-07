@@ -3,8 +3,10 @@
 **SC-OES PNT Profile v0.1.0 — Draft.** Profile maturity: `DRAFT`.
 
 This document is complete for v0.1.0. Complete means every heading the specification requires of a
-profile is written and says what this profile does and does not commit to — not that the profile has
-acquired conformance rules of its own, which it has not; see "Conformance" at the end.
+profile is written and says what this profile does and does not commit to. **Since 2026-09-07 it
+also declares one executable conformance rule of its own** — the first profile in this
+specification to declare any — so a dimension D assessment against it returns a verdict rather
+than a `SKIP`; see "Conformance" at the end.
 
 ## Scope
 
@@ -170,20 +172,57 @@ v0.1.0, through the PNTMAP producer — the one producer in this repository that
 semantics. It asserts exactly three fields of the block, `spec_version`, `event_class` and
 `type_id`, and nothing its source does not support: no fabricated confidence, verification, status,
 effective interval, security marking or entity relationship. Producer-backed means those three
-fields are emitted by running code and checked against goldens; it does not mean this profile has
-normative conformance rules of its own — see "Conformance".
+fields are emitted by running code and checked against goldens.
+
+The profile's state, in the form the packaged registry carries it:
+
+```text
+Version:                      0.1.0
+Maturity:                     DRAFT
+Implementation status:        producer-backed
+Reference producer:           PNTMAP
+Executable Dimension D rules: available
+```
+
+**PNTMAP is the reference producer and not a requirement.** Nothing in this profile refers to
+`source.system`, `source.adapter` or any other producer identity, and a conformance assessment
+never reads one. A third-party GNSS monitor, a military sensor adapter, a simulation producer or a
+future vendor integration conforms on exactly the same terms as PNTMAP does: by satisfying the
+contract below and the CDM and SC-OES contracts around it. "Reference producer" names the
+implementation that is held to the profile in this repository's own test suite; it confers nothing
+and it excludes nobody.
 
 ## Conformance
 
 Dimension D is assessed only against an explicitly named profile, and never inferred
-(`../13-conformance.md`). This profile declares no conformance rules of its own in v0.1.0: every
-constraint stated above is either one dimension A, B, C or E already checks — the CDM's structural
-contract, the block's core syntax, the governed type's agreement with the registry, and the
-recognition of governed ontology terms — or a convention marked SHOULD, which is guidance to a
-producer and not a rule to grade against. A D assessment against this profile therefore
-has no rules to check, and the permitted claim "SC-OES PNT Profile Conformant" is not yet
-available. Dimensions A, B, C and E are unaffected: they do not depend on any profile.
+(`../13-conformance.md`). **This profile declares one executable conformance rule of its own, and
+it is the first profile in this specification to declare any.** Everything else stated above is
+either a constraint dimension A, B, C or E already checks — the CDM's structural contract, the
+block's core syntax, the governed type's agreement with the registry, and the recognition of
+governed ontology terms — or a convention marked SHOULD, which is guidance to a producer and not a
+rule to grade against.
 
-The round that gives this profile its first rule of its own writes the rules and the check that
-enforces them together, in the same commit — a dimension that reported a verdict no rule set could
-change would be worse than an honest `SKIP`.
+The rule, normatively:
+
+> **Event membership.** An event assessed against PNT Profile 0.1 MUST carry an `oes.type_id` that
+> is one of the governed types this profile declares. An event whose governed type belongs to
+> another profile is `D = FAIL`, with a reason naming the type and the profile it was put to.
+
+The machine-readable form of that rule, and of this profile's identity, version, maturity,
+implementation status and membership, is the packaged profile registry
+(`synapse_cdm/registry/sc_oes/profiles.json`), which is what a validator reads. It ships in the
+wheel, needs no repository checkout and no network, and is the machine authority for dimension D.
+This document remains the authority for what the profile MEANS; where the two could be read as
+disagreeing about a rule, the registry is what the tool obeys and the disagreement is a defect the
+suite fails on.
+
+What the rule deliberately does NOT require, each because a producer may honestly not know it:
+geometry, an entity relation, a confidence value, a verification state, a lifecycle status, an
+effective interval, a security marking, evidence or an extension. None of them is made mandatory
+by this profile, and a producer that omits every one of them can still be PNT Profile Conformant.
+
+The permitted claim, when dimension D returns `PASS` against this profile, is
+**"SC-OES PNT Profile 0.1 Conformant"**, and it is a claim about one assessed object and not about
+a producer. It names one dimension of five: `../13-conformance.md` requires a conformance claim to
+name the dimensions assessed and the verdict each returned, and this profile creates no aggregate,
+no score and no certification.

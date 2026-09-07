@@ -181,7 +181,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v1.8.0 -m "..."                           # annotated, never lightweight
+git tag -a v2.0.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -262,9 +262,44 @@ measured off the index afterwards, and which step of it did not run.
 
 Nothing here is in a release — every line below is in **no release** at all. The distribution on
 the index is **1.8.0**, and a reader who installed `synapse-cdm` from the index has that and not
-this.
+this. `PACKAGE_VERSION` in this tree now reads **2.0.0**, which is the number the next release
+would carry and not a number anything serves: no `v2.0.0` tag exists, nothing has been published,
+and `pip install synapse-cdm` still resolves 1.8.0.
 
-**What moved inside the distribution: 557 files.**
+**THE PACKAGE VERSION MOVED 1.8.0 -> 2.0.0 ON 2026-09-07, AND IT IS A SECOND MAJOR ON A SECOND
+AXIS.** `SCHEMA_VERSION` moved 1.0.0 -> 2.0.0 the day before, on this table, for the reason the
+paragraph below it gives. `PACKAGE_VERSION` moves now on the OTHER table — ordinary semver over
+the Python surface, in `version.py` — and the two are not one decision made twice:
+
+* the schema is MAJOR because a 1.x strict reader meeting `oes` or `ontology_types` REJECTS the
+  object, which is this table's consequence column for MAJOR;
+* the package is MAJOR because a third party's consumer or adapter written against 1.8.0 does not
+  work against a distribution whose canonical objects carry two new keys and whose emitted objects
+  declare a contract version that 1.x refuses. `docs/adr/0005-cdm-schema-version-impact.md` is
+  where that derivation is argued, and it was argued before this round.
+
+They land on the same number and that is a **coincidence of two independently justified major
+changes**, exactly as 1.0.0 and 1.0.0 were a coincidence of two first releases — an equality that
+did not survive the eleventh adapter. `version.py` states the six version axes and their
+independence in one place; nothing derives either number from the other, and
+`tests/test_cdm_packaging.py` sweeps the package to keep it so.
+
+**Version ruling.** `1.8.0 → 2.0.0` — MAJOR: the automatic derivation and the number are two
+different things here, and the gate now says which is which. `gates/bump_derivation.py` derives a
+**FLOOR** from the diff over the distribution, and the floor for this arc is **MINOR** — every
+signal it can prove is an addition: an optional field on two models, seventeen exported names, two
+new modules, three shipped registries, an adapter emitting a key it did not emit before. What the
+floor cannot reach is the fact that decides the number: **what breaks is a THIRD PARTY'S consumer**,
+and no file in this distribution records a third party's code. ADR 0005 records the derivation over
+the package table's own MAJOR row and is the deciding document; `version.py` had already written
+down that "the rule states a FLOOR and says so" and that "the release that types the number is the
+one that writes the ruling". This paragraph is that ruling, and it is refused by the gate the
+moment it names any arc but this one. The bump algorithm is unchanged and still derives MINOR.
+
+**No release date is invented here.** This section is the established convention for work that is
+in no release; the date belongs to the release action and is written when the release is cut.
+
+**What moved inside the distribution: 558 files.**
 
 **THE COUNT READ `three` UNTIL 2026-09-06, AND BOTH READINGS WERE RIGHT WHEN THEY WERE TAKEN.**
 The sentence above said "three shipped files" and described the SC-OES ontology round's arc alone;
@@ -279,6 +314,14 @@ now been right four times. It read `556` between then and the SC-OES producer ro
 2026-09-06, which made the PNTMAP adapter emit the wire-semantic block: **one file, and not five**
 — the adapter's four goldens were already inside the count, because the model round had already
 moved every golden in the package. The fifth reading of a count that has now been right five times.
+It read `557` between then and the release-readiness round of 2026-09-07, which added the packaged
+profile registry: **one file, and not four** — `conformance.py`, `oes_registry.py` and
+`version.py` were already inside the count, because earlier rounds in this arc had already moved
+them. The sixth reading of a count that has now been right six times, and the first taken with the
+gate that checks it SKIPPING: `PACKAGE_VERSION` is `2.0.0` and no `v2.0.0` tag exists, so
+`test_the_unreleased_sections_spelled_count_agrees_with_the_derived_moved_set` has no arc to
+measure. The number above was derived by hand from the same two `git diff --name-only` calls that
+test makes, and it is recorded here that it was.
 
 **THE WIRE CONTRACT MOVED, AND IT IS A MAJOR.** `SCHEMA_VERSION` `1.0.0` -> `2.0.0`. `Event` gained
 an optional `oes` block and `Entity` gained an optional `ontology_types` list, and by this table's
@@ -1089,6 +1132,17 @@ under the package, which is the class M ruled above and not a second decision. I
 file under `synapse_cdm/registry/` and the first the ruling was written in advance of; the gate
 still names it, because the ruling is a paragraph naming a unit and not a pattern the gate infers.
 Nothing is removed or renamed by it: thirteen entries arrive where there were none.
+
+**Bump ruling.** `synapse_cdm/registry/sc_oes/profiles.json` — MINOR: a new shipped data file
+under the package, which is the class M ruled above and not a third decision. It is the third file
+under `synapse_cdm/registry/` and it carries the executable conformance metadata for the seven
+SC-OES profiles: each one's identifier, version, maturity, implementation status, governed
+event-type membership, and the rules conformance dimension D can run against it. Nothing is removed
+or renamed by it — seven records arrive where there were none — and its event-type lists are a
+PROJECTION of `event_types.json` refused at load if they disagree, so it adds no second list a
+consumer could read differently. The gate still names it, because a ruling is a paragraph naming a
+unit and not a pattern the gate infers. `docs/adr/0004-registry-packaging.md` carries the
+implementation note for the third artefact.
 
 **Bump ruling.** `synapse_cdm/adapters/pntmap.py:PntmapAdapter` — MINOR: **the adapter emits a key
 it has never emitted**, `oes`, and it emits it on every alert. This is the shape ruled for

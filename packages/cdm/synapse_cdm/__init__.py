@@ -95,14 +95,19 @@ from synapse_cdm.oes_registry import (
     OES_PAYLOAD_MODELS,
     PROFILES,
     EventTypeRecord,
+    ImplementationStatus,
     Maturity,
     OntologyTermRecord,
+    ProfileRecord,
     get_event_type,
     get_legacy_event_type,
     get_ontology_term,
+    get_profile,
     get_profile_event_types,
     list_event_types,
     list_ontology_terms,
+    list_profiles,
+    profile_has_executable_rules,
 )
 from synapse_cdm.adapter import Adapter, REGISTRY, load_adapter
 from synapse_cdm.version import SCHEMA_VERSION, SC_OES_VERSION
@@ -119,7 +124,9 @@ __all__ = [
     "SecurityMarking", "Verification",
     "find_relation_cycles", "is_governed_event_type", "is_governed_ontology_term",
     "validate_event_bundle", "validate_ontology_identifier", "validate_type_id",
-    "OES_PAYLOAD_MODELS", "PROFILES", "EventTypeRecord", "Maturity", "OntologyTermRecord",
-    "get_event_type", "get_legacy_event_type", "get_ontology_term", "get_profile_event_types",
-    "list_event_types", "list_ontology_terms",
+    "OES_PAYLOAD_MODELS", "PROFILES", "EventTypeRecord", "ImplementationStatus", "Maturity",
+    "OntologyTermRecord", "ProfileRecord",
+    "get_event_type", "get_legacy_event_type", "get_ontology_term", "get_profile",
+    "get_profile_event_types", "list_event_types", "list_ontology_terms", "list_profiles",
+    "profile_has_executable_rules",
 ]

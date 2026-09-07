@@ -159,6 +159,20 @@ as implying an operational adapter implementation exists for this profile: the e
 `examples/sc-oes/` were written against the models by hand and name an adapter nothing resolves,
 and PNT is the one profile with a reference producer behind it (`pnt.md`).
 
+The profile's state, in the form the packaged registry carries it:
+
+```text
+Version:                      0.1.0
+Maturity:                     DRAFT
+Implementation status:        specification-only
+Executable Dimension D rules: not defined in 0.1.0
+```
+
+A reader should not have to discover this from a `SKIP` on a command line. The packaged profile
+registry (`synapse_cdm/registry/sc_oes/profiles.json`) carries the same four facts in the form a
+validator reads, which is how a conformance tool tells this profile — known, and deliberately
+without executable rules — from a profile name that does not exist.
+
 ## Conformance
 
 Dimension D is assessed only against an explicitly named profile, and never inferred
@@ -173,3 +187,10 @@ available. Dimensions A, B, C and E are unaffected: they do not depend on any pr
 The round that gives this profile its first rule of its own writes the rules and the check that
 enforces them together, in the same commit — a dimension that reported a verdict no rule set could
 change would be worse than an honest `SKIP`.
+
+**Executable Dimension D rules for this profile: not defined in 0.1.0.** That is a scope boundary
+and not an unfinished edge: `pnt.md` acquired the specification's first executable rule on
+2026-09-07, and the arrangement stated just above is the one it followed. Until this profile does
+the same, a dimension D assessment against Logistics returns `SKIP` with a reason that says so, and
+never `PASS` — a profile with no rules is not a profile anything can be conformed to — and never
+`FAIL`, which would grade a profile for being deliberately specification-only.

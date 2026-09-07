@@ -112,6 +112,14 @@ PACKAGE_ONLY_TESTS = (
     # ship, which is why the drift half of the same subject is `test_cdm_ontology.py` in the
     # other list.
     "test_cdm_registry.py",
+    # `test_cdm_profile_registry.py` is package-only for the same reason one artefact over: the
+    # profile registry it reads is `registry/sc_oes/profiles.json`, which ships and is reached
+    # through `importlib.resources.files("synapse_cdm")`, so against an installed distribution
+    # this module checks the profile metadata a consumer actually got — which is where §15's
+    # "no repository checkout, no network, no remote profile service" is really tested. The
+    # seven normative profile DOCUMENTS are at the repository root and do not ship, so the
+    # document-against-registry half is `test_cdm_profiles.py` in the other list.
+    "test_cdm_profile_registry.py",
     # `test_cdm_conformance.py` is package-only on `test_cdm_registry.py`'s reading exactly: the
     # conformance tool reads both packaged registries and generates the schemas from the models,
     # so against an installed distribution this module assesses objects with the artefacts a

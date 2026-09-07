@@ -1,160 +1,109 @@
-# synapse-cdm 1.8.0
+# synapse-cdm 2.0.0
 
-A minor release, and what it adds is one item and one document. MISB ST 0601 item 73 — the RVT
-Local Set — is decoded and carried, so a `stanag4609` consumer whose packets nest a MISB ST 0806.4
-set now receives it instead of an unread run of octets. And the MISP-2019.1 Motion Imagery
-Handbook, the last document this profile delegates to that was not on disk, is held and pinned:
-**the parks table is empty at this release**, thirteen rows and none of them open, which is the
-first time this package has shipped with nothing waiting on an acquisition.
+A major release, and what it adds is a semantic layer over the model this package has always
+carried. **SC-OES** — the SynapseCommand Operational Event Specification, v0.1.0 Draft — attaches
+operational-event semantics to a CDM object *after* source-format translation: what kind of
+assertion an event is, which governed semantic type it claims, what it relates to and with which
+role, and how sure its source was. It is a wire-semantic contract, not a new format and not a
+replacement for one.
 
-**Package version 1.8.0 · CDM `schema_version` 1.0.0.** If you consume CDM objects, no schema
-moved: no field was added, removed or retyped, and the diff over `schemas/` since 1.7.0 is empty —
-`git diff v1.7.0..HEAD -- schemas/` returns nothing, which is the check that decided
-`SCHEMA_VERSION` stays where it is rather than an assumption that it would. Everything new reaches
-a consumer inside `Entity.attributes`, which the published `entity` schema declares
-`additionalProperties: true` — the 1.2.0 ruling, applied a fifth time and checked against the
-schema files rather than recalled.
+**Package version 2.0.0 · CDM `schema_version` 2.0.0.** If you consume CDM objects, this is a
+breaking change and the next section says exactly how. **The two numbers being equal is a
+coincidence of two independently justified major changes and not a derivation** — the schema moved
+on `MIGRATIONS.md`'s table because a 1.x strict reader rejects the new objects, the package moved
+on `version.py`'s because a third party's consumer written against 1.8.0 does not work against this
+distribution, and `synapse_cdm/version.py` states the six version axes and their independence in
+one place. A package at 2.0.0 does **not** mean SC-OES 2.0: SC-OES is at `0.1.0` and is a Draft.
 
-**UNRELEASED, ADDED 2026-09-06 — the wire contract has since moved, and these notes are still
-1.8.0's.** The sentences above describe the distribution on the index and stay exactly true of it:
-1.8.0 shipped at CDM `schema_version` 1.0.0 and nothing in it moved the wire contract. On the
-working branch the SC-OES model round has taken `SCHEMA_VERSION` to **`schema_version` 2.0.0**, a
-MAJOR — `Event` gains an optional SC-OES block and `Entity` an optional list of ontology types, and
-the canonical objects forbid undeclared keys, so a 1.x strict reader refuses an object carrying
-either. **No release carries that yet.** `pip install synapse-cdm` still resolves 1.8.0 and 1.8.0
-still emits 1.0.0 objects; this paragraph is here because these notes are one of the few documents
-that states both numbers, which makes them one of the few places the two could be made to disagree
-without anybody noticing. `packages/cdm/synapse_cdm/MIGRATIONS.md`'s `### Unreleased` section
-carries the migration statement and the derivation.
+## What changed on the wire, and what a 1.x consumer must do
 
-**If you ingest STANAG 4609 / MISB KLV, read the next section.** Nothing is removed and no key
-changes shape. A packet that carries no item 73 yields exactly the object 1.7.0 yielded, byte for
-byte; a packet that carries one yields the same object with four more keys on it.
+Two optional keys, and they are what makes this a major:
 
-For what 1.7.0 was — item 74 becoming `DETECTION` events and `Track` objects, item 94 becoming
-entries in `Entity.source_ids`, and MISB ST 0902.8's minimum metadata set riding every object as a
-per-packet advisory — see
-[the 1.7.0 release](https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v1.7.0)
-and the previous notes in this file's git history. This document does not restate them.
+* `Event.oes` — the SC-OES block, `null` unless the producer made an SC-OES assertion.
+* `Entity.ontology_types` — a list of governed ontology identifiers, empty unless the producer
+  asserted one.
 
-## What changed on the wire for a `stanag4609` consumer
+Both are OPTIONAL and both default to nothing, so legacy data is structurally representable
+without change. That is not the same as compatibility, and this document does not claim it is: the
+canonical objects are `additionalProperties: false`, so **a 1.x strict reader meeting either key
+rejects the object rather than ignoring it**. `version.compatible("2.0.0", "1.0.0")` is `False`,
+and that refusal is the message the major exists to carry. Whether to move is an explicit consumer
+decision; `packages/cdm/synapse_cdm/MIGRATIONS.md` carries the migration statement and the
+derivation.
 
-Three things, each stated as what a consumer receives.
+There is no migration tooling and none was written for this release. Migration in this repository
+is documented rather than executable, deliberately, and a framework invented for one release would
+be a second thing to keep correct.
 
-**1. A packet carrying ST 0601 item 73 now puts the decoded RVT Local Set on the packet's own
-`Entity`, under four new `attributes` keys.** They are `rvt_local_set`, `rvt_basis`,
-`rvt_mapping_not_taken` and `rvt_embedded_set_policy`, and the parsed twin the harness harvests
-gains a matching `rvt` key. `attributes.rvt_local_set` carries the set's `element_order` — the tags
-in the order the octets presented them — and an `elements` map keyed by tag number, each entry
-naming the element, its raw `octets`, its decoded `value`, its `units` as ST 0806.4 states them,
-and the `requirements` the element satisfies. Subordinate sets appear under `subordinate_sets`,
-each with the tag that carried it and the same shape recursively.
+## What SC-OES adds
 
-**None of these keys appears on a packet without item 73.** That is the same conditional-key rule
-`vmti` was given in 1.7.0, applied to a fifth layer, and it is why every golden written before this
-arc is byte-identical after it: the pinned real stream carries no item 73 at all, so all 112 of the
-goldens that existed at `v1.7.0` are unchanged and the only paths this release adds are the `rvt`
-ones on its own seven new fixtures.
+* **The specification**, `spec/sc-oes/`, v0.1.0 Draft: core model, event classes, governed event
+  types, temporality, relations, confidence, entity semantics, security markings, extensions,
+  versioning and conformance.
+* **The SynapseCommand Operational Ontology**, v0.1.0 Draft. Turtle is the authority; the JSON-LD
+  context and the packaged term registry are derived from it and drift-tested against it, and
+  **nothing at runtime parses RDF** — `rdflib` is a test dependency and a boundary test proves it.
+* **Three packaged machine-readable registries** under `synapse_cdm/registry/sc_oes/`: the governed
+  event contract, the generated ontology-term registry, and the profile registry. All three ship in
+  the wheel, load through `importlib.resources`, and need no checkout and no network.
+* **Offline conformance tooling** — `python -m synapse_cdm.conformance`, also installed as
+  `cdm-conformance` — reporting five separately named dimensions, `PASS`/`FAIL`/`SKIP` each, with
+  no aggregate score and four exit codes a CI system can branch on.
+* **A reference producer.** The `pntmap` adapter emits the block on every alert, asserting three
+  fields and nothing its source does not support.
+* **Fourteen worked examples**, thirteen individual and one linked operational chain, and **seven
+  profile documents**.
 
-**2. Four element tables are read, not one.** `adapters/klv_rvt_codec.py` is a new module and walks
-MISB ST 0806.4's Table 8-1 (the RVT Local Set, 21 tags), Table 8-2 (Point of Interest LS, 10),
-Table 8-3 (Area of Interest LS, 10) and Table 8-4 (User Defined LS, 2) with **one** recursive
-`decode_set`, because a subordinate set's Value is a bare run of triplets exactly as ST 0601 item
-73's own is. An RVT tag this layer does not list is carried through and reported rather than
-dropped, and an element whose stated length it does not have is refused with the packet still
-translating — both behaviours have a fixture of their own.
+## Dimension D is executable for one profile
 
-**3. Eight elements that have a CDM home are deliberately NOT mapped into one, and the release says
-so rather than leaving it to be discovered.** POI Latitude, POI Longitude and POI Altitude
-(Table 8-2, tags 2–4), the four AOI corner coordinates (Table 8-3, tags 2–5) and the RVT LS's own
-User Defined Time Stamp (Table 8-1, tag 2) all ride in `attributes` as the document names them.
-Emitting a POI as a second `Entity`, or an AOI as a geometry, is a modelling decision no clause of
-either document makes, so it is written down as a proposal in `attributes.rvt_mapping_not_taken`
-and is not taken. A consumer that wants that shape today can read it off these keys; a consumer
-that waits for the model to grow one will not have had a guess made on its behalf in the meantime.
+The **PNT Profile 0.1.0** is the first profile with a conformance rule of its own, so a
+conformance assessment of the reference GNSS-interference event against it returns
+A `PASS`, B `PASS`, C `PASS`, D `PASS`, E `PASS` and exits `0`. The permitted claim is
+**"SC-OES PNT Profile 0.1 Conformant"**, it names one assessed object, and it is not a
+certification: this work creates no certification programme.
 
-**And what the RVT set is NOT.** ST 0806.4's four requirements govern an *independent* RVT Local
-Set. One nested in ST 0601 item 73 is not independent — it draws its time and its integrity from
-the ST 0601 packet, which carries both — so this layer **reports** which of the four the octets
-satisfy, per element, and refuses nothing on their account. The reasoning, with both documents'
-clauses, is in `attributes.rvt_embedded_set_policy` on every packet that carries the set.
+The other six profiles are **specification-only** and dimension D against them is `SKIP` — the
+profile is known and has no executable rules, which is a different fact from a profile name that
+does not exist and a different fact again from an object that failed. A `PASS` drawn from an empty
+rule set would be a claim manufactured out of the absence of anything to check.
 
-## The parks table is empty, and what that does and does not mean
+The profile does **not** require any particular producer. `PNTMAP` is a reference producer; a
+third-party GNSS monitor, a military sensor adapter or a simulation producer conforms on the same
+terms.
 
-`gates/parks_table.py` reads **13 rows, 0 open, 13 closed** at this commit. Two rows closed in this
-arc and they were the last two.
+## Why this is a MAJOR, and the gate derived a MINOR floor
 
-**Park 7 closed on MISB ST 0806.4**, pinned by digest and byte count and transcribed into the four
-tables above.
+`gates/bump_derivation.py` classifies the diff over the distribution's own contents between
+`v1.8.0` and this tree against `version.py`'s `PACKAGE_VERSION` table. It reports **MINOR** — and
+that is not a disagreement, it is the gate answering the question it can answer. Every signal it
+can prove is an ADDITION: an optional field on two models, seventeen exported names, two new
+modules, three shipped registries, an adapter emitting a key it did not emit before. No importable
+name is removed and no signature moves, so no MAJOR row is reached **by the diff**.
 
-**Park 10 closed on the MISP-2019.1 Motion Imagery Handbook**, and it closed on a *reading* rather
-than on code: the Handbook is the fourteenth and last document MISP-2019.1 delegates to, and the
-open question against it was register entry KLV 8 — whether the Handbook is normative for the KLV
-metadata this adapter emits. It is not. The Handbook's own Scope page says *"The MISP succinctly
-states requirements, while the Motion Imagery Handbook discusses principles underlying requirements
-more thoroughly,"* and the document bears that out: 124 pages carrying **one** `shall`, about the
-term FMV, no Common Metadata System named anywhere in it, and no required data items defined. So it
-is ruled a **companion**, the ruling is closed in `fixtures/klv/spec/klv_pin.json`'s ambiguity
-register with the sentence that decided it, and **no row of `FORMAT_COVERAGE.md` moved on its
-account.** A consumer receives nothing new from park 10 and that is the correct outcome: what
-changed is that a question this record had carried open since it was written now has an answer with
-a page number on it.
+What the derivation cannot reach is the fact that decides the number: **what breaks is a third
+party's consumer**, and no file in this distribution records a third party's code.
+`docs/adr/0005-cdm-schema-version-impact.md` is where that derivation is argued and it was argued
+before the number was typed. The gate calls its own answer a FLOOR and says so; the release that
+types the number writes the ruling, and the ruling is a dated paragraph in `MIGRATIONS.md`'s
+section for this arc naming both ends of it. Run
+`.venv/bin/python gates/bump_derivation.py` on this tree and it prints both: `derived MINOR`, and
+`version rule MAJOR over the derived MINOR floor`.
 
-**What it does not mean.** An empty parks table is a statement about *acquisition* — every document
-the profile delegates to is on disk and pinned — and not about coverage. Rows in
-`FORMAT_COVERAGE.md` still read `not yet`, and the parks table never tracked those.
-
-## Why this is a MINOR, and the gate derived it rather than being told
-
-`gates/bump_derivation.py` classifies the diff over the distribution's own contents between `v1.7.0`
-and this tree against `version.py`'s `PACKAGE_VERSION` table. It reports **MINOR** over
-**100 signals** across **37 distribution files**, and the floor is **1.8.0** — the release gate's
-moved set is 38, the one file apart being `version.py`, whose only changed unit at this commit is
-the declaration the gate refuses to read as evidence for itself. The kind needed no argument:
-`adapters/klv_rvt_codec.py` is a **new importable module**, `klv_uas_codec` gains the public names
-`RVT_TAG` and `RVT_BASIS`, `stanag4609` gains `RVT_ABSENT_BASIS`, and `fixtures/klv/` gains seven
-payloads that extend a fixture set — all of which sit on the MINOR list. No importable name is
-removed and no signature moves, so no MAJOR row is reached, and no emitted key was removed either.
-
-**Twelve units the table could not decide carry a person's ruling, and not one of them is this
-release round's.** The gate's PATCH row and its MAJOR row both reach a function whose body moved and
-whose name did not, so it names the unit and stops rather than guessing. Every one of the twelve was
-ruled by the round that made it, in `MIGRATIONS.md`'s 1.8.0 section, in the form the gate parses,
-with the check that was taken recorded beside it — **eight of the twelve are PATCH and four MINOR**,
-and all eight PATCH units are top-level statements the gate names by POSITION, six of them import
-lines renumbered by an inserted import and two of them module-level statements modified in place
-with no name added or removed. That is a property of positional unit naming rather than a change to
-anything a caller can see. `pending.unruled` is the empty list at this commit, which is the pre-step
-the release procedure's condition 5 requires before a version number is typed.
-
-The number is the gate's and not a judgement: run `.venv/bin/python gates/bump_derivation.py` on this
-tree and it prints the same classification, the same signals and the same floor. It reads the
-distribution **through `git`**, so it classifies what is committed rather than what is on disk.
+`pending.unruled` is the empty list at this commit, which is the pre-step the release procedure's
+condition 5 requires before a version number is typed.
 
 ## What else moved
 
-* **Three documents were pinned and the pin corpus reached every delegation.** MISB ST 0806.4
-  (park 7) and both editions of the Motion Imagery Handbook — MISP-2019.1, which park 10 stands on,
-  and MISP-2019.2, pinned **context only** as a later edition of the same delegated document.
-  `gates/pin_paths.py` reads **30 pinned copies, 30 present, 30 matched, 0 failed**, three more than
-  1.7.0 shipped. `klv_pin.json`'s own derivation from its sha256-bearing entries now reads
-  **nineteen** of them, of which five are held and are not delegations, leaving **fourteen — the
-  whole of what MISP-2019.1 delegates to.** The pinned documents themselves are gitignored, as they
-  have always been: nothing in this release redistributes a standard.
-* **The KLV fixture set grew by seven payloads and their seven parsed twins, and the golden set by
-  fourteen**, to 63 payloads and 126 goldens. `stanag4609`'s fixture verdicts move from 112 to
-  **126**, and the roster's total from 524 to **538**.
-* **The seven new fixtures are built from the element rules, not from a printed example, and the
-  release says which.** ST 0806.4 prints no worked packet: its one packet illustration, Figure 7-1,
-  is a raster image, and ST 0601.14a §8.73's Example KLV Item row reads `49 - N/A`. So there is no
-  `check_against_the_documents_own_examples` in the new module, because there are no examples to
-  check against — which is stated rather than quietly omitted.
-* **The shipped documents.** `MIGRATIONS.md`, `FORMAT_COVERAGE.md` and `fixtures/klv/README.md`
-  carry the arc; `klv_pin.json` gains the `st_0806_4` node, both Handbook nodes, the closure entries
-  for parks 7 and 10, the closed KLV 8 register entry, and a dated negative recording that no
-  archive capture of any 2019.x Handbook exists on any `nga.mil` host.
-
-**No schema, model, harness flag or dependency moved**, and no adapter was added or removed.
+* **The published schemas.** All six regenerate from the models and carry `2.0.0`; `event` and
+  `entity` gain one optional property each and nothing is removed or retyped.
+* **Every golden in the package** now carries `schema_version` `2.0.0`, every entity an
+  `ontology_types` list and every event an `oes` key. Compared by JSON path, the moved set across
+  the CDM goldens is exactly those three paths — the `pntmap` adapter's four goldens additionally
+  carry the block it now emits.
+* **No runtime dependency changed.** `pydantic` and `jsonschema`, as before. `rdflib` is a test
+  extra and nothing under `synapse_cdm/` imports it.
+* **No adapter was added or removed**, and no adapter's translation was changed to make a
+  conformance verdict come out differently.
 
 ## Fourteen adapters, all harness-verified
 
@@ -184,16 +133,16 @@ totals below were summed from the harness on this tree.
 | `tak` | bidirectional | 12 |
 
 **538 fixture verdicts, 0 failed** across the fourteen adapters, against the published schemas.
-The whole of the increase is `stanag4609`'s: fourteen more verdicts than 1.7.0 shipped, from the
-seven new payloads and their parsed twins. `gates/wheel_install.py` reports **1076** over the
-same roster, which is these 538 run in each of two schema modes.
+The roster's totals are unmoved from 1.8.0: this release adds a semantic layer over the objects
+and no fixture. `gates/wheel_install.py` reports **1076** over the same roster, which is these 538
+run in each of two schema modes.
 
 The six published schemas — `cdm_object`, `entity`, `event`, `plan_object`, `track`,
 `payload_gnss_interference` — regenerate byte-identical from the models, and
 `python -m synapse_cdm.schemas --check --out schemas` reports `CURRENT: schemas vs models at
-1.0.0`.
+2.0.0`.
 
-## Published by CI over OIDC, as 1.1.0, 1.2.0, 1.2.1, 1.3.0, 1.4.0, 1.4.1, 1.5.0, 1.6.0 and 1.7.0 were
+## Published by CI over OIDC, as 1.1.0 through 1.8.0 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
@@ -217,6 +166,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==1.8.0
+pip install synapse-cdm==2.0.0
 python -m synapse_cdm.harness --list-adapters
 ```

@@ -122,6 +122,15 @@ move is the WHOLE of the change — a function that adds a flag and also changes
 flag means is ruled MINOR here, and only a reader would catch the second half. What the gate does
 prove is that no unit changed with nothing in the table reaching it.
 
+**And since 2026-09-07 it does not claim the floor is a CEILING either.** A declared number
+stronger than the floor is still refused by default — that is the 1.3.0 defect and it is the
+reason this file exists — but it can be RULED, once, in `MIGRATIONS.md`'s section for the arc,
+naming both ends of the arc and the kind (`VERSION_RULING_MARKER`). The case that forced it is the
+one `version.py` had already written down: a package MAJOR obliged by a wire-contract MAJOR is not
+provable from a diff over this distribution's Python surface, because what breaks is a third
+party's consumer and no file in this package records that. A ruling naming any other arc is stale
+and refused, and no ruling rescues an UNDERSHOOT.
+
 WHY IT IS A GATE WITH A SUITE MEMBER RATHER THAN ONLY ONE OR THE OTHER
 ----------------------------------------------------------------------
 It needs git and nothing else — no network, no credential — so unlike `gates/deploy_record.py` it
@@ -190,6 +199,35 @@ RULING_MARKER = "**Bump ruling.**"
 #: closing backtick still bounds it and the kind still has to follow.
 RULING_LINE = re.compile(
     r"`(?P<unit>[^`]+?)`\s*(?:—|-)\s*(?P<kind>PATCH|MINOR|MAJOR)\b", re.I)
+
+#: Where a human's ruling on the NUMBER ITSELF is read from, and it is a different question from
+#: the one above. A `Bump ruling.` decides one changed unit the table cannot reach; a
+#: `Version ruling.` decides that the declared number is deliberately STRONGER than the floor the
+#: diff proves. A paragraph in the same section, of the shape:
+#:
+#:     **Version ruling.** `1.8.0 → 2.0.0` — MAJOR: <why>, and the deciding document.
+#:
+#: WHY THIS EXISTS, AND WHY IT IS NOT A HOLE IN THE EXCEED REFUSAL
+#: ---------------------------------------------------------------
+#: `version.py` has said since the schema moved that "the rule states a FLOOR and says so", and
+#: that "what the package number owes a schema MAJOR is derived from the package table" —
+#: ending: "ADR 0005 records that derivation, and **the release that types the number is the one
+#: that writes the ruling**." This is that ruling, in the form the gate reads. Before it, the gate
+#: refused every declared number stronger than its own floor, which made the sentence above
+#: unsatisfiable: a package MAJOR obliged by a wire-contract MAJOR is not provable from a diff
+#: over the distribution's Python surface, because what breaks is a THIRD PARTY'S CONSUMER and no
+#: file in this package records that.
+#:
+#: The refusal is not weakened where it was earned. The 1.3.0 defect this gate was written for is
+#: still refused unless somebody writes, in `MIGRATIONS.md`, in the section describing that arc,
+#: a paragraph naming BOTH ENDS of the arc and the kind — a deliberate, dated, reviewable act,
+#: which is the same standard every `Bump ruling.` is held to. A ruling naming any other arc is
+#: refused as stale, so it cannot outlive its case. UNDERSHOOT is never permitted by it: a number
+#: BELOW the floor denies a surface the distribution ships, and no argument makes that true.
+VERSION_RULING_MARKER = "**Version ruling.**"
+VERSION_RULING_LINE = re.compile(
+    r"`(?P<base>\d+\.\d+\.\d+)\s*(?:→|->)\s*(?P<declared>\d+\.\d+\.\d+)`"
+    r"\s*(?:—|-)\s*(?P<kind>PATCH|MINOR|MAJOR)\b", re.I)
 
 
 class Finding(Exception):
@@ -960,6 +998,32 @@ def rulings(heading: str) -> dict[str, str]:
     return found
 
 
+def version_ruling(heading: str) -> tuple[str, str, str] | None:
+    """`(base, declared, KIND)` from one `**Version ruling.**` paragraph, or `None`.
+
+    At most one: two rulings for one section would be two opinions about one number, and the
+    second is the one nobody re-reads. More than one is refused here rather than resolved.
+    """
+    if not MIGRATIONS.exists():
+        return None
+    section = _section(MIGRATIONS.read_text(), heading)
+    if not section:
+        return None
+    found: list[tuple[str, str, str]] = []
+    for start in [m.start() for m in re.finditer(re.escape(VERSION_RULING_MARKER), section)]:
+        paragraph = section[start:].split("\n\n", 1)[0]
+        for line in VERSION_RULING_LINE.finditer(paragraph):
+            found.append((line.group("base"), line.group("declared"),
+                          line.group("kind").upper()))
+    if len(found) > 1:
+        raise Finding(
+            f"MIGRATIONS.md's `### {heading}` section carries {len(found)} version rulings "
+            f"{found}. One arc has one number, and a section holding two rulings for it is a "
+            "section in which nobody can say which was believed."
+        )
+    return found[0] if found else None
+
+
 def apply_rulings(derived: Derivation, heading: str) -> tuple[Derivation, dict[str, str]]:
     """Fold recorded rulings into a derivation. Both directions, and the second one matters.
 
@@ -1062,6 +1126,10 @@ class Verdict:
     pending_kind: str | None
     pending_number: str | None
     pending_ambiguities: list[Ambiguity]
+    #: `(base, declared, KIND)` when a person ruled the number stronger than the derived floor,
+    #: `None` otherwise. Reported so that a round quoting this gate can state the two facts §10
+    #: keeps apart: the automatic calculated floor, and the final human-governed version.
+    version_ruling: tuple[str, str, str] | None = None
 
     def as_dict(self) -> dict:
         return {
@@ -1069,6 +1137,9 @@ class Verdict:
             "arc": {"from": self.base_tag, "to": self.judged_end},
             "declared_kind": self.declared_kind,
             "derived_kind": self.derived_kind,
+            "version_ruling": (None if self.version_ruling is None else
+                               {"from": self.version_ruling[0], "to": self.version_ruling[1],
+                                "kind": self.version_ruling[2]}),
             "signals": [dataclasses.asdict(s) for s in self.signals],
             "ruled": self.ruled,
             "pending": {"kind": self.pending_kind, "number": self.pending_number,
@@ -1086,7 +1157,8 @@ def _successor(base: tuple[int, int, int], kind: str) -> str:
 
 
 def refuse_unless_clean(derived: Derivation, base: tuple[int, int, int], base_tag: str,
-                        judged_end: str, declared: str, declared_kind: str, heading: str) -> None:
+                        judged_end: str, declared: str, declared_kind: str, heading: str,
+                        ruling: tuple[str, str, str] | None = None) -> None:
     """The three refusals, in one place so a fixture meets the same sentences a release would.
 
     `--mutation-check` calls this with synthetic arcs. If the messages lived inside `measure()` the
@@ -1109,9 +1181,26 @@ def refuse_unless_clean(derived: Derivation, base: tuple[int, int, int], base_ta
             "ruling that outlives its case."
         )
 
+    base_version = ".".join(str(p) for p in base)
+    if ruling is not None and (ruling[0], ruling[1]) != (base_version, declared):
+        raise Finding(
+            f"MIGRATIONS.md's `### {heading}` section carries a version ruling for the arc "
+            f"`{ruling[0]} → {ruling[1]}`, and the arc under judgement is "
+            f"`{base_version} → {declared}`.\n"
+            "  A ruling that names another arc is an exemption for a case that no longer exists. "
+            "It is refused for the reason a stale bump ruling is: the whole worth of a written "
+            "ruling is that it was written about THIS number."
+        )
+
     if declared_kind != derived.floor:
         direction = ("EXCEED" if KINDS.index(declared_kind) > KINDS.index(derived.floor)
                      else "UNDERSHOOT")
+        if direction == "EXCEED" and ruling is not None and ruling[2] == declared_kind:
+            # §10's arrangement, and `version.py`'s own sentence: the derivation states a FLOOR
+            # and a person types the number. The ruling names this arc and this kind, it is dated
+            # by the section it sits in, and it is refused above if it names any other arc.
+            # UNDERSHOOT is deliberately not reachable here.
+            return
         evidence = ("\n".join(f"    {s.kind:<6} {s.unit}\n        {s.reason}"
                               for s in derived.strongest())
                     or "    (no file in the distribution changed across this arc at all)")
@@ -1122,7 +1211,13 @@ def refuse_unless_clean(derived: Derivation, base: tuple[int, int, int], base_ta
                 "DEFECT THIS GATE WAS WRITTEN FOR: the 1.2.1 round was specified as 1.3.0 over an "
                 "arc that changed no executable line, and every check in this repository would "
                 "have passed it. A PyPI filename is permanent — this is the one claim in a "
-                "release that can never be corrected.",
+                "release that can never be corrected.\n"
+                "  If the number is deliberately stronger than the floor — a package MAJOR "
+                f"obliged by a wire-contract MAJOR is the case {PKG}/version.py describes — that "
+                "is a person's ruling and it is written down, in MIGRATIONS.md's "
+                f"`### {heading}` section, as:\n"
+                f"      {VERSION_RULING_MARKER} `{base_version} \u2192 {declared}` \u2014 "
+                f"{declared_kind}: <why>, and the deciding document.",
             "UNDERSHOOT":
                 f"the diff proves {derived.floor} and {declared} is only a {declared_kind}, so "
                 "the distribution would ship a surface its own number denies. A consumer pinning "
@@ -1172,15 +1267,16 @@ def measure() -> Verdict:
         pending_ambiguities = pending.ambiguities
 
     declared_kind = single_step(base, version)
+    ruling = version_ruling(heading)
     verdict = Verdict(
         declared=declared, base_tag=base_tag, judged_end=judged_end,
         declared_kind=declared_kind, derived_kind=derived.floor,
         signals=derived.signals, ambiguities=derived.ambiguities, ruled=ruled,
         pending_kind=pending_kind, pending_number=pending_number,
-        pending_ambiguities=pending_ambiguities)
+        pending_ambiguities=pending_ambiguities, version_ruling=ruling)
 
     refuse_unless_clean(derived, base, base_tag, judged_end, declared,
-                        declared_kind, heading)
+                        declared_kind, heading, ruling)
 
     return verdict
 
@@ -1221,8 +1317,13 @@ def _adapter(class_name: str, wire_name: str) -> bytes:
 
 #: name, before, after, base, declared, expected — where expected is the refusal's first word, or
 #: None for the arcs that must pass.
+#: Each row: name, before, after, base version, declared version, expected refusal (or `None`
+#: for a pass), and the version ruling in force (`None` for none). The last three rows exercise
+#: `VERSION_RULING_MARKER` in all three of its states — honoured, stale, and unable to rescue an
+#: UNDERSHOOT — because a mechanism that only ever lets things through is not a mechanism.
 FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
-                      tuple[int, int, int], str, str | None], ...] = (
+                      tuple[int, int, int], str, str | None,
+                      tuple[str, str, str] | None], ...] = (
     (
         "a MINOR arc numbered PATCH — an adapter added and the number moved by one patch",
         {"pyproject.toml": _PYPROJECT,
@@ -1230,7 +1331,7 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
         {"pyproject.toml": _PYPROJECT,
          f"{PKG}/adapters/tak.py": _adapter("TakAdapter", "tak"),
          f"{PKG}/adapters/newfmt.py": _adapter("NewfmtAdapter", "newfmt")},
-        (1, 0, 0), "1.0.1", "UNDERSHOOT",
+        (1, 0, 0), "1.0.1", "UNDERSHOOT", None,
     ),
     (
         "a PATCH arc numbered MINOR — comments and a shipped document, and nothing else. "
@@ -1243,7 +1344,7 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
          f"{PKG}/adapter.py": b'"""The SDK, restated."""\n\n\n# the same comment, reworded\ndef discover():\n'
                               b'    return REGISTRY\n',
          f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, after\n"},
-        (1, 2, 0), "1.3.0", "EXCEED",
+        (1, 2, 0), "1.3.0", "EXCEED", None,
     ),
     (
         "an unruled arc — a function body moved with no name added, removed or rostered",
@@ -1251,7 +1352,7 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
          f"{PKG}/adapter.py": b'def translate(value):\n    return value + 1\n'},
         {"pyproject.toml": _PYPROJECT,
          f"{PKG}/adapter.py": b'def translate(value):\n    return value + 2\n'},
-        (1, 2, 0), "1.2.1", "UNRULED",
+        (1, 2, 0), "1.2.1", "UNRULED", None,
     ),
     (
         "a PATCH arc numbered PATCH — the arc this repository actually shipped, in miniature",
@@ -1259,7 +1360,7 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
          f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, before\n"},
         {"pyproject.toml": _PYPROJECT,
          f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, after\n"},
-        (1, 2, 0), "1.2.1", None,
+        (1, 2, 0), "1.2.1", None, None,
     ),
     (
         "a MINOR arc numbered MINOR — an adapter added and the number moved by one minor",
@@ -1268,24 +1369,55 @@ FIXTURES: tuple[tuple[str, dict[str, bytes], dict[str, bytes],
         {"pyproject.toml": _PYPROJECT,
          f"{PKG}/adapters/tak.py": _adapter("TakAdapter", "tak"),
          f"{PKG}/adapters/newfmt.py": _adapter("NewfmtAdapter", "newfmt")},
-        (1, 2, 0), "1.3.0", None,
+        (1, 2, 0), "1.3.0", None, None,
+    ),
+    (
+        "a PATCH arc numbered MINOR, WITH a version ruling naming that exact arc — the "
+        "deliberate act §10 describes, and the only thing that lets a number exceed its floor",
+        {"pyproject.toml": _PYPROJECT,
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, before\n"},
+        {"pyproject.toml": _PYPROJECT,
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, after\n"},
+        (1, 2, 0), "1.3.0", None, ("1.2.0", "1.3.0", "MINOR"),
+    ),
+    (
+        "the same arc with a version ruling naming a DIFFERENT one — refused as stale, so a "
+        "ruling cannot outlive the number it was written about",
+        {"pyproject.toml": _PYPROJECT,
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, before\n"},
+        {"pyproject.toml": _PYPROJECT,
+         f"{PKG}/MIGRATIONS.md": b"# History\n\na shipped document, after\n"},
+        (1, 2, 0), "1.3.0", "MIGRATIONS.md's", ("1.1.0", "1.2.0", "MINOR"),
+    ),
+    (
+        "an UNDERSHOOT with a version ruling for the same arc — still refused. A number BELOW "
+        "the floor denies a surface the distribution ships, and no ruling makes that true",
+        {"pyproject.toml": _PYPROJECT,
+         f"{PKG}/adapters/tak.py": _adapter("TakAdapter", "tak")},
+        {"pyproject.toml": _PYPROJECT,
+         f"{PKG}/adapters/tak.py": _adapter("TakAdapter", "tak"),
+         f"{PKG}/adapters/newfmt.py": _adapter("NewfmtAdapter", "newfmt")},
+        (1, 0, 0), "1.0.1", "UNDERSHOOT", ("1.0.0", "1.0.1", "PATCH"),
     ),
 )
 
 
 def run_fixture(before: dict[str, bytes], after: dict[str, bytes],
-                base: tuple[int, int, int], declared: str) -> str | None:
+                base: tuple[int, int, int], declared: str,
+                ruling: tuple[str, str, str] | None = None) -> str | None:
     """Judge one synthetic arc. Returns the refusal's first word, or None when it passes.
 
-    Rulings are NOT read here: `MIGRATIONS.md` describes this repository's arcs and a fixture that
-    could be silenced by a ruling written for the real tree would be a fixture that stops
-    witnessing anything the day somebody rules on an unrelated unit.
+    Bump rulings are NOT read from disk here: `MIGRATIONS.md` describes this repository's arcs and
+    a fixture that could be silenced by a ruling written for the real tree would be a fixture that
+    stops witnessing anything the day somebody rules on an unrelated unit. A VERSION ruling is
+    passed in instead, for the same reason from the other side — the fixtures that exercise it
+    must carry their own, so that what they witness is the mechanism and never this tree's number.
     """
     derived = derive(before, after)
     version = parse_version(declared)
     try:
         refuse_unless_clean(derived, base, f"v{'.'.join(map(str, base))}", "the working tree",
-                            declared, single_step(base, version), "Unreleased")
+                            declared, single_step(base, version), "Unreleased", ruling)
     except Finding as finding:
         return str(finding).split(maxsplit=1)[0]
     return None
@@ -1344,8 +1476,8 @@ def summary_check() -> int:
 def mutation_check() -> int:
     """Every fixture, both directions. A gate nobody has seen fail is a gate nobody has seen."""
     failed = summary_check()
-    for name, before, after, base, declared, expected in FIXTURES:
-        got = run_fixture(before, after, base, declared)
+    for name, before, after, base, declared, expected, ruling in FIXTURES:
+        got = run_fixture(before, after, base, declared, ruling)
         want = expected or "PASS"
         have = got or "PASS"
         if have == want:
@@ -1383,6 +1515,10 @@ def main(argv: list[str] | None = None) -> int:
           f"{verdict.base_tag}")
     print(f"derived       {verdict.derived_kind}, from the diff over the distribution between "
           f"{verdict.base_tag} and {verdict.judged_end}")
+    if verdict.version_ruling is not None:
+        base, to, kind = verdict.version_ruling
+        print(f"version rule  {kind} over the derived {verdict.derived_kind} floor, ruled by a "
+              f"person for `{base} → {to}` in MIGRATIONS.md")
     for signal in verdict.signals:
         if signal.kind == verdict.derived_kind:
             print(f"              {signal.kind:<6} {signal.unit}")

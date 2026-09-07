@@ -1,0 +1,88 @@
+{
+  "artefact": "sc-oes-profiles",
+  "artefact_version": "1",
+  "sc_oes_version": "0.1.0",
+  "namespace": "sc.",
+  "authored": "hand-authored beside spec/sc-oes/profiles/; not generated",
+  "authority": "this file is the machine authority for a profile's version, maturity, implementation status, governed event-type membership and executable conformance rules (spec/sc-oes/13-conformance.md, dimension D). The human-readable normative profile documents under spec/sc-oes/profiles/ remain the authority for a profile's narrative and domain semantics; they do not ship, and this file does.",
+  "profiles": [
+    {
+      "id": "PNT",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "PRODUCER_BACKED",
+      "event_types": [
+        "sc.pnt.gnss_interference.v1"
+      ],
+      "conformance_rules": {
+        "event_type_membership_required": true
+      }
+    },
+    {
+      "id": "Air",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "event_types": [
+        "sc.air.air_track_observed.v1",
+        "sc.air.runway_availability_changed.v1",
+        "sc.air.airspace_restriction_changed.v1"
+      ],
+      "conformance_rules": {}
+    },
+    {
+      "id": "Logistics",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "event_types": [
+        "sc.logistics.supply_threshold_reached.v1",
+        "sc.logistics.route_availability_changed.v1"
+      ],
+      "conformance_rules": {}
+    },
+    {
+      "id": "ISR",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "event_types": [
+        "sc.isr.threat_assessment_updated.v1"
+      ],
+      "conformance_rules": {}
+    },
+    {
+      "id": "C2",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "event_types": [
+        "sc.c2.system_availability_changed.v1"
+      ],
+      "conformance_rules": {}
+    },
+    {
+      "id": "Mission",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "event_types": [
+        "sc.mission.mission_status_changed.v1",
+        "sc.mission.operational_impact_assessed.v1"
+      ],
+      "conformance_rules": {}
+    },
+    {
+      "id": "Decision",
+      "version": "0.1.0",
+      "maturity": "DRAFT",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "event_types": [
+        "sc.decision.recommendation_created.v1",
+        "sc.decision.decision_recorded.v1",
+        "sc.decision.action_authorized.v1"
+      ],
+      "conformance_rules": {}
+    }
+  ]
+}

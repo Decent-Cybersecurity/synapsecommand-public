@@ -9,11 +9,19 @@ which exercises the same rules against objects. The split is `test_cdm_registry.
 `test_cdm_ontology.py`'s exactly: a check against the artefacts travels with them, a check
 against the authority stays where the authority is.
 
-THE PROFILE CHECK IS THE ONE THAT MATTERS. Dimension D is `SKIP` for all seven profiles in
-v0.1.0 because every profile document says a D assessment against it has no rules to check. The
-day a profile acquires normative content, `PROFILE_RULES` must acquire its rules — and without
-the test below, the tool would go on reporting `SKIP` with a detail line that had quietly become
-false. A verdict that cannot change is the shape this repository treats as a defect.
+THE PROFILE CHECK IS THE ONE THAT MATTERS, AND IT FIRED ON 2026-09-07
+---------------------------------------------------------------------
+It read: "Dimension D is `SKIP` for all seven profiles in v0.1.0 because every profile document
+says a D assessment against it has no rules to check. The day a profile acquires normative
+content, `PROFILE_RULES` must acquire its rules — and without the test below, the tool would go
+on reporting `SKIP` with a detail line that had quietly become false. A verdict that cannot
+change is the shape this repository treats as a defect."
+
+That day was 2026-09-07 and PNT is the profile. `test_the_pnt_document_declares_the_rule_the_tool
+_checks` is the same tripwire pointing the other way: PNT's document must now say it HAS a rule,
+and the packaged registry must declare exactly the rules the document states. The six
+specification-only profiles keep the original check unchanged, so the trap is still armed for
+whichever of them acquires content next.
 """
 import pathlib
 import re
@@ -32,7 +40,7 @@ from synapse_cdm.conformance import (
     SKIP,
     UNASSESSED_THIRD_PARTY_TERM,
 )
-from synapse_cdm.oes_registry import PROFILES
+from synapse_cdm.oes_registry import PROFILES, profile_has_executable_rules
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 SPEC = REPO / "spec" / "sc-oes"
@@ -41,9 +49,16 @@ CONVENTIONS_DOC = SPEC / "00-conventions.md"
 ADR = REPO / "docs" / "adr" / "0009-conformance-model.md"
 PROFILE_DOCS = {name: SPEC / "profiles" / f"{name.lower()}.md" for name in PROFILES}
 
-#: The sentence every profile stub carries in its "Conformance" section. When one of them stops
-#: carrying it, that profile has normative content and `PROFILE_RULES` owes it rules.
+#: The sentence a profile with no rules carries in its "Conformance" section. When one of them
+#: stops carrying it, that profile has normative content and `PROFILE_RULES` owes it rules.
 NO_RULES_SENTENCE = "has no rules to check"
+
+#: The one profile that has acquired executable rules (§12), and the six that deliberately have
+#: not. Derived from the packaged registry rather than typed twice: the constant below is what
+#: this module ASSERTS about, and `test_only_one_profile_has_executable_rules_and_the_documents
+#: _agree` is what pins it to one name.
+EXECUTABLE_PROFILE = "PNT"
+SPECIFICATION_ONLY_PROFILES = tuple(p for p in PROFILES if p != EXECUTABLE_PROFILE)
 
 
 def test_the_documents_this_module_judges_are_all_present():
@@ -106,9 +121,10 @@ def test_the_document_forbids_an_aggregate_score_and_the_module_produces_none():
     assert "MUST NOT be displayed, reported, exported or aggregated as `PASS`" in text
 
 
-@pytest.mark.parametrize("profile", PROFILES)
-def test_every_profile_document_still_says_a_d_assessment_has_no_rules_to_check(profile):
-    """The gate for the ruling that makes dimension D `SKIP` in v0.1.0. See the module docstring."""
+@pytest.mark.parametrize("profile", SPECIFICATION_ONLY_PROFILES)
+def test_every_specification_only_document_still_says_a_d_assessment_has_no_rules_to_check(
+        profile):
+    """The gate for the ruling that keeps dimension D `SKIP` for six profiles. See the docstring."""
     text = PROFILE_DOCS[profile].read_text()
     assert NO_RULES_SENTENCE in text, (
         f"{PROFILE_DOCS[profile].relative_to(REPO)} no longer says a D assessment has no rules "
@@ -116,6 +132,60 @@ def test_every_profile_document_still_says_a_d_assessment_has_no_rules_to_check(
         "it rules — dimension D must stop reporting SKIP with a detail line that has become "
         "false")
     assert PROFILE_RULES[profile] == ()
+    assert not profile_has_executable_rules(profile)
+
+
+def test_the_pnt_document_declares_the_rule_the_tool_checks():
+    """The other half of the tripwire: the document that HAS a rule says so, in its own words.
+
+    Both directions, because either alone is the failure this module exists to catch. A document
+    claiming a rule the registry does not declare promises a producer something no tool enforces;
+    a registry declaring a rule the document does not state grades a producer against a rule it
+    could not have read.
+    """
+    text = PROFILE_DOCS[EXECUTABLE_PROFILE].read_text()
+    assert NO_RULES_SENTENCE not in text, (
+        f"{PROFILE_DOCS[EXECUTABLE_PROFILE].relative_to(REPO)} still says a D assessment has no "
+        "rules to check while the packaged registry declares "
+        f"{PROFILE_RULES[EXECUTABLE_PROFILE]} for it")
+    assert "declares one executable conformance rule of its own" in text
+    assert "**Event membership.**" in text
+    assert PROFILE_RULES[EXECUTABLE_PROFILE] == ("event_type_membership_required",)
+    assert profile_has_executable_rules(EXECUTABLE_PROFILE)
+
+
+def test_only_one_profile_has_executable_rules_and_the_documents_agree():
+    """§12: PNT is the first and, in v0.1.0, the only executable profile."""
+    executable = [name for name in PROFILES if profile_has_executable_rules(name)]
+    assert executable == [EXECUTABLE_PROFILE]
+    for name in SPECIFICATION_ONLY_PROFILES:
+        assert "not defined in 0.1.0" in PROFILE_DOCS[name].read_text(), (
+            f"{PROFILE_DOCS[name].name} does not tell a reader in its own words that it has no "
+            "executable dimension D rules; §58 forbids leaving that to be discovered from a CLI "
+            "SKIP")
+
+
+def test_the_normative_document_states_the_five_dimension_d_outcomes():
+    """§59: the five sentences, in the document, as sentences and not as an implementation note."""
+    text = " ".join(CONFORMANCE_DOC.read_text().replace("> ", " ").split())
+    for sentence in (
+            "`PNT` requested + executable PNT rules + the event is in PNT = `D` `PASS`.",
+            "`PNT` requested + executable PNT rules + the event is outside PNT = `D` `FAIL`.",
+            "A specification-only profile requested = `D` `SKIP`.",
+            "No profile requested = `D` `SKIP`.",
+            "An unknown profile requested = a CLI / configuration error, and not a conformance "
+            "finding."):
+        assert sentence in text, sentence
+
+
+def test_the_document_forbids_a_profile_requiring_a_particular_producer():
+    """§21/§25 as a rule of the specification, not only as an absence in one profile's rules."""
+    text = " ".join(CONFORMANCE_DOC.read_text().split())
+    assert "a profile MUST NOT require a producer to be a particular producer" in text
+    assert "`source.system`" in text and "`source.adapter`" in text
+    for name in PROFILES:
+        doc = PROFILE_DOCS[name].read_text()
+        assert "source.system ==" not in doc and "source.adapter ==" not in doc, name
 
 
 def test_the_profiles_the_module_knows_are_the_documents_that_exist():

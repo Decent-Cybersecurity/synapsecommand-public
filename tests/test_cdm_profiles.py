@@ -31,7 +31,12 @@ import pytest
 import synapse_cdm
 from synapse_cdm import adapter
 from synapse_cdm.oes import EventClass
-from synapse_cdm.oes_registry import PROFILES, Maturity, get_profile_event_types
+from synapse_cdm.oes_registry import (
+    PROFILES,
+    Maturity,
+    get_profile,
+    get_profile_event_types,
+)
 from synapse_cdm.version import SC_OES_VERSION
 
 REPO = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
@@ -56,6 +61,12 @@ SPECIFICATION_ONLY = "**Specification-only in v0.1.0.**"
 #: against the adapter that actually emits the block, in
 #: `test_the_producer_backed_profile_is_the_one_with_a_producer_behind_it`.
 PRODUCER_BACKED_PROFILE = "PNT"
+
+#: The one profile with executable dimension D rules (§12), and the six without. Both derived
+#: from the packaged registry: a second profile acquiring rules moves these sets rather than
+#: leaving a parametrisation that no longer covers what it claims to.
+EXECUTABLE_PROFILE = "PNT"
+SPECIFICATION_ONLY_PROFILES = tuple(p for p in PROFILES if p != EXECUTABLE_PROFILE)
 
 GOVERNED_ID = re.compile(r"sc\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*\.v[1-9][0-9]*")
 
@@ -250,8 +261,8 @@ def test_a_profile_cites_an_example_for_each_of_its_governed_types(profile):
 # ---------------------------------------------------- 5. what a profile does NOT yet declare
 
 
-@pytest.mark.parametrize("profile", PROFILES)
-def test_every_profile_says_in_as_many_words_that_it_declares_no_rules_of_its_own(profile):
+@pytest.mark.parametrize("profile", SPECIFICATION_ONLY_PROFILES)
+def test_every_specification_only_profile_says_it_declares_no_rules_of_its_own(profile):
     """The positive half of the sentence `tests/test_cdm_conformance_spec.py` guards.
 
     That module asserts the profile still says a D assessment has no rules to check. This one
@@ -266,15 +277,78 @@ def test_every_profile_says_in_as_many_words_that_it_declares_no_rules_of_its_ow
     assert "writes the rules and the check that" in section
 
 
+def test_the_executable_profile_states_the_rule_the_registry_declares_for_it():
+    """§17's first clause, over the document rather than over the registry pair.
+
+    The rule count is DERIVED from the packaged registry, so a second rule added there with no
+    sentence written here fails on the count rather than on somebody noticing.
+    """
+    section = _section(EXECUTABLE_PROFILE, "Conformance")
+    rules = get_profile(EXECUTABLE_PROFILE).rules
+    assert len(rules) == 1, rules
+    assert "declares one executable conformance rule of its own" in section
+    assert "**Event membership.**" in section
+    assert "declares no conformance rules of its own in v0.1.0" not in section
+    assert "synapse_cdm/registry/sc_oes/profiles.json" in section
+
+
 @pytest.mark.parametrize("profile", PROFILES)
 def test_no_profile_uses_a_normative_must_for_a_rule_it_does_not_check(profile):
-    """A profile with no rules may not spell an obligation in the word reserved for one.
+    """A profile may spell an obligation in the reserved word only for a rule the tool checks.
 
-    `MUST` survives in exactly one place — the ban on becoming a second copy of the registry,
-    which is a rule about this document rather than about an event — and that exemption is
-    checked rather than assumed, so a second `MUST` cannot slip in beside it.
+    Two exemptions and both are checked rather than assumed. The ban on becoming a second copy
+    of the registry is a rule about the DOCUMENT and not about an event, and every profile
+    carries it. The executable profile additionally states its own rule, which is the one case
+    where `MUST` is what the word is for — and `test_cdm_conformance_spec.py` is what stops that
+    sentence existing without a check behind it.
     """
+    allowed = ("second hand-authored copy", "registry is right")
+    if get_profile(profile).rules:
+        allowed += ("MUST carry an `oes.type_id`",)
     lines = [line.strip() for line in _text(profile).splitlines() if re.search(r"\bMUST\b", line)]
-    assert lines == ["registry could be read as disagreeing, the registry is right."] or all(
-        "second hand-authored copy" in line or "registry is right" in line for line in lines), (
-        f"{DOCS[profile].name} states a MUST outside the registry-copy ban: {lines}")
+    assert all(any(phrase in line for phrase in allowed) for line in lines), (
+        f"{DOCS[profile].name} states a MUST outside its checked rules: {lines}")
+
+
+# ------------------------------------------- 6. §17 — the document and the packaged metadata
+#
+# The two may not silently disagree on profile ID, version, maturity, implementation status or
+# governed event-type membership. Membership is already one fact in both directions — the
+# registry refuses a projection that disagrees with `event_types.json`, and
+# `test_the_types_in_scope_are_exactly_the_types_the_registry_files_under_the_profile` above
+# reads the document against the same authority — so what is added here is the other four.
+
+
+@pytest.mark.parametrize("profile", PROFILES)
+def test_the_document_and_the_packaged_record_agree_on_identity_and_state(profile):
+    record = get_profile(profile)
+    version_block = _section(profile, "Version")
+    assert f"profile:         {record.id}" in version_block
+    assert f"profile_version: {record.version}" in version_block
+    stated_maturity = _section(profile, "Maturity").split("```text")[1].split("```")[0].strip()
+    assert stated_maturity == record.maturity.value
+    status_block = _section(profile, "Implementation status")
+    spelled = {"PRODUCER_BACKED": "producer-backed",
+               "SPECIFICATION_ONLY": "specification-only"}[record.implementation_status.value]
+    assert f"Implementation status:        {spelled}" in status_block, (
+        f"{DOCS[profile].name} does not state implementation status {spelled}, which is what "
+        f"synapse_cdm/registry/sc_oes/profiles.json carries for it")
+    marker = PRODUCER_BACKED if spelled == "producer-backed" else SPECIFICATION_ONLY
+    assert marker in status_block
+
+
+@pytest.mark.parametrize("profile", PROFILES)
+def test_the_document_and_the_packaged_record_agree_on_whether_rules_exist(profile):
+    record = get_profile(profile)
+    status_block = _section(profile, "Implementation status")
+    expected = "available" if record.rules else "not defined in 0.1.0"
+    assert f"Executable Dimension D rules: {expected}" in status_block, (
+        f"{DOCS[profile].name} does not state that its executable dimension D rules are "
+        f"{expected!r}, which is what the packaged registry says")
+
+
+@pytest.mark.parametrize("profile", PROFILES)
+def test_the_document_and_the_packaged_record_agree_on_membership(profile):
+    """§17's last clause. There is ONE list of event types and this reads the document against it."""
+    listed = set(GOVERNED_ID.findall(_section(profile, "Event types in scope")))
+    assert listed == set(get_profile(profile).event_types)

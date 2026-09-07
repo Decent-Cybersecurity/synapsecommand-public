@@ -115,8 +115,46 @@ Normative:
 
 *(Example.)* `PNT`, `Air`, `Logistics` — the profiles named in `profiles/`.
 
-In v0.1.0, D is exercisable against PNT, which has a reference producer, and declarable but
-unexercised against the other six, which are specification-only (`profiles/`).
+In v0.1.0, D is EXECUTABLE against PNT, which has a reference producer and, since 2026-09-07, one
+conformance rule of its own; it is declarable but unexercised against the other six, which are
+specification-only (`profiles/`).
+
+Normative — the complete outcome table. The profile's version, maturity, implementation status,
+governed event-type membership and executable rules are read from the packaged profile registry
+(`synapse_cdm/registry/sc_oes/profiles.json`), which is the machine authority for them:
+
+| Request | Profile state | Object | D |
+|---|---|---|---|
+| no profile requested | — | any | `SKIP` — an implementation does not infer which profile was meant |
+| a specification-only profile requested | known, no executable rules | any | `SKIP` — the profile exists and there is nothing to check it against |
+| an executable profile requested | executable rules | the object is a member of the profile and every rule holds | `PASS` |
+| an executable profile requested | executable rules | the object carries a governed type the profile does not declare | `FAIL` |
+| an executable profile requested | executable rules | the object carries no SC-OES block | `SKIP` — membership cannot be established, and SC-OES metadata is never manufactured to establish it |
+| an unknown profile requested | no such profile | — | not a verdict: a CLI / configuration error, exit code 2 |
+
+Read as five sentences, which is how the implementation is written:
+
+> `PNT` requested + executable PNT rules + the event is in PNT = `D` `PASS`.
+
+> `PNT` requested + executable PNT rules + the event is outside PNT = `D` `FAIL`.
+
+> A specification-only profile requested = `D` `SKIP`.
+
+> No profile requested = `D` `SKIP`.
+
+> An unknown profile requested = a CLI / configuration error, and not a conformance finding.
+
+Two rules bound what D may do with those answers. **D MUST NOT report A, B, C or E as its own
+findings** — an object whose block is malformed fails B, and D says only that it cannot establish
+membership. And **a profile MUST NOT require a producer to be a particular producer**: nothing in
+a profile's rules may read `source.system`, `source.adapter` or any other producer identity. A
+reference producer is an implementation held to the profile, not a condition of conforming to it.
+
+*(Non-normative.)* A profile with no executable rules returns `SKIP` rather than `PASS` for the
+reason the whole of this document turns on: `SKIP` means this was not assessed. A `PASS` produced
+from an empty rule set would be a conformance claim manufactured out of the absence of anything to
+check, and the specification-only profiles are deliberately unfinished rather than defective — so
+`FAIL` is wrong for them too.
 
 ## Dimension E — Ontology Conformance
 

@@ -14,8 +14,12 @@ The difference here is the direction of the failure. A stale count is embarrassi
 positioning sentence is a CLAIM: "SC-OES Certified" on a page nobody re-read, or a profile
 described as published when the tree has no document for it. So the sweep is over every TRACKED
 file rather than over an allowlist of pages, and the allowlist below is of files that quote a
-forbidden phrase IN ORDER TO FORBID IT — five of them, each of which would be the wrong place to
-find the phrase absent.
+forbidden phrase IN ORDER TO FORBID IT — seven of them, each of which would be the wrong place to
+find the phrase absent. **The count read `five` until 2026-09-07 and the tuple already held
+seven**: this module is on its own allowlist, because it quotes every banned phrase in order to
+sweep for it, and the seventh entry is the module itself. Every one of the seven was checked and
+passed the whole time, so nothing was wrong except this sentence — corrected where it is stated,
+which is the only place a count belongs.
 
 THE SUBSTRING THAT IS NOT A CLAIM, AND WHY THE PATTERN CARRIES A LOOKAHEAD
 -------------------------------------------------------------------------

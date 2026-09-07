@@ -32,11 +32,54 @@ own version in its own document, and an event type's semantic major is a segment
 ``type_id`` itself. An axis belongs where the thing it versions is authored, which is the same
 rule that keeps the two numbers below apart.
 
+THE SIX AXES, AND WHAT EACH ONE MOVES FOR
+------------------------------------------
+Three of them are constants in this file; three are authored where the thing they version is
+authored, which is the same rule stated one level up. The full set, as of 2026-09-07::
+
+    Python package        2.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+                                  surface, the ``Adapter`` contract, the harness CLI, the
+                                  fixture set. What ``pip install synapse-cdm==…`` resolves.
+    CDM schema            2.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
+                                  every serialised object, governed by ``MIGRATIONS.md``.
+    SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
+                                  ``spec/sc-oes/``, claimed by a producer in
+                                  ``Event.oes.spec_version``. Still a Draft specification.
+    Operational Ontology  0.1.0   the ontology's own metadata in ``ontology/*.ttl``, projected
+                                  into ``registry/sc_oes/ontology_terms.json``.
+    Profile versions      0.1.0   each profile declares its own, in its own document and in
+                                  ``registry/sc_oes/profiles.json``. Seven independent numbers
+                                  that happen to be equal.
+    Event semantic major  v1      a SEGMENT OF THE IDENTIFIER — ``sc.pnt.gnss_interference.v1``
+                                  — so a consumer matching on the string cannot fail to notice
+                                  a breaking change to one type's semantics.
+
+**Independence is the whole arrangement, and the equalities are coincidences.** Package 2.0.0 and
+schema 2.0.0 are two separately argued major changes that landed on one number (see below); a
+package 2.0.0 does NOT mean SC-OES 2.0, and SC-OES is at 0.1.0 and Draft. A profile at 0.1.0 says
+nothing about the specification's version, and an event type's ``v1`` says nothing about any of
+the five above it. Nothing in this package computes one axis from another, ``tests/
+test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids deriving
+``SC_OES_VERSION`` from either number beside it.
+
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``1.8.0`` and ``SCHEMA_VERSION`` is ``2.0.0``, and this paragraph is the
-third version of itself that does not have to reason about a hypothetical. **Corrected
+``PACKAGE_VERSION`` is ``2.0.0`` and ``SCHEMA_VERSION`` is ``2.0.0``, and this paragraph is the
+third version of itself that does not have to reason about a hypothetical.
+
+**AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
+``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
+party's adapter or consumer written against 1.8.0 does not work against a distribution whose
+canonical objects carry two new keys. The schema moved to 2.0.0 the day before, over
+``MIGRATIONS.md``'s table, for a different reason on a different axis. **Two independently
+justified major changes that happen to land on the same number**, and the arithmetic that
+produced each is written down where that axis is governed. They were also equal at ``1.0.0``,
+at first release, for exactly the same kind of reason — and that equality did not survive the
+eleventh adapter. Neither will this one: the next adapter is a package MINOR that moves no
+contract. Nothing below derives either number from the other, and
+``tests/test_cdm_packaging.py`` sweeps the package to keep it that way, with the sweep's own
+docstring recording that its teeth return whenever the two are level. **Corrected
 2026-09-06:** it read "``SCHEMA_VERSION`` is ``1.0.0``" for eight package releases, and the
 SC-OES model round moved the wire contract for the first time. The gap did not close and it did
 not merely widen — it reversed direction on one axis, which is worth stating plainly because it
@@ -162,7 +205,12 @@ SCHEMA_VERSION = "2.0.0"
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the
 #: number every release tag has to name. NOT the same fact as SCHEMA_VERSION — see above.
-PACKAGE_VERSION = "1.8.0"
+#: Moved 1.8.0 -> 2.0.0 on 2026-09-07, a MAJOR, and the decision is ADR 0005's rather than a
+#: derivation from the line above it: `Event.oes` and `Entity.ontology_types` change what this
+#: package emits, so a third party's consumer written against 1.8.0 does not work against this
+#: distribution. `gates/bump_derivation.py` derives a FLOOR and the floor for this arc is MINOR;
+#: the floor is not the answer, and ADR 0005 is where the answer is argued.
+PACKAGE_VERSION = "2.0.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

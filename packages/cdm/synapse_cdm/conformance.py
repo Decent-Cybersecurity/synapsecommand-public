@@ -37,18 +37,30 @@ class, and that class is a term the packaged ontology-term registry carries. A g
 ontology class the ontology never minted is a broken semantic contract, and an object claiming it
 is claiming something this repository cannot honour.
 
-WHY DIMENSION D IS `SKIP` FOR EVERY PROFILE IN v0.1.0
-------------------------------------------------------
-Not because no profile was named — that case is §38's and is reported separately — but because
-the profile documents say so. `spec/sc-oes/profiles/pnt.md` closes with: "Until this profile's
-normative content exists, a D assessment against it has no rules to check, and the permitted claim
-'SC-OES PNT Profile Conformant' is therefore not yet available." All seven profile documents are
-stubs carrying scope, version, maturity and implementation status, and none declares a
-conformance rule. A `PASS` here would be exactly the claim those documents say is not available,
-manufactured out of the absence of anything to check. The registry does declare which profile owns
-each governed type, and that membership is REPORTED in the detail — as an observation, not as a
-verdict, because a profile rule this repository has not written is not one a producer could have
-read. `PROFILE_RULES` below is where a profile's rules land when it acquires some.
+DIMENSION D IS EXECUTABLE FOR ONE PROFILE, AND `SKIP` FOR THE OTHER SIX
+------------------------------------------------------------------------
+**This section read "WHY DIMENSION D IS `SKIP` FOR EVERY PROFILE IN v0.1.0" until 2026-09-07, and
+the reasoning it carried is why the change is a change and not a repair.** It said that a `PASS`
+drawn from an empty rule set would be exactly the claim the profile documents said was not
+available, manufactured out of the absence of anything to check — and it said `PROFILE_RULES`
+below "is where a profile's rules land when it acquires some". PNT has acquired one. The round
+that gave it that rule wrote the rule and the check together, which is what every profile
+document promised would have to happen first.
+
+So D now has three answers rather than one, and each is a different fact:
+
+- **No profile requested** — `SKIP`. §38, unchanged: an implementation does not infer which
+  profile a producer probably meant.
+- **A profile with no executable rules requested** — `SKIP`, and this is the six
+  specification-only profiles. Not `PASS`, which would grade an object against nothing; not
+  `FAIL`, which would grade a profile for being deliberately unfinished (§36).
+- **PNT requested** — assessed. `PASS` when the object is a member of the profile and every rule
+  it declares holds; `FAIL` when a governed event outside the profile's scope is put to it.
+
+The rules themselves are NOT written in this module. They are read from
+`registry/sc_oes/profiles.json` through `oes_registry.get_profile`, because a rule set stated in
+two places is a rule set that can disagree with itself; `PROFILE_RULES` below is that read, and
+`PROFILE_RULE_CHECKS` is the table of checks the declared rules resolve to.
 
 OFFLINE, AND ASSERTED RATHER THAN PROMISED (§125)
 --------------------------------------------------
@@ -92,8 +104,11 @@ from synapse_cdm.oes import (
 from synapse_cdm.oes_registry import (
     OES_PAYLOAD_MODELS,
     PROFILES,
+    ImplementationStatus,
+    ProfileRecord,
     get_event_type,
     get_ontology_term,
+    get_profile,
     get_profile_event_types,
 )
 from synapse_cdm.schemas import generate
@@ -153,10 +168,16 @@ EVENT_ONTOLOGY_REFERENCE_FIELDS: tuple[str, ...] = ()
 #: extends a table instead of editing E.
 PROFILE_ONTOLOGY_ID_FIELDS: dict[str, tuple[str, ...]] = {name: () for name in PROFILES}
 
-#: What each profile requires of an object, when it requires anything. Empty for all seven in
-#: v0.1.0: `spec/sc-oes/profiles/*.md` are stubs and each one's "Conformance" section says
-#: outright that a D assessment against it has no rules to check. See the module docstring.
-PROFILE_RULES: dict[str, tuple[str, ...]] = {name: () for name in PROFILES}
+#: What each profile requires of an object, when it requires anything — READ FROM THE PACKAGED
+#: PROFILE REGISTRY rather than written down here, so that the rules a profile declares and the
+#: rules this tool checks are one fact. `PNT` declares one in v0.1.0; the other six declare none
+#: and are `()`, which is the state §36 requires be reported as `SKIP`.
+#:
+#: The read happens at import, which is a deliberate choice and not an oversight: it is the same
+#: packaged resource `assess_c` reaches for on every governed type, it opens no socket and needs
+#: no checkout (§125), and a registry that cannot be loaded is a defect a consumer should meet
+#: when it imports the tool rather than three hundred objects into a run.
+PROFILE_RULES: dict[str, tuple[str, ...]] = {name: get_profile(name).rules for name in PROFILES}
 
 
 class Verdict(NamedTuple):
@@ -426,28 +447,104 @@ def assess_c(obj: Any) -> Verdict:
 def assess_d(obj: Any, profile: str | None) -> Verdict:
     """Assessed only against a profile the caller named, and never inferred (§38).
 
-    In v0.1.0 the verdict is `SKIP` whichever profile is named, and the module docstring carries
-    the reason: no profile document declares a conformance rule, and a `PASS` drawn from an empty
-    rule set is the claim those documents say is not yet available. The registry's own statement
-    about which profile owns the object's governed type is reported as an OBSERVATION in the
-    detail, where it informs without grading.
+    §34's six conditions for a `PASS`, in the order they are decided: the caller named a profile;
+    the profile exists; it declares executable rules; its implementation status supports being
+    evaluated; the object is a member of it; and every one of its executable requirements holds.
+    The first four are questions about the PROFILE and are answered from the packaged registry;
+    the last two are questions about the object.
+
+    WHAT THIS DIMENSION DOES NOT REPORT
+    ------------------------------------
+    A, B, C or E as its own findings. An object with a malformed block fails B, and D says so by
+    being unable to establish membership — it does not restate B's findings under its own letter.
+    The registry's statement about which profile owns the object's type is REPORTED as an
+    observation wherever D has no verdict of its own to give, where it informs without grading.
     """
     if profile is None:
         return Verdict(SKIP, "no profile requested; an implementation does not infer which "
                              "profile a producer probably meant")
-    rules = PROFILE_RULES[profile]
+    record = get_profile(profile)
+    rules = record.rules
     if not rules:
         return Verdict(SKIP,
-                       f"profile {profile} declares no conformance rules in v0.1.0 "
+                       f"profile {profile} {record.version} is "
+                       f"{record.implementation_status.value} and declares no executable "
+                       f"conformance rules in SC-OES {SC_OES_VERSION} "
                        f"(spec/sc-oes/profiles/{profile.lower()}.md, 'Conformance'); "
                        f"{_profile_observation(obj, profile)}")
-    # A profile that has acquired rules is assessed against them; none has in v0.1.0, and the
-    # branch is here so that the round which writes the first rule set writes a check and not
-    # a dimension.
-    findings = [f"{profile}: {rule}" for rule in rules if not _profile_rule_holds(obj, rule)]
+    if record.implementation_status is not ImplementationStatus.PRODUCER_BACKED:
+        # Unreachable while the registry refuses the combination, and kept because §34's fourth
+        # condition is a condition and not a consequence: a status that stopped supporting
+        # evaluation must land here rather than in a PASS nobody re-read.
+        return Verdict(SKIP,
+                       f"profile {profile} {record.version} declares executable rules and its "
+                       f"implementation status {record.implementation_status.value} does not "
+                       "support conformance evaluation")
+
+    if not isinstance(obj, dict) or obj.get("object_kind") != "event":
+        return Verdict(SKIP, "profile conformance is assessed on Event; SC-OES metadata is "
+                             "carried there and nowhere else")
+    block = obj.get(OES_FIELD)
+    if not isinstance(block, dict):
+        # §38, and the sentence is the load-bearing half: a CDM event with no SC-OES block is a
+        # legacy object, and manufacturing a block for it in order to have something to grade
+        # would be this tool inventing the assertion it is here to check.
+        return Verdict(SKIP,
+                       f"no SC-OES block, so membership of profile {profile} {record.version} "
+                       "cannot be established; SC-OES metadata is not manufactured in order to "
+                       "assess it")
+
+    findings: list[str] = []
+    for rule in rules:
+        finding = _profile_rule_holds(obj, record, rule)
+        if finding is not None:
+            findings.append(f"{profile}: {finding}")
     if findings:
         return Verdict(FAIL, f"{len(findings)} {profile} profile finding(s)", tuple(findings))
-    return Verdict(PASS, f"{profile} profile rules hold ({len(rules)} checked)")
+    # §44's permitted claim, stated only where it is true. `00-conventions.md` forbids the
+    # certification words outright, and `13-conformance.md` requires a claim to name the
+    # dimensions and their verdicts — which the table above this detail line is.
+    return Verdict(PASS,
+                   f"{profile} profile {record.version} rules hold ({len(rules)} checked: "
+                   f"{', '.join(rules)}); the permitted claim \"SC-OES {profile} Profile "
+                   f"{_claim_version(record.version)} Conformant\" is available for this object")
+
+
+def _claim_version(version: str) -> str:
+    """`0.1.0` -> `0.1`, the form §44 spells the permitted claim in. Nothing else uses it."""
+    major, minor, _ = version.split(".")
+    return f"{major}.{minor}"
+
+
+def _event_type_is_a_member(obj: dict, record: ProfileRecord) -> str | None:
+    """`event_type_membership_required`: the object's governed type is one the profile owns.
+
+    The comparison is against the profile's OWN declared membership, not against the type's
+    domain segment: `sc.pnt.…` looking like a PNT identifier is a naming convention, and a
+    profile that graded on it would be inferring the very thing §38 forbids inferring.
+
+    A `type_id` that is missing or not a string is B's finding and not this one — the rule can
+    only say the object is not established as a member, which it does by naming what it found.
+    """
+    type_id = obj.get(OES_FIELD, {}).get("type_id")
+    if type_id in record.event_types:
+        return None
+    if not isinstance(type_id, str) or not type_id:
+        return ("the object claims no SC-OES semantic type, so it is not established as a member "
+                f"of profile {record.id} {record.version}, whose scope is "
+                f"{sorted(record.event_types)} (dimension B reports the block's own syntax)")
+    return (f"event type {type_id} is not a member of the requested profile {record.id} "
+            f"{record.version}, whose scope is {sorted(record.event_types)}")
+
+
+#: `rule name -> the check that decides it`. The keys are `ProfileConformanceRules`' declared
+#: flags, and `test_cdm_conformance.py` asserts the two sets are equal in both directions: a
+#: profile cannot declare a rule with no check behind it, and a check cannot sit here unreachable
+#: by any profile. Each entry returns the finding when the rule does NOT hold, and `None` when it
+#: does.
+PROFILE_RULE_CHECKS: dict[str, Any] = {
+    "event_type_membership_required": _event_type_is_a_member,
+}
 
 
 def _profile_observation(obj: Any, profile: str) -> str:
@@ -465,11 +562,21 @@ def _profile_observation(obj: Any, profile: str) -> str:
             f"{get_event_type(type_id).profile}, not in {profile}")
 
 
-def _profile_rule_holds(obj: Any, rule: str) -> bool:
-    """No profile carries a rule in v0.1.0, so nothing reaches here. See `PROFILE_RULES`."""
-    raise NotImplementedError(
-        f"profile rule {rule!r} is declared in PROFILE_RULES and has no implementation; the "
-        "round that writes a profile's normative content writes the check with it")
+def _profile_rule_holds(obj: dict, record: ProfileRecord, rule: str) -> str | None:
+    """One declared rule against one object: `None` when it holds, the finding when it does not.
+
+    The registry's `ProfileConformanceRules` is `extra="forbid"` and its declared flags are this
+    table's keys, so a profile cannot name a rule that arrives here without a check — which is
+    the arrangement every profile document promised: "the round that gives this profile its first
+    rule of its own writes the rules and the check that enforces them together".
+    """
+    check = PROFILE_RULE_CHECKS.get(rule)
+    if check is None:
+        raise NotImplementedError(
+            f"profile rule {rule!r} is declared in the packaged profile registry and has no "
+            "check in PROFILE_RULE_CHECKS; the two are asserted equal by the test suite"
+        )
+    return check(obj, record)
 
 
 # ------------------------------------------------------------------ dimension E — ontology
@@ -633,6 +740,11 @@ def assess_document(payload: Any, *, profile: str | None = None,
         "cdm_schema_version": SCHEMA_VERSION,
         "sc_oes_version": SC_OES_VERSION,
         "profile": profile,
+        # The version dimension D actually assessed against, taken from the packaged registry
+        # rather than from the caller. `null` when no profile was requested. It is reported
+        # because a D verdict is a verdict against a PROFILE VERSION, and a record of one that
+        # does not say which version was in force is a record of half the claim (§48).
+        "profile_version": None if profile is None else get_profile(profile).version,
         "required": list(required),
         "objects": results,
         "summary": summary,
@@ -674,7 +786,8 @@ def render_report(report: dict) -> str:
     lines = [
         f"sc-oes conformance   synapse-cdm {report['package_version']}, CDM "
         f"{report['cdm_schema_version']}, SC-OES {report['sc_oes_version']}",
-        f"profile              {report['profile'] or '(none requested)'}",
+        f"profile              "
+        f"{report['profile'] + ' ' + report['profile_version'] if report['profile'] else '(none requested)'}",
         f"required             {','.join(required)}",
         "",
         f"{'object'.ljust(width)}  {'kind'.ljust(kind_width)}  "
@@ -730,6 +843,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--profile", default=None, choices=PROFILES,
                         help="assess dimension D against this profile. Omitted, D is SKIP: an "
                              "implementation does not infer which profile a producer meant")
+    parser.add_argument("--profile-version", default=None, metavar="X.Y.Z",
+                        help="the profile version the caller means. Omitted, the packaged "
+                             "registry's version for that profile is used and reported; given "
+                             "and different, the invocation is refused rather than silently "
+                             "assessed against the version this package happens to carry")
     parser.add_argument("--require", default=None, metavar="A,B,C",
                         help="dimensions the caller requires. A required dimension that FAILs "
                              "or SKIPs makes the invocation unsuccessful; the reported verdict "
@@ -756,6 +874,20 @@ def main(argv: list[str] | None = None) -> int:
         return EXIT_OK
 
     required = _required(args.require, parser) if args.require else ()
+    if args.profile_version is not None:
+        # §23. A profile version is part of the request, so a request this package cannot serve
+        # is a configuration error (exit 2) and never a quiet fall-back to the version installed:
+        # a caller asking for rules that do not exist here must be told so, not handed the ones
+        # that do.
+        if args.profile is None:
+            parser.error("--profile-version names a version and no --profile names the profile "
+                         "it belongs to; a profile version is not a global setting")
+        carried = get_profile(args.profile).version
+        if args.profile_version != carried:
+            parser.error(
+                f"--profile-version {args.profile_version} is not the {args.profile} profile "
+                f"version this package carries, which is {carried}. The request is refused "
+                "rather than assessed against a different version of the profile's rules")
     if args.input is None:
         parser.error("--input is required (or --list-dimensions to see what is assessed)")
 

@@ -1,13 +1,23 @@
-"""The two packaged SC-OES registries, read as data, and the seven helpers over them.
+"""The three packaged SC-OES registries, read as data, and the helpers over them.
 
 WHAT THIS MODULE IS
 -------------------
 `synapse_cdm/registry/sc_oes/` holds the machine-readable runtime artefacts ADR 0004 puts there:
 `event_types.json`, the governed event contract, hand-authored under
-`spec/governance/EVENT-TYPE-PROCESS.md`, and `ontology_terms.json`, generated from the Turtle
-authority by `gates/ontology_terms.py` and drift-tested against it. This module loads both,
-validates them against their declared shape, and exposes the helper surface ADR 0004 decision 7
-names — so a consumer asks a question rather than opening a path.
+`spec/governance/EVENT-TYPE-PROCESS.md`; `ontology_terms.json`, generated from the Turtle
+authority by `gates/ontology_terms.py` and drift-tested against it; and `profiles.json`, the
+executable conformance metadata for the seven profiles. This module loads all three, validates
+them against their declared shape, and exposes the helper surface ADR 0004 decision 7 names — so
+a consumer asks a question rather than opening a path.
+
+`profiles.json` IS THE THIRD ARTEFACT, AND IT ARRIVED BECAUSE DIMENSION D BECAME EXECUTABLE
+--------------------------------------------------------------------------------------------
+ADR 0004's lineage note of 2026-09-07 records it: an offline dimension D has to answer "does this
+profile have rules, and is this event in it" with no repository checkout, and the normative
+profile documents under `spec/sc-oes/profiles/` do not ship and are prose. Parsing Markdown at
+runtime to decide a conformance verdict is the arrangement this registry directory exists to
+avoid. The file is additive — nothing about the offline, no-network architecture changes — and it
+carries only what dimension D branches on; the profile documents keep the narrative.
 
 WHY IT IS NOT CALLED `registry.py`
 ----------------------------------
@@ -68,6 +78,7 @@ from synapse_cdm.oes import (
 REGISTRY_DIR = ("registry", "sc_oes")
 EVENT_TYPES_FILE = "event_types.json"
 ONTOLOGY_TERMS_FILE = "ontology_terms.json"
+PROFILES_FILE = "profiles.json"
 
 #: The strictness the canonical objects use (`models.py`), for the same reason one level down: a
 #: registry that tolerated an undeclared key would let a governed field arrive misspelt and mean
@@ -300,6 +311,195 @@ class OntologyTermRegistry(BaseModel):
     terms: list[OntologyTermRecord]
 
 
+class ImplementationStatus(StrEnum):
+    """§114's two statuses, as the machine-readable vocabulary dimension D branches on.
+
+    The profile DOCUMENTS have carried these two states in prose since the profiles landed —
+    "**Reference producer-backed.**" and "**Specification-only in v0.1.0.**", asserted by
+    `tests/test_cdm_profiles.py`. This enum is the same fact in the form a validator can read,
+    and `tests/test_cdm_profiles.py` is where the two spellings are held together so that a
+    document and this registry cannot disagree about which state a profile is in.
+
+    Neither value is a certification word. `spec/sc-oes/00-conventions.md` forbids `CERTIFIED`,
+    `APPROVED` and `OFFICIAL` outright, and a status vocabulary is exactly where one of them
+    would arrive by accident: `PRODUCER_BACKED` says a producer in this repository emits the
+    profile's semantics and nothing about anybody's endorsement of it.
+    """
+    PRODUCER_BACKED = "PRODUCER_BACKED"
+    SPECIFICATION_ONLY = "SPECIFICATION_ONLY"
+
+
+class ProfileConformanceRules(BaseModel):
+    """The executable requirements one profile places on an object, as declared flags.
+
+    One flag exists in v0.1.0 and the model is `extra="forbid"`, so a profile cannot declare a
+    rule this package has no check for: the round that adds a rule adds the flag here and the
+    check in `conformance.py` in the same commit, which is the arrangement
+    `spec/sc-oes/profiles/*.md` has promised since the profiles landed.
+
+    All flags default to false, so a profile with no executable rules is `{}` in the file and
+    needs no per-rule denial. "Whether executable conformance rules exist" (§16) is therefore
+    DERIVED — `declared()` below — rather than carried as a second field that could disagree
+    with the flags beside it.
+    """
+    model_config = STRICT
+
+    event_type_membership_required: bool = Field(
+        default=False,
+        description="The object's `oes.type_id` must be one of the profile's governed event "
+                    "types. A governed type outside the profile is a dimension D FAIL; it is "
+                    "not a reason to widen the profile.",
+    )
+
+    def declared(self) -> tuple[str, ...]:
+        """The rule names this profile actually declares, in field order. Empty means none."""
+        return tuple(name for name in type(self).model_fields if getattr(self, name))
+
+
+class ProfileRecord(BaseModel):
+    """One SC-OES profile, in the shape §16 fixes: identity, state, membership, rules.
+
+    What is NOT here is as deliberate as what is. There is no narrative, no scope paragraph, no
+    ontology-concept list and no reference-producer name: those are the human-readable profile
+    document's, and §16 keeps machine-readable authority to executable conformance metadata. A
+    field here is one dimension D branches on.
+    """
+    model_config = STRICT
+
+    id: str = Field(description="The profile identifier, one of PROFILES.")
+    version: str = Field(description="The profile's own version (§48), independent of every "
+                                     "other axis.")
+    maturity: Maturity
+    implementation_status: ImplementationStatus
+    event_types: list[str] = Field(
+        description="The governed types this profile owns. Checked against event_types.json, "
+                    "which is where a type declares its owning profile — this list is a "
+                    "projection of that one and never a second opinion about it."
+    )
+    conformance_rules: ProfileConformanceRules = Field(
+        default_factory=ProfileConformanceRules,
+        description="The executable requirements dimension D checks. `{}` for a profile that "
+                    "has none.",
+    )
+
+    @field_validator("id")
+    @classmethod
+    def _known_profile(cls, v: str) -> str:
+        if v not in PROFILES:
+            raise ValueError(
+                f"profile {v!r} is not one of the seven declared profiles {PROFILES}; a profile "
+                "record may not name a profile that has no document"
+            )
+        return v
+
+    @field_validator("version")
+    @classmethod
+    def _semver(cls, v: str) -> str:
+        if SEMVER_RE.fullmatch(v) is None:
+            raise ValueError(f"{v!r} is not a semantic version, and a profile declares one")
+        return v
+
+    @field_validator("event_types")
+    @classmethod
+    def _governed_ids(cls, v: list[str]) -> list[str]:
+        for type_id in v:
+            if not is_governed_event_type(type_id):
+                raise ValueError(
+                    f"profile member {type_id!r} is not a governed type identifier: a profile "
+                    "governs `sc.` types and a third party's `x.` contract is not this "
+                    "repository's to file under one"
+                )
+        if len(set(v)) != len(v):
+            raise ValueError(f"a profile lists a governed type twice: {v}")
+        return v
+
+    @property
+    def rules(self) -> tuple[str, ...]:
+        """The executable rule names this profile declares. Empty means specification-only."""
+        return self.conformance_rules.declared()
+
+    @model_validator(mode="after")
+    def _rules_and_status_are_one_fact(self) -> "ProfileRecord":
+        """A profile with executable rules is producer-backed, and one without is not.
+
+        §34's fourth condition for a `PASS` is that "the profile implementation status supports
+        conformance evaluation", and §36 forbids a `PASS` for a profile with no executable
+        rules. Two independent fields could express the contradiction — rules declared on a
+        specification-only profile — and dimension D would then have to decide which one it
+        believed. It is refused here instead, so the question never reaches the assessment.
+        """
+        executable = bool(self.rules)
+        if executable and self.implementation_status is not ImplementationStatus.PRODUCER_BACKED:
+            raise ValueError(
+                f"profile {self.id!r} declares executable conformance rules {self.rules} and "
+                f"implementation status {self.implementation_status.value}. Executable rules are "
+                "the claim that a producer has been held to them"
+            )
+        if not executable and self.implementation_status is ImplementationStatus.PRODUCER_BACKED:
+            raise ValueError(
+                f"profile {self.id!r} is PRODUCER_BACKED and declares no executable conformance "
+                "rule, so dimension D against it can only ever SKIP while the registry says a "
+                "producer stands behind it"
+            )
+        return self
+
+
+class ProfileRegistry(BaseModel):
+    """The `profiles.json` document: its provenance header, and all seven profiles.
+
+    ALL SEVEN, AND THAT IS §19'S POINT
+    -----------------------------------
+    A specification-only profile is in this file so that a validator can tell "known profile,
+    no executable rules" from "no such profile". A registry holding only the profile that has
+    rules would make the second answer the only one it could give, and `Air` would be
+    indistinguishable from a typo.
+    """
+    model_config = STRICT
+
+    artefact: str
+    artefact_version: str
+    sc_oes_version: str
+    namespace: str
+    authored: str
+    authority: str
+    profiles: list[ProfileRecord]
+
+    @model_validator(mode="after")
+    def _the_seven_and_no_others(self) -> "ProfileRegistry":
+        listed = [p.id for p in self.profiles]
+        if len(set(listed)) != len(listed):
+            raise ValueError(f"a profile identifier appears twice: {listed}")
+        if set(listed) != set(PROFILES):
+            raise ValueError(
+                f"the profile registry carries {sorted(listed)} and the seven declared profiles "
+                f"are {sorted(PROFILES)}. §19 requires every profile to be present, including "
+                "the specification-only ones"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def _membership_agrees_with_the_event_registry(self) -> "ProfileRegistry":
+        """§17: there are not two lists of event types, there is one and a projection of it.
+
+        `event_types.json` is where a governed type declares its owning profile, and that is the
+        authority `get_profile_event_types` has always answered from. This check is what stops
+        the projection here from becoming a second, independently edited copy — a type filed
+        under Air in one file and listed under ISR in the other would otherwise make dimension D
+        and dimension C disagree about the same object, and nothing would say which was right.
+        """
+        for profile in self.profiles:
+            owned = {entry.id for entry in _event_registry().event_types
+                     if entry.profile == profile.id}
+            listed = set(profile.event_types)
+            if listed != owned:
+                raise ValueError(
+                    f"profile {profile.id!r} lists {sorted(listed)} and the event registry files "
+                    f"{sorted(owned)} under it. The event registry is where a type declares its "
+                    "profile; this list is a projection of that one"
+                )
+        return self
+
+
 def _read(name: str) -> Any:
     """Read one packaged registry as JSON, from wherever this package is installed."""
     root = importlib.resources.files("synapse_cdm")
@@ -316,6 +516,11 @@ def _event_registry() -> EventTypeRegistry:
 @functools.lru_cache(maxsize=1)
 def _term_registry() -> OntologyTermRegistry:
     return OntologyTermRegistry.model_validate(_read(ONTOLOGY_TERMS_FILE))
+
+
+@functools.lru_cache(maxsize=1)
+def _profile_registry() -> ProfileRegistry:
+    return ProfileRegistry.model_validate(_read(PROFILES_FILE))
 
 
 def list_event_types() -> tuple[EventTypeRecord, ...]:
@@ -347,6 +552,43 @@ def get_profile_event_types(profile: str) -> tuple[EventTypeRecord, ...]:
             f"{profile!r} is not one of the seven SC-OES profiles {PROFILES}"
         )
     return tuple(e for e in _event_registry().event_types if e.profile == profile)
+
+
+def list_profiles() -> tuple[ProfileRecord, ...]:
+    """Every profile the packaged registry carries, in the registry's own order (§113's).
+
+    All seven, always: §19 keeps the specification-only ones here so that a caller can tell a
+    known profile with no executable rules from a name nothing declares.
+    """
+    return tuple(_profile_registry().profiles)
+
+
+def get_profile(profile: str) -> ProfileRecord:
+    """The packaged record for `profile`, which must be one of the seven (§113).
+
+    RAISES on an unknown name rather than returning `None`, for `get_profile_event_types`'
+    reason one function up: a caller that mistyped a profile is a configuration error, and
+    `spec/sc-oes/13-conformance.md` makes it the CLI's exit code 2 rather than a conformance
+    finding. Recognition of an EVENT TYPE is a different question and keeps its `None`, because
+    an unrecognised governed type is something a producer can put on the wire and a profile name
+    is something only a caller can type.
+    """
+    for record in _profile_registry().profiles:
+        if record.id == profile:
+            return record
+    raise KeyError(
+        f"{profile!r} is not one of the seven SC-OES profiles {PROFILES}"
+    )
+
+
+def profile_has_executable_rules(profile: str) -> bool:
+    """Does `profile` declare rules dimension D can actually evaluate?
+
+    False for the six specification-only profiles in v0.1.0, and that is the state §36 requires
+    be reported as `SKIP` — not `PASS`, which would be a claim nothing was checked against, and
+    not `FAIL`, which would grade a profile for being deliberately unfinished.
+    """
+    return bool(get_profile(profile).rules)
 
 
 def get_legacy_event_type(type_id: str) -> EventType | None:

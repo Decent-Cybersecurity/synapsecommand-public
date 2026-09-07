@@ -259,10 +259,23 @@ def test_this_trees_package_version_is_the_bump_its_own_diff_requires(gate):
     """
     _require_git()
     verdict = gate.measure()
-    assert verdict.declared_kind == verdict.derived_kind, (
-        f"{verdict.declared} is a {verdict.declared_kind} over {verdict.base_tag} and the diff "
-        f"derives {verdict.derived_kind}"
-    )
+    if verdict.version_ruling is None:
+        assert verdict.declared_kind == verdict.derived_kind, (
+            f"{verdict.declared} is a {verdict.declared_kind} over {verdict.base_tag} and the "
+            f"diff derives {verdict.derived_kind}"
+        )
+    else:
+        # The floor is a floor (§10, 2026-09-07). A number deliberately stronger than it is
+        # allowed only where a person ruled it, for THIS arc, in MIGRATIONS.md — so what is
+        # asserted here is that the ruling names this arc and this kind, and that it is a
+        # raise and never a drop.
+        base, to, kind = verdict.version_ruling
+        assert (base, to) == (verdict.base_tag[1:], verdict.declared), verdict.version_ruling
+        assert kind == verdict.declared_kind
+        assert gate.KINDS.index(verdict.declared_kind) > gate.KINDS.index(verdict.derived_kind), (
+            f"a version ruling records a number STRONGER than the derived floor; "
+            f"{verdict.declared_kind} is not stronger than {verdict.derived_kind}"
+        )
     assert not verdict.ambiguities
 
 
@@ -360,8 +373,8 @@ def test_each_fixture_behaves_as_its_own_specification_says(gate, index):
     working. A gate that only refused would pass every refusal case and fail the two that must
     pass; a gate that only passed would fail the three refusals.
     """
-    name, before, after, base, declared, expected = gate.FIXTURES[index]
-    got = gate.run_fixture(before, after, base, declared)
+    name, before, after, base, declared, expected, ruling = gate.FIXTURES[index]
+    got = gate.run_fixture(before, after, base, declared, ruling)
     assert got == expected, (
         f"fixture {name!r} expected {expected or 'PASS'} and got {got or 'PASS'}"
     )
@@ -374,12 +387,22 @@ def test_the_fixture_set_covers_every_refusal_and_both_passing_directions(gate):
     coverage is asserted separately: all three refusals must be witnessed, and both a PATCH and a
     MINOR arc must be witnessed passing.
     """
-    outcomes = {expected for *_, expected in gate.FIXTURES}
+    outcomes = {expected for *_, expected, _ in gate.FIXTURES}
     assert {"UNDERSHOOT", "EXCEED", "UNRULED", None} <= outcomes, (
         f"the fixtures witness {outcomes}. All three refusal directions and at least one passing "
         "arc have to be there — a refusal nobody has seen is a refusal nobody has"
     )
-    passing = [(base, declared) for _, _, _, base, declared, exp in gate.FIXTURES if exp is None]
+    # The version-ruling mechanism (§10, 2026-09-07) has to be witnessed in all three of its
+    # states, for the same reason: one that only ever let numbers through would pass a fixture
+    # set in which it was never asked to refuse anything.
+    ruled = [(exp, ruling) for *_, exp, ruling in gate.FIXTURES if ruling is not None]
+    assert len(ruled) >= 3, ruled
+    assert {exp for exp, _ in ruled} == {None, "MIGRATIONS.md's", "UNDERSHOOT"}, (
+        f"the version-ruling fixtures witness {sorted(str(e) for e, _ in ruled)}. A ruling must "
+        "be seen honouring its own arc, refused as stale on another, and failing to rescue an "
+        "UNDERSHOOT")
+    passing = [(base, declared) for _, _, _, base, declared, exp, _ in gate.FIXTURES
+               if exp is None]
     kinds = {gate.single_step(base, gate.parse_version(declared)) for base, declared in passing}
     assert {"PATCH", "MINOR"} <= kinds, (
         f"the passing fixtures only witness {kinds}. A gate that refused every MINOR would pass a "
@@ -518,7 +541,19 @@ def test_the_human_summary_states_the_pending_arcs_unruled_count():
     measured = subprocess.run([sys.executable, str(GATE_PATH), "--json"],
                               cwd=REPO, capture_output=True, text=True)
     assert measured.returncode == 0, measured.stderr
-    unruled = json.loads(measured.stdout)["pending"]["unruled"]
+    report = json.loads(measured.stdout)
+    unruled = report["pending"]["unruled"]
+
+    if report["pending"]["kind"] is None:
+        # `PACKAGE_VERSION` is ahead of every tag, so the JUDGED arc already ends at the working
+        # tree and there is no pending arc behind it. The console must not print a pending line
+        # it has nothing to fill — a `pending 0 unruled` here would be a report about an arc
+        # that does not exist.
+        assert report["arc"]["to"] == "the working tree"
+        assert unruled == []
+        assert not [line for line in console.stdout.splitlines()
+                    if line.startswith("pending")], console.stdout
+        return
 
     pending = [line for line in console.stdout.splitlines() if line.startswith("pending")]
     assert len(pending) == 1, (
@@ -567,9 +602,19 @@ def test_the_json_measurement_is_what_a_round_would_quote():
                          cwd=REPO, capture_output=True, text=True)
     assert out.returncode == 0, out.stderr
     measured = json.loads(out.stdout)
-    assert measured["declared_kind"] == measured["derived_kind"]
+    if measured["version_ruling"] is None:
+        assert measured["declared_kind"] == measured["derived_kind"]
+    else:
+        assert measured["version_ruling"]["kind"] == measured["declared_kind"]
+        assert measured["version_ruling"]["to"] == measured["declared"]
     assert measured["arc"]["from"].startswith("v")
-    assert measured["pending"]["kind"] in gate_kinds()
+    # `null` while `PACKAGE_VERSION` is ahead of every tag: the judged arc then ENDS at the
+    # working tree, so there is no second arc left to report. That is the release-candidate
+    # state the gate's own docstring describes, and it is not a pending arc of zero.
+    if measured["arc"]["to"] == "the working tree":
+        assert measured["pending"]["kind"] is None
+    else:
+        assert measured["pending"]["kind"] in gate_kinds()
 
 
 def gate_kinds() -> tuple[str, ...]:

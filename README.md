@@ -223,7 +223,7 @@ to refuse it — a gate nobody has seen fail is a gate nobody has seen.
 **A release is a pushed tag.** `.github/workflows/publish.yml` does the rest:
 
 ```bash
-git tag -a v1.8.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
+git tag -a v2.0.0 -m "..."            # annotated; a lightweight tag is refused by the workflow
 git push origin main --follow-tags
 ```
 

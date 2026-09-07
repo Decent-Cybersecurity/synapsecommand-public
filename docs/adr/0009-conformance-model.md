@@ -11,6 +11,27 @@ valid third-party ontology terms, and an object whose `type_id` is syntactically
 adds the normative dimension E truth table below. The governed ontology prefix is dated
 `2026-09-06` (SA.1 §14, ADR 0003). Still Accepted.
 
+**Implementation note — round SK, 2026-09-07. Not a reopening: nothing decided here moves.** The
+five-dimensional architecture is unchanged — five dimensions, the same three verdicts, no
+aggregate score, the same four exit codes, the same required-dimension mechanism, and dimension D
+still assessed only against a profile the caller names. What SK changes is that dimension D became
+EXECUTABLE for one profile. `spec/sc-oes/profiles/pnt.md` acquired its first conformance rule of
+its own — event membership — and the check for it landed in the same commit, which is the
+arrangement every profile document has promised since the profiles were written. Consequently:
+
+- **PNT** requested, with the event in the profile, is `D = PASS`; with a governed event outside
+  the profile, `D = FAIL`.
+- **The other six profiles** remain specification-only and `D = SKIP`, with a detail line that now
+  says which state the profile is in and why, rather than that no profile has rules.
+- **No profile requested** is `D = SKIP`, unchanged, and **an unknown profile** remains a
+  CLI/configuration error at exit code 2, unchanged.
+
+The rules a profile declares are read from the packaged profile registry
+`registry/sc_oes/profiles.json` (ADR 0004's lineage note of the same date) rather than written into
+the tool, so that the rules a profile declares and the rules the tool checks cannot be two facts.
+This ADR is unchanged and Accepted; the note records when the first `PASS` became reachable, which
+is the date this model stopped being declarable-only.
+
 ## Context
 
 §34 retains five separately reportable dimensions — **A** CDM Conformance, **B** SC-OES Core

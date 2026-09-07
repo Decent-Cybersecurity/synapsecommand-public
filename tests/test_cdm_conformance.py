@@ -33,6 +33,7 @@ from synapse_cdm.conformance import (
     FAIL,
     PASS,
     PROFILE_ONTOLOGY_ID_FIELDS,
+    PROFILE_RULE_CHECKS,
     PROFILE_RULES,
     SKIP,
     UNASSESSED_THIRD_PARTY_TERM,
@@ -42,7 +43,16 @@ from synapse_cdm.conformance import (
     render_report,
 )
 from synapse_cdm.oes import MAX_EXTENSION_DEPTH
-from synapse_cdm.oes_registry import PROFILES, get_event_type, list_ontology_terms
+from synapse_cdm.oes_registry import (
+    PROFILES,
+    get_event_type,
+    get_profile,
+    list_ontology_terms,
+)
+
+#: The six profiles that deliberately have no executable rules (§13). Derived, so that
+#: a seventh acquiring rules changes this set rather than passing unnoticed.
+SPECIFICATION_ONLY = tuple(p for p in PROFILES if not get_profile(p).rules)
 from synapse_cdm.version import SCHEMA_VERSION, SC_OES_VERSION
 
 EVENT_ID = "4cd605e7-afa2-5360-b5b9-c5e9fb5c76f4"
@@ -428,29 +438,123 @@ def test_d_skips_when_no_profile_is_requested():
     assert "does not infer" in detail(event(), "D")
 
 
-def test_d_skips_against_a_named_profile_because_no_profile_declares_a_rule_in_v0_1_0():
-    """spec/sc-oes/profiles/*.md: "a D assessment against it has no rules to check"."""
-    assert verdicts(event(), profile="PNT")["D"] == SKIP
-    assert "declares no conformance rules" in detail(event(), "D", profile="PNT")
+def test_d_skips_against_a_specification_only_profile_because_it_declares_no_rule():
+    """§36. `spec/sc-oes/profiles/air.md`: "a D assessment against it has no rules to check"."""
+    for profile in SPECIFICATION_ONLY:
+        assert verdicts(event(), profile=profile)["D"] == SKIP
+        said = detail(event(), "D", profile=profile)
+        assert "declares no executable conformance rules" in said
+        assert "SPECIFICATION_ONLY" in said
 
 
-def test_every_profile_declares_no_conformance_rules_and_no_ontology_id_field_in_v0_1_0():
+def test_d_passes_the_canonical_event_against_the_executable_profile():
+    """§34's six conditions, met. The profile is named, exists, has rules, and the event is in it."""
+    assert verdicts(event(), profile="PNT")["D"] == PASS
+    said = detail(event(), "D", profile="PNT")
+    assert "PNT profile 0.1.0 rules hold (1 checked: event_type_membership_required)" in said
+    assert '"SC-OES PNT Profile 0.1 Conformant"' in said
+
+
+def test_the_canonical_event_passes_all_five_dimensions_against_its_profile():
+    """§35/§91: five verdicts, five reasons, no aggregate anywhere. The hard criterion."""
+    # The canonical reference event carries an entity relation with a governed predicate, which
+    # is what gives E a governed identifier to recognise: an event with no ontology identifier at
+    # all is an honest E `SKIP` and would prove nothing about the five-PASS case.
+    obj = event(related_entities=[ENTITY_ID],
+                oes=oes_block(entity_relations=[{"entity_id": ENTITY_ID,
+                                                 "predicate": governed_term()}]))
+    result = conformance.assess(obj, profile="PNT")
+    assert {k: v["verdict"] for k, v in result["dimensions"].items()} == {
+        "A": PASS, "B": PASS, "C": PASS, "D": PASS, "E": PASS}
+    reasons = [v["detail"] for v in result["dimensions"].values()]
+    assert len(set(reasons)) == 5, "each dimension must have its own reason"
+    assert "overall" not in json.dumps(result).lower()
+
+
+def test_d_fails_a_governed_event_that_belongs_to_another_profile():
+    """§40/§94. The distinction between "no rules to run" and "rules ran and the object is out"."""
+    elsewhere = event(oes=oes_block(type_id="sc.c2.system_availability_changed.v1"))
+    assert verdicts(elsewhere, profile="PNT")["D"] == FAIL
+    findings = conformance.assess(elsewhere, profile="PNT")["dimensions"]["D"]["findings"]
+    assert len(findings) == 1
+    assert "is not a member of the requested profile PNT 0.1.0" in findings[0]
+    assert "sc.c2.system_availability_changed.v1" in findings[0]
+
+
+def test_d_fails_a_third_party_type_put_to_the_executable_profile():
+    """An `x.` type is a contract this repository does not govern, and it is not in PNT either."""
+    ungoverned = event(oes=oes_block(type_id="x.acme.pnt.thing.v1"))
+    assert verdicts(ungoverned, profile="PNT")["D"] == FAIL
+
+
+def test_d_skips_a_legacy_event_with_no_oes_block_against_the_executable_profile():
+    """§38: membership cannot be established, and SC-OES metadata is not manufactured for it."""
+    legacy = event()
+    del legacy["oes"]
+    assert verdicts(legacy, profile="PNT")["D"] == SKIP
+    assert "not manufactured" in detail(legacy, "D", profile="PNT")
+
+
+def test_d_skips_a_non_event_object_whichever_profile_is_named():
+    for profile in PROFILES:
+        assert verdicts(entity(), profile=profile)["D"] == SKIP
+
+
+def test_the_declared_rules_are_exactly_the_checks_this_module_implements():
+    """Both directions: no rule without a check, and no check no profile can reach.
+
+    This is what makes `_profile_rule_holds`' `NotImplementedError` unreachable in a shipped
+    tree, and it is the closure the profile documents promised — the round that declares a rule
+    writes its check in the same commit.
+    """
     assert set(PROFILE_RULES) == set(PROFILES) == set(PROFILE_ONTOLOGY_ID_FIELDS)
-    assert all(rules == () for rules in PROFILE_RULES.values())
+    declared = {rule for rules in PROFILE_RULES.values() for rule in rules}
+    assert declared == set(PROFILE_RULE_CHECKS)
     assert all(fields == () for fields in PROFILE_ONTOLOGY_ID_FIELDS.values())
 
 
+def test_exactly_one_profile_declares_a_rule_in_v0_1_0():
+    """§12: PNT only. The other six are specification-only and D reports that, not a grade."""
+    assert [name for name, rules in PROFILE_RULES.items() if rules] == ["PNT"]
+    assert PROFILE_RULES["PNT"] == ("event_type_membership_required",)
+
+
 def test_d_reports_the_registrys_own_statement_about_the_type_as_an_observation():
-    assert "the registry declares" in detail(event(), "D", profile="PNT")
-    elsewhere = event(oes=oes_block(type_id="sc.air.air_track_observed.v1"))
-    assert "not in PNT" in detail(elsewhere, "D", profile="PNT")
+    """The observation survives where D has no verdict of its own: a specification-only profile."""
+    assert "the registry declares" in detail(event(), "D", profile="Air")
+    assert "not in Air" in detail(event(), "D", profile="Air")
     ungoverned = event(oes=oes_block(type_id="x.acme.pnt.thing.v1"))
-    assert "not a governed type" in detail(ungoverned, "D", profile="PNT")
+    assert "not a governed type" in detail(ungoverned, "D", profile="Air")
 
 
-def test_d_is_skip_for_every_one_of_the_seven_profiles():
-    for profile in PROFILES:
-        assert verdicts(event(), profile=profile)["D"] == SKIP
+def test_the_profile_rules_do_not_read_any_producer_identity():
+    """§21/§25: PNTMAP is a reference producer, not a condition of conforming.
+
+    The same event, produced by four different systems and adapters, gets the same D verdict.
+    Asserted over the assessment rather than over the source text, because what matters is that
+    the verdict does not move.
+    """
+    for system, adapter_name in (("PNTMAP", "pntmap"), ("ACME-GNSS-MONITOR", "acme"),
+                                 ("MIL-SENSOR-7", "milsensor"), ("SIMULATOR", "sim")):
+        obj = event(source={"system": system, "adapter": adapter_name,
+                            "adapter_version": "9.9.9", "synthetic": True},
+                    source_ids=[{"system": system, "external_id": "X-1"}])
+        assert verdicts(obj, profile="PNT")["D"] == PASS, system
+
+
+def test_the_profile_requires_none_of_the_optional_semantics():
+    """§26/§27/§31/§32/§33: nothing optional is made mandatory by the profile.
+
+    Every one of these is already `None`, `[]` or `{}` on the canonical event and the verdict is
+    `PASS`; the test states the list so that a future rule making one of them required has to
+    delete a name from it.
+    """
+    optional = ("confidence", "verification", "status", "effective_from", "effective_to",
+                "security", "evidence", "entity_relations", "extensions")
+    block = oes_block()
+    assert all(not block[field] for field in optional), block
+    obj = event(oes=block, geometry=None, related_entities=[])
+    assert verdicts(obj, profile="PNT")["D"] == PASS
 
 
 # ------------------------------------------------------------------ §39 / SA.1 dimension E
@@ -607,6 +711,115 @@ def test_the_human_report_names_every_dimension_and_its_verdict(tmp_path, capsys
     for d in DIMENSIONS:
         assert d.name in out
     assert "A conformance claim names the dimensions assessed" in out
+
+
+# ---------------------------------------------- §66 the profile battery, at the process boundary
+#
+# Eight invocations, each one a row of §66's table. They are run through `main` rather than
+# through `assess` because what they are about is the EXIT STATUS a CI system branches on, and
+# the exit status is a different layer from the verdict — `13-conformance.md` keeps them apart
+# and this is where both halves are read at once.
+
+
+def _canonical(tmp_path):
+    """The canonical PNT reference event, in a file, with a governed ontology identifier on it."""
+    return write(tmp_path, event(related_entities=[ENTITY_ID],
+                                 oes=oes_block(entity_relations=[
+                                     {"entity_id": ENTITY_ID, "predicate": governed_term()}])),
+                 name="pnt.json")
+
+
+def _verdicts_from(capsys):
+    return {k: v["verdict"]
+            for k, v in json.loads(capsys.readouterr().out)["objects"][0]["dimensions"].items()}
+
+
+def test_cli_valid_pnt_event_against_pnt_profile_passes_d(tmp_path, capsys):
+    assert conformance.main(["--input", _canonical(tmp_path), "--profile", "PNT",
+                             "--json"]) == EXIT_OK
+    assert _verdicts_from(capsys)["D"] == PASS
+
+
+def test_cli_the_machine_readable_proof_carries_five_named_dimensions(tmp_path, capsys):
+    """§43: the established shape, not a second JSON format written for the proof."""
+    assert conformance.main(["--input", _canonical(tmp_path), "--profile", "PNT", "--require",
+                             "A,B,C,D,E", "--json"]) == EXIT_OK
+    report = json.loads(capsys.readouterr().out)
+    assert report["profile"] == "PNT"
+    assert report["profile_version"] == "0.1.0"
+    dimensions = report["objects"][0]["dimensions"]
+    assert list(dimensions) == ["A", "B", "C", "D", "E"]
+    assert {k: v["verdict"] for k, v in dimensions.items()} == {k: PASS for k in "ABCDE"}
+
+
+def test_cli_the_human_proof_states_the_permitted_pnt_claim(tmp_path, capsys):
+    """§44's permitted language, and none of the words §80 forbids."""
+    assert conformance.main(["--input", _canonical(tmp_path), "--profile", "PNT",
+                             "--require", "A,B,C,D,E"]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "SC-OES PNT Profile 0.1 Conformant" in out
+    assert "profile              PNT 0.1.0" in out
+    for forbidden in ("Certified", "Approved", "Official", "NATO Certified", "NATO Approved"):
+        assert forbidden not in out, forbidden
+
+
+def test_cli_a_non_pnt_governed_event_against_pnt_fails_and_exits_one(tmp_path, capsys):
+    obj = event(oes=oes_block(type_id="sc.c2.system_availability_changed.v1"))
+    assert conformance.main(["--input", write(tmp_path, obj), "--profile", "PNT",
+                             "--require", "D", "--json"]) == EXIT_FAILED
+    assert _verdicts_from(capsys)["D"] == FAIL
+
+
+def test_cli_a_specification_only_profile_skips_and_a_required_d_is_unsuccessful(
+        tmp_path, capsys):
+    """§36 and §41's second half: SKIP is honest, and requiring it is still unsuccessful."""
+    path = _canonical(tmp_path)
+    assert conformance.main(["--input", path, "--profile", "Air", "--json"]) == EXIT_OK
+    assert _verdicts_from(capsys)["D"] == SKIP
+    assert conformance.main(["--input", path, "--profile", "Air", "--require", "D",
+                             "--json"]) == EXIT_FAILED
+    assert _verdicts_from(capsys)["D"] == SKIP
+
+
+def test_cli_no_profile_requested_skips_d(tmp_path, capsys):
+    assert conformance.main(["--input", _canonical(tmp_path), "--json"]) == EXIT_OK
+    assert _verdicts_from(capsys)["D"] == SKIP
+
+
+def test_cli_an_unknown_profile_is_a_configuration_error_and_not_a_finding(tmp_path):
+    """§37/§95: exit 2, and no report — a report would claim an assessment happened."""
+    with pytest.raises(SystemExit) as raised:
+        conformance.main(["--input", _canonical(tmp_path), "--profile", "UnknownProfile"])
+    assert raised.value.code == EXIT_USAGE
+
+
+def test_cli_an_unsupported_profile_version_does_not_fall_back(tmp_path):
+    """§23. The refusal is the point: a caller asking for rules this package does not carry is
+    told so, rather than handed the rules it does carry under the number it asked for."""
+    with pytest.raises(SystemExit) as raised:
+        conformance.main(["--input", _canonical(tmp_path), "--profile", "PNT",
+                          "--profile-version", "0.2.0"])
+    assert raised.value.code == EXIT_USAGE
+    with pytest.raises(SystemExit) as raised:
+        conformance.main(["--input", _canonical(tmp_path), "--profile-version", "0.1.0"])
+    assert raised.value.code == EXIT_USAGE
+
+
+def test_cli_the_supported_profile_version_is_accepted(tmp_path, capsys):
+    assert conformance.main(["--input", _canonical(tmp_path), "--profile", "PNT",
+                             "--profile-version", "0.1.0", "--require", "A,B,C,D,E",
+                             "--json"]) == EXIT_OK
+    assert _verdicts_from(capsys)["D"] == PASS
+
+
+def test_no_aggregate_verdict_appears_even_when_all_five_pass(tmp_path, capsys):
+    """§67: five PASSes are still five facts. No overall, no score, no level."""
+    conformance.main(["--input", _canonical(tmp_path), "--profile", "PNT", "--require",
+                      "A,B,C,D,E"])
+    human = capsys.readouterr().out.lower()
+    for banned in ("overall", "score", "5/5", "gold", "grade", "percentage"):
+        assert banned not in human.replace("no aggregate verdict, score, grade or percentage", ""), \
+            banned
 
 
 def test_the_output_uses_no_forbidden_claim(tmp_path, capsys):
