@@ -1,0 +1,70 @@
+{
+  "adapter": "legion",
+  "license_class_supported_by_these_readings": "LICENSED",
+  "mapping_rule_applied": "M's ruling 2026-09-07T21:39:33Z on the five questions. The mapping rule's vendor-API line sent this one to M (\"a vendor API description under the vendor's own terms -> M_TO_RULE\"), and M ruled it on the readings above: publicly documented (question 1, YES); implementation and redistribution not stated (questions 2 and 3); no proprietary SDK and no confidential material in the shipped adapter (question 4, NO, a reading of this tree); Picogrid's terms bind customers under an executed Order Form only (question 5). LICENSED records that the terms are the vendor's and that this repository redistributes none of the document, asserting no permission nobody granted. PROPRIETARY_PLUGIN was excluded by M's prior ruling for an adapter that ships in this repository, ARCHITECTURE.md 3.2 defining that class as one whose adapter \"lives outside this repository\".",
+  "not_committed": "This record is a reading of the publishers' pages, not an acquisition and not a pin: no document was downloaded into this repository, no hash of any standard is claimed, and no clause of any standard is transcribed beyond the quoted sentences below. It states no permission: where a page is silent, the record says the page is silent rather than inferring a grant. It does not claim the pages still read this way after read_at; a later reading is a later record beside this one. It does not claim Picogrid forbids anything: questions 2, 3 and 5 answer NOT STATED, and LICENSED is the conservative reading of silence rather than a quotation of a prohibition. It does not claim the pinned OpenAPI document is the live one - it is not, and the drift is recorded above. PUBLIC_GOVERNMENT is refuted by the readings (Picogrid, Inc. is a company and \".govcloud.\" is a deployment name in a hostname), and CONTROLLED is refuted by the documentation being served with no credential.",
+  "read_at": "2026-09-07T21:00:24Z",
+  "standards": [
+    {
+      "availability": "free_download",
+      "edition_if_stated": "not stated",
+      "fetched_at": "2026-09-07T20:58:23Z",
+      "http_status": 200,
+      "identifier": "docs.picogrid.com",
+      "name": "Legion Platform API v3 documentation, read for whether the interface is public",
+      "notes": "M's question 1 (publicly documented?) answers YES from this page and the next two: 330998 bytes served to a client carrying no credential, titled \"Getting Started with Legion\", and the page itself invites machine reading. Nothing on it grants or withholds a licence.",
+      "page_url": "https://docs.picogrid.com/",
+      "publisher": "Picogrid, Inc.",
+      "quoted": "Fetch the complete documentation index at: https://docs.picogrid.com/llms.txt ... Append .md to any documentation page URL to get its markdown version"
+    },
+    {
+      "availability": "free_download",
+      "edition_if_stated": "updatedAt: 2026-05-10T09:22:51.000Z",
+      "fetched_at": "2026-09-07T21:00:24Z",
+      "http_status": 200,
+      "identifier": "openapi_pin.json source.prose_companion.url",
+      "name": "The prose companion the pin names, read for corroboration of the pin",
+      "notes": "Byte-for-byte the value fixtures/legion/spec/openapi_pin.json's source.prose_companion.updated_at states, so the pin is corroborated at the publisher and not only asserted here. This entry carries no licence sentence because the page carries none.",
+      "page_url": "https://docs.picogrid.com/reference/post_v3-entities-entityid-locations-2.md",
+      "publisher": "Picogrid, Inc.",
+      "quoted": "---\nupdatedAt: 2026-05-10T09:22:51.000Z\n---"
+    },
+    {
+      "availability": "free_download",
+      "edition_if_stated": "info.version 3.14.0 at fetched_at",
+      "fetched_at": "2026-09-07T20:58:26Z",
+      "http_status": 200,
+      "identifier": "Legion Platform API, info.version 3.14.0 live (pinned copy states 3.0.0)",
+      "name": "The Legion OpenAPI document itself, read for a license object",
+      "notes": "The quoted line is the whole of the document's `info` block: two keys, and `license` is not one of them, so the interface description states no terms at all. Served without authentication. M's question 3 (redistribution of interface details permitted?) is therefore NOT STATED rather than granted. M's question 4 (does the shipped adapter rely on a proprietary SDK or confidential material?) is a reading of this tree and answers NO: adapters/legion.py:109-126 imports __future__, datetime, json, math, typing and synapse_cdm.* only - no vendor package, no HTTP client, no credential - and its docstring at :11-12 states the rule, \"This adapter does not own, and must never acquire, an HTTP client, an OAuth token, a retry policy, a page cursor or a base URL.\" READING WORTH RECORDING AND REFUTING NOTHING: live this pass the document is 1079453 bytes, sha256 b44bb1241157527c29b1f7bbfe918ea5b0edecaa6b64b86f8ad7a44b48e90206, info.version 3.14.0, against the pin's 984135 bytes / 464857b081f1fb47c82e56b23f7585eb44e475c64cec1678629b41a252f6b9e1 / 3.0.0 at 2026-08-22T21:04:41Z. That is the drift the pin's own _comment was written for; the tests walk the pinned file.",
+      "page_url": "https://api.hopper.west.prod.govcloud.legion.picogrid.com/v3/openapi.json",
+      "publisher": "Picogrid, Inc.",
+      "quoted": "{\"title\": \"Legion Platform API\", \"version\": \"3.14.0\"}"
+    },
+    {
+      "availability": "not_stated",
+      "edition_if_stated": "not applicable",
+      "fetched_at": "2026-09-07T20:58:25Z",
+      "http_status": 200,
+      "identifier": "www.picogrid.com",
+      "name": "Picogrid's corporate site, read for every legal route it offers",
+      "notes": "The quoted string is the ONE legal link the page carries, found by extracting every href and filtering for term/legal/privacy/policy/licen/eula. The five routes that do not exist, each recorded with its instant: https://www.picogrid.com/terms 404 at 2026-09-07T20:58:24Z; https://www.picogrid.com/legal 404 at 20:58:38Z; https://www.picogrid.com/legal/terms-of-service 404 at 20:58:37Z; https://www.picogrid.com/privacy 404 at 20:58:39Z; https://docs.picogrid.com/terms 404 at 20:58:38Z. There is no terms-of-service page governing a reader of the documentation.",
+      "page_url": "https://www.picogrid.com/",
+      "publisher": "Picogrid, Inc.",
+      "quoted": "/legal/commercial-license-terms.pdf"
+    },
+    {
+      "availability": "vendor_terms",
+      "edition_if_stated": "not stated in the document",
+      "fetched_at": "2026-09-07T20:58:55Z",
+      "http_status": 200,
+      "identifier": "commercial-license-terms.pdf, 135326 bytes, 7 pages",
+      "name": "Picogrid Standard Terms and Conditions, the only terms document that exists",
+      "notes": "The clauses were extracted from the PDF OUTSIDE this tree (FlateDecode content streams, Type0/CIDFontType2 glyph ids resolved through the document's own three ToUnicode CMaps, 80 entries); no fetched byte is committed. The opening sentence is what scopes all of it, and it is why M's questions 2 and 5 answer NOT STATED rather than NO: the Standard Terms are a contract with a Customer under an executed Order Form, this repository is not one, 5.1's restrictions bind \"Customer\", 1.6 defines \"Product\" as Picogrid's Software and Platform rather than the interface description, and 1.2 excludes from Confidential Information anything \"publicly available through no fault of Customer\", which the public OpenAPI document is. Nothing in the document addresses third-party use of the public interface description - and the absence of a grant is not a grant.",
+      "page_url": "https://www.picogrid.com/legal/commercial-license-terms.pdf",
+      "publisher": "Picogrid, Inc.",
+      "quoted": "These Standard Terms and Conditions, including any Addenda (collectively, \"Standard Terms\") are incorporated by reference into the Order Form executed by Customer and Picogrid, Inc. (\"Picogrid\") and form a legally binding agreement between them and govern a Customer's use of the Products and receipt of Services ...\n1.6 \"Product(s)\" mean Picogrid's proprietary Software (as defined below), \"Picogrid Platform\" product, as specified by the Customer on the Order Form ...\n4.1 Ownership. Except for the limited license rights expressly provided herein, Picogrid retains all rights, title and interest in and to the Product(s), Documentation and any other related documentation or materials provided by Picogrid hereunder ...\n5.1 Restrictions. Customer will not (and will not allow any third party to): (i) reverse engineer or attempt to discover any source code or underlying ideas or algorithms of any Product ... (iii) list or otherwise display or copy any object code of any Product; (iv) copy any Product (or component thereof); (v) develop any improvement, modification or derivative work thereof ...\n1.2 \"Confidential Information\" means all information disclosed by Picogrid to the Customer in connection with this Agreement ... Confidential Information shall not include information that (i) is publicly available through no fault of Customer ..."
+    }
+  ],
+  "what_this_is": "Licensing posture of the source standard(s) behind the legion adapter, read from the publishers' own pages on 2026-09-07. Not a pin: no document was acquired. Read by P1 for license_class."
+}

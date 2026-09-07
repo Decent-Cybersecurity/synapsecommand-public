@@ -1,0 +1,58 @@
+{
+  "adapter": "tak",
+  "license_class_supported_by_these_readings": "PUBLIC_GOVERNMENT",
+  "mapping_rule_applied": "Mapping rule, quoted from rounds/briefs/PA-soif-licence-provenance.md: \"a standard the publisher states is a free public download from a public body or treaty/alliance organisation (ICAO, ITU, NATO, EUROCONTROL) -> PUBLIC_GOVERNMENT; a standard released under an open licence or into the public domain by its author (CoT schema, if the page says so) -> OPEN; a standard sold or licensed by a private standards body or vendor (RTCA, NMEA) -> LICENSED; where one adapter rests on two standards with different postures, the MORE restrictive class governs and both readings are recorded; access restricted by classification/eligibility -> CONTROLLED; a vendor API description under the vendor's own terms -> M_TO_RULE\". Applied, and the rule does NOT decide this one on its own words: its OPEN branch is conditioned on the page saying the schema is under an open licence or in the public domain, and the page says \"All rights reserved\" AND \"Distribution Unlimited\". LICENSED is refuted by the readings (no fee, no agreement, nothing to sign); CONTROLLED is refuted by the words \"Distribution Unlimited\". PUBLIC_GOVERNMENT - \"published by a government or an alliance body and publicly retrievable, under that body's own terms\" - fits the retrievability and the \"under that body's own terms\" exactly, and fits the publisher if MITRE as an FFRDC republishing through the TAK Product Center counts as such a body. That last step is a judgement and not a derivation, so it was put to M: RULED PUBLIC_GOVERNMENT by M 2026-09-07T21:39:33Z, over the defensible alternative OPEN.",
+  "not_committed": "This record is a reading of the publishers' pages, not an acquisition and not a pin: no document was downloaded into this repository, no hash of any standard is claimed, and no clause of any standard is transcribed beyond the quoted sentences below. It states no permission: where a page is silent, the record says the page is silent rather than inferring a grant. It does not claim the pages still read this way after read_at; a later reading is a later record beside this one. It does not claim MITRE is a government body: the class was ruled by M on the readings above, and the sentence that decides it - whether \"All rights reserved. Approved for Public Release; Distribution Unlimited.\" is read as ARCHITECTURE.md 3.2's \"publicly available under terms permitting free implementation\" - is recorded here as the question it is.",
+  "read_at": "2026-09-07T20:58:01Z",
+  "standards": [
+    {
+      "availability": "free_download",
+      "edition_if_stated": "Version 2.0, 13-June-2003",
+      "fetched_at": "2026-09-07T20:58:01Z",
+      "http_status": 200,
+      "identifier": "CoT Base-Event Schema (Event-PUBLIC.xsd), MITRE Case #11-3895",
+      "name": "Schema for Cursor-On-Target (CoT) Event data model, the document the adapter implements",
+      "notes": "The terms are in the document's own header rather than on a publisher page, which is why this entry is the one the class rests on. `gh api repos/TAK-Product-Center/atak-civ/contents/takcot/mitre` at 2026-09-07T20:57:5xZ lists twelve CoT schemas and every one is named \"... (PUBLIC RELEASE).xsd\": Base-Event, Contact, Flow-Tags, Image, Link, Remarks, Request, Sensor, Shape, Spatial, Track, Uid. QUOTATION DELIBERATELY PARTIAL, and this is the reason rather than an accident. The body line immediately above \"All rights reserved.\" is the schema's attribution line: it names The MITRE Corporation and the year 2005 in the ordinary notice form. It is DESCRIBED here and not pasted, because tests/test_cdm_publication.py::test_the_only_copyright_notices_are_in_licence_files refuses any tracked file but the licence files to carry a notice of that shape, and NOTICE states that this repository keeps its licence policy at the repository level instead of in per-file headers. Nothing the class rests on is omitted: the two sentences that decide it are quoted above, verbatim and in the document's own order.",
+      "page_url": "https://raw.githubusercontent.com/TAK-Product-Center/atak-civ/main/takcot/mitre/CoT%20Base-Event%20Schema%20%20(PUBLIC%20RELEASE).xsd",
+      "publisher": "The MITRE Corporation, republished by the TAK Product Center",
+      "quoted": "Schema for Cursor-On-Target (CoT) Event data model (Version 2.0) 13-June-2003\nAll rights reserved.\nApproved for Public Release; Distribution Unlimited.\nMITRE Case #11-3895 (Event-PUBLIC.xsd)"
+    },
+    {
+      "availability": "free_download",
+      "edition_if_stated": "not stated",
+      "fetched_at": "2026-09-07T20:57:37Z",
+      "http_status": 200,
+      "identifier": "CoT_link.xsd, MITRE Case #11-3911",
+      "name": "CoT_link schema, the same marking under a second case number",
+      "notes": "Recorded because one header could be an artefact of one file; two files in two repositories carrying the same two sentences under different case numbers is the publisher's practice rather than a copy-paste. Its attribution line names the years 2005-2006, one range wider than the Base-Event schema's, and is omitted from the quotation for the same reason given in the entry above.",
+      "page_url": "https://raw.githubusercontent.com/TAK-Product-Center/Server/main/src/takserver-common/src/main/xsd/CoT_link.xsd",
+      "publisher": "The MITRE Corporation, republished by the TAK Product Center",
+      "quoted": "All rights reserved.\nApproved for Public Release; Distribution Unlimited.\nMITRE Case #11-3911  (CoT_link.xsd)"
+    },
+    {
+      "availability": "unreachable",
+      "edition_if_stated": "not applicable",
+      "fetched_at": "2026-09-07T20:55:40Z",
+      "http_status": 403,
+      "identifier": "mitre.org/our-impact/intellectual-property/cursor-target",
+      "name": "MITRE's own Cursor-on-Target publication page",
+      "notes": "An absence recorded as a reading. www.mitre.org answers 403 at its own ROOT (https://www.mitre.org/, 403, 367 bytes, 2026-09-07T20:56:17Z, body \"Access Denied ... You don't have permission to access \\\"http://www.mitre.org/\\\" on this server. Reference #18.27cbffb0.1788814577.19ddcbd8\", with server-timing cdn-cache; desc=HIT and errors.edgesuite.net in the body - Akamai), so this 403 is a blanket edge block and NOT a statement about the CoT page. Same shape as FORMAT_COVERAGE.md:14314 records for nso.nato.int. https://www.mitre.org/sites/default/files/pdf/09_4937.pdf answered 403, 426 bytes, at 2026-09-07T20:56:17Z.",
+      "page_url": "https://www.mitre.org/our-impact/intellectual-property/cursor-target",
+      "publisher": "The MITRE Corporation",
+      "quoted": ""
+    },
+    {
+      "availability": "not_stated",
+      "edition_if_stated": "not applicable",
+      "fetched_at": "2026-09-07T20:55:39Z",
+      "http_status": 200,
+      "identifier": "tak.gov",
+      "name": "TAK Product Center's own site, read for a terms statement about the schema",
+      "notes": "The page states nothing about the CoT schema's terms: the word \"Cursor\" does not occur on it, its software links are \"ATAK ( source code )\", \"TAK Server ( source code )\" and \"VR-TAK ( source code )\", and its own downloads sit behind \"LOGIN / CREATE AN ACCOUNT\". The quoted sentence is about TAK the programme, not about the schema, and is recorded so that a later reader can see it was read and not mistaken for a licence. https://tak.gov/terms answered 404, 831 bytes, at 2026-09-07T20:55:51Z; https://tak.gov/resources answered 404, 831 bytes, at 2026-09-07T20:56:48Z.",
+      "page_url": "https://tak.gov/",
+      "publisher": "TAK Product Center (tak.gov)",
+      "quoted": "TAK is public. What drives it is not on this website."
+    }
+  ],
+  "what_this_is": "Licensing posture of the source standard(s) behind the tak adapter, read from the publishers' own pages on 2026-09-07. Not a pin: no document was acquired. Read by P1 for license_class."
+}

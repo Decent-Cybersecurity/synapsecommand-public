@@ -146,12 +146,16 @@ def test_no_specification_document_is_shippable():
     assert not pdfs, f"specification documents would be shipped: {pdfs}"
     stray = sorted(p for p in ships if "/spec/" in p
                    and pathlib.PurePosixPath(p).name != "build_fixtures.py"
-                   and not pathlib.PurePosixPath(p).name.endswith("_pin.json"))
+                   and not pathlib.PurePosixPath(p).name.endswith("_pin.json")
+                   and not pathlib.PurePosixPath(p).name.endswith("_terms.json"))
     assert not stray, (
-        f"{stray} would be shipped from a spec/ directory. Only two classes belong in a "
+        f"{stray} would be shipped from a spec/ directory. Only three classes belong in a "
         "distribution from there: `build_fixtures.py`, which is the reviewable form of a fixture "
-        "set an ASTERIX block cannot document itself, and `*_pin.json`, which NOTICE points at "
-        "for each pinned document's terms. Anything else in spec/ is somebody else's document"
+        "set an ASTERIX block cannot document itself, `*_pin.json`, which NOTICE points at "
+        "for each pinned document's terms, and `*_terms.json`, which records what a publisher's "
+        "own page says about a standard this repository holds NO document for — a reading, with "
+        "the URL, the status, the instant and the sentence quoted, and no byte of anybody's "
+        "standard in it. Anything else in spec/ is somebody else's document"
     )
 
 

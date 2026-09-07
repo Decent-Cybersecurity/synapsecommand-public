@@ -258,6 +258,51 @@ measured off the index afterwards, and which step of it did not run.
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** A reader who ran
+`pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
+
+**What moved inside the distribution: SIX files.** `FORMAT_COVERAGE.md`, `MIGRATIONS.md` (this file),
+and four records that did not exist before — `fixtures/adsb/spec/adsb_terms.json`,
+`fixtures/ais/spec/ais_terms.json`, `fixtures/tak/spec/tak_terms.json` and
+`fixtures/legion/spec/legion_terms.json`.
+
+**What the four records are, and what they are not.** Four adapters — adsb, ais, tak and legion —
+translate standards this repository holds no document for. Nothing in the tree stated those
+publishers' terms, so no licence class for them could be read rather than asserted, and a round that
+needed one stopped rather than guess. Each record is a reading of the publishers' own pages, taken on
+2026-09-07: per standard the URL, the HTTP status, the instant to the second, the sentence quoted
+verbatim, and one of six `availability` values. **They are not pins.** No document was acquired, no
+hash of anybody's standard is claimed, no clause is transcribed beyond the quoted sentences, and where
+a page is silent the record says the page is silent instead of inferring a grant — a 403 or a 404 is
+written down with the same precision as a 200. The classes the readings carry: `LICENSED` for adsb
+(RTCA prices DO-260B and its own licence agreement forbids transfer to any third party; ICAO's store
+prices Annex 10 Volume IV, which refutes the free-public-download branch that names ICAO), `LICENSED`
+for ais (ITU-R M.1371-6 reads "Access : Free Download" and NMEA 0183 reads "available only from
+NMEA", so the more restrictive of the two governs and both halves are recorded), `PUBLIC_GOVERNMENT`
+for tak (the CoT schema states its own terms in its own header, and the publisher's website answers
+403 at its root), and `LICENSED` for legion (a vendor API whose interface description carries no
+`license` at all and whose terms bind a Customer under an executed Order Form).
+
+**The bump unit and its reason, as `gates/bump_derivation.py` derives them.** Six units, every one
+**PATCH**: `a shipped document or fixture payload appears` for the four records, and the same reason
+with `moves` for `FORMAT_COVERAGE.md` and for this file. The gate's document rule puts everything
+under `synapse_cdm/fixtures/` in the PATCH row, and the MINOR row it keeps for fixtures is a fixture
+SET appearing — a new directory under `fixtures/` — which this is not: adsb, ais, tak and legion each
+had a fixture set already, and these records land inside one. So the arc derives **PATCH with 0
+unruled** and the next release is at least 2.0.1. Nothing here is ruled by hand and nothing may be:
+the gate refuses a ruling for a unit the arc does not find ambiguous, and it finds none.
+
+**One test moved with them, and it is not one of the six.** `tests/test_cdm_packaging.py` now admits
+a third permitted name under a `spec/` directory — `*_terms.json`, beside `build_fixtures.py` and
+`*_pin.json`. Without that the four records are refused: they match the `fixtures/**/*` package-data
+include and no exclude, so they ship, and the rule that keeps somebody else's document out of an
+Apache-2.0 wheel treated them exactly as it treats a specification PDF. The widened list still
+refuses what it is for — a `.xsd` planted in `fixtures/adsb/spec/`, and a file named `terms.json`
+without the underscore, were both run and both failed it. `tests/` is not shipped, which is why the
+count above is six and not seven.
+
 ### 2.0.0 — 2026-09-07 — SC-OES v0.1.0 Draft ships: `Event.oes` and `Entity.ontology_types` carry a wire-semantic layer, the contract moves to 2.0.0, and the package takes its first MAJOR on a third party's consumer
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

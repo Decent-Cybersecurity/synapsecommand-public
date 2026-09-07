@@ -1,0 +1,46 @@
+{
+  "adapter": "ais",
+  "license_class_supported_by_these_readings": "LICENSED",
+  "mapping_rule_applied": "Mapping rule, quoted from rounds/briefs/PA-soif-licence-provenance.md: \"a standard the publisher states is a free public download from a public body or treaty/alliance organisation (ICAO, ITU, NATO, EUROCONTROL) -> PUBLIC_GOVERNMENT; a standard released under an open licence or into the public domain by its author (CoT schema, if the page says so) -> OPEN; a standard sold or licensed by a private standards body or vendor (RTCA, NMEA) -> LICENSED; where one adapter rests on two standards with different postures, the MORE restrictive class governs and both readings are recorded; access restricted by classification/eligibility -> CONTROLLED; a vendor API description under the vendor's own terms -> M_TO_RULE\". Applied: ITU-R M.1371-6 reads PUBLIC_GOVERNMENT on the publisher's own \"Free Download\" sentence, and NMEA 0183 reads LICENSED on \"available only from NMEA\" plus a verified fee. Two standards with different postures, so \"the MORE restrictive class governs and both readings are recorded\": LICENSED, with the ITU half recorded above and not discarded. Confirmed by M 2026-09-07T21:39:33Z.",
+  "not_committed": "This record is a reading of the publishers' pages, not an acquisition and not a pin: no document was downloaded into this repository, no hash of any standard is claimed, and no clause of any standard is transcribed beyond the quoted sentences below. It states no permission: where a page is silent, the record says the page is silent rather than inferring a grant. It does not claim the pages still read this way after read_at; a later reading is a later record beside this one. In particular it does not claim that the message layer is unobtainable: ITU-R M.1371-6 is a free download at the URL above, and the class is LICENSED because the SENTENCE layer is not.",
+  "read_at": "2026-09-07T20:55:20Z",
+  "standards": [
+    {
+      "availability": "free_download",
+      "edition_if_stated": "M.1371-6 (02/2026)",
+      "fetched_at": "2026-09-07T20:55:20Z",
+      "http_status": 200,
+      "identifier": "ITU-R M.1371-6",
+      "name": "Recommendation ITU-R M.1371-6, the AIS message layer the ais row set is written against",
+      "notes": "The two-cell table carrying the quoted sentence is followed by \"Available languages and formats ... English / Word 2007 / 2132560 bytes / 2026-05-26 ... PDF (acrobat) / 3464843 bytes / 2026-05-26\". This is the publisher saying it in its own words, which is what the mapping rule's PUBLIC_GOVERNMENT branch asks for and what no tracked file in this repository previously stated for M.1371.",
+      "page_url": "https://www.itu.int/rec/R-REC-M.1371-6-202602-I/en",
+      "publisher": "International Telecommunication Union, Radiocommunication Sector (ITU-R)",
+      "quoted": "Access : Free Download"
+    },
+    {
+      "availability": "free_download",
+      "edition_if_stated": "M.1371-6 (02/2026), In force (Main)",
+      "fetched_at": "2026-09-07T20:55:02Z",
+      "http_status": 200,
+      "identifier": "ITU-R M.1371 (series)",
+      "name": "Recommendation ITU-R M.1371 series page, for which edition is in force",
+      "notes": "The same listing marks M.1371-5 (02/2014) and every earlier revision \"Superseded\", which is how the edition read above is established as the current one rather than assumed.",
+      "page_url": "https://www.itu.int/rec/R-REC-M.1371/en",
+      "publisher": "International Telecommunication Union, Radiocommunication Sector (ITU-R)",
+      "quoted": "M.1371-6 (02/2026) ... In force (Main)"
+    },
+    {
+      "availability": "paywalled",
+      "edition_if_stated": "Version 4.30 (December 2023), named current on the page",
+      "fetched_at": "2026-09-07T20:55:03Z",
+      "http_status": 200,
+      "identifier": "NMEA 0183",
+      "name": "NMEA 0183 Interface Standard, the AIVDM/AIVDO sentence layer the ais adapter parses",
+      "notes": "The same page states \"The NMEA 0183 Interface Standard has a tiered pricing system based on industry group ... NMEA will verify this information\", so the route is a fee plus an eligibility check. \"Available only from NMEA\" is a statement about redistribution and not only about price, which is what makes this half of the adapter the restrictive one.",
+      "page_url": "https://www.nmea.org/nmea-0183.html",
+      "publisher": "National Marine Electronics Association (NMEA)",
+      "quoted": "The NMEA 0183 Interface Standard is a COPYRIGHTED document and available only from NMEA. Other Internet offerings are not authorized and may constitute a copyright infringement.\nDue to copyright and licensing, the NMEA 0183 Standard is not sold via an online store. To purchase the NMEA 0183 Standard please fill out the \"Request to buy the NMEA 0183 Standard\" button above. Upon verification of company information, NMEA will send a secure purchase link (credit card) or bank wire form."
+    }
+  ],
+  "what_this_is": "Licensing posture of the source standard(s) behind the ais adapter, read from the publishers' own pages on 2026-09-07. Not a pin: no document was acquired. Read by P1 for license_class."
+}

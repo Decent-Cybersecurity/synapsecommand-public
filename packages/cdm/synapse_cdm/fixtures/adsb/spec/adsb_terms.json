@@ -1,0 +1,46 @@
+{
+  "adapter": "adsb",
+  "license_class_supported_by_these_readings": "LICENSED",
+  "mapping_rule_applied": "Mapping rule, quoted from rounds/briefs/PA-soif-licence-provenance.md: \"a standard the publisher states is a free public download from a public body or treaty/alliance organisation (ICAO, ITU, NATO, EUROCONTROL) -> PUBLIC_GOVERNMENT; a standard released under an open licence or into the public domain by its author (CoT schema, if the page says so) -> OPEN; a standard sold or licensed by a private standards body or vendor (RTCA, NMEA) -> LICENSED; where one adapter rests on two standards with different postures, the MORE restrictive class governs and both readings are recorded; access restricted by classification/eligibility -> CONTROLLED; a vendor API description under the vendor's own terms -> M_TO_RULE\". Applied: RTCA is named in the LICENSED branch and its own licence agreement forbids transfer to a third party; ICAO's PUBLIC_GOVERNMENT branch is conditioned on a free public download the publisher's own store refutes, so ICAO reads LICENSED here too. Both readings give the same class, so more-restrictive-governs is never reached. Confirmed by M 2026-09-07T21:39:33Z.",
+  "not_committed": "This record is a reading of the publishers' pages, not an acquisition and not a pin: no document was downloaded into this repository, no hash of any standard is claimed, and no clause of any standard is transcribed beyond the quoted sentences below. It states no permission: where a page is silent, the record says the page is silent rather than inferring a grant. It does not claim the pages still read this way after read_at; a later reading is a later record beside this one.",
+  "read_at": "2026-09-07T20:55:49Z",
+  "standards": [
+    {
+      "availability": "paywalled",
+      "edition_if_stated": "not stated on this page beyond the -260B revision letter",
+      "fetched_at": "2026-09-07T20:54:47Z",
+      "http_status": 200,
+      "identifier": "DO-260B",
+      "name": "DO-260B, the 1090ES Extended Squitter MOPS the ADS-B row set is written against",
+      "notes": "The page states a price and a purchase limit. It does not state any free route to the document, and it does not state terms for a non-member: the Member Price of $0.00 is a membership benefit, not a public download.",
+      "page_url": "https://my.rtca.org/nc__store?search=DO-260B",
+      "publisher": "RTCA, Inc.",
+      "quoted": "DO-260B - Electronic / Retail Price: $875.00 / Member Price: $0.00\nDO-260B - Hard Copy / Retail Price: $715.00 / Member Price: $325.00\nThe total number of documents purchased is limited to twenty documents per day. For more information see the Electronic License Agreement."
+    },
+    {
+      "availability": "paywalled",
+      "edition_if_stated": "not stated",
+      "fetched_at": "2026-09-07T20:55:49Z",
+      "http_status": 200,
+      "identifier": "Electronic License Agreement",
+      "name": "RTCA Electronic License Agreement, the terms every purchased RTCA document carries",
+      "notes": "This is the sentence that decides what this repository may hold rather than what it may read: a purchased RTCA document is not redistributable, which is exactly ARCHITECTURE.md 3.2's LICENSED wording, \"retrievable but not redistributable\".",
+      "page_url": "https://www.rtca.org/content/electronic-license-agreement",
+      "publisher": "RTCA, Inc.",
+      "quoted": "YOU ACKNOWLEDGE THAT YOU HAVE PURCHASED ONLY THE RIGHT TO ACCESS, DOWNLOAD, AND PRINT ONE COPY OF THE ELECTRONIC DOCUMENT AND THE ASSOCIATED SEARCHABLE DOCUMENT FOR YOUR PERSONAL USE AND NOT FOR RESALE, TRANSFER, OR DISTRIBUTION TO ANY THIRD PARTY."
+    },
+    {
+      "availability": "paywalled",
+      "edition_if_stated": "Sixth Edition, August 2026",
+      "fetched_at": "2026-09-07T20:54:25Z",
+      "http_status": 200,
+      "identifier": "Annex 10 Volume IV (Surveillance Radar and Collision Avoidance Systems)",
+      "name": "Annex 10 to the Convention on International Civil Aviation, Volume IV",
+      "notes": "ICAO is named in the mapping rule's PUBLIC_GOVERNMENT branch, but that branch is conditioned on the publisher stating a free public download and this publisher's own store states a price. Nothing on any ICAO page read this pass states a free download of an Annex; the store's one USD 0.00 line is a corrigendum (\"Volume III ... (Corrigendum no. 1 dated 9/10/24) ... USD 0.00\"), not an Annex. The same listing prices Volume I at USD 630.00 and Volume III at USD 233.00.",
+      "page_url": "https://store.icao.int/en/annexes/annex-10?p=2",
+      "publisher": "International Civil Aviation Organization (ICAO)",
+      "quoted": "Annex 10 - Aeronautical Telecommunications - Volume IV- Surveillance Radar and Collision Avoidance Systems / Sixth Edition, August 2026 / USD 240.00"
+    }
+  ],
+  "what_this_is": "Licensing posture of the source standard(s) behind the adsb adapter, read from the publishers' own pages on 2026-09-07. Not a pin: no document was acquired. Read by P1 for license_class."
+}
