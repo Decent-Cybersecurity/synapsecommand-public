@@ -37,8 +37,13 @@ from abc import ABC, abstractmethod
 from typing import Any, ClassVar, Literal
 
 from synapse_cdm import times
+from synapse_cdm.manifest import AdapterMetadata
 from synapse_cdm.models import CDMBase, SourceRef
 
+#: UNCHANGED, and deliberately. `manifest.Direction` carries ARCHITECTURE.md §2's six values;
+#: these three are the v1 wire and code spellings of its first three rows, and §1.2's additive
+#: rule forbids v2 from removing or renaming a v1 name. A class in this repository therefore
+#: still declares one of these three, and `metadata.direction` is required to agree with it.
 Direction = Literal["ingest", "egress", "bidirectional"]
 
 REGISTRY: dict[str, type["Adapter"]] = {}
@@ -51,6 +56,20 @@ class Adapter(ABC):
 
     #: External system this adapter speaks for — goes into SourceRef.system.
     system: ClassVar[str] = ""
+
+    #: THE v2 DECLARATION, and it is REQUIRED — M's ruling F1.1, 2026-09-07.
+    #:
+    #: Every concrete `Adapter` subclass MUST set this, at class definition, to a valid
+    #: `AdapterMetadata`. `None` is the unset marker and `__init_subclass__` refuses it, in the
+    #: same breath as a missing `name` or `version` and for the same reason: an adapter whose
+    #: maturity, licence class, format edition and limitations are unknown is one nobody can
+    #: decide to depend on, and a framework that INVENTED any of them for an undeclared adapter
+    #: would be publishing a claim no one made.
+    #:
+    #: The framework synthesises nothing. There is no derived default, no `maturity: L0`
+    #: fallback, no sixth licence class meaning "undeclared" — the specification has five and
+    #: F1.1 records that inventing a sixth was the alternative and is refused.
+    metadata: ClassVar[AdapterMetadata | None] = None
 
     #: Source paths whose values legitimately change in translation, mapped to the REASON.
     #: Printed by the harness on every run; see lossless.py for why the escape is loud.
@@ -133,6 +152,10 @@ class Adapter(ABC):
                 f"{existing.__module__}.{existing.__qualname__} — names are how the harness "
                 "and every SourceRef identify a translator, so they must be unique"
             )
+        # v2, and LAST of the class-definition checks on purpose: every refusal above is about
+        # the v1 identity, and a v1 defect has to keep reporting itself in the words it always
+        # did rather than being masked by "this adapter declares no metadata".
+        _check_metadata(cls)
         REGISTRY[cls.name] = cls
 
     def __init__(self, clock: times.Clock | None = None, *, synthetic: bool = True) -> None:
@@ -172,6 +195,108 @@ class Adapter(ABC):
         """Egress adapters override this. Ingest-only adapters inherit the refusal."""
         raise NotImplementedError(
             f"{type(self).__name__} is {self.direction}-only and does not emit"
+        )
+
+    # ------------------------------------------------------------------ Adapter API v2
+    #
+    # Four members, added by P1 under `ARCHITECTURE.md` §1.2, which freezes v2 as an ADDITIVE
+    # layer: nothing above is removed or renamed, and `to_cdm`/`from_cdm` stay the implemented
+    # pair through the whole of Part 1.
+
+    @classmethod
+    def capabilities(cls):
+        """The machine-readable capability and limits block (§3.5), from the declaration.
+
+        Read from `metadata` rather than assembled here, because §3.5's whole reason for putting
+        `limits` inside `capabilities` is that the conformance suite and the parser-safety policy
+        must read ONE declaration. A `capabilities()` that built its own block would be a second.
+        """
+        return cls.metadata.capabilities
+
+    def detect(self, raw: bytes | dict) -> bool | None:
+        """Does this adapter claim this payload? `None` means "cannot tell" (§1.2).
+
+        THE DEFAULT IS WEAK AND IS DOCUMENTED AS WEAK. It attempts a translation and answers on
+        whether that raised, which costs a full parse and, worse, answers True for any payload
+        the adapter can make sense of even partially. A format with a magic number, a header or
+        a category octet SHOULD override this with the cheap structural test — that is what the
+        method is for, and the ADS-B, ASTERIX and KLV families all have one available.
+
+        It is a default rather than an abstract method because §1.2 adds `detect` to EVERY
+        adapter's surface, and an abstract addition would break every subclass outside this
+        repository at import — which is precisely the MAJOR that §1.2's additive rule forbids.
+        """
+        try:
+            self.to_cdm(raw)
+        except Exception:
+            return False
+        return True
+
+    def validate_source(self, raw: bytes | dict) -> list[str]:
+        """Problems with `raw` as an instance of the SOURCE standard, independent of translation.
+
+        Returns a list of human-readable problems; empty means "nothing this adapter can see".
+        The default reports whatever a decode attempt raises, which is a weaker claim than the
+        method's name promises: a payload can be a perfectly invalid instance of its standard and
+        still decode, and this default will not say so. An adapter with a real structural
+        validator overrides it.
+        """
+        try:
+            self.to_cdm(raw)
+        except Exception as problem:
+            return [f"{type(problem).__name__}: {problem}"]
+        return []
+
+    def decode(self, raw: bytes | dict) -> list[CDMBase]:
+        """The v2 spelling of `to_cdm`. A thin alias and nothing more (§1.2)."""
+        return self.to_cdm(raw)
+
+    def encode(self, objects: list[CDMBase]) -> bytes | dict:
+        """The v2 spelling of `from_cdm`. A thin alias and nothing more (§1.2)."""
+        return self.from_cdm(objects)
+
+
+def _check_metadata(cls: type["Adapter"]) -> None:
+    """The v2 half of the class-definition contract. Called from `__init_subclass__` only.
+
+    A FUNCTION RATHER THAN MORE LINES INSIDE `__init_subclass__`, and the reason is this
+    repository's own: `ARCHITECTURE.md` §1.1's table cites `adapter.py` line numbers for every v1
+    element and a test holds each citation to what it points at, so the enforcement block is kept
+    as short as the checks allow. The enforcement POINT does not move — this runs at class
+    definition, before the class is registered.
+    """
+    declared = cls.__dict__.get("metadata", getattr(cls, "metadata", None))
+    if declared is None:
+        raise TypeError(
+            f"{cls.__name__} declares no `metadata`. Adapter API v2 requires an "
+            "`AdapterMetadata` on every adapter class: its format and edition, its licence "
+            "class, its maturity and the evidence for it, its claim status, and what it does "
+            "NOT do. None of those is derivable from the code, so none of them is invented for "
+            "an adapter that does not state them — a synthesised maturity or licence class "
+            "would be this repository asserting something about a third party's standard that "
+            "nobody has checked"
+        )
+    if not isinstance(declared, AdapterMetadata):
+        raise TypeError(
+            f"{cls.__name__}.metadata is {type(declared).__name__}, not AdapterMetadata. A "
+            "dictionary passes no validator, so the impossible combinations §16 enumerates "
+            "would all be declarable"
+        )
+    wrong = []
+    if declared.id != cls.name:
+        wrong.append(f"metadata.id is {declared.id!r} and the registry name is {cls.name!r}")
+    if declared.adapter_version != cls.version:
+        wrong.append(f"metadata.adapter_version is {declared.adapter_version!r} and the class's "
+                     f"version is {cls.version!r}")
+    if declared.direction.value != cls.direction:
+        wrong.append(f"metadata.direction is {declared.direction.value!r} and the class declares "
+                     f"{cls.direction!r}")
+    if wrong:
+        raise TypeError(
+            f"{cls.__name__}: the manifest and the implementation disagree — " +
+            "; ".join(wrong) + ". §16 fails CI on an adapter version inconsistent with its "
+            "implementation metadata, and the same argument reaches the identifier and the "
+            "direction: a manifest a consumer filters on has to describe the class that runs"
         )
 
 

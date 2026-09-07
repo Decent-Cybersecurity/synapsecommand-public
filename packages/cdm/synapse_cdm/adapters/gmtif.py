@@ -123,6 +123,9 @@ from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource
 from synapse_cdm.geo import Point
 from synapse_cdm.models import (CDMBase, Entity, Event, Kinematics, Position, SourceId, Track,
                                 TrackSample)
+from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
+                                   Residual)
 
 SYSTEM = "GMTIF"
 
@@ -1067,6 +1070,92 @@ class GmtifAdapter(Adapter):
     version = "1.0.0"
     direction = "bidirectional"
     system = SYSTEM
+
+    #: Adapter API v2's declaration (ARCHITECTURE.md §3). Licence class from `NOTICE` — "NATO's
+    #: for the STANAGs and AEDPs"
+    metadata = AdapterMetadata(
+        id="gmti",
+        name="STANAG 4607 GMTIF",
+        adapter_version="1.0.0",
+        format=FormatRef(name="STANAG 4607 / AEDP-4607 — NATO Ground Moving Target Indicator Format "
+                     "(GMTIF)",
+                         version="AEDP-4607 Edition A Version 1"),
+        direction=Direction.BIDIRECTIONAL,
+        license_class=LicenseClass.PUBLIC_GOVERNMENT,
+        maturity=Maturity(
+            level=MaturityLevel.L4,
+            basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
+                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
+                  "COLUMN is SKIP for every adapter in this repository, because "
+                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
+                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
+                  "This adapter ships it: "
+                  "tests/test_cdm_gmtif_adapter.py::test_every_fixture_round_trips_byte_for_byte. "
+                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
+                  "applicable conformance set, which is P2's Suite v2.",
+            external_exercise=None,
+        ),
+        claim_status=ClaimStatus.VERIFIED,
+        claim_external_system=None,
+        profiles=[],
+        capabilities=Capabilities(
+            wire=True,
+            directions_exercised=["ingest", "egress"],
+            message_types=[
+                "segment types 1, 2, 3, 5, 6, 10, 12, 13 and the two Controlled-Extension "
+                "slots 101 and 102",
+            ],
+            limits=Limits(
+                max_input_bytes=None,
+                max_depth=None,
+                max_objects=None,
+                max_decompressed_bytes=None,
+                max_parse_seconds=None,
+                absent_because={
+                    "max_input_bytes":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_depth":
+                        "a GMTIF packet is a flat sequence of segments; segments do not nest",
+                    "max_objects":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_decompressed_bytes":
+                        "this adapter accepts no archived or compressed payload, so there is "
+                        "no expansion to bound",
+                    "max_parse_seconds":
+                        "no wall-clock bound is enforced by this adapter today; the "
+                        "parser-safety policy's concrete bounds are owed by P5 "
+                        "(ARCHITECTURE.md §9)",
+                },
+            ),
+        ),
+        limitations=[
+            "the Controlled Extension FIELD DEFINITIONS are not implemented and cannot be: "
+            "AEDP-4607's §L.4, which is where their field tables belong, reads \"(TO BE "
+            "PROVIDED)\" in the promulgated Edition A Version 1",
+            "the standard itself declines to specify error handling (§2.2), so a malformed "
+            "packet's treatment is this adapter's decision and is documented at the site "
+            "rather than cited",
+            "leftovers are parked in `Entity.attributes` / `Event.payload` under "
+            "`source_extras` (`lossless.residual()`), not in the origin-identifying container "
+            "ARCHITECTURE.md §5 gives to P3 — the Part 1 stance that section rules for the "
+            "adapters already shipped",
+            "no evidence RECORD is generated for this adapter: the harness produces verdicts, "
+            "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
+            "`evidence.available` is false for that reason and not because the checks do not "
+            "run",
+            "none of §3.5's five resource limits is enforced by this adapter; the "
+            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
+            "each limit's own reason is in `capabilities.limits.absent_because`",
+        ],
+        limitations_empty_reason=None,
+        residual=Residual.LEGACY,
+        payload_adapter=None,
+        constituents=[],
+        evidence=Evidence(available=False),
+    )
 
     #: Empty, and that is a claim. Every decoded field is parked verbatim as well as converted,
     #: so the never-drop rule is satisfied by PRESENCE and `lossless.unrepresented()` runs at

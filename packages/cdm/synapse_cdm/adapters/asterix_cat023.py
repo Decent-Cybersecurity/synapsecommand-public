@@ -63,6 +63,9 @@ from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters import cat023_codec as codec
 from synapse_cdm.enums import Affiliation, EntityType, EventType, Severity
 from synapse_cdm.models import CDMBase, Entity, Event, SourceId
+from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
+                                   Residual)
 
 #: This adapter's own system name, for `SourceRef.system`.
 SYSTEM = "ASTERIX_CAT023"
@@ -781,6 +784,89 @@ class AsterixCat023Adapter(Adapter):
     version = "1.0.0"
     direction = "bidirectional"
     system = SYSTEM
+
+    #: Adapter API v2's declaration (ARCHITECTURE.md §3). Licence class from `NOTICE` —
+    #: "EUROCONTROL's for the ASTERIX specifications"
+    metadata = AdapterMetadata(
+        id="cat023",
+        name="ASTERIX CAT023",
+        adapter_version="1.0.0",
+        format=FormatRef(name="EUROCONTROL ASTERIX Category 023 — CNS/ATM Ground Station and Service "
+                     "Status Reports",
+                         version="Edition 1.3"),
+        direction=Direction.BIDIRECTIONAL,
+        license_class=LicenseClass.PUBLIC_GOVERNMENT,
+        maturity=Maturity(
+            level=MaturityLevel.L4,
+            basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
+                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
+                  "COLUMN is SKIP for every adapter in this repository, because "
+                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
+                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
+                  "This adapter ships it: "
+                  "tests/test_cdm_asterix_cat023_adapter.py::test_every_fixture_round_trips_byte_for_byte. "
+                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
+                  "applicable conformance set, which is P2's Suite v2.",
+            external_exercise=None,
+        ),
+        claim_status=ClaimStatus.VERIFIED,
+        claim_external_system=None,
+        profiles=[],
+        capabilities=Capabilities(
+            wire=True,
+            directions_exercised=["ingest", "egress"],
+            message_types=[
+                "ASTERIX data blocks of category 023 — the nine data items Edition 1.3 "
+                "defines",
+            ],
+            limits=Limits(
+                max_input_bytes=None,
+                max_depth=None,
+                max_objects=None,
+                max_decompressed_bytes=None,
+                max_parse_seconds=None,
+                absent_because={
+                    "max_input_bytes":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_depth":
+                        "an ASTERIX data block nests only through compound items, to a depth "
+                        "the UAP fixes",
+                    "max_objects":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_decompressed_bytes":
+                        "this adapter accepts no archived or compressed payload, so there is "
+                        "no expansion to bound",
+                    "max_parse_seconds":
+                        "no wall-clock bound is enforced by this adapter today; the "
+                        "parser-safety policy's concrete bounds are owed by P5 "
+                        "(ARCHITECTURE.md §9)",
+                },
+            ),
+        ),
+        limitations=[
+            "the smallest specification pinned in this repository: nine data items, and "
+            "nothing outside them is decoded",
+            "leftovers are parked in `Entity.attributes` / `Event.payload` under "
+            "`source_extras` (`lossless.residual()`), not in the origin-identifying container "
+            "ARCHITECTURE.md §5 gives to P3 — the Part 1 stance that section rules for the "
+            "adapters already shipped",
+            "no evidence RECORD is generated for this adapter: the harness produces verdicts, "
+            "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
+            "`evidence.available` is false for that reason and not because the checks do not "
+            "run",
+            "none of §3.5's five resource limits is enforced by this adapter; the "
+            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
+            "each limit's own reason is in `capabilities.limits.absent_because`",
+        ],
+        limitations_empty_reason=None,
+        residual=Residual.LEGACY,
+        payload_adapter=None,
+        constituents=[],
+        evidence=Evidence(available=False),
+    )
 
     #: EMPTY, and that is a claim rather than an oversight — the claim all four ASTERIX siblings
     #: make. A declared transform is an EXEMPTION from the never-drop check, and this adapter needs

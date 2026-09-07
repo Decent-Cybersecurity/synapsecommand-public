@@ -1,0 +1,69 @@
+{
+  "adapter": {
+    "adapter_version": "1.0.0",
+    "capabilities": {
+      "directions_exercised": [
+        "ingest",
+        "egress"
+      ],
+      "limits": {
+        "absent_because": {
+          "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
+          "max_depth": "an ASTERIX data block nests only through compound items, to a depth the UAP fixes",
+          "max_input_bytes": "no bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)",
+          "max_objects": "no bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)",
+          "max_parse_seconds": "no wall-clock bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)"
+        },
+        "max_decompressed_bytes": null,
+        "max_depth": null,
+        "max_input_bytes": null,
+        "max_objects": null,
+        "max_parse_seconds": null
+      },
+      "message_types": [
+        "ASTERIX data blocks of category 062",
+        "the Reserved Expansion Field (Appendix A, Edition 1.3)"
+      ],
+      "wire": true
+    },
+    "claim_external_system": null,
+    "claim_status": "VERIFIED",
+    "constituents": [],
+    "direction": "bidirectional",
+    "evidence": {
+      "available": false
+    },
+    "format": {
+      "name": "EUROCONTROL ASTERIX Category 062 \u2014 SDPS Track Messages",
+      "version": "Edition 1.21"
+    },
+    "id": "cat062",
+    "license_class": "PUBLIC_GOVERNMENT",
+    "limitations": [
+      "the input is already the output of a fusion process, so the CDM objects this adapter emits carry judgements a tracker made and this adapter neither repeats nor re-decides",
+      "items the specification marks implementation-dependent are parked verbatim and not interpreted",
+      "leftovers are parked in `Entity.attributes` / `Event.payload` under `source_extras` (`lossless.residual()`), not in the origin-identifying container ARCHITECTURE.md \u00a75 gives to P3 \u2014 the Part 1 stance that section rules for the adapters already shipped",
+      "no evidence RECORD is generated for this adapter: the harness produces verdicts, and the evidence record and its schema are owed by P4 (ARCHITECTURE.md \u00a79). `evidence.available` is false for that reason and not because the checks do not run",
+      "none of \u00a73.5's five resource limits is enforced by this adapter; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79), and each limit's own reason is in `capabilities.limits.absent_because`"
+    ],
+    "limitations_empty_reason": null,
+    "maturity": {
+      "basis": "L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's `translate`, `schema`, `provenance` and `lossless` checks are PASS on every fixture of this adapter, which carries L1 to L3; the `roundtrip` COLUMN is SKIP for every adapter in this repository, because `harness.py`'s structural comparison cannot compare non-JSON egress bytes and says so \u2014 \"the adapter must ship its own round-trip test in tests/\". This adapter ships it: tests/test_cdm_asterix_cat062_adapter.py::test_every_fixture_round_trips_byte_for_byte. L5 is not declared here: ARCHITECTURE.md \u00a73.6 computes it from the full applicable conformance set, which is P2's Suite v2.",
+      "external_exercise": null,
+      "level": "L4"
+    },
+    "name": "ASTERIX CAT062",
+    "payload_adapter": null,
+    "profiles": [],
+    "residual": "legacy"
+  },
+  "api": {
+    "version": "2"
+  },
+  "cdm": {
+    "schema_version": "2.0.0",
+    "supported": "2.x"
+  },
+  "manifest_schema_version": "1.0.0",
+  "schema_id": "synapse.adapter-manifest/v1"
+}

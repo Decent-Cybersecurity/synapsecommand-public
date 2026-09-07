@@ -14,12 +14,15 @@ from synapse_cdm.adapter import REGISTRY, Adapter, discover, load_adapter
 from synapse_cdm.enums import EntityType, Affiliation
 from synapse_cdm.models import Entity
 
+from tests import probe_metadata
+
 
 class _Minimal(Adapter):
     name = "test_minimal"
     version = "0.1.0"
     direction = "ingest"
     system = "TEST"
+    metadata = probe_metadata("test_minimal")
 
     def to_cdm(self, raw):
         return [Entity(source=self.source_ref(),
@@ -34,6 +37,7 @@ def test_an_adapter_without_identity_fails_at_import_time():
             name = "test_no_version"
             direction = "ingest"
             system = "TEST"
+            metadata = probe_metadata("test_no_version")
 
             def to_cdm(self, raw):
                 return []
@@ -47,6 +51,7 @@ def test_an_egress_adapter_that_cannot_emit_is_refused():
             version = "0.1.0"
             direction = "bidirectional"
             system = "TEST"
+            metadata = probe_metadata("test_fake_egress", direction="bidirectional")
 
             def to_cdm(self, raw):
                 return []
@@ -60,6 +65,7 @@ def test_an_ingest_adapter_that_can_emit_must_say_so():
             version = "0.1.0"
             direction = "ingest"
             system = "TEST"
+            metadata = probe_metadata("test_undeclared_egress")
 
             def to_cdm(self, raw):
                 return []
@@ -75,6 +81,7 @@ def test_a_duplicate_name_is_refused():
             version = "9.9.9"
             direction = "ingest"
             system = "TEST"
+            metadata = probe_metadata("test_minimal", version="9.9.9")
 
             def to_cdm(self, raw):
                 return []
@@ -87,6 +94,7 @@ def test_a_bad_direction_is_refused():
             version = "0.1.0"
             direction = "outbound"
             system = "TEST"
+            metadata = probe_metadata("test_bad_direction")
 
             def to_cdm(self, raw):
                 return []
@@ -152,3 +160,129 @@ def test_the_abstract_escape_is_not_inherited():
             name = "test_inherits_abstract"
             direction = "ingest"
             system = "TEST"
+            metadata = probe_metadata("test_inherits_abstract")
+
+
+# ============================================================== Adapter API v2 (round P1)
+#
+# Every refusal below was run RED before the check existed and is green now — the same
+# discipline the v1 refusals above were written under. What they guard is M's ruling F1.1: an
+# adapter must DECLARE its metadata and the framework must synthesise none of it.
+
+
+def test_an_adapter_without_metadata_fails_at_import_time():
+    """The v2 counterpart of the missing-version refusal, and the reason is the same shape.
+
+    A missing `version` makes provenance unattributable. A missing `metadata` makes an adapter
+    undecidable: nothing says which edition of which standard it implements, whether that
+    standard can be redistributed, or how far the translation has actually been checked. The
+    framework does not fill any of that in — a synthesised maturity or licence class is this
+    repository asserting something about somebody else's document that nobody verified.
+    """
+    with pytest.raises(TypeError, match="declares no `metadata`"):
+        class _NoMetadata(Adapter):
+            name = "test_no_metadata"
+            version = "0.1.0"
+            direction = "ingest"
+            system = "TEST"
+
+            def to_cdm(self, raw):
+                return []
+
+
+def test_metadata_that_is_not_an_adapter_metadata_is_refused():
+    """A dict passes no validator, so every §16 combination would become declarable again."""
+    with pytest.raises(TypeError, match="not AdapterMetadata"):
+        class _DictMetadata(Adapter):
+            name = "test_dict_metadata"
+            version = "0.1.0"
+            direction = "ingest"
+            system = "TEST"
+            metadata = {"id": "test_dict_metadata"}
+
+            def to_cdm(self, raw):
+                return []
+
+
+def test_a_manifest_naming_a_different_version_from_the_implementation_is_refused():
+    """§16's last CI clause: "adapter version inconsistent with implementation metadata"."""
+    with pytest.raises(TypeError, match="metadata.adapter_version is '2.0.0'"):
+        class _VersionSkew(Adapter):
+            name = "test_version_skew"
+            version = "0.1.0"
+            direction = "ingest"
+            system = "TEST"
+            metadata = probe_metadata("test_version_skew", version="2.0.0")
+
+            def to_cdm(self, raw):
+                return []
+
+
+def test_a_manifest_naming_a_different_id_from_the_registry_name_is_refused():
+    """The same argument one field along: a manifest a consumer filters on names its own class."""
+    with pytest.raises(TypeError, match="metadata.id is 'somebody_else'"):
+        class _IdSkew(Adapter):
+            name = "test_id_skew"
+            version = "0.1.0"
+            direction = "ingest"
+            system = "TEST"
+            metadata = probe_metadata("somebody_else")
+
+            def to_cdm(self, raw):
+                return []
+
+
+def test_a_manifest_declaring_a_direction_the_class_does_not_is_refused():
+    """§16's "impossible direction declared", in the form the class can see.
+
+    The manifest says bidirectional and the class says ingest. Both statements are internally
+    fine; together they are a published claim that this adapter emits, made by a class that
+    `__init_subclass__` has already refused an egress path to.
+    """
+    with pytest.raises(TypeError, match="metadata.direction is 'bidirectional'"):
+        class _DirectionSkew(Adapter):
+            name = "test_direction_skew"
+            version = "0.1.0"
+            direction = "ingest"
+            system = "TEST"
+            metadata = probe_metadata("test_direction_skew", direction="bidirectional")
+
+            def to_cdm(self, raw):
+                return []
+
+
+def test_the_v2_aliases_delegate_and_do_not_reimplement():
+    """`decode`/`encode` are the v2 spellings and nothing more (ARCHITECTURE.md §1.2)."""
+    adapter = _Minimal()
+    assert adapter.decode({})[0].source.adapter == "test_minimal"
+    with pytest.raises(NotImplementedError, match="does not emit"):
+        adapter.encode([])
+
+
+def test_capabilities_reads_the_declaration_rather_than_assembling_a_second_one():
+    """§3.5's whole reason for putting `limits` inside `capabilities` is that there is ONE block."""
+    assert _Minimal.capabilities() is _Minimal.metadata.capabilities
+
+
+def test_detect_answers_on_a_translation_attempt_and_is_documented_as_weak():
+    """The default is a full parse and it says so in its own docstring, which is the honest form.
+
+    Asserted here rather than left to the docstring alone: a weak default that stops SAYING it is
+    weak is a default somebody will trust for dispatch.
+    """
+    assert _Minimal().detect({}) is True
+    assert "weak" in Adapter.detect.__doc__.lower()
+
+    class _NeverTranslates(Adapter):
+        name = "test_never_translates"
+        version = "0.1.0"
+        direction = "ingest"
+        system = "TEST"
+        metadata = probe_metadata("test_never_translates")
+
+        def to_cdm(self, raw):
+            raise ValueError("not mine")
+
+    assert _NeverTranslates().detect(b"anything") is False
+    assert _NeverTranslates().validate_source(b"anything") == ["ValueError: not mine"]
+    assert _Minimal().validate_source({}) == []

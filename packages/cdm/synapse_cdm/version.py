@@ -32,10 +32,15 @@ own version in its own document, and an event type's semantic major is a segment
 ``type_id`` itself. An axis belongs where the thing it versions is authored, which is the same
 rule that keeps the two numbers below apart.
 
-THE SIX AXES, AND WHAT EACH ONE MOVES FOR
-------------------------------------------
-Three of them are constants in this file; three are authored where the thing they version is
+THE EIGHT AXES, AND WHAT EACH ONE MOVES FOR
+-------------------------------------------
+Five of them are constants in this file; three are authored where the thing they version is
 authored, which is the same rule stated one level up. The full set, as of 2026-09-07::
+
+    (This heading read SIX and the split read "three and three" until 2026-09-07, when round P1
+    declared ``ADAPTER_API_VERSION`` and ``MANIFEST_SCHEMA_VERSION``. ``VERSIONING.md``'s table
+    listed both as rows before either existed — "added by P1", "not yet declared" — so the UNION
+    the table states is unmoved at nine and it is this file's own tally that moved.)
 
     Python package        2.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
@@ -53,6 +58,15 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     Event semantic major  v1      a SEGMENT OF THE IDENTIFIER — ``sc.pnt.gnss_interference.v1``
                                   — so a consumer matching on the string cannot fail to notice
                                   a breaking change to one type's semantics.
+    Adapter API           2.0.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
+                                  class is written against — what ``Adapter`` requires of a
+                                  subclass and what it offers it. Frozen by ``ARCHITECTURE.md``
+                                  §1 and additive over v1: v2 adds ``metadata``, ``detect``,
+                                  ``validate_source`` and ``capabilities`` and renames nothing.
+    Manifest schema       1.0.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
+                                  published manifest, generated into
+                                  ``schemas/manifests/adapter-manifest.schema.json`` and carried
+                                  in every file under ``manifests/``.
 
 **Independence is the whole arrangement, and the equalities are coincidences.** Package 2.0.0 and
 schema 2.0.0 are two separately argued major changes that landed on one number (see below); a
@@ -217,6 +231,25 @@ PACKAGE_VERSION = "2.0.0"
 #: against a later specification version must stay transportable. NOT derived from either number
 #: above, and not equal to them by anything but coincidence — see the docstring.
 SC_OES_VERSION = "0.1.0"
+
+#: The Adapter CONTRACT's version, and a FOURTH axis. `2.0.0` because `ARCHITECTURE.md` §1.2
+#: freezes v2 as an ADDITIVE layer over v1: `metadata`, `detect()`, `validate_source()` and
+#: `capabilities()` are added, `decode`/`encode` arrive as aliases, and no v1 name is removed or
+#: renamed. A subclass written against v1 still imports; what it must now also do is DECLARE its
+#: metadata, which is why this is a new major rather than a minor — the requirement is on the
+#: subclass, and a third party's adapter that does not declare metadata stops being definable.
+#: NOT derived from PACKAGE_VERSION and equal to it only by coincidence, exactly as the two
+#: numbers above are: `pip install synapse-cdm==2.0.0` resolves a distribution whose Adapter API
+#: is v1, because this constant did not exist at that tag.
+ADAPTER_API_VERSION = "2.0.0"
+
+#: The published manifest's shape, and a FIFTH axis. `1.0.0` because this is the first manifest
+#: schema there has ever been: `schemas/manifests/adapter-manifest.schema.json` is generated from
+#: `manifest.AdapterManifest` and every file under `manifests/` declares this number in its own
+#: `manifest_schema_version`. It moves when the MANIFEST's shape moves — a required field added,
+#: a field's meaning changed — and not when an adapter's metadata VALUES move, which is the
+#: distinction that keeps a consumer's schema check from failing on somebody else's maturity.
+MANIFEST_SCHEMA_VERSION = "1.0.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:

@@ -1,0 +1,460 @@
+{
+  "$defs": {
+    "AdapterMetadata": {
+      "additionalProperties": false,
+      "description": "\u00a73.1's fields, with \u00a716's impossible combinations refused by construction.\n\nThe field names are the specification's (\u00a78) rather than ARCHITECTURE.md \u00a73.1's table\nheadings, which spell two of them `licence_class` and `claim`. \u00a73.1's own opening clause is\nwhat permits it \u2014 \":142, Every adapter SHALL expose metadata EQUIVALENT to the following\" \u2014\nso the table fixes the SEMANTICS and not a spelling, and the specification's spelling is the\none a manifest consumer reading \u00a78 will look for.",
+      "properties": {
+        "adapter_version": {
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "capabilities": {
+          "$ref": "#/$defs/Capabilities"
+        },
+        "claim_external_system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Claim External System"
+        },
+        "claim_status": {
+          "$ref": "#/$defs/ClaimStatus"
+        },
+        "constituents": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constituents",
+          "type": "array"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "format": {
+          "$ref": "#/$defs/FormatRef"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "license_class": {
+          "$ref": "#/$defs/LicenseClass"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "limitations_empty_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limitations Empty Reason"
+        },
+        "maturity": {
+          "$ref": "#/$defs/Maturity"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "payload_adapter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Payload Adapter"
+        },
+        "profiles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Profiles",
+          "type": "array"
+        },
+        "residual": {
+          "$ref": "#/$defs/Residual"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "adapter_version",
+        "format",
+        "direction",
+        "license_class",
+        "maturity",
+        "claim_status",
+        "claim_external_system",
+        "profiles",
+        "capabilities",
+        "limitations",
+        "limitations_empty_reason",
+        "residual",
+        "payload_adapter",
+        "constituents",
+        "evidence"
+      ],
+      "title": "AdapterMetadata",
+      "type": "object"
+    },
+    "ApiRef": {
+      "additionalProperties": false,
+      "description": "`api.version` is the ADAPTER API major, and \u00a71.2 says what it does NOT mean.\n\n\"A manifest's `api.version: \"2\"` therefore means 'this adapter declares metadata and honours\nthe v2 contract'. It does NOT mean 'this adapter uses the new method names', and a gate MUST\nNOT infer the second from the first.\"",
+      "properties": {
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "title": "ApiRef",
+      "type": "object"
+    },
+    "Capabilities": {
+      "additionalProperties": false,
+      "description": "\u00a73.5's machine-readable block. `limits` lives HERE and not beside it, deliberately.\n\nThe reason is \u00a73.5's own: the conformance suite's resource-limits check and the parser-safety\npolicy must read ONE declaration, and two declarations of one bound is the arrangement where a\nparser is hardened against a number the report does not print.",
+      "properties": {
+        "directions_exercised": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Directions Exercised",
+          "type": "array"
+        },
+        "limits": {
+          "$ref": "#/$defs/Limits"
+        },
+        "message_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Message Types",
+          "type": "array"
+        },
+        "wire": {
+          "title": "Wire",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "wire",
+        "directions_exercised",
+        "message_types",
+        "limits"
+      ],
+      "title": "Capabilities",
+      "type": "object"
+    },
+    "CdmRef": {
+      "additionalProperties": false,
+      "description": "Which CDM a consumer of this manifest is being told the adapter emits.",
+      "properties": {
+        "schema_version": {
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "supported": {
+          "title": "Supported",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supported",
+        "schema_version"
+      ],
+      "title": "CdmRef",
+      "type": "object"
+    },
+    "ClaimStatus": {
+      "description": "\u00a73.4's six. A SEPARATE axis from maturity and never derived from it.",
+      "enum": [
+        "DOCUMENTED",
+        "IMPLEMENTED",
+        "VERIFIED",
+        "EXERCISED",
+        "INTEGRATED",
+        "DEPLOYED"
+      ],
+      "title": "ClaimStatus",
+      "type": "string"
+    },
+    "Direction": {
+      "description": "ARCHITECTURE.md \u00a72's six, in the lower-case wire spellings that document freezes.",
+      "enum": [
+        "ingest",
+        "egress",
+        "bidirectional",
+        "model",
+        "transport",
+        "composite"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "description": "\u00a713's `evidence.available`. P4 is what makes it mean a generated record.",
+      "properties": {
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "available"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "ExternalExercise": {
+      "additionalProperties": false,
+      "description": "What L6 requires, and what this repository cannot produce for its own adapters (\u00a73.3).",
+      "properties": {
+        "date": {
+          "title": "Date",
+          "type": "string"
+        },
+        "record": {
+          "title": "Record",
+          "type": "string"
+        },
+        "system": {
+          "title": "System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system",
+        "date",
+        "record"
+      ],
+      "title": "ExternalExercise",
+      "type": "object"
+    },
+    "FormatRef": {
+      "additionalProperties": false,
+      "description": "The source standard this adapter is written against.\n\n`version` is `None` when NO document in this tree states which edition the adapter targets.\nThat is a reading and not a gap to be filled in: an invented edition number is a claim about\na publisher's document, and a consumer checking compatibility against it would be checking\nagainst a guess. A `None` here MUST be accompanied by a limitation saying so, which\n`AdapterMetadata` enforces below.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Version"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "FormatRef",
+      "type": "object"
+    },
+    "LicenseClass": {
+      "description": "\u00a73.2's five. A statement about the SOURCE STANDARD's terms, never about this repository's.",
+      "enum": [
+        "OPEN",
+        "PUBLIC_GOVERNMENT",
+        "LICENSED",
+        "CONTROLLED",
+        "PROPRIETARY_PLUGIN"
+      ],
+      "title": "LicenseClass",
+      "type": "string"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "description": "\u00a73.5's five bounds, and the reason for each one that does not apply.\n\n\"A limit that does not apply to a format MUST be declared absent with a reason, not silently\nomitted\" \u2014 \u00a73.5. So `None` is legal and bare `None` is not: `absent_because` has to carry the\nreason, keyed by the field. \"This format does not nest\" is a fact about the format, and a\nreader who cannot find it has to go and work it out again.",
+      "properties": {
+        "absent_because": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Absent Because",
+          "type": "object"
+        },
+        "max_decompressed_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Decompressed Bytes"
+        },
+        "max_depth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Depth"
+        },
+        "max_input_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Input Bytes"
+        },
+        "max_objects": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Objects"
+        },
+        "max_parse_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Parse Seconds"
+        }
+      },
+      "required": [
+        "max_input_bytes",
+        "max_depth",
+        "max_objects",
+        "max_decompressed_bytes",
+        "max_parse_seconds",
+        "absent_because"
+      ],
+      "title": "Limits",
+      "type": "object"
+    },
+    "Maturity": {
+      "additionalProperties": false,
+      "description": "A rung and the evidence it rests on.\n\n`basis` is required and is prose, because the rung is a CLAIM ABOUT EVIDENCE (\u00a73.6) and a\nrung with no statement of what verified it is the thing the eligibility algorithm exists to\nstop being typed.",
+      "properties": {
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        },
+        "external_exercise": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExternalExercise"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "level": {
+          "$ref": "#/$defs/MaturityLevel"
+        }
+      },
+      "required": [
+        "level",
+        "basis",
+        "external_exercise"
+      ],
+      "title": "Maturity",
+      "type": "object"
+    },
+    "MaturityLevel": {
+      "description": "\u00a73.3's seven rungs. L6 is not awardable from this repository's own evidence (\u00a73.3).",
+      "enum": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "L6"
+      ],
+      "title": "MaturityLevel",
+      "type": "string"
+    },
+    "Residual": {
+      "description": "ARCHITECTURE.md \u00a75: the fourteen keep `legacy` parking through Part 1.",
+      "enum": [
+        "legacy",
+        "structured"
+      ],
+      "title": "Residual",
+      "type": "string"
+    }
+  },
+  "$id": "urn:synapsecommand:manifest:1.0.0:adapter-manifest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The published document: \u00a713's semantics in this repository's canonical JSON (F1.3).\n\nThe envelope is separate from `AdapterMetadata` because the two are different facts. The\nmetadata is what the ADAPTER declares and is inspectable from the class; the envelope is what\nthe PUBLICATION declares \u2014 which manifest schema it was written to, which Adapter API it\nclaims, which CDM it emits \u2014 and none of those belong to one adapter.",
+  "properties": {
+    "adapter": {
+      "$ref": "#/$defs/AdapterMetadata"
+    },
+    "api": {
+      "$ref": "#/$defs/ApiRef"
+    },
+    "cdm": {
+      "$ref": "#/$defs/CdmRef"
+    },
+    "manifest_schema_version": {
+      "title": "Manifest Schema Version",
+      "type": "string"
+    },
+    "schema_id": {
+      "title": "Schema Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_id",
+    "manifest_schema_version",
+    "api",
+    "cdm",
+    "adapter"
+  ],
+  "title": "AdapterManifest",
+  "type": "object",
+  "x-manifest-schema-version": "1.0.0"
+}

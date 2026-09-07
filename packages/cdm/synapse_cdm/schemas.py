@@ -24,8 +24,9 @@ import sys
 
 from pydantic import BaseModel, TypeAdapter
 
+from synapse_cdm.manifest import AdapterManifest
 from synapse_cdm.models import KINDS, PAYLOAD_MODELS, CDMObject
-from synapse_cdm.version import SCHEMA_VERSION
+from synapse_cdm.version import MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
 
 #: The base every schema's `$id` is built from. A URN, and the choice is RULED rather than
 #: conventional — see below, because the obvious answer is an `https://` URL and it is wrong here.
@@ -94,7 +95,32 @@ def generate() -> dict[str, dict]:
     union["$id"] = f"{BASE_ID}:{SCHEMA_VERSION}:cdm_object"
     union["x-cdm-schema-version"] = SCHEMA_VERSION
     out["cdm_object"] = union
+    out[MANIFEST_STEM] = manifest_schema()
     return out
+
+
+#: The manifest schema's stem, and it carries a DIRECTORY. `write()` and `check()` treat a stem
+#: as a path relative to `--out`, so `schemas/manifests/` (spec §12) is reached without a second
+#: exporter — and `tests/test_cdm_schemas.py`'s parametrised checks glob `schemas/*.schema.json`
+#: at the top level only, so the manifest schema is not swept into the CDM object checks that
+#: assert `x-cdm-schema-version` and a `urn:synapsecommand:cdm:` identifier. It is a different
+#: contract on a different axis and it says so in its own keys.
+MANIFEST_STEM = "manifests/adapter-manifest"
+
+
+def manifest_schema() -> dict:
+    """The published shape of `manifests/<id>.json`, generated from `manifest.AdapterManifest`.
+
+    Generated from the MANIFEST model rather than from `AdapterMetadata` alone, and the
+    difference matters: the published file is the manifest — envelope and declaration — so a
+    schema generated from the declaration by itself would reject every file it is supposed to
+    validate. `AdapterMetadata` is in here, as the `adapter` property's `$def`.
+    """
+    schema = AdapterManifest.model_json_schema(mode="serialization")
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["$id"] = f"urn:synapsecommand:manifest:{MANIFEST_SCHEMA_VERSION}:adapter-manifest"
+    schema["x-manifest-schema-version"] = MANIFEST_SCHEMA_VERSION
+    return schema
 
 
 def _serialise(schema: dict) -> str:
@@ -108,6 +134,9 @@ def write(out_dir: pathlib.Path) -> list[pathlib.Path]:
     written = []
     for name, schema in generate().items():
         path = out_dir / f"{name}.schema.json"
+        # A stem may carry a directory (see MANIFEST_STEM); nothing else needs this and it costs
+        # one line, which is cheaper than a second exporter for one file.
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(_serialise(schema))
         written.append(path)
     return written

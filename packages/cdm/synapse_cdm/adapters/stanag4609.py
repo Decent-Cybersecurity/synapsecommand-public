@@ -150,6 +150,9 @@ from synapse_cdm.models import (
     TrackSample,
 )
 from synapse_cdm.geo import Point
+from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
+                                   Residual)
 
 #: `SourceRef.system` — the covering standard, which is what this adapter is named for.
 SYSTEM = "STANAG4609"
@@ -751,6 +754,93 @@ class Stanag4609Adapter(Adapter):
     version = "1.0.0"
     direction = "bidirectional"
     system = SYSTEM
+
+    #: Adapter API v2's declaration (ARCHITECTURE.md §3). Licence class from `NOTICE` — "MISB's
+    #: for the Motion Imagery Standards Profile"; `fixtures/klv/spec/klv_pin.json` — the
+    #: delegated standards and their editions
+    metadata = AdapterMetadata(
+        id="stanag4609",
+        name="STANAG 4609 KLV",
+        adapter_version="1.0.0",
+        format=FormatRef(name="STANAG 4609 / MISP-2019.1 — the UAS Datalink Local Set",
+                         version="MISP-2019.1 (STANAG 4609 Edition 5 wrapper)"),
+        direction=Direction.BIDIRECTIONAL,
+        license_class=LicenseClass.PUBLIC_GOVERNMENT,
+        maturity=Maturity(
+            level=MaturityLevel.L4,
+            basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
+                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
+                  "COLUMN is SKIP for every adapter in this repository, because "
+                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
+                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
+                  "This adapter ships it: "
+                  "tests/test_cdm_stanag4609_adapter.py::test_egress_reproduces_every_fixture_byte_for_byte. "
+                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
+                  "applicable conformance set, which is P2's Suite v2.",
+            external_exercise=None,
+        ),
+        claim_status=ClaimStatus.VERIFIED,
+        claim_external_system=None,
+        profiles=[],
+        capabilities=Capabilities(
+            wire=True,
+            directions_exercised=["ingest", "egress"],
+            message_types=[
+                "UAS Datalink Local Set packets (MISB ST 0601.14)",
+                "the VMTI Local Set (ST 0903.4) and the RVT Local Set (ST 0806.4) where a "
+                "packet carries them",
+            ],
+            limits=Limits(
+                max_input_bytes=None,
+                max_depth=None,
+                max_objects=None,
+                max_decompressed_bytes=None,
+                max_parse_seconds=None,
+                absent_because={
+                    "max_input_bytes":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_depth":
+                        "KLV nests: a Local Set item may itself be a Local Set, and no depth "
+                        "bound is declared yet",
+                    "max_objects":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_decompressed_bytes":
+                        "this adapter accepts no archived or compressed payload, so there is "
+                        "no expansion to bound",
+                    "max_parse_seconds":
+                        "no wall-clock bound is enforced by this adapter today; the "
+                        "parser-safety policy's concrete bounds are owed by P5 "
+                        "(ARCHITECTURE.md §9)",
+                },
+            ),
+        ),
+        limitations=[
+            "ST 0601.14 is the authoritative tag table; ST 0601.19 is pinned as CONTEXT ONLY "
+            "and is never a source of tag semantics here",
+            "a length-divergent item's original octets are carried verbatim so that egress is "
+            "byte exact, which means this adapter reproduces a defect rather than correcting "
+            "it",
+            "leftovers are parked in `Entity.attributes` / `Event.payload` under "
+            "`source_extras` (`lossless.residual()`), not in the origin-identifying container "
+            "ARCHITECTURE.md §5 gives to P3 — the Part 1 stance that section rules for the "
+            "adapters already shipped",
+            "no evidence RECORD is generated for this adapter: the harness produces verdicts, "
+            "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
+            "`evidence.available` is false for that reason and not because the checks do not "
+            "run",
+            "none of §3.5's five resource limits is enforced by this adapter; the "
+            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
+            "each limit's own reason is in `capabilities.limits.absent_because`",
+        ],
+        limitations_empty_reason=None,
+        residual=Residual.LEGACY,
+        payload_adapter=None,
+        constituents=[],
+        evidence=Evidence(available=False),
+    )
 
     #: `fixtures/klv`, not `fixtures/stanag4609`. The `stanag4676` → `nits` split reached a second
     #: time and in the same direction: an adapter named after a STANDARD is named for a covering

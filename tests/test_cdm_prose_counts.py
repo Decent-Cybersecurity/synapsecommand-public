@@ -2070,3 +2070,51 @@ def test_every_citation_of_the_register_quotes_the_heading_that_is_there():
             "a heading that carries a count is a restatement of that count, and it goes stale on "
             "the event — a new register entry — that makes anybody read it"
         )
+
+
+# ============================================================ the manifests, against the roster
+#
+# Round P1 added `manifests/<adapter-id>.json`, one per registered adapter, GENERATED from each
+# adapter's own declaration. That makes the number of files in that directory a restatement of
+# the roster count — the fact this whole module exists to stop being restated without a gate on
+# it — so it is compared here rather than in `tests/test_cdm_manifests.py`, which owns the
+# manifests' CONTENT. This module already holds the one authority for "how many adapters ship",
+# and adding a second derivation of it beside the first is the defect, not the fix.
+#
+# `tests/test_cdm_manifests.py` asserts the two SETS are equal, which is the stronger statement
+# and is where a renamed adapter is caught. This is the count, in the module a reader comes to
+# for counts, and it fails for a reason that names this file.
+
+MANIFESTS = REPO / "manifests"
+
+
+def test_the_number_of_published_manifests_is_the_roster_count():
+    published = sorted(p.name for p in MANIFESTS.glob("*.json"))
+    assert len(published) == _roster(), (
+        f"`manifests/` holds {len(published)} files and the registry ships {_roster()} "
+        f"adapters: {published}.\nRun `python -m synapse_cdm.manifests --out manifests`. A "
+        "manifest directory that has stopped tracking the roster is the roster count restated "
+        "in a place nothing reads, which is the drift every site in this module was found in"
+    )
+
+
+def test_the_readme_roster_sentence_and_the_manifest_directory_agree():
+    """The count the package README states, against the files on disk — one hop, no third copy.
+
+    The README's own sentence is already pinned to the registry by `PKG_README_SITES` above; this
+    is the other end of the same fact, so a round that adds an adapter and forgets to regenerate
+    the manifests fails here with the README quoted at it rather than with a diff nobody reads.
+    """
+    for site in PKG_README_SITES:
+        found = re.search(site.pattern, pkg_readme())
+        for group, derive in site.derivations.items():
+            if derive is _roster:
+                assert stated(found.group(group)) == len(list(MANIFESTS.glob("*.json"))), (
+                    f"{PKG_README} states {found.group(group)!r} for the roster and "
+                    f"`manifests/` holds {len(list(MANIFESTS.glob('*.json')))} files"
+                )
+                return
+    raise AssertionError(
+        "no README site derives the roster count any more, so this comparison has nothing to "
+        "compare. Re-anchor it deliberately rather than deleting it"
+    )

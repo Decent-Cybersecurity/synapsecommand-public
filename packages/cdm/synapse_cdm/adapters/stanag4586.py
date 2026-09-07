@@ -98,6 +98,9 @@ from synapse_cdm.models import (
     CDMBase, Entity, Kinematics, Position, SourceId, Track, TrackSample,
 )
 from synapse_cdm.symbology import sidc_from_affiliation
+from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
+                                   Residual)
 
 SYSTEM = "STANAG4586"
 
@@ -121,6 +124,93 @@ class Stanag4586Adapter(Adapter):
     version = "1.0.0"
     direction = "ingest"
     system = SYSTEM
+
+    #: Adapter API v2's declaration (ARCHITECTURE.md §3). Licence class from `NOTICE` — "NATO's
+    #: for the STANAGs and AEDPs"
+    metadata = AdapterMetadata(
+        id="stanag4586",
+        name="STANAG 4586 DLI",
+        adapter_version="1.0.0",
+        format=FormatRef(name="STANAG 4586 — Standard Interfaces of UAV Control System (UCS), DLI "
+                     "telemetry",
+                         version="Edition 3"),
+        direction=Direction.INGEST,
+        license_class=LicenseClass.PUBLIC_GOVERNMENT,
+        maturity=Maturity(
+            level=MaturityLevel.L3,
+            basis="L3 PROVENANCE VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema` and `provenance` checks are PASS on every fixture of "
+                  "this adapter. L4 is NOT declared and is not merely unproven: this adapter "
+                  "is ingest-only, so there is no egress direction for information to be lost "
+                  "in and the roundtrip check is inapplicable rather than absent "
+                  "(ARCHITECTURE.md §3.6, rule 4). A rung passed vacuously is not a rung "
+                  "declared, so the declaration stops at the last one positively verified.",
+            external_exercise=None,
+        ),
+        claim_status=ClaimStatus.VERIFIED,
+        claim_external_system=None,
+        profiles=[],
+        capabilities=Capabilities(
+            wire=True,
+            directions_exercised=["ingest"],
+            message_types=[
+                "DLI datagrams — the wrapped message set §3.3.1 defines, message 0101 and its "
+                "companions",
+            ],
+            limits=Limits(
+                max_input_bytes=None,
+                max_depth=None,
+                max_objects=None,
+                max_decompressed_bytes=None,
+                max_parse_seconds=None,
+                absent_because={
+                    "max_input_bytes":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_depth":
+                        "a DLI datagram is a flat sequence of wrapped messages; messages do "
+                        "not nest",
+                    "max_objects":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_decompressed_bytes":
+                        "this adapter accepts no archived or compressed payload, so there is "
+                        "no expansion to bound",
+                    "max_parse_seconds":
+                        "no wall-clock bound is enforced by this adapter today; the "
+                        "parser-safety policy's concrete bounds are owed by P5 "
+                        "(ARCHITECTURE.md §9)",
+                },
+            ),
+        ),
+        limitations=[
+            "Edition 4 is current (promulgated as AEP-84 Edition A) and is NOT implemented: "
+            "FORMAT_COVERAGE.md records that `nso.nato.int` answers HTTP 403 on every route "
+            "tried, that the mirror carrying this family lists exactly Editions 2 and 3, and "
+            "that the commercial distributors holding Edition 4 serve it paywalled and "
+            "DRM-wrapped. No sentence here claims an Edition 3 decoder reads an Edition 4 "
+            "feed",
+            "ingest only: this adapter does not emit DLI",
+            "whether the 5-octet millisecond timestamp steps at a leap second is not stated "
+            "by the document, and every object carries `attributes.time_basis` saying so",
+            "leftovers are parked in `Entity.attributes` / `Event.payload` under "
+            "`source_extras` (`lossless.residual()`), not in the origin-identifying container "
+            "ARCHITECTURE.md §5 gives to P3 — the Part 1 stance that section rules for the "
+            "adapters already shipped",
+            "no evidence RECORD is generated for this adapter: the harness produces verdicts, "
+            "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
+            "`evidence.available` is false for that reason and not because the checks do not "
+            "run",
+            "none of §3.5's five resource limits is enforced by this adapter; the "
+            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
+            "each limit's own reason is in `capabilities.limits.absent_because`",
+        ],
+        limitations_empty_reason=None,
+        residual=Residual.LEGACY,
+        payload_adapter=None,
+        constituents=[],
+        evidence=Evidence(available=False),
+    )
     # No `fixture_dir`: the fixtures live in `fixtures/stanag4586`, which is this adapter's own
     # name, and an override equal to the name is a no-op that reads as an exception. The two
     # adapters that DO override are named for covering documents whose payloads have another

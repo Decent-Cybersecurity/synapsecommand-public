@@ -17,6 +17,8 @@ from synapse_cdm.enums import Affiliation, EntityType
 import synapse_cdm
 from synapse_cdm.models import Entity
 
+from tests import probe_metadata
+
 # The package lives under packages/cdm/ while this suite sits at the repo root, so its
 # internal files are located through the import system rather than by walking up from
 # this file: a relative hop between the two breaks the moment either one moves, and this
@@ -61,6 +63,7 @@ class _LossyAdapter(Adapter):
     version = "0.1.0"
     direction = "ingest"
     system = "PNTMAP"
+    metadata = probe_metadata("test_lossy")
 
     def to_cdm(self, raw):
         return [Entity(source=self.source_ref(),
@@ -71,6 +74,7 @@ class _LossyAdapter(Adapter):
 
 class _CrashingAdapter(_LossyAdapter):
     name = "test_crashing"
+    metadata = probe_metadata("test_crashing")
 
     def to_cdm(self, raw):
         raise RuntimeError("upstream shape changed")
@@ -168,6 +172,10 @@ class _RoundTripAdapter(PntmapAdapter):
     """
     name = "test_roundtrip"
     direction = "bidirectional"
+    # Its own declaration, not PntmapAdapter's: a subclass that changes `name` and `direction`
+    # and inherits the parent's metadata is publishing the parent's manifest under a different
+    # class, which is exactly what `adapter.py` refuses at class definition.
+    metadata = probe_metadata("test_roundtrip", version="1.0.0", direction="bidirectional")
 
     def from_cdm(self, objects):
         entity, event = objects
@@ -198,6 +206,7 @@ class _RoundTripAdapter(PntmapAdapter):
 
 class _DroppingRoundTripAdapter(_RoundTripAdapter):
     name = "test_roundtrip_dropping"
+    metadata = probe_metadata("test_roundtrip_dropping", version="1.0.0", direction="bidirectional")
 
     def from_cdm(self, objects):
         payload = super().from_cdm(objects)
@@ -225,6 +234,7 @@ def test_roundtrip_is_skip_for_an_ingest_only_adapter_never_pass():
 
 class _BrokenEgressAdapter(_RoundTripAdapter):
     name = "test_broken_egress"
+    metadata = probe_metadata("test_broken_egress", version="1.0.0", direction="bidirectional")
 
     def from_cdm(self, objects):
         raise NotImplementedError("not written yet")
@@ -656,6 +666,7 @@ class _OutsideAdapter(Adapter):
     direction = "ingest"
     system = "OUTSIDE"
     fixture_dir = "pntmap"
+    metadata = probe_metadata("outside-pntmap", version="0.0.1")
 
     def to_cdm(self, raw):
         raise AssertionError("never reached: the run is refused before any fixture is read")

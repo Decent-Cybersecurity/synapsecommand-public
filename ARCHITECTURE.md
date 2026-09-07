@@ -33,17 +33,17 @@ The v1 surface is `packages/cdm/synapse_cdm/adapter.py`. It is a class contract 
 
 | element | where | what it is |
 |---|---|---|
-| `name` | `adapter.py:48` | the registry key; how a `SourceRef` identifies its translator |
-| `version` | `adapter.py:49` | the adapter's own semver, stamped into `SourceRef.adapter_version` |
-| `direction` | `adapter.py:50` | one of the three wire spellings; see §2 |
-| `system` | `adapter.py:53` | the external system the adapter speaks for, into `SourceRef.system` |
-| `TRANSFORMS` | `adapter.py:57` | source paths whose value legitimately changes, mapped to the REASON |
-| `fixture_dir` | `adapter.py:94` | the fixture directory when it is not the adapter's own name |
-| `to_cdm` | `adapter.py:159` | abstract; one source payload in, a list of canonical objects out |
-| `from_cdm` | `adapter.py:171` | overridden by an emitting adapter; the base raises the refusal |
-| `source_ref` | `adapter.py:153` | the provenance stamp every emitted object carries |
-| `now` | `adapter.py:149` | receipt time, from the injected clock and never `datetime.now()` |
-| `__init_subclass__` | `adapter.py:96` | the enforcement: the checks below run when the class is defined |
+| `name` | `adapter.py:53` | the registry key; how a `SourceRef` identifies its translator |
+| `version` | `adapter.py:54` | the adapter's own semver, stamped into `SourceRef.adapter_version` |
+| `direction` | `adapter.py:55` | one of the three wire spellings; see §2 |
+| `system` | `adapter.py:58` | the external system the adapter speaks for, into `SourceRef.system` |
+| `TRANSFORMS` | `adapter.py:76` | source paths whose value legitimately changes, mapped to the REASON |
+| `fixture_dir` | `adapter.py:113` | the fixture directory when it is not the adapter's own name |
+| `to_cdm` | `adapter.py:182` | abstract; one source payload in, a list of canonical objects out |
+| `from_cdm` | `adapter.py:194` | overridden by an emitting adapter; the base raises the refusal |
+| `source_ref` | `adapter.py:176` | the provenance stamp every emitted object carries |
+| `now` | `adapter.py:172` | receipt time, from the injected clock and never `datetime.now()` |
+| `__init_subclass__` | `adapter.py:115` | the enforcement: the checks below run when the class is defined |
 
 `__init_subclass__` refuses, at import: a missing `name`, `version`, `direction` or `system`; a
 `direction` outside the three literals; a declared `egress`/`bidirectional` adapter that does not
@@ -54,6 +54,16 @@ deployment, not on the first outbound push.
 **This enforcement point MUST NOT move.** A contract checked at call time is a contract discovered
 in production, and every v2 addition below is specified so that it can be checked at
 class-definition time or by a gate over the manifests, never at first use.
+
+**Dated correction, 2026-09-07 (round P1). Every `adapter.py:N` above moved, and the enforcement
+point did not.** P1 added the v2 members `metadata`, `capabilities()`, `detect()`,
+`validate_source()`, `decode()` and `encode()` to the same class and three checks to the same
+`__init_subclass__`, so each of the eleven cited lines is further down the file than it was — the
+citations in the table are the re-derived ones and `tests/test_cdm_architecture_docs.py` compares
+every one of them against the file on every run. **Nothing in the eleven rows changed meaning and
+no row was added:** this table is the v1 surface, which §1.2's additive rule keeps exactly as it
+is, and the v2 members are §1.2's table rather than this one. `adapter.py:3–15`, cited in §4.6, is
+unmoved; §4.4's constructor range is re-derived in place for the same reason as these.
 
 ### 1.2 What v2 adds
 
@@ -322,7 +332,7 @@ machine-verifiable per adapter rather than a consequence of the golden files.
 For identical input, adapter version, schema version and configuration, the canonical output MUST
 be deterministic.
 
-**Enforced today.** The clock is INJECTED, never read: `adapter.py:138–151` takes a `Clock` in the
+**Enforced today.** The clock is INJECTED, never read: `adapter.py:161–174` takes a `Clock` in the
 constructor and `now()` is the only receipt-time source; `times.py:39` fixes the frozen instant the
 harness uses and `times.py:46` builds the frozen clock. The golden check compares byte for byte
 under that frozen clock. Serialisation is the goldens' own form (§6).

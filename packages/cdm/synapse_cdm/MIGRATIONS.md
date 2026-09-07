@@ -263,10 +263,20 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
-**What moved inside the distribution: SIX files.** `FORMAT_COVERAGE.md`, `MIGRATIONS.md` (this file),
-and four records that did not exist before — `fixtures/adsb/spec/adsb_terms.json`,
-`fixtures/ais/spec/ais_terms.json`, `fixtures/tak/spec/tak_terms.json` and
-`fixtures/legion/spec/legion_terms.json`.
+**What moved inside the distribution: 25 files.** Two rounds are in this section now and the
+sentence above is the arc's size, not either round's — the arc is `v2.0.0` to the working tree and
+`python gates/bump_derivation.py` prints the set. **Round PA** moved six: `FORMAT_COVERAGE.md`,
+`MIGRATIONS.md` (this file), and four records that did not exist before —
+`fixtures/adsb/spec/adsb_terms.json`, `fixtures/ais/spec/ais_terms.json`,
+`fixtures/tak/spec/tak_terms.json` and `fixtures/legion/spec/legion_terms.json`. **Round P1** moved
+nineteen more: two new modules, `manifest.py` and `manifests.py`; `adapter.py`, `version.py` and
+`schemas.py`; and the fourteen adapter modules — `adapters/adsb.py`, `adapters/ais.py`,
+`adapters/tak.py`, `adapters/legion.py`, `adapters/pntmap.py`, `adapters/asterix_cat021.py`,
+`adapters/asterix_cat023.py`, `adapters/asterix_cat034.py`, `adapters/asterix_cat048.py`,
+`adapters/asterix_cat062.py`, `adapters/gmtif.py`, `adapters/stanag4586.py`,
+`adapters/stanag4609.py`, `adapters/stanag4676.py`. PA's own paragraphs are kept below exactly as
+that round wrote them, with the one sentence this one had to overtake — its count — replaced here
+rather than left standing in two places.
 
 **What the four records are, and what they are not.** Four adapters — adsb, ais, tak and legion —
 translate standards this repository holds no document for. Nothing in the tree stated those
@@ -302,6 +312,182 @@ Apache-2.0 wheel treated them exactly as it treats a specification PDF. The wide
 refuses what it is for — a `.xsd` planted in `fixtures/adsb/spec/`, and a file named `terms.json`
 without the underscore, were both run and both failed it. `tests/` is not shipped, which is why the
 count above is six and not seven.
+
+**ROUND P1 — Adapter API v2: every adapter now describes itself, and the description is checkable.**
+
+**What v2 adds, and it renames nothing.** `Adapter` gains five members and loses none:
+`metadata` — a required `AdapterMetadata` declared at class definition — plus `capabilities()`,
+`detect()`, `validate_source()` and the thin aliases `decode()`/`encode()` for `to_cdm`/`from_cdm`.
+Both v1 names stay, are still what the harness calls, and are still what every shipped adapter
+defines. A third party's subclass written against v1 still imports; what it must now ALSO do is
+declare its metadata, which is the one requirement v2 places on the subclass rather than offering
+it. `ADAPTER_API_VERSION` is `2.0.0` in `version.py` and says so; `MANIFEST_SCHEMA_VERSION` is
+`1.0.0` beside it. Neither is derived from `PACKAGE_VERSION`, which is `2.0.0` for reasons of its
+own and was `2.0.0` before either of these constants existed.
+
+**`metadata` is REQUIRED and nothing is synthesised for an adapter that omits it.** That is the
+whole point of the field. An adapter's licence class, its format edition, its maturity and its
+limitations are claims about somebody else's standard and about how far this repository has
+actually checked the translation, and a framework that invented any of them for an undeclared
+adapter would be publishing a claim nobody made. So the refusal is at class definition, beside the
+refusals for a missing `name` or `version`, and it is a `TypeError` at import rather than a warning.
+
+**`manifest.py` is the declaration and `manifests.py` is the publication.** The models are strict —
+`extra="forbid"` throughout — because a metadata block that swallows a misspelled key publishes a
+manifest missing the field a consumer filters on, with every gate green. Seven of the
+impossible combinations the specification's §16 enumerates are refused by construction: an empty
+`limitations` list with no stated reason; an unknown maturity value; an `L6` naming no external
+system, date and record; `INTEGRATED` or `DEPLOYED` naming no external system; a `MODEL` direction
+declaring `capabilities.wire: true`, a `TRANSPORT` naming no payload adapter or a `COMPOSITE`
+naming no constituents; a declared direction disagreeing with the directions the capability block
+says are exercised; and a null `format.version` that no limitation accounts for. The three that
+need the CLASS — `adapter_version` against the class's `version`, `id` against its `name`,
+`direction` against its `direction` — are refused in `adapter.__init_subclass__`, which is earlier
+than CI and is where `adapter.py`'s own docstring says the enforcement point belongs.
+
+**The published files.** `python -m synapse_cdm.manifests --out manifests` writes
+`manifests/<adapter-id>.json` at the REPOSITORY ROOT, a peer of `schemas/` (M's ruling F1.4), and
+`--check` fails on a file that is missing, stale or orphaned. The schema they validate against is
+generated too, by the existing exporter into `schemas/manifests/adapter-manifest.schema.json`.
+**Neither directory is inside the distribution**, which is why neither appears in the file count
+above: manifests are framework-level interoperability artefacts and shipping the same payload in
+the wheel as well would be a third copy of one fact. The wheel carries the GENERATOR and the
+declarations, which is what `schemas.py` argues for the schemas already.
+
+**The maturity every adapter declares, and why it is not the harness column.** Eleven of the fourteen
+declare `L4` and three declare `L3`, and the split is `direction`: the three ingest-only ones
+(`legion`, `pntmap`, `stanag4586`) have no egress direction for information to be lost in, so the
+roundtrip rung is passed vacuously — and a rung passed vacuously is not a rung declared. The
+eleven bidirectional ones cannot get `L4` from the harness either: its `roundtrip` column is SKIP
+for every adapter in this repository, because the check compares JSON structurally and no shipped
+adapter emits JSON. The column says so itself — "the adapter must ship its own round-trip test in
+tests/" — and each of the eleven ships exactly that test, which its `maturity.basis` names by
+`file::function`. `tests/test_cdm_manifests.py` re-derives all of it from a harness run rather than
+reading it back out of the declaration. No adapter declares `L5`: that rung is computed from every
+check APPLICABLE to an adapter, and the applicable set is the Conformance Suite v2's, which does
+not exist yet. No adapter declares `L6` and none in this repository can — every fixture here is
+synthetic.
+
+**Every adapter claims `VERIFIED` and none claims more.** Claim status is a separate axis from
+maturity and is never derived from it. `VERIFIED` is "passes this repository's public gates", which
+is exactly what is true; `EXERCISED`, `INTEGRATED` and `DEPLOYED` are statements about the world,
+and the last two are refused unless they name the external system.
+
+**`ci.yml`.** `.github/workflows/ci.yml` runs the suite, the two `--check` exporters and the pin,
+parks and commit-message gates on `push` to `main` and `soif/**` and on `pull_request`. Until it
+existed nothing in this repository could fail on a branch: `publish.yml` starts on a `v*` tag and
+on `workflow_dispatch` and on nothing else, so every "CI MUST fail if …" clause of this campaign
+had nothing to fail on. It is a separate file rather than more jobs in `publish.yml` because a
+release pipeline that also runs pull-request checks becomes a release pipeline nobody may
+restructure. Actions are pinned by SHA from its first commit.
+
+**The bump units, and the whole list is ruled by SHAPE.** `gates/bump_derivation.py` derives
+**MINOR** for this arc from the two new modules alone — `manifest.py` and `manifests.py` are public
+top-level names appearing, which is the MINOR row verbatim — so the next release is at least
+**2.1.0** and no ruling below moves that number. Twenty-five units come back unruled because the
+gate refuses to classify a body it cannot attribute to a name appearing or disappearing, and each
+is ruled here on the row whose shape it has.
+
+**Bump ruling.** `synapse_cdm/adapter.py:Adapter` — MINOR: the class gains `metadata`,
+`capabilities()`, `detect()`, `validate_source()`, `decode()` and `encode()` and loses nothing.
+Five names are added to a public surface and existing code keeps working, which is the MINOR row's
+shape. The one behavioural change is a REFUSAL that did not exist — a subclass declaring no
+metadata now fails at import — and that is a new requirement on a subclass author rather than a
+removal or a change of meaning, which is what `ADAPTER_API_VERSION` moving to `2.0.0` records on
+its own axis.
+
+**Bump ruling.** `synapse_cdm/adapters/adsb.py:AdsbAdapter` — MINOR: the class gains a `metadata`
+class attribute and nothing else; its translation behaviour is untouched and every golden is
+unmoved. Same row, same shape, for each of the other thirteen.
+
+**Bump ruling.** `synapse_cdm/adapters/ais.py:AisAdapter` — MINOR: a `metadata` class attribute
+appears.
+
+**Bump ruling.** `synapse_cdm/adapters/tak.py:TakAdapter` — MINOR: a `metadata` class attribute
+appears.
+
+**Bump ruling.** `synapse_cdm/adapters/legion.py:LegionAdapter` — MINOR: a `metadata` class
+attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/pntmap.py:PntmapAdapter` — MINOR: a `metadata` class
+attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/asterix_cat021.py:AsterixCat021Adapter` — MINOR: a
+`metadata` class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/asterix_cat023.py:AsterixCat023Adapter` — MINOR: a
+`metadata` class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/asterix_cat034.py:AsterixCat034Adapter` — MINOR: a
+`metadata` class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter` — MINOR: a
+`metadata` class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/asterix_cat062.py:AsterixCat062Adapter` — MINOR: a
+`metadata` class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/gmtif.py:GmtifAdapter` — MINOR: a `metadata` class
+attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4586.py:Stanag4586Adapter` — MINOR: a `metadata`
+class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — MINOR: a `metadata`
+class attribute appears.
+
+**Bump ruling.** `synapse_cdm/adapters/stanag4676.py:Stanag4676Adapter` — MINOR: a `metadata`
+class attribute appears.
+
+**Bump ruling.** `synapse_cdm/schemas.py:generate` — MINOR: the exporter publishes one more
+schema, `manifests/adapter-manifest`, and publishes every schema it published before. A
+publication gaining a member is an addition and existing consumers keep working.
+
+**Bump ruling.** `synapse_cdm/schemas.py:write` — PATCH: one `mkdir(parents=True)` so a stem may
+carry a directory. No name is added or removed, no caller's behaviour changes for any stem that
+existed before, and the surface is identical.
+
+**The eight `<statement N>` units, and what they actually are.** `functional_units()` keys an
+unnamed top-level statement by its INDEX in the module body, so inserting one import renumbers
+every anonymous statement after it and the gate reports each as changed. That is what these eight
+are, and it was checked rather than assumed: comparing the anonymous units of each module as a SET
+across the arc, `adapter.py` and `ais.py` each gain exactly one member — the new
+`from synapse_cdm.manifest import …` line — and lose none; `schemas.py` gains that import plus a
+widened `from synapse_cdm.version import …` and loses the narrower form of the same line. No other
+anonymous statement's content differs at either end.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 8>` — PATCH: an import statement appears; the
+module's anonymous units are otherwise identical across the arc and no importable surface moved.
+
+**Bump ruling.** `synapse_cdm/adapters/ais.py:<statement 42>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapters/ais.py:<statement 43>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapters/ais.py:<statement 44>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapters/ais.py:<statement 45>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapters/ais.py:<statement 46>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/schemas.py:<statement 6>` — PATCH: an import appears and one import
+widens by a name; no importable surface of this module moved with it.
+
+**Bump ruling.** `synapse_cdm/schemas.py:<statement 7>` — PATCH: index shift from the same two
+import lines; the unit's content is unchanged.
+
+**What moved outside the distribution, named here because a reader of this file will ask.**
+`ARCHITECTURE.md` gained nothing and `VERSIONING.md` gained a dated correction plus the two axis
+rows that had read "added by P1"; `.github/workflows/ci.yml`, `manifests/` and
+`schemas/manifests/` are new; `docs/docs/writing-an-adapter.mdx` gained the metadata block and the
+maturity and claim tables; and four test modules moved — `tests/test_cdm_manifests.py` is new,
+`tests/test_cdm_adapter_contract.py` gained the v2 refusals, `tests/test_cdm_prose_counts.py`
+gained the manifest count, and `tests/__init__.py` gained the one metadata factory the suite's
+adapter doubles share. None of those ships, which is why the count above is 25 and not 33.
 
 ### 2.0.0 — 2026-09-07 — SC-OES v0.1.0 Draft ships: `Event.oes` and `Entity.ontology_types` carry a wire-semantic layer, the contract moves to 2.0.0, and the package takes its first MAJOR on a third party's consumer
 

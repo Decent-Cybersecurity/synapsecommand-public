@@ -43,6 +43,8 @@ from synapse_cdm import adapter, harness
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.models import CDMBase
 
+from tests import probe_metadata
+
 #: The names in the rendered table: every line after the rule, first column.
 ROW = re.compile(r"^(?P<name>\S+)\s+(?P<version>\S+)\s+(?P<direction>\S+)\s+"
                  r"(?P<fixtures>\S+)\s+(?P<system>\S+)$")
@@ -154,6 +156,7 @@ def test_adding_an_adapter_to_the_registry_adds_it_to_the_listing(monkeypatch):
         direction = "ingest"
         system = "PROBE"
         fixture_dir = "somewhere_else"
+        metadata = probe_metadata("_probe_listing", version="9.9.9")
 
         def to_cdm(self, raw: bytes | dict) -> list[CDMBase]:
             raise NotImplementedError

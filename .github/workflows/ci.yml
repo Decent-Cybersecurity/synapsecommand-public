@@ -1,0 +1,94 @@
+# CI — the workflow that can FAIL on a branch, which is the thing this repository did not have.
+#
+# WHY IT EXISTS, stated here rather than in a commit message
+# ----------------------------------------------------------
+# `publish.yml` is triggered by a `v*` tag and by `workflow_dispatch`. Nothing else starts it, so
+# until this file landed a change to a branch started no workflow at all, and every "CI MUST fail
+# if …" clause of the SOIF Part 1 specification — a missing or invalid manifest, an impossible
+# direction, an unknown maturity value, a conformance regression, a fixture without provenance —
+# had nothing to fail on. `ARCHITECTURE.md` §7 designs this file and gives the job table it grows
+# into; P1 lands the first three rows and P2, P4, P5 and P6 add the rest.
+#
+# WHY IT IS A SEPARATE FILE AND NOT MORE JOBS IN `publish.yml`
+# ------------------------------------------------------------
+# `ARCHITECTURE.md` §7, in as many words: "a release pipeline that also runs pull-request checks
+# becomes a release pipeline nobody may restructure". `publish.yml` keeps its present shape and
+# its present triggers.
+#
+# THE STEPS ARE `publish.yml`'s GATE HALF, DELIBERATELY IDENTICAL IN SUBSTANCE
+# ----------------------------------------------------------------------------
+# Same Python (3.12, and `publish.yml` explains at length why it is not the declared 3.11 floor),
+# same install — `pip install -e "packages/cdm[test]"`, which is CONTRIBUTING.md's documented
+# setup command — and the same `pytest -q`. Two files running the suite two different ways is two
+# different greens, and the one that gates a release would be the one nobody had read.
+#
+# ACTIONS PINNED BY SHA, from the first commit. P6 will require it of every workflow; starting
+# compliant is cheaper than a migration, and a tag is a moving target on somebody else's account.
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'soif/**'
+  pull_request:
+
+# Read-only, and nothing here widens it. This workflow publishes nothing, signs nothing and
+# needs no token: `id-token: write` lives on `publish.yml`'s publish job alone.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    name: Suite, gates and manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          # Full history and tags, for the same reason `publish.yml` takes them:
+          # `tests/test_cdm_release.py` re-derives every tag in history against its tree's
+          # PACKAGE_VERSION, and `gates/bump_derivation.py` reads the arc since the last tag. A
+          # shallow clone makes both of those pass vacuously rather than fail.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install by the documented path
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+
+      - name: The suite
+        # `-rs` for the reason `publish.yml` gives: a CI green is not the same green a maintainer
+        # sees — the pinned specification PDFs are gitignored, so a fresh clone has the pin
+        # RECORDS and not the documents and skips accordingly — and the difference has to be
+        # legible rather than hidden inside one number. The counts are deliberately NOT asserted.
+        run: python -m pytest -q -rs
+
+      - name: The published schemas are what the models generate
+        run: python -m synapse_cdm.schemas --check --out schemas
+
+      - name: The published manifests are what the adapters declare
+        # §16: CI MUST fail if a manifest is missing or its schema is invalid. `--check` reports
+        # missing, stale AND orphaned; the suite step above is what fails on an impossible
+        # direction, an unknown maturity value or a missing limitation, because those are refused
+        # at class definition and by the models rather than by a file comparison.
+        run: python -m synapse_cdm.manifests --check --out manifests
+
+      - name: The pin gate
+        run: python gates/pin_paths.py
+
+      - name: The parks gate
+        run: python gates/parks_table.py
+
+      - name: The commit-message gate
+        run: python gates/commit_message.py --rev HEAD

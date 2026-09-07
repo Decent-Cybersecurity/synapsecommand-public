@@ -39,13 +39,22 @@ The specification this campaign implements names six axes. The tree already carr
 overlap in three, so the union is nine, and all nine are listed — the framework's version model is
 the whole set and not the subset one document happened to enumerate.
 
+**Dated correction, 2026-09-07 (round P1, and the sentence above is left standing as written).**
+The tree now carries EIGHT: `ADAPTER_API_VERSION` and `MANIFEST_SCHEMA_VERSION` were declared in
+`packages/cdm/synapse_cdm/version.py` by P1, so their rows below have stopped reading "added by
+P1 / not yet declared" and carry the tree's own name, reading and line. **The union is unmoved at
+nine** — both were already rows here, which is what listing an owed axis before it exists is for —
+and that is why the sentence above is corrected rather than rewritten: its arithmetic is still
+right and only its middle clause has been overtaken. `EVIDENCE_SCHEMA_VERSION` is still owed, by
+P4.
+
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:213` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:203` |
-| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:219` |
-| Adapter API | `ADAPTER_API_VERSION` | added by P1 | not yet declared | `version.py`, when P1 declares it |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | added by P1 | not yet declared | `version.py`, when P1 declares it |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:227` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:217` |
+| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:233` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:244` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:252` |
 | Evidence schema | `EVIDENCE_SCHEMA_VERSION` | added by P4 | not yet declared | `version.py`, when P4 declares it |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |

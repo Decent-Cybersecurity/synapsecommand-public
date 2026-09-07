@@ -83,13 +83,15 @@ class TakAdapter(Adapter):
     direction = "bidirectional"      # then you MUST override from_cdm()
     system = "TAK"
 
+    metadata = AdapterMetadata(...)  # required; see "2. Declare what you are" below
+
     TRANSFORMS = {"event.@time": "re-rendered into the CDM's fixed-millisecond form"}
 
     def to_cdm(self, raw: bytes | dict) -> list[CDMBase]:
         ...
 ```
 
-Four gates run when Python defines the class:
+Six gates run when Python defines the class:
 
 | Gate | Fails when |
 | --- | --- |
@@ -98,19 +100,121 @@ Four gates run when Python defines the class:
 | capability | `egress`/`bidirectional` without overriding `from_cdm()` — an adapter that cannot emit must not claim it can |
 | capability | `ingest` *with* `from_cdm()` overridden — declare `bidirectional` so the capability is discoverable |
 | uniqueness | `name` is already registered by another class |
+| metadata | `metadata` is absent, is not an `AdapterMetadata`, or its `id`, `adapter_version` or `direction` disagrees with the class's own |
 
 `to_cdm()` **raises** on a payload it cannot translate. It must not return a partial object and
 it must not return an empty list to signal failure: an empty list means "this payload
 legitimately carries nothing", and the two cases have to stay distinguishable.
 
-## 2. Map the fields
+## 2. Declare what you are
+
+Adapter API v2 requires a `metadata` block on every adapter class, and requires it at the same
+moment `name` and `version` are required — when Python defines the class. It is not optional and
+nothing is derived for you: a maturity level, a licence class or a format edition that the
+framework invented would be this repository making a claim about somebody else's standard that
+nobody checked.
+
+```python
+from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
+                                  Evidence, FormatRef, LicenseClass, Limits, Maturity,
+                                  MaturityLevel, Residual)
+
+
+class TakAdapter(Adapter):
+    ...
+    metadata = AdapterMetadata(
+        id="tak",                                  # == the class's `name`
+        name="Cursor-on-Target",                   # for a human
+        adapter_version="0.1.0",                   # == the class's `version`
+        format=FormatRef(name="Cursor-on-Target (TAK)", version=None),
+        direction=Direction.BIDIRECTIONAL,         # == the class's `direction`
+        license_class=LicenseClass.PUBLIC_GOVERNMENT,
+        maturity=Maturity(level=MaturityLevel.L4, basis="what verified it, and where",
+                          external_exercise=None),
+        claim_status=ClaimStatus.VERIFIED,
+        claim_external_system=None,
+        profiles=[],                               # SC-OES profiles you produce for
+        capabilities=Capabilities(
+            wire=True,
+            directions_exercised=["ingest", "egress"],
+            message_types=["CoT atoms (`a-.-...`)"],
+            limits=Limits(max_input_bytes=None, ..., absent_because={...}),
+        ),
+        limitations=["what this adapter does NOT do — at least one line"],
+        limitations_empty_reason=None,
+        residual=Residual.LEGACY,
+        payload_adapter=None,
+        constituents=[],
+        evidence=Evidence(available=False),
+    )
+```
+
+Running `python -m synapse_cdm.manifests --out manifests` writes `manifests/<id>.json` from that
+declaration, and `--check` fails on a file that is missing, stale or left behind by an adapter
+that no longer exists. The schema those files validate against is generated too, into
+`schemas/manifests/adapter-manifest.schema.json`. **Never edit either by hand** — the declaration
+is the authority and the files are its publication, exactly as `/schemas` is for the models.
+
+### The rules that are easy to get wrong
+
+- **`limitations` may not be empty by default.** Every adapter has them — an edition it does not
+  implement, a message type it declines, a field with no canonical home — and one declaring none
+  is one nobody has audited. If you genuinely have none, say so in `limitations_empty_reason`;
+  silence is not the same statement.
+- **A `format.version` you cannot read from a document is `None`, never a guess**, and a
+  limitation has to say that no document states it. An invented edition number is a claim about
+  a publisher's document, and a consumer checking compatibility against it is checking a guess.
+- **Every one of the five `limits` is either a number or absent WITH a reason.** "This format
+  does not nest" is a fact about the format and belongs in the declaration; silence reads as an
+  oversight.
+
+### Maturity — seven rungs, and each is a claim about evidence
+
+Declare the last rung your evidence **positively** supports. A rung passed vacuously is not a
+rung declared.
+
+| Level | Name | What it asserts |
+| --- | --- | --- |
+| `L0` | DOCUMENTED | the relationship to the source standard is documented |
+| `L1` | DECODED | the source representation can be parsed |
+| `L2` | CANONICAL | the source can be translated into the CDM |
+| `L3` | PROVENANCE VERIFIED | the required provenance survives translation |
+| `L4` | ROUNDTRIP VERIFIED | applicable information survives source → CDM → source |
+| `L5` | PUBLIC CONFORMANCE VERIFIED | every applicable public conformance gate passes |
+| `L6` | EXTERNALLY EXERCISED | verified against an independent real implementation |
+
+`L6` **cannot be awarded from this repository's own evidence.** Every fixture here is synthetic,
+so the top rung is not the gate-writer's to award; the model refuses an `L6` that names no
+external system, date and record.
+
+An ingest-only adapter stops at `L3`: there is no egress direction for information to be lost
+in, so the roundtrip check is *inapplicable* rather than absent — and inapplicable is never
+printed or recorded as PASS.
+
+### Claim status — a separate axis, never derived from maturity
+
+| Status | What it asserts |
+| --- | --- |
+| `DOCUMENTED` | the mapping is written down |
+| `IMPLEMENTED` | code exists that performs the mapping |
+| `VERIFIED` | the mapping passes this repository's public gates |
+| `EXERCISED` | it has been run against an independent implementation |
+| `INTEGRATED` | integration with a NAMED external system has actually occurred |
+| `DEPLOYED` | it is running in a named operational or exercise deployment |
+
+The two axes are separate because one is about how thoroughly this repository has checked the
+translation and the other is about what has happened in the world — and the second cannot be
+earned by running a test. `INTEGRATED` and `DEPLOYED` are refused unless they name the external
+system, because the name is part of the claim.
+
+## 3. Map the fields
 
 `packages/cdm/synapse_cdm/FORMAT_COVERAGE.md` already holds the Cursor-on-Target, STANAG 4676
 and GeoJSON mappings row by row, with every known gap named. **That table is your
 specification** — and a test resolves every path in its *CDM field* column against the actual
 Pydantic models, so a renamed field breaks the build rather than just the prose.
 
-## 3. Park everything else
+## 4. Park everything else
 
 List the dotted paths you consumed, hand them to `lossless.residual()`, and put the result in
 `attributes["source_extras"]` or `payload["source_extras"]`.
@@ -128,7 +232,7 @@ exists.
 Keeping the consumed paths as **data** rather than burying them in the translation code is
 deliberate: "what does this adapter understand?" is then answerable by reading one list.
 
-## 4. Refuse what you cannot read
+## 5. Refuse what you cannot read
 
 A missing required field, or an unmappable severity, **raises**. Do not default it — an alert
 that arrives labelled `INFO` because its severity was unreadable is worse than one that fails
@@ -142,7 +246,7 @@ CoT says it with `9999999`. An adapter that forwards either puts a ship at 102 k
 commander's map. Because the sentinel's *value* then appears nowhere in the output, the
 translation is declared in `TRANSFORMS` — which is what that mechanism is for.
 
-## 5. Ship fixtures
+## 6. Ship fixtures
 
 At least three synthetic payloads under `packages/cdm/synapse_cdm/fixtures/<name>/`, including
 one that exercises the **awkward** path: a missing position, an unknown type, a vendor block you
@@ -153,7 +257,7 @@ no geolocated emitter, an alert with an unknown interference type and unmapped v
 and an emitter on the equator at longitude zero, which exists purely to prove that `0.0` is
 treated as a coordinate and not as absence.
 
-## 6. Record the golden output and read it
+## 7. Record the golden output and read it
 
 ```bash
 python -m synapse_cdm.harness --adapter tak --update-golden
@@ -164,7 +268,7 @@ Review the diff before committing it. Both defects found while building the refe
 were caught by **reading a golden file**, not by a failing test.
 :::
 
-## 7. Add the tests
+## 8. Add the tests
 
 Copy the shape of `tests/test_cdm_pntmap_adapter.py`: one test per claim in your adapter's
 docstring.

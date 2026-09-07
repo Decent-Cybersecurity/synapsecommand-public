@@ -83,6 +83,9 @@ from synapse_cdm.enums import (
 )
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, PlanObject, Position
 from synapse_cdm.symbology import affiliation_from_cot, sidc_from_affiliation
+from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
+                                   Residual)
 
 SYSTEM = "TAK"
 
@@ -145,6 +148,91 @@ class TakAdapter(Adapter):
     version = "1.0.0"
     direction = "bidirectional"
     system = SYSTEM
+
+    #: Adapter API v2's declaration (ARCHITECTURE.md §3). Licence class from
+    #: `fixtures/tak/spec/tak_terms.json` — `license_class_supported_by_these_readings`
+    metadata = AdapterMetadata(
+        id="tak",
+        name="Cursor-on-Target",
+        adapter_version="1.0.0",
+        format=FormatRef(name="Cursor-on-Target (TAK)",
+                         version=None),
+        direction=Direction.BIDIRECTIONAL,
+        license_class=LicenseClass.PUBLIC_GOVERNMENT,
+        maturity=Maturity(
+            level=MaturityLevel.L4,
+            basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
+                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
+                  "COLUMN is SKIP for every adapter in this repository, because "
+                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
+                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
+                  "This adapter ships it: "
+                  "tests/test_cdm_tak_adapter.py::test_ingest_round_trip_loses_no_source_value. "
+                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
+                  "applicable conformance set, which is P2's Suite v2.",
+            external_exercise=None,
+        ),
+        claim_status=ClaimStatus.VERIFIED,
+        claim_external_system=None,
+        profiles=[],
+        capabilities=Capabilities(
+            wire=True,
+            directions_exercised=["ingest", "egress"],
+            message_types=[
+                "CoT atoms (`a-.-...`) — contact reports",
+                "CoT drawing shapes, on egress",
+            ],
+            limits=Limits(
+                max_input_bytes=None,
+                max_depth=None,
+                max_objects=None,
+                max_decompressed_bytes=None,
+                max_parse_seconds=None,
+                absent_because={
+                    "max_input_bytes":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_depth":
+                        "CoT is XML and does nest; no depth bound is declared yet",
+                    "max_objects":
+                        "no bound is enforced by this adapter today; the parser-safety "
+                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
+                    "max_decompressed_bytes":
+                        "this adapter accepts no archived or compressed payload, so there is "
+                        "no expansion to bound",
+                    "max_parse_seconds":
+                        "no wall-clock bound is enforced by this adapter today; the "
+                        "parser-safety policy's concrete bounds are owed by P5 "
+                        "(ARCHITECTURE.md §9)",
+                },
+            ),
+        ),
+        limitations=[
+            "the CoT schema edition this adapter is written against is NOT STATED by any "
+            "document in this repository — `fixtures/tak/spec/tak_terms.json` records the "
+            "Base-Event Schema's own version as its publisher states it, which is a reading "
+            "of that page and not a statement that this implementation targets it, so "
+            "`format.version` is null rather than guessed",
+            "contact atoms only on ingest; CoT types outside `a-.-...` are out of scope",
+            "leftovers are parked in `Entity.attributes` / `Event.payload` under "
+            "`source_extras` (`lossless.residual()`), not in the origin-identifying container "
+            "ARCHITECTURE.md §5 gives to P3 — the Part 1 stance that section rules for the "
+            "adapters already shipped",
+            "no evidence RECORD is generated for this adapter: the harness produces verdicts, "
+            "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
+            "`evidence.available` is false for that reason and not because the checks do not "
+            "run",
+            "none of §3.5's five resource limits is enforced by this adapter; the "
+            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
+            "each limit's own reason is in `capabilities.limits.absent_because`",
+        ],
+        limitations_empty_reason=None,
+        residual=Residual.LEGACY,
+        payload_adapter=None,
+        constituents=[],
+        evidence=Evidence(available=False),
+    )
 
     TRANSFORMS = {
         "event.@time": "re-rendered from CoT's second-precision Z form into the CDM's fixed "
