@@ -73,7 +73,7 @@ from synapse_cdm.oes import (
     validate_ontology_identifier,
 )
 
-#: Where the two artefacts live inside the package. Named once; every reader below goes through
+#: Where the registry artefacts live inside the package. Named once; every reader below goes through
 #: `_read()` rather than repeating it, which is the point of ADR 0004 decision 7.
 REGISTRY_DIR = ("registry", "sc_oes")
 EVENT_TYPES_FILE = "event_types.json"

@@ -530,3 +530,16 @@ changes no behaviour, and correcting it is a one-word edit — but it is a chang
 round was instructed to leave alone, so it is recorded here rather than made. It is the only
 surviving place in the tree where a current-state sentence still implies two runtime SC-OES registry
 artefacts.
+
+**CORRECTED 2026-09-07: THE OWNER RULED, AND THE SITE ABOVE IS NOW FIXED.** The paragraph above was
+true when it was written and records why the edit was withheld. The owner ruled the same day that
+the comment is a current-state statement, that the no-code-change instruction protects behaviour and
+a comment changes none, and authorised the one-line correction; the comment now reads "Where the
+registry artefacts live inside the package" and carries no count. That is the only line under
+`packages/` this round changed — the diff shows it and nothing else there — and it moved no schema,
+golden, registry, ontology, example or conformance verdict: the structural gates were re-run to
+prove it, `A/B/C/D/E` still `PASS` at exit `0` for the canonical PNT reference event from the source
+tree and from the installed wheel, and the bump gate derives no pending unit from it. No
+current-state sentence anywhere in the tree now implies that only two runtime SC-OES registry
+artefacts exist; the sentence quoted in the paragraph above is the superseded wording, quoted there
+as the defect it was and kept because this record is append-only.
