@@ -37,6 +37,7 @@ rather than to a movable tag, and that the publish job is reachable only by a ta
 """
 import pathlib
 import re
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -52,6 +53,56 @@ ENVIRONMENT = "pypi"
 
 #: The PyPI project this publishes. `synapse-cdm` is the normalised form and the one on the index.
 PROJECT = "synapse-cdm"
+
+#: TestPyPI's host, compared as a WHOLE host and never as a substring of a line.
+TESTPYPI_HOST = "test.pypi.org"
+
+#: What separates one YAML token from the next, for the purpose of finding hosts in a line.
+#: Quotes, brackets and `=` are here because `url: "https://…"`, `[a, b]` and `VAR=https://…`
+#: all put a host flush against punctuation, and a token that still carries the punctuation
+#: parses to a different host or to none.
+_TOKEN_SPLIT = re.compile(r"""[\s,;'"()\[\]{}<>=]+""")
+
+
+def hosts_named_in(line: str) -> set[str]:
+    """Every host `line` names, as whole host components.
+
+    Substring matching on an unparsed URL is the mistake CodeQL's
+    `py/incomplete-url-substring-sanitization` is named after, and it flagged the TestPyPI check
+    below for it on 2026-09-08 (run 34212170555, CVSS 7.8). The complaint is exact: "the string
+    test.pypi.org may be at an arbitrary position in the sanitized URL". It cuts both ways here
+    — `https://pypi.org/project/test.pypi.org-shim/` contains those characters and targets the
+    real index, while what the check is for is a host.
+
+    So every token is parsed and its HOST component compared. A token with no scheme is parsed
+    as a bare authority (`//<token>`) rather than string-split, so exactly one code path decides
+    what a host is: `urlsplit` strips userinfo, port, path, query and fragment, and lowercases
+    the host, none of which a `split('/')` would do.
+    """
+    hosts: set[str] = set()
+    for token in _TOKEN_SPLIT.split(line):
+        if not token:
+            continue
+        try:
+            host = urlsplit(token if "://" in token else f"//{token}").hostname
+        except ValueError:  # a malformed authority names no host, which is the safe direction
+            continue
+        if host:
+            hosts.add(host)
+    return hosts
+
+
+def targets_testpypi(line: str) -> bool:
+    """True if `line` names TestPyPI as a host — the host itself or any subdomain of it.
+
+    The subdomain arm is the form CodeQL's own recommendation gives (`host.endswith('.' + h)`
+    on a PARSED host), and it is checked here rather than assumed unnecessary: an index that
+    ever answered on `files.test.pypi.org` would be TestPyPI as much as the apex is.
+    """
+    return any(
+        host == TESTPYPI_HOST or host.endswith(f".{TESTPYPI_HOST}")
+        for host in hosts_named_in(line)
+    )
 
 
 @pytest.fixture(scope="module")
@@ -172,7 +223,7 @@ def test_nothing_uploads_to_testpypi_implicitly(workflow):
     is a second irreversible act nobody asked for, on an index whose filenames are also permanent.
     """
     live = [line for line in workflow.splitlines() if not line.lstrip().startswith("#")]
-    hits = [line.strip() for line in live if "test.pypi.org" in line]
+    hits = [line.strip() for line in live if targets_testpypi(line)]
     assert not hits, (
         f"the workflow targets TestPyPI in executable YAML: {hits}. A preview belongs on its own "
         "explicit trigger with its own environment, so that running it is a decision and skipping "

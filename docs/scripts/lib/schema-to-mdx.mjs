@@ -59,7 +59,31 @@ const BANNER =
  *
  * `mode: 'cell'` additionally collapses whitespace, because a newline ends a table ROW and a
  * multi-line docstring would truncate the table at that point.
+ *
+ * THE BACKSLASH, WHICH IS TWO DIFFERENT CHARACTERS DEPENDING ON WHICH SEGMENT IT IS IN
+ * ------------------------------------------------------------------------------------
+ * Escaping a meta-character by putting a backslash in front of it is only complete if the
+ * backslash itself is accounted for (CodeQL `js/incomplete-sanitization`, which flagged both
+ * pipe replacements below on 2026-09-08: "This does not escape backslash characters in the
+ * input"). The un-accounted case is real and it breaks the table rather than the wording: a
+ * literal `\|` in schema text became `\\|` — an escaped BACKSLASH followed by a bare pipe —
+ * and the cell ended there.
+ *
+ * The completion is not the same on the two sides of the split, and that is the same
+ * distinction the paragraph above draws for entities:
+ *   - outside code the text is parsed as Markdown inline, where `\x` IS an escape, so a
+ *     backslash is doubled first and every later escape composes with it. That also repairs a
+ *     silent loss: a lone `\` in a description used to disappear from the page;
+ *   - inside code it is not, so doubling a backslash there would SHOW the reader `\\.` where
+ *     the pattern they must implement says `\.` — exactly the failure the entity paragraph
+ *     describes. Only a run of backslashes immediately before a pipe is doubled, because that
+ *     run is what GFM's cell scanner counts when it decides whether the pipe is escaped.
  */
+//: A pipe, escaped for a GFM cell without doubling any backslash that is not shielding one.
+//: Written as a replacer function on purpose: the backslash run is data, not a fixed prefix.
+const escapeCodeSpanPipes = (text) =>
+  text.replace(/(\\*)\|/g, (_match, backslashes) => `${backslashes}${backslashes}\\|`);
+
 function escapeMdx(text, {mode} = {mode: 'prose'}) {
   if (text === undefined || text === null) return '';
   let value = String(text);
@@ -72,10 +96,16 @@ function escapeMdx(text, {mode} = {mode: 'prose'}) {
     .split(/(`[^`]*`)/g)
     .map((segment) => {
       const isCode = segment.startsWith('`') && segment.endsWith('`') && segment.length > 1;
-      if (isCode) return mode === 'cell' ? segment.replace(/\|/g, '\\|') : segment;
-      let out = segment.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;').replace(/</g, '&lt;');
-      if (mode === 'cell') out = out.replace(/\|/g, '\\|').replace(/>/g, '&gt;');
-      return out;
+      if (isCode) return mode === 'cell' ? escapeCodeSpanPipes(segment) : segment;
+      // The backslash is doubled in the SAME chain as the `|` escape that depends on it, which
+      // is the form the rule's own recommendation shows. The entity escapes follow rather than
+      // precede it only for that reason: `{ } < >` and `| \` share no character, so the order
+      // between the two groups cannot change a single byte of output.
+      const out =
+        mode === 'cell'
+          ? segment.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/>/g, '&gt;')
+          : segment.replace(/\\/g, '\\\\');
+      return out.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;').replace(/</g, '&lt;');
     })
     .join('');
 }
