@@ -7,18 +7,28 @@ becomes permanent by nobody looking at it, so the enforcement has to be somethin
 without anybody choosing to look. This module is that: an `expiry` in the past fails the WHOLE
 SUITE, on the day it passes, with no flag, no environment variable, no marker and no skip.
 
-That is deliberately harsher than it needs to be for a repository with no exceptions in it today,
-and the harshness is the point. The two softer arrangements both fail in the same direction:
+That is deliberately harsher than it needs to be for a repository with two exceptions in it, and
+the harshness is the point. The two softer arrangements both fail in the same direction:
 
 * a warning — read by nobody, because the run is green;
 * a check in CI only — passed over by anyone running `pytest` locally, and CI is exactly where a
   red build gets an `|| true` added under time pressure.
 
-**There are no exception files today.** `pip-audit --strict` was clean on 2026-09-08 and no CodeQL
-SARIF has been produced for this repository yet. So most of what follows runs over an empty
-directory — and that is why the schema itself, the README and the derivation are checked too:
-those assertions have content on an empty directory, and they are what will be true on the day the
-first exception is written by somebody who has not read §45.
+**There are two exception files, both written on 2026-09-08 by round PB** (`image-size`'s two
+high npm advisories, which have no upstream fix; they expire 2026-11-07). Until that round this
+paragraph read "there are no exception files today", and most of what follows ran over an empty
+directory; the assertions below are written so that they have content in EITHER state, because a
+test that encodes today's emptiness as a fact about the tree is a test that goes red when the
+mechanism is first used — which is exactly what happened to two tests in other modules when these
+two files landed, and they were the things that were wrong, not the code.
+
+`pip-audit --strict` over the Python environment is still clean, and both files are about the
+`docs/` npm toolchain, which the Python distribution does not carry.
+
+M's ruling of 2026-09-08T16:45:00Z added `mitigation` and `upstream_status` to the schema's
+required fields and requires that "malformed or incomplete exception files must fail validation";
+`test_an_incomplete_exception_file_fails_validation_field_by_field` below is that requirement,
+proved one omitted field at a time rather than once over a single broken file.
 """
 from __future__ import annotations
 
@@ -57,6 +67,26 @@ def _today() -> dt.date:
     return dt.datetime.now(dt.timezone.utc).date()
 
 
+#: One record that validates, at module scope because two tests need the same positive control:
+#: the refusal test below mutates a field of it, and the incompleteness test deletes one. Written
+#: out in full rather than read from `security/exceptions/` — a test whose positive control is a
+#: live file passes whenever that file passes, which is the assertion it was meant to make
+#: independently.
+VALID_EXCEPTION = {
+    "identifier": "GHSA-aaaa-bbbb-cccc",
+    "affected_package": "some-dependency",
+    "version_range": ">=1.0,<1.4",
+    "risk": "an attacker who controls the input reaches the parser directly",
+    "reason": "no upstream fix exists; tracked in the linked issue and re-checked weekly",
+    "mitigation": "the parser is never reached: no build step passes untrusted input to it",
+    "upstream_status": "no fix released; issue open upstream, removed when a patched release lands",
+    "owner": "@decentcybersecurity",
+    "expiry": "2026-12-31",
+    "created": "2026-09-08",
+    "references": ["https://github.com/advisories/GHSA-aaaa-bbbb-cccc"],
+}
+
+
 # --------------------------------------------------------------------------------------------
 # The directory and its schema exist and mean what §45 requires.
 # --------------------------------------------------------------------------------------------
@@ -87,15 +117,23 @@ def test_the_schema_is_not_under_the_generated_schemas_directory():
 
 
 def test_the_schema_requires_every_field_section_45_lists(schema):
-    """§45: identifier, affected package, risk, reason, owner, expiry — plus this round's three.
+    """§45: identifier, affected package, risk, reason, owner, expiry — plus five more.
 
-    `version_range`, `created` and `references` are the brief's additions to §45's six, and they
+    `version_range`, `created` and `references` are round P6's additions to §45's six, and they
     are in the same list here because a schema that required six of nine would let a file omit
     the range — which is what makes an exception bounded in versions as well as in time.
+
+    `mitigation` and `upstream_status` are M's, ruled 2026-09-08T16:45:00Z, and they are required
+    for the reason the ruling gives: with only `risk` and `reason`, what holds the risk down and
+    what would end the exception could both be omitted by writing a longer sentence in `reason`,
+    and round PB's own first draft of these two files did exactly that.
     """
     required = set(schema["required"])
     assert {"identifier", "affected_package", "risk", "reason", "owner", "expiry"} <= required
     assert {"version_range", "created", "references"} <= required
+    assert {"mitigation", "upstream_status"} <= required, (
+        "M's ruling of 2026-09-08T16:45:00Z requires both; without them an exception can state a "
+        "risk and a reason and say nothing about the controls in force or the event that ends it")
     assert schema.get("additionalProperties") is False, (
         "the schema permits extra properties, so a file could carry `exipry` alongside a valid "
         "`expiry` and nothing would say so")
@@ -107,22 +145,14 @@ def test_the_schema_refuses_the_shapes_that_make_an_exception_meaningless(schema
     Each case below is a real way a hurried exception gets written: a one-word reason, no owner,
     no reference, an expiry as a year, an unbounded version range.
     """
-    valid = {
-        "identifier": "GHSA-aaaa-bbbb-cccc",
-        "affected_package": "some-dependency",
-        "version_range": ">=1.0,<1.4",
-        "risk": "an attacker who controls the input reaches the parser directly",
-        "reason": "no upstream fix exists; tracked in the linked issue and re-checked weekly",
-        "owner": "@decentcybersecurity",
-        "expiry": "2026-12-31",
-        "created": "2026-09-08",
-        "references": ["https://github.com/advisories/GHSA-aaaa-bbbb-cccc"],
-    }
+    valid = dict(VALID_EXCEPTION)
     jsonschema.validate(valid, schema)  # the positive control, first
 
     for field, bad in (
         ("risk", "low"),
         ("reason", "later"),
+        ("mitigation", "none"),
+        ("upstream_status", "open"),
         ("owner", ""),
         ("expiry", "2026"),
         ("created", "8 September 2026"),
@@ -137,6 +167,39 @@ def test_the_schema_refuses_the_shapes_that_make_an_exception_meaningless(schema
 
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(dict(valid, exipry="2026-12-31"), schema)
+
+
+def test_an_incomplete_exception_file_fails_validation_field_by_field(schema, tmp_path):
+    """M, 2026-09-08T16:45:00Z, verbatim: "malformed or incomplete exception files must fail
+    validation."
+
+    ONE OMISSION AT A TIME, and that is the point of the loop. A single broken file missing five
+    fields would pass this test with four of the five requirements absent from the schema —
+    `jsonschema` raises on the first one it finds and says nothing about the rest. Omitting each
+    required field on its own is what proves that each is required.
+
+    Written through a FILE on disk, because that is what a person adds to
+    `security/exceptions/`, and because it exercises the same read the two consumers do.
+    """
+    complete = tmp_path / "GHSA-aaaa-bbbb-cccc.json"
+    complete.write_text(json.dumps(VALID_EXCEPTION), encoding="utf-8")
+    jsonschema.validate(json.loads(complete.read_text()), schema)   # green, before any red
+
+    for field in schema["required"]:
+        incomplete = dict(VALID_EXCEPTION)
+        del incomplete[field]
+        path = tmp_path / f"missing-{field}.json"
+        path.write_text(json.dumps(incomplete), encoding="utf-8")
+        with pytest.raises(jsonschema.ValidationError) as raised:
+            jsonschema.validate(json.loads(path.read_text()), schema)
+        assert field in str(raised.value), (
+            f"a file with no {field!r} was refused, but the message does not name the field: "
+            f"{raised.value.message!r}. The person who has to fix the file reads that message")
+
+    malformed = tmp_path / "not-json.json"
+    malformed.write_text("{ this is not JSON", encoding="utf-8")
+    with pytest.raises(json.JSONDecodeError):
+        json.loads(malformed.read_text())
 
 
 # --------------------------------------------------------------------------------------------

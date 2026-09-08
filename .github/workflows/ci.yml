@@ -318,3 +318,107 @@ jobs:
           name: frozen-closure-${{ github.sha }}
           path: frozen-closure.txt
           if-no-files-found: error
+
+  docs-audit:
+    name: npm audit over docs/, at high, with the exceptions derived from security/exceptions/
+    runs-on: ubuntu-latest
+    # THE GAP THIS CLOSES, in one sentence: `pip-audit` is Python-only, `dependency-review.yml`
+    # runs on pull requests only, and CodeQL analyses source rather than dependencies — so until
+    # round PB nothing in CI looked at `docs/package-lock.json` on a push, and the repository was
+    # green with seven high npm advisories standing (round P8's readiness report, blocker 2).
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Set up Node at the version the repository pins
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
+        with:
+          node-version-file: .node-version
+
+      - name: Install from the committed lock
+        # `npm ci` and not `npm install`: the audit has to be about the tree that ships, and
+        # `npm install` may resolve something the lock does not contain, which would make a green
+        # here a statement about today's registry rather than about this commit.
+        run: npm ci --prefix docs
+
+      - name: The exception allowlist, derived from the tree and printed before it is used
+        # §45, and the same derivation the `supply-chain` job above uses: one directory, no
+        # second list, nothing typed into this file. `--emit-pip-audit-ignores` prints
+        # `--ignore-vuln <id>` pairs; the ids are what this job needs, and taking them from the
+        # SAME command is what keeps the two jobs from drifting. An expired exception is dropped
+        # by the gate itself, so the day one lapses this job goes red without anybody editing it.
+        id: excepted
+        run: |
+          set -euo pipefail
+          ids="$(python gates/codeql_gate.py --emit-pip-audit-ignores | sed 's/--ignore-vuln //g')"
+          echo "derived: [${ids}]"
+          echo "ids=${ids}" >> "${GITHUB_OUTPUT}"
+
+      - name: npm audit --audit-level=high, for the log
+        # M's ruling of 2026-09-08 names this command, so it is run verbatim and its output is in
+        # the log. Its EXIT STATUS cannot be the job's: with an excepted advisory outstanding it
+        # is always non-zero, and the step after this one is what decides. Captured with
+        # `&& status=0 || status=$?`, which RECORDS the status rather than discarding it.
+        # `tests/test_cdm_security_policy.py` forbids the two usual ways of discarding one
+        # anywhere in this file — a rule written for the gitleaks step and correct here too: an
+        # ignored exit status is invisible, and a printed one is not.
+        run: |
+          set -uo pipefail
+          npm audit --prefix docs --audit-level=high && status=0 || status=$?
+          echo "npm audit --audit-level=high exited ${status}; an excepted advisory makes that "
+          echo "non-zero by construction, so the next step is the one that decides."
+
+      - name: Fail on any high or critical advisory that is not excepted
+        # The enforcing half. `npm audit --json` reports one entry per PACKAGE, and a package that
+        # is merely a dependent of a vulnerable one inherits the severity while carrying no
+        # advisory of its own — sixteen of the seventeen "high" entries on 2026-09-08 were that
+        # shape. So the set that matters is the ADVISORIES, which are the object-valued `via`
+        # entries, and an unexcepted one at high or critical is what fails the build.
+        env:
+          EXCEPTED: ${{ steps.excepted.outputs.ids }}
+        run: |
+          set -euo pipefail
+          # `|| true` on the CAPTURE only: `npm audit` exits non-zero whenever it finds
+          # anything, and what is being captured is the report, not a verdict. The verdict is
+          # taken below, from the report's own contents.
+          npm audit --prefix docs --json > npm-audit.json || true
+          python - <<'PY'
+          import json, os, sys
+
+          excepted = set(os.environ.get("EXCEPTED", "").split())
+          report = json.load(open("npm-audit.json"))
+          advisories = {}
+          for entry in report.get("vulnerabilities", {}).values():
+              for via in entry.get("via", []):
+                  if isinstance(via, dict):
+                      advisories[via["url"].rsplit("/", 1)[-1]] = (via["severity"], via["title"])
+
+          blocking = sorted(i for i, (sev, _) in advisories.items()
+                            if sev in ("high", "critical") and i not in excepted)
+          used = sorted(i for i in advisories if i in excepted)
+          unused = sorted(excepted - set(advisories))
+
+          print(f"advisories: {len(advisories)}; excepted and present: {used}; "
+                f"excepted and absent: {unused}")
+          for identifier in blocking:
+              severity, title = advisories[identifier]
+              print(f"BLOCKING {severity} {identifier} — {title}")
+          if blocking:
+              sys.exit(f"{len(blocking)} unexcepted high/critical npm advisory/advisories in "
+                       "docs/. Upgrade the dependency, or write a time-bounded exception under "
+                       "security/exceptions/ — never an ignore line in this workflow.")
+          print("OK — no unexcepted high or critical npm advisory in docs/")
+          PY
+
+      - name: Upload the audit report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: npm-audit-${{ github.sha }}
+          path: npm-audit.json
+          if-no-files-found: error
+
+      - name: The site still builds from the audited tree
+        # Last step of the same job, deliberately: an upgrade that clears an advisory and breaks
+        # the build is not a fix, and a separate job could go green on a lock the build rejects.
+        run: npm --prefix docs run build

@@ -322,6 +322,109 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
+**ROUND PB's RECORD, 2026-09-08 — the two readiness blockers, repaired.**
+
+Recorded 2026-09-08 by SOIF Part 1 round PB, on M's rulings of the same day. Nothing here is
+released; `PACKAGE_VERSION` is unmoved at 2.0.0. The round exists because round P8's readiness
+report (`docs/soif-part1-release-readiness.md`) ended
+`blocked: [conformance-json-not-byte-stable, eleven-open-dependabot-alerts-unaudited-by-ci]`,
+which under §57 is NO RELEASE.
+
+**THE PACKAGED SURFACE DID NOT MOVE, AND THAT IS A READING RATHER THAN A CLAIM.**
+`python gates/bump_derivation.py --json` reports **697 signals with the working tree staged and
+697 with it clean** — the identical set — so this round contributes **no unit, of any kind**, and
+no ruling was written. The arc since 2.0.0 still derives MINOR with 0 unruled and the next release
+is still at least 2.1.0. What moved is the SHAPE OF A SERIALISED REPORT, and the gate is right not
+to see it: `check_malformed` builds its `details` dict inline, so no importable name, no signature,
+no manifest field and no fixture set changed. A consumer who reads `conformance run --format json`
+does see the difference, which is what this paragraph is for.
+
+**Check H's refusal records no longer carry `seconds`, and nothing replaced it that varies.**
+Each entry of `conformance.checks.H.details.refusals[]` was
+`{fixture, refused_by, exception, seconds}` and is now
+`{fixture, refused_by, exception, over_time_bound}`, a boolean; `details.over_time_bound` was a
+list of `"<fixture>: refused after 0.123s"` strings and is now a list of fixture names;
+`details.timeout_s` — the declared five-second bound, identical on every machine — is unchanged
+and is the only number about time the report still publishes. §21's bound is still ENFORCED: the
+elapsed time is measured around every call and compared against `timeout_s`, and a refusal that
+crosses it still fails the check with the fixture named. What changed is that the reading stays in
+the frame that took it.
+
+*Why, in one paragraph.* The old field was a wall-clock measurement in an artefact whose SHA-256
+is written into `SHA256SUMS` by the release pipeline's `build` job and read back out of the
+witness record by `gates/witness_verify.py`. On an unloaded machine all 28 refusals read `0.0`,
+so the value sat exactly on the rounding boundary and a single refusal taking 50 microseconds
+flipped one to `0.0001`; that flip reddened `test_two_sweeps_of_one_tree_are_byte_identical` on
+two `publish.yml` runners out of two and on `ci.yml`, and it made `conformance-<version>.json`'s
+digest a function of machine load. `evidence.py` had already noticed the field was not
+reproducible and MASKED it — but two tests compare the artefact's BYTES, unmasked, so a mask could
+never have made the artefact reproducible. M's ruling of 2026-09-08: expose deterministic outcome
+fields, never the observed duration, and remove the masks rather than leave deterministic output
+depending on consumers knowing which fields to ignore.
+
+**`evidence.MASKED` is therefore two entries and not three**: `generated_at` and
+`test_run.duration_s`, plus `source_commit` when either side is dirty.
+`conformance.checks.H.details.refusals[].seconds` is gone from it because the field is gone from
+the record. `masked()`'s `[]` path segment is kept — no `MASKED` entry uses one today, `also=`
+still accepts one, and `tests/test_cdm_evidence.py` still exercises the mechanism. Ten consecutive
+sweeps of the whole tree, unloaded and again under six-way CPU contention, hash to one digest:
+`e11cd61735c274e2f27827fff5db5aae15b6a8eb5ce08d054a40e588831ea971`, twenty times out of twenty.
+
+**`docs/` is not in the distribution and its npm tree is now audited anyway.** The wheel carries
+no npm dependency and `pip-audit --strict` over its frozen closure is clean; the eleven open
+Dependabot alerts were all in `docs/package-lock.json`, and no CI job on a push looked at that
+file — `pip-audit` is Python-only, `dependency-review.yml` runs on pull requests only, and CodeQL
+analyses source rather than dependencies. THREE `overrides` entries in `docs/package.json` move
+`fast-uri` to `^3.1.7`, `qs` to `^6.16.0` and `serialize-javascript` to `^7.1.1`; the lock moves
+exactly those three forward and drops `randombytes`, which `serialize-javascript` 7 no longer
+needs. `overrides` and not `npm audit fix` — the run of `npm audit fix` this round took first
+DOWNGRADED `express` 4.22.2 → 4.22.1 and `qs` 6.15.3 → 6.14.2, leaving `qs` inside the vulnerable
+range it was supposed to leave, so it was reverted. An override is also the only route available
+for `serialize-javascript`: `copy-webpack-plugin@11` and `css-minimizer-webpack-plugin@5` ask for
+`^6.0.0`, both are pinned by `@docusaurus/bundler@3.10.2`, and 3.10.2 is the newest Docusaurus
+there is. That clears five high advisories and three moderate ones. All 26 built HTML pages are
+byte-identical before and after, so no Docusaurus bump was needed and no page's content or chrome
+moved — re-derived on 2026-09-08 from THREE independent builds, each after its own `npm ci`: the
+tree at `a9c0660`, the tree at this round's commit, and that same commit built a second time in a
+different directory. All 66 files of `docs/build`, not only the 26 HTML pages, carry identical
+SHA-256 digests in all three, down to the `runtime~main.<hash>.js` chunk name. The reason is that
+all three overridden packages are webpack-side build tooling — `fast-uri` under `ajv`, `qs` and
+`serialize-javascript` under the plugins — and none of them is bundled into the client output. What remains is `uuid` (moderate, no fix, reachable only through `webpack-dev-server`,
+which no build uses) and `image-size`'s two high advisories, which have no upstream fix and no
+reachable upgrade: they are the first two files ever written into `security/exceptions/`, expire
+2026-11-07, and are enforced by the new `docs-audit` job in `.github/workflows/ci.yml`, which
+derives its allowlist from that directory through
+`gates/codeql_gate.py --emit-pip-audit-ignores` rather than carrying one of its own.
+
+**AN EXCEPTION NOW HAS FOUR PROSE FIELDS AND NOT TWO** (M's ruling, 2026-09-08T16:45:00Z, on this
+round's first attempt). `security/exceptions/schema.json` gains `mitigation` and
+`upstream_status`, both REQUIRED and both with the thirty-character floor `risk` and `reason`
+already carried, and the four are now separated by what they answer: `risk` is the security
+impact, `reason` is why the exception is granted, `mitigation` is the compensating controls in
+force NOW, and `upstream_status` is whether a fix exists, the advisory's state and **the event
+that will trigger removal**. The first draft of the two `image-size` files had the last two buried
+inside `reason` under labels, and the ruling is what makes that impossible: an incomplete file
+fails validation, and
+`tests/test_cdm_security_exceptions.py::test_an_incomplete_exception_file_fails_validation_field_by_field`
+omits each of the eleven required keys in turn and requires the refusal to name the key it
+omitted. **This is not a packaged surface**: the file is hand-written, lives beside the files it
+governs rather than under `schemas/`, is imported by nothing, and the bump gate reads no unit for
+it — the arc is unmoved at MINOR with 0 unruled.
+
+*Two tests elsewhere had encoded the empty directory as a constant and this is where that is
+recorded*, because it is the shape rather than the incident that matters:
+`tests/test_cdm_codeql_gate.py::test_the_live_directory_derives_the_flags_the_workflow_will_run_with`
+asserted the derived allowlist was the empty string, and
+`tests/test_cdm_release_notes.py::test_an_empty_exception_directory_renders_as_none_rather_than_as_nothing`
+asserted the rendered notes said `**none**`. Both went red the moment the first two exception
+files landed, and in both cases the code under test was right: the derivation emitted exactly the
+flags the `docs-audit` job then ran green with, and the renderer printed the count and the names,
+which is its other branch working correctly. Both now DERIVE from the directory — the first
+compares the emitted flags against the identifiers it reads out of the JSON itself, the second
+states the count and names every file, and the empty case is proved on a directory that is empty
+rather than on the repository's. `security/exceptions/README.md`, this file's own P4 paragraph and
+`docs/docs/cdm/evidence.mdx` carry dated corrections for the same reason.
+
 **ROUND P7's RECORD, 2026-09-08 — the release pipeline (SOIF §49–§55).**
 
 Recorded 2026-09-08 by SOIF Part 1 round P7. Nothing here is released; `PACKAGE_VERSION` is
@@ -395,7 +498,10 @@ front of it and compares field by field, masking only `generated_at`, `test_run.
 proof rather than by reasoning about it**: two generations from one fresh clone differed in
 exactly one field, `stanag4676`'s second refusal reading `0.0` and then `0.0001`, and the rule
 that settles it is the one `test_run.duration_s` already stood for — a measured duration is not a
-measurement of the tree. The mask is an enumeration and not a pattern, and a test sweeps every
+measurement of the tree. (**2026-09-08, round PB: the third mask is gone and so is the field it
+named.** A mask could not help the two tests that compare the artefact's bytes unmasked, so
+`suite.py` stopped writing the reading; see round PB's record at the top of this section. P4's
+paragraph is kept as written because it is the record of what P4 did.) The mask is an enumeration and not a pattern, and a test sweeps every
 leaf of a record for an unmasked duration so that a timing field added later cannot make `verify`
 flaky instead of failing loudly here.
 `lossless.classify()` partitions every source leaf into §34's six categories, the suite carries it

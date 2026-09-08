@@ -60,19 +60,27 @@ $ synapse evidence verify evidence/pntmap/1.0.0/evidence.json
 REPRODUCED: evidence/pntmap/1.0.0/evidence.json (masked: generated_at, test_run.duration_s)
 ```
 
-Four fields are masked and nothing else is. The rule is that **a measured duration is not a
+Three fields are masked and nothing else is. The rule is that **a measured duration is not a
 measurement of the tree**, and the list is an enumeration of where one appears rather than a
 pattern — a pattern would mask a future field nobody had looked at.
 
 - `generated_at` — two runs are never at one instant;
 - `test_run.duration_s` — wall time for the whole run, which differs by scheduling;
-- `conformance.checks.H.details.refusals[].seconds` — how long one malformed payload took to be
-  refused. A real measurement, and check H's whole point is a five-second bound, but it measures
-  *this machine at this moment*. It was found by running the reproducibility proof, not by
-  reasoning about it: two generations from one fresh clone differed in exactly one field;
 - `source_commit`, **only when either side is dirty**, and `verify` says so in its own output. A
   dirty tree has no commit that describes it, so comparing the field would be comparing a label
   to a thing it does not name.
+
+**There were four until 2026-09-08.** The fourth was
+`conformance.checks.H.details.refusals[].seconds` — how long one malformed payload took to be
+refused — and it was found by running the reproducibility proof rather than by reasoning about
+it: two generations from one fresh clone differed in exactly one field. Masking it was the wrong
+repair, and the reason is worth keeping. The same value is written into
+`conformance-<version>.json`, whose SHA-256 the release pipeline records; two tests compare THOSE
+BYTES, unmasked, so the mask made `verify` reproducible while leaving the published artefact a
+function of machine load. On M's ruling of 2026-09-08 the field was removed from the report
+instead: check H still measures the elapsed time and still enforces §21's five-second bound, and
+what it publishes is `over_time_bound`, a boolean, beside the declared `timeout_s`. Deterministic
+output should not depend on a consumer knowing which fields to ignore.
 
 A test sweeps every leaf of a record for a key that names a duration and fails on any that is
 neither masked nor a declared bound, so a timing field added by a later round cannot quietly make

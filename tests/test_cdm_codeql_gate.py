@@ -79,6 +79,12 @@ def exception_file(directory: pathlib.Path, identifier: str, expiry: str) -> pat
         "version_range": "*",
         "risk": "a synthetic finding in a test fixture, exploitable by nobody",
         "reason": "written by tests/test_cdm_codeql_gate.py to prove the excepted branch",
+        # 2026-09-08, round PB: `mitigation` and `upstream_status` became required fields of
+        # `security/exceptions/schema.json` (M's ruling). This gate reads three fields and would
+        # not notice their absence, but a synthetic file that no longer validates against the
+        # live schema is a fixture that has stopped resembling the thing it stands for.
+        "mitigation": "none needed: the file exists only inside a tmp_path for this module",
+        "upstream_status": "not applicable; the fixture is deleted when the test ends",
         "owner": "the-test-suite",
         "expiry": expiry,
         "created": "2026-09-08",
@@ -260,7 +266,11 @@ def test_the_pip_audit_flags_are_derived_from_the_directory(tmp_path, monkeypatc
 
 
 def test_an_empty_directory_derives_an_empty_allowlist(tmp_path, monkeypatch, capsys):
-    """The state today, and the reason this is not implemented as "if the file exists".
+    """The reason this is not implemented as "if the file exists".
+
+    (2026-09-08, round PB: this docstring used to open "the state today". It is no longer the
+    state of the live directory — two exceptions were written into it — which is why the case is
+    proved on a `tmp_path` and not on the repository.)
 
     `pip-audit --strict $(...)` with an empty expansion is `pip-audit --strict`, which is the
     correct invocation when nothing is excepted. A mechanism that only worked once an exception
@@ -272,9 +282,39 @@ def test_an_empty_directory_derives_an_empty_allowlist(tmp_path, monkeypatch, ca
 
 
 def test_the_live_directory_derives_the_flags_the_workflow_will_run_with(capsys):
-    """Against `security/exceptions/` as it stands, which is the reading the CI step takes."""
-    assert codeql_gate.emit_pip_audit_ignores(dt.date.today()) == 0
-    assert capsys.readouterr().out.strip() == ""
+    """Against `security/exceptions/` as it stands, which is the reading the CI step takes.
+
+    DERIVED FROM THE DIRECTORY, NOT WRITTEN DOWN. Until round PB this test asserted the output
+    was the empty string, and it passed for a reason that was not the property it was named
+    after: the directory happened to be empty. The first two exception files reddened it, and
+    the test was the thing that was wrong — `emit_pip_audit_ignores` was producing exactly the
+    flags the `docs-audit` job then ran green with. What is asserted now is the property the
+    workflow actually depends on, and it has content on an empty directory and on a full one:
+    the flags are `--ignore-vuln <id>` for every valid, unexpired file in the directory, in the
+    gate's own order, and for nothing else.
+
+    The expected identifiers are read from the JSON a second time, by this test, rather than
+    taken from `load_exceptions()` alone — otherwise the assertion would be the gate agreeing
+    with itself and a filter dropped from `load_exceptions` would still pass.
+    """
+    today = dt.date.today()
+    exceptions_dir = REPO / "security" / "exceptions"
+    from_the_files = {
+        body["identifier"]
+        for body in (json.loads(path.read_text(encoding="utf-8"))
+                     for path in sorted(exceptions_dir.glob("*.json"))
+                     if path.name != "schema.json")
+        if dt.date.fromisoformat(body["expiry"]) >= today
+    }
+    expected = [word
+                for exemption in codeql_gate.load_exceptions()
+                if exemption.valid_on(today)
+                for word in ("--ignore-vuln", exemption.identifier)]
+    assert {w for w in expected if w != "--ignore-vuln"} == from_the_files, (
+        "the gate's live reading and this test's own reading of the same directory disagree")
+
+    assert codeql_gate.emit_pip_audit_ignores(today) == 0
+    assert capsys.readouterr().out.split() == expected
 
 
 # --------------------------------------------------------------------------------------------

@@ -318,6 +318,14 @@ def check_malformed(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Cl
     loader (`harness.load_raw`) before the adapter is asked, because the loader is what parses
     JSON — that is a true and useful fact about the pipeline and it is not the parser being
     exercised, so the check requires at least one payload to be refused by the ADAPTER itself.
+
+    THE TIME BOUND IS ENFORCED AND ITS READING IS NOT PUBLISHED (round PB, 2026-09-08). Each
+    refusal carries `over_time_bound`, a boolean, and `details` carries `timeout_s`, the bound
+    the run was given; neither varies between two runs of one tree. The elapsed seconds are
+    measured — that is how the boolean is decided — and they stay in this frame, because
+    `--format json` is evidence whose digest is written into `SHA256SUMS` and read back by
+    `gates/witness_verify.py`, and a machine-load-dependent byte makes that digest a number
+    nobody can re-derive.
     """
     directory = fixtures / MALFORMED_DIR
     if not directory.is_dir():
@@ -350,11 +358,19 @@ def check_malformed(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Cl
             else:
                 accepted.append(f"{path.name}: returned {len(objects)} object(s)")
                 continue
-        elapsed = time.monotonic() - started
-        if elapsed > timeout_s:
-            slow.append(f"{path.name}: refused after {elapsed:.3f}s")
+        # THE ELAPSED TIME IS MEASURED AND NOT REPORTED, and the asymmetry is the point (round
+        # PB, 2026-09-08). The bound is enforced here, in the comparison below; what reaches the
+        # report is the OUTCOME of that comparison and never the reading behind it. A wall-clock
+        # value in `--format json` makes the artefact's bytes a function of machine load: the
+        # field this replaced read `round(elapsed, 4)`, every one of the 28 refusals sat at 0.0,
+        # and a single refusal taking 50 microseconds flipped one to 0.0001 — which reddened
+        # `test_two_sweeps_of_one_tree_are_byte_identical` on two runners out of two and, through
+        # `SHA256SUMS`, made `conformance-<version>.json`'s digest unre-derivable.
+        over_time_bound = (time.monotonic() - started) > timeout_s
+        if over_time_bound:
+            slow.append(path.name)
         refusals.append({"fixture": path.name, "refused_by": layer, "exception": outcome,
-                         "seconds": round(elapsed, 4)})
+                         "over_time_bound": over_time_bound})
     by_adapter = [r for r in refusals if r["refused_by"] == "adapter"]
     details = {"payloads": len(payloads), "refusals": refusals, "accepted": accepted,
                "crashed": crashed, "over_time_bound": slow, "timeout_s": timeout_s,

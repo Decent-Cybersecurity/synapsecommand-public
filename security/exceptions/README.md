@@ -3,13 +3,25 @@
 A documented, time-bounded decision **not to fix a security finding immediately**. SOIF Part 1
 §45: "no permanent undocumented exemptions".
 
-**There are none today.** This directory holds `schema.json` and this file and no exception, and
-that is a reading rather than an aspiration: `pip-audit --strict` over the installed environment
-on 2026-09-08 reported *No known vulnerabilities found*, and no CodeQL run has yet produced a
-SARIF for this repository — advanced setup landed in round P6 and its first run is round P7's to
-record. An empty directory is the correct state and the tooling is written for it: both consumers
-below derive an empty allowlist from an empty directory, which is not the same thing as having no
-allowlist mechanism.
+**There are two today, and both are about `docs/`.** `GHSA-w3rx-r6r6-pgpr.json` and
+`GHSA-5p2g-fcmc-qvqq.json` cover `image-size`'s two high npm advisories: a denial of service in
+its ICNS, JXL and HEIF parsers, reachable only when Docusaurus measures an image, at documentation
+build time, in a toolchain the Python distribution does not carry. They were written on
+2026-09-08 by round PB, they have no upstream fix to take, and they expire **2026-11-07** — sixty
+days, on M's ruling of the same day, with removal on the first upstream fix rather than at expiry.
+Each file's `upstream_status` says which event that would be.
+
+Until 2026-09-08 this paragraph read "there are none today", and the empty state is still the one
+the tooling is written for: both consumers below derive an EMPTY allowlist from an empty
+directory, which is not the same thing as having no allowlist mechanism. Two tests in other
+modules had encoded that emptiness as a constant and went red the moment these files landed —
+`tests/test_cdm_codeql_gate.py` and `tests/test_cdm_release_notes.py`, both now deriving from the
+directory instead. If you are reading this because you are about to add the third file, that is
+the failure mode to look for: a test that passes because the directory is empty rather than
+because the derivation is right.
+
+`pip-audit --strict` over the installed Python environment reports *No known vulnerabilities
+found*, and nothing in this directory excepts a Python finding.
 
 ## The shape
 
@@ -22,7 +34,9 @@ One file per exception, `<identifier>.json`, validated against `schema.json` by
   "affected_package": "some-dependency",
   "version_range": ">=1.0,<1.4",
   "risk": "what an attacker gets if this is exploited in THIS repository's use of the package",
-  "reason": "why it is not fixed now, and what has to change for it to be fixed",
+  "reason": "why the exception is being granted",
+  "mitigation": "the compensating controls in force NOW, present tense and checkable",
+  "upstream_status": "whether a fix exists, the advisory's state, and the event that ends this",
   "owner": "a person or team that answers for it",
   "expiry": "2026-12-31",
   "created": "2026-09-08",
@@ -32,6 +46,17 @@ One file per exception, `<identifier>.json`, validated against `schema.json` by
 
 The filename's stem MUST be the `identifier`. Two files could otherwise carry one identifier and
 disagree, and which of them a consumer honoured would depend on directory order.
+
+**The four prose fields are four for a reason** (M's ruling, 2026-09-08T16:45:00Z, which added the
+last two and made them required): `risk` is the security IMPACT and nothing else; `reason` is why
+the exception is being GRANTED; `mitigation` is the concrete compensating controls IN FORCE NOW;
+`upstream_status` is whether a fix exists, what state the upstream issue or advisory is in, and
+**the event that will trigger removal**. With only the first two, a file can state a risk and a
+reason and say nothing about what holds the risk down or what would end the exception — and the
+first draft of the two files in this directory did exactly that, with both buried inside `reason`.
+An incomplete file now fails validation, field by field:
+`tests/test_cdm_security_exceptions.py::test_an_incomplete_exception_file_fails_validation_field_by_field`
+omits each required key in turn and requires the refusal to name it.
 
 ## What makes it an exception rather than a note
 

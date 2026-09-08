@@ -78,19 +78,22 @@ RECORD_NAME = "evidence.json"
 #:   generated_at          — the instant. Two runs are never at one instant.
 #:   test_run.duration_s   — wall time for the whole run. Two runs of one deterministic suite
 #:                           differ by scheduling.
-#:   conformance.checks.H.details.refusals[].seconds
-#:                         — how long ONE malformed payload took to be refused (`suite.py:357`).
-#:                           FOUND BY THIS ROUND'S OWN §36 PROOF rather than reasoned about: two
-#:                           generations from one fresh clone differed in exactly one field, and
-#:                           it was `stanag4676`'s second refusal reading 0.0 and then 0.0001.
-#:                           It is a real measurement and it belongs in the record — check H's
-#:                           whole point is a five-second bound — but it measures THIS MACHINE AT
-#:                           THIS MOMENT, which is what `test_run.duration_s` is masked for.
 #:   source_commit         — ONLY when the tree is dirty, and `verify` says which. A dirty tree
 #:                           has no commit that describes it, so comparing the field would be
 #:                           comparing a label to a thing it does not name.
-MASKED = ("generated_at", "test_run.duration_s",
-          "conformance.checks.H.details.refusals[].seconds")
+#:
+#: A THIRD ENTRY WAS HERE UNTIL 2026-09-08 AND THE FIELD IT NAMED NO LONGER EXISTS. It was
+#: `conformance.checks.H.details.refusals[].seconds`, how long ONE malformed payload took to be
+#: refused, found by round P4's §36 proof rather than reasoned about: two generations from one
+#: fresh clone differed in exactly one field, and it was `stanag4676`'s second refusal reading
+#: 0.0 and then 0.0001. Round PB took the reading out of `suite.py`'s report instead of masking
+#: it, on M's ruling of 2026-09-08 — the same value reddened
+#: `test_two_sweeps_of_one_tree_are_byte_identical` on two release-pipeline runners out of two,
+#: and those two tests compare the bytes UNMASKED, so a mask here could never have made the
+#: artefact reproducible. What check H publishes now is `over_time_bound`, a boolean, and
+#: `timeout_s`, the declared bound. Deterministic output should not depend on a consumer knowing
+#: which fields to ignore.
+MASKED = ("generated_at", "test_run.duration_s")
 
 #: What a masked field is replaced BY. A sentinel and not a deletion, because two records where
 #: one has the field and the other does not are still different records, and `compare` has to be
@@ -501,11 +504,13 @@ def _flatten(payload: Any, prefix: str = "") -> dict[str, Any]:
 def masked(payload: dict, *, also: Iterable[str] = ()) -> dict:
     """A COPY of the record with every field in `MASKED` replaced by `MASK_SENTINEL`.
 
-    A `[]` segment in a path means "every element of this list", which is how the per-refusal
-    wall time is reached. Nothing else in a record is inside a list and masked, and a path whose
-    shape the record does not have is silently a no-op — deliberately, because a mask that
-    RAISED when its field was absent would make `compare` fail on a truncated record instead of
-    reporting the truncation.
+    A `[]` segment in a path means "every element of this list". NO ENTRY IN `MASKED` USES ONE
+    TODAY (round PB, 2026-09-08, removed the only one by removing the field it named), and the
+    segment is kept because it is part of the path language `also=` accepts and because the
+    alternative — a mask that cannot reach inside a list — is what forced `compare` to collapse
+    lists in the first place. A path whose shape the record does not have is silently a no-op,
+    deliberately: a mask that RAISED when its field was absent would make `compare` fail on a
+    truncated record instead of reporting the truncation.
     """
     out = copy.deepcopy(payload)
     for path in (*MASKED, *also):

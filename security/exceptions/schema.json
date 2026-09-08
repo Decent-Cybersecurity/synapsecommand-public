@@ -11,6 +11,8 @@
     "version_range",
     "risk",
     "reason",
+    "mitigation",
+    "upstream_status",
     "owner",
     "expiry",
     "created",
@@ -41,7 +43,17 @@
     "reason": {
       "type": "string",
       "minLength": 30,
-      "description": "Why it is not being fixed now, and what has to change for it to be fixed. “No fix available upstream” is a reason; “low priority” is not."
+      "description": "Why the exception is being GRANTED — the decision, not its consequences. “No fix available upstream” is a reason; “low priority” is not. What holds the risk down belongs in `mitigation`, and what would end the exception belongs in `upstream_status`: M's ruling of 2026-09-08T16:45:00Z split those two out of this field, so that neither can be omitted by writing a longer sentence here."
+    },
+    "mitigation": {
+      "type": "string",
+      "minLength": 30,
+      "description": "The concrete compensating controls IN FORCE NOW — what is already true of this repository that keeps the risk in `risk` from being reachable, or from mattering if it is. Present tense and checkable: a gate that runs, a path no build takes, a file the distribution does not carry. A control somebody intends to add is not a mitigation. Required since M's ruling of 2026-09-08T16:45:00Z; the thirty-character floor is the one `risk` and `reason` already carry, and it is a floor against a one-word entry rather than a target."
+    },
+    "upstream_status": {
+      "type": "string",
+      "minLength": 30,
+      "description": "Whether a fix exists upstream, the state of the upstream issue or advisory, and THE EVENT THAT WILL TRIGGER REMOVAL of this exception. The trigger is what bounds the exception by something other than the calendar: `expiry` fails the suite on a date, and this field says what would end the exception before that date — which is what M's ruling of 2026-09-08 requires when it says a fix arriving before release means the exception goes and the dependency is upgraded. Required since M's ruling of 2026-09-08T16:45:00Z."
     },
     "owner": {
       "type": "string",

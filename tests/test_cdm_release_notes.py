@@ -65,7 +65,12 @@ def sweep() -> dict:
 def render(notes: pathlib.Path, sweep: dict, **kwargs) -> str:
     return release_notes.render(
         DECLARED, notes_path=notes, manifests_dir=MANIFESTS, conformance=sweep,
-        security_path=SECURITY, exceptions_dir=EXCEPTIONS,
+        security_path=SECURITY,
+        # 2026-09-08, round PB: `exceptions_dir` became overridable, because the empty-directory
+        # branch below can no longer be proved on the repository's own directory — it has two
+        # exceptions in it. The default is still the live directory, so every other caller reads
+        # the tree.
+        exceptions_dir=kwargs.pop("exceptions_dir", EXCEPTIONS),
         codeql=kwargs.pop("codeql", "0 findings at or above 7.0"),
         pip_audit=kwargs.pop("pip_audit", "0 findings"), **kwargs)
 
@@ -182,11 +187,43 @@ def test_the_security_section_reads_securitys_own_controls_table():
     assert all(c["control"] and c["state"] for c in status["controls"])
 
 
-def test_an_empty_exception_directory_renders_as_none_rather_than_as_nothing(notes, sweep):
-    text = render(notes, sweep)
+def test_an_empty_exception_directory_renders_as_none_rather_than_as_nothing(notes, sweep,
+                                                                             tmp_path):
+    """Proved on an EMPTY DIRECTORY given to the renderer, not on the repository's own.
+
+    (2026-09-08, round PB: this test used to render the live directory and assert `**none**`,
+    which held only while `security/exceptions/` was empty. The first two exceptions reddened it
+    — and the renderer was right: it printed the count and the names, which is
+    `release_notes.py`'s other branch working correctly. The empty case is still worth a test,
+    so it is given a directory that is empty.)
+    """
+    empty = tmp_path / "no-exceptions"
+    empty.mkdir()
+    text = render(notes, sweep, exceptions_dir=empty)
     assert "Security exceptions in force: **none**" in text, (
         "an empty exceptions directory must be stated, not omitted: a section that is silent "
         "about exceptions reads the same whether there are none or nobody looked")
+
+
+def test_the_exceptions_in_force_are_counted_and_named_from_the_directory(notes, sweep):
+    """The live directory, DERIVED: the count is the number of files and the names are theirs.
+
+    Nothing here is a constant about how many exceptions the repository has today. A release
+    note that stated a count from a literal would keep stating it after an exception expired and
+    was deleted, which is the failure `security/exceptions/README.md` is written against.
+    """
+    live = sorted(path.name for path in EXCEPTIONS.glob("*.json")
+                  if path.name != "schema.json")
+    text = render(notes, sweep)
+    if not live:                      # true again the day the last exception is removed
+        assert "Security exceptions in force: **none**" in text
+        return
+    assert f"Security exceptions in force: **{len(live)}**" in text, (
+        f"{len(live)} exception file(s) in {EXCEPTIONS} and the notes do not state the count")
+    for name in live:
+        assert f"`{name}`" in text, (
+            f"{name} is in force and the release notes do not name it; a reader is told a "
+            "number and not which findings it covers")
 
 
 def test_the_limitations_come_from_the_manifests_themselves():

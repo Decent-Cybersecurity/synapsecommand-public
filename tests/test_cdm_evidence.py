@@ -467,30 +467,53 @@ def test_two_records_generated_from_this_tree_differ_only_in_the_masked_fields()
     first = evidence.generate("pntmap").model_dump(mode="json")
     second = evidence.generate("pntmap").model_dump(mode="json")
     assert evidence.compare(first, second) == []
-    assert set(evidence.MASKED) == {"generated_at", "test_run.duration_s",
-                                    "conformance.checks.H.details.refusals[].seconds"}
+    assert set(evidence.MASKED) == {"generated_at", "test_run.duration_s"}
 
 
-def test_the_mask_reaches_inside_the_refusal_list_and_leaves_the_rest_of_it_alone():
-    """The one masked field that lives inside a list, and the one this round's §36 proof found.
+def test_the_refusal_list_needs_no_mask_because_it_carries_no_wall_clock_reading():
+    """What replaced the one masked field that lived inside a list (round PB, 2026-09-08).
 
-    Two generations from one fresh clone differed in exactly one field: `stanag4676`'s second
-    refusal read `0.0` and then `0.0001`. A per-refusal wall time is a measurement of this
-    machine at this moment, which is what `test_run.duration_s` is already masked for — but it
-    sits inside a list, and `compare` collapses lists to whole values, so it could not be
-    excluded by name after the collapse. The mask is therefore a rewrite of the payload.
+    Round P4's §36 proof found it: two generations from one fresh clone differed in exactly one
+    field, and it was `stanag4676`'s second refusal reading `0.0` and then `0.0001`. It was
+    masked. M ruled on 2026-09-08 that a mask is the wrong repair — `evidence.compare` was not
+    the only consumer, and the two tests that compare `--format json`'s BYTES do so unmasked —
+    so `suite.py` stopped writing the reading and publishes the outcome of the bound instead.
+
+    The assertion is therefore the absence, plus the two deterministic fields that took its
+    place, plus the reason it can be an absence: two generations of one adapter's refusal list
+    are equal WITHOUT any masking at all.
     """
     record = evidence.generate("stanag4676").model_dump(mode="json")
-    refusals = record["conformance"]["checks"]["H"]["details"]["refusals"]
-    assert refusals and all(isinstance(r["seconds"], float) for r in refusals)
-    hidden = evidence.masked(record)["conformance"]["checks"]["H"]["details"]["refusals"]
-    assert all(r["seconds"] == evidence.MASK_SENTINEL for r in hidden)
-    # Everything else in the same objects survives, or the mask would be hiding the finding.
-    assert [r["fixture"] for r in hidden] == [r["fixture"] for r in refusals]
-    assert [r["exception"] for r in hidden] == [r["exception"] for r in refusals]
-    # And the ORIGINAL is untouched: a mask that mutated its input would corrupt the record on
-    # its way to disk.
-    assert record["conformance"]["checks"]["H"]["details"]["refusals"] == refusals
+    details = record["conformance"]["checks"]["H"]["details"]
+    refusals = details["refusals"]
+    assert refusals
+    assert all("seconds" not in r for r in refusals)
+    assert all(isinstance(r["over_time_bound"], bool) for r in refusals)
+    assert details["timeout_s"] == suite.DEFAULT_TIMEOUT_S
+    # No mask, no sentinel: the list survives `masked()` unchanged, which is the whole claim.
+    assert evidence.masked(record)["conformance"]["checks"]["H"]["details"]["refusals"] == refusals
+    again = evidence.generate("stanag4676").model_dump(mode="json")
+    assert again["conformance"]["checks"]["H"]["details"] == details
+
+
+def test_the_mask_still_reaches_inside_a_list_when_a_caller_names_one():
+    """`MASKED` uses no `[]` path today; `also=` can, and `compare` depends on that reach.
+
+    Kept as a test of the mechanism rather than of a field, because the day some later round
+    finds a second value inside a list, the repair it reaches for has to still work — and the
+    two properties that made the old mask correct are the ones nothing else exercises: it
+    rewrites a COPY, and it leaves the siblings of the masked key alone.
+    """
+    record = evidence.generate("stanag4676").model_dump(mode="json")
+    path = "conformance.checks.H.details.refusals[].fixture"
+    before = [dict(r) for r in record["conformance"]["checks"]["H"]["details"]["refusals"]]
+    hidden = evidence.masked(record, also=(path,))
+    refusals = hidden["conformance"]["checks"]["H"]["details"]["refusals"]
+    assert refusals and all(r["fixture"] == evidence.MASK_SENTINEL for r in refusals)
+    assert [r["exception"] for r in refusals] == [r["exception"] for r in before]
+    # The ORIGINAL is untouched: a mask that mutated its input would corrupt the record on its
+    # way to disk.
+    assert record["conformance"]["checks"]["H"]["details"]["refusals"] == before
 
 
 def test_no_unmasked_wall_clock_reading_has_appeared_anywhere_in_a_record():
@@ -523,7 +546,7 @@ def test_no_unmasked_wall_clock_reading_has_appeared_anywhere_in_a_record():
             and value != evidence.MASK_SENTINEL]
     assert not live, (
         f"these wall-clock readings reach an evidence record unmasked: {live}. Either mask the "
-        "path in evidence.MASKED — with the reason, as the existing three carry — or take the "
+        "path in evidence.MASKED — with the reason, as the existing two carry — or take the "
         "reading out of the report. An unmasked one makes `verify` fail at random")
 
 

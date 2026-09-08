@@ -571,6 +571,56 @@ def test_two_sweeps_of_one_tree_are_byte_identical(capsys):
     assert capsys.readouterr().out == first
 
 
+def test_the_sweep_writes_no_wall_clock_reading_so_its_bytes_do_not_depend_on_load(capsys):
+    """Why the test above is now stable, as a property rather than as a repetition count.
+
+    It failed on both release-pipeline runners and on `ci.yml` until 2026-09-08 (round PB),
+    because check H wrote `round(elapsed, 4)` per refusal: on an unloaded machine every one of
+    those read `0.0`, so the identity held locally, and a single refusal crossing 50 microseconds
+    under contention flipped one to `0.0001`. Repeating the sweep more times does not catch that
+    — the flip is a function of the machine, not of the number of tries. Sweeping the artefact
+    for the SHAPE of a wall-clock reading does, and it catches the next one somebody adds too.
+
+    `timeout_s` is the declared bound the run was given, identical on every machine, so it is
+    named here rather than matched by the key sweep. This is the same accounting
+    `tests/test_cdm_evidence.py` keeps over an evidence record; the artefact this one guards is
+    `conformance-<version>.json`, whose SHA-256 goes into `SHA256SUMS` and out again through
+    `gates/witness_verify.py`.
+    """
+    assert suite.main(["conformance", "run", "--all", "--format", "json"]) == suite.EXIT_OK
+    document = json.loads(capsys.readouterr().out)
+
+    def walk(node, path=""):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                yield from walk(value, f"{path}.{key}" if path else key)
+        elif isinstance(node, list):
+            for index, value in enumerate(node):
+                yield from walk(value, f"{path}[{index}]")
+        else:
+            yield path, node
+
+    declared = {"timeout_s"}
+    live = [f"{path} = {value!r}" for path, value in walk(document)
+            if path.rsplit(".", 1)[-1] in ("seconds", "duration_s", "elapsed", "elapsed_s")
+            and path.rsplit(".", 1)[-1] not in declared]
+    assert not live, (
+        f"these wall-clock readings reach the conformance artefact: {live}. Take the reading out "
+        "of the report — a bound is enforced by comparing against it, and what the report needs "
+        "is the outcome of that comparison. A measured duration here makes the artefact's digest "
+        "a function of machine load")
+
+    # And the field that was there is gone, at the site it was written from, for every adapter.
+    for report in document["adapters"].values():
+        entry = report["checks"]["H"]
+        if entry["verdict"] != suite.PASS:
+            continue
+        refusals = entry["details"]["refusals"]
+        assert refusals
+        assert all(set(r) == {"fixture", "refused_by", "exception", "over_time_bound"}
+                   for r in refusals)
+
+
 def test_the_sweep_and_a_single_adapter_are_two_different_requests(capsys):
     with pytest.raises(SystemExit):
         suite.main(["conformance", "run", "--all", "--adapter", "pntmap"])
