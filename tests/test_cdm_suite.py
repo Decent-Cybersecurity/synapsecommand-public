@@ -532,6 +532,58 @@ def test_the_cli_refuses_an_unknown_adapter_and_an_unknown_letter(capsys):
         suite.main(["conformance", "run", "--adapter", "pntmap", "--require", "Z"])
 
 
+def test_the_sweep_covers_every_shipped_adapter_in_one_document(capsys):
+    """`--all` is §50's conformance stage: one invocation, one artefact, one exit code."""
+    assert suite.main(["conformance", "run", "--all", "--format", "json"]) == suite.EXIT_OK
+    document = json.loads(capsys.readouterr().out)
+    assert set(document["adapters"]) == set(shipped())
+    assert document["conformant"] == sorted(shipped())
+
+
+def test_the_sweep_writes_no_absolute_path_so_two_runners_agree_on_its_digest(capsys):
+    """§53 hashes this artefact. `run()`'s own absolute `fixtures` path is relativised by `--all`.
+
+    The digest is the point: two checkouts at different paths must produce the same bytes, or a
+    witness record's `conformance_sha256` is a statement about a directory layout.
+    """
+    assert suite.main(["conformance", "run", "--all", "--format", "json"]) == suite.EXIT_OK
+    out = capsys.readouterr().out
+    assert str(REPO) not in out, "the sweep leaked the checkout path into its artefact"
+    for report in json.loads(out)["adapters"].values():
+        assert report["adapter"]["fixtures"].startswith("<packaged>/")
+
+
+def test_the_single_adapter_report_still_names_the_directory_it_read(capsys):
+    """The relativising is `--all`'s and not `run()`'s.
+
+    `tests/test_cdm_evidence.py` compares an evidence record against `run()`'s output verbatim, so
+    moving this into `run()` would move a published surface to serve one caller.
+    """
+    assert suite.main(["conformance", "run", "--adapter", "pntmap", "--format", "json"]) == \
+        suite.EXIT_OK
+    assert json.loads(capsys.readouterr().out)["adapter"]["fixtures"].startswith("/")
+
+
+def test_two_sweeps_of_one_tree_are_byte_identical(capsys):
+    assert suite.main(["conformance", "run", "--all", "--format", "json"]) == suite.EXIT_OK
+    first = capsys.readouterr().out
+    assert suite.main(["conformance", "run", "--all", "--format", "json"]) == suite.EXIT_OK
+    assert capsys.readouterr().out == first
+
+
+def test_the_sweep_and_a_single_adapter_are_two_different_requests(capsys):
+    with pytest.raises(SystemExit):
+        suite.main(["conformance", "run", "--all", "--adapter", "pntmap"])
+    with pytest.raises(SystemExit):
+        suite.main(["conformance", "run"])
+
+
+def test_a_required_check_that_skips_fails_the_whole_sweep(capsys):
+    """One adapter's failure is the sweep's. A stage that exits 0 on a partial pass is not a gate."""
+    assert suite.main(["conformance", "run", "--all", "--require", "M"]) != suite.EXIT_OK
+    capsys.readouterr()
+
+
 def test_the_console_script_and_the_dash_m_path_are_the_same_entry_point():
     pyproject = (REPO / "packages" / "cdm" / "pyproject.toml").read_text()
     assert 'synapse = "synapse_cdm.suite:main"' in pyproject

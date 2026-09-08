@@ -940,8 +940,16 @@ def build_parser() -> argparse.ArgumentParser:
     actions = conformance.add_subparsers(dest="action")
 
     run_parser = actions.add_parser("run", help="run every check over one adapter")
-    run_parser.add_argument("--adapter", required=True,
+    run_parser.add_argument("--adapter", default=None,
                             help="registered name (pntmap) or module:ClassName")
+    # §50's pipeline runs the sweep as ONE stage and hands ONE artefact to the release notes and
+    # to the witness. Fourteen separate invocations produce fourteen files whose combination is
+    # the caller's problem, and a combination assembled by a shell loop is not something
+    # `gates/witness_verify.py` can hash. `--all` exists so that the sweep has a single output
+    # with a single digest.
+    run_parser.add_argument("--all", action="store_true",
+                            help="every adapter this package ships, as one report (§50). "
+                                 "Mutually exclusive with --adapter")
     run_parser.add_argument("--fixtures", type=pathlib.Path, default=None,
                             help="directory of payloads. Omitted, the fixtures that came with "
                                  "the installed package are used")
@@ -979,12 +987,80 @@ def build_parser() -> argparse.ArgumentParser:
                         add_help=False)
     commands.add_parser("badges", help="write shields.io endpoint JSON from evidence (§35)",
                         add_help=False)
+    commands.add_parser("release-notes", help="render §52's ten fields for a release",
+                        add_help=False)
     return parser
+
+
+def shipped_adapters() -> dict[str, type[Adapter]]:
+    """The adapters this PACKAGE ships — not everything `REGISTRY` happens to hold.
+
+    Every `Adapter` subclass registers itself at class-definition time, so `roster()` also carries
+    any adapter a caller has merely IMPORTED: a third party's class, or a test double. A release's
+    conformance sweep must not grow or shrink with what else is in the interpreter, so `--all`
+    reads this and not `roster()`. `tests/test_cdm_suite.py` had already written the same filter
+    for its own parametrisation and its docstring names the hazard; the rule belongs here, where
+    the shipped sweep is defined, rather than only in the tests that noticed it.
+    """
+    return {name: cls for name, cls in roster().items()
+            if cls.__module__.startswith("synapse_cdm.adapters.")}
+
+
+def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen) -> int:
+    """`--all`: every shipped adapter, one document, one exit code.
+
+    THE FIXTURES PATH IS RELATIVISED HERE AND NOWHERE ELSE. `run()` reports the directory it
+    actually read, which is an absolute path and is the right thing for a person debugging one
+    adapter. It is the wrong thing for an artefact whose SHA-256 goes into a witness record: two
+    runners with different checkout paths would produce two digests for one tree, and §53's
+    "deterministic and verifiable" would be false by construction. `run()` is not changed —
+    `tests/test_cdm_evidence.py` compares an evidence record against `run()`'s output verbatim,
+    so moving this into `run()` would move a published surface to serve a caller.
+    """
+    reports: dict[str, dict] = {}
+    worst = EXIT_OK
+    for name, adapter_class in sorted(shipped_adapters().items()):
+        adapter = adapter_class(clock=times.frozen_clock(frozen),
+                                synthetic=args.synthetic == "true")
+        try:
+            report = run(adapter, packaged_fixtures(adapter_class),
+                         clock=times.frozen_clock(frozen), frozen_at=frozen,
+                         schema_dir=args.schemas, offset_cap=args.offset_cap,
+                         timeout_s=args.timeout)
+        except (harness.NoFixturesFound, harness.NoSchemasFound) as e:
+            print(f"synapse conformance: {name}: {e}", file=sys.stderr)
+            return EXIT_USAGE
+        report = copy.deepcopy(report)
+        report["adapter"]["fixtures"] = f"<packaged>/{name}"
+        reports[name] = report
+        status = exit_status(report, required, strict=strict)
+        worst = worst or status
+    document = {
+        "sweep": "synapse conformance run --all",
+        "required": list(required),
+        "strict": strict,
+        "generated_with": {"package": PACKAGE_VERSION, "schema": SCHEMA_VERSION,
+                           "adapter_api": version.ADAPTER_API_VERSION},
+        "adapters": reports,
+        "conformant": sorted(n for n, r in reports.items() if r.get("result") == "CONFORMANT"),
+    }
+    if args.format == "json":
+        print(json.dumps(document, indent=2, sort_keys=True))
+    else:
+        for name in sorted(reports):
+            print(render_report(reports[name]))
+        print(f"\n{len(document['conformant'])}/{len(reports)} CONFORMANT")
+    return worst
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] == "release-notes":
+        # Deferred for the same reason `evidence` is: the renderer imports nothing from here, but
+        # keeping the import inside the branch means `synapse conformance` costs nothing for it.
+        from synapse_cdm import release_notes
+        return release_notes.main(argv[1:])
     if argv and argv[0] in ("evidence", "badges"):
         # Deferred, and the reason is the same cycle `schemas.evidence_schema()` names: the
         # evidence module imports this one. Importing it at the top would be a cycle; importing
@@ -1000,12 +1076,21 @@ def main(argv: list[str] | None = None) -> int:
         print(render_roster(roster()))
         return EXIT_OK
 
+    if args.all and args.adapter:
+        parser.error("--all and --adapter name two different sweeps; pass one of them")
+    if not args.all and not args.adapter:
+        parser.error("pass --adapter <name> for one adapter, or --all for every shipped adapter")
+
     required = _required(args.require, parser) if args.require else ()
     # F4.4's default, spelled as one line: strictness is ON when the caller asked for D and OFF
     # otherwise, and an explicit --strict/--no-strict overrides both. `None` is what
     # "the caller did not say" looks like, which is why the flag's default is not `False`.
     strict = ("D" in required) if args.strict is None else args.strict
     frozen = times.parse(args.now) if args.now else times.FROZEN_NOW
+
+    if args.all:
+        return _sweep(args, required, strict=strict, frozen=frozen)
+
     try:
         adapter_class = load_adapter(args.adapter)
     except LookupError as e:

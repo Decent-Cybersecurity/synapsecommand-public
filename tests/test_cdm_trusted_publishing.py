@@ -270,16 +270,73 @@ def test_every_pin_records_the_tag_it_came_from(workflow):
 # ------------------------------------------------------------------ the publish job's own gating
 
 
+#: A job header is two spaces, a name, a colon and nothing else. Matching "two spaces then
+#: anything" also matches this file's own section-divider comments, which is how the first draft of
+#: `test_the_jobs_realise_section_50s_order` reported six comment lines as jobs.
+_JOB_HEADER = re.compile(r"^  ([a-z][a-z0-9_-]*):[ \t]*$", re.MULTILINE)
+
+
+def _job_blocks(workflow: str) -> dict[str, str]:
+    """Each job's name mapped to its text, without a YAML parser."""
+    body = workflow[workflow.index("\njobs:"):]
+    matches = list(_JOB_HEADER.finditer(body))
+    return {m.group(1): body[m.start():(matches[i + 1].start() if i + 1 < len(matches) else len(body))]
+            for i, m in enumerate(matches)}
+
+
+def needs_of(workflow: str) -> dict[str, list[str]]:
+    """Each job's `needs:`, in either spelling, without a YAML parser.
+
+    PyYAML is not a dependency of this repository (`tests/test_cdm_security_policy.py` records the
+    same absence), and the two spellings Actions accepts — `needs: build` and `needs: [a, b]` — are
+    a two-line regex. A parser would be a dependency added to read one key.
+    """
+    out: dict[str, list[str]] = {}
+    for name, block in _job_blocks(workflow).items():
+        match = re.search(r"^    needs:\s*(.+)$", block, re.MULTILINE)
+        if match is None:
+            out[name] = []
+            continue
+        value = match.group(1).strip()
+        out[name] = [n.strip() for n in value.strip("[]").split(",") if n.strip()]
+    return out
+
+
 def test_the_publish_job_is_reachable_only_by_a_tag_and_only_after_the_gate(workflow):
-    """Three conditions, all of them in the file: after `build`, on a tag, in the environment.
+    """Three conditions, all of them in the file: after the gate chain, on a tag, in the environment.
 
     Any one of them missing turns a dispatch run — or a push to a branch — into an upload. That is
     an irreversible act, so it is not enough for the current triggers to make it unlikely.
+
+    **THIS USED TO READ `needs: build` AND THAT WAS THE WRONG ASSERTION, 2026-09-08 (round P7).**
+    The property is that nothing can upload before everything that gates the upload has passed, and
+    a literal job name is a proxy for it that stops being true the moment a stage is inserted — as
+    §50's order required here, where `attest` now sits between `build` and `publish`. Reading one
+    name would have failed on a change that made the guarantee STRONGER, which is how a check gets
+    deleted rather than fixed. So the chain is walked instead, and the assertion is what it was
+    always meant to be: `publish` transitively needs `gate`.
     """
     publish = workflow[workflow.index("\n  publish:"):]
-    assert re.search(r"^\s*needs:\s*build\s*$", publish, re.MULTILINE), (
-        "the publish job does not declare `needs: build`, so an upload could start while the gate "
-        "is still running or after it has failed")
+    needs = needs_of(workflow)
+    assert "publish" in needs, "there is no publish job"
+
+    reached, frontier = set(), list(needs.get("publish", []))
+    assert frontier, ("the publish job declares no `needs:` at all, so an upload could start while "
+                      "the gate is still running or after it has failed")
+    while frontier:
+        job = frontier.pop()
+        if job in reached:
+            continue
+        reached.add(job)
+        frontier.extend(needs.get(job, []))
+    assert "gate" in reached, (
+        f"the publish job does not depend on `gate`, even transitively: it reaches {sorted(reached)}. "
+        "Every stage that gates the upload has to be upstream of it, or the upload is not gated")
+    assert "build" in reached, (
+        f"the publish job does not depend on `build`: it reaches {sorted(reached)}. It uploads "
+        "the artefact `build` produced, so an upload that did not wait for it uploads nothing or "
+        "something stale")
+
     assert re.search(r"if:\s*startsWith\(github\.ref,\s*'refs/tags/v'\)", publish), (
         "the publish job has no tag guard. Without `if: startsWith(github.ref, 'refs/tags/v')` a "
         "workflow_dispatch run — the thing that exists so the build half can be tested — would "
@@ -567,3 +624,155 @@ def test_the_fallback_is_documented_somewhere_rather_than_only_forbidden():
         assert cost in section.lower() or cost in section, (
             f"the manual fallback does not state {why}. A fallback whose costs are not written is "
             "a second procedure, not a fallback")
+
+
+# ------------------------------------------------------- §50's pipeline, added by round P7 (2026-09-08)
+
+#: §50's required order, as job names. The specification's diagram is the authority; this is it
+#: transcribed, and `test_the_jobs_realise_section_50s_order` is what holds the file to it.
+SECTION_50_ORDER = ("gate", "build", "attest", "publish", "release", "witness")
+
+#: Which job may hold which write permission. Anything not listed here holds none of them, and
+#: that is the assertion — a permission is a thing you grant to one job, not a thing a file has.
+PERMITTED_WRITES = {
+    "id-token: write": {"publish", "attest"},
+    "attestations: write": {"attest"},
+    "contents: write": {"release", "witness"},
+}
+
+#: The jobs that must never run without a tag. Each of them either performs an irreversible act or
+#: records one, and a dispatch run reaching any of them would be a release nobody asked for.
+TAG_ONLY = ("publish", "release", "witness")
+
+
+def jobs_in_order(workflow: str) -> list[str]:
+    return list(_job_blocks(workflow))
+
+
+def job_block(workflow: str, name: str) -> str:
+    blocks = _job_blocks(workflow)
+    assert name in blocks, f"no job named {name}: the file declares {list(blocks)}"
+    return blocks[name]
+
+
+def test_the_jobs_realise_section_50s_order(workflow):
+    """One job per stage boundary, each `needs:` the one before it.
+
+    §50 fixes an ORDER, and an order enforced by the dependency graph is enforced; an order that is
+    only the sequence the steps happen to be written in is a convention. The difference shows up
+    the first time somebody adds a stage in the wrong place.
+    """
+    assert jobs_in_order(workflow) == list(SECTION_50_ORDER)
+    needs = needs_of(workflow)
+    for earlier, later in zip(SECTION_50_ORDER, SECTION_50_ORDER[1:]):
+        assert earlier in needs[later], (
+            f"`{later}` does not declare `needs: {earlier}`, so §50's order is not enforced by "
+            f"anything: it reads {needs[later]}")
+
+
+@pytest.mark.parametrize("job", TAG_ONLY)
+def test_every_irreversible_job_is_reachable_only_by_a_tag(workflow, job):
+    """`workflow_dispatch` exercises the pipeline up to the upload and no further."""
+    assert re.search(r"if:\s*startsWith\(github\.ref,\s*'refs/tags/v'\)", job_block(workflow, job)), (
+        f"the `{job}` job has no tag guard. `workflow_dispatch` exists so the gated half can be "
+        "tested on a branch; a stage without this guard turns that test into a release")
+
+
+def test_the_stages_before_the_upload_carry_no_tag_guard(workflow):
+    """The other half of the same property: a dispatch must actually exercise them."""
+    for job in ("gate", "build", "attest"):
+        assert "startsWith(github.ref, 'refs/tags/v')" not in job_block(workflow, job).split(
+            "steps:")[0], (
+            f"the `{job}` job is guarded to tags, so a dispatch run would skip it and prove "
+            "nothing — which is the whole reason the dispatch trigger exists")
+
+
+@pytest.mark.parametrize("permission,allowed", sorted(PERMITTED_WRITES.items()))
+def test_each_write_permission_is_granted_to_the_jobs_that_need_it_and_no_others(
+        workflow, permission, allowed):
+    """Least privilege, checked per job rather than believed per file."""
+    holders = {name for name in jobs_in_order(workflow)
+               if re.search(rf"^\s*{re.escape(permission)}\s*$",
+                            _executable(job_block(workflow, name)), re.MULTILINE)}
+    assert holders == allowed, (
+        f"`{permission}` is held by {sorted(holders)} and should be held by {sorted(allowed)}. A "
+        "permission on a job that does not need it is a permission everything that job runs has")
+
+
+def test_the_four_release_conditions_survived_the_restructure_verbatim(workflow):
+    """The untouchable of this file's history: conditions are added to, never edited.
+
+    They moved between jobs — 1 and 3 are the gate's, 2 and 4 are the build's, because 2 and 4 read
+    `dist/` and `dist/` is what the build makes — and not one word of any of them changed.
+    """
+    for condition in ("Condition 1 — the suite is green",
+                      "Condition 2 — the gate, including the mutation check",
+                      "Condition 3 — the tag names this tree's PACKAGE_VERSION",
+                      "Condition 4 — the derivations, for notes that are derived and not remembered"):
+        assert workflow.count(f"- name: {condition}") == 1, (
+            f"`{condition}` appears {workflow.count(f'- name: {condition}')} times. MIGRATIONS.md's "
+            "conditions are this file's contract; they are moved, never reworded and never dropped")
+    assert "python -m pytest -q -rs" in workflow, "condition 1 no longer runs the suite"
+    assert "python gates/wheel_install.py --mutation-check --export-dist dist" in workflow, (
+        "condition 2 no longer runs the gate with the mutation check and the one build")
+    assert "the annotated-tag" not in workflow.lower() or "git cat-file -t" in workflow, (
+        "the annotated-tag check is named but not performed")
+
+
+def test_condition_4_is_still_described_as_a_persons(workflow):
+    """The renderer added by §52 does not take condition 4 over, and the file must not imply it did.
+
+    "Derived" is a claim about what the WRITER read. A generated file does not satisfy it, the
+    header says so, and `synapse release-notes` refuses rather than inventing the one field that
+    is a person's.
+    """
+    assert "CANNOT RUN HERE" in workflow
+    assert "it is still a" in workflow and "person's" in workflow
+
+
+def test_the_conformance_sweep_is_one_artefact_and_not_a_loop(workflow):
+    """§53 hashes it. Fourteen files produced by a shell loop have no digest to record."""
+    gate = _executable(job_block(workflow, "gate"))
+    assert "conformance run --all" in gate, (
+        "the gate does not run the sweep with `--all`, so there is no single conformance artefact "
+        "for the notes to summarise or for the witness record to hash")
+    assert "for adapter in" not in gate, (
+        "the gate sweeps with a shell loop; §50's conformance stage is one invocation producing "
+        "one document, because `conformance_sha256` is a digest of a file")
+
+
+def test_the_release_carries_the_full_asset_set(workflow):
+    """F7.4's default, as an assertion rather than as a ruling nobody reads again."""
+    release = _executable(job_block(workflow, "release"))
+    for asset in ("dist/*", "SHA256SUMS", "synapse_cdm.spdx.json", "synapse_cdm.cdx.json",
+                  "evidence-${version}.tar.gz", "conformance-${version}.json",
+                  "release-notes-${version}.md"):
+        assert asset in release, f"the Release does not attach {asset}"
+
+
+def test_the_release_notes_are_rendered_and_not_written_in_the_workflow(workflow):
+    release = _executable(job_block(workflow, "release"))
+    assert "release-notes" in release and "--from RELEASE_NOTES.md" in release, (
+        "the release job does not render §52's notes from the tree")
+    assert "--verify-tag" in release, (
+        "`gh release create` without `--verify-tag` will create a tag that does not exist rather "
+        "than refusing, which is a release pointing at a commit nobody tagged")
+
+
+def test_the_witness_record_is_produced_after_the_release_and_not_committed(workflow):
+    """§53, and RUNNER.md's hard limit that a workflow does not commit."""
+    witness = _executable(job_block(workflow, "witness"))
+    assert "build_witness.py" in witness and "witness_verify.py" in witness, (
+        "the witness job does not both build and verify the record; a record nothing verified is "
+        "a file asserting its own correctness")
+    assert "gh release upload" in witness
+    for forbidden in ("git commit", "git push", "add-and-commit"):
+        assert forbidden not in witness, (
+            f"the witness job runs `{forbidden}`. RUNNER.md's hard limits: only the runner commits, "
+            "and the witness round is what commits the record")
+
+
+def test_the_pipeline_names_a_script_that_exists(workflow):
+    """A workflow referencing a file nobody shipped fails at release time and nowhere earlier."""
+    for script in re.findall(r"(?:python |bash )?(\.github/scripts/\S+\.py|gates/\S+\.py)", workflow):
+        assert (REPO / script).is_file(), f"the workflow runs {script}, which is not in the tree"

@@ -215,3 +215,41 @@ and pushed commit is never amended, rebased away, squashed or force-pushed.
 
 Tags are created by release rounds alone, and the tag names the version the tree it points at
 declares. That correspondence is gated, not conventional.
+
+### 5.1 The commands, added 2026-09-08 (SOIF Part 1 round P7)
+
+The rule above was written by round P0 and says what MUST happen. This says how, because a rule
+whose execution is left to memory is executed differently each time — and the one step where that
+matters is the one that cannot be undone.
+
+```bash
+git fetch origin
+git switch main
+git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
+git tag -a v2.0.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git push origin main --follow-tags
+```
+
+**`--ff-only` is the whole of it.** Without the flag `git merge` produces a merge commit and
+succeeds, which is not a refusal to fast-forward — it is a fast-forward being silently replaced by
+something else. The tree that then gets tagged is a tree no review ever saw: a merge commit's
+content is `soif/1.0`'s, but the commit is new, and every reading a review took is about a commit
+that is now the second parent of something else.
+
+**What a refusal means, and what it does not.** `git merge --ff-only` refuses when `main` holds a
+commit the reviewed branch does not. That is not a merge conflict and is not fixed by resolving
+one: it means `main` moved independently of the reviewed branch, so the reviewed thing is not the
+thing that would be released. The release round STOPS, and what follows is a new round that
+reviews the combined history — never a rebase of the branch, and never a force-push. A previously
+accepted and pushed commit is never amended, rebased away or squashed (§54; `RUNNER.md`'s hard
+limits say the same thing for the loop).
+
+**The order is not interchangeable.** The tag is created on `main`'s new tip AFTER the
+fast-forward, because `.github/workflows/publish.yml`'s condition 3 compares the tag's ref against
+the tree's `PACKAGE_VERSION` and the release pipeline runs on the tag push. A tag created on the
+branch before the fast-forward names the same commit today and stops naming a commit on `main` the
+moment anything else lands.
+
+`packages/cdm/synapse_cdm/MIGRATIONS.md`, "Releasing the package", carries the same sequence beside
+the five conditions it has to satisfy; that file is the authority on the conditions and this one is
+the authority on the axes.

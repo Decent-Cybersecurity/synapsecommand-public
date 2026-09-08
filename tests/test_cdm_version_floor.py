@@ -245,6 +245,12 @@ def test_the_declared_floor_is_still_the_one_this_round_ruled_for():
 
 # ------------------------------------------------------------------------------ file discovery
 
+#: Every root the gate parses, in one tuple, because `discover()` and the size check below both
+#: read it. They used to carry the same three-element literal each, which is two lists to keep in
+#: step for one fact — and the closure test exists precisely to catch a root nobody added.
+ROOTS = (PKG, REPO / "tests", REPO / "gates", REPO / ".github" / "scripts")
+
+
 def discover() -> list[pathlib.Path]:
     """Every Python file this gate parses: the package, the test suite, and the gate scripts.
 
@@ -255,9 +261,15 @@ def discover() -> list[pathlib.Path]:
     is run by a contributor before a pull request, on whatever interpreter they have, and the
     oldest one this project says it supports is 3.11. A gate that will not parse on the floor the
     project declares is a gate the floor's users cannot run.
+
+    `.github/scripts/` joined the same way on 2026-09-08 (round P7), and the decision is the same
+    one for a different reason. `build_witness.py` runs in the release pipeline's `witness` job on
+    the runner's interpreter — 3.12 today, and pinned in one line of one workflow. It is IN SCOPE
+    because a release is the worst place to meet a `SyntaxError`, and because the pin is a choice
+    somebody can lower: the floor is what says which interpreters that choice may range over.
     """
     out = []
-    for root in (PKG, REPO / "tests", REPO / "gates"):
+    for root in ROOTS:
         out.extend(python_files_under(root))
     return sorted(out)
 
@@ -274,7 +286,7 @@ def test_the_discovery_found_the_tree_and_not_a_corner_of_it():
     went stale. Counting each root separately also localises the failure: a walk that stopped at
     the package still finds the suite, and a total would hide that.
     """
-    for root in (PKG, REPO / "tests", REPO / "gates"):
+    for root in ROOTS:
         here = [f for f in FILES if f.is_relative_to(root)]
         expected = sum(1 for _ in root.rglob("*.py") if "__pycache__" not in _.parts)
         assert here and len(here) == expected, (

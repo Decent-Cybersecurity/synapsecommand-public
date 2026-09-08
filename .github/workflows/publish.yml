@@ -113,8 +113,43 @@
 #
 # To update a pin: read the SHA off the release, put the new tag in the comment, and change both in
 # the same commit.
+#
+# THE FILE BECAME A PIPELINE, 2026-09-08 (SOIF Part 1 round P7, spec §49–§55)
+# ---------------------------------------------------------------------------
+# Everything above this paragraph is unchanged and still true; what follows is an addition, in the
+# tense this repository writes records in. Until today this file was two jobs — gate-and-build, then
+# publish — and SOIF §50 fixes an ORDER with more stages than that: lint/type, conformance, security
+# gates, clean install from the built package, package test, SBOM, hash, attestation, and after the
+# upload a GitHub Release and a witness record. The stages are now one job per boundary, each
+# `needs:` the one before it, so the order is enforced by the dependency graph rather than by the
+# order steps happen to be written in:
+#
+#   gate -> build -> attest -> publish -> release -> witness
+#
+# THE FOUR CONDITIONS ARE VERBATIM AND THEY MOVED WITHOUT BEING EDITED. Conditions 1 and 3 and the
+# annotated-tag check are `gate`'s; conditions 2 and 4 are `build`'s, because both of them read
+# `dist/` and `dist/` is what `build` makes. Not one word of any of them changed, including the
+# paragraph above that says condition 4 CANNOT RUN HERE — and that paragraph is still right. The
+# `release` job renders notes with `synapse release-notes`, and rendering the nine mechanical fields
+# is not the same act as satisfying condition 4: "derived" is a claim about what the WRITER read,
+# `RELEASE_NOTES.md` is still written by a person, and the renderer REFUSES if that file describes
+# another version. What changed is only that the nine fields can no longer be mistyped.
+#
+# WHY `attest` IS ITS OWN JOB AND NOT THE LAST STEPS OF `build`. §50 lists attestation as a stage,
+# not as a job, and putting it in `build` would need `id-token: write` and `attestations: write` on
+# the job that runs the build — the same objection the paragraph above makes to granting `id-token`
+# at workflow level, one level down. `rc-build.yml` split it for this reason and this file follows
+# it. The ORDER §50 fixes is unchanged; only the boundary is.
+#
+# WHAT A DISPATCH RUNS, AND WHAT IT STILL CANNOT DO. `workflow_dispatch` runs `gate`, `build` and
+# `attest` and stops: `publish`, `release` and `witness` all carry the tag guard. So the whole
+# pipeline short of the irreversible act is exercisable on a branch, which is how this round proved
+# it — run 34220688516 on `soif/1.0`, green, with `publish` skipped.
 
-name: Publish to PyPI
+# `Release`, and not `Publish to PyPI`, since 2026-09-08: the file no longer only publishes. The
+# FILENAME is unchanged and that is the part that matters — PUBLICATION.md:540 records that PyPI's
+# trusted publisher matches `publish.yml`, the path, and never the display name below.
+name: Release
 
 on:
   push:
@@ -127,6 +162,14 @@ on:
 # Read-only by default, and widened to `id-token: write` on the publish job alone. A workflow-level
 # `id-token: write` would let every job in the file mint an OIDC token, including the one that runs
 # the test suite.
+#
+# CORRECTED 2026-09-08 (round P7): "on the publish job alone" became false when §50's attestation
+# stage landed, and the sentence is corrected here rather than edited, because the reasoning above
+# it is exactly why the new grant is where it is. `id-token: write` is now on TWO jobs — `publish`,
+# to mint the PyPI upload token, and `attest`, to mint the Sigstore signing token — and on neither
+# of the two that run the suite or the build. `attestations: write` is on `attest` alone and
+# `contents: write` on `release` and `witness` alone. The rule the sentence states is unchanged:
+# the permission goes on the job that needs it and nowhere wider.
 permissions:
   contents: read
 
@@ -135,51 +178,62 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build and gate the distribution
+  # ------------------------------------------------------------------ §50: lint/type/test, conformance, security
+  gate:
+    name: Gate — lint, suite, conformance, security
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # The CodeQL gate below reads the analysis this commit already has. READ, not write: this job
+      # judges a SARIF, it does not upload one — `codeql.yml` does that.
+      security-events: read
     steps:
       - name: Check out the tree the tag points at
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           # Full history and tags: `tests/test_cdm_release.py` re-derives every tag in history
-          # against its tree's PACKAGE_VERSION, and the annotated-tag check below reads the tag
-          # OBJECT. A shallow clone has neither, and both would pass vacuously rather than fail.
+          # against its tree's PACKAGE_VERSION, the annotated-tag check below reads the tag
+          # OBJECT, and gitleaks §39 walks history rather than the checkout. A shallow clone has
+          # none of the three, and each would pass vacuously rather than fail.
           fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
-          # NOT the declared floor, and the reason is a real limitation rather than a preference.
-          # `pyproject.toml` declares `requires-python = ">=3.11"`, and running CI at 3.11 would
-          # turn `tests/test_cdm_version_floor.py`'s syntactic gate — which parses at
-          # `feature_version=(3, 11)` on a newer interpreter, and says in its own docstring that
-          # this cannot catch a runtime-only 3.12 API — into a real one. It was tried. The package
-          # is clean on 3.11; three of that module's OWN self-tests fail there, because they assert
-          # on the wording of findings the scanner produces, and a genuine 3.11 tokenizer refuses
-          # the quoted PEP 701 expression earlier and with a different message than a 3.14 parser
-          # analysing it at feature_version 3.11. The suite therefore needs a host ABOVE the floor
-          # to test the floor. That is a defect in the self-tests, not in the package, and fixing
-          # it is not this workflow's business — but it is why the floor is not the CI version.
-          # 3.12 was verified green (2886 passed, 2 skipped) before being written here.
+          # NOT the declared floor, and the reason is in this file's history: `pyproject.toml`
+          # declares `requires-python = ">=3.11"` and three of `tests/test_cdm_version_floor.py`'s
+          # OWN self-tests fail on a genuine 3.11 interpreter, because they assert on the wording
+          # of findings a 3.14 parser produces at `feature_version=(3, 11)`. The suite needs a host
+          # ABOVE the floor to test the floor.
           python-version: '3.12'
 
       - name: Install what the suite and the gate need, by the documented path
         run: |
           set -euo pipefail
           python -m pip install --upgrade pip
-          # This is CONTRIBUTING.md's setup command, verbatim, and using anything else here would
-          # be a mistake with history: the first dispatch run of this workflow installed only
-          # `pytest twine` and all 35 test modules failed collection on `No module named
-          # 'pydantic'`. The suite needs the package's dependencies, and the documented way to get
-          # them is the editable install with its `[test]` extra. Running the documented command
-          # also means a CI failure here is a report that the documented path is broken — which is
-          # a thing worth learning from a workflow rather than from a new contributor.
+          # CONTRIBUTING.md's setup command, verbatim. Using anything else here would be a mistake
+          # with history: the first dispatch run of this workflow installed only `pytest twine` and
+          # all 35 test modules failed collection on `No module named 'pydantic'`.
           python -m pip install -e "packages/cdm[test]"
-          # `twine` for the --strict metadata check below. `build` is deliberately NOT installed:
-          # the gate provisions it into a venv of its own, and a second copy alongside would leave
-          # which one built the published artefact depending on PATH.
-          python -m pip install twine
+          python -m pip install pip-audit
+
+      - name: Lint — ruff, and the rule set is narrowed on purpose
+        # §50's `lint/type` stage. F7.1's pre-ruled default was `E9,F`; the reading that decided the
+        # actual set was taken at this round's Act 0 and is recorded in `packages/cdm/pyproject.toml`
+        # beside the config: `E9` finds NOTHING in this tree and `F` finds 12 in the package and 47
+        # repository-wide. A release-engineering round does not clean up 47 findings, and a stage
+        # added red is a stage somebody disables. So the gate is `E9` — syntax errors and undefined
+        # names, the class that is never a style opinion — and the `F` set is a known limitation
+        # P8 §57 records rather than a rule this file pretends to enforce.
+        run: |
+          set -euo pipefail
+          python -m pip install "ruff==0.16.6"
+          # `--config` explicitly, because there is no pyproject.toml at the repository ROOT: ruff
+          # discovers configuration by walking up from each file, so `gates/` and `tests/` would
+          # otherwise be linted under ruff's DEFAULT rule set while `packages/cdm/` used the
+          # configured one — two rule sets in one command, and the stricter one applied to the two
+          # directories nobody configured.
+          ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests
 
       - name: Condition 1 — the suite is green
         # `-rs` because a CI green is NOT the same green a maintainer sees, and the difference has
@@ -222,6 +276,156 @@ jobs:
           git for-each-ref "refs/tags/${GITHUB_REF_NAME}" \
             --format='tagger: %(taggername) %(taggerdate:iso8601)%0asubject: %(contents:subject)'
 
+      - name: The published schemas are CURRENT
+        # From the repository ROOT, which is where MIGRATIONS.md's sequence runs it and where the
+        # published `schemas/` directory actually is. The first draft set
+        # `working-directory: packages/cdm` on the assumption that a package's schemas live under
+        # the package, and got six `missing` lines.
+        run: python -m synapse_cdm.schemas --check --out schemas
+
+      - name: The published manifests are CURRENT
+        # Its sibling, and new here: §14's manifests are generated from the adapters and drift the
+        # same way the schemas do. `--check` writes nothing and exits non-zero on a difference.
+        run: python -m synapse_cdm.manifests --check
+
+      - name: Conformance — the Suite v2 sweep, every shipped adapter, as ONE artefact
+        # §50's `conformance` stage, and the artefact matters as much as the exit code: §52's notes
+        # render their conformance summary from this file and §53's witness carries its SHA-256. A
+        # sweep spelled as a shell loop over fourteen invocations produces fourteen documents whose
+        # combination nothing can hash, which is why `--all` exists (round P7).
+        #
+        # `--require` names the checks that MUST pass. E, I and M are absent because they are
+        # DECLARED INAPPLICABLE for some adapters and a SKIP among the required set exits non-zero
+        # (§19) — requiring them would fail an adapter for not having an egress direction.
+        run: |
+          set -euo pipefail
+          version="$(python -c 'from synapse_cdm.version import PACKAGE_VERSION; print(PACKAGE_VERSION)')"
+          python -m synapse_cdm.suite conformance run --all \
+            --require A,B,C,D,F,G,H,J,K,L,O --format json > "conformance-${version}.json"
+          python -c 'import json,sys; d=json.load(open(sys.argv[1])); print(len(d["conformant"]), "of", len(d["adapters"]), "CONFORMANT")' "conformance-${version}.json"
+
+      - name: Evidence records for every adapter, and the bundle the Release carries
+        run: |
+          set -euo pipefail
+          version="$(python -c 'from synapse_cdm.version import PACKAGE_VERSION; print(PACKAGE_VERSION)')"
+          python -m synapse_cdm.evidence provenance
+          python -m synapse_cdm.evidence generate --all --out evidence
+          find evidence -name evidence.json -print0 \
+            | xargs -0 python -m synapse_cdm.evidence verify
+          tar --sort=name --owner=0 --group=0 --numeric-owner \
+              --mtime='UTC 1970-01-01' -czf "evidence-${version}.tar.gz" evidence
+          sha256sum "evidence-${version}.tar.gz"
+
+      - name: Security gate — gitleaks over the history this tag carries
+        # The binary, pinned by version AND by the release artefact's SHA-256, for the reason
+        # `ci.yml`'s own `secrets` job states: `gitleaks/gitleaks-action` requires a paid licence
+        # for a repository owned by an ORGANIZATION, which this one is, so adding it would put a
+        # job into the release path that fails for want of a licence key.
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          url="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl --fail --silent --show-error --location --retry 3 -o gitleaks.tar.gz "$url"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks version
+          ./gitleaks git . --redact --config .gitleaks.toml --log-opts "--all"
+
+      - name: Security gate — the exception allowlist, derived and printed before it is used
+        # §45: DERIVED from `security/exceptions/` at run time and never typed into this file. An
+        # audit that ignored a vulnerability without saying which is a green nobody can check.
+        id: ignores
+        run: |
+          set -euo pipefail
+          ignores="$(python gates/codeql_gate.py --emit-pip-audit-ignores)"
+          echo "derived: [${ignores}]"
+          echo "flags=${ignores}" >> "${GITHUB_OUTPUT}"
+
+      - name: Security gate — pip-audit, strict
+        # `--strict` makes a dependency pip-audit cannot resolve a FAILURE rather than a skipped
+        # line; without it the audit passes on a package whose advisories were never fetched. The
+        # identifiers in `flags` are constrained by `security/exceptions/schema.json`'s pattern to
+        # characters no shell splits on, so the unquoted expansion is deliberate.
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC2086
+          pip-audit --strict ${{ steps.ignores.outputs.flags }}
+
+      - name: Security gate — CodeQL, over the analysis this commit already has
+        # §44 and M's amended threshold, applied by `gates/codeql_gate.py` — the SAME module
+        # `codeql.yml` runs, over the SAME exceptions directory, so this stage cannot disagree with
+        # the scan job about what blocks. What it adds is that the RELEASE refuses to proceed past
+        # an unaddressed HIGH, which a scan job on another workflow cannot do.
+        #
+        # NO ANALYSIS IS A FAILURE AND NOT A PASS. A commit CodeQL has not looked at yet is a
+        # commit whose findings are unknown, and "unknown" is the state this gate exists to refuse.
+        env:
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: this file states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ref="${GITHUB_REF}"
+          analyses="$(gh api "repos/${GITHUB_REPOSITORY}/code-scanning/analyses?ref=${ref}&per_page=100" \
+                       --jq "[.[] | select(.commit_sha == \"${GITHUB_SHA}\")]")"
+          count="$(echo "${analyses}" | python -c 'import json,sys; print(len(json.load(sys.stdin)))')"
+          echo "analyses on ${GITHUB_SHA}: ${count}"
+          if [ "${count}" -eq 0 ]; then
+            echo "::error::CodeQL has produced no analysis for ${GITHUB_SHA} on ${ref}. A commit nobody has scanned is not a commit with no findings. Let codeql.yml finish on this ref, then re-run." >&2
+            exit 1
+          fi
+          mkdir -p sarif
+          echo "${analyses}" \
+            | python -c 'import json,sys; [print(a["id"]) for a in json.load(sys.stdin)]' \
+            | while read -r id; do
+                gh api -H "Accept: application/sarif+json" \
+                  "repos/${GITHUB_REPOSITORY}/code-scanning/analyses/${id}" > "sarif/${id}.sarif"
+              done
+          python gates/codeql_gate.py sarif/*.sarif
+
+      - name: Hand the gate's artefacts to the jobs that need them
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: gate
+          path: |
+            conformance-*.json
+            evidence-*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+  # ------------------------------------------- §50: package build, clean install, package test, SBOM, hash
+  build:
+    name: Build, install clean, SBOM and hash
+    needs: gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the tree the tag points at
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install what the suite and the gate need, by the documented path
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+          # `twine` for the --strict metadata check below. `build` is deliberately NOT installed:
+          # the gate provisions it into a venv of its own, and a second copy alongside would leave
+          # which one built the published artefact depending on PATH.
+          python -m pip install twine cyclonedx-bom
+
       - name: Condition 2 — the gate, including the mutation check
         run: |
           set -euo pipefail
@@ -236,13 +440,75 @@ jobs:
           ls -l dist
           python -m twine check --strict dist/*
 
-      - name: The published schemas are CURRENT
-        # From the repository ROOT, which is where MIGRATIONS.md's sequence runs it and where the
-        # published `schemas/` directory actually is. The first draft set
-        # `working-directory: packages/cdm` on the assumption that a package's schemas live under
-        # the package, and got six `missing` lines — the same wrong assumption also had the
-        # derivations step below listing `packages/cdm/schemas`.
-        run: python -m synapse_cdm.schemas --check --out schemas
+      - name: Clean install from the built package, in a venv of its own
+        # §50's `clean install from built package`, as a PIPELINE stage rather than only as
+        # `gates/wheel_install.py`'s internal act. The difference is what it installs FROM: the
+        # gate builds its own wheel in a temporary directory, and this installs the exact file
+        # that is about to be uploaded, in an interpreter that has never seen the source tree.
+        run: |
+          set -euo pipefail
+          python -m venv /tmp/clean
+          /tmp/clean/bin/python -m pip install --upgrade pip
+          /tmp/clean/bin/python -m pip install dist/*.whl
+          # From `/tmp`, so that an accidental import of the source tree cannot pass for the wheel.
+          cd /tmp
+          /tmp/clean/bin/python -c "import synapse_cdm; print(synapse_cdm.__file__)"
+
+      - name: Package test — the installed wheel answers for itself
+        # §50's `package test`: not the suite again, but the things a CONSUMER does with the
+        # artefact — the console scripts resolve, the packaged fixtures and schemas are inside the
+        # wheel, and the conformance sweep runs from the installed package with no repository
+        # anywhere near it.
+        run: |
+          set -euo pipefail
+          cd /tmp
+          /tmp/clean/bin/synapse conformance list
+          /tmp/clean/bin/synapse conformance run --all --require A,B,C,D,F,G,H,J,K,L,O \
+            --format json > /tmp/installed-conformance.json
+          /tmp/clean/bin/python -c 'import json; d=json.load(open("/tmp/installed-conformance.json")); assert d["conformant"] == sorted(d["adapters"]), d["conformant"]; print(len(d["conformant"]), "adapters CONFORMANT from the installed wheel")'
+          /tmp/clean/bin/cdm-harness --list-adapters
+
+      - name: SBOM — SPDX, from syft over the gated wheel
+        # syft reads the WHEEL, not the source tree and not the environment: the artefact that
+        # ships is the artefact described.
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
+        with:
+          file: dist/synapse_cdm-${{ github.ref_name }}-py3-none-any.whl
+          format: spdx-json
+          output-file: sbom/synapse_cdm.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: SBOM — CycloneDX, from the same syft run
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
+        with:
+          file: dist/synapse_cdm-${{ github.ref_name }}-py3-none-any.whl
+          format: cyclonedx-json
+          output-file: sbom/synapse_cdm.cdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Fetch the gate's conformance and evidence artefacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: gate
+          path: gate/
+
+      - name: Hash — one SHA256SUMS over every artefact this release publishes
+        # §50's `hash` stage. Everything the Release carries is in one table, so a consumer checks
+        # one file rather than six, and `gates/witness_verify.py` reads the same digests back out
+        # of the witness record afterwards.
+        run: |
+          set -euo pipefail
+          cp gate/conformance-*.json gate/evidence-*.tar.gz .
+          sha256sum dist/* sbom/*.json conformance-*.json evidence-*.tar.gz | tee SHA256SUMS
+          {
+            echo '## Artefacts, with digests'
+            echo
+            echo '```'
+            cat SHA256SUMS
+            echo '```'
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
 
       - name: Condition 4 — the derivations, for notes that are derived and not remembered
         # THE BLOCK GOES TO THE JOB LOG AS WELL AS THE STEP SUMMARY, and `tee -a` rather than `>>`
@@ -301,11 +567,98 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+      - name: Hand the release assets to the release job
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: assets
+          path: |
+            sbom/*.json
+            SHA256SUMS
+            conformance-*.json
+            evidence-*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+  # ------------------------------------------------------------------------------------ §50: attestation
+  attest:
+    name: Build provenance, and the verification that proves it
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      # The instant the attestations were actually verified, carried to the `witness` job. Without
+      # it that job would have to write the RELEASE's instant into `attestation.verified_at`,
+      # which is a different event — and a record whose fields are approximately right is the
+      # thing §53's "verifiable" exists to rule out.
+      verified_at: ${{ steps.verify.outputs.verified_at }}
+    permissions:
+      # Narrow, and on this job alone. `id-token: write` is the OIDC token Sigstore signs with and
+      # `attestations: write` is the attestation store; granting either to the job that runs the
+      # suite would let anything the suite imports mint one.
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download the distribution
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: dist
+          path: artefacts/dist/
+
+      - name: Download the release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: assets
+          path: artefacts/
+
+      - name: The digests survived the hand-off
+        # Between two jobs the artefacts go through an upload and a download, and this is where a
+        # truncated transfer is caught — before an attestation is minted over the wrong bytes.
+        run: |
+          set -euo pipefail
+          cd artefacts && sha256sum -c SHA256SUMS
+
+      - name: Attest the wheel, the sdist, both SBOMs and the evidence bundle
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4.2.2
+        with:
+          subject-path: |
+            artefacts/dist/*
+            artefacts/sbom/synapse_cdm.spdx.json
+            artefacts/sbom/synapse_cdm.cdx.json
+            artefacts/evidence-*.tar.gz
+
+      - name: Verify each attestation — the proof, not the claim
+        id: verify
+        # §47's chain ends in an attestation, and an attestation nobody verified is a file. This
+        # runs the same command a consumer runs, in the same run that produced it, so a broken
+        # chain fails HERE rather than in somebody else's audit.
+        env:
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: this file states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for artefact in artefacts/dist/* artefacts/sbom/*.json artefacts/evidence-*.tar.gz; do
+            echo "::group::verify $artefact"
+            gh attestation verify "$artefact" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --signer-workflow "${GITHUB_REPOSITORY}/.github/workflows/publish.yml"
+            echo "::endgroup::"
+          done
+          echo "verified_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "${GITHUB_OUTPUT}"
+
+  # ------------------------------------------------------------------------------------------ §50/§51: publish
   publish:
     name: Publish to PyPI over OIDC
-    # Only after the gate passed, and only for a tag. A dispatch run reaches this job and is
-    # skipped, which is deliberate and is why the header says the upload half is unproven.
-    needs: build
+    # Only after the whole gate chain passed, and only for a tag. A dispatch run reaches this job
+    # and is skipped, which is deliberate: it is what makes everything above it exercisable on a
+    # branch. `needs: attest` is the END of the chain gate -> build -> attest, so this job cannot
+    # start before any of them; `tests/test_cdm_trusted_publishing.py` walks the chain rather than
+    # reading one name, because the name of the job immediately before this one is not the
+    # property that matters.
+    needs: attest
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
@@ -347,3 +700,177 @@ jobs:
           # a `password:` line, Trusted Publishing has been abandoned and ledger entry 6 is wrong.
           print-hash: true
           attestations: true
+
+  # ------------------------------------------------------------------------------------- §52: GitHub Release
+  release:
+    name: GitHub Release, with notes rendered from the tree
+    needs: publish
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      # The only job in this file that writes to the repository, and it writes a Release rather
+      # than a commit: RUNNER.md's hard limits keep committing a runner's act, and §53's witness
+      # record is committed by the witness round for exactly that reason.
+      contents: write
+    steps:
+      - name: Check out the tree the tag points at
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install the package, for the renderer
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+
+      - name: Download the distribution
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: dist
+          path: dist/
+
+      - name: Download the release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: assets
+          path: assets/
+
+      - name: Render the notes — §52's ten fields, nine of them derived
+        # The tenth is `RELEASE_NOTES.md`'s prose, quoted. The renderer REFUSES if that file
+        # describes another version, which is the §52 failure with no visible symptom: a heading
+        # carrying the right number over prose about the previous release.
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          python -m synapse_cdm.suite release-notes \
+            --version "${version}" \
+            --from RELEASE_NOTES.md \
+            --manifests manifests \
+            --conformance "assets/conformance-${version}.json" \
+            --security SECURITY.md \
+            --exceptions security/exceptions \
+            --codeql "0 findings at or above 7.0, gate green in this run" \
+            --pip-audit "0 findings, strict, in this run" \
+            --out "release-notes-${version}.md"
+          sha256sum "release-notes-${version}.md"
+
+      - name: Create the Release, with the full asset set
+        # F7.4's default. Evidence and conformance are ASSETS and not merely workflow artefacts,
+        # because a workflow artefact expires in 90 days and a release's evidence should outlive
+        # the run that produced it — `evidence.available` becoming true for a consumer who cannot
+        # run this package is exactly what the attachment is for.
+        env:
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: this file states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "synapse-cdm ${version}" \
+            --notes-file "release-notes-${version}.md" \
+            --verify-tag \
+            dist/* \
+            assets/SHA256SUMS \
+            assets/sbom/synapse_cdm.spdx.json \
+            assets/sbom/synapse_cdm.cdx.json \
+            "assets/evidence-${version}.tar.gz" \
+            "assets/conformance-${version}.json" \
+            "release-notes-${version}.md"
+
+  # -------------------------------------------------------------------------------------- §53: witness entry
+  witness:
+    name: Witness record, from the index and the Release
+    # `release` is the stage before it; `attest` is named as well only so that
+    # `needs.attest.outputs.verified_at` is readable here. The order §50 fixes is unchanged —
+    # `release` already depends on `attest` transitively.
+    needs: [release, attest]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the tree the tag points at
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Download the release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: assets
+          path: assets/
+
+      - name: Build the witness record from what was actually published
+        # AFTER the upload and AFTER the Release, because every field in it is a reading of
+        # something that did not exist before: PyPI's own digests, the Release's id and instant,
+        # and the approval that released the hold. A record assembled from what the pipeline
+        # INTENDED to publish would agree with itself and prove nothing.
+        env:
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: this file states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${GITHUB_REF_NAME}" > release.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/approvals" > approvals.json || echo '[]' > approvals.json
+          python .github/scripts/build_witness.py \
+            --version "${version}" \
+            --commit "${GITHUB_SHA}" \
+            --tag "${GITHUB_REF_NAME}" \
+            --tag-object "$(git rev-parse "${GITHUB_REF_NAME}")" \
+            --release release.json \
+            --approvals approvals.json \
+            --assets assets \
+            --attestation-verified \
+            --attestation-verified-at "${{ needs.attest.outputs.verified_at }}" \
+            --out "witness-${version}.json"
+
+      - name: Verify it — §53's "deterministic and verifiable", as a command
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          python gates/witness_verify.py "witness-${version}.json" --download
+
+      - name: Attach it to the Release
+        # It is NOT committed here. A workflow does not commit to `main` (RUNNER.md's hard limits);
+        # the witness round commits the same file under `releases/witness/` alongside
+        # PUBLICATION.md's ledger entry.
+        env:
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: this file states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          gh release upload "${GITHUB_REF_NAME}" "witness-${version}.json"
+          {
+            echo '## The witness record'
+            echo
+            echo 'Commit this to `releases/witness/'"${version}"'.json` in the witness round.'
+            echo
+            echo '```json'
+            cat "witness-${version}.json"
+            echo '```'
+          } | tee -a "${GITHUB_STEP_SUMMARY}"

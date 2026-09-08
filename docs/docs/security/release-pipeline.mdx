@@ -1,0 +1,126 @@
+---
+title: Release pipeline
+sidebar_label: Release pipeline
+sidebar_position: 4
+description: The six jobs a release runs through, the one human gate in the middle of them, how main advances, and the two commands a consumer runs to check any of it without trusting this repository.
+---
+
+# Release pipeline
+
+A release here is **a pushed tag and nothing else typed by hand**. Everything from that tag to a
+published artefact, a GitHub Release and a machine-readable witness record happens in
+`.github/workflows/publish.yml`, in one order, with one human decision in the middle of it.
+
+This page says what the order is, what each stage refuses, and — the part worth more than the rest
+— what a consumer runs to check the result without taking any of it on trust.
+
+The convention is the specification's: **MUST**, **SHOULD**, **MAY**.
+
+## 1. The six jobs, and why they are six
+
+SOIF Part 1 §50 fixes an order. One job per stage boundary, each `needs:` the one before it, so the
+order is enforced by the dependency graph rather than by the order steps happen to be written in:
+
+```text
+gate ──► build ──► attest ──► publish ──► release ──► witness
+                               (held)
+```
+
+| job | what it does | what it refuses |
+| --- | --- | --- |
+| `gate` | ruff `E9`; the suite (**condition 1**); tag names `PACKAGE_VERSION` (**condition 3**); the tag is annotated; schemas and manifests `--check`; the conformance sweep over every shipped adapter; evidence records; gitleaks; `pip-audit --strict`; the CodeQL gate | a red suite, a tag that names another version, a lightweight tag, drifted schemas or manifests, a non-conformant adapter, a secret in history, a vulnerable dependency, a CodeQL finding at or above CVSS 7.0 — **and a commit CodeQL has not analysed at all** |
+| `build` | `gates/wheel_install.py --mutation-check --export-dist` (**condition 2**, and the ONE build); `twine check --strict`; a clean install from the built wheel into a fresh venv; a package test run from that install; SPDX and CycloneDX SBOMs; one `SHA256SUMS`; **condition 4**'s derivations | a wheel that fails its own gate, metadata `twine` rejects, an installed wheel whose adapters are not conformant |
+| `attest` | Sigstore build provenance over the wheel, the sdist, both SBOMs and the evidence bundle, then `gh attestation verify` on each | a digest that changed in the hand-off between jobs; an attestation that does not verify |
+| `publish` | the `pypi` environment's hold, then an OIDC upload with no credential in the file | everything, until a person approves |
+| `release` | `gh release create` with notes rendered by `synapse release-notes` and the full asset set | notes that describe another version |
+| `witness` | builds `witness-<version>.json` from PyPI and the Release API, verifies it, attaches it | a record whose digests disagree with the index |
+
+**`workflow_dispatch` runs the first three and stops.** `publish`, `release` and `witness` each
+carry `if: startsWith(github.ref, 'refs/tags/v')`, so the whole pipeline short of the irreversible
+act is exercisable on any branch. That is what it is for: a mechanism first run during a release is
+a mechanism debugged during a release.
+
+## 2. The approval, and what it is not
+
+The `pypi` environment carries a **required reviewer**, and the upload waits there. A PyPI upload
+cannot be undone — a yanked release still owns its filename forever — and it is the only step of a
+release that is irreversible. Every other step is revocable: a tag moves, a Release deletes, a
+commit reverts.
+
+It is a **confirmation prompt and not a review**. `prevent_self_review` is off, because with one
+maintainer the only person who can push a tag is the only person who could approve it, and the
+stronger setting would be a deadlock rather than a second pair of eyes. `PUBLICATION.md` entry 6
+records that, and records the trigger for changing it: a second maintainer.
+
+## 3. Advancing `main`
+
+Campaign work happens on a branch and `main` is unchanged by it. A release round is the only round
+that advances `main`, and it advances it by **fast-forward**:
+
+```bash
+git fetch origin
+git switch main
+git merge --ff-only soif/1.0     # a refusal is a STOP
+git tag -a v2.0.0 -m "..."       # on main's new tip, after the fast-forward
+git push origin main --follow-tags
+```
+
+**If the fast-forward is impossible the release STOPS.** It is not fixed by merging and not by
+rebasing. A refusal means `main` holds a commit the reviewed branch does not — so the thing that
+was reviewed is not the thing that would be released, which is the condition a release must not
+paper over. `VERSIONING.md` §5 and §5.1 are the authority.
+
+## 4. What a consumer checks, and how
+
+Nothing on this page has to be believed. Four artefacts are attached to every Release and two
+commands check them.
+
+**The build provenance**, which chains the artefact to the commit and the workflow that made it:
+
+```bash
+gh attestation verify synapse_cdm-2.1.0-py3-none-any.whl \
+  --repo Decent-Cybersecurity/synapsecommand-public \
+  --signer-workflow Decent-Cybersecurity/synapsecommand-public/.github/workflows/publish.yml
+```
+
+**The witness record**, which re-derives every digest in the release from PyPI and from the Release
+API and exits non-zero on any disagreement:
+
+```bash
+python gates/witness_verify.py releases/witness/2.1.0.json            # index and Release
+python gates/witness_verify.py releases/witness/2.1.0.json --offline  # no network
+python gates/witness_verify.py releases/witness/2.1.0.json --download # re-hash the served bytes
+```
+
+The check worth understanding is the one that needs no network at all: the record carries the
+digests the build job produced **and** the digests the index reports, from two different sources,
+and the verifier compares them. A release where those disagree uploaded bytes nothing gated.
+
+`releases/witness/README.md` documents every field. The record is produced by CI after the upload
+and **committed by a person afterwards** — a workflow does not commit here, which is why the
+directory is filled by the witness round rather than by the run.
+
+## 5. The release notes
+
+SOIF §52 requires ten things in a release's notes. Nine are derived from the tree at the tag by
+`synapse release-notes`: the five version axes, the adapter status table, the security controls,
+the adapters' stated limitations, and the conformance summary. The tenth — **major changes** — is
+quoted from `RELEASE_NOTES.md`, which is written by a person.
+
+That split is deliberate and it is not a loophole in `MIGRATIONS.md`'s condition 4. "Derived, not
+remembered" is a claim about what the **writer** read, and a generated file does not satisfy it. So
+the renderer refuses rather than guessing: if `RELEASE_NOTES.md` describes a different version than
+the one being released, nothing is rendered and the release fails there. Notes carrying the right
+number in the heading over prose about the previous release is the §52 failure with no visible
+symptom, and it is the one this refusal exists for.
+
+## 6. What this pipeline does not cover
+
+* **The npm dependency set of this documentation site.** `pip-audit` is Python-only and CodeQL
+  reads source rather than dependencies. Dependabot alerts cover it and no job in this pipeline
+  fails on one — see [Supply chain](./supply-chain.mdx) §2.
+* **Type checking.** There is no mypy configuration in this package and none is run. The lint stage
+  is ruff `E9` only — syntax errors and undefined names — and the narrowing is documented in
+  `packages/cdm/pyproject.toml` beside the config, with the readings that decided it.
+* **A refused upload.** It has never happened, so the recovery path is unexercised. The fix is on
+  pypi.org, per `PUBLICATION.md` entry 6, and never a token pasted into the workflow.

@@ -114,6 +114,40 @@ cdm-conformance = "synapse_cdm.conformance:main"
 # would leave the specification's own command line unrunnable.
 synapse = "synapse_cdm.suite:main"
 
+# ---------------------------------------------------------------------------------------------
+# LINT, AND WHY THE RULE SET IS THIS SMALL. Added 2026-09-08 by SOIF Part 1 round P7, for §50's
+# `lint/type` stage in `.github/workflows/publish.yml`.
+#
+# F7.1's pre-ruled default was `select = ["E9", "F"]` — syntax errors plus pyflakes, the
+# "zero-noise floor". The reading that decided the set was taken at that round's Act 0 with ruff
+# 0.16.6, and it refuted the "zero-noise" half:
+#
+#     ruff check packages/cdm --select E9   ->  All checks passed
+#     ruff check .            --select E9   ->  All checks passed
+#     ruff check packages/cdm --select F    ->  12 (8 F401, 2 F541, 2 F841)
+#     ruff check .            --select F    ->  47 (26 F401, 13 F841, 8 F541)
+#
+# The default's own escape clause governs: "If `ruff check` finds anything in the existing tree, it
+# is a FINDING listed in the report, and the rule set narrows to what passes with the narrowing
+# documented — the tree is not 'cleaned up' in a release-engineering round." So the set is `E9`.
+#
+# THAT IS A NARROWING AND NOT A DISMISSAL. `E9` is the class that is never a style opinion: a
+# syntax error, or a name that is not defined at all. `F`'s 47 are real and are recorded as a known
+# limitation for P8's §57 item 15 — unused imports and unused locals, none of which changes what
+# the package does, and every one of which needs an edit to a shipped module that a release round
+# has no business making. A stage added red is a stage somebody switches off in the release it
+# first blocks; this one is added green and can only go red on something new.
+#
+# There is no `[tool.mypy]`, and that is also F7.1: the package has never had a type config, and
+# adding one in a release-engineering round would put a first type-check run inside the pipeline
+# that publishes. P8 §57 records it as a limitation.
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E9"]
+
 [tool.setuptools.dynamic]
 version = { attr = "synapse_cdm.version.PACKAGE_VERSION" }
 

@@ -256,6 +256,65 @@ Three things are still deliberately a person's:
 `PUBLICATION.md` ledger entry 5 carries the sequence that was followed for 1.0.0 by hand, what was
 measured off the index afterwards, and which step of it did not run.
 
+### The pipeline, and advancing `main` — added 2026-09-08 (SOIF Part 1 round P7)
+
+**Nothing above is edited.** The five conditions, the pre-checks, the sequence, the fallback and
+the three things that stay a person's are all unchanged, and each of them still holds. What this
+section adds is the two things the sections above do not say, because until this round neither
+existed: the pipeline has more stages than three conditions and a `twine` check, and a campaign
+branch has to reach `main` before a tag can be pushed to it.
+
+**The pipeline, in SOIF §50's order.** `.github/workflows/publish.yml` is one job per stage
+boundary, each `needs:` the one before, so the order is enforced by the dependency graph:
+
+```text
+gate      lint (ruff E9) -> suite (condition 1) -> tag/version (condition 3) -> annotated tag ->
+          schemas CURRENT -> manifests CURRENT -> conformance sweep -> evidence ->
+          gitleaks -> pip-audit -> CodeQL gate
+build     condition 2 and the ONE build -> twine --strict -> clean install from the built wheel ->
+          package test from that install -> SBOMs (SPDX, CycloneDX) -> SHA256SUMS -> condition 4
+attest    Sigstore build provenance over wheel, sdist, both SBOMs, evidence -> gh attestation verify
+publish   the `pypi` environment's hold, then OIDC upload — unchanged
+release   gh release create, notes rendered by `synapse release-notes`, the full asset set
+witness   releases/witness/<version>.json, built from PyPI and the Release, then verified
+```
+
+**Conditions 1–4 are the same text in a different job.** 1 and 3 and the annotated-tag check are
+the gate's; 2 and 4 are the build's, because both read `dist/` and `dist/` is what the build makes.
+Not one word of any of them changed, and `tests/test_cdm_trusted_publishing.py` holds them to that.
+
+**Condition 4 is still a person's, and the renderer does not take it over.** `synapse release-notes`
+renders nine of SOIF §52's ten fields from the tree — the five version axes, the adapter status, the
+security status, the known limitations and the conformance summary. The tenth, *major changes*, is
+quoted from `RELEASE_NOTES.md`, which is written by a person; the renderer REFUSES if that file's
+heading names another version. So the derivation is free and the judgement is not delegated, which
+is what condition 4 has said since it was written.
+
+**Advancing `main` is a release round's, by fast-forward only.** A campaign branch is reviewed and
+pushed to its own remote; `main` moves once, at the release:
+
+```bash
+git fetch origin
+git switch main
+git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
+git tag -a v2.0.0 -m "..."       # on main's new tip, after the fast-forward
+git push origin main --follow-tags
+```
+
+A refusal means `main` holds a commit the reviewed branch does not, so the reviewed thing is not
+the thing that would be released — the condition a release must not paper over. `VERSIONING.md`
+§5.1 carries the same commands with the reasoning; a commit that was already accepted and pushed is
+never amended, rebased away, squashed or force-pushed.
+
+**What the witness record is, and who writes it.** SOIF §53 requires a machine-readable record per
+milestone release and fixes one property: it MUST be deterministic and verifiable. The `witness`
+job builds it AFTER the upload, from PyPI's own JSON API and the Release API rather than from what
+the pipeline intended to publish, and attaches it to the Release. **A workflow does not commit**, so
+the file lands under `releases/witness/` in the witness round that follows, beside
+`PUBLICATION.md`'s ledger entry. `python gates/witness_verify.py releases/witness/<v>.json`
+re-derives every digest in it and exits non-zero on any disagreement — that command is what the word
+"verifiable" is discharged by. `releases/witness/README.md` documents the fields.
+
 ## History
 
 ### Unreleased
@@ -263,7 +322,37 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
-**What moved inside the distribution: 672 files.** Four rounds are in this section now and the
+**ROUND P7's RECORD, 2026-09-08 — the release pipeline (SOIF §49–§55).**
+
+Recorded 2026-09-08 by SOIF Part 1 round P7. Nothing here is released; `PACKAGE_VERSION` is
+unmoved at 2.0.0 and the number is the release round's to type.
+
+**The packaged surface moved in three places and NONE of them needed a ruling**, which was
+established by writing three and having the gate refuse all three: `gates/bump_derivation.py`
+classifies each of them itself, and it rejects a ruling for a unit it does not find ambiguous on
+the grounds that a second opinion on a decided question is the habit it exists to replace. What it
+derives, and what is therefore recorded here as prose rather than as an exemption:
+
+* `synapse_cdm/release_notes.py` — a new module, and a new public name (`synapse release-notes`)
+  on the `synapse` console script's surface.
+* `synapse_cdm/suite.py:build_parser` — `conformance run` gains `--all` and the parser gains the
+  `release-notes` command. Nothing is removed and nothing is renamed: `--adapter` stops being
+  `required=True` and remains accepted exactly as before, so every existing command line means
+  what it meant.
+* `synapse_cdm/suite.py:shipped_adapters` — a new public name. It is the filter `--all` sweeps
+  with, and it is a function rather than an inline expression because `roster()` also carries
+  adapters a caller has merely imported, so a release's sweep would otherwise grow or shrink with
+  what else is in the interpreter.
+
+The arc still derives **MINOR** with `pending.unruled` empty, so the floor is unchanged at 2.1.0.
+
+`gates/witness_verify.py`, `.github/scripts/build_witness.py`, `.github/workflows/publish.yml`,
+`releases/witness/`, the ruff configuration and this document's procedure text carry NO bump unit:
+none of them is inside the distribution. `packages/cdm/pyproject.toml`'s new `[tool.ruff]` section
+ships in the sdist and configures a linter; it adds no importable name and changes no packaged
+behaviour.
+
+**What moved inside the distribution: 673 files.** Five rounds are in this section now and the
 sentence above is the arc's size, not any one round's — the arc is `v2.0.0` to the working tree and
 `python gates/bump_derivation.py` prints the set. **Round PA** moved six: `FORMAT_COVERAGE.md`,
 `MIGRATIONS.md` (this file), and four records that did not exist before —
@@ -355,6 +444,15 @@ earlier rounds' lists and is one file in the arc's. Nothing else under `packages
 `git status --porcelain -- packages/cdm` before this paragraph was written returned nothing at all,
 and the bump gate still reads MINOR / 2.1.0 with **0 unruled** units, so this round writes no Bump
 ruling. That is the whole distribution half of P6, stated so a reader does not go looking for more.
+
+**Round P7 moved THREE files inside the distribution and one of them is new**, so **the arc's own
+figure above moves 672 -> 673**: `synapse_cdm/release_notes.py` is the new one, and
+`synapse_cdm/suite.py` and `synapse_cdm/MIGRATIONS.md` (this file) were already in earlier rounds'
+lists. `packages/cdm/pyproject.toml` is the fourth path under `packages/cdm/` and was already in
+the arc. Everything else P7 built is outside the distribution — the workflow, the two gate scripts,
+`releases/witness/`, the docs page and four test modules — and carries no bump unit for that
+reason. The gate reads MINOR / 2.1.0 with **0 unruled**, and this round writes no Bump ruling: it
+wrote three, and the gate refused all three as second opinions on units it classifies itself.
 
 **What P6 added, in one paragraph, and none of it is in the wheel.** Everything the round did is
 CI, settings and documents: `.github/dependabot.yml` (three ecosystems — `pip` in `/packages/cdm`,
