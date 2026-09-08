@@ -1,0 +1,1140 @@
+{
+  "directory": "klv",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "a_checksum_that_does_not_validate_is_flagged_not_refused.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_checksum_that_does_not_validate_is_flagged_not_refused.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_correction_offset_is_applied_and_the_raw_stamp_is_kept.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_correction_offset_is_applied_and_the_raw_stamp_is_kept.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_course_of_360_degrees_is_the_documents_own_zero.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_course_of_360_degrees_is_the_documents_own_zero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_minor_core_identifier_is_one_uuid_and_no_foundational_claim.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_negative_time_adjustment_is_read_signed.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_negative_time_adjustment_is_read_signed.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_platform_only_core_identifier_names_one_of_the_two_devices.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_platform_only_core_identifier_names_one_of_the_two_devices.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_poi_coordinate_at_the_error_indicator_is_a_signal_and_not_a_position.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_poi_missing_a_mandatory_element_is_carried_and_reported.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_poi_missing_a_mandatory_element_is_carried_and_reported.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_prefilled_platform_identifier_is_a_defect_and_never_an_identity.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_short_wavelength_record_is_refused_and_the_packet_translates.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_short_wavelength_record_is_refused_and_the_packet_translates.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_target_location_pack_is_absolute_and_needs_no_frame_centre.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_usage_byte_naming_more_uuids_than_follow_is_refused_and_the_packet_translates.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_wavelengths_list_from_the_documents_own_example.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_wavelengths_list_from_the_documents_own_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_windowed_core_identifier_carries_three_uuids_in_the_ebnfs_order.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_zero_length_imapb_item_is_an_explicit_unknown.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_zero_length_imapb_item_is_an_explicit_unknown.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_zero_length_leap_seconds_item_is_not_a_zero_adjustment.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_zero_length_minimum_item_does_not_meet_the_reporting_requirement.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_imapb_item_past_its_max_length_is_an_advisory.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_imapb_item_past_its_max_length_is_an_advisory.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_offset_target_with_no_frame_centre_emits_no_position.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_offset_target_with_no_frame_centre_emits_no_position.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_rvt_element_at_a_stated_length_it_does_not_have_is_refused.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_rvt_local_set_carrying_two_points_of_interest_is_two_pois.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_rvt_string_that_is_not_iso_7_is_refused_and_the_packet_translates.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_unlisted_rvt_tag_is_carried_and_this_layer_declines_to_read_it.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_unwitnessed_tag_is_skipped_and_the_packet_translates.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_unwitnessed_tag_is_skipped_and_the_packet_translates.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "both_hae_items_agreeing_take_tag_104_and_raise_nothing.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "both_hae_items_agreeing_take_tag_104_and_raise_nothing.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "both_hae_items_disagreeing_raise_an_advisory_and_still_emit.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "both_hae_items_disagreeing_raise_an_advisory_and_still_emit.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "every_row_of_the_minimum_set_reported_in_one_packet.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "every_row_of_the_minimum_set_reported_in_one_packet.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hae_from_tag_75_when_it_is_the_only_ellipsoid_item.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hae_from_tag_75_when_it_is_the_only_ellipsoid_item.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hae_is_tag_104_and_never_tag_15s_msl.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hae_is_tag_104_and_never_tag_15s_msl.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hae_is_tag_75_and_never_tag_15s_msl.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hae_is_tag_75_and_never_tag_15s_msl.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "imapb_items_from_the_documents_own_examples.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "imapb_items_from_the_documents_own_examples.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "imapb_special_values_are_signals_and_not_measurements.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "imapb_special_values_are_signals_and_not_measurements.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "leap_seconds_alone_convert_the_stamp_toward_utc.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "leap_seconds_alone_convert_the_stamp_toward_utc.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_divergence_at_a_required_length.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_divergence_at_a_required_length.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mandatory_items_only.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mandatory_items_only.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "no_security_local_set_is_unlabelled_not_unclassified.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "no_security_local_set_is_unlabelled_not_unclassified.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "over_recommended_max_length_is_an_advisory.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "over_recommended_max_length_is_an_advisory.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "rvt_local_set_complete_from_the_element_rules.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "rvt_local_set_complete_from_the_element_rules.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_classification_outside_the_enumeration_carries_no_label.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_classification_outside_the_enumeration_carries_no_label.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_local_set_complete_from_the_element_rules.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_local_set_complete_from_the_element_rules.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_local_set_minimal_required_only.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_local_set_minimal_required_only.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_local_set_partial_is_carried_as_partial.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_local_set_partial_is_carried_as_partial.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_at_an_odd_octet_count_is_refused.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_at_an_odd_octet_count_is_refused.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_big_endian_bom_is_honoured_and_stripped.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_big_endian_bom_is_honoured_and_stripped.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_little_endian_bom_is_honoured_with_an_advisory.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_multiple_are_split_on_the_semicolon.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_multiple_are_split_on_the_semicolon.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_with_a_lone_surrogate_is_refused.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_with_a_lone_surrogate_is_refused.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_object_country_codes_with_no_bom_are_big_endian_by_two_documents.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_required_element_at_a_forbidden_length_is_refused.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_required_element_at_a_forbidden_length_is_refused.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_uint16_that_the_format_cannot_carry_is_refused.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "security_uint16_that_the_format_cannot_carry_is_refused.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_values_are_signals_and_not_measurements.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_values_are_signals_and_not_measurements.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_104_carrying_a_signal_emits_no_altitude.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_104_carrying_a_signal_emits_no_altitude.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_75_from_the_documents_own_example.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_75_from_the_documents_own_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "the_documents_own_dynamic_only_packet_reports_nineteen_of_the_thirty_three_rows.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "the_miis_core_identifier_from_the_documents_own_example.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "the_miis_core_identifier_from_the_documents_own_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "the_time_adjustments_from_the_documents_own_examples.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "the_time_adjustments_from_the_documents_own_examples.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_packets_one_payload_are_two_statements.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_packets_one_payload_are_two_statements.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_vtargets_sharing_one_target_id_number_are_two_detections.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "witnessed_set_from_the_documents_own_examples.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "witnessed_set_from_the_documents_own_examples.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_length_item_is_an_explicit_unknown.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_length_item_is_an_explicit_unknown.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_length_item_on_a_required_item_is_a_defect.klv",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_length_item_on_a_required_item_is_a_defect.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4609 KLV packets built from field values by `klv/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/klv/README.md` states \"Every octet is synthetic, and the one thing borrowed is borrowed from the standard.\"",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

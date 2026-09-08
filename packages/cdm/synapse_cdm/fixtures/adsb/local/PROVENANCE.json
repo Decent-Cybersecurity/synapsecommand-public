@@ -1,0 +1,70 @@
+{
+  "directory": "adsb/local",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_baro_gulf_of_riga.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_gillham_above_50175.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_gnss_height_odd.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_permanent_alert.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nonicao_anonymous_address.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_position_riga_taxiway.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_position_stopped_no_track.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tisb_fine_format_relayed_track.cdm.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM output, not input: `fixtures/adsb/README.md` states \"`local/` holds the CDM output for the referenced path: the same `.adsb` fixtures translated by an adapter constructed with `reference_position=(56.9236, 23.9711)`, a receiver at Riga.\"",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

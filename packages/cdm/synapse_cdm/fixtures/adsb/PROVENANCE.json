@@ -1,0 +1,262 @@
+{
+  "directory": "adsb",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_baro_gulf_of_riga.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_baro_gulf_of_riga.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_gillham_above_50175.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_gillham_above_50175.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_gnss_height_odd.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_gnss_height_odd.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_no_position_information.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_no_position_information.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_permanent_alert.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_permanent_alert.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_velocity_airspeed_and_heading.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_velocity_airspeed_and_heading.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_velocity_all_unavailable.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_velocity_all_unavailable.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_velocity_ground_speed.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_velocity_ground_speed.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "aircraft_status_unlawful_interference.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "aircraft_status_unlawful_interference.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "identification_light_aircraft.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "identification_light_aircraft.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "identification_point_obstacle.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "identification_point_obstacle.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nonicao_anonymous_address.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "nonicao_anonymous_address.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "operational_status_magnetic_heading.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "operational_status_magnetic_heading.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_position_riga_taxiway.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_position_riga_taxiway.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_position_stopped_no_track.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_position_stopped_no_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tisb_fine_format_relayed_track.adsb",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tisb_fine_format_relayed_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic 1090ES frames written as field values and encoded by `adapters/adsb.py`; `fixtures/adsb/README.md` states \"Every one is synthetic. No real 1090ES traffic, and no ICAO address of a live aircraft, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

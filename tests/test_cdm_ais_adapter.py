@@ -32,7 +32,7 @@ import uuid
 import pytest
 
 import synapse_cdm
-from synapse_cdm import lossless, times
+from synapse_cdm import harness, lossless, times
 from synapse_cdm.adapters import ais
 from synapse_cdm.adapters.ais import AisAdapter
 from synapse_cdm.enums import (
@@ -51,7 +51,10 @@ EGRESS = FIXTURES / "egress"
 SCHEMAS = pathlib.Path(__file__).resolve().parents[1] / "schemas"
 
 NMEA_FIXTURES = sorted(FIXTURES.glob("*.nmea"))
-EGRESS_FIXTURES = sorted(EGRESS.glob("*.json"))
+#: §33's provenance record sits beside the egress payloads and is `*.json` like them, so it
+#: is excluded by NAME — `harness.PROVENANCE_FILE`, round P4.
+EGRESS_FIXTURES = sorted(p for p in EGRESS.glob("*.json")
+                         if p.name != harness.PROVENANCE_FILE)
 
 
 def _adapter() -> AisAdapter:

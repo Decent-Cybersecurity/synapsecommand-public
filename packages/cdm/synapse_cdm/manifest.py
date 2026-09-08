@@ -236,6 +236,91 @@ class Capabilities(Strict):
         return value
 
 
+class Limitation(Strict):
+    """A limitation stated so that a MACHINE can act on it — M's ruling, 2026-09-08, round P4.
+
+    WHY THIS EXISTS BESIDE THE SENTENCE AND DOES NOT REPLACE IT
+    -----------------------------------------------------------
+    `limitations` has always been `list[str]`, and a sentence is the right shape for most of what
+    an adapter has to admit: "no document in this tree states which edition this targets" is prose
+    and stays prose. §34 asks for one thing a sentence cannot give. The loss report classifies a
+    source path as UNSUPPORTED when it is "an explicit documented exception", and a classifier
+    that had to decide that by reading English would be a classifier that guessed. So the
+    exception becomes data: `unsupported_paths` holds the SOURCE paths, in the dotted spelling
+    `lossless.leaves()` produces, and the classifier does a set membership test.
+
+    `limitations` is therefore `list[str | Limitation]` and not `list[Limitation]`. The union is
+    the whole ruling: existing string entries stay valid unchanged, all fourteen shipped adapters
+    keep the sentences they already declare, and only an adapter that needs the mechanism emits
+    the structured form. A field that FORCED the structure would have converted twenty-eight
+    prose statements into objects with an empty `unsupported_paths`, which is a schema migration
+    performed to satisfy a shape rather than to say anything.
+
+    `severity` is optional and its vocabulary is NOT frozen here: ARCHITECTURE.md defines no
+    severity scale for limitations and inventing one in a model would be freezing a contract in
+    the wrong document. It is a free string when it is given at all.
+    """
+
+    #: Stable within one adapter, so a consumer can track one limitation across releases. Not
+    #: globally unique and not a registry key — two adapters may both call one `format-version`.
+    id: str
+    #: The sentence a `str` entry would have been. The structured form does not get to be less
+    #: readable than the shape it replaces.
+    summary: str
+    #: SOURCE paths, dotted, in `lossless.leaves()`'s spelling. The one field a classifier reads.
+    unsupported_paths: list[str] = []
+    #: Free text. Optional, and unfrozen — see the docstring.
+    severity: str | None = None
+    #: Why, where the summary is not the whole answer.
+    notes: str | None = None
+
+    @field_validator("id", "summary")
+    @classmethod
+    def _not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("a Limitation's `id` and `summary` are both required and non-empty; "
+                             "a structured limitation with no summary is less legible than the "
+                             "sentence it replaced")
+        return value
+
+    @field_validator("unsupported_paths")
+    @classmethod
+    def _paths_are_paths(cls, value: list[str]) -> list[str]:
+        """§34, and M's ruling: "must be machine-readable and contain canonical source/CDM paths,
+        not prose descriptions". A path with a space in it is a sentence that got into the wrong
+        field, and the loss classifier would silently never match it."""
+        prose = sorted(p for p in value if not p.strip() or " " in p.strip())
+        if prose:
+            raise ValueError(
+                f"unsupported_paths holds {prose}, which are prose and not paths. This field is "
+                "read by `lossless.classify` as a set of dotted SOURCE paths "
+                "(`vendor.firmware`, `items[0].code`); a description here classifies nothing"
+            )
+        return value
+
+
+def limitation_text(entry: "str | Limitation") -> str:
+    """The prose of a limitation, whichever of the two shapes it arrived in.
+
+    Written once, because four validators below and `AdapterMetadata` read a limitation AS PROSE
+    (the blank check, the format-version-is-null check) and four places each unpacking a union is
+    four places one of them gets wrong.
+    """
+    return entry if isinstance(entry, str) else entry.summary
+
+
+def unsupported_paths(limitations: "list[str | Limitation]") -> tuple[str, ...]:
+    """Every source path any structured limitation declares unsupported, sorted and deduplicated.
+
+    `lossless.classify` reads this and nothing else for its UNSUPPORTED category. A string entry
+    contributes nothing — deliberately: a sentence is not an exception a classifier may act on,
+    which is the entire reason the structured form exists.
+    """
+    paths = {path for entry in limitations if isinstance(entry, Limitation)
+             for path in entry.unsupported_paths}
+    return tuple(sorted(paths))
+
+
 class ExternalExercise(Strict):
     """What L6 requires, and what this repository cannot produce for its own adapters (§3.3)."""
 
@@ -302,7 +387,7 @@ class AdapterMetadata(Strict):
     claim_external_system: str | None
     profiles: list[str]
     capabilities: Capabilities
-    limitations: list[str]
+    limitations: list[str | Limitation]
     limitations_empty_reason: str | None
     residual: Residual
     payload_adapter: str | None
@@ -331,7 +416,7 @@ class AdapterMetadata(Strict):
         if self.limitations and self.limitations_empty_reason:
             raise ValueError("limitations_empty_reason is set on an adapter that declares "
                              "limitations — the reason explains an empty list and this one is not")
-        if any(not line.strip() for line in self.limitations):
+        if any(not limitation_text(line).strip() for line in self.limitations):
             raise ValueError("a limitation is blank; a limitation is a sentence or it is nothing")
 
         # §15: the two statuses that are about the world rather than about this repository's gates.
@@ -392,7 +477,8 @@ class AdapterMetadata(Strict):
         # A format version nobody can read from a document is `None` WITH a limitation saying so,
         # never a guess. This is the half of that rule a model can enforce.
         if self.format.version is None and not any(
-                "format version" in line.lower() or "edition" in line.lower()
+                "format version" in limitation_text(line).lower()
+                or "edition" in limitation_text(line).lower()
                 for line in self.limitations):
             raise ValueError(
                 "format.version is null and no limitation says so. A null edition is a reading — "

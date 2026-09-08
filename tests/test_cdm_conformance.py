@@ -933,19 +933,39 @@ FORBIDDEN_ROOTS = {
 }
 
 
-def _closure(module_name: str) -> set[str]:
+#: The one reach into `FORBIDDEN_ROOTS` this closure tolerates, and it is a (root, module) PAIR
+#: rather than a root — M's ruling of 2026-09-08, the same allowance
+#: `tests/test_cdm_boundary.py`'s `CRYPTO_ALLOWANCE` carries and scoped the same way.
+#:
+#: `synapse_cdm/evidence.py` imports `hashlib` to digest fixture files for an evidence record.
+#: The conformance path reaches it because `conformance.py` imports `schemas.generate`, and
+#: `schemas.evidence_schema()` needs the record's model to publish its shape. It is a REACH and
+#: not a use: no code on the conformance path calls a digest, and §125's offline behaviour test
+#: below is unaffected either way. It is recorded here rather than dropped from
+#: `FORBIDDEN_ROOTS`, because deleting `hashlib` from that set would stop this gate noticing the
+#: day some other module on this path started hashing.
+CLOSURE_ALLOWANCE: set[tuple[str, str]] = {("hashlib", "evidence")}
+
+
+def _closure(module_name: str, *, by_module: bool = False):
     """Every module the named package module reaches, by AST, without importing anything.
 
     AST rather than `sys.modules`, on the same reasoning `test_cdm_boundary.py` uses: importing
     the module to measure its imports would measure the whole package, because importing any
     submodule runs `synapse_cdm/__init__.py` first. What is being asserted here is what the
     conformance PATH reaches, which is a property of the source.
+
+    `by_module=True` returns `{(outside root, the package module that imports it)}` instead of
+    the bare set. The pair is what makes a NAMED allowance possible: "nothing reaches hashlib"
+    and "only the evidence module reaches hashlib" are different gates, and the second one still
+    fails the day a second module reaches it.
     """
     import ast
     import pathlib
     package = pathlib.Path(synapse_cdm.__file__).resolve().parent
     seen: set[str] = set()
     outside: set[str] = set()
+    pairs: set[tuple[str, str]] = set()
     queue = [module_name]
     while queue:
         name = queue.pop()
@@ -970,19 +990,41 @@ def _closure(module_name: str) -> set[str]:
                     queue.append(target[len("synapse_cdm."):] or "__init__")
                 else:
                     outside.add(target.split(".")[0])
-    return outside
+                    pairs.add((target.split(".")[0], name))
+    return pairs if by_module else outside
 
 
 def test_the_conformance_import_closure_reaches_nothing_that_could_go_out_to_a_network():
-    reached = _closure("conformance")
-    assert reached, "the closure walk found nothing, so its PASS would mean nothing"
-    assert not (reached & FORBIDDEN_ROOTS), sorted(reached & FORBIDDEN_ROOTS)
+    pairs = _closure("conformance", by_module=True)
+    assert pairs, "the closure walk found nothing, so its PASS would mean nothing"
+    offending = {pair for pair in pairs
+                 if pair[0] in FORBIDDEN_ROOTS} - CLOSURE_ALLOWANCE
+    assert not offending, sorted(offending)
+
+
+def test_the_one_allowed_reach_is_still_exactly_one_and_is_still_there():
+    """The allowance's shape, asserted — an exemption list is one edit from being a hole.
+
+    Both directions. If the pair disappears (the evidence module stops hashing, or stops being
+    reachable) the allowance is guarding nothing and should go; if it grows, a second module has
+    started reaching for a forbidden root and that is a decision for a person.
+    """
+    assert CLOSURE_ALLOWANCE == {("hashlib", "evidence")}, (
+        f"the closure allowance now covers {sorted(CLOSURE_ALLOWANCE)}. M's ruling of "
+        "2026-09-08 permits SHA-256 content digests in ONE module and nothing else"
+    )
+    assert ("hashlib", "evidence") in _closure("conformance", by_module=True), (
+        "the evidence module no longer reaches hashlib from the conformance path, so this "
+        "allowance is a standing exception for something that is not happening"
+    )
 
 
 def test_the_closure_walk_would_catch_a_forbidden_import():
     """A negative test that cannot fail is worse than none — so this one proves it can."""
     assert _closure("harness") & {"jsonschema"}, "the walk does not see third-party imports"
     assert FORBIDDEN_ROOTS & {"socket"}
+    # And the allowance is a PAIR: the same root reached from any other module is still caught.
+    assert ("hashlib", "harness") not in CLOSURE_ALLOWANCE
 
 
 def test_a_full_assessment_completes_with_the_network_removed(monkeypatch, tmp_path, capsys):

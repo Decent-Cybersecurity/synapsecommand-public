@@ -1,0 +1,546 @@
+{
+  "directory": "klv/imapb",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "item_103_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_103_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_104_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_104_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_105_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_105_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_109_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_109_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_112_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_112_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_113_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_113_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_114_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_114_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_117_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_117_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_118_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_118_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_119_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_119_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_120_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_120_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_132_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_132_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_134_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_134_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_96_document_worked_example.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_96_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_from_the_wire_tag112_2_octets.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_from_the_wire_tag112_2_octets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_from_the_wire_tag112_3_octets.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_from_the_wire_tag112_3_octets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_from_the_wire_tag112_4_octets.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_from_the_wire_tag112_4_octets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "msb_high_is_a_normal_value_when_the_range_is_a_power_of_two.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "msb_high_is_a_normal_value_when_the_range_is_a_power_of_two.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_minus_inf.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_minus_inf.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_minus_qnan.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_minus_qnan.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_minus_snan.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_minus_snan.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_plus_inf.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_plus_inf.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_plus_qnan.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_plus_qnan.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_plus_snan_with_payload.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_plus_snan_with_payload.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_reserved.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_reserved.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_userdefined_with_payload.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_userdefined_with_payload.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "st1201_example_3_altitude.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "st1201_example_3_altitude.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "st1201_example_4_small_range.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "st1201_example_4_small_range.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_offset_applies_when_the_range_spans_zero.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_offset_applies_when_the_range_spans_zero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_offset_is_not_applied_to_an_all_positive_range.imapb",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_offset_is_not_applied_to_an_all_positive_range.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic IMAPB items carrying the Example KLV Values ST 0601.14a's own \u00a78.x blocks print, transcribed by hand a third time and read by `tests/test_cdm_imapb_codec.py`; the ranges are ST 1201.3 \u00a77's.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

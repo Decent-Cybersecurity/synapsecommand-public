@@ -1,0 +1,24 @@
+{
+  "directory": "cat034/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "declared_length_longer_than_the_block.cat034",
+      "operational_data": false,
+      "origin": "Synthetic malformed payloads for the Conformance Suite's check H (\u00a721), written by round P2 alongside this directory's own README.md, which states \"Malformed cat034 payloads \u2014 every one synthetic, every one refused\" and that checks A\u2013F never see them.",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_payload.cat034",
+      "operational_data": false,
+      "origin": "Synthetic malformed payloads for the Conformance Suite's check H (\u00a721), written by round P2 alongside this directory's own README.md, which states \"Malformed cat034 payloads \u2014 every one synthetic, every one refused\" and that checks A\u2013F never see them.",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

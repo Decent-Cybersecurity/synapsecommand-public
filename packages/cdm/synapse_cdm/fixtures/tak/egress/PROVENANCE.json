@@ -1,0 +1,30 @@
+{
+  "directory": "tak/egress",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "annotation_point_unlabelled.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/tak.py`; `fixtures/tak/egress/README.md` states \"CDM `PlanObject`s and the CoT drawing each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "coa_sketch_polygon.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/tak.py`; `fixtures/tak/egress/README.md` states \"CDM `PlanObject`s and the CoT drawing each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "patrol_route_linestring.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/tak.py`; `fixtures/tak/egress/README.md` states \"CDM `PlanObject`s and the CoT drawing each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

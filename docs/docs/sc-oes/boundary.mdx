@@ -88,6 +88,27 @@ field exists from day one so that turning signing on later is a *value* change r
 schema change.
 :::
 
+:::info[The one exception, and what it is not — added 2026-09-08]
+`synapse_cdm/evidence.py` imports `hashlib`, and it is the only module in the package that may.
+
+**SHA-256 there is content identification and integrity evidence, not a cryptographic capability
+of this package.** An evidence record says which fixture bytes a conformance run read and which
+artefact a release published, so it has to be able to answer *"are these the same bytes?"*. That
+digest carries no key, authenticates nobody and asserts nothing about who produced the bytes it
+names — which is the whole of what the crypto row above is protecting against.
+
+The allowance is four uses and no fifth: fixture hashes, artifact hashes, evidence-record
+integrity identifiers, deterministic content addressing. Encryption, key derivation,
+authentication, signatures, MACs, password hashing, token generation and any other security
+protocol primitive stay forbidden everywhere, and so do `cryptography`, `hmac`, `secrets`, `ssl`,
+`nacl` and `oqs` — including inside the one exempt module.
+
+The gate enforces it by **module name**: `CRYPTO_ALLOWANCE = {"evidence.py": {"hashlib"}}` in
+`tests/test_cdm_boundary.py`. Two further tests exist because an exemption list is one edit from
+being a hole — one asserts the allowance's exact size and contents, the other proves that the
+same import in any other module is still refused.
+:::
+
 ## The dependency budget
 
 The installed package depends on `pydantic` and `jsonschema`. Nothing else — no Kafka, no Redis,

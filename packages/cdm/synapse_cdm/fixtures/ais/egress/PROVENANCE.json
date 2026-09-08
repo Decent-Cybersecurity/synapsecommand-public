@@ -1,0 +1,30 @@
+{
+  "directory": "ais/egress",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "entity_fused_elsewhere.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/ais.py`; `fixtures/ais/README.md` states \"`egress/` holds CDM objects and the AIVDM each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "entity_static_voyage_no_position.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/ais.py`; `fixtures/ais/README.md` states \"`egress/` holds CDM objects and the AIVDM each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_patrol_three_samples.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/ais.py`; `fixtures/ais/README.md` states \"`egress/` holds CDM objects and the AIVDM each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

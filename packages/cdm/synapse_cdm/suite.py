@@ -53,7 +53,7 @@ import time
 import uuid
 from typing import Any
 
-from synapse_cdm import harness, lossless, times, version
+from synapse_cdm import harness, lossless, manifest, times, version
 from synapse_cdm.adapter import Adapter, load_adapter, packaged_fixtures, roster
 from synapse_cdm.manifest import UnknownFields
 from synapse_cdm.models import CDMBase
@@ -195,9 +195,18 @@ def _dump(objects: list[CDMBase]) -> list[dict]:
 
 
 def _fixtures(directory: pathlib.Path) -> list[pathlib.Path]:
-    """`harness.py:343`'s three predicates, applied to the same directory it applies them to."""
+    """`harness.py`'s predicates, applied to the same directory it applies them to.
+
+    Restated rather than imported for the reason the harness's own docstring gives — the two
+    modules select fixtures for two different purposes — and kept identical by
+    `tests/test_cdm_suite.py`, which asserts the two selections agree over every shipped
+    directory. §33's `PROVENANCE.json` is excluded HERE too, and by the same NAME the harness
+    excludes it by: `check_malformed` reads `malformed/` through this function, and every
+    `malformed/` directory carries a provenance record of its own.
+    """
     return sorted(p for p in directory.iterdir()
-                  if p.is_file() and not p.name.startswith(".") and p.name != "README.md")
+                  if p.is_file() and not p.name.startswith(".")
+                  and p.name not in ("README.md", harness.PROVENANCE_FILE))
 
 
 def _fresh(adapter: Adapter, clock: times.Clock) -> Adapter:
@@ -691,6 +700,65 @@ def check_resource_limits(adapter: Adapter, payloads: list[tuple[str, Any]], *,
                                  f"returning {len(objects)} object(s)", max_input_bytes=bound)
 
 
+#: Worst-wins order for the per-adapter aggregate (§34). One source path may be PRESERVED in one
+#: fixture and DROPPED in another — the two fixtures exercise different branches of one parser —
+#: and a report that listed the path twice would let a reader take the kinder line. The adapter is
+#: accountable for the worst outcome any of its own fixtures produced, so that is what is reported.
+LOSS_SEVERITY: tuple[str, ...] = ("DROPPED", "UNSUPPORTED", "RESIDUAL", "DERIVED", "NORMALIZED",
+                                  "PRESERVED")
+
+
+def loss_report(adapter: Adapter, payloads: list[tuple[str, Any]]) -> dict:
+    """§34's six categories over every classifiable fixture, aggregated per source path.
+
+    THE GUARD IS `harness.py:378`'s AND NOT A NEW ONE. The lossless comparison needs a leaf
+    structure, so a non-JSON payload has nothing to classify — the harness SKIPs check D for
+    exactly those fixtures and says so. Classifying them anyway would put the whole byte string
+    in DROPPED and report a catastrophic loss for every binary format in the repository, which is
+    the false positive `lossless.py`'s own docstring warns is the expensive kind. `skipped` counts
+    them, so the number is visible rather than hidden in a smaller denominator.
+
+    UNSUPPORTED IS READ FROM THE MANIFEST AND NOWHERE ELSE. `manifest.unsupported_paths()` returns
+    only the paths a STRUCTURED `Limitation` declares; a prose limitation contributes nothing, on
+    §34's own words — an "explicit documented exception" a classifier cannot read is not one.
+    """
+    declared = manifest.unsupported_paths(adapter.metadata.limitations)
+    worst: dict[str, str] = {}
+    classified = skipped = 0
+    for _name, raw in payloads:
+        if not isinstance(raw, (dict, list)):
+            skipped += 1
+            continue
+        try:
+            objects = _dump(list(adapter.to_cdm(raw)))
+        except Exception:                               # noqa: BLE001 - A already reported it
+            skipped += 1
+            continue
+        classified += 1
+        report = lossless.classify(raw, objects, type(adapter).TRANSFORMS, declared)
+        for category in lossless.CATEGORIES:
+            rank = LOSS_SEVERITY.index(category)
+            for path in getattr(report, category):
+                if path not in worst or rank < LOSS_SEVERITY.index(worst[path]):
+                    worst[path] = category
+    paths = {category: sorted(p for p, c in worst.items() if c == category)
+             for category in lossless.CATEGORIES}
+    return {"paths": paths,
+            "counts": {category: len(paths[category]) for category in lossless.CATEGORIES},
+            "total": len(worst),
+            "fixtures": {"classified": classified, "skipped": skipped,
+                         "skipped_because": "a non-JSON payload has no comparable leaf structure "
+                                            "(harness.py:378, the same guard check D uses)"},
+            "unsupported_declared": list(declared)}
+
+
+def loss_lines(report: dict) -> list[str]:
+    """§34's six-line summary for `--format text`. Always six lines, in §34's order."""
+    counts = report["counts"]
+    width = max(len(name) for name in lossless.CATEGORIES)
+    return [f"  {name.ljust(width)}  {counts[name]}" for name in lossless.CATEGORIES]
+
+
 def eligible_level(checks: dict[str, dict]) -> str:
     """ARCHITECTURE.md §3.6, steps 2–7, and nothing else.
 
@@ -748,6 +816,7 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock | None =
 
     failed = [letter for letter in CHECK_LETTERS if checks[letter]["verdict"] == FAIL]
     return {
+        "loss_report": loss_report(adapter, payloads),
         "adapter": {"id": adapter.metadata.id, "name": adapter.name,
                     "adapter_version": adapter.metadata.adapter_version,
                     "direction": adapter.direction, "system": adapter.system,
@@ -761,13 +830,20 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, clock: times.Clock | None =
     }
 
 
-def exit_status(report: dict, required: tuple[str, ...] = ()) -> int:
+def exit_status(report: dict, required: tuple[str, ...] = (), *, strict: bool = False) -> int:
     """§19: a required check that FAILs or SKIPs makes the INVOCATION unsuccessful.
 
     `conformance.py:754`'s idiom exactly, one namespace over: nothing here rewrites a verdict.
     `--require M` against an adapter that declares no streaming leaves `M = SKIP` in the report
     and returns non-zero, because collapsing the first into the second would put the caller's
     command line into the conformance record.
+
+    `strict` IS A THIRD REASON TO EXIT NON-ZERO AND NOT A FOURTH VERDICT (F4.4, default). A
+    DROPPED path is a fact the loss report states; check D's verdict stays the harness's, exactly
+    as the paragraph above says no verdict is rewritten here. The two are not the same test and
+    the difference is live: an adapter that DECLARES a source path unsupported still fails check
+    D — the value really did vanish — while its DROPPED count is 0, because the exception was
+    documented in a form a machine can read. `--strict` asks the second question.
     """
     for letter in (required or CHECK_LETTERS):
         if report["checks"][letter]["verdict"] == FAIL:
@@ -775,6 +851,8 @@ def exit_status(report: dict, required: tuple[str, ...] = ()) -> int:
     for letter in required:
         if report["checks"][letter]["verdict"] == SKIP:
             return EXIT_FAILED
+    if strict and report["loss_report"]["counts"]["DROPPED"]:
+        return EXIT_FAILED
     return EXIT_OK
 
 
@@ -792,6 +870,14 @@ def render_report(report: dict) -> str:
         lines.append(f"{check.letter} {check.name}".ljust(28) + entry["verdict"])
     lines += ["", f"RESULT: {report['result']}",
               f"MATURITY ELIGIBLE: {report['maturity_eligible']}"]
+    loss = report.get("loss_report")
+    if loss:
+        lines += ["", "LOSS REPORT (§34), source paths by category, worst outcome across "
+                      f"{loss['fixtures']['classified']} classifiable fixture(s):"]
+        lines += loss_lines(loss)
+        if loss["fixtures"]["skipped"]:
+            lines.append(f"  ({loss['fixtures']['skipped']} fixture(s) not classified: "
+                         f"{loss['fixtures']['skipped_because']})")
     reasons = [(c, report["checks"][c.letter]) for c in CHECKS
                if report["checks"][c.letter]["verdict"] != PASS]
     if reasons:
@@ -855,6 +941,12 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--require", default=None,
                             help="comma-separated letters that MUST pass; a FAIL or a SKIP among "
                                  "them exits non-zero (§19)")
+    run_parser.add_argument("--strict", action="store_true", default=None,
+                            help="a non-empty DROPPED category in the loss report exits non-zero "
+                                 "(§34). Implied by --require naming D; pass --no-strict to ask "
+                                 "for D's verdict without the loss report's")
+    run_parser.add_argument("--no-strict", dest="strict", action="store_false",
+                            help=argparse.SUPPRESS)
     run_parser.add_argument("--now", default=None,
                             help="freeze received_at at this RFC 3339 instant "
                                  f"(default {times.render(times.FROZEN_NOW)})")
@@ -866,11 +958,30 @@ def build_parser() -> argparse.ArgumentParser:
                             help=f"seconds one refusal may take (default {DEFAULT_TIMEOUT_S})")
 
     actions.add_parser("list", help="the registered adapters, with declared maturity")
+
+    # `synapse evidence …` and `synapse badges …` attach HERE rather than growing two more
+    # console scripts, because `synapse` is the one entry point ARCHITECTURE.md §8 names and a
+    # third script would be a third thing to document, package and keep in step. The evidence
+    # module owns its own parser; this delegates to it with the remaining argv, which keeps the
+    # two commands' help text where their code is.
+    commands.add_parser("evidence", help="generate, verify and inspect evidence records (§31)",
+                        add_help=False)
+    commands.add_parser("badges", help="write shields.io endpoint JSON from evidence (§35)",
+                        add_help=False)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
+    argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] in ("evidence", "badges"):
+        # Deferred, and the reason is the same cycle `schemas.evidence_schema()` names: the
+        # evidence module imports this one. Importing it at the top would be a cycle; importing
+        # it here costs nothing until somebody asks for the command.
+        from synapse_cdm import evidence as evidence_module
+        if argv[0] == "badges":
+            return evidence_module.main(["badges", *argv[1:]])
+        return evidence_module.main(argv[1:])
     args = parser.parse_args(argv)
     if args.command != "conformance" or getattr(args, "action", None) is None:
         parser.error("usage: synapse conformance run --adapter <name> | synapse conformance list")
@@ -879,6 +990,10 @@ def main(argv: list[str] | None = None) -> int:
         return EXIT_OK
 
     required = _required(args.require, parser) if args.require else ()
+    # F4.4's default, spelled as one line: strictness is ON when the caller asked for D and OFF
+    # otherwise, and an explicit --strict/--no-strict overrides both. `None` is what
+    # "the caller did not say" looks like, which is why the flag's default is not `False`.
+    strict = ("D" in required) if args.strict is None else args.strict
     frozen = times.parse(args.now) if args.now else times.FROZEN_NOW
     try:
         adapter_class = load_adapter(args.adapter)
@@ -906,7 +1021,7 @@ def main(argv: list[str] | None = None) -> int:
         return EXIT_USAGE
     print(json.dumps(report, indent=2, sort_keys=True) if args.format == "json"
           else render_report(report))
-    return exit_status(report, required)
+    return exit_status(report, required, strict=strict)
 
 
 if __name__ == "__main__":

@@ -263,7 +263,7 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
-**What moved inside the distribution: 632 files.** Three rounds are in this section now and the
+**What moved inside the distribution: 672 files.** Four rounds are in this section now and the
 sentence above is the arc's size, not any one round's — the arc is `v2.0.0` to the working tree and
 `python gates/bump_derivation.py` prints the set. **Round PA** moved six: `FORMAT_COVERAGE.md`,
 `MIGRATIONS.md` (this file), and four records that did not exist before —
@@ -286,6 +286,95 @@ adapter modules and `manifest.py` are in two rounds' lists and are one file each
 **Round P3** moved 553, none of them new, and the arc's own figure above moved 82 -> 632 rather
 than to 635: `adapter.py`, `version.py` and this file are in an earlier round's list as well as in
 P3's, and are one file each in the arc's.
+
+**Round P4** moved 47 files inside the distribution, of which 40 are new. The forty are
+`evidence.py` and THIRTY-NINE `PROVENANCE.json` records — one in each fixture directory a tracked
+test reads. The seven it modified are `version.py`, `manifest.py`, `harness.py`, `suite.py`,
+`lossless.py`, `schemas.py` and this file. The arc's own figure above moves 632 -> 672 and not to
+679, because all seven of those are in an earlier round's list as well as in P4's and are one file
+each in the arc's. `manifests.py` is NOT in either list and is worth one clause: its source is
+untouched and all fourteen files it generates moved anyway, because it writes
+`MANIFEST_SCHEMA_VERSION` into every manifest's envelope and that constant moved.
+
+**What P4 added, in one paragraph.** `synapse evidence generate --adapter X | --all` writes an
+evidence record per adapter (§32) — the adapter's manifest embedded whole, the commit measured,
+five version axes, the conformance report verbatim, the loss report, and a SHA-256 of every
+fixture file the run read. `synapse evidence verify <file>` produces a NEW record from the tree in
+front of it and compares field by field, masking only `generated_at`, `test_run.duration_s`,
+`conformance.checks.H.details.refusals[].seconds` and, when either side is dirty, `source_commit`
+— which is §36's reproducibility made a command. **The third of those was found by running the
+proof rather than by reasoning about it**: two generations from one fresh clone differed in
+exactly one field, `stanag4676`'s second refusal reading `0.0` and then `0.0001`, and the rule
+that settles it is the one `test_run.duration_s` already stood for — a measured duration is not a
+measurement of the tree. The mask is an enumeration and not a pattern, and a test sweeps every
+leaf of a record for an unmasked duration so that a timing field added later cannot make `verify`
+flaky instead of failing loudly here.
+`lossless.classify()` partitions every source leaf into §34's six categories, the suite carries it
+under `loss_report` and prints six lines for it, and `--strict` (implied by `--require D`) exits
+non-zero on a non-empty DROPPED. `synapse badges` writes shields.io endpoint files derived from
+the records and from nothing else. **The records themselves are NOT in this distribution and not
+in the repository**: `evidence/` is gitignored, CI produces the set on every run and uploads it,
+and a release attaches it — which is why every adapter still declares `evidence.available: false`.
+
+**Bump ruling.** `synapse_cdm/harness.py:FIXTURE_PATTERN` — PATCH: a constant STRING changed in
+place, and the gate is right that it cannot classify one on its own. The string is the
+human-readable statement of the fixture-selection rule, printed by `_no_fixtures_message` when a
+run selects nothing. It gained a fourth exclusion — `PROVENANCE.json` — beside the three it
+already named, in the same sentence and the same shape. **PATCH and not MINOR**, on the two things
+that decide it: no importable name is added or removed by the unit (the NEW name is
+`harness.PROVENANCE_FILE`, a separate unit the gate classifies as MINOR by itself), and no fixture
+leaves the set — the harness selected 538 top-level fixture files before this round and selects
+538 after it, because the file the new predicate excludes did not exist until this round wrote it.
+**PATCH and not nothing**, because the string is consumer-visible in a refusal message and a
+caller who greps that message would see it move. The ruling is the brief's own, item 7: "harness
+constant string changed in place → PATCH for that unit".
+
+**The manifest schema moves 1.0.0 -> 1.1.0, and the fourteen published manifests move by exactly
+one line each.** `AdapterMetadata.limitations` widened from `list[str]` to `list[str |
+Limitation]`, so §34's "explicit documented exception" can carry machine-readable
+`unsupported_paths` instead of prose a classifier would have to guess at. `VERSIONING.md`'s own
+row governs — "A new optional field is a MINOR; a newly required field is a MAJOR, because every
+existing manifest becomes invalid" — and no existing manifest becomes invalid: all fourteen keep
+plain sentences, their `adapter` blocks are BYTE-IDENTICAL across the bump, and `manifest.py`'s
+validators read either form through one helper. What did move in all fourteen files is the
+envelope's `manifest_schema_version`, because `manifests.py:50` writes the constant into it; that
+is arithmetic the drift gate enforces and not a second decision. **The P2 note below stays true**:
+this constant is still unpublished at 1.1.0 — no release has ever carried a manifest schema — so
+1.1.0 is the first number a consumer will see rather than a deprecation of 1.0.0.
+
+**`EVIDENCE_SCHEMA_VERSION` is `1.0.0` and is the sixth constant in `version.py`.** It is the last
+axis `VERSIONING.md` carried as owed, and it is NOT derived from `SCHEMA_VERSION`: an evidence
+record is a measurement OF a tree and carries `cdm_version` as data, so binding the record's shape
+to the contract it reports on would move this number every time the measured thing moved. Every
+line citation in `VERSIONING.md`'s axis table moved with the insertion and was re-read rather than
+carried over.
+
+**`hashlib` is now importable in ONE module of this package, and the rule it narrows is not
+weakened.** `tests/test_cdm_boundary.py` forbade `hashlib` everywhere under `synapse_cdm/`, for a
+reason about SIGNING; §32's `fixture_hashes` requires a digest. M ruled on 2026-09-08 that
+`hashlib` is permitted in `synapse_cdm/evidence.py` alone, for content digests alone — fixture
+hashes, artifact hashes, evidence-record integrity identifiers, deterministic content addressing —
+and that encryption, key derivation, authentication, signatures, MACs, password hashing, token
+generation and every other security-protocol primitive stay forbidden, as do `cryptography`,
+`hmac`, `secrets`, `ssl`, `nacl` and `oqs`, everywhere including inside the exempt module. The
+gate enforces the allowance by module NAME; two further tests assert the allowance's exact size
+and prove that the same import in any other module is still refused. `ARCHITECTURE.md` §6.2 and
+`docs/docs/sc-oes/boundary.mdx` both carry a dated sentence saying SHA-256 here is content
+identification and integrity evidence and not a cryptographic capability of this package.
+
+**Thirty-nine `PROVENANCE.json` records, and the covered set is derived rather than enumerated.**
+Every fixture directory the harness selects from (fourteen), every `malformed/` subdirectory
+(fourteen), and every auxiliary family a tracked test replays (eleven: three `egress/`, one
+`local/`, five `refusals/`, `klv/framing` and `klv/imapb`). `fixtures/fft` has NO record, and the
+absence is the statement: the harness selects nothing there, so it is not a fixture family.
+`golden/` and `spec/` are not covered at any depth — a golden is an adapter's output over a
+fixture that is already covered, and `spec/` holds pinned specification records with a gate of
+their own. **All 733 declared fixtures** read `synthetic: true`, `classification: "PUBLIC"`,
+`operational_data: false` and `personal_data: false`, and no origin reads "unknown" — 538 of them
+are the top-level set the harness replays, 28 are the malformed payloads and 167 are the auxiliary
+families. The record is excluded from fixture selection by NAME and not by extension, in the
+harness and in the suite alike, because two of these directories ship nothing but `.json` payloads
+and an extension rule would have selected the record and skipped the fixtures.
 
 **What the four records are, and what they are not.** Four adapters — adsb, ais, tak and legion —
 translate standards this repository holds no document for. Nothing in the tree stated those

@@ -1,0 +1,22 @@
+{
+  "directory": "nits/malformed",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "not_well_formed_xml.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic malformed payloads for the Conformance Suite's check H (\u00a721), written by round P2 alongside this directory's own README.md, which states \"Malformed nits payloads \u2014 every one synthetic, every one refused\" and that checks A\u2013F never see them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "truncated_payload.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic malformed payloads for the Conformance Suite's check H (\u00a721), written by round P2 alongside this directory's own README.md, which states \"Malformed nits payloads \u2014 every one synthetic, every one refused\" and that checks A\u2013F never see them.",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

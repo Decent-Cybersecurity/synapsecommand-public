@@ -80,11 +80,22 @@ from synapse_cdm.models import CDMBase
 GOLDEN_DIR = "golden"
 PASS, FAIL, SKIP = "PASS", "FAIL", "SKIP"
 
+#: The name of the per-directory provenance record (§33, M's pre-ruled default 3). Excluded by
+#: NAME rather than by extension, because a fixture directory legitimately holds `.json`
+#: payloads — `pntmap` and `legion` ship nothing else — so an extension rule would exclude the
+#: fixtures and keep the record.
+PROVENANCE_FILE = "PROVENANCE.json"
+
 #: The rule that selects a fixture, written down so a run that selects NOTHING can quote it.
-#: It is not a glob — it is three predicates over the directory's immediate children — and the
+#: It is not a glob — it is four predicates over the directory's immediate children — and the
 #: message says so rather than printing a `*` that would suggest a pattern the code never uses.
+#:
+#: The fourth exclusion arrived with §33's provenance records (round P4, 2026-09-08). It is the
+#: same argument `README.md` already won: a file that DESCRIBES the fixture set is not a member
+#: of it, and one that got replayed as a payload would report an adapter failure about a
+#: document nobody claimed was a message.
 FIXTURE_PATTERN = ("immediate children of the directory that are files, "
-                   "excluding dotfiles and README.md")
+                   "excluding dotfiles, README.md and PROVENANCE.json")
 
 #: Exit status for a run that could not happen. Distinct from 1, which means fixtures ran and
 #: some failed: this one means the INVOCATION was wrong, and conflating the two would tell a
@@ -342,7 +353,8 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=False))
     paths = sorted(p for p in fixtures.iterdir()
                    if p.is_file() and not p.name.startswith(".")
-                   and p.name != "README.md" and p.parent.name != GOLDEN_DIR)
+                   and p.name not in ("README.md", PROVENANCE_FILE)
+                   and p.parent.name != GOLDEN_DIR)
     if not paths:
         raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=True))
     golden_dir = fixtures / GOLDEN_DIR

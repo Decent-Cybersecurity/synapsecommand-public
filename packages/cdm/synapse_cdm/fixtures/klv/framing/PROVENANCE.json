@@ -1,0 +1,474 @@
+{
+  "directory": "klv/framing",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "checksum_document_worked_example.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "checksum_document_worked_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_document_checksum_triple.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_document_checksum_triple.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_zero_length.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "item_zero_length.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "key_truncated.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "key_truncated.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "key_uas_local_set.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "key_uas_local_set.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "key_wrong_final_octet.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "key_wrong_final_octet.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_indefinite_first_octet.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_indefinite_first_octet.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_long_form_lowest.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_long_form_lowest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_long_form_two_octets.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_long_form_two_octets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_non_minimal_long_form.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_non_minimal_long_form.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_non_minimal_padded_zeros.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_non_minimal_padded_zeros.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_short_form_document_example.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_short_form_document_example.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_short_form_highest.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_short_form_highest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_short_form_zero.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_short_form_zero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_truncated_long_form.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_truncated_long_form.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "packet_long_form_value_length.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "packet_long_form_value_length.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "packet_short_form_value_length.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "packet_short_form_value_length.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_non_minimal_two_octets.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_non_minimal_two_octets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_single_octet_highest.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_single_octet_highest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_single_octet_lowest.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_single_octet_lowest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_three_octet_lowest.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_three_octet_lowest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_truncated_continuation.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_truncated_continuation.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_two_octet_ceiling.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_two_octet_ceiling.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_two_octet_highest_assigned.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_two_octet_highest_assigned.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_two_octet_lowest.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_two_octet_lowest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_zero_octet.klvframe",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tag_zero_octet.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic KLV framing octets built by `klv/spec/build_fixtures.py`, whose docstring calls itself \"THE SOURCE OF TRUTH FOR BOTH ARTEFACTS\"; they exercise the framing rules ST 0601.14a's own text and worked examples establish, and the refusals at the edges of those rules.",
+      "personal_data": false,
+      "standard_ref": "klv/spec/klv_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

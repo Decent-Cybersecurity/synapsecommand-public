@@ -1,0 +1,30 @@
+{
+  "directory": "adsb/egress",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "entity_fused_elsewhere.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/adsb.py`; `fixtures/adsb/README.md` states \"`egress/` holds CDM objects and the frames each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "entity_identification_no_position.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/adsb.py`; `fixtures/adsb/README.md` states \"`egress/` holds CDM objects and the frames each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_air_patrol_three_samples.json",
+      "operational_data": false,
+      "origin": "Synthetic CDM objects hand-authored as the egress inputs for `adapters/adsb.py`; `fixtures/adsb/README.md` states \"`egress/` holds CDM objects and the frames each one becomes\" and that the harness never replays them.",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

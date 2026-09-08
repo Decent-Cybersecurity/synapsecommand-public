@@ -1,0 +1,278 @@
+{
+  "directory": "nits",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "amplification_zombie_beside_friend.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "amplification_zombie_beside_friend.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "cooperative_modality_is_a_gnss_fix.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "cooperative_modality_is_a_gnss_fix.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "datastream_unresolved_references.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "datastream_unresolved_references.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "detection_evidence_tree.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "detection_evidence_tree.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ecef_track_with_velocity.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ecef_track_with_velocity.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "exercise_faker_is_friendly.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "exercise_faker_is_friendly.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "fractional_increment_parks_raw_integers.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "fractional_increment_parks_raw_integers.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "linkage_processed_track_carried.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "linkage_processed_track_carried.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_cartesian_with_complete_cft.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_cartesian_with_complete_cft.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_spherical_is_attributes_only.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "local_spherical_is_attributes_only.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "motion_event_complex_polygon.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "motion_event_complex_polygon.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "motion_event_tripwire.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "motion_event_tripwire.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "segment_retraction_is_an_event.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "segment_retraction_is_an_event.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "standalone_basic_track.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "standalone_basic_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "three_contiguous_segments_one_track.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "three_contiguous_segments_one_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wgs84_velocity_with_height.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wgs84_velocity_with_height.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wgs84_velocity_without_height.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wgs84_velocity_without_height.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4676 documents; `fixtures/nits/README.md` states \"Everything here is synthetic. No recorded NITS traffic, no real collection, no real track, no real platform. Every document is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

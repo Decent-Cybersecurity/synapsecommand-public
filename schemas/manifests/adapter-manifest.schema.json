@@ -50,7 +50,14 @@
         },
         "limitations": {
           "items": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/Limitation"
+              }
+            ]
           },
           "title": "Limitations",
           "type": "array"
@@ -301,6 +308,58 @@
       "title": "LicenseClass",
       "type": "string"
     },
+    "Limitation": {
+      "additionalProperties": false,
+      "description": "A limitation stated so that a MACHINE can act on it \u2014 M's ruling, 2026-09-08, round P4.\n\nWHY THIS EXISTS BESIDE THE SENTENCE AND DOES NOT REPLACE IT\n-----------------------------------------------------------\n`limitations` has always been `list[str]`, and a sentence is the right shape for most of what\nan adapter has to admit: \"no document in this tree states which edition this targets\" is prose\nand stays prose. \u00a734 asks for one thing a sentence cannot give. The loss report classifies a\nsource path as UNSUPPORTED when it is \"an explicit documented exception\", and a classifier\nthat had to decide that by reading English would be a classifier that guessed. So the\nexception becomes data: `unsupported_paths` holds the SOURCE paths, in the dotted spelling\n`lossless.leaves()` produces, and the classifier does a set membership test.\n\n`limitations` is therefore `list[str | Limitation]` and not `list[Limitation]`. The union is\nthe whole ruling: existing string entries stay valid unchanged, all fourteen shipped adapters\nkeep the sentences they already declare, and only an adapter that needs the mechanism emits\nthe structured form. A field that FORCED the structure would have converted twenty-eight\nprose statements into objects with an empty `unsupported_paths`, which is a schema migration\nperformed to satisfy a shape rather than to say anything.\n\n`severity` is optional and its vocabulary is NOT frozen here: ARCHITECTURE.md defines no\nseverity scale for limitations and inventing one in a model would be freezing a contract in\nthe wrong document. It is a free string when it is given at all.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "unsupported_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Unsupported Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "summary"
+      ],
+      "title": "Limitation",
+      "type": "object"
+    },
     "Limits": {
       "additionalProperties": false,
       "description": "\u00a73.5's five bounds, and the reason for each one that does not apply.\n\n\"A limit that does not apply to a format MUST be declared absent with a reason, not silently\nomitted\" \u2014 \u00a73.5. So `None` is legal and bare `None` is not: `absent_because` has to carry the\nreason, keyed by the field. \"This format does not nest\" is a fact about the format, and a\nreader who cannot find it has to go and work it out again.",
@@ -442,7 +501,7 @@
       "type": "string"
     }
   },
-  "$id": "urn:synapsecommand:manifest:1.0.0:adapter-manifest",
+  "$id": "urn:synapsecommand:manifest:1.1.0:adapter-manifest",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "The published document: \u00a713's semantics in this repository's canonical JSON (F1.3).\n\nThe envelope is separate from `AdapterMetadata` because the two are different facts. The\nmetadata is what the ADAPTER declares and is inspectable from the class; the envelope is what\nthe PUBLICATION declares \u2014 which manifest schema it was written to, which Adapter API it\nclaims, which CDM it emits \u2014 and none of those belong to one adapter.",
@@ -474,5 +533,5 @@
   ],
   "title": "AdapterManifest",
   "type": "object",
-  "x-manifest-schema-version": "1.0.0"
+  "x-manifest-schema-version": "1.1.0"
 }

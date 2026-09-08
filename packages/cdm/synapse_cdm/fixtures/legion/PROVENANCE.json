@@ -1,0 +1,60 @@
+{
+  "directory": "legion",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "entity_exercise_affiliation_and_nulls.json",
+      "operational_data": false,
+      "origin": "Synthetic Picogrid Legion documents; `fixtures/legion/README.md` states \"Every one is synthetic. No recorded Legion traffic, no real organisation, no real device. Each document was hand-written from the `example` values in the pinned OpenAPI schemas and from the schemas themselves, then checked against the field inventory in `spec/openapi_pin.json`.\"",
+      "personal_data": false,
+      "standard_ref": "legion/spec/openapi_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "entity_location_ecef_gulf_of_riga.json",
+      "operational_data": false,
+      "origin": "Synthetic Picogrid Legion documents; `fixtures/legion/README.md` states \"Every one is synthetic. No recorded Legion traffic, no real organisation, no real device. Each document was hand-written from the `example` values in the pinned OpenAPI schemas and from the schemas themselves, then checked against the field inventory in `spec/openapi_pin.json`.\"",
+      "personal_data": false,
+      "standard_ref": "legion/spec/openapi_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "entity_location_lla_ventspils.json",
+      "operational_data": false,
+      "origin": "Synthetic Picogrid Legion documents; `fixtures/legion/README.md` states \"Every one is synthetic. No recorded Legion traffic, no real organisation, no real device. Each document was hand-written from the `example` values in the pinned OpenAPI schemas and from the schemas themselves, then checked against the field inventory in `spec/openapi_pin.json`.\"",
+      "personal_data": false,
+      "standard_ref": "legion/spec/openapi_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "entity_sensor_mast_riga.json",
+      "operational_data": false,
+      "origin": "Synthetic Picogrid Legion documents; `fixtures/legion/README.md` states \"Every one is synthetic. No recorded Legion traffic, no real organisation, no real device. Each document was hand-written from the `example` values in the pinned OpenAPI schemas and from the schemas themselves, then checked against the field inventory in `spec/openapi_pin.json`.\"",
+      "personal_data": false,
+      "standard_ref": "legion/spec/openapi_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "event_gunshot_detection.json",
+      "operational_data": false,
+      "origin": "Synthetic Picogrid Legion documents; `fixtures/legion/README.md` states \"Every one is synthetic. No recorded Legion traffic, no real organisation, no real device. Each document was hand-written from the `example` values in the pinned OpenAPI schemas and from the schemas themselves, then checked against the field inventory in `spec/openapi_pin.json`.\"",
+      "personal_data": false,
+      "standard_ref": "legion/spec/openapi_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "locations_list_patrol_three.json",
+      "operational_data": false,
+      "origin": "Synthetic Picogrid Legion documents; `fixtures/legion/README.md` states \"Every one is synthetic. No recorded Legion traffic, no real organisation, no real device. Each document was hand-written from the `example` values in the pinned OpenAPI schemas and from the schemas themselves, then checked against the field inventory in `spec/openapi_pin.json`.\"",
+      "personal_data": false,
+      "standard_ref": "legion/spec/openapi_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

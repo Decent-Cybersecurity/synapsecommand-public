@@ -73,6 +73,34 @@ PROSE_ROOTS = ("agents", "core", "platform", "synapse-data", "airtasking")
 
 FORBIDDEN_CRYPTO = {"cryptography", "hashlib", "hmac", "nacl", "oqs", "secrets", "ssl"}
 
+#: THE ONE ALLOWANCE, AND IT IS A MODULE NAME AND A MODULE NAME ONLY — M's ruling, 2026-09-08.
+#:
+#: `synapse_cdm/evidence.py` computes SHA-256 over fixture files and build artefacts so that an
+#: evidence record can say WHICH bytes a conformance run read. M ruled: "`hashlib` is permitted
+#: only inside the evidence-generation module for non-cryptographic-security uses such as
+#: deterministic SHA-256 content digests. Allowed uses: fixture hashes; artifact hashes;
+#: evidence-record integrity identifiers; deterministic content addressing. Forbidden uses remain
+#: unchanged: encryption; key derivation; authentication; signatures; MACs; password hashing;
+#: random/token generation; any security protocol primitive."
+#:
+#: THE RULE ABOVE IS NOT WEAKENED, AND THIS IS WHY. The reason `FORBIDDEN_CRYPTO` exists is in
+#: this module's own docstring and it is about SIGNING — "an import of `cryptography` or
+#: `hashlib` here would mean somebody had started signing objects inside the translation layer,
+#: where the key material has no business being and where nothing audits it". A content digest
+#: carries no key, authenticates nobody and asserts nothing about who produced the bytes. It
+#: answers "did this file change?", which is a question about identity and not about trust.
+#:
+#: SCOPED TO ONE NAME AND NOT TO A PATTERN, deliberately. `{"evidence.py"}` is a set of one; a
+#: prefix rule (`evidence*`) or a marker comment would let the next module opt itself in, and an
+#: allowance that a module can grant itself is not an allowance, it is the absence of a rule.
+#: `test_the_crypto_allowance_is_one_named_module` below pins the size of this set, and the
+#: parametrised test still fails for every other module in the package — proved by a mutation in
+#: the round that added it: the same `import hashlib` in a second module reds this file.
+#:
+#: `hmac`, `cryptography`, `secrets`, `ssl`, `nacl` and `oqs` remain forbidden EVERYWHERE,
+#: including in the allowed module: the allowance is one name on each side, not a door.
+CRYPTO_ALLOWANCE: dict[str, set[str]] = {"evidence.py": {"hashlib"}}
+
 SOURCES = sorted(PACKAGE.rglob("*.py"))
 
 
@@ -103,11 +131,59 @@ def test_no_import_from_a_consumer(path):
 
 @pytest.mark.parametrize("path", SOURCES, ids=lambda p: p.name)
 def test_no_crypto_in_the_contract_layer(path):
-    offending = _imported_roots(path) & FORBIDDEN_CRYPTO
+    allowed = CRYPTO_ALLOWANCE.get(path.name, set())
+    offending = _imported_roots(path) & FORBIDDEN_CRYPTO - allowed
     assert not offending, (
         f"{path.relative_to(ROOT)} imports {sorted(offending)} — the `integrity` field is "
         "designed, not implemented (models.Integrity). Signing belongs to the ledger, which "
-        "holds the keys and is audited; a signature computed inside a translator is neither"
+        "holds the keys and is audited; a signature computed inside a translator is neither. "
+        f"The one allowance is {sorted(CRYPTO_ALLOWANCE)}, for CONTENT DIGESTS and nothing "
+        "else (see CRYPTO_ALLOWANCE above); widening it needs a ruling, not an edit"
+    )
+
+
+def test_the_crypto_allowance_is_one_named_module_and_one_named_import():
+    """The allowance's SIZE is the gate, because a set is one edit away from being a hole.
+
+    A parametrised test cannot notice that its own exemption list grew — it would simply stop
+    failing — so the shape of `CRYPTO_ALLOWANCE` is asserted here rather than left to review.
+    Adding a module or an import to it fails this test, which is where the ruling gets read.
+    """
+    assert set(CRYPTO_ALLOWANCE) == {"evidence.py"}, (
+        f"the crypto allowance now covers {sorted(CRYPTO_ALLOWANCE)}. M's ruling of 2026-09-08 "
+        "names ONE module — the evidence generator — and every widening is a security decision "
+        "that belongs to a person"
+    )
+    assert CRYPTO_ALLOWANCE["evidence.py"] == {"hashlib"}, (
+        f"evidence.py is allowed {sorted(CRYPTO_ALLOWANCE['evidence.py'])}. The ruling permits "
+        "SHA-256 content digests; `hmac`, `cryptography`, `secrets` and `ssl` are what the "
+        "forbidden uses are made of and none of them is allowed anywhere"
+    )
+    allowed_module = PACKAGE / "evidence.py"
+    assert allowed_module.is_file(), (
+        "the allowance names a module that does not exist. An exemption for a file nobody "
+        "ships is an exemption nothing constrains"
+    )
+    assert "hashlib" in _imported_roots(allowed_module), (
+        "evidence.py no longer imports hashlib, so the allowance guards nothing and should be "
+        "removed rather than left as a standing exception"
+    )
+
+
+def test_every_other_module_is_still_refused_the_same_import():
+    """The mutation, run as a test: `import hashlib` in a module that is not the allowed one.
+
+    Written because the allowance above is the exact shape of change that silently disables a
+    negative gate. This constructs the offending module in memory, runs the gate's own predicate
+    over it, and requires the refusal — so the narrowing is proved to be a narrowing rather than
+    a removal, on every run and not once in a round report.
+    """
+    other = next(p for p in SOURCES if p.name not in CRYPTO_ALLOWANCE and p.name != "__init__.py")
+    allowed = CRYPTO_ALLOWANCE.get(other.name, set())
+    mutated = _imported_roots(other) | {"hashlib"}
+    assert mutated & FORBIDDEN_CRYPTO - allowed == {"hashlib"}, (
+        f"a `import hashlib` added to {other.name} would not be caught. The allowance has "
+        "stopped being scoped to one module"
     )
 
 

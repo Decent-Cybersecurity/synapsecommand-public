@@ -1,0 +1,312 @@
+{
+  "directory": "cat034",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "geographical_filter_polar_window.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "geographical_filter_polar_window.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "jamming_strobe_is_not_gnss.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "jamming_strobe_is_not_gnss.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "message_counts_twenty_one_types.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "message_counts_twenty_one_types.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "message_type_008.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "message_type_008.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_nearest.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_nearest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_s_jamming_strobe.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_s_jamming_strobe.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "non_minimal_fspec.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "non_minimal_fspec.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "north_marker_minimal.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "north_marker_minimal.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "processing_mode_reduction_steps.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "processing_mode_reduction_steps.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "re_and_sp_carried.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "re_and_sp_carried.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sector_crossing_with_rotation.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sector_crossing_with_rotation.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "solar_storm_message.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "solar_storm_message.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spare_bits_nonzero.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spare_bits_nonzero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "station_position_three_dimensional.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "station_position_three_dimensional.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "system_status_all_four_subfields.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "system_status_all_four_subfields.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "time_of_day_absent_where_optional.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "time_of_day_absent_where_optional.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_records_one_block.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_records_one_block.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks built from field values by `cat034/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat034/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

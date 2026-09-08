@@ -1,0 +1,510 @@
+{
+  "directory": "cat062",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "ads_c_age_two_octets.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "ads_c_age_two_octets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "adsb_version_3_emergency.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "adsb_version_3_emergency.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "both_altitudes_disagreeing.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "both_altitudes_disagreeing.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "cartesian_position_parked.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "cartesian_position_parked.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "composed_track_number_three_units.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "composed_track_number_three_units.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "contributing_sensors.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "contributing_sensors.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "emergency_disagreement.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "emergency_disagreement.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "emitter_category_and_fleet.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "emitter_category_and_fleet.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "estimated_accuracies_full.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "estimated_accuracies_full.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "flight_plan_correlated.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "flight_plan_correlated.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "full_mask_track.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "full_mask_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_nearest.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_nearest.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "minimum_fspec_track.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "minimum_fspec_track.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode5_time_offset.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode5_time_offset.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_s_address_present.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_s_address_present.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "non_minimal_fspec.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "non_minimal_fspec.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "pre_emergency_pair.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "pre_emergency_pair.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reserved_and_extension_fields.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reserved_and_extension_fields.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spare_bits_nonzero.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spare_bits_nonzero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "target_identification_forbidden.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "target_identification_forbidden.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "target_size_length_only.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "target_size_length_only.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "three_altitudes_and_a_measured_height.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "three_altitudes_and_a_measured_height.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_begin.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_begin.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_data_ages.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_data_ages.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_end.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_end.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_number_only.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_number_only.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "trajectory_intent_three_points.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "trajectory_intent_three_points.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_records_one_block.cat062",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_records_one_block.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT062 blocks built from field values by `cat062/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat062/README.md` heads its set \"Everything here is synthetic\".",
+      "personal_data": false,
+      "standard_ref": "cat062/spec/cat062_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -1,0 +1,105 @@
+{
+  "directory": "cat048/refusals",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "descriptor_sixth_extension.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_disagrees_with_buffer.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_mandatory_data_source.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_s_target_missing_address.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "plot_characteristics_second_primary_octet.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "radial_doppler_spare_presence_bit.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "records_do_not_tile_len.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "time_of_day_one_lsb_past_86400.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "track_status_second_extent.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "trailing_fspec_fx_set.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wrong_category.cat048",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT048 blocks a conforming decoder must REFUSE, built by `cat048/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat048/spec/cat048_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

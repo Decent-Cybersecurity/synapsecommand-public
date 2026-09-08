@@ -1,0 +1,366 @@
+{
+  "directory": "cat021",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_coarse_and_high_resolution.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_coarse_and_high_resolution.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_time_of_applicability.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "airborne_position_time_of_applicability.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "duplicate_address.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "duplicate_address.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "emergency_unlawful_interference.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "emergency_unlawful_interference.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "icao24_shared_with_adsb.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "icao24_shared_with_adsb.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_after.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_after.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_before.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "midnight_rollover_before.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_five_authenticated.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mode_five_authenticated.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "obstacle_line.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "obstacle_line.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "position_time_of_message_reception_high_precision.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "position_time_of_message_reception_high_precision.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "quality_indicators_without_mops_version.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "quality_indicators_without_mops_version.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "range_check_failed_still_translated.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "range_check_failed_still_translated.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reserved_full_second_indication.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reserved_full_second_indication.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spare_bits_nonzero.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spare_bits_nonzero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_purpose_field_opaque.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "special_purpose_field_opaque.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_stopped_track_invalid.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_stopped_track_invalid.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_vehicle_with_ref_ground_vector.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "surface_vehicle_with_ref_ground_vector.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "trajectory_intent_two_points.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "trajectory_intent_two_points.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_records_one_block.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_records_one_block.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "version_three_emergency_in_ref.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "version_three_emergency_in_ref.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks built from field values by `cat021/spec/build_fixtures.py`, the only thing that writes this directory; `fixtures/cat021/README.md` states \"Every one is synthetic. No recorded ASTERIX traffic, no real ground station, no real\" aircraft.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

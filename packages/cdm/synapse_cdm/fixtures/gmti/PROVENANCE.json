@@ -1,0 +1,262 @@
+{
+  "directory": "gmti",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "delta_targets_across_the_prime_meridian.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "delta_targets_across_the_prime_meridian.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "dwell_with_no_targets_and_target_bits_set.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "dwell_with_no_targets_and_target_bits_set.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "free_text_and_test_status.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "free_text_and_test_status.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "full_mask_every_optional_group.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "full_mask_every_optional_group.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hrr_signature_parked_both_time_branches.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "hrr_signature_parked_both_time_branches.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mission_dwell_hi_res_targets.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "mission_dwell_hi_res_targets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "multi_day_dwell_time.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "multi_day_dwell_time.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "platform_location_mixed_time_basis.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "platform_location_mixed_time_basis.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "processing_history_chain.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "processing_history_chain.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "repeated_mission_segment.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "repeated_mission_segment.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reserved_and_extension_segments_recorded.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "reserved_and_extension_segments_recorded.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "simulated_classifications_never_flip_synthetic.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "simulated_classifications_never_flip_synthetic.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sparse_mask_minimum_dwell.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sparse_mask_minimum_dwell.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "synthesized_data_parks_without_refusal.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "synthesized_data_parks_without_refusal.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tagging_device_beside_simulated_targets.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tagging_device_beside_simulated_targets.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tasking_segments_parked_with_job_id_zero.gmti",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "tasking_segments_parked_with_job_id_zero.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4607 packets; `fixtures/gmti/README.md` states \"Everything here is synthetic. No recorded GMTI traffic, no real mission, no real platform, no real detection. Every packet is built from field values by `spec/build_fixtures.py`, which is the only thing that should ever write to this directory\".",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

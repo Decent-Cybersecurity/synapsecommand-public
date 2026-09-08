@@ -1,0 +1,38 @@
+{
+  "directory": "pntmap",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "equator_emitter_l5.json",
+      "operational_data": false,
+      "origin": "Synthetic PNTMAP documents, hand-written for this repository. No README states it and the assertion is a tracked test's: `tests/test_cdm_pntmap_adapter.py:193`, `test_every_fixture_is_synthetic_by_default` \u2014 \"No real PNTMAP data in this repository, and the objects must say so (TR-12)\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "jamming_gulf_of_riga.json",
+      "operational_data": false,
+      "origin": "Synthetic PNTMAP documents, hand-written for this repository. No README states it and the assertion is a tracked test's: `tests/test_cdm_pntmap_adapter.py:193`, `test_every_fixture_is_synthetic_by_default` \u2014 \"No real PNTMAP data in this repository, and the objects must say so (TR-12)\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "spoofing_no_geolocation.json",
+      "operational_data": false,
+      "origin": "Synthetic PNTMAP documents, hand-written for this repository. No README states it and the assertion is a tracked test's: `tests/test_cdm_pntmap_adapter.py:193`, `test_every_fixture_is_synthetic_by_default` \u2014 \"No real PNTMAP data in this repository, and the objects must say so (TR-12)\".",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "unknown_type_vendor_fields.json",
+      "operational_data": false,
+      "origin": "Synthetic PNTMAP documents, hand-written for this repository. No README states it and the assertion is a tracked test's: `tests/test_cdm_pntmap_adapter.py:193`, `test_every_fixture_is_synthetic_by_default` \u2014 \"No real PNTMAP data in this repository, and the objects must say so (TR-12)\".",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

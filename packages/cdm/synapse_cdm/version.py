@@ -32,15 +32,20 @@ own version in its own document, and an event type's semantic major is a segment
 ``type_id`` itself. An axis belongs where the thing it versions is authored, which is the same
 rule that keeps the two numbers below apart.
 
-THE EIGHT AXES, AND WHAT EACH ONE MOVES FOR
--------------------------------------------
-Five of them are constants in this file; three are authored where the thing they version is
-authored, which is the same rule stated one level up. The full set, as of 2026-09-07::
+THE NINE AXES, AND WHAT EACH ONE MOVES FOR
+------------------------------------------
+Six of them are constants in this file; three are authored where the thing they version is
+authored, which is the same rule stated one level up. The full set, as of 2026-09-08::
 
     (This heading read SIX and the split read "three and three" until 2026-09-07, when round P1
     declared ``ADAPTER_API_VERSION`` and ``MANIFEST_SCHEMA_VERSION``. ``VERSIONING.md``'s table
     listed both as rows before either existed — "added by P1", "not yet declared" — so the UNION
     the table states is unmoved at nine and it is this file's own tally that moved.)
+
+    (It read EIGHT until 2026-09-08, when round P4 declared ``EVIDENCE_SCHEMA_VERSION`` — the
+    last row ``VERSIONING.md`` carried as owed. This file's tally has now caught the table up:
+    the union was nine before this constant existed and is nine after it, because listing an
+    owed axis before it exists is exactly what that table is for.)
 
     Python package        2.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
@@ -65,10 +70,20 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   subclass and what it offers it. Frozen by ``ARCHITECTURE.md``
                                   §1 and additive over v1: v2 adds ``metadata``, ``detect``,
                                   ``validate_source`` and ``capabilities`` and renames nothing.
-    Manifest schema       1.0.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
+    Manifest schema       1.1.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
                                   published manifest, generated into
                                   ``schemas/manifests/adapter-manifest.schema.json`` and carried
-                                  in every file under ``manifests/``.
+                                  in every file under ``manifests/``. (1.0.0 -> 1.1.0 on
+                                  2026-09-08, round P4: ``limitations`` widened to accept a
+                                  structured ``Limitation`` beside the sentence it already
+                                  accepted. Additive, so a MINOR by this table's own rule.)
+    Evidence schema       1.0.0   this file, ``EVIDENCE_SCHEMA_VERSION``. The shape of the
+                                  generated evidence record, published into
+                                  ``schemas/evidence/evidence.schema.json``. NOT derived from
+                                  ``SCHEMA_VERSION``: a record carries the CDM version it
+                                  measured in its own ``cdm_version`` field, so binding the
+                                  record's shape to the contract it reports on would move this
+                                  number every time the measured thing moved.
 
 **Independence is the whole arrangement, and the equalities are coincidences.** Package 2.0.0 and
 schema 2.0.0 are two separately argued major changes that landed on one number (see below); a
@@ -257,13 +272,45 @@ SC_OES_VERSION = "0.1.0"
 #: is v1, because this constant did not exist at that tag.
 ADAPTER_API_VERSION = "2.0.0"
 
-#: The published manifest's shape, and a FIFTH axis. `1.0.0` because this is the first manifest
-#: schema there has ever been: `schemas/manifests/adapter-manifest.schema.json` is generated from
+#: The published manifest's shape, and a FIFTH axis. It moves when the MANIFEST's shape moves — a
+#: required field added, a field's meaning changed — and not when an adapter's metadata VALUES
+#: move, which is the distinction that keeps a consumer's schema check from failing on somebody
+#: else's maturity. `schemas/manifests/adapter-manifest.schema.json` is generated from
 #: `manifest.AdapterManifest` and every file under `manifests/` declares this number in its own
-#: `manifest_schema_version`. It moves when the MANIFEST's shape moves — a required field added,
-#: a field's meaning changed — and not when an adapter's metadata VALUES move, which is the
-#: distinction that keeps a consumer's schema check from failing on somebody else's maturity.
-MANIFEST_SCHEMA_VERSION = "1.0.0"
+#: `manifest_schema_version`.
+#:
+#: `1.0.0` was the first manifest schema there had ever been. **`1.1.0` on 2026-09-08, round P4,
+#: on M's ruling of that date**: `AdapterMetadata.limitations` widened from `list[str]` to
+#: `list[str | Limitation]` so that §34's "explicit documented exception" can carry
+#: MACHINE-READABLE `unsupported_paths` instead of prose a loss classifier would have to guess at.
+#: A new optional shape a field ACCEPTS is additive — `VERSIONING.md`'s own row says "A new
+#: optional field is a MINOR; a newly required field is a MAJOR, because every existing manifest
+#: becomes invalid" — and no existing manifest becomes invalid: every one of the fourteen keeps
+#: plain sentences and `manifest.py`'s validators read either form.
+#:
+#: THE FOURTEEN FILES UNDER `manifests/` MOVE BY EXACTLY ONE LINE EACH, and that is arithmetic
+#: rather than a decision: `manifests.py:50` writes this constant into every manifest's envelope
+#: as `manifest_schema_version`, so bumping it here makes all fourteen stale by
+#: `python -m synapse_cdm.manifests --check`. Their `adapter` blocks — the declarations
+#: themselves — are byte-identical, which is what M's ruling means by not regenerating them to
+#: convert strings into objects. MIGRATIONS.md's P2 note that this constant "does NOT move:
+#: `1.0.0` has never been published" is what made 1.0.0 free to be the first published number
+#: rather than a deprecated one; it is still unpublished at 1.1.0, and this round's record says so.
+MANIFEST_SCHEMA_VERSION = "1.1.0"
+
+#: The generated EVIDENCE RECORD's shape, and a SIXTH axis — the last one `VERSIONING.md` carried
+#: as owed. `1.0.0` because `schemas/evidence/evidence.schema.json` is the first evidence schema
+#: there has ever been and no release has carried one.
+#:
+#: NOT DERIVED FROM `SCHEMA_VERSION`, AND THE INDEPENDENCE IS THE POINT. An evidence record is a
+#: measurement OF a tree: it carries `cdm_version`, `package_version`, `adapter_api_version`,
+#: `manifest_version` and `sc_oes_version` as DATA, because the whole value of the record is that
+#: a third party can read which versions were in force when the run happened. If the record's own
+#: shape were pinned to `SCHEMA_VERSION`, then every CDM minor would move the evidence schema
+#: without one field of the record changing, and a consumer's schema check would break on a
+#: number that describes somebody else's contract. It moves when the RECORD's fields move, on
+#: `VERSIONING.md`'s "Same rule as the manifest".
+EVIDENCE_SCHEMA_VERSION = "1.0.0"
 
 
 def parse(version: str) -> tuple[int, int, int]:

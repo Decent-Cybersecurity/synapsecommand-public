@@ -207,3 +207,173 @@ def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Res
     that the first of them is written against a helper rather than against a shape it invents.
     """
     return Residual(namespace=adapter.metadata.format.name, data=residual(raw, consumed))
+
+
+# ---------------------------------------------------------------------- §34's six categories
+#
+# WHAT `unrepresented()` COULD NOT SAY, AND WHY A SECOND FUNCTION RATHER THAN A WIDER ONE
+# ----------------------------------------------------------------------------------------
+# `unrepresented()` answers one question — "did this value survive at all?" — and answers it
+# well enough to gate fourteen adapters. It cannot answer the question §34 asks, which is
+# WHERE a value went and BY WHAT LICENCE. A field that arrived in `attributes` and a field
+# that arrived in a canonical slot are both "present" to the check above, and they are not the
+# same fact about a translation: the first is parked and the second is mapped, and an
+# integrator choosing an adapter needs to know which.
+#
+# So `classify()` is a strictly finer partition of the same leaves, and the arithmetic ties the
+# two together rather than leaving them to agree: DROPPED is `unrepresented()`'s set minus the
+# paths a limitation declares UNSUPPORTED, and `tests/test_cdm_lossless.py` asserts that
+# identity per adapter per fixture rather than trusting this paragraph.
+#
+# THE PRECEDENCE IS DECLARATION-FIRST, AND THAT IS THE RULING
+# -----------------------------------------------------------
+# A declared transform wins over an observed presence. A knots-to-metres conversion whose source
+# figure happens to appear elsewhere in the output would otherwise be reported PRESERVED, and
+# the report would then say the value survived verbatim when what survived was a coincidence.
+# Declarations are what the adapter is accountable for; presence is what this module measured.
+# Reporting the accountable fact first is what makes the six categories auditable.
+
+#: The subtrees that hold PARKED source data rather than mapped fields. Three of them are
+#: `suite.PARKED` — the legacy parking every adapter in this repository declares (`residual:
+#: legacy`, ARCHITECTURE.md §5) — and `residual` is §28's structured container, which Part 2's
+#: adapters use. A leaf reached through any of them is RESIDUAL and not PRESERVED.
+PARKED_KEYS: tuple[str, ...] = ("attributes", "payload", "source_extras", "residual")
+
+#: The marker that turns a declared transform from NORMALIZED into DERIVED (M's pre-ruled
+#: default 2). It lives in the REASON string of the existing `TRANSFORMS` map rather than in a
+#: second `DERIVATIONS` map, because a second map is a second place to forget a path, and the
+#: reason is already required, already printed by the harness on every run, and already the
+#: thing an auditor reads.
+DERIVED_MARKER = "derived:"
+
+#: §34's six, in §34's order. Exported so the suite's text summary and the badge writer cannot
+#: invent a seventh or drop one.
+CATEGORIES: tuple[str, ...] = ("PRESERVED", "NORMALIZED", "DERIVED", "RESIDUAL", "UNSUPPORTED",
+                               "DROPPED")
+
+
+class LossReport:
+    """Every source leaf, in exactly one of §34's six categories.
+
+    A class rather than a dict so that the six names are fixed at one site, and so that
+    `as_dict()` — which is what goes into the conformance JSON and into the evidence record —
+    has one definition instead of one per caller.
+    """
+
+    __slots__ = CATEGORIES
+
+    def __init__(self, **buckets: list[str]) -> None:
+        for name in CATEGORIES:
+            setattr(self, name, tuple(sorted(buckets.get(name, ()))))
+
+    @property
+    def total(self) -> int:
+        return sum(len(getattr(self, name)) for name in CATEGORIES)
+
+    def as_dict(self) -> dict:
+        """The published shape: the six lists, plus their counts and the total.
+
+        The counts are computed here and not by the caller, because a summary line that counted
+        for itself is a second arithmetic that can disagree with the list beside it.
+        """
+        paths = {name: list(getattr(self, name)) for name in CATEGORIES}
+        return {"paths": paths,
+                "counts": {name: len(paths[name]) for name in CATEGORIES},
+                "total": self.total}
+
+    def summary_lines(self) -> list[str]:
+        """§34's six-line summary, for `--format text`. One line per category, always all six."""
+        width = max(len(name) for name in CATEGORIES)
+        return [f"  {name.ljust(width)}  {len(getattr(self, name))}" for name in CATEGORIES]
+
+    def __repr__(self) -> str:                       # pragma: no cover - debugging convenience
+        counts = ", ".join(f"{n}={len(getattr(self, n))}" for n in CATEGORIES)
+        return f"LossReport({counts})"
+
+
+def _harvest(objects: Iterable[dict]) -> tuple[set[str], set[str]]:
+    """(forms reached through no parked key, forms reached through one).
+
+    Two harvests of one structure rather than two walks of two structures, because the question
+    is about the PATH a leaf sits on and not about which object it came from.
+    """
+    canonical: set[str] = set()
+    parked: set[str] = set()
+
+    def walk(node: Any, under_parked: bool) -> None:
+        target = parked if under_parked else canonical
+        if isinstance(node, dict):
+            for key, value in node.items():
+                walk(value, under_parked or key in PARKED_KEYS)
+            return
+        if isinstance(node, (list, tuple)):
+            for value in node:
+                walk(value, under_parked)
+            return
+        if node not in _UNINTERESTING:
+            target |= _normalise(node)
+
+    def walk_keys(node: Any, under_parked: bool) -> None:
+        target = parked if under_parked else canonical
+        if isinstance(node, dict):
+            for key, value in node.items():
+                nested = under_parked or key in PARKED_KEYS
+                # The KEY counts as evidence exactly as it does in `_present_forms`: a source
+                # field parked under its own name keeps that name as the proof it arrived.
+                (parked if nested else target).add(str(key).casefold())
+                walk_keys(value, nested)
+        elif isinstance(node, (list, tuple)):
+            for value in node:
+                walk_keys(value, under_parked)
+
+    for obj in objects:
+        walk(obj, False)
+        walk_keys(obj, False)
+    return canonical, parked
+
+
+def _declared(path: str, declarations: Iterable[str]) -> str | None:
+    """The declaration covering `path`, with `unrepresented()`'s own prefix semantics."""
+    for declared in declarations:
+        if (path == declared or path.startswith(f"{declared}.")
+                or path.startswith(f"{declared}[")):
+            return declared
+    return None
+
+
+def classify(raw: Any, cdm_objects: Iterable[dict],
+             transforms: dict[str, str] | None = None,
+             unsupported: Iterable[str] = ()) -> LossReport:
+    """§34's loss report for one payload.
+
+    `transforms` is the adapter's `TRANSFORMS` map — path to reason. A reason beginning
+    `derived:` (see `DERIVED_MARKER`) puts the path in DERIVED; any other reason puts it in
+    NORMALIZED. `unsupported` is `manifest.unsupported_paths(metadata.limitations)`: the
+    machine-readable half of §34's "explicit documented exception", and the ONLY thing that
+    moves a path out of DROPPED without the value being anywhere in the output.
+    """
+    transforms = transforms or {}
+    unsupported = tuple(unsupported)
+    objects = list(cdm_objects)
+    canonical, parked = _harvest(objects)
+    buckets: dict[str, list[str]] = {name: [] for name in CATEGORIES}
+    for path, value in leaves(raw).items():
+        if value in _UNINTERESTING:
+            continue
+        declared = _declared(path, transforms)
+        if declared is not None:
+            reason = transforms[declared]
+            kind = "DERIVED" if reason.strip().lower().startswith(DERIVED_MARKER) else "NORMALIZED"
+            buckets[kind].append(path)
+            continue
+        if _declared(path, unsupported) is not None:
+            buckets["UNSUPPORTED"].append(path)
+            continue
+        forms = _normalise(value)
+        if forms & canonical:
+            buckets["PRESERVED"].append(path)
+        elif forms & parked:
+            buckets["RESIDUAL"].append(path)
+        else:
+            buckets["DROPPED"].append(path)
+    return LossReport(**buckets)

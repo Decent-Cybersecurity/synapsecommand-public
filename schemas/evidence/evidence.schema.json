@@ -1,0 +1,232 @@
+{
+  "$defs": {
+    "FileHash": {
+      "additionalProperties": false,
+      "description": "One file, by content. `path` is relative to the FIXTURE ROOT and never absolute.\n\nAn absolute path would make every record machine-specific and \u00a736's reproducibility check\nwould fail on the one difference that says nothing about the tree.",
+      "properties": {
+        "bytes": {
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "bytes"
+      ],
+      "title": "FileHash",
+      "type": "object"
+    },
+    "Generator": {
+      "additionalProperties": false,
+      "description": "\u00a732's `generator{package_version, command}` \u2014 what MADE the record, not what it measured.",
+      "properties": {
+        "command": {
+          "title": "Command",
+          "type": "string"
+        },
+        "package_version": {
+          "title": "Package Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "package_version",
+        "command"
+      ],
+      "title": "Generator",
+      "type": "object"
+    },
+    "ProvenanceSummary": {
+      "additionalProperties": false,
+      "description": "See `provenance_summary()` for why this field exists although \u00a732 does not list it.",
+      "properties": {
+        "classifications": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Classifications",
+          "type": "array"
+        },
+        "directories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Directories",
+          "type": "array"
+        },
+        "fixtures": {
+          "title": "Fixtures",
+          "type": "integer"
+        },
+        "synthetic": {
+          "title": "Synthetic",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "directories",
+        "fixtures",
+        "synthetic",
+        "classifications"
+      ],
+      "title": "ProvenanceSummary",
+      "type": "object"
+    },
+    "TestRun": {
+      "additionalProperties": false,
+      "description": "\u00a732's envelope around the run this record is evidence of.\n\nWHICH run, since \u00a732 does not say and two readings are available. It is the CONFORMANCE\nSUITE over this adapter \u2014 the thing `verify` re-runs and the thing `conformance` holds the\nreport of \u2014 and not `pytest`. `passed`/`failed`/`skipped` are therefore counts of the\nfifteen CHECKS by verdict, which is the vocabulary the suite already speaks, and `command`\nis the exact line a reader can paste to get the same report.",
+      "properties": {
+        "command": {
+          "title": "Command",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "exit": {
+          "title": "Exit",
+          "type": "integer"
+        },
+        "failed": {
+          "title": "Failed",
+          "type": "integer"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "integer"
+        },
+        "platform": {
+          "title": "Platform",
+          "type": "string"
+        },
+        "python": {
+          "title": "Python",
+          "type": "string"
+        },
+        "skipped": {
+          "title": "Skipped",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "command",
+        "exit",
+        "passed",
+        "failed",
+        "skipped",
+        "duration_s",
+        "python",
+        "platform"
+      ],
+      "title": "TestRun",
+      "type": "object"
+    }
+  },
+  "$id": "urn:synapsecommand:evidence:1.0.0:evidence",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "\u00a732's record. STRICT, like every model in `manifest.py` and for the same reason.\n\n`adapter` is the MANIFEST embedded whole rather than the adapter's id: a record that named\nthe manifest would be a record whose subject could change under it, and the one thing this\ndocument exists to do is fix what was measured.\n\n`source_commit` carries a `-dirty` suffix when the working tree had uncommitted changes at\ngeneration. That keeps \u00a732's field list exactly as written while still recording the fact\n`verify` needs in order to say \u2014 as the brief requires \u2014 WHICH state it is comparing.",
+  "properties": {
+    "adapter": {
+      "additionalProperties": true,
+      "title": "Adapter",
+      "type": "object"
+    },
+    "adapter_api_version": {
+      "title": "Adapter Api Version",
+      "type": "string"
+    },
+    "artifact_hashes": {
+      "items": {
+        "$ref": "#/$defs/FileHash"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "cdm_version": {
+      "title": "Cdm Version",
+      "type": "string"
+    },
+    "conformance": {
+      "additionalProperties": true,
+      "title": "Conformance",
+      "type": "object"
+    },
+    "evidence_schema_version": {
+      "title": "Evidence Schema Version",
+      "type": "string"
+    },
+    "fixture_hashes": {
+      "items": {
+        "$ref": "#/$defs/FileHash"
+      },
+      "title": "Fixture Hashes",
+      "type": "array"
+    },
+    "fixture_provenance": {
+      "$ref": "#/$defs/ProvenanceSummary"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "generator": {
+      "$ref": "#/$defs/Generator"
+    },
+    "loss_report": {
+      "additionalProperties": true,
+      "title": "Loss Report",
+      "type": "object"
+    },
+    "manifest_version": {
+      "title": "Manifest Version",
+      "type": "string"
+    },
+    "package_version": {
+      "title": "Package Version",
+      "type": "string"
+    },
+    "sc_oes_version": {
+      "title": "Sc Oes Version",
+      "type": "string"
+    },
+    "source_commit": {
+      "title": "Source Commit",
+      "type": "string"
+    },
+    "test_run": {
+      "$ref": "#/$defs/TestRun"
+    }
+  },
+  "required": [
+    "evidence_schema_version",
+    "generated_at",
+    "generator",
+    "source_commit",
+    "package_version",
+    "cdm_version",
+    "sc_oes_version",
+    "adapter_api_version",
+    "manifest_version",
+    "adapter",
+    "test_run",
+    "conformance",
+    "loss_report",
+    "fixture_hashes",
+    "fixture_provenance",
+    "artifact_hashes"
+  ],
+  "title": "EvidenceRecord",
+  "type": "object",
+  "x-evidence-schema-version": "1.0.0"
+}

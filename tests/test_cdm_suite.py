@@ -91,7 +91,8 @@ def test_the_text_report_is_section_18s_layout_and_the_reasons_follow_it():
 
 def test_the_json_report_carries_section_18s_keys_and_is_sorted():
     report = _report()
-    assert set(report) == {"adapter", "checks", "result", "maturity_eligible", "generated_with"}
+    assert set(report) == {"adapter", "checks", "result", "maturity_eligible", "generated_with",
+                           "loss_report"}
     assert report["generated_with"] == {"package": version.PACKAGE_VERSION,
                                         "schema": version.SCHEMA_VERSION,
                                         "adapter_api": version.ADAPTER_API_VERSION}
@@ -298,19 +299,34 @@ def test_G_catches_an_adapter_that_does_not_produce_the_same_bytes_twice(probe_f
 
 
 def test_G_compares_the_serialisation_architecture_md_froze_and_imports_no_hash():
-    """§6.2's form, and the collision `suite.canonical`'s docstring records.
+    """§6.2's form, and THE COLLISION, NOW RULED — this is the round that came back and said so.
 
-    `tests/test_cdm_boundary.py` forbids `hashlib` under `synapse_cdm/` and ARCHITECTURE.md §4.4
-    says this check hashes. Neither is edited: G compares the serialisations themselves, which
-    decides the same question more strongly. This test pins BOTH halves, so that a later round
-    which resolves the collision has to come back here and say so.
+    P2 wrote this test with the note that "a later round which resolves the collision has to come
+    back here and say so". Round P4 is that round. The collision was: ARCHITECTURE.md §4.4 says
+    this check hashes, and `tests/test_cdm_boundary.py` forbade `hashlib` in every module of the
+    package. M ruled on 2026-09-08 that `hashlib` is permitted in ONE module —
+    `synapse_cdm/evidence.py` — for content digests only, and ARCHITECTURE.md §6.2 now carries a
+    dated sentence saying SHA-256 here is content identification and not a cryptographic
+    capability of this package.
+
+    NOTHING BELOW IS RELAXED BY THAT RULING, and that is the point of leaving it here. `suite.py`
+    is not the allowed module. G still compares the canonical serialisations DIRECTLY, which
+    decides §20's question more strongly than comparing digests would — two different
+    serialisations cannot compare equal as strings, and two different serialisations CAN in
+    principle share a digest. So the assertions are unchanged; what changed is that they are now
+    a statement about a boundary somebody drew, rather than about one nobody had ruled on.
     """
     objects = [{"b": 1, "a": 2}]
     assert suite.canonical(objects) == json.dumps(objects, sort_keys=True, indent=2) + "\n"
     assert not hasattr(suite, "digest"), \
-        "a digest reappeared without the boundary gate's ruling; see canonical()'s docstring"
+        "a digest reappeared in the suite. The 2026-09-08 ruling put content digests in " \
+        "evidence.py and nowhere else; G compares serialisations and needs no hash"
     source = (PACKAGE / "suite.py").read_text()
     assert "\nimport hashlib" not in source
+    # The allowance is real and is somewhere else — asserted here so that this test cannot be
+    # read as saying the package computes no digests at all, which stopped being true today.
+    from tests.test_cdm_boundary import CRYPTO_ALLOWANCE
+    assert set(CRYPTO_ALLOWANCE) == {"evidence.py"}
 
 
 def test_H_skips_when_no_malformed_set_is_declared_and_fails_on_an_empty_one(probe_fixtures):

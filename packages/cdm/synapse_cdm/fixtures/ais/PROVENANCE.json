@@ -1,0 +1,182 @@
+{
+  "directory": "ais",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "aid_to_navigation_off_position.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "aid_to_navigation_off_position.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "aid_to_navigation_virtual.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "aid_to_navigation_virtual.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "base_station_liepaja.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "base_station_liepaja.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_a_assigned_schedule_moored.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_a_assigned_schedule_moored.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_a_sentinels_no_position.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_a_sentinels_no_position.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_a_underway_gulf_of_riga.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_a_underway_gulf_of_riga.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_b_extended_named.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_b_extended_named.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_b_own_station_ventspils.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "class_b_own_station_ventspils.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equator_zero_meridian.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equator_zero_meridian.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sart_active_distress.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "sart_active_distress.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "static_voyage_two_fragments.nmea",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "static_voyage_two_fragments.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic AIS sentences written as field values and encoded by `adapters/ais.py`; `fixtures/ais/README.md` states \"Every one is synthetic. No real AIS traffic, and no MMSI of a live vessel, is in this repository.\"",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

@@ -60,6 +60,7 @@ import re
 import pytest
 
 import synapse_cdm
+from synapse_cdm import harness
 from synapse_cdm.adapters import klv_codec as codec
 
 #: Every path below is anchored on the PACKAGE and not on the repository root, which is what puts
@@ -824,14 +825,14 @@ def test_the_framing_fixtures_are_still_not_reachable_as_adapter_fixtures():
     every immediate file child is one of the adapter fixtures the generator writes, and no framing
     fixture's extension appears at the top level.
     """
-    from synapse_cdm import harness
     assert "immediate children" in harness.FIXTURE_PATTERN
     module = _build_fixtures_module()
     expected = set()
     for spec in module.ADAPTER_FIXTURES:
         expected |= {f"{spec['name']}.klv", f"{spec['name']}.parsed.json"}
     present = {p.name for p in FIXTURES.iterdir()
-               if p.is_file() and p.name != "README.md" and not p.name.startswith(".")}
+               if p.is_file() and not p.name.startswith(".")
+               and p.name not in ("README.md", harness.PROVENANCE_FILE)}
     assert present == expected, (
         f"fixtures/klv's immediate files are {sorted(present)} and the generator writes "
         f"{sorted(expected)}. Every payload there is replayed by the harness as adapter #10's, so "

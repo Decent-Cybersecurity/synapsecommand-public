@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 import synapse_cdm
 from gates import parks_table, pin_paths
-from synapse_cdm import models
+from synapse_cdm import harness, models
 from synapse_cdm.geo import LineString, Point, Polygon
 
 # The package lives under packages/cdm/ while this suite sits at the repo root, so its
@@ -754,8 +754,11 @@ def test_the_legion_rows_claim_the_adapter_that_now_implements_them():
     )
 
 
-LEGION_FIXTURES = sorted((pathlib.Path(synapse_cdm.__file__).resolve().parent
-                         / "fixtures/legion").glob("*.json"))
+#: §33's provenance record is a `*.json` in a directory whose payloads are all `*.json`, so it is
+#: excluded by NAME and not by extension — `harness.PROVENANCE_FILE`, round P4.
+LEGION_FIXTURES = sorted(p for p in (pathlib.Path(synapse_cdm.__file__).resolve().parent
+                                     / "fixtures/legion").glob("*.json")
+                         if p.name != harness.PROVENANCE_FILE)
 
 
 def _uuids(value, found=None):

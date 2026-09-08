@@ -38,7 +38,7 @@ import uuid
 import pytest
 
 import synapse_cdm
-from synapse_cdm import ids, lossless, times
+from synapse_cdm import harness, ids, lossless, times
 from synapse_cdm.adapters import adsb
 from synapse_cdm.adapters.adsb import AdsbAdapter
 from synapse_cdm.enums import (
@@ -58,7 +58,10 @@ EGRESS = FIXTURES / "egress"
 SCHEMAS = pathlib.Path(__file__).resolve().parents[1] / "schemas"
 
 FRAME_FIXTURES = sorted(FIXTURES.glob("*.adsb"))
-EGRESS_FIXTURES = sorted(EGRESS.glob("*.json"))
+#: §33's provenance record sits beside the egress payloads and is `*.json` like them, so it
+#: is excluded by NAME — `harness.PROVENANCE_FILE`, round P4.
+EGRESS_FIXTURES = sorted(p for p in EGRESS.glob("*.json")
+                         if p.name != harness.PROVENANCE_FILE)
 
 #: The receiver the `local/` goldens were decoded against — Riga, and the same value the
 #: fixtures README states. A CPR local decode is measured FROM this point.

@@ -96,6 +96,7 @@ def generate() -> dict[str, dict]:
     union["x-cdm-schema-version"] = SCHEMA_VERSION
     out["cdm_object"] = union
     out[MANIFEST_STEM] = manifest_schema()
+    out[EVIDENCE_STEM] = evidence_schema()
     return out
 
 
@@ -120,6 +121,34 @@ def manifest_schema() -> dict:
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     schema["$id"] = f"urn:synapsecommand:manifest:{MANIFEST_SCHEMA_VERSION}:adapter-manifest"
     schema["x-manifest-schema-version"] = MANIFEST_SCHEMA_VERSION
+    return schema
+
+
+#: The evidence schema's stem, and it carries a directory for the same reason `MANIFEST_STEM`
+#: does: `schemas/evidence/` (spec §32) is reached by `write()`'s one `mkdir(parents=True)` line
+#: rather than by a second exporter. `tests/test_cdm_schemas.py` globs `schemas/*.schema.json` at
+#: the top level and `docs/scripts/check-schema-docs.mjs:44` uses a non-recursive `readdirSync`,
+#: so neither sweeps a subdirectory — which is why the documentation site's "9 generated files"
+#: is unmoved by this addition, by design rather than by luck.
+EVIDENCE_STEM = "evidence/evidence"
+
+
+def evidence_schema() -> dict:
+    """The published shape of `evidence/<adapter>/<version>/evidence.json` (§32).
+
+    THE IMPORT IS DEFERRED AND THE CYCLE IS THE REASON. `synapse_cdm.evidence` needs the
+    conformance suite, which needs the harness, which needs THIS module — so an import at the top
+    of this file would be a cycle at interpreter start. The alternative was to define the record's
+    models somewhere that imports nothing, which would have split one contract across two modules
+    to satisfy an import graph. One deferred import, named here, is the cheaper honesty.
+    """
+    from synapse_cdm.evidence import EvidenceRecord
+    from synapse_cdm.version import EVIDENCE_SCHEMA_VERSION
+
+    schema = EvidenceRecord.model_json_schema(mode="serialization")
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["$id"] = f"urn:synapsecommand:evidence:{EVIDENCE_SCHEMA_VERSION}:evidence"
+    schema["x-evidence-schema-version"] = EVIDENCE_SCHEMA_VERSION
     return schema
 
 

@@ -22,7 +22,7 @@ import uuid
 import pytest
 
 import synapse_cdm
-from synapse_cdm import ids, lossless, times
+from synapse_cdm import harness, ids, lossless, times
 from synapse_cdm.adapters import legion
 from synapse_cdm.adapters.legion import LegionAdapter
 from synapse_cdm.enums import (
@@ -39,7 +39,10 @@ FIXTURES = PACKAGE / "fixtures" / "legion"
 GOLDEN = FIXTURES / "golden"
 SCHEMAS = pathlib.Path(__file__).resolve().parents[1] / "schemas"
 
-DOCUMENTS = sorted(FIXTURES.glob("*.json"))
+#: §33's provenance record is a `*.json` in a directory whose payloads are all `*.json`, so
+#: it is excluded by NAME and not by extension — `harness.PROVENANCE_FILE`, round P4.
+DOCUMENTS = sorted(p for p in FIXTURES.glob("*.json")
+                   if p.name != harness.PROVENANCE_FILE)
 
 
 def _adapter() -> LegionAdapter:

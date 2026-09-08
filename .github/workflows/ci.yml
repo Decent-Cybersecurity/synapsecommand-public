@@ -7,7 +7,8 @@
 # if …" clause of the SOIF Part 1 specification — a missing or invalid manifest, an impossible
 # direction, an unknown maturity value, a conformance regression, a fixture without provenance —
 # had nothing to fail on. `ARCHITECTURE.md` §7 designs this file and gives the job table it grows
-# into; P1 lands the first three rows and P2, P4, P5 and P6 add the rest.
+# into; P1 landed the first three rows, P2 and P4 have added theirs — a conformance job and an
+# evidence job — and P5 and P6 add the rest.
 #
 # WHY IT IS A SEPARATE FILE AND NOT MORE JOBS IN `publish.yml`
 # ------------------------------------------------------------
@@ -143,3 +144,59 @@ jobs:
           set -euo pipefail
           python -m synapse_cdm.suite conformance run --adapter cat021 --format json \
             | python -c "import json,sys; r=json.load(sys.stdin); assert r['result']=='CONFORMANT', r['result']; print(r['maturity_eligible'])"
+
+  evidence:
+    name: Evidence records, provenance and badges
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          # §32's record carries `source_commit`, and `synapse evidence generate` reads it with
+          # `git rev-parse HEAD`. A checkout is enough for that; full history is not needed here
+          # the way it is for the suite job's tag arithmetic.
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install by the documented path
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+
+      - name: Every fixture family declares its provenance
+        # §33: "CI MUST fail when a covered fixture family lacks the required provenance record"
+        # (M's ruling, 2026-09-08). Unconditional from round P4 — there is no migration flag and
+        # no skip: a check that passed while a record was missing would be the whole defect.
+        run: python -m synapse_cdm.evidence provenance
+
+      - name: Generate an evidence record for every adapter
+        # `evidence/` is gitignored (F4.1): the record names the commit it measured and hashes
+        # every fixture the run read, so it is PRODUCED here rather than tracked. The release
+        # round attaches this artefact to the GitHub Release, which is the point at which
+        # `evidence.available` may become true for a consumer who cannot run the package.
+        run: python -m synapse_cdm.evidence generate --all --out evidence
+
+      - name: Verify every record against the tree it was generated from
+        # §36's reproducibility, in the same job and therefore on the same tree: `verify`
+        # re-hashes the fixtures and re-runs the suite, and compares every field but the instant
+        # and the wall time. A record that cannot be reproduced by the machine that made it is a
+        # record of nothing, and this is the step that would say so.
+        run: |
+          set -euo pipefail
+          find evidence -name evidence.json -print0 \
+            | xargs -0 python -m synapse_cdm.evidence verify
+
+      - name: Badges, derived from the records and never hand-set
+        run: python -m synapse_cdm.evidence badges --from evidence
+
+      - name: Upload the evidence set
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: evidence-${{ github.sha }}
+          path: evidence/
+          if-no-files-found: error

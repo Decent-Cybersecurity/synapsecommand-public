@@ -1,0 +1,51 @@
+{
+  "directory": "cat021/refusals",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "fspec_names_a_not_used_frn.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks a conforming decoder must REFUSE, built by `cat021/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "length_disagrees_with_buffer.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks a conforming decoder must REFUSE, built by `cat021/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_mandatory_target_address.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks a conforming decoder must REFUSE, built by `cat021/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "time_beyond_one_day.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks a conforming decoder must REFUSE, built by `cat021/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wrong_category.cat021",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT021 blocks a conforming decoder must REFUSE, built by `cat021/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat021/spec/sac_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

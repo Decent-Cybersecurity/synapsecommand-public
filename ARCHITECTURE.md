@@ -461,6 +461,21 @@ existing golden files are already written this way. A hash quoted anywhere in th
 evidence records, witness entries, conformance output — is sha256 over the UTF-8 bytes of that
 form unless the quoting site names another algorithm explicitly.
 
+**Dated correction, 2026-09-08 (round P4; the paragraph above is left standing as written, and
+this states what it did not).** SHA-256 in this framework is CONTENT IDENTIFICATION AND INTEGRITY
+EVIDENCE. It is not a cryptographic capability of the `synapse_cdm` package. A digest here
+answers "are these the same bytes?" — which fixture a run read, which artefact a release
+published — and it carries no key, authenticates nobody and says nothing about who produced the
+bytes it names. `models.Integrity` is still designed and unpopulated, signing still belongs to
+the ledger, and `tests/test_cdm_boundary.py` still forbids `cryptography`, `hmac`, `secrets`,
+`ssl`, `nacl` and `oqs` in every module of the package without exception. M ruled on 2026-09-08
+that `hashlib` is permitted in ONE module, `synapse_cdm/evidence.py`, for exactly four uses —
+fixture hashes, artifact hashes, evidence-record integrity identifiers and deterministic content
+addressing — and that every forbidden use (encryption, key derivation, authentication,
+signatures, MACs, password hashing, token generation, any security protocol primitive) remains
+forbidden. The gate enforces the allowance by module NAME and fails for every other module, and
+a second test asserts the size of the allowance so that widening it cannot happen quietly.
+
 Time has one serialised form throughout: RFC 3339 UTC, exactly three decimals, always `Z`. Two
 timestamps meaning the same instant MUST compare equal as strings, because that is what golden
 diffs and chain hashes compare.

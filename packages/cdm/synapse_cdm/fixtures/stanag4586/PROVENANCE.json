@@ -1,0 +1,222 @@
+{
+  "directory": "stanag4586",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "a_checksum_that_does_not_validate_is_flagged.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "a_checksum_that_does_not_validate_is_flagged.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "altitude_type_baro_never_reaches_alt_m.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "altitude_type_baro_never_reaches_alt_m.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_idd_version_that_is_not_edition_3.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_idd_version_that_is_not_edition_3.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_undecoded_message_type_is_parked.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "an_undecoded_message_type_is_parked.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "four_decoded_messages_one_vehicle.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "four_decoded_messages_one_vehicle.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "four_octet_checksum.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "four_octet_checksum.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "inertial_states_wgs84_altitude.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "inertial_states_wgs84_altitude.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "longitude_absent_from_the_presence_vector.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "longitude_absent_from_the_presence_vector.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "no_checksum_is_not_a_failing_checksum.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "no_checksum_is_not_a_failing_checksum.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_inertial_states_leave_the_entity_unpositioned.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_inertial_states_leave_the_entity_unpositioned.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_vehicles_are_two_entities.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "two_vehicles_are_two_entities.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_ground_speed_yields_no_course.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "zero_ground_speed_yields_no_course.s4586",
+      "operational_data": false,
+      "origin": "Synthetic STANAG 4586 messages built from field values by `stanag4586/spec/build_fixtures.py`, the only thing that writes this directory. No README states it and the assertion is a tracked test's: `tests/test_cdm_stanag4586_adapter.py:163`, `test_the_generator_is_the_only_thing_that_writes_the_octets`.",
+      "personal_data": false,
+      "standard_ref": "stanag4586/spec/stanag4586_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

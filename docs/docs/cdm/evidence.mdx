@@ -1,0 +1,215 @@
+---
+title: Evidence records
+sidebar_label: Evidence records
+sidebar_position: 7
+description: The machine-generated record behind every compatibility claim — how it is produced, how it is verified, what the loss report and the fixture provenance say, and why no badge here can be hand-set.
+---
+
+# Evidence records
+
+A maturity rung in `manifests/adsb.json` is a **claim**. A conformance report is a **measurement
+taken somewhere**. Neither is evidence on its own: a reader cannot tell whether `maturity: L4`
+was earned or typed, and cannot tell which tree, which fixtures or which versions a report
+describes.
+
+An evidence record is the missing document. One JSON file per adapter, carrying the manifest it
+measured, the commit it measured at, every version axis in force, the conformance report
+verbatim, the loss report, and a SHA-256 of every fixture file the run read.
+
+```bash
+pip install synapse-cdm
+
+synapse evidence generate --all --out evidence/
+synapse evidence verify evidence/adsb/1.0.0/evidence.json
+synapse evidence provenance
+synapse badges --from evidence/
+```
+
+## What is in a record
+
+`evidence/<adapter>/<adapter-version>/evidence.json`, written in the canonical serialisation
+`ARCHITECTURE.md` §6.2 fixes for everything this framework compares — `sort_keys=True`,
+two-space indent, UTF-8, trailing newline.
+
+| Field | What it is |
+| --- | --- |
+| `adapter` | the adapter's **published manifest, embedded whole**. Not its id: a record that named its subject would be a record whose subject could change under it |
+| `source_commit` | the commit the run measured, with a `-dirty` suffix when the working tree had uncommitted changes, or `unknown` outside a checkout |
+| `package_version`, `cdm_version`, `sc_oes_version`, `adapter_api_version`, `manifest_version` | the five version axes in force, as **data** — this is what makes a record readable years later |
+| `evidence_schema_version` | this record's own shape, on its own axis |
+| `test_run` | `command`, `exit`, `passed` / `failed` / `skipped`, `duration_s`, `python`, `platform` — the envelope around the run |
+| `conformance` | the Conformance Suite's own JSON report, verbatim |
+| `loss_report` | the six categories, below |
+| `fixture_hashes` | `{path, sha256, bytes}` for every file the suite read, including `malformed/` and the goldens. Paths are relative to the packaged fixture root, never absolute |
+| `fixture_provenance` | the summary the *Synthetic Fixtures* badge is grounded in |
+| `artifact_hashes` | empty until a release has artefacts to name |
+| `generated_at`, `generator` | the instant, and what produced the record |
+
+`test_run` records the **conformance suite** run — the thing `verify` re-runs and the thing
+`conformance` holds the report of. `passed` / `failed` / `skipped` are therefore counts of the
+fifteen checks by verdict.
+
+## Verifying one
+
+`verify` does not read the record back, which would prove nothing. It **produces a new record
+from the tree in front of it** — re-hashing every fixture, re-running every check — and compares
+the two field by field.
+
+```bash
+$ synapse evidence verify evidence/pntmap/1.0.0/evidence.json
+REPRODUCED: evidence/pntmap/1.0.0/evidence.json (masked: generated_at, test_run.duration_s)
+```
+
+Four fields are masked and nothing else is. The rule is that **a measured duration is not a
+measurement of the tree**, and the list is an enumeration of where one appears rather than a
+pattern — a pattern would mask a future field nobody had looked at.
+
+- `generated_at` — two runs are never at one instant;
+- `test_run.duration_s` — wall time for the whole run, which differs by scheduling;
+- `conformance.checks.H.details.refusals[].seconds` — how long one malformed payload took to be
+  refused. A real measurement, and check H's whole point is a five-second bound, but it measures
+  *this machine at this moment*. It was found by running the reproducibility proof, not by
+  reasoning about it: two generations from one fresh clone differed in exactly one field;
+- `source_commit`, **only when either side is dirty**, and `verify` says so in its own output. A
+  dirty tree has no commit that describes it, so comparing the field would be comparing a label
+  to a thing it does not name.
+
+A test sweeps every leaf of a record for a key that names a duration and fails on any that is
+neither masked nor a declared bound, so a timing field added by a later round cannot quietly make
+`verify` flaky.
+
+A difference anywhere else is a difference in what was measured, and it is printed as
+`field: record says X, this tree gives Y`.
+
+## The loss report — §34's six categories
+
+Every scalar in a source payload lands in exactly one of six categories. The categories are a
+**partition**, and the precedence is declaration-first: a declared transform outranks an observed
+presence, because a knots-to-metres conversion whose source figure happens to appear elsewhere in
+the output is not a value that survived verbatim.
+
+| Category | What it means |
+| --- | --- |
+| `PRESERVED` | the value is in the output, outside the parked subtrees |
+| `NORMALIZED` | the path is declared in the adapter's `TRANSFORMS`, with its reason |
+| `DERIVED` | the same map, with a reason beginning `derived:` — the value is reachable only through a declared derivation |
+| `RESIDUAL` | the value arrived under `attributes`, `payload`, `source_extras` or §28's `residual` container |
+| `UNSUPPORTED` | the path is named in a structured `Limitation`'s `unsupported_paths` — §34's "explicit documented exception" |
+| `DROPPED` | none of the above. The value is gone and nobody wrote down that it would be |
+
+The report is in the suite's JSON under `loss_report` and in `--format text` as a six-line
+summary. `DROPPED` is exactly the harness's own check-D set minus the paths a limitation
+declares, and a test asserts that identity per adapter per fixture rather than leaving two
+answers to one question.
+
+`--strict` makes a non-empty `DROPPED` exit non-zero. It is implied by `--require D` and can be
+turned off with `--no-strict`. It is a **third reason to exit non-zero and not a fourth verdict**:
+check D's verdict stays the harness's. The two differ in one live case — an adapter that declares
+a source path unsupported still fails check D, because the value really did vanish, while its
+`DROPPED` count is 0 because the exception was documented in a form a machine can read.
+
+### Declaring an exception
+
+`limitations` accepts a sentence or a structured object, and both stay valid:
+
+```python
+limitations = [
+    "no document in this tree states which edition this adapter targets",
+    Limitation(id="no-vendor-block",
+               summary="the vendor block is not mapped",
+               unsupported_paths=["vendor"]),
+]
+```
+
+Only `unsupported_paths` is read by the classifier. A prose limitation contributes nothing to it —
+deliberately, because a documented exception a machine cannot read is not one.
+
+## Fixture provenance — §33
+
+Every fixture directory a tracked test reads carries a `PROVENANCE.json`:
+
+```json
+{
+  "schema_id": "synapse.fixture-provenance/v1",
+  "directory": "pntmap",
+  "fixtures": [
+    {
+      "file": "jamming_gulf_of_riga.json",
+      "synthetic": true,
+      "classification": "PUBLIC",
+      "operational_data": false,
+      "personal_data": false,
+      "origin": "…one sentence saying where this came from…",
+      "standard_ref": "klv/spec/klv_pin.json"
+    }
+  ]
+}
+```
+
+`synapse evidence provenance` enforces it, unconditionally and with no migration flag:
+
+- every covered directory has a record;
+- every file on disk is listed, and every listed file is on disk;
+- `synthetic` is `true` and `classification` is `PUBLIC` for every fixture in this repository —
+  a `false` is a finding, not a value to accept;
+- an `origin` is a sentence, and a `standard_ref` names a pin record that exists.
+
+The covered set is **derived from the tree**, never enumerated: every directory the harness
+selects fixtures from, every `malformed/` set, and every auxiliary family a tracked test replays
+(`egress/`, `local/`, `refusals/`, `framing/`, `imapb/`). `golden/` is not covered — a golden is
+an adapter's output over a fixture that is already covered — and neither is `spec/`, which holds
+pinned specification records with a gate of their own. `fixtures/fft` has no record because the
+harness selects nothing there; the absence is what says it is not a fixture family.
+
+The record is excluded from fixture selection **by name** and not by extension, in the harness and
+in the suite alike: two of these directories ship nothing but `.json` payloads, so an extension
+rule would select the record and skip the fixtures.
+
+## Badges — §35
+
+```bash
+synapse badges --from evidence/ --out evidence/badges/
+```
+
+Six [shields.io endpoint](https://shields.io/badges/endpoint-badge) files per adapter, and one
+repository-level set that takes the **worst** reading of each — a repository badge reporting its
+best adapter would be a badge that says nothing.
+
+| Badge | Grounded in |
+| --- | --- |
+| SC-CDM Compatible | `conformance.result` |
+| Conformance L*n* | `conformance.maturity_eligible` |
+| Roundtrip Verified | `conformance.checks.E.verdict` |
+| Deterministic | `conformance.checks.G.verdict` |
+| Lossless Verified | `conformance.checks.D.verdict` and `loss_report.counts.DROPPED` |
+| Synthetic Fixtures | `fixture_provenance.fixtures` and `.synthetic` |
+
+**No badge is hand-assigned, and no badge outlives its evidence.** `badges()` takes one argument —
+the record — so there is nothing a caller can say to influence what it renders. And a badge whose
+grounding field is **absent from the record is absent from the output**: not red, which would be a
+claim that the thing was measured and failed, and not grey, which would be a claim that the tool
+is fine. A test removes each grounding field in turn and requires the corresponding badge to
+disappear.
+
+## Where the records live
+
+`evidence/` is **not tracked**. A record names the commit it measured and hashes every fixture the
+run read, so a tracked record is either stale the moment it is committed or a mechanical diff on
+every fixture round.
+
+CI generates the set on every run and uploads it as the artefact `evidence-<sha>`; the release
+pipeline attaches it to the GitHub Release. That attachment is the point at which
+`evidence.available` may become true in an adapter's manifest — **`synapse evidence generate`
+means evidence is *producible*, not that it is *available***, and every adapter shipped here
+declares `available: false` until a published release carries the records.
+
+## SHA-256 here is identification, not signing
+
+`synapse_cdm/evidence.py` is the only module in the package that may import `hashlib`, and the
+allowance is enforced by module name in `tests/test_cdm_boundary.py`. The digest answers *"are
+these the same bytes?"* — which fixture a run read, which artefact a release published. It carries
+no key, authenticates nobody and asserts nothing about who produced the bytes it names.
+
+`models.Integrity` is still designed and unpopulated. Signing belongs to the ledger, which holds
+the keys and is audited, and `cryptography`, `hmac`, `secrets`, `ssl`, `nacl` and `oqs` remain
+forbidden in every module of this package — including in the one exempt module.

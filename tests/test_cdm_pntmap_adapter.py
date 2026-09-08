@@ -9,7 +9,7 @@ import pathlib
 
 import pytest
 
-from synapse_cdm import adapter, conformance, ids, oes_registry, times
+from synapse_cdm import adapter, conformance, harness, ids, oes_registry, times
 from synapse_cdm.adapters import pntmap
 from synapse_cdm.adapters.pntmap import PntmapAdapter
 from synapse_cdm.enums import (
@@ -26,6 +26,17 @@ import synapse_cdm
 # this file: a relative hop between the two breaks the moment either one moves, and this
 # way the files checked are the ones belonging to the package that is actually importable.
 FIXTURES = pathlib.Path(synapse_cdm.__file__).resolve().parent / "fixtures" / "pntmap"
+
+
+def _documents() -> list[pathlib.Path]:
+    """The fixture documents, which are `*.json` — and so is §33's provenance record.
+
+    Excluded by the NAME `harness.PROVENANCE_FILE` and never by extension: pntmap ships nothing
+    but `.json`, so an extension rule here would select the record and skip the fixtures. This is
+    the same predicate `harness.py` applies, reached through the constant rather than restated
+    (round P4).
+    """
+    return sorted(p for p in FIXTURES.glob("*.json") if p.name != harness.PROVENANCE_FILE)
 
 
 def _adapter():
@@ -192,7 +203,7 @@ def test_live_mode_marks_objects_live_and_changes_the_symbol_context():
 
 def test_every_fixture_is_synthetic_by_default():
     """No real PNTMAP data in this repository, and the objects must say so (TR-12)."""
-    for path in sorted(FIXTURES.glob("*.json")):
+    for path in sorted(_documents()):
         for obj in _adapter().to_cdm(json.loads(path.read_text())):
             assert obj.source.synthetic is True
 
@@ -225,11 +236,11 @@ def test_every_fixture_gets_the_block_and_all_three_fields_agree_across_them():
     payload and the SEMANTIC TYPE is unaffected, because what the type identifies is the kind of
     observation and not the classifier's answer."""
     seen = set()
-    for path in sorted(FIXTURES.glob("*.json")):
+    for path in sorted(_documents()):
         event = _adapter().to_cdm(json.loads(path.read_text()))[1]
         assert event.oes is not None, path.name
         seen.add((event.oes.spec_version, event.oes.event_class, event.oes.type_id))
-    assert len(list(FIXTURES.glob("*.json"))) == 4
+    assert len(_documents()) == 4
     assert seen == {(SC_OES_VERSION, EventClass.OBSERVATION, "sc.pnt.gnss_interference.v1")}
 
 
@@ -276,7 +287,7 @@ def test_confidence_is_supplied_by_the_source_and_still_not_asserted_on_the_bloc
     entity, event = _translate("jamming_gulf_of_riga")
     assert entity.confidence == 0.87
     assert event.oes.confidence is None
-    for path in sorted(FIXTURES.glob("*.json")):
+    for path in sorted(_documents()):
         raw = json.loads(path.read_text())
         assert "confidence" in raw["interference"], path.name
         assert _adapter().to_cdm(raw)[1].oes.confidence is None, path.name

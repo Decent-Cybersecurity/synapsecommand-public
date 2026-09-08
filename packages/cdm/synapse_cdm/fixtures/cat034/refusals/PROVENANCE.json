@@ -1,0 +1,33 @@
+{
+  "directory": "cat034/refusals",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "length_disagrees_with_buffer.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks a conforming decoder must REFUSE, built by `cat034/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "missing_mandatory_data_source.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks a conforming decoder must REFUSE, built by `cat034/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "wrong_category.cat034",
+      "operational_data": false,
+      "origin": "Synthetic ASTERIX CAT034 blocks a conforming decoder must REFUSE, built by `cat034/spec/build_fixtures.py`'s `refusals()` and written to this subdirectory by the same generator run that writes the translatable set beside it.",
+      "personal_data": false,
+      "standard_ref": "cat034/spec/cat034_pin.json",
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}

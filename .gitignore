@@ -171,3 +171,37 @@ fixtures/klv/streams/
 # `day_flight_provenance_2026_08_26`, with the origin URL it was served from, exactly as the PDFs
 # are. `git check-ignore -v` was run on every file that landed and each reports this rule.
 fixtures/klv/provenance/
+
+# Generated evidence records and the badges derived from them — round P4, 2026-09-08, M's
+# pre-ruled default 1.
+#
+# WHY IT IS AT THE BOTTOM OF THIS FILE AND NOT BESIDE `*.whl`, WHICH IS WHERE IT BELONGS BY
+# SUBJECT. Because `tests/test_cdm_pins.py` pins three of this file's lines BY NUMBER — 42
+# (`*.pdf`), 43 (`*.txt`) and 173 (`fixtures/klv/provenance/`) — and `klv_pin.json` and
+# `FORMAT_COVERAGE.md` cite them. A rule inserted above any of those silently re-points every
+# citation at a different line, which is the defect that test exists to catch, and it caught this
+# one: the first draft of this block went in above line 42 and reddened it. Appending is the only
+# placement that leaves all three citations true, and git resolves a path to its LAST matching
+# pattern, so an append is also the safest position for the rule itself.
+#
+# WHAT IT IGNORES. `synapse evidence generate --all` writes one JSON document per adapter under
+# `evidence/<adapter>/<adapter-version>/evidence.json`, and `synapse badges` writes shields.io
+# endpoint files under `evidence/badges/`. Each record NAMES THE COMMIT IT MEASURED and carries a
+# sha256 of every fixture file the run read, so a tracked record is either stale the moment it is
+# committed — it describes the tree as of its own generation, and the commit that adds it is a
+# different tree — or a mechanical diff on every fixture round, in a file nobody reads and
+# everybody re-generates.
+#
+# WHERE IT LIVES INSTEAD. CI generates the set on every run and uploads it as the artefact
+# `evidence-<sha>`; the release round attaches it to the GitHub Release. That attachment is the
+# moment `evidence.available` becomes true for a consumer who cannot run this package, and until
+# then it is false — every one of the fourteen manifests says so, and M ruled on 2026-09-08 that
+# it stays false through P4–P8.
+#
+# ANCHORED WITH A LEADING SLASH, AND THE UNANCHORED FORM WAS A LIVE DEFECT RATHER THAN A STYLE
+# POINT. A pattern with no leading slash matches a directory of that name at ANY depth, so a bare
+# `evidence/` also ignored `schemas/evidence/` — the GENERATED AND TRACKED evidence schema this
+# same round publishes. `git add` refused it and said which rule, which is the only reason this
+# was found before the file went missing from a release. The generated records live at the
+# repository root and nowhere else, so the rule says exactly that.
+/evidence/

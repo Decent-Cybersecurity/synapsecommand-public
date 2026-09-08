@@ -1,0 +1,102 @@
+{
+  "directory": "tak",
+  "fixtures": [
+    {
+      "classification": "PUBLIC",
+      "file": "air_track_due_north.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "air_track_due_north.xml",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "bridge_installation.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "bridge_installation.xml",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "degraded_no_position.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "degraded_no_position.xml",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equator_zero_meridian.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "equator_zero_meridian.xml",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "narva_patrol.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "narva_patrol.xml",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "suspect_vessel_sentinels.parsed.json",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
+      "file": "suspect_vessel_sentinels.xml",
+      "operational_data": false,
+      "origin": "Synthetic Cursor-on-Target documents, hand-built as XML with their `.parsed.json` twins regenerated from the XML. No README states it and the assertion is a tracked test's: `tests/test_cdm_tak_adapter.py:66`, `test_every_xml_fixture_ships_its_parsed_form_and_they_agree` \u2014 \"Regenerate it from the XML rather than editing it by hand.\"",
+      "personal_data": false,
+      "synthetic": true
+    }
+  ],
+  "schema_id": "synapse.fixture-provenance/v1"
+}
