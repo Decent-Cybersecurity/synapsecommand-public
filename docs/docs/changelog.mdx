@@ -35,6 +35,18 @@ is major because a third party's consumer written against 1.8.0 does not work ag
 distribution. They were equal at `1.0.0` once before, for exactly this kind of reason, and that
 equality did not survive the eleventh adapter. **Still no release carries either change**: the
 index serves 1.8.0, and `pip install synapse-cdm` resolves it.
+
+**Updated 2026-09-08, and they are UNEQUAL again — on the schema's side this time.** On the
+working branch the package is at `2.0.0` and the schema stays at `2.1.0`: round P3 moved the wire
+contract a MINOR for the CDM foundation primitives (multi-geometry, vertical position with a unit
+and a datum, temporal validity, route, area, quality, the Rule 5 provenance fields, operational
+status and the structured residual container) and moved the package by nothing at all, because a
+package release is a later round's business. Every addition is an optional field or a model
+reached only through one, so a 2.0.0 object still validates and a 2.0.0 reader still reads a 2.1.0
+object — the fourteen examples under `examples/` are the witness: they still declare
+`schema_version: "2.0.0"` and they still validate against the 2.1.0 models. The paragraph above is
+kept as written; the equality it recorded lasted a day, which is the shortest life any of these
+coincidences has had. **Still no release carries any of it.**
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

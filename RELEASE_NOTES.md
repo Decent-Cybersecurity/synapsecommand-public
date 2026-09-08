@@ -15,6 +15,21 @@ on `version.py`'s because a third party's consumer written against 1.8.0 does no
 distribution, and `synapse_cdm/version.py` states the six version axes and their independence in
 one place. A package at 2.0.0 does **not** mean SC-OES 2.0: SC-OES is at `0.1.0` and is a Draft.
 
+**UNRELEASED, ADDED 2026-09-08 — the wire contract has moved again, and these notes are still
+2.0.0's.** The paragraph above describes the distribution the index serves and stays exactly true
+of it: 2.0.0 shipped at CDM `schema_version` 2.0.0 and the two numbers really were equal at that
+tag. On the working branch the SOIF Part 1 CDM round has taken `SCHEMA_VERSION` to
+**`schema_version` 2.1.0**, a MINOR — the geometry, vertical-position, temporal-validity, route,
+area, quality, provenance, status and residual primitives are added, every one of them as an
+optional field or a model reached only through one, so a 2.0.0 reader keeps working and 2.0.0 data
+keeps validating. `PACKAGE_VERSION` has NOT followed and is still `2.0.0`: a schema bump obliges a
+release, it does not perform one, and the number is the release round's to type. **No release
+carries any of that yet.** This paragraph is here for the reason the same paragraph was here for
+the 1.8.0 -> 2.0.0 arc: these notes are one of the few documents that state both numbers, which
+makes them one of the few places the two could be made to disagree without anybody noticing.
+`packages/cdm/synapse_cdm/MIGRATIONS.md`'s pending section carries the migration statement, the
+derivation and the bump rulings.
+
 ## What changed on the wire, and what a 1.x consumer must do
 
 Two optional keys, and they are what makes this a major:

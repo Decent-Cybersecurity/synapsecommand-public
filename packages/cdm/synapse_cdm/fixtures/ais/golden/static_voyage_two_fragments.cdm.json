@@ -76,12 +76,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "ais",
       "adapter_version": "1.0.0",
+      "format_name": "AIS (NMEA 0183 AIVDM/AIVDO)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "AIS"
+      "system": "AIS",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -93,6 +102,7 @@
         "system": "IMO"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:12:05.000Z",
     "valid_to": null
@@ -113,17 +123,26 @@
       "received_at_unix": 1777443125,
       "severity_basis": "AIS states no urgency outside navigational status 14; INFO is the format's silence, not an assessment that nothing is wrong"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:12:05.000Z",
     "related_entities": [
       "c0542054-80da-5686-ace1-a2168db65251"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "ais",
       "adapter_version": "1.0.0",
+      "format_name": "AIS (NMEA 0183 AIVDM/AIVDO)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "AIS"
+      "system": "AIS",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -134,6 +153,7 @@
         "external_id": "9284702",
         "system": "IMO"
       }
-    ]
+    ],
+    "status": null
   }
 ]

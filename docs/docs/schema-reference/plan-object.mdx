@@ -15,9 +15,9 @@ description: "What we push OUT: a drawing a commander's plan puts on someone els
 | | |
 | --- | --- |
 | Source file | `schemas/plan_object.schema.json` |
-| `$id` | `urn:synapsecommand:cdm:2.0.0:plan_object` |
-| CDM schema version | `2.0.0` |
-| SHA-256 of source | `39f17bae5ad8a98edb083a7d6d06ecdb4fa758cd2dd63c51d8735c32f63e519f` |
+| `$id` | `urn:synapsecommand:cdm:2.1.0:plan_object` |
+| CDM schema version | `2.1.0` |
+| SHA-256 of source | `a452c4769124e789afc735e576e9ef2041a15e6293b1983f492f878df595f762` |
 
 What we push OUT: a drawing a commander's plan puts on someone else's map.
 
@@ -30,17 +30,23 @@ outcomes, because everyone assumes it arrived.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `expires_at` | string \| null | no | When the drawing should disappear. None = until explicitly removed — which for a stale COA sketch on a live map is a decision, so state it. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
-| `geometry` | [Point](#point) \| [LineString](#linestring) \| [Polygon](#polygon) | **yes** | GeoJSON, WGS84, [lon, lat] order. Required. |
+| `area` | [Area](#area) \| null | no | Lateral geometry with vertical limits and time validity, when this object is a region. `geometry` above stays the required projection of its lateral extent. Default `null`. |
+| `expires_at` | string \| null | no | When the drawing should disappear. None = until explicitly removed — which for a stale COA sketch on a live map is a decision, so state it. KEPT beside `validity` below, of which it is the projection: a receiving client that only knows how to expire an overlay reads this one field. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `geometry` | [Point](#point) \| [LineString](#linestring) \| [Polygon](#polygon) \| [MultiPoint](#multipoint) \| [MultiLineString](#multilinestring) \| [MultiPolygon](#multipolygon) | **yes** | GeoJSON, WGS84, [lon, lat] order. Required. |
 | `integrity` | [Integrity](#integrity) \| null | no | PQC signature block — designed, not yet populated. Default `null`. |
 | `label` | string \| null | no | What a client shows next to the drawing. None = unlabelled; never an empty string, which renders as a blank callout. Default `null`. (min length 1) |
 | `object_id` | string (uuid) | **yes** |  |
 | `object_kind` | `"plan_object"` | no |  |
 | `object_type` | [ObjectType](#objecttype) | **yes** |  |
-| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.0.0"`. |
+| `quality` | [Quality](#quality) \| null | no | How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor. Default `null`. |
+| `residual` | [Residual](#residual) \| null | no | Source information the CDM does not model, under the name of the format it came from (§28). None = nothing was left over, or — for the fourteen adapters shipped before this container existed — the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 rules they keep through Part 1. Default `null`. |
+| `route` | [Route](#route) \| null | no | Ordered waypoints and legs, when this object IS a route (ObjectType.ROUTE). `geometry` above stays REQUIRED and stays the LineString projection of the waypoints, so every consumer written before routes existed still draws it. Default `null`. |
+| `schema_version` | string | no | Semver of the CDM this object was written against. Default `"2.1.0"`. |
 | `source` | [SourceRef](#sourceref) | **yes** | Which adapter produced this object. Required on every kind. |
 | `source_ids` | array&lt;[SourceId](#sourceid)&gt; | **yes** | Every external identifier this object is known by. At least one, on EVERY kind — see the class docstring. (min items 1) |
+| `status` | [OperationalStatus](#operationalstatus) \| null | no | The source's own operational state for this object, namespaced. None = the source stated none. Default `null`. |
 | `style` | object | no | Rendering HINTS, not requirements — stroke, fill, opacity, dash. A receiving client is free to ignore them, so nothing that changes MEANING may live here (an affiliation belongs on the entity, not in a colour). |
+| `validity` | [TemporalValidity](#temporalvalidity) \| null | no | The four times the source states about this object (§27). `expires_at` above is the projection of `validity.valid_to` for clients that read one field; when both are stated they must agree. Default `null`. |
 
 :::info[`additionalProperties: false`]
 Unknown keys are **rejected**. That is safe only because the CDM pairs strictness
@@ -53,6 +59,56 @@ validation.
 
 Every `$ref` on this page resolves to one of these, inlined here so the page is a
 complete reference and not a starting point for chasing pointers.
+
+### Area
+
+A region with lateral geometry, optional vertical limits and optional time validity.
+
+The three together are what an airspace, a danger area, a jamming footprint and a search box
+all are, and the reason they are one model is that any two of them without the third is a
+different claim: a polygon with no ceiling is the whole column of sky above it, and a polygon
+with no validity is permanent.
+
+`geometry` is a `Polygon` or a `MultiPolygon` and nothing else. A point or a line is not an
+area — a corridor drawn as a line has no width, and a consumer that buffered it would be
+choosing the width itself, which is an operational decision an adapter may not make (Rule 6).
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `bounds` | [BoundingBox](#boundingbox) \| null | no | The coarse extent the SOURCE declared about this area, when it declared one. NEVER computed from `geometry` here: a sensor's declared coverage rectangle and its footprint's envelope are different facts and are allowed to differ, so a computed value would overwrite one with the other. Default `null`. |
+| `geometry` | [Polygon](#polygon) \| [MultiPolygon](#multipolygon) | **yes** | Lateral extent. WGS84, [lon, lat]. |
+| `validity` | [TemporalValidity](#temporalvalidity) \| null | no | When the area applies. None = the source stated no times. Default `null`. |
+| `vertical` | [VerticalExtent](#verticalextent) \| null | no | Floor and ceiling. None = the source stated no vertical limits, which is not the same as surface-to-unlimited (that is a VerticalExtent with both bounds absent, and it says the source described the column). Default `null`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### BoundingBox
+
+A rectangular region in WGS84, bounds NAMED rather than positional.
+
+Why not RFC 7946 §5's `bbox` array: it is [west, south, east, north] and nothing in a
+four-float array stops a reader from taking it as [south, west, north, east]. That transposed
+reading is legal for most of the globe and puts the box in the wrong hemisphere, which is the
+same silent defect `_check_lonlat` exists to catch and cannot catch inside an array of four.
+Named fields make it unspellable. An adapter that must emit RFC 7946's array builds it from
+these four, in that order, at the edge where it is writing GeoJSON anyway.
+
+A box is not a Polygon and is not a substitute for one. It is the coarse extent a source
+states about itself — a coverage envelope, a search area, a tile — and a consumer that draws
+it as a shape is drawing something the source did not describe. Where the source really does
+describe a region, that region is a Polygon or a MultiPolygon.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `max_lat` | number | **yes** | North edge, WGS84 degrees. (≥ -90; ≤ 90) |
+| `max_lon` | number | **yes** | East edge, WGS84 degrees. (≥ -180; ≤ 180) |
+| `min_lat` | number | **yes** | South edge, WGS84 degrees. (≥ -90; ≤ 90) |
+| `min_lon` | number | **yes** | West edge, WGS84 degrees. (≥ -180; ≤ 180) |
+| `vertical` | [VerticalExtent](#verticalextent) \| null | no | Floor and ceiling, when the source states a volume. Default `null`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
 
 ### Integrity
 
@@ -92,6 +148,50 @@ belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
 
+### MultiLineString
+
+Several lines that are one thing — a route with a gap, a corridor in two legs.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `coordinates` | array&lt;array&lt;array&lt;number&gt;&gt;&gt; | **yes** | (min items 1) |
+| `type` | `"MultiLineString"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### MultiPoint
+
+Several points that are ONE thing — a scatter of detections from one report.
+
+Not a list of `Point` objects, because a list of geometries is a list of objects and this is
+one object with a discontinuous location. The difference is visible the moment a consumer
+counts contacts.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `coordinates` | array&lt;array&lt;number&gt;&gt; | **yes** | (min items 1) |
+| `type` | `"MultiPoint"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### MultiPolygon
+
+Several polygons that are one thing — an airspace in disjoint lateral parts.
+
+The ring rules are `Polygon`'s and are enforced per part, for the reason they are enforced
+there: a ring that arrives open is a source or adapter defect, and closing it invents an edge
+the source never stated.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `coordinates` | array&lt;array&lt;array&lt;array&lt;number&gt;&gt;&gt;&gt; | **yes** | (min items 1) |
+| `type` | `"MultiPolygon"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
 ### ObjectType
 
 What we push OUT — the egress direction, e.g. to TAK as a drawing object.
@@ -106,6 +206,48 @@ member rather than a null wherever the enum has one.
 | `ROUTE` |
 | `CONTROL_MEASURE` |
 | `ANNOTATION` |
+
+### OperationalStatus
+
+What state the source says a thing is in, in the SOURCE's vocabulary, namespaced.
+
+THERE IS NO ENUM HERE AND THERE WILL NOT BE ONE. "SERVICEABLE", "DEGRADED", "MISSION CAPABLE",
+"RED" and "U/S" come from five different domains and mean five different things, and a closed
+CDM vocabulary would have to map each of them onto a member — which is a judgement about
+somebody else's operational language, made inside a translator, invisible in the output, and
+exactly what Rule 6 forbids. `namespace` says whose vocabulary `state` belongs to, so a
+consumer meeting an unfamiliar value can find out what it means instead of guessing; a
+consumer MUST NOT compare `state` across namespaces.
+
+`since` is when the state began, not when it was reported. Absent means the source did not
+say — never the receipt time, which would make every restart look like a state change.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `attributes` | object | no | Status-specific source fields with no canonical home. |
+| `namespace` | string | **yes** | Whose vocabulary `state` is in — normally the source format's name. Required: an unnamespaced status is a word with no owner. (min length 1) |
+| `since` | string \| null | no | When the state began. None = the source did not say. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `state` | string | **yes** | The source's own token, verbatim and untranslated. (min length 1) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Period
+
+A closed or open-ended interval. `start` required, `end` optional and open-ended if absent.
+
+`start` is required and `end` is not, because that asymmetry is what the sources state: an
+activation begins at a stated instant and ends "until further notice" far more often than the
+reverse. An interval with neither bound is not a period, it is the absence of one, and the
+field holding a Period is optional for exactly that case.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `end` | string \| null | no | When it closes. None = open-ended, never 'unknown'. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `start` | string | **yes** | When the interval opens. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
 
 ### Point
 
@@ -123,6 +265,182 @@ belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
 | --- | --- | --- | --- |
 | `coordinates` | array&lt;array&lt;array&lt;number&gt;&gt;&gt; | **yes** | (min items 1) |
 | `type` | `"Polygon"` | no |  |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Position
+
+A fix. Both coordinates required — that is how the null-never-zero rule is structural.
+
+An unknown position is the ABSENCE of this object (`entity.position is None`), never a
+Position holding zeros. Because lat and lon are required here, an adapter cannot express
+"unknown" as (0, 0) even by accident: it has to either omit the Position or state a real
+coordinate. Coordinate zero is a real point in the Gulf of Guinea, and a contact painted
+there is a contact that does not exist.
+
+`accuracy_m` absent means unknown accuracy, NOT perfect accuracy. Zero would mean a fix
+with no error, which no sensor produces.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `accuracy_m` | number \| null | no | Metres, 1-sigma. None = unknown, never 0. Default `null`. (≥ 0) |
+| `alt_m` | number \| null | no | Metres HAE. None = unknown. Default `null`. |
+| `lat` | number | **yes** | WGS84 decimal degrees. (≥ -90; ≤ 90) |
+| `lon` | number | **yes** | WGS84 decimal degrees. (≥ -180; ≤ 180) |
+| `position_source` | [PositionSource](#positionsource) | **yes** | How the fix was obtained — the field that survives GNSS denial. |
+| `vertical` | [VerticalPosition](#verticalposition) \| null | no | The height AS THE SOURCE STATED IT — unit and datum carried, never converted. `alt_m` above stays the canonical HAE-in-metres projection and is None whenever the source's datum is not HAE. Default `null`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### PositionSource
+
+How the position was obtained. Load-bearing in a GNSS-denied environment.
+
+This is the field that lets a commander tell a fix from a guess. When PNTMAP reports
+jamming over an area, every GNSS-sourced position inside that area becomes suspect and
+every INERTIAL or MANUAL one does not — a distinction that is impossible to make after
+the fact if the adapter flattened them all to "position".
+
+Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
+
+member rather than a null wherever the enum has one.
+
+| Value |
+| --- |
+| `GNSS` |
+| `INERTIAL` |
+| `MANUAL` |
+| `ESTIMATED` |
+
+### Quality
+
+How good the source says its own data is. Four ways of saying it, none derived.
+
+`confidence` is 0..1 and comparable across sources; `source_quality` is the source's OWN
+grade, a free string, because ASTERIX's track quality, AIS's position accuracy flag and a
+NATO track's evaluation code are three ordinal scales with no defined mapping between them
+and inventing one would be a fusion decision made inside a translator.
+
+`uncertainty` is a NAMED dict — `{"along_track_m": 40.0, "cross_track_m": 12.0}` — rather
+than a single number, because an error ellipse is not a radius and flattening it loses the
+orientation that made it worth sending. Names are the source's; the CDM does not fix a
+vocabulary here, and the unit belongs in the key exactly as `signal_strength_dbm` carries
+its own unit in its name.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `accuracy_m` | number \| null | no | Metres, 1-sigma. None = unknown, never 0. Default `null`. (≥ 0) |
+| `confidence` | number \| null | no | 0..1. None = unknown; 0 means certainty-that-not, which is a claim. Default `null`. (≥ 0; ≤ 1) |
+| `source_quality` | string \| null | no | The source's own grade, verbatim. None = the source stated none. Default `null`. (min length 1) |
+| `uncertainty` | object&lt;string, number&gt; | no | Named components, e.g. along_track_m / cross_track_m. The unit is in the key. Empty = the source named none. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Residual
+
+Source information the CDM does not model, kept under the name of the format it came from.
+
+§28's container, and its two rules are load-bearing in opposite directions:
+
+1. **It MUST identify its origin.** `namespace` is the source format's own name — the same
+   string as the adapter's `metadata.format.name` — so a reader meeting an unfamiliar key
+   inside `data` can find out which standard's vocabulary it belongs to. An unnamespaced bag
+   of leftovers is the free-form dict this model exists to replace.
+2. **It MUST NOT be treated as semantically trusted merely because it survived translation.**
+   A residual says "the source said this and the CDM has no home for it". It is a fact about
+   the source RECORD, not an assertion about the world. A consumer MUST NOT promote a
+   residual value into a canonical field, and a later adapter MUST NOT read another adapter's
+   residual as an input — ARCHITECTURE.md §5 states both as normative text.
+
+`data` preserves the source's own STRUCTURE, which is why it is a dict and not a list of
+dotted paths: `lossless.residual()` learned that the hard way when a two-element list came
+back as two keys named `affected_constellations[0]` and `[1]`, satisfying the never-drop rule
+in the letter while destroying the reader's ability to see a list.
+
+THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE THIS YET, deliberately. ARCHITECTURE.md
+§5 rules that they keep their `attributes` / `payload` parking under `source_extras` through
+the whole of Part 1 and declare `residual: legacy` in their manifests, because the
+information is already preserved and paying for a placement change with every golden file and
+every downstream consumer buys nothing a reader can use (§29: no breaking change for
+stylistic cleanliness). Every Part 2 adapter declares `residual: structured` and uses this.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | object | no | The unconsumed source structure, preserved as the source shaped it. |
+| `namespace` | string | **yes** | The source format's name — normally metadata.format.name. Required. (min length 1) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### Route
+
+Ordered waypoints, the legs between them, and the route's own metadata.
+
+At least two waypoints, because a route to one place from nowhere is a position. `sequence`
+values must be distinct — two waypoints numbered 3 make the order unrecoverable, which is the
+single thing `sequence` exists to preserve — and every leg must name sequences that exist,
+because a leg to a waypoint nobody sent is a route with a hole in it that renders as a line
+to the origin.
+
+Legs may be EMPTY. A source that sends points and no segments has described a route whose
+legs are the implied consecutive pairs, and manufacturing those pairs here would publish
+segments the source never stated — including, for a route the source meant as a set of
+reporting points, segments that are not flyable.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `legs` | array&lt;[RouteLeg](#routeleg)&gt; | no | Segments the SOURCE stated. Empty = the source stated none; consecutive pairs are NOT invented here. |
+| `metadata` | object | no | Route-level source fields with no canonical home — a procedure name, a flight rules letter, an airway designator. |
+| `waypoints` | array&lt;[Waypoint](#waypoint)&gt; | **yes** | At least two. Ordered by `sequence`, not by list position. (min items 2) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### RouteLeg
+
+One segment between two waypoints, addressed BY SEQUENCE and not by index.
+
+`distance_m` and `course_deg` are optional because they are the SOURCE's numbers when the
+source states them, and nothing computes them here. Two waypoints determine a great-circle
+distance, so a computed value is always available — and a computed value that disagrees with
+the source's is a second truth in the same record, with nothing to say which one a consumer
+should plan against. The source's own leg lengths often encode a procedure the geometry does
+not (a DME arc, a holding pattern), which is exactly the information a computation destroys.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `attributes` | object | no | Leg-specific source fields with no canonical home. |
+| `course_deg` | number \| null | no | Degrees true, [0, 360), as the source states it. None = not stated. Default `null`. (≥ 0; &lt; 360) |
+| `distance_m` | number \| null | no | Metres, as the SOURCE states it. None = not stated. Default `null`. (≥ 0) |
+| `from_seq` | integer | **yes** | `sequence` of the waypoint this leg leaves. (≥ 0) |
+| `to_seq` | integer | **yes** | `sequence` of the waypoint this leg reaches. (≥ 0) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### SourceHash
+
+A digest of the source record, as the ADAPTER computed it. Carried, never computed here.
+
+Rule 5 asks for "source hash where appropriate", and the appropriateness is the adapter's
+judgement: a hash of a 3-byte AIS sentence identifies nothing an external id does not, while a
+hash of a 4 MB NITF segment is how an auditor proves the bytes on the wire were the bytes
+described. So it is optional, and its absence means the adapter did not compute one.
+
+NO HASHING HAPPENS IN THIS PACKAGE. `tests/test_cdm_boundary.py` asserts that no module under
+`synapse_cdm/` imports `hashlib` or any crypto library, and this model does not change that:
+it is a container for a value produced outside the contract layer, exactly as `Integrity` is
+a container for a signature this package does not make. `algorithm` is therefore required and
+free-form — a digest with no algorithm cannot be reproduced by anyone, and an enum would make
+the day SHA-3 arrives a MAJOR bump for a string nobody branches on.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `algorithm` | string | **yes** | e.g. sha256. Named by the producer. (min length 1) |
+| `value` | string | **yes** | The digest, in the producer's own encoding. (min length 1) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
@@ -159,8 +477,191 @@ data and hide it from an operator. There is no safe default, so there is no defa
 | --- | --- | --- | --- |
 | `adapter` | string | **yes** | Adapter name, e.g. pntmap. (min length 1) |
 | `adapter_version` | string | **yes** | Adapter semver. (min length 1) |
+| `format_name` | string \| null | no | The source STANDARD's name, e.g. 'ASTERIX'. Filled from the adapter's own declared metadata.format; None only for an adapter that declares none. Default `null`. |
+| `format_version` | string \| null | no | The edition of that standard, e.g. 'Cat 062 ed 1.18'. None = no document in this tree states which edition the adapter targets — a reading, never a gap filled in. Default `null`. |
+| `observed_at` | string \| null | no | The instant the SOURCE RECORD states for itself, when it states one and no canonical field already carries it. Event.observed_at stays the event's own time; this is the record's. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `original_id` | string \| null | no | The source record's OWN identifier, as a first-class provenance field. Distinct from source_ids, which is the identity of the THING; this is the identity of the RECORD that described it. Default `null`. |
+| `record_index` | integer \| null | no | Which record of a multi-record payload this object came from, 0-based. None = the payload was not a sequence, or the adapter does not track it. Never -1 and never 0-as-unknown: 0 is the first record. Default `null`. (≥ 0) |
+| `source_hash` | [SourceHash](#sourcehash) \| null | no | Digest of the source record, computed by the adapter. Default `null`. |
 | `synthetic` | boolean | **yes** | true for anything not from a real source (TR-12). |
 | `system` | string | **yes** | The external system this came from. (min length 1) |
+| `transformations` | array&lt;string&gt; | no | Rule 5's transformation chain: the TRANSFORMS reasons this adapter applied, in the order it applied them. Empty = nothing was transformed, which is a claim the lossless check can contradict. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### TemporalValidity
+
+The four times an object can have, separated because they answer different questions.
+
+§27's four, and the separation is the point:
+
+    observed_at   when the SOURCE saw the state
+    valid_from    when the state BEGAN, which may be long before anyone saw it
+    valid_to      when it ceased. None = still current, never "unknown"
+    effective     the period the source declares the object OPERATIVE — an airspace
+                  reservation published on Monday, effective Wednesday 0600 to 1200
+
+An airspace restriction shows why one timestamp cannot do the work of four: it is observed
+when the NOTAM is read, valid from the moment it is published, and effective for a window
+that has not started yet. Collapsing those into "the time" is how a restriction gets drawn on
+a map twelve hours early.
+
+EVERY FIELD IS OPTIONAL AND THAT IS DELIBERATE. A source that states only one of the four
+says one of the four; a model that required more would be filled by adapters copying one
+instant into three fields, and three copies of one reading look like corroboration. The
+PRESENCE of this block is itself information — the source described validity in time — and
+a block with nothing in it is the absence of the block.
+
+§27's epoch rule, stated where it is enforced: unknown time is NOT `1970-01-01` and NOT
+`now()`. It is the absence of the field. `Timestamp` does not refuse the epoch instant, and
+that is a decision rather than an omission — 1970-01-01T00:00:00Z is a real instant, some
+sources legitimately carry it as a base epoch, and a validator that refused it would refuse
+real data in order to catch a defect that lives in the ADAPTER. The rule is therefore
+enforced where the substitution would be made, in review of the adapter and in the
+conformance suite's own reading, and it is written down here and in `docs/docs/cdm/policies`.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `effective` | [Period](#period) \| null | no | The period the source declares the object operative. Default `null`. |
+| `observed_at` | string \| null | no | When the source saw it. None = the source did not say. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `valid_from` | string \| null | no | When the state began. None = the source did not say. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `valid_to` | string \| null | no | When it ceased. None = still current / open-ended. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### VerticalExtent
+
+Lower and upper bounds of a volume. An airspace's floor and ceiling.
+
+Both optional and both may be absent: "surface to unlimited" is a real airspace and it is
+spelled by two absences, not by 0 and 999999. An extent with neither bound is still worth
+carrying, because its PRESENCE says the source described a volume rather than a surface.
+
+A bound may be stated in a different unit or against a different datum from the other — a
+danger area really is published as "surface to FL195" — so no comparison between the two is
+attempted here. Comparing 0 AGL with FL195 would need a terrain model and a pressure, and a
+validator that guessed at either would refuse real airspace.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `lower` | [VerticalPosition](#verticalposition) \| null | no | Floor. None = unstated. Default `null`. |
+| `upper` | [VerticalPosition](#verticalposition) \| null | no | Ceiling. None = unstated. Default `null`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### VerticalPosition
+
+A height, with the unit it was stated in and the datum it was measured from.
+
+§26's rule made structural: `value` is never alone. Three fields are required together
+because any two of them without the third is the ambiguity the policy exists to prevent —
+600 could be metres or feet, and 600 ft AGL over the Alps is not 600 ft MSL.
+
+NO CONVERSION HAPPENS HERE. This model records; it does not normalise. `models.Position`
+keeps `alt_m` as the canonical HAE-in-metres projection and a validator (there, not here)
+requires the two to agree when both are stated and the reference really is HAE. When the
+source's altitude is anything else, `alt_m` stays `None` — Rule 2, unknown is not a
+substituted value — and this block carries what the source actually said. Converting MSL to
+HAE needs a geoid model, converting a flight level needs the local QNH, and an adapter that
+performed either silently would be publishing a number nobody measured.
+
+`uncertainty` is in the SAME unit as `value`, and is one-sigma, matching
+`Position.accuracy_m`'s convention. Absent means unknown, never zero: zero would assert a
+height with no error, which no altimeter and no GNSS receiver produces.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `reference` | [VerticalReference](#verticalreference) | **yes** | The datum. UNKNOWN is a member, not null. |
+| `uncertainty` | number \| null | no | 1-sigma, in the same unit as `value`. None = unknown, never 0. Default `null`. (≥ 0) |
+| `unit` | [VerticalUnit](#verticalunit) | **yes** | Never inferred; see VerticalUnit. |
+| `value` | number | **yes** | The number the source stated, in `unit`. |
+
+`additionalProperties: false` — unknown keys are rejected. Source-specific fields
+belong in the declared extension bags (`Entity.attributes`, `Event.payload`).
+
+### VerticalReference
+
+What a `VerticalPosition` is measured FROM. The datum, never assumed.
+
+The six here are the ones the formats in scope actually state. HAE is the WGS84 ellipsoid —
+what a GNSS receiver computes natively and what `Position.alt_m` has always meant. MSL is a
+geoid model, and the separation between the two reaches 100 m in places, so a silent
+substitution moves an aircraft by more than its own vertical separation minimum. AGL is
+height above the terrain beneath the object, which is not a datum at all but a difference,
+and is therefore not convertible to either of the others without a terrain model. BARO is an
+altimeter reading against a stated or unstated pressure setting; FL is BARO against the
+standard setting.
+
+UNKNOWN is a MEMBER, unlike `VerticalUnit`'s absent one, and the asymmetry is the point: a
+number with no unit cannot be rendered at all, whereas a number whose datum is unstated can
+still be shown to an operator beside the words "reference unknown". That is a worse fix than
+a referenced one and a far better one than a fix silently labelled MSL.
+
+Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
+
+member rather than a null wherever the enum has one.
+
+| Value |
+| --- |
+| `HAE` |
+| `MSL` |
+| `AGL` |
+| `BARO` |
+| `FL` |
+| `UNKNOWN` |
+
+### VerticalUnit
+
+The unit a `VerticalPosition` states its number in. §26's "value plus unit", closed.
+
+Three members and no UNKNOWN, which is a departure from this module's opening paragraph and
+is the unit policy rather than an oversight. §26 forbids "ambiguous naked numeric fields
+where unit ambiguity matters"; a vertical measurement whose unit nobody knows IS that naked
+number wearing a wrapper, and recording it would let a consumer render 300 as metres when
+the source meant feet. An adapter that cannot read the unit therefore has no vertical
+position to state — it parks the raw number in the residual, where nothing reads it as a
+height. Absence is expressible (the whole `VerticalPosition` is optional); an unknown unit
+is not, deliberately.
+
+`FL` is a unit as well as a reference because a flight level IS its own scale: FL350 is
+"35000 feet on the 1013.25 hPa isobaric surface", a number that is neither metres nor feet
+above anything on the ground. Converting it needs the local pressure, which the adapter does
+not have, so it is carried as it was stated.
+
+Closed vocabulary — a value outside this list is invalid, and `UNKNOWN` is a
+
+member rather than a null wherever the enum has one.
+
+| Value |
+| --- |
+| `m` |
+| `ft` |
+| `FL` |
+
+### Waypoint
+
+One ordered point of a route.
+
+`sequence` is REQUIRED and is the route's order of record. List position would be the obvious
+alternative and it is the wrong one: a route arrives split across messages, is filtered, is
+re-sent with one leg amended, and every one of those operations preserves the numbers while
+destroying the positions. A waypoint that knows its own sequence can be reassembled; one that
+knows only where it happened to sit in an array cannot.
+
+`altitude_constraint` is a `VerticalPosition` rather than a bare number for §26's reason: a
+crossing restriction published as "FL240" and one published as "8000 ft MSL" are different
+constraints and the difference is in the unit and the datum, not in the number.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `altitude_constraint` | [VerticalPosition](#verticalposition) \| null | no | A crossing restriction, with its unit and datum. Default `null`. |
+| `eta` | string \| null | no | Estimated time at this waypoint. None = not estimated. Default `null`. (pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`) |
+| `name` | string \| null | no | The source's own designator, e.g. an ICAO fix name. None = unnamed; never an empty string. Default `null`. (min length 1) |
+| `position` | [Position](#position) | **yes** | Where the waypoint is. |
+| `sequence` | integer | **yes** | 0-based order of record. Required — see the class docstring. (≥ 0) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields
 belong in the declared extension bags (`Entity.attributes`, `Event.payload`).

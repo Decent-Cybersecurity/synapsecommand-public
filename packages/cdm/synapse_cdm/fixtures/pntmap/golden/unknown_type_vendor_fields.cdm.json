@@ -31,14 +31,24 @@
       "alt_m": null,
       "lat": 57.045,
       "lon": 21.02,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "pntmap",
       "adapter_version": "1.0.0",
+      "format_name": "PNTMAP GNSS interference alert",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "PNTMAP"
+      "system": "PNTMAP",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -46,6 +56,7 @@
         "system": "PNTMAP"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:44:19.000Z",
     "valid_to": null
@@ -78,23 +89,33 @@
       "signal_strength_dbm": -88.25,
       "source_extras": {}
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "74dbb71a-86f1-5e22-9da4-ad618600c19b"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "ADVISORY",
     "source": {
       "adapter": "pntmap",
       "adapter_version": "1.0.0",
+      "format_name": "PNTMAP GNSS interference alert",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "PNTMAP"
+      "system": "PNTMAP",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "PNTMAP-2026-04-29-0119",
         "system": "PNTMAP"
       }
-    ]
+    ],
+    "status": null
   }
 ]

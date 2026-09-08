@@ -49,14 +49,24 @@
       "alt_m": 31.4,
       "lat": 59.3762,
       "lon": 28.1908,
-      "position_source": "GNSS"
+      "position_source": "GNSS",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
+      "format_name": "Cursor-on-Target (TAK)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "TAK"
+      "system": "TAK",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -64,6 +74,7 @@
         "system": "TAK"
       }
     ],
+    "status": null,
     "symbol": "10230000000000000000",
     "valid_from": "2026-04-29T06:11:20.000Z",
     "valid_to": "2026-04-29T06:16:20.000Z"
@@ -82,23 +93,33 @@
       "event_id_basis": "event/@uid + event/@time",
       "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "db0a297e-fd50-5e82-a169-6cb5ede76ae1"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
+      "format_name": "Cursor-on-Target (TAK)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "TAK"
+      "system": "TAK",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "ANDROID-352629101234567",
         "system": "TAK"
       }
-    ]
+    ],
+    "status": null
   }
 ]

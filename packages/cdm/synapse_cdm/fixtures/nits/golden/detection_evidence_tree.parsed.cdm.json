@@ -266,14 +266,24 @@
       "alt_m": 12.0,
       "lat": 56.9496,
       "lon": 24.1052,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4676 / AEDP-12 \u2014 NATO ISR Tracking Standard (NITS)",
+      "format_version": "AEDP-12 Edition B Version 2",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "NITS"
+      "system": "NITS",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -285,6 +295,7 @@
         "system": "NITS_UID"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:00.000Z",
     "valid_to": null
@@ -293,6 +304,8 @@
     "entity_id": "585014da-039d-54c1-8e9b-9a4b52bd4a26",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2026-04-29T06:00:00.000Z",
@@ -301,16 +314,24 @@
           "alt_m": 12.0,
           "lat": 56.9496,
           "lon": 24.1052,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4676 / AEDP-12 \u2014 NATO ISR Tracking Standard (NITS)",
+      "format_version": "AEDP-12 Edition B Version 2",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "NITS"
+      "system": "NITS",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -322,6 +343,7 @@
         "system": "NITS_UID"
       }
     ],
+    "status": null,
     "track_id": "1a343d93-1efe-59d9-a6a7-3569aa0b08a7",
     "track_quality": null
   },
@@ -570,21 +592,31 @@
       "severity_basis": "INFO. NITS grades nothing \u2014 not even its own COLLISION motion event, whose definition \u00a72.5.37 hands to the data producer. Grading a producer-defined event would mean grading something whose threshold we do not know",
       "synthetic_basis": "essence ['SIMULATED'] parked and checked against the deployment declaration source.synthetic=True; essence never sets it"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4676 / AEDP-12 \u2014 NATO ISR Tracking Standard (NITS)",
+      "format_version": "AEDP-12 Edition B Version 2",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "NITS"
+      "system": "NITS",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "f1c70000-0000-8000-8000-000000000060",
         "system": "NITS_UID"
       }
-    ]
+    ],
+    "status": null
   }
 ]

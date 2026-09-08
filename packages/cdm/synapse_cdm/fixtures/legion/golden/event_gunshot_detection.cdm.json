@@ -33,23 +33,33 @@
         }
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "f44cfe73-bd44-5120-a7da-c9794fde918c"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
+      "format_name": "Picogrid Legion Platform API v3",
+      "format_version": "v3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "LEGION"
+      "system": "LEGION",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "f1c70000-0003-8000-8000-000000000001",
         "system": "LEGION"
       }
-    ]
+    ],
+    "status": null
   }
 ]

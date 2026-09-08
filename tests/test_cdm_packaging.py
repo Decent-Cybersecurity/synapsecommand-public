@@ -321,11 +321,12 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.0.0", "2.0.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.0.0", "2.1.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "2.0.0 and 2.0.0. They are EQUAL and that is a coincidence of two independently argued "
-        "major changes — MIGRATIONS.md's for the schema, ADR 0005's for the package — and not a "
-        "derivation. If you are reading this because you bumped one of them: that is the expected "
+        "2.0.0 and 2.1.0. They are UNEQUAL again — round P3 moved the schema a MINOR for the CDM "
+        "foundation primitives and did not move the package, because a package release is P8's "
+        "and PR's business — and the inequality is as much a coincidence as the equality it "
+        "replaced. If you are reading this because you bumped one of them: that is the expected "
         "event, and the fix is to update this assertion to the two numbers you now mean, not to "
         "re-link them"
     )

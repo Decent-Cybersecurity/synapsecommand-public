@@ -143,14 +143,24 @@
       "alt_m": 1500.0,
       "lat": 57.51199996098876,
       "lon": 21.88400002196431,
-      "position_source": "INERTIAL"
+      "position_source": "INERTIAL",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4586",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4586 \u2014 Standard Interfaces of UAV Control System (UCS), DLI telemetry",
+      "format_version": "Edition 3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4586"
+      "system": "STANAG4586",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -158,6 +168,7 @@
         "system": "STANAG4586"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:12:44.000Z",
     "valid_to": null
@@ -166,6 +177,8 @@
     "entity_id": "e6e3f161-a501-5446-9775-010bdfc1bfae",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2026-04-29T06:12:44.000Z",
@@ -174,16 +187,24 @@
           "alt_m": 1500.0,
           "lat": 57.51199996098876,
           "lon": 21.88400002196431,
-          "position_source": "INERTIAL"
+          "position_source": "INERTIAL",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4586",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4586 \u2014 Standard Interfaces of UAV Control System (UCS), DLI telemetry",
+      "format_version": "Edition 3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4586"
+      "system": "STANAG4586",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -191,6 +212,7 @@
         "system": "STANAG4586"
       }
     ],
+    "status": null,
     "track_id": "f109da18-73dd-5b33-8422-7736d7e6088a",
     "track_quality": null
   }

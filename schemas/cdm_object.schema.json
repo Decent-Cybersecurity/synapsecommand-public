@@ -11,6 +11,126 @@
       "title": "Affiliation",
       "type": "string"
     },
+    "Area": {
+      "additionalProperties": false,
+      "description": "A region with lateral geometry, optional vertical limits and optional time validity.\n\nThe three together are what an airspace, a danger area, a jamming footprint and a search box\nall are, and the reason they are one model is that any two of them without the third is a\ndifferent claim: a polygon with no ceiling is the whole column of sky above it, and a polygon\nwith no validity is permanent.\n\n`geometry` is a `Polygon` or a `MultiPolygon` and nothing else. A point or a line is not an\narea \u2014 a corridor drawn as a line has no width, and a consumer that buffered it would be\nchoosing the width itself, which is an operational decision an adapter may not make (Rule 6).",
+      "properties": {
+        "bounds": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The coarse extent the SOURCE declared about this area, when it declared one. NEVER computed from `geometry` here: a sensor's declared coverage rectangle and its footprint's envelope are different facts and are allowed to differ, so a computed value would overwrite one with the other."
+        },
+        "geometry": {
+          "description": "Lateral extent. WGS84, [lon, lat].",
+          "discriminator": {
+            "mapping": {
+              "MultiPolygon": "#/$defs/MultiPolygon",
+              "Polygon": "#/$defs/Polygon"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Polygon"
+            },
+            {
+              "$ref": "#/$defs/MultiPolygon"
+            }
+          ],
+          "title": "Geometry"
+        },
+        "validity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemporalValidity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the area applies. None = the source stated no times."
+        },
+        "vertical": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalExtent"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Floor and ceiling. None = the source stated no vertical limits, which is not the same as surface-to-unlimited (that is a VerticalExtent with both bounds absent, and it says the source described the column)."
+        }
+      },
+      "required": [
+        "geometry"
+      ],
+      "title": "Area",
+      "type": "object"
+    },
+    "BoundingBox": {
+      "additionalProperties": false,
+      "description": "A rectangular region in WGS84, bounds NAMED rather than positional.\n\nWhy not RFC 7946 \u00a75's `bbox` array: it is [west, south, east, north] and nothing in a\nfour-float array stops a reader from taking it as [south, west, north, east]. That transposed\nreading is legal for most of the globe and puts the box in the wrong hemisphere, which is the\nsame silent defect `_check_lonlat` exists to catch and cannot catch inside an array of four.\nNamed fields make it unspellable. An adapter that must emit RFC 7946's array builds it from\nthese four, in that order, at the edge where it is writing GeoJSON anyway.\n\nA box is not a Polygon and is not a substitute for one. It is the coarse extent a source\nstates about itself \u2014 a coverage envelope, a search area, a tile \u2014 and a consumer that draws\nit as a shape is drawing something the source did not describe. Where the source really does\ndescribe a region, that region is a Polygon or a MultiPolygon.",
+      "properties": {
+        "max_lat": {
+          "description": "North edge, WGS84 degrees.",
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Max Lat",
+          "type": "number"
+        },
+        "max_lon": {
+          "description": "East edge, WGS84 degrees.",
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Max Lon",
+          "type": "number"
+        },
+        "min_lat": {
+          "description": "South edge, WGS84 degrees.",
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Min Lat",
+          "type": "number"
+        },
+        "min_lon": {
+          "description": "West edge, WGS84 degrees.",
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Min Lon",
+          "type": "number"
+        },
+        "vertical": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalExtent"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Floor and ceiling, when the source states a volume."
+        }
+      },
+      "required": [
+        "min_lon",
+        "min_lat",
+        "max_lon",
+        "max_lat"
+      ],
+      "title": "BoundingBox",
+      "type": "object"
+    },
     "Entity": {
       "additionalProperties": false,
       "description": "Anything that exists on the map, at a stated time, with stated confidence.",
@@ -97,8 +217,32 @@
           "default": null,
           "description": "None = position unknown. NEVER a Position holding zeros."
         },
+        "quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quality"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor."
+        },
+        "residual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Residual"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source information the CDM does not model, under the name of the format it came from (\u00a728). None = nothing was left over, or \u2014 for the fourteen adapters shipped before this container existed \u2014 the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md \u00a75 rules they keep through Part 1."
+        },
         "schema_version": {
-          "default": "2.0.0",
+          "default": "2.1.0",
           "description": "Semver of the CDM this object was written against.",
           "title": "Schema Version",
           "type": "string"
@@ -115,6 +259,18 @@
           "minItems": 1,
           "title": "Source Ids",
           "type": "array"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationalStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own operational state for this object, namespaced. None = the source stated none."
         },
         "symbol": {
           "anyOf": [
@@ -218,6 +374,9 @@
               "discriminator": {
                 "mapping": {
                   "LineString": "#/$defs/LineString",
+                  "MultiLineString": "#/$defs/MultiLineString",
+                  "MultiPoint": "#/$defs/MultiPoint",
+                  "MultiPolygon": "#/$defs/MultiPolygon",
                   "Point": "#/$defs/Point",
                   "Polygon": "#/$defs/Polygon"
                 },
@@ -232,6 +391,15 @@
                 },
                 {
                   "$ref": "#/$defs/Polygon"
+                },
+                {
+                  "$ref": "#/$defs/MultiPoint"
+                },
+                {
+                  "$ref": "#/$defs/MultiLineString"
+                },
+                {
+                  "$ref": "#/$defs/MultiPolygon"
                 }
               ]
             },
@@ -285,6 +453,18 @@
           "title": "Payload",
           "type": "object"
         },
+        "quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quality"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor."
+        },
         "received_at": {
           "description": "When WE took delivery. Never source time.",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
@@ -300,8 +480,20 @@
           "title": "Related Entities",
           "type": "array"
         },
+        "residual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Residual"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source information the CDM does not model, under the name of the format it came from (\u00a728). None = nothing was left over, or \u2014 for the fourteen adapters shipped before this container existed \u2014 the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md \u00a75 rules they keep through Part 1."
+        },
         "schema_version": {
-          "default": "2.0.0",
+          "default": "2.1.0",
           "description": "Semver of the CDM this object was written against.",
           "title": "Schema Version",
           "type": "string"
@@ -321,6 +513,18 @@
           "minItems": 1,
           "title": "Source Ids",
           "type": "array"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationalStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own operational state for this object, namespaced. None = the source stated none."
         }
       },
       "required": [
@@ -625,6 +829,99 @@
       "title": "LineString",
       "type": "object"
     },
+    "MultiLineString": {
+      "additionalProperties": false,
+      "description": "Several lines that are one thing \u2014 a route with a gap, a corridor in two legs.",
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "MultiLineString",
+          "default": "MultiLineString",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "MultiLineString",
+      "type": "object"
+    },
+    "MultiPoint": {
+      "additionalProperties": false,
+      "description": "Several points that are ONE thing \u2014 a scatter of detections from one report.\n\nNot a list of `Point` objects, because a list of geometries is a list of objects and this is\none object with a discontinuous location. The difference is visible the moment a consumer\ncounts contacts.",
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "MultiPoint",
+          "default": "MultiPoint",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "MultiPoint",
+      "type": "object"
+    },
+    "MultiPolygon": {
+      "additionalProperties": false,
+      "description": "Several polygons that are one thing \u2014 an airspace in disjoint lateral parts.\n\nThe ring rules are `Polygon`'s and are enforced per part, for the reason they are enforced\nthere: a ring that arrives open is a source or adapter defect, and closing it invents an edge\nthe source never stated.",
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "MultiPolygon",
+          "default": "MultiPolygon",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "MultiPolygon",
+      "type": "object"
+    },
     "ObjectType": {
       "description": "What we push OUT \u2014 the egress direction, e.g. to TAK as a drawing object.",
       "enum": [
@@ -774,10 +1071,99 @@
       "title": "OesMetadata",
       "type": "object"
     },
+    "OperationalStatus": {
+      "additionalProperties": false,
+      "description": "What state the source says a thing is in, in the SOURCE's vocabulary, namespaced.\n\nTHERE IS NO ENUM HERE AND THERE WILL NOT BE ONE. \"SERVICEABLE\", \"DEGRADED\", \"MISSION CAPABLE\",\n\"RED\" and \"U/S\" come from five different domains and mean five different things, and a closed\nCDM vocabulary would have to map each of them onto a member \u2014 which is a judgement about\nsomebody else's operational language, made inside a translator, invisible in the output, and\nexactly what Rule 6 forbids. `namespace` says whose vocabulary `state` belongs to, so a\nconsumer meeting an unfamiliar value can find out what it means instead of guessing; a\nconsumer MUST NOT compare `state` across namespaces.\n\n`since` is when the state began, not when it was reported. Absent means the source did not\nsay \u2014 never the receipt time, which would make every restart look like a state change.",
+      "properties": {
+        "attributes": {
+          "additionalProperties": true,
+          "description": "Status-specific source fields with no canonical home.",
+          "title": "Attributes",
+          "type": "object"
+        },
+        "namespace": {
+          "description": "Whose vocabulary `state` is in \u2014 normally the source format's name. Required: an unnamespaced status is a word with no owner.",
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the state began. None = the source did not say.",
+          "title": "Since"
+        },
+        "state": {
+          "description": "The source's own token, verbatim and untranslated.",
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "namespace"
+      ],
+      "title": "OperationalStatus",
+      "type": "object"
+    },
+    "Period": {
+      "additionalProperties": false,
+      "description": "A closed or open-ended interval. `start` required, `end` optional and open-ended if absent.\n\n`start` is required and `end` is not, because that asymmetry is what the sources state: an\nactivation begins at a stated instant and ends \"until further notice\" far more often than the\nreverse. An interval with neither bound is not a period, it is the absence of one, and the\nfield holding a Period is optional for exactly that case.",
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When it closes. None = open-ended, never 'unknown'.",
+          "title": "End"
+        },
+        "start": {
+          "description": "When the interval opens.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start"
+      ],
+      "title": "Period",
+      "type": "object"
+    },
     "PlanObject": {
       "additionalProperties": false,
       "description": "What we push OUT: a drawing a commander's plan puts on someone else's map.\n\nGeometry is REQUIRED here, unlike on Event. An overlay with no geometry cannot be drawn,\nso an egress adapter would have to either invent a location or silently drop the object \u2014\nand a COA sketch that quietly fails to appear on the TAK client is the worst of the three\noutcomes, because everyone assumes it arrived.",
       "properties": {
+        "area": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Area"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lateral geometry with vertical limits and time validity, when this object is a region. `geometry` above stays the required projection of its lateral extent."
+        },
         "expires_at": {
           "anyOf": [
             {
@@ -790,7 +1176,7 @@
             }
           ],
           "default": null,
-          "description": "When the drawing should disappear. None = until explicitly removed \u2014 which for a stale COA sketch on a live map is a decision, so state it.",
+          "description": "When the drawing should disappear. None = until explicitly removed \u2014 which for a stale COA sketch on a live map is a decision, so state it. KEPT beside `validity` below, of which it is the projection: a receiving client that only knows how to expire an overlay reads this one field.",
           "title": "Expires At"
         },
         "geometry": {
@@ -798,6 +1184,9 @@
           "discriminator": {
             "mapping": {
               "LineString": "#/$defs/LineString",
+              "MultiLineString": "#/$defs/MultiLineString",
+              "MultiPoint": "#/$defs/MultiPoint",
+              "MultiPolygon": "#/$defs/MultiPolygon",
               "Point": "#/$defs/Point",
               "Polygon": "#/$defs/Polygon"
             },
@@ -812,6 +1201,15 @@
             },
             {
               "$ref": "#/$defs/Polygon"
+            },
+            {
+              "$ref": "#/$defs/MultiPoint"
+            },
+            {
+              "$ref": "#/$defs/MultiLineString"
+            },
+            {
+              "$ref": "#/$defs/MultiPolygon"
             }
           ],
           "title": "Geometry"
@@ -856,8 +1254,44 @@
         "object_type": {
           "$ref": "#/$defs/ObjectType"
         },
+        "quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quality"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor."
+        },
+        "residual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Residual"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source information the CDM does not model, under the name of the format it came from (\u00a728). None = nothing was left over, or \u2014 for the fourteen adapters shipped before this container existed \u2014 the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md \u00a75 rules they keep through Part 1."
+        },
+        "route": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Route"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ordered waypoints and legs, when this object IS a route (ObjectType.ROUTE). `geometry` above stays REQUIRED and stays the LineString projection of the waypoints, so every consumer written before routes existed still draws it."
+        },
         "schema_version": {
-          "default": "2.0.0",
+          "default": "2.1.0",
           "description": "Semver of the CDM this object was written against.",
           "title": "Schema Version",
           "type": "string"
@@ -875,11 +1309,35 @@
           "title": "Source Ids",
           "type": "array"
         },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationalStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own operational state for this object, namespaced. None = the source stated none."
+        },
         "style": {
           "additionalProperties": true,
           "description": "Rendering HINTS, not requirements \u2014 stroke, fill, opacity, dash. A receiving client is free to ignore them, so nothing that changes MEANING may live here (an affiliation belongs on the entity, not in a colour).",
           "title": "Style",
           "type": "object"
+        },
+        "validity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemporalValidity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The four times the source states about this object (\u00a727). `expires_at` above is the projection of `validity.valid_to` for clients that read one field; when both are stated they must agree."
         }
       },
       "required": [
@@ -993,6 +1451,18 @@
         "position_source": {
           "$ref": "#/$defs/PositionSource",
           "description": "How the fix was obtained \u2014 the field that survives GNSS denial."
+        },
+        "vertical": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The height AS THE SOURCE STATED IT \u2014 unit and datum carried, never converted. `alt_m` above stays the canonical HAE-in-metres projection and is None whenever the source's datum is not HAE."
         }
       },
       "required": [
@@ -1013,6 +1483,181 @@
       ],
       "title": "PositionSource",
       "type": "string"
+    },
+    "Quality": {
+      "additionalProperties": false,
+      "description": "How good the source says its own data is. Four ways of saying it, none derived.\n\n`confidence` is 0..1 and comparable across sources; `source_quality` is the source's OWN\ngrade, a free string, because ASTERIX's track quality, AIS's position accuracy flag and a\nNATO track's evaluation code are three ordinal scales with no defined mapping between them\nand inventing one would be a fusion decision made inside a translator.\n\n`uncertainty` is a NAMED dict \u2014 `{\"along_track_m\": 40.0, \"cross_track_m\": 12.0}` \u2014 rather\nthan a single number, because an error ellipse is not a radius and flattening it loses the\norientation that made it worth sending. Names are the source's; the CDM does not fix a\nvocabulary here, and the unit belongs in the key exactly as `signal_strength_dbm` carries\nits own unit in its name.",
+      "properties": {
+        "accuracy_m": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metres, 1-sigma. None = unknown, never 0.",
+          "title": "Accuracy M"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0..1. None = unknown; 0 means certainty-that-not, which is a claim.",
+          "title": "Confidence"
+        },
+        "source_quality": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own grade, verbatim. None = the source stated none.",
+          "title": "Source Quality"
+        },
+        "uncertainty": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "Named components, e.g. along_track_m / cross_track_m. The unit is in the key. Empty = the source named none.",
+          "title": "Uncertainty",
+          "type": "object"
+        }
+      },
+      "title": "Quality",
+      "type": "object"
+    },
+    "Residual": {
+      "additionalProperties": false,
+      "description": "Source information the CDM does not model, kept under the name of the format it came from.\n\n\u00a728's container, and its two rules are load-bearing in opposite directions:\n\n1. **It MUST identify its origin.** `namespace` is the source format's own name \u2014 the same\n   string as the adapter's `metadata.format.name` \u2014 so a reader meeting an unfamiliar key\n   inside `data` can find out which standard's vocabulary it belongs to. An unnamespaced bag\n   of leftovers is the free-form dict this model exists to replace.\n2. **It MUST NOT be treated as semantically trusted merely because it survived translation.**\n   A residual says \"the source said this and the CDM has no home for it\". It is a fact about\n   the source RECORD, not an assertion about the world. A consumer MUST NOT promote a\n   residual value into a canonical field, and a later adapter MUST NOT read another adapter's\n   residual as an input \u2014 ARCHITECTURE.md \u00a75 states both as normative text.\n\n`data` preserves the source's own STRUCTURE, which is why it is a dict and not a list of\ndotted paths: `lossless.residual()` learned that the hard way when a two-element list came\nback as two keys named `affected_constellations[0]` and `[1]`, satisfying the never-drop rule\nin the letter while destroying the reader's ability to see a list.\n\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE THIS YET, deliberately. ARCHITECTURE.md\n\u00a75 rules that they keep their `attributes` / `payload` parking under `source_extras` through\nthe whole of Part 1 and declare `residual: legacy` in their manifests, because the\ninformation is already preserved and paying for a placement change with every golden file and\nevery downstream consumer buys nothing a reader can use (\u00a729: no breaking change for\nstylistic cleanliness). Every Part 2 adapter declares `residual: structured` and uses this.",
+      "properties": {
+        "data": {
+          "additionalProperties": true,
+          "description": "The unconsumed source structure, preserved as the source shaped it.",
+          "title": "Data",
+          "type": "object"
+        },
+        "namespace": {
+          "description": "The source format's name \u2014 normally metadata.format.name. Required.",
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "Residual",
+      "type": "object"
+    },
+    "Route": {
+      "additionalProperties": false,
+      "description": "Ordered waypoints, the legs between them, and the route's own metadata.\n\nAt least two waypoints, because a route to one place from nowhere is a position. `sequence`\nvalues must be distinct \u2014 two waypoints numbered 3 make the order unrecoverable, which is the\nsingle thing `sequence` exists to preserve \u2014 and every leg must name sequences that exist,\nbecause a leg to a waypoint nobody sent is a route with a hole in it that renders as a line\nto the origin.\n\nLegs may be EMPTY. A source that sends points and no segments has described a route whose\nlegs are the implied consecutive pairs, and manufacturing those pairs here would publish\nsegments the source never stated \u2014 including, for a route the source meant as a set of\nreporting points, segments that are not flyable.",
+      "properties": {
+        "legs": {
+          "description": "Segments the SOURCE stated. Empty = the source stated none; consecutive pairs are NOT invented here.",
+          "items": {
+            "$ref": "#/$defs/RouteLeg"
+          },
+          "title": "Legs",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Route-level source fields with no canonical home \u2014 a procedure name, a flight rules letter, an airway designator.",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "waypoints": {
+          "description": "At least two. Ordered by `sequence`, not by list position.",
+          "items": {
+            "$ref": "#/$defs/Waypoint"
+          },
+          "minItems": 2,
+          "title": "Waypoints",
+          "type": "array"
+        }
+      },
+      "required": [
+        "waypoints"
+      ],
+      "title": "Route",
+      "type": "object"
+    },
+    "RouteLeg": {
+      "additionalProperties": false,
+      "description": "One segment between two waypoints, addressed BY SEQUENCE and not by index.\n\n`distance_m` and `course_deg` are optional because they are the SOURCE's numbers when the\nsource states them, and nothing computes them here. Two waypoints determine a great-circle\ndistance, so a computed value is always available \u2014 and a computed value that disagrees with\nthe source's is a second truth in the same record, with nothing to say which one a consumer\nshould plan against. The source's own leg lengths often encode a procedure the geometry does\nnot (a DME arc, a holding pattern), which is exactly the information a computation destroys.",
+      "properties": {
+        "attributes": {
+          "additionalProperties": true,
+          "description": "Leg-specific source fields with no canonical home.",
+          "title": "Attributes",
+          "type": "object"
+        },
+        "course_deg": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 360.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Degrees true, [0, 360), as the source states it. None = not stated.",
+          "title": "Course Deg"
+        },
+        "distance_m": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metres, as the SOURCE states it. None = not stated.",
+          "title": "Distance M"
+        },
+        "from_seq": {
+          "description": "`sequence` of the waypoint this leg leaves.",
+          "minimum": 0,
+          "title": "From Seq",
+          "type": "integer"
+        },
+        "to_seq": {
+          "description": "`sequence` of the waypoint this leg reaches.",
+          "minimum": 0,
+          "title": "To Seq",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "from_seq",
+        "to_seq"
+      ],
+      "title": "RouteLeg",
+      "type": "object"
     },
     "SecurityMarking": {
       "additionalProperties": false,
@@ -1093,6 +1738,30 @@
       "title": "Severity",
       "type": "string"
     },
+    "SourceHash": {
+      "additionalProperties": false,
+      "description": "A digest of the source record, as the ADAPTER computed it. Carried, never computed here.\n\nRule 5 asks for \"source hash where appropriate\", and the appropriateness is the adapter's\njudgement: a hash of a 3-byte AIS sentence identifies nothing an external id does not, while a\nhash of a 4 MB NITF segment is how an auditor proves the bytes on the wire were the bytes\ndescribed. So it is optional, and its absence means the adapter did not compute one.\n\nNO HASHING HAPPENS IN THIS PACKAGE. `tests/test_cdm_boundary.py` asserts that no module under\n`synapse_cdm/` imports `hashlib` or any crypto library, and this model does not change that:\nit is a container for a value produced outside the contract layer, exactly as `Integrity` is\na container for a signature this package does not make. `algorithm` is therefore required and\nfree-form \u2014 a digest with no algorithm cannot be reproduced by anyone, and an enum would make\nthe day SHA-3 arrives a MAJOR bump for a string nobody branches on.",
+      "properties": {
+        "algorithm": {
+          "description": "e.g. sha256. Named by the producer.",
+          "minLength": 1,
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "description": "The digest, in the producer's own encoding.",
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "value"
+      ],
+      "title": "SourceHash",
+      "type": "object"
+    },
     "SourceId": {
       "additionalProperties": false,
       "description": "One external identifier for an object \u2014 the provenance mapping.\n\nA list of these, not one, because the same object arrives from several systems: the same\nvessel is an MMSI to AIS, a track number to STANAG 4676 and a UID to TAK. Fusion joins\nthem later; the adapter's job is to record which name its own system used, and never to\noverwrite another system's entry.",
@@ -1133,6 +1802,86 @@
           "title": "Adapter Version",
           "type": "string"
         },
+        "format_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source STANDARD's name, e.g. 'ASTERIX'. Filled from the adapter's own declared metadata.format; None only for an adapter that declares none.",
+          "title": "Format Name"
+        },
+        "format_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The edition of that standard, e.g. 'Cat 062 ed 1.18'. None = no document in this tree states which edition the adapter targets \u2014 a reading, never a gap filled in.",
+          "title": "Format Version"
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The instant the SOURCE RECORD states for itself, when it states one and no canonical field already carries it. Event.observed_at stays the event's own time; this is the record's.",
+          "title": "Observed At"
+        },
+        "original_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source record's OWN identifier, as a first-class provenance field. Distinct from source_ids, which is the identity of the THING; this is the identity of the RECORD that described it.",
+          "title": "Original Id"
+        },
+        "record_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which record of a multi-record payload this object came from, 0-based. None = the payload was not a sequence, or the adapter does not track it. Never -1 and never 0-as-unknown: 0 is the first record.",
+          "title": "Record Index"
+        },
+        "source_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceHash"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Digest of the source record, computed by the adapter."
+        },
         "synthetic": {
           "description": "true for anything not from a real source (TR-12).",
           "title": "Synthetic",
@@ -1143,6 +1892,14 @@
           "minLength": 1,
           "title": "System",
           "type": "string"
+        },
+        "transformations": {
+          "description": "Rule 5's transformation chain: the TRANSFORMS reasons this adapter applied, in the order it applied them. Empty = nothing was transformed, which is a claim the lossless check can contradict.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Transformations",
+          "type": "array"
         }
       },
       "required": [
@@ -1152,6 +1909,71 @@
         "synthetic"
       ],
       "title": "SourceRef",
+      "type": "object"
+    },
+    "TemporalValidity": {
+      "additionalProperties": false,
+      "description": "The four times an object can have, separated because they answer different questions.\n\n\u00a727's four, and the separation is the point:\n\n    observed_at   when the SOURCE saw the state\n    valid_from    when the state BEGAN, which may be long before anyone saw it\n    valid_to      when it ceased. None = still current, never \"unknown\"\n    effective     the period the source declares the object OPERATIVE \u2014 an airspace\n                  reservation published on Monday, effective Wednesday 0600 to 1200\n\nAn airspace restriction shows why one timestamp cannot do the work of four: it is observed\nwhen the NOTAM is read, valid from the moment it is published, and effective for a window\nthat has not started yet. Collapsing those into \"the time\" is how a restriction gets drawn on\na map twelve hours early.\n\nEVERY FIELD IS OPTIONAL AND THAT IS DELIBERATE. A source that states only one of the four\nsays one of the four; a model that required more would be filled by adapters copying one\ninstant into three fields, and three copies of one reading look like corroboration. The\nPRESENCE of this block is itself information \u2014 the source described validity in time \u2014 and\na block with nothing in it is the absence of the block.\n\n\u00a727's epoch rule, stated where it is enforced: unknown time is NOT `1970-01-01` and NOT\n`now()`. It is the absence of the field. `Timestamp` does not refuse the epoch instant, and\nthat is a decision rather than an omission \u2014 1970-01-01T00:00:00Z is a real instant, some\nsources legitimately carry it as a base epoch, and a validator that refused it would refuse\nreal data in order to catch a defect that lives in the ADAPTER. The rule is therefore\nenforced where the substitution would be made, in review of the adapter and in the\nconformance suite's own reading, and it is written down here and in `docs/docs/cdm/policies`.",
+      "properties": {
+        "effective": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Period"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The period the source declares the object operative."
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the source saw it. None = the source did not say.",
+          "title": "Observed At"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the state began. None = the source did not say.",
+          "title": "Valid From"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When it ceased. None = still current / open-ended.",
+          "title": "Valid To"
+        }
+      },
+      "title": "TemporalValidity",
       "type": "object"
     },
     "Track": {
@@ -1182,6 +2004,30 @@
           "title": "Object Kind",
           "type": "string"
         },
+        "quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quality"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor."
+        },
+        "residual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Residual"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source information the CDM does not model, under the name of the format it came from (\u00a728). None = nothing was left over, or \u2014 for the fourteen adapters shipped before this container existed \u2014 the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md \u00a75 rules they keep through Part 1."
+        },
         "samples": {
           "description": "Time-ordered, non-decreasing. At least one.",
           "items": {
@@ -1192,7 +2038,7 @@
           "type": "array"
         },
         "schema_version": {
-          "default": "2.0.0",
+          "default": "2.1.0",
           "description": "Semver of the CDM this object was written against.",
           "title": "Schema Version",
           "type": "string"
@@ -1209,6 +2055,18 @@
           "minItems": 1,
           "title": "Source Ids",
           "type": "array"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationalStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own operational state for this object, namespaced. None = the source stated none."
         },
         "track_id": {
           "format": "uuid",
@@ -1272,9 +2130,167 @@
       ],
       "title": "Verification",
       "type": "string"
+    },
+    "VerticalExtent": {
+      "additionalProperties": false,
+      "description": "Lower and upper bounds of a volume. An airspace's floor and ceiling.\n\nBoth optional and both may be absent: \"surface to unlimited\" is a real airspace and it is\nspelled by two absences, not by 0 and 999999. An extent with neither bound is still worth\ncarrying, because its PRESENCE says the source described a volume rather than a surface.\n\nA bound may be stated in a different unit or against a different datum from the other \u2014 a\ndanger area really is published as \"surface to FL195\" \u2014 so no comparison between the two is\nattempted here. Comparing 0 AGL with FL195 would need a terrain model and a pressure, and a\nvalidator that guessed at either would refuse real airspace.",
+      "properties": {
+        "lower": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Floor. None = unstated."
+        },
+        "upper": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ceiling. None = unstated."
+        }
+      },
+      "title": "VerticalExtent",
+      "type": "object"
+    },
+    "VerticalPosition": {
+      "additionalProperties": false,
+      "description": "A height, with the unit it was stated in and the datum it was measured from.\n\n\u00a726's rule made structural: `value` is never alone. Three fields are required together\nbecause any two of them without the third is the ambiguity the policy exists to prevent \u2014\n600 could be metres or feet, and 600 ft AGL over the Alps is not 600 ft MSL.\n\nNO CONVERSION HAPPENS HERE. This model records; it does not normalise. `models.Position`\nkeeps `alt_m` as the canonical HAE-in-metres projection and a validator (there, not here)\nrequires the two to agree when both are stated and the reference really is HAE. When the\nsource's altitude is anything else, `alt_m` stays `None` \u2014 Rule 2, unknown is not a\nsubstituted value \u2014 and this block carries what the source actually said. Converting MSL to\nHAE needs a geoid model, converting a flight level needs the local QNH, and an adapter that\nperformed either silently would be publishing a number nobody measured.\n\n`uncertainty` is in the SAME unit as `value`, and is one-sigma, matching\n`Position.accuracy_m`'s convention. Absent means unknown, never zero: zero would assert a\nheight with no error, which no altimeter and no GNSS receiver produces.",
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/VerticalReference",
+          "description": "The datum. UNKNOWN is a member, not null."
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1-sigma, in the same unit as `value`. None = unknown, never 0.",
+          "title": "Uncertainty"
+        },
+        "unit": {
+          "$ref": "#/$defs/VerticalUnit",
+          "description": "Never inferred; see VerticalUnit."
+        },
+        "value": {
+          "description": "The number the source stated, in `unit`.",
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "reference"
+      ],
+      "title": "VerticalPosition",
+      "type": "object"
+    },
+    "VerticalReference": {
+      "description": "What a `VerticalPosition` is measured FROM. The datum, never assumed.\n\nThe six here are the ones the formats in scope actually state. HAE is the WGS84 ellipsoid \u2014\nwhat a GNSS receiver computes natively and what `Position.alt_m` has always meant. MSL is a\ngeoid model, and the separation between the two reaches 100 m in places, so a silent\nsubstitution moves an aircraft by more than its own vertical separation minimum. AGL is\nheight above the terrain beneath the object, which is not a datum at all but a difference,\nand is therefore not convertible to either of the others without a terrain model. BARO is an\naltimeter reading against a stated or unstated pressure setting; FL is BARO against the\nstandard setting.\n\nUNKNOWN is a MEMBER, unlike `VerticalUnit`'s absent one, and the asymmetry is the point: a\nnumber with no unit cannot be rendered at all, whereas a number whose datum is unstated can\nstill be shown to an operator beside the words \"reference unknown\". That is a worse fix than\na referenced one and a far better one than a fix silently labelled MSL.",
+      "enum": [
+        "HAE",
+        "MSL",
+        "AGL",
+        "BARO",
+        "FL",
+        "UNKNOWN"
+      ],
+      "title": "VerticalReference",
+      "type": "string"
+    },
+    "VerticalUnit": {
+      "description": "The unit a `VerticalPosition` states its number in. \u00a726's \"value plus unit\", closed.\n\nThree members and no UNKNOWN, which is a departure from this module's opening paragraph and\nis the unit policy rather than an oversight. \u00a726 forbids \"ambiguous naked numeric fields\nwhere unit ambiguity matters\"; a vertical measurement whose unit nobody knows IS that naked\nnumber wearing a wrapper, and recording it would let a consumer render 300 as metres when\nthe source meant feet. An adapter that cannot read the unit therefore has no vertical\nposition to state \u2014 it parks the raw number in the residual, where nothing reads it as a\nheight. Absence is expressible (the whole `VerticalPosition` is optional); an unknown unit\nis not, deliberately.\n\n`FL` is a unit as well as a reference because a flight level IS its own scale: FL350 is\n\"35000 feet on the 1013.25 hPa isobaric surface\", a number that is neither metres nor feet\nabove anything on the ground. Converting it needs the local pressure, which the adapter does\nnot have, so it is carried as it was stated.",
+      "enum": [
+        "m",
+        "ft",
+        "FL"
+      ],
+      "title": "VerticalUnit",
+      "type": "string"
+    },
+    "Waypoint": {
+      "additionalProperties": false,
+      "description": "One ordered point of a route.\n\n`sequence` is REQUIRED and is the route's order of record. List position would be the obvious\nalternative and it is the wrong one: a route arrives split across messages, is filtered, is\nre-sent with one leg amended, and every one of those operations preserves the numbers while\ndestroying the positions. A waypoint that knows its own sequence can be reassembled; one that\nknows only where it happened to sit in an array cannot.\n\n`altitude_constraint` is a `VerticalPosition` rather than a bare number for \u00a726's reason: a\ncrossing restriction published as \"FL240\" and one published as \"8000 ft MSL\" are different\nconstraints and the difference is in the unit and the datum, not in the number.",
+      "properties": {
+        "altitude_constraint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A crossing restriction, with its unit and datum."
+        },
+        "eta": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated time at this waypoint. None = not estimated.",
+          "title": "Eta"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own designator, e.g. an ICAO fix name. None = unnamed; never an empty string.",
+          "title": "Name"
+        },
+        "position": {
+          "$ref": "#/$defs/Position",
+          "description": "Where the waypoint is."
+        },
+        "sequence": {
+          "description": "0-based order of record. Required \u2014 see the class docstring.",
+          "minimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "position",
+        "sequence"
+      ],
+      "title": "Waypoint",
+      "type": "object"
     }
   },
-  "$id": "urn:synapsecommand:cdm:2.0.0:cdm_object",
+  "$id": "urn:synapsecommand:cdm:2.1.0:cdm_object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "discriminator": {
     "mapping": {
@@ -1299,5 +2315,5 @@
       "$ref": "#/$defs/PlanObject"
     }
   ],
-  "x-cdm-schema-version": "2.0.0"
+  "x-cdm-schema-version": "2.1.0"
 }

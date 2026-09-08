@@ -52,8 +52,17 @@ from synapse_cdm.enums import (
     ObjectType,
     PositionSource,
     Severity,
+    VerticalReference,
+    VerticalUnit,
 )
-from synapse_cdm.geo import Geometry
+from synapse_cdm.geo import (
+    BoundingBox,
+    Geometry,
+    MultiPolygon,
+    Polygon,
+    VerticalExtent,
+    VerticalPosition,
+)
 from synapse_cdm.version import SCHEMA_VERSION
 
 STRICT = ConfigDict(extra="forbid", use_enum_values=False, validate_assignment=True)
@@ -100,6 +109,26 @@ class SourceId(BaseModel):
 from synapse_cdm.oes import OesMetadata, validate_ontology_identifier  # noqa: E402
 
 
+class SourceHash(BaseModel):
+    """A digest of the source record, as the ADAPTER computed it. Carried, never computed here.
+
+    Rule 5 asks for "source hash where appropriate", and the appropriateness is the adapter's
+    judgement: a hash of a 3-byte AIS sentence identifies nothing an external id does not, while a
+    hash of a 4 MB NITF segment is how an auditor proves the bytes on the wire were the bytes
+    described. So it is optional, and its absence means the adapter did not compute one.
+
+    NO HASHING HAPPENS IN THIS PACKAGE. `tests/test_cdm_boundary.py` asserts that no module under
+    `synapse_cdm/` imports `hashlib` or any crypto library, and this model does not change that:
+    it is a container for a value produced outside the contract layer, exactly as `Integrity` is
+    a container for a signature this package does not make. `algorithm` is therefore required and
+    free-form — a digest with no algorithm cannot be reproduced by anyone, and an enum would make
+    the day SHA-3 arrives a MAJOR bump for a string nobody branches on.
+    """
+    model_config = STRICT
+    algorithm: str = Field(min_length=1, description="e.g. sha256. Named by the producer.")
+    value: str = Field(min_length=1, description="The digest, in the producer's own encoding.")
+
+
 class SourceRef(BaseModel):
     """Which adapter produced this object, from which system, and whether it is real.
 
@@ -115,6 +144,52 @@ class SourceRef(BaseModel):
     adapter: str = Field(min_length=1, description="Adapter name, e.g. pntmap.")
     adapter_version: str = Field(min_length=1, description="Adapter semver.")
     synthetic: bool = Field(description="true for anything not from a real source (TR-12).")
+    # ------------------------------------------------------------------ Rule 5, completed in P3
+    #
+    # ARCHITECTURE.md §4.5 named six items of Rule 5 that had no canonical home and told adapters
+    # to park them in the residual "with a documented key" until this round landed them. These
+    # seven fields are that landing. Every one is OPTIONAL, because every one is a fact some
+    # sources have and others do not, and a required field would be filled with a guess by the
+    # adapters that cannot read it — which is the failure `synthetic` has no default in order to
+    # avoid, one field up.
+    format_name: str | None = Field(
+        default=None,
+        description="The source STANDARD's name, e.g. 'ASTERIX'. Filled from the adapter's own "
+                    "declared metadata.format; None only for an adapter that declares none.",
+    )
+    format_version: str | None = Field(
+        default=None,
+        description="The edition of that standard, e.g. 'Cat 062 ed 1.18'. None = no document "
+                    "in this tree states which edition the adapter targets — a reading, never a "
+                    "gap filled in.",
+    )
+    original_id: str | None = Field(
+        default=None,
+        description="The source record's OWN identifier, as a first-class provenance field. "
+                    "Distinct from source_ids, which is the identity of the THING; this is the "
+                    "identity of the RECORD that described it.",
+    )
+    source_hash: SourceHash | None = Field(
+        default=None, description="Digest of the source record, computed by the adapter."
+    )
+    record_index: int | None = Field(
+        default=None, ge=0,
+        description="Which record of a multi-record payload this object came from, 0-based. "
+                    "None = the payload was not a sequence, or the adapter does not track it. "
+                    "Never -1 and never 0-as-unknown: 0 is the first record.",
+    )
+    observed_at: Timestamp | None = Field(
+        default=None,
+        description="The instant the SOURCE RECORD states for itself, when it states one and no "
+                    "canonical field already carries it. Event.observed_at stays the event's "
+                    "own time; this is the record's.",
+    )
+    transformations: list[str] = Field(
+        default_factory=list,
+        description="Rule 5's transformation chain: the TRANSFORMS reasons this adapter applied, "
+                    "in the order it applied them. Empty = nothing was transformed, which is a "
+                    "claim the lossless check can contradict.",
+    )
 
 
 class Integrity(BaseModel):
@@ -163,6 +238,52 @@ class Position(BaseModel):
     accuracy_m: float | None = Field(
         default=None, ge=0.0, description="Metres, 1-sigma. None = unknown, never 0."
     )
+    vertical: VerticalPosition | None = Field(
+        default=None,
+        description="The height AS THE SOURCE STATED IT — unit and datum carried, never "
+                    "converted. `alt_m` above stays the canonical HAE-in-metres projection and "
+                    "is None whenever the source's datum is not HAE.",
+    )
+
+    @model_validator(mode="after")
+    def _altitude_projection(self) -> "Position":
+        """`alt_m` is the canonical projection of `vertical`, and the two may not disagree.
+
+        Two rules, and both of them exist because the alternative is a silent height error of up
+        to a hundred metres:
+
+        1. When `vertical` is HAE in metres, `alt_m` — if stated at all — must be the same
+           number. A projection that disagrees with what it projects is worse than an absent one,
+           because every consumer reading only `alt_m` gets a value the record itself refutes.
+        2. When `vertical`'s datum is anything but HAE, `alt_m` must be None. MSL, AGL, BARO and
+           FL are not metres above the ellipsoid and cannot be turned into metres above the
+           ellipsoid without a geoid model, a terrain model or a pressure setting — none of which
+           this package has. Rule 2 says unknown stays unknown; it does not say "close enough".
+
+        Feet-HAE is deliberately NOT converted here either. 1000 ft HAE is 304.8 m HAE exactly,
+        so the arithmetic is available — and doing it in a validator would mean this model writes
+        a value no adapter stated, which is the boundary the whole class of defect lives on. An
+        adapter that wants `alt_m` populated converts at the adapter, where the conversion is
+        declared in TRANSFORMS and printed on every harness run.
+        """
+        if self.vertical is None:
+            return self
+        is_hae_metres = (self.vertical.reference is VerticalReference.HAE
+                         and self.vertical.unit is VerticalUnit.METRES)
+        if is_hae_metres:
+            if self.alt_m is not None and self.alt_m != self.vertical.value:
+                raise ValueError(
+                    f"alt_m {self.alt_m} disagrees with vertical {self.vertical.value} m HAE. "
+                    "alt_m is the canonical projection of the same height, not a second reading"
+                )
+        elif self.alt_m is not None:
+            raise ValueError(
+                f"alt_m is {self.alt_m} while vertical states {self.vertical.value} "
+                f"{self.vertical.unit.value} {self.vertical.reference.value}. alt_m means metres "
+                "HAE and nothing else; converting from that datum needs a model this package "
+                "does not have, so alt_m stays None and `vertical` carries what the source said"
+            )
+        return self
 
 
 class Kinematics(BaseModel):
@@ -179,6 +300,337 @@ class Kinematics(BaseModel):
     )
     climb_mps: float | None = Field(
         default=None, description="Metres per second, negative = descending."
+    )
+
+
+class Period(BaseModel):
+    """A closed or open-ended interval. `start` required, `end` optional and open-ended if absent.
+
+    `start` is required and `end` is not, because that asymmetry is what the sources state: an
+    activation begins at a stated instant and ends "until further notice" far more often than the
+    reverse. An interval with neither bound is not a period, it is the absence of one, and the
+    field holding a Period is optional for exactly that case.
+    """
+    model_config = STRICT
+    start: Timestamp = Field(description="When the interval opens.")
+    end: Timestamp | None = Field(
+        default=None, description="When it closes. None = open-ended, never 'unknown'."
+    )
+
+    @model_validator(mode="after")
+    def _forwards(self) -> "Period":
+        if self.end is not None and self.end < self.start:
+            raise ValueError(
+                f"end {times.render(self.end)} precedes start {times.render(self.start)} — an "
+                "interval that runs backwards is a translation defect, not data"
+            )
+        return self
+
+
+class TemporalValidity(BaseModel):
+    """The four times an object can have, separated because they answer different questions.
+
+    §27's four, and the separation is the point:
+
+        observed_at   when the SOURCE saw the state
+        valid_from    when the state BEGAN, which may be long before anyone saw it
+        valid_to      when it ceased. None = still current, never "unknown"
+        effective     the period the source declares the object OPERATIVE — an airspace
+                      reservation published on Monday, effective Wednesday 0600 to 1200
+
+    An airspace restriction shows why one timestamp cannot do the work of four: it is observed
+    when the NOTAM is read, valid from the moment it is published, and effective for a window
+    that has not started yet. Collapsing those into "the time" is how a restriction gets drawn on
+    a map twelve hours early.
+
+    EVERY FIELD IS OPTIONAL AND THAT IS DELIBERATE. A source that states only one of the four
+    says one of the four; a model that required more would be filled by adapters copying one
+    instant into three fields, and three copies of one reading look like corroboration. The
+    PRESENCE of this block is itself information — the source described validity in time — and
+    a block with nothing in it is the absence of the block.
+
+    §27's epoch rule, stated where it is enforced: unknown time is NOT `1970-01-01` and NOT
+    `now()`. It is the absence of the field. `Timestamp` does not refuse the epoch instant, and
+    that is a decision rather than an omission — 1970-01-01T00:00:00Z is a real instant, some
+    sources legitimately carry it as a base epoch, and a validator that refused it would refuse
+    real data in order to catch a defect that lives in the ADAPTER. The rule is therefore
+    enforced where the substitution would be made, in review of the adapter and in the
+    conformance suite's own reading, and it is written down here and in `docs/docs/cdm/policies`.
+    """
+    model_config = STRICT
+    observed_at: Timestamp | None = Field(
+        default=None, description="When the source saw it. None = the source did not say."
+    )
+    valid_from: Timestamp | None = Field(
+        default=None, description="When the state began. None = the source did not say."
+    )
+    valid_to: Timestamp | None = Field(
+        default=None, description="When it ceased. None = still current / open-ended."
+    )
+    effective: Period | None = Field(
+        default=None, description="The period the source declares the object operative."
+    )
+
+    @model_validator(mode="after")
+    def _forwards(self) -> "TemporalValidity":
+        if (self.valid_from is not None and self.valid_to is not None
+                and self.valid_to < self.valid_from):
+            raise ValueError(
+                f"valid_to {times.render(self.valid_to)} precedes valid_from "
+                f"{times.render(self.valid_from)} — an interval that runs backwards is a "
+                "translation defect, not data"
+            )
+        return self
+
+
+class Waypoint(BaseModel):
+    """One ordered point of a route.
+
+    `sequence` is REQUIRED and is the route's order of record. List position would be the obvious
+    alternative and it is the wrong one: a route arrives split across messages, is filtered, is
+    re-sent with one leg amended, and every one of those operations preserves the numbers while
+    destroying the positions. A waypoint that knows its own sequence can be reassembled; one that
+    knows only where it happened to sit in an array cannot.
+
+    `altitude_constraint` is a `VerticalPosition` rather than a bare number for §26's reason: a
+    crossing restriction published as "FL240" and one published as "8000 ft MSL" are different
+    constraints and the difference is in the unit and the datum, not in the number.
+    """
+    model_config = STRICT
+    position: Position = Field(description="Where the waypoint is.")
+    name: str | None = Field(
+        default=None, min_length=1,
+        description="The source's own designator, e.g. an ICAO fix name. None = unnamed; never "
+                    "an empty string.",
+    )
+    sequence: int = Field(
+        ge=0, description="0-based order of record. Required — see the class docstring."
+    )
+    eta: Timestamp | None = Field(
+        default=None, description="Estimated time at this waypoint. None = not estimated."
+    )
+    altitude_constraint: VerticalPosition | None = Field(
+        default=None, description="A crossing restriction, with its unit and datum."
+    )
+
+
+class RouteLeg(BaseModel):
+    """One segment between two waypoints, addressed BY SEQUENCE and not by index.
+
+    `distance_m` and `course_deg` are optional because they are the SOURCE's numbers when the
+    source states them, and nothing computes them here. Two waypoints determine a great-circle
+    distance, so a computed value is always available — and a computed value that disagrees with
+    the source's is a second truth in the same record, with nothing to say which one a consumer
+    should plan against. The source's own leg lengths often encode a procedure the geometry does
+    not (a DME arc, a holding pattern), which is exactly the information a computation destroys.
+    """
+    model_config = STRICT
+    from_seq: int = Field(ge=0, description="`sequence` of the waypoint this leg leaves.")
+    to_seq: int = Field(ge=0, description="`sequence` of the waypoint this leg reaches.")
+    distance_m: float | None = Field(
+        default=None, ge=0.0, description="Metres, as the SOURCE states it. None = not stated."
+    )
+    course_deg: float | None = Field(
+        default=None, ge=0.0, lt=360.0,
+        description="Degrees true, [0, 360), as the source states it. None = not stated.",
+    )
+    attributes: Attributes = Field(
+        default_factory=dict, description="Leg-specific source fields with no canonical home."
+    )
+
+    @model_validator(mode="after")
+    def _not_a_loop(self) -> "RouteLeg":
+        if self.from_seq == self.to_seq:
+            raise ValueError(
+                f"leg runs from sequence {self.from_seq} to itself. A leg joins two waypoints; a "
+                "hold or an orbit at one waypoint is a property of that waypoint, not a segment"
+            )
+        return self
+
+
+class Route(BaseModel):
+    """Ordered waypoints, the legs between them, and the route's own metadata.
+
+    At least two waypoints, because a route to one place from nowhere is a position. `sequence`
+    values must be distinct — two waypoints numbered 3 make the order unrecoverable, which is the
+    single thing `sequence` exists to preserve — and every leg must name sequences that exist,
+    because a leg to a waypoint nobody sent is a route with a hole in it that renders as a line
+    to the origin.
+
+    Legs may be EMPTY. A source that sends points and no segments has described a route whose
+    legs are the implied consecutive pairs, and manufacturing those pairs here would publish
+    segments the source never stated — including, for a route the source meant as a set of
+    reporting points, segments that are not flyable.
+    """
+    model_config = STRICT
+    waypoints: list[Waypoint] = Field(
+        min_length=2, description="At least two. Ordered by `sequence`, not by list position."
+    )
+    legs: list[RouteLeg] = Field(
+        default_factory=list,
+        description="Segments the SOURCE stated. Empty = the source stated none; consecutive "
+                    "pairs are NOT invented here.",
+    )
+    metadata: Attributes = Field(
+        default_factory=dict,
+        description="Route-level source fields with no canonical home — a procedure name, a "
+                    "flight rules letter, an airway designator.",
+    )
+
+    @model_validator(mode="after")
+    def _sequences_are_a_key(self) -> "Route":
+        seen: dict[int, int] = {}
+        for index, waypoint in enumerate(self.waypoints):
+            if waypoint.sequence in seen:
+                raise ValueError(
+                    f"waypoints {seen[waypoint.sequence]} and {index} both carry sequence "
+                    f"{waypoint.sequence}. `sequence` is the route's order of record and a "
+                    "duplicate makes that order unrecoverable"
+                )
+            seen[waypoint.sequence] = index
+        for index, leg in enumerate(self.legs):
+            for end, value in (("from_seq", leg.from_seq), ("to_seq", leg.to_seq)):
+                if value not in seen:
+                    raise ValueError(
+                        f"leg {index}'s {end} is {value}, which no waypoint carries. Known "
+                        f"sequences: {sorted(seen)}"
+                    )
+        return self
+
+
+class Area(BaseModel):
+    """A region with lateral geometry, optional vertical limits and optional time validity.
+
+    The three together are what an airspace, a danger area, a jamming footprint and a search box
+    all are, and the reason they are one model is that any two of them without the third is a
+    different claim: a polygon with no ceiling is the whole column of sky above it, and a polygon
+    with no validity is permanent.
+
+    `geometry` is a `Polygon` or a `MultiPolygon` and nothing else. A point or a line is not an
+    area — a corridor drawn as a line has no width, and a consumer that buffered it would be
+    choosing the width itself, which is an operational decision an adapter may not make (Rule 6).
+    """
+    model_config = STRICT
+    geometry: Polygon | MultiPolygon = Field(
+        discriminator="type", description="Lateral extent. WGS84, [lon, lat]."
+    )
+    vertical: VerticalExtent | None = Field(
+        default=None,
+        description="Floor and ceiling. None = the source stated no vertical limits, which is "
+                    "not the same as surface-to-unlimited (that is a VerticalExtent with both "
+                    "bounds absent, and it says the source described the column).",
+    )
+    validity: TemporalValidity | None = Field(
+        default=None, description="When the area applies. None = the source stated no times."
+    )
+    bounds: BoundingBox | None = Field(
+        default=None,
+        description="The coarse extent the SOURCE declared about this area, when it declared "
+                    "one. NEVER computed from `geometry` here: a sensor's declared coverage "
+                    "rectangle and its footprint's envelope are different facts and are allowed "
+                    "to differ, so a computed value would overwrite one with the other.",
+    )
+
+
+class Quality(BaseModel):
+    """How good the source says its own data is. Four ways of saying it, none derived.
+
+    `confidence` is 0..1 and comparable across sources; `source_quality` is the source's OWN
+    grade, a free string, because ASTERIX's track quality, AIS's position accuracy flag and a
+    NATO track's evaluation code are three ordinal scales with no defined mapping between them
+    and inventing one would be a fusion decision made inside a translator.
+
+    `uncertainty` is a NAMED dict — `{"along_track_m": 40.0, "cross_track_m": 12.0}` — rather
+    than a single number, because an error ellipse is not a radius and flattening it loses the
+    orientation that made it worth sending. Names are the source's; the CDM does not fix a
+    vocabulary here, and the unit belongs in the key exactly as `signal_strength_dbm` carries
+    its own unit in its name.
+    """
+    model_config = STRICT
+    source_quality: str | None = Field(
+        default=None, min_length=1,
+        description="The source's own grade, verbatim. None = the source stated none.",
+    )
+    confidence: float | None = Field(
+        default=None, ge=0.0, le=1.0,
+        description="0..1. None = unknown; 0 means certainty-that-not, which is a claim.",
+    )
+    accuracy_m: float | None = Field(
+        default=None, ge=0.0, description="Metres, 1-sigma. None = unknown, never 0."
+    )
+    uncertainty: dict[str, float] = Field(
+        default_factory=dict,
+        description="Named components, e.g. along_track_m / cross_track_m. The unit is in the "
+                    "key. Empty = the source named none.",
+    )
+
+
+class OperationalStatus(BaseModel):
+    """What state the source says a thing is in, in the SOURCE's vocabulary, namespaced.
+
+    THERE IS NO ENUM HERE AND THERE WILL NOT BE ONE. "SERVICEABLE", "DEGRADED", "MISSION CAPABLE",
+    "RED" and "U/S" come from five different domains and mean five different things, and a closed
+    CDM vocabulary would have to map each of them onto a member — which is a judgement about
+    somebody else's operational language, made inside a translator, invisible in the output, and
+    exactly what Rule 6 forbids. `namespace` says whose vocabulary `state` belongs to, so a
+    consumer meeting an unfamiliar value can find out what it means instead of guessing; a
+    consumer MUST NOT compare `state` across namespaces.
+
+    `since` is when the state began, not when it was reported. Absent means the source did not
+    say — never the receipt time, which would make every restart look like a state change.
+    """
+    model_config = STRICT
+    state: str = Field(
+        min_length=1, description="The source's own token, verbatim and untranslated."
+    )
+    namespace: str = Field(
+        min_length=1,
+        description="Whose vocabulary `state` is in — normally the source format's name. "
+                    "Required: an unnamespaced status is a word with no owner.",
+    )
+    since: Timestamp | None = Field(
+        default=None, description="When the state began. None = the source did not say."
+    )
+    attributes: Attributes = Field(
+        default_factory=dict, description="Status-specific source fields with no canonical home."
+    )
+
+
+class Residual(BaseModel):
+    """Source information the CDM does not model, kept under the name of the format it came from.
+
+    §28's container, and its two rules are load-bearing in opposite directions:
+
+    1. **It MUST identify its origin.** `namespace` is the source format's own name — the same
+       string as the adapter's `metadata.format.name` — so a reader meeting an unfamiliar key
+       inside `data` can find out which standard's vocabulary it belongs to. An unnamespaced bag
+       of leftovers is the free-form dict this model exists to replace.
+    2. **It MUST NOT be treated as semantically trusted merely because it survived translation.**
+       A residual says "the source said this and the CDM has no home for it". It is a fact about
+       the source RECORD, not an assertion about the world. A consumer MUST NOT promote a
+       residual value into a canonical field, and a later adapter MUST NOT read another adapter's
+       residual as an input — ARCHITECTURE.md §5 states both as normative text.
+
+    `data` preserves the source's own STRUCTURE, which is why it is a dict and not a list of
+    dotted paths: `lossless.residual()` learned that the hard way when a two-element list came
+    back as two keys named `affected_constellations[0]` and `[1]`, satisfying the never-drop rule
+    in the letter while destroying the reader's ability to see a list.
+
+    THE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE THIS YET, deliberately. ARCHITECTURE.md
+    §5 rules that they keep their `attributes` / `payload` parking under `source_extras` through
+    the whole of Part 1 and declare `residual: legacy` in their manifests, because the
+    information is already preserved and paying for a placement change with every golden file and
+    every downstream consumer buys nothing a reader can use (§29: no breaking change for
+    stylistic cleanliness). Every Part 2 adapter declares `residual: structured` and uses this.
+    """
+    model_config = STRICT
+    namespace: str = Field(
+        min_length=1,
+        description="The source format's name — normally metadata.format.name. Required.",
+    )
+    data: dict[str, Any] = Field(
+        default_factory=dict,
+        description="The unconsumed source structure, preserved as the source shaped it.",
     )
 
 
@@ -217,6 +669,24 @@ class CDMBase(BaseModel):
     )
     integrity: Integrity | None = Field(
         default=None, description="PQC signature block — designed, not yet populated."
+    )
+    quality: Quality | None = Field(
+        default=None,
+        description="How good the SOURCE says this object is. None = the source said nothing "
+                    "about quality, which is not the same as saying it is poor.",
+    )
+    status: OperationalStatus | None = Field(
+        default=None,
+        description="The source's own operational state for this object, namespaced. None = the "
+                    "source stated none.",
+    )
+    residual: Residual | None = Field(
+        default=None,
+        description="Source information the CDM does not model, under the name of the format it "
+                    "came from (§28). None = nothing was left over, or — for the fourteen "
+                    "adapters shipped before this container existed — the leftovers are parked "
+                    "in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md §5 "
+                    "rules they keep through Part 1.",
     )
 
     @field_validator("schema_version")
@@ -508,8 +978,48 @@ class PlanObject(CDMBase):
     expires_at: Timestamp | None = Field(
         default=None,
         description="When the drawing should disappear. None = until explicitly removed — "
-                    "which for a stale COA sketch on a live map is a decision, so state it.",
+                    "which for a stale COA sketch on a live map is a decision, so state it. "
+                    "KEPT beside `validity` below, of which it is the projection: a receiving "
+                    "client that only knows how to expire an overlay reads this one field.",
     )
+    validity: TemporalValidity | None = Field(
+        default=None,
+        description="The four times the source states about this object (§27). `expires_at` "
+                    "above is the projection of `validity.valid_to` for clients that read one "
+                    "field; when both are stated they must agree.",
+    )
+    route: Route | None = Field(
+        default=None,
+        description="Ordered waypoints and legs, when this object IS a route "
+                    "(ObjectType.ROUTE). `geometry` above stays REQUIRED and stays the LineString "
+                    "projection of the waypoints, so every consumer written before routes existed "
+                    "still draws it.",
+    )
+    area: Area | None = Field(
+        default=None,
+        description="Lateral geometry with vertical limits and time validity, when this object "
+                    "is a region. `geometry` above stays the required projection of its lateral "
+                    "extent.",
+    )
+
+    @model_validator(mode="after")
+    def _expiry_projection(self) -> "PlanObject":
+        """`expires_at` and `validity.valid_to` are one fact stated twice; they may not differ.
+
+        The duplication is deliberate and is documented on both fields: a TAK client knows how to
+        expire an overlay and does not know what a TemporalValidity is, so the projection has to
+        stay. What must not happen is the two drifting apart, because then the drawing disappears
+        at one time on the map and at another in the record, and nobody can say which was meant.
+        """
+        if self.validity is None or self.validity.valid_to is None or self.expires_at is None:
+            return self
+        if self.expires_at != self.validity.valid_to:
+            raise ValueError(
+                f"expires_at {times.render(self.expires_at)} disagrees with validity.valid_to "
+                f"{times.render(self.validity.valid_to)}. expires_at is the projection of "
+                "valid_to, not a second deadline"
+            )
+        return self
 
 
 CDMObject = Annotated[

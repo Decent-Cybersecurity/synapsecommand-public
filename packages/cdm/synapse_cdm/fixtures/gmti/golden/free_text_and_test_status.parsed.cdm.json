@@ -97,12 +97,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -110,6 +119,7 @@
         "system": "GMTIF-PLATFORM"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T06:15:00.000Z",
     "valid_to": null
@@ -138,24 +148,34 @@
       "severity_basis": "INFO; the format grades nothing, including an operator message",
       "text_basis": "F3 is carried verbatim and NEVER parsed. An operator's message is not a structured field, and searching it for coordinates or callsigns would be inventing data. Its trailing spaces are kept because its width is the remainder of the segment rather than a declared number"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "47cef385-9333-5635-9bca-a5e76a4e54f9"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "ZZ/ZZSYN00001/4242/text1",
         "system": "GMTIF-FREETEXT"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "f4ccd907-376e-5851-a0aa-a5f4081962fe",
@@ -190,23 +210,33 @@
       "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
       "severity_basis": "INFO, and this is the row where that costs the most. T5 bit 4 is a FAILED DATALINK \u2014 the most gradeable thing in the format \u2014 and grading it is an operational judgement about a platform this adapter knows nothing else about. The format grades nothing, so the bits are named and the severity is not raised"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "47cef385-9333-5635-9bca-a5e76a4e54f9"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "ZZ/ZZSYN00001/4242/status2",
         "system": "GMTIF-STATUS"
       }
-    ]
+    ],
+    "status": null
   }
 ]

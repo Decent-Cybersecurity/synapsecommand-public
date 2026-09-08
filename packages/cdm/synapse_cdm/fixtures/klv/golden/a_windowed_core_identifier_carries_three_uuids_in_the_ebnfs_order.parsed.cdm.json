@@ -663,12 +663,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -688,6 +697,7 @@
         "system": "MIIS-WINDOW-INCLUDED"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2008-10-24T00:13:29.913Z",
     "valid_to": null
@@ -781,17 +791,26 @@
         "what_observed_at_IS": "the instant EPOCH + applied_microseconds. With neither tag 136 nor tag 137 in the packet that is the raw MISP Time System instant and NOT UTC; with tag 136 it is \u00a76.4 Equation 2's UTC less the 82-microsecond residue; with tag 137 it is the corrected time \u00a76.4 Equation 1 defines. The CDM's Timestamp is UTC and this adapter does not pretend the difference away \u2014 it states which of the three this object carries, on the object"
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "97a501bb-20a1-53b3-9ba7-1a697784bd42"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -810,6 +829,7 @@
         "external_id": "C3C3-C3C3-C3C3-C3C3-C3C3-C3C3-C3C3-C3C3",
         "system": "MIIS-WINDOW-INCLUDED"
       }
-    ]
+    ],
+    "status": null
   }
 ]

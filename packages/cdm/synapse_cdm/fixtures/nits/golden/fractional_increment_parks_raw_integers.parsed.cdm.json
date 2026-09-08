@@ -228,14 +228,24 @@
       "alt_m": null,
       "lat": 56.41,
       "lon": 24.41,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4676 / AEDP-12 \u2014 NATO ISR Tracking Standard (NITS)",
+      "format_version": "AEDP-12 Edition B Version 2",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "NITS"
+      "system": "NITS",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -247,6 +257,7 @@
         "system": "NITS_UID"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:01.023Z",
     "valid_to": null
@@ -255,6 +266,8 @@
     "entity_id": "b1e2b61c-3565-562a-8388-6d487b11bf04",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2026-04-29T06:00:00.023Z",
@@ -263,7 +276,8 @@
           "alt_m": null,
           "lat": 56.4,
           "lon": 24.4,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       },
       {
@@ -273,16 +287,24 @@
           "alt_m": null,
           "lat": 56.41,
           "lon": 24.41,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4676",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4676 / AEDP-12 \u2014 NATO ISR Tracking Standard (NITS)",
+      "format_version": "AEDP-12 Edition B Version 2",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "NITS"
+      "system": "NITS",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -294,6 +316,7 @@
         "system": "NITS_UID"
       }
     ],
+    "status": null,
     "track_id": "ebf44629-b689-5170-9b0a-b57666c9934a",
     "track_quality": null
   }

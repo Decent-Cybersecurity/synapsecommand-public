@@ -191,12 +191,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -204,6 +213,7 @@
         "system": "GMTIF-PLATFORM"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T06:15:00.000Z",
     "valid_to": null

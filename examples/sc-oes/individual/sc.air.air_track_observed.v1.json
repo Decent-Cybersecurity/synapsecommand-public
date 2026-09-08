@@ -20,14 +20,24 @@
       "alt_m": 1450.0,
       "lat": 48.31,
       "lon": 17.06,
-      "position_source": "GNSS"
+      "position_source": "GNSS",
+      "vertical": null
     },
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -35,6 +45,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T07:02:11.000Z",
     "valid_to": null
@@ -56,14 +67,24 @@
       "alt_m": null,
       "lat": 48.17,
       "lon": 17.21,
-      "position_source": "MANUAL"
+      "position_source": "MANUAL",
+      "vertical": null
     },
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -71,6 +92,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T00:00:00.000Z",
     "valid_to": null
@@ -116,24 +138,34 @@
       "reporting_sensor": "SENSOR-DELTA",
       "track_number": "TRK-0417"
     },
+    "quality": null,
     "received_at": "2026-04-29T07:02:12.000Z",
     "related_entities": [
       "becc35d6-a7a8-5564-9ab7-a51c0f867003",
       "3544a404-4d37-5a59-a639-08cb979973d0"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "SYNTHETIC-AIR-TRACK-001",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   }
 ]

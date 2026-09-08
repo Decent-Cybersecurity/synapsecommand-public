@@ -18,14 +18,24 @@
       "alt_m": null,
       "lat": 57.512,
       "lon": 21.884,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -33,6 +43,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T06:12:44.000Z",
     "valid_to": null
@@ -95,23 +106,33 @@
       "interference_type": "JAMMING",
       "signal_strength_dbm": -71.5
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "9597a04b-5e0e-5bd6-8a1a-a87a6070c63d"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "WARNING",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "SYNTHETIC-GNSS-001",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   }
 ]

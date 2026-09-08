@@ -12,12 +12,21 @@
       "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
     ],
     "position": null,
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -25,6 +34,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T15:00:00.000Z",
     "valid_to": null
@@ -42,12 +52,21 @@
       "tag:synapsecommand.com,2026-09-06:ontology:core:Route"
     ],
     "position": null,
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -55,6 +74,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T15:55:00.000Z",
     "valid_to": null
@@ -96,24 +116,34 @@
       "authorized_by": "COMMANDER-ALPHA",
       "mission": "MISSION-41"
     },
+    "quality": null,
     "received_at": "2026-04-29T15:55:01.000Z",
     "related_entities": [
       "64bebfce-ab5d-56ba-8b12-f88b9f42bb87",
       "a6d9e7c1-bf7a-5a0b-9ef1-ae2e0e4e5e56"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "SYNTHETIC-ACTION-001",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   }
 ]

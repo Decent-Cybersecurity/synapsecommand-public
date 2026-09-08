@@ -84,3 +84,50 @@ class ObjectType(StrEnum):
     ROUTE = "ROUTE"
     CONTROL_MEASURE = "CONTROL_MEASURE"
     ANNOTATION = "ANNOTATION"
+
+
+class VerticalUnit(StrEnum):
+    """The unit a `VerticalPosition` states its number in. §26's "value plus unit", closed.
+
+    Three members and no UNKNOWN, which is a departure from this module's opening paragraph and
+    is the unit policy rather than an oversight. §26 forbids "ambiguous naked numeric fields
+    where unit ambiguity matters"; a vertical measurement whose unit nobody knows IS that naked
+    number wearing a wrapper, and recording it would let a consumer render 300 as metres when
+    the source meant feet. An adapter that cannot read the unit therefore has no vertical
+    position to state — it parks the raw number in the residual, where nothing reads it as a
+    height. Absence is expressible (the whole `VerticalPosition` is optional); an unknown unit
+    is not, deliberately.
+
+    `FL` is a unit as well as a reference because a flight level IS its own scale: FL350 is
+    "35000 feet on the 1013.25 hPa isobaric surface", a number that is neither metres nor feet
+    above anything on the ground. Converting it needs the local pressure, which the adapter does
+    not have, so it is carried as it was stated.
+    """
+    METRES = "m"
+    FEET = "ft"
+    FLIGHT_LEVEL = "FL"
+
+
+class VerticalReference(StrEnum):
+    """What a `VerticalPosition` is measured FROM. The datum, never assumed.
+
+    The six here are the ones the formats in scope actually state. HAE is the WGS84 ellipsoid —
+    what a GNSS receiver computes natively and what `Position.alt_m` has always meant. MSL is a
+    geoid model, and the separation between the two reaches 100 m in places, so a silent
+    substitution moves an aircraft by more than its own vertical separation minimum. AGL is
+    height above the terrain beneath the object, which is not a datum at all but a difference,
+    and is therefore not convertible to either of the others without a terrain model. BARO is an
+    altimeter reading against a stated or unstated pressure setting; FL is BARO against the
+    standard setting.
+
+    UNKNOWN is a MEMBER, unlike `VerticalUnit`'s absent one, and the asymmetry is the point: a
+    number with no unit cannot be rendered at all, whereas a number whose datum is unstated can
+    still be shown to an operator beside the words "reference unknown". That is a worse fix than
+    a referenced one and a far better one than a fix silently labelled MSL.
+    """
+    HAE = "HAE"
+    MSL = "MSL"
+    AGL = "AGL"
+    BARO = "BARO"
+    FL = "FL"
+    UNKNOWN = "UNKNOWN"

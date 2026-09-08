@@ -39,8 +39,8 @@ The v1 surface is `packages/cdm/synapse_cdm/adapter.py`. It is a class contract 
 | `system` | `adapter.py:58` | the external system the adapter speaks for, into `SourceRef.system` |
 | `TRANSFORMS` | `adapter.py:76` | source paths whose value legitimately changes, mapped to the REASON |
 | `fixture_dir` | `adapter.py:113` | the fixture directory when it is not the adapter's own name |
-| `to_cdm` | `adapter.py:182` | abstract; one source payload in, a list of canonical objects out |
-| `from_cdm` | `adapter.py:194` | overridden by an emitting adapter; the base raises the refusal |
+| `to_cdm` | `adapter.py:204` | abstract; one source payload in, a list of canonical objects out |
+| `from_cdm` | `adapter.py:216` | overridden by an emitting adapter; the base raises the refusal |
 | `source_ref` | `adapter.py:176` | the provenance stamp every emitted object carries |
 | `now` | `adapter.py:172` | receipt time, from the injected clock and never `datetime.now()` |
 | `__init_subclass__` | `adapter.py:115` | the enforcement: the checks below run when the class is defined |
@@ -297,6 +297,13 @@ harness's fourth check (`lossless`) is where an adapter meets this rule.
 **The gap.** The residual today is parked in `Entity.attributes` or `Event.payload`, which is a
 free-form dictionary; the source-identifying container of §5 is P3's addition.
 
+**LANDED 2026-09-08, round P3.** `models.Residual{namespace, data}` and
+`lossless.residual_block(adapter, raw, consumed)` exist. What has NOT changed is §5's Part 1
+stance: the fourteen adapters shipped here keep the `attributes` / `payload` parking and keep
+declaring `residual: legacy`, so no golden moved for residual placement. The container is there
+for Part 2, and `tests/test_cdm_lossless.py` carries the rule that a `structured` adapter may not
+also use the legacy bag.
+
 ### 4.2 Rule 2 — do not invent values
 
 Unknown is not zero. An unknown position is not `0,0`; an unknown altitude, confidence, velocity or
@@ -362,6 +369,15 @@ to one entry of `source_ids`), **transformation chain**, **source hash** and **r
 the source payload**. Until P3 lands them, an adapter needing any of them MUST park it in the
 residual with a documented key, and MUST NOT invent a top-level field.
 
+**CLOSED 2026-09-08, round P3, and the sentence above is kept because it is what the gap was.**
+All six now have a canonical home on `SourceRef`: `format_name`, `format_version`, `original_id`,
+`source_hash`, `record_index` and `transformations`, every one of them OPTIONAL, plus an
+`observed_at` for the record's own instant. `Adapter.source_ref()` fills the first two from the
+adapter's own `metadata.format`, so the stamp and the manifest cannot disagree; the other five are
+facts about ONE SOURCE RECORD and are set per object by an adapter that has them. The instruction
+to park in the residual has therefore expired for these six items and still holds for anything
+else.
+
 ### 4.6 Rule 6 — adapters do not make operational decisions
 
 An adapter MAY parse, validate, canonicalise, normalise units, translate and preserve provenance.
@@ -405,6 +421,11 @@ adapter uses the structured container. The goldens are therefore NOT rewritten f
 placement in Part 1, on the specification's own instruction not to introduce a breaking change for
 stylistic cleanliness: the information is already preserved, the placement is what changes, and
 paying for that with every golden file and every downstream consumer buys nothing a reader can use.
+
+**Added 2026-09-08, round P3.** The four policies this section and §4 state normatively — geometry
+and CRS, units, time, and residual — are also written for a reader rather than for an implementer
+at `docs/docs/cdm/policies.mdx`, which names the line that enforces each one. This document stays
+the normative text; that page is its projection and adds no rule.
 
 ---
 

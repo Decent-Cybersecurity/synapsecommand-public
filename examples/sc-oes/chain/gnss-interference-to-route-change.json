@@ -17,14 +17,24 @@
       "alt_m": null,
       "lat": 57.512,
       "lon": 21.884,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -32,6 +42,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T06:12:44.000Z",
     "valid_to": null
@@ -51,12 +62,21 @@
       "tag:synapsecommand.com,2026-09-06:ontology:core:Mission"
     ],
     "position": null,
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -64,6 +84,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T05:00:00.000Z",
     "valid_to": null
@@ -81,12 +102,21 @@
       "tag:synapsecommand.com,2026-09-06:ontology:core:Route"
     ],
     "position": null,
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -94,6 +124,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T15:55:00.000Z",
     "valid_to": null
@@ -156,24 +187,34 @@
       "interference_type": "JAMMING",
       "signal_strength_dbm": -68.0
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "6ab3a8e0-b92f-58d5-a35b-d87c274be31c"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "WARNING",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "CHAIN-41-OBSERVATION",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "1165bceb-0221-5671-ad19-113108ec22f8",
@@ -223,24 +264,34 @@
       "previous_level": "MODERATE",
       "threat": "GNSS denial over the Gulf approach"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:41:02.000Z",
     "related_entities": [
       "6ab3a8e0-b92f-58d5-a35b-d87c274be31c"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "WARNING",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "CHAIN-41-ASSESSMENT",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "3d3d29b4-e317-58e7-a7da-238475c6502d",
@@ -290,24 +341,34 @@
       "impact": "planned low-level leg cannot be flown on GNSS alone",
       "mission": "MISSION-41"
     },
+    "quality": null,
     "received_at": "2026-04-29T07:05:02.000Z",
     "related_entities": [
       "eeb03ae0-2902-5a68-a8b3-b4999f60ee50"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "WARNING",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "CHAIN-41-IMPACT",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "91479923-98c8-5a74-9895-8f9d7c007a3b",
@@ -361,25 +422,35 @@
       "proposed_by": "MISSION-CELL-ALPHA",
       "recommendation": "re-route MISSION-41 via ROUTE-DELTA"
     },
+    "quality": null,
     "received_at": "2026-04-29T07:22:01.000Z",
     "related_entities": [
       "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
       "6f27d016-39a0-5162-ad36-06c4bfbc10c7"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "ADVISORY",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "CHAIN-41-RECOMMENDATION",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "e61d7c30-c090-5e2e-87a4-a65bb7dae71b",
@@ -429,24 +500,34 @@
       "decision_forum": "MISSION-BRIEF-41-B",
       "mission": "MISSION-41"
     },
+    "quality": null,
     "received_at": "2026-04-29T07:40:01.000Z",
     "related_entities": [
       "eeb03ae0-2902-5a68-a8b3-b4999f60ee50"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "CHAIN-41-DECISION",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "fa2346fd-784f-5d24-8a37-292c4364e032",
@@ -500,24 +581,34 @@
       "authorized_by": "COMMANDER-ALPHA",
       "mission": "MISSION-41"
     },
+    "quality": null,
     "received_at": "2026-04-29T07:52:01.000Z",
     "related_entities": [
       "eeb03ae0-2902-5a68-a8b3-b4999f60ee50",
       "6f27d016-39a0-5162-ad36-06c4bfbc10c7"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "INFO",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "CHAIN-41-ACTION",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   }
 ]

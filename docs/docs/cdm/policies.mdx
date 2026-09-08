@@ -1,0 +1,141 @@
+---
+title: CDM Policies
+sidebar_label: CDM Policies
+sidebar_position: 5
+description: Geometry, units, time and residual data — the four rules the canonical model is written on, each with the line that enforces it.
+---
+
+# The four CDM policies
+
+Four rules about how the canonical model states things, as opposed to what it states. Each one
+exists because the alternative is a defect that is **silent**: the record looks well-formed, every
+check passes, and the number on the map is wrong. Each section below names where the rule is
+enforced in code, so a reader can check the claim rather than take it.
+
+They arrived together with the CDM foundation primitives in `SCHEMA_VERSION` **2.1.0** (round P3,
+2026-09-08). Nothing here is retroactive: the rules describe the model as it now stands.
+
+## Geometry — one CRS, two coordinate orders, no third
+
+**Every coordinate in the CDM is WGS84 decimal degrees.** That is the CRS RFC 7946 §4 fixes for
+GeoJSON and it is the only one the canonical form has. There is no `crs` field and there will not
+be one — a per-object CRS makes every consumer a coordinate-transformation library, and the
+transformation is exactly the one an adapter is in a position to do correctly, once, with the
+source's own parameters to hand.
+
+So an adapter **converts to WGS84 or refuses the payload**. It never labels a UTM easting as a
+longitude and it never passes a national grid reference through untouched.
+
+Two coordinate ORDERS live in this repository, deliberately, and there is no third:
+
+| shape | order | why |
+| --- | --- | --- |
+| `Point`, `LineString`, `Polygon`, `MultiPoint`, `MultiLineString`, `MultiPolygon` | `coordinates` is `[lon, lat]` | GeoJSON, RFC 7946 §3.1.1 — the wire form a GeoJSON consumer expects |
+| `Position` | named fields `lat` and `lon` | a name cannot be transposed |
+| `BoundingBox` | named `min_lon`, `min_lat`, `max_lon`, `max_lat` | RFC 7946 §5's `bbox` array is `[west, south, east, north]` and a reader who assumes `[south, west, north, east]` gets a box in the wrong hemisphere, with nothing able to tell |
+
+Coordinates MUST NOT silently swap. `geo._check_lonlat` refuses a latitude outside `[-90, 90]`,
+which catches the swap for every coordinate outside the equatorial band where both readings happen
+to be legal; the remaining band is covered by fixture tests. The symptom the guard exists for:
+**24.1E 57.5N is in the Baltic, 57.5E 24.1N is in Saudi Arabia**.
+
+`MultiPoint`, `MultiLineString` and `MultiPolygon` are in the geometry union. **`GeometryCollection`
+is not, and that is a decision.** A collection is heterogeneous, so it has no single geometry
+semantics for a consumer to act on — "draw this", "is my position inside it", "how long is it" all
+stop having one answer. RFC 7946 §3.1.8 advises against one where a single-type geometry will do,
+and an object that genuinely needs mixed geometry is more than one canonical object.
+
+A `type` the CDM does not know is **refused**, never passed through, so an unsupported geometry
+fails loudly at the adapter instead of arriving as an unrenderable blob on a map.
+
+## Units — no naked numbers where the unit matters
+
+A number whose unit is not stated somewhere is a number that will be read in the wrong unit. The
+CDM does this two ways and no third:
+
+1. **The unit is in the field name**, normatively fixed by the schema: `alt_m`, `accuracy_m`,
+   `speed_mps`, `course_deg`, `climb_mps`, `distance_m`, `signal_strength_dbm`.
+2. **The unit is a field**, where the source's own unit varies: `VerticalPosition{value, unit,
+   reference, uncertainty}`.
+
+`VerticalPosition` is where the second form matters most. A vertical measurement has *two* pieces
+of context, not one — the scale (`m`, `ft`, `FL`) and the datum (`HAE`, `MSL`, `AGL`, `BARO`, `FL`,
+`UNKNOWN`) — and dropping either produces a plausible number in the wrong place. The separation
+between the WGS84 ellipsoid and a geoid model reaches 100 m in places, which is more than an
+aircraft's own vertical separation minimum.
+
+**Adapters convert only when the conversion is exact, or the precision effect is documented.**
+`Position.alt_m` remains the canonical metres-HAE projection, and `Position`'s validator enforces
+the two halves of that:
+
+- when `vertical` is HAE in metres and `alt_m` is stated, the two numbers must be equal — a
+  projection that disagrees with what it projects is worse than an absent one;
+- when `vertical`'s datum is anything else, `alt_m` **must be `None`**. Converting MSL, AGL, BARO
+  or FL to metres HAE needs a geoid model, a terrain model or a local pressure setting, none of
+  which this package has.
+
+`VerticalUnit` has no `UNKNOWN` member, which is the unit policy rather than an oversight: a height
+whose unit nobody knows is the naked number this rule exists to prevent, so it is not expressible.
+An adapter that cannot read the unit has no vertical position to state, and parks the raw number in
+the residual where nothing reads it as a height. `VerticalReference` *does* have `UNKNOWN`, because
+a number with an unstated datum can still be shown to an operator beside the words "reference
+unknown" — a worse fix than a referenced one, and a far better one than a fix silently labelled MSL.
+
+## Time — UTC, and unknown is absent
+
+Canonical timestamps are RFC 3339 **UTC**, rendered with exactly three decimal places and always
+`Z`. The `Timestamp` type parses loosely (sources are undisciplined) and serialises to exactly one
+form: parse wide, emit narrow, publish narrow.
+
+**Unknown time MUST NOT become `1970-01-01` and MUST NOT become `now()`.** Both substitutions
+produce a record that looks complete. The epoch reads as a real instant fifty-six years ago and
+sorts to the top of every timeline; `now()` reads as a fresh observation and makes every restart
+look like a wave of new activity. Unknown time is the **absence of the field**.
+
+`Timestamp` does not refuse the epoch instant, and that is a decision rather than an omission.
+`1970-01-01T00:00:00.000Z` is a real instant, some sources legitimately carry it as a base epoch,
+and a validator that refused it would refuse real data in order to catch a defect that lives in the
+**adapter**. The rule is therefore enforced where the substitution would be made — in review of the
+adapter, and in the conformance suite's own reading — and it is written down here.
+
+Four times, separated because they answer different questions:
+
+| field | question |
+| --- | --- |
+| `observed_at` | when the SOURCE saw the state |
+| `valid_from` | when the state BEGAN, which may be long before anyone saw it |
+| `valid_to` | when it ceased. `None` = still current, never "unknown" |
+| `effective` | the `Period` the source declares the object operative |
+
+An airspace restriction shows why one timestamp cannot do the work of four: it is observed when the
+NOTAM is read, valid from the moment it is published, and effective for a window that has not
+started yet. `Event` keeps its own pair — `observed_at` is when the source saw it, `received_at` is
+when we took delivery — and the field descriptions say "Never receipt time" and "Never source time"
+because that is the confusion they exist to prevent.
+
+## Residual — it names its origin, and nothing trusts it
+
+`Residual{namespace, data}` is where source information the CDM does not model is kept.
+
+**It MUST identify its origin.** `namespace` is the source format's own name — the same string the
+adapter declares as `metadata.format.name`, the same string `SourceRef.format_name` carries, and
+the same string `manifests/<id>.json` publishes. One declaration, projected everywhere it is
+needed, so a reader meeting an unfamiliar key inside `data` can find out whose vocabulary it
+belongs to.
+
+**It MUST NOT be treated as semantically trusted merely because it survived translation.** A
+residual says "the source said this and the CDM has no home for it". That is a fact about the
+source *record*, not an assertion about the world. A consumer MUST NOT promote a residual value
+into a canonical field, and a later adapter MUST NOT read another adapter's residual as an input.
+
+`data` preserves the source's own **structure**. It is a nested object, not a list of dotted paths,
+because the first version of `lossless.residual()` was the latter and it turned a two-element list
+into two keys named `affected_constellations[0]` and `affected_constellations[1]` — the never-drop
+rule satisfied in the letter, and a consumer that could no longer read the field as a list.
+
+**The fourteen adapters in this repository do not use the container yet, and that is ruled rather
+than pending.** They keep their `attributes` / `payload` parking under `source_extras` through the
+whole of Part 1 and declare `residual: legacy` in their manifests. The information is already
+preserved; only the placement would change, and paying for that with every golden file and every
+downstream consumer buys nothing a reader can use. Every Part 2 adapter declares
+`residual: structured` and calls `lossless.residual_block()`.

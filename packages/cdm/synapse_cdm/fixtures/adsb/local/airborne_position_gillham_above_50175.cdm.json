@@ -52,14 +52,24 @@
       "alt_m": null,
       "lat": 57.39079284667969,
       "lon": 21.560583114624023,
-      "position_source": "GNSS"
+      "position_source": "GNSS",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
+      "format_name": "ADS-B 1090ES Extended Squitter (Mode S DF17/DF18)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ADSB"
+      "system": "ADSB",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -67,6 +77,7 @@
         "system": "ICAO24"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:15:00.000Z",
     "valid_to": null
@@ -89,23 +100,33 @@
       "received_at_basis": "the injected clock. An ADS-B frame stream carries no wall-clock timestamp \u2014 the AVR '@' field is a receiver counter \u2014 so unlike AIS there is no feed-supplied delivery instant to prefer over ours",
       "severity_basis": "ADS-B states no urgency outside a surveillance status of 1 and a type code 28 emergency state; INFO is the format's silence, not an assessment that nothing is wrong"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "09748c3c-cf04-5141-9f0a-f7db600fd4df"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "adsb",
       "adapter_version": "1.0.0",
+      "format_name": "ADS-B 1090ES Extended Squitter (Mode S DF17/DF18)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ADSB"
+      "system": "ADSB",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "0029C3",
         "system": "ICAO24"
       }
-    ]
+    ],
+    "status": null
   }
 ]

@@ -45,12 +45,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
+      "format_name": "Picogrid Legion Platform API v3",
+      "format_version": "v3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "LEGION"
+      "system": "LEGION",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -58,6 +67,7 @@
         "system": "LEGION"
       }
     ],
+    "status": null,
     "symbol": "10230000000000000000",
     "valid_from": "2026-04-29T06:05:00.000Z",
     "valid_to": "2026-04-29T18:00:00.000Z"

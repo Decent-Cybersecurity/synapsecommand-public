@@ -811,14 +811,24 @@
       "alt_m": null,
       "lat": 60.176822966978335,
       "lon": 128.42675904204452,
-      "position_source": "GNSS"
+      "position_source": "GNSS",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -826,6 +836,7 @@
         "system": "UAS-LS-PACKET"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2009-01-12T22:08:22.000Z",
     "valid_to": null
@@ -924,23 +935,33 @@
         "what_observed_at_IS": "the instant EPOCH + applied_microseconds. With neither tag 136 nor tag 137 in the packet that is the raw MISP Time System instant and NOT UTC; with tag 136 it is \u00a76.4 Equation 2's UTC less the 82-microsecond residue; with tag 137 it is the corrected time \u00a76.4 Equation 1 defines. The CDM's Timestamp is UTC and this adapter does not pretend the difference away \u2014 it states which of the three this object carries, on the object"
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "e736fa50-cc0a-54fd-8faa-203f4f6dbc64"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "1231798102000000|0",
         "system": "UAS-LS-PACKET"
       }
-    ]
+    ],
+    "status": null
   }
 ]

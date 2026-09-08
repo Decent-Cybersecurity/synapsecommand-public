@@ -18,14 +18,24 @@
       "alt_m": null,
       "lat": 48.17,
       "lon": 17.21,
-      "position_source": "MANUAL"
+      "position_source": "MANUAL",
+      "vertical": null
     },
+    "quality": null,
+    "residual": null,
     "schema_version": "2.0.0",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -33,6 +43,7 @@
         "system": "SC-OES-EXAMPLES"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T08:00:00.000Z",
     "valid_to": null
@@ -71,23 +82,33 @@
       "reason_stated_by_source": "surface inspection",
       "runway": "RUNWAY-27"
     },
+    "quality": null,
     "received_at": "2026-04-29T08:00:04.000Z",
     "related_entities": [
       "4e70a641-20be-5d0f-9401-65a650e25450"
     ],
+    "residual": null,
     "schema_version": "2.0.0",
     "severity": "ADVISORY",
     "source": {
       "adapter": "sc-oes-examples",
       "adapter_version": "0.1.0",
+      "format_name": null,
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "SC-OES-EXAMPLES"
+      "system": "SC-OES-EXAMPLES",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "SYNTHETIC-RWY-001",
         "system": "SC-OES-EXAMPLES"
       }
-    ]
+    ],
+    "status": null
   }
 ]

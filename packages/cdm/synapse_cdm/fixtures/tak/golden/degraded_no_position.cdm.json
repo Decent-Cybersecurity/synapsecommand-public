@@ -31,12 +31,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
+      "format_name": "Cursor-on-Target (TAK)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "TAK"
+      "system": "TAK",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -44,6 +53,7 @@
         "system": "TAK"
       }
     ],
+    "status": null,
     "symbol": "10230000000000000000",
     "valid_from": "2026-04-29T06:13:07.000Z",
     "valid_to": "2026-04-29T06:18:07.000Z"
@@ -62,23 +72,33 @@
       "event_id_basis": "event/@uid + event/@time",
       "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "b56a20b9-6b8f-57a5-8bce-e65086440d4d"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
+      "format_name": "Cursor-on-Target (TAK)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "TAK"
+      "system": "TAK",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "TAK-DISMOUNT-19",
         "system": "TAK"
       }
-    ]
+    ],
+    "status": null
   }
 ]

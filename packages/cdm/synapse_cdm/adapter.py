@@ -174,9 +174,31 @@ class Adapter(ABC):
         return self._clock()
 
     def source_ref(self) -> SourceRef:
-        """The provenance stamp for every object this adapter emits."""
+        """The provenance stamp for every object this adapter emits.
+
+        `format_name` and `format_version` are READ FROM THE DECLARATION, not passed in and not
+        guessed. `metadata.format` is the same block `manifests/<id>.json` publishes and the same
+        block the conformance suite reads, so an adapter cannot stamp one format on its objects
+        and declare another in its manifest — there is one statement of the fact and this method
+        projects it. That is why all fourteen shipped adapters gained the two fields in round P3
+        without a single per-adapter edit.
+
+        `format_version` stays `None` for an adapter whose `metadata.format.version` is `None`,
+        and `AdapterMetadata` already refuses that unless a limitation says in words that no
+        document in this tree states the edition. A null here is therefore a reading somebody
+        wrote down, never a field nobody filled in.
+
+        The other five Rule 5 fields — `original_id`, `source_hash`, `record_index`,
+        `observed_at`, `transformations` — are NOT filled here, and the asymmetry is deliberate.
+        Each of them is a fact about ONE SOURCE RECORD, and this method has no record in front of
+        it: it is called once per translation to build the stamp every object of that translation
+        shares. An adapter that has the record's own identifier or its index sets them on the
+        copy it puts on each object, where the value is true of that object alone.
+        """
         return SourceRef(system=self.system, adapter=self.name,
-                         adapter_version=self.version, synthetic=self._synthetic)
+                         adapter_version=self.version, synthetic=self._synthetic,
+                         format_name=self.metadata.format.name,
+                         format_version=self.metadata.format.version)
 
     @abstractmethod
     def to_cdm(self, raw: bytes | dict) -> list[CDMBase]:

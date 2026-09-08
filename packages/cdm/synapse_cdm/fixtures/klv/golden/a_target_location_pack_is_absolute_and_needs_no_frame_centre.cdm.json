@@ -1227,12 +1227,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -1240,6 +1249,7 @@
         "system": "UAS-LS-PACKET"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2008-10-24T00:13:29.913Z",
     "valid_to": null
@@ -1333,24 +1343,34 @@
         "what_observed_at_IS": "the instant EPOCH + applied_microseconds. With neither tag 136 nor tag 137 in the packet that is the raw MISP Time System instant and NOT UTC; with tag 136 it is \u00a76.4 Equation 2's UTC less the 82-microsecond residue; with tag 137 it is the corrected time \u00a76.4 Equation 1 defines. The CDM's Timestamp is UTC and this adapter does not pretend the difference away \u2014 it states which of the three this object carries, on the object"
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "97a501bb-20a1-53b3-9ba7-1a697784bd42"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "1224807209913000|0",
         "system": "UAS-LS-PACKET"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "event_id": "2850f564-8d33-5ab6-b8bd-8a05882b6d61",
@@ -1696,17 +1716,26 @@
       },
       "vmti_target_ordinal": 0
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "49cab8c5-856d-5920-af40-42b901c2b4fe"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -1721,7 +1750,8 @@
         "external_id": "f81d4fae7dec11d0a76500a0c91e6bf6",
         "system": "VMTI-VTRACKER-TRACK-ID"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -2089,14 +2119,24 @@
       "alt_m": 10000.0,
       "lat": 43.0,
       "lon": 110.0,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -2112,6 +2152,7 @@
         "system": "VMTI-VTRACKER-TRACK-ID"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2008-10-24T00:13:29.913Z",
     "valid_to": null
@@ -2120,6 +2161,8 @@
     "entity_id": "49cab8c5-856d-5920-af40-42b901c2b4fe",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2008-10-24T00:13:29.913Z",
@@ -2128,16 +2171,24 @@
           "alt_m": 10000.0,
           "lat": 43.0,
           "lon": 110.0,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "stanag4609",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4609 / MISP-2019.1 \u2014 the UAS Datalink Local Set",
+      "format_version": "MISP-2019.1 (STANAG 4609 Edition 5 wrapper)",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "STANAG4609"
+      "system": "STANAG4609",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -2153,6 +2204,7 @@
         "system": "VMTI-VTRACKER-TRACK-ID"
       }
     ],
+    "status": null,
     "track_id": "43e69628-d100-5138-9768-adc7980a1de1",
     "track_quality": 0.5
   }

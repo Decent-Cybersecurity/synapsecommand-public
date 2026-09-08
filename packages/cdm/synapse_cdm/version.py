@@ -45,8 +45,10 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     Python package        2.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
-    CDM schema            2.0.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
+    CDM schema            2.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
                                   every serialised object, governed by ``MIGRATIONS.md``.
+                                  (2.0.0 -> 2.1.0 on 2026-09-08, round P3: optional primitives
+                                  only. The package did NOT follow it and is still 2.0.0.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -79,8 +81,12 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``2.0.0`` and ``SCHEMA_VERSION`` is ``2.0.0``, and this paragraph is the
-third version of itself that does not have to reason about a hypothetical.
+``PACKAGE_VERSION`` is ``2.0.0`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
+fourth version of itself that does not have to reason about a hypothetical. (Corrected
+2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
+the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
+paragraph below — written the day the two became equal — is already describing a state that has
+passed. It is kept as written; this is the sentence that overtakes it.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -214,7 +220,15 @@ self-inflicted outage. ``PACKAGE_VERSION`` needs no such helper: ``pip`` resolve
 #: strict reader REFUSES an object carrying either key rather than ignoring it. That is
 #: MIGRATIONS.md's MAJOR row read by its consequence column — "breaks readers" — and it is why
 #: this is not a forward-compatible 1.1. ADR 0005 is the decision.
-SCHEMA_VERSION = "2.0.0"
+#: MOVED 2.0.0 -> 2.1.0 on 2026-09-08, a MINOR, by round P3 (SOIF Part 1, R03): the CDM gained
+#: the geometry, vertical, temporal-validity, route, area, quality, provenance, status and
+#: residual primitives, and EVERY ONE of them is an optional field or a new model reached only
+#: through one. Nothing was removed, nothing was renamed, no type was narrowed and no optional
+#: field became required, so MIGRATIONS.md's MINOR row is the whole of it: old readers keep
+#: working and old data keeps validating. `compatible()` below is what makes that true in
+#: practice — a 2.0.0 reader accepts a 2.1.0 object, and the round proves it on a golden file
+#: written before the bump.
+SCHEMA_VERSION = "2.1.0"
 
 #: The distribution. Governed by ordinary semver over the Python surface; read by
 #: `pyproject.toml` as the packaging version, and by `tests/test_cdm_release.py` as the

@@ -136,12 +136,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 023 \u2014 CNS/ATM Ground Station and Service Status Reports",
+      "format_version": "Edition 1.3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT023"
+      "system": "ASTERIX_CAT023",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -149,6 +158,7 @@
         "system": "ASTERIX_SAC_SIC"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:00.000Z",
     "valid_to": null
@@ -184,12 +194,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 023 \u2014 CNS/ATM Ground Station and Service Status Reports",
+      "format_version": "Edition 1.3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT023"
+      "system": "ASTERIX_CAT023",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -197,6 +216,7 @@
         "system": "ASTERIX_CNS_SERVICE"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:00.000Z",
     "valid_to": null
@@ -265,18 +285,27 @@
         "report_type_text": "Service Statistics report"
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "62650095-2e7e-522b-9e65-1a0aa64fc315",
       "ad358100-c4d8-5b86-adf7-7c9178a01c3a"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat023",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 023 \u2014 CNS/ATM Ground Station and Service Status Reports",
+      "format_version": "Edition 1.3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT023"
+      "system": "ASTERIX_CAT023",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -287,6 +316,7 @@
         "external_id": "2929|3",
         "system": "ASTERIX_CNS_SERVICE"
       }
-    ]
+    ],
+    "status": null
   }
 ]

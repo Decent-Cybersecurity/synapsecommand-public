@@ -743,11 +743,20 @@ def test_the_block_is_published_inside_the_event_schema_rather_than_only_in_pyth
 
 
 def test_the_wire_contract_is_a_major_and_a_one_x_reader_is_refused_at_the_version_gate():
-    """ADR 0005's readings, taken here rather than quoted from the ADR."""
-    assert version.SCHEMA_VERSION == "2.0.0"
+    """ADR 0005's readings, taken here rather than quoted from the ADR.
+
+    RE-PINNED 2026-09-08 by round P3, from `2.0.0` to `2.1.0`, and the assertions are still
+    LITERALS. ADR 0005's claim is about the MAJOR — a 1.x reader is refused and a 2.x one is not —
+    and the obvious repair was to assert `parse(SCHEMA_VERSION)[0] == 2` so that no minor bump
+    ever touches this line again. That is the repair this repository does not make: it moves the
+    derivation to fit the tree instead of correcting the figure where it is stated, and it would
+    have made a MAJOR bump to 3.0.0 pass here unnoticed. The number is edited deliberately, once
+    per bump, exactly as `tests/test_cdm_packaging.py`'s own pin instructs.
+    """
+    assert version.SCHEMA_VERSION == "2.1.0"
     assert version.compatible("2.0.0", "1.0.0") is False
     assert version.compatible("1.0.0", "2.0.0") is False
-    assert _event().schema_version == "2.0.0"
+    assert _event().schema_version == "2.1.0"
 
 
 def test_a_legacy_one_x_object_still_validates_against_the_two_x_models():

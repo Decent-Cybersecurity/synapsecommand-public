@@ -286,3 +286,54 @@ def test_detect_answers_on_a_translation_attempt_and_is_documented_as_weak():
     assert _NeverTranslates().detect(b"anything") is False
     assert _NeverTranslates().validate_source(b"anything") == ["ValueError: not mine"]
     assert _Minimal().validate_source({}) == []
+
+
+# --- P3: Rule 5, and the projection that fills it (F3.3) ---------------------------------------
+
+
+def test_the_provenance_stamp_carries_the_format_the_adapter_declares():
+    """`source_ref()` READS `metadata.format`; it is not passed in and it is not guessed.
+
+    That is what let all fourteen shipped adapters gain `source.format_name` and
+    `source.format_version` in round P3 without one per-adapter edit — and it is what makes a
+    disagreement between an object's stamp and its manifest impossible rather than merely
+    unlikely: there is one declaration and this is a projection of it.
+    """
+    for name, cls in sorted(discover().items()):
+        if not cls.__module__.startswith("synapse_cdm.adapters"):
+            continue                              # test doubles defined by this suite
+        ref = cls(synthetic=True).source_ref()
+        assert ref.format_name == cls.metadata.format.name, name
+        assert ref.format_version == cls.metadata.format.version, name
+
+
+def test_a_null_format_version_on_the_stamp_is_a_reading_a_limitation_states():
+    """A null edition is never a field nobody filled in — `AdapterMetadata` already refuses that.
+
+    So the stamp inherits the guarantee: wherever `source.format_version` is null in a golden
+    file, some limitation of that adapter says in words that no document in this tree states
+    which edition it targets.
+    """
+    unstated = []
+    for name, cls in sorted(discover().items()):
+        if not cls.__module__.startswith("synapse_cdm.adapters"):
+            continue
+        if cls(synthetic=True).source_ref().format_version is None:
+            said_so = any("format version" in line.lower() or "edition" in line.lower()
+                          for line in cls.metadata.limitations)
+            unstated.append(name) if not said_so else None
+    assert unstated == [], (
+        f"{unstated} stamp a null format_version with no limitation saying why")
+
+
+def test_the_five_record_level_provenance_fields_are_not_filled_by_the_stamp():
+    """`source_ref()` is called once per translation and has no source RECORD in front of it.
+
+    `original_id`, `source_hash`, `record_index`, `observed_at` and `transformations` are facts
+    about one record, so filling them here would put the first record's values on every object of
+    the payload. An adapter that has them sets them per object.
+    """
+    ref = _Minimal(synthetic=True).source_ref()
+    assert ref.original_id is None and ref.source_hash is None
+    assert ref.record_index is None and ref.observed_at is None
+    assert ref.transformations == []

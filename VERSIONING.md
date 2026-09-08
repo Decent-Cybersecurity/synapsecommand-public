@@ -50,11 +50,11 @@ P4.
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:227` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:217` |
-| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:233` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:244` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:252` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:241` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:231` |
+| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:247` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:258` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:266` |
 | Evidence schema | `EVIDENCE_SCHEMA_VERSION` | added by P4 | not yet declared | `version.py`, when P4 declares it |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
@@ -115,6 +115,13 @@ independently, and finding out about three of them later is finding out from an 
 changes that landed on one number, and the equality is a coincidence rather than a rule: a package
 at 2.0.0 does NOT mean SC-OES is at 2.0, SC-OES is at 0.1.0 and Draft, a profile's number says
 nothing about the specification's, and an event type's `v1` says nothing about any axis above it.
+
+**CORRECTED 2026-09-08, round P3 (SOIF Part 1, R03), and the correction is the section's own point
+arriving.** The two numbers no longer read the same: `SCHEMA_VERSION` moved 2.0.0 -> 2.1.0 with the
+CDM foundation primitives and `PACKAGE_VERSION` did not move at all, because a package release is
+P8's and PR's business and not this round's. The paragraph above is kept exactly as written — it
+argued that the equality was a coincidence and not a rule, and an axis diverging is what that
+sentence was for. The table above carries the two numbers as they now stand.
 
 **They MUST NOT automatically share a number.** Anything that made one axis follow another would
 turn every one of the coincidences above into a false statement the moment the axes diverged, and

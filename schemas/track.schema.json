@@ -30,6 +30,51 @@
       "title": "Integrity",
       "type": "object"
     },
+    "OperationalStatus": {
+      "additionalProperties": false,
+      "description": "What state the source says a thing is in, in the SOURCE's vocabulary, namespaced.\n\nTHERE IS NO ENUM HERE AND THERE WILL NOT BE ONE. \"SERVICEABLE\", \"DEGRADED\", \"MISSION CAPABLE\",\n\"RED\" and \"U/S\" come from five different domains and mean five different things, and a closed\nCDM vocabulary would have to map each of them onto a member \u2014 which is a judgement about\nsomebody else's operational language, made inside a translator, invisible in the output, and\nexactly what Rule 6 forbids. `namespace` says whose vocabulary `state` belongs to, so a\nconsumer meeting an unfamiliar value can find out what it means instead of guessing; a\nconsumer MUST NOT compare `state` across namespaces.\n\n`since` is when the state began, not when it was reported. Absent means the source did not\nsay \u2014 never the receipt time, which would make every restart look like a state change.",
+      "properties": {
+        "attributes": {
+          "additionalProperties": true,
+          "description": "Status-specific source fields with no canonical home.",
+          "title": "Attributes",
+          "type": "object"
+        },
+        "namespace": {
+          "description": "Whose vocabulary `state` is in \u2014 normally the source format's name. Required: an unnamespaced status is a word with no owner.",
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the state began. None = the source did not say.",
+          "title": "Since"
+        },
+        "state": {
+          "description": "The source's own token, verbatim and untranslated.",
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "namespace"
+      ],
+      "title": "OperationalStatus",
+      "type": "object"
+    },
     "Position": {
       "additionalProperties": false,
       "description": "A fix. Both coordinates required \u2014 that is how the null-never-zero rule is structural.\n\nAn unknown position is the ABSENCE of this object (`entity.position is None`), never a\nPosition holding zeros. Because lat and lon are required here, an adapter cannot express\n\"unknown\" as (0, 0) even by accident: it has to either omit the Position or state a real\ncoordinate. Coordinate zero is a real point in the Gulf of Guinea, and a contact painted\nthere is a contact that does not exist.\n\n`accuracy_m` absent means unknown accuracy, NOT perfect accuracy. Zero would mean a fix\nwith no error, which no sensor produces.",
@@ -78,6 +123,18 @@
         "position_source": {
           "$ref": "#/$defs/PositionSource",
           "description": "How the fix was obtained \u2014 the field that survives GNSS denial."
+        },
+        "vertical": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerticalPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The height AS THE SOURCE STATED IT \u2014 unit and datum carried, never converted. `alt_m` above stays the canonical HAE-in-metres projection and is None whenever the source's datum is not HAE."
         }
       },
       "required": [
@@ -98,6 +155,112 @@
       ],
       "title": "PositionSource",
       "type": "string"
+    },
+    "Quality": {
+      "additionalProperties": false,
+      "description": "How good the source says its own data is. Four ways of saying it, none derived.\n\n`confidence` is 0..1 and comparable across sources; `source_quality` is the source's OWN\ngrade, a free string, because ASTERIX's track quality, AIS's position accuracy flag and a\nNATO track's evaluation code are three ordinal scales with no defined mapping between them\nand inventing one would be a fusion decision made inside a translator.\n\n`uncertainty` is a NAMED dict \u2014 `{\"along_track_m\": 40.0, \"cross_track_m\": 12.0}` \u2014 rather\nthan a single number, because an error ellipse is not a radius and flattening it loses the\norientation that made it worth sending. Names are the source's; the CDM does not fix a\nvocabulary here, and the unit belongs in the key exactly as `signal_strength_dbm` carries\nits own unit in its name.",
+      "properties": {
+        "accuracy_m": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metres, 1-sigma. None = unknown, never 0.",
+          "title": "Accuracy M"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0..1. None = unknown; 0 means certainty-that-not, which is a claim.",
+          "title": "Confidence"
+        },
+        "source_quality": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's own grade, verbatim. None = the source stated none.",
+          "title": "Source Quality"
+        },
+        "uncertainty": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "Named components, e.g. along_track_m / cross_track_m. The unit is in the key. Empty = the source named none.",
+          "title": "Uncertainty",
+          "type": "object"
+        }
+      },
+      "title": "Quality",
+      "type": "object"
+    },
+    "Residual": {
+      "additionalProperties": false,
+      "description": "Source information the CDM does not model, kept under the name of the format it came from.\n\n\u00a728's container, and its two rules are load-bearing in opposite directions:\n\n1. **It MUST identify its origin.** `namespace` is the source format's own name \u2014 the same\n   string as the adapter's `metadata.format.name` \u2014 so a reader meeting an unfamiliar key\n   inside `data` can find out which standard's vocabulary it belongs to. An unnamespaced bag\n   of leftovers is the free-form dict this model exists to replace.\n2. **It MUST NOT be treated as semantically trusted merely because it survived translation.**\n   A residual says \"the source said this and the CDM has no home for it\". It is a fact about\n   the source RECORD, not an assertion about the world. A consumer MUST NOT promote a\n   residual value into a canonical field, and a later adapter MUST NOT read another adapter's\n   residual as an input \u2014 ARCHITECTURE.md \u00a75 states both as normative text.\n\n`data` preserves the source's own STRUCTURE, which is why it is a dict and not a list of\ndotted paths: `lossless.residual()` learned that the hard way when a two-element list came\nback as two keys named `affected_constellations[0]` and `[1]`, satisfying the never-drop rule\nin the letter while destroying the reader's ability to see a list.\n\nTHE FOURTEEN ADAPTERS IN THIS REPOSITORY DO NOT USE THIS YET, deliberately. ARCHITECTURE.md\n\u00a75 rules that they keep their `attributes` / `payload` parking under `source_extras` through\nthe whole of Part 1 and declare `residual: legacy` in their manifests, because the\ninformation is already preserved and paying for a placement change with every golden file and\nevery downstream consumer buys nothing a reader can use (\u00a729: no breaking change for\nstylistic cleanliness). Every Part 2 adapter declares `residual: structured` and uses this.",
+      "properties": {
+        "data": {
+          "additionalProperties": true,
+          "description": "The unconsumed source structure, preserved as the source shaped it.",
+          "title": "Data",
+          "type": "object"
+        },
+        "namespace": {
+          "description": "The source format's name \u2014 normally metadata.format.name. Required.",
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "Residual",
+      "type": "object"
+    },
+    "SourceHash": {
+      "additionalProperties": false,
+      "description": "A digest of the source record, as the ADAPTER computed it. Carried, never computed here.\n\nRule 5 asks for \"source hash where appropriate\", and the appropriateness is the adapter's\njudgement: a hash of a 3-byte AIS sentence identifies nothing an external id does not, while a\nhash of a 4 MB NITF segment is how an auditor proves the bytes on the wire were the bytes\ndescribed. So it is optional, and its absence means the adapter did not compute one.\n\nNO HASHING HAPPENS IN THIS PACKAGE. `tests/test_cdm_boundary.py` asserts that no module under\n`synapse_cdm/` imports `hashlib` or any crypto library, and this model does not change that:\nit is a container for a value produced outside the contract layer, exactly as `Integrity` is\na container for a signature this package does not make. `algorithm` is therefore required and\nfree-form \u2014 a digest with no algorithm cannot be reproduced by anyone, and an enum would make\nthe day SHA-3 arrives a MAJOR bump for a string nobody branches on.",
+      "properties": {
+        "algorithm": {
+          "description": "e.g. sha256. Named by the producer.",
+          "minLength": 1,
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "value": {
+          "description": "The digest, in the producer's own encoding.",
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "value"
+      ],
+      "title": "SourceHash",
+      "type": "object"
     },
     "SourceId": {
       "additionalProperties": false,
@@ -139,6 +302,86 @@
           "title": "Adapter Version",
           "type": "string"
         },
+        "format_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source STANDARD's name, e.g. 'ASTERIX'. Filled from the adapter's own declared metadata.format; None only for an adapter that declares none.",
+          "title": "Format Name"
+        },
+        "format_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The edition of that standard, e.g. 'Cat 062 ed 1.18'. None = no document in this tree states which edition the adapter targets \u2014 a reading, never a gap filled in.",
+          "title": "Format Version"
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "description": "RFC 3339 UTC, exactly three decimal places, always Z.",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The instant the SOURCE RECORD states for itself, when it states one and no canonical field already carries it. Event.observed_at stays the event's own time; this is the record's.",
+          "title": "Observed At"
+        },
+        "original_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source record's OWN identifier, as a first-class provenance field. Distinct from source_ids, which is the identity of the THING; this is the identity of the RECORD that described it.",
+          "title": "Original Id"
+        },
+        "record_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which record of a multi-record payload this object came from, 0-based. None = the payload was not a sequence, or the adapter does not track it. Never -1 and never 0-as-unknown: 0 is the first record.",
+          "title": "Record Index"
+        },
+        "source_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceHash"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Digest of the source record, computed by the adapter."
+        },
         "synthetic": {
           "description": "true for anything not from a real source (TR-12).",
           "title": "Synthetic",
@@ -149,6 +392,14 @@
           "minLength": 1,
           "title": "System",
           "type": "string"
+        },
+        "transformations": {
+          "description": "Rule 5's transformation chain: the TRANSFORMS reasons this adapter applied, in the order it applied them. Empty = nothing was transformed, which is a claim the lossless check can contradict.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Transformations",
+          "type": "array"
         }
       },
       "required": [
@@ -180,9 +431,72 @@
       ],
       "title": "TrackSample",
       "type": "object"
+    },
+    "VerticalPosition": {
+      "additionalProperties": false,
+      "description": "A height, with the unit it was stated in and the datum it was measured from.\n\n\u00a726's rule made structural: `value` is never alone. Three fields are required together\nbecause any two of them without the third is the ambiguity the policy exists to prevent \u2014\n600 could be metres or feet, and 600 ft AGL over the Alps is not 600 ft MSL.\n\nNO CONVERSION HAPPENS HERE. This model records; it does not normalise. `models.Position`\nkeeps `alt_m` as the canonical HAE-in-metres projection and a validator (there, not here)\nrequires the two to agree when both are stated and the reference really is HAE. When the\nsource's altitude is anything else, `alt_m` stays `None` \u2014 Rule 2, unknown is not a\nsubstituted value \u2014 and this block carries what the source actually said. Converting MSL to\nHAE needs a geoid model, converting a flight level needs the local QNH, and an adapter that\nperformed either silently would be publishing a number nobody measured.\n\n`uncertainty` is in the SAME unit as `value`, and is one-sigma, matching\n`Position.accuracy_m`'s convention. Absent means unknown, never zero: zero would assert a\nheight with no error, which no altimeter and no GNSS receiver produces.",
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/VerticalReference",
+          "description": "The datum. UNKNOWN is a member, not null."
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1-sigma, in the same unit as `value`. None = unknown, never 0.",
+          "title": "Uncertainty"
+        },
+        "unit": {
+          "$ref": "#/$defs/VerticalUnit",
+          "description": "Never inferred; see VerticalUnit."
+        },
+        "value": {
+          "description": "The number the source stated, in `unit`.",
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "reference"
+      ],
+      "title": "VerticalPosition",
+      "type": "object"
+    },
+    "VerticalReference": {
+      "description": "What a `VerticalPosition` is measured FROM. The datum, never assumed.\n\nThe six here are the ones the formats in scope actually state. HAE is the WGS84 ellipsoid \u2014\nwhat a GNSS receiver computes natively and what `Position.alt_m` has always meant. MSL is a\ngeoid model, and the separation between the two reaches 100 m in places, so a silent\nsubstitution moves an aircraft by more than its own vertical separation minimum. AGL is\nheight above the terrain beneath the object, which is not a datum at all but a difference,\nand is therefore not convertible to either of the others without a terrain model. BARO is an\naltimeter reading against a stated or unstated pressure setting; FL is BARO against the\nstandard setting.\n\nUNKNOWN is a MEMBER, unlike `VerticalUnit`'s absent one, and the asymmetry is the point: a\nnumber with no unit cannot be rendered at all, whereas a number whose datum is unstated can\nstill be shown to an operator beside the words \"reference unknown\". That is a worse fix than\na referenced one and a far better one than a fix silently labelled MSL.",
+      "enum": [
+        "HAE",
+        "MSL",
+        "AGL",
+        "BARO",
+        "FL",
+        "UNKNOWN"
+      ],
+      "title": "VerticalReference",
+      "type": "string"
+    },
+    "VerticalUnit": {
+      "description": "The unit a `VerticalPosition` states its number in. \u00a726's \"value plus unit\", closed.\n\nThree members and no UNKNOWN, which is a departure from this module's opening paragraph and\nis the unit policy rather than an oversight. \u00a726 forbids \"ambiguous naked numeric fields\nwhere unit ambiguity matters\"; a vertical measurement whose unit nobody knows IS that naked\nnumber wearing a wrapper, and recording it would let a consumer render 300 as metres when\nthe source meant feet. An adapter that cannot read the unit therefore has no vertical\nposition to state \u2014 it parks the raw number in the residual, where nothing reads it as a\nheight. Absence is expressible (the whole `VerticalPosition` is optional); an unknown unit\nis not, deliberately.\n\n`FL` is a unit as well as a reference because a flight level IS its own scale: FL350 is\n\"35000 feet on the 1013.25 hPa isobaric surface\", a number that is neither metres nor feet\nabove anything on the ground. Converting it needs the local pressure, which the adapter does\nnot have, so it is carried as it was stated.",
+      "enum": [
+        "m",
+        "ft",
+        "FL"
+      ],
+      "title": "VerticalUnit",
+      "type": "string"
     }
   },
-  "$id": "urn:synapsecommand:cdm:2.0.0:track",
+  "$id": "urn:synapsecommand:cdm:2.1.0:track",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "An entity's position history, in time order. The order is a contract, not a hope.\n\nA scrambled sample list produces nonsense the moment anything differentiates it \u2014 speed\nfrom consecutive positions, a heading arrow, a predicted point. So non-decreasing\ntimestamps are validated here, at the boundary, where the defect is one adapter's bug\nrather than a mystery in a fusion layer three hops downstream.\n\nEqual timestamps are ALLOWED: two sensors reporting the same instant is real, and\nrejecting it would refuse legitimate multi-source data.",
@@ -211,6 +525,30 @@
       "title": "Object Kind",
       "type": "string"
     },
+    "quality": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Quality"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "How good the SOURCE says this object is. None = the source said nothing about quality, which is not the same as saying it is poor."
+    },
+    "residual": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Residual"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Source information the CDM does not model, under the name of the format it came from (\u00a728). None = nothing was left over, or \u2014 for the fourteen adapters shipped before this container existed \u2014 the leftovers are parked in `attributes` / `payload` under `source_extras`, which ARCHITECTURE.md \u00a75 rules they keep through Part 1."
+    },
     "samples": {
       "description": "Time-ordered, non-decreasing. At least one.",
       "items": {
@@ -221,7 +559,7 @@
       "type": "array"
     },
     "schema_version": {
-      "default": "2.0.0",
+      "default": "2.1.0",
       "description": "Semver of the CDM this object was written against.",
       "title": "Schema Version",
       "type": "string"
@@ -238,6 +576,18 @@
       "minItems": 1,
       "title": "Source Ids",
       "type": "array"
+    },
+    "status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OperationalStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The source's own operational state for this object, namespaced. None = the source stated none."
     },
     "track_id": {
       "format": "uuid",
@@ -269,5 +619,5 @@
   ],
   "title": "Track",
   "type": "object",
-  "x-cdm-schema-version": "2.0.0"
+  "x-cdm-schema-version": "2.1.0"
 }

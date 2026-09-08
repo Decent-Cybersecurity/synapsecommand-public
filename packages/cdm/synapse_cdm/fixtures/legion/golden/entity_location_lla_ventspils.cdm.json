@@ -75,14 +75,24 @@
       "alt_m": 8.0,
       "lat": 57.3908,
       "lon": 21.5606,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
+      "format_name": "Picogrid Legion Platform API v3",
+      "format_version": "v3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "LEGION"
+      "system": "LEGION",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -90,6 +100,7 @@
         "system": "LEGION"
       }
     ],
+    "status": null,
     "symbol": "10240000000000000000",
     "valid_from": "2026-04-29T06:09:30.000Z",
     "valid_to": null
@@ -112,23 +123,33 @@
       "received_at_basis": "the injected clock. Legion's created_at is when the PLATFORM stored the record, which is its receipt and not ours",
       "severity_basis": "INFO. Legion states no severity on any resource, so this is the format's silence and not an assessment that nothing is wrong"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "eb04b352-b5ff-53b2-9e58-278a86609560"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
+      "format_name": "Picogrid Legion Platform API v3",
+      "format_version": "v3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "LEGION"
+      "system": "LEGION",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "f1c70000-0002-8000-8000-000000000003",
         "system": "LEGION"
       }
-    ]
+    ],
+    "status": null
   }
 ]

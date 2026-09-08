@@ -30,14 +30,24 @@
       "alt_m": null,
       "lat": 57.7431,
       "lon": 21.4102,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
+      "format_name": "Cursor-on-Target (TAK)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "TAK"
+      "system": "TAK",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -45,6 +55,7 @@
         "system": "TAK"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T05:58:02.000Z",
     "valid_to": "2026-04-29T06:28:02.000Z"
@@ -63,23 +74,33 @@
       "event_id_basis": "event/@uid + event/@time",
       "severity_basis": "CoT carries no urgency field; INFO is the format's silence"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "be93e3ca-206f-5596-831a-018a9ad7eb6a"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "tak",
       "adapter_version": "1.0.0",
+      "format_name": "Cursor-on-Target (TAK)",
+      "format_version": null,
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "TAK"
+      "system": "TAK",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "TAK-VESSEL-77Z",
         "system": "TAK"
       }
-    ]
+    ],
+    "status": null
   }
 ]

@@ -104,14 +104,24 @@
       "alt_m": 52.0,
       "lat": 57.6903,
       "lon": 23.6912,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
+      "format_name": "Picogrid Legion Platform API v3",
+      "format_version": "v3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "LEGION"
+      "system": "LEGION",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -119,6 +129,7 @@
         "system": "LEGION"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:11:00.000Z",
     "valid_to": null
@@ -127,6 +138,8 @@
     "entity_id": "e16afcaf-4d13-534a-a5b5-56b42ded15cb",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2026-04-29T06:11:00.000Z",
@@ -135,7 +148,8 @@
           "alt_m": 40.001,
           "lat": 57.4102,
           "lon": 23.2088,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       },
       {
@@ -145,7 +159,8 @@
           "alt_m": 45.0,
           "lat": 57.5514,
           "lon": 23.4471,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       },
       {
@@ -155,16 +170,24 @@
           "alt_m": 52.0,
           "lat": 57.6903,
           "lon": 23.6912,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "legion",
       "adapter_version": "1.0.0",
+      "format_name": "Picogrid Legion Platform API v3",
+      "format_version": "v3",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "LEGION"
+      "system": "LEGION",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -172,6 +195,7 @@
         "system": "LEGION"
       }
     ],
+    "status": null,
     "track_id": "7553c88a-45af-5c24-9af1-40598b0835cf",
     "track_quality": null
   }

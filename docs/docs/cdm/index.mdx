@@ -19,7 +19,15 @@ is by **what a thing is** — not by which system sent it, and not by which cons
 
 ## What all four carry
 
-Every canonical object inherits `CDMBase`, and none of these four fields is decoration.
+Every canonical object inherits `CDMBase`, and none of these fields is decoration.
+
+:::note[This list grew on 2026-09-08, and it read "these four fields" until it did]
+`schema_version`, `source`, `source_ids[]` and `integrity` were the four. `schema_version`
+2.1.0 adds three more — `quality`, `status` and `residual` — and all three are OPTIONAL, so
+an object written against 2.0.0 is still a valid object and a 2.0.0 reader still reads a
+2.1.0 one. What each of them means, and the rule that keeps `residual` from being trusted,
+are on the [CDM Policies](./policies.mdx) page.
+:::
 
 ### `schema_version`
 
@@ -73,6 +81,34 @@ translation layer, where the key material has no business being and where nothin
 All three of its fields or none. A block holding a signature with no algorithm is unverifiable,
 and an unverifiable signature that *looks* present is worse than an absent one: it reads as
 assurance to everything downstream that does not check.
+
+### `quality`
+
+`{source_quality, confidence, accuracy_m, uncertainty}` — how good the **source** says its own
+data is. Absent means the source said nothing about quality, which is not the same as saying it
+is poor. `uncertainty` is a named dict rather than one number, because an error ellipse is not a
+radius and flattening it loses the orientation that made it worth sending.
+
+### `status`
+
+`{state, namespace, since, attributes}` — the source's own operational state, in the source's own
+words. **There is no enum and there will not be one.** "SERVICEABLE", "MISSION CAPABLE", "RED" and
+"U/S" come from different domains and mean different things; a closed CDM vocabulary would have to
+map each onto a member, which is a judgement about somebody else's operational language made
+inside a translator. `namespace` says whose vocabulary `state` belongs to, and a consumer must not
+compare `state` across namespaces.
+
+### `residual`
+
+`{namespace, data}` — source information the CDM does not model, kept under the name of the format
+it came from. It **identifies its origin** and it is **never semantically trusted**: it records
+that the source said something the CDM has no home for, which is a fact about the source record
+and not an assertion about the world. See [CDM Policies](./policies.mdx).
+
+The fourteen adapters shipped today do not use it yet — they keep parking leftovers in
+`attributes.source_extras` and declare `residual: legacy`, because the information is already
+preserved and moving the placement would cost every golden file and every consumer for nothing a
+reader can use.
 
 ## Why `additionalProperties: false` everywhere
 

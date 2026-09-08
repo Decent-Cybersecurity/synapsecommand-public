@@ -160,12 +160,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "cat048",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 048 \u2014 Monoradar Target Reports",
+      "format_version": "Edition 1.32",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT048"
+      "system": "ASTERIX_CAT048",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -173,6 +182,7 @@
         "system": "CAT048_REPORT"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:00.000Z",
     "valid_to": null
@@ -203,24 +213,34 @@
         "raised_by": null
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "164f32c9-259a-5888-9f12-2a41459b6e88"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat048",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 048 \u2014 Monoradar Target Reports",
+      "format_version": "Edition 1.32",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT048"
+      "system": "ASTERIX_CAT048",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "2525|2764800|3200|54613|0",
         "system": "CAT048_REPORT"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -383,12 +403,21 @@
     "object_kind": "entity",
     "ontology_types": [],
     "position": null,
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "cat048",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 048 \u2014 Monoradar Target Reports",
+      "format_version": "Edition 1.32",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT048"
+      "system": "ASTERIX_CAT048",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -396,6 +425,7 @@
         "system": "CAT048_REPORT"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:04.000Z",
     "valid_to": null
@@ -426,23 +456,33 @@
         "raised_by": null
       }
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "0bd90fd1-af0a-500f-b85b-decdeb4b0a1d"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat048",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 048 \u2014 Monoradar Target Reports",
+      "format_version": "Edition 1.32",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT048"
+      "system": "ASTERIX_CAT048",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "2525|2765312|3302|54686|1",
         "system": "CAT048_REPORT"
       }
-    ]
+    ],
+    "status": null
   }
 ]

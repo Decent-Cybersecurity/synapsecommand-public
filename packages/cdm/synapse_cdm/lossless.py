@@ -31,7 +31,12 @@ their float value, because 71.5 and 71.50 are the same measurement written twice
 """
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
+
+from synapse_cdm.models import Residual
+
+if TYPE_CHECKING:                      # pragma: no cover - typing only
+    from synapse_cdm.adapter import Adapter
 
 # Values too common to prove anything by their presence. `None` is the absence of data, and
 # an empty string or list carries no value to lose. Booleans and small integers are NOT here:
@@ -178,3 +183,27 @@ def residual(raw: Any, consumed: Iterable[str]) -> Any:
 
     pruned = _walk(raw, "")
     return {} if pruned is _DROPPED else pruned
+
+
+def residual_block(adapter: "Adapter", raw: Any, consumed: Iterable[str]) -> Residual:
+    """`residual()`'s leftovers, wrapped in the origin-identifying container of §28.
+
+    The namespace is READ FROM THE ADAPTER'S DECLARATION — `metadata.format.name`, the same
+    string `source_ref()` stamps into `SourceRef.format_name` and the same string
+    `manifests/<id>.json` publishes. Not a parameter, deliberately: an adapter free to name its
+    own residual namespace could file leftovers under a format that is not the one it parsed, and
+    then the container's ONE promise (a reader can find out whose vocabulary a key belongs to)
+    would hold only by convention. One declaration, projected everywhere it is needed.
+
+    Returns a `Residual` even when nothing was left over — `data` is then `{}` — because the
+    caller is the one that decides whether an empty residual is worth attaching, and a helper
+    that returned `None` for "nothing left" would make every call site write the same branch. An
+    adapter that wants the field absent tests `block.data` and passes `None`.
+
+    THE FOURTEEN ADAPTERS SHIPPED IN THIS REPOSITORY DO NOT CALL THIS, and that is
+    ARCHITECTURE.md §5's ruling rather than an oversight: they keep their `attributes` /
+    `payload` parking under `source_extras` through Part 1 and declare `residual: legacy`. This
+    exists for the Part 2 adapters, which declare `residual: structured`, and it exists NOW so
+    that the first of them is written against a helper rather than against a shape it invents.
+    """
+    return Residual(namespace=adapter.metadata.format.name, data=residual(raw, consumed))

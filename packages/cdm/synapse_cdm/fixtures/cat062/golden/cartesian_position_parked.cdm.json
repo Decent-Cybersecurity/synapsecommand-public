@@ -141,14 +141,24 @@
       "alt_m": null,
       "lat": 57.38999783992767,
       "lon": 21.559998393058777,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 062 \u2014 SDPS Track Messages",
+      "format_version": "Edition 1.21",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT062"
+      "system": "ASTERIX_CAT062",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -156,6 +166,7 @@
         "system": "CAT062_TRACK_REPORT"
       }
     ],
+    "status": null,
     "symbol": "10210000000000000000",
     "valid_from": "2026-04-29T06:00:00.000Z",
     "valid_to": null
@@ -196,23 +207,33 @@
       "record_index": 0,
       "track_number": 4242
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "2bd2849a-e97f-52eb-ab6f-471b6c8361c0"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "cat062",
       "adapter_version": "1.0.0",
+      "format_name": "EUROCONTROL ASTERIX Category 062 \u2014 SDPS Track Messages",
+      "format_version": "Edition 1.21",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "ASTERIX_CAT062"
+      "system": "ASTERIX_CAT062",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "2929|2764800|4242|0",
         "system": "CAT062_TRACK_REPORT"
       }
-    ]
+    ],
+    "status": null
   }
 ]

@@ -221,14 +221,24 @@
       "alt_m": 8500.0,
       "lat": 57.30999999213964,
       "lon": 24.72000002861023,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -236,6 +246,7 @@
         "system": "GMTIF-PLATFORM"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T08:30:00.000Z",
     "valid_to": null
@@ -244,6 +255,8 @@
     "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2026-04-29T08:30:00.000Z",
@@ -252,16 +265,24 @@
           "alt_m": 8500.0,
           "lat": 57.30999999213964,
           "lon": 24.72000002861023,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -269,6 +290,7 @@
         "system": "GMTIF-PLATFORM"
       }
     ],
+    "status": null,
     "track_id": "3c8b288f-c8c1-5628-9eb3-d3dff85cc78f",
     "track_quality": null
   },
@@ -332,14 +354,24 @@
       "alt_m": 40.0,
       "lat": 57.0600000070408,
       "lon": 24.419999979436398,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -347,6 +379,7 @@
         "system": "GMTIF-TARGET"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T08:30:00.000Z",
     "valid_to": null
@@ -417,24 +450,34 @@
       "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
       "severity_basis": "INFO. GMTIF grades nothing \u2014 there is no severity, priority-of-threat or alert level anywhere in the format. J5 and R3 are tasking priorities and are parked"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "6f1ead77-e588-5084-bfac-676ec0f25c5c"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s2/r0",
         "system": "GMTIF-TARGET"
       }
-    ]
+    ],
+    "status": null
   },
   {
     "affiliation": "UNKNOWN",
@@ -496,14 +539,24 @@
       "alt_m": 40.0,
       "lat": 57.07999998237938,
       "lon": 24.440000038594007,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -511,6 +564,7 @@
         "system": "GMTIF-TARGET"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T08:30:00.000Z",
     "valid_to": null
@@ -581,23 +635,33 @@
       "reference_date_basis": "in_packet: Mission Segment M5/M6/M7 = 2026-04-29",
       "severity_basis": "INFO. GMTIF grades nothing \u2014 there is no severity, priority-of-threat or alert level anywhere in the format. J5 and R3 are tasking priorities and are parked"
     },
+    "quality": null,
     "received_at": "2026-04-29T06:15:00.000Z",
     "related_entities": [
       "d0806d3a-8699-5e49-9389-b87c8fafdac3"
     ],
-    "schema_version": "2.0.0",
+    "residual": null,
+    "schema_version": "2.1.0",
     "severity": "INFO",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
         "external_id": "ZZ/ZZSYN00001/4242/77/3/11/s2/r1",
         "system": "GMTIF-TARGET"
       }
-    ]
+    ],
+    "status": null
   }
 ]

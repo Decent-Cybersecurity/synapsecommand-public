@@ -153,14 +153,24 @@
       "alt_m": 8600.0,
       "lat": 57.33999999705702,
       "lon": 24.759999979287386,
-      "position_source": "ESTIMATED"
+      "position_source": "ESTIMATED",
+      "vertical": null
     },
-    "schema_version": "2.0.0",
+    "quality": null,
+    "residual": null,
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -168,6 +178,7 @@
         "system": "GMTIF-PLATFORM"
       }
     ],
+    "status": null,
     "symbol": null,
     "valid_from": "2026-04-29T08:30:30.000Z",
     "valid_to": null
@@ -176,6 +187,8 @@
     "entity_id": "47cef385-9333-5635-9bca-a5e76a4e54f9",
     "integrity": null,
     "object_kind": "track",
+    "quality": null,
+    "residual": null,
     "samples": [
       {
         "observed_at": "2026-04-29T08:30:00.000Z",
@@ -184,7 +197,8 @@
           "alt_m": 8600.0,
           "lat": 57.33000000938773,
           "lon": 24.750000033527613,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       },
       {
@@ -194,16 +208,24 @@
           "alt_m": 8600.0,
           "lat": 57.33999999705702,
           "lon": 24.759999979287386,
-          "position_source": "ESTIMATED"
+          "position_source": "ESTIMATED",
+          "vertical": null
         }
       }
     ],
-    "schema_version": "2.0.0",
+    "schema_version": "2.1.0",
     "source": {
       "adapter": "gmti",
       "adapter_version": "1.0.0",
+      "format_name": "STANAG 4607 / AEDP-4607 \u2014 NATO Ground Moving Target Indicator Format (GMTIF)",
+      "format_version": "AEDP-4607 Edition A Version 1",
+      "observed_at": null,
+      "original_id": null,
+      "record_index": null,
+      "source_hash": null,
       "synthetic": true,
-      "system": "GMTIF"
+      "system": "GMTIF",
+      "transformations": []
     },
     "source_ids": [
       {
@@ -211,6 +233,7 @@
         "system": "GMTIF-PLATFORM"
       }
     ],
+    "status": null,
     "track_id": "3c8b288f-c8c1-5628-9eb3-d3dff85cc78f",
     "track_quality": null
   }
