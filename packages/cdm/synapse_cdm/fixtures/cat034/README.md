@@ -197,3 +197,10 @@ testing the round trip the document requires.
 
 `../../FORMAT_COVERAGE.md` lists all twenty fixtures with the defect each one is there to catch,
 and names the five Phase 1 rows Phase 2 changed and why.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

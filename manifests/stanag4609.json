@@ -24,6 +24,8 @@
         "UAS Datalink Local Set packets (MISB ST 0601.14)",
         "the VMTI Local Set (ST 0903.4) and the RVT Local Set (ST 0806.4) where a packet carries them"
       ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "unknown KLV local-set TAGS are preserved on the wire and reported at `attributes.klv_unknown_tags` / `attributes.klv_unknown_items` (ST 0107.3-04 requires a decoder to skip what it does not know) \u2014 but that is an unwitnessed TAG NUMBER and not a named field, and the decoded twin this adapter also accepts is a rendering of the witnessed items with no carrier for a key nobody defined. The two facts are different and this value is the one about the document form",
       "wire": true
     },
     "claim_external_system": null,

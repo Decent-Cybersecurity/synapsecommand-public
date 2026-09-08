@@ -92,3 +92,54 @@ jobs:
 
       - name: The commit-message gate
         run: python gates/commit_message.py --rev HEAD
+
+  conformance:
+    name: Conformance Suite v2, every shipped adapter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install by the documented path
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+
+      - name: Every adapter, under the checks every adapter can be held to
+        # §22: "regressions MUST fail CI". The sweep is a SHELL LOOP over the roster the package
+        # itself reports, not a list of fourteen names — a list would go stale the way every
+        # enumerated roster in this repository has gone stale, and a fifteenth adapter would be
+        # swept by nobody.
+        #
+        # WHY THE REQUIRED SET IS THESE TEN AND NOT ALL FIFTEEN, each absence a reading:
+        #   E  roundtrip  — SKIP for every adapter in this repository, because the harness's
+        #                   structural comparison cannot read non-JSON egress bytes and says so
+        #                   (`harness.py:246`). Each bidirectional adapter ships its own
+        #                   byte-exact round-trip test in `tests/`; its manifest names it.
+        #   I  unknown    — SKIP where the adapter declares `unknown_fields: none`, which seven do.
+        #   M  streaming  — SKIP for all fourteen; no adapter can declare the capability today.
+        #   N  robustness — SKIP for the two adapters that ship no byte fixture to truncate.
+        #   O  limits     — SKIP for all fourteen until P5 declares the bounds (F2.3).
+        # None of the five is FAIL anywhere, and `test_cdm_suite.py` re-derives that rather than
+        # trusting this comment: a check quietly dropped because it FAILED would be a green bar
+        # over a hole.
+        run: |
+          set -euo pipefail
+          for adapter in $(python -c "from synapse_cdm.adapter import roster; print(' '.join(roster()))"); do
+            echo "::group::$adapter"
+            python -m synapse_cdm.suite conformance run --adapter "$adapter" \
+              --require A,B,C,D,F,G,H,J,K,L
+            echo "::endgroup::"
+          done
+
+      - name: The report is machine-readable and says CONFORMANT
+        run: |
+          set -euo pipefail
+          python -m synapse_cdm.suite conformance run --adapter cat021 --format json \
+            | python -c "import json,sys; r=json.load(sys.stdin); assert r['result']=='CONFORMANT', r['result']; print(r['maturity_eligible'])"

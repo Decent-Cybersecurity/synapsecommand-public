@@ -25,6 +25,8 @@
         "Track",
         "Telemetry \u2014 the resources `fixtures/legion/spec/openapi_pin.json` pins"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "a Legion payload IS a JSON document and its vendor fields are open-ended by design; every key this adapter does not consume is parked verbatim under `source_extras`",
       "wire": true
     },
     "claim_external_system": null,

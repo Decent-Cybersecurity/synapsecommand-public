@@ -145,8 +145,8 @@ from synapse_cdm.enums import (
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "ASTERIX_CAT021"
 
@@ -2280,6 +2280,13 @@ class AsterixCat021Adapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.NONE,
+            unknown_fields_basis=(
+                "ASTERIX is a closed catalogue of data items selected by an FSPEC bitmask: an item "
+                "the catalogue does not define cannot be expressed on the wire at all, and the "
+                "decoded twin this adapter also accepts is a rendering of that closed record rather "
+                "than an open document. Unconsumed DEFINED items are still parked under "
+                "`source_extras`, which is what the harness's lossless check proves"),
         ),
         limitations=[
             "ADS-B MOPS versions 0, 1 and 2 in full; version 3 (ED-102B / DO-260C) only "

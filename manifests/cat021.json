@@ -24,6 +24,8 @@
         "ASTERIX data blocks of category 021",
         "the Reserved Expansion Field (Appendix A, Edition 1.5)"
       ],
+      "unknown_fields": "none",
+      "unknown_fields_basis": "ASTERIX is a closed catalogue of data items selected by an FSPEC bitmask: an item the catalogue does not define cannot be expressed on the wire at all, and the decoded twin this adapter also accepts is a rendering of that closed record rather than an open document. Unconsumed DEFINED items are still parked under `source_extras`, which is what the harness's lossless check proves",
       "wire": true
     },
     "claim_external_system": null,

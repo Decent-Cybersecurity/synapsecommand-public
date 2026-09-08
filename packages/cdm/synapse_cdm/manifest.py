@@ -109,6 +109,24 @@ class Residual(str, enum.Enum):
     STRUCTURED = "structured"
 
 
+class UnknownFields(str, enum.Enum):
+    """Does this adapter preserve a source field it does not recognise, in its DOCUMENT form?
+
+    Two values and no third, because the conformance suite's check I needs an answer it can act
+    on rather than a description it has to interpret. The question is asked of the DOCUMENT form
+    the adapter accepts — the dict a caller hands `to_cdm` — and not of every carrier the wire
+    format has: `stanag4609` preserves unknown KLV local-set TAGS on the wire
+    (`attributes.klv_unknown_items`, `stanag4609.py:1575`) and has no carrier for an unknown key
+    in the decoded twin, and those are two true facts that one enum value cannot hold. The
+    accompanying `unknown_fields_basis` is where the distinction is stated, in the adapter's own
+    words, which is the same arrangement `Limits.absent_because` uses for a bound that does not
+    apply.
+    """
+
+    PRESERVED = "preserved"
+    NONE = "none"
+
+
 class FormatRef(Strict):
     """The source standard this adapter is written against.
 
@@ -188,6 +206,25 @@ class Capabilities(Strict):
     directions_exercised: list[str]
     message_types: list[str]
     limits: Limits
+    #: Check I's declaration (P2). It is READ and never inferred: a probe that injects an unknown
+    #: field and finds nothing in the output has found either a format with no carrier for one or
+    #: an adapter that drops what it carries, and those are opposite verdicts about the same
+    #: evidence. Only the adapter can say which.
+    unknown_fields: UnknownFields
+    #: Why, in the adapter's own words. Required for BOTH values, not just `none`: "preserved"
+    #: without a basis is a claim nobody has to justify, and this model's whole habit is that a
+    #: declaration carries its reason (§3.5, `Limits.absent_because`).
+    unknown_fields_basis: str
+
+    @field_validator("unknown_fields_basis")
+    @classmethod
+    def _the_declaration_carries_its_reason(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("unknown_fields_basis is empty. Whether unknown source fields "
+                             "survive is a fact about the format AND about this adapter, and a "
+                             "bare enum value leaves a reader unable to tell which one they are "
+                             "being told")
+        return value
 
     @field_validator("directions_exercised")
     @classmethod

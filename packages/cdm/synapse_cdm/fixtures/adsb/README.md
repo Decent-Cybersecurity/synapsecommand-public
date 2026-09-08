@@ -117,3 +117,10 @@ Goldens are the emitted frames under the frozen clock (`times.FROZEN_NOW`) — w
 format changes nothing, since no frame has a time field. That is itself worth knowing: the
 clock is load-bearing for `observed_at` and `received_at` in the CDM output and reaches the wire
 nowhere.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

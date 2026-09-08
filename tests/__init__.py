@@ -10,6 +10,7 @@ duplicate. One package, one identity.
 
 
 def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
+                   unknown_fields_declaration: str = "none", max_input_bytes: int | None = None,
                    **overrides):
     """A valid `AdapterMetadata` for a TEST double, in one place rather than in six files.
 
@@ -28,7 +29,7 @@ def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
     """
     from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
                                       Evidence, FormatRef, LicenseClass, Limits, Maturity,
-                                      MaturityLevel, Residual)
+                                      MaturityLevel, Residual, UnknownFields)
 
     exercised = {"ingest": ["ingest"], "egress": ["egress"],
                  "bidirectional": ["ingest", "egress"]}.get(direction, [])
@@ -48,12 +49,16 @@ def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
             wire=True,
             directions_exercised=exercised,
             message_types=["whatever the test hands it"],
-            limits=Limits(max_input_bytes=None, max_depth=None, max_objects=None,
+            limits=Limits(max_input_bytes=max_input_bytes, max_depth=None, max_objects=None,
                           max_decompressed_bytes=None, max_parse_seconds=None,
                           absent_because={field: "a test double declares no bounds"
                                           for field in ("max_input_bytes", "max_depth",
                                                         "max_objects", "max_decompressed_bytes",
-                                                        "max_parse_seconds")}),
+                                                        "max_parse_seconds")
+                                          if not (field == "max_input_bytes"
+                                                  and max_input_bytes is not None)}),
+            unknown_fields=UnknownFields(unknown_fields_declaration),
+            unknown_fields_basis="a test double declares what the test needs it to declare",
         ),
         limitations=["it is a test double and translates nothing anybody uses"],
         limitations_empty_reason=None,

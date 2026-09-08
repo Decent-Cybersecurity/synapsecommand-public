@@ -50,6 +50,23 @@ python -m synapse_cdm.harness --list-adapters         # the names --adapter take
 system where its own fixtures are and replays those, wherever the package is installed. Pass it
 to replay your own set. Both commands also install as `cdm-harness` and `cdm-schemas`.
 
+The harness's six checks are the **Synapse Conformance Suite**'s A–F. Nine more — determinism,
+malformed-input refusal, unknown-field preservation, temporal correctness, identity stability,
+version compatibility, streaming, parser robustness and resource limits — run beside them:
+
+```bash
+python -m synapse_cdm.suite conformance run --adapter cat021        # the fifteen checks
+python -m synapse_cdm.suite conformance run --adapter cat021 --format json
+python -m synapse_cdm.suite conformance list                        # roster with declared maturity
+```
+
+It installs as `synapse`, so `synapse conformance run --adapter cat021` is the same command.
+A check that does not apply reports `SKIP` with the declaration that made it inapplicable, never
+`PASS`; `--require A,B,C` exits non-zero if any letter it names is `FAIL` **or** `SKIP`. The
+fifteen checks, what makes each one applicable, and how `MATURITY ELIGIBLE` is computed from them
+are documented at
+[docs.synapsecommand.com/cdm/conformance-suite](https://docs.synapsecommand.com/cdm/conformance-suite).
+
 **`--list-adapters` shipped in 1.1.0.** It was on `main` and absent from 1.0.0 for one release,
 and this paragraph carried that warning; on an installed 1.0.0 the third command above still fails
 with argparse's `unrecognized arguments`, which is worth knowing only if that is the version you

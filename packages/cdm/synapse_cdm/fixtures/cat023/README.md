@@ -89,3 +89,10 @@ copied from `I023/100`'s would be off by one on every record.
 EUROCONTROL's, under their own terms, and this edition — unlike Part 9 Edition 1.21 — carries no
 copyright notice anywhere, because its back cover is an unfinished template. So there is no stated
 permission to rely on, which makes carrying it a worse idea rather than a better one.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

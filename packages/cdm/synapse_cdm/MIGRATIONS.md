@@ -263,8 +263,8 @@ measured off the index afterwards, and which step of it did not run.
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
-**What moved inside the distribution: 25 files.** Two rounds are in this section now and the
-sentence above is the arc's size, not either round's — the arc is `v2.0.0` to the working tree and
+**What moved inside the distribution: 82 files.** Three rounds are in this section now and the
+sentence above is the arc's size, not any one round's — the arc is `v2.0.0` to the working tree and
 `python gates/bump_derivation.py` prints the set. **Round PA** moved six: `FORMAT_COVERAGE.md`,
 `MIGRATIONS.md` (this file), and four records that did not exist before —
 `fixtures/adsb/spec/adsb_terms.json`, `fixtures/ais/spec/ais_terms.json`,
@@ -276,7 +276,13 @@ nineteen more: two new modules, `manifest.py` and `manifests.py`; `adapter.py`, 
 `adapters/asterix_cat062.py`, `adapters/gmtif.py`, `adapters/stanag4586.py`,
 `adapters/stanag4609.py`, `adapters/stanag4676.py`. PA's own paragraphs are kept below exactly as
 that round wrote them, with the one sentence this one had to overtake — its count — replaced here
-rather than left standing in two places.
+rather than left standing in two places. **Round P2** moved seventy-two, of which forty-three are
+new: `suite.py`, and forty-two under `fixtures/*/malformed/` — fourteen directories, each holding
+two payloads and the README that says what is wrong with each. The twenty-nine it modified are
+`pyproject.toml`, `README.md`, `harness.py`, `manifest.py`, the fourteen adapter modules again, and
+the eleven fixture READMEs that now point at their malformed set. Seventy-two plus the fifty-seven
+this arc already held is eighty-two and not one hundred and twenty-nine, because the fourteen
+adapter modules and `manifest.py` are in two rounds' lists and are one file each in the arc's.
 
 **What the four records are, and what they are not.** Four adapters — adsb, ais, tak and legion —
 translate standards this repository holds no document for. Nothing in the tree stated those
@@ -487,7 +493,88 @@ rows that had read "added by P1"; `.github/workflows/ci.yml`, `manifests/` and
 maturity and claim tables; and four test modules moved — `tests/test_cdm_manifests.py` is new,
 `tests/test_cdm_adapter_contract.py` gained the v2 refusals, `tests/test_cdm_prose_counts.py`
 gained the manifest count, and `tests/__init__.py` gained the one metadata factory the suite's
-adapter doubles share. None of those ships, which is why the count above is 25 and not 33.
+adapter doubles share. None of those ships, which is why P1's own count was 19 and not 27.
+
+**ROUND P2 — the Synapse Conformance Suite: fifteen checks, and a SKIP that costs what a SKIP
+should cost.**
+
+**Nine checks are added and the six that existed are not renamed.** `suite.py` is a new module and
+`harness.py` stays the engine for A–F: the suite calls `harness.run` once and folds its
+per-fixture verdicts into six adapter-level ones, because a conformance claim is a statement about
+an ADAPTER and several of the new checks cannot be expressed per fixture at all — G decodes one
+payload three times, H reads a directory the harness deliberately cannot see, K decodes twice
+through two fresh instances, N feeds bytes no fixture contains. The nine are G deterministic, H
+malformed-input, I unknown-preservation, J temporal, K identity, L version, M streaming, N parser
+robustness and O resource limits.
+
+**`cdm-harness --json` gains exactly one key and its text output does not move.** `check_letters`
+maps the six existing check names to `A`–`F`. Re-keying the report by letter was the alternative
+and was refused: `--json` is a surface this package has published since 1.0.0, and re-keying it
+would break every consumer of it in order to save a lookup.
+
+**`synapse` is a fourth console script**, and the only one not spelled `cdm-*`. The specification
+fixes the command — `synapse conformance run --adapter cat021` — so the name is not a choice this
+repository gets to make; `python -m synapse_cdm.suite` is the same entry point for a caller who
+would rather not depend on a name being on `PATH`. `cdm-harness`, `cdm-schemas` and
+`cdm-conformance` are unchanged.
+
+**`capabilities` gains `unknown_fields` and `unknown_fields_basis`.** Check I asks whether a source
+field the adapter does not recognise survives translation, and that question cannot be answered by
+probing: a probe that injects an unknown field and finds nothing has found either a format with no
+carrier for one or an adapter that drops what it carries, and those are opposite verdicts about the
+same evidence. So the adapter declares it, and — as with `limits.absent_because` — the declaration
+carries its reason. Seven declare `preserved` and seven declare `none`.
+`MANIFEST_SCHEMA_VERSION` does NOT move: `1.0.0` has never been published, since the constant did
+not exist at `v2.0.0` and no release has carried a manifest schema at all, so the first manifest
+schema anybody can install is whatever shape this arc ships.
+
+**Every adapter now ships a `malformed/` directory**, and it is a SUBDIRECTORY on purpose:
+`harness.py:343` selects immediate children of a fixture directory that are files, so those
+payloads are invisible to checks A–F by construction rather than by an exclusion somebody has to
+remember to keep in step. Each holds a truncation and one format-specific case from §21's list —
+an invalid declared length, a checksum that does not match, XML that is not well formed, JSON that
+is not JSON — and each must be REFUSED: any exception except `SystemExit`, `KeyboardInterrupt`,
+`MemoryError` or `RecursionError`, inside the time bound, returning no object, with the class
+recorded. All twenty-eight are built by cutting or corrupting this repository's own synthetic
+payloads, so none carries anybody else's data.
+
+**The twenty-eight, named, because this section's subject is the arc and a file it does not name
+is a change no reader of the history can find.** Each row's directory also holds a `README.md`
+saying what is wrong with each payload.
+
+| Directory | Truncation | Format-specific case |
+|---|---|---|
+| `fixtures/adsb/malformed/` | `truncated_payload.adsb` | `a_character_outside_the_hex_alphabet.adsb` |
+| `fixtures/ais/malformed/` | `truncated_payload.nmea` | `a_checksum_that_does_not_match.nmea` |
+| `fixtures/cat021/malformed/` | `truncated_payload.cat021` | `declared_length_longer_than_the_block.cat021` |
+| `fixtures/cat023/malformed/` | `truncated_payload.cat023` | `declared_length_longer_than_the_block.cat023` |
+| `fixtures/cat034/malformed/` | `truncated_payload.cat034` | `declared_length_longer_than_the_block.cat034` |
+| `fixtures/cat048/malformed/` | `truncated_payload.cat048` | `declared_length_longer_than_the_block.cat048` |
+| `fixtures/cat062/malformed/` | `truncated_payload.cat062` | `declared_length_longer_than_the_block.cat062` |
+| `fixtures/gmti/malformed/` | `truncated_payload.gmti` | `declared_packet_size_longer_than_the_packet.gmti` |
+| `fixtures/klv/malformed/` | `truncated_payload.klv` | `declared_length_longer_than_the_packet.klv` |
+| `fixtures/legion/malformed/` | `a_truncated_record.json` | `malformed_json.json` |
+| `fixtures/nits/malformed/` | `truncated_payload.nits.xml` | `not_well_formed_xml.nits.xml` |
+| `fixtures/pntmap/malformed/` | `a_truncated_record.json` | `malformed_json.json` |
+| `fixtures/stanag4586/malformed/` | `truncated_payload.s4586` | `declared_length_longer_than_the_datagram.s4586` |
+| `fixtures/tak/malformed/` | `truncated_payload.xml` | `not_well_formed_xml.xml` |
+
+The two `malformed_json.json` records are refused by the fixture LOADER rather than by their
+adapter, because JSON is what the loader parses; check H records which layer refused and requires
+at least one payload per adapter to reach the parser itself.
+
+**Bump ruling.** `synapse_cdm/harness.py:run` — MINOR: the report gains one key,
+`check_letters`, and loses none. A published report gaining a member is an addition; every
+existing key, every per-fixture `checks` mapping and the text rendering are byte-for-byte what
+they were.
+
+**What moved outside the distribution in P2, named for the same reason.**
+`tests/test_cdm_suite.py` is new and `tests/__init__.py`'s metadata factory gained the two
+capability fields; `.github/workflows/ci.yml` gained a second job that sweeps every adapter the
+package's own roster reports; `gates/wheel_install.py` gained the new test module in its
+repository-bound list; `manifests/*.json` and `schemas/manifests/adapter-manifest.schema.json`
+were regenerated; and `docs/docs/cdm/conformance-suite.mdx` is new. None of those ships, which is
+why P2's own count is 72 and not 78.
 
 ### 2.0.0 — 2026-09-07 — SC-OES v0.1.0 Draft ships: `Event.oes` and `Entity.ontology_types` carry a wire-semantic layer, the contract moves to 2.0.0, and the package takes its first MAJOR on a third party's consumer
 

@@ -23,6 +23,8 @@
       "message_types": [
         "segment types 1, 2, 3, 5, 6, 10, 12, 13 and the two Controlled-Extension slots 101 and 102"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "the parsed twin is an ordinary JSON document and every key this adapter does not consume is parked verbatim under `source_extras`. STANAG 4607's own extension point is its segment types, which this adapter reports as it finds them rather than inventing a carrier for",
       "wire": true
     },
     "claim_external_system": null,

@@ -99,13 +99,20 @@ Issues = "https://github.com/Decent-Cybersecurity/synapsecommand-public/issues"
 Changelog = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/packages/cdm/synapse_cdm/MIGRATIONS.md"
 
 [project.scripts]
-# The three entry points the README documents as `python -m ...`; all three stay importable that
-# way. `cdm-conformance` joined 2026-09-06 with the SC-OES conformance tool: §40 requires a
+# The entry points the README documents as `python -m ...`; every one of them stays importable
+# that way. `cdm-conformance` joined 2026-09-06 with the SC-OES conformance tool: §40 requires a
 # process status a CI system can branch on, and a console script is how this repository has
 # always spelled "runnable without knowing where the package is installed".
 cdm-harness = "synapse_cdm.harness:main"
 cdm-schemas = "synapse_cdm.schemas:main"
 cdm-conformance = "synapse_cdm.conformance:main"
+# `synapse` joined 2026-09-07 with the Synapse Conformance Suite (F2.4). It is the one entry
+# point NOT spelled `cdm-*`, because SOIF §19 spells the command it must answer to —
+# `synapse conformance run --adapter cat021` — and a console script whose name a specification
+# fixes is not a naming choice this repository gets to make. The three above are unchanged; a
+# collision on a caller's PATH is documented rather than defended against, because renaming it
+# would leave the specification's own command line unrunnable.
+synapse = "synapse_cdm.suite:main"
 
 [tool.setuptools.dynamic]
 version = { attr = "synapse_cdm.version.PACKAGE_VERSION" }

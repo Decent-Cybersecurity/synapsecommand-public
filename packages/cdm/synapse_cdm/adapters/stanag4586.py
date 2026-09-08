@@ -99,8 +99,8 @@ from synapse_cdm.models import (
 )
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "STANAG4586"
 
@@ -182,6 +182,13 @@ class Stanag4586Adapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.NONE,
+            unknown_fields_basis=(
+                "a STANAG 4586 message is a fixed binary layout with no extension point: a field the "
+                "message definition does not define cannot be expressed on the wire, and the decoded "
+                "twin this adapter also accepts is a rendering of that fixed record rather than an "
+                "open document. Unconsumed DEFINED fields are still parked under `source_extras`, "
+                "which is what the harness's lossless check proves"),
         ),
         limitations=[
             "Edition 4 is current (promulgated as AEP-84 Edition A) and is NOT implemented: "

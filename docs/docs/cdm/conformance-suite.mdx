@@ -1,0 +1,96 @@
+---
+title: Conformance Suite
+sidebar_label: Conformance Suite
+sidebar_position: 6
+description: The fifteen checks an adapter is judged by, what makes each one applicable, and why a SKIP is never a PASS.
+---
+
+# The Synapse Conformance Suite
+
+Fifteen checks, `A` through `O`, over one adapter. Six of them are the harness's — the same six
+`cdm-harness` has printed since 1.0.0 — and nine were added beside them. Every check returns
+`PASS`, `FAIL` or `SKIP`, and **a `SKIP` is never a `PASS`**: it means this was not assessed, and
+the report says which declaration made it inapplicable.
+
+```bash
+pip install synapse-cdm
+
+synapse conformance run --adapter cat021
+synapse conformance run --adapter cat021 --format json
+synapse conformance run --adapter cat021 --require A,B,C,D,F,G,H,J,K,L
+synapse conformance list
+```
+
+`python -m synapse_cdm.suite conformance run …` is the same entry point, for a caller who would
+rather not depend on a name being on `PATH`.
+
+## The fifteen
+
+| | check | what it asserts | when it is `SKIP` |
+| --- | --- | --- | --- |
+| A | translate | every fixture decodes into CDM objects | never |
+| B | schema | every object validates against the published JSON Schema | never |
+| C | provenance | every object carries the source, adapter and identifiers §4.5 requires | never |
+| D | lossless | no scalar in the source payload is absent from the output and undeclared | a bytes fixture has no leaf structure to compare |
+| E | roundtrip | source → CDM → source loses no value | the adapter is ingest-only, or the emitted form is not structurally comparable |
+| F | golden | the output is byte-identical to the committed golden file | no golden file exists yet |
+| G | deterministic | three decodes of one payload under one frozen clock hash equal | never |
+| H | malformed-input | every payload under `malformed/` is refused, safely, in time | the adapter declares no `malformed/` set |
+| I | unknown-preservation | an injected unknown field survives into the output | the adapter declares `unknown_fields: none` |
+| J | temporal | timestamps are RFC 3339 UTC, are not the epoch, and a time taken from `now()` says so | the adapter emits no timestamp |
+| K | identity | identifiers are equal across two decodes and are `uuid5`, not drawn | the adapter emits no identifier |
+| L | version | every object's `schema_version` is this package's and inside the manifest's `cdm.supported` | the adapter emits no object |
+| M | streaming | a payload fed in two chunks produces the output the whole one does | no adapter declares the capability today |
+| N | parser robustness | a payload truncated at every offset raises rather than crashes | the adapter ships no byte fixture |
+| O | resource limits | one byte over `max_input_bytes` is refused before decode | no bound is declared (each manifest says why) |
+
+`G` hashes the serialisation this framework fixed once: `json.dumps(obj, sort_keys=True,
+indent=2)`, UTF-8, trailing newline, sha256 over those bytes. `N` truncates at every offset for a
+fixture under 4 KiB and at 4096 evenly spaced offsets above it; the cap is printed in the report.
+
+## What a `SKIP` costs, and what it does not
+
+A maturity level is a claim about evidence, so the suite **computes** eligibility from the results
+rather than reading a declaration:
+
+- `L1` needs `A`; `L2` needs `A B`; `L3` needs `A B C`; `L4` needs `A B C E`; `L5` needs every
+  check applicable to this adapter.
+- A required check that is `PASS` satisfies its requirement.
+- A required check that is `SKIP` **from a declared inapplicability** does not block the rung. An
+  ingest-only adapter is not blocked by the round-trip check: there is no egress direction for
+  information to be lost in.
+- A required check that is `FAIL`, or `SKIP` with **no** declared inapplicability, blocks that
+  rung and every rung above it.
+- `L6` is never computed from this repository's own evidence: every fixture here is synthetic.
+
+The two are printed separately on purpose. `synapse conformance list` shows what each adapter
+**declares**; a run prints `MATURITY ELIGIBLE`, which is what this repository's evidence supports
+today. They are allowed to differ, and where they do, the manifest's `maturity.basis` says what
+the difference rests on — each bidirectional adapter ships a byte-exact round-trip test in
+`tests/` that the suite's `E` cannot see, so it declares `L4` where the suite computes `L3`.
+
+## Strict mode
+
+`--require` names the letters a caller depends on. If any of them is `FAIL` **or** `SKIP` the
+command exits non-zero — a check that could not be evaluated is not a check that passed. The
+verdicts in the report are never rewritten to match: a reader has to be able to tell an adapter
+that failed a check from one nobody could evaluate.
+
+| exit | meaning |
+| --- | --- |
+| `0` | the run completed and no required check failed or was skipped |
+| `1` | a required check `FAIL`ed, or a required check came back `SKIP` |
+| `2` | the invocation was wrong — an unknown adapter, or no fixtures where one was named |
+
+## Malformed fixtures
+
+Every adapter ships at least two payloads under `<fixtures>/<adapter>/malformed/`: a truncation
+and one format-specific case — an invalid declared length, a checksum that does not match, XML
+that is not well formed, JSON that is not JSON. They are a **subdirectory**, so checks A–F never
+see them: the harness selects immediate children that are files.
+
+A payload must be **refused**, and refused safely: any exception except `SystemExit`,
+`KeyboardInterrupt`, `MemoryError` or `RecursionError`, inside the time bound, with no object
+returned. The exception class is recorded in the report. A declared error hierarchy — so that a
+caller can catch one class rather than `Exception` — is Part 2 of this specification and is a
+stated limitation until then.

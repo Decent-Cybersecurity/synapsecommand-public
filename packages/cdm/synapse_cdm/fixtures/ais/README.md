@@ -81,3 +81,10 @@ that emits something it cannot parse structurally.
 
 Goldens are the emitted sentences under the frozen clock (`times.FROZEN_NOW`), so the fields a
 CDM object does not state — which for AIS means the minute and the date — are stable.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

@@ -73,3 +73,10 @@ points out of time order, overlapping multi-hypothesis segments, an essence conf
 label, an egress with a dangling reference — lives in `tests/test_cdm_stanag4676_adapter.py` with
 an inline document. A fixture whose `to_cdm()` raises is a harness FAIL, and a refusal that reads
 as a failure is a refusal nobody will keep.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

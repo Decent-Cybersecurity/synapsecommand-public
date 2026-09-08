@@ -500,3 +500,10 @@ discharge is the envelope, the witnessed items, the defect classes and the refus
 round-trip trap `../../README.md` names under "Four things the harness cannot check for you",
 self-consistency without an external anchor, is answered here by the documents' own worked examples
 rather than by a promise.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

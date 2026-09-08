@@ -129,8 +129,8 @@ from synapse_cdm.geo import LineString, Point, Polygon
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track, TrackSample
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "NITS"
 
@@ -1423,6 +1423,10 @@ class Stanag4676Adapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.PRESERVED,
+            unknown_fields_basis=(
+                "a NITS message is XML and its parsed twin is an open document; every element this "
+                "adapter does not consume is parked verbatim under `source_extras`"),
         ),
         limitations=[
             "Edition A (the STANAG 4676 Edition 1 generation) is read for the edition delta "

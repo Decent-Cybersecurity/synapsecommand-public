@@ -23,6 +23,8 @@
       "message_types": [
         "AIVDM/AIVDO message types 1, 2, 3, 4, 5, 18, 19, 21"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "the parsed twin is an ordinary JSON document and every key this adapter does not consume is parked verbatim under `source_extras`. The six-bit armoured payload has no room for a field nobody defined, so this declaration is about the document form and not about the wire form",
       "wire": true
     },
     "claim_external_system": null,

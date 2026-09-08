@@ -212,8 +212,8 @@ from synapse_cdm.enums import (
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "ADSB"
 
@@ -1251,6 +1251,13 @@ class AdsbAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.PRESERVED,
+            unknown_fields_basis=(
+                "an ADS-B caller may hand this adapter the parsed twin, which is an ordinary JSON "
+                "document, and every key this adapter does not consume is parked verbatim under "
+                "`source_extras` by `lossless.residual()`. The 112-bit extended squitter itself has "
+                "no room for a field nobody defined, so this declaration is about the document form "
+                "and not about the wire form"),
         ),
         limitations=[
             "the edition this adapter is written against is NOT STATED by any document in "

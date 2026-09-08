@@ -89,8 +89,8 @@ from synapse_cdm.adapters import cat062_codec as codec
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, SourceId
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 #: This adapter's own system name, for `SourceRef.system`.
 SYSTEM = "ASTERIX_CAT062"
@@ -2648,6 +2648,13 @@ class AsterixCat062Adapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.NONE,
+            unknown_fields_basis=(
+                "ASTERIX is a closed catalogue of data items selected by an FSPEC bitmask: an item "
+                "the catalogue does not define cannot be expressed on the wire at all, and the "
+                "decoded twin this adapter also accepts is a rendering of that closed record rather "
+                "than an open document. Unconsumed DEFINED items are still parked under "
+                "`source_extras`, which is what the harness's lossless check proves"),
         ),
         limitations=[
             "the input is already the output of a fusion process, so the CDM objects this "

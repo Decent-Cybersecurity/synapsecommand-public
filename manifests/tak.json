@@ -24,6 +24,8 @@
         "CoT atoms (`a-.-...`) \u2014 contact reports",
         "CoT drawing shapes, on egress"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "Cursor-on-Target's `<detail>` is an open extension point by design \u2014 the schema states that its contents are not constrained \u2014 and the parsed twin is an open document; every child this adapter does not consume is parked verbatim under `source_extras`",
       "wire": true
     },
     "claim_external_system": null,

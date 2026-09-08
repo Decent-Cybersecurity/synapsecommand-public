@@ -151,8 +151,8 @@ from synapse_cdm.models import (
 )
 from synapse_cdm.geo import Point
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 #: `SourceRef.system` — the covering standard, which is what this adapter is named for.
 SYSTEM = "STANAG4609"
@@ -816,6 +816,14 @@ class Stanag4609Adapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.NONE,
+            unknown_fields_basis=(
+                "unknown KLV local-set TAGS are preserved on the wire and reported at "
+                "`attributes.klv_unknown_tags` / `attributes.klv_unknown_items` (ST 0107.3-04 "
+                "requires a decoder to skip what it does not know) — but that is an unwitnessed TAG "
+                "NUMBER and not a named field, and the decoded twin this adapter also accepts is a "
+                "rendering of the witnessed items with no carrier for a key nobody defined. The two "
+                "facts are different and this value is the one about the document form"),
         ),
         limitations=[
             "ST 0601.14 is the authoritative tag table; ST 0601.19 is pinned as CONTEXT ONLY "

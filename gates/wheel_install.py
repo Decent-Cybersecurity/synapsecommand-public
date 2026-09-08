@@ -37,7 +37,7 @@ repository. Every check below is a property of the installed artefact:
     schemas    the published schemas can be regenerated and re-checked from anywhere
     harness    every adapter the tree registers replays green with no --fixtures argument
                at all — the roster derived, never a count typed here
-    scripts    the cdm-harness, cdm-schemas and cdm-conformance entry points work
+    scripts    the cdm-harness, cdm-schemas, cdm-conformance and synapse entry points work
     prose      no shipped file hands the reader a repo-relative path
     slice      the package-only half of the suite passes against the INSTALLED package
 
@@ -186,6 +186,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
     "test_cdm_commit_message.py": "gates/commit_message.py and this history's messages",
     "test_cdm_scripted_edits.py": "gates/scripted_edit.py and git blobs — neither ships",
+    "test_cdm_suite.py": "the Synapse Conformance Suite against the repository: it reads packages/cdm/pyproject.toml for the `synapse` console script and asserts the sweep set against every shipped adapter through `roster()`, which under an installed wheel is a different set from the one the tree registers",
     "test_cdm_pdf_text.py": "gates/pdf_text.py and the pinned PDFs — neither ships",
     "test_cdm_parks_table.py": "gates/parks_table.py and FORMAT_COVERAGE.md's parks table — the gate does not ship, and the check is about rows citing each other rather than about anything the wheel installs",
     "test_cdm_pin_paths.py": "gates/pin_paths.py and BOTH fixture bases — the repository root is one of the two, so an installed wheel has no second base for the resolver to be right about",
@@ -566,7 +567,17 @@ def check_console_scripts(scripts: pathlib.Path, outside: pathlib.Path,
                   "locating a packaged golden for cdm-conformance").strip()
     must(run([str(scripts / "cdm-conformance"), "--input", golden, "--json"], cwd=outside),
          "cdm-conformance")
-    return "cdm-harness, cdm-schemas and cdm-conformance all run"
+    # `synapse` joined 2026-09-07 and is exercised the same way, for the same reason: the
+    # conformance suite reads the fixtures AND the `malformed/` subdirectory through
+    # `importlib.resources`, so a wheel that dropped either would produce a report that ran
+    # nothing and still said CONFORMANT. `--require H` is the letter that fails if the malformed
+    # payloads are not in the wheel, which is the packaging question this gate is here to ask.
+    must(run([str(scripts / "synapse"), "conformance", "run", "--adapter", "pntmap",
+              "--format", "json", "--require", "A,B,C,D,F,G,H,J,K,L"], cwd=outside),
+         "synapse conformance run")
+    must(run([str(scripts / "synapse"), "conformance", "list"], cwd=outside),
+         "synapse conformance list")
+    return "cdm-harness, cdm-schemas, cdm-conformance and synapse all run"
 
 
 def check_slice_closure() -> str:

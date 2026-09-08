@@ -22,6 +22,8 @@
       "message_types": [
         "GNSS interference alert \u2014 one alert becomes an INTERFERENCE_SOURCE entity and a `sc.pnt.gnss_interference.v1` event"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "a PNTMAP alert IS a JSON document carrying vendor fields; every key this adapter does not consume is parked verbatim under `source_extras`",
       "wire": true
     },
     "claim_external_system": null,

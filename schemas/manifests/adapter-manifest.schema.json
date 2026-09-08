@@ -153,6 +153,13 @@
           "title": "Message Types",
           "type": "array"
         },
+        "unknown_fields": {
+          "$ref": "#/$defs/UnknownFields"
+        },
+        "unknown_fields_basis": {
+          "title": "Unknown Fields Basis",
+          "type": "string"
+        },
         "wire": {
           "title": "Wire",
           "type": "boolean"
@@ -162,7 +169,9 @@
         "wire",
         "directions_exercised",
         "message_types",
-        "limits"
+        "limits",
+        "unknown_fields",
+        "unknown_fields_basis"
       ],
       "title": "Capabilities",
       "type": "object"
@@ -421,6 +430,15 @@
         "structured"
       ],
       "title": "Residual",
+      "type": "string"
+    },
+    "UnknownFields": {
+      "description": "Does this adapter preserve a source field it does not recognise, in its DOCUMENT form?\n\nTwo values and no third, because the conformance suite's check I needs an answer it can act\non rather than a description it has to interpret. The question is asked of the DOCUMENT form\nthe adapter accepts \u2014 the dict a caller hands `to_cdm` \u2014 and not of every carrier the wire\nformat has: `stanag4609` preserves unknown KLV local-set TAGS on the wire\n(`attributes.klv_unknown_items`, `stanag4609.py:1575`) and has no carrier for an unknown key\nin the decoded twin, and those are two true facts that one enum value cannot hold. The\naccompanying `unknown_fields_basis` is where the distinction is stated, in the adapter's own\nwords, which is the same arrangement `Limits.absent_because` uses for a bound that does not\napply.",
+      "enum": [
+        "preserved",
+        "none"
+      ],
+      "title": "UnknownFields",
       "type": "string"
     }
   },

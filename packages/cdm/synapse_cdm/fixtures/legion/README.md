@@ -110,3 +110,10 @@ because the fixtures are what produced them rather than a review:
   adapter translates what a search returned and knows nothing about the query.
 - **No `EPSG:4979` fixture.** That value is in the enum and defined in no document, so the row
   set refuses it. A fixture would require inventing the axis order the refusal exists over.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

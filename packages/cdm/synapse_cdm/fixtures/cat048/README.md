@@ -152,3 +152,10 @@ prints, so a drift shows as a failure rather than as a stale table:
 | `I048/110` | raw × 25 ft, two's complement over 14 bits, **mean sea level** zero reference | A different datum from I048/090 and from `Position.alt_m`. The fixture carries both items so the difference is visible rather than argued |
 | `I048/200` groundspeed | raw × 2⁻¹⁴ NM/s × 1852 m = raw × 0.113 037 109 375 m/s | Exact in float64: 1852 needs 11 significand bits and the scale is dyadic |
 | `I048/140` | raw × 1/128 s since last midnight | 1/128 s is not a whole number of milliseconds, so the raw integer is what egress re-emits |
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

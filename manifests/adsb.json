@@ -25,6 +25,8 @@
         "DF18 (TIS-B / non-ICAO)",
         "ME type codes: identification, surface_position, airborne_position, airborne_velocity_ground, airborne_velocity_air, aircraft_status, operational_status"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "an ADS-B caller may hand this adapter the parsed twin, which is an ordinary JSON document, and every key this adapter does not consume is parked verbatim under `source_extras` by `lossless.residual()`. The 112-bit extended squitter itself has no room for a field nobody defined, so this declaration is about the document form and not about the wire form",
       "wire": true
     },
     "claim_external_system": null,

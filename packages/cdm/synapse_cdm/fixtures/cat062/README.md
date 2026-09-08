@@ -76,3 +76,10 @@ also runs `check_layouts()`, which asserts every encoder emits exactly the octet
 **The documents themselves are not in git and never will be**: they are EUROCONTROL's, under their
 own terms, and `NOTICE` says so. A pin plus an edition plus a SHA-256 identifies a document without
 redistributing it.
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

@@ -100,3 +100,10 @@ a failure is a refusal nobody keeps.
 | `tasking_segments_parked_with_job_id_zero` | a Job Definition, Job Request and Job Acknowledge with **no dwell data**, so `P10 = 0` per §3.1.10 while `J1 = 77`. Under a literal `J1`/`P10` cross-check this packet is unrepresentable, and the guide's own Figure 2-1 shows one — **ambiguity 16**, and this is what pins the narrowing |
 | `dwell_with_no_targets_and_target_bits_set` | `D5 = 0` with the target-report mask bits **set**, which §3.4.1 makes conformant. A Free Text Segment follows, so reading one byte too many corrupts a value the golden checks. Also **gap 22**'s fixture: the packet states that the radar looked and found nothing, and the CDM says nothing about it |
 | `repeated_mission_segment` | two Mission Segments with the same reference date in one packet, which §3.3 and guide §A.1.3 make ordinary rather than exotic |
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

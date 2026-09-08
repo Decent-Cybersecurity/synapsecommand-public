@@ -125,8 +125,8 @@ from synapse_cdm.enums import (
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track, TrackSample
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "LEGION"
 
@@ -494,6 +494,10 @@ class LegionAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.PRESERVED,
+            unknown_fields_basis=(
+                "a Legion payload IS a JSON document and its vendor fields are open-ended by design; "
+                "every key this adapter does not consume is parked verbatim under `source_extras`"),
         ),
         limitations=[
             "a VENDOR API rather than a ratified standard: "

@@ -23,6 +23,8 @@
       "message_types": [
         "NITSRoot documents \u2014 the 48 classes and 273 attributes AEDP-12 Edition B Version 2 defines"
       ],
+      "unknown_fields": "preserved",
+      "unknown_fields_basis": "a NITS message is XML and its parsed twin is an open document; every element this adapter does not consume is parked verbatim under `source_extras`",
       "wire": true
     },
     "claim_external_system": null,

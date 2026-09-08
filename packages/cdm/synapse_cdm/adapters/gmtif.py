@@ -124,8 +124,8 @@ from synapse_cdm.geo import Point
 from synapse_cdm.models import (CDMBase, Entity, Event, Kinematics, Position, SourceId, Track,
                                 TrackSample)
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "GMTIF"
 
@@ -1130,6 +1130,12 @@ class GmtifAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.PRESERVED,
+            unknown_fields_basis=(
+                "the parsed twin is an ordinary JSON document and every key this adapter does not "
+                "consume is parked verbatim under `source_extras`. STANAG 4607's own extension point "
+                "is its segment types, which this adapter reports as it finds them rather than "
+                "inventing a carrier for"),
         ),
         limitations=[
             "the Controlled Extension FIELD DEFINITIONS are not implemented and cannot be: "

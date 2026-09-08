@@ -106,8 +106,8 @@ from synapse_cdm.oes import EventClass, OesMetadata
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.version import SC_OES_VERSION
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "PNTMAP"
 
@@ -213,6 +213,10 @@ class PntmapAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.PRESERVED,
+            unknown_fields_basis=(
+                "a PNTMAP alert IS a JSON document carrying vendor fields; every key this adapter "
+                "does not consume is parked verbatim under `source_extras`"),
         ),
         limitations=[
             "no document in this repository DEFINES the PNTMAP alert payload — "

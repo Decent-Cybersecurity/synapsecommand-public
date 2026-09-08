@@ -84,8 +84,8 @@ from synapse_cdm.enums import (
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, PlanObject, Position
 from synapse_cdm.symbology import affiliation_from_cot, sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel,
-                                   Residual)
+                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
+                                   UnknownFields)
 
 SYSTEM = "TAK"
 
@@ -207,6 +207,12 @@ class TakAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
             ),
+            unknown_fields=UnknownFields.PRESERVED,
+            unknown_fields_basis=(
+                "Cursor-on-Target's `<detail>` is an open extension point by design — the schema "
+                "states that its contents are not constrained — and the parsed twin is an open "
+                "document; every child this adapter does not consume is parked verbatim under "
+                "`source_extras`"),
         ),
         limitations=[
             "the CoT schema edition this adapter is written against is NOT STATED by any "

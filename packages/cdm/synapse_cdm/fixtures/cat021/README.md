@@ -93,3 +93,10 @@ Each raises with the offending octets quoted, and none falls back to the clock.
 | `length_disagrees_with_buffer` | Reading to the end of the buffer instead would translate whatever followed the block as if it were part of it |
 | `fspec_names_a_not_used_frn` | FRN 43 is Not Used, so it cannot be skipped and guessing a length would desynchronise the record |
 | `missing_mandatory_target_address` | ASTERIX carries no checksum at any level, so the four mandatory items are part of what replaces one |
+
+## The malformed set
+
+`malformed/` holds two payloads this directory's adapter must REFUSE — a truncation and one
+format-specific case (§21). They are a subdirectory because checks A–F select files only, so
+they are invisible to the harness and read by the conformance suite's check H alone.
+`malformed/README.md` names each one and what is wrong with it.

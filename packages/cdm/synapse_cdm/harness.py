@@ -128,7 +128,7 @@ class NoFixturesFound(RuntimeError):
     """
 
 
-def _load_raw(path: pathlib.Path) -> Any:
+def load_raw(path: pathlib.Path) -> Any:
     """Fixtures are JSON on disk; adapters may take bytes or dict.
 
     A `.bin`/`.txt`/`.xml` fixture is handed over as raw bytes untouched — a STANAG or CoT XML
@@ -351,7 +351,7 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         entry: dict[str, Any] = {"fixture": path.name, "objects": 0,
                                  "checks": {}, "problems": []}
         try:
-            raw = _load_raw(path)
+            raw = load_raw(path)
             objects = adapter.to_cdm(raw)
             dumped = _dump(objects)
             entry["objects"] = len(dumped)
@@ -428,6 +428,12 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         "results": results,
         "passed": sum(1 for r in results if r["verdict"] == PASS),
         "failed": sum(1 for r in results if r["verdict"] == FAIL),
+        # F2.1, 2026-09-07: the six checks ARE the conformance suite's A-F, and the letters are
+        # published BESIDE the existing keys rather than replacing them. Re-keying the report by
+        # letter would break every consumer of `cdm-harness --json` in order to save a lookup,
+        # and `--json` output is a surface this package has published since 1.0.0. Nothing else
+        # in this report moves and the text rendering is untouched.
+        "check_letters": dict(CHECK_LETTERS),
     }
 
 
@@ -471,6 +477,11 @@ def render_roster(adapters: dict[str, type[Adapter]]) -> str:
 
 
 _COLUMNS = ("translate", "schema", "provenance", "lossless", "roundtrip", "golden")
+
+#: The suite's letters for the six columns above (ARCHITECTURE.md §8: these are the HARNESS
+#: namespace, not the SC-OES tool's dimensions). Derived from `_COLUMNS` so a seventh column
+#: cannot acquire a letter by being forgotten here.
+CHECK_LETTERS = tuple(zip(_COLUMNS, "ABCDEF"))
 
 
 def render_report(report: dict) -> str:

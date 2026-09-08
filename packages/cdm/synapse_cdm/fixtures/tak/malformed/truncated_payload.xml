@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC. A hostile air track heading due north, which CoT spells 360.0 and the CDM
+     spells 0.0 — the same bearing, and the only one Kinematics.course_deg admits. The
+     reduction is a declared transform, not a silent fix, because the number on the wire is
+     not the number in the output. how="m-i" is an inertial fix, which stays trustworthy
+     exactly where a GNSS one would not. -->
+<event version="2.0" uid="TAK-AIR-4471" type="a-h-A-M-F-Q"
+       tim
