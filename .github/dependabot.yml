@@ -1,0 +1,111 @@
+# Dependabot — SOIF Part 1 §43, round P6.
+#
+# WHAT THIS FILE IS AND IS NOT
+# -----------------------------
+# §43 asks for three separate things and this file is only the third of them: the dependency
+# GRAPH and Dependabot ALERTS are repository settings and are not configurable from the tree
+# (they were switched on in this round through `gh api`, with the before-and-after readings in
+# `rounds/reports/P6.md` and the resulting state quoted in `SECURITY.md`'s controls table). What
+# a file in the tree can decide is the version-UPDATE behaviour, which is what follows.
+#
+# THREE ECOSYSTEMS, AND WHY EACH DIRECTORY IS THE ONE NAMED
+# ----------------------------------------------------------
+#   pip             /packages/cdm   — the distribution's own `pyproject.toml`. NOT `/`: there is no
+#                                     manifest at the repository root, and Dependabot reports a
+#                                     directory with no manifest as an error rather than as
+#                                     "nothing to do".
+#   github-actions  /               — this ecosystem is rooted at the repository, not at
+#                                     `.github/workflows`; Dependabot resolves the workflow files
+#                                     itself. Every action in this repository is pinned by commit
+#                                     SHA (a deliberate policy — see `ci.yml`'s header), and a SHA
+#                                     pin is exactly the case a human will never notice has gone
+#                                     stale, so this is the ecosystem the automation earns most.
+#   npm             /docs           — `docs/package-lock.json` is committed, so the docs site has a
+#                                     resolved tree to update. It builds the published
+#                                     documentation and publishes nothing else.
+#
+# GROUPED, AND WEEKLY, FOR A STATED REASON
+# -----------------------------------------
+# Minor and patch updates are grouped per ecosystem into ONE pull request. Ungrouped, the docs
+# site's Docusaurus tree alone would open a double-figure number of pull requests a week against a
+# repository whose CI runs the whole suite on every one of them, and the predictable outcome is
+# that they stop being read. Majors are deliberately NOT grouped: a major is a decision, it gets
+# its own pull request and its own review.
+#
+# `open-pull-requests-limit` is the brake on the same failure mode from the other side.
+#
+# LABELS: ONE, AND THE READING BEHIND THAT
+# -----------------------------------------
+# `gh label list` on 2026-09-08 returned ten labels and none of them is `security` or
+# `dependencies`. Dependabot creates `dependencies` itself when it is missing; it does NOT create
+# a label a configuration names, and a configuration naming a label that does not exist gets a
+# warning on the Dependabot run page that nobody is watching. So one label is declared here, the
+# one the tool will make, and the ecosystem is legible from the pull request's own title.
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    directory: /packages/cdm
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      # DCO is this repository's policy for every commit (`CONTRIBUTING.md`, and
+      # `gates/commit_message.py` is the gate). Dependabot cannot add a `Signed-off-by` trailer,
+      # so a Dependabot branch is merged by a person who signs off the merge — the prefix is here
+      # so that the commit the gate eventually reads announces what it is.
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: scope
+    groups:
+      pip-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "deps"
+      include: scope
+    groups:
+      actions-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /docs
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: scope
+    groups:
+      docs-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch

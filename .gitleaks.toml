@@ -2,15 +2,38 @@
 #
 # WHY THIS FILE EXISTS WITH AN EMPTY ALLOWLIST
 # ---------------------------------------------
-# §39 permits an allowlist that is "narrow and documented", and the brief for this round permits
+# §39 permits an allowlist that is "narrow and documented", and the brief for round P5 permitted
 # one entry per finding the FIRST RUN proves false-positive. The runs below are gitleaks 8.30.1's
-# own output on 2026-09-08, TAKEN AT THE COMMIT THAT CARRIES THIS FILE, and they produced nothing
-# to allowlist:
+# own output on 2026-09-08, TAKEN AT THE COMMIT THAT INTRODUCED THIS FILE — `e37cf20`, round P5's
+# — and they produced nothing to allowlist:
 #
 #     gitleaks git . --redact --config .gitleaks.toml
 #         -> 246 commits scanned, no leaks found
 #     gitleaks git --config .gitleaks.toml --log-opts "origin/main..HEAD" .
 #         ->   7 commits scanned, no leaks found
+#
+# RE-TAKEN 2026-09-08 IN ROUND P6, at ROUND P6's OWN COMMIT — the EIGHTH of the arc, the one
+# carrying this paragraph — both clean and both one higher:
+#
+#     gitleaks git . --redact --config .gitleaks.toml
+#         -> 247 commits scanned, no leaks found
+#     gitleaks git --config .gitleaks.toml --log-opts "origin/main..HEAD" .
+#         ->   8 commits scanned, no leaks found
+#
+# **AND THAT RE-TAKING IS THE POINT, not a correction of an error.** P5 anchored these figures to
+# "the commit that carries this file" so that a reading taken BEFORE the round's own commit could
+# not be committed as though it described the tree it shipped in. That anchor is now spelled as a
+# HASH, because the original phrase has a second reading — every later commit also carries this
+# file — under which the sentence goes false on the next round's commit without anybody editing
+# it. Neither number is a constant: the arc grows by one per round and full history by one per
+# commit. A round that quotes either one states the commit it took it at, or states nothing.
+#
+# P5'S HASH IS WRITTEN ABOVE AND P6'S IS NOT, AND THE ASYMMETRY IS DELIBERATE. `e37cf20` is a
+# PAST commit: pushed, immutable, and nameable. P6's own commit is the one carrying this comment,
+# and a hash written here would be the hash of the commit BEFORE this comment was added — writing
+# it changes the commit and falsifies it, which is the loop P5's header refused to enter. So the
+# past reading is anchored by hash and the present one by ordinal, and both are checkable: the
+# eighth commit of `origin/main..HEAD` is this one.
 #
 # The second of those is §42's "no secrets in the campaign history", over the whole SOIF Part 1
 # arc, and it is clean.

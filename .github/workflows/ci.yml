@@ -249,3 +249,72 @@ jobs:
         # status is the gate — gitleaks exits non-zero when it finds anything, and nothing here
         # softens that with `|| true`.
         run: ./gitleaks git . --redact --config .gitleaks.toml --log-opts "--all"
+
+  supply-chain:
+    name: pip-audit, over the environment and over the wheel's frozen closure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install by the documented path, and pip-audit beside it
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+          python -m pip install pip-audit build
+
+      - name: The exception allowlist, derived from the tree and printed before it is used
+        # §45: the allowlist is DERIVED from `security/exceptions/` at run time and never typed
+        # into this file. Printed as its own step so that a run's log carries the allowlist it
+        # ran with — an audit that ignored a vulnerability without saying which is a green nobody
+        # can check. An empty directory prints an empty line, which is the state today.
+        id: ignores
+        run: |
+          set -euo pipefail
+          ignores="$(python gates/codeql_gate.py --emit-pip-audit-ignores)"
+          echo "derived: [${ignores}]"
+          echo "flags=${ignores}" >> "${GITHUB_OUTPUT}"
+
+      - name: pip-audit over the installed environment
+        # `--strict` makes a dependency pip-audit cannot resolve a FAILURE rather than a skipped
+        # line. Without it the audit passes on a package whose advisories were never fetched,
+        # which is the shape of a green with a hole in it. The identifiers in `flags` are
+        # constrained by `security/exceptions/schema.json`'s pattern to characters no shell
+        # splits on, so the unquoted expansion is deliberate and safe.
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC2086
+          python -m pip_audit --strict ${{ steps.ignores.outputs.flags }}
+
+      - name: pip-audit over the wheel's own frozen closure, in a venv of its own
+        # The step above audits the DEVELOPMENT environment — the package plus its `test` extra
+        # plus pip-audit itself and everything those drag in. A consumer installs none of that.
+        # This step builds the wheel, installs it alone into a clean virtual environment, freezes
+        # what that produced, and audits the freeze: the closure a `pip install synapse-cdm`
+        # actually creates. The two readings differ and both matter — the first is what CI runs
+        # on, the second is what a user gets.
+        run: |
+          set -euo pipefail
+          python -m build --wheel --outdir dist-audit packages/cdm
+          python -m venv .audit-venv
+          .audit-venv/bin/python -m pip install --upgrade pip >/dev/null
+          .audit-venv/bin/python -m pip install dist-audit/*.whl
+          .audit-venv/bin/python -m pip freeze --exclude-editable > frozen-closure.txt
+          echo '--- the closure being audited ---'
+          cat frozen-closure.txt
+          # shellcheck disable=SC2086
+          python -m pip_audit --strict -r frozen-closure.txt ${{ steps.ignores.outputs.flags }}
+
+      - name: Upload the frozen closure
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: frozen-closure-${{ github.sha }}
+          path: frozen-closure.txt
+          if-no-files-found: error

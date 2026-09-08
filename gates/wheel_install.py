@@ -191,6 +191,8 @@ PACKAGE_ONLY_TESTS = (
 REPO_BOUND_TESTS = {
     "test_cdm_boundary.py": "AST over the package sources as files in the tree",
     "test_cdm_security_policy.py": "SECURITY.md, security/README.md, .gitleaks.toml, ci.yml and the parser-safety page against the tree — every path it reads is at the repository root or under .github/, and not one of them ships in the wheel",
+    "test_cdm_security_exceptions.py": "security/exceptions/ at the repository root — the schema, the README and every exception file, plus .github/workflows/ci.yml and dependency-review.yml read as text to prove no allowlist is typed into either. None of those paths is inside the wheel, and an installed wheel has no exceptions directory for this module to be right about",
+    "test_cdm_codeql_gate.py": "gates/codeql_gate.py, which the wheel does not carry — the same reason test_cdm_parks_table.py and test_cdm_pin_paths.py are here. It also reads security/exceptions/ live and .github/workflows/, both outside the distribution",
     "test_cdm_bump_derivation.py": "gates/bump_derivation.py, release tags and git blobs",
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
     "test_cdm_conformance_spec.py": "spec/sc-oes/13-conformance.md, 00-conventions.md, the seven profile documents and docs/adr/0009 — the normative tree the conformance module implements, none of which ships in the wheel",

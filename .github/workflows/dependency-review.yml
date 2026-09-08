@@ -1,0 +1,65 @@
+# Dependency review — SOIF Part 1 §45, round P6.
+#
+# WHAT THIS CATCHES AND WHAT IT CANNOT
+# -------------------------------------
+# `actions/dependency-review-action` compares the dependency graph of the base ref with the head
+# ref of a PULL REQUEST and reports dependencies the pull request ADDS that carry a known
+# advisory. That is the only thing it does, and stating the limit here matters because of how this
+# repository is developed: the SOIF campaign pushes directly to `soif/1.0`, so **this workflow does
+# not run on the commits that make up the campaign**. It is not a scan of the dependency set; it is
+# a gate on the moment a dependency changes through a pull request.
+#
+# The scan of the dependency set as it actually stands is `pip-audit` in the `supply-chain` job of
+# `ci.yml`, which runs on every push to `main` and to `soif/**` and needs no pull request. Both
+# exist, they answer different questions, and `docs/docs/security/supply-chain.mdx` says which is
+# which so that a reader cannot mistake one green for the other.
+#
+# `fail-on-severity: high` is M's ruling of 2026-09-07T21:53:40Z applied on this axis too: "HIGH
+# and CRITICAL findings block release." The action's own default is `low`, which would block on
+# anything at all; `high` is a deliberate loosening downward from the default and a deliberate
+# tightening upward from the `critical` this round's brief could have chosen.
+name: Dependency review
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'soif/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Newly introduced vulnerable dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # The summary comment is written through the pull request's own API, which needs write on
+      # pull-requests and nothing else. `contents` stays read: this job installs nothing, builds
+      # nothing and must not be able to change the tree it is reviewing.
+      pull-requests: write
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Review what this pull request adds
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294  # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+          # DELIBERATELY NO `allow-ghsas`. The exception mechanism §45 requires is
+          # `security/exceptions/`, and an advisory allowlisted in this file would be an exception
+          # with no expiry, no owner and no reason — the "permanent undocumented exemption" §45
+          # names in as many words. If a pull request has to land with a known advisory, the
+          # exception file lands with it and `gates/codeql_gate.py --emit-pip-audit-ignores` is
+          # what the audit step then honours.
+          license-check: false
+          # Licences are not this gate's business and a half-configured licence check is worse
+          # than none: the repository's licence position is recorded in `README.md` and in each
+          # adapter's manifest, and `gates/wheel_install.py`'s `licences` check is what holds the
+          # distribution to it.

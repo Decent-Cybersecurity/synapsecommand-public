@@ -35,7 +35,8 @@ examples/           synthetic SC-OES events, validated by the suite
 tests/              the suite; bare `pytest` from this directory runs all of it
 gates/              checks too slow or too networked for the suite; each is a protocol act
 docs/               the documentation site (Docusaurus, deployed to Cloudflare Pages)
-security/           the security working files; the policy itself is SECURITY.md at the root
+security/           the security working files, and exceptions/ — the one way past a blocking
+                    supply-chain finding; the policy itself is SECURITY.md at the root
 ARCHITECTURE.md     the adapter contract — API v2, directions, metadata, the six core rules
 VERSIONING.md       the version axes, what moves each of them, and where each is authored
 INTEROPERABILITY.md what this is and is not, and how an adapter is built against it
@@ -265,7 +266,7 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 | [`ontology/README.md`](ontology/README.md) | the Operational Ontology: the eight Turtle modules, the two derived artefacts, and the drift gate |
 | [`examples/README.md`](examples/README.md) | the synthetic examples, one per governed event type, and the linked decision chain |
 | [`spec/governance/`](spec/governance) | how a governed type or term is proposed, reviewed, versioned and deprecated |
-| [`SECURITY.md`](SECURITY.md) | **Security:** how to report a vulnerability privately, which versions are supported, what is in and out of scope, and every control with the reading behind it |
+| [`SECURITY.md`](SECURITY.md) | **Security:** how to report a vulnerability privately, which versions are supported, what is in and out of scope, and every control with the reading behind it — and, from round P6, the supply chain: Dependabot, `pip-audit` over both the environment and the wheel's frozen closure, CodeQL with a gate that blocks HIGH and CRITICAL, SBOMs in SPDX and CycloneDX, OIDC build attestation, and `security/exceptions/` as the one documented, time-bounded way past a blocking finding |
 
 ## Dependencies, and what is deliberately absent
 

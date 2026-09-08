@@ -1,0 +1,151 @@
+---
+title: Supply chain
+sidebar_label: Supply chain
+sidebar_position: 3
+description: The provenance chain from a commit to an attested artefact, the job that realises each arrow, and what each of the five scanners does and does not cover.
+---
+
+# Supply chain
+
+Release artefacts here are meant to be **auditable by somebody who does not trust this
+repository**: a wheel, its hash, its bill of materials, and a signature chaining all three back to
+the commit and the workflow run that produced them. This page says how that is arranged, and — the
+part that is easier to leave out — what each layer does *not* cover.
+
+The convention is the specification's: **MUST**, **SHOULD**, **MAY**.
+
+## 1. The chain, and the job that realises each arrow
+
+`.github/workflows/rc-build.yml` is one dispatchable workflow, three jobs, in this order. Each
+arrow below is a `needs:` edge or a step, not a description of intent:
+
+| arrow | realised by |
+|---|---|
+| source commit → CI | `qualify`, checked out at the dispatched ref with `fetch-depth: 0` |
+| CI → tests | `qualify`, step **The suite** |
+| tests → conformance | `qualify`, steps **Conformance Suite v2** and **Evidence records** |
+| conformance → build | `build` declares `needs: qualify` — a red suite builds nothing |
+| build → SBOM | `build`, syft over the wheel that was just gated |
+| SBOM → artefact hash | `build`, one `sha256sum` table over `dist/` and `sbom/` |
+| artefact hash → attestation | `attest` declares `needs: build` and re-checks `SHA256SUMS` first |
+| attestation → proof | `attest`, `gh attestation verify` on every artefact |
+
+**The build happens once.** `gates/wheel_install.py --export-dist` exports the artefacts *that
+gate judged*, and nothing downstream rebuilds them. The alternative — a workflow that runs
+`python -m build` and then runs the gate — produces two files that are not byte-identical, and
+that gate's own docstring carries the two digests that proved it. Every hash, SBOM and attestation
+in this workflow is over the bytes the thirteen checks passed.
+
+**Two SBOM formats, and one of the two producers is a cross-check.** The release artefacts are
+syft's: `synapse_cdm.spdx.json` (**SPDX** 2.3, JSON) and `synapse_cdm.cdx.json` (**CycloneDX**,
+JSON), both read off the gated wheel rather than off the source tree or the runner's environment.
+Beside them, `cyclonedx-py environment` writes `environment.cdx.json` — the closure pip actually
+resolved. The two answer different questions and neither tool can report the difference alone, so
+the component counts are printed and never asserted equal: the environment carries the `test`
+extra and the wheel does not.
+
+**Nothing here publishes.** `rc-build.yml` has no PyPI step, creates no release and moves no tag.
+Publishing is `.github/workflows/publish.yml`, which a `v*` tag starts.
+
+## 2. Five scanners, and what each one is blind to
+
+Stated as a table because the failure mode is mistaking one green for another.
+
+| layer | where | what it reads | blind to |
+|---|---|---|---|
+| Dependabot alerts + security updates | repository settings | the dependency **graph** GitHub builds from the committed manifests | anything not in a manifest; a vulnerability with no advisory yet |
+| Dependabot version updates | `.github/dependabot.yml` | `pip` in `/packages/cdm`, `github-actions` in `/`, `npm` in `/docs` | a dependency reachable only at runtime |
+| Dependency review | `.github/workflows/dependency-review.yml` | what a **pull request** adds | **every commit pushed directly**, which is how this campaign is developed — see below |
+| `pip-audit` | `ci.yml`, job `supply-chain` | the installed environment, **and** the wheel's own frozen closure in a clean venv | JavaScript; anything outside Python packaging |
+| CodeQL | `.github/workflows/codeql.yml` | `python` and `javascript-typescript` sources, `security-extended` | dependencies (that is the four rows above) |
+
+**The dependency-review row is the one worth reading twice.** That action compares the dependency
+graph of a pull request's base and head refs, so it exercises only on pull requests. The SOIF
+Part 1 campaign pushes directly to its branch, which means dependency review **did not run on the
+commits that built this package**. The layer that covers the dependency set as it actually stands,
+on every push, is `pip-audit` in `ci.yml` — two readings, because they answer different questions:
+
+- the **installed environment**: the package plus its `test` extra plus everything those drag in;
+- the **wheel's frozen closure**: the wheel installed alone into a clean virtual environment and
+  `pip freeze`d. This is what `pip install synapse-cdm` actually creates, and it is the smaller
+  and more relevant of the two.
+
+## 3. What blocks, and the one way past it
+
+**HIGH and CRITICAL findings block.** A CVSS `security-severity` of 7.0 or above fails the gate;
+9.0 and above is reported as `critical` rather than used as a second threshold.
+
+Precision is **printed for every finding and is not part of the blocking test**. A
+`medium`-precision CVSS 9.8 result that passed a gate claiming to block critical findings would be
+the gate's whole failure mode. A query that is genuinely imprecise is a query problem — narrow it
+or suppress it at the source — and an exception is deliberately not the tool for that.
+
+Findings below 7.0, and results whose rule carries no `security-severity` at all (CodeQL sets that
+property on security queries only, and `security-extended` runs quality queries too), are
+**reported and counted, never dropped**. The gate prints each one.
+
+The one way past a blocking finding is a documented, time-bounded exception:
+
+```text
+security/exceptions/<identifier>.json
+```
+
+with an `identifier`, `affected_package`, `version_range`, `risk`, `reason`, `owner`, `expiry`,
+`created` and at least one `reference`. Two properties make it a mechanism rather than a note:
+
+1. **One source, two consumers.** `gates/codeql_gate.py` reads the directory, and the `pip-audit`
+   step runs `python gates/codeql_gate.py --emit-pip-audit-ignores` to derive its `--ignore-vuln`
+   flags. Neither workflow carries a list, and a test asserts that neither ever will — two lists
+   diverge silently in the direction that suppresses a live finding.
+2. **Expiry is enforced by the suite, unconditionally.**
+   `tests/test_cdm_security_exceptions.py` fails the whole suite on the day an `expiry` passes.
+   No flag, no grace period, no skip. The repair is to fix the finding or to write a new exception
+   saying what changed — never to move the date.
+
+There are **no exceptions today**, and that is a reading: `pip-audit --strict` reported *No known
+vulnerabilities found* on 2026-09-08.
+
+## 4. The gate runs the same way on your machine
+
+`gates/codeql_gate.py` is a file in the tree rather than an expression inside a workflow, so a
+downloaded SARIF gets the same verdict CI gave:
+
+```bash
+gh run download <run-id> --name codeql-sarif-python
+python gates/codeql_gate.py *.sarif
+```
+
+Exit `0` is clean, `1` is a blocking finding, `2` is a refusal — a missing or malformed SARIF,
+which is deliberately not the same thing as a clean one. A gate that treated an absent SARIF as an
+empty one would print a green for an analysis that never ran.
+
+## 5. Signing: OIDC, and no key anywhere
+
+Attestation is `actions/attest-build-provenance`, which is Sigstore-backed and authenticated by
+the workflow run's own OIDC token. **There is no signing key in this repository, in its secrets,
+or on anybody's disk** — nothing to rotate, nothing to leak, and nothing that outlives the run
+that used it.
+
+`id-token: write` and `attestations: write` are declared on the `attest` job of `rc-build.yml` and
+nowhere else. Every other job in every workflow here is `contents: read`, with two exceptions that
+name their reason: `security-events: write` on CodeQL's analysis job, for the SARIF upload, and
+`pull-requests: write` on dependency review, for its summary comment.
+
+Every `uses:` in every workflow is pinned to a **full commit SHA** with the tag it corresponded to
+in a trailing comment. A tag is a moving target on somebody else's account; `github-actions` is in
+Dependabot's config precisely because a SHA pin is the kind of staleness nobody notices by
+reading.
+
+## 6. What this does not claim
+
+- **Not a claim about dependencies' own code.** `pip-audit` reports known advisories. It is not an
+  audit, and "no known vulnerabilities" is a statement about what is *published*.
+- **Not reproducible builds.** The wheel is built once and hashed; two runs of this workflow are
+  not asserted to produce identical bytes. The attestation says *this run produced these bytes
+  from this commit*, which is a weaker and checkable claim.
+- **Not a claim about the runner.** GitHub-hosted runners are trusted here. An attacker with
+  control of the runner image is outside the boundary
+  (`spec/sc-oes/14-security-considerations.md` is where the trust boundaries are written down).
+- **No CodeQL finding has been evaluated yet.** Advanced setup landed in round P6 and its first
+  run is round P7's to record. The gate is in place and tested against synthetic SARIF; it has
+  not yet been handed a real analysis of this repository.

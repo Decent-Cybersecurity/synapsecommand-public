@@ -1,0 +1,291 @@
+# Release-candidate build — SOIF Part 1 §47's provenance chain and §48's artefact set, as ONE
+# dispatchable workflow. Round P6.
+#
+# WHAT §48 ASKS FOR, AND WHY IT IS A FILE OF ITS OWN
+# ---------------------------------------------------
+# §48: "A local/release-candidate build SHALL produce: package artifact; hash; SBOM;
+# provenance/attestation evidence; conformance evidence." All five, from one dispatch, on any ref —
+# without publishing anything and without a tag.
+#
+# The round's brief asks for the SBOM and attestation steps "in `ci.yml`'s build job". **`ci.yml`
+# has no build job** — its five jobs are `suite`, `conformance`, `evidence`, `secrets` and
+# `supply-chain`, none of which builds a distribution, and `publish.yml`'s build job is a release
+# pipeline that round P7 owns and this round must not touch. So the composition lives here, which
+# is the alternative the brief itself names. Three reasons it is the better half of that choice:
+#
+#   * §48 asks for ONE run that produces the whole set. In `ci.yml` the set would be spread across
+#     jobs that run on every push, and attestation needs `id-token: write` — a permission that has
+#     no business being reachable on every pull request from a fork.
+#   * A release CANDIDATE is a thing you ask for. `workflow_dispatch` is that; `push` is not.
+#   * P7 restructures `publish.yml` around exactly this order (§50) and takes this workflow's
+#     first run as its Act 0 reading. Keeping the composition in one readable file is what makes
+#     that comparison possible.
+#
+# THE CHAIN §47 DRAWS, WITH THE JOB THAT REALISES EACH ARROW
+# -----------------------------------------------------------
+#   source commit -> CI            `qualify`, at the dispatched ref, `fetch-depth: 0`
+#   CI            -> tests         `qualify`, step "The suite"
+#   tests         -> conformance   `qualify`, steps "Conformance Suite v2" and "Evidence records"
+#   conformance   -> build         `build` needs `qualify`; a red suite builds nothing
+#   build         -> SBOM          `build`, syft over the WHEEL that was just gated
+#   SBOM          -> artefact hash `build`, one sha256 table over dist/ and the SBOMs
+#   artefact hash -> attestation   `attest` needs `build`; attests the exact uploaded bytes
+#   attestation   -> (proof)       `attest`, `gh attestation verify` on each artefact
+#
+# `docs/docs/security/supply-chain.mdx` carries the same table, and a test compares the two so
+# that a job renamed here cannot leave the documentation describing a workflow that no longer
+# exists.
+name: RC build
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this candidate is being built (recorded in the job summary)'
+        required: false
+        default: 'release-candidate qualification'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rc-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    name: Suite, conformance and evidence at this commit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          # Full history: `tests/test_cdm_release.py` re-derives every tag against its tree's
+          # PACKAGE_VERSION and `gates/bump_derivation.py` reads the arc since the last tag. A
+          # shallow clone makes both pass vacuously, which on a release candidate is the reading
+          # that matters least being the one that cannot fail.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install by the documented path
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+
+      - name: The suite
+        run: python -m pytest -q -rs
+
+      - name: Conformance Suite v2, every shipped adapter, check O required
+        # The roster is asked of the package rather than written down, for the reason `ci.yml`'s
+        # own sweep gives at length: an enumerated roster in this repository has gone stale every
+        # time one has been written.
+        run: |
+          set -euo pipefail
+          for adapter in $(python -c "from synapse_cdm.adapter import roster; print(' '.join(roster()))"); do
+            echo "::group::$adapter"
+            python -m synapse_cdm.suite conformance run --adapter "$adapter" \
+              --require A,B,C,D,F,G,H,J,K,L,O
+            echo "::endgroup::"
+          done
+
+      - name: Evidence records — §48's "conformance evidence"
+        run: |
+          set -euo pipefail
+          python -m synapse_cdm.evidence provenance
+          python -m synapse_cdm.evidence generate --all --out evidence
+          find evidence -name evidence.json -print0 \
+            | xargs -0 python -m synapse_cdm.evidence verify
+
+      - name: Upload the conformance evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: rc-evidence
+          path: evidence/
+          if-no-files-found: error
+
+  build:
+    name: Gated build, SBOMs and hashes
+    needs: qualify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install what the gate and the checks need
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+          # `twine` for the metadata check; `cyclonedx-bom` for the Python-native SBOM
+          # cross-check below. `build` is deliberately NOT installed: the gate provisions it into
+          # a venv of its own, and a second copy alongside would leave which one built the
+          # published artefact depending on PATH (`publish.yml` states the same reason).
+          python -m pip install twine cyclonedx-bom
+
+      - name: The gate, including the mutation check — and this is the ONE build
+        # `--export-dist` is what makes it one build: the gate builds its own distribution, so a
+        # workflow that ran `python -m build` and then ran the gate would produce two files that
+        # are not byte-identical (see `export_dist()`'s docstring for the two digests that proved
+        # it). The exported bytes are the bytes the 13 checks passed, and they are the bytes
+        # every later step in this workflow hashes, bills of material, and attests.
+        run: |
+          set -euo pipefail
+          python gates/wheel_install.py --mutation-check --export-dist dist
+
+      - name: twine check --strict, on the bytes that were gated
+        run: |
+          set -euo pipefail
+          ls -l dist
+          python -m twine check --strict dist/*
+
+      - name: SBOM — SPDX, from syft over the gated wheel
+        # syft reads the WHEEL, not the source tree and not the environment. That is the artefact
+        # a consumer installs, so it is the artefact whose bill of materials means anything; an
+        # SBOM of the CI environment would describe the runner.
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
+        with:
+          file: dist
+          format: spdx-json
+          output-file: sbom/synapse_cdm.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: SBOM — CycloneDX, from the same syft run
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
+        with:
+          file: dist
+          format: cyclonedx-json
+          output-file: sbom/synapse_cdm.cdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: SBOM cross-check — cyclonedx-py over the installed environment
+        # TWO PRODUCERS, and the second is a cross-check rather than a second release artefact
+        # (M's pre-ruled default 4: "the release artefacts are syft's"). They answer different
+        # questions and that is the value: syft reads the wheel's own declared metadata, while
+        # `cyclonedx-py environment` reads what pip actually RESOLVED into this environment. A
+        # dependency that appears in one and not the other is a real discrepancy worth a look,
+        # and neither tool can report it alone. The counts are printed, never asserted equal —
+        # the environment carries the `test` extra and the wheel does not.
+        run: |
+          set -euo pipefail
+          mkdir -p sbom
+          python -m cyclonedx_py environment --output-format json \
+            --outfile sbom/environment.cdx.json
+          for f in sbom/synapse_cdm.cdx.json sbom/environment.cdx.json; do
+            python -c 'import json,sys; d=json.load(open(sys.argv[1])); print(sys.argv[1], "components:", len(d.get("components") or []))' "$f"
+          done
+
+      - name: Hashes — §48's "hash", over every artefact this run produced
+        run: |
+          set -euo pipefail
+          {
+            echo '## RC build — artefacts and digests'
+            echo
+            echo "Ref \`${GITHUB_REF}\` at commit \`${GITHUB_SHA}\`."
+            echo "Reason: ${{ inputs.reason }}"
+            echo
+            echo '```'
+            sha256sum dist/* sbom/*
+            echo '```'
+            echo
+            echo 'The wheel and sdist above are the bytes `gates/wheel_install.py` passed 13'
+            echo 'checks on and exported; nothing in this workflow rebuilds them.'
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
+          sha256sum dist/* sbom/* > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Upload the distribution
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: rc-dist
+          path: |
+            dist/
+            SHA256SUMS
+          if-no-files-found: error
+
+      - name: Upload the SBOMs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: rc-sbom
+          path: sbom/
+          if-no-files-found: error
+
+  attest:
+    name: Build provenance, and the verification that proves it
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      # THE ONLY JOB IN THIS REPOSITORY WITH THESE TWO, and they are here rather than at the
+      # workflow level for that reason. `id-token: write` is the OIDC token Sigstore signs with;
+      # `attestations: write` is the attestation store. `contents: read` because
+      # `gh attestation verify` reads the repository. No long-lived key exists anywhere in this
+      # arrangement — §47's "avoid long-lived signing secrets where a safer OIDC mechanism is
+      # available", and M's pre-ruled default 5.
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download the distribution
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: rc-dist
+          path: artefacts
+
+      - name: Download the SBOMs
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: rc-sbom
+          path: artefacts/sbom
+
+      - name: The digests survived the hand-off
+        # An attestation over bytes that are not the gated bytes attests nothing, and an artefact
+        # upload/download round trip is a place bytes can change. `SHA256SUMS` was written beside
+        # them in the build job; this re-checks it before anything is signed.
+        run: |
+          set -euo pipefail
+          ls -lR artefacts
+          (cd artefacts && sha256sum -c SHA256SUMS)
+
+      - name: Attest the wheel, the sdist and both SBOMs
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4.2.2
+        with:
+          subject-path: |
+            artefacts/dist/*
+            artefacts/sbom/synapse_cdm.spdx.json
+            artefacts/sbom/synapse_cdm.cdx.json
+
+      - name: Verify each attestation — the proof, not the claim
+        # §47's chain ends in an attestation, and an attestation nobody verified is a file. This
+        # runs the same command a consumer runs, in the same run that produced it, so a broken
+        # chain fails HERE rather than in somebody else's audit.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for artefact in artefacts/dist/* artefacts/sbom/synapse_cdm.spdx.json artefacts/sbom/synapse_cdm.cdx.json; do
+            case "$artefact" in
+              */SHA256SUMS) continue ;;
+            esac
+            echo "::group::verify $artefact"
+            gh attestation verify "$artefact" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --signer-workflow "${GITHUB_REPOSITORY}/.github/workflows/rc-build.yml"
+            echo "::endgroup::"
+          done

@@ -349,6 +349,49 @@ and `tests/test_cdm_parser_safety.py` takes the XML readings M's F5.5 deferral r
 than asserting them, including `pyexpat.version_info`, because what refuses an entity bomb is the
 runtime's libexpat and not this package.
 
+**Round P6 moved ONE file inside the distribution — this one — and it is not new.** **The arc's
+own figure above does not move and stays 672**, because `synapse_cdm/MIGRATIONS.md` is in four
+earlier rounds' lists and is one file in the arc's. Nothing else under `packages/cdm/` changed:
+`git status --porcelain -- packages/cdm` before this paragraph was written returned nothing at all,
+and the bump gate still reads MINOR / 2.1.0 with **0 unruled** units, so this round writes no Bump
+ruling. That is the whole distribution half of P6, stated so a reader does not go looking for more.
+
+**What P6 added, in one paragraph, and none of it is in the wheel.** Everything the round did is
+CI, settings and documents: `.github/dependabot.yml` (three ecosystems — `pip` in `/packages/cdm`,
+`github-actions` in `/`, `npm` in `/docs` — weekly, minor and patch grouped per ecosystem and
+majors deliberately not); `.github/workflows/dependency-review.yml` at `fail-on-severity: high`;
+`.github/workflows/codeql.yml` (advanced setup, `security-extended`, matrix `python` and
+`javascript-typescript`, weekly schedule) with `gates/codeql_gate.py` reading the SARIF the run
+just produced; a `supply-chain` job in `ci.yml` running `pip-audit --strict` **twice** — over the
+installed environment and over the wheel's own `pip freeze` closure in a clean venv, which are two
+different closures and both matter; `.github/workflows/rc-build.yml`, one dispatchable workflow
+composing §48's whole artefact set (suite → conformance → evidence → gated build → SPDX and
+CycloneDX SBOMs → hashes → OIDC attestation → `gh attestation verify`); `security/exceptions/` with
+a hand-written `schema.json` and a README; and `docs/docs/security/supply-chain.mdx`.
+
+**Two things about that set are decisions rather than implementations.** The first is the
+THRESHOLD: M ruled on 2026-09-07 that HIGH and CRITICAL findings block and that a 9.0 CVSS cut
+"MUST NOT mean that HIGH findings between 7.0 and 8.9 are ignored", so `gates/codeql_gate.py`
+blocks at `security-severity >= 7.0` and reports 9.0-and-above as a band rather than as a second
+threshold — and **precision is printed for every finding and is not part of the blocking test**,
+because a `medium`-precision CVSS 9.8 result passing a gate that claims to block critical findings
+is that gate's whole failure mode. The second is ONE SOURCE for the allowlist: the CodeQL gate and
+the `pip-audit` step both derive their exclusions from `security/exceptions/` at run time
+(`python gates/codeql_gate.py --emit-pip-audit-ignores`), no list is typed into any workflow, and
+`tests/test_cdm_security_exceptions.py` asserts that none ever is — two lists diverge silently in
+the direction that suppresses a live finding. An `expiry` in the past fails the whole suite on the
+day it passes, with no flag and no skip, which is what makes §45's "no permanent undocumented
+exemptions" enforced rather than intended. **There are no exception files today**, and that is a
+reading: `pip-audit --strict` reported no known vulnerabilities on 2026-09-08.
+
+**`gates/codeql_gate.py` is outside the package on purpose and is not a unit.** It is a gate — a
+protocol act, like `gates/wheel_install.py` and `gates/parks_table.py` — so it ships in no wheel,
+appears in no bump derivation, and is registered in `gates/wheel_install.py`'s `REPO_BOUND_TESTS`
+alongside its own test module for the same reason. Two test modules joined the suite this round,
+`tests/test_cdm_codeql_gate.py` and `tests/test_cdm_security_exceptions.py`, and both are
+repository-bound: an installed wheel has no `security/exceptions/` directory and no `gates/` for
+them to be right about.
+
 **The seven `<statement N>` units in `adapter.py`, and what they actually are.** The same thing the
 eight below were: `functional_units()` keys an unnamed top-level statement by its INDEX in the
 module body, so one inserted import renumbers every anonymous statement after it. `import

@@ -1,0 +1,128 @@
+# CodeQL — SOIF Part 1 §44, round P6. ADVANCED setup, and the gate is a file in the tree.
+#
+# WHY ADVANCED SETUP AND NOT DEFAULT SETUP
+# -----------------------------------------
+# Default setup was `not-configured` when this round started (`gh api
+# repos/.../code-scanning/default-setup` -> `{"state": "not-configured", "languages":
+# ["actions","python"], ...}`), and it is left that way: the two are mutually exclusive — an
+# advanced-setup upload is REFUSED while default setup is enabled — and default setup cannot do
+# the one thing §44 requires. It runs the `default` query suite, it chooses its own languages, and
+# it has no step after the analysis, so "high-confidence critical findings SHALL fail the relevant
+# security gate" would have nothing to fail. Advanced setup gives all three: `security-extended`,
+# a declared matrix, and `gates/codeql_gate.py` reading the SARIF this workflow just produced.
+#
+# THE GATE READS THE SARIF, NOT THE ALERTS API
+# ---------------------------------------------
+# `analyze` is told to write the SARIF to disk (`output:`) and NOT to upload from that path but in
+# addition to it, so this job holds the same bytes the code-scanning API receives. Gating on the
+# API instead would mean waiting for ingestion, authenticating, and reading alert state that a
+# person may have dismissed — a gate whose verdict can be changed from a web page is not a gate.
+# The SARIF is also uploaded as a workflow artefact, which is what makes
+# `python gates/codeql_gate.py <downloaded>.sarif` reproduce the CI verdict exactly.
+#
+# THE MATRIX IS TWO LANGUAGES AND BOTH ARE PRESENT
+# -------------------------------------------------
+# `python` — the distribution and the gates (§44: "Python MUST be included").
+# `javascript-typescript` — `docs/` is a TypeScript Docusaurus site: `docusaurus.config.ts`,
+#   `sidebars.ts`, `src/` and `scripts/*.mjs`. CodeQL's `javascript-typescript` covers both.
+# `actions` — the third language CodeQL supports here, and NOT in the matrix: it analyses workflow
+#   files, and the repository's own policy already pins every action by commit SHA and declares
+#   least-privilege `permissions:` per job. Adding it is a defensible extension and it is the kind
+#   of scope change M rules rather than the runner; the round's brief names two languages and this
+#   file implements two. Recorded in the report rather than taken silently.
+name: CodeQL
+
+on:
+  push:
+    branches:
+      - main
+      - 'soif/**'
+  pull_request:
+    branches:
+      - main
+      - 'soif/**'
+  schedule:
+    # Weekly. A scheduled run is the only one that finds a finding that appeared because the QUERY
+    # SUITE changed rather than because the code did, and that is most of them: `security-extended`
+    # is updated upstream far more often than this repository's Python is.
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyse ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # `security-events: write` is what the SARIF upload needs, and it is declared on THIS job
+      # and nowhere else in this repository. The workflow-level block above is read-only, so a job
+      # added to this file later starts with no write of any kind.
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: python
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@486fec2a3ea2626afcd8c7e9208b4f515078dd7e  # codeql-bundle-v2.26.4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          # `security-extended` rather than the `default` suite, and the difference is the point:
+          # `default` is tuned for a low false-positive rate on a pull request, `security-extended`
+          # adds the lower-precision security queries. The gate below prints the precision of every
+          # finding and blocks on severity rather than on precision (M's ruling of 2026-09-07), so
+          # the wider suite is readable rather than noisy.
+          queries: security-extended
+
+      - name: Analyse
+        id: analyze
+        uses: github/codeql-action/analyze@486fec2a3ea2626afcd8c7e9208b4f515078dd7e  # codeql-bundle-v2.26.4
+        with:
+          category: /language:${{ matrix.language }}
+          # The SARIF on disk as well as in the API. `upload: always` keeps the alerts working for
+          # a human; `output:` is what makes the gate below possible and what makes it possible to
+          # re-run that gate locally on the same bytes.
+          output: sarif-results
+          upload: always
+
+      - name: Upload the SARIF as an artefact
+        # BEFORE the gate, and `if: always()` so the artefact survives a blocking finding. A gate
+        # that fails and takes its own evidence with it is a gate you have to re-run to read.
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: codeql-sarif-${{ matrix.language }}
+          path: sarif-results
+          if-no-files-found: error
+
+      - name: Set up Python for the gate
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: The CodeQL gate — HIGH and CRITICAL block, exceptions derived from the tree
+        # §44's "SHALL fail the relevant security gate", as a file rather than as an expression in
+        # this workflow: `gates/codeql_gate.py` is the threshold, `tests/test_cdm_codeql_gate.py`
+        # proves each of its branches on synthetic SARIF, and `security/exceptions/` is the one
+        # source of the allowlist. Nothing here softens the exit status.
+        #
+        # The glob is deliberate: `analyze` writes one `<language>.sarif` per analysed language
+        # into `output:`, and the gate reads every run in every file it is handed.
+        run: |
+          set -euo pipefail
+          ls -l sarif-results
+          python gates/codeql_gate.py sarif-results/*.sarif
