@@ -9,13 +9,20 @@
         "absent_because": {
           "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
           "max_depth": "Legion responses are JSON and do nest; no depth bound is declared yet",
-          "max_input_bytes": "no bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)",
           "max_objects": "no bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)",
           "max_parse_seconds": "no wall-clock bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)"
         },
+        "declared_because": {
+          "max_input_bytes": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs",
+            "kind": "implementation_cap",
+            "source": "The Picogrid Legion Platform API v3 record in `fixtures/legion/spec/openapi_pin.json` states no maximum response size and JSON states none, so there is no normative figure to take. 1 MiB is chosen from the parser audit: the payload reaches `json.loads` (`adapters/legion.py:991`), whose cost is linear in the document, and the largest Legion fixture in this package is 1172 octets. This is an IMPLEMENTATION CAP under M's F5.4 ruling and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
+          }
+        },
         "max_decompressed_bytes": null,
         "max_depth": null,
-        "max_input_bytes": null,
+        "max_input_bytes": 1048576,
         "max_objects": null,
         "max_parse_seconds": null
       },
@@ -48,7 +55,7 @@
       "only the resources the pinned OpenAPI document names are in scope",
       "leftovers are parked in `Entity.attributes` / `Event.payload` under `source_extras` (`lossless.residual()`), not in the origin-identifying container ARCHITECTURE.md \u00a75 gives to P3 \u2014 the Part 1 stance that section rules for the adapters already shipped",
       "no evidence RECORD is generated for this adapter: the harness produces verdicts, and the evidence record and its schema are owed by P4 (ARCHITECTURE.md \u00a79). `evidence.available` is false for that reason and not because the checks do not run",
-      "none of \u00a73.5's five resource limits is enforced by this adapter; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79), and each limit's own reason is in `capabilities.limits.absent_because`"
+      "of \u00a73.5's five resource limits this adapter enforces ONE \u2014 `max_input_bytes`, declared in `capabilities.limits` with its basis beside it and refused before decode by the base class (round P5). The other four are still absent, each with its own reason in `capabilities.limits.absent_because`; a depth, object-count, decompression or wall-clock bound is not enforced here today"
     ],
     "limitations_empty_reason": null,
     "maturity": {
@@ -68,6 +75,6 @@
     "schema_version": "2.1.0",
     "supported": "2.x"
   },
-  "manifest_schema_version": "1.1.0",
+  "manifest_schema_version": "1.2.0",
   "schema_id": "synapse.adapter-manifest/v1"
 }

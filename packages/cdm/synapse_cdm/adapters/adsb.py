@@ -212,8 +212,8 @@ from synapse_cdm.enums import (
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
-                                   UnknownFields)
+                                   FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
+                                   Maturity, MaturityLevel, Residual, UnknownFields)
 
 SYSTEM = "ADSB"
 
@@ -1227,15 +1227,12 @@ class AdsbAdapter(Adapter):
                 "operational_status",
             ],
             limits=Limits(
-                max_input_bytes=None,
+                max_input_bytes=64,
                 max_depth=None,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_input_bytes":
-                        "no bound is enforced by this adapter today; the parser-safety "
-                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
                     "max_depth":
                         "1090ES does not nest: a frame is 112 bits with a fixed ME layout "
                         "selected by its type code",
@@ -1249,6 +1246,29 @@ class AdsbAdapter(Adapter):
                         "no wall-clock bound is enforced by this adapter today; the "
                         "parser-safety policy's concrete bounds are owed by P5 "
                         "(ARCHITECTURE.md §9)",
+                },
+                declared_because={
+                    "max_input_bytes": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "A DF17/DF18 extended squitter is fixed at 112 bits "
+                            "(`adapters/adsb.py:238`) and the longest AVR line that can carry "
+                            "one is 42 characters: `@` plus a 12-character receiver counter "
+                            "plus 28 hex characters plus `;` (`adapters/adsb.py:246`-`:249`). "
+                            "1090ES states no maximum for a DELIVERY, and `_parse_frame_line` "
+                            "strips surrounding whitespace before it counts "
+                            "(`adapters/adsb.py:607`), so a bound of exactly 42 would refuse a "
+                            "correctly terminated line with a newline on it. 64 octets leaves "
+                            "room for that and none for a second frame. This is an "
+                            "IMPLEMENTATION CAP under M's F5.4 ruling and is NOT the format's "
+                            "normative maximum."),
+                        enforced_at=(
+                            "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with "
+                            "`enforce_input_bound` at class-definition time (`adapter.py`, "
+                            "`_bind_input_bound`), so the payload is measured and refused "
+                            "before any decoder in this module runs"),
+                        test="tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound",
+                    ),
                 },
             ),
             unknown_fields=UnknownFields.PRESERVED,
@@ -1276,9 +1296,11 @@ class AdsbAdapter(Adapter):
             "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
             "`evidence.available` is false for that reason and not because the checks do not "
             "run",
-            "none of §3.5's five resource limits is enforced by this adapter; the "
-            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
-            "each limit's own reason is in `capabilities.limits.absent_because`",
+            "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
+            "declared in `capabilities.limits` with its basis beside it and refused before "
+            "decode by the base class (round P5). The other four are still absent, each with "
+            "its own reason in `capabilities.limits.absent_because`; a depth, object-count, "
+            "decompression or wall-clock bound is not enforced here today",
         ],
         limitations_empty_reason=None,
         residual=Residual.LEGACY,

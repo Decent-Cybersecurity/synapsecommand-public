@@ -126,16 +126,21 @@ jobs:
         #   I  unknown    — SKIP where the adapter declares `unknown_fields: none`, which seven do.
         #   M  streaming  — SKIP for all fourteen; no adapter can declare the capability today.
         #   N  robustness — SKIP for the two adapters that ship no byte fixture to truncate.
-        #   O  limits     — SKIP for all fourteen until P5 declares the bounds (F2.3).
-        # None of the five is FAIL anywhere, and `test_cdm_suite.py` re-derives that rather than
+        # None of the four is FAIL anywhere, and `test_cdm_suite.py` re-derives that rather than
         # trusting this comment: a check quietly dropped because it FAILED would be a green bar
         # over a hole.
+        #
+        # **O LEFT THAT LIST IN ROUND P5 AND THE LIST WAS FIVE.** P2 excluded it because no
+        # adapter declared `max_input_bytes` at all. P5 declares one on all fourteen — five
+        # NORMATIVE, nine an IMPLEMENTATION CAP, each with its basis in the manifest — and puts
+        # the enforcement in `Adapter.__init_subclass__`, so O is PASS everywhere and is required
+        # here. It is the check that would notice a bound being quietly removed from a manifest.
         run: |
           set -euo pipefail
           for adapter in $(python -c "from synapse_cdm.adapter import roster; print(' '.join(roster()))"); do
             echo "::group::$adapter"
             python -m synapse_cdm.suite conformance run --adapter "$adapter" \
-              --require A,B,C,D,F,G,H,J,K,L
+              --require A,B,C,D,F,G,H,J,K,L,O
             echo "::endgroup::"
           done
 
@@ -200,3 +205,47 @@ jobs:
           name: evidence-${{ github.sha }}
           path: evidence/
           if-no-files-found: error
+
+  secrets:
+    name: gitleaks, over the full history reachable from this push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          # §39: the scan is over HISTORY and not over the working tree. A secret committed and
+          # then deleted is still in the pack, still fetchable, and still a secret — a scan of the
+          # checkout would report green over exactly that. `fetch-depth: 0` is what makes the
+          # `gitleaks git` invocation below have anything to walk.
+          fetch-depth: 0
+
+      # WHY THE BINARY AND NOT `gitleaks/gitleaks-action`
+      # --------------------------------------------------
+      # The action is the obvious choice and it is not usable here: it requires a paid licence
+      # (`GITLEAKS_LICENSE`) for repositories owned by a GitHub ORGANIZATION, which this one is.
+      # Adding it would put a secret-scanning job into CI that fails for want of a licence key —
+      # a red job that says nothing about secrets.
+      #
+      # So the release ARTEFACT is pinned instead, and pinned harder than an action ref can be: a
+      # version AND the SHA-256 of the exact tarball, from `gitleaks_8.30.1_checksums.txt` in the
+      # upstream release. An action pinned by commit SHA pins source; this pins the bytes that
+      # run. `sha256sum -c` is what makes the pin enforceable rather than decorative — the step
+      # fails if the download is not that file.
+      - name: Install gitleaks, pinned by version and by the artefact's SHA-256
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          url="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl --fail --silent --show-error --location --retry 3 -o gitleaks.tar.gz "$url"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks version
+
+      - name: No secret anywhere in the history this push carries
+        # `--redact` for the reason §39 gives: a finding is a reason to rotate a credential, and a
+        # CI log that printed the credential would be a second place it had leaked to. The exit
+        # status is the gate — gitleaks exits non-zero when it finds anything, and nothing here
+        # softens that with `|| true`.
+        run: ./gitleaks git . --redact --config .gitleaks.toml --log-opts "--all"

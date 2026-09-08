@@ -154,13 +154,64 @@ LIMIT_FIELDS = ("max_input_bytes", "max_depth", "max_objects",
                 "max_decompressed_bytes", "max_parse_seconds")
 
 
+class LimitKind(str, enum.Enum):
+    """Where a declared bound's NUMBER came from — M's F5.4 ruling, 2026-09-07, round P5.
+
+    The ruling's own words are the reason two values are not one: a limit "must NOT be described
+    as the format's normative maximum unless the specification actually says so". A consumer
+    reading `max_input_bytes: 65535` cannot tell whether it is a fact about ASTERIX or a choice
+    this repository made, and the two behave differently — a normative bound is the same in every
+    implementation, an implementation cap is ours and may be raised.
+    """
+
+    NORMATIVE = "normative"
+    IMPLEMENTATION_CAP = "implementation_cap"
+
+
+class LimitBasis(Strict):
+    """The four things F5.4 requires an adapter to record beside a bound it DECLARES.
+
+    "Each adapter records: selected limit; source/rationale; normative vs implementation cap;
+    enforcement point; oversized-input test." The selected limit is the field on `Limits`; the
+    other four are here, keyed to the field by `Limits.declared_because` — the mirror image of
+    `absent_because`, which carries the same weight for a bound that is NOT declared.
+    """
+
+    #: Normative maximum, or a cap this repository chose. Never inferred from the number.
+    kind: LimitKind
+    #: The document or module that states the figure, with the clause or line. Prose, because a
+    #: citation is read by a person deciding whether to trust the bound.
+    source: str
+    #: Where the bound BITES. One place for all fourteen today, and named per adapter anyway: a
+    #: declaration that pointed at nothing would be the failure this field exists to make visible.
+    enforced_at: str
+    #: The test that feeds one octet more than the bound and asserts the refusal.
+    test: str
+
+    @field_validator("source", "enforced_at", "test")
+    @classmethod
+    def _not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("a LimitBasis states its source, its enforcement point and its "
+                             "oversized-input test; an empty one declares a bound nobody can "
+                             "check and nobody can trace")
+        return value
+
+
 class Limits(Strict):
-    """§3.5's five bounds, and the reason for each one that does not apply.
+    """§3.5's five bounds, the reason for each one that does not apply, and the basis of each
+    one that does.
 
     "A limit that does not apply to a format MUST be declared absent with a reason, not silently
     omitted" — §3.5. So `None` is legal and bare `None` is not: `absent_because` has to carry the
     reason, keyed by the field. "This format does not nest" is a fact about the format, and a
     reader who cannot find it has to go and work it out again.
+
+    `declared_because` is the same rule pointed the other way, added by round P5 under M's F5.4:
+    a bound that IS declared carries where its number came from, what kind of bound it is, where
+    it is enforced and which test proves the refusal. A number on its own is exactly as opaque as
+    a `None` on its own, and the round that introduced real bounds is the round where that stopped
+    being hypothetical.
     """
 
     max_input_bytes: int | None
@@ -169,6 +220,7 @@ class Limits(Strict):
     max_decompressed_bytes: int | None
     max_parse_seconds: float | None
     absent_because: dict[str, str]
+    declared_because: dict[str, LimitBasis] = {}
 
     @model_validator(mode="after")
     def _every_absent_limit_has_a_reason(self) -> "Limits":
@@ -190,6 +242,27 @@ class Limits(Strict):
             raise ValueError(
                 f"these limits are both declared and explained as absent: {contradicted}. One of "
                 "the two is wrong and a reader cannot tell which"
+            )
+        unbased = [name for name in LIMIT_FIELDS
+                   if getattr(self, name) is not None and name not in self.declared_because]
+        if unbased:
+            raise ValueError(
+                f"these limits are declared with no basis: {unbased}. M's F5.4 ruling (round P5) "
+                "requires a declared bound to record its source, whether it is the format's "
+                "normative maximum or an implementation cap, where it is enforced and which test "
+                "proves the refusal — a bare number is a bound a reader cannot audit"
+            )
+        astray = sorted(set(self.declared_because) - set(LIMIT_FIELDS))
+        if astray:
+            raise ValueError(f"declared_because names {astray}, which are not limits. The five "
+                             f"are {list(LIMIT_FIELDS)}")
+        phantom = sorted(name for name in LIMIT_FIELDS
+                         if getattr(self, name) is None and name in self.declared_because)
+        if phantom:
+            raise ValueError(
+                f"these limits are absent and carry a basis anyway: {phantom}. A basis describes "
+                "where a NUMBER came from, and there is no number here — the reason belongs in "
+                "absent_because"
             )
         return self
 

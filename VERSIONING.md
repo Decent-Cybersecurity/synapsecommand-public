@@ -66,14 +66,25 @@ MINOR, and no existing manifest becomes invalid: all fourteen keep plain sentenc
 too — every one of them, because a new constant was inserted into `version.py` — and they are
 re-read here rather than carried over.
 
+**Dated correction, 2026-09-08 (round P5; every paragraph above is left standing as written).**
+`MANIFEST_SCHEMA_VERSION` reads `1.2.0`. §40 requires input bounds and M's F5.4 ruling requires a
+DECLARED bound to record where its number came from, so `Limits` gained `declared_because` — the
+mirror of `absent_because`, keyed by the same five field names, carrying the kind (normative
+maximum or implementation cap), the source, the enforcement point and the test. MINOR on §3's row
+below: the field defaults to `{}`, so a manifest written against `1.1.0` still validates and no
+existing field changed shape. This time all fourteen manifests move in their `adapter` block as
+well as their envelope, because all fourteen now DECLARE `max_input_bytes` and so lose an
+`absent_because` entry and gain a basis. The evidence row's line citation moved with it — nine
+comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-read here.
+
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
 | Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.0.0` | `packages/cdm/synapse_cdm/version.py:256` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:246` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:262` |
 | Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:273` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.1.0` | `packages/cdm/synapse_cdm/version.py:299` |
-| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:313` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:308` |
+| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:322` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
 | Event semantic major | — | — | a segment of the identifier | the `type_id` itself, e.g. `sc.pnt.gnss_interference.v1` |

@@ -1,0 +1,210 @@
+---
+title: Parser safety
+sidebar_label: Parser safety
+sidebar_position: 2
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, archives and SQLite, and the audit of every parser call in the fourteen shipped adapters.
+---
+
+# Parser safety
+
+Every adapter in this repository is handed bytes somebody else produced. This page is the policy
+those parsers are held to. It is written for the formats **Part 2** brings — AIXM and KML (XML),
+KMZ (a zip), GeoPackage (a zip and a SQLite database) — because those are the ones where a
+parser's default behaviour is dangerous, and it is enforced today on the fourteen adapters that
+already ship.
+
+The convention is the specification's: **MUST**, **SHOULD**, **MAY**.
+
+## 1. The five bounds, and their one home
+
+`ARCHITECTURE.md` §3.5 puts the bounds inside `capabilities`, and the reason is that there must be
+exactly one declaration of each: the conformance suite's resource-limits check and this policy have
+to read the same number, and two declarations of one bound is the arrangement where a parser is
+hardened against a figure the report does not print.
+
+| bound | what it bounds |
+|---|---|
+| `max_input_bytes` | the octets an adapter is handed for one payload |
+| `max_depth` | how deeply a document may nest |
+| `max_objects` | how many CDM objects one payload may produce |
+| `max_decompressed_bytes` | what an archive may expand to |
+| `max_parse_seconds` | wall time for one decode |
+
+> An adapter **MUST** declare every one of the five, either as a number or as absent with a
+> reason. `Limits` refuses a bare `None`: `absent_because` carries the reason, keyed by field.
+
+> An adapter that declares a bound **MUST** record its basis. `declared_because` carries, per
+> field: `kind` (`normative` or `implementation_cap`), the `source` the figure comes from, the
+> `enforced_at` point, and the `test` that proves the refusal.
+
+> A bound **MUST NOT** be described as the format's normative maximum unless the specification
+> actually says so. Nine of the fourteen adapters declare an implementation cap and say so in the
+> enum and in the prose.
+
+### What is enforced today
+
+`max_input_bytes` is declared and enforced on **all fourteen**. The other four are declared absent
+with a reason on all fourteen; none is enforced yet, and no page here says otherwise.
+
+Enforcement is in the base class, at class-definition time:
+`Adapter.__init_subclass__` wraps each subclass's own `to_cdm`, so the bound is checked before any
+adapter's decoder runs, and an adapter cannot forget it while remaining an `Adapter`. A payload
+over the bound raises `InputTooLarge`, whose message names both numbers.
+
+> The bound is on **octets**. A `dict` — the `.parsed.json` twin that ships beside a byte fixture —
+> is **not** bounded, and this is a rule rather than an oversight: a caller holding a parsed
+> document has already done the parse the bound exists to prevent. ADS-B's 14 wire octets serialise
+> to over 400 as a decoded twin, so a bound applied to twins would refuse the format's own legal
+> messages.
+
+### The fourteen declarations
+
+| adapter | `max_input_bytes` | kind | where the figure comes from |
+|---|---|---|---|
+| `cat021` | 65 535 | **normative** | ASTERIX `LEN` is a two-octet field over the whole data block |
+| `cat023` | 65 535 | **normative** | as above |
+| `cat034` | 65 535 | **normative** | as above |
+| `cat048` | 65 535 | **normative** | as above |
+| `cat062` | 65 535 | **normative** | as above |
+| `adsb` | 64 | implementation cap | the longest AVR line carrying a 112-bit squitter is 42 characters |
+| `ais` | 1 024 | implementation cap | NMEA 0183 caps a sentence at 82 characters and a message at 9 fragments — 738 — plus TAG blocks |
+| `stanag4586` | 65 536 | implementation cap | one DLI message is bounded at 528 octets; the number of messages per datagram is not |
+| `gmti` | 1 048 576 | implementation cap | STANAG 4607's `P2` is 32 bits, so its normative maximum is 4 GiB and is no safety bound |
+| `stanag4609` | 1 048 576 | implementation cap | KLV BER long form can state a length no buffer could hold |
+| `stanag4676` | 1 048 576 | implementation cap | XML; AEDP-12 states no maximum document size |
+| `tak` | 1 048 576 | implementation cap | XML; Cursor-on-Target states no maximum event size |
+| `legion` | 1 048 576 | implementation cap | JSON; the pinned API record states no maximum response size |
+| `pntmap` | 1 048 576 | implementation cap | JSON; no document in this tree states a maximum |
+
+## 2. XML
+
+Part 2's AIXM and KML are XML, and so are two adapters that already ship — `tak` and
+`stanag4676`, both through the standard library's `xml.etree.ElementTree`.
+
+> An XML parser **MUST NOT** resolve external entities.
+
+> An XML parser **MUST NOT** fetch an external DTD or schema, or make any other network request
+> while parsing.
+
+> An XML document **MUST** be bounded by `max_input_bytes` before it reaches the parser.
+
+> An adapter parsing XML **MUST** ship tests for a malformed document, an external entity
+> reference and an entity-expansion bomb, and **MUST** record its parser choice as a limitation
+> where that choice leaves a property to the runtime.
+
+### What the standard library actually does — measured, not recited
+
+These are readings taken in round P5 on CPython 3.14.7 with **libexpat 2.7.4**, not claims from
+the documentation:
+
+| case | `xml.etree.ElementTree` |
+|---|---|
+| external entity (`<!ENTITY xxe SYSTEM "file:///etc/passwd">`) | **refused** — `ParseError: undefined entity`. The external subset is never read, so the entity was never declared. |
+| external DTD (`<!DOCTYPE foo SYSTEM "http://…">`) | **not fetched** — the document parses, the URL is never opened |
+| small internal entity (3 levels, ×10) | **expanded**, silently, to 3 000 characters |
+| entity bomb (6 levels, ×10) | **refused** — `ParseError: limit on input amplification factor (from DTD and entities) breached` |
+
+Two conclusions follow, and both matter more than the reassuring half.
+
+The first is that the XXE case is stronger than "does not resolve": the reference is an **error**,
+not an empty string, so a document that depends on one cannot pass silently.
+
+The second is that **what stops an entity bomb is libexpat and not this package**. That protection
+was added in libexpat 2.4.0 and is on by default; a deployment linking an older expat loses it
+without anything in this package changing. That is why it is recorded as a known limitation on
+both XML adapters rather than presented as a property of the package, and why
+`tests/test_cdm_parser_safety.py` **reads** `pyexpat.version_info` and fails if it is older than
+2.4.0, rather than assuming the build it runs on.
+
+### `defusedxml`
+
+`defusedxml` is **not** a dependency. It is deferred to Part 2, under a ruling that made the
+deferral conditional on the four properties above being established by test rather than asserted —
+which is what the table is. What it would add is the removal of the runtime dependency: it refuses
+DTDs and entity declarations outright, in this package's own code, instead of relying on the expat
+the deployment happens to link.
+
+The declared version floor is Python 3.11. The readings above are from 3.14.7; the expat a 3.11
+build links is a property of that build and not of the Python version, which is the whole reason
+the test reads it at runtime.
+
+## 3. Archives — Part 2 (KMZ, GeoPackage)
+
+No shipped adapter opens an archive today: a sweep of `packages/cdm/synapse_cdm/adapters/` for
+`zipfile`, `gzip` and `zlib` returns nothing. The rules are written now so that the first adapter
+that needs one is held to them rather than setting the precedent.
+
+> An archive-reading adapter **MUST** refuse any member whose name is absolute, or contains `..`,
+> or resolves outside the extraction root — checked on the resolved path, not on the name as
+> stored.
+
+> It **MUST** declare `max_decompressed_bytes` and enforce it on the **running total** of what has
+> been written, not on the header's declared size. A header is attacker-controlled.
+
+> It **MUST** enforce a decompression **ratio** bound as well as a total, and **MUST** decompress
+> in bounded chunks rather than into one buffer.
+
+> It **MUST** bound the member count, and **MUST NOT** follow a symlink stored in an archive.
+
+## 4. SQLite — Part 2 (GeoPackage)
+
+No shipped adapter opens a database: the same sweep for `sqlite3` returns nothing.
+
+> A SQLite-reading adapter **MUST** open the file read-only through a URI —
+> `file:…?mode=ro&immutable=1` — and never by plain path.
+
+> It **MUST** call `enable_load_extension(False)`; an extension is arbitrary native code named by
+> the file being read.
+
+> It **MUST** set a query timeout and a progress handler, and **MUST** bound the row count it will
+> read.
+
+> It **MUST NOT** interpolate any value out of the file into SQL.
+
+## 5. Timeouts
+
+> A decode **MUST** be bounded in wall time once `max_parse_seconds` is enforced, and an adapter
+> **MUST** declare the bound or the reason it has none.
+
+None of the fourteen enforces one today, and each says so in its own `absent_because`. The
+conformance suite's checks **H** and **N** already measure the related property — that a malformed
+or truncated payload is refused *quickly* rather than hanging — with a per-payload timeout, so a
+parser that goes quadratic on a bad input is caught even where no wall-clock bound is declared.
+
+## 6. What the conformance suite verifies
+
+| check | what it asserts |
+|---|---|
+| **H** — malformed payloads | every malformed fixture is refused, without a crash class, inside the timeout |
+| **N** — parser robustness | a truncated payload at many offsets is refused, inside the timeout |
+| **O** — resource limits | one octet more than the declared `max_input_bytes` is refused |
+
+**O is required in CI for all fourteen.** It was a SKIP for all fourteen until round P5, because
+no adapter declared a bound to check; it is now in the required set for every adapter in the
+sweep, which is what would notice a bound being quietly removed from a manifest.
+
+## 7. The audit: every parser call in the fourteen
+
+Taken with
+`grep -rn "ET.fromstring\|xml\.\|zipfile\|sqlite3\|gzip\|zlib\|json.loads" packages/cdm/synapse_cdm/adapters/`.
+Line numbers are as at round P5 and move; the grep is the durable form.
+
+| adapter | call | reached with | bounded before the call? |
+|---|---|---|---|
+| `tak` | `ET.fromstring` (`tak.py:637`) | XML text | **yes** — 1 MiB, in the base class |
+| `tak` | `json.loads` (`tak.py:592`) | JSON text | **yes** — same bound |
+| `stanag4676` | `ET.fromstring` (`stanag4676.py:748`) | XML text | **yes** — 1 MiB |
+| `stanag4676` | `ET.fromstring` (`stanag4676.py:2447`) | an **egress** fragment this adapter built | n/a — not attacker input |
+| `stanag4676` | `xml.dom.minidom.parseString` (`stanag4676.py:2473`) | an **egress** document this adapter built, for pretty-printing | n/a — not attacker input |
+| `legion` | `json.loads` (`legion.py:991`) | JSON text | **yes** — 1 MiB |
+| `pntmap` | `json.loads` (`pntmap.py:375`) | JSON text | **yes** — 1 MiB |
+| `ais` | `json.loads` (`ais.py:1144`) | JSON text | **yes** — 1 024 octets |
+| `adsb` | `json.loads` (`adsb.py:1623`) | JSON text | **yes** — 64 octets |
+| the rest of the roster | none | — | the ASTERIX, GMTI and KLV families decode octets with their own codecs and call no general-purpose parser |
+| all fourteen | `zipfile`, `sqlite3`, `gzip`, `zlib` | — | **no hit anywhere** |
+
+Two rows are the ones worth reading twice. The two `stanag4676` egress calls are **not** inbound
+parsing: the adapter re-parses a fragment it has just serialised itself, so the input is its own
+output. And the adapters with no row of their own are not unbounded — they are bounded by the same
+`max_input_bytes`, and they simply reach no parser this audit's grep can find, which is a property
+of hand-written binary codecs rather than a gap in the audit.

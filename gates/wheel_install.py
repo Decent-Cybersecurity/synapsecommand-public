@@ -104,6 +104,21 @@ PACKAGE_ONLY_TESTS = (
     # in prose, not opened — a test that opened `spec/sc-oes/` would belong in the other list.
     "test_cdm_oes.py",
     "test_cdm_pntmap_adapter.py",
+    # `test_cdm_input_bounds.py` and `test_cdm_no_network.py` are package-only, and both earn it
+    # the same way `test_cdm_adapter_contract.py` does: everything they touch is an importable
+    # name under `synapse_cdm` plus the fixtures that ship beside it. `test_cdm_input_bounds.py`
+    # reads `capabilities.limits` off the installed classes and feeds each one octet more than it
+    # declares; `test_cdm_no_network.py` walks the INSTALLED package's own `.py` files through
+    # `synapse_cdm.__file__` and then runs the conformance sweep with `socket.socket` removed.
+    # Against a wheel both check the artefacts a consumer actually got, which is where the §41
+    # claim and the §40 bounds are worth checking at all.
+    "test_cdm_input_bounds.py",
+    "test_cdm_no_network.py",
+    # `test_cdm_parser_safety.py` is package-only for the same reason and one more: its subject is
+    # the RUNTIME's expat build, which it reads through `pyexpat.version_info`. That reading is
+    # about the interpreter an installed distribution is running on, so it is more meaningful
+    # against the wheel than against the tree, not less.
+    "test_cdm_parser_safety.py",
     # `test_cdm_registry.py` is package-only, and the boundary is the same one `test_cdm_oes.py`
     # is on the other side of nothing: both registries it reads — `registry/sc_oes/*.json` — ship
     # in the wheel and are reached through `importlib.resources.files("synapse_cdm")`, so against
@@ -175,6 +190,7 @@ PACKAGE_ONLY_TESTS = (
 #: is what stops a module drifting in here because it was easier than making it installable.
 REPO_BOUND_TESTS = {
     "test_cdm_boundary.py": "AST over the package sources as files in the tree",
+    "test_cdm_security_policy.py": "SECURITY.md, security/README.md, .gitleaks.toml, ci.yml and the parser-safety page against the tree — every path it reads is at the repository root or under .github/, and not one of them ships in the wheel",
     "test_cdm_bump_derivation.py": "gates/bump_derivation.py, release tags and git blobs",
     "test_cdm_changelog_claim.py": "docs/docs/changelog.mdx against MIGRATIONS.md",
     "test_cdm_conformance_spec.py": "spec/sc-oes/13-conformance.md, 00-conventions.md, the seven profile documents and docs/adr/0009 — the normative tree the conformance module implements, none of which ships in the wheel",

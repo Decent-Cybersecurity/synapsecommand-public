@@ -1,0 +1,32 @@
+---
+title: Security
+sidebar_label: Overview
+sidebar_position: 1
+description: Where the security policy is, what this section covers, and what it deliberately does not claim.
+---
+
+# Security
+
+The **policy** — how to report a vulnerability, what is in scope, what the supported versions are,
+and the table of controls with the reading behind each one — is
+[`SECURITY.md`](https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/main/SECURITY.md)
+at the repository root. It lives there because that is where GitHub looks for it and where a
+reporter arriving at the repository will find it; this section is not a second copy.
+
+What this section holds is the **engineering policy** the adapters are held to:
+
+- [Parser safety](./parser-safety.mdx) — the five configurable bounds and where they live, the
+  rules for XML, archives and SQLite, and the audit of every parser call in all fourteen shipped
+  adapters.
+
+## Two things stated here so they are not inferred
+
+**The package makes no network call.** No telemetry, no licence check, no remote registry, no
+update ping. `tests/test_cdm_no_network.py` proves it statically over every module and again by
+removing `socket.socket` and running the whole conformance sweep underneath. The claim is about
+this package's own code and not about its dependencies.
+
+**Nothing here is signed.** The CDM carries no signature, no MAC and no integrity token, and the
+translation layer is forbidden from importing a cryptographic primitive at all. That is a
+deliberate absence with a recorded reason, not an omission — a consumer who needs provenance they
+can verify cryptographically does not have it here today.

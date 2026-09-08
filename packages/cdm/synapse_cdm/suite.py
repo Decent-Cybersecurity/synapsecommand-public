@@ -682,8 +682,19 @@ def check_resource_limits(adapter: Adapter, payloads: list[tuple[str, Any]], *,
                         max_input_bytes=limits.max_input_bytes)
     seed = next((raw for _, raw in payloads if isinstance(raw, (bytes, bytearray))), None)
     if seed is None:
+        # A DICT-ONLY ADAPTER IS STILL BOUNDED, AND ROUND P5 IS WHERE THAT STOPPED BEING A SKIP.
+        # `legion` and `pntmap` ship no byte fixture, but both reach `json.loads` on a byte or
+        # text payload — the bound is about the octets a caller hands over, and those two accept
+        # octets like the other twelve. So the twin is serialised back to the compact JSON a
+        # caller would have sent and THAT is repeated up to the bound. Skipping here instead
+        # would have left the only two adapters whose parser is a general-purpose JSON reader as
+        # the only two whose bound nothing exercised.
+        document = next((raw for _, raw in payloads if isinstance(raw, (dict, list))), None)
+        if document is not None:
+            seed = json.dumps(document, separators=(",", ":"), default=str).encode("utf-8")
+    if seed is None:
         return _verdict(SKIP, reason="the declared bound is a byte count and this adapter ships "
-                                     "no byte fixture to repeat", declared=False,
+                                     "no fixture at all to repeat", declared=False,
                         max_input_bytes=limits.max_input_bytes)
     bound = limits.max_input_bytes
     oversized = (bytes(seed) * (bound // max(1, len(seed)) + 2))[:bound + 1]

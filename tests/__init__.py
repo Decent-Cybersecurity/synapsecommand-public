@@ -28,8 +28,8 @@ def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
     combination is refused passes exactly the one field it is making bad.
     """
     from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
-                                      Evidence, FormatRef, LicenseClass, Limits, Maturity,
-                                      MaturityLevel, Residual, UnknownFields)
+                                      Evidence, FormatRef, LicenseClass, LimitBasis, LimitKind,
+                                      Limits, Maturity, MaturityLevel, Residual, UnknownFields)
 
     exercised = {"ingest": ["ingest"], "egress": ["egress"],
                  "bidirectional": ["ingest", "egress"]}.get(direction, [])
@@ -56,7 +56,16 @@ def probe_metadata(name: str, version: str = "0.1.0", direction: str = "ingest",
                                                         "max_objects", "max_decompressed_bytes",
                                                         "max_parse_seconds")
                                           if not (field == "max_input_bytes"
-                                                  and max_input_bytes is not None)}),
+                                                  and max_input_bytes is not None)},
+                          # Round P5: a DECLARED bound carries its basis or `Limits` refuses it
+                          # (M's F5.4). A double that declares one therefore needs one too, and
+                          # saying so here keeps the requirement in one place for every double.
+                          declared_because={} if max_input_bytes is None else {
+                              "max_input_bytes": LimitBasis(
+                                  kind=LimitKind.IMPLEMENTATION_CAP,
+                                  source="a test double picks a number the test needs",
+                                  enforced_at="the base class, like every other adapter",
+                                  test="the test that constructed this double")}),
             unknown_fields=UnknownFields(unknown_fields_declaration),
             unknown_fields_basis="a test double declares what the test needs it to declare",
         ),

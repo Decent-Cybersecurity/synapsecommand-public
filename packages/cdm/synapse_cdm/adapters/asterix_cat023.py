@@ -64,8 +64,8 @@ from synapse_cdm.adapters import cat023_codec as codec
 from synapse_cdm.enums import Affiliation, EntityType, EventType, Severity
 from synapse_cdm.models import CDMBase, Entity, Event, SourceId
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
-                                   UnknownFields)
+                                   FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
+                                   Maturity, MaturityLevel, Residual, UnknownFields)
 
 #: This adapter's own system name, for `SourceRef.system`.
 SYSTEM = "ASTERIX_CAT023"
@@ -821,15 +821,12 @@ class AsterixCat023Adapter(Adapter):
                 "defines",
             ],
             limits=Limits(
-                max_input_bytes=None,
+                max_input_bytes=65535,
                 max_depth=None,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_input_bytes":
-                        "no bound is enforced by this adapter today; the parser-safety "
-                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
                     "max_depth":
                         "an ASTERIX data block nests only through compound items, to a depth "
                         "the UAP fixes",
@@ -843,6 +840,27 @@ class AsterixCat023Adapter(Adapter):
                         "no wall-clock bound is enforced by this adapter today; the "
                         "parser-safety policy's concrete bounds are owed by P5 "
                         "(ARCHITECTURE.md §9)",
+                },
+                declared_because={
+                    "max_input_bytes": LimitBasis(
+                        kind=LimitKind.NORMATIVE,
+                        source=(
+                            "NORMATIVE. An ASTERIX data block is `CAT | LEN | records`, LEN is "
+                            "a TWO-OCTET field and §4.5.2 makes it the total length of the "
+                            "whole block including CAT and LEN — quoted at "
+                            "`adapters/asterix_cat023.py:650`, where it is read as "
+                            "`read_unsigned(data, 1, 2)`. Two octets cannot express more than "
+                            "65535, so no conforming data block of any ASTERIX category is "
+                            "larger; `adapters/asterix_cat021.py:2070` states the same figure "
+                            "as `MAX_BLOCK_OCTETS = 0xFFFF` on the encoding side. The number "
+                            "is the standard's and not this repository's."),
+                        enforced_at=(
+                            "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with "
+                            "`enforce_input_bound` at class-definition time (`adapter.py`, "
+                            "`_bind_input_bound`), so the payload is measured and refused "
+                            "before any decoder in this module runs"),
+                        test="tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound",
+                    ),
                 },
             ),
             unknown_fields=UnknownFields.NONE,
@@ -864,9 +882,11 @@ class AsterixCat023Adapter(Adapter):
             "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
             "`evidence.available` is false for that reason and not because the checks do not "
             "run",
-            "none of §3.5's five resource limits is enforced by this adapter; the "
-            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
-            "each limit's own reason is in `capabilities.limits.absent_because`",
+            "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
+            "declared in `capabilities.limits` with its basis beside it and refused before "
+            "decode by the base class (round P5). The other four are still absent, each with "
+            "its own reason in `capabilities.limits.absent_because`; a depth, object-count, "
+            "decompression or wall-clock bound is not enforced here today",
         ],
         limitations_empty_reason=None,
         residual=Residual.LEGACY,

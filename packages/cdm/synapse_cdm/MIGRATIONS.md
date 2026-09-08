@@ -316,6 +316,69 @@ the records and from nothing else. **The records themselves are NOT in this dist
 in the repository**: `evidence/` is gitignored, CI produces the set on every run and uploads it,
 and a release attaches it — which is why every adapter still declares `evidence.available: false`.
 
+**Round P5** moved 19 files inside the distribution and **none of them is new**: `adapter.py`,
+`manifest.py`, `suite.py`, `version.py`, the fourteen adapter modules, and this file. **The arc's
+own figure above does not move and stays 672**, because every one of the nineteen is already in an
+earlier round's list and is one file each in the arc's. The fourteen files under `manifests/` move
+again and are again not in that count — they are generated, they sit outside `packages/cdm/`, and
+this time they move in their `adapter` block as well as their envelope.
+
+**What P5 added, in one paragraph.** `SECURITY.md`, `security/README.md`, `.gitleaks.toml` and
+`docs/docs/security/parser-safety.mdx` are the round's documents and none of them is in the
+distribution. What IS in the distribution is §40's first real bound. `Limits` gains
+`declared_because` — the mirror of `absent_because`, keyed by the same five field names — carrying
+per bound its `kind` (`normative` or `implementation_cap`), its `source`, its `enforced_at` point
+and the `test` that proves the refusal, and refusing a declared bound that has no basis exactly as
+it already refused an absent bound that has no reason. All fourteen adapters then declare
+`max_input_bytes`: **65535 on the ASTERIX adapters, which is NORMATIVE** — `LEN` is a
+two-octet field over the whole data block and the codecs already quote the clause — and an
+IMPLEMENTATION CAP on the other nine, each naming the figure it was derived from and each saying in
+its own words that it is not the format's normative maximum. Enforcement is ONE place:
+`Adapter.__init_subclass__` wraps each subclass's own `to_cdm` with `enforce_input_bound` at
+class-definition time, so the bound is checked before any adapter's decoder runs and an adapter
+cannot forget it while remaining an `Adapter`. **The bound is on OCTETS and not on the parsed
+twin**, and that is a decision rather than an omission: `wire_size` answers `None` for a `dict`,
+because ADS-B's 14 wire octets serialise to over 400 as a decoded document and a bound applied to
+twins would refuse the format's own legal messages — while a caller holding a parsed dict has
+already done the parse the bound exists to prevent. The conformance suite's check **O**, SKIP for
+all fourteen since P2 wrote it, is now PASS for all fourteen and is required in CI; the two
+adapters that ship no byte fixture stopped being a SKIP too, by serialising their dict twin back
+to the JSON a caller would have sent. `tests/test_cdm_no_network.py` proves §41 twice — over the
+syntax tree of every module, and again with `socket.socket` removed while the whole sweep runs —
+and `tests/test_cdm_parser_safety.py` takes the XML readings M's F5.5 deferral rests on rather
+than asserting them, including `pyexpat.version_info`, because what refuses an entity bomb is the
+runtime's libexpat and not this package.
+
+**The seven `<statement N>` units in `adapter.py`, and what they actually are.** The same thing the
+eight below were: `functional_units()` keys an unnamed top-level statement by its INDEX in the
+module body, so one inserted import renumbers every anonymous statement after it. `import
+functools` is that import. It was checked and not assumed — comparing the anonymous units of
+`adapter.py` as a SET across the arc `v2.0.0`..the working tree, the module gains exactly two
+members (`import functools` and P1's `from synapse_cdm.manifest import AdapterMetadata`) and loses
+none; no other anonymous statement's content differs at either end.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 1>` — PATCH: an import statement appears at
+this position; the module's anonymous units gain it and lose nothing, and no importable surface of
+this module moved with it.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 2>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 3>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 4>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 5>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 6>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
+**Bump ruling.** `synapse_cdm/adapter.py:<statement 7>` — PATCH: index shift from one added
+import; the unit's content is unchanged.
+
 **Bump ruling.** `synapse_cdm/harness.py:FIXTURE_PATTERN` — PATCH: a constant STRING changed in
 place, and the gate is right that it cannot classify one on its own. The string is the
 human-readable statement of the fixture-selection rule, printed by `_no_fixtures_message` when a

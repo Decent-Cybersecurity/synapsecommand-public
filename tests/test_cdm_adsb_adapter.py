@@ -393,8 +393,21 @@ def test_global_even_odd_pairing_is_not_implemented_and_the_pair_is_refused():
     """
     even = (FIXTURES / "airborne_position_baro_gulf_of_riga.adsb").read_bytes()
     odd = (FIXTURES / "airborne_position_gnss_height_odd.adsb").read_bytes()
-    with pytest.raises(ValueError, match="exactly one frame per payload"):
+
+    # ROUND P5 MOVED WHICH REFUSAL COMES FIRST, and the pair is kept rather than replaced.
+    # Both fixtures are in the `@` form — 42 characters each — so two of them are 74 octets and
+    # `max_input_bytes = 64` now refuses the payload before the framing ever counts its lines.
+    # That is the bound doing its job: two frames is exactly the shape it exists to refuse. The
+    # framing rule still has to be provable on its own, so the second half feeds two BARE frames
+    # (28 characters each, 57 octets with the separator) which fit under the bound and reach the
+    # rule that names them.
+    with pytest.raises(ValueError, match="max_input_bytes"):
         _adapter().to_cdm(even + odd)
+
+    bare = b"\n".join(line.strip()[13:-1] for line in (even.strip(), odd.strip()))
+    assert len(bare) < 64, len(bare)
+    with pytest.raises(ValueError, match="exactly one frame per payload"):
+        _adapter().to_cdm(bare)
     assert not any(name.startswith("cpr_decode_global") for name in dir(adsb)), (
         "a global decoder appearing here means the CPR decision changed; FORMAT_COVERAGE.md "
         "and MIGRATIONS.md have to change with it"

@@ -30,7 +30,7 @@ PACKAGE = pathlib.Path(synapse_cdm.__file__).resolve().parent
 #: The set every adapter in this repository is held to. E, I, M, N and O are absent and each
 #: absence is a READING rather than a preference — see
 #: `test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter_can_pass`.
-SWEEP = ("A", "B", "C", "D", "F", "G", "H", "J", "K", "L")
+SWEEP = ("A", "B", "C", "D", "F", "G", "H", "J", "K", "L", "O")
 
 
 def shipped() -> dict:
@@ -82,7 +82,7 @@ def test_the_text_report_is_section_18s_layout_and_the_reasons_follow_it():
     assert lines[1] == "Adapter: pntmap"
     assert lines[2] == ""
     assert lines[3] == "A translate                 PASS"
-    assert lines[17] == "O resource limits           SKIP"
+    assert lines[17] == "O resource limits           PASS"
     assert lines[18] == ""
     assert "RESULT: CONFORMANT" in text
     assert "MATURITY ELIGIBLE: L" in text
@@ -177,13 +177,19 @@ def test_every_shipped_adapter_passes_the_sweep(name):
 
 
 def test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter_can_pass():
-    """The five absences from SWEEP, each derived from the tree rather than chosen.
+    """The four absences from SWEEP, each derived from the tree rather than chosen.
 
     A sweep set that quietly dropped a check an adapter merely fails would be a green bar over a
-    hole. So each exclusion is re-derived here: every one of the five is SKIP for at least one
-    adapter for a reason that is DECLARED, and none of the five is FAIL anywhere.
+    hole. So each exclusion is re-derived here: every one of the four is SKIP for at least one
+    adapter for a reason that is DECLARED, and none of the four is FAIL anywhere.
+
+    **O LEFT THIS SET IN ROUND P5 AND IT WAS FIVE.** P2 excluded it because no adapter declared
+    `max_input_bytes` at all; P5 declared one on all fourteen and put the enforcement in the base
+    class, so O is PASS everywhere and belongs in the bar rather than beside it. That is the
+    shape this test exists to make visible: an exclusion is a reading, and when the reading
+    changes the exclusion goes.
     """
-    excluded = set("EIMNO")
+    excluded = set("EIMN")
     assert set(suite.CHECK_LETTERS) - set(SWEEP) == excluded
     for letter in excluded:
         skipped = {name: _report(name)["checks"][letter] for name in shipped()}
@@ -460,21 +466,46 @@ def test_N_skips_a_dict_only_adapter_by_declaration(probe_fixtures):
 
 
 def test_O_skips_on_the_declared_absence_and_bites_where_a_bound_is_declared(probe_fixtures):
+    """All three branches, and the FAIL one now costs something to reach — which is the point.
+
+    Round P5 put the bound's enforcement in `Adapter.__init_subclass__`, so an adapter that
+    declares `max_input_bytes` and accepts a payload over it cannot be written by declaring one
+    and forgetting the check: the base class wrapped `to_cdm` when the class was defined. The
+    only way to get an accepting adapter is to UNWRAP it, which is what `__wrapped__` is doing
+    below. A check whose FAIL branch had become unreachable would be a check that could no longer
+    report anything, and O still has to be able to fail for an adapter that ships outside this
+    repository and overrides the machinery.
+    """
     clock = times.frozen_clock()
     entry = suite.check_resource_limits(_Base(clock=clock), _payloads(probe_fixtures),
                                         clock=clock)
     assert entry["verdict"] == suite.SKIP and entry["declared_inapplicable"]
     assert "no limit declared" in entry["reason"]
 
-    bounded = _bounded(_Accepting, 32)(clock=clock)
+    unguarded = _bounded(_Accepting, 32)
+    unguarded.to_cdm = unguarded.to_cdm.__wrapped__
     (probe_fixtures / "bytes.bin").write_bytes(b"\x01" * 8)
-    accepted = suite.check_resource_limits(bounded, _payloads(probe_fixtures), clock=clock)
+    accepted = suite.check_resource_limits(unguarded(clock=clock), _payloads(probe_fixtures),
+                                           clock=clock)
     assert accepted["verdict"] == suite.FAIL
     assert "accepted it" in accepted["reason"]
 
     refusing = suite.check_resource_limits(_bounded(_Base, 32)(clock=clock),
                                            _payloads(probe_fixtures), clock=clock)
     assert refusing["verdict"] == suite.PASS
+
+
+def test_O_is_live_for_the_two_adapters_that_ship_no_byte_fixture(probe_fixtures):
+    """`legion` and `pntmap` ship dict fixtures only, and P5 made that stop being a SKIP.
+
+    The old branch answered "the declared bound is a byte count and this adapter ships no byte
+    fixture to repeat". Both adapters accept octets — both reach `json.loads` — so the twin is
+    serialised back to the JSON a caller would have sent and the bound is exercised on that.
+    """
+    for name in ("legion", "pntmap"):
+        entry = _report(name)["checks"]["O"]
+        assert entry["verdict"] == suite.PASS, entry
+        assert entry["details"]["bytes_fed"] == entry["details"]["max_input_bytes"] + 1
 
 
 # --- the CLI ---------------------------------------------------------------------------------

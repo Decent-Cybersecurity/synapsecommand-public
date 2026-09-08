@@ -115,8 +115,8 @@ from synapse_cdm.enums import (
 from synapse_cdm.models import CDMBase, Entity, Event, Kinematics, Position, Track
 from synapse_cdm.symbology import sidc_from_affiliation
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
-                                   UnknownFields)
+                                   FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
+                                   Maturity, MaturityLevel, Residual, UnknownFields)
 
 SYSTEM = "AIS"
 
@@ -817,15 +817,12 @@ class AisAdapter(Adapter):
                 "AIVDM/AIVDO message types 1, 2, 3, 4, 5, 18, 19, 21",
             ],
             limits=Limits(
-                max_input_bytes=None,
+                max_input_bytes=1024,
                 max_depth=None,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_input_bytes":
-                        "no bound is enforced by this adapter today; the parser-safety "
-                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
                     "max_depth":
                         "an AIS message does not nest: a sentence envelope carries a flat "
                         "armoured payload whose layout is fixed by its message type",
@@ -839,6 +836,27 @@ class AisAdapter(Adapter):
                         "no wall-clock bound is enforced by this adapter today; the "
                         "parser-safety policy's concrete bounds are owed by P5 "
                         "(ARCHITECTURE.md §9)",
+                },
+                declared_because={
+                    "max_input_bytes": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "NMEA 0183 caps one sentence at 82 characters including the "
+                            "delimiters and the checksum (`adapters/ais.py:372`), and the "
+                            "AIVDM fragment-count field is a single character, so one whole "
+                            "message is at most 9 x 82 = 738 octets. That figure does not "
+                            "cover the NMEA 0183 v4.10 TAG blocks this adapter also accepts on "
+                            "each line (`adapters/ais.py:79`), which is why the declared bound "
+                            "is not 738: 1024 carries the 738 plus a TAG block on every "
+                            "fragment. This is an IMPLEMENTATION CAP under M's F5.4 ruling and "
+                            "is NOT the format's normative maximum."),
+                        enforced_at=(
+                            "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with "
+                            "`enforce_input_bound` at class-definition time (`adapter.py`, "
+                            "`_bind_input_bound`), so the payload is measured and refused "
+                            "before any decoder in this module runs"),
+                        test="tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound",
+                    ),
                 },
             ),
             unknown_fields=UnknownFields.PRESERVED,
@@ -865,9 +883,11 @@ class AisAdapter(Adapter):
             "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
             "`evidence.available` is false for that reason and not because the checks do not "
             "run",
-            "none of §3.5's five resource limits is enforced by this adapter; the "
-            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
-            "each limit's own reason is in `capabilities.limits.absent_because`",
+            "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
+            "declared in `capabilities.limits` with its basis beside it and refused before "
+            "decode by the base class (round P5). The other four are still absent, each with "
+            "its own reason in `capabilities.limits.absent_because`; a depth, object-count, "
+            "decompression or wall-clock bound is not enforced here today",
         ],
         limitations_empty_reason=None,
         residual=Residual.LEGACY,

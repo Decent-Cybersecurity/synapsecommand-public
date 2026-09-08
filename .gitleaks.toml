@@ -1,0 +1,51 @@
+# gitleaks configuration — the CI secret scanner's second layer (SOIF Part 1 §39, round P5).
+#
+# WHY THIS FILE EXISTS WITH AN EMPTY ALLOWLIST
+# ---------------------------------------------
+# §39 permits an allowlist that is "narrow and documented", and the brief for this round permits
+# one entry per finding the FIRST RUN proves false-positive. The runs below are gitleaks 8.30.1's
+# own output on 2026-09-08, TAKEN AT THE COMMIT THAT CARRIES THIS FILE, and they produced nothing
+# to allowlist:
+#
+#     gitleaks git . --redact --config .gitleaks.toml
+#         -> 246 commits scanned, no leaks found
+#     gitleaks git --config .gitleaks.toml --log-opts "origin/main..HEAD" .
+#         ->   7 commits scanned, no leaks found
+#
+# The second of those is §42's "no secrets in the campaign history", over the whole SOIF Part 1
+# arc, and it is clean.
+#
+# BOTH NUMBERS ARE THE SCANNER'S, AND NEITHER IS A COMMIT COUNT THIS REPOSITORY WOULD PRINT.
+# `git rev-list --count HEAD` is 245 and `git rev-list --count origin/main..HEAD` is 7: gitleaks
+# reports one more than `rev-list` for a full-history scan (its own counting convention, stable
+# before and after this commit) and the same number for a range. The SEVENTH commit of the arc is
+# the one carrying this file. `origin/main..HEAD` grows by exactly one when a round's own commit
+# lands, so an arc reading taken before that commit says six and is false the instant it is
+# committed — this file states the reading AT the commit for that reason, not the reading before
+# it.
+#
+# A third run, `gitleaks dir .`, reported three findings and NONE of them is in the repository:
+# all three are in `rounds/`, the untracked round apparatus (`git ls-files rounds/` -> 0), and all
+# three are the same string — an SSH signing key FINGERPRINT of the form `SHA256:...`, which is
+# the public half of a signing key written into a round record on purpose. They are not
+# allowlisted here, and deliberately not: the CI job scans the GIT HISTORY, those files are not in
+# it, and an allowlist entry for a path CI never reads would be an entry nobody could ever see
+# fire. If a future round tracks a file carrying a key fingerprint, THAT is when the entry is
+# written, with the path and the reason.
+#
+# EXTENDING THE DEFAULT RULE SET RATHER THAN REPLACING IT
+# -------------------------------------------------------
+# `useDefault = true` keeps every rule gitleaks ships and adds nothing. A configuration that
+# enumerated its own rules would silently stop matching the ones added upstream, which is the
+# failure mode a scanner cannot report: it would go on passing.
+title = "synapse-cdm"
+
+[extend]
+useDefault = true
+
+# NO `[[allowlists]]` BLOCK AT ALL, and that is the empty allowlist rather than an omission.
+# gitleaks 8.30.1 REFUSES an allowlist with no check in it — "must contain at least one check for:
+# commits, paths, regexes, or stopwords" — so an empty block is not a way to say "nothing is
+# allowlisted"; the absence of the block is. The reading that makes it empty is in the header
+# above, and `tests/test_cdm_security_policy.py` asserts that this file declares no allowlist
+# entry, so an entry cannot be added without the test that reads it also being changed.

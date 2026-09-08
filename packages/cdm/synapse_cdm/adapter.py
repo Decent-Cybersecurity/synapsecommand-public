@@ -29,6 +29,7 @@ delivery. It comes from the injected clock so that golden-output tests are possi
 """
 from __future__ import annotations
 
+import functools
 import importlib
 import importlib.resources
 import pathlib
@@ -156,6 +157,7 @@ class Adapter(ABC):
         # the v1 identity, and a v1 defect has to keep reporting itself in the words it always
         # did rather than being masked by "this adapter declares no metadata".
         _check_metadata(cls)
+        _bind_input_bound(cls)
         REGISTRY[cls.name] = cls
 
     def __init__(self, clock: times.Clock | None = None, *, synthetic: bool = True) -> None:
@@ -276,6 +278,97 @@ class Adapter(ABC):
     def encode(self, objects: list[CDMBase]) -> bytes | dict:
         """The v2 spelling of `from_cdm`. A thin alias and nothing more (§1.2)."""
         return self.from_cdm(objects)
+
+
+class InputTooLarge(ValueError):
+    """A payload larger than the adapter's declared `capabilities.limits.max_input_bytes`.
+
+    A `ValueError` and not a new hierarchy, because every adapter in this repository already
+    raises `ValueError` (or a subclass of it) on a payload it refuses, and the conformance
+    suite's check O reads "refused without crashing" from the exception CLASS. A refusal that
+    arrived as something exotic would be indistinguishable from the parser falling over.
+    """
+
+
+def wire_size(raw: Any) -> int | None:
+    """How many octets this payload IS on the wire, or `None` if it did not arrive as octets.
+
+    Bytes are counted. Text is counted as UTF-8, which is what it would have been on the wire.
+    ANYTHING ELSE RETURNS `None`, and that is the whole judgement in this function.
+
+    `to_cdm` also accepts the PARSED TWIN — the `dict` that ships beside a byte fixture as its
+    readable form — and a twin is not an input size. It is a different and usually much larger
+    representation of the same message: the 14 octets of an ADS-B extended squitter serialise to
+    over 400 as a decoded document, so a wire bound applied to a twin would refuse the very
+    fixtures the bound's own format declares legal. §40's bound is `max_input_bytes`, and octets
+    are what it is about.
+
+    Nor is a twin a hole in the policy. The parse this bound exists to prevent has ALREADY
+    happened in whatever built the dict; a caller who hands over a parsed document has paid that
+    cost themselves and is past the point where an adapter could have protected them. The
+    parser-safety policy says so in those words rather than leaving a reader to infer it from a
+    number that quietly does not apply.
+    """
+    if isinstance(raw, (bytes, bytearray, memoryview)):
+        return len(bytes(raw))
+    if isinstance(raw, str):
+        return len(raw.encode("utf-8"))
+    return None
+
+
+def enforce_input_bound(cls: type["Adapter"], raw: Any) -> None:
+    """Refuse a payload over the declared bound, BEFORE the adapter's own decoder sees it.
+
+    §40's rule, and the reason it lives in the base class rather than in fourteen decoders:
+    a bound each adapter enforced for itself would be a bound each adapter could forget, and the
+    forgetting would be invisible — the manifest would still publish the number. Here there is
+    one enforcement point, it is the one `capabilities.limits` publishes, and an adapter cannot
+    opt out of it while remaining an `Adapter` subclass.
+
+    An adapter that declares no bound is not refused anything: `Limits` already requires the
+    absence to carry a reason, and inventing a default here would be this module choosing a
+    number no document states.
+    """
+    bound = cls.metadata.capabilities.limits.max_input_bytes
+    if bound is None:
+        return
+    size = wire_size(raw)
+    if size is not None and size > bound:
+        raise InputTooLarge(
+            f"{cls.name} was handed {size} octets and declares max_input_bytes = {bound}. "
+            f"Refused before decode: the declaration is at capabilities.limits, its basis at "
+            f"capabilities.limits.declared_because['max_input_bytes'], and a parser that read "
+            f"this far would already have done the work the bound exists to prevent"
+        )
+
+
+def _bind_input_bound(cls: type["Adapter"]) -> None:
+    """Wrap the subclass's own `to_cdm` so the bound is checked before it runs.
+
+    WRAPPED AT CLASS DEFINITION, for the reason `__init_subclass__` gives about every other part
+    of this contract: a check installed at first call is a check discovered in production. The
+    wrapper is installed on the class that DEFINES `to_cdm` and on no other — a subclass that
+    inherits its parent's decoder inherits the parent's wrapper, and wrapping again would count
+    the payload twice and report the same refusal from two places.
+
+    `functools.wraps` leaves `__wrapped__` on the result, which is not decoration: it is the only
+    way to obtain an adapter that ACCEPTS an oversized payload, and `tests/test_cdm_suite.py`
+    uses it to prove that the conformance suite's check O can still report FAIL. A guard nothing
+    can get past is a guard whose failure branch is untested.
+    """
+    own = cls.__dict__.get("to_cdm")
+    if own is None or getattr(own, "__isabstractmethod__", False):
+        return
+    if getattr(own, "__input_bounded__", False):
+        return
+
+    @functools.wraps(own)
+    def bounded(self, raw, *args, **kwargs):
+        enforce_input_bound(type(self), raw)
+        return own(self, raw, *args, **kwargs)
+
+    bounded.__input_bounded__ = True
+    cls.to_cdm = bounded
 
 
 def _check_metadata(cls: type["Adapter"]) -> None:

@@ -308,6 +308,44 @@
       "title": "LicenseClass",
       "type": "string"
     },
+    "LimitBasis": {
+      "additionalProperties": false,
+      "description": "The four things F5.4 requires an adapter to record beside a bound it DECLARES.\n\n\"Each adapter records: selected limit; source/rationale; normative vs implementation cap;\nenforcement point; oversized-input test.\" The selected limit is the field on `Limits`; the\nother four are here, keyed to the field by `Limits.declared_because` \u2014 the mirror image of\n`absent_because`, which carries the same weight for a bound that is NOT declared.",
+      "properties": {
+        "enforced_at": {
+          "title": "Enforced At",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/LimitKind"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "test": {
+          "title": "Test",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "enforced_at",
+        "test"
+      ],
+      "title": "LimitBasis",
+      "type": "object"
+    },
+    "LimitKind": {
+      "description": "Where a declared bound's NUMBER came from \u2014 M's F5.4 ruling, 2026-09-07, round P5.\n\nThe ruling's own words are the reason two values are not one: a limit \"must NOT be described\nas the format's normative maximum unless the specification actually says so\". A consumer\nreading `max_input_bytes: 65535` cannot tell whether it is a fact about ASTERIX or a choice\nthis repository made, and the two behave differently \u2014 a normative bound is the same in every\nimplementation, an implementation cap is ours and may be raised.",
+      "enum": [
+        "normative",
+        "implementation_cap"
+      ],
+      "title": "LimitKind",
+      "type": "string"
+    },
     "Limitation": {
       "additionalProperties": false,
       "description": "A limitation stated so that a MACHINE can act on it \u2014 M's ruling, 2026-09-08, round P4.\n\nWHY THIS EXISTS BESIDE THE SENTENCE AND DOES NOT REPLACE IT\n-----------------------------------------------------------\n`limitations` has always been `list[str]`, and a sentence is the right shape for most of what\nan adapter has to admit: \"no document in this tree states which edition this targets\" is prose\nand stays prose. \u00a734 asks for one thing a sentence cannot give. The loss report classifies a\nsource path as UNSUPPORTED when it is \"an explicit documented exception\", and a classifier\nthat had to decide that by reading English would be a classifier that guessed. So the\nexception becomes data: `unsupported_paths` holds the SOURCE paths, in the dotted spelling\n`lossless.leaves()` produces, and the classifier does a set membership test.\n\n`limitations` is therefore `list[str | Limitation]` and not `list[Limitation]`. The union is\nthe whole ruling: existing string entries stay valid unchanged, all fourteen shipped adapters\nkeep the sentences they already declare, and only an adapter that needs the mechanism emits\nthe structured form. A field that FORCED the structure would have converted twenty-eight\nprose statements into objects with an empty `unsupported_paths`, which is a schema migration\nperformed to satisfy a shape rather than to say anything.\n\n`severity` is optional and its vocabulary is NOT frozen here: ARCHITECTURE.md defines no\nseverity scale for limitations and inventing one in a model would be freezing a contract in\nthe wrong document. It is a free string when it is given at all.",
@@ -362,13 +400,21 @@
     },
     "Limits": {
       "additionalProperties": false,
-      "description": "\u00a73.5's five bounds, and the reason for each one that does not apply.\n\n\"A limit that does not apply to a format MUST be declared absent with a reason, not silently\nomitted\" \u2014 \u00a73.5. So `None` is legal and bare `None` is not: `absent_because` has to carry the\nreason, keyed by the field. \"This format does not nest\" is a fact about the format, and a\nreader who cannot find it has to go and work it out again.",
+      "description": "\u00a73.5's five bounds, the reason for each one that does not apply, and the basis of each\none that does.\n\n\"A limit that does not apply to a format MUST be declared absent with a reason, not silently\nomitted\" \u2014 \u00a73.5. So `None` is legal and bare `None` is not: `absent_because` has to carry the\nreason, keyed by the field. \"This format does not nest\" is a fact about the format, and a\nreader who cannot find it has to go and work it out again.\n\n`declared_because` is the same rule pointed the other way, added by round P5 under M's F5.4:\na bound that IS declared carries where its number came from, what kind of bound it is, where\nit is enforced and which test proves the refusal. A number on its own is exactly as opaque as\na `None` on its own, and the round that introduced real bounds is the round where that stopped\nbeing hypothetical.",
       "properties": {
         "absent_because": {
           "additionalProperties": {
             "type": "string"
           },
           "title": "Absent Because",
+          "type": "object"
+        },
+        "declared_because": {
+          "additionalProperties": {
+            "$ref": "#/$defs/LimitBasis"
+          },
+          "default": {},
+          "title": "Declared Because",
           "type": "object"
         },
         "max_decompressed_bytes": {
@@ -501,7 +547,7 @@
       "type": "string"
     }
   },
-  "$id": "urn:synapsecommand:manifest:1.1.0:adapter-manifest",
+  "$id": "urn:synapsecommand:manifest:1.2.0:adapter-manifest",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "The published document: \u00a713's semantics in this repository's canonical JSON (F1.3).\n\nThe envelope is separate from `AdapterMetadata` because the two are different facts. The\nmetadata is what the ADAPTER declares and is inspectable from the class; the envelope is what\nthe PUBLICATION declares \u2014 which manifest schema it was written to, which Adapter API it\nclaims, which CDM it emits \u2014 and none of those belong to one adapter.",
@@ -533,5 +579,5 @@
   ],
   "title": "AdapterManifest",
   "type": "object",
-  "x-manifest-schema-version": "1.1.0"
+  "x-manifest-schema-version": "1.2.0"
 }

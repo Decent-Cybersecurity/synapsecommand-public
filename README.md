@@ -35,9 +35,11 @@ examples/           synthetic SC-OES events, validated by the suite
 tests/              the suite; bare `pytest` from this directory runs all of it
 gates/              checks too slow or too networked for the suite; each is a protocol act
 docs/               the documentation site (Docusaurus, deployed to Cloudflare Pages)
+security/           the security working files; the policy itself is SECURITY.md at the root
 ARCHITECTURE.md     the adapter contract — API v2, directions, metadata, the six core rules
 VERSIONING.md       the version axes, what moves each of them, and where each is authored
 INTEROPERABILITY.md what this is and is not, and how an adapter is built against it
+SECURITY.md         how to report a vulnerability, what is in scope, and the table of controls
 ```
 
 `spec/`, `ontology/` and `examples/` are human-readable and repository-bound; the machine-readable
@@ -263,6 +265,7 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 | [`ontology/README.md`](ontology/README.md) | the Operational Ontology: the eight Turtle modules, the two derived artefacts, and the drift gate |
 | [`examples/README.md`](examples/README.md) | the synthetic examples, one per governed event type, and the linked decision chain |
 | [`spec/governance/`](spec/governance) | how a governed type or term is proposed, reviewed, versioned and deprecated |
+| [`SECURITY.md`](SECURITY.md) | **Security:** how to report a vulnerability privately, which versions are supported, what is in and out of scope, and every control with the reading behind it |
 
 ## Dependencies, and what is deliberately absent
 
@@ -272,3 +275,8 @@ what keeps it possible. There is also no crypto here: the `integrity` field is d
 deliberately unpopulated, because a signature computed inside a translator is held by nothing
 that audits it. Both properties are enforced by AST over the package sources in
 `tests/test_cdm_boundary.py` rather than by this paragraph.
+
+A third absence belongs beside them: **the package makes no network call.** No telemetry, no
+licence check, no remote registry, no update ping. `tests/test_cdm_no_network.py` proves it the
+same way — over the syntax tree of every module — and then again by removing `socket.socket` and
+running the whole conformance sweep with no socket obtainable.

@@ -5,6 +5,22 @@
 This document covers reports about SC-OES: a defect in the normative text, or a defect in this
 repository's implementation of it, with a security consequence.
 
+**Dated correction, 2026-09-08 (round P5). The channel now exists. Nothing below is rewritten.**
+`SECURITY.md` was written at the repository root on that date and it establishes what the section
+below records as outstanding: GitHub private vulnerability reporting is enabled on this repository
+(`gh api .../private-vulnerability-reporting` -> `{"enabled": true}`) and is the preferred channel,
+with `security@decentcybersecurity.eu` as the alternative, monitored by Decent Cybersecurity.
+Acknowledgement is targeted at 5 business days and the default coordinated-disclosure period is 90
+calendar days, both stated as targets rather than guarantees. The normative rule below — that a
+document in this tree MUST NOT name a security contact, address or channel that has not been
+established — is unchanged and is now satisfied rather than avoided: the channel was established
+before the address was published, and the two readings above are what say so.
+
+**The section below stands as written because it was true when it was written**, and because its
+reason for writing the gap down — "a published channel that nobody monitors is worse than none" —
+is the reason the establishment came first. Where it and this correction disagree about whether a
+channel exists, this correction governs; where they disagree about anything else, they do not.
+
 ## Status of the reporting channel in v0.1.0
 
 *(Non-normative, and stated first because it is the fact a reporter needs.)* No dedicated private

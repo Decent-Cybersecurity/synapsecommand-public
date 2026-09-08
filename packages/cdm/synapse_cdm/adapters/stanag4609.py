@@ -151,8 +151,8 @@ from synapse_cdm.models import (
 )
 from synapse_cdm.geo import Point
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction, Evidence,
-                                   FormatRef, LicenseClass, Limits, Maturity, MaturityLevel, Residual,
-                                   UnknownFields)
+                                   FormatRef, LicenseClass, LimitBasis, LimitKind, Limits,
+                                   Maturity, MaturityLevel, Residual, UnknownFields)
 
 #: `SourceRef.system` — the covering standard, which is what this adapter is named for.
 SYSTEM = "STANAG4609"
@@ -792,15 +792,12 @@ class Stanag4609Adapter(Adapter):
                 "packet carries them",
             ],
             limits=Limits(
-                max_input_bytes=None,
+                max_input_bytes=1048576,
                 max_depth=None,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_input_bytes":
-                        "no bound is enforced by this adapter today; the parser-safety "
-                        "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
                     "max_depth":
                         "KLV nests: a Local Set item may itself be a Local Set, and no depth "
                         "bound is declared yet",
@@ -814,6 +811,27 @@ class Stanag4609Adapter(Adapter):
                         "no wall-clock bound is enforced by this adapter today; the "
                         "parser-safety policy's concrete bounds are owed by P5 "
                         "(ARCHITECTURE.md §9)",
+                },
+                declared_because={
+                    "max_input_bytes": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "A UAS Datalink Local Set packet's length is BER-encoded, and BER "
+                            "long form can state a length no buffer could hold — "
+                            "`adapters/klv_codec.py`'s own header sets out the rule and "
+                            "records that not one example in 218 pages of the held documents "
+                            "exercises long form at all. There is no normative figure to take. "
+                            "1 MiB is chosen from the parser audit: the largest STANAG 4609 "
+                            "fixture in this package is 15384 octets. This is an "
+                            "IMPLEMENTATION CAP under M's F5.4 ruling and is NOT the format's "
+                            "normative maximum."),
+                        enforced_at=(
+                            "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with "
+                            "`enforce_input_bound` at class-definition time (`adapter.py`, "
+                            "`_bind_input_bound`), so the payload is measured and refused "
+                            "before any decoder in this module runs"),
+                        test="tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound",
+                    ),
                 },
             ),
             unknown_fields=UnknownFields.NONE,
@@ -839,9 +857,11 @@ class Stanag4609Adapter(Adapter):
             "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
             "`evidence.available` is false for that reason and not because the checks do not "
             "run",
-            "none of §3.5's five resource limits is enforced by this adapter; the "
-            "parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9), and "
-            "each limit's own reason is in `capabilities.limits.absent_because`",
+            "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
+            "declared in `capabilities.limits` with its basis beside it and refused before "
+            "decode by the base class (round P5). The other four are still absent, each with "
+            "its own reason in `capabilities.limits.absent_because`; a depth, object-count, "
+            "decompression or wall-clock bound is not enforced here today",
         ],
         limitations_empty_reason=None,
         residual=Residual.LEGACY,

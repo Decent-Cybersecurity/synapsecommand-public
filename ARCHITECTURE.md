@@ -33,17 +33,17 @@ The v1 surface is `packages/cdm/synapse_cdm/adapter.py`. It is a class contract 
 
 | element | where | what it is |
 |---|---|---|
-| `name` | `adapter.py:53` | the registry key; how a `SourceRef` identifies its translator |
-| `version` | `adapter.py:54` | the adapter's own semver, stamped into `SourceRef.adapter_version` |
-| `direction` | `adapter.py:55` | one of the three wire spellings; see §2 |
-| `system` | `adapter.py:58` | the external system the adapter speaks for, into `SourceRef.system` |
-| `TRANSFORMS` | `adapter.py:76` | source paths whose value legitimately changes, mapped to the REASON |
-| `fixture_dir` | `adapter.py:113` | the fixture directory when it is not the adapter's own name |
-| `to_cdm` | `adapter.py:204` | abstract; one source payload in, a list of canonical objects out |
-| `from_cdm` | `adapter.py:216` | overridden by an emitting adapter; the base raises the refusal |
-| `source_ref` | `adapter.py:176` | the provenance stamp every emitted object carries |
-| `now` | `adapter.py:172` | receipt time, from the injected clock and never `datetime.now()` |
-| `__init_subclass__` | `adapter.py:115` | the enforcement: the checks below run when the class is defined |
+| `name` | `adapter.py:54` | the registry key; how a `SourceRef` identifies its translator |
+| `version` | `adapter.py:55` | the adapter's own semver, stamped into `SourceRef.adapter_version` |
+| `direction` | `adapter.py:56` | one of the three wire spellings; see §2 |
+| `system` | `adapter.py:59` | the external system the adapter speaks for, into `SourceRef.system` |
+| `TRANSFORMS` | `adapter.py:77` | source paths whose value legitimately changes, mapped to the REASON |
+| `fixture_dir` | `adapter.py:114` | the fixture directory when it is not the adapter's own name |
+| `to_cdm` | `adapter.py:206` | abstract; one source payload in, a list of canonical objects out |
+| `from_cdm` | `adapter.py:218` | overridden by an emitting adapter; the base raises the refusal |
+| `source_ref` | `adapter.py:178` | the provenance stamp every emitted object carries |
+| `now` | `adapter.py:174` | receipt time, from the injected clock and never `datetime.now()` |
+| `__init_subclass__` | `adapter.py:116` | the enforcement: the checks below run when the class is defined |
 
 `__init_subclass__` refuses, at import: a missing `name`, `version`, `direction` or `system`; a
 `direction` outside the three literals; a declared `egress`/`bidirectional` adapter that does not

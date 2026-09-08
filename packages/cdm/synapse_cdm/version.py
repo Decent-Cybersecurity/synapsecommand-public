@@ -70,7 +70,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   subclass and what it offers it. Frozen by ``ARCHITECTURE.md``
                                   §1 and additive over v1: v2 adds ``metadata``, ``detect``,
                                   ``validate_source`` and ``capabilities`` and renames nothing.
-    Manifest schema       1.1.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
+    Manifest schema       1.2.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
                                   published manifest, generated into
                                   ``schemas/manifests/adapter-manifest.schema.json`` and carried
                                   in every file under ``manifests/``. (1.0.0 -> 1.1.0 on
@@ -296,7 +296,16 @@ ADAPTER_API_VERSION = "2.0.0"
 #: convert strings into objects. MIGRATIONS.md's P2 note that this constant "does NOT move:
 #: `1.0.0` has never been published" is what made 1.0.0 free to be the first published number
 #: rather than a deprecated one; it is still unpublished at 1.1.0, and this round's record says so.
-MANIFEST_SCHEMA_VERSION = "1.1.0"
+#:
+#: **1.1.0 -> 1.2.0, round P5, 2026-09-08.** `Limits` gains `declared_because` — the mirror of
+#: `absent_because` — because M's F5.4 ruling requires a bound that IS declared to record where
+#: its number came from, whether it is the format's normative maximum or an implementation cap,
+#: where it is enforced and which test proves the refusal. MINOR on `VERSIONING.md`'s own row: the
+#: field carries a default of `{}`, so a manifest written against 1.1.0 still validates, and no
+#: existing field changed shape or meaning. All fourteen manifests move, and this time they move
+#: in their `adapter` block as well as their envelope: every one of the fourteen now declares
+#: `max_input_bytes`, so every one loses an `absent_because` entry and gains a basis.
+MANIFEST_SCHEMA_VERSION = "1.2.0"
 
 #: The generated EVIDENCE RECORD's shape, and a SIXTH axis — the last one `VERSIONING.md` carried
 #: as owed. `1.0.0` because `schemas/evidence/evidence.schema.json` is the first evidence schema

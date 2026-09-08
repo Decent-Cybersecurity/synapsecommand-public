@@ -243,9 +243,21 @@ def test_an_absent_limit_needs_a_reason_and_a_declared_one_may_not_have_one():
         Limits(**{**limits, "absent_because": {}})
     with pytest.raises(ValueError, match="both declared and explained as absent"):
         Limits(**{**limits, "max_depth": 8})
-    assert Limits(**{**limits, "max_depth": 8,
-                     "absent_because": {k: v for k, v in limits["absent_because"].items()
-                                        if k != "max_depth"}}).max_depth == 8
+    # Round P5, M's F5.4: a DECLARED bound needs a basis exactly as an absent one needs a reason.
+    from synapse_cdm.manifest import LimitBasis, LimitKind
+    basis = LimitBasis(kind=LimitKind.IMPLEMENTATION_CAP, source="a probe picks a number",
+                       enforced_at="the base class", test="this test")
+    without_absence = {k: v for k, v in limits["absent_because"].items() if k != "max_depth"}
+    with pytest.raises(ValueError, match="declared with no basis"):
+        Limits(**{**limits, "max_depth": 8, "absent_because": without_absence})
+    with pytest.raises(ValueError, match="absent and carry a basis anyway"):
+        Limits(**{**limits, "declared_because": {"max_objects": basis}})
+    with pytest.raises(ValueError, match="which are not limits"):
+        Limits(**{**limits, "max_depth": 8, "absent_because": without_absence,
+                  "declared_because": {"max_depth": basis, "max_wombats": basis}})
+
+    assert Limits(**{**limits, "max_depth": 8, "absent_because": without_absence,
+                     "declared_because": {"max_depth": basis}}).max_depth == 8
 
 
 def test_a_null_format_version_must_be_stated_as_a_limitation():
