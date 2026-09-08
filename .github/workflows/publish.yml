@@ -434,22 +434,70 @@ jobs:
           # check builds deliberately.
           python gates/wheel_install.py --mutation-check --export-dist dist
 
+      - name: The release artefacts, named from PACKAGE_VERSION and never from the ref
+        # ROUND PS, 2026-09-08, on M's ruling: derive the expected wheel path from
+        # PACKAGE_VERSION. `dist/` is what condition 2's `--export-dist` wrote, and every later
+        # step in this job needs those two files BY NAME. Two ways of naming them were wrong. The
+        # first was `dist/synapse_cdm-<the raw git ref>-py3-none-any.whl`, which stood in the
+        # two SBOM steps below until this round: on the dispatch run that exercised them it named
+        # `synapse_cdm-soif/1.0-py3-none-any.whl` and on a tag push it would name
+        # `synapse_cdm-v2.1.0-py3-none-any.whl` — neither of them a file that has ever existed,
+        # because a wheel is named by its packaging metadata and not by the ref that triggered the
+        # build. The second is an unconstrained `dist/*.whl` glob, which cannot tell the release
+        # wheel from anything else that lands in the directory and silently hashes whatever it
+        # finds. So the version comes from the package, the two names are computed from it, and
+        # the step refuses a `dist/` that does not hold exactly those two files.
+        run: |
+          set -euo pipefail
+          version="$(python -c 'from synapse_cdm.version import PACKAGE_VERSION; print(PACKAGE_VERSION)')"
+          wheel="dist/synapse_cdm-${version}-py3-none-any.whl"
+          sdist="dist/synapse_cdm-${version}.tar.gz"
+          held="$(ls dist | wc -l | tr -d ' ')"
+          if [ "${held}" != "2" ]; then
+            echo "::error::dist/ holds ${held} files and a release is exactly two, the wheel and the sdist. Anything else makes every digest below ambiguous: $(ls dist | tr '\n' ' ')" >&2
+            exit 1
+          fi
+          for artefact in "${wheel}" "${sdist}"; do
+            if [ ! -f "${artefact}" ]; then
+              echo "::error::${artefact} does not exist. PACKAGE_VERSION is ${version} and dist/ holds: $(ls dist | tr '\n' ' '). An artefact path is derived from the package's own version, so a mismatch here is a build that produced something else." >&2
+              exit 1
+            fi
+          done
+          mkdir -p sbom
+          {
+            echo "VERSION=${version}"
+            echo "WHEEL=${wheel}"
+            echo "SDIST=${sdist}"
+          } >> "${GITHUB_ENV}"
+          ls -l "${wheel}" "${sdist}"
+
       - name: twine check --strict, on the bytes that were gated
         run: |
           set -euo pipefail
           ls -l dist
-          python -m twine check --strict dist/*
+          python -m twine check --strict "${WHEEL}" "${SDIST}"
 
       - name: Clean install from the built package, in a venv of its own
         # §50's `clean install from built package`, as a PIPELINE stage rather than only as
         # `gates/wheel_install.py`'s internal act. The difference is what it installs FROM: the
         # gate builds its own wheel in a temporary directory, and this installs the exact file
         # that is about to be uploaded, in an interpreter that has never seen the source tree.
+        #
+        # ROUND PS, 2026-09-08: this environment is now also THE SUBJECT OF THE RELEASE SBOM, so
+        # the step exports its path and the SBOM steps below read that variable rather than naming
+        # a directory of their own. It is the environment M's ruling describes — the clean install
+        # created from the gated wheel — and it holds the release's runtime closure and nothing
+        # else. The gate's own internal venv is not usable for this: it is deleted when the gate
+        # returns unless `--keep` is passed, its path is printed rather than exported, and by the
+        # time the gate has finished with it the `slice` check has installed `pytest` into it, so
+        # an SBOM taken there would describe a test environment as a release.
         run: |
           set -euo pipefail
           python -m venv /tmp/clean
           /tmp/clean/bin/python -m pip install --upgrade pip
-          /tmp/clean/bin/python -m pip install dist/*.whl
+          /tmp/clean/bin/python -m pip install "${WHEEL}"
+          echo "CLEAN_VENV=/tmp/clean" >> "${GITHUB_ENV}"
+          /tmp/clean/bin/python -m pip list --format=freeze
           # From `/tmp`, so that an accidental import of the source tree cannot pass for the wheel.
           cd /tmp
           /tmp/clean/bin/python -c "import synapse_cdm; print(synapse_cdm.__file__)"
@@ -468,12 +516,16 @@ jobs:
           /tmp/clean/bin/python -c 'import json; d=json.load(open("/tmp/installed-conformance.json")); assert d["conformant"] == sorted(d["adapters"]), d["conformant"]; print(len(d["conformant"]), "adapters CONFORMANT from the installed wheel")'
           /tmp/clean/bin/cdm-harness --list-adapters
 
-      - name: SBOM — SPDX, from syft over the gated wheel
-        # syft reads the WHEEL, not the source tree and not the environment: the artefact that
-        # ships is the artefact described.
+      - name: SBOM — SPDX, from syft over the clean-install environment
+        # ROUND PS, 2026-09-08, on M's ruling of the same day. syft reads THE ENVIRONMENT the
+        # gated wheel was installed into, and the reason is a reading rather than a preference:
+        # syft over a `.whl` FILE enumerates one SPDX package — the filename — and zero CycloneDX
+        # components, so the step this replaces would have published, greenly, an SBOM that named
+        # no dependency of anything. Over the clean venv the same syft version catalogues the
+        # installed distribution and its whole runtime closure with the licence each one declares.
         uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
         with:
-          file: dist/synapse_cdm-${{ github.ref_name }}-py3-none-any.whl
+          path: ${{ env.CLEAN_VENV }}
           format: spdx-json
           output-file: sbom/synapse_cdm.spdx.json
           upload-artifact: false
@@ -482,11 +534,101 @@ jobs:
       - name: SBOM — CycloneDX, from the same syft run
         uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
         with:
-          file: dist/synapse_cdm-${{ github.ref_name }}-py3-none-any.whl
+          path: ${{ env.CLEAN_VENV }}
           format: cyclonedx-json
           output-file: sbom/synapse_cdm.cdx.json
           upload-artifact: false
           upload-release-assets: false
+
+      - name: SBOM cross-check — cyclonedx-py over the same environment
+        # TWO PRODUCERS, and the second is a cross-check rather than a second release artefact
+        # (P6's pre-ruled default 4: "the release artefacts are syft's", `rc-build.yml`). M's
+        # ruling of 2026-09-08 names this tool over THIS environment, and the value is that the
+        # two read it differently: syft catalogues the directory, `cyclonedx-py environment` asks
+        # the interpreter what is importable in it. A distribution in one and not the other is a
+        # real discrepancy, and neither tool can report it alone.
+        #
+        # It writes OUTSIDE `sbom/`: everything in that directory is hashed into `SHA256SUMS` and
+        # handed to the release job, and a cross-check is not an artefact of the release. The
+        # difference is printed and never asserted empty — syft's document also carries file and
+        # application components, which `cyclonedx-py` has no notion of.
+        run: |
+          set -euo pipefail
+          cyclonedx-py environment "${CLEAN_VENV}/bin/python" \
+            --output-format JSON --output-file /tmp/environment.cdx.json
+          python - sbom/synapse_cdm.cdx.json /tmp/environment.cdx.json <<'PY'
+          import json
+          import sys
+
+          def libraries(path):
+              document = json.load(open(path))
+              return {(component["name"], component.get("version")) for component
+                      in (document.get("components") or [])
+                      if component.get("type") == "library"}
+
+          syft, native = libraries(sys.argv[1]), libraries(sys.argv[2])
+          print(f"syft: {len(syft)} library components; cyclonedx-py: {len(native)}")
+          for label, difference in (("only syft", syft - native), ("only cyclonedx-py", native - syft)):
+              print(f"{label}: {sorted(difference)}")
+          PY
+
+      - name: The SBOMs describe this release, or the pipeline stops
+        # §46 asks a release for an SBOM. A file that PARSES as one and describes nothing meets
+        # the letter of that and none of its point, which is exactly what the wheel-file SBOM
+        # above was: the four refusals below are M's ruling of 2026-09-08 written as assertions —
+        # synapse-cdm absent, its version not PACKAGE_VERSION, zero components, or a generation
+        # step that failed (`set -euo pipefail`, and a missing file raises here). The cross-check
+        # document is held to the same two facts; it is not a release artefact, but a cross-check
+        # that disagrees about the version of the package being released is not a cross-check.
+        #
+        # The name is normalised PEP 503 style because the two tools need not agree with each
+        # other: syft reports the installed distribution's name and cyclonedx-py the metadata's,
+        # and either may spell it `synapse_cdm`.
+        run: |
+          set -euo pipefail
+          python - "${VERSION}" sbom/synapse_cdm.spdx.json sbom/synapse_cdm.cdx.json /tmp/environment.cdx.json <<'PY'
+          import json
+          import re
+          import sys
+
+          version, spdx_path, cdx_path, cross_path = sys.argv[1:5]
+
+
+          def normalise(name: str) -> str:
+              return re.sub(r"[-_.]+", "-", name or "").lower()
+
+
+          def refuse(message: str) -> None:
+              print(f"::error::{message}. SOIF Part 1 §46, round PS: the release SBOM describes "
+                    "the clean-install environment created from the gated wheel, and one that "
+                    "cannot name the package being released describes nothing.", file=sys.stderr)
+              raise SystemExit(1)
+
+
+          spdx = json.load(open(spdx_path))
+          cdx = json.load(open(cdx_path))
+          cross = json.load(open(cross_path))
+          packages = spdx.get("packages") or []
+          components = cdx.get("components") or []
+          if not packages:
+              refuse(f"{spdx_path} carries no packages[] entry at all")
+          if not components:
+              refuse(f"{cdx_path} carries no components[] entry at all")
+
+          for path, entries, field in ((spdx_path, packages, "versionInfo"),
+                                       (cdx_path, components, "version"),
+                                       (cross_path, cross.get("components") or [], "version")):
+              versions = {entry.get(field) for entry in entries
+                          if normalise(entry.get("name", "")) == "synapse-cdm"}
+              if not versions:
+                  refuse(f"{path} names no synapse-cdm entry among its {len(entries)}")
+              if versions != {version}:
+                  refuse(f"{path} carries synapse-cdm at {sorted(map(str, versions))} and this "
+                         f"tree's PACKAGE_VERSION is {version}")
+
+          print(f"SPDX: {len(packages)} packages. CycloneDX: {len(components)} components. "
+                f"synapse-cdm at {version} in both, and in the cross-check.")
+          PY
 
       - name: Fetch the gate's conformance and evidence artefacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
@@ -501,7 +643,8 @@ jobs:
         run: |
           set -euo pipefail
           cp gate/conformance-*.json gate/evidence-*.tar.gz .
-          sha256sum dist/* sbom/*.json conformance-*.json evidence-*.tar.gz | tee SHA256SUMS
+          sha256sum "${WHEEL}" "${SDIST}" sbom/*.json conformance-*.json evidence-*.tar.gz \
+            | tee SHA256SUMS
           {
             echo '## Artefacts, with digests'
             echo

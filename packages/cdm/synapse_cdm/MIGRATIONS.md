@@ -322,6 +322,70 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
+**ROUND PS's RECORD, 2026-09-08 — the release pipeline's SBOM stage, repaired.**
+
+Recorded 2026-09-08 by SOIF Part 1 round PS, on M's rulings of the same day. Nothing here is
+released; `PACKAGE_VERSION` is unmoved at 2.0.0. The round exists because round P8's readiness
+report (`docs/soif-part1-release-readiness.md`) ended
+`blocked: [sbom-stage-fails-on-a-ref-derived-wheel-path, sbom-over-a-wheel-file-enumerates-no-components]`,
+which under §57 is NO RELEASE, and because P8 is qualification-only and may not repair what it
+finds.
+
+**NOTHING IN THE PACKAGE MOVED AND THE GATE SAYS SO.** `python gates/bump_derivation.py --json`
+reads the identical signal set with this round's work staged and with the tree clean, so the round
+contributes **no unit, of any kind**, and no ruling was written. Everything it changed is the
+release workflow, one test module, one documentation page and this file. The arc since 2.0.0 still
+derives MINOR with 0 unruled and the next release is still at least 2.1.0.
+
+**The SBOM's subject is now the ENVIRONMENT and not the wheel file, and that is a reading rather
+than a preference.** syft over a `.whl` file catalogues **one** SPDX package — the filename — and
+**zero** CycloneDX components, taken on 2026-09-08 with syft v1.51.1 (the version the pinned
+`anchore/sbom-action` carries) over `synapse_cdm-2.0.0-py3-none-any.whl`; a green step publishing
+that would have attached to a release a document naming no dependency of anything. Over the clean
+venv the same syft version reads **19** SPDX packages and **50** CycloneDX components, of which
+**12** are `library`: those twelve are the installed distributions — `synapse-cdm` 2.0.0 and its
+whole runtime closure — each with the licence it declares (ten MIT, `synapse-cdm` Apache-2.0,
+`typing-extensions` PSF-2.0). The SPDX count is those twelve plus the directory scanned and six
+copies of pip's vendored `Simple Launcher`; the CycloneDX remainder is file and application
+components, which the other producer has no notion of.
+
+**Both released documents are still syft's, and the second producer is a cross-check** — P6's
+pre-ruled default 4, unchanged by this round. `cyclonedx-py` 7.3.1 over the same venv reads
+**12** components, the same twelve distributions, and the only disagreement between the two is
+punctuation: syft says `pydantic-core` and `typing-extensions` where `cyclonedx-py` says
+`pydantic_core` and `typing_extensions`, which is why the assertion normalises PEP 503 style. The
+cross-check writes outside `sbom/`, because everything in that directory is hashed into
+`SHA256SUMS` and handed to the release job. `synapse-cdm` at `PACKAGE_VERSION` appears in all
+three documents.
+
+**The environment is the pipeline's own clean install, and not the one inside
+`gates/wheel_install.py`.** M's ruling names the clean-install environment created from the gated
+wheel; the workflow has created exactly that since round P7 — `python -m venv /tmp/clean` from the
+wheel condition 2 exported — and the SBOM steps now read the path that step exports. The gate's
+internal venv is a different thing wearing the same words: it is deleted when the gate returns
+unless `--keep` is passed, its path is printed rather than exported, and the gate's `slice` check
+installs `pytest` into it — seventeen distributions rather than twelve, taken the same day — so an
+SBOM from there would describe a test environment as a release.
+
+**Every artefact path in the `build` job is derived from `PACKAGE_VERSION`.** One step computes
+`dist/synapse_cdm-<version>-py3-none-any.whl` and `dist/synapse_cdm-<version>.tar.gz`, refuses a
+`dist/` that does not hold exactly those two files, and exports both names; `twine check`, the
+clean install and `SHA256SUMS` read them. The two SBOM steps had built that path from the raw git
+ref, which named `synapse_cdm-soif/1.0-py3-none-any.whl` on the dispatch that found it and would
+have named `synapse_cdm-v2.1.0-py3-none-any.whl` on the tag — a wheel is named by its packaging
+metadata, so neither file has ever existed. A wheel's name is not a fact about the ref that built
+it, and an unconstrained `dist/*.whl` glob is not a smaller version of the same thing: it hashes
+whatever it finds.
+
+**The pipeline now asserts on its own SBOMs.** A step after generation refuses an SPDX document
+with no `packages[]`, a CycloneDX document with no `components[]`, any of the three documents that
+names no `synapse-cdm`, and a version that is not this tree's `PACKAGE_VERSION`; generation
+failures come through `set -euo pipefail`. Four new tests in
+`tests/test_cdm_trusted_publishing.py` hold the workflow text to it — no line pairs a git-ref token with an artefact path, no path-shaped action
+input carries the ref at all, the SBOM steps run after the install they describe, and the four
+refusals are present — and each was proven against a mutated copy of the workflow before it was
+kept.
+
 **ROUND PB's RECORD, 2026-09-08 — the two readiness blockers, repaired.**
 
 Recorded 2026-09-08 by SOIF Part 1 round PB, on M's rulings of the same day. Nothing here is
@@ -559,6 +623,11 @@ the arc. Everything else P7 built is outside the distribution — the workflow, 
 `releases/witness/`, the docs page and four test modules — and carries no bump unit for that
 reason. The gate reads MINOR / 2.1.0 with **0 unruled**, and this round writes no Bump ruling: it
 wrote three, and the gate refused all three as second opinions on units it classifies itself.
+
+**Round PS moved ONE file inside the distribution — this one — and it is not new**, so the arc's
+own figure above is unmoved at 673. The rest of the round is the release workflow, one test module
+and one documentation page, none of which ships in a wheel and none of which carries a bump unit
+for that reason.
 
 **What P6 added, in one paragraph, and none of it is in the wheel.** Everything the round did is
 CI, settings and documents: `.github/dependabot.yml` (three ecosystems — `pip` in `/packages/cdm`,

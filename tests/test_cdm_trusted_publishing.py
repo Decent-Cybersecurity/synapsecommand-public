@@ -776,3 +776,147 @@ def test_the_pipeline_names_a_script_that_exists(workflow):
     """A workflow referencing a file nobody shipped fails at release time and nowhere earlier."""
     for script in re.findall(r"(?:python |bash )?(\.github/scripts/\S+\.py|gates/\S+\.py)", workflow):
         assert (REPO / script).is_file(), f"the workflow runs {script}, which is not in the tree"
+
+
+# ------------------------------------------------- §46: the SBOM, and the paths the ref must not name
+#
+# Round PS, 2026-09-08. Round P8's qualification dispatched this workflow and it failed in `build`
+# at the SPDX step, for two reasons that are one shape: a path nobody could have taken and a
+# document nobody could have used. The step read
+# `file: dist/synapse_cdm-${{ github.ref_name }}-py3-none-any.whl`, which on the dispatch named
+# `synapse_cdm-soif/1.0-py3-none-any.whl` and on a `v2.1.0` tag would have named
+# `synapse_cdm-v2.1.0-py3-none-any.whl` — a wheel is named by its packaging metadata, so neither
+# file has ever existed. And had the path been right, syft over a `.whl` FILE catalogues one SPDX
+# package (the filename) and zero CycloneDX components, so the green step would have published an
+# SBOM naming no dependency of anything. The four assertions below are M's rulings of the same day.
+
+#: The ways this workflow can name the ref it was triggered by.
+REF_TOKENS = ("github.ref_name", "GITHUB_REF_NAME")
+
+#: What a release artefact looks like in a path. A ref token and one of these on one line is the
+#: defect: `${GITHUB_REF_NAME#v}` compared against `PACKAGE_VERSION` is the ref used as a VERSION,
+#: which is its only legitimate use here, and no legitimate use builds a filename.
+ARTEFACT_TOKENS = ("dist/", ".whl", ".tar.gz", "sbom/", "SHA256SUMS")
+
+#: The action and step inputs that name a file or a directory. A ref token in one of these is the
+#: exact line round P8's dispatch died on.
+PATH_INPUTS = ("file:", "path:", "output-file:", "artifact-name:")
+
+
+def test_no_artefact_path_in_this_workflow_is_built_from_the_git_ref(workflow):
+    """M's ruling of 2026-09-08: `do not use the raw git ref/tag to construct the artifact path`.
+
+    The ref is legitimate as a VERSION — `${GITHUB_REF_NAME#v}` compared against
+    `PACKAGE_VERSION`, or handed to `gh release` as the name of the release — and never as part of
+    a filename. Both halves are checked because both are cheap: no line pairs a ref with an
+    artefact path, and no action input that names a file or a directory carries a ref at all.
+    """
+    for name in jobs_in_order(workflow):
+        for line in _executable(job_block(workflow, name)).splitlines():
+            if not any(ref in line for ref in REF_TOKENS):
+                continue
+            named = [token for token in ARTEFACT_TOKENS if token in line]
+            assert not named, (
+                f"the `{name}` job builds a path from the git ref: {line.strip()!r} names "
+                f"{named}. Round P8's dispatch failed on exactly this line — a wheel is named "
+                "by PACKAGE_VERSION, and a ref-derived path is wrong on a branch and wrong on a "
+                "tag")
+            stripped = line.strip()
+            for prefix in PATH_INPUTS:
+                assert not stripped.startswith(prefix), (
+                    f"the `{name}` job passes the git ref to a `{prefix}` input: "
+                    f"{stripped!r}. That input is a path, and a path derived from the ref is the "
+                    "defect round PS repaired")
+
+
+def test_the_release_artefacts_are_named_from_package_version_and_exported_once(workflow):
+    """One step computes the two names, refuses a `dist/` it cannot account for, and exports them.
+
+    M's ruling: compute the filename from the package name and PACKAGE_VERSION, fail if the
+    expected wheel is missing, fail if more than the expected release artefact would create
+    ambiguity, and do not use an unconstrained `dist/*.whl` glob. A glob is not a smaller version
+    of this: it hashes and uploads whatever it happens to find, which is how a stale wheel from an
+    earlier step gets published under a digest nobody derived.
+    """
+    build = _executable(job_block(workflow, "build"))
+    assert "from synapse_cdm.version import PACKAGE_VERSION" in build, (
+        "the build job never asks the package for its version, so every artefact name in it is "
+        "either a glob or a guess")
+    for exported in ("VERSION=${version}", "WHEEL=${wheel}", "SDIST=${sdist}"):
+        assert exported in build, (
+            f"the build job does not export {exported} into $GITHUB_ENV. The names are computed "
+            "once and read by every later step, or they are computed differently in each of them")
+    assert '"${held}" != "2"' in build, (
+        "nothing refuses a `dist/` holding more or fewer than the wheel and the sdist. M's "
+        "ruling: fail if more than the expected release artefact would create ambiguity")
+    assert '[ ! -f "${artefact}" ]' in build, (
+        "nothing refuses a MISSING expected artefact, which is the failure round P8 hit: the "
+        "path was computed, the file was not there, and the step that used it reported the "
+        "absence as its own kind of error")
+    assert "dist/*.whl" not in build, (
+        "the build job still resolves a release artefact through an unconstrained glob")
+
+
+def test_the_release_sbom_is_taken_over_the_clean_install_environment(workflow):
+    """M's ruling: syft over the clean venv, `cyclonedx-py` over the same one, in that order.
+
+    The subject of the SBOM is the environment, not the wheel file: an SBOM over the file names
+    the file and stops, and what a consumer of a release needs is the closure that got installed.
+    The order is part of the property — an SBOM taken before the install describes an environment
+    that does not exist yet — and it is checked as an order of steps, since nothing else in the
+    file enforces it.
+    """
+    build = job_block(workflow, "build")
+    executable = _executable(build)
+    assert 'echo "CLEAN_VENV=/tmp/clean" >> "${GITHUB_ENV}"' in executable, (
+        "the clean-install step does not export the venv it created, so any SBOM step below it "
+        "names a directory of its own and the two can drift apart silently")
+    assert executable.count("path: ${{ env.CLEAN_VENV }}") == 2, (
+        "both syft SBOMs are not taken over the exported clean venv: the file points them at "
+        f"{executable.count('path: ${{ env.CLEAN_VENV }}')} such path(s)")
+    assert 'cyclonedx-py environment "${CLEAN_VENV}/bin/python"' in executable, (
+        "the cross-check does not run over the same environment. M's ruling of 2026-09-08 names "
+        "cyclonedx-py over that venv, and a cross-check over a different environment compares "
+        "nothing")
+    assert "--output-file /tmp/environment.cdx.json" in executable, (
+        "the cross-check writes into the released artefact set. `sbom/` is hashed into "
+        "SHA256SUMS and handed to the release job, and P6's default 4 — the release artefacts "
+        "are syft's — is what keeps a second producer's document out of it")
+    order = [
+        "- name: Clean install from the built package",
+        "- name: SBOM — SPDX",
+        "- name: SBOM — CycloneDX",
+        "- name: SBOM cross-check",
+        "- name: The SBOMs describe this release",
+    ]
+    positions = []
+    for step in order:
+        assert step in build, f"the build job has no step `{step}`"
+        positions.append(build.index(step))
+    assert positions == sorted(positions), (
+        "the SBOM steps do not run after the clean install and before the assertion: the build "
+        f"job orders them {[order[i] for i in sorted(range(len(order)), key=positions.__getitem__)]}")
+
+
+def test_the_sbom_assertions_refuse_the_four_things_m_ruled(workflow):
+    """`the release pipeline MUST fail if` — four conditions, and the step that fails on them.
+
+    Generation succeeding is not the property. A file that parses as an SBOM and describes
+    nothing passes every check a workflow makes about exit statuses, which is what the wheel-file
+    SBOM did: one SPDX package, zero CycloneDX components, both steps green.
+    """
+    build = _executable(job_block(workflow, "build"))
+    step = build[build.index("- name: The SBOMs describe this release"):]
+    step = step[:step.index("- name: Fetch the gate")]
+    for refusal, why in (
+            ("carries no packages[] entry at all", "an empty SPDX document"),
+            ("carries no components[] entry at all", "an empty CycloneDX document"),
+            ("names no synapse-cdm entry", "an SBOM that does not mention the package"),
+            ("PACKAGE_VERSION is", "a version that is not the one being released"),
+            ("set -euo pipefail", "a generation step that failed"),
+    ):
+        assert refusal in step, f"nothing in the assertion step refuses {why} ({refusal!r})"
+    assert 'r"[-_.]+"' in step, (
+        "the assertion compares names without normalising them PEP 503 style. syft and "
+        "cyclonedx-py need not spell the distribution the same way, and `synapse_cdm` failing a "
+        "check for `synapse-cdm` is a release blocked by punctuation")

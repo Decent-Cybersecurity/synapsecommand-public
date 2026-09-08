@@ -29,7 +29,7 @@ gate ──► build ──► attest ──► publish ──► release ──
 | job | what it does | what it refuses |
 | --- | --- | --- |
 | `gate` | ruff `E9`; the suite (**condition 1**); tag names `PACKAGE_VERSION` (**condition 3**); the tag is annotated; schemas and manifests `--check`; the conformance sweep over every shipped adapter; evidence records; gitleaks; `pip-audit --strict`; the CodeQL gate | a red suite, a tag that names another version, a lightweight tag, drifted schemas or manifests, a non-conformant adapter, a secret in history, a vulnerable dependency, a CodeQL finding at or above CVSS 7.0 — **and a commit CodeQL has not analysed at all** |
-| `build` | `gates/wheel_install.py --mutation-check --export-dist` (**condition 2**, and the ONE build); `twine check --strict`; a clean install from the built wheel into a fresh venv; a package test run from that install; SPDX and CycloneDX SBOMs; one `SHA256SUMS`; **condition 4**'s derivations | a wheel that fails its own gate, metadata `twine` rejects, an installed wheel whose adapters are not conformant |
+| `build` | `gates/wheel_install.py --mutation-check --export-dist` (**condition 2**, and the ONE build); `twine check --strict`; a clean install from the built wheel into a fresh venv; a package test run from that install; SPDX and CycloneDX SBOMs over that install; one `SHA256SUMS`; **condition 4**'s derivations | a wheel that fails its own gate, metadata `twine` rejects, an installed wheel whose adapters are not conformant, a `dist/` that does not hold exactly the two expected artefacts, an SBOM with no components or one that does not name `synapse-cdm` at `PACKAGE_VERSION` |
 | `attest` | Sigstore build provenance over the wheel, the sdist, both SBOMs and the evidence bundle, then `gh attestation verify` on each | a digest that changed in the hand-off between jobs; an attestation that does not verify |
 | `publish` | the `pypi` environment's hold, then an OIDC upload with no credential in the file | everything, until a person approves |
 | `release` | `gh release create` with notes rendered by `synapse release-notes` and the full asset set | notes that describe another version |
@@ -39,6 +39,23 @@ gate ──► build ──► attest ──► publish ──► release ──
 carry `if: startsWith(github.ref, 'refs/tags/v')`, so the whole pipeline short of the irreversible
 act is exercisable on any branch. That is what it is for: a mechanism first run during a release is
 a mechanism debugged during a release.
+
+**What the SBOMs describe — added 2026-09-08.** The subject is **the environment**, not the wheel
+file: the `build` job installs the gated wheel into a venv that has never seen this repository,
+and both released documents are taken over that install by syft. So each carries `synapse-cdm` at
+the version being released, the whole runtime closure that came with it, and the licence each of
+those declares. `cyclonedx-py` then reads the same environment as a **cross-check** — a second
+tool asking the interpreter what is importable, where syft catalogues the directory — and its
+document is printed and compared rather than published. The pipeline **asserts on its own
+output**: it fails if either released document has no entries, if any of the three names no
+`synapse-cdm`, if the version named is not this tree's `PACKAGE_VERSION`, or if generation itself
+failed.
+
+That paragraph exists because the previous arrangement was none of those things and looked like
+all of them. syft ran over the `.whl` **file**, which catalogues one SPDX package — the filename —
+and zero CycloneDX components; the file path was built from the git ref, which names no wheel that
+has ever existed, on a branch or on a tag. A dispatch run of round P8's qualification is what
+found it, which is the argument for `workflow_dispatch` in the paragraph above.
 
 ## 2. The approval, and what it is not
 
