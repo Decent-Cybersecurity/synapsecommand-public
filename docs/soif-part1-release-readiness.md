@@ -1,24 +1,26 @@
-# SOIF Part 1 release-readiness report — 2026-09-08
+# SOIF Part 1 release-readiness report — 2026-09-09
 
-Written by round P8 (attempt 4) of the SOIF Part 1 campaign (spec §56–§58). Every figure below is
+Written by round P8 (attempt 5) of the SOIF Part 1 campaign (spec §56–§58). Every figure below is
 a reading taken on the commit named in section 18, with the command that produced it. Nothing is
 carried from a brief or from an earlier attempt: where an earlier report's figure and this tree's
 disagree, this tree's is what is written and the disagreement is named.
 
-This report **replaces** the one round P8 wrote as attempt 2 on 2026-09-08 at commit `b9ccb2c`.
-That report carried two blockers, both in the release pipeline's SBOM stage. Round PS repaired
-them, and this qualification was run again from scratch — a fresh clone, a fresh pipeline dispatch
-— against the tree PS and PT left. **Both of those blockers are closed**, by the pipeline's own
-readings and not by assertion: sections 11 and 12.
+This report **replaces** the one round P8 wrote as attempt 4 on 2026-09-08 at commit `248743d`.
+That report carried one blocker: two HIGH npm advisories, published into existence while the
+qualification was running, put `docs/`'s locked dependency tree in breach of the `docs-audit` gate
+round PB built. **Round PD closed it by upgrade and not by exception** — `js-yaml` to 4.3.2 and
+`svgo` to 3.3.5, through the `overrides` block PB introduced — and section 10 has this round's own
+readings of the result, from the gate's own logic run locally and from the gate itself running in
+CI on this commit.
 
-**One new blocker is open, and it was published into existence while this qualification was
-running.** Two npm advisories dated 2026-09-08T21:20:28Z and 2026-09-08T21:24:51Z make `docs/`'s
-locked dependency tree carry two unexcepted HIGH findings, which is exactly what round PB's
-`docs-audit` job exists to refuse. Section 10 has the readings and section 20 the argument.
+**Release status: ready for PR.** Every §56 item is green in a fresh clone of this commit, the
+release pipeline is green end to end through `attest` on this commit, and section 20 is empty.
 
-**Release status: NO RELEASE.** `PACKAGE_VERSION` is therefore unmoved at `2.0.0` — and under M's
-ruling of 2026-09-08T20:56:31Z it would have been unmoved either way: readiness is a claim about a
-tree the release round can run ON, and the version moves in that round, atomically with the tag.
+`PACKAGE_VERSION` is nevertheless unmoved at `2.0.0`, and that is what readiness means here. M's
+ruling of 2026-09-08T20:56:31Z: readiness is a claim about a tree the release round can run ON, so
+the version, the `### Unreleased` heading and `RELEASE_NOTES.md` all move in the release round,
+atomically with the tag. `tests/test_cdm_readiness.py` (round PT) is what holds this report to that
+rule in both directions.
 
 ---
 
@@ -28,18 +30,18 @@ tree the release round can run ON, and the version moves in that round, atomical
 |---|---|---|
 | last release | `2.0.0`, tag `v2.0.0` | `git tag --sort=-v:refname \| head -1` |
 | `main` | `a9ea68c1fdb260b91142330d3d06b5b6552e8476`, unmoved since the 2.0.0 witness round | `git rev-parse origin/main` |
-| branch under review | `soif/1.0`, sixteen commits ahead of `v2.0.0`, fifteen ahead of `origin/main` | `git rev-list --count v2.0.0..HEAD` → 16; `… origin/main..HEAD` → 15 |
-| arc size | **797 files changed, 52053 insertions(+), 3914 deletions(-)** | `git diff --shortstat v2.0.0..HEAD` |
-| tags | 12 local, 24 remote lines; no tag names any Part 1 commit | `git tag \| wc -l`; `git ls-remote --tags origin \| wc -l` |
+| branch under review | `soif/1.0`, eighteen commits ahead of `v2.0.0`, seventeen ahead of `origin/main` | `git rev-list --count v2.0.0..HEAD` → 18; `… origin/main..HEAD` → 17 |
+| arc size | **797 files changed, 52114 insertions(+), 3920 deletions(-)** | `git diff --shortstat v2.0.0..HEAD` |
+| tags | 12 local, 24 remote lines; no tag names any Part 1 commit | `git tag \| wc -l`; `git ls-remote --tags origin \| wc -l`; `git tag -l v2.1.0` → empty |
 
 The arc by top-level directory (`git diff --numstat v2.0.0..HEAD`, grouped):
 
 | directory | files | + | − |
 |---|---|---|---|
-| `packages/` | 673 | 32234 | 3627 |
+| `packages/` | 673 | 32291 | 3627 |
 | `tests/` | 36 | 6296 | 50 |
 | `schemas/` | 8 | 3915 | 39 |
-| `docs/` | 26 | 3522 | 79 |
+| `docs/` | 26 | 3526 | 85 |
 | `.github/` | 7 | 1901 | 39 |
 | root files | 9 | 1650 | 14 |
 | `manifests/` | 14 | 1089 | 0 |
@@ -49,10 +51,10 @@ The arc by top-level directory (`git diff --numstat v2.0.0..HEAD`, grouped):
 | `releases/` | 1 | 71 | 0 |
 | `spec/` | 1 | 16 | 0 |
 
-The sixteen commits, oldest first: `a9ea68c` (the 2.0.0 witness commit, which is on `main`),
+The eighteen commits, oldest first: `a9ea68c` (the 2.0.0 witness commit, which is on `main`),
 `5209c1e` P0, `f28d58e` PA, `441a509` P1, `606e844` P2, `6351fe1` P3, `9069fa9` P4, `e37cf20` P5,
 `c52e496` P6, `e540de8` PC, `4ee2788` P7, `a9c0660` P8 (the first qualification), `b9ccb2c` PB,
-`a214192` P8 (attempt 2), `cca0ec8` PS, `248743d` PT.
+`a214192` P8 (attempt 2), `cca0ec8` PS, `248743d` PT, `a0d5db1` P8 (attempt 4), `1a26576` PD.
 
 ## 2. Resulting architecture
 
@@ -76,9 +78,9 @@ the v1 surface: `metadata`, `detect()`, `validate_source()`, `capabilities()` ar
 Part 1. The contract stays enforced at class-definition time in `__init_subclass__`.
 `ADAPTER_API_VERSION` is `2.0.0` (`version.py:273`).
 
-Direction model: the fourteen declare `bidirectional` ×11 and `ingest` ×3
-(`manifests/*.json`, `adapter.direction`). MODEL, TRANSPORT and COMPOSITE exist in the model and
-are declared by none of the fourteen.
+Direction model, re-derived from `manifests/*.json` this round: the fourteen declare
+`bidirectional` ×11 and `ingest` ×3. MODEL, TRANSPORT and COMPOSITE exist in the model and are
+declared by none of the fourteen.
 
 ## 4. CDM changes
 
@@ -96,7 +98,9 @@ union widened to six), `VerticalPosition`, `VerticalExtent`, `BoundingBox` and t
 Published schemas: `python -m synapse_cdm.schemas --check --out schemas` (from the repository root)
 → `CURRENT: schemas vs models at 2.1.0`, in the working tree and in the fresh clone alike.
 `git diff --shortstat v2.0.0..HEAD -- schemas/` → **8 files changed, 3915 insertions(+), 39
-deletions(-)**.
+deletions(-)**, and `git diff --name-only cca0ec8..HEAD -- schemas/ manifests/` → **0 files**: no
+schema and no manifest has moved since round PS, so the last three commits of the arc cannot have
+changed what a consumer validates against.
 
 Backwards compatibility, derived and not asserted — see section 14 for the goldens.
 
@@ -136,7 +140,8 @@ inapplicability does not block a rung while an undeclared SKIP does. Not resolve
 
 `synapse conformance run --all --require A,B,C,D,F,G,H,J,K,L,O --format json` → **exit 0,
 fourteen CONFORMANT, no FAIL on any check for any adapter**. That is the required set CI and the
-release pipeline use (`ci.yml:143`, `publish.yml:304`, `publish.yml:514`, `rc-build.yml:94`).
+release pipeline use (`ci.yml:143`, `publish.yml:304`, `publish.yml:514`, `rc-build.yml:94`), and
+the pipeline's own run of it on this commit printed `14 of 14 CONFORMANT` (section 13).
 
 The full verdict table, from one `--all` sweep in the fresh clone:
 
@@ -167,22 +172,29 @@ fixtures are parsed dicts with nothing to truncate, and both declare the inappli
 
 **The sweep's record is deterministic.** Two consecutive sweeps with the same arguments, written to
 two files, are **byte-identical** (`cmp` reports no difference). The only `seconds` substring in the
-record is `microseconds`, five times, inside fixture element paths in check H's records — content,
-not a clock. That is the property round PB's change to check H was for, and it is the property this
-report tests rather than the weaker "no such substring".
+record is `microseconds`, five times of five, inside fixture element paths in check H's records —
+content, not a clock. That is the property round PB's change to check H was for, and it is the
+property this report tests rather than the weaker "no such substring".
+
+The sweep's `generated_with` block names what produced it: `adapter_api` 2.0.0, `package` 2.0.0,
+`schema` 2.1.0.
 
 ## 8. Evidence
 
 `evidence.py` (767 lines, rounds P4 and PB), `EVIDENCE_SCHEMA_VERSION` `1.0.0`, with §34's six
-loss categories in `lossless.classify` and §33's `PROVENANCE.json` per fixture directory.
+loss categories in `lossless.classify` and §33's `PROVENANCE.json` per fixture directory (39
+tracked).
 
 * `python -m synapse_cdm.evidence provenance` → `COMPLETE: 39 fixture directories under §33`.
 * `synapse evidence generate --all`, twice into two directories → **14 records each**; comparing
-  the two generations with `evidence.MASKED` removed leaf by leaf → **empty for all fourteen**.
-* `synapse evidence verify` over all fourteen records → **14 REPRODUCED, exit 0**.
-* `evidence.MASKED` is exactly `("generated_at", "test_run.duration_s")` — **two** entries. The
-  third candidate, the refusal record's wall clock, was removed at the source by PB rather than
-  masked, so the artefact no longer contains an unreproducible value to hide.
+  the two generations leaf by leaf, **the only leaves that differ are the two `evidence.MASKED`
+  names** — `generated_at` and `test_run.duration_s`, 28 differing leaves over 14 records, two per
+  record and nothing else. The masked comparison is therefore empty for all fourteen.
+* `synapse evidence verify` over all fourteen records → **14 REPRODUCED, exit 0**, each line
+  naming the mask it applied.
+* `evidence.MASKED` is exactly `("generated_at", "test_run.duration_s")` (`evidence.py:96`) —
+  **two** entries. The third candidate, the refusal record's wall clock, was removed at the source
+  by PB rather than masked, so the artefact no longer contains an unreproducible value to hide.
 * Loss report, summed over the fourteen: `DROPPED` **0**, `UNSUPPORTED` **0**, `DERIVED` **0**,
   `NORMALIZED` 38, `PRESERVED` 187, `RESIDUAL` 2877; **274** fixtures classified and **264**
   skipped as non-JSON payloads.
@@ -197,11 +209,13 @@ platform secret scanning and push protection were enabled in P5; the parser-safe
 bounds are declared per adapter in each manifest's `capabilities.limits`, with
 `absent_because` where no bound is enforced.
 
-* `gitleaks git --config .gitleaks.toml --log-opts "origin/main..HEAD" .` → **15 commits scanned,
-  no leaks found**, in the fresh clone and in the working tree.
+* `gitleaks git --log-opts "origin/main..HEAD"` → **17 commits scanned, no leaks found**, in the
+  fresh clone; the pipeline's own gitleaks step on this commit reads `no leaks found` too.
 * `gates/codeql_gate.py` over both SARIFs of the CodeQL run on this commit (`codeql.yml` run
-  34284003597, success; analyses `1744292479` python and `1744290501` javascript-typescript, each
-  `results_count` 0) → **0 results, 0 blocking, 0 excepted, 0 unclassified, exit 0**.
+  **34295041904**, success; analyses **1744827404** python and **1744825958**
+  javascript-typescript, each `results_count` **0**) → **0 results, 0 blocking, 0 reported, 0
+  unclassified, exit 0** for each. The pipeline's own CodeQL gate step reads `0 result(s), 0
+  blocking`.
 * `gh api …/code-scanning/alerts?ref=refs/heads/soif/1.0` → **zero open**; the four HIGH findings
   of CodeQL's first run are all `fixed`, closed at their sites by round PC.
 * `security/exceptions/` → two exception files (`GHSA-5p2g-fcmc-qvqq.json`,
@@ -212,9 +226,9 @@ bounds are declared per adapter in each manifest's `capabilities.limits`, with
 
 ## 10. Dependencies
 
-`.github/dependabot.yml` (pip, github-actions, npm; weekly; minor+patch grouped),
-`dependency-review.yml` at `fail-on-severity: high`, a `supply-chain` CI job running
-`pip-audit --strict` twice — over the installed environment and over the wheel's own frozen
+`.github/dependabot.yml` (pip, github-actions, npm — three ecosystems; weekly; minor+patch
+grouped), `dependency-review.yml` at `fail-on-severity: high` (`:53`), a `supply-chain` CI job
+running `pip-audit --strict` twice — over the installed environment and over the wheel's own frozen
 closure in a clean venv (round P6) — and, since PB, a **`docs-audit`** job (`ci.yml:322`) that runs
 `npm audit` over `docs/` at `--audit-level=high` with its allowlist derived from
 `security/exceptions/` and nothing typed into the workflow.
@@ -222,47 +236,65 @@ closure in a clean venv (round P6) — and, since PB, a **`docs-audit`** job (`c
 **Python: clean.** `pip-audit --strict` in the fresh clone, with the ignores the gate derives
 (`--ignore-vuln GHSA-5p2g-fcmc-qvqq --ignore-vuln GHSA-w3rx-r6r6-pgpr`, printed by
 `gates/codeql_gate.py --emit-pip-audit-ignores` before they are used) → **No known vulnerabilities
-found**, exit 0.
+found**, exit 0. The pipeline's own strict `pip-audit` step on this commit reads the same.
 
-**npm: two unexcepted HIGH advisories, as of 2026-09-08T22:13:41Z. This is blocker 1.** Read by the
+**npm: clean at the floor the gate enforces. Attempt 4's blocker is closed.** Read by the
 `docs-audit` job's own logic — `npm audit --prefix docs --json`, one advisory per object-valued
-`via` entry, keyed by GHSA id:
+`via` entry, keyed by GHSA id — at 2026-09-09T00:28:58Z in the working tree and at 00:34:27Z in the
+fresh clone, **the same three advisories both times**:
 
 | advisory | package | installed | npm severity | excepted | first patched |
 |---|---|---|---|---|---|
 | `GHSA-5p2g-fcmc-qvqq` | image-size | 2.0.2 | high | **yes** | none published |
 | `GHSA-w3rx-r6r6-pgpr` | image-size | 2.0.2 | high | **yes** | none published |
-| `GHSA-2883-xcg3-v3hh` | js-yaml | 4.3.1 | **high** | no | **4.3.2** |
-| `GHSA-w27v-7q3p-w38r` | svgo | 3.3.4 | **high** | no | **3.3.5** |
-| `GHSA-4vpr-x523-8j87` | svgo | 3.3.4 | moderate | no | 3.3.5 |
 | `GHSA-w5hq-g745-h8pq` | uuid | 8.3.2 | moderate | no | 11.1.1 |
 
-Six advisories; the gate's blocking set is the high-or-critical ones that are not excepted, and
-that set is **`['GHSA-2883-xcg3-v3hh', 'GHSA-w27v-7q3p-w38r']`** — two, where the gate needs zero.
-`npm audit --prefix docs --audit-level=high` exits **1**.
+The gate's blocking set is the high-or-critical ones that are not excepted, and that set is
+**empty**. The enforcing step's own line, reproduced locally:
+`advisories: 3; excepted and present: ['GHSA-5p2g-fcmc-qvqq', 'GHSA-w3rx-r6r6-pgpr']; excepted and
+absent: []`, followed by `OK — no unexcepted high or critical npm advisory in docs/`, exit 0.
 
-**The timing matters, and it is why CI on this commit is green.** The two advisories were published
-at **2026-09-08T21:20:28Z** (svgo) and **2026-09-08T21:24:51Z** (js-yaml)
-(`gh api advisories/<id>`), and npm's audit endpoint began serving them between **22:05:06Z** and
-**22:13:41Z**. `ci.yml` run 34284003679 on this commit ran its `docs-audit` step at 22:05:06Z and
-printed `advisories: 3; excepted and present: ['GHSA-5p2g-fcmc-qvqq', 'GHSA-w3rx-r6r6-pgpr'];
-excepted and absent: []` followed by `OK — no unexcepted high or critical npm advisory in docs/`.
-That green is true of the instant it was taken and false of this tree now: the same job, run again
-on the same commit, fails. A readiness report that quoted only the run would be quoting a stale
-world.
+**And the gate itself says so, on this commit, in CI.** `ci.yml` run **34295041951**, pushed at
+00:26:48Z, is **success** in all six jobs, and its `docs-audit` job printed, at 00:27:24Z and
+00:27:28Z:
 
-**And this one is not cleared by advancing `main`.** The eleven open Dependabot alerts —
-`gh api …/dependabot/alerts?state=open` → **11: 7 high, 4 medium**, every one `npm` in
-`docs/package-lock.json` — are computed against the **default branch**, and eight of the nine
-non-excepted ones name `fast-uri`, `qs` and `serialize-javascript`, which this branch already
-overrides (`git show origin/main:docs/package-lock.json` has 3.1.5 / 6.15.3 / 6.0.2; this commit has
-3.1.7 / 6.16.0 / 7.1.1). Those fall when `main` fast-forwards. The two new ones do not: `js-yaml`
-is **4.3.1 on `main` and 4.3.1 here**, `svgo` **3.3.4 and 3.3.4** — the branch carries the
-vulnerable versions itself, so no merge can clear them and only a lockfile change can.
+```text
+derived: [GHSA-5p2g-fcmc-qvqq GHSA-w3rx-r6r6-pgpr]
+npm audit --audit-level=high exited 1; an excepted advisory makes that
+advisories: 3; excepted and present: ['GHSA-5p2g-fcmc-qvqq', 'GHSA-w3rx-r6r6-pgpr']; excepted and absent: []
+OK — no unexcepted high or critical npm advisory in docs/
+```
 
-**Both of attempt 2's dependency findings remain closed.** The npm tree is audited on every push by
-a job that derives its allowlist from `security/exceptions/`, and it is that very job — working as
-designed, on advisories published forty minutes before this reading — which now refuses the tree.
+The bare `npm audit --prefix docs --audit-level=high` still exits **1**, here and on the runner,
+and always will while either `image-size` exception is outstanding: `ci.yml:352–369` says so in its
+own words and captures the status rather than discarding it. The step that decides is the one
+above, and its verdict is zero blocking.
+
+**The two `image-size` exceptions are outstanding because there is nothing to upgrade to.** Both
+advisories report `first_patched_version: null` over `<= 2.0.2`, and npm's `latest` dist-tag for
+that package **is** the installed 2.0.2. M's standing rule — a HIGH with a fix is upgraded, never
+excepted — is therefore not triggered for them, and it is exactly what PD applied to the other two.
+
+**The eleven open Dependabot alerts are a property of `main`, and nine of them fall when `main`
+fast-forwards.** `gh api …/dependabot/alerts?state=open` → **11: 7 high, 4 medium**, every one
+`npm` in `docs/package-lock.json`: `fast-uri` ×4, `serialize-javascript` ×2, `qs` ×2,
+`image-size` ×2, `uuid` ×1. The alerts are computed against the **default branch**, and the branch
+under review already carries the upgrade for every package but the two that have no fix:
+
+| package | `origin/main` | this commit |
+|---|---|---|
+| `fast-uri` | 3.1.5 | **3.1.7** |
+| `qs` | 6.15.3 | **6.16.0** |
+| `serialize-javascript` | 6.0.2 | **7.1.1** |
+| `js-yaml` | 4.3.1 | **4.3.2** (round PD) |
+| `svgo` | 3.3.4 | **3.3.5** (round PD) |
+| `image-size` | 2.0.2 | 2.0.2 — excepted, no fix published |
+| `uuid` | 8.3.2 | 8.3.2 — moderate, below the gate's floor |
+
+So of the eleven, the eight `fast-uri`/`qs`/`serialize-javascript` alerts fall with the merge, the
+two `image-size` ones are the excepted pair, and the `uuid` one is a moderate the gate does not
+reach. Nothing in the list is a HIGH with an available fix that this branch does not already take.
+That is verified after the release rather than before it — section 15, limitation 16.
 
 ## 11. SBOM
 
@@ -272,30 +304,31 @@ environment** the previous step built, plus a `cyclonedx-py` cross-check over th
 environment. §46 asks for both formats "where supported by tooling" and makes the SBOM a release
 artefact.
 
-**The stage is green on this commit, and that closes both of attempt 2's blockers.** The
-`workflow_dispatch` run of `publish.yml` on `soif/1.0` (run
-[34284117127](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/34284117127),
-`head_sha` `248743d7…`, created 22:05:50Z, concluded 22:21:35Z `success`) ran all four SBOM steps
-green and printed, from its own assertion step:
+**Green on this commit, in this round's own dispatch.** The `workflow_dispatch` run of
+`publish.yml` on `soif/1.0` (run
+[34295137040](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/34295137040),
+`head_sha` `1a26576350cbd847add2b958bcb18c023002f0f6`, created 00:28:08Z, concluded 00:43:39Z
+**success**) ran all four SBOM steps green and printed, from its own assertion step at 00:37:12Z:
 `SPDX: 19 packages. CycloneDX: 50 components. synapse-cdm at 2.0.0 in both, and in the
 cross-check.`
 
-Both documents were downloaded from the run and re-counted here rather than trusted:
+Both documents were downloaded from the run (`gh run download 34295137040`) and re-counted here
+rather than trusted:
 
 * `synapse_cdm.spdx.json` → **SPDX-2.3, 19 packages**, with `synapse-cdm 2.0.0` present.
 * `synapse_cdm.cdx.json` → **CycloneDX 1.7, 50 components** — 12 `library`, 32 `file`,
   6 `application` — with `synapse-cdm 2.0.0` a `library`, and **12 of 50** declaring a licence.
-* The two documents' SHA-256 digests, re-derived locally from the downloaded bytes, equal the
-  entries the run's own `SHA256SUMS` carries for them
-  (`0c1683c8…` cdx, `16a239c3…` spdx). `SHA256SUMS` covers **six** artefacts: the wheel, the sdist,
-  both SBOMs, the conformance JSON and the evidence archive.
+* **All six** `SHA256SUMS` entries re-derived locally from the downloaded bytes and compared, not
+  just the two SBOMs: `abf69a58…` spdx, `7277cc7a…` cdx, `15a87650…` wheel, `5de4b80a…` sdist,
+  `0bce02ea…` `conformance-2.0.0.json`, `226a9210…` `evidence-2.0.0.tar.gz`. Every one equals the
+  run's own entry. `SHA256SUMS` covers **six** artefacts and no more.
 
 Attempt 2's blocker 1 was a wheel path built out of `github.ref_name`, which never exists on a
 branch dispatch; PS replaced it with a path derived from `PACKAGE_VERSION`, and the run's step 6 is
 named for that rule. Attempt 2's blocker 2 was an SBOM over a wheel *file*, which enumerated one
 package and zero components; PS moved the scan to the clean-install environment, and the counts
 above are what that produces. Neither reading is an assertion about the repair: they are the
-pipeline's own output on this commit.
+pipeline's own output on this commit, taken twice now on two different commits.
 
 ## 12. Build provenance
 
@@ -303,12 +336,12 @@ pipeline's own output on this commit.
 both SBOM files and the evidence archive, then runs `gh attestation verify` against each.
 `id-token: write` and `attestations: write` are scoped to that job alone and to no other.
 
-**Proven on this commit for the first time.** In run 34284117127 the `attest` job is **success**:
+**Proven on this commit.** In run 34295137040 the `attest` job is **success** (00:43:05Z→00:43:38Z):
 `Attestation created for 5 subjects`, published at
-`…/attestations/46093962`, and the verification step ran `gh attestation verify` over each of the
-five subjects — the wheel, the sdist, `sbom/synapse_cdm.cdx.json`, `sbom/synapse_cdm.spdx.json` and
-`evidence-2.0.0.tar.gz` — under `set -euo pipefail`, so the job's green is each verification's
-exit 0.
+`https://github.com/Decent-Cybersecurity/synapsecommand-public/attestations/46115699`, and the
+verification step opened five `verify` groups — the wheel, the sdist, `sbom/synapse_cdm.cdx.json`,
+`sbom/synapse_cdm.spdx.json` and `evidence-2.0.0.tar.gz` — under `set -euo pipefail`, so the job's
+green is each verification's exit 0.
 
 `rc-build.yml` (round P6), the other workflow that composes the same artefact set, still cannot be
 dispatched at all until it is on the default branch: its first run is necessarily post-release,
@@ -325,22 +358,36 @@ annotated-tag check in `gate`; 2 and 4 in `build`, because both read `dist/`), a
 a version comment. `publish`, `release` and `witness` are each guarded by
 `if: startsWith(github.ref, 'refs/tags/v')`, which is why a branch dispatch cannot publish.
 
-The dispatch on this commit, stage by stage:
+This round's dispatch on this commit, stage by stage — **every step of every job that a branch can
+reach is success, and no step of any job failed**:
 
 | §50 stage | job | conclusion |
 |---|---|---|
-| gate — lint, suite, conformance, security gates, annotated-tag check | `gate` | **success** (Condition 3 and the annotated-tag check `skipped`: they are tag-only) |
-| package build, clean install, package test, SBOM ×3, hash, Condition 4 | `build` | **success — every step** |
+| gate — lint, suite, conformance, security gates, annotated-tag check | `gate` | **success**, 17 steps (Condition 3 and the annotated-tag check `skipped`: they are tag-only) |
+| package build, clean install, package test, SBOM ×3, hash, Condition 4 | `build` | **success — all 18 steps** |
 | Sigstore build provenance and its verification | `attest` | **success — 5 subjects created and verified** |
 | PyPI upload / GitHub Release / witness | `publish`, `release`, `witness` | `skipped` — the tag guard |
 
-The `gate` job's own suite step read **5103 passed, 76 skipped** on the runner, and its clean-install
-slice **3116 passed, 7 skipped**.
+Readings the run took of itself, quoted from its log:
 
-CI-side readings on this same commit: `ci.yml` run **34284003679 success** (six jobs — suite/gates/
+* Lint (`ruff`, the narrowed rule set): `All checks passed!`
+* Condition 1 — the suite: **5103 passed, 76 skipped** in 340.88s.
+* Schemas: `CURRENT: schemas vs models at 2.1.0`. Manifests:
+  `CURRENT: manifests vs 14 shipped adapters at manifest schema 1.2.0`.
+* Conformance, as one artefact: **14 of 14 CONFORMANT**. Evidence:
+  `COMPLETE: 39 fixture directories under §33`.
+* Security gates: gitleaks `no leaks found`; `pip-audit` `No known vulnerabilities found`;
+  CodeQL gate `0 result(s), 0 blocking`.
+* Condition 2 — `gates/wheel_install.py` on the runner: **13 checks, 0 failed**, slice
+  **3116 passed, 7 skipped**.
+* `twine check --strict` on the gated bytes: `PASSED` for the wheel and for the sdist.
+* Package test: **14 adapters CONFORMANT from the installed wheel**.
+* Condition 4's own re-run of the suite: **5103 passed, 76 skipped** in 343.08s.
+
+CI-side readings on this same commit: `ci.yml` run **34295041951 success** (six jobs — suite/gates/
 manifests, conformance, evidence, gitleaks, supply-chain, docs-audit), `codeql.yml` run
-**34284003597 success** (two languages, 0 results each). Section 10 records what the `docs-audit`
-job's green does and does not mean on a tree whose advisory set changed eight minutes later.
+**34295041904 success** (two languages, 0 results each). Section 10 quotes the `docs-audit` job's
+own lines.
 
 * Notes: `synapse release-notes` (`release_notes.py`, 387 lines) renders nine of §52's ten fields
   from the tree and **quotes** the tenth, *major changes*, from `RELEASE_NOTES.md` — refusing when
@@ -359,7 +406,7 @@ job's green does and does not mean on a tree whose advisory set changed eight mi
 **All fourteen public adapters continue to work, and the CDM change is additive in the goldens as
 well as in the schemas.** Derived this round by comparing every golden at `v2.0.0` against the same
 file at this commit, leaf by leaf (`git show v2.0.0:<path>` versus `git show HEAD:<path>`, JSON
-paths flattened), and not carried from any earlier report:
+paths flattened and list indices normalised), and not carried from any earlier report:
 
 | reading | value |
 |---|---|
@@ -368,9 +415,15 @@ paths flattened), and not carried from any earlier report:
 | objects compared | 1308 |
 | JSON paths **removed** | **0** |
 | JSON values **moved** | **1** — `schema_version`, on all 1308 objects |
-| JSON paths added | 11: `source.source_hash`, `source.format_name`, `source.format_version`, `source.observed_at`, `source.original_id`, `source.record_index`, `status`, `quality`, `residual` (1308 each); `position.vertical` (259) and `samples.position.vertical` (89) |
+| JSON paths added | 11: `source.source_hash`, `source.format_name`, `source.format_version`, `source.observed_at`, `source.original_id`, `source.record_index`, `status`, `quality`, `residual` (1308 objects each); `position.vertical` (259) and `samples.position.vertical` (89) |
 
-`git diff --shortstat cca0ec8..HEAD -- '**/golden/**'` → empty: no golden moved in PS or PT either.
+The two counts in that last row are per OBJECT. Counted per OCCURRENCE instead,
+`samples.position.vertical` is 117, because some objects carry several samples; the other ten paths
+occur at most once per object and their two counts coincide. The per-object figure is the one
+earlier reports state and the one comparable across them.
+
+`git diff --shortstat cca0ec8..HEAD -- '*golden*'` → empty: no golden moved in PS, PT, P8 attempt 4
+or PD either.
 
 Fixture verdicts: `gates/wheel_install.py` reports **1076** over the roster, the 538 run in each of
 two schema modes, 0 failed, 13 checks 0 failed; the conformance sweep reports fourteen CONFORMANT
@@ -379,14 +432,13 @@ with zero FAIL (section 7).
 ## 15. Known limitations
 
 Everything the campaign deferred, each with where it is recorded. None of these is a blocker;
-blockers are section 20.
+blockers are section 20, and section 20 is empty.
 
-1. **47 ruff `F` findings, and no mypy configuration** (round P7). Re-derived this round with the
-   pinned ruff 0.16.6: **12** in `packages/cdm`, **3** in `gates/`, **32** in `tests/`. The
-   workflow's own command, `ruff check --config packages/cdm/pyproject.toml packages/cdm gates
-   tests`, prints `All checks passed!`: the configured rule set selects `E9`, which finds nothing,
-   while `F` finds 47 and fixing them means editing shipped modules. Widening the rule set is a
-   round of its own.
+1. **47 ruff `F` findings, and no mypy configuration** (round P7). Re-derived this round with
+   ruff 0.16.6: **12** in `packages/cdm`, **3** in `gates/`, **32** in `tests/`. The workflow's own
+   command, `ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests`, prints
+   `All checks passed!`: the configured rule set selects `E9`, which finds nothing, while `F` finds
+   47 and fixing them means editing shipped modules. Widening the rule set is a round of its own.
 2. **`ARCHITECTURE.md:487`'s one-workflow sentence is false** (five workflows exist). §7's job
    table is otherwise satisfied.
 3. **`evidence.available` is `false` on all fourteen** and `artifact_hashes` is empty. Both flip
@@ -431,11 +483,14 @@ blockers are section 20.
     at `.git/info/exclude`, so it is invisible to a clone and to every commit, and the tests that
     see it walk the filesystem rather than the git index. A fresh clone of this commit is **0
     failed** (section 17).
-16. **The `uuid` and `svgo` moderate advisories have no taken fix**, and the eleven default-branch
-    Dependabot alerts of section 10 stay open until `main` fast-forwards. The moderates are below
-    the floor the `docs-audit` gate enforces; the eleven are a property of `main`'s tree and are
-    verified after the release rather than before it. The two HIGH ones are **not** in this list:
-    they are section 20's blocker.
+16. **Two advisories have no taken fix, and eleven default-branch Dependabot alerts stay open until
+    `main` fast-forwards.** The two are the `image-size` pair, HIGH, excepted because
+    `first_patched_version` is `null` and npm's `latest` for that package is the installed 2.0.2;
+    the `uuid` moderate is below the floor the `docs-audit` gate enforces. The eleven are a
+    property of `main`'s tree, and section 10's table shows this branch already carries the
+    upgrade for every one of them that has a fix — so they are verified after the release rather
+    than before it. Nothing here is section 20's: attempt 4's blocker was two HIGHs **with**
+    published fixes, and round PD took the fixes.
 
 ## 16. Intentionally deferred work
 
@@ -462,16 +517,16 @@ the clone's own distribution installed editable by absolute path.
 
 ```bash
 # 0  the clone
-git clone --no-local <repo> clone && cd clone && git checkout 248743d
+git clone --no-local <repo> clone && cd clone && git checkout 1a26576
 python -m venv .venv && .venv/bin/pip install -e "$PWD/packages/cdm[test]"
+pip install build twine pip-audit ruff        # what the clone needs and the package does not
 # 1  unit + adapter tests
 python -m pytest -q                                  # in <clone>, and in the working tree
 # 2  conformance
 synapse conformance run --all --require A,B,C,D,F,G,H,J,K,L,O --format json   # twice, then cmp
-synapse conformance run --all --require A,B,C,D,E,F,G,H,J,K,L,N,O --format json
-synapse conformance run --all --format json          # the verdict table of section 7
+synapse conformance run --all --require A,B,C,D,E,F,G,H,J,K,L,N,O --format json  # the §17 SKIP proof
 # 3  packaging
-cd packages/cdm && python -m build && python -m twine check --strict dist/*
+python -m build packages/cdm --outdir dist && twine check --strict dist/*
 # 4  clean install
 python gates/wheel_install.py
 # 5  schema drift  (from the repository ROOT)
@@ -480,46 +535,57 @@ python -m synapse_cdm.schemas --check --out schemas
 python -m synapse_cdm.manifests --check --out manifests
 python -m pytest -q tests/test_cdm_manifests.py
 # 7  evidence
-python -m synapse_cdm.evidence provenance
-synapse evidence generate --all --out ev1 && synapse evidence generate --all --out ev2
-synapse evidence verify ev1/*/*/evidence.json        # and a masked leaf-by-leaf diff of ev1 vs ev2
-synapse evidence badges                              # from a directory with no record
+synapse evidence provenance
+synapse evidence generate --all --out ev1 && synapse evidence generate --all --out ev2  # then diff
+synapse evidence verify ev1/*/*/evidence.json
+synapse evidence badges                              # from a directory with no record: exits 2
 # 8  security
-gitleaks git --config .gitleaks.toml --log-opts "origin/main..HEAD" .
-gh api -H "Accept: application/sarif+json" repos/<owner>/<repo>/code-scanning/analyses/<id>
-python gates/codeql_gate.py <both sarifs>
+gitleaks git --log-opts "origin/main..HEAD" --redact --no-banner
+gh api repos/<owner>/<repo>/code-scanning/analyses/<id> -H 'Accept: application/sarif+json' \
+  | python gates/codeql_gate.py /dev/stdin           # both languages of this commit's run
 python -m pytest -q -k "no_network or network"
-gh api repos/<owner>/<repo>/code-scanning/alerts?ref=refs/heads/soif/1.0
 # 9  dependencies
 python gates/codeql_gate.py --emit-pip-audit-ignores
-pip-audit --strict <the derived ignores>
-npm audit --prefix docs --audit-level=high ; npm audit --prefix docs --json
-gh api advisories/<ghsa-id>                          # each advisory's publication instant
-gh api repos/<owner>/<repo>/dependabot/alerts?state=open --paginate
+pip-audit --strict $(python gates/codeql_gate.py --emit-pip-audit-ignores)
+npm audit --prefix docs --audit-level=high           # for the log; its status is not the verdict
+npm audit --prefix docs --json                       # the verdict, by ci.yml:379-410's own logic
+gh api repos/<owner>/<repo>/dependabot/alerts?state=open
 # 10 SBOM and provenance
-gh run download <run> && shasum -a 256 <the downloaded SBOMs>
+gh workflow run publish.yml --ref soif/1.0 && gh run watch <run>
+gh run download <run> && shasum -a 256 <every artefact> # against the run's own SHA256SUMS
 # 11 documentation
-npm ci && npm run build                # in <clone>/docs, F8.3's scope
+cd docs && npm ci && npm run build
 # 12 the pipeline itself
-gh workflow run publish.yml --ref soif/1.0 && gh run view <run> --log
+gh run view <run> --json jobs                        # every step of every job
 # 13 lint, for section 15
 ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests
 ruff check --select F --config packages/cdm/pyproject.toml packages/cdm gates tests
 ```
 
-Suite figures, both taken at this commit: **fresh clone → 0 failed, 5105 passed, 74 skipped**
-(collection 5179); **working tree → 4 failed, 5169 passed, 6 skipped**, whose failures are all in the local apparatus
-directory of limitation 15 and in no tracked file.
+Suite figures, at the commit of section 18: **fresh clone → 0 failed, 5105 passed, 74 skipped**
+(151.39s), collection 5179. The clone's is the citable figure.
+
+The working tree's run of the same suite reads **4 failed, 5168 passed, 7 skipped**, and the two
+differences from the clone are both accounted for. The four failures are all in the local apparatus
+directory of limitation 15 and in no tracked file. The one pass/skip difference from the clone
+figure above is **this report's own effect**: the commit that carries this file makes `blocked:` an
+empty list, which is what `tests/test_cdm_readiness.py`'s empty-list branch tests — so that branch
+runs (and passes) where it used to skip, and the two converse tests skip instead. Measured, not
+argued: that file alone reads 27 passed / 1 skipped at the commit of section 18 and 26 passed / 2
+skipped at the commit that carries this file, with collection 5179 at both. A clone of the latter
+commit therefore reads **0 failed, 5104 passed, 75 skipped**.
 
 Documentation check (§56's last item, F8.3 = build only): `npm ci` then `npm run build` in the
-fresh clone → `npm ci` exit 0, then **`[SUCCESS] Generated static files in "build"`, exit 0**.
+fresh clone → `npm ci` exit 0 (1297 packages added from the committed lock), then
+**`[SUCCESS] Generated static files in "build"`, exit 0**, 66 files written, with the `prebuild`
+schema generator reporting `0 written, 9 already current`.
 
 ## 18. Commit
 
-This report describes **`248743d737553fc2c33cec9ea716fec571bef9d0`** — round PT's commit, the tip
-of `soif/1.0` and, since 2026-09-08T22:04:30Z, its remote tip. `origin/main` is unmoved at
+This report describes **`1a26576350cbd847add2b958bcb18c023002f0f6`** — round PD's commit, the tip
+of `soif/1.0` and, since 2026-09-09T00:26:46Z, its remote tip. `origin/main` is unmoved at
 `a9ea68c1fdb260b91142330d3d06b5b6552e8476`; `git merge-base HEAD origin/main` is that same commit;
-no tag names any commit on this branch (12 local, 24 remote tag lines, unmoved).
+no tag names any commit on this branch (12 local, 24 remote tag lines, `v2.1.0` absent).
 
 The commit that carries **this file** is the round-P8 commit immediately after it, whose subject
 begins `SOIF P8`. Its hash is deliberately not written here: a hash cannot name the commit that
@@ -527,89 +593,54 @@ carries it, and a number written before the commit exists is a number nobody re-
 
 ## 19. Release status
 
-**NO RELEASE.** Spec §57: "If blockers are non-empty: NO RELEASE."
+**The verdict is `ready for PR`** — §57's own phrase for an empty blocker list, and this tree
+earns it. The release round is the next step.
 
-* `PACKAGE_VERSION` stays **`2.0.0`** — and this round would not have moved it in any case. M's
-  ruling of 2026-09-08T20:56:31Z: readiness means a tree the release round can run ON, so the
-  version, the `### Unreleased` heading and `RELEASE_NOTES.md` all move in the release round,
-  atomically with the tag. `tests/test_cdm_readiness.py` (round PT) is what holds this report to
-  that rule in both directions.
-* The derivation would allow the release: `gates/bump_derivation.py --json` reads `derived_kind`
+* Every §56 item is green in a fresh clone of this commit — the suite, the conformance sweep,
+  packaging, clean install, schema drift, manifest validation, evidence, security analysis,
+  dependency analysis, SBOM, and the documentation build. The one item that was red in attempt 4,
+  the npm half of dependency analysis, is green here and green in CI on this commit (section 10).
+* The release pipeline is green end to end through every stage a branch can reach: `gate`,
+  `build` and `attest`, all steps, in this round's own dispatch (section 13).
+* The derivation allows the release: `gates/bump_derivation.py --json` reads `derived_kind`
   **MINOR**, `pending` floor **2.1.0**, `unruled` **`[]`** over **697** signals and **10** ruled
-  units, and `--mutation-check` → 1 check, 0 failed. The number is held back by this report's
-  verdict, not by the derivation.
+  units, and `--mutation-check` → 1 check, 0 failed.
+* `PACKAGE_VERSION` stays **`2.0.0`**, and that is the point. M's ruling of 2026-09-08T20:56:31Z:
+  readiness means a tree the release round can run ON, so the version, the `### Unreleased` heading
+  and `RELEASE_NOTES.md` all move in the release round, atomically with the tag. The bump gate is
+  the reason: it reads its rulings from `### Unreleased` until a tag names the declared version, so
+  moving either one early makes it refuse. `tests/test_cdm_readiness.py` holds this report to that
+  rule in both directions.
 * The five other axes are unmoved: `SCHEMA_VERSION` 2.1.0, `SC_OES_VERSION` 0.1.0,
   `ADAPTER_API_VERSION` 2.0.0, `MANIFEST_SCHEMA_VERSION` 1.2.0, `EVIDENCE_SCHEMA_VERSION` 1.0.0.
 * `MIGRATIONS.md`'s arc stays under `### Unreleased` (`:320`) with its round records under it.
-  Nothing in it is released.
-* `RELEASE_NOTES.md` still opens `# synapse-cdm 2.0.0`.
-* The release round does not run. Beyond the blocker it also needs what no round can supply: M's
-  authorisation of the number, and a fast-forward of `main` to this branch.
+  `RELEASE_NOTES.md` still opens `# synapse-cdm 2.0.0`.
 
-**Everything §56 asks for is green except one item.** The pipeline is green through `attest` for
-the first time; the SBOMs enumerate the release; the attestation exists and verifies; the suite,
-conformance, packaging, clean install, schema drift, manifests, evidence, secret scanning, CodeQL,
-`pip-audit` and the docs build are all green in a fresh clone. The one red item is the npm half of
-dependency analysis, and by this round's default 2 it is a blocker and not a repair: a red §56 item
-is written down, not fixed in passing.
+**What "ready" does not decide.** Two things this report cannot supply and does not claim:
+
+1. **M's authorisation of the number.** The release round's own fork FR.1 is unruled by design.
+   Readiness is a property of the tree; the decision to release is not.
+2. **The fast-forward of `main`.** `git merge --ff-only soif/1.0` has never been run, and a refusal
+   is a stop rather than a merge commit. It is the release round's first act, and no reading taken
+   here can predict it — only that `git merge-base HEAD origin/main` equals `origin/main`'s tip
+   today, which is the condition a fast-forward needs.
 
 ## 20. Blockers
 
 ```text
-1. docs-npm-tree-carries-two-unexcepted-high-advisories
+(none)
 ```
 
-### Blocker 1 — two HIGH npm advisories published today put `docs/`'s locked tree in breach of the gate round PB built
-
-**What is red.** `npm audit` over `docs/`, read by the exact logic of `ci.yml`'s `docs-audit` job,
-reports six advisories, of which **two are HIGH and neither is excepted**:
-
-* **`GHSA-2883-xcg3-v3hh`** — *js-yaml: `maxTotalMergeKeys` does not limit CPU use for empty
-  merges*. Installed **4.3.1**; vulnerable range `>= 4.0.0, < 4.3.2`; first patched **4.3.2**.
-  Published **2026-09-08T21:24:51Z**.
-* **`GHSA-w27v-7q3p-w38r`** — *SVGO: `removeScripts` allows executable links through namespace
-  confusion*. Installed **3.3.4**; the 3.x range is `>= 3.0.0, < 3.3.5`; first patched **3.3.5**.
-  Published **2026-09-08T21:20:28Z**.
-
-The gate's blocking set is therefore `['GHSA-2883-xcg3-v3hh', 'GHSA-w27v-7q3p-w38r']` and
-`npm audit --prefix docs --audit-level=high` exits 1. Nothing about the tree changed: the advisory
-database did, forty minutes before this reading.
-
-**Why it is a blocker and not a limitation.** Round PB added `docs-audit` precisely so that a push
-carrying an unexcepted high or critical npm advisory fails CI, and attempt 2's blocker 2 was the
-absence of that audit. The gate now does what it was built to do. The consequence is concrete: the
-next push of this branch reds `ci.yml`, and the first step of the release procedure
-(`VERSIONING.md` §5.1) is a fast-forward of `main` to this branch — so the release would land a red
-default branch. Declaring "ready for PR" over a gate that refuses the tree would be a readiness
-claim the tree contradicts.
-
-**Why advancing `main` cannot clear it.** Unlike the eleven open Dependabot alerts of section 10,
-these two are not artefacts of `main` lagging the branch: `js-yaml` is 4.3.1 on both,
-`svgo` is 3.3.4 on both. The branch carries the vulnerable versions itself.
-
-**What it does not touch.** The release pipeline does not audit npm: `publish.yml` contains no
-`npm` step, and its `gate` job's security stage is gitleaks plus the CodeQL gate plus `pip-audit`.
-Run 34284117127 is green end to end through `attest` (sections 11–13) and would be green on a tag
-today. The docs site also still builds from the audited tree (`npm run build`, exit 0). What is
-broken is the branch's compliance with its own dependency policy, not its ability to produce
-artefacts.
-
-**What the fix looks like, for whoever briefs it** — recorded because §57 asks for the blocker's
-mechanism, not because this round may take it: both packages are transitive dependencies of
-`@docusaurus/*`, so the shape is PB's own — an `overrides` entry in `docs/package.json` pinning
-`js-yaml ^4.3.2` and `svgo ^3.3.5`, `npm install` to move `docs/package-lock.json`, then the docs
-build and the audit re-run. Two files, one of them generated. The alternative — a
-`security/exceptions/` entry for each — is available and, unlike the `image-size` pair, would be
-hard to argue: a fix exists upstream in both cases.
-
-**What is unproven.** Whether a bump to `js-yaml 4.3.2` and `svgo 3.3.5` leaves the Docusaurus
-build green. This round did not try it: trying it is the repair.
-
----
+No §56 item is red on this commit, no pipeline stage a branch can reach is red, and nothing in
+section 15 rises to a blocker. Attempt 4's one blocker,
+`docs-npm-tree-carries-two-unexcepted-high-advisories`, was closed by round PD by upgrade — the
+`js-yaml` and `svgo` versions the two advisories named are no longer in the lock — and section 10
+records the gate's verdict on the result, both locally and in CI on this commit.
 
 ## Appendix — §58's definition of done, line by line
 
-Each line of spec §58 with the file that satisfies it, and the ones that do not.
+Each line of spec §58 with the file that satisfies it, and the ones that are satisfied only as
+files because a branch cannot execute them.
 
 | §58 line | satisfied by | verdict |
 |---|---|---|
@@ -638,25 +669,30 @@ Each line of spec §58 with the file that satisfies it, and the ones that do not
 | secret scanning | platform + `.gitleaks.toml` + the `secrets` CI job | yes |
 | push protection where available | enabled in P5 | yes |
 | parser safety policy | `SECURITY.md`, `capabilities.limits` on all fourteen | yes |
-| dependency review | `dependency-review.yml`, `fail-on-severity: high` | yes, pull-request-only |
-| Dependabot | `.github/dependabot.yml`, and `docs-audit` enforcing its npm findings | yes — and it is the gate now refusing the tree, blocker 1 |
-| vulnerability scanning | `pip-audit --strict` ×2 plus `npm audit` at high, in CI | **written and working; the npm half is RED on this tree** |
+| dependency review | `dependency-review.yml`, `fail-on-severity: high` | yes, and pull-request-only by the action's own trigger |
+| Dependabot | `.github/dependabot.yml`, three ecosystems, and `docs-audit` enforcing its npm findings on every push | yes |
+| vulnerability scanning | `pip-audit --strict` ×2 plus `npm audit` at high, in CI | **yes — both halves green on this commit** |
 | CodeQL | `codeql.yml` + `gates/codeql_gate.py`, 0 blocking | yes |
-| SBOM | `publish.yml` `build`, syft over the clean-install environment, both formats, plus a `cyclonedx-py` cross-check | **yes — green on this commit** |
-| build attestation | `publish.yml` `attest`, Sigstore + `gh attestation verify`, 5 subjects | **yes — executed and verified on this commit** |
-| repeatable CI release pipeline | `publish.yml`, six jobs in §50's order, green through `attest` | **yes for every stage a branch can reach** |
+| SBOM | `publish.yml` `build`, syft over the clean-install environment, both formats, plus a `cyclonedx-py` cross-check | yes — green on this commit |
+| build attestation | `publish.yml` `attest`, Sigstore + `gh attestation verify`, 5 subjects | yes — executed and verified on this commit |
+| repeatable CI release pipeline | `publish.yml`, six jobs in §50's order, green through `attest` | yes for every stage a branch can reach |
 | GitHub Release | `publish.yml` `release`, notes from `synapse release-notes` | written, tag-gated |
 | PyPI publication | `publish.yml` `publish`, OIDC, `pypi` environment | written, tag-gated |
 | witness format | `build_witness.py`, `gates/witness_verify.py`, `releases/witness/README.md` | yes |
 | main/release rules | `VERSIONING.md` §5.1, `MIGRATIONS.md`'s pipeline section | yes |
 | All existing public adapters continue to work | section 14: 0 paths removed, 1 value moved | yes |
 
-**Thirty-four of §58's thirty-seven lines are satisfied outright** — three more than attempt 2's
-report, and the three are the SBOM, the attestation and the pipeline, all of which PS's repair took
-from written-but-never-executed to executed and verified. Three remain satisfied **as files** and
-tag-gated by design (`publish`, `release`, `witness`); they cannot execute on a branch. **One is
-red**: vulnerability scanning, whose npm half refuses this tree — blocker 1.
+**Thirty-five of §58's thirty-seven lines are satisfied**, one more than attempt 4's report. The
+line that moved is vulnerability scanning, whose npm half round PD cleared and which is now green
+both locally and in CI on this commit. Two remain satisfied **as files** and tag-gated by design —
+the PyPI publication and the GitHub Release — and they cannot execute on a branch at all; the
+release round is where they first run. **None is red.**
+
+Two of the thirty-five carry a qualification worth reading rather than burying: dependency review
+runs on pull requests only, because that is what `actions/dependency-review-action` supports, and
+the release pipeline's green covers every stage a branch can reach and not the three the tag guard
+holds back.
 
 ```yaml
-blocked: [docs-npm-tree-carries-two-unexcepted-high-advisories]
+blocked: []
 ```
