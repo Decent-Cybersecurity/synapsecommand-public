@@ -181,7 +181,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v2.0.0 -m "..."                           # annotated, never lightweight
+git tag -a v2.1.0 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -297,7 +297,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v2.0.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v2.1.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -317,10 +317,66 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 
 ## History
 
-### Unreleased
+### 2.1.0 — 2026-09-09 — SOIF Part 1: Foundation & Assurance — Adapter API v2, the Conformance Suite, evidence records, the CDM 2.1.0 primitives and a release pipeline
 
-**Nothing in this section is in a release: there is no release that contains it.** A reader who ran
-`pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `2.1.0` at this
+commit, in `version.py`, and the tag `v2.1.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said the opposite in the pending tense — nothing here is in a release, a
+reader who installed the package has 2.0.0 and 2.0.0 carries none of it — and every clause of it
+was true until this commit.
+
+**THE PACKAGE VERSION MOVED 2.0.0 -> 2.1.0 ON 2026-09-09, AND THE NUMBER IS THE DERIVED FLOOR.**
+That is worth one sentence because the release before it was the opposite case: 2.0.0 was a MAJOR
+the diff could not reach, argued in ADR 0005 over a third party's consumer and ruled by hand. This
+arc removes nothing, renames nothing and narrows nothing — every signal it carries is an addition —
+so `gates/bump_derivation.py`'s floor and this release's number are one number, and the Version
+ruling paragraph 2.0.0 needed has no counterpart here. `SCHEMA_VERSION` had already moved to 2.1.0
+on 2026-09-08 in round P3, on this table and for its own reason; the two axes landing on the same
+value is the coincidence `version.py` says it is, and neither is computed from the other.
+
+**ROUND PR's RECORD, 2026-09-09 — the release transition itself: `main` fast-forwarded, the
+number typed, the section rolled, the tag made.**
+
+The SOIF Part 1 campaign ran on a branch and every round of it was reviewed and pushed there;
+`main` moved once, here, by `git merge --ff-only`, and the commit this paragraph is in is the only
+commit of the arc that `main` did not already have as a fast-forward. `VERSIONING.md` §5.1 and the
+pipeline section above carry the commands and the reasoning. Nothing was amended, rebased,
+squashed or force-pushed, and the eighteen commits the branch was reviewed as are the eighteen
+commits `main` now holds.
+
+**What this commit moves, and it is the release-state set rather than any of the arc's work.**
+`version.py`'s constant and the two live readings in its docstring; this file's heading and its
+opening paragraphs, plus the two tag-command examples in the procedure and in the pipeline
+section; `RELEASE_NOTES.md`, rewritten for this release; `README.md`'s tag example;
+`VERSIONING.md`'s package-version figure, its tag-command example and its axis-table line
+references; `docs/docs/changelog.mdx`'s live pair of numbers; and the two version literals
+`tests/test_cdm_packaging.py` pins so that a bump is a deliberate edit in two places. No adapter,
+no schema, no fixture and no dependency moves in this commit: the distribution's contents are the
+arc's, and the arc is what the section below records.
+
+**ONE TEST CHANGED, AND IT IS A RULE ABOUT WHAT A READINESS REPORT MEANS AFTER THE RELEASE IT
+CERTIFIED.** `docs/soif-part1-release-readiness.md` is SOIF §57's report and
+`tests/test_cdm_readiness.py` holds it to the tree. Round PT encoded M's rule for the pre-release
+side only — readiness is a property of a tree BETWEEN releases, so an empty blocker list obliged
+the version not to have moved and the arc still to be pending — and that is exactly the state this
+commit ends. M's ruling of 2026-09-09 splits the module on the one fact that decides it: whether a
+tag exists that exactly names this tree's `PACKAGE_VERSION`. Before that tag the report is a live
+pre-release gate and every one of the five pre-release assertions stands. With it the same report
+is a historical certification, and what remains checkable is what a certification can be held to —
+it exists, it ends with an empty blocker list, it names a commit the released tag contains, and it
+names the released version somewhere in its own text. The transition is read from the tag and from
+nothing else: not from the branch, not from the date. The change was demonstrated red before the
+tag and green after it, in that order, on this commit.
+
+**What the release does NOT assert, for the same reason 2.0.0's section does not.** What the index
+serves, the digests of the published files, the run that uploaded them and the approval that let it
+are measured facts about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s
+ledger and in `releases/witness/2.1.0.json` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened.
 
 **ROUND PD's RECORD, 2026-09-08 — the docs site's two HIGH npm advisories, upgraded away.**
 

@@ -239,6 +239,79 @@ UNRULED_HISTORICAL_ARCS = {
                            "synapse_cdm/registry/sc_oes/profiles.json",
                            "synapse_cdm/adapters/pntmap.py:PntmapAdapter",
                            "synapse_cdm/adapters/pntmap.py:<statement 7>"},
+    # `v2.0.0 → v2.1.0` is the eighth entry and by a long way the largest the set has ever held,
+    # at FORTY-TWO units. It arrives by the second entry's route like the five before it: every
+    # one of the forty-two WAS ruled, in `MIGRATIONS.md`'s 2.1.0 section, by the SOIF Part 1
+    # rounds that made them. The ruled set and this set are the same forty-two names, which is
+    # derived rather than asserted — the gate's own `--json` reports `ruled` at 42 and
+    # `pending.unruled` as the empty list on the tagged tree, and the two sets compare equal. This
+    # test derives the arc RAW and never calls `apply_rulings()`, so the forty-two belong here
+    # whatever the section says about them.
+    #
+    # WHY IT IS SO MUCH LARGER THAN EVERY ENTRY ABOVE, and the answer is the arc's subject rather
+    # than any change in the gate. Adapter API v2 gave every adapter four new members, so all
+    # FOURTEEN adapter classes are modified in place with no name added or removed — the shape the
+    # table reaches twice and decides nothing about. Nine more are the `Adapter` base class and
+    # eight module-level statements of `adapter.py`, which v2 rewrote. Six are `models.py` —
+    # `CDMBase`, `PlanObject`, `Position`, `SourceRef` and two module-level statements — where the
+    # CDM 2.1.0 primitives landed on existing models; four are `schemas.py`, which generates two
+    # more schema files than it did; two are `harness.py`; and one each are `geo.py:Geometry` and
+    # `lossless.py:<statement 1>`.
+    #
+    # FIVE OF THE FORTY-TWO ARE POSITIONAL AND THEY STAY AT FULL WIDTH for the reason every entry
+    # above gives. `<statement 42>` through `<statement 46>` of `ais.py` are module-level
+    # statements that DID NOT CHANGE: a `from synapse_cdm.manifest import …` line was inserted
+    # into that module's import block and the gate names an unnamed top-level statement by its
+    # position, so one insertion is five refusals. Collapsing them would make this set a summary
+    # of causes rather than a record of units.
+    #
+    # AND THIS ROW TOO WAS ADDED AFTER THE TAG EXISTED, by the one local re-tag a release round is
+    # allowed. The key is a pair of tags, so no entry for an arc can be written before its head
+    # tag is created; the 2.1.0 round tagged, read this test red, wrote the row and moved the tag
+    # onto the commit carrying it, all before anything was pushed. That is now five releases
+    # running, and the release template says so in advance rather than discovering it again.
+    ("v2.0.0", "v2.1.0"): {"synapse_cdm/adapter.py:<statement 1>",
+                           "synapse_cdm/adapter.py:<statement 2>",
+                           "synapse_cdm/adapter.py:<statement 3>",
+                           "synapse_cdm/adapter.py:<statement 4>",
+                           "synapse_cdm/adapter.py:<statement 5>",
+                           "synapse_cdm/adapter.py:<statement 6>",
+                           "synapse_cdm/adapter.py:<statement 7>",
+                           "synapse_cdm/adapter.py:<statement 8>",
+                           "synapse_cdm/adapter.py:Adapter",
+                           "synapse_cdm/adapters/adsb.py:AdsbAdapter",
+                           "synapse_cdm/adapters/ais.py:AisAdapter",
+                           "synapse_cdm/adapters/ais.py:<statement 42>",
+                           "synapse_cdm/adapters/ais.py:<statement 43>",
+                           "synapse_cdm/adapters/ais.py:<statement 44>",
+                           "synapse_cdm/adapters/ais.py:<statement 45>",
+                           "synapse_cdm/adapters/ais.py:<statement 46>",
+                           "synapse_cdm/adapters/asterix_cat021.py:AsterixCat021Adapter",
+                           "synapse_cdm/adapters/asterix_cat023.py:AsterixCat023Adapter",
+                           "synapse_cdm/adapters/asterix_cat034.py:AsterixCat034Adapter",
+                           "synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter",
+                           "synapse_cdm/adapters/asterix_cat062.py:AsterixCat062Adapter",
+                           "synapse_cdm/adapters/gmtif.py:GmtifAdapter",
+                           "synapse_cdm/adapters/legion.py:LegionAdapter",
+                           "synapse_cdm/adapters/pntmap.py:PntmapAdapter",
+                           "synapse_cdm/adapters/stanag4586.py:Stanag4586Adapter",
+                           "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+                           "synapse_cdm/adapters/stanag4676.py:Stanag4676Adapter",
+                           "synapse_cdm/adapters/tak.py:TakAdapter",
+                           "synapse_cdm/geo.py:Geometry",
+                           "synapse_cdm/harness.py:FIXTURE_PATTERN",
+                           "synapse_cdm/harness.py:run",
+                           "synapse_cdm/lossless.py:<statement 1>",
+                           "synapse_cdm/models.py:CDMBase",
+                           "synapse_cdm/models.py:PlanObject",
+                           "synapse_cdm/models.py:Position",
+                           "synapse_cdm/models.py:SourceRef",
+                           "synapse_cdm/models.py:<statement 6>",
+                           "synapse_cdm/models.py:<statement 7>",
+                           "synapse_cdm/schemas.py:generate",
+                           "synapse_cdm/schemas.py:write",
+                           "synapse_cdm/schemas.py:<statement 6>",
+                           "synapse_cdm/schemas.py:<statement 7>"},
 }
 
 

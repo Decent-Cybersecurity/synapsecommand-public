@@ -40,6 +40,42 @@ either — round P8 found two blockers, and a report that had listed them while 
 next number into `version.py` would have been a release-readiness report asserting readiness it
 had itself refuted.
 
+AND WHAT IT MEANS AFTER THE RELEASE IT CERTIFIED, WHICH IS A DIFFERENT QUESTION
+------------------------------------------------------------------------------
+The five parts above are all pre-release conditions, and the release round ends every one of them
+in a single commit: the version moves, the pending section is rolled into a release section, the
+notes are rewritten. Round PT ruled the pre-release side and nothing ruled the other, so on the
+tagged tree this module refused the release it had just certified — assertion (a) first, because
+the bump gate reads its rulings from the pending section until a tag names the declared version
+and reports no pending arc once one does. Round PR found it and could not close it: no P round may
+tag, so nothing before PR could reach the state.
+
+M's ruling of 2026-09-09, fork FR.5 of `rounds/briefs/PR-soif-release-2.1.0.md`, quoted here
+because this module is again the rule:
+
+    "Before PACKAGE_VERSION is tagged: the readiness report is a live pre-release gate; it must
+    end with `blocked: []`; version/release-note invariants for an unreleased package remain
+    enforced. After a git tag exists that exactly names PACKAGE_VERSION: the same readiness report
+    becomes a historical certification of that release; tests must no longer require pre-release
+    conditions such as: PACKAGE_VERSION still being unreleased; an `Unreleased` release-note state
+    for 2.1.0; version remaining at the previous release state; tests must still require: the
+    readiness report exists; it corresponds to the released version/commit where applicable; it
+    ends with `blocked: []`. The transition must be determined from the exact PACKAGE_VERSION tag,
+    not from branch name or current date."
+
+So there are two modes and ONE fact decides which: does a tag exist that exactly names this tree's
+`PACKAGE_VERSION`. Not the branch — a release commit sits on `main` and a campaign branch is
+fast-forwarded to it, so both names see the same tree. Not the date — a report is not a different
+document tomorrow. The tag, and `_released_tag()` below is the whole of the decision.
+
+What survives into the released mode is what a certification can be held to: the report exists, it
+ends with an empty blocker list, it names the version that was released, and every commit it names
+is one the release tag contains. What is dropped is dropped because it is a statement about a tree
+BETWEEN releases and this tree is no longer one. What is NOT dropped is the report's own verdict —
+section 19 saying `ready for PR` and section 20 arguing no blocker — because that is a property of
+the document rather than of the tree, and a certification whose own verdict had been edited away
+would be a certification of nothing.
+
 WHAT IT REFUSES TO CHECK
 ------------------------
 Whether a blocker is real. That is a reading of the tree and of two CI runs, and a test that
@@ -160,6 +196,34 @@ def _measured() -> dict:
     return json.loads(out.stdout)
 
 
+def _released_tag() -> str | None:
+    """The tag that exactly names this tree's `PACKAGE_VERSION`, or None if there is none.
+
+    M's FR.5: the transition is read from the tag and from nothing else. `git tag -l <name>` is
+    exact-match by name and prints nothing for a tag that does not exist, so the answer is the
+    output being non-empty — no parsing of a tag list, no ordering, no `--sort`, and no chance of
+    a prefix match putting `v2.1.0-rc1` in the way.
+
+    Note what this deliberately does NOT ask: whether the tag points at HEAD. A release tag names
+    a commit, `main` may move on afterwards, and the report stays the certification of that
+    release either way. The correspondence that IS checked is the other direction — the commits
+    the report names have to be commits the tag contains.
+    """
+    from synapse_cdm.version import PACKAGE_VERSION
+
+    out = subprocess.run(["git", "tag", "-l", f"v{PACKAGE_VERSION}"],
+                         cwd=REPO, capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr
+    return out.stdout.strip() or None
+
+
+def _tag_contains(tag: str, commit: str) -> bool:
+    out = subprocess.run(["git", "merge-base", "--is-ancestor", commit, tag],
+                         cwd=REPO, capture_output=True, text=True)
+    assert out.returncode in (0, 1), out.stderr
+    return out.returncode == 0
+
+
 def _unreleased_section() -> str | None:
     """The pending section's body, by the rule `gates/bump_derivation.py:_section()` uses."""
     text = MIGRATIONS.read_text(encoding="utf-8")
@@ -220,12 +284,89 @@ def test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_w
     M's rule of 2026-09-08, in the module docstring: what an empty list obliges is a tree the
     release round can run ON, not a tree the release round has already run on. So the version and
     the headings are asserted UNMOVED here, and the derivation is asserted to allow the move.
+
+    AND, since M's FR.5 of 2026-09-09, only while that is still the tree in front of it. Once a
+    tag exactly names `PACKAGE_VERSION` the release has happened and the same five assertions
+    would refuse it; the released mode below is what the report is held to then. Both modes share
+    the report's own verdict, which is the last block of this test.
     """
     from synapse_cdm.version import PACKAGE_VERSION
 
     if _blocked():
         pytest.skip(f"blocked is {_blocked()}, so this report does not claim readiness; the "
                     "converse direction is the test below")
+
+    released = _released_tag()
+    if released is not None:
+        _certifies_the_release(released)
+    else:
+        _certifies_readiness()
+
+    # (e) the report's own verdict, in §57's two places. BOTH modes: a released report is still a
+    # report, and its verdict is what it certified rather than a reading of today's tree.
+    status = _report_section("19. Release status", "20. Blockers")
+    assert READY in status, (
+        f"no blockers are listed and section 19 does not say {READY!r}. The empty list is a "
+        f"verdict and section 19 is where §57 puts it"
+    )
+    assert "NO RELEASE" not in status, (
+        "no blockers are listed and section 19 still says NO RELEASE. §57 attaches that phrase to "
+        "a non-empty list"
+    )
+    blockers = _report_section("20. Blockers", None)
+    assert not BLOCKER_HEADING.search(blockers), (
+        "the machine-readable list is empty and section 20 still argues a `### Blocker N`. The "
+        "list is the index and the headings are the reasons: an argued blocker that is not in the "
+        "list is a blocker the machine-readable answer hides"
+    )
+
+
+def _certifies_the_release(tag: str) -> None:
+    """THE RELEASED MODE, M's FR.5. Three obligations and not one of them about today's tree.
+
+    Existence, correspondence, and the empty list. Correspondence is the only one with any content
+    and it is asserted in the direction that can actually be wrong: every commit the report names
+    must be one the release tag CONTAINS. A report describing a commit the tag does not reach is a
+    certification of a different tree, which is the failure this direction exists for — and it is
+    reachable by an ordinary mistake, because a release round that stops and is re-run leaves a
+    report naming the commit of the attempt that did not ship.
+    """
+    from synapse_cdm.version import PACKAGE_VERSION
+
+    assert REPORT.is_file(), (
+        f"{tag} names this tree's PACKAGE_VERSION, so this report is the certification of a "
+        f"release, and it is not there. §57's report is not consumed by the release it certifies"
+    )
+    assert _blocked() == [], (
+        f"{tag} exists and the report's final statement is not the empty list. A release was cut "
+        f"from a tree whose own readiness report lists blockers"
+    )
+    assert PACKAGE_VERSION in _text(), (
+        f"the report never names {PACKAGE_VERSION}, which is the version {tag} released. A "
+        f"certification that does not name what it certifies corresponds to nothing"
+    )
+    commits = re.findall(r"\b[0-9a-f]{40}\b", _report_section("18. Commit", "19. Release status"))
+    assert commits, (
+        "section 18 names no commit hash, so there is nothing to check the released tag against. "
+        "The self-referential form section 18 is also allowed to use is not available in the "
+        "released mode: after the tag there IS a hash for the commit that carries the file"
+    )
+    outside = [c for c in commits if not _tag_contains(tag, c)]
+    assert not outside, (
+        f"section 18 names {outside}, which {tag} does not contain. The report describes a tree "
+        f"the release was not cut from"
+    )
+
+
+def _certifies_readiness() -> None:
+    """THE PRE-RELEASE MODE, round PT's rule, unchanged in substance by FR.5.
+
+    Five parts, and all five are statements about a tree BETWEEN releases: the derivation allows
+    the release, the version has not moved, the arc is still pending with its records, and the
+    notes still open at the released version. The fifth — the report's own verdict — is shared
+    with the released mode and asserted by the caller.
+    """
+    from synapse_cdm.version import PACKAGE_VERSION
 
     previous = _previous_release()
     floor = _minor_above(previous)
@@ -279,23 +420,6 @@ def test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_w
     assert first_line == f"# synapse-cdm {previous}", (
         f"{NOTES.name} opens {first_line!r} and the newest release tag is v{previous}. The notes "
         f"are rewritten by the release round; a readiness report is not the release"
-    )
-
-    # (e) the report's own verdict, in §57's two places.
-    status = _report_section("19. Release status", "20. Blockers")
-    assert READY in status, (
-        f"no blockers are listed and section 19 does not say {READY!r}. The empty list is a "
-        f"verdict and section 19 is where §57 puts it"
-    )
-    assert "NO RELEASE" not in status, (
-        "no blockers are listed and section 19 still says NO RELEASE. §57 attaches that phrase to "
-        "a non-empty list"
-    )
-    blockers = _report_section("20. Blockers", None)
-    assert not BLOCKER_HEADING.search(blockers), (
-        "the machine-readable list is empty and section 20 still argues a `### Blocker N`. The "
-        "list is the index and the headings are the reasons: an argued blocker that is not in the "
-        "list is a blocker the machine-readable answer hides"
     )
 
 

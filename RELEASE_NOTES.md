@@ -1,124 +1,123 @@
-# synapse-cdm 2.0.0
+# synapse-cdm 2.1.0
 
-A major release, and what it adds is a semantic layer over the model this package has always
-carried. **SC-OES** — the SynapseCommand Operational Event Specification, v0.1.0 Draft — attaches
-operational-event semantics to a CDM object *after* source-format translation: what kind of
-assertion an event is, which governed semantic type it claims, what it relates to and with which
-role, and how sure its source was. It is a wire-semantic contract, not a new format and not a
-replacement for one.
+A MINOR release, and it is the largest one this package has had. **SOIF Part 1 — Foundation &
+Assurance** is not a format and not a semantic layer: it is the machinery that makes a claim about
+an adapter checkable by somebody who did not write it. An adapter now describes itself in a
+published manifest; a fifteen-check conformance suite runs over any adapter in the roster; an
+evidence record states what was measured, on which commit, against which versions, with a digest
+of every fixture the run read; and the CDM gains the geometry, time, route, quality, provenance and
+residual primitives an adapter needs in order to say what it actually translated. Nothing is
+removed, renamed or narrowed, so a 2.0.0 consumer keeps working without doing anything.
 
-**Package version 2.0.0 · CDM `schema_version` 2.0.0.** If you consume CDM objects, this is a
-breaking change and the next section says exactly how. **The two numbers being equal is a
-coincidence of two independently justified major changes and not a derivation** — the schema moved
-on `MIGRATIONS.md`'s table because a 1.x strict reader rejects the new objects, the package moved
-on `version.py`'s because a third party's consumer written against 1.8.0 does not work against this
-distribution, and `synapse_cdm/version.py` states the six version axes and their independence in
-one place. A package at 2.0.0 does **not** mean SC-OES 2.0: SC-OES is at `0.1.0` and is a Draft.
+**Package version 2.1.0 · CDM `schema_version` 2.1.0.** The two numbers are equal again, and **that
+is a coincidence and not a derivation**: the schema moved on `MIGRATIONS.md`'s table in the CDM
+round, for optional primitives only, and the package moves here on `version.py`'s table because a
+release is what puts a schema bump on the index. A schema bump obliges a package release and does
+not perform one — this release is the one that pays that debt, which is why the two land on one
+value. `synapse_cdm/version.py` states the nine version axes and their independence in one place,
+and `tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive either
+number from the other. A package at 2.1.0 does **not** mean SC-OES 2.1: `SC_OES_VERSION` is a third
+axis, still `0.1.0` and still a Draft.
 
-**UNRELEASED, ADDED 2026-09-08 — the wire contract has moved again, and these notes are still
-2.0.0's.** The paragraph above describes the distribution the index serves and stays exactly true
-of it: 2.0.0 shipped at CDM `schema_version` 2.0.0 and the two numbers really were equal at that
-tag. On the working branch the SOIF Part 1 CDM round has taken `SCHEMA_VERSION` to
-**`schema_version` 2.1.0**, a MINOR — the geometry, vertical-position, temporal-validity, route,
-area, quality, provenance, status and residual primitives are added, every one of them as an
-optional field or a model reached only through one, so a 2.0.0 reader keeps working and 2.0.0 data
-keeps validating. `PACKAGE_VERSION` has NOT followed and is still `2.0.0`: a schema bump obliges a
-release, it does not perform one, and the number is the release round's to type. **No release
-carries any of that yet.** This paragraph is here for the reason the same paragraph was here for
-the 1.8.0 -> 2.0.0 arc: these notes are one of the few documents that state both numbers, which
-makes them one of the few places the two could be made to disagree without anybody noticing.
-`packages/cdm/synapse_cdm/MIGRATIONS.md`'s pending section carries the migration statement, the
-derivation and the bump rulings.
+## What changed on the wire, and what a 2.0.0 consumer must do
 
-## What changed on the wire, and what a 1.x consumer must do
+**Nothing, and this is the release that says so with a gate rather than a promise.** `schema_version`
+moves 2.0.0 -> 2.1.0 and every addition behind it is an optional field or a model reached only
+through one, so a 2.0.0 reader still reads a 2.1.0 object and a 2.0.0 object still validates against
+the 2.1.0 models. The fourteen worked examples under `spec/sc-oes/` are the witness: they still
+declare `schema_version` 2.0.0 and they still validate.
 
-Two optional keys, and they are what makes this a major:
+What a producer gains is vocabulary, not obligation:
 
-* `Event.oes` — the SC-OES block, `null` unless the producer made an SC-OES assertion.
-* `Entity.ontology_types` — a list of governed ontology identifiers, empty unless the producer
-  asserted one.
+* **Geometry.** `synapse_cdm.geo` carries `Point`, `LineString`, `Polygon` and their multi- forms,
+  plus `BoundingBox`, `VerticalPosition` and `VerticalExtent`. A vertical position states its unit
+  and its datum, because an altitude without a datum is a number and not a position.
+* **Time.** `TemporalValidity` and `Period` — when an assertion is held to be true, as distinct
+  from when it was made.
+* **Route and area.** `Route`, `RouteLeg`, `Waypoint`, `Area`.
+* **Quality and provenance.** `Quality`, `SourceHash`, `OperationalStatus`, and seven added fields
+  on `SourceRef` so that a CDM object can say which bytes it came from.
+* **Residual data.** `Residual` and `lossless.classify()`, which partitions every source leaf into
+  six categories and lets an adapter carry what the CDM has no field for instead of dropping it
+  silently.
 
-Both are OPTIONAL and both default to nothing, so legacy data is structurally representable
-without change. That is not the same as compatibility, and this document does not claim it is: the
-canonical objects are `additionalProperties: false`, so **a 1.x strict reader meeting either key
-rejects the object rather than ignoring it**. `version.compatible("2.0.0", "1.0.0")` is `False`,
-and that refusal is the message the major exists to carry. Whether to move is an explicit consumer
-decision; `packages/cdm/synapse_cdm/MIGRATIONS.md` carries the migration statement and the
-derivation.
+`packages/cdm/synapse_cdm/MIGRATIONS.md`'s 2.1.0 section carries the migration statement and the
+derivation, entry by entry. There is no migration tooling, because there is nothing to migrate.
 
-There is no migration tooling and none was written for this release. Migration in this repository
-is documented rather than executable, deliberately, and a framework invented for one release would
-be a second thing to keep correct.
+## Adapter API v2, and every adapter now describes itself
 
-## What SC-OES adds
+`ADAPTER_API_VERSION` is `2.0.0` — the contract an adapter class is written against, additive over
+v1 and renaming nothing. v2 adds four members: `metadata`, `detect`, `validate_source` and
+`capabilities`. `ARCHITECTURE.md` §1 freezes it.
 
-* **The specification**, `spec/sc-oes/`, v0.1.0 Draft: core model, event classes, governed event
-  types, temporality, relations, confidence, entity semantics, security markings, extensions,
-  versioning and conformance.
-* **The SynapseCommand Operational Ontology**, v0.1.0 Draft. Turtle is the authority; the JSON-LD
-  context and the packaged term registry are derived from it and drift-tested against it, and
-  **nothing at runtime parses RDF** — `rdflib` is a test dependency and a boundary test proves it.
-* **Three packaged machine-readable registries** under `synapse_cdm/registry/sc_oes/`: the governed
-  event contract, the generated ontology-term registry, and the profile registry. All three ship in
-  the wheel, load through `importlib.resources`, and need no checkout and no network.
-* **Offline conformance tooling** — `python -m synapse_cdm.conformance`, also installed as
-  `cdm-conformance` — reporting five separately named dimensions, `PASS`/`FAIL`/`SKIP` each, with
-  no aggregate score and four exit codes a CI system can branch on.
-* **A reference producer.** The `pntmap` adapter emits the block on every alert, asserting three
-  fields and nothing its source does not support.
-* **Fourteen worked examples**, thirteen individual and one linked operational chain, and **seven
-  profile documents**.
+The visible half is the **manifest**. All fourteen adapters ship one under `manifests/`, validated
+against `schemas/manifests/adapter-manifest.schema.json` at `MANIFEST_SCHEMA_VERSION` `1.2.0`, and
+`python -m synapse_cdm.manifests --check` reports `CURRENT: manifests vs 14 shipped adapters at
+manifest schema 1.2.0`. A manifest states the adapter's direction, its declared limits and where
+each limit's number came from, its known limitations as structured records rather than sentences,
+and what it does not support — so "this adapter handles that format" becomes a document a third
+party can read without reading the code.
 
-## Dimension D is executable for one profile
+## The Synapse Conformance Suite
 
-The **PNT Profile 0.1.0** is the first profile with a conformance rule of its own, so a
-conformance assessment of the reference GNSS-interference event against it returns
-A `PASS`, B `PASS`, C `PASS`, D `PASS`, E `PASS` and exits `0`. The permitted claim is
-**"SC-OES PNT Profile 0.1 Conformant"**, it names one assessed object, and it is not a
-certification: this work creates no certification programme.
+`python -m synapse_cdm.suite`, also installed as `synapse`, runs **fifteen checks, A through O**,
+over any adapter in the roster: identity, determinism, malformed input, parser robustness, resource
+limits, streaming, temporal handling and the rest. Results come out as `--format json` and are
+byte-identical across two sweeps of one tree, which is what makes them evidence rather than output.
 
-The other six profiles are **specification-only** and dimension D against them is `SKIP` — the
-profile is known and has no executable rules, which is a different fact from a profile name that
-does not exist and a different fact again from an object that failed. A `PASS` drawn from an empty
-rule set would be a claim manufactured out of the absence of anything to check.
+SC-OES conformance is a separate and smaller thing and it is unchanged: `python -m
+synapse_cdm.conformance`, also `cdm-conformance`, reports five separately named dimensions with
+`PASS`/`FAIL`/`SKIP` each, no aggregate score, and four exit codes a CI system can branch on. The
+**PNT Profile 0.1.0** remains the only profile with an executable rule of its own; against the
+other six, dimension D is `SKIP`, which is a different fact from a failure and a different fact
+again from a profile that does not exist. This work still creates no certification programme.
 
-The profile does **not** require any particular producer. `PNTMAP` is a reference producer; a
-third-party GNSS monitor, a military sensor adapter or a simulation producer conforms on the same
-terms.
+## Evidence records
 
-## Why this is a MAJOR, and the gate derived a MINOR floor
+`EVIDENCE_SCHEMA_VERSION` `1.0.0`, published as `schemas/evidence/evidence.schema.json`. `synapse
+evidence generate --adapter X | --all` writes one record per adapter: the manifest embedded whole,
+the commit it was measured on, five version axes, the conformance report verbatim, the loss report,
+and a SHA-256 of every fixture file the run read. `synapse evidence verify <file>` generates a NEW
+record from the tree in front of it and compares field by field, masking only what is a measurement
+of the run rather than of the tree — so reproducibility is a command and not an assertion. `synapse
+badges` derives shields.io endpoint files from those records and refuses to write one without a
+record behind it.
 
-`gates/bump_derivation.py` classifies the diff over the distribution's own contents between
-`v1.8.0` and this tree against `version.py`'s `PACKAGE_VERSION` table. It reports **MINOR** — and
-that is not a disagreement, it is the gate answering the question it can answer. Every signal it
-can prove is an ADDITION: an optional field on two models, seventeen exported names, two new
-modules, three shipped registries, an adapter emitting a key it did not emit before. No importable
-name is removed and no signature moves, so no MAJOR row is reached **by the diff**.
+**The records are not in this distribution and not in the repository.** They are produced by CI on
+every run, uploaded, and attached to a release; each adapter's manifest declares
+`evidence.available: false` until the release they are attached to exists. Thirty-nine
+`PROVENANCE.json` records — one in every fixture directory a tracked test reads — say where the
+fixture data came from.
 
-What the derivation cannot reach is the fact that decides the number: **what breaks is a third
-party's consumer**, and no file in this distribution records a third party's code.
-`docs/adr/0005-cdm-schema-version-impact.md` is where that derivation is argued and it was argued
-before the number was typed. The gate calls its own answer a FLOOR and says so; the release that
-types the number writes the ruling, and the ruling is a dated paragraph in `MIGRATIONS.md`'s
-section for this arc naming both ends of it. Run
-`.venv/bin/python gates/bump_derivation.py` on this tree and it prints both: `derived MINOR`, and
-`version rule MAJOR over the derived MINOR floor`.
+## Security, dependencies and the supply chain
 
-`pending.unruled` is the empty list at this commit, which is the pre-step the release procedure's
-condition 5 requires before a version number is typed.
+* `SECURITY.md`: the reporting path, and a parser-safety policy with declared limits on all
+  fourteen adapters.
+* Secret scanning on the platform, `.gitleaks.toml` in the tree, and a CI job over the full
+  history reachable from every push.
+* `pip-audit --strict` twice — over the environment and over the wheel's frozen closure — and an
+  npm audit at high over the documentation tree, with the two live advisory exceptions declared as
+  files under `security/exceptions/` with an expiry each rather than as a flag on a command line.
+* CodeQL, and a gate that refuses a blocking alert.
+* An SBOM in both SPDX and CycloneDX, built by the release pipeline over the clean-install
+  environment, plus a second tool's cross-check.
+* Build provenance: Sigstore attestation over the built artefacts, verified in the same run that
+  produced them.
 
 ## What else moved
 
-* **The published schemas.** All six regenerate from the models and carry `2.0.0`; `event` and
-  `entity` gain one optional property each and nothing is removed or retyped.
-* **Every golden in the package** now carries `schema_version` `2.0.0`, every entity an
-  `ontology_types` list and every event an `oes` key. Compared by JSON path, the moved set across
-  the CDM goldens is exactly those three paths — the `pntmap` adapter's four goldens additionally
-  carry the block it now emits.
+* **The published schemas.** All six regenerate from the models at `2.1.0`, and two new ones join
+  them — the adapter manifest and the evidence record. `git diff v2.0.0..HEAD -- schemas/` is eight
+  files, 3915 insertions, 39 deletions. `python -m synapse_cdm.schemas --check --out schemas`
+  reports `CURRENT: schemas vs models at 2.1.0`.
+* **A fourth console script**, `synapse`. It is the one entry point not spelled `cdm-*`, because
+  SOIF §19 fixes the command line it has to answer to. The three that existed are unchanged.
 * **No runtime dependency changed.** `pydantic` and `jsonschema`, as before. `rdflib` is a test
   extra and nothing under `synapse_cdm/` imports it.
 * **No adapter was added or removed**, and no adapter's translation was changed to make a
   conformance verdict come out differently.
+* **A release pipeline.** `.github/workflows/publish.yml` now runs six jobs in SOIF §50's order —
+  gate, build, attest, publish, release, witness — and the last three of them only on a tag.
 
 ## Fourteen adapters, all harness-verified
 
@@ -148,16 +147,11 @@ totals below were summed from the harness on this tree.
 | `tak` | bidirectional | 12 |
 
 **538 fixture verdicts, 0 failed** across the fourteen adapters, against the published schemas.
-The roster's totals are unmoved from 1.8.0: this release adds a semantic layer over the objects
-and no fixture. `gates/wheel_install.py` reports **1076** over the same roster, which is these 538
-run in each of two schema modes.
+The roster's totals are unmoved from 2.0.0: this release adds vocabulary and assurance machinery
+over objects already translated, and no fixture. `gates/wheel_install.py` reports **1076** over the
+same roster, which is these 538 run in each of two schema modes.
 
-The six published schemas — `cdm_object`, `entity`, `event`, `plan_object`, `track`,
-`payload_gnss_interference` — regenerate byte-identical from the models, and
-`python -m synapse_cdm.schemas --check --out schemas` reports `CURRENT: schemas vs models at
-2.0.0`.
-
-## Published by CI over OIDC, as 1.1.0 through 1.8.0 were
+## Published by CI over OIDC, as 1.1.0 through 2.0.0 were
 
 No API token. `.github/workflows/publish.yml` builds on the tagged tree, gates that build with
 `gates/wheel_install.py --mutation-check`, runs `twine check --strict`, checks that the tag names
@@ -169,7 +163,10 @@ configuration.
 
 An sdist and a wheel, built once by the workflow, gated as that build, and uploaded as those same
 files. Their **SHA-256 digests are recorded in `PUBLICATION.md`'s ledger** together with the
-workflow run that produced them.
+workflow run that produced them. This release additionally attaches, to the GitHub Release itself,
+both SBOMs, the evidence set, the conformance report, the witness record and these notes — so the
+evidence a claim rests on is retrievable with the release rather than only as a workflow artefact
+with a retention window.
 
 They are deliberately not committed here, for the reason this file has given since 1.1.0. A digest
 is a property of one build rather than of the tree: two builds of one tree have identical payloads
@@ -181,6 +178,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==2.0.0
+pip install synapse-cdm==2.1.0
 python -m synapse_cdm.harness --list-adapters
 ```

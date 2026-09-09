@@ -47,13 +47,15 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        2.0.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        2.1.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            2.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
                                   every serialised object, governed by ``MIGRATIONS.md``.
                                   (2.0.0 -> 2.1.0 on 2026-09-08, round P3: optional primitives
-                                  only. The package did NOT follow it and is still 2.0.0.)
+                                  only. The package did not follow it for two days and then did,
+                                  on 2026-09-09, at the same number by coincidence — a schema
+                                  bump obliges a release and does not perform one.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -96,12 +98,17 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``2.0.0`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
-fourth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``2.1.0`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
+fifth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
-passed. It is kept as written; this is the sentence that overtakes it.)
+passed. It is kept as written; this is the sentence that overtakes it. **Corrected again
+2026-09-09, the 2.1.0 release**: the two are LEVEL once more, for the fourth time in this file's
+life and for the reason the last paragraph of the packaging sweep's docstring predicted — a
+schema MINOR obliges at least a package MINOR, so the day the package pays that debt is a day
+the two numbers can land on one value. They are level and neither is computed from the other,
+which is the only thing this section has ever claimed.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -253,7 +260,11 @@ SCHEMA_VERSION = "2.1.0"
 #: package emits, so a third party's consumer written against 1.8.0 does not work against this
 #: distribution. `gates/bump_derivation.py` derives a FLOOR and the floor for this arc is MINOR;
 #: the floor is not the answer, and ADR 0005 is where the answer is argued.
-PACKAGE_VERSION = "2.0.0"
+#: Moved 2.0.0 -> 2.1.0 on 2026-09-09, a MINOR, and this one IS the derived floor: the SOIF Part 1
+#: arc adds an Adapter API v2 surface, a conformance suite, evidence records and the CDM 2.1.0
+#: optional primitives, and removes nothing — so the gate's floor and the release's number are the
+#: same number, which is the ordinary case and was not the case one release ago.
+PACKAGE_VERSION = "2.1.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written
