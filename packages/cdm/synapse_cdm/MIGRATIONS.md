@@ -317,7 +317,69 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v2.1.0` and a reader who installed the package has 2.0.0, because the run on that
+tag never uploaded anything — see the dated note on the section below.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section
+being what moved in it. Everything else this round touched is repository-bound and ships in
+nothing: two workflow files, one test module for each of them, and one page of the documentation
+site.
+
+**ROUND PP's RECORD, 2026-09-09 — the release pipeline's security audit stops requiring the
+upload it gates.** Unit: `synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's shipped-document
+row — no importable name, no harness flag, no fixture set and no dependency moves, so the MINOR
+list does not reach it. No other unit: nothing under `synapse_cdm/` changed but this file, and
+`gates/bump_derivation.py` reads the distribution and nothing else.
+
+**THE DEFECT, IN ONE SENTENCE: `pip-audit --strict` cannot pass at a release tag, because the
+version it audits is the version the run has not published yet.** Both workflows install the
+package by CONTRIBUTING.md's documented path before auditing, so the environment holds
+`synapse-cdm` at the tree's own `PACKAGE_VERSION`; `--strict` makes a dependency pip-audit cannot
+resolve a failure rather than a skipped line; and the index cannot carry that version until the
+`publish` job, which `needs:` the gate that just failed. The `Release` run on `v2.1.0`
+(34332384035) is where it was found — job `gate`, step 15 of 15, "synapse-cdm: Dependency not
+found on PyPI and could not be audited: synapse-cdm (2.1.0)", fourteen of fifteen steps green and
+nothing published. `ci.yml` was red on `main` at the same commit for the same reason. No dispatch
+run could ever have caught it: a dispatch runs at a version that has already been released.
+
+**M's RULING OF 2026-09-09 IS A SCOPE AND NOT A SUPPRESSION.** The audits cover all installed and
+runtime dependencies of the release candidate, "excluding only `synapse-cdm` itself", because
+requiring the audit to resolve the unreleased version creates a circular release gate, and because
+the candidate is already covered by CodeQL, the repository suite, the conformance gates, dependency
+review, secret scanning and the release qualification. Every third-party dependency stays under
+`--strict`; no transitive dependency is excluded; the published version is audited like any other
+dependency by ordinary downstream monitoring once it exists.
+
+**THE MECHANISM IS A FILTER AND NOT A FLAG, AND THE READING IS WHY.** `pip-audit` 2.10.1 has
+`--skip-editable`, which is what the ruling's phrasing suggests, and it does not compose with
+`--strict`: a skipped distribution counts as a collection failure, so `pip-audit --strict
+--skip-editable` exits 1 with "synapse-cdm: distribution marked as editable" on the one
+distribution it was told to skip. So each audit exports `pip list --format=freeze` — which writes
+`name==version` for every distribution however it was installed, where `pip freeze` writes
+`-e git+file://…` for an editable install and `synapse-cdm @ file:///…` for a wheel installed from
+a local file, neither of which a name-anchored pattern can match — removes the single line matching
+`^synapse[-_]cdm==`, asserts that exactly one line was removed, and audits the remainder.
+`tests/test_cdm_security_exceptions.py` holds both workflows to that: the pattern, the file the
+audit reads, the count assertion, `--strict` still present, and no skip, no `--path`, no glob and
+no `--ignore-vuln` that `security/exceptions/` did not derive.
+
+**`PACKAGE_VERSION` DOES NOT MOVE IN THIS ROUND, AND THAT IS THE DOCTRINE RATHER THAN AN
+OMISSION.** M's Option 1 of 2026-09-09: this round fixes the gate, renames no release notes and
+creates no tag, because there must be no intermediate state in which the number is a corrective
+release's while no tag of that name exists. The number and the headings move with the tag, in the
+release round, as `### What a release requires` above has said since round PT.
+
 ### 2.1.0 — 2026-09-09 — SOIF Part 1: Foundation & Assurance — Adapter API v2, the Conformance Suite, evidence records, the CDM 2.1.0 primitives and a release pipeline
+
+**DATED NOTE, ADDED 2026-09-09 AFTER THE TAG WAS CUT: this version was tagged 2026-09-09T09:01:43Z
+on `b69a267`, was refused by its own pip-audit gate (`Release` run 34332384035), never reached
+PyPI, and is superseded by 2.1.1 — which is not cut either at the time of writing.** The tag stays
+where it is and is never moved, deleted or recreated; what it names is a commit whose pipeline
+refused it, and the repair is the round recorded under the pending heading above. Nothing else in
+this section is edited: it was true when it was written and it is still what this arc contains.
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 

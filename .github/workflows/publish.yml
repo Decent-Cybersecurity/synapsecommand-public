@@ -348,10 +348,58 @@ jobs:
         # line; without it the audit passes on a package whose advisories were never fetched. The
         # identifiers in `flags` are constrained by `security/exceptions/schema.json`'s pattern to
         # characters no shell splits on, so the unquoted expansion is deliberate.
+        #
+        # THE AUDIT EXCLUDES EXACTLY ONE DISTRIBUTION AND IT IS THE PROJECT BEING RELEASED. M's
+        # ruling of 2026-09-09, in one sentence: synapse-cdm cannot exist on PyPI at the version
+        # being released, so requiring pip-audit to resolve that version creates a circular release
+        # gate — the audit demands the publication the audit gates. It is not hypothetical. The
+        # `Release` run on `v2.1.0` failed here with "synapse-cdm: Dependency not found on PyPI and
+        # could not be audited: synapse-cdm (2.1.0)", `publish` never ran, and the version the run
+        # refused to audit was the version that run existed to upload.
+        #
+        # WHY A FILTER AND NOT `--skip-editable`, WHICH IS THE FLAG THAT LOOKS LIKE THE ANSWER.
+        # pip-audit 2.10.1 has the flag and it does not compose with `--strict`: a skipped
+        # distribution IS a collection failure, so `pip-audit --strict --skip-editable` exits 1
+        # with "synapse-cdm: distribution marked as editable". Reading taken 2026-09-09 in a clean
+        # clone at this tree's version; dropping `--strict` instead is not on the table, because
+        # `--strict` is what stops an unresolvable dependency from passing as a skipped line.
+        #
+        # WHY `pip list --format=freeze` AND NOT `pip freeze`. The exclusion has to be a filter on
+        # the project's NAME, and `pip freeze` does not always write one: an editable install comes
+        # out as `-e git+file://…#egg=synapse_cdm` and a wheel installed from a local file as
+        # `synapse-cdm @ file:///…#sha256=…`. `pip list --format=freeze` writes `name==version` for
+        # every distribution however it was installed, so one anchored pattern is the whole rule in
+        # both jobs.
+        #
+        # WHAT THE PATTERN MAY AND MAY NOT DO. Anchored to the start of the line and to the
+        # project's two PEP 503 spellings, closed by the `==` the export always writes; the number
+        # of lines it removes is asserted to be EXACTLY ONE, so a second package can never go
+        # unaudited without this step failing. No transitive dependency is excluded by it; every
+        # third-party distribution stays under `--strict`; nothing reaches `--ignore-vuln` that
+        # `security/exceptions/` did not derive; nothing else is skipped.
+        #
+        # WHAT STILL COVERS THE RELEASE CANDIDATE, so the exclusion is a scope and not a hole:
+        # CodeQL, the repository suite, the conformance gates, dependency review, secret scanning
+        # and the release qualification — and, once it is on the index, ordinary downstream
+        # monitoring, which audits the published version like any other dependency.
+        # `tests/test_cdm_security_exceptions.py` holds this step to exactly that scope and fails
+        # on any exclusion wider than the project.
         run: |
           set -euo pipefail
+          python -m pip list --format=freeze > environment.txt
+          echo '--- the installed environment ---'
+          cat environment.txt
+          if ! grep -v -E '^synapse[-_]cdm==' environment.txt > environment-third-party.txt; then
+            echo 'nothing is left to audit once the project under release is removed' >&2
+            exit 1
+          fi
+          removed=$(( $(wc -l < environment.txt) - $(wc -l < environment-third-party.txt) ))
+          echo "removed ${removed} line(s) naming the project under release"
+          test "${removed}" -eq 1
+          echo '--- the third-party set being audited ---'
+          cat environment-third-party.txt
           # shellcheck disable=SC2086
-          pip-audit --strict ${{ steps.ignores.outputs.flags }}
+          pip-audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }}
 
       - name: Security gate — CodeQL, over the analysis this commit already has
         # §44 and M's amended threshold, applied by `gates/codeql_gate.py` — the SAME module

@@ -57,6 +57,32 @@ and zero CycloneDX components; the file path was built from the git ref, which n
 has ever existed, on a branch or on a tag. A dispatch run of round P8's qualification is what
 found it, which is the argument for `workflow_dispatch` in the paragraph above.
 
+**What the dependency audit leaves out, and why it is exactly one thing — added 2026-09-09.**
+`pip-audit --strict` in the `gate` job audits every third-party dependency of the release
+candidate and excludes exactly one distribution: `synapse-cdm` itself. The reason is a circle. Both
+this workflow and `ci.yml` install the package by the documented path before auditing, so the
+environment holds the project at the tree's own `PACKAGE_VERSION`; `--strict` turns a dependency
+pip-audit cannot resolve into a failure rather than a skipped line; and the index cannot carry that
+version until the `publish` job, which `needs:` the gate. The first run of this pipeline on a real
+tag is what showed it — job `gate`, step 15 of 15, `synapse-cdm: Dependency not found on PyPI and
+could not be audited`, with fourteen steps green and nothing published.
+
+The exclusion is a **scope**, not a suppression, and the distinction is worth stating because the
+two look alike in a green log. An `--ignore-vuln` hides a known finding on a package that WAS
+audited, and this repository requires a dated file under `security/exceptions/` for each one. What
+this exclusion does is leave one distribution out of the audit altogether — so it is written down
+here, in the workflow comments, and in a test that fails if the exclusion ever widens. Exactly one
+name may be in it; every transitive dependency stays under `--strict`; and the release candidate
+itself is covered by CodeQL, the suite, the conformance gates, dependency review, secret scanning
+and the release qualification, and by ordinary downstream monitoring once the version exists on the
+index.
+
+Mechanically it is a filter and not a flag. `pip-audit` has `--skip-editable`, which looks like the
+answer and is not: under `--strict` a skipped distribution counts as a collection failure, so the
+flag fails on the very package it was told to skip. Each audit therefore exports
+`pip list --format=freeze`, removes the one line matching `^synapse[-_]cdm==`, asserts that exactly
+one line was removed, and audits what is left.
+
 ## 2. The approval, and what it is not
 
 The `pypi` environment carries a **required reviewer**, and the upload waits there. A PyPI upload

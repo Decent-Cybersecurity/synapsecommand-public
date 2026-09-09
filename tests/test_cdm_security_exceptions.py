@@ -35,6 +35,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import pathlib
+import re
 import sys
 
 import pytest
@@ -311,3 +312,181 @@ def test_no_advisory_is_allowlisted_in_the_dependency_review_action():
     offenders = [line for line in review.splitlines()
                  if "allow-ghsas" in line and not line.lstrip().startswith("#")]
     assert not offenders, offenders
+
+
+# --------------------------------------------- what the audits may leave OUT, which is one thing
+#
+# M's ruling of 2026-09-09, taken after the `Release` run on `v2.1.0` failed at `pip-audit
+# --strict` with "synapse-cdm: Dependency not found on PyPI and could not be audited: synapse-cdm
+# (2.1.0)" and published nothing:
+#
+#     "all installed/runtime dependencies of the release candidate, excluding only `synapse-cdm`
+#     itself. […] both the clean-environment audit and wheel-closure audit exclude exactly the
+#     project under release; no transitive dependency may be excluded by this rule; […] a
+#     workflow-text test must assert that the exclusion is exactly `synapse-cdm` and is not a
+#     wildcard or broader ignore."
+#
+# The three tests below are that assertion, and they live in THIS module rather than beside the
+# other workflow-text checks because the rule they carry is this module's rule seen from the other
+# end. `security/exceptions/` answers "which advisory may be ignored, by whom, until when"; these
+# answer "which distribution may be left unaudited", and those are the only two ways the audit's
+# coverage can narrow. Putting them anywhere else would leave one half of that question with an
+# owner and the other half with none.
+#
+# THE EXCLUSION IS NOT A SUPPRESSION, AND THE DISTINCTION IS THE POINT. `--ignore-vuln` hides a
+# KNOWN finding on an audited package and needs a dated file in this directory. What these tests
+# police is a package that is never audited at all — which needs no file, leaves no expiry, and is
+# therefore the shape that goes permanent by nobody looking. Exactly one distribution may be in
+# it, and it is the one the run exists to create.
+#
+# WHY THE MECHANISM IS A FILTER RATHER THAN `--skip-editable`, which is what the ruling's own
+# phrasing suggests: pip-audit 2.10.1 counts a skipped distribution as a collection failure under
+# `--strict`, so `pip-audit --strict --skip-editable` exits 1 on the very distribution it was
+# asked to skip. The flag exists and does not do the job. The exclusion is therefore a line-level
+# filter on the project's name over `pip list --format=freeze`, in every audit, and these tests
+# hold each of the three properties that could widen without looking different: the pattern, the
+# file the audit actually reads, and the number of lines the filter removed.
+
+#: The one distribution the audits may leave out: the project under release itself.
+PROJECT = "synapse-cdm"
+
+#: The filter every audit must use, spelled once so that a widening is a diff on this line. PEP
+#: 503 normalises `synapse_cdm` and `synapse-cdm` to the same name and an export may print either,
+#: so both spellings are matched — and nothing else is, because the pattern is anchored to the
+#: start of the line and closed by the `==` `pip list --format=freeze` always writes.
+PROJECT_FILTER = "^synapse[-_]cdm=="
+
+CI_WORKFLOW = REPO / ".github" / "workflows" / "ci.yml"
+PUBLISH_WORKFLOW = REPO / ".github" / "workflows" / "publish.yml"
+
+#: Every workflow that runs an audit, keyed by the name a failure message should print.
+AUDIT_WORKFLOWS = {"ci.yml": CI_WORKFLOW, "publish.yml": PUBLISH_WORKFLOW}
+
+#: A line that RUNS the tool: the console script or the module spelling, followed by a flag. Both
+#: are in use — the release workflow calls `pip-audit`, `ci.yml` calls `python -m pip_audit` — and
+#: requiring a following `--` is what keeps a job name, a step name and an install line out of the
+#: set. Every audit here is `--strict`, so there is no flagless invocation for this to miss; one
+#: appearing would be its own defect and the strictness test below would not see it either.
+_AUDIT_CALL = re.compile(r"(?:^|[\s|&;])(?:pip-audit|pip_audit)\s+--")
+
+
+def _audit_commands(text: str) -> list[str]:
+    """Every line that INVOKES pip-audit: no comments, no installs, no YAML keys.
+
+    `--emit-pip-audit-ignores` is the gate that PRINTS the allowlist rather than an audit that
+    consumes it, and it is excluded here so that the test above owns it and these own the audits —
+    one rule, one site, as with everything else in this directory.
+    """
+    lines = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#") or "--emit-pip-audit-ignores" in stripped:
+            continue
+        if "pip install" in stripped or not _AUDIT_CALL.search(stripped):
+            continue
+        lines.append(stripped)
+    return lines
+
+
+def _filters(text: str) -> list[str]:
+    """Every line that removes something from an export before it is audited."""
+    return [line.strip() for line in text.splitlines()
+            if not line.strip().startswith("#") and "grep -v" in line]
+
+
+def _redirect_target(line: str) -> str:
+    """The file a shell line redirects into, as its own token.
+
+    The filter sits inside an `if … ; then`, so splitting on `>` alone hands back
+    `closure-third-party.txt; then` and a containment check on it would fail on punctuation rather
+    than on the property being asked about.
+    """
+    return line.split(">")[-1].strip().split(";")[0].split()[0]
+
+
+def test_every_audit_reads_an_export_the_project_has_been_filtered_out_of():
+    """M's ruling from the audit's end: no audit reads a set the project is still in.
+
+    Every invocation must be `-r <file>`, and `<file>` must be the output of a filter in the same
+    workflow. An audit over the live environment is exactly the one that cannot pass at a release
+    tag, so its absence is the property, not an implementation detail.
+    """
+    for name, path in AUDIT_WORKFLOWS.items():
+        text = path.read_text()
+        commands = _audit_commands(text)
+        assert commands, (
+            f"{name} runs no audit at all. The supply-chain gate is the audit; a workflow with "
+            f"none of them is not gating anything")
+        produced = {_redirect_target(line) for line in _filters(text)}
+        for command in commands:
+            match = re.search(r"-r\s+(\S+)", command)
+            assert match, (
+                f"{name} audits the live environment: {command!r}. Under `--strict` that audit "
+                f"cannot pass at a release tag, because the environment holds {PROJECT} at a "
+                f"version PyPI cannot have yet — the run being gated is what would put it there. "
+                f"M's ruling of 2026-09-09: audit an export the project's own line has been "
+                f"removed from")
+            assert match.group(1) in produced, (
+                f"{name} audits {match.group(1)!r}, which no filter in that workflow produced "
+                f"({sorted(produced)}). Auditing the unfiltered export puts the unpublishable "
+                f"version straight back into the audit, which is the failure the filter exists "
+                f"to remove")
+
+
+def test_every_filter_removes_exactly_the_projects_own_line_and_says_so():
+    """The filter itself, on all three properties that can widen it without looking different.
+
+    The pattern is the anchored project name and not a prefix or a wildcard; there is one filter
+    per export and not two; and the number of removed lines is asserted to be exactly one, so an
+    export that ever carried two matching lines fails instead of quietly leaving a second package
+    unaudited.
+    """
+    for name, path in AUDIT_WORKFLOWS.items():
+        text = path.read_text()
+        filters = _filters(text)
+        assert filters, (
+            f"{name} filters nothing out of its export, so either the audit is unfiltered or the "
+            f"exclusion has moved somewhere this test cannot see it")
+        for line in filters:
+            patterns = re.findall(r"'([^']*)'", line)
+            assert patterns == [PROJECT_FILTER], (
+                f"{name}'s filter {line!r} carries the pattern set {patterns} and the only "
+                f"pattern M's ruling permits is {PROJECT_FILTER!r} — anchored to the start of the "
+                f"line and to {PROJECT}'s two PEP 503 spellings. A wider pattern excludes "
+                f"packages nobody ruled on, and it does it silently")
+        counted = [line.strip() for line in text.splitlines()
+                   if line.strip().startswith("test ") and "-eq 1" in line]
+        assert len(counted) == len(filters), (
+            f"{name} has {len(filters)} filter(s) and {len(counted)} assertion(s) that a filter "
+            f"removed exactly one line: {counted}. Exactly one is the whole of the rule, and a "
+            f"filter whose effect is never counted can widen without any run going red")
+
+
+def test_no_audit_excludes_anything_wider_than_the_project():
+    """The negative direction, over both workflows, on every flag that could narrow an audit.
+
+    `--ignore-vuln` is covered for `ci.yml` by the allowlist test above and re-checked here for
+    the release workflow, which had no test of its own. The rest are the ways an audit narrows by
+    SCOPE rather than by advisory: a skip of any kind, a `--path` restriction, a glob standing in
+    for a package name, and `--strict` going missing — which would turn every unresolvable
+    dependency back into a skipped line and make the whole rule unenforceable.
+    """
+    for name, path in AUDIT_WORKFLOWS.items():
+        for command in _audit_commands(path.read_text()):
+            assert "--strict" in command, (
+                f"{name}'s audit is not strict: {command!r}. Without it a dependency pip-audit "
+                f"cannot resolve is a skipped line rather than a failure, and an exclusion nobody "
+                f"wrote down is exactly what this module exists to refuse")
+            assert "--ignore-vuln" not in command, (
+                f"{name} types an --ignore-vuln into the audit itself: {command!r}. The allowlist "
+                f"is derived from security/exceptions/ by `--emit-pip-audit-ignores` and from "
+                f"nowhere else")
+            assert not re.search(r"--skip", command), (
+                f"{name}'s audit skips something: {command!r}. The exclusion is the filter on the "
+                f"export, which is counted; a skip flag is not counted by anything")
+            assert "--path" not in command, (
+                f"{name}'s audit restricts its scope with --path: {command!r}. That narrows the "
+                f"audit to an installation path and leaves the rest of the environment unread")
+            assert "*" not in command, (
+                f"{name}'s audit carries a glob: {command!r}. An exclusion that matches by "
+                f"pattern rather than by name is the wildcard M's ruling forbids")

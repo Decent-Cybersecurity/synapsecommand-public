@@ -9,12 +9,13 @@ about.
 WHAT `blocked: []` MEANS, AND WHY IT IS NOT "THE RELEASE HAS ALREADY HAPPENED"
 -----------------------------------------------------------------------------
 M's ruling of 2026-09-08, on round P8 attempt 3's HOLD, carried by round PT's brief
-(`rounds/briefs/PT-soif-readiness-rule.md`) and quoted here because this module is the rule:
-
-    "amend `tests/test_cdm_readiness.py` so `blocked: []` means the tree is release-ready, not
-    that PACKAGE_VERSION and release headings have already been moved to the final tagged state;
-    preserve the requirements that bump derivation is MINOR, floor is 2.1.0, unruled is empty, all
-    substantive blockers are empty, and the required suite is green; make no release-state edits."
+(`rounds/briefs/PT-soif-readiness-rule.md`): `blocked: []` means the tree is release-READY, not
+that `PACKAGE_VERSION` and the release headings have already been moved to the final tagged state.
+What it told this module to preserve was the derivation's verdict — that the gate derives a bump,
+that the pending number is the one the gate's own floor names, that nothing is unruled — together
+with an empty substantive blocker set and a green suite; and to make no release-state edits. The
+ruling named that campaign's kind and number as literals and this file no longer does, for the
+reason the corrective section at the end of this docstring gives.
 
 The rule this module encoded before that ruling was the opposite one: an empty list obliged
 `PACKAGE_VERSION` to carry the release number and obliged `### Unreleased` to be gone. That rule
@@ -28,8 +29,9 @@ only move WITH the tag, and the tag is the release round's (`rounds/templates/re
 lists both of them among the sites that round moves).
 
 So readiness is a property of a tree BETWEEN releases, and that is what the empty-list branch
-asserts, in five parts: the derivation allows the release (MINOR, a floor one MINOR above the
-newest tag, nothing unruled); `PACKAGE_VERSION` has not moved ahead of the newest tag; the arc is
+asserts, in five parts: the derivation allows the release (the gate derives a bump over the pending
+arc, the pending number is that bump applied to the released version by the gate's own successor
+function, nothing is unruled); `PACKAGE_VERSION` has not moved ahead of the newest tag; the arc is
 still under `### Unreleased` with its round records; `RELEASE_NOTES.md` still opens at the released
 version; and the report says so itself, in §57's sections 19 and 20. None of the five is a claim
 that the release happened, and all five together are what "ready" means.
@@ -50,18 +52,14 @@ the bump gate reads its rulings from the pending section until a tag names the d
 and reports no pending arc once one does. Round PR found it and could not close it: no P round may
 tag, so nothing before PR could reach the state.
 
-M's ruling of 2026-09-09, fork FR.5 of `rounds/briefs/PR-soif-release-2.1.0.md`, quoted here
-because this module is again the rule:
-
-    "Before PACKAGE_VERSION is tagged: the readiness report is a live pre-release gate; it must
-    end with `blocked: []`; version/release-note invariants for an unreleased package remain
-    enforced. After a git tag exists that exactly names PACKAGE_VERSION: the same readiness report
-    becomes a historical certification of that release; tests must no longer require pre-release
-    conditions such as: PACKAGE_VERSION still being unreleased; an `Unreleased` release-note state
-    for 2.1.0; version remaining at the previous release state; tests must still require: the
-    readiness report exists; it corresponds to the released version/commit where applicable; it
-    ends with `blocked: []`. The transition must be determined from the exact PACKAGE_VERSION tag,
-    not from branch name or current date."
+M's ruling of 2026-09-09, fork FR.5 of round PR's brief under `rounds/briefs/`: before
+`PACKAGE_VERSION` is tagged the readiness report is a live pre-release gate, it must end with
+`blocked: []`, and the version and release-note invariants of a package between releases stay
+enforced. Once a tag exists that exactly names `PACKAGE_VERSION`, the same report becomes the
+historical certification of that release: the pre-release conditions are dropped — the version
+having not moved, the notes still standing at the previous heading — and what stays required is
+that the report exists, that it corresponds to the released version and commit, and that it ends
+with the empty list. The transition is decided by the tag and never by a branch name or a date.
 
 So there are two modes and ONE fact decides which: does a tag exist that exactly names this tree's
 `PACKAGE_VERSION`. Not the branch — a release commit sits on `main` and a campaign branch is
@@ -88,6 +86,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import types
 
 import pytest
 
@@ -126,6 +125,10 @@ SECTIONS = (
 READY = "ready for PR"
 
 UNRELEASED = "### Unreleased"
+
+#: The same heading with its `### ` stripped: what `gates/bump_derivation.py` calls a section when
+#: it looks up rulings. Derived from `UNRELEASED` so the two can never be edited apart.
+UNRELEASED_HEADING = UNRELEASED.removeprefix("### ")
 
 BLOCKED_LINE = re.compile(r"^blocked:\s*\[(?P<items>.*)\]\s*$", re.M)
 
@@ -175,14 +178,55 @@ def _previous_release() -> str:
     return newest[0].lstrip("v")
 
 
-def _minor_above(version: str) -> str:
-    """The MINOR successor of a release number. The floor a MINOR arc derives, spelled by no test.
+def _gate_module():
+    """`gates/bump_derivation.py` as an importable module, loaded from SOURCE.
 
-    §55 fixes the milestone at 2.1.0 and this returns it from `2.0.0` — but as a derivation, so
-    that the day the newest tag moves the floor moves with it and nobody edits a literal here.
+    `exec(compile(...))` rather than the ordinary loader, and registered in `sys.modules` while it
+    runs: `tests/test_cdm_bump_derivation.py`'s fixture gives both reasons — a `.pyc` is
+    revalidated on mtime in whole seconds, and a `@dataclass` under `from __future__ import
+    annotations` resolves its field annotations through `sys.modules[cls.__module__]`, which is
+    `None` for a module exec'd into a bare namespace. This gate holds five dataclasses.
+
+    WHY THE MODULE AND NOT MORE ARITHMETIC HERE. What this file used to carry was a
+    `_minor_above()` that spelled one kind of bump and one way of stepping a version — a second
+    implementation of `_successor()`, correct only for the campaign it was written in. M's ruling
+    of 2026-09-09 removed the assumption behind it (that §55's milestone is always the next
+    release, and always exactly one minor step above the newest tag), and the honest replacement
+    is not a more general arithmetic of our own but the gate's own function: the floor a release
+    must carry is whatever `gates/bump_derivation.py` says it is, computed by the code that says
+    it.
     """
-    major, minor, _ = version.split(".")
-    return f"{major}.{int(minor) + 1}.0"
+    module = types.ModuleType("_bump_derivation_for_readiness")
+    module.__file__ = str(GATE)
+    sys.modules[module.__name__] = module
+    try:
+        exec(compile(GATE.read_text(encoding="utf-8"), str(GATE), "exec"), module.__dict__)
+    finally:
+        sys.modules.pop(module.__name__, None)
+    return module
+
+
+def _derived_pending(gate) -> tuple[str, str] | None:
+    """`(kind, number)` for the arc since the released tag, re-derived rather than read.
+
+    The same three lines `measure()` runs for its `pending` block, executed here in this process
+    so that the JSON the report is judged against has a second, independent derivation behind it.
+    Read from the gate's own JSON alone, the assertions below would be the gate agreeing with
+    itself; re-derived, they catch a reporting path that has drifted from the derivation it
+    reports — which is a live class of defect in a gate whose JSON and human summary are separate
+    code, and was one in this repository's history.
+
+    `None` when no tag names `PACKAGE_VERSION`: there is no released end to measure from, and the
+    caller is in a mode where that cannot happen.
+    """
+    tags = gate.release_tags()
+    version = gate.parse_version(gate.declared_version())
+    released = tags.get(version)
+    if released is None:
+        return None
+    pending, _ = gate.apply_rulings(
+        gate.derive(gate.snapshot_at(released), gate.snapshot_at(None)), UNRELEASED_HEADING)
+    return pending.floor, gate._successor(version, pending.floor)
 
 
 def _measured() -> dict:
@@ -196,25 +240,51 @@ def _measured() -> dict:
     return json.loads(out.stdout)
 
 
+def _certified_commits() -> list[str]:
+    """Every 40-character hash §57's section 18 names. The report's own subject, as it writes it."""
+    return re.findall(r"\b[0-9a-f]{40}\b", _report_section("18. Commit", "19. Release status"))
+
+
 def _released_tag() -> str | None:
-    """The tag that exactly names this tree's `PACKAGE_VERSION`, or None if there is none.
+    """The tag that names this tree's `PACKAGE_VERSION` AND contains the commit this report
+    certifies — or None, which is the pre-release mode.
 
     M's FR.5: the transition is read from the tag and from nothing else. `git tag -l <name>` is
-    exact-match by name and prints nothing for a tag that does not exist, so the answer is the
-    output being non-empty — no parsing of a tag list, no ordering, no `--sort`, and no chance of
-    a prefix match putting `v2.1.0-rc1` in the way.
+    exact-match by name and prints nothing for a tag that does not exist, so the answer starts
+    from that output being non-empty — no parsing of a tag list, no ordering, no `--sort`, and no
+    chance of a prefix match putting a `v<version>-rc1` in the way.
 
-    Note what this deliberately does NOT ask: whether the tag points at HEAD. A release tag names
-    a commit, `main` may move on afterwards, and the report stays the certification of that
-    release either way. The correspondence that IS checked is the other direction — the commits
-    the report names have to be commits the tag contains.
+    THE NAME IS NOT ENOUGH, AND A TAG THAT EXISTS TAUGHT US SO. M's corrective ruling of
+    2026-09-09: "A tag such as [the one naming this version] that exists but does NOT contain the
+    new report's commit is a tagged-but-unpublished historical tag and MUST NOT switch the new
+    readiness report into released mode." That is a state this repository is actually in — a
+    release tag was cut, its own pipeline refused it at a security gate, nothing reached the
+    index, and the corrective release is a later number from a later commit. A name-only test
+    would read the tag, call the corrective campaign's fresh readiness report a historical
+    certification, and drop every pre-release condition the corrective release still has to meet.
+    So the tag must CONTAIN what the report describes before it can decide what the report is.
+
+    Note what this still deliberately does NOT ask: whether the tag points at HEAD. A release tag
+    names a commit, `main` may move on afterwards, and the report stays the certification of that
+    release either way. Containment is the relation; identity is not.
+
+    A report that names no commit at all is pre-release by the same rule, and that is not a gap.
+    §57 lets section 18 be self-referential — "the commit that carries this file" — which is the
+    only honest form BEFORE the commit exists, and it is exactly the form a report written for a
+    release that has not happened takes. Nothing can be shown to contain it, so nothing does.
     """
     from synapse_cdm.version import PACKAGE_VERSION
 
     out = subprocess.run(["git", "tag", "-l", f"v{PACKAGE_VERSION}"],
                          cwd=REPO, capture_output=True, text=True)
     assert out.returncode == 0, out.stderr
-    return out.stdout.strip() or None
+    tag = out.stdout.strip() or None
+    if tag is None:
+        return None
+    commits = _certified_commits()
+    if not commits:
+        return None
+    return tag if all(_tag_contains(tag, commit) for commit in commits) else None
 
 
 def _tag_contains(tag: str, commit: str) -> bool:
@@ -324,12 +394,16 @@ def test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_w
 def _certifies_the_release(tag: str) -> None:
     """THE RELEASED MODE, M's FR.5. Three obligations and not one of them about today's tree.
 
-    Existence, correspondence, and the empty list. Correspondence is the only one with any content
-    and it is asserted in the direction that can actually be wrong: every commit the report names
-    must be one the release tag CONTAINS. A report describing a commit the tag does not reach is a
-    certification of a different tree, which is the failure this direction exists for — and it is
-    reachable by an ordinary mistake, because a release round that stops and is re-run leaves a
-    report naming the commit of the attempt that did not ship.
+    Existence, correspondence, and the empty list. CORRESPONDENCE IS NOT ASSERTED HERE ANY MORE,
+    and its absence is the point rather than an omission: since M's corrective ruling of
+    2026-09-09 it is what SELECTS this mode. `_released_tag()` returns a tag only when the tag
+    contains every commit section 18 names, so by the time this function runs the correspondence
+    has already been established — asserting it again would be a branch that can never be taken,
+    and a check nobody has ever seen fail is not a check. The failure it used to catch is caught
+    strictly earlier and harder: a report describing a commit the tag does not reach no longer
+    fails an assertion inside the released mode, it never enters the released mode at all, and is
+    held to the pre-release conditions instead. Which is right — that report is a claim about a
+    tree between releases, whatever tags happen to exist beside it.
     """
     from synapse_cdm.version import PACKAGE_VERSION
 
@@ -345,17 +419,6 @@ def _certifies_the_release(tag: str) -> None:
         f"the report never names {PACKAGE_VERSION}, which is the version {tag} released. A "
         f"certification that does not name what it certifies corresponds to nothing"
     )
-    commits = re.findall(r"\b[0-9a-f]{40}\b", _report_section("18. Commit", "19. Release status"))
-    assert commits, (
-        "section 18 names no commit hash, so there is nothing to check the released tag against. "
-        "The self-referential form section 18 is also allowed to use is not available in the "
-        "released mode: after the tag there IS a hash for the commit that carries the file"
-    )
-    outside = [c for c in commits if not _tag_contains(tag, c)]
-    assert not outside, (
-        f"section 18 names {outside}, which {tag} does not contain. The report describes a tree "
-        f"the release was not cut from"
-    )
 
 
 def _certifies_readiness() -> None:
@@ -369,23 +432,41 @@ def _certifies_readiness() -> None:
     from synapse_cdm.version import PACKAGE_VERSION
 
     previous = _previous_release()
-    floor = _minor_above(previous)
 
-    # (a) the derivation allows the release. Quoted by section 19 of every report; re-taken here.
+    # (a) the derivation allows the release, and BOTH of its numbers come from the derivation.
+    # Section 19 of every report quotes them; they are re-taken here, twice and by two routes —
+    # the gate's JSON, and the gate's own functions run in this process.
     measured = _measured()
-    assert measured["derived_kind"] == "MINOR", (
-        f"the readiness report says `blocked: []` and the bump gate derives "
-        f"{measured['derived_kind']} over {measured['arc']} — §55's milestone is a MINOR"
-    )
     pending = measured["pending"]
-    assert pending is not None and pending["kind"] == "MINOR", (
-        f"the readiness report says `blocked: []` and the gate reports no pending MINOR arc: "
-        f"{pending!r}. A ready tree has work that is not in a release yet"
+    assert pending is not None and pending["kind"] is not None, (
+        f"the readiness report says `blocked: []` and the gate reports no pending arc: {pending!r} "
+        f"over {measured['arc']}. The gate measures the pending arc from the tag that NAMES the "
+        f"declared version, so this is the shape of PACKAGE_VERSION ({PACKAGE_VERSION}) having "
+        f"moved ahead of every tag: the number moves in the release round, with the tag, and a "
+        f"readiness report is not the release"
+    )
+    derived = _derived_pending(_gate_module())
+    assert derived is not None, (
+        "the gate's JSON reports a pending arc and the same derivation re-run in this process "
+        "finds no released tag to measure one from. The two disagree about the tree they are "
+        "reading, which is a defect in the gate and not in the report"
+    )
+    kind, floor = derived
+    assert kind != "NONE", (
+        f"the readiness report says `blocked: []` and the arc since v{previous} derives {kind}: "
+        f"nothing in the distribution has moved since the last release. A report claiming "
+        f"readiness for a release with no content is claiming readiness for nothing"
+    )
+    assert pending["kind"] == kind, (
+        f"the gate's JSON reports a pending {pending['kind']} arc and the same derivation re-run "
+        f"in this process yields {kind}. The number a release carries is decided by the "
+        f"derivation, so the two have to be one answer"
     )
     assert pending["number"] == floor, (
-        f"the gate's floor for the pending arc is {pending['number']} and one MINOR above the "
-        f"newest tag ({previous}) is {floor}. A report claiming readiness is claiming readiness "
-        f"for the number the derivation names"
+        f"the gate's floor for the pending arc is {pending['number']} and applying the derived "
+        f"{kind} to the released version ({previous}) gives {floor}. A report claiming readiness "
+        f"is claiming readiness for the number the derivation names — which is the derived kind "
+        f"applied to the released version, and never a number a test spelled in advance"
     )
     assert pending["unruled"] == [], (
         f"the readiness report says `blocked: []` and the gate leaves "

@@ -287,29 +287,77 @@ jobs:
         # which is the shape of a green with a hole in it. The identifiers in `flags` are
         # constrained by `security/exceptions/schema.json`'s pattern to characters no shell
         # splits on, so the unquoted expansion is deliberate and safe.
+        #
+        # THE ONE DISTRIBUTION THIS AUDIT LEAVES OUT IS THE PROJECT ITSELF, by M's ruling of
+        # 2026-09-09 and for the reason `publish.yml`'s `gate` job states at length: synapse-cdm
+        # cannot be on PyPI at the version being released, so `--strict` over an environment that
+        # contains it makes the audit demand the publication it gates. This job read
+        # "synapse-cdm: Dependency not found on PyPI and could not be audited" at the release
+        # commit, and `main` stayed red for exactly as long as the tree carried a version the index
+        # had not been given yet.
+        #
+        # `--skip-editable` is the flag that looks like the answer and is not: pip-audit 2.10.1
+        # treats a skipped distribution as a collection failure under `--strict` and exits 1 with
+        # "distribution marked as editable". So the exclusion is a filter on the project's NAME,
+        # over `pip list --format=freeze` — which writes `name==version` for every distribution
+        # however it was installed, where `pip freeze` would write `-e git+file://…` for this one
+        # and no name-anchored pattern could match it. The pattern is anchored to the start of the
+        # line and to both PEP 503 spellings, and the count of removed lines is asserted to be
+        # exactly one. No transitive dependency is excluded; every third-party distribution stays
+        # under `--strict`. `tests/test_cdm_security_exceptions.py` fails on anything wider.
         run: |
           set -euo pipefail
+          python -m pip list --format=freeze > environment.txt
+          echo '--- the installed environment ---'
+          cat environment.txt
+          if ! grep -v -E '^synapse[-_]cdm==' environment.txt > environment-third-party.txt; then
+            echo 'nothing is left to audit once the project under release is removed' >&2
+            exit 1
+          fi
+          removed=$(( $(wc -l < environment.txt) - $(wc -l < environment-third-party.txt) ))
+          echo "removed ${removed} line(s) naming the project under release"
+          test "${removed}" -eq 1
+          echo '--- the third-party set being audited ---'
+          cat environment-third-party.txt
           # shellcheck disable=SC2086
-          python -m pip_audit --strict ${{ steps.ignores.outputs.flags }}
+          python -m pip_audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }}
 
       - name: pip-audit over the wheel's own frozen closure, in a venv of its own
         # The step above audits the DEVELOPMENT environment — the package plus its `test` extra
         # plus pip-audit itself and everything those drag in. A consumer installs none of that.
-        # This step builds the wheel, installs it alone into a clean virtual environment, freezes
-        # what that produced, and audits the freeze: the closure a `pip install synapse-cdm`
-        # actually creates. The two readings differ and both matter — the first is what CI runs
-        # on, the second is what a user gets.
+        # This step builds the wheel, installs it alone into a clean virtual environment, lists
+        # what that produced, and audits that list minus the project's own line: the third-party
+        # closure a `pip install synapse-cdm` actually creates. The two readings differ and both
+        # matter — the first is what CI runs on, the second is what a user gets.
+        #
+        # THE SAME EXCLUSION AS THE STEP ABOVE, THE SAME PATTERN, THE SAME COUNT ASSERTION, and it
+        # is needed here for a second reason as well: a wheel installed from a local file is a
+        # DIRECT REFERENCE, and `pip freeze` writes it as `synapse-cdm @ file:///…#sha256=…` —
+        # a line no name-anchored filter matches and which `--strict` then fails on anyway,
+        # because the version it names is not on the index. `pip list --format=freeze` writes
+        # `synapse-cdm==<version>` instead, so one pattern serves both jobs. `frozen-closure.txt`
+        # keeps the whole closure INCLUDING the project, because that is the record the artefact
+        # upload below is for; only the audited copy has the line removed.
         run: |
           set -euo pipefail
           python -m build --wheel --outdir dist-audit packages/cdm
           python -m venv .audit-venv
           .audit-venv/bin/python -m pip install --upgrade pip >/dev/null
           .audit-venv/bin/python -m pip install dist-audit/*.whl
-          .audit-venv/bin/python -m pip freeze --exclude-editable > frozen-closure.txt
-          echo '--- the closure being audited ---'
+          .audit-venv/bin/python -m pip list --format=freeze > frozen-closure.txt
+          echo '--- the closure, whole ---'
           cat frozen-closure.txt
+          if ! grep -v -E '^synapse[-_]cdm==' frozen-closure.txt > closure-third-party.txt; then
+            echo 'nothing is left to audit once the project under release is removed' >&2
+            exit 1
+          fi
+          removed=$(( $(wc -l < frozen-closure.txt) - $(wc -l < closure-third-party.txt) ))
+          echo "removed ${removed} line(s) naming the project under release"
+          test "${removed}" -eq 1
+          echo '--- the third-party closure being audited ---'
+          cat closure-third-party.txt
           # shellcheck disable=SC2086
-          python -m pip_audit --strict -r frozen-closure.txt ${{ steps.ignores.outputs.flags }}
+          python -m pip_audit --strict -r closure-third-party.txt ${{ steps.ignores.outputs.flags }}
 
       - name: Upload the frozen closure
         if: always()
