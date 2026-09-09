@@ -322,6 +322,63 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** A reader who ran
 `pip install synapse-cdm` has 2.0.0, and 2.0.0 carries none of what follows.
 
+**ROUND PD's RECORD, 2026-09-08 — the docs site's two HIGH npm advisories, upgraded away.**
+
+Recorded 2026-09-08 by SOIF Part 1 round PD, on M's standing rule of 2026-09-07/08 (rounds P6 and
+PB): a HIGH or CRITICAL finding with an upstream fix is UPGRADED, and an exception is only for a
+finding that has none. Nothing here is released; `PACKAGE_VERSION` is unmoved at 2.0.0. The round
+exists because round P8's readiness report (`docs/soif-part1-release-readiness.md`) ended
+`blocked: [docs-npm-tree-carries-two-unexcepted-high-advisories]`, which under §57 is NO RELEASE,
+and because P8 is qualification-only and may not repair what it finds.
+
+**THE TREE DID NOT MOVE TO EARN THE BLOCKER; THE ADVISORY DATABASE DID.** `GHSA-w27v-7q3p-w38r`
+(SVGO, `>= 3.0.0, < 3.3.5`, HIGH) was published 2026-09-08T21:20:28Z and `GHSA-2883-xcg3-v3hh`
+(js-yaml, `>= 4.0.0, < 4.3.2`, HIGH) at 21:24:51Z, against a `docs/package-lock.json` that had not
+changed since round PB. CI run 34284003679 read three advisories and printed `OK — no unexcepted
+high or critical npm advisory in docs/` at 22:05:06Z; run 34287702937, forty minutes later and on a
+tree whose `docs/` was byte-identical, read six and failed. Both packages are transitive under
+`@docusaurus/*`, which is why sixteen of the nineteen "high" entries `npm audit` reports are
+dependents carrying no advisory of their own.
+
+**THE REPAIR IS TWO LINES IN `docs/package.json`'s EXISTING `overrides` BLOCK** — PB's own
+mechanism, extended rather than duplicated: `"js-yaml": "^4.3.2"` and `"svgo": "^3.3.5"` beside the
+`fast-uri`, `qs` and `serialize-javascript` pins already there. `npm install --prefix docs` moved
+`docs/package-lock.json` by **six lines changed in two entries and nothing else** —
+`node_modules/js-yaml` 4.3.1 → 4.3.2 and `node_modules/svgo` 3.3.4 → 3.3.5, each with its new
+`resolved` URL and `integrity`. No dependency was added or removed; the lock still describes 1344
+packages. `.github/workflows/ci.yml` is NOT edited: the `docs-audit` job PB wrote is what proves the
+repair, and a gate that has to be adjusted to pass its own subject is not a gate.
+
+**NOTHING IN THE PACKAGE MOVED AND THE GATE SAYS SO.** `python gates/bump_derivation.py --json`
+reads **697 signals with this round's change staged and 697 with the tree clean — the identical
+set** — so the round contributes **no unit, of any kind**, and no ruling was written. The arc since
+2.0.0 still derives MINOR with `unruled: []` and the next release is still at least 2.1.0. Nothing
+inside the package directory is touched but this file, which the gate classifies as prose.
+
+**THE BUILT SITE IS THE SAME SITE, AND THAT IS A DIGEST READING RATHER THAN AN ASSERTION.** Two
+builds of `a0d5db1` — one in the working tree, one in a separate worktree — produce byte-identical
+SHA-256 digests for all sixty-six files of `docs/build`, so the build is deterministic and the
+comparison means something. After the override, sixty-five of the sixty-six differ in nothing but
+the webpack runtime chunk's content-hashed FILENAME (`runtime~main.2a6e0e76.js` →
+`runtime~main.142b4dbc.js`), which every page references: normalise that one token and sixty-five
+files are byte-identical. The sixty-sixth is that runtime chunk itself, and it differs in
+**thirteen characters, all of them one minifier swapping the local names `u` and `b`** — the two
+files are the same length and applying only those thirteen substitutions makes them equal. No page's
+content changes. `npm --prefix docs run ci` is exit 0: `check-schema-docs: CURRENT — 9 generated
+files match`, `tsc` clean, the build green, and `check-built-admonitions: OK — 19 directives in the
+sources, 19 admonitions rendered, 0 literal ':::' in 26 built pages`.
+
+**THE TWO `image-size` EXCEPTIONS STAY, AND THAT IS A READING TOO.** M's rule removes an exception
+the day upstream publishes a fix. `GHSA-w3rx-r6r6-pgpr` and `GHSA-5p2g-fcmc-qvqq` both report
+`first_patched_version: null` over `<= 2.0.2`, and `image-size`'s `latest` dist-tag on npm IS 2.0.2,
+so there is no version to upgrade to and the two files under `security/exceptions/` are untouched.
+Run the `docs-audit` job's own derivation and enforcement locally and it now reads `advisories: 3;
+excepted and present: ['GHSA-5p2g-fcmc-qvqq', 'GHSA-w3rx-r6r6-pgpr']; excepted and absent: []`,
+zero BLOCKING lines, exit 0 — where before the override it read six advisories and two BLOCKING
+HIGHs. The third remaining advisory is `GHSA-w5hq-g745-h8pq` (uuid), MODERATE, below the gate's
+threshold and unchanged by this round. `GHSA-4vpr-x523-8j87` (SVGO, MODERATE, published
+21:20:05Z) was cleared by the same upgrade without being the reason for it.
+
 **ROUND PS's RECORD, 2026-09-08 — the release pipeline's SBOM stage, repaired.**
 
 Recorded 2026-09-08 by SOIF Part 1 round PS, on M's rulings of the same day. Nothing here is
