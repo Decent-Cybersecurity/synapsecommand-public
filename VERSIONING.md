@@ -79,12 +79,12 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:267` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:253` |
-| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:273` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:284` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:319` |
-| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:333` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.1` | `packages/cdm/synapse_cdm/version.py:283` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:262` |
+| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:289` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:300` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:335` |
+| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:349` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
 | Event semantic major | — | — | a segment of the identifier | the `type_id` itself, e.g. `sc.pnt.gnss_interference.v1` |
@@ -194,6 +194,17 @@ That number is a **derivation to be taken at the release, not a figure to be typ
   the schema does not move, and a package MINOR with an unmoved schema is the ordinary case rather
   than an anomaly.
 
+**CORRECTED 2026-09-10, and the second bullet above is what corrected it.** The campaign's number
+came out as `2.1.1` and not `2.1.0`. `v2.1.0` was tagged on `b69a267` on 2026-09-09 and its own
+`pip-audit --strict` release gate refused to publish it — the audit resolves every installed
+distribution against the index, and the one distribution it could not resolve was the release
+candidate itself. The tag stays where it is, permanently, and names a commit that never reached
+PyPI; the corrective release carries the same content one PATCH higher. The paragraph above is
+kept as written because it said this would happen: the number is taken at the release, and the
+sentence is what gets corrected. What it did not anticipate is the direction — the floor was never
+in question, and the number moved because a workflow refused a tag rather than because a diff
+proved anything.
+
 ---
 
 ## 5. Main advancement
@@ -226,7 +237,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v2.1.0 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v2.1.1 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

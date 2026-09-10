@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        2.1.0   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        2.1.1   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            2.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -55,7 +55,11 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   (2.0.0 -> 2.1.0 on 2026-09-08, round P3: optional primitives
                                   only. The package did not follow it for two days and then did,
                                   on 2026-09-09, at the same number by coincidence — a schema
-                                  bump obliges a release and does not perform one.)
+                                  bump obliges a release and does not perform one. They parted
+                                  again on 2026-09-10, at 2.1.1 against 2.1.0, and the schema did
+                                  nothing to deserve it: the package took a corrective PATCH for a
+                                  release gate that refused its own tag, which is precisely the
+                                  kind of event this table exists to keep off the other axes.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -98,8 +102,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``2.1.0`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
-fifth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``2.1.1`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
+sixth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -108,7 +112,12 @@ passed. It is kept as written; this is the sentence that overtakes it. **Correct
 life and for the reason the last paragraph of the packaging sweep's docstring predicted — a
 schema MINOR obliges at least a package MINOR, so the day the package pays that debt is a day
 the two numbers can land on one value. They are level and neither is computed from the other,
-which is the only thing this section has ever claimed.)
+which is the only thing this section has ever claimed. **Corrected a third time 2026-09-10, the
+2.1.1 corrective release, and the level lasted one day**: ``v2.1.0`` was tagged and its own
+``pip-audit --strict`` release gate refused to publish it, so the package took a PATCH the schema
+had no part in and the two numbers parted for the fifth time. Nothing about the wire contract
+moved on either day. That is the argument this section makes, arriving from a direction nobody
+anticipated: the axis that moved was moved by a workflow's defect.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -264,7 +273,14 @@ SCHEMA_VERSION = "2.1.0"
 #: arc adds an Adapter API v2 surface, a conformance suite, evidence records and the CDM 2.1.0
 #: optional primitives, and removes nothing — so the gate's floor and the release's number are the
 #: same number, which is the ordinary case and was not the case one release ago.
-PACKAGE_VERSION = "2.1.0"
+#: Moved 2.1.0 -> 2.1.1 on 2026-09-10, a PATCH, and it is a CORRECTIVE release rather than new
+#: content: `v2.1.0` was tagged on `b69a267` and its own `pip-audit --strict` release gate refused
+#: it, because the audited environment holds the version the run had not published yet. The tag
+#: stays where it is and 2.1.0 never reached the index. What moved between the two numbers is the
+#: gate, not the distribution — `gates/bump_derivation.py`'s floor for the arc v2.1.0 -> v2.1.1 is
+#: PATCH with nothing unruled, and this number is that floor. A reader installing 2.1.1 gets
+#: everything 2.1.0 was going to carry.
+PACKAGE_VERSION = "2.1.1"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

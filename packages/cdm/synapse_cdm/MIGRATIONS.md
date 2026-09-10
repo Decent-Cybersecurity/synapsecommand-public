@@ -181,7 +181,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v2.1.0 -m "..."                           # annotated, never lightweight
+git tag -a v2.1.1 -m "..."                           # annotated, never lightweight
 git push origin main --follow-tags                   # this is the whole of it
 ```
 
@@ -297,7 +297,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v2.1.0 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v2.1.1 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -317,16 +317,47 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 
 ## History
 
-### Unreleased
+### 2.1.1 — 2026-09-10 — SOIF Part 1: Foundation & Assurance, published — the corrective release for the tagged-never-published 2.1.0
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v2.1.0` and a reader who installed the package has 2.0.0, because the run on that
-tag never uploaded anything — see the dated note on the section below.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section
-being what moved in it. Everything else this round touched is repository-bound and ships in
-nothing: two workflow files, one test module for each of them, and one page of the documentation
-site.
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `2.1.1` at this
+commit, in `version.py`, and the tag `v2.1.1` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said that nothing in the section was in a release and that the newest tag
+was `v2.1.0` on a tree whose reader still had 2.0.0 — every clause of it was true until this
+commit, and the middle one stays true forever: `v2.1.0` is a release tag that released nothing.
+
+**WHAT MOVED BETWEEN 2.1.0 AND 2.1.1 IS A WORKFLOW AND NOT THE DISTRIBUTION.** A reader upgrading
+from 2.0.0 gets exactly the arc the section below describes; a reader comparing 2.1.0 with 2.1.1
+finds this file and `version.py` and nothing else, because 2.1.0 was never installable. The
+`Release` run on `v2.1.0` (34332384035) failed in its first job on step 15 of 15,
+`pip-audit --strict`, with "synapse-cdm: Dependency not found on PyPI and could not be audited:
+synapse-cdm (2.1.0)" — a gate that required the publication it was gating. Round PP's record below
+is the repair, and this release is the first one that carries it.
+
+**What moved inside the distribution: two files** — `MIGRATIONS.md` (this section, PP's record and
+the two tag-command examples) and `version.py` (the constant and its live docstring readings).
+Everything else the corrective touched is repository-bound and ships in nothing: the release
+notes, the root `README.md`, `VERSIONING.md`, the documentation site's changelog page and one test
+module's version pin.
+
+**THE PACKAGE VERSION MOVED 2.1.0 -> 2.1.1 ON 2026-09-10, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v2.1.0` and derives PATCH with nothing unruled: no
+importable name was added, removed or narrowed between the two tags, and the shipped-document row
+is what carries this file. So the floor and the number are one number and no Version ruling is
+needed or present — the same shape 2.1.0 had, for the opposite reason. `SCHEMA_VERSION` does not
+move and stays at `2.1.0`: the wire contract had no part in any of this, and the two axes are
+unequal again after one day of coincidence.
+
+**THE RECOVERY, RECORDED WHERE A READER WILL FIND IT.** `v2.1.0` remains permanently attached to
+commit `b69a267`. It is not moved, not deleted, not recreated, and history is not rewritten to
+pretend it did not happen. It was tagged 2026-09-09T09:01:43Z and pushed; its own pip-audit
+release gate refused publication; it never reached PyPI; and 2.1.1 is the corrective and the first
+successfully published SOIF Part 1 release. The dated note on the 2.1.0 section below says the
+same thing from the other side, and `PUBLICATION.md`'s ledger is where the upload that did happen
+is measured.
 
 **ROUND PP's RECORD, 2026-09-09 — the release pipeline's security audit stops requiring the
 upload it gates.** Unit: `synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's shipped-document

@@ -57,6 +57,17 @@ two have coincided for two separate reasons. **What the index serves is a separa
 this tree says**, measured after an upload rather than asserted before one: `PUBLICATION.md`'s
 ledger is where it is recorded, and the paragraphs above that state it in the present tense are
 dated readings and are left as written.
+
+**Updated 2026-09-10, the 2.1.1 corrective release, and they are UNEQUAL again after one day.**
+On this tree the package is at `2.1.1` and the schema stays at `2.1.0`, and the schema had no part
+in the move: `v2.1.0` was tagged and its own `pip-audit --strict` release gate refused to publish
+it — the audit resolves every installed distribution against the index and could not resolve the
+release candidate itself, which is a gate requiring the publication it gates. The tag stays where
+it is, permanently, naming a commit that never reached PyPI, and 2.1.1 carries the identical wire
+contract one PATCH higher. The paragraph above is kept as written: the level it recorded was real
+and lasted a day, which is the second-shortest life any of these coincidences has had. **What the
+index serves is still a separate fact from what this tree says**, and `PUBLICATION.md`'s ledger is
+still where it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

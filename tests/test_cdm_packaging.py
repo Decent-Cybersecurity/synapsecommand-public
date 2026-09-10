@@ -309,6 +309,14 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     as correct on every run of this tree. It is the first reopening the previous paragraph
     predicted in advance rather than recorded after the fact, and it arrived one release later
     than the paragraph was written.
+
+    **AND IT CLOSED AGAIN THE NEXT DAY, ON 2026-09-10, FOR A REASON NO PARAGRAPH HERE PREDICTED.**
+    `v2.1.0` was tagged and its own `pip-audit --strict` release gate refused to publish it, so the
+    corrective 2.1.1 moved the package a PATCH the schema had no part in: the numbers are `2.1.1`
+    and `2.1.0` and the sweep is quiet again. The window this docstring tracks has now been opened
+    by a schema bump twice and closed by a workflow defect once, which is worth recording because
+    every earlier parting in this file was argued from the contract. This one was not argued at
+    all — it is what a release gate did.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -328,14 +336,13 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.1.0", "2.1.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.1.1", "2.1.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "2.1.0 and 2.1.0. They are LEVEL again — round P3 moved the schema a MINOR for the CDM "
-        "foundation primitives and the 2.1.0 release moved the package a MINOR two days later, "
-        "paying the debt a schema bump always creates — and the equality is as much of a "
-        "coincidence as the inequality it replaced. If you bumped one of them just now: "
-        "that is the expected event, and the fix is to update this assertion to the two numbers "
-        "you now mean, not to re-link them"
+        "2.1.1 and 2.1.0. They are UNEQUAL again — the level they reached on 2026-09-09 lasted "
+        "one day, because `v2.1.0`'s own pip-audit release gate refused to publish it and the "
+        "corrective 2.1.1 moved the package a PATCH the wire contract had no part in. If you "
+        "bumped one of them just now: that is the expected event, and the fix is to update this "
+        "assertion to the two numbers you now mean, not to re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

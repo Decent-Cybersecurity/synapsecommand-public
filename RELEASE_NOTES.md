@@ -1,23 +1,46 @@
-# synapse-cdm 2.1.0
+# synapse-cdm 2.1.1
 
-A MINOR release, and it is the largest one this package has had. **SOIF Part 1 — Foundation &
-Assurance** is not a format and not a semantic layer: it is the machinery that makes a claim about
-an adapter checkable by somebody who did not write it. An adapter now describes itself in a
-published manifest; a fifteen-check conformance suite runs over any adapter in the roster; an
-evidence record states what was measured, on which commit, against which versions, with a digest
-of every fixture the run read; and the CDM gains the geometry, time, route, quality, provenance and
-residual primitives an adapter needs in order to say what it actually translated. Nothing is
-removed, renamed or narrowed, so a 2.0.0 consumer keeps working without doing anything.
+**SOIF Part 1 — Foundation & Assurance**, and this is the release that ships it. Part 1 is not a
+format and not a semantic layer: it is the machinery that makes a claim about an adapter checkable
+by somebody who did not write it. An adapter now describes itself in a published manifest; a
+fifteen-check conformance suite runs over any adapter in the roster; an evidence record states what
+was measured, on which commit, against which versions, with a digest of every fixture the run read;
+and the CDM gains the geometry, time, route, quality, provenance and residual primitives an adapter
+needs in order to say what it actually translated. Nothing is removed, renamed or narrowed, so a
+2.0.0 consumer keeps working without doing anything.
 
-**Package version 2.1.0 · CDM `schema_version` 2.1.0.** The two numbers are equal again, and **that
-is a coincidence and not a derivation**: the schema moved on `MIGRATIONS.md`'s table in the CDM
-round, for optional primitives only, and the package moves here on `version.py`'s table because a
-release is what puts a schema bump on the index. A schema bump obliges a package release and does
-not perform one — this release is the one that pays that debt, which is why the two land on one
-value. `synapse_cdm/version.py` states the nine version axes and their independence in one place,
-and `tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive either
-number from the other. A package at 2.1.0 does **not** mean SC-OES 2.1: `SC_OES_VERSION` is a third
-axis, still `0.1.0` and still a Draft.
+**If you are upgrading from 2.0.0 — which is what the index served until this release — read this
+as the MINOR it is.** Everything below is the arc from 2.0.0, because 2.1.0 never reached anybody.
+
+## Why the number is 2.1.1 and not 2.1.0
+
+**2.1.0 was tagged and was never published, and the tag stays where it is.** `v2.1.0` was created
+on commit `b69a267` on 2026-09-09 and pushed. Its own release pipeline then refused it: the `gate`
+job's last step is `pip-audit --strict` over the installed environment, the environment holds the
+release candidate at the tree's own version, `--strict` turns a distribution the index cannot
+resolve into a failure, and the index cannot carry 2.1.0 until the `publish` job — which needs the
+gate that just failed. Fourteen of the gate's fifteen steps were green and nothing was uploaded.
+It is a gate that required the publication it was gating, and no dispatch run could ever have
+caught it, because a dispatch runs at a version that has already been released.
+
+The repair scopes both audits to the release candidate's dependencies, excluding only
+`synapse-cdm` itself, and leaves every third-party line under `--strict`. `v2.1.0` is **not**
+moved, deleted or recreated: it remains permanently attached to `b69a267` as a release tag that
+released nothing, and 2.1.1 is the corrective and the first successfully published SOIF Part 1
+release. `PUBLICATION.md`'s ledger records both facts.
+
+Between the two tags the distribution itself moves by two files — `MIGRATIONS.md` and
+`version.py`. `gates/bump_derivation.py` derives PATCH over that arc with nothing unruled, and
+2.1.1 is that floor.
+
+**Package version 2.1.1 · CDM `schema_version` 2.1.0.** The two numbers are unequal, and **that is
+the ordinary case and not a signal**: the schema moved on `MIGRATIONS.md`'s table in the CDM round,
+for optional primitives only; the package moved on `version.py`'s table for the release; and then
+the package moved once more, a PATCH the wire contract had no part in. They were level for one day.
+`synapse_cdm/version.py` states the nine version axes and their independence in one place, and
+`tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive either number
+from the other. A package at 2.1.1 does **not** mean SC-OES 2.1: `SC_OES_VERSION` is a third axis,
+still `0.1.0` and still a Draft.
 
 ## What changed on the wire, and what a 2.0.0 consumer must do
 
@@ -42,7 +65,7 @@ What a producer gains is vocabulary, not obligation:
   silently.
 
 `packages/cdm/synapse_cdm/MIGRATIONS.md`'s 2.1.0 section carries the migration statement and the
-derivation, entry by entry. There is no migration tooling, because there is nothing to migrate.
+derivation, entry by entry, and its 2.1.1 section carries this release's own record. There is no migration tooling, because there is nothing to migrate.
 
 ## Adapter API v2, and every adapter now describes itself
 
@@ -95,7 +118,10 @@ fixture data came from.
   fourteen adapters.
 * Secret scanning on the platform, `.gitleaks.toml` in the tree, and a CI job over the full
   history reachable from every push.
-* `pip-audit --strict` twice — over the environment and over the wheel's frozen closure — and an
+* `pip-audit --strict` twice — over the environment and over the wheel's frozen closure — with
+  exactly one distribution excluded by name, `synapse-cdm` itself, because an audit that has to
+  resolve the release candidate against the index is a gate requiring the publication it gates.
+  Every third-party line stays under `--strict` and no transitive dependency is excluded. Plus an
   npm audit at high over the documentation tree, with the two live advisory exceptions declared as
   files under `security/exceptions/` with an expiry each rather than as a flag on a command line.
 * CodeQL, and a gate that refuses a blocking alert.
@@ -178,6 +204,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==2.1.0
+pip install synapse-cdm==2.1.1
 python -m synapse_cdm.harness --list-adapters
 ```
