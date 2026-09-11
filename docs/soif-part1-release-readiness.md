@@ -618,7 +618,10 @@ Suite figures, at the commit of section 18: **fresh clone → 0 failed, 5148 pas
 
 The working tree's run of the same suite reads **5 failed, 5144 passed, 75 skipped** (170.65s), and
 both reconcile to the same collection of 5224. The five failures are in three modules —
-`test_cdm_changelog_claim.py::test_no_site_claims_this_page_mirrors_the_migrations_file`,
+`test_cdm_changelog_claim.py`'s sweep for the retired copy-claim about the changelog page (its id
+is described rather than quoted: the id itself carries the pairing that check bans, and this
+document is inside the sweep, so `MIGRATIONS.md`'s elision of its own pending-arc heading token is
+followed here),
 `test_cdm_consumer_path.py` ×3 and
 `test_cdm_deploy_workflow.py::test_the_site_list_is_exactly_the_files_that_state_the_mechanism` —
 every one of them naming a file in the local apparatus directory of limitation 17 and no tracked
@@ -626,6 +629,19 @@ file. **The binding invariant is that failure set: those five and no sixth.** Th
 difference between the two runs is the same apparatus plus the virtual environment sitting inside
 the tree and outside the clone, and neither skip count is comparable with a figure taken before the
 2026-09-10 environment rebuild (limitation 20).
+
+**Correction, 2026-09-11, appended by the round that repairs this file.** The paragraph above was
+true of the commit section 18 names and was NOT true of the commit that first carried this report.
+That commit quoted whole the id of the check the paragraph describes, and the id itself carries the
+pairing that check bans — so this report became the one TRACKED offender against it, at this file's
+line 621 as it then stood. Measured, not inferred: a fresh clone of that commit read **1 failed,
+5147 passed, 76 skipped** with `docs/soif-part1-release-readiness.md:621` the whole offender list,
+`git log -S` put the pairing in that commit and in no earlier one, and the push run 34649439341 was
+red on its `Suite, gates and manifests` job for that line alone. The sentence "and no tracked file"
+above is corrected to read: no tracked file other than this one, and only until this repair. The
+line is now narrowed to describe the check instead of quoting it, and the sweep over the tracked
+tree is empty again; the in-tree run still reports the failure, because the apparatus directory of
+limitation 17 is untracked yet sits inside the repository and inside the sweep.
 
 **The ref-dependent steps, rehearsed against a real tag.** `gates/release_ref_rehearsal.py`
 (484 lines, round PQ) replays each step of `publish.yml` whose behaviour depends on the ref, against
@@ -677,6 +693,13 @@ and this tree earns it. The release round is the next step.
 * Every §56 item is green in a fresh clone of this commit — the suite, the conformance sweep,
   packaging, clean install, schema drift, manifest validation, evidence, security analysis,
   dependency analysis, SBOM, and the documentation build.
+
+  **Correction, 2026-09-11.** True of the commit section 18 names, and not of the commit that first
+  carried this file: that commit's own copy of this report failed one tracked check, so a fresh
+  clone of IT read 1 failed / 5147 passed / 76 skipped. Section 17's correction has the readings.
+  The same qualification applies to the identical sentence in this document's opening summary. The
+  repair is one narrowed line in section 17 plus these two dated corrections and nothing else — no
+  code, no gate, no schema and no §56 figure moves with it.
 * **Both steps that refused a tag are green on the runner, on this commit, in the steps that
   refused them.** `gate` step 15 (pip-audit) is success with one line removed from the closure, and
   `gate` step 16 (CodeQL) is success reading `analyses on 78b9b4a0…: 2`. Step 16's green on a
