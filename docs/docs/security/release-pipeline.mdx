@@ -83,6 +83,46 @@ flag fails on the very package it was told to skip. Each audit therefore exports
 `pip list --format=freeze`, removes the one line matching `^synapse[-_]cdm==`, asserts that exactly
 one line was removed, and audits what is left.
 
+**What the CodeQL gate reads, and why it is the commit and not the ref — added 2026-09-10.**
+The `gate` job's CodeQL stage asks GitHub for this repository's code-scanning analyses and keeps
+the ones whose `commit_sha` is the commit under release. It does **not** filter by the ref the
+release was triggered on. Until 2026-09-10 it did, and the filter made the step unpassable by any
+tag: `v2.1.1` was tagged on `4409115` and pushed, `Release` run 34452755466 reached step 16 of 17,
+asked for the analyses of `refs/tags/v2.1.1`, and got none — because `codeql.yml` triggers on
+pushes and pull requests to `main` and `soif/**` and a weekly schedule, and has no trigger under
+which the ref is a tag. The commit itself had two clean analyses on `refs/heads/main`, minutes
+old, and the gate excluded them by ref. Nothing was published and the tag was spent.
+
+The repair is the promise the step's own name has always made: *over the analysis this commit
+already has*. It is not a weakening. The gate still requires a real analysis of the exact release
+commit, still refuses a commit nobody has scanned — no analysis is a failure, not a pass — and
+still hands the SARIFs to `gates/codeql_gate.py`, the same module `codeql.yml` runs against the
+same `security/exceptions/` directory. What it stopped doing is caring which ref produced the
+analysis, including a pull-request ref for the same SHA, which is the same code scanned by the
+same query suite. The paging is bounded and the refusal says how many analysis records it examined
+before concluding that none belongs to the commit, because "none" is only honest with that number
+beside it; and the refusal now names the fix that exists — let `codeql.yml` finish on a **branch**
+containing the commit — instead of the one that does not.
+
+**The pre-push rehearsal — added 2026-09-10.** `gates/release_ref_rehearsal.py` replays, against
+the real API and the real tree, every release step whose behaviour depends on the ref, with the tag
+that is about to be pushed: the `refs/tags/v` guard on everything irreversible, condition 3, the
+annotated-tag check and its tagger, the CodeQL query and the threshold module over the SARIFs it
+returns, the five `${GITHUB_REF_NAME#v}` version derivations, and whether a Release already carries
+the tag's name. It is a **mandatory act between tagging and pushing**, and a red rehearsal is a
+stop with the tag still local and unspent.
+
+It exists because a tag is the one thing this repository cannot un-spend, and two releases were
+burned in two days by gates whose first execution was also their last chance — `v2.1.0` at the
+dependency audit, `v2.1.1` at the CodeQL gate. Both defects have one shape: a step that depends on
+the ref, first run on a ref nobody had run it on. Neither was findable by the suite, which reads
+the workflow's text and not the API's answer to it; by a `workflow_dispatch` run, whose ref is a
+branch and therefore the ref that works; or by a re-run, which does not change the input that
+decides. The module's last check is the one that outlives the round that wrote it: it greps
+`publish.yml` for every use of `GITHUB_REF`, `GITHUB_REF_NAME`, `github.ref` and `github.ref_name`
+and **fails on any use its own covered-uses table does not name** — so a future step that depends
+on the ref without deciding how it is rehearsed fails here, locally, rather than on a pushed tag.
+
 ## 2. The approval, and what it is not
 
 The `pypi` environment carries a **required reviewer**, and the upload waits there. A PyPI upload

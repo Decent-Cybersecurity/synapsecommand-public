@@ -182,8 +182,22 @@ behind it.
 
 ```bash
 git tag -a v2.1.1 -m "..."                           # annotated, never lightweight
+python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
+
+**The middle line is not optional and it is not a convenience — added 2026-09-10.**
+`gates/release_ref_rehearsal.py` replays, against the real API and this tree, every step of
+`publish.yml` whose behaviour depends on the ref the release runs on, with `GITHUB_REF` bound to
+the tag that is about to be pushed: the `refs/tags/v` guard on both irreversible jobs, condition 3,
+the annotated-tag check and its tagger, the CodeQL gate's query and `gates/codeql_gate.py` over the
+SARIFs it returns, every `${GITHUB_REF_NAME#v}` version derivation, and whether a Release already
+carries the tag's name. A red rehearsal is a **stop, with the tag still local and unspent**; a
+green one means the tag reaches the `pypi` hold, which is the only place a tag has ever been
+burned. It exists because two tags were burned in two days by gates whose first execution on a tag
+ref was also their last chance — `v2.1.0` at the dependency audit and `v2.1.1` at the CodeQL gate —
+and its last check refuses any ref-dependent use of `publish.yml` its own covered-uses table does
+not name, so the next step of that class fails here rather than on a pushed tag.
 
 The tag is the release. `.github/workflows/publish.yml` takes it from there: conditions 1, 2 and 3,
 `twine check --strict`, then a wait for a reviewer on the `pypi` environment, then an upload over
@@ -317,7 +331,69 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v2.1.1`, and a reader who installed the package has 2.0.0 — the runs on `v2.1.0`
+and on `v2.1.1` both died in the gate job and uploaded nothing. See the dated notes on the two
+sections below.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
+dated note on the 2.1.1 section and the rehearsal line in the release sequence being what moved in
+it. Everything else this round touched ships in nothing: the release workflow, two test modules, a
+new gate module and one page of the documentation site.
+
+**ROUND PQ's RECORD, 2026-09-10 — the release pipeline's CodeQL gate reads the analyses of the
+commit, and a pre-push rehearsal replays every ref-dependent step against the tag.** Unit:
+`synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's shipped-document row — no importable name,
+no harness flag, no fixture set and no dependency moves, so the MINOR list does not reach it and
+the PATCH row does. No other unit: nothing under `synapse_cdm/` changed but this file.
+
+**THE DEFECT, IN ONE SENTENCE: the CodeQL gate asked which analyses exist for the REF, and no
+workflow in this repository can ever produce an analysis on a tag ref.** `publish.yml`'s step 16
+queried `code-scanning/analyses?ref=${GITHUB_REF}` and then selected on the commit SHA. On a tag
+push `GITHUB_REF` is `refs/tags/<tag>`; `codeql.yml` triggers on pushes and pull requests to `main`
+and `soif/**` and a weekly schedule, and has no `workflow_dispatch`. So the step was unpassable by
+every tag this repository will ever push, and `v2.1.1` — run 34452755466, gate step 16 of 17 — was
+its first execution on a tag ref in this repository's history. It was not a finding and not a race:
+the commit had two analyses, `1753264364` and `1753266107`, both on `refs/heads/main` and both five
+and a half minutes older than the query, and `gates/codeql_gate.py` over their SARIFs returns
+`0 result(s), 0 blocking`. The ref filter excluded them. No dispatch run could have caught it: a
+dispatch runs on a branch, which is the ref that works.
+
+**THE REPAIR IS THE PROMISE THE STEP ALREADY MADE.** Its name has said *over the analysis this
+commit already has* since round P7 wrote it, and `select(.commit_sha == "${GITHUB_SHA}")` is the
+clause that does the work. The query drops `ref=`, pages the endpoint under a stated bound of five
+pages of a hundred, and reports how many analysis records it examined when it refuses — because
+"no analysis for this commit" is only honest with that number beside it. No analysis is still a
+FAILURE and not a pass. The refusal no longer tells the reader to let `codeql.yml` finish on this
+ref, which names something that cannot happen; it names a **branch** containing the commit, which
+can. Accepting an analysis produced on a pull-request ref for the same SHA is deliberate and is
+not a weakening: it is the same code, scanned by the same query suite, and the gate still demands a
+real analysis of the exact release commit and still runs the shared threshold module over it.
+
+**AND THE CLASS OF DEFECT IS CLOSED, NOT JUST THE INSTANCE.** `gates/release_ref_rehearsal.py` is
+new, and the release sequence above now names it as a mandatory act between tagging and pushing.
+Its seven checks replay the tag guard, condition 3, the annotated tag, the CodeQL query and the
+threshold module over the SARIFs it fetches, the five `${GITHUB_REF_NAME#v}` derivations and the
+Release name, against a named tag and commit, before the tag leaves this machine. The last check is
+the one that outlives this round: it greps `publish.yml` for every use of `GITHUB_REF`,
+`GITHUB_REF_NAME`, `github.ref` and `github.ref_name` and fails on any use its own covered-uses
+table does not name. Run against `v2.1.1` and `4409115` — the tag refused on 2026-09-10 — it is
+green on all seven.
+
 ### 2.1.1 — 2026-09-10 — SOIF Part 1: Foundation & Assurance, published — the corrective release for the tagged-never-published 2.1.0
+
+**DATED NOTE, 2026-09-10, appended and not an edit: this release was tagged and never published
+either.** `v2.1.1` was tagged at 07:59:24Z on `4409115` and pushed. `Release` run 34452755466
+failed in its first job at gate step 16 of 17 — the CodeQL gate — because that step asked for the
+code-scanning analyses of `${GITHUB_REF}`, which on a tag push is `refs/tags/v2.1.1`, and
+`codeql.yml` has no trigger under which the ref is a tag. Steps 1 to 15 were green, the pip-audit
+step that refused 2.1.0 included. Nothing reached PyPI, no `pypi` hold was ever created and no
+GitHub Release exists. The tag stays where it is, permanently, exactly as `v2.1.0` does: two
+release tags now name commits that released nothing. The number that carries this work to the
+index is **2.1.2**, and round PQ (below, under the pending section) is the repair that lets it
+get there.
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 

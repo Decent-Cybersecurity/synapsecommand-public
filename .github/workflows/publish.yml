@@ -409,6 +409,37 @@ jobs:
         #
         # NO ANALYSIS IS A FAILURE AND NOT A PASS. A commit CodeQL has not looked at yet is a
         # commit whose findings are unknown, and "unknown" is the state this gate exists to refuse.
+        #
+        # THE QUERY IS SCOPED TO THE COMMIT AND NOT TO THE REF — round PQ, 2026-09-10, and the
+        # reading is `Release` run 34452755466. `v2.1.1` was tagged on 4409115 and pushed; this
+        # step asked `code-scanning/analyses?ref=${GITHUB_REF}`, which on a tag push is
+        # `refs/tags/v2.1.1`, got `analyses on 4409115…: 0` and failed the release at step 16 of
+        # 17. The commit HAD two analyses — 1753264364 and 1753266107, both on `refs/heads/main`,
+        # both created five and a half minutes before the query — and `gates/codeql_gate.py` over
+        # their SARIFs returns `0 result(s), 0 blocking`, exit 0. `codeql.yml` triggers on
+        # `push`/`pull_request` to `main` and `soif/**` and a weekly cron and has no
+        # `workflow_dispatch`, so NO ref of the form `refs/tags/*` can ever carry an analysis: the
+        # ref filter made this step unpassable by every tag this repository will ever push, and
+        # v2.1.1 was its first execution on a tag ref in the repository's history.
+        #
+        # So the filter is the commit SHA, which is what this step's own name has promised since
+        # P7 wrote it. It is NOT a weakening (M's ruling of 2026-09-10, and the runner's fork
+        # FQ.2 pre-ruled ACCEPTED): the gate still demands a real analysis for the exact release
+        # commit and still runs the shared threshold module over it. What it stops doing is
+        # caring which ref produced that analysis — including a pull-request or fork ref for the
+        # same SHA, which is the same code scanned by the same query suite. `GITHUB_REF` is still
+        # PRINTED, for the record; it no longer decides anything.
+        #
+        # The endpoint is PAGED, and the paging is BOUNDED: `MAX_PAGES` x `PER_PAGE` newest
+        # analyses. The refusal message reports how many records were examined, because "0
+        # analyses for this commit" is only honest if the reader is told how far the search
+        # looked. The release commit's analyses are minutes old when this runs and the endpoint
+        # returns newest first, so page 1 answers it in practice.
+        #
+        # `gates/release_ref_rehearsal.py` replays this query — and every other ref-dependent
+        # release step — against the real API with the tag about to be pushed, BEFORE it is
+        # pushed. That module is where a defect of this class is now caught; a tag is the one
+        # thing this repository cannot un-spend.
         env:
           # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
           # spelling is deliberate: this file states, in its header and in
@@ -418,22 +449,36 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          ref="${GITHUB_REF}"
-          analyses="$(gh api "repos/${GITHUB_REPOSITORY}/code-scanning/analyses?ref=${ref}&per_page=100" \
-                       --jq "[.[] | select(.commit_sha == \"${GITHUB_SHA}\")]")"
-          count="$(echo "${analyses}" | python -c 'import json,sys; print(len(json.load(sys.stdin)))')"
-          echo "analyses on ${GITHUB_SHA}: ${count}"
+          echo "trigger ref: ${GITHUB_REF} (printed for the record; it does not filter the query below)"
+          MAX_PAGES=5
+          PER_PAGE=100
+          : > analysis-ids.txt
+          examined=0
+          page=0
+          while [ "${page}" -lt "${MAX_PAGES}" ]; do
+            page=$(( page + 1 ))
+            found="$(gh api "repos/${GITHUB_REPOSITORY}/code-scanning/analyses?per_page=${PER_PAGE}&page=${page}" \
+                       --jq "{examined: length, matched: [.[] | select(.commit_sha == \"${GITHUB_SHA}\") | .id]}")"
+            examined=$(( examined + $(echo "${found}" | python -c 'import json,sys; print(json.load(sys.stdin)["examined"])') ))
+            echo "${found}" \
+              | python -c 'import json,sys; [print(i) for i in json.load(sys.stdin)["matched"]]' \
+              >> analysis-ids.txt
+            if [ "$(echo "${found}" | python -c 'import json,sys; print(json.load(sys.stdin)["examined"])')" -lt "${PER_PAGE}" ]; then
+              break
+            fi
+          done
+          count="$(grep -c . analysis-ids.txt || true)"
+          echo "analyses on ${GITHUB_SHA}: ${count} (examined ${examined} record(s) over ${page} page(s); bound ${MAX_PAGES} x ${PER_PAGE})"
           if [ "${count}" -eq 0 ]; then
-            echo "::error::CodeQL has produced no analysis for ${GITHUB_SHA} on ${ref}. A commit nobody has scanned is not a commit with no findings. Let codeql.yml finish on this ref, then re-run." >&2
+            echo "::error::CodeQL has produced no analysis of commit ${GITHUB_SHA}. ${examined} analysis record(s) were examined over ${page} page(s) of this repository's code-scanning analyses, newest first, bounded at ${MAX_PAGES} page(s) of ${PER_PAGE}, and none of them analysed this commit. A commit nobody has scanned is not a commit with no findings. This query does not care which ref produced the analysis, so the fix is to let codeql.yml finish on a BRANCH that contains ${GITHUB_SHA} — codeql.yml has no trigger under which the ref is a tag — and then re-run." >&2
             exit 1
           fi
           mkdir -p sarif
-          echo "${analyses}" \
-            | python -c 'import json,sys; [print(a["id"]) for a in json.load(sys.stdin)]' \
-            | while read -r id; do
-                gh api -H "Accept: application/sarif+json" \
-                  "repos/${GITHUB_REPOSITORY}/code-scanning/analyses/${id}" > "sarif/${id}.sarif"
-              done
+          while read -r id; do
+            gh api -H "Accept: application/sarif+json" \
+              "repos/${GITHUB_REPOSITORY}/code-scanning/analyses/${id}" > "sarif/${id}.sarif"
+          done < analysis-ids.txt
+          rm -f analysis-ids.txt
           python gates/codeql_gate.py sarif/*.sarif
 
       - name: Hand the gate's artefacts to the jobs that need them

@@ -920,3 +920,139 @@ def test_the_sbom_assertions_refuse_the_four_things_m_ruled(workflow):
         "the assertion compares names without normalising them PEP 503 style. syft and "
         "cyclonedx-py need not spell the distribution the same way, and `synapse_cdm` failing a "
         "check for `synapse-cdm` is a release blocked by punctuation")
+
+
+# ------------------------------------- Round PQ: the CodeQL gate reads the COMMIT, never the ref
+#
+# 2026-09-10. `v2.1.1` was tagged on `4409115` and pushed, and the `Release` run 34452755466 died
+# in `gate` at step 16 of 17 — this step — with `analyses on 4409115ba9f762868a08244b97a0a64e55643744: 0`
+# and `::error::CodeQL has produced no analysis … on refs/tags/v2.1.1`. The commit HAD two clean
+# analyses (`1753264364`, `1753266107`, both on `refs/heads/main`, both older than the query), and
+# `gates/codeql_gate.py` over their SARIFs exits 0. The query asked
+# `code-scanning/analyses?ref=${GITHUB_REF}`, and `codeql.yml` triggers only on `push`/
+# `pull_request` to `main` and `soif/**` plus a weekly cron: no ref of the form `refs/tags/*` can
+# ever carry an analysis, so the step was unpassable by any tag this repository will ever push.
+#
+# M's ruling of 2026-09-10 made the query commit-scoped, which is what the step's own name has
+# always promised ("over the analysis this commit already has"). These tests are the part that
+# fails if the ref filter comes back or the commit match goes away — the two mutations that would
+# restore the defect — and they check the paging bound and the failure text as well, because
+# "0 analyses" is only honest if the reader is told how many records were examined to conclude it.
+
+#: The step whose text the checks below read. Matched on its `- name:` line.
+CODEQL_STEP_NAME = "Security gate — CodeQL, over the analysis this commit already has"
+
+#: The selection that does the work. It stays byte-for-byte, in `--jq`, with the escaping the
+#: workflow needs — a check that normalised the quoting would pass a step that filtered on nothing.
+COMMIT_SELECT = 'select(.commit_sha == \\"${GITHUB_SHA}\\")'
+
+#: The endpoint. A `ref=` parameter on THIS path is the defect; `ref` elsewhere in the step (the
+#: value printed for the record) is not.
+ANALYSES_PATH = "code-scanning/analyses?"
+
+
+def codeql_step(workflow: str) -> str:
+    """The gate job's CodeQL step, from its `- name:` line to the next step's."""
+    gate = job_block(workflow, "gate")
+    start = gate.index(f"- name: {CODEQL_STEP_NAME}")
+    rest = gate[start + 1:]
+    nxt = rest.find("\n      - name: ")
+    return gate[start:(start + 1 + nxt if nxt != -1 else len(gate))]
+
+
+def check_the_query_is_commit_scoped(step: str) -> None:
+    """The property, as one function, so a mutation can be fed to the same code the tree is.
+
+    Raises `AssertionError` exactly as the tests below do. Kept separate from them because the
+    only way to show a check catches a defect is to hand it the defect.
+    """
+    executable = _executable(step)
+    queries = [line for line in executable.splitlines() if ANALYSES_PATH in line]
+    assert queries, (
+        "the step no longer queries the code-scanning analyses endpoint at all: "
+        f"nothing in it names {ANALYSES_PATH!r}")
+    for line in queries:
+        assert "ref=" not in line, (
+            f"the analyses query carries a ref filter again: {line.strip()!r}. On a tag push "
+            "`GITHUB_REF` is `refs/tags/<tag>` and codeql.yml never runs on a tag ref, so this "
+            "line is the one that refused v2.1.1 (run 34452755466, gate step 16 of 17)")
+    assert COMMIT_SELECT in executable, (
+        f"the step does not select on the commit SHA ({COMMIT_SELECT!r}). Dropping the ref filter "
+        "without keeping the commit match turns the gate into 'this repository has some analysis "
+        "somewhere', which is not a statement about the release commit")
+
+
+def check_the_paging_is_bounded_and_said_so(step: str) -> None:
+    """A bound, and a failure message that reports how many records the bound let it examine."""
+    executable = _executable(step)
+    assert "MAX_PAGES" in executable, (
+        "the query pages the endpoint with no stated bound. An unbounded loop that ends in "
+        "'0 analyses' cannot be told apart from a loop that stopped early")
+    errors = [line for line in executable.splitlines() if "::error::" in line]
+    assert len(errors) == 1, f"expected one ::error:: line in the step, found {len(errors)}"
+    message = errors[0]
+    assert "examined" in message, (
+        "the failure message does not say how many analysis records were examined before it "
+        f"concluded that none belongs to this commit: {message.strip()!r}")
+    for forbidden in ("finish on this ref", "on ${ref}"):
+        assert forbidden not in message, (
+            f"the failure message still tells the reader to {forbidden!r}. codeql.yml has no "
+            "trigger under which the ref is a tag, so that advice names something that cannot "
+            "happen; the fix is a BRANCH that contains the commit")
+    assert "branch" in message.lower(), (
+        "the failure message does not name the thing that CAN produce the missing analysis — a "
+        f"branch containing the commit: {message.strip()!r}")
+
+
+def test_the_codeql_gate_queries_the_commits_analyses_and_not_the_refs(workflow):
+    """M's ruling of 2026-09-10, and the step's own name since P7 wrote it."""
+    check_the_query_is_commit_scoped(codeql_step(workflow))
+
+
+def test_the_codeql_gates_paging_is_bounded_and_its_refusal_counts_what_it_read(workflow):
+    check_the_paging_is_bounded_and_said_so(codeql_step(workflow))
+
+
+def test_the_query_check_catches_a_restored_ref_filter(workflow):
+    """The mutation that is the defect: `?ref=${GITHUB_REF}&` back in front of `per_page`."""
+    mutated = codeql_step(workflow).replace(
+        "code-scanning/analyses?", "code-scanning/analyses?ref=${GITHUB_REF}&")
+    with pytest.raises(AssertionError, match="ref filter again"):
+        check_the_query_is_commit_scoped(mutated)
+
+
+def test_the_query_check_catches_a_dropped_commit_match(workflow):
+    """The other mutation: the ref filter gone AND the commit match gone with it."""
+    mutated = codeql_step(workflow).replace(COMMIT_SELECT, ".id")
+    with pytest.raises(AssertionError, match="does not select on the commit SHA"):
+        check_the_query_is_commit_scoped(mutated)
+
+
+def test_the_bound_check_catches_an_unbounded_loop(workflow):
+    mutated = codeql_step(workflow).replace("MAX_PAGES", "PAGES_WITHOUT_A_BOUND")
+    with pytest.raises(AssertionError, match="no stated bound"):
+        check_the_paging_is_bounded_and_said_so(mutated)
+
+
+def test_the_codeql_step_still_runs_the_shared_gate_module(workflow):
+    """The threshold stays `gates/codeql_gate.py`'s. PQ changed which analyses reach it, not it."""
+    assert "python gates/codeql_gate.py sarif/*.sarif" in _executable(codeql_step(workflow)), (
+        "the step no longer hands the fetched SARIFs to gates/codeql_gate.py, which is the module "
+        "codeql.yml runs and the only place the 7.0 threshold is stated")
+
+
+def test_the_rehearsal_module_exists_and_the_release_record_names_it(workflow):
+    """M's ruling 2 of 2026-09-10: the pre-push rehearsal is a file, not an instruction.
+
+    `test_the_pipeline_names_a_script_that_exists` above covers the scripts the WORKFLOW runs.
+    This one is the other direction: the rehearsal is deliberately NOT run by the workflow — it
+    runs before the tag is pushed, which is the only moment at which its verdict can still save a
+    tag — so nothing in the workflow would notice it disappearing.
+    """
+    assert (REPO / "gates" / "release_ref_rehearsal.py").is_file(), (
+        "gates/release_ref_rehearsal.py is gone. It is the pre-push replay of every ref-dependent "
+        "release step, and MIGRATIONS.md's sequence names it as a mandatory act before the push")
+    assert "release_ref_rehearsal.py" in (REPO / "packages" / "cdm" / "synapse_cdm"
+                                         / "MIGRATIONS.md").read_text(), (
+        "MIGRATIONS.md does not name the rehearsal, so the release procedure a person follows "
+        "does not include the step that would have caught v2.1.1's refusal before the push")
