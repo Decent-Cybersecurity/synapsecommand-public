@@ -382,6 +382,25 @@ the one that outlives this round: it greps `publish.yml` for every use of `GITHU
 table does not name. Run against `v2.1.1` and `4409115` — the tag refused on 2026-09-10 — it is
 green on all seven.
 
+**ROUND PV's RECORD, 2026-09-12 — the pre-push rehearsal's own test derives the tag from the tree,
+so the module written to stop version-shaped surprises stops being one.** Unit:
+`synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's shipped-document row, and it is the unit
+round PQ's record above already carries — this round adds no second one, because the only other
+file it touched is `tests/test_cdm_release_ref_rehearsal.py`, which is repository-bound and ships
+in nothing. The count in this section's opening account of the arc is unmoved by it.
+
+**THE DEFECT: `rehearse()` reads `PACKAGE_VERSION` out of the tree, and its own test handed it a
+tag written down.** `test_every_check_in_the_plan_is_reachable_and_named_once` called
+`rehearse("v2.1.1", …)`, and `rehearse()` takes the version from `package_version()` and gives the
+pair to condition 3, which compares them. At 2.1.1 they agree and all seven checks are reachable;
+at every other version condition 3 refuses, the plan short-circuits after two checks, and the
+assertion on the list of names fails. Round PR attempt 9 met it on the 2.1.2 release commit, where
+the suite went red on a test that was reporting the version of the tree rather than any defect in
+the release. The tag is now derived — `rehearse(f"v{package_version()}", …)` — and the companion
+test that reddens the tag guard derives the same string without the leading `v`, because what
+reddens that guard is the missing `v` and not the digits. No release literal is left in either
+call, so the site closes at every future version instead of moving to the next one.
+
 ### 2.1.1 — 2026-09-10 — SOIF Part 1: Foundation & Assurance, published — the corrective release for the tagged-never-published 2.1.0
 
 **DATED NOTE, 2026-09-10, appended and not an edit: this release was tagged and never published

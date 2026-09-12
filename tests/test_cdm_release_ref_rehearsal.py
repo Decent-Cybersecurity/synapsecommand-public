@@ -303,8 +303,12 @@ def test_the_release_name_check_passes_when_it_is_free():
 
 def test_the_rehearsal_stops_at_the_first_failure():
     """CI stops at the first red step, so a rehearsal that reported all seven would be lying about
-    what the release will do — and the later checks read state the earlier ones prove."""
-    checks = rehearsal.rehearse("2.1.1", COMMIT, "owner/name",
+    what the release will do — and the later checks read state the earlier ones prove.
+
+    The tag is the tree's own version WITHOUT the leading `v`, derived rather than written down for
+    the reason the test below gives: what reddens the guard here is the missing `v`, not the digits.
+    """
+    checks = rehearsal.rehearse(rehearsal.package_version(), COMMIT, "owner/name",
                                 fetch=found(IDS), sarif=clean_sarif,
                                 exists=lambda _repo, _tag: False)
     assert [c["check"] for c in checks] == ["tag guard"]
@@ -312,7 +316,16 @@ def test_the_rehearsal_stops_at_the_first_failure():
 
 
 def test_every_check_in_the_plan_is_reachable_and_named_once():
-    checks = rehearsal.rehearse("v2.1.1", COMMIT, "owner/name",
+    """The tag is DERIVED from the tree, because `rehearse()` reads `PACKAGE_VERSION` from the tree.
+
+    A written-down `v2.1.1` here made this test pass at exactly one version: `rehearse()` takes the
+    version from `package_version()` and hands it to condition 3, which compares it against the tag
+    it was given, so the plan short-circuited after two checks at every other version and the
+    assertion below failed. Round PR attempt 9 found it on the 2.1.2 release commit, where this
+    module — written to stop version-shaped surprises before a tag is pushed — was itself one.
+    Deriving the tag closes the site at every future version instead of moving it to the next.
+    """
+    checks = rehearsal.rehearse(f"v{rehearsal.package_version()}", COMMIT, "owner/name",
                                 fetch=found(IDS), sarif=clean_sarif,
                                 exists=lambda _repo, _tag: False)
     names = [c["check"] for c in checks]
