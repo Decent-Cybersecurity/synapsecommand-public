@@ -221,10 +221,11 @@ class Stanag4586Adapter(Adapter):
             "`source_extras` (`lossless.residual()`), not in the origin-identifying container "
             "ARCHITECTURE.md §5 gives to P3 — the Part 1 stance that section rules for the "
             "adapters already shipped",
-            "no evidence RECORD is generated for this adapter: the harness produces verdicts, "
-            "and the evidence record and its schema are owed by P4 (ARCHITECTURE.md §9). "
-            "`evidence.available` is false for that reason and not because the checks do not "
-            "run",
+            "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is "
+            "untracked and unpackaged, CI generates the set on every run and the release "
+            "pipeline attaches it to the GitHub Release. `evidence.available` is true because "
+            "the records for 2.1.2 are attached to the `v2.1.2` Release and retrievable by a "
+            "third party, and it says nothing about what the wheel contains",
             "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
             "declared in `capabilities.limits` with its basis beside it and refused before "
             "decode by the base class (round P5). The other four are still absent, each with "
@@ -235,7 +236,7 @@ class Stanag4586Adapter(Adapter):
         residual=Residual.LEGACY,
         payload_adapter=None,
         constituents=[],
-        evidence=Evidence(available=False),
+        evidence=Evidence(available=True),
     )
     # No `fixture_dir`: the fixtures live in `fixtures/stanag4586`, which is this adapter's own
     # name, and an override equal to the name is a no-op that reads as an exception. The two

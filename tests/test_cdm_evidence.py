@@ -20,6 +20,7 @@ being measured. So the absent-not-red rule gets its own test per badge.
 """
 import json
 import pathlib
+import re
 
 import pytest
 
@@ -442,11 +443,68 @@ def test_the_artifact_hashes_are_empty_until_a_release_names_something(record):
     assert record.artifact_hashes == []
 
 
-def test_evidence_available_is_still_false_on_every_shipped_adapter():
-    """M's ruling of 2026-09-08: producible is not available. It flips in PR and not before."""
+#: The clause in an adapter's `limitations` that states the field's value in words. The prose and
+#: the boolean are two statements of one fact, and the round that flipped the boolean (PE) found
+#: fourteen sentences still saying the opposite — which is why the agreement is asserted rather
+#: than reviewed. Deliberately loose about the rest of the sentence: it binds the WORD after
+#: "is", not the wording around it, so a later round may rewrite the reason without this check
+#: either breaking or going vacuous.
+AVAILABILITY_CLAIM = re.compile(r"`evidence\.available` is (true|false)\b")
+
+
+def _limitation_text(entry) -> str:
+    """One `limitations` element as prose. M's ruling of 2026-09-07 made the list heterogeneous."""
+    return entry if isinstance(entry, str) else entry.summary
+
+
+def test_evidence_available_is_true_on_every_shipped_adapter():
+    """P4's condition, discharged: the records are attached to a published Release.
+
+    M's ruling of 2026-09-08 was that producible is not available, and the field stayed false
+    through P4-P8 for that reason. What made it true is not this package: `evidence-2.1.2.tar.gz`
+    is an asset of the `v2.1.2` Release, so a consumer who cannot run the harness can still fetch
+    the records. See PUBLICATION.md entry 19 and MIGRATIONS.md's PE record.
+    """
     declared = {name: cls.metadata.evidence.available for name, cls in shipped().items()}
-    assert set(declared.values()) == {False}, \
-        f"these adapters claim available evidence: {[n for n, v in declared.items() if v]}"
+    assert len(declared) == 14, f"the shipped roster is {sorted(declared)}, not the fourteen"
+    assert set(declared.values()) == {True}, \
+        f"these adapters still deny available evidence: {[n for n, v in declared.items() if not v]}"
+
+
+def test_the_field_the_prose_and_the_manifest_all_state_the_same_availability():
+    """Three copies of one fact, held together mechanically so they cannot drift apart again.
+
+    The failure this refuses is the one PE was written to repair: the boolean and the sentence
+    beside it disagreeing, with the generated manifest carrying both. It is an AGREEMENT check
+    and not a `True` check on purpose — the test above is what pins the value, and this one keeps
+    working whichever way a later ruling moves it.
+    """
+    offenders = []
+    for name, cls in sorted(shipped().items()):
+        declared = cls.metadata.evidence.available
+        published = json.loads((REPO / "manifests" / f"{name}.json").read_text())
+        if published["adapter"]["evidence"]["available"] != declared:
+            offenders.append(f"{name}: manifests/{name}.json says "
+                             f"{published['adapter']['evidence']['available']}, the module says "
+                             f"{declared}")
+        said = [m.group(1) for entry in cls.metadata.limitations
+                for m in AVAILABILITY_CLAIM.finditer(_limitation_text(entry))]
+        if said != [str(declared).lower()]:
+            offenders.append(f"{name}: the limitations state {said} where the field is {declared}"
+                             " — exactly one limitation says the field's value in words")
+    assert not offenders, "the field, its prose and its manifest disagree:\n  " + \
+        "\n  ".join(offenders)
+
+
+def test_the_availability_claim_pattern_can_see_the_sentences_it_reads():
+    """A pattern matching nothing would make the agreement above green on fourteen silences."""
+    assert AVAILABILITY_CLAIM.findall("`evidence.available` is true because the records") == \
+        ["true"], "the pattern no longer recognises the sentence the fourteen adapters carry"
+    assert AVAILABILITY_CLAIM.findall(
+        "`evidence.available` is false for that reason and not because the checks do not run") == \
+        ["false"], "the pattern no longer recognises the sentence those fourteen carried before"
+    assert AVAILABILITY_CLAIM.findall("evidence is available to anyone who asks") == [], \
+        "the pattern matches prose that states no value, so the agreement check reads noise"
 
 
 def test_the_record_validates_against_its_own_published_schema(record):

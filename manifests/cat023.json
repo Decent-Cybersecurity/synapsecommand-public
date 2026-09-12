@@ -39,7 +39,7 @@
     "constituents": [],
     "direction": "bidirectional",
     "evidence": {
-      "available": false
+      "available": true
     },
     "format": {
       "name": "EUROCONTROL ASTERIX Category 023 \u2014 CNS/ATM Ground Station and Service Status Reports",
@@ -50,7 +50,7 @@
     "limitations": [
       "the smallest specification pinned in this repository: nine data items, and nothing outside them is decoded",
       "leftovers are parked in `Entity.attributes` / `Event.payload` under `source_extras` (`lossless.residual()`), not in the origin-identifying container ARCHITECTURE.md \u00a75 gives to P3 \u2014 the Part 1 stance that section rules for the adapters already shipped",
-      "no evidence RECORD is generated for this adapter: the harness produces verdicts, and the evidence record and its schema are owed by P4 (ARCHITECTURE.md \u00a79). `evidence.available` is false for that reason and not because the checks do not run",
+      "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run and the release pipeline attaches it to the GitHub Release. `evidence.available` is true because the records for 2.1.2 are attached to the `v2.1.2` Release and retrievable by a third party, and it says nothing about what the wheel contains",
       "of \u00a73.5's five resource limits this adapter enforces ONE \u2014 `max_input_bytes`, declared in `capabilities.limits` with its basis beside it and refused before decode by the base class (round P5). The other four are still absent, each with its own reason in `capabilities.limits.absent_because`; a depth, object-count, decompression or wall-clock bound is not enforced here today"
     ],
     "limitations_empty_reason": null,

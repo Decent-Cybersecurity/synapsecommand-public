@@ -336,9 +336,12 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section being
-what moved in it. Everything else this round touched ships in nothing: the release workflow, the
-witness builder it runs and that builder's test module.
+**What moved inside the distribution: 15 files** — `MIGRATIONS.md`, this section being what moved
+in it, and the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the
+two rounds before it did not. Everything else these rounds touched ships in nothing: the release
+workflow, the witness builder it runs and that builder's test module, the generated manifests under
+`manifests/`, `tests/test_cdm_evidence.py`, the ledger, the documentation page and the witness
+record.
 
 **ROUND PW's RECORD, 2026-09-12 — the witness record's approval instant comes from the deployment's
 own status history, because the endpoint the builder asked carries no instant at all.** Unit:
@@ -405,6 +408,82 @@ fourteen modules with a bump consequence of its own, it is not what a witness co
 it was deferred on 2026-09-12 to a round of its own rather than folded in here. **2.1.2 as
 published declares `available: false` permanently**, because it was built and uploaded before the
 question could be reached. `PUBLICATION.md`'s ledger entry 19 says the same in a reader's terms.
+
+**ROUND PE's RECORD, 2026-09-12 — `evidence.available` becomes true, in the fourteen adapter
+modules and in the manifests generated from them, together with the one sentence in each that said
+the opposite.** The condition ARCHITECTURE.md §9 set and M restated on 2026-09-08 — release
+evidence generated from the release commit, attached to the Release, referenced by the witness
+record and retrievable by a third party — was met by the 2.1.2 release and recorded as met in
+`PUBLICATION.md` entry 19 while the field still read `false`. This is the round that moves the
+field. `evidence-2.1.2.tar.gz` is an asset of the `v2.1.2` Release, 136 114 bytes, listed there on
+2026-09-12; a consumer who cannot run this package can fetch the records from it.
+
+**WHAT 2.1.2 AS PUBLISHED SAYS, AND IT CANNOT BE CHANGED BY THIS OR ANY LATER ROUND.** The
+distribution on the index declares `available: false` in all fourteen manifests and always will:
+it was built and uploaded before the question was reached. This section changes what the
+REPOSITORY says from the next release onwards. A reader holding the 2.1.2 wheel and the 2.1.2
+Release side by side sees a manifest that denies evidence hanging off the Release it came from;
+entry 19 of `PUBLICATION.md` says so in a reader's terms and this paragraph says so in the
+package's.
+
+**WHAT MOVED, PER ADAPTER, AND IT IS TWO THINGS AND NOT ONE.** M ruled on 2026-09-12 that the
+prose is corrected with the field — "leaving prose that contradicts the data is exactly the kind of
+stale claim the campaign's own gates exist to catch, and a reader trusts the sentence more than the
+boolean" — which relaxes P4's `that field and nothing else` to exactly two things. Each of the
+fourteen modules moves `evidence=Evidence(available=False)` to `True` and replaces the one
+`limitations` entry that stated the field's value in words. The old entry said no evidence record
+is generated for this adapter and that the record and its schema are owed by P4; both clauses had
+been false since P4 shipped `synapse evidence generate`. The new entry states the limitation that
+is still real — the records are not IN the distribution, `evidence/` being untracked and
+unpackaged — and names the Release the 2.1.2 records are attached to. No other limitation moved,
+no adapter gained or lost one, and the fourteen diffs are two hunks each.
+
+**AND THE TWO STATEMENTS ARE HELD TOGETHER MECHANICALLY NOW.**
+`tests/test_cdm_evidence.py` asserted that the declared set was exactly `{False}`; it now asserts
+that the field is true on all fourteen AND that the field, the sentence beside it and the generated
+manifest all state the same availability, with a third test proving the sentence pattern is not
+matching nothing. The drift this round repaired — a boolean and a paragraph disagreeing for as long
+as nobody read both — is the drift those tests refuse.
+
+**Bump ruling.** M's ruling of 2026-09-12, in M's words: PATCH — "a declared fact corrected. The
+field's value changes from a claim that was true when written to one that is true now; no Python
+surface is added, removed or renamed, and no consumer's call changes." The gate reaches each
+adapter's class body, finds a unit changed on functional lines with no name added or removed and no
+roster move behind it, and refuses to choose between the PATCH row and the MAJOR row — which is the
+refusal this file exists to answer. Fourteen units, each PATCH:
+`synapse_cdm/adapters/adsb.py:AdsbAdapter` — PATCH;
+`synapse_cdm/adapters/ais.py:AisAdapter` — PATCH;
+`synapse_cdm/adapters/asterix_cat021.py:AsterixCat021Adapter` — PATCH;
+`synapse_cdm/adapters/asterix_cat023.py:AsterixCat023Adapter` — PATCH;
+`synapse_cdm/adapters/asterix_cat034.py:AsterixCat034Adapter` — PATCH;
+`synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter` — PATCH;
+`synapse_cdm/adapters/asterix_cat062.py:AsterixCat062Adapter` — PATCH;
+`synapse_cdm/adapters/gmtif.py:GmtifAdapter` — PATCH;
+`synapse_cdm/adapters/legion.py:LegionAdapter` — PATCH;
+`synapse_cdm/adapters/pntmap.py:PntmapAdapter` — PATCH;
+`synapse_cdm/adapters/stanag4586.py:Stanag4586Adapter` — PATCH;
+`synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter` — PATCH;
+`synapse_cdm/adapters/stanag4676.py:Stanag4676Adapter` — PATCH;
+`synapse_cdm/adapters/tak.py:TakAdapter` — PATCH.
+`synapse_cdm/MIGRATIONS.md` is PATCH by the shipped-document row and is already named twice above
+in this section; this paragraph adds no new unit for it. The next release is therefore at least
+2.1.3, unchanged by this round.
+
+**THIS SECTION'S OPENING SENTENCE MOVED WITH THE COMMIT, AND TWO DATED RECORDS ARE CORRECTED
+INSTEAD, 2026-09-12.** The opening states the arc's size, a live claim `tests/test_cdm_release.py`
+derives from `git` rather than reads, so it is UPDATED and not annotated: one shipped document
+through rounds PW and PR2, fifteen files here, because the fourteen adapter modules move and every
+one of them ships. The sentence is not quoted anywhere in this section, the anchor it carries being
+admitted exactly once. The dated records either side of it are a different kind of text and are
+left in their own tense: round PR2's closing paragraph says `evidence.available` "is `false` in all
+fourteen adapters and therefore in all fourteen generated manifests" and that the flip "was
+deferred on 2026-09-12 to a round of its own" — the first clause stopped being true at this commit
+and the second is discharged by it. The same
+correction reaches one older sentence in this file: round P5's record says the evidence records are
+not in the distribution and not in the repository, "which is why every adapter still declares
+`evidence.available: false`". The premise is still true and the consequence is not — what the field
+now reports is the attachment to the `v2.1.2` Release, not the contents of the wheel. That sentence
+too stays where it is, in its own tense, corrected here.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 
