@@ -331,6 +331,55 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 
 ## History
 
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section being
+what moved in it. Everything else this round touched ships in nothing: the release workflow, the
+witness builder it runs and that builder's test module.
+
+**ROUND PW's RECORD, 2026-09-12 — the witness record's approval instant comes from the deployment's
+own status history, because the endpoint the builder asked carries no instant at all.** Unit:
+`synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's shipped-document row — no importable name,
+no harness flag, no fixture set and no dependency moves, so the MINOR list does not reach it and
+the PATCH row does. No other unit: nothing under `synapse_cdm/` changed but this file.
+
+**THE DEFECT: a field read off a key the API has never sent, and a fixture that invented the key.**
+The `witness` job of the v2.1.2 release — the FIRST execution of that job in this repository's
+history, the runs on `v2.1.0` and `v2.1.1` having died in the gate job — built the record, and
+`gates/witness_verify.py` refused it with `an approval entry has no approved_at`. The builder read
+the instant as `created_at` off an entry of `actions/runs/<id>/approvals`, and that payload's
+entries carry four keys — `comment`, `environments`, `state`, `user` — and no timestamp at any
+level. The `created_at` one level down, on the nested environment object, is when the `pypi`
+ENVIRONMENT was created, three weeks before the hold it would have been mistaken for. Nothing
+caught it because the builder's test supplied a `created_at` this repository composed rather than
+captured: a recorded payload that agrees with the code instead of with the API is not a recording.
+The release itself is unaffected — the upload, the Release and the attestation all succeeded, and
+the refusal is the verifier doing its work — but the record was never built and never attached.
+
+**THE REPAIR, AND WHY IT IS A DEPLOYMENT AND NOT AN APPROVAL.** The instant was never lost: the
+`pypi` deployment's own status history reads `waiting` when the hold began, `queued` when it was
+released, then `in_progress` and `success`. `queued` is the transition the approval causes, and for
+the v2.1.2 run it reads 2026-09-12T10:48:52Z against a `waiting` of 10:28:09Z — the 20 min 43 s the
+record is supposed to show. So the witness job now lists the deployments of the release commit,
+fetches their statuses, and hands them to the builder with the run id; the builder takes
+`approved_at` from the `queued` status of the deployment whose statuses name THIS run and whose
+environment matches the approval's. That link — `log_url` and `target_url` naming
+`/actions/runs/<run id>/job/<job id>` — is the only one there is: the deployment object carries no
+run id, and the run carries no deployment once the hold is released. **An instant that cannot be
+read stays the empty string and the record is refused**, which is the same rule the builder already
+applied one field up to `review_file`; it is never synthesised, never defaulted and never taken
+from a clock, and the builder's header says so in a dated sentence. Two deployments matching one
+run stop the build rather than being resolved by recency.
+
+**AND THE FIXTURE IS A CAPTURE NOW.** Both approval-half payloads in the builder's test module are
+quoted from the live API for the v2.1.2 run, with their endpoint, run id and capture instant beside
+them, and one test asserts what the approvals payload does NOT contain — so a future refactor
+cannot quietly go back to reading a key GitHub does not send. The environment's own `created_at` is
+kept in the fixture precisely because it is the plausible wrong answer, and a test names it as one.
+
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

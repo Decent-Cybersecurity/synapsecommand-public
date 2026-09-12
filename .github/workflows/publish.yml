@@ -1068,6 +1068,19 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${GITHUB_REF_NAME}" > release.json
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/approvals" > approvals.json || echo '[]' > approvals.json
+          # The approvals payload says WHO released the hold and on which verdict; it carries no
+          # timestamp at any level (round PW, 2026-09-12 — its entries' only keys are `comment`,
+          # `environments`, `state`, `user`). WHEN lives in the deployment's status history, so the
+          # statuses of every deployment of this commit are fetched and handed over with it; the
+          # builder picks the one deployment whose statuses name this run. No `|| echo '[]'` here:
+          # the approvals endpoint 404s when no hold was configured, which is a real state, while a
+          # failure to list deployments is an unknown one and must stop the job rather than write a
+          # record with an empty instant.
+          gh api "repos/${GITHUB_REPOSITORY}/deployments?sha=${GITHUB_SHA}&per_page=100" --jq '.[].id' \
+            | while read -r deployment; do
+                gh api "repos/${GITHUB_REPOSITORY}/deployments/${deployment}/statuses?per_page=100"
+              done \
+            | jq -s 'add // []' > deployment-statuses.json
           python .github/scripts/build_witness.py \
             --version "${version}" \
             --commit "${GITHUB_SHA}" \
@@ -1075,6 +1088,8 @@ jobs:
             --tag-object "$(git rev-parse "${GITHUB_REF_NAME}")" \
             --release release.json \
             --approvals approvals.json \
+            --deployment-statuses deployment-statuses.json \
+            --run-id "${GITHUB_RUN_ID}" \
             --assets assets \
             --attestation-verified \
             --attestation-verified-at "${{ needs.attest.outputs.verified_at }}" \
