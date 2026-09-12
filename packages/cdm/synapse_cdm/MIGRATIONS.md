@@ -380,6 +380,32 @@ them, and one test asserts what the approvals payload does NOT contain — so a 
 cannot quietly go back to reading a key GitHub does not send. The environment's own `created_at` is
 kept in the fixture precisely because it is the plausible wrong answer, and a test names it as one.
 
+**ROUND PR2's RECORD, 2026-09-12 — the 2.1.2 witness half: the record is committed, the ledger
+entry is written, and one duty it owed is deferred in writing rather than quietly dropped.** Unit:
+`synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's shipped-document row, and it is the SAME
+unit round PW's record above already names — one shipped document moved in this arc, twice, and a
+second paragraph in it adds no unit. **No other unit: nothing else under `synapse_cdm/` changed at
+all.** The three other files this round writes ship in nothing — the ledger, the documentation
+page and the witness record itself, which lives beside the other release records and outside the
+package.
+
+**WHAT IT DID.** `witness-2.1.2.json` was already attached to the Release by the previous attempt,
+so this round did not rebuild it: it downloaded the attached asset, ran
+`gates/witness_verify.py --download` over the downloaded bytes, and committed **those** bytes, with
+the digest of the asset and of the committed file read separately and shown equal. A record built
+twice is two records; a record downloaded and re-verified is the one a stranger gets. It is the
+first file in that directory, which until this commit held only its README, and the field the
+repair above exists for — `approved_at` — reads 2026-09-12T10:48:52Z in it.
+
+**AND THE DUTY IT DID NOT DISCHARGE, WHICH IS RECORDED BECAUSE IT WAS NOT DISCHARGED.**
+`evidence.available` is `false` in all fourteen adapters and therefore in all fourteen generated
+manifests. The condition for flipping it is now met — the release evidence is attached to the
+Release, referenced by the witness record and retrievable by anybody — but the flip is a change to
+fourteen modules with a bump consequence of its own, it is not what a witness commit is for, and
+it was deferred on 2026-09-12 to a round of its own rather than folded in here. **2.1.2 as
+published declares `available: false` permanently**, because it was built and uploaded before the
+question could be reached. `PUBLICATION.md`'s ledger entry 19 says the same in a reader's terms.
+
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.

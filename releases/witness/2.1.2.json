@@ -1,0 +1,50 @@
+{
+  "approvals": [
+    {
+      "approved_at": "2026-09-12T10:48:52Z",
+      "approver": "decentcybersecurity",
+      "environment": "pypi",
+      "review_file": "rounds/reports/PR.review.md"
+    }
+  ],
+  "artifact_sha256": {
+    "synapse_cdm-2.1.2-py3-none-any.whl": "56eddc85ce26cc484636f9352042c391d78b71d4ccb22aeaec048f245c645e51",
+    "synapse_cdm-2.1.2.tar.gz": "ea52f49146611dccf0d102cefe77bad3132be54249e945edbb6eb3e7333d5a37"
+  },
+  "attestation": {
+    "bundle_sha256": "",
+    "verified": true,
+    "verified_at": "2026-09-12T10:28:06Z"
+  },
+  "commit": "5ab80f5fa93895722e587f755e7de446b71feb5b",
+  "conformance_sha256": "d3f2d75e8e6cd6f8a62296c14ad19408de3f85638ddb328e0216abe849a27626",
+  "evidence_sha256": "6ff16b5eeeda78e32a41f70807a6141cfa15822d72d881302243d621ef73614a",
+  "github_release": {
+    "id": 387540161,
+    "published_at": "2026-09-12T10:49:31Z",
+    "url": "https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v2.1.2"
+  },
+  "pypi": {
+    "files": [
+      {
+        "filename": "synapse_cdm-2.1.2-py3-none-any.whl",
+        "sha256": "56eddc85ce26cc484636f9352042c391d78b71d4ccb22aeaec048f245c645e51",
+        "upload_time": "2026-09-12T10:49:09.492298Z"
+      },
+      {
+        "filename": "synapse_cdm-2.1.2.tar.gz",
+        "sha256": "ea52f49146611dccf0d102cefe77bad3132be54249e945edbb6eb3e7333d5a37",
+        "upload_time": "2026-09-12T10:49:11.553329Z"
+      }
+    ],
+    "version": "2.1.2"
+  },
+  "release": "2.1.2",
+  "released_at": "2026-09-12T10:49:31Z",
+  "sbom_sha256": {
+    "cyclonedx": "b258a36f698afefd1ff49dfad80064b134fd8c41630534a86915e18f96406883",
+    "spdx": "243ef7a51c1adfa1d29efca2835abd3b2e7cdf21bdc20c181d1cb56230536dd7"
+  },
+  "tag": "v2.1.2",
+  "tag_object": "e8fed4327d1bcaa6d15f642e12c57977f83cbb50"
+}
