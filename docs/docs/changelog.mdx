@@ -68,6 +68,17 @@ contract one PATCH higher. The paragraph above is kept as written: the level it 
 and lasted a day, which is the second-shortest life any of these coincidences has had. **What the
 index serves is still a separate fact from what this tree says**, and `PUBLICATION.md`'s ledger is
 still where it is measured.
+
+**Updated 2026-09-12, the 2.1.2 corrective release, and the gap is now two PATCHes wide.** On this
+tree the package is at `2.1.2` and the schema stays at `2.1.0`, and the schema had no part in this
+move either: `v2.1.1` was tagged in turn and the release pipeline's CodeQL gate refused to publish
+it, because that step asked for the code-scanning analyses of the REF and a tag ref can carry none
+in this repository. Two release tags now name commits that never reached PyPI, both stay where they
+are, and 2.1.2 carries the identical wire contract two PATCHes above the level of 2026-09-09. The
+paragraph above is kept as written. **What the index serves is still a separate fact from what this
+tree says** — at the time of writing it is still `2.0.0`, which is the whole point of measuring it
+after an upload rather than asserting it before one, and `PUBLICATION.md`'s ledger is still where
+it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

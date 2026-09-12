@@ -79,12 +79,12 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.1` | `packages/cdm/synapse_cdm/version.py:283` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:262` |
-| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:289` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:300` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:335` |
-| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:349` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.2` | `packages/cdm/synapse_cdm/version.py:303` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:273` |
+| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:309` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:320` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:355` |
+| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:369` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
 | Event semantic major | — | — | a segment of the identifier | the `type_id` itself, e.g. `sc.pnt.gnss_interference.v1` |
@@ -205,6 +205,20 @@ sentence is what gets corrected. What it did not anticipate is the direction —
 in question, and the number moved because a workflow refused a tag rather than because a diff
 proved anything.
 
+**CORRECTED AGAIN 2026-09-12, and the correction above is what it corrects.** The campaign's
+number came out as `2.1.2`. `v2.1.1` was tagged on `4409115` on 2026-09-10 and pushed, and the
+release pipeline refused it too — the CodeQL gate at step 16 of 17 asked for the code-scanning
+analyses of `${GITHUB_REF}`, which on a tag push is `refs/tags/v2.1.1`, and no workflow in this
+repository produces an analysis on a tag ref. Round PQ made the gate read the analyses of the
+COMMIT and added `gates/release_ref_rehearsal.py`, a mandatory act between tagging and pushing
+that replays every ref-dependent step while the tag is still local; round PV then made that
+module's own test take its tag from `PACKAGE_VERSION` instead of a literal, so the rehearsal does
+not itself become the next version-shaped surprise. Both earlier tags stay where they are,
+permanently, naming commits that never reached PyPI; 2.1.2 carries the same content two PATCHes
+higher. The paragraph above is left standing: it said the number is taken at the release and the
+sentence is what gets corrected, and it has now been corrected twice for the same class of reason
+— a ref-dependent release step whose first execution on a tag was also its only chance.
+
 ---
 
 ## 5. Main advancement
@@ -237,7 +251,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v2.1.1 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v2.1.2 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

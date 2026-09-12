@@ -181,7 +181,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v2.1.1 -m "..."                           # annotated, never lightweight
+git tag -a v2.1.2 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -311,7 +311,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v2.1.1 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v2.1.2 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -331,17 +331,64 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 
 ## History
 
-### Unreleased
+### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v2.1.1`, and a reader who installed the package has 2.0.0 — the runs on `v2.1.0`
-and on `v2.1.1` both died in the gate job and uploaded nothing. See the dated notes on the two
-sections below.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section, the
-dated note on the 2.1.1 section and the rehearsal line in the release sequence being what moved in
-it. Everything else this round touched ships in nothing: the release workflow, two test modules, a
-new gate module and one page of the documentation site.
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `2.1.2` at this
+commit, in `version.py`, and the tag `v2.1.2` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said that nothing in the section was in a release, that the newest tag was
+`v2.1.1`, and that a reader who installed the package had 2.0.0 — the first clause stops being
+true at this commit and the other two stay true until an upload changes them.
+
+**WHAT MOVED BETWEEN 2.1.1 AND 2.1.2 IS A WORKFLOW AND NOT THE DISTRIBUTION, FOR THE SECOND TIME
+IN THREE DAYS.** A reader upgrading from 2.0.0 — which is still what the index serves — gets
+exactly the arc the 2.1.0 section below describes; a reader comparing 2.1.1 with 2.1.2 finds this
+file and `version.py` and nothing else, because neither 2.1.0 nor 2.1.1 was ever installable. The
+`Release` run on `v2.1.1` (34452755466) failed in its first job at gate step 16 of 17, the CodeQL
+gate, which asked `code-scanning/analyses?ref=${GITHUB_REF}`: on a tag push that ref is
+`refs/tags/v2.1.1`, and `codeql.yml` triggers only on pushes and pull requests to `main` and
+`soif/**` and a weekly cron, so no ref of the form `refs/tags/*` can ever carry an analysis. The
+commit had two clean analyses on `refs/heads/main` and the ref filter excluded them. Round PQ's
+record below is the repair, round PV's record below it closes the repair's own version-shaped
+site, and this release is the first one that carries both.
+
+**What moved inside the distribution: two files** — `MIGRATIONS.md` (this section, PQ's and PV's
+records, the dated note on the 2.1.1 section, the rehearsal line in the release sequence and the
+two tag-command examples) and `version.py` (the constant and its live docstring readings).
+Everything else the corrective arc touched is repository-bound and ships in nothing: the release
+workflow, the release notes, the root `README.md`, `VERSIONING.md`, the documentation site's
+changelog page, four test modules and a new gate module.
+
+**THE PACKAGE VERSION MOVED 2.1.1 -> 2.1.2 ON 2026-09-12, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v2.1.1` and derives PATCH with nothing unruled: no
+importable name was added, removed or narrowed between the two tags, and the shipped-document row
+is what carries this file. So the floor and the number are one number and no Version ruling is
+needed or present — the same shape 2.1.1 had, for the same reason one release later.
+`SCHEMA_VERSION` does not move and stays at `2.1.0`: the wire contract had no part in either
+corrective, and the two axes are now two PATCHes apart.
+
+**THE RECOVERY, RECORDED WHERE A READER WILL FIND IT, AND IT IS NOW TWO TAGS.** `v2.1.0` remains
+permanently attached to commit `b69a267` and `v2.1.1` to commit `4409115`. Neither is moved,
+deleted or recreated, and history is not rewritten to pretend either happened otherwise. `v2.1.0`
+was tagged 2026-09-09T09:01:43Z and pushed, and its own `pip-audit --strict` release gate refused
+publication; `v2.1.1` was tagged 2026-09-10T07:59:24Z and pushed, and its own CodeQL release gate
+refused publication because it asked for an analysis on a ref no workflow can produce. Neither
+reached PyPI; no `pypi` hold was ever created for either and no GitHub Release exists for either.
+2.1.2 is the corrective and, if its pipeline completes, the first successfully published SOIF
+Part 1 release. The dated notes on the two sections below say the same thing from the other side,
+and `PUBLICATION.md`'s ledger is where the upload that does happen is measured.
+
+**AND THE CLASS OF DEFECT IS WHAT THE ARC CLOSED, NOT JUST THE INSTANCE.** Both refusals were one
+shape: a release step whose behaviour depends on the ref, first executed on a ref nobody had ever
+run it on, with a pushed tag as the only place to find out. `gates/release_ref_rehearsal.py` is
+the answer and the release sequence above names it as a mandatory act between tagging and pushing
+— it replays the tag guard, condition 3, the annotated-tag check, the CodeQL query, the five
+`${GITHUB_REF_NAME#v}` derivations and the Release name against a named tag and commit, while the
+tag is still local, and its last check fails on any future use of `GITHUB_REF` its own covered-uses
+table does not name.
 
 **ROUND PQ's RECORD, 2026-09-10 — the release pipeline's CodeQL gate reads the analyses of the
 commit, and a pre-push rehearsal replays every ref-dependent step against the tag.** Unit:
@@ -413,6 +460,13 @@ GitHub Release exists. The tag stays where it is, permanently, exactly as `v2.1.
 release tags now name commits that released nothing. The number that carries this work to the
 index is **2.1.2**, and round PQ (below, under the pending section) is the repair that lets it
 get there.
+
+**DATED CORRECTION, 2026-09-12, appended and not an edit: the note above is true except for one
+locative.** The 2.1.2 release absorbed the pending arc, so round PQ's record is no longer under a
+pending section — it is under the `### 2.1.2` section immediately above this one, which is the
+release that carries the repair, and round PV's record sits beside it there. Nothing else in the
+note has changed: `v2.1.1` still names `4409115`, still released nothing, and still stays where it
+is.
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
 

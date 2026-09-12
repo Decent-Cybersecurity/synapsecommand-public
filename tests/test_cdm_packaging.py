@@ -317,6 +317,14 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     by a schema bump twice and closed by a workflow defect once, which is worth recording because
     every earlier parting in this file was argued from the contract. This one was not argued at
     all — it is what a release gate did.
+
+    **AND THEN IT HAPPENED A SECOND TIME, ON 2026-09-12, WHICH MAKES IT A CLASS AND NOT AN
+    ACCIDENT.** `v2.1.1` was tagged in turn and the release pipeline's CodeQL gate refused it — the
+    step asked for the code-scanning analyses of the ref, and a tag ref carries none here — so the
+    corrective 2.1.2 moved the package one more PATCH the schema again had no part in: the numbers
+    are `2.1.2` and `2.1.0`. Two of the partings this docstring tracks are now release-pipeline
+    defects, and the pin below is what keeps them from being quietly re-linked while nobody is
+    looking at the release.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -336,13 +344,13 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.1.1", "2.1.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.1.2", "2.1.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "2.1.1 and 2.1.0. They are UNEQUAL again — the level they reached on 2026-09-09 lasted "
-        "one day, because `v2.1.0`'s own pip-audit release gate refused to publish it and the "
-        "corrective 2.1.1 moved the package a PATCH the wire contract had no part in. If you "
-        "bumped one of them just now: that is the expected event, and the fix is to update this "
-        "assertion to the two numbers you now mean, not to re-link them"
+        "2.1.2 and 2.1.0. They are UNEQUAL by two PATCHes — the level they reached on 2026-09-09 "
+        "lasted one day, and two release tags were then refused by two steps of this project's "
+        "own release pipeline, each costing the package a PATCH the wire contract had no part in. "
+        "If you bumped one of them just now: that is the expected event, and the fix is to update "
+        "this assertion to the two numbers you now mean, not to re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

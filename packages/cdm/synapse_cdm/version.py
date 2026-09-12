@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        2.1.1   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        2.1.2   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            2.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -59,7 +59,11 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   again on 2026-09-10, at 2.1.1 against 2.1.0, and the schema did
                                   nothing to deserve it: the package took a corrective PATCH for a
                                   release gate that refused its own tag, which is precisely the
-                                  kind of event this table exists to keep off the other axes.)
+                                  kind of event this table exists to keep off the other axes. And
+                                  a third time on 2026-09-12, at 2.1.2 against 2.1.0, for the same
+                                  class of reason: the tag 2.1.1 named was refused by the release
+                                  pipeline's CodeQL gate, so the package took one more corrective
+                                  PATCH and the wire contract still had no part in it.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -102,8 +106,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``2.1.1`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
-sixth version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``2.1.2`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
+seventh version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -117,7 +121,14 @@ which is the only thing this section has ever claimed. **Corrected a third time 
 ``pip-audit --strict`` release gate refused to publish it, so the package took a PATCH the schema
 had no part in and the two numbers parted for the fifth time. Nothing about the wire contract
 moved on either day. That is the argument this section makes, arriving from a direction nobody
-anticipated: the axis that moved was moved by a workflow's defect.)
+anticipated: the axis that moved was moved by a workflow's defect. **Corrected a fourth time
+2026-09-12, the 2.1.2 corrective release, and the parting is now two PATCHes wide**: ``v2.1.1``
+was tagged on ``4409115`` in turn and refused by the release pipeline's CodeQL gate, which asked
+for the code-scanning analyses of a tag ref no workflow in this repository can produce, so the
+package took a second corrective PATCH the wire contract again had no part in. Two of the five
+partings in this file's life are now workflow defects rather than contract decisions, which is
+worth stating plainly: this axis records what was RELEASED, and a release is a thing a pipeline
+can refuse.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -280,7 +291,16 @@ SCHEMA_VERSION = "2.1.0"
 #: gate, not the distribution — `gates/bump_derivation.py`'s floor for the arc v2.1.0 -> v2.1.1 is
 #: PATCH with nothing unruled, and this number is that floor. A reader installing 2.1.1 gets
 #: everything 2.1.0 was going to carry.
-PACKAGE_VERSION = "2.1.1"
+#: Moved 2.1.1 -> 2.1.2 on 2026-09-12, a PATCH, and it is the SECOND corrective in three days: the
+#: tag `v2.1.1` on `4409115` was refused by the release pipeline's CodeQL gate at step 16 of 17,
+#: which asked for the code-scanning analyses of `${GITHUB_REF}` — `refs/tags/v2.1.1` on a tag
+#: push, and no workflow in this repository can produce an analysis on a tag ref. Round PQ made
+#: that gate read the analyses of the COMMIT and wrote `gates/release_ref_rehearsal.py`, which
+#: replays every ref-dependent step against a tag while it is still local; round PV made that
+#: module's own test derive the tag from this constant rather than write it down. Neither 2.1.0
+#: nor 2.1.1 reached the index; both tags stay where they are. The floor for the arc
+#: v2.1.1 -> v2.1.2 is PATCH with nothing unruled, and this number is that floor.
+PACKAGE_VERSION = "2.1.2"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

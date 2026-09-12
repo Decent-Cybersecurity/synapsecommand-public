@@ -1,4 +1,4 @@
-# synapse-cdm 2.1.1
+# synapse-cdm 2.1.2
 
 **SOIF Part 1 — Foundation & Assurance**, and this is the release that ships it. Part 1 is not a
 format and not a semantic layer: it is the machinery that makes a claim about an adapter checkable
@@ -10,36 +10,54 @@ needs in order to say what it actually translated. Nothing is removed, renamed o
 2.0.0 consumer keeps working without doing anything.
 
 **If you are upgrading from 2.0.0 — which is what the index served until this release — read this
-as the MINOR it is.** Everything below is the arc from 2.0.0, because 2.1.0 never reached anybody.
+as the MINOR it is.** Everything below is the arc from 2.0.0, because neither 2.1.0 nor 2.1.1 ever
+reached anybody.
 
-## Why the number is 2.1.1 and not 2.1.0
+## Why the number is 2.1.2 and not 2.1.0 or 2.1.1
 
-**2.1.0 was tagged and was never published, and the tag stays where it is.** `v2.1.0` was created
-on commit `b69a267` on 2026-09-09 and pushed. Its own release pipeline then refused it: the `gate`
-job's last step is `pip-audit --strict` over the installed environment, the environment holds the
-release candidate at the tree's own version, `--strict` turns a distribution the index cannot
-resolve into a failure, and the index cannot carry 2.1.0 until the `publish` job — which needs the
-gate that just failed. Fourteen of the gate's fifteen steps were green and nothing was uploaded.
-It is a gate that required the publication it was gating, and no dispatch run could ever have
-caught it, because a dispatch runs at a version that has already been released.
+**Two tags were cut before this one, both were pushed, neither was published, and both stay where
+they are.** They were refused by two different steps of this project's own release pipeline, and
+both refusals were the same shape: a step whose behaviour depends on the ref, executed for the
+first time on a tag ref.
 
-The repair scopes both audits to the release candidate's dependencies, excluding only
-`synapse-cdm` itself, and leaves every third-party line under `--strict`. `v2.1.0` is **not**
-moved, deleted or recreated: it remains permanently attached to `b69a267` as a release tag that
-released nothing, and 2.1.1 is the corrective and the first successfully published SOIF Part 1
-release. `PUBLICATION.md`'s ledger records both facts.
+* **`v2.1.0`**, on commit `b69a267`, 2026-09-09. The `gate` job's last step was
+  `pip-audit --strict` over the installed environment; that environment holds the release
+  candidate at the tree's own version, `--strict` turns a distribution the index cannot resolve
+  into a failure, and the index cannot carry 2.1.0 until the `publish` job — which needs the gate
+  that just failed. A gate that required the publication it was gating. The repair scopes both
+  audits to the release candidate's dependencies, excluding only `synapse-cdm` itself by name, and
+  leaves every third-party line under `--strict`.
+* **`v2.1.1`**, on commit `4409115`, 2026-09-10. Step 15 passed — the repair worked — and step 16
+  of 17 refused it: the CodeQL gate asked for the code-scanning analyses of `${GITHUB_REF}`, which
+  on a tag push is `refs/tags/v2.1.1`, and no workflow in this repository can produce an analysis
+  on a tag ref. The commit had two clean analyses on `refs/heads/main`; the ref filter excluded
+  them. The repair makes the gate read the analyses of the **commit** it is gating, which is what
+  the step's own name had promised since it was written.
 
-Between the two tags the distribution itself moves by two files — `MIGRATIONS.md` and
+Neither tag is moved, deleted or recreated: each remains permanently attached to its commit as a
+release tag that released nothing, and 2.1.2 is the corrective. `PUBLICATION.md`'s ledger records
+what was actually uploaded, and nothing in this file claims an upload that has not happened.
+
+**What the arc closed is the class and not the two instances.** `gates/release_ref_rehearsal.py`
+replays every ref-dependent release step — the tag guard, the tag-names-the-version condition, the
+annotated-tag check, the CodeQL query, the five tag-derived versions and the Release name — against
+a named tag and commit while that tag is still local, and it is a mandatory act between tagging and
+pushing. Its last check refuses any future use of `GITHUB_REF` in the release workflow that its own
+covered-uses table does not name, so the next ref-dependent step fails on a laptop rather than on a
+pushed tag. Its own test now derives the tag it rehearses from `PACKAGE_VERSION`, so the rehearsal
+does not become the next thing a version bump surprises.
+
+Between `v2.1.1` and this tag the distribution itself moves by two files — `MIGRATIONS.md` and
 `version.py`. `gates/bump_derivation.py` derives PATCH over that arc with nothing unruled, and
-2.1.1 is that floor.
+2.1.2 is that floor.
 
-**Package version 2.1.1 · CDM `schema_version` 2.1.0.** The two numbers are unequal, and **that is
+**Package version 2.1.2 · CDM `schema_version` 2.1.0.** The two numbers are unequal, and **that is
 the ordinary case and not a signal**: the schema moved on `MIGRATIONS.md`'s table in the CDM round,
 for optional primitives only; the package moved on `version.py`'s table for the release; and then
-the package moved once more, a PATCH the wire contract had no part in. They were level for one day.
-`synapse_cdm/version.py` states the nine version axes and their independence in one place, and
+the package moved twice more, two PATCHes the wire contract had no part in. They were level for one
+day. `synapse_cdm/version.py` states the nine version axes and their independence in one place, and
 `tests/test_cdm_packaging.py` sweeps the package for an assignment that would derive either number
-from the other. A package at 2.1.1 does **not** mean SC-OES 2.1: `SC_OES_VERSION` is a third axis,
+from the other. A package at 2.1.2 does **not** mean SC-OES 2.1: `SC_OES_VERSION` is a third axis,
 still `0.1.0` and still a Draft.
 
 ## What changed on the wire, and what a 2.0.0 consumer must do
@@ -65,7 +83,7 @@ What a producer gains is vocabulary, not obligation:
   silently.
 
 `packages/cdm/synapse_cdm/MIGRATIONS.md`'s 2.1.0 section carries the migration statement and the
-derivation, entry by entry, and its 2.1.1 section carries this release's own record. There is no migration tooling, because there is nothing to migrate.
+derivation, entry by entry, and its 2.1.2 section carries this release's own record. There is no migration tooling, because there is nothing to migrate.
 
 ## Adapter API v2, and every adapter now describes itself
 
@@ -204,6 +222,6 @@ workflow's, never a rebuild's. Everything else in this document is readable off 
 what condition 4 of the release procedure asks for.
 
 ```bash
-pip install synapse-cdm==2.1.1
+pip install synapse-cdm==2.1.2
 python -m synapse_cdm.harness --list-adapters
 ```
