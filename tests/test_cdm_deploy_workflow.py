@@ -34,6 +34,7 @@ mutation `tests/test_cdm_pins.py` is built around, reached here from the other s
 """
 import pathlib
 import re
+import subprocess
 import tomllib
 
 import pytest
@@ -42,6 +43,24 @@ import synapse_cdm
 
 PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
+
+
+def _tracked() -> list[pathlib.Path]:
+    """Every file git tracks. `git ls-files`, not a walk of the filesystem.
+
+    Until 2026-09-16 the two sweeps below walked `REPO.rglob("*")` behind a five-name skip set,
+    and the closure check failed on every in-tree run while a fresh clone passed it: the
+    maintainer's tree carries an untracked rounds directory, excluded from the index and never
+    committed, whose reports state the deploy mechanism in order to record a deploy. Those files
+    are not sites — a reader of this repository never sees them — and a sweep that counted them
+    was reporting on the disk beside the checkout rather than on the repository. The closure is
+    a property of the REPOSITORY, so the repository's own file list is what is swept, and the skip
+    set is gone rather than lengthened: nothing git tracks sits under any of the five names, so it
+    would have filtered nothing.
+    """
+    listed = subprocess.run(["git", "ls-files", "-z"], cwd=REPO, capture_output=True, text=True,
+                            check=True).stdout
+    return [REPO / name for name in listed.split("\0") if name]
 
 #: The two files that state the deploy mechanism. Both are checked, and the sweep below
 #: re-derives this list rather than trusting it.
@@ -141,11 +160,8 @@ def test_no_site_anywhere_claims_that_a_push_deploys():
         r"|(?:push[- ]triggered deploy)",
         re.I)
     offenders = []
-    for path in sorted(REPO.rglob("*")):
+    for path in _tracked():
         if not path.is_file() or path.suffix not in {".md", ".mdx", ".toml", ".py", ".ts"}:
-            continue
-        if any(part in {".git", "node_modules", ".docusaurus", "build", ".venv"}
-               for part in path.parts):
             continue
         rel = str(path.relative_to(REPO))
         if rel == SELF:
@@ -202,12 +218,9 @@ def test_the_workflow_order_is_written_down_and_says_why_the_order_matters():
 
 def _files_stating_the_mechanism() -> list[str]:
     found = []
-    for path in sorted(REPO.rglob("*")):
+    for path in _tracked():
         if not path.is_file() or path.suffix not in {".md", ".mdx", ".toml", ".py", ".ts",
                                                      ".json"}:
-            continue
-        if any(part in {".git", "node_modules", ".docusaurus", "build", ".venv"}
-               for part in path.parts):
             continue
         rel = str(path.relative_to(REPO))
         if rel == SELF:
@@ -279,7 +292,6 @@ def test_the_built_site_is_not_committed_so_a_deploy_is_the_only_way_it_ships():
     Stated because the alternative design is real and was not chosen: committing the built site
     would make a push carry the rendered pages, and the mechanism above would be a different one.
     """
-    import subprocess
     tracked = subprocess.run(["git", "ls-files", "docs/build"], cwd=REPO,
                              capture_output=True, text=True).stdout.strip()
     assert tracked == "", (

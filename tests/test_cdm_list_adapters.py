@@ -3,7 +3,8 @@
 WHY THIS EXISTS
 ---------------
 The registry decided what `--adapter` accepts and there was no way to ask it. A caller who did
-not already know the ten names had two routes to them, and both were failures:
+not already know the names — ten, when this flag was added; the roster has grown since and this
+sentence is about that day — had two routes to them, and both were failures:
 
 * `--adapter typo` — `LookupError: unknown adapter 'typo'; registered: adsb, ais, …`. The roster
   was a clause inside an error message, so the inventory was a side effect of misuse;
@@ -28,6 +29,12 @@ down*: a tuple of ten names in `harness.py` that stays right until the eleventh 
 and then reads as authoritative while being wrong. So the load-bearing test here is a mutation:
 the registry is changed under the code, and the OUTPUT has to change with it. A listing that
 survives its registry being altered is a literal with a table around it.
+
+The "ten names" in that sentence are left as written, and deliberately so (2026-09-16): the
+number is the roster of the day the sentence was written, not a count of this tree, and
+`gates/wheel_install.py` quotes the sentence verbatim as the prediction that came true when the
+tuple inside that gate stopped at ten while two more adapters shipped. Rewriting it would
+desynchronise the quotation from the thing quoted.
 
 The second is the disjunction. Two things now state the roster — the listing and the refusal in
 `load_adapter` — and a fact stated twice can drift at one site. Both read `adapter.roster()`, and
@@ -79,10 +86,12 @@ def test_the_listing_names_every_registered_adapter_and_nothing_else():
         f"{sorted(adapter.roster())}. A roster that is not the registry is a second opinion "
         "about what `--adapter` accepts"
     )
-    assert len(rendered) >= 10, (
-        f"the listing has {len(rendered)} rows, which is fewer than the adapters this package "
-        "ships — the row parser has probably stopped matching, and every check here would then "
-        "be passing on an empty table"
+    # The floor was the literal `10` until 2026-09-16 — the roster of the day it was written, which
+    # this module's own header calls the defect. It is derived now, from the registry it checks.
+    assert len(rendered) >= len(adapter.roster()), (
+        f"the listing has {len(rendered)} rows, which is fewer than the {len(adapter.roster())} "
+        "the registry holds — the row parser has probably stopped matching, and every check here "
+        "would then be passing on an empty table"
     )
 
 

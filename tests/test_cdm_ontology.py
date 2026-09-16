@@ -25,7 +25,11 @@ parser is narrowed rather than silenced.
 
 WHY THE GATE IS LOADED WITH `exec(compile(...))`
 --------------------------------------------------
-`gates/` is not a package and is not on `sys.path`. `tests/test_cdm_generator_loading.py` bans
+Not because it could not be imported by name: this section used to open "`gates/` is not a
+package and is not on `sys.path`", and that was false — corrected 2026-09-16. The repository
+root is on `sys.path` under pytest, `gates` resolves as a namespace package without an
+`__init__.py`, and seven test modules import it that way. The reason is the loader, not the
+path. `tests/test_cdm_generator_loading.py` bans
 `exec_module` across this whole suite and gives the reproduction: a `.pyc` is revalidated on the
 source's mtime in whole seconds plus its size, so a same-length edit reverted inside one second
 hands back a module compiled from the edit. This module's subject IS that source, so reading a

@@ -37,12 +37,38 @@ convenient form is the broken one and it is what anybody writing a fourth loader
 So the poisoning is performed here: a cache is planted, the source is restored at the same mtime
 and size, and each loader must still return what the SOURCE says. A loader that regressed would
 pass every other test in the suite.
+
+POISONED ON A COPY, AND WITH BYTECODE WRITING FORCED ON — 2026-09-16
+--------------------------------------------------------------------
+Two things about the first form of that check were wrong in the same direction, which is that
+the gate depended on the environment it ran in rather than on the loader it judges.
+
+It rewrote the nine tracked generators IN PLACE — poisoned bytes into `spec/build_fixtures.py`,
+the truth restored in a `finally`. The restore held on every run anybody looked at, and that is
+not the standard: an interrupt between the write and the restore, or two suites running at once
+over the same checkout, leaves a tracked file modified, and a test that can dirty the tree it is
+judging is the shape `tests/test_cdm_positioning.py` and `.gitignore` both argue against. So the
+generator is copied under `tmp_path` in its own `synapse_cdm/fixtures/<dir>/spec/` layout — the
+depth matters, because the generators locate the package root from `__file__` — and the loader
+is pointed at the copy by patching the `FIXTURES` constant it reads its path from. The loader is
+unchanged and so is what it is asked; only the file it is asked about lives somewhere a failure
+cannot reach the index from.
+
+And it read RED under `PYTHONDONTWRITEBYTECODE=1` — seven false failures, one per loader. The
+plant is made by the ordinary source loader, which honours `sys.dont_write_bytecode` and writes
+nothing when it is set, so the assertion that a cache exists to be defeated fired on a tree with
+no defect in it. That variable is set in more places than a shell: container images and CI
+runners set it routinely, and a gate whose verdict depends on it is a gate that passes in CI
+because the runner happens not to. The setting is forced off for the duration of each poisoning
+test, through `monkeypatch` so nothing outlives the test, and the check is then deterministic:
+it plants a cache because it says it does, not because the environment allowed it.
 """
 import ast
 import importlib
 import os
 import pathlib
 import shutil
+import sys
 import types
 
 import pytest
@@ -174,8 +200,30 @@ def test_no_test_module_anywhere_uses_the_caching_loader():
 # ------------------------------------------------------------------------- the poisoning
 
 
+def _staged_copy(name: str, tmp_path: pathlib.Path, monkeypatch) -> pathlib.Path:
+    """A byte-identical copy of `name`'s generator under `tmp_path`, and the loader pointed at it.
+
+    The copy keeps the generator's own depth — `synapse_cdm/fixtures/<dir>/spec/build_fixtures.py`
+    — because every generator locates the package root by walking up from `__file__`, and a copy
+    at the wrong depth would put a nonsense directory on `sys.path` at exec time. `sys.path` is
+    restored afterwards for the same reason: each generator inserts that root when it runs, and
+    the copy's root is a temporary directory nothing should keep resolving imports against.
+
+    Pointing the loader at the copy is one `monkeypatch` of the `FIXTURES` constant the loader
+    reads its path from, so the function under test is the shipped one, untouched.
+    """
+    source = _generator_path(name)
+    stage = tmp_path / "synapse_cdm" / "fixtures" / source.parents[1].name / "spec"
+    stage.mkdir(parents=True)
+    copy = stage / source.name
+    copy.write_bytes(source.read_bytes())
+    monkeypatch.setattr(sys, "path", list(sys.path))
+    monkeypatch.setattr(_module(name), "FIXTURES", stage.parent)
+    return copy
+
+
 @pytest.mark.parametrize("name", sorted(LOADERS), ids=lambda n: n.replace("test_cdm_", ""))
-def test_the_loader_reads_the_source_even_with_a_poisoned_cache(name):
+def test_the_loader_reads_the_source_even_with_a_poisoned_cache(name, tmp_path, monkeypatch):
     """THE TEETH, and it is the check that would have caught the original defect.
 
     A cache is planted from a MODIFIED generator, the true source is restored byte-for-byte at the
@@ -185,8 +233,12 @@ def test_the_loader_reads_the_source_even_with_a_poisoned_cache(name):
     The mutation is a comment appended to the generator and padded back to the original length, so
     it changes the bytecode without changing behaviour — the point is which BYTES were compiled,
     not what they do.
+
+    Performed on a COPY of the generator, never on the tracked file, and with bytecode writing
+    forced on — the module docstring's last section says why both.
     """
-    path = _generator_path(name)
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+    path = _staged_copy(name, tmp_path, monkeypatch)
     cache = path.parent / "__pycache__"
     original = path.read_bytes()
     stat = path.stat()
@@ -201,60 +253,64 @@ def test_the_loader_reads_the_source_even_with_a_poisoned_cache(name):
     # precisely the state a same-length edit-and-revert leaves behind.
     poisoned = original + f"\n{marker} = 1\n".encode()
 
-    shutil.rmtree(cache, ignore_errors=True)
-    try:
-        path.write_bytes(poisoned)
-        os.utime(path, (stat.st_atime, stat.st_mtime))
-        # Compile the poisoned source the OLD way, so a cache exists to be read.
-        import importlib.util
-        spec = importlib.util.spec_from_file_location(f"poison_{name}", path)
-        planted = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(planted)
-        assert getattr(planted, marker, None) == 1, (
-            "the poisoning did not take, so this test proves nothing about the loader"
-        )
-        pycs = sorted(cache.glob("*.pyc")) if cache.is_dir() else []
-        assert pycs, (
-            "no bytecode was written, so there is no stale cache to defeat and this check is "
-            "vacuous — the hazard it guards depends on exec_module writing one"
-        )
+    path.write_bytes(poisoned)
+    os.utime(path, (stat.st_atime, stat.st_mtime))
+    # Compile the poisoned source the OLD way, so a cache exists to be read.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(f"poison_{name}", path)
+    planted = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(planted)
+    assert getattr(planted, marker, None) == 1, (
+        "the poisoning did not take, so this test proves nothing about the loader"
+    )
+    pycs = sorted(cache.glob("*.pyc")) if cache.is_dir() else []
+    assert pycs, (
+        "no bytecode was written, so there is no stale cache to defeat and this check is "
+        "vacuous — the hazard it guards depends on exec_module writing one, and writing is "
+        "forced on above, so this is the loader having stopped writing rather than the "
+        "environment having forbidden it"
+    )
 
-        # Restore the truth, at the same mtime, and make the cache claim the restored size.
-        path.write_bytes(original)
-        os.utime(path, (stat.st_atime, stat.st_mtime))
-        assert path.read_bytes() == original
-        for pyc in pycs:
-            blob = bytearray(pyc.read_bytes())
-            blob[12:16] = (len(original) & 0xFFFFFFFF).to_bytes(4, "little")
-            pyc.write_bytes(bytes(blob))
+    # Restore the truth, at the same mtime, and make the cache claim the restored size.
+    path.write_bytes(original)
+    os.utime(path, (stat.st_atime, stat.st_mtime))
+    assert path.read_bytes() == original
+    for pyc in pycs:
+        blob = bytearray(pyc.read_bytes())
+        blob[12:16] = (len(original) & 0xFFFFFFFF).to_bytes(4, "little")
+        pyc.write_bytes(bytes(blob))
 
-        module = getattr(_module(name), LOADERS[name])()
-        assert not hasattr(module, marker), (
-            f"{name}'s loader returned a module built from bytecode, not from the source on disk: "
-            f"{marker} is present and the source does not define it. A .pyc validates on the "
-            "source's mtime in whole seconds and its size, both of which are unchanged here — so "
-            "this is what an edit reverted inside one second produces. Compile in memory"
-        )
-        assert isinstance(module, types.ModuleType)
-    finally:
-        path.write_bytes(original)
-        os.utime(path, (stat.st_atime, stat.st_mtime))
-        shutil.rmtree(cache, ignore_errors=True)
+    module = getattr(_module(name), LOADERS[name])()
+    assert module.__file__ == str(path), (
+        f"{name}'s loader read {module.__file__} and not the staged copy, so this run poisoned "
+        "one file and judged another"
+    )
+    assert not hasattr(module, marker), (
+        f"{name}'s loader returned a module built from bytecode, not from the source on disk: "
+        f"{marker} is present and the source does not define it. A .pyc validates on the "
+        "source's mtime in whole seconds and its size, both of which are unchanged here — so "
+        "this is what an edit reverted inside one second produces. Compile in memory"
+    )
+    assert isinstance(module, types.ModuleType)
 
 
 @pytest.mark.parametrize("name", sorted(LOADERS), ids=lambda n: n.replace("test_cdm_", ""))
-def test_loading_a_generator_writes_no_bytecode_beside_it(name):
+def test_loading_a_generator_writes_no_bytecode_beside_it(name, tmp_path, monkeypatch):
     """The other half: not reading a cache is worth little if the loader still writes one.
 
     A written `.pyc` is what the NEXT reader trips over, so a loader that ignores caches and leaves
     them behind has moved the hazard rather than removed it.
+
+    Bytecode writing is forced on here too, for the converse of the reason above: under
+    `PYTHONDONTWRITEBYTECODE=1` a loader that had gone back to `exec_module` would write nothing
+    and this check would pass it.
     """
-    path = _generator_path(name)
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+    path = _staged_copy(name, tmp_path, monkeypatch)
     cache = path.parent / "__pycache__"
-    shutil.rmtree(cache, ignore_errors=True)
     getattr(_module(name), LOADERS[name])()
     assert not cache.exists(), (
-        f"loading {name}'s generator created {cache.relative_to(REPO)}. Compiling in memory writes "
+        f"loading {name}'s generator created {cache.relative_to(tmp_path)}. Compiling in memory writes "
         "nothing; something has gone back to the source loader"
     )
 

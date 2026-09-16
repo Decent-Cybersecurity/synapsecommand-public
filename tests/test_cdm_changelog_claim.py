@@ -61,6 +61,7 @@ agree, so both are swept by one regex here.
 """
 import pathlib
 import re
+import subprocess
 
 import pytest
 
@@ -71,6 +72,24 @@ PKG = pathlib.Path(synapse_cdm.__file__).resolve().parent
 REPO = PKG.parents[2]
 MIGRATIONS = PKG / "MIGRATIONS.md"
 CHANGELOG = REPO / "docs" / "docs" / "changelog.mdx"
+
+
+def tracked() -> list[pathlib.Path]:
+    """Every file git tracks. `git ls-files`, not a walk of the filesystem.
+
+    Until 2026-09-16 the pairing sweep below walked `REPO.rglob("*")` and skipped four directory
+    names by hand — and not `.venv`, so it read every third-party file in the virtualenv on each
+    run and its verdict depended on what happened to be installed; and not the maintainer's
+    untracked rounds directory, whose reports pair the two words in order to discuss this very
+    ban, so the check failed on every in-tree run and passed in a fresh clone. Both are the same
+    defect: a sweep reporting on the disk beside the checkout rather than on the repository. The
+    ban is on what the REPOSITORY says, so the repository's own file list is what is swept, and
+    the skip set is gone rather than lengthened — nothing git tracks sits under any of the four
+    names, so it would have filtered nothing.
+    """
+    listed = subprocess.run(["git", "ls-files", "-z"], cwd=REPO, capture_output=True, text=True,
+                            check=True).stdout
+    return [REPO / name for name in listed.split("\0") if name]
 
 #: The page's history section and the file's, by their own headings. Read rather than assumed: a
 #: heading that stops matching is a FAILURE here, not a silently empty section.
@@ -118,10 +137,8 @@ def test_no_site_claims_this_page_mirrors_the_migrations_file():
     "MIGRATIONS", which no innocent use has ever been.
     """
     offenders = []
-    for path in sorted(REPO.rglob("*")):
+    for path in tracked():
         if not path.is_file() or path.suffix not in {".md", ".mdx", ".py", ".json", ".ts"}:
-            continue
-        if any(part in {".git", "node_modules", ".docusaurus", "build"} for part in path.parts):
             continue
         if path.name == pathlib.Path(__file__).name:
             continue                      # this module quotes the retired sentence, on purpose

@@ -47,6 +47,7 @@ has to be rewritten deliberately — which is the point of allowlisting a site r
 """
 import pathlib
 import re
+import subprocess
 
 import pytest
 
@@ -60,17 +61,33 @@ REPO = pathlib.Path(synapse_cdm.__file__).resolve().parents[3]
 #: `tests/test_cdm_prose_counts.py` and `tests/test_cdm_publication.py` both make.
 SELF = "tests/test_cdm_consumer_path.py"
 
-SKIP_PARTS = {".git", ".venv", "node_modules", ".docusaurus", "build", "__pycache__",
-              "dist", ".pytest_cache", ".wrangler", "synapse_cdm.egg-info"}
+
+def tracked() -> list[pathlib.Path]:
+    """Every file git tracks. `git ls-files`, not a walk of the filesystem.
+
+    Until 2026-09-16 this module walked `REPO.rglob("*")` behind a hand-written skip set — `.git`,
+    `.venv`, `node_modules`, `build`, `dist` and five more — and the set was a list of everything
+    somebody had once found beside the checkout. It was one name short: the maintainer's tree
+    carries an untracked rounds directory, excluded from the index and never committed, whose
+    reports quote the retired commands in order to discuss them, and three of the checks below
+    failed on every in-tree run while a fresh clone passed them. That is a sweep reporting on the
+    disk a maintainer happens to have rather than on the repository, which is the distinction
+    `tests/test_cdm_positioning.py` draws in the same words. What is asserted here is a property
+    of the REPOSITORY — what a reader of it is told — so the repository's own file list is what
+    is swept, and the skip set is gone rather than lengthened: nothing git tracks sits under any
+    of the ten names it held, so it would have filtered nothing, and a list that filters nothing
+    reads as a ruling about things it never sees.
+    """
+    listed = subprocess.run(["git", "ls-files", "-z"], cwd=REPO, capture_output=True, text=True,
+                            check=True).stdout
+    return [REPO / name for name in listed.split("\0") if name]
 
 
 def documents() -> list[pathlib.Path]:
     """Every prose or source file a reader could be following an instruction out of."""
     out = []
-    for path in sorted(REPO.rglob("*")):
+    for path in tracked():
         if not path.is_file() or path.suffix not in {".md", ".mdx", ".py", ".toml"}:
-            continue
-        if any(part in SKIP_PARTS for part in path.parts):
             continue
         if str(path.relative_to(REPO)) == SELF:
             continue

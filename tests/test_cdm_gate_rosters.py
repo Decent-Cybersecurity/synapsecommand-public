@@ -30,10 +30,15 @@ not a second copy of it. It checks only the part that can be wrong while sitting
 the gate's rosters still describe this tree. Those are cheap, pure comparisons, and cheap is the
 point, because a check that runs on every commit is what the gate needed and did not have.
 
-`gates/wheel_install.py` is loaded by PATH rather than imported by name: `gates/` is not a
-package, has no `__init__.py`, and is not on `sys.path` when the suite runs. Loading it also
-proves the file is importable with no side effects, which is worth one assertion of its own —
-a gate that only parses is a gate that fails at the end of a five-minute build.
+`gates/wheel_install.py` is loaded by PATH rather than imported by name, and NOT because it
+could not be. This paragraph used to say `gates/` "is not on `sys.path` when the suite runs",
+and that was false — corrected 2026-09-16. `gates/` has no `__init__.py`, but the repository
+root IS on `sys.path` under pytest (`tests/__init__.py` makes `tests` a package, and pytest
+prepends the parent of the package it collects from), so `gates` resolves as a namespace
+package, and seven test modules import it by name and pass. The reason for loading by path is
+the one in the next paragraph and nothing else. Loading it also proves the file is importable
+with no side effects, which is worth one assertion of its own — a gate that only parses is a
+gate that fails at the end of a five-minute build.
 
 It is loaded with `exec(compile(...))` and NOT with `spec.loader.exec_module`, and that is not a
 style preference. The first draft of this module used `exec_module`, and
