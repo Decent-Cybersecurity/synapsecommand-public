@@ -799,15 +799,18 @@ class AsterixCat023Adapter(Adapter):
         maturity=Maturity(
             level=MaturityLevel.L4,
             basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
-                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
-                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
-                  "COLUMN is SKIP for every adapter in this repository, because "
-                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
-                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
-                  "This adapter ships it: "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on every "
+                  "fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its "
+                  "`roundtrip` column is PASS as well: `from_cdm(to_cdm(raw))` reproduces every "
+                  "byte fixture octet for octet under the declared `bytes` tolerance "
+                  "(`ROUNDTRIP_TOLERANCE`), so `synapse conformance run --adapter cat023` "
+                  "computes E = PASS and L4 is the suite's own reading rather than this "
+                  "declaration's. The adapter's own statement of the same claim is "
                   "tests/test_cdm_asterix_cat023_adapter.py::test_every_fixture_round_trips_byte_for_byte. "
-                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
-                  "applicable conformance set, which is P2's Suite v2.",
+                  "L5 is eligible and not declared: the rung above this one rests on `M` "
+                  "(streaming) being inapplicable to every adapter in this repository, and a rung "
+                  "passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the "
+                  "reading the ingest-only adapters apply to `E`).",
             external_exercise=None,
         ),
         claim_status=ClaimStatus.VERIFIED,

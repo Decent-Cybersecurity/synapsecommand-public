@@ -1,15 +1,17 @@
-"""One test per claim in the TAK adapter's docstring, plus the round trips the harness cannot do.
+"""One test per claim in the TAK adapter's docstring, plus the round trips in the adapter's own words.
 
 WHY THIS FILE CARRIES THE ROUND-TRIP CHECKS
 -------------------------------------------
-The harness's `roundtrip` column reports SKIP for an adapter that emits XML, and says so out
-loud: it compares structures, `from_cdm()` here returns CoT bytes, and a check it cannot run
-must report SKIP rather than PASS. The README's instruction for that case is that the adapter
-ships its own round-trip test — so the two directions are exercised here, with the same
-value-presence comparison (`lossless.unrepresented`) and the same TRANSFORMS exemptions the
+Until 2026-09-16 the harness's `roundtrip` column reported SKIP for an adapter that emits XML,
+and said so out loud: it compared structures, `from_cdm()` here returns CoT bytes, and a check
+it cannot run must report SKIP rather than PASS. The README's instruction for that case was that
+the adapter ships its own round-trip test — so the two directions were exercised here, with the
+same value-presence comparison (`lossless.unrepresented`) and the same TRANSFORMS exemptions the
 harness would have used. Byte equality is neither achievable nor the point: attribute order is
 arbitrary, an omitted optional field comes back explicit, and a re-rendered timestamp is a
-different string for the same instant.
+different string for the same instant — which is why the class declares the `values` tolerance,
+and the harness now re-ingests what it emitted and makes this comparison itself. The tests here
+remain the adapter's own statement of the claim.
 """
 import json
 import pathlib
@@ -731,9 +733,13 @@ def test_the_harness_passes_every_fixture_against_the_published_schemas():
         # the never-drop check off for this adapter.
         expected = "SKIP" if result["fixture"].endswith(".xml") else "PASS"
         assert checks["lossless"] == expected, result
-        # roundtrip is SKIP for every fixture BY DESIGN: from_cdm returns XML, which the
-        # harness cannot compare structurally. That is why this file carries the round trips.
-        assert checks["roundtrip"] == "SKIP", result
+        # roundtrip is judged on the PARSED twin and SKIP on the XML (2026-09-16): this class
+        # declares the `values` tolerance, so the harness re-ingests what `from_cdm` emitted and
+        # asks the never-drop question of the twin — the comparison
+        # `test_ingest_round_trip_loses_no_source_value` makes. Until then it was SKIP for every
+        # fixture, because the harness could not compare XML structurally.
+        expected = "SKIP" if result["fixture"].endswith(".xml") else "PASS"
+        assert checks["roundtrip"] == expected, result
 
 
 def test_the_adapter_is_registered_and_declares_itself_bidirectional():

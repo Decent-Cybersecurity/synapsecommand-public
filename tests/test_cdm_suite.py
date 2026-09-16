@@ -191,11 +191,32 @@ def test_the_required_set_this_suite_sweeps_with_excludes_only_checks_no_adapter
     """
     excluded = set("EIMN")
     assert set(suite.CHECK_LETTERS) - set(SWEEP) == excluded
+    reports = {name: _report(name) for name in shipped()}
     for letter in excluded:
-        skipped = {name: _report(name)["checks"][letter] for name in shipped()}
+        skipped = {name: reports[name]["checks"][letter] for name in shipped()}
         assert any(e["verdict"] == suite.SKIP for e in skipped.values()), letter
         assert not any(e["verdict"] == suite.FAIL for e in skipped.values()), \
             f"{letter} FAILs somewhere and is being excluded rather than reported"
+    # **E LEFT THE "SKIP FOR ALL FOURTEEN" READING ON 2026-09-16 AND STAYS EXCLUDED.** It is a
+    # DECLARED SKIP for the three ingest-only adapters, and a required SKIP exits non-zero (§19).
+    # For every adapter that emits it is PASS now, computed from the octets under the class's
+    # `ROUNDTRIP_TOLERANCE`, and a regression to SKIP there would be the old hole reopening —
+    # every emitter declaring L4 on a test the suite could not see. The half of each fixture
+    # pair that carries the verdict is exactly the set the adapter's own round-trip test reads:
+    # the byte fixtures under `bytes`, the parsed twins under `values`.
+    for name, cls in shipped().items():
+        entry = reports[name]["checks"]["E"]
+        if cls.direction == "ingest":
+            assert entry["verdict"] == suite.SKIP and entry["declared_inapplicable"], name
+            continue
+        assert entry["verdict"] == suite.PASS, (name, entry)
+        assert not entry["declared_inapplicable"], f"{name}: PASS is a measurement, not a declaration"
+        judged = [p for p in suite._fixtures(_fixtures(name))
+                  if (p.suffix != ".json") == (cls.ROUNDTRIP_TOLERANCE == "bytes")]
+        assert entry["details"]["pass"] == len(judged) and entry["details"]["fail"] == 0, \
+            (name, entry["details"])
+        assert entry["details"]["skip"] == entry["details"]["fixtures"] - len(judged), name
+        assert reports[name]["maturity_eligible"] == "L5", name
 
 
 # --- the synthetic adapters: every check proved to bite --------------------------------------
@@ -549,15 +570,23 @@ def test_the_sweep_writes_no_absolute_path_so_two_runners_agree_on_its_digest(ca
     assert suite.main(["conformance", "run", "--all", "--format", "json"]) == suite.EXIT_OK
     out = capsys.readouterr().out
     assert str(REPO) not in out, "the sweep leaked the checkout path into its artefact"
-    for report in json.loads(out)["adapters"].values():
+    reports = json.loads(out)["adapters"]
+    for report in reports.values():
         assert report["adapter"]["fixtures"].startswith("<packaged>/")
+    # The label is the DIRECTORY, not the adapter name (2026-09-16): the two differ for the two
+    # adapters named for a standard, and the evidence record's `fixture_hashes` already say `klv/`.
+    assert reports["stanag4609"]["adapter"]["fixtures"] == "<packaged>/klv"
+    assert reports["stanag4676"]["adapter"]["fixtures"] == "<packaged>/nits"
+    assert reports["pntmap"]["adapter"]["fixtures"] == suite.packaged_label(shipped()["pntmap"])
 
 
 def test_the_single_adapter_report_still_names_the_directory_it_read(capsys):
-    """The relativising is `--all`'s and not `run()`'s.
+    """The relativising is `portable`'s and not `run()`'s.
 
-    `tests/test_cdm_evidence.py` compares an evidence record against `run()`'s output verbatim, so
-    moving this into `run()` would move a published surface to serve one caller.
+    `run()` is the surface `cdm-harness` and `synapse conformance run --adapter` publish, and the
+    directory it read is the right thing for a person debugging one adapter. The `--all` sweep and
+    the evidence record both relativise through `suite.portable` (2026-09-16) rather than by
+    moving `run()` to serve one caller.
     """
     assert suite.main(["conformance", "run", "--adapter", "pntmap", "--format", "json"]) == \
         suite.EXIT_OK

@@ -47,9 +47,11 @@ count is derived by `tests/test_cdm_harness.py` now, at every site that states i
                cannot say where it came from is inadmissible regardless of how well-formed it
                is.
 4. lossless    no source value vanished. See lossless.py. Declared transforms are printed.
-5. roundtrip   for an egress or bidirectional adapter: raw -> CDM -> raw loses no VALUE. See
-               `_check_roundtrip`, which explains why it is not a byte comparison and why an
-               ingest-only adapter gets SKIP rather than PASS.
+5. roundtrip   for an egress or bidirectional adapter: raw -> CDM -> raw reproduces the
+               source under the tolerance the class DECLARES — octet for octet by default, or
+               no VALUE lost after re-ingest where the format (XML) cannot promise octets. See
+               `_check_roundtrip`, which explains which half of a fixture pair carries the
+               verdict and why an ingest-only adapter gets SKIP rather than PASS.
 6. golden      the output matches the recorded expectation byte for byte, under a FROZEN
                clock. This is what catches an unintended change in a translation nobody meant
                to touch.
@@ -223,23 +225,36 @@ def _diff(expected: Any, actual: Any, path: str = "") -> list[str]:
     return [] if expected == actual else [f"{path or '(root)'}: {expected!r} -> {actual!r}"]
 
 
-def _check_roundtrip(adapter: Adapter, objects: list[CDMBase],
-                     raw: Any) -> tuple[str, list[str]]:
+def _check_roundtrip(adapter: Adapter, objects: list[CDMBase], raw: Any,
+                     raw_bytes: bytes | None = None) -> tuple[str, list[str]]:
     """For an adapter that also emits: does raw -> CDM -> raw lose anything?
 
     The brief asks for round-trip tests on bidirectional adapters, and the first of those
     (TAK / CoT) is the next one to be written — so the check exists before it is needed rather
     than being retrofitted around whatever the first egress adapter happens to do.
 
-    Equality is measured with the same value-presence comparison as the lossless check, NOT
-    with `==` on the two payloads. A byte-equal round trip is not achievable and not the point:
-    key order changes, a source that omitted an optional field gets it back explicitly, XML
-    attribute order is arbitrary. What must hold is that no VALUE from the original went
-    missing on the way out, which is the property an operator on the receiving TAK client
-    actually depends on.
+    A JSON emitter is measured with the same value-presence comparison as the lossless check,
+    NOT with `==` on the two payloads: key order changes, a source that omitted an optional
+    field gets it back explicitly. What must hold is that no VALUE from the original went
+    missing on the way out.
 
-    Reported as SKIP — never PASS — for an ingest-only adapter. An unrun check that reads as
-    passed is how a capability nobody tested acquires a green tick.
+    A NON-JSON EMITTER IS MEASURED UNDER THE TOLERANCE ITS CLASS DECLARES (2026-09-16). Until
+    then this branch returned SKIP with a sentence pointing at `tests/` — a directory the wheel
+    does not carry — and the suite's §3.6 rule 6 blocked L4 on that undeclared SKIP for every
+    one of the eleven emitters whose own tests proved the round trip. Now `ROUNDTRIP_TOLERANCE`
+    decides which half of a fixture pair carries the verdict, mirroring how `lossless` skips the
+    byte fixture and relies on the parsed twin beside it:
+
+      "bytes"   the BYTE fixture is judged — `from_cdm(to_cdm(raw))` against
+                `adapter.roundtrip_reference(raw)`, octet for octet, and the first differing
+                offset is named — and the parsed twin reports SKIP.
+      "values"  the PARSED twin is judged — what `from_cdm` emitted is re-ingested and no
+                source value may be absent, with `TRANSFORMS` and `ROUNDTRIP_TRANSFORMS`
+                excused — and the byte fixture reports SKIP.
+
+    Both SKIPs are the check saying which fixture it read instead, and `suite._fold` credits an
+    adapter for the half it judged. Reported as SKIP — never PASS — for an ingest-only adapter.
+    An unrun check that reads as passed is how a capability nobody tested acquires a green tick.
     """
     if adapter.direction == "ingest":
         return SKIP, []
@@ -257,11 +272,7 @@ def _check_roundtrip(adapter: Adapter, objects: list[CDMBase],
         try:
             emitted = json.loads(emitted)
         except ValueError:
-            return SKIP, [
-                "roundtrip: SKIPPED — from_cdm returned non-JSON bytes (XML, USMTF), which "
-                "this check cannot compare structurally; the adapter must ship its own "
-                "round-trip test in tests/"
-            ]
+            return _compare_emitted(adapter, emitted, raw, raw_bytes)
     if raw is None or not isinstance(emitted, (dict, list)):
         return SKIP, ["roundtrip: SKIPPED — no comparable structure on one side"]
 
@@ -269,6 +280,44 @@ def _check_roundtrip(adapter: Adapter, objects: list[CDMBase],
     return (FAIL if missing else PASS), [
         f"roundtrip: value at {path_} = {value!r} was in the source payload but is absent "
         "from what from_cdm() emitted"
+        for path_, value in sorted(missing.items())
+    ]
+
+
+def _compare_emitted(adapter: Adapter, emitted: bytes | bytearray | str, raw: Any,
+                     raw_bytes: bytes | None) -> tuple[str, list[str]]:
+    """The non-JSON half of `_check_roundtrip`, under the class's declared tolerance."""
+    tolerance = type(adapter).ROUNDTRIP_TOLERANCE
+    if tolerance == "bytes":
+        if raw_bytes is None:
+            return SKIP, ["roundtrip: SKIPPED — parsed twin of a byte fixture; the byte fixture "
+                          "beside it carries the byte-exact comparison"]
+        if isinstance(emitted, str):
+            return FAIL, ["roundtrip: from_cdm returned text where the adapter declares a "
+                          "byte-exact round trip (ROUNDTRIP_TOLERANCE 'bytes')"]
+        reference = adapter.roundtrip_reference(bytes(raw_bytes))
+        emitted = bytes(emitted)
+        if emitted == reference:
+            return PASS, []
+        offset = next((i for i, (a, b) in enumerate(zip(emitted, reference)) if a != b),
+                      min(len(emitted), len(reference)))
+        return FAIL, [f"roundtrip: from_cdm emitted {len(emitted)} byte(s) against "
+                      f"{len(reference)} ingested; first difference at offset {offset}"]
+    # "values": re-ingest what was emitted and ask the never-drop question of it.
+    if raw is None:
+        return SKIP, ["roundtrip: SKIPPED — byte fixture under a declared 'values' tolerance; "
+                      "the parsed twin beside it carries the value comparison"]
+    try:
+        again = _dump(adapter.to_cdm(
+            emitted if isinstance(emitted, (bytes, bytearray)) else emitted.encode("utf-8")))
+    except Exception as e:                              # noqa: BLE001 - same containment as
+        return FAIL, [f"roundtrip: re-ingesting what from_cdm emitted raised "  # translate
+                      f"{type(e).__name__}: {e}"]
+    declared = {**type(adapter).TRANSFORMS, **type(adapter).ROUNDTRIP_TRANSFORMS}
+    missing = lossless.unrepresented(raw, again, declared)
+    return (FAIL if missing else PASS), [
+        f"roundtrip: value at {path_} = {value!r} was in the source payload and is absent "
+        "after egress and re-ingest"
         for path_, value in sorted(missing.items())
     ]
 
@@ -359,6 +408,7 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
         raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=True))
     golden_dir = fixtures / GOLDEN_DIR
     results = []
+    reference_normalised: list[str] = []
     for path in paths:
         entry: dict[str, Any] = {"fixture": path.name, "objects": 0,
                                  "checks": {}, "problems": []}
@@ -406,9 +456,13 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
                 for path_, value in sorted(missing.items())
             ]
 
+        raw_bytes = bytes(raw) if isinstance(raw, (bytes, bytearray)) else None
         entry["checks"]["roundtrip"], roundtrip_problems = _check_roundtrip(
-            adapter, objects, raw_for_lossless)
+            adapter, objects, raw_for_lossless, raw_bytes)
         entry["problems"] += roundtrip_problems
+        if raw_bytes is not None and adapter.direction != "ingest" \
+                and adapter.roundtrip_reference(raw_bytes) != raw_bytes:
+            reference_normalised.append(path.name)
 
         golden_path = golden_dir / f"{path.stem}.cdm.json"
         rendered = json.dumps(dumped, indent=2, sort_keys=True) + "\n"
@@ -436,6 +490,12 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
                     "class": f"{type(adapter).__module__}.{type(adapter).__qualname__}"},
         "schemas": source_of_schemas,
         "transforms": dict(type(adapter).TRANSFORMS),
+        # 2026-09-16: the round-trip declarations, published for the reason `transforms` is —
+        # an exemption the report does not print is an exemption nobody can see. A second
+        # ADDED key beside `check_letters`; nothing else in this report moves.
+        "roundtrip": {"tolerance": type(adapter).ROUNDTRIP_TOLERANCE,
+                      "transforms": dict(type(adapter).ROUNDTRIP_TRANSFORMS),
+                      "reference_normalised": reference_normalised},
         "fixtures": str(fixtures),
         "results": results,
         "passed": sum(1 for r in results if r["verdict"] == PASS),
@@ -518,6 +578,17 @@ def render_report(report: dict) -> str:
         lines += ["", "declared transforms (exempt from the lossless check, printed every run "
                       "so the exemption is visible):"]
         lines += [f"  {path}: {reason}" for path, reason in sorted(report["transforms"].items())]
+    roundtrip = report.get("roundtrip")
+    if roundtrip and adapter["direction"] != "ingest":
+        lines += ["", f"roundtrip tolerance: {roundtrip['tolerance']} (the comparison the "
+                      "roundtrip column makes, printed every run so the declaration is visible)"]
+        if roundtrip["transforms"]:
+            lines += ["  re-stamped on egress (exempt from the roundtrip check):"]
+            lines += [f"    {path}: {reason}"
+                      for path, reason in sorted(roundtrip["transforms"].items())]
+        if roundtrip["reference_normalised"]:
+            lines += ["  compared against roundtrip_reference(raw), not raw, for: "
+                      + ", ".join(roundtrip["reference_normalised"])]
     problems = [(r["fixture"], p) for r in report["results"] for p in r["problems"]]
     if problems:
         lines += ["", "problems:"]

@@ -796,15 +796,21 @@ class AisAdapter(Adapter):
         maturity=Maturity(
             level=MaturityLevel.L4,
             basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
-                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
-                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
-                  "COLUMN is SKIP for every adapter in this repository, because "
-                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
-                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
-                  "This adapter ships it: "
-                  "tests/test_cdm_ais_adapter.py::test_the_ingest_round_trip_is_byte_exact. "
-                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
-                  "applicable conformance set, which is P2's Suite v2.",
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on every "
+                  "fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its "
+                  "`roundtrip` column is PASS as well: `from_cdm(to_cdm(raw))` reproduces every "
+                  "byte fixture octet for octet under the declared `bytes` tolerance "
+                  "(`ROUNDTRIP_TOLERANCE`), the two fixtures that carry an NMEA TAG block being "
+                  "compared against `roundtrip_reference(raw)` — the sentences without the "
+                  "receiver's own annotation, which the harness names in every report, so "
+                  "`synapse conformance run --adapter ais` computes E = PASS and L4 is the "
+                  "suite's own reading rather than this declaration's. The adapter's own "
+                  "statement of the same claim is "
+                  "tests/test_cdm_ais_adapter.py::test_the_ingest_round_trip_is_byte_exact. L5 is "
+                  "eligible and not declared: the rung above this one rests on `M` (streaming) "
+                  "being inapplicable to every adapter in this repository, and a rung passed "
+                  "vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the reading "
+                  "the ingest-only adapters apply to `E`).",
             external_exercise=None,
         ),
         claim_status=ClaimStatus.VERIFIED,
@@ -1091,6 +1097,21 @@ class AisAdapter(Adapter):
                 None)
 
     # ------------------------------------------------------------------- egress
+
+    def roundtrip_reference(self, raw: bytes) -> bytes:
+        """The sentences without the receiver's TAG annotations — what a re-emission reproduces.
+
+        The NMEA 0183 v4.10 TAG block (`\\s:…,c:…*hh\\`) is the receiver's own annotation, not
+        part of the AIS message: it IS carried into the CDM (`Event.payload.received_at_unix`),
+        and what it does not survive is being retransmitted — a re-emission is a new
+        transmission, and stamping it with the original receipt time would misstate when it was
+        received. So the byte-exact comparison the harness makes (2026-09-16) is against the
+        sentences alone, and the harness names every fixture it did this for. The algorithm was
+        `tests/test_cdm_ais_adapter.py`'s `_strip_tag_blocks` until the harness needed it.
+        """
+        lines = [line.rsplit("\\", 1)[-1]
+                 for line in raw.decode("ascii").split(SENTENCE_TERMINATOR) if line]
+        return (SENTENCE_TERMINATOR.join(lines) + SENTENCE_TERMINATOR).encode("ascii")
 
     def from_cdm(self, objects: list[CDMBase]) -> bytes:
         """One Entity or one Track -> the AIVDM sentences that restate it, as UTF-8 bytes.

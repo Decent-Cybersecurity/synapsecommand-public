@@ -1,13 +1,15 @@
-"""One test per claim in the CAT021 adapter's docstring, plus the round trip the harness cannot do.
+"""One test per claim in the CAT021 adapter's docstring, plus the round trip in the adapter's own words.
 
 WHY THIS FILE CARRIES THE BYTE-EXACT ROUND TRIP
 ------------------------------------------------
-The harness's `roundtrip` column reports SKIP for an adapter that emits something it cannot
-compare structurally, and says so out loud: `from_cdm()` here returns raw ASTERIX octets. The
-README's instruction for that case is that the adapter ships its own round-trip test, so both
-directions are exercised here — and here the claim is stronger than the harness's would be. The
-harness compares VALUE PRESENCE; this compares OCTETS, because a CAT021 record's contents are
-deterministic and a byte-exact claim is falsifiable in a way a value-presence one is not.
+Until 2026-09-16 the harness's `roundtrip` column reported SKIP for an adapter that emits
+something it cannot compare structurally, and said so out loud: `from_cdm()` here returns raw
+ASTERIX octets. The README's instruction for that case was that the adapter ships its own
+round-trip test, so both directions were exercised here — and the claim here was stronger than
+the harness's: it compared VALUE PRESENCE, this compares OCTETS, because a CAT021 record's
+contents are deterministic and a byte-exact claim is falsifiable in a way a value-presence one is
+not. The harness makes the octet comparison itself now, under this class's `bytes` tolerance;
+this test remains the adapter's own statement of it.
 
 WHAT IS PINNED, AND AGAINST WHAT
 ---------------------------------

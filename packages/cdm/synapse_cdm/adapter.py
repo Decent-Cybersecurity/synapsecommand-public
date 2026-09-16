@@ -76,6 +76,29 @@ class Adapter(ABC):
     #: Printed by the harness on every run; see lossless.py for why the escape is loud.
     TRANSFORMS: ClassVar[dict[str, str]] = {}
 
+    #: How egress is compared on the way back — ARCHITECTURE.md §3.3's L4, "within DECLARED
+    #: tolerances" (added 2026-09-16; the harness's `roundtrip` check reads it).
+    #:
+    #:   "bytes"   `from_cdm(to_cdm(raw))` must equal `roundtrip_reference(raw)` octet for octet.
+    #:             The default, and the claim every binary and line-oriented emitter here makes.
+    #:   "values"  the emitted document is re-ingested and no source value may be missing
+    #:             (`lossless.unrepresented` over the parsed twin, with `TRANSFORMS` and
+    #:             `ROUNDTRIP_TRANSFORMS` excused). The tolerance every XML emitter needs: XML
+    #:             permits insignificant whitespace, attribute order and namespace prefix choice,
+    #:             so octet equality is not a property the format lets an emitter promise.
+    #:
+    #: Until 2026-09-16 the harness reported SKIP for every non-JSON emitter and told the reader
+    #: to go and find the adapter's own test in `tests/` — a directory the wheel does not carry —
+    #: and §3.6 rule 6 then blocked L4 on that undeclared SKIP for every emitter whose own tests
+    #: proved the round trip. A tolerance the report prints is what §3.6 rule 4 asks for, and an
+    #: undeclared fall-back to value equality would be the typed rung §3.6 forbids.
+    ROUNDTRIP_TOLERANCE: ClassVar[str] = "bytes"
+
+    #: Source paths egress legitimately re-stamps, mapped to the REASON. Read only under the
+    #: "values" tolerance, merged with `TRANSFORMS` for the re-ingest comparison, and printed by
+    #: the harness beside `TRANSFORMS` so the exemption is as visible as that one is.
+    ROUNDTRIP_TRANSFORMS: ClassVar[dict[str, str]] = {}
+
     #: The directory under `synapse_cdm/fixtures/` holding this adapter's fixtures, when it is
     #: NOT the adapter's own name. Left None means "the same string as `name`", which is true of
     #: twelve of the fourteen shipped adapters — `stanag4676`, whose fixtures are in
@@ -153,6 +176,7 @@ class Adapter(ABC):
                 f"{existing.__module__}.{existing.__qualname__} — names are how the harness "
                 "and every SourceRef identify a translator, so they must be unique"
             )
+        _check_roundtrip_declaration(cls)
         # v2, and LAST of the class-definition checks on purpose: every refusal above is about
         # the v1 identity, and a v1 defect has to keep reporting itself in the words it always
         # did rather than being masked by "this adapter declares no metadata".
@@ -220,6 +244,17 @@ class Adapter(ABC):
         raise NotImplementedError(
             f"{type(self).__name__} is {self.direction}-only and does not emit"
         )
+
+    def roundtrip_reference(self, raw: bytes) -> bytes:
+        """The octets a re-emission is expected to reproduce, under the "bytes" tolerance.
+
+        Identity by default. An adapter overrides it ONLY to strip an envelope the source format
+        itself says is not part of the message — AIS's NMEA TAG block, the receiver's own
+        annotation, is the one case in this repository — and never to normalise the message. The
+        harness reports every fixture where this differs from `raw`, so the normalisation is a
+        printed declaration and not a quiet one.
+        """
+        return raw
 
     # ------------------------------------------------------------------ Adapter API v2
     #
@@ -412,6 +447,45 @@ def _check_metadata(cls: type["Adapter"]) -> None:
             "; ".join(wrong) + ". §16 fails CI on an adapter version inconsistent with its "
             "implementation metadata, and the same argument reaches the identifier and the "
             "direction: a manifest a consumer filters on has to describe the class that runs"
+        )
+
+
+def _check_roundtrip_declaration(cls: type["Adapter"]) -> None:
+    """The round-trip tolerance, refused at class definition where it cannot mean anything.
+
+    A function for `_check_metadata`'s reason — the enforcement block stays as short as the
+    checks allow — and the same enforcement point. Three shapes are refused: a tolerance outside
+    the two the harness implements; `ROUNDTRIP_TRANSFORMS` or a `roundtrip_reference` override
+    under the tolerance that never reads it, which would be a declaration the report prints and
+    nothing honours; and either on an ingest-only adapter, which has no egress to tolerate.
+    """
+    tolerance = cls.ROUNDTRIP_TOLERANCE
+    if tolerance not in ("bytes", "values"):
+        raise TypeError(
+            f"{cls.__name__}.ROUNDTRIP_TOLERANCE must be 'bytes' or 'values', got {tolerance!r}. "
+            "The harness compares egress one of those two ways and a third word would be a "
+            "tolerance nothing measures"
+        )
+    own = cls.__dict__
+    declares = [name for name in ("ROUNDTRIP_TOLERANCE", "ROUNDTRIP_TRANSFORMS",
+                                  "roundtrip_reference") if name in own]
+    if cls.direction == "ingest" and declares:
+        raise TypeError(
+            f"{cls.__name__} declares {', '.join(declares)} but has direction 'ingest' — there "
+            "is no egress direction for a round-trip tolerance to apply to, so the declaration "
+            "would be printed and never read"
+        )
+    if tolerance == "bytes" and cls.ROUNDTRIP_TRANSFORMS:
+        raise TypeError(
+            f"{cls.__name__} declares ROUNDTRIP_TRANSFORMS under ROUNDTRIP_TOLERANCE 'bytes'. "
+            "An octet comparison excuses nothing; declare 'values' if egress legitimately "
+            "re-stamps a source value, or drop the exemptions"
+        )
+    if tolerance == "values" and cls.roundtrip_reference is not Adapter.roundtrip_reference:
+        raise TypeError(
+            f"{cls.__name__} overrides roundtrip_reference() under ROUNDTRIP_TOLERANCE 'values'. "
+            "The reference octets are read only by the 'bytes' comparison, so the override "
+            "would be a normalisation nothing applies"
         )
 
 

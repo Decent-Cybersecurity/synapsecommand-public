@@ -220,11 +220,14 @@ golden file, not by a failing test.
 
 **7. Add the tests.** Copy the shape of `tests/test_cdm_pntmap_adapter.py`: one test per claim
 in your adapter's docstring. If you are bidirectional, the harness already round-trips you —
-declare `direction = "bidirectional"`, override `from_cdm()`, and the `roundtrip` column checks
-that no source value goes missing on the way out. It compares values, not bytes: a byte-equal
-round trip is neither achievable nor the point (key order changes, omitted optional fields come
-back explicit, XML attribute order is arbitrary). An adapter emitting XML or USMTF gets `SKIP`
-there and must ship its own round-trip test.
+declare `direction = "bidirectional"`, override `from_cdm()`, and the `roundtrip` column judges
+what comes back. A JSON emitter is compared by values, not bytes (key order changes, omitted
+optional fields come back explicit). Anything else is compared under the tolerance the class
+declares in `ROUNDTRIP_TOLERANCE`, printed with every report: `bytes`, the default, is octet
+equality against the byte fixture; `values`, for XML, re-ingests what was emitted and requires no
+source value missing from the parsed twin, with `ROUNDTRIP_TRANSFORMS` naming what egress
+legitimately re-stamps. Your own round-trip test in `tests/` is your statement of the claim; the
+column is the suite's.
 
 ## The harness
 
@@ -318,25 +321,21 @@ So audit the model separately, against something outside the implementation —
 - `asterix_cat021`'s scale factors are the safe kind: each is a single stated LSB, checkable
   against the document without running anything.
 
-**A wheel-only consumer cannot run any round-trip proof for an adapter with a non-JSON egress,
-and the harness says so in a sentence that points where the wheel does not reach.** `roundtrip`
-reports `SKIP` when `from_cdm()` returns bytes it cannot compare structurally, and the SKIP text
-reads "the adapter must ship its own round-trip test in `tests/`". That instruction is correct and
-it is unreachable from a wheel: `tests/` is not packaged, so a consumer who installed from PyPI
-reads a pointer to a directory they do not have. It is not a defect in any adapter and not a defect
-in a release — it is the shape of the distribution, and it has been true of every version. What it
-costs is specific rather than general: `lossless` and the schema checks still run and still prove
-what they prove, so the floor a wheel-only consumer gets is **ingress** conformance, and egress
-byte-exactness is proved only in a clone. Every adapter that declares an egress direction is
-affected — eleven of the fourteen shipped adapters, every one of which emits something the check
-cannot parse as JSON, leaving only the three ingest-only adapters unaffected for a different
-reason.
-Two things would change it and neither is free: packaging the round-trip tests, which puts a test
-suite inside a runtime distribution; or giving the harness a comparison that works on the emitted
-bytes per format, which is the codec-level work each of those adapters already does in `tests/`.
-Recorded here rather than fixed in passing, and recorded as reach rather than as a count of one
-release: it is what a wheel-only conformance claim does NOT cover, and the person who needs to know
-is the one reading `20 passed, 0 failed` from an installed copy.
+**A wheel-only consumer CAN run the round-trip proof for every emitter, since 2026-09-16.** Until
+then `roundtrip` reported `SKIP` when `from_cdm()` returned bytes it could not compare
+structurally, and the SKIP text read "the adapter must ship its own round-trip test in `tests/`" —
+an instruction that was correct and unreachable from a wheel, because `tests/` is not packaged, so
+a consumer who installed from PyPI read a pointer to a directory they did not have. The floor a
+wheel-only consumer got was **ingress** conformance, and egress byte-exactness was proved only in a
+clone. Every adapter that declares an egress direction was affected — eleven of the fourteen
+shipped adapters, every one of which emits something the check could not parse as JSON. The second
+of the two repairs that paragraph named was taken: the harness compares the emitted bytes itself,
+under the tolerance each class declares in `ROUNDTRIP_TOLERANCE` — octet for octet for the nine
+binary and line-oriented codecs, and by re-ingest for the two XML emitters, whose format cannot
+promise octet order — and prints the declaration with every report. The tests in `tests/` still
+make the same claims; they are each adapter's own statement of it, and the column is the suite's.
+The person who needs to know is the one reading `20 passed, 0 failed` from an installed copy, and
+what that line covers now includes the way back.
 
 **The roster sweep is a manual protocol act, and prose counts are what it is for.** When an
 adapter joins the shipped roster, every document that restates how many adapters there are has to

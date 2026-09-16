@@ -5,12 +5,13 @@ to the document as a whole, per the testing protocol: a section-wide substring c
 when the phrase happens to appear somewhere else, and the CAT062 section is over a thousand lines
 long — the largest in this document.
 
-THE ROUND TRIP IS TESTED HERE AND NOT BY THE HARNESS
------------------------------------------------------
-`harness._check_roundtrip` reports SKIP for an adapter whose `from_cdm` returns non-JSON bytes and
-says in as many words that "the adapter must ship its own round-trip test in tests/". This is it,
-and it is stronger than the harness's value-presence comparison: it asserts BYTE EQUALITY on every
-fixture in the set.
+THE ROUND TRIP IS TESTED HERE AS WELL AS BY THE HARNESS
+--------------------------------------------------------
+Until 2026-09-16 `harness._check_roundtrip` reported SKIP for an adapter whose `from_cdm` returned
+non-JSON bytes and said in as many words that "the adapter must ship its own round-trip test in
+tests/". This was it, stronger than the harness's value-presence comparison: it asserts BYTE
+EQUALITY on every fixture in the set. The harness now asserts the same octet equality under this
+class's `bytes` tolerance; this remains the adapter's own statement of the claim.
 
 THE THREE THINGS A GREEN HARNESS RUN CANNOT TELL YOU, AND WHERE EACH IS ANSWERED
 --------------------------------------------------------------------------------

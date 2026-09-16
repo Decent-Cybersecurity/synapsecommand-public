@@ -336,16 +336,18 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 24 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 30 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
-parser-safety record at the end of this section moves again; and nine files under three
-`malformed/` fixture directories that record added — `tak/malformed/deeply_nested.xml`,
+parser-safety record below moves again, and eleven of which the harness-evidence record at the end
+of this section moves a third time; nine files under three `malformed/` fixture directories the
+parser-safety record added — `tak/malformed/deeply_nested.xml`,
 `nits/malformed/deeply_nested.nits.xml`, `pntmap/malformed/a_json_list.json`, and the `README.md`
-and `PROVENANCE.json` beside each. Everything else these rounds touched ships in nothing: the
-release workflow, the witness builder it runs and that builder's test module, the generated
-manifests under `manifests/`, the test modules under `tests/`, the ledger, the documentation pages
-and the witness record.
+and `PROVENANCE.json` beside each; and six files the harness-evidence record moves — `adapter.py`,
+`harness.py`, `suite.py`, `evidence.py`, `version.py` and the package's own `README.md`. Everything
+else these rounds touched ships in nothing: the release workflow, the witness builder it runs and
+that builder's test module, the generated manifests under `manifests/`, the test modules under
+`tests/`, the ledger, the documentation pages and the witness record.
 
 **ROUND PW's RECORD, 2026-09-12 — the witness record's approval instant comes from the deployment's
 own status history, because the endpoint the builder asked carries no instant at all.** Unit:
@@ -552,6 +554,134 @@ call changes. `synapse_cdm/adapters/tak.py:_parse_cot` — PATCH;
 and is not a ruling: the two constants the declarations are read from are public top-level names,
 and the gate derives MINOR from their appearance by its own row, so the pending arc reads MINOR
 from this commit onwards and the release round takes that derivation as it finds it.
+
+**THE HARNESS-EVIDENCE RECORD, 2026-09-16 — the harness compares egress octets under a tolerance
+each adapter declares, so L4 is computed for the eleven emitters rather than typed beside an L3
+the suite computed; and an evidence record reproduces on another machine, at another path.**
+Units: `synapse_cdm/adapter.py`, which gains the three declarations — `ROUNDTRIP_TOLERANCE`,
+`ROUNDTRIP_TRANSFORMS`, `roundtrip_reference()` — and the class-definition refusal that checks
+them; `synapse_cdm/harness.py`, whose `roundtrip` column makes the comparison and whose report
+gains one key, `roundtrip`, beside `check_letters`; `synapse_cdm/suite.py`, which gains `portable`
+and `packaged_label` and loses the sentence that said the SKIP was the model working;
+`synapse_cdm/evidence.py`, which gains `ENVIRONMENT`, `environment_differences` and `reproduce`;
+`synapse_cdm/version.py`, where `ADAPTER_API_VERSION` moves 2.0.0 → 2.1.0 by VERSIONING.md §3's
+own row — an ADDITION to the v2 contract is a MINOR, and every default is the behaviour the member
+replaced; the eleven bidirectional adapter modules, whose `maturity.basis` sentences said "the
+`roundtrip` COLUMN is SKIP for every adapter in this repository" and now say what the column
+measures, `ais.py` additionally gaining the `roundtrip_reference` override and `tak.py` and
+`stanag4676.py` their `values` declarations; the package `README.md`; and this file. No fixture,
+no golden, no wire field, no `SCHEMA_VERSION`, no `MANIFEST_SCHEMA_VERSION`, no
+`EVIDENCE_SCHEMA_VERSION`: the manifests are regenerated because eleven basis sentences moved, and
+their shape did not.
+
+**THE FIRST DEFECT, MEASURED.** `harness._check_roundtrip` compared JSON structurally and every
+shipped emitter returns bytes, so `json.loads` raised on every fixture and the column reported SKIP
+with a sentence pointing at "the adapter's own round-trip test in tests/" — a directory the wheel
+does not carry. That SKIP was not a declared inapplicability, so ARCHITECTURE.md §3.6 rule 6 blocked
+L4, and every released 2.1.2 record and every local one read `declared_maturity: L4` beside
+`maturity_eligible: L3` for the eleven, with the `conformance-level` badge grounded in the second.
+The manifests typed L4 on the strength of eleven tests the suite could not see, which §3.6's first
+sentence — "computed from check results and never typed" — does not admit, however carefully
+`suite._roundtrip_declaration`'s docstring explained the two numbers. The maintainer's ruling: the
+byte comparison is made, so that L4 is COMPUTED; no adapter is demoted.
+
+**THE REPAIR, AND WHY THE XML ADAPTERS DECLARE A TOLERANCE RATHER THAN BEING EXCUSED.** §3.3
+defines L4 as information surviving "within DECLARED tolerances", and §3.6 rule 4 lets a SKIP
+through only from a declaration the report prints. So the tolerance is a class attribute the
+harness reads and publishes: `bytes`, the default, means `from_cdm(to_cdm(raw))` must equal
+`roundtrip_reference(raw)` octet for octet — the claim nine of the eleven already made in their own tests, and
+`roundtrip_reference` is identity except in `ais`, where it strips the NMEA TAG block exactly as
+`tests/test_cdm_ais_adapter.py::_strip_tag_blocks` did, the harness naming every fixture it does
+that for; `values` means what was emitted is re-ingested and no source value may be missing from the
+parsed twin, with `TRANSFORMS` and the new `ROUNDTRIP_TRANSFORMS` excused — the tolerance XML
+needs, since `from_cdm`'s own docstring in `stanag4676.py` says octet equality "cannot be: XML
+permits insignificant whitespace, attribute order and namespace prefix choice", and `tak.py`'s
+emits `ET.indent`-ed bytes. `stanag4676` declares the two values its test has always excused,
+`msgCreatedTime` and `profile`. Each fixture pair carries the verdict on one half and SKIPs the
+other with a sentence saying so, mirroring how check D skips the byte fixture and relies on the
+twin, and the fixtures judged are exactly the harness's own selection — no manifest chooses them —
+which for the eleven top-level directories is exactly the set each adapter's test globs. The
+readings are the ones the design brief predicted from a probe: 16, 11, 20, 17, 17, 41, 28, 16 and 63
+byte fixtures octet-exact for adsb, ais, cat021, cat023, cat034, cat048, cat062, gmti and
+stanag4609; 6 and 17 parsed twins value-complete for tak and stanag4676; zero FAIL; every one of
+the fourteen now computes `maturity_eligible: L5`. An undeclared fallback to value equality would
+have been the typed rung §3.6 forbids, and the class-definition refusal keeps the declaration
+honest: a third word, an exemption under `bytes`, a reference override under `values`, or either on
+an ingest-only adapter is a `TypeError` at import.
+
+**WHAT IS DECLARED, AND WHY IT STAYS AT L4.** Every adapter now computes L5 and every adapter
+declares less: the three ingest-only ones L3, as before and for the reason their bases give — E is
+inapplicable to them, and a rung passed vacuously is not a rung declared — and the eleven emitters
+L4, for the same reason one rung up: L5 rests on check M being declared inapplicable to every
+adapter in this repository. The repository's rule is the release notes' — a declared rung ABOVE an
+eligible one is a defect, a declared rung below it is a reading — and nothing in it says the
+declaration must track the computation; the three ingest-only adapters have read below it since
+P2 by a maintainer's ruling. So the eleven bases are rewritten to say what the column measures,
+name the suite command whose reading L4 now rests on, keep their `tests/…::function` citation as
+the adapter's own statement of the same claim, and say why L5 is eligible and not declared;
+`tests/test_cdm_manifests.py` derives the rung from a suite run, requires declared ≤ eligible,
+requires E = PASS for every emitter, and holds each basis's `` `bytes` ``/`` `values` `` clause to
+the class's declaration. `tests/test_cdm_suite.py` requires E = PASS for every emitter over
+exactly the judged half of its fixture set, so a regression to the old SKIP cannot pass as an
+exclusion. `ci.yml` and `publish.yml` keep E out of `--require`, because it is a DECLARED SKIP
+for three adapters and a required SKIP exits non-zero (§19); `publish.yml` additionally refuses
+the sweep artefact unless every adapter is CONFORMANT, since `exit_status` iterates only the
+required letters and an E FAIL outside them would otherwise not fail the gate.
+
+**THE SECOND DEFECT, MEASURED.** An evidence record carried `conformance.adapter.fixtures` as the
+absolute directory `suite.run` read — `/home/runner/work/…/fixtures/adsb` in the released 2.1.2
+records — and `compare` masked only `generated_at`, `test_run.duration_s` and a dirty
+`source_commit`, so a record generated in CI and verified from any other checkout reported DIFFERS
+on that path and on `test_run.python` and `test_run.platform`: three fields, none of which says
+anything about the tree, which is the failure `FileHash`'s docstring gives as the reason its paths
+are relative. Nothing caught it because `ci.yml` generates and verifies in one job and the §36 test
+generated both records in one process. And every released record reads `source_commit:
+5ab80f5…-dirty`, because the gate job writes `conformance-2.1.2.json` into the checkout root before
+the evidence step runs there and nothing ignored it, so `verify` masks the one field that binds a
+record to a commit for every consumer of that release.
+
+**THE SECOND REPAIR.** `evidence.generate` relativises the packaged directory through
+`suite.portable` to the label the `--all` sweep already wrote — now `<packaged>/<directory>`
+rather than `<packaged>/<adapter name>`, so `stanag4609` reads `<packaged>/klv` beside hashes
+already spelled `klv/…`; a caller's `--fixtures` directory stays as given, because `verify`
+regenerates from the packaged set and could never reproduce such a record anyway. `test_run.python`
+and `test_run.platform` become `ENVIRONMENT`: recorded, printed by `verify` where they differ, and
+never compared — two reproductions of one tree on two machines are the same evidence. `MASKED` is
+unchanged and a clean `source_commit` is still compared, because a record verified on a different
+commit SHOULD differ. `.gitignore` names the gate's two root artefacts, and `publish.yml` refuses a
+record whose `source_commit` is not `HEAD`, bare, so the next tag's records are bound rather than
+masked. `artifact_hashes` stays empty and its comment now states the true reason — the records are
+made before the artefacts are built, and `verify` re-derives from the tree — rather than "until
+PR". The proof: the fourteen records generated from this tree, then verified from a copy of
+`packages/cdm` at a different absolute path with `PYTHONPATH` pointing at the copy, every one
+REPRODUCED; and a copy of one record with `linux-x86_64` and `3.12.14` written into it verified
+REPRODUCED with both fields printed as differing. `tests/test_cdm_evidence.py` carries the
+cross-host case CI never had, and asserts the checkout path is absent from the serialised record.
+The released 2.1.2 records are not repairable: they carry the runner path and the `-dirty` suffix
+and can only be regenerated from the tag by a new release, which is when this takes effect.
+
+**WHAT IS LEFT SAYING THE OLD THING, ON PURPOSE.** `docs/soif-part1-release-readiness.md` and this
+file's 2.1.2 record describe the arrangement as it stood at that release, and `RELEASE_NOTES.md`
+says `ADAPTER_API_VERSION` is `2.0.0` because for 2.1.2 it is; they are records, not prose, and the
+release round's notes will describe 2.1.0 of the contract. `rounds/reports/P2.md` anticipated
+exactly this change and deferred it; the design taken measures rather than declares, which is the
+half that report asked for.
+
+**Bump ruling.** The arc's floor is MINOR from the new public names and the contract constant, and
+the gate cannot classify ten changed units from the table alone. Three are additions to a surface a
+consumer reads and take the MINOR the additions already carry: `synapse_cdm/adapter.py:Adapter` —
+MINOR, three members added and none removed, the reason `ADAPTER_API_VERSION` moved;
+`synapse_cdm/harness.py:run` — MINOR, the report gains one key, the ruling round P2 gave the same
+function for `check_letters`; `synapse_cdm/version.py:ADAPTER_API_VERSION` — MINOR, the constant
+moved by the row that names it. The other seven change behaviour on functional lines with no name
+added, removed or renamed and no consumer's call changed, M's words for PATCH on 2026-09-12:
+`synapse_cdm/evidence.py:compare` — PATCH, the excluded set gains the two environment fields;
+`synapse_cdm/evidence.py:generate` — PATCH, one field's value in the record, not its shape;
+`synapse_cdm/evidence.py:main` — PATCH, two printed lines after the verdict;
+`synapse_cdm/evidence.py:verify` — PATCH, a clause in the description it returns;
+`synapse_cdm/harness.py:_check_roundtrip` — PATCH, a private name with an optional parameter;
+`synapse_cdm/harness.py:render_report` — PATCH, a block rendered for an emitting adapter;
+`synapse_cdm/suite.py:_sweep` — PATCH, the label it writes names the directory.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 

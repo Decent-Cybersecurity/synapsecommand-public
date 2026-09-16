@@ -1425,15 +1425,22 @@ class Stanag4676Adapter(Adapter):
         maturity=Maturity(
             level=MaturityLevel.L4,
             basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
-                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
-                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
-                  "COLUMN is SKIP for every adapter in this repository, because "
-                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
-                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
-                  "This adapter ships it: "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on every "
+                  "fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its "
+                  "`roundtrip` column is PASS as well: XML permits insignificant whitespace, "
+                  "attribute order and namespace prefix choice, so this adapter declares the "
+                  "`values` tolerance (`ROUNDTRIP_TOLERANCE`) and the harness re-ingests what "
+                  "`from_cdm` emitted and finds no source value missing from any parsed twin, the "
+                  "two values egress legitimately re-stamps being declared in "
+                  "`ROUNDTRIP_TRANSFORMS` and printed with the report, so `synapse conformance "
+                  "run --adapter stanag4676` computes E = PASS and L4 is the suite's own reading "
+                  "rather than this declaration's. The adapter's own statement of the same claim "
+                  "is "
                   "tests/test_cdm_stanag4676_adapter.py::test_the_round_trip_changes_exactly_one_value. "
-                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
-                  "applicable conformance set, which is P2's Suite v2.",
+                  "L5 is eligible and not declared: the rung above this one rests on `M` "
+                  "(streaming) being inapplicable to every adapter in this repository, and a rung "
+                  "passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the "
+                  "reading the ingest-only adapters apply to `E`).",
             external_exercise=None,
         ),
         claim_status=ClaimStatus.VERIFIED,
@@ -1565,6 +1572,20 @@ class Stanag4676Adapter(Adapter):
     #: so the never-drop rule is satisfied by PRESENCE and `lossless.unrepresented()` runs at
     #: full strength with nothing excused. A declared transform is a hole with a reason attached.
     TRANSFORMS: dict[str, str] = {}
+
+    #: XML, so not byte-exact and it cannot be: XML permits insignificant whitespace, attribute
+    #: order and namespace prefix choice (`from_cdm`'s docstring). The harness re-ingests what was
+    #: emitted and asks the never-drop question of every parsed twin instead (2026-09-16), with
+    #: exactly the two values `tests/test_cdm_stanag4676_adapter.py` has always excused declared
+    #: below rather than assumed — a hole with a reason attached, printed with every report.
+    ROUNDTRIP_TOLERANCE = "values"
+    ROUNDTRIP_TRANSFORMS = {
+        "msgCreatedTime": "egress stamps when THIS document was written; the ingested value is "
+                          "parked at nits_root.msgCreatedTime and re-emitted beside it "
+                          "(test_the_round_trip_changes_exactly_one_value)",
+        "profile": "egress emits STANDALONE only; a DATASTREAM source comes back STANDALONE, "
+                   "and the source's own profile is parked verbatim",
+    }
 
     def __init__(self, clock: times.Clock | None = None, *, synthetic: bool = True,
                  confidentiality_label: str | None = None) -> None:

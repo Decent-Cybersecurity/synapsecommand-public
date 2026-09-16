@@ -1,12 +1,14 @@
-"""One test per claim in the AIS adapter's docstring, plus the round trips the harness cannot do.
+"""One test per claim in the AIS adapter's docstring, plus the round trips in the adapter's own words.
 
 WHY THIS FILE CARRIES THE ROUND-TRIP CHECKS
 -------------------------------------------
-The harness's `roundtrip` column reports SKIP for an adapter that emits something it cannot
-parse structurally, and says so out loud: `from_cdm()` here returns NMEA sentences, and a check
-it cannot run must report SKIP rather than PASS. The README's instruction for that case is that
-the adapter ships its own round-trip test — so both directions are exercised here, with the
-same value-presence comparison (`lossless.unrepresented`) the harness would have used.
+Until 2026-09-16 the harness's `roundtrip` column reported SKIP for an adapter that emits
+something it cannot parse structurally, and said so out loud: `from_cdm()` here returns NMEA
+sentences, and a check it cannot run must report SKIP rather than PASS. The README's instruction
+for that case was that the adapter ships its own round-trip test — so both directions were
+exercised here, with the same value-presence comparison (`lossless.unrepresented`) the harness
+would have used. The harness now compares the sentences octet for octet itself, against
+`roundtrip_reference(raw)`; the tests here remain the adapter's own statement of the claim.
 
 AND WHY THE PAYLOAD IS UNPACKED RATHER THAN EXEMPTED
 -----------------------------------------------------
@@ -88,13 +90,6 @@ def _parse_all(emitted: bytes) -> list[dict]:
             buffered = []
     assert not buffered, "emitted burst ends on an incomplete fragment"
     return messages
-
-
-def _strip_tag_blocks(raw: bytes) -> bytes:
-    """The sentences without the receiver's TAG annotations — see NOT_RETRANSMITTED."""
-    lines = [line.rsplit("\\", 1)[-1]
-             for line in raw.decode("ascii").split(ais.SENTENCE_TERMINATOR) if line]
-    return (ais.SENTENCE_TERMINATOR.join(lines) + ais.SENTENCE_TERMINATOR).encode("ascii")
 
 
 # --------------------------------------------------------------- the fixture set
@@ -772,7 +767,19 @@ def test_the_ingest_round_trip_is_byte_exact(path):
     re-encoded exactly.
     """
     emitted = _adapter().from_cdm(_adapter().to_cdm(path.read_bytes()))
-    assert emitted == _strip_tag_blocks(path.read_bytes())
+    # `roundtrip_reference` strips the TAG blocks (NOT_RETRANSMITTED); it lived here as
+    # `_strip_tag_blocks` until the harness made the same comparison itself (2026-09-16).
+    assert emitted == _adapter().roundtrip_reference(path.read_bytes())
+
+
+def test_the_reference_the_harness_compares_against_strips_only_the_tag_block():
+    """`roundtrip_reference` is a printed normalisation, so it has to be exactly the one claimed:
+    a sentence without a TAG block comes back untouched, and one with it loses only the block."""
+    plain = b"!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\r\n"
+    assert _adapter().roundtrip_reference(plain) == plain
+    tagged = b"\\s:receiver,c:1700000000*5C\\" + plain
+    assert _adapter().roundtrip_reference(tagged) == plain
+    assert _adapter().roundtrip_reference(tagged + plain) == plain + plain
 
 
 @pytest.mark.parametrize("path", NMEA_FIXTURES, ids=lambda p: p.name)
@@ -928,9 +935,13 @@ def test_the_harness_passes_every_fixture_against_the_published_schemas():
         # quietly turning the never-drop check off for this adapter.
         expected = "SKIP" if result["fixture"].endswith(".nmea") else "PASS"
         assert checks["lossless"] == expected, result
-        # roundtrip is SKIP for every fixture BY DESIGN: from_cdm returns NMEA, which the
-        # harness cannot compare structurally. That is why this file carries the round trips.
-        assert checks["roundtrip"] == "SKIP", result
+        # roundtrip is judged on the SENTENCES and SKIP on the parsed twin (2026-09-16): the
+        # harness compares `from_cdm(to_cdm(raw))` against `roundtrip_reference(raw)` octet for
+        # octet under this class's `bytes` tolerance, which is the comparison
+        # `test_the_ingest_round_trip_is_byte_exact` makes. Until then it was SKIP for every
+        # fixture, because the harness could not compare NMEA structurally.
+        expected = "PASS" if result["fixture"].endswith(".nmea") else "SKIP"
+        assert checks["roundtrip"] == expected, result
 
 
 def test_the_adapter_is_registered_and_declares_itself_bidirectional():

@@ -94,7 +94,7 @@ Guidance, not a requirement — a report missing any of it is still worth making
 - **The documentation site's hosting**, and anything belonging to GitHub Pages.
 - **PyPI and GitHub platform issues.** Report those to PyPI and to GitHub.
 - **A finding that requires the operator to load a hostile adapter.** `load_adapter` accepts
-  `module:ClassName` and imports it (`packages/cdm/synapse_cdm/adapter.py:439`). Choosing which
+  `module:ClassName` and imports it (`packages/cdm/synapse_cdm/adapter.py:513`). Choosing which
   module to import is the operator's trust decision, and code an operator has decided to import
   runs with the operator's privileges by construction. An adapter *shipped in this repository*
   behaving badly is in scope; the mechanism that lets an operator load their own is not.

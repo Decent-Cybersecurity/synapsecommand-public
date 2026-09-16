@@ -4,10 +4,12 @@ Every assertion here is scoped to a NAMED table or a NAMED fixture rather than t
 as a whole, per the testing protocol: a section-wide substring check passes by luck when the
 phrase happens to appear somewhere else, and the CAT048 section is 1 300 lines long.
 
-The round trip is tested HERE and not by the harness. `_check_roundtrip` reports SKIP for an
-adapter whose `from_cdm` returns non-JSON bytes and says in as many words that "the adapter must
-ship its own round-trip test in tests/". This is it, and it is stronger than the harness's
-value-presence comparison: it asserts BYTE EQUALITY on every fixture in the set.
+The round trip is tested HERE as well as by the harness. Until 2026-09-16 `_check_roundtrip`
+reported SKIP for an adapter whose `from_cdm` returned non-JSON bytes and said in as many words
+that "the adapter must ship its own round-trip test in tests/". This was it, stronger than the
+harness's value-presence comparison: it asserts BYTE EQUALITY on every fixture in the set. The
+harness now asserts the same octet equality under this class's `bytes` tolerance; this remains
+the adapter's own statement of the claim.
 """
 import datetime as dt
 import json

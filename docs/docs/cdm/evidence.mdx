@@ -38,11 +38,11 @@ two-space indent, UTF-8, trailing newline.
 | `package_version`, `cdm_version`, `sc_oes_version`, `adapter_api_version`, `manifest_version` | the five version axes in force, as **data** — this is what makes a record readable years later |
 | `evidence_schema_version` | this record's own shape, on its own axis |
 | `test_run` | `command`, `exit`, `passed` / `failed` / `skipped`, `duration_s`, `python`, `platform` — the envelope around the run |
-| `conformance` | the Conformance Suite's own JSON report, verbatim |
+| `conformance` | the Conformance Suite's own JSON report, with one field made portable: `conformance.adapter.fixtures` reads `<packaged>/<directory>` — the label the `--all` sweep writes — and never the absolute path the run read |
 | `loss_report` | the six categories, below |
 | `fixture_hashes` | `{path, sha256, bytes}` for every file the suite read, including `malformed/` and the goldens. Paths are relative to the packaged fixture root, never absolute |
 | `fixture_provenance` | the summary the *Synthetic Fixtures* badge is grounded in |
-| `artifact_hashes` | empty until a release has artefacts to name |
+| `artifact_hashes` | empty, for a reason of order: the release pipeline generates the records before it builds the wheel and sdist, and `verify` re-derives a record from the tree, so a digest of an artefact that is not in the tree could never reproduce. The artefact digests are published in `SHA256SUMS` and in the witness record instead |
 | `generated_at`, `generator` | the instant, and what produced the record |
 
 `test_run` records the **conformance suite** run — the thing `verify` re-runs and the thing
@@ -57,7 +57,8 @@ the two field by field.
 
 ```bash
 $ synapse evidence verify evidence/pntmap/1.0.0/evidence.json
-REPRODUCED: evidence/pntmap/1.0.0/evidence.json (masked: generated_at, test_run.duration_s)
+REPRODUCED: evidence/pntmap/1.0.0/evidence.json (masked: generated_at, test_run.duration_s, environment: test_run.python, test_run.platform (recorded, not compared))
+  environment differs, not compared — test_run.platform: record says 'linux-x86_64', this tree gives 'macosx-26.0-arm64'
 ```
 
 Three fields are masked and nothing else is. The rule is that **a measured duration is not a
@@ -69,6 +70,15 @@ pattern — a pattern would mask a future field nobody had looked at.
 - `source_commit`, **only when either side is dirty**, and `verify` says so in its own output. A
   dirty tree has no commit that describes it, so comparing the field would be comparing a label
   to a thing it does not name.
+
+Two more fields are **recorded and not compared**, which is a different class from masked:
+`test_run.python` and `test_run.platform` describe the host the record was made on rather than
+the tree it measured. They stay in the record — a reader matching a record against a wheel tag
+needs both — and `verify` prints them where they differ, after its verdict and never affecting
+it. Two reproductions of one tree on two machines are the same evidence; until 2026-09-16 they
+were not, because a CI record verified from any other checkout differed on exactly these two
+fields and on the absolute fixtures path, none of which says anything about the tree. That is
+what makes a record produced by CI verifiable by a third party on their own machine.
 
 **There were four until 2026-09-08.** The fourth was
 `conformance.checks.H.details.refusals[].seconds` — how long one malformed payload took to be
@@ -207,9 +217,10 @@ every fixture round.
 
 CI generates the set on every run and uploads it as the artefact `evidence-<sha>`; the release
 pipeline attaches it to the GitHub Release. That attachment is the point at which
-`evidence.available` may become true in an adapter's manifest — **`synapse evidence generate`
-means evidence is *producible*, not that it is *available***, and every adapter shipped here
-declares `available: false` until a published release carries the records.
+`evidence.available` becomes true in an adapter's manifest — **`synapse evidence generate`
+means evidence is *producible*, not that it is *available*** — and every adapter shipped here
+declared `available: false` until the 2.1.2 Release carried the records; since then every manifest
+declares it `true` and names that attachment.
 
 ## SHA-256 here is identification, not signing
 

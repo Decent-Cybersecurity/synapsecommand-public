@@ -3,10 +3,12 @@
 WHAT THIS MODULE CHECKS THAT NOTHING ELSE CAN
 ---------------------------------------------
 The harness checks the six generic properties over the ten fixtures — translate, schema,
-provenance, lossless, round-trip and golden — and reports the round-trip one as SKIP for a binary
-adapter, because `from_cdm` returns octets it cannot compare structurally. So the byte-exact
-egress claim is unchecked unless a module like this one checks it, which is what `harness.py` says
-in the message it prints: "the adapter must ship its own round-trip test in tests/".
+provenance, lossless, round-trip and golden — and until 2026-09-16 reported the round-trip one as
+SKIP for a binary adapter, because `from_cdm` returns octets it could not compare structurally. So
+the byte-exact egress claim was unchecked unless a module like this one checked it, which is what
+`harness.py` said in the message it printed: "the adapter must ship its own round-trip test in
+tests/". The harness compares the octets itself now, under this class's `bytes` tolerance; the
+test here remains the adapter's own statement of the claim.
 
 FOUR THINGS ARE ASSERTED HERE AND EACH ONE IS A CLAIM MADE IN PROSE SOMEWHERE ELSE
 ----------------------------------------------------------------------------------

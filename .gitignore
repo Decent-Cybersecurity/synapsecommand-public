@@ -238,3 +238,17 @@ rounds/
 # only because ruff writes its own `.ruff_cache/.gitignore`, which exists once the tool has run
 # here and not before, and a rule that depends on the tool having run is not a rule of this tree.
 .ruff_cache/
+
+# And two more, appended on 2026-09-16 below the three above for the same reason, by the audit
+# that made the evidence records reproducible on another machine. The release gate writes
+# `conformance-<version>.json` and `evidence-<version>.tar.gz` into the checkout root
+# (`publish.yml`, the `gate` job) BEFORE the evidence step runs there, and `evidence.source_commit`
+# reads `git status --porcelain` and appends `-dirty` to the commit when anything is unignored.
+# So every record in `evidence-2.1.2.tar.gz` carries `source_commit: 5ab80f5…-dirty` for a file
+# that is not a change to the tree, and `verify` masks the one field that binds a record to a
+# commit for every consumer of that release. Anchored, like `/evidence/`, because the artefacts
+# live at the root and nowhere else; the pipeline now also refuses a record whose commit is not
+# HEAD, bare, so the next tag's records are bound rather than masked. The 2.1.2 records are not
+# repairable — they can only be regenerated from the tag by a new release.
+/conformance-*.json
+/evidence-*.tar.gz

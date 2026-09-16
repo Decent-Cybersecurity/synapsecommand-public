@@ -38,12 +38,12 @@ The v1 surface is `packages/cdm/synapse_cdm/adapter.py`. It is a class contract 
 | `direction` | `adapter.py:56` | one of the three wire spellings; see §2 |
 | `system` | `adapter.py:59` | the external system the adapter speaks for, into `SourceRef.system` |
 | `TRANSFORMS` | `adapter.py:77` | source paths whose value legitimately changes, mapped to the REASON |
-| `fixture_dir` | `adapter.py:114` | the fixture directory when it is not the adapter's own name |
-| `to_cdm` | `adapter.py:206` | abstract; one source payload in, a list of canonical objects out |
-| `from_cdm` | `adapter.py:218` | overridden by an emitting adapter; the base raises the refusal |
-| `source_ref` | `adapter.py:178` | the provenance stamp every emitted object carries |
-| `now` | `adapter.py:174` | receipt time, from the injected clock and never `datetime.now()` |
-| `__init_subclass__` | `adapter.py:116` | the enforcement: the checks below run when the class is defined |
+| `fixture_dir` | `adapter.py:137` | the fixture directory when it is not the adapter's own name |
+| `to_cdm` | `adapter.py:230` | abstract; one source payload in, a list of canonical objects out |
+| `from_cdm` | `adapter.py:242` | overridden by an emitting adapter; the base raises the refusal |
+| `source_ref` | `adapter.py:202` | the provenance stamp every emitted object carries |
+| `now` | `adapter.py:198` | receipt time, from the injected clock and never `datetime.now()` |
+| `__init_subclass__` | `adapter.py:139` | the enforcement: the checks below run when the class is defined |
 
 `__init_subclass__` refuses, at import: a missing `name`, `version`, `direction` or `system`; a
 `direction` outside the three literals; a declared `egress`/`bidirectional` adapter that does not
@@ -65,6 +65,14 @@ no row was added:** this table is the v1 surface, which §1.2's additive rule ke
 is, and the v2 members are §1.2's table rather than this one. `adapter.py:3–15`, cited in §4.6, is
 unmoved; §4.4's constructor range is re-derived in place for the same reason as these.
 
+**Dated correction, 2026-09-16. Six of the eleven moved again, and the enforcement point did
+not.** The audit that made the harness compare egress octets added `ROUNDTRIP_TOLERANCE` and
+`ROUNDTRIP_TRANSFORMS` beside `TRANSFORMS`, `roundtrip_reference()` beside `from_cdm`, and one call
+inside `__init_subclass__` to the refusal that checks them, so every citation from `fixture_dir`
+down is further along the file than it was; the four above `TRANSFORMS` and `TRANSFORMS` itself
+did not move. The table carries the re-derived numbers and the same test holds them. The three
+new members are §1.2's, under 2.1.0.
+
 ### 1.2 What v2 adds
 
 Adapter API v2 is an **ADDITIVE layer over the v1 surface**. Every v1 name above remains, with its
@@ -78,7 +86,8 @@ present meaning, for the whole of Part 1 and beyond it:
   > remove the old one in the next MAJOR. One release that renames is an outage for every consumer
   > that has not been redeployed in the same hour.
 
-v2 adds four members, and renames nothing:
+v2 adds four members, and renames nothing; 2.1.0 (2026-09-16) adds three more on the same terms,
+every default being the behaviour the member replaced:
 
 | v2 member | added by | contract |
 |---|---|---|
@@ -86,6 +95,9 @@ v2 adds four members, and renames nothing:
 | `detect()` | P1 | given a candidate payload, does this adapter claim it? MAY return `None` for "cannot tell" |
 | `validate_source()` | P1 | is this payload well-formed against the source standard, independent of translation? |
 | `capabilities()` | P1 | the machine-readable capability and limits block of §3 |
+| `ROUNDTRIP_TOLERANCE` | 2.1.0 | how the roundtrip check compares egress — `bytes` (octet equality, the default) or `values` (re-ingest, no source value missing); §3.3's "declared tolerances" made a declaration the report prints |
+| `ROUNDTRIP_TRANSFORMS` | 2.1.0 | source paths egress legitimately re-stamps, with the reason; read under `values` only, printed beside `TRANSFORMS` |
+| `roundtrip_reference()` | 2.1.0 | the octets a re-emission must reproduce under `bytes`; identity unless the source format carries an envelope that is not part of the message, and the harness names every fixture it differs on |
 
 **`decode` and `encode` are the v2 NAMES of `to_cdm` and `from_cdm`.** Which is canonical, stated
 once so no later round has to decide it:
@@ -339,7 +351,7 @@ machine-verifiable per adapter rather than a consequence of the golden files.
 For identical input, adapter version, schema version and configuration, the canonical output MUST
 be deterministic.
 
-**Enforced today.** The clock is INJECTED, never read: `adapter.py:161–174` takes a `Clock` in the
+**Enforced today.** The clock is INJECTED, never read: `adapter.py:187–198` takes a `Clock` in the
 constructor and `now()` is the only receipt-time source; `times.py:39` fixes the frozen instant the
 harness uses and `times.py:46` builds the frozen clock. The golden check compares byte for byte
 under that frozen clock. Serialisation is the goldens' own form (§6).

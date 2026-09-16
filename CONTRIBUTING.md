@@ -159,9 +159,13 @@ is a finding, not a pass. Two cases to know about:
   bytes. An XML or binary adapter must therefore ship each fixture **twice** — the raw bytes and
   the parsed form — or the never-drop rule is never actually checked for it. See
   `fixtures/tak/*.parsed.json`.
-- **`roundtrip` skips for an adapter that emits XML or USMTF**, because the harness cannot
-  compare a structure it cannot parse. Such an adapter must ship its own round-trip test. See
-  `tests/test_cdm_tak_adapter.py`.
+- **`roundtrip` skips one half of every fixture pair for an adapter that emits bytes**, and
+  judges the other half under the tolerance the class declares in `ROUNDTRIP_TOLERANCE`: the byte
+  fixture under `bytes` (octet equality), the parsed twin under `values` (re-ingest, no source
+  value missing — the tolerance XML needs). The SKIP text says which half carried the verdict.
+  Until 2026-09-16 the column skipped every non-JSON emitter outright and pointed at `tests/`;
+  see `tests/test_cdm_tak_adapter.py` for what the adapter's own statement of the claim looks
+  like.
 
 ### Synthetic fixtures only
 

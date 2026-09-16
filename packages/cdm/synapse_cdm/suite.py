@@ -11,9 +11,11 @@ cannot see, K decodes twice through two fresh instances, N feeds bytes no fixtur
 
 So the harness stays the engine for A–F and is not rewritten. This module composes it: it calls
 `harness.run` once, folds its per-fixture verdicts into six adapter-level ones, and implements
-G–O beside them. `harness.py`'s own JSON gains exactly one key (`check_letters`) and its text
-output is untouched, because `cdm-harness --json` has consumers and this is an addition to a
-published surface rather than a re-keying of it.
+G–O beside them. `harness.py`'s own JSON gained exactly one key for it (`check_letters`) and its
+text output was untouched, because `cdm-harness --json` has consumers and this is an addition to
+a published surface rather than a re-keying of it. (A second added key, `roundtrip`, arrived on
+2026-09-16 with the byte-exact round-trip comparison, on the same rule: added beside, never
+re-keyed, and the text report gained a block only for an adapter that emits.)
 
 THE ONE RULE THIS MODULE EXISTS TO KEEP
 ---------------------------------------
@@ -261,13 +263,17 @@ def _roundtrip_declaration(adapter: Adapter) -> tuple[bool, str]:
     """Is E's SKIP a DECLARED inapplicability (§3.6 rule 4) or an absence of evidence (rule 6)?
 
     Declared exactly once: an ingest-only adapter has no egress direction, which is §3.6's own
-    standing example. The other SKIP the harness produces — `from_cdm` returned non-JSON bytes
-    the structural comparison cannot read (`harness.py:246`) — is NOT a declared inapplicability.
-    It is the tool saying it could not measure, and rule 6 blocks the rung on exactly that. Each
-    bidirectional adapter ships its own byte-exact round-trip test in `tests/` (its manifest names
-    it), and that evidence lives outside this suite: it is why one DECLARES L4 while the suite
-    computes a lower eligibility, and the two numbers being different is the model working rather
-    than a contradiction.
+    standing example. Any other SKIP the harness produces for E is NOT a declared inapplicability.
+    It is the tool saying it could not measure, and rule 6 blocks the rung on exactly that.
+
+    UNTIL 2026-09-16 THAT OTHER SKIP WAS THE ORDINARY CASE, NOT THE EXCEPTION. The harness
+    reported it for every one of the eleven emitters in this repository — `from_cdm` returned
+    non-JSON bytes the structural comparison could not read — and each declared L4 on the
+    strength of a round-trip test in `tests/` this suite could not see, so every record read
+    "declared L4, eligible L3". The harness now compares the emitted octets itself under the
+    tolerance the class declares (`Adapter.ROUNDTRIP_TOLERANCE`), so L4 is COMPUTED for the
+    eleven and this function has one declared case left. A SKIP here for an emitting adapter
+    means no fixture was comparable, and blocking on it is right.
     """
     if adapter.direction == "ingest":
         return True, ("the adapter declares `direction: ingest`; there is no egress direction "
@@ -1022,16 +1028,41 @@ def shipped_adapters() -> dict[str, type[Adapter]]:
             if cls.__module__.startswith("synapse_cdm.adapters.")}
 
 
+def packaged_label(adapter_class: type[Adapter]) -> str:
+    """`<packaged>/<directory>`: the fixture root's name for a packaged directory, path-free.
+
+    The DIRECTORY and not the adapter's name, because the two differ for `stanag4609` (`klv`) and
+    `stanag4676` (`nits`) and `evidence.FileHash.path` is already spelled relative to the fixture
+    root as `klv/…`. Until 2026-09-16 the sweep wrote the adapter name here, so one record named
+    its fixtures two different ways.
+    """
+    return f"<packaged>/{adapter_class.fixture_dir or adapter_class.name}"
+
+
+def portable(report: dict, label: str) -> dict:
+    """A COPY of `run()`'s report with the fixtures path replaced by `label`.
+
+    `run()` reports the directory it actually read, which is an absolute path and is the right
+    thing for a person debugging one adapter. It is the wrong thing for any artefact two machines
+    have to agree on: the `--all` sweep, whose SHA-256 goes into a witness record, and — since
+    2026-09-16 — an evidence record, which `verify` reproduces from another checkout. Both call
+    this; `run()` itself is not changed, and `tests/test_cdm_suite.py` pins that the single-adapter
+    CLI still names the directory it read.
+    """
+    report = copy.deepcopy(report)
+    report["adapter"]["fixtures"] = label
+    return report
+
+
 def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen) -> int:
     """`--all`: every shipped adapter, one document, one exit code.
 
-    THE FIXTURES PATH IS RELATIVISED HERE AND NOWHERE ELSE. `run()` reports the directory it
-    actually read, which is an absolute path and is the right thing for a person debugging one
-    adapter. It is the wrong thing for an artefact whose SHA-256 goes into a witness record: two
-    runners with different checkout paths would produce two digests for one tree, and §53's
-    "deterministic and verifiable" would be false by construction. `run()` is not changed —
-    `tests/test_cdm_evidence.py` compares an evidence record against `run()`'s output verbatim,
-    so moving this into `run()` would move a published surface to serve a caller.
+    THE FIXTURES PATH IS RELATIVISED HERE AND IN `evidence.generate`, THROUGH `portable`. `run()`
+    reports the directory it actually read, which is an absolute path and is the right thing for
+    a person debugging one adapter. It is the wrong thing for an artefact whose SHA-256 goes into
+    a witness record: two runners with different checkout paths would produce two digests for one
+    tree, and §53's "deterministic and verifiable" would be false by construction. `run()` is not
+    changed, so `cdm-harness`'s and `synapse conformance run --adapter`'s output does not move.
     """
     reports: dict[str, dict] = {}
     worst = EXIT_OK
@@ -1046,8 +1077,7 @@ def _sweep(args, required: tuple[str, ...], *, strict: bool, frozen) -> int:
         except (harness.NoFixturesFound, harness.NoSchemasFound) as e:
             print(f"synapse conformance: {name}: {e}", file=sys.stderr)
             return EXIT_USAGE
-        report = copy.deepcopy(report)
-        report["adapter"]["fixtures"] = f"<packaged>/{name}"
+        report = portable(report, packaged_label(adapter_class))
         reports[name] = report
         status = exit_status(report, required, strict=strict)
         worst = worst or status

@@ -100,6 +100,59 @@ def test_a_bad_direction_is_refused():
                 return []
 
 
+def _emitter(name: str, **members):
+    """A bidirectional adapter class with the given extra members, for the tolerance refusals."""
+    body = {"name": name, "version": "0.1.0", "direction": "bidirectional", "system": "TEST",
+            "metadata": probe_metadata(name, direction="bidirectional"),
+            "to_cdm": lambda self, raw: [], "from_cdm": lambda self, objects: b"", **members}
+    return type("_Emitter", (Adapter,), body)
+
+
+def test_a_round_trip_tolerance_outside_the_two_the_harness_implements_is_refused():
+    """2026-09-16: the tolerance is a declaration the report prints, so a word the harness does
+    not implement would be a printed claim nothing measures."""
+    with pytest.raises(TypeError, match="'bytes' or 'values'"):
+        _emitter("test_bad_tolerance", ROUNDTRIP_TOLERANCE="whitespace")
+
+
+def test_an_ingest_only_adapter_may_not_declare_a_round_trip_tolerance():
+    with pytest.raises(TypeError, match="direction 'ingest'"):
+        class _IngestWithTolerance(Adapter):
+            name = "test_ingest_tolerance"
+            version = "0.1.0"
+            direction = "ingest"
+            system = "TEST"
+            metadata = probe_metadata("test_ingest_tolerance")
+            ROUNDTRIP_TOLERANCE = "bytes"
+
+            def to_cdm(self, raw):
+                return []
+
+
+def test_round_trip_exemptions_under_the_byte_comparison_are_refused():
+    """An octet comparison excuses nothing, so a `ROUNDTRIP_TRANSFORMS` beside it would be printed
+    and never honoured — the shape of declaration §3.6 rule 5 exists to keep out."""
+    with pytest.raises(TypeError, match="excuses nothing"):
+        _emitter("test_bytes_with_exemptions", ROUNDTRIP_TRANSFORMS={"stamp": "re-stamped"})
+
+
+def test_a_reference_override_under_the_value_comparison_is_refused():
+    with pytest.raises(TypeError, match="normalisation nothing applies"):
+        _emitter("test_values_with_reference", ROUNDTRIP_TOLERANCE="values",
+                 roundtrip_reference=lambda self, raw: raw)
+
+
+def test_the_defaults_are_the_old_behaviour_and_every_shipped_adapter_declares_a_valid_pair():
+    assert Adapter.ROUNDTRIP_TOLERANCE == "bytes" and Adapter.ROUNDTRIP_TRANSFORMS == {}
+    assert Adapter.roundtrip_reference(None, b"raw") == b"raw", "identity, on the base class"
+    for name, cls in discover().items():
+        assert cls.ROUNDTRIP_TOLERANCE in ("bytes", "values"), name
+        if cls.direction == "ingest":
+            assert "ROUNDTRIP_TOLERANCE" not in vars(cls), name
+        if cls.ROUNDTRIP_TRANSFORMS:
+            assert cls.ROUNDTRIP_TOLERANCE == "values", name
+
+
 def test_abstract_intermediates_are_exempt():
     """A shared base between adapters is legitimate and must not have to fake a name."""
     class _SharedBase(Adapter):

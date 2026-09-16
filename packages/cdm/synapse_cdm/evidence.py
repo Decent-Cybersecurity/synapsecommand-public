@@ -95,6 +95,16 @@ RECORD_NAME = "evidence.json"
 #: which fields to ignore.
 MASKED = ("generated_at", "test_run.duration_s")
 
+#: Fields that describe the HOST the record was made on rather than the tree it measured
+#: (2026-09-16). They are RECORDED — §32 asks for the envelope, and a reader matching a record
+#: against a wheel tag needs both — and `verify` prints them where they differ, but they are
+#: never compared: two reproductions of one tree on two machines are the same evidence, and a
+#: record that could only be reproduced on the interpreter that wrote it would be reproducible
+#: by nobody a release is for. Enumerated rather than patterned, for MASKED's reason. Found the
+#: way the third MASKED entry was found: a CI record verified from another checkout differed in
+#: exactly these two fields and the fixtures path, none of which says anything about the tree.
+ENVIRONMENT = ("test_run.python", "test_run.platform")
+
 #: What a masked field is replaced BY. A sentinel and not a deletion, because two records where
 #: one has the field and the other does not are still different records, and `compare` has to be
 #: able to say so.
@@ -438,6 +448,15 @@ def generate(adapter_name: str, *, fixtures: pathlib.Path | None = None,
     started = time.monotonic()
     report = suite.run(adapter, directory, clock=times.frozen_clock(frozen), frozen_at=frozen)
     duration = time.monotonic() - started
+    # The packaged directory is named the way the `--all` sweep names it — `<packaged>/<dir>` —
+    # and not by the absolute path `run()` read (2026-09-16). An absolute path made every record
+    # machine-specific, which is the failure `FileHash` was already spelled relative to avoid: a
+    # CI record verified from any other checkout differed on the one field that says nothing
+    # about the tree. A caller-supplied `--fixtures` directory stays as given: it is machine-
+    # specific by the caller's choice, and `verify` — which regenerates from the packaged set —
+    # can never reproduce such a record anyway.
+    if directory == packaged_fixtures(adapter_class):
+        report = suite.portable(report, suite.packaged_label(adapter_class))
     verdicts = [entry["verdict"] for entry in report["checks"].values()]
 
     hashes = []
@@ -468,8 +487,16 @@ def generate(adapter_name: str, *, fixtures: pathlib.Path | None = None,
         loss_report=report["loss_report"],
         fixture_hashes=hashes,
         fixture_provenance=ProvenanceSummary(**provenance_summary(covered, root)),
-        # §32: "MAY initially be empty". It stays empty until PR, which is the round that has
-        # artefacts — a wheel and an sdist built from a release commit — to name.
+        # §32: "MAY initially be empty", and it is empty for a reason of ORDER rather than of a
+        # round not yet run (corrected 2026-09-16; it used to say "until PR"). The field is for
+        # the release artefacts — wheel, sdist, the two SBOMs — but `publish.yml` generates and
+        # tars the records in the `gate` job, BEFORE the `build` job produces `dist/*`, and
+        # `verify` re-derives a record from the tree, so a digest of a file that is not in the
+        # tree would never reproduce. Those digests are published where they can be: in
+        # `SHA256SUMS` beside the artefacts, and in `releases/witness/<version>.json` as
+        # `artifact_sha256` and `sbom_sha256`. Filling this field is a post-build step that
+        # rewrites the records and moves the field into the recorded-not-compared class above;
+        # that is a change to the pipeline's sequence and belongs to a release round.
         artifact_hashes=[],
     )
 
@@ -534,16 +561,20 @@ def _apply_mask(node: Any, segments: list[str]) -> None:
 
 
 def compare(recorded: dict, fresh: dict) -> list[str]:
-    """Every field that differs, excluding `MASKED` and a dirty `source_commit` (§36).
+    """Every field that differs, excluding `MASKED`, `ENVIRONMENT` and a dirty `source_commit`.
 
     Lists are compared as whole values rather than element-wise: `fixture_hashes` differing by
     one entry is one finding about the fixture set, and 733 findings about 733 files would bury
     it. The masking happens BEFORE that collapse, which is why it is a rewrite of the payload
     rather than a filter over flattened keys — a value inside a list cannot be excluded by name
     once the list has become one leaf.
+
+    The environment fields are excluded here and reported by `environment_differences`, so a
+    caller can print what differed without a difference there ever counting as a problem (§36).
     """
     also = ("source_commit",) if (recorded.get("source_commit", "").endswith("-dirty")
                                   or fresh.get("source_commit", "").endswith("-dirty")) else ()
+    also = (*ENVIRONMENT, *also)
     left = _flatten(masked(recorded, also=also))
     right = _flatten(masked(fresh, also=also))
     problems = []
@@ -557,12 +588,35 @@ def compare(recorded: dict, fresh: dict) -> list[str]:
     return problems
 
 
+def environment_differences(recorded: dict, fresh: dict) -> list[str]:
+    """The `ENVIRONMENT` fields on which the two records differ, one line each, never a problem.
+
+    Printed by `verify` after its verdict so a reader can see that a record made on one host was
+    reproduced on another — which is the claim §36 is for — without the difference between the
+    hosts ever failing the reproduction.
+    """
+    left, right = _flatten(recorded), _flatten(fresh)
+    return [f"{key}: record says {left.get(key)!r}, this tree gives {right.get(key)!r}"
+            for key in ENVIRONMENT if left.get(key) != right.get(key)]
+
+
 def verify(path: pathlib.Path) -> tuple[list[str], str]:
     """Re-derive the record at `path` and report every unmasked difference.
 
     Returns (problems, what was masked). Re-hashes every fixture and re-runs the suite: the
     point is not to read the record back, which proves nothing, but to produce a new one from
-    this tree and compare.
+    this tree and compare. The second element names the `ENVIRONMENT` fields too, as recorded
+    and not compared; `environment_differences` says which of them actually differed.
+    """
+    problems, said, _environment = reproduce(path)
+    return problems, said
+
+
+def reproduce(path: pathlib.Path) -> tuple[list[str], str, list[str]]:
+    """`verify` with its third reading: (problems, what was masked, environment differences).
+
+    One generation serves all three, because a second `generate` for the environment lines
+    would double the cost of every `verify` for a difference that is never a problem.
     """
     recorded = json.loads(path.read_text())
     adapter_id = recorded["adapter"]["adapter"]["id"]
@@ -571,7 +625,8 @@ def verify(path: pathlib.Path) -> tuple[list[str], str]:
     if recorded.get("source_commit", "").endswith("-dirty") or \
             fresh.get("source_commit", "").endswith("-dirty"):
         said.append("source_commit (the tree is dirty, so no commit describes it)")
-    return compare(recorded, fresh), ", ".join(said)
+    said.append(f"environment: {', '.join(ENVIRONMENT)} (recorded, not compared)")
+    return compare(recorded, fresh), ", ".join(said), environment_differences(recorded, fresh)
 
 
 # ------------------------------------------------------------------------------ §35: badges
@@ -740,11 +795,15 @@ def main(argv: list[str] | None = None) -> int:
             if not path.is_file():
                 print(f"synapse evidence: {path} does not exist", file=sys.stderr)
                 return EXIT_USAGE
-            problems, masked = verify(path)
+            problems, masked, environment = reproduce(path)
             for problem in problems:
                 print(f"{path}: {problem}", file=sys.stderr)
             print(f"{'DIFFERS' if problems else 'REPRODUCED'}: {path} "
                   f"(masked: {masked})")
+            # To stdout, after the verdict and never affecting it: a record from another host
+            # reproducing here is the reading §36 exists for, and the host is worth naming.
+            for line in environment:
+                print(f"  environment differs, not compared — {line}")
             failed += 1 if problems else 0
         return EXIT_FAILED if failed else EXIT_OK
 

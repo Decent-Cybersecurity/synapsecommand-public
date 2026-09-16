@@ -274,13 +274,21 @@ Copy the shape of `tests/test_cdm_pntmap_adapter.py`: one test per claim in your
 docstring.
 
 If you are bidirectional, the harness already round-trips you — declare
-`direction = "bidirectional"`, override `from_cdm()`, and the `roundtrip` column checks that no
-source value goes missing on the way out. It compares **values, not bytes**: a byte-equal round
-trip is neither achievable nor the point, since key order changes, omitted optional fields come
-back explicit, and XML attribute order is arbitrary.
+`direction = "bidirectional"`, override `from_cdm()`, and the `roundtrip` column judges what comes
+back. A JSON emitter is compared by **values, not bytes**: key order changes and omitted optional
+fields come back explicit, so the check asks whether any source value went missing on the way out.
 
-An adapter emitting XML or USMTF gets `SKIP` on that column and **must ship its own round-trip
-test**, because the harness cannot compare a structure it cannot parse.
+An emitter of anything else is compared under the tolerance its class **declares** in
+`ROUNDTRIP_TOLERANCE`, which the report prints. `bytes`, the default, means
+`from_cdm(to_cdm(raw))` must equal the byte fixture octet for octet — the claim every binary and
+line-oriented codec here makes — and the parsed twin beside it reports `SKIP`. `values` is for XML,
+whose attribute order and whitespace no emitter can promise: the harness re-ingests what you
+emitted and no source value may be missing from the parsed twin, and the byte fixture reports
+`SKIP`. A value egress legitimately re-stamps goes in `ROUNDTRIP_TRANSFORMS` with its reason,
+beside `TRANSFORMS`, and is printed with every report. Override `roundtrip_reference()` only to
+strip an envelope the source format itself says is not part of the message — the harness names
+every fixture it does that for. Your own round-trip test in `tests/` is still worth writing; it is
+your statement of the claim, and the harness's column is the suite's.
 
 ## The harness
 

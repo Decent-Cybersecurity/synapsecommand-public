@@ -82,7 +82,7 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 | Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.2` | `packages/cdm/synapse_cdm/version.py:303` |
 | CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:273` |
 | SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:309` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.0.0` | `packages/cdm/synapse_cdm/version.py:320` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.1.0` | `packages/cdm/synapse_cdm/version.py:320` |
 | Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:355` |
 | Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:369` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |

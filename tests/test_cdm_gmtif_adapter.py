@@ -325,12 +325,13 @@ def test_the_binary_twin_and_the_parsed_twin_produce_identical_cdm(path):
 
 @pytest.mark.parametrize("path", BINARIES, ids=lambda p: p.stem)
 def test_every_fixture_round_trips_byte_for_byte(path):
-    """`encode(to_cdm(bytes)) == bytes`. The claim the harness explicitly cannot make.
+    """`encode(to_cdm(bytes)) == bytes`. The claim the harness could not make until 2026-09-16.
 
-    `_check_roundtrip` compares structures and `from_cdm()` returns binary, so the harness reports
-    SKIP on both halves of every twin with a message saying the adapter must ship this test. Here
-    it is, and it is a STRONGER claim than the harness's: not "no value went missing" but "the
-    emitted packet is the same bytes".
+    `_check_roundtrip` compared structures and `from_cdm()` returns binary, so the harness
+    reported SKIP on both halves of every twin with a message saying the adapter must ship this
+    test. Here it is, a STRONGER claim than the harness's was: not "no value went missing" but
+    "the emitted packet is the same bytes" — and the harness makes exactly that comparison now,
+    under this class's `bytes` tolerance. This remains the adapter's own statement of it.
     """
     raw = path.read_bytes()
     objects = adapter().to_cdm(raw)
@@ -1524,10 +1525,13 @@ def test_the_harness_passes_every_fixture_against_the_published_schemas():
         # is what stops a binaries-only fixture set from quietly disabling the never-drop rule.
         expected = "PASS" if result["fixture"].endswith(".parsed.json") else "SKIP"
         assert checks["lossless"] == expected, result
-        # And roundtrip is SKIP on BOTH halves, because from_cdm returns binary and the harness
-        # compares structures. That is not a gap: it is why this file ships
-        # test_every_fixture_round_trips_byte_for_byte, which is a stronger claim.
-        assert checks["roundtrip"] == "SKIP", result
+        # And roundtrip is the mirror split (2026-09-16): PASS on the raw packets, where the
+        # harness compares `from_cdm(to_cdm(raw))` with the fixture octet for octet under this
+        # class's `bytes` tolerance, and SKIP on the twins. Until then it was SKIP on BOTH halves,
+        # because the harness compared structures and from_cdm returns binary; this file's
+        # test_every_fixture_round_trips_byte_for_byte makes the same claim in its own words.
+        expected = "SKIP" if result["fixture"].endswith(".parsed.json") else "PASS"
+        assert checks["roundtrip"] == expected, result
 
 
 def test_the_harness_runs_with_transforms_empty():

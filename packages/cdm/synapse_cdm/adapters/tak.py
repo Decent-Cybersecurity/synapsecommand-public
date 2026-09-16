@@ -198,15 +198,20 @@ class TakAdapter(Adapter):
         maturity=Maturity(
             level=MaturityLevel.L4,
             basis="L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's "
-                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on "
-                  "every fixture of this adapter, which carries L1 to L3; the `roundtrip` "
-                  "COLUMN is SKIP for every adapter in this repository, because "
-                  "`harness.py`'s structural comparison cannot compare non-JSON egress bytes "
-                  "and says so — \"the adapter must ship its own round-trip test in tests/\". "
-                  "This adapter ships it: "
+                  "`translate`, `schema`, `provenance` and `lossless` checks are PASS on every "
+                  "fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its "
+                  "`roundtrip` column is PASS as well: XML permits insignificant whitespace, "
+                  "attribute order and namespace prefix choice, so this adapter declares the "
+                  "`values` tolerance (`ROUNDTRIP_TOLERANCE`) and the harness re-ingests what "
+                  "`from_cdm` emitted and finds no source value missing from any parsed twin, so "
+                  "`synapse conformance run --adapter tak` computes E = PASS and L4 is the "
+                  "suite's own reading rather than this declaration's. The adapter's own "
+                  "statement of the same claim is "
                   "tests/test_cdm_tak_adapter.py::test_ingest_round_trip_loses_no_source_value. "
-                  "L5 is not declared here: ARCHITECTURE.md §3.6 computes it from the full "
-                  "applicable conformance set, which is P2's Suite v2.",
+                  "L5 is eligible and not declared: the rung above this one rests on `M` "
+                  "(streaming) being inapplicable to every adapter in this repository, and a rung "
+                  "passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4 — the "
+                  "reading the ingest-only adapters apply to `E`).",
             external_exercise=None,
         ),
         claim_status=ClaimStatus.VERIFIED,
@@ -328,6 +333,15 @@ class TakAdapter(Adapter):
         constituents=[],
         evidence=Evidence(available=True),
     )
+
+    #: XML: `from_cdm` emits `ET.indent`-ed bytes with an XML declaration, attribute order is
+    #: the serialiser's and not the source's, and a re-rendered timestamp is a different string
+    #: for the same instant — so octet equality is not a promise this format lets an emitter
+    #: make. The harness therefore re-ingests what was emitted and asks the never-drop question
+    #: of every parsed twin (2026-09-16), which is the comparison
+    #: `tests/test_cdm_tak_adapter.py::test_ingest_round_trip_loses_no_source_value` has always
+    #: made, printed as a declaration rather than assumed.
+    ROUNDTRIP_TOLERANCE = "values"
 
     TRANSFORMS = {
         "event.@time": "re-rendered from CoT's second-precision Z form into the CDM's fixed "

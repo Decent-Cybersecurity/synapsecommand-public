@@ -10,7 +10,7 @@ import uuid
 
 import pytest
 
-from synapse_cdm import harness, times
+from synapse_cdm import harness, ids, times
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters.pntmap import PntmapAdapter
 from synapse_cdm.enums import Affiliation, EntityType
@@ -244,6 +244,158 @@ def test_a_declared_egress_that_raises_fails_rather_than_skipping():
     report = harness.run(_adapter(_BrokenEgressAdapter), FIXTURES)
     assert all(r["checks"]["roundtrip"] == "FAIL" for r in report["results"])
     assert "NotImplementedError" in " ".join(report["results"][0]["problems"])
+
+
+# --- the round trip on emitted BYTES, under a declared tolerance (2026-09-16) ------------------
+#
+# Until this date the check returned SKIP for every non-JSON emitter and pointed at `tests/`, a
+# directory the wheel does not carry. The doubles below are a line codec — `key=value` octets in,
+# one Entity out, octets back — so each branch of `_compare_emitted` has a case that proves it
+# the way `_RoundTripAdapter` proves the JSON branch: a PASS, a FAIL that names where, and the
+# SKIP on the half of a fixture pair that does not carry the verdict.
+
+
+class _LineCodec(Adapter):
+    """`id=<x>;stamp=<y>` as bytes OR as the dict `{"id": x, "stamp": y}`; emits the line form."""
+    name = "test_roundtrip_bytes"
+    version = "1.0.0"
+    direction = "bidirectional"
+    system = "LINE"
+    metadata = probe_metadata("test_roundtrip_bytes", version="1.0.0", direction="bidirectional")
+
+    def _fields(self, raw) -> dict:
+        if isinstance(raw, (bytes, bytearray)):
+            return dict(part.split("=", 1) for part in raw.decode("ascii").strip().split(";"))
+        return dict(raw)
+
+    def to_cdm(self, raw):
+        fields = self._fields(raw)
+        return [Entity(
+            entity_id=ids.derive(self.system, fields["id"], kind="entity"),
+            source_ids=[{"system": self.system, "external_id": fields["id"]}],
+            entity_type=EntityType.UNKNOWN, affiliation=Affiliation.UNKNOWN,
+            valid_from=self.now(), source=self.source_ref(), attributes=fields,
+        )]
+
+    def from_cdm(self, objects):
+        fields = objects[0].attributes
+        return f"id={fields['id']};stamp={fields['stamp']}\n".encode("ascii")
+
+
+class _FlippingLineCodec(_LineCodec):
+    """Emits one byte wrong, so the octet comparison has a difference to locate."""
+    name = "test_roundtrip_bytes_flipped"
+    metadata = probe_metadata("test_roundtrip_bytes_flipped", version="1.0.0",
+                              direction="bidirectional")
+
+    def from_cdm(self, objects):
+        line = bytearray(super().from_cdm(objects))
+        line[3] ^= 0x20                                    # the fourth octet, case-flipped
+        return bytes(line)
+
+
+class _RestampingLineCodec(_LineCodec):
+    """Re-stamps `stamp` on the way out, under the `values` tolerance, and declares it."""
+    name = "test_roundtrip_values"
+    metadata = probe_metadata("test_roundtrip_values", version="1.0.0", direction="bidirectional")
+    ROUNDTRIP_TOLERANCE = "values"
+    ROUNDTRIP_TRANSFORMS = {"stamp": "egress stamps when THIS line was written"}
+
+    def from_cdm(self, objects):
+        return f"id={objects[0].attributes['id']};stamp=NEW\n".encode("ascii")
+
+
+class _UndeclaredRestampingLineCodec(_RestampingLineCodec):
+    """The same re-stamp with no declaration: the value is missing after re-ingest, so FAIL."""
+    name = "test_roundtrip_values_undeclared"
+    metadata = probe_metadata("test_roundtrip_values_undeclared", version="1.0.0",
+                              direction="bidirectional")
+    ROUNDTRIP_TRANSFORMS = {}
+
+
+@pytest.fixture()
+def line_fixtures(tmp_path):
+    """A byte fixture and its parsed twin, the pairing every non-JSON adapter here ships."""
+    (tmp_path / "alpha.line").write_bytes(b"id=alpha;stamp=old\n")
+    (tmp_path / "alpha.parsed.json").write_text(json.dumps({"id": "alpha", "stamp": "old"}))
+    return tmp_path
+
+
+def _roundtrip(report: dict) -> dict:
+    return {r["fixture"]: (r["checks"]["roundtrip"],
+                           [p for p in r["problems"] if p.startswith("roundtrip:")])
+            for r in report["results"]}
+
+
+def test_a_byte_exact_re_emission_passes_on_the_byte_fixture_and_skips_its_twin(line_fixtures):
+    report = harness.run(_adapter(_LineCodec), line_fixtures)
+    verdicts = _roundtrip(report)
+    assert verdicts["alpha.line"] == ("PASS", [])
+    assert verdicts["alpha.parsed.json"][0] == "SKIP"
+    assert "byte fixture beside it carries" in verdicts["alpha.parsed.json"][1][0]
+    assert report["roundtrip"] == {"tolerance": "bytes", "transforms": {},
+                                   "reference_normalised": []}
+    assert "roundtrip tolerance: bytes" in harness.render_report(report)
+
+
+def test_one_wrong_octet_fails_the_byte_comparison_and_names_the_offset(line_fixtures):
+    verdicts = _roundtrip(harness.run(_adapter(_FlippingLineCodec), line_fixtures))
+    verdict, problems = verdicts["alpha.line"]
+    assert verdict == "FAIL"
+    assert "first difference at offset 3" in problems[0], problems
+    assert "19 byte(s) against 19 ingested" in problems[0], problems
+
+
+def test_a_declared_value_tolerance_judges_the_twin_and_skips_the_byte_fixture(line_fixtures):
+    report = harness.run(_adapter(_RestampingLineCodec), line_fixtures)
+    verdicts = _roundtrip(report)
+    assert verdicts["alpha.parsed.json"] == ("PASS", [])
+    assert verdicts["alpha.line"][0] == "SKIP"
+    assert "parsed twin beside it carries" in verdicts["alpha.line"][1][0]
+    assert report["roundtrip"]["tolerance"] == "values"
+    text = harness.render_report(report)
+    assert "roundtrip tolerance: values" in text
+    assert "stamp: egress stamps when THIS line was written" in text, \
+        "a round-trip exemption is printed every run, exactly as TRANSFORMS is"
+
+
+def test_an_undeclared_re_stamp_fails_the_value_comparison_and_names_the_value(line_fixtures):
+    verdicts = _roundtrip(harness.run(_adapter(_UndeclaredRestampingLineCodec), line_fixtures))
+    verdict, problems = verdicts["alpha.parsed.json"]
+    assert verdict == "FAIL"
+    assert "stamp = 'old'" in problems[0] and "after egress and re-ingest" in problems[0]
+
+
+def test_a_normalised_reference_is_named_in_the_report_rather_than_applied_quietly(line_fixtures):
+    """`roundtrip_reference` may strip an envelope; the report says on which fixtures it did."""
+    class _EnvelopedLineCodec(_LineCodec):
+        name = "test_roundtrip_enveloped"
+        metadata = probe_metadata("test_roundtrip_enveloped", version="1.0.0",
+                                  direction="bidirectional")
+
+        def to_cdm(self, raw):
+            if isinstance(raw, (bytes, bytearray)):
+                raw = raw.split(b"\\", 1)[-1]                 # the envelope is not the message
+            return super().to_cdm(raw)
+
+        def roundtrip_reference(self, raw):
+            return raw.split(b"\\", 1)[-1]
+
+    (line_fixtures / "beta.line").write_bytes(b"receiver:1\\id=beta;stamp=old\n")
+    report = harness.run(_adapter(_EnvelopedLineCodec), line_fixtures)
+    verdicts = _roundtrip(report)
+    assert verdicts["alpha.line"][0] == "PASS" and verdicts["beta.line"][0] == "PASS"
+    assert report["roundtrip"]["reference_normalised"] == ["beta.line"]
+    assert "compared against roundtrip_reference(raw), not raw, for: beta.line" in \
+        harness.render_report(report)
+
+
+def test_the_ingest_only_report_carries_the_declarations_and_renders_no_block():
+    """The key is on every report (a consumer reads one shape); the text block is for emitters."""
+    report = harness.run(_adapter(), FIXTURES)
+    assert report["roundtrip"] == {"tolerance": "bytes", "transforms": {},
+                                   "reference_normalised": []}
+    assert "roundtrip tolerance" not in harness.render_report(report)
 
 
 def test_a_fixture_directory_may_document_itself(tmp_path):

@@ -56,7 +56,7 @@
     ],
     "limitations_empty_reason": null,
     "maturity": {
-      "basis": "L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's `translate`, `schema`, `provenance` and `lossless` checks are PASS on every fixture of this adapter, which carries L1 to L3; the `roundtrip` COLUMN is SKIP for every adapter in this repository, because `harness.py`'s structural comparison cannot compare non-JSON egress bytes and says so \u2014 \"the adapter must ship its own round-trip test in tests/\". This adapter ships it: tests/test_cdm_gmtif_adapter.py::test_every_fixture_round_trips_byte_for_byte. L5 is not declared here: ARCHITECTURE.md \u00a73.6 computes it from the full applicable conformance set, which is P2's Suite v2.",
+      "basis": "L4 ROUNDTRIP VERIFIED, from evidence that runs today. The harness's `translate`, `schema`, `provenance` and `lossless` checks are PASS on every fixture of this adapter, which carries L1 to L3, and since 2026-09-16 its `roundtrip` column is PASS as well: `from_cdm(to_cdm(raw))` reproduces every byte fixture octet for octet under the declared `bytes` tolerance (`ROUNDTRIP_TOLERANCE`), so `synapse conformance run --adapter gmti` computes E = PASS and L4 is the suite's own reading rather than this declaration's. The adapter's own statement of the same claim is tests/test_cdm_gmtif_adapter.py::test_every_fixture_round_trips_byte_for_byte. L5 is eligible and not declared: the rung above this one rests on `M` (streaming) being inapplicable to every adapter in this repository, and a rung passed vacuously is not a rung declared (ARCHITECTURE.md \u00a73.6, rule 4 \u2014 the reading the ingest-only adapters apply to `E`).",
       "external_exercise": null,
       "level": "L4"
     },

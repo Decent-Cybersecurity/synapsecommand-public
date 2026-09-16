@@ -32,7 +32,7 @@ rather not depend on a name being on `PATH`.
 | B | schema | every object validates against the published JSON Schema | never |
 | C | provenance | every object carries the source, adapter and identifiers §4.5 requires | never |
 | D | lossless | no scalar in the source payload is absent from the output and undeclared | a bytes fixture has no leaf structure to compare |
-| E | roundtrip | source → CDM → source loses no value | the adapter is ingest-only, or the emitted form is not structurally comparable |
+| E | roundtrip | source → CDM → source reproduces the source under the tolerance the adapter declares: octet for octet (`bytes`, the default), or no value lost after re-ingest (`values`, for XML) | the adapter is ingest-only |
 | F | golden | the output is byte-identical to the committed golden file | no golden file exists yet |
 | G | deterministic | three decodes of one payload under one frozen clock hash equal | never |
 | H | malformed-input | every payload under `malformed/` is refused, safely, in time | the adapter declares no `malformed/` set |
@@ -65,9 +65,24 @@ rather than reading a declaration:
 
 The two are printed separately on purpose. `synapse conformance list` shows what each adapter
 **declares**; a run prints `MATURITY ELIGIBLE`, which is what this repository's evidence supports
-today. They are allowed to differ, and where they do, the manifest's `maturity.basis` says what
-the difference rests on — each bidirectional adapter ships a byte-exact round-trip test in
-`tests/` that the suite's `E` cannot see, so it declares `L4` where the suite computes `L3`.
+today. They are allowed to differ — a declared rung *above* the eligible one is a defect, a
+declared rung below it is a reading — and where they do, the manifest's `maturity.basis` says what
+the difference rests on. Every adapter here computes `L5` and declares less: the three ingest-only
+adapters declare `L3` because `E` is inapplicable to them rather than passed, and the eleven that
+emit declare `L4` because `L5` rests on `M` being inapplicable to every adapter in this repository.
+A rung passed vacuously is not a rung declared.
+
+**`E` is computed for the eleven emitters, not taken on trust.** Until 2026-09-16 the suite could
+not read non-JSON egress, reported `SKIP`, and pointed at a round-trip test in `tests/` that a
+wheel does not carry — so every emitter declared `L4` where the suite computed `L3`. Now the
+harness makes the comparison itself under the tolerance the class declares in
+`ROUNDTRIP_TOLERANCE`: `bytes` (nine of the eleven, `from_cdm(to_cdm(raw))` equals the fixture octet
+for octet, AIS's NMEA TAG block excepted by a printed `roundtrip_reference`) or `values` (TAK and
+STANAG 4676, whose XML cannot promise octet order, so what was emitted is re-ingested and no source
+value may be missing, with the two values NITS egress re-stamps declared in `ROUNDTRIP_TRANSFORMS`).
+Each fixture pair carries the verdict on one half — the byte fixture under `bytes`, the parsed twin
+under `values` — and the other half reports `SKIP` with a sentence saying so, exactly as `D` skips
+the byte fixture and relies on the twin.
 
 ## Strict mode
 

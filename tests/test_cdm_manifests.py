@@ -23,11 +23,12 @@ THE SIX CI CLAUSES OF §16, AND WHERE EACH ONE IS PROVEN
 """
 import json
 import pathlib
+import re
 
 import jsonschema
 import pytest
 
-from synapse_cdm import adapter, harness, manifests, schemas, times
+from synapse_cdm import adapter, harness, manifests, schemas, suite, times
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
                                   MaturityLevel)
 from synapse_cdm.version import ADAPTER_API_VERSION, MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
@@ -271,21 +272,39 @@ def test_a_null_format_version_must_be_stated_as_a_limitation():
 # ------------------------------------------------- maturity is a claim about evidence (§3.6)
 
 
+#: The clause in a bidirectional adapter's `maturity.basis` that names the tolerance its class
+#: declares. Two statements of one fact, held together the way `tests/test_cdm_evidence.py` holds
+#: `evidence.available` to its sentence: it binds the WORD in the backticks, not the prose around
+#: it, so a later round may rewrite the reason without this check breaking or going vacuous.
+TOLERANCE_CLAIM = re.compile(r"`(bytes|values)` tolerance \(`ROUNDTRIP_TOLERANCE`\)")
+
+#: §3.3's rungs as an ordinal, for the one comparison the release notes state as a rule.
+RUNG = {level: int(level.value[1:]) for level in MaturityLevel}
+
+
 def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
-    """THE RUNG, RE-DERIVED FROM A HARNESS RUN, not read back out of the declaration.
+    """THE RUNG, RE-DERIVED FROM A SUITE RUN, not read back out of the declaration.
 
-    What the evidence actually supports, per adapter:
+    UNTIL 2026-09-16 THIS TEST ASSERTED THAT THE ROUNDTRIP COLUMN WAS NOT PASS, so that its own
+    reasoning could not go stale in silence: the harness could not read non-JSON egress, every
+    bidirectional adapter declared L4 on a round-trip test in `tests/` the suite could not see,
+    and the suite computed L3 beside it. That assertion failed by design the day the harness
+    began comparing the emitted octets itself under each class's `ROUNDTRIP_TOLERANCE`, and the
+    rungs are derived from the column now, which is what the old message asked for.
 
-    * `translate`, `schema` and `provenance` PASS on every fixture — that is L1, L2 and L3.
-    * the `roundtrip` COLUMN is SKIP for every adapter this repository ships. For the three
-      ingest-only ones it is inapplicable by direction; for the eleven bidirectional ones it is
-      `harness.py`'s own declared limit — the check compares JSON structurally and no shipped
-      adapter emits JSON, so it says "the adapter must ship its own round-trip test in tests/".
-      Taking the column alone would put all fourteen at L3 and make L4 unreachable by any adapter
-      here, which is M's ruling F1.2 collapsing into one branch. So L4's evidence is the harness
-      run AND the adapter's own round-trip test, which its `maturity.basis` names.
-    * L5 is nobody's to declare here: ARCHITECTURE.md §3.6 computes it from every check
-      APPLICABLE to the adapter, and the applicable set is P2's Suite v2.
+    What the evidence supports, per adapter, and what may be declared against it:
+
+    * `A`, `B` and `C` PASS — that is L1, L2 and L3 — and the run is CONFORMANT.
+    * declared <= eligible, on the ordinal. "A declared rung above an eligible one is a defect,
+      not a note" (`release_notes.py`); a declared rung BELOW is a reading, and every adapter
+      here reads below, for a reason its basis states.
+    * ingest-only: `E` is a DECLARED SKIP and exactly L3 is declared. There is no egress
+      direction for information to be lost in, so the roundtrip rung is passed vacuously — and
+      a rung passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4).
+    * bidirectional: `E` is PASS, from the column, and exactly L4 is declared. L5 is eligible
+      for all fourteen and rests on `M` being inapplicable to every one of them — the same
+      vacuous-rung reading, one rung up. The basis names the tolerance the class declares and
+      cites exactly one test in `tests/` as the adapter's own statement of the claim.
     """
     schema_dir = REPO / "schemas"
     for name, cls in sorted(shipped().items()):
@@ -294,36 +313,46 @@ def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
         # a FAIL and the rung would read as unsupported for a reason that is the
         # test's own.
         instance = cls(clock=times.frozen_clock())
-        report = harness.run(instance, adapter.packaged_fixtures(cls),
-                             schema_dir=schema_dir)
-        assert report["failed"] == 0, f"{name}: the harness is not green, so no rung is supported"
-        verdicts = {column: {result["checks"].get(column) for result in report["results"]}
-                    for column in ("translate", "schema", "provenance", "roundtrip")}
-        for column in ("translate", "schema", "provenance"):
-            assert verdicts[column] <= {"PASS"}, f"{name}: {column} is {verdicts[column]}"
-        assert "PASS" not in verdicts["roundtrip"], (
-            f"{name}: the harness now reports roundtrip PASS. That is a change in the evidence "
-            "and it makes this test's reasoning obsolete rather than wrong — re-derive the rungs "
-            "from the column instead of from the shipped test"
-        )
+        report = suite.run(instance, adapter.packaged_fixtures(cls), schema_dir=schema_dir)
+        assert report["result"] == "CONFORMANT", \
+            f"{name}: the suite is not green, so no rung is supported"
+        checks = report["checks"]
+        for letter in "ABC":
+            assert checks[letter]["verdict"] == "PASS", f"{name}: {letter} is {checks[letter]}"
 
         level = cls.metadata.maturity.level
         basis = cls.metadata.maturity.basis
-        assert level in (MaturityLevel.L3, MaturityLevel.L4), f"{name} declares {level}"
+        eligible = MaturityLevel(report["maturity_eligible"])
+        assert RUNG[level] <= RUNG[eligible], (
+            f"{name} declares {level.value} and the suite computes {eligible.value}. A declared "
+            "rung above an eligible one is a defect, not a note"
+        )
         if cls.metadata.direction is Direction.INGEST:
+            assert checks["E"]["verdict"] == "SKIP" and checks["E"]["declared_inapplicable"], name
             assert level is MaturityLevel.L3, (
                 f"{name} is ingest-only and declares {level.value}. There is no egress direction "
                 "for information to be lost in, so the roundtrip rung is passed vacuously — and "
                 "a rung passed vacuously is not a rung declared (ARCHITECTURE.md §3.6, rule 4)"
             )
             continue
+        assert checks["E"]["verdict"] == "PASS", (
+            f"{name}: E is {checks['E']['verdict']} — {checks['E'].get('reason')}. The harness "
+            "compares egress for every emitter since 2026-09-16, and L4 rests on that column"
+        )
+        assert checks["E"]["details"]["fail"] == 0 and checks["E"]["details"]["pass"] >= 1, name
         assert level is MaturityLevel.L4, f"{name} is bidirectional and declares {level.value}"
+        assert TOLERANCE_CLAIM.findall(basis) == [cls.ROUNDTRIP_TOLERANCE], (
+            f"{name}: the basis says {TOLERANCE_CLAIM.findall(basis)} where the class declares "
+            f"ROUNDTRIP_TOLERANCE {cls.ROUNDTRIP_TOLERANCE!r} — exactly one clause, agreeing"
+        )
+        assert f"conformance run --adapter {name}" in basis, \
+            f"{name}: the basis does not name the suite command whose reading it rests on"
         cited = [token.rstrip(".,;") for token in basis.split()
                  if token.startswith("tests/") and "::" in token]
         assert len(cited) == 1, (
-            f"{name} declares L4 and its `maturity.basis` cites {cited}. L4's evidence here is "
-            "the adapter's OWN round-trip test, so the basis names exactly one and a reader can "
-            "go and run it"
+            f"{name} declares L4 and its `maturity.basis` cites {cited}. The adapter's OWN "
+            "statement of the round-trip claim is one test, so the basis names exactly one and a "
+            "reader can go and run it"
         )
         path, _, function = cited[0].partition("::")
         module = REPO / path

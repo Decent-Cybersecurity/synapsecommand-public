@@ -1,11 +1,13 @@
-"""One test per claim in the ADS-B adapter's docstring, plus the round trips the harness cannot do.
+"""One test per claim in the ADS-B adapter's docstring, plus the round trips in the adapter's own words.
 
 WHY THIS FILE CARRIES THE ROUND-TRIP CHECKS
 -------------------------------------------
-The harness's `roundtrip` column reports SKIP for an adapter that emits something it cannot
-parse structurally, and says so out loud: `from_cdm()` here returns hex frames. The README's
-instruction for that case is that the adapter ships its own round-trip test, so both directions
-are exercised here.
+Until 2026-09-16 the harness's `roundtrip` column reported SKIP for an adapter that emits
+something it cannot parse structurally, and said so out loud: `from_cdm()` here returns hex
+frames. The README's instruction for that case was that the adapter ships its own round-trip
+test, so both directions were exercised here. The harness now makes the byte-exact comparison
+itself under this class's `bytes` tolerance; the tests here remain the adapter's own statement
+of the same claim, and the ones below say what the column cannot.
 
 AND WHY THE EGRESS ROUND TRIP RE-INGESTS RATHER THAN COMPARING VALUES
 ---------------------------------------------------------------------
@@ -1464,9 +1466,13 @@ def test_the_harness_passes_every_fixture_against_the_published_schemas():
         # turning the never-drop check off for this adapter.
         expected = "SKIP" if result["fixture"].endswith(".adsb") else "PASS"
         assert checks["lossless"] == expected, result
-        # roundtrip is SKIP for every fixture BY DESIGN: from_cdm returns hex frames, which the
-        # harness cannot compare structurally. That is why this file carries the round trips.
-        assert checks["roundtrip"] == "SKIP", result
+        # roundtrip is judged on the FRAMES and SKIP on the parsed twin (2026-09-16): the harness
+        # compares `from_cdm(to_cdm(raw))` with the fixture octet for octet under this class's
+        # `bytes` tolerance — the comparison `test_the_ingest_round_trip_is_byte_exact` makes.
+        # Until then it was SKIP for every fixture, because the harness could not compare hex
+        # frames structurally.
+        expected = "PASS" if result["fixture"].endswith(".adsb") else "SKIP"
+        assert checks["roundtrip"] == expected, result
 
 
 def test_the_harness_does_not_pick_up_the_local_or_egress_directories():

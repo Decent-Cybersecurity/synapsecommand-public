@@ -417,11 +417,26 @@ def test_the_embedded_manifest_is_the_published_one(record):
     assert record.adapter == published
 
 
-def test_the_conformance_block_is_the_suites_own_report_verbatim(record):
+def test_the_conformance_block_is_the_suites_own_report_made_portable(record):
+    """Verbatim but for one field (2026-09-16): `conformance.adapter.fixtures` carries the sweep's
+    `<packaged>/<directory>` label and not the absolute path `run()` read, because the path made
+    every record machine-specific — the failure `FileHash` was already spelled relative to avoid."""
     fresh = suite.run(shipped()["pntmap"](clock=times.frozen_clock()),
                       packaged_fixtures(shipped()["pntmap"]))
-    assert record.conformance == fresh
+    assert fresh["adapter"]["fixtures"].startswith("/"), "run() itself still names the directory"
+    assert record.conformance == suite.portable(fresh, "<packaged>/pntmap")
+    assert record.conformance["adapter"]["fixtures"] == "<packaged>/pntmap"
     assert record.loss_report == fresh["loss_report"]
+    assert str(ROOT) not in evidence.serialise(record), "the checkout path leaked into the record"
+
+
+def test_the_fixtures_label_names_the_packaged_directory_and_not_the_adapter():
+    """`stanag4609` reads `fixtures/klv`, and its hashes are already `klv/…`; the label agrees."""
+    klv = evidence.generate("stanag4609")
+    assert klv.conformance["adapter"]["fixtures"] == "<packaged>/klv"
+    assert klv.fixture_hashes and all(h.path.startswith("klv/") for h in klv.fixture_hashes)
+
+
 
 
 def test_every_fixture_the_suite_read_is_hashed_with_a_relative_path(record):
@@ -439,7 +454,14 @@ def test_every_fixture_the_suite_read_is_hashed_with_a_relative_path(record):
 
 
 def test_the_artifact_hashes_are_empty_until_a_release_names_something(record):
-    """§32: "MAY initially be empty". PR is the round that fills it."""
+    """§32: "MAY initially be empty", and it is empty for a reason of ORDER (2026-09-16).
+
+    The release pipeline generates and verifies the records in the gate job, before the build
+    job produces the wheel and sdist, and `verify` re-derives a record from the tree — so a
+    digest of an artefact that is not in the tree could never reproduce. The artefact digests
+    are published in `SHA256SUMS` and in the witness record instead, and filling this field is
+    a pipeline-sequence change for a release round.
+    """
     assert record.artifact_hashes == []
 
 
@@ -526,6 +548,38 @@ def test_two_records_generated_from_this_tree_differ_only_in_the_masked_fields()
     second = evidence.generate("pntmap").model_dump(mode="json")
     assert evidence.compare(first, second) == []
     assert set(evidence.MASKED) == {"generated_at", "test_run.duration_s"}
+    assert set(evidence.ENVIRONMENT) == {"test_run.python", "test_run.platform"}, \
+        "the recorded-not-compared class is exactly the two host fields, and nothing else"
+
+
+def test_a_record_from_another_host_and_checkout_reproduces(tmp_path, record, capsys):
+    """§36 across machines (2026-09-16): a record CI made on Linux, verified from this checkout.
+
+    The test the round that wrote `verify` did not have: `ci.yml` generates and verifies in one
+    job, and the §36 test above generates both records in one process, so nothing exercised a
+    change of host or path. A copy of the record with a foreign interpreter and platform — and,
+    since the fixtures label is portable, nothing else to change — must REPRODUCE, and the two
+    host fields must be printed as differing rather than counted as problems.
+    """
+    path = evidence.write(record, tmp_path)
+    payload = json.loads(path.read_text())
+    assert payload["test_run"]["platform"] != "linux-x86_64"
+    payload["test_run"]["platform"] = "linux-x86_64"
+    payload["test_run"]["python"] = "3.12.14"
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    problems, masked = evidence.verify(path)
+    assert problems == [], problems
+    assert "environment: test_run.python, test_run.platform (recorded, not compared)" in masked
+    fresh = evidence.generate("pntmap").model_dump(mode="json")
+    lines = evidence.environment_differences(payload, fresh)
+    assert [line.split(":")[0] for line in lines] == ["test_run.python", "test_run.platform"]
+    assert "record says 'linux-x86_64'" in lines[1]
+    assert evidence.main(["verify", str(path)]) == evidence.EXIT_OK
+    out = capsys.readouterr().out
+    assert out.startswith("REPRODUCED:")
+    assert out.count("environment differs, not compared") == 2
+    # The fields are still IN the record: recorded is not the same thing as masked.
+    assert payload["test_run"]["python"] == "3.12.14"
 
 
 def test_the_refusal_list_needs_no_mask_because_it_carries_no_wall_clock_reading():

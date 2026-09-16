@@ -75,11 +75,11 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     Event semantic major  v1      a SEGMENT OF THE IDENTIFIER — ``sc.pnt.gnss_interference.v1``
                                   — so a consumer matching on the string cannot fail to notice
                                   a breaking change to one type's semantics.
-    Adapter API           2.0.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
+    Adapter API           2.1.0   this file, ``ADAPTER_API_VERSION``. The CONTRACT an adapter
                                   class is written against — what ``Adapter`` requires of a
                                   subclass and what it offers it. Frozen by ``ARCHITECTURE.md``
-                                  §1 and additive over v1: v2 adds ``metadata``, ``detect``,
-                                  ``validate_source`` and ``capabilities`` and renames nothing.
+                                  §1 and additive over v1; 2.1.0 added the round-trip tolerance
+                                  declarations (2026-09-16) and, like v2, renamed nothing.
     Manifest schema       1.2.0   this file, ``MANIFEST_SCHEMA_VERSION``. The shape of the
                                   published manifest, generated into
                                   ``schemas/manifests/adapter-manifest.schema.json`` and carried
@@ -308,16 +308,16 @@ PACKAGE_VERSION = "2.1.2"
 #: above, and not equal to them by anything but coincidence — see the docstring.
 SC_OES_VERSION = "0.1.0"
 
-#: The Adapter CONTRACT's version, and a FOURTH axis. `2.0.0` because `ARCHITECTURE.md` §1.2
-#: freezes v2 as an ADDITIVE layer over v1: `metadata`, `detect()`, `validate_source()` and
-#: `capabilities()` are added, `decode`/`encode` arrive as aliases, and no v1 name is removed or
-#: renamed. A subclass written against v1 still imports; what it must now also do is DECLARE its
-#: metadata, which is why this is a new major rather than a minor — the requirement is on the
-#: subclass, and a third party's adapter that does not declare metadata stops being definable.
-#: NOT derived from PACKAGE_VERSION and equal to it only by coincidence, exactly as the two
-#: numbers above are: `pip install synapse-cdm==2.0.0` resolves a distribution whose Adapter API
-#: is v1, because this constant did not exist at that tag.
-ADAPTER_API_VERSION = "2.0.0"
+#: The Adapter CONTRACT's version, and a FOURTH axis. Major 2 because `ARCHITECTURE.md` §1.2
+#: freezes v2 as an ADDITIVE layer over v1 — `metadata`, `detect()`, `validate_source()` and
+#: `capabilities()` added, `decode`/`encode` as aliases, no v1 name removed — while requiring a
+#: subclass to DECLARE its metadata, a new demand on the subclass and so a major. 2.0.0 -> 2.1.0
+#: on 2026-09-16: `ROUNDTRIP_TOLERANCE`, `ROUNDTRIP_TRANSFORMS` and `roundtrip_reference()`
+#: added to the base class so the harness can compare egress octets under a declared tolerance;
+#: every default is the old behaviour, so a MINOR by VERSIONING.md §3's own row. NOT derived from
+#: PACKAGE_VERSION: `pip install synapse-cdm==2.0.0` resolves a distribution whose Adapter API is
+#: v1, because this constant did not exist at that tag, and 2.1.x ships this 2.1.0 contract.
+ADAPTER_API_VERSION = "2.1.0"
 
 #: The published manifest's shape, and a FIFTH axis. It moves when the MANIFEST's shape moves — a
 #: required field added, a field's meaning changed — and not when an adapter's metadata VALUES

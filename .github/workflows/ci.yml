@@ -119,10 +119,12 @@ jobs:
         # swept by nobody.
         #
         # WHY THE REQUIRED SET IS THESE TEN AND NOT ALL FIFTEEN, each absence a reading:
-        #   E  roundtrip  — SKIP for every adapter in this repository, because the harness's
-        #                   structural comparison cannot read non-JSON egress bytes and says so
-        #                   (`harness.py:246`). Each bidirectional adapter ships its own
-        #                   byte-exact round-trip test in `tests/`; its manifest names it.
+        #   E  roundtrip  — a DECLARED SKIP for the three ingest-only adapters, which have no
+        #                   egress direction to lose information in, and a required SKIP exits
+        #                   non-zero (§19). PASS for the eleven that emit, computed since
+        #                   2026-09-16 under each class's `ROUNDTRIP_TOLERANCE`; before that it
+        #                   was SKIP for all fourteen, because the harness could not read
+        #                   non-JSON egress bytes. `test_cdm_suite.py` requires the PASS.
         #   I  unknown    — SKIP where the adapter declares `unknown_fields: none`, which seven do.
         #   M  streaming  — SKIP for all fourteen; no adapter can declare the capability today.
         #   N  robustness — SKIP for the two adapters that ship no byte fixture to truncate.
