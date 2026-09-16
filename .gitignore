@@ -30,15 +30,15 @@ docs/.cache-loader/
 #
 # THE FAILURE THIS CLOSES. `tests/test_cdm_pins.py::test_no_pdf_is_tracked_anywhere_in_the_
 # repository` asserts `git ls-files` returns no `.pdf` anywhere. It is a good gate and it fires
-# after the fact: `git add -A` from the repository root stages all 52 held documents, and only a
+# after the fact: `git add -A` from the repository root stages every held document, and only a
 # suite run or a reading of `git status` catches it before the commit. That near-miss has happened
 # twice. The rule below makes the staging itself refuse, so the gate and the mechanism now fail in
 # the same direction and neither is load-bearing alone.
 #
 # THE EXTENSION SET IS DERIVED, NOT GUESSED. Every file under a `fixtures/*/spec/` directory is a
-# `.pdf` (60), a `.txt` (1), a `.json` pin record (9) or a `.py` generator (9) — FOUR members since
-# 2026-09-04, and the note below the rules says why that is a first. The last two are exactly the
-# committed artefacts, which is why this ignores an EXTENSION and not the `spec/` directory.
+# `.pdf` (60), a `.txt` (1), a `.json` (13: nine pin records, four `*_terms.json` provenance
+# records) or a `.py` generator (9) — FOUR members since 2026-09-04; the note below the rules says
+# why. The last two are the committed artefacts, so this ignores an EXTENSION, not the directory.
 *.pdf
 *.txt
 
@@ -53,7 +53,7 @@ docs/.cache-loader/
 # commit as the substantive change, and it is the less interesting of the two corrections.
 #
 # AND THE PARAGRAPH ABOVE WAS KEPT TO FOUR LINES ON PURPOSE, which is the reason this note is here
-# and not there. `*.pdf` is cited as `.gitignore:42` at twenty-four places in this tree; a fifth line above the rule
+# and not there. `*.pdf` is cited as `.gitignore:42` on twenty-six lines of this tree (2026-09-16 count); a fifth line above the rule
 # would have re-pointed every one of them at a comment. The foot of this block states that rule for
 # comments and this round found it applies to a REWRITE of an existing comment just as much.
 #
@@ -194,9 +194,11 @@ fixtures/klv/provenance/
 #
 # WHERE IT LIVES INSTEAD. CI generates the set on every run and uploads it as the artefact
 # `evidence-<sha>`; the release round attaches it to the GitHub Release. That attachment is the
-# moment `evidence.available` becomes true for a consumer who cannot run this package, and until
-# then it is false — every one of the fourteen manifests says so, and M ruled on 2026-09-08 that
-# it stays false through P4–P8.
+# moment `evidence.available` becomes true for a consumer who cannot run this package. It was
+# false in every one of the fourteen manifests until the 2.1.2 Release carried the set — M ruled
+# on 2026-09-08 that it stayed false through P4–P8, and it did — and since round PE (2026-09-12)
+# every manifest declares it true and names that attachment. This paragraph went on saying "is
+# false" until 2026-09-16, four days after PE flipped the manifests without coming back to it.
 #
 # ANCHORED WITH A LEADING SLASH, AND THE UNANCHORED FORM WAS A LIVE DEFECT RATHER THAN A STYLE
 # POINT. A pattern with no leading slash matches a directory of that name at ANY depth, so a bare
@@ -205,3 +207,34 @@ fixtures/klv/provenance/
 # was found before the file went missing from a release. The generated records live at the
 # repository root and nowhere else, so the rule says exactly that.
 /evidence/
+
+# THE DERIVED COUNTS ABOVE WERE CORRECTED AGAIN ON 2026-09-16, AND THIS TIME BY AN AUDIT RATHER
+# THAN BY THE ROUND THAT MOVED THEM. `f28d58e` (2026-09-07) added four `*_terms.json` licensing
+# provenance records under `spec/` — adsb, ais, legion, tak — and the derived-set paragraph went on
+# saying `.json` pin record (9): the nine PIN records are still nine, but the paragraph enumerates
+# every file under `spec/`, and the command it names returns 13. The citation count for
+# `.gitignore:42` said twenty-four and never matched the tree that wrote it;
+# `git grep -n '\.gitignore:42' | wc -l` gives 26 lines today and is what the sentence now states.
+# The `.pdf` (60) and `.txt` (1) figures are NOT re-derived here: this checkout holds no pinned
+# document, so the command above cannot count them, and they stand as the text-pins round derived
+# them. The evidence paragraph's "is false" was four days stale — round PE flipped every manifest
+# on 2026-09-12 — and is corrected in place. Every line above 173 is where it was.
+#
+# Three rules follow, appended for the reason the evidence block gives: nothing above may move.
+
+# The rounds apparatus and the agent configuration. Both are local, both are private, and both
+# were kept out of the index by `.git/info/exclude` alone — a file that does not travel with the
+# repository, so a second clone that copied the directories in had no rule and `git add -A` would
+# have staged some two hundred files. That is the argument at the top of the pinned-document block,
+# verbatim: a test on the commit is a gate on the COMMIT and not on the operation, and the
+# mechanism has to be in the tree. The paths are not secret — seventy tracked lines name `rounds/`
+# and the readiness report advertises `git ls-files rounds/` → 0 as a property of the tree — so
+# ignoring them in the shared file gives away nothing and makes the advertised property one the
+# tree itself enforces. Ruled by M on 2026-09-16.
+rounds/
+.claude/
+
+# Ruff's cache, beside `.pytest_cache/` at line 3 for the same reason. It stayed out of `git status`
+# only because ruff writes its own `.ruff_cache/.gitignore`, which exists once the tool has run
+# here and not before, and a rule that depends on the tool having run is not a rule of this tree.
+.ruff_cache/

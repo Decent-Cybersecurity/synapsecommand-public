@@ -41,3 +41,18 @@
 # The fifth ASTERIX category, and the last of this round. Same reason, same habit: the extension
 # arrives in the commit that produces the blocks.
 *.cat023 -text -diff
+
+# The KLV family and the STANAG 4586 messages, and the marker is explicit for the reason every
+# entry above gives. They were missing here from the day their fixtures landed — 65 `.klv`, 30
+# `.imapb`, 26 `.klvframe` and 14 `.s4586` files by 2026-09-16 — and git's NUL heuristic carried
+# them, which is exactly what the `.gmti` paragraph says not to rely on. Nine of them are the case
+# the heuristic gets wrong: one-to-three-octet framing and IMAPB payloads with no NUL in them, which
+# git classifies as text with no line ending, so the next such fixture that happens to hold 0x0A
+# would be rewritten to CRLF on a Windows checkout and fail the byte-exact assertions in
+# `tests/test_cdm_klv_framing.py` and `tests/test_cdm_stanag4586_adapter.py` as an adapter defect.
+# Added 2026-09-16, four extensions and several rounds late, which is the habit the ASTERIX
+# paragraph was written to end.
+*.klv -text -diff
+*.imapb -text -diff
+*.klvframe -text -diff
+*.s4586 -text -diff
