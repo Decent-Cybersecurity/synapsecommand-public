@@ -3,6 +3,14 @@
   "fixtures": [
     {
       "classification": "PUBLIC",
+      "file": "a_json_list.json",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload for the Conformance Suite's check H (\u00a721), written on 2026-09-16 when the adapter began refusing a non-object JSON document by name: this directory's own synthetic jamming_gulf_of_riga alert wrapped in a JSON array, which the fixture loader parses and the adapter must refuse as a ValueError rather than trip over.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
       "file": "a_truncated_record.json",
       "operational_data": false,
       "origin": "Synthetic malformed payloads for the Conformance Suite's check H (\u00a721), written by round P2 alongside this directory's own README.md, which states \"Malformed pntmap payloads \u2014 every one synthetic, every one refused\" and that checks A\u2013F never see them.",

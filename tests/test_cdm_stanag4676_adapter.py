@@ -971,6 +971,40 @@ def test_an_edition_a_document_is_refused_by_root_element_too():
     assert "root element is <TrackMessage>" in str(raised.value)
 
 
+def _nested_document(depth: int) -> bytes:
+    """The standalone track with one unmodelled element chain, to a total element depth of
+    `depth`. Unmodelled, so that without the bound it is `ET.tostring` under `_verbatim` that
+    recursed — the second of the two readers the bound protects."""
+    body = (FIXTURES / "standalone_basic_track.nits.xml").read_text()
+    chain = "<extension>" * (depth - 1) + "</extension>" * (depth - 1)
+    assert body.count("</NITSRoot>") == 1
+    return body.replace("</NITSRoot>", chain + "</NITSRoot>").encode()
+
+
+def test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it():
+    """The `max_depth` refusal (2026-09-16). expat builds a tree of any depth without recursing;
+    `_read_element` and `ET.tostring` both recurse once per level; so before the bound a thousand
+    nested elements — 7 KB against a 1 MiB `max_input_bytes` — raised `RecursionError`, a crash
+    class. `pytest.raises(NitsError)` does not catch one, so a regression is red, never green."""
+    bound = Stanag4676Adapter.metadata.capabilities.limits.max_depth
+    assert bound == nits.NITS_MAX_DEPTH, "the manifest publishes the number the parser enforces"
+    for depth in (bound + 1, 1000):
+        document = _nested_document(depth)
+        assert len(document) < Stanag4676Adapter.metadata.capabilities.limits.max_input_bytes
+        with pytest.raises(NitsError, match=f"nests {depth} elements deep.*max_depth = {bound}"):
+            adapter().to_cdm(document)
+
+
+def test_a_document_at_the_declared_depth_still_translates():
+    """A document AT the bound translates, and every shipped fixture sits far under it: the class
+    model's deepest path is seven classes, the fixtures read seven or eight, the bound is 64."""
+    bound = Stanag4676Adapter.metadata.capabilities.limits.max_depth
+    objects = adapter().to_cdm(_nested_document(bound))
+    assert entities(objects) and tracks(objects)
+    deepest = max(nits._tree_depth(nits.ET.fromstring(path.read_bytes())) for path in XML)
+    assert deepest == 8 and deepest < bound
+
+
 def test_an_abstract_shape_with_no_concrete_type_is_refused():
     xml = (XML[0].read_bytes()
            .replace(b"<NITSRoot", b"<NITSRoot", 1))

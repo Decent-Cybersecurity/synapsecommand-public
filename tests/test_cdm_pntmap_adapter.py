@@ -194,6 +194,17 @@ def test_a_non_json_input_type_is_refused_clearly():
         _adapter().to_cdm(42)
 
 
+@pytest.mark.parametrize("payload", [b"[]", b'"an alert"', b"42", b"null",
+                                     json.dumps([{"alert_id": "X"}]).encode()])
+def test_a_json_document_that_is_not_an_object_is_refused_as_a_value_error(payload):
+    """A refusal, not a stumble (2026-09-16). Before this check a bare array reached
+    `alert.get(...)` and came out as an `AttributeError` from inside the decoder — not a crash
+    class, so checks H and O still passed, but not the `ValueError` every other refusal this
+    adapter makes, and not one a caller catching the documented class would see."""
+    with pytest.raises(ValueError, match="PNTMAP payload is a JSON .*, not an object"):
+        _adapter().to_cdm(payload)
+
+
 def test_live_mode_marks_objects_live_and_changes_the_symbol_context():
     entity, event = PntmapAdapter(clock=times.frozen_clock(), synthetic=False).to_cdm(
         _fixture("jamming_gulf_of_riga"))

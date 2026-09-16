@@ -142,6 +142,32 @@ NITS_VERSION = "B.2"
 #: and a different security model — a separate adapter, not a mode.
 REFUSED_VERSION_PREFIX = "A."
 
+#: How deep a NITS document may nest before it is refused — §3.5's `max_depth`, declared in the
+#: metadata below FROM this constant so the number the manifest publishes is the number
+#: `parse_document` enforces (2026-09-16).
+#:
+#: WHY A BOUND, AND WHY IT IS NOT THE PARSER'S. libexpat and `ET.fromstring` build a tree of any
+#: depth without recursing — a document nested fifty thousand elements deep parses — and what
+#: walks the tree afterwards recurses once per level: `_read_element` for every modelled class,
+#: and `ET.tostring` inside `_verbatim` for every unmodelled or label element it carries. So
+#: before this bound a `<NITSRoot>` nesting a thousand empty elements — about 7 KB, against a
+#: `max_input_bytes` of 1 MiB — raised `RecursionError`, one of the four crash classes the
+#: conformance suite refuses to count as a refusal (`suite.CRASH_CLASSES`), from whichever of the
+#: two walkers reached it first. A bound the manifest publishes is a fact a consumer can read;
+#: the interpreter's recursion limit is not.
+#:
+#: WHY 64. The deepest path the Edition B class model (`MODEL`) admits from the root is seven
+#: classes — NITSRoot › TrackMessage › TrackData › TrackSegment › TrackPoint › Ellipsoid ›
+#: CovarianceMatrix — so a conformant document's element depth is eight at its deepest scalar,
+#: and every NITS fixture in this package reads seven or eight. AEDP-12 states no maximum, and a
+#: STANAG 4774 label or an unmodelled extension may nest below any element, so the figure is an
+#: IMPLEMENTATION CAP and `declared_because` says so: eight times the deepest conformant path,
+#: and shallow enough that the walkers' deepest recursion stays under two hundred Python frames —
+#: inside the interpreter's default limit of a thousand from any call depth the harness, the
+#: suite or a pytest run puts beneath it. Only the XML path is measured: the parsed-dict twin is
+#: read by class name against `MODEL` and never descended past what the model names.
+NITS_MAX_DEPTH = 64
+
 
 class NitsError(ValueError):
     """A NITS document this adapter refuses to translate. Every message quotes what it read."""
@@ -728,6 +754,17 @@ def _verbatim(element: ET.Element) -> str:
     return ET.tostring(element, encoding="unicode").strip()
 
 
+def _tree_depth(root: ET.Element) -> int:
+    """Element nesting of a parsed tree, counted with a stack and never by recursion — a reader
+    that recursed to find out whether recursing is safe would answer by crashing."""
+    deepest, pending = 1, [(root, 1)]
+    while pending:
+        element, depth = pending.pop()
+        deepest = max(deepest, depth)
+        pending.extend((child, depth + 1) for child in element)
+    return deepest
+
+
 #: A confidentiality label, matched in the SOURCE TEXT rather than rebuilt from the parse tree.
 #:
 #: This is not an optimisation. `ET.tostring()` on a parsed element re-renders the namespace
@@ -748,6 +785,16 @@ def parse_document(payload: bytes | str) -> dict:
         root = ET.fromstring(payload)
     except ET.ParseError as e:
         raise NitsError(f"not well-formed XML: {e}") from e
+    # Measured BEFORE either walker runs, because the walkers are what recurse: expat has
+    # already built the whole tree without recursing, however deep it is (NITS_MAX_DEPTH).
+    depth = _tree_depth(root)
+    if depth > NITS_MAX_DEPTH:
+        raise NitsError(
+            f"document nests {depth} elements deep and this adapter declares max_depth = "
+            f"{NITS_MAX_DEPTH}. Refused before anything recurses into it: the declaration is at "
+            f"capabilities.limits, its basis at capabilities.limits.declared_because"
+            f"['max_depth'], and both readers that follow the parse descend one frame per level"
+        )
     if _local(root.tag) != "NITSRoot":
         raise NitsError(
             f"root element is <{_local(root.tag)}>, and Ed B §B.1 requires <NITSRoot>. An "
@@ -1401,13 +1448,11 @@ class Stanag4676Adapter(Adapter):
             ],
             limits=Limits(
                 max_input_bytes=1048576,
-                max_depth=None,
+                max_depth=NITS_MAX_DEPTH,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_depth":
-                        "NITS is XML and does nest; no depth bound is declared yet",
                     "max_objects":
                         "no bound is enforced by this adapter today; the parser-safety "
                         "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
@@ -1420,6 +1465,30 @@ class Stanag4676Adapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
                 declared_because={
+                    "max_depth": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "NITS is XML, it nests, and AEDP-12 states no maximum depth. 64 is "
+                            "chosen from the parser audit of 2026-09-16: `ET.fromstring` builds "
+                            "a tree of any depth without recursing, both readers after it "
+                            "(`_read_element`, and `ET.tostring` under `_verbatim`) recurse "
+                            "once per level, and a `<NITSRoot>` nesting a thousand empty "
+                            "elements — about 7 KB — raised `RecursionError` under a 1 MiB "
+                            "`max_input_bytes`. The deepest path the Edition B class model "
+                            "admits is seven classes, so a conformant document reads eight "
+                            "elements deep at its deepest scalar and every fixture in this "
+                            "package reads seven or eight; 64 is eight times that and keeps "
+                            "the readers under two hundred frames. This is an IMPLEMENTATION "
+                            "CAP (`NITS_MAX_DEPTH`, `adapters/stanag4676.py`) and is NOT the "
+                            "format's normative maximum."),
+                        enforced_at=(
+                            "`parse_document` measures the element tree without recursing, "
+                            "immediately after `ET.fromstring` and before `_read_element` "
+                            "walks it, and refuses with `NitsError` naming both numbers. The "
+                            "parsed-dict twin is not measured: it is read by class name "
+                            "against `MODEL` and never descended past what the model names"),
+                        test="tests/test_cdm_stanag4676_adapter.py::test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it",
+                    ),
                     "max_input_bytes": LimitBasis(
                         kind=LimitKind.IMPLEMENTATION_CAP,
                         source=(
@@ -1459,11 +1528,13 @@ class Stanag4676Adapter(Adapter):
             "pipeline attaches it to the GitHub Release. `evidence.available` is true because "
             "the records for 2.1.2 are attached to the `v2.1.2` Release and retrievable by a "
             "third party, and it says nothing about what the wheel contains",
-            "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
+            "of §3.5's five resource limits this adapter enforces TWO — `max_input_bytes`, "
             "declared in `capabilities.limits` with its basis beside it and refused before "
-            "decode by the base class (round P5). The other four are still absent, each with "
-            "its own reason in `capabilities.limits.absent_because`; a depth, object-count, "
-            "decompression or wall-clock bound is not enforced here today",
+            "decode by the base class (round P5), and `max_depth`, declared the same way and "
+            "refused by `parse_document` immediately after the XML parse and before either "
+            "reader recurses into the tree (2026-09-16). The other three are still absent, "
+            "each with its own reason in `capabilities.limits.absent_because`; an "
+            "object-count, decompression or wall-clock bound is not enforced here today",
             "XML is parsed with the standard library's `xml.etree.ElementTree` and NOT with "
             "`defusedxml`, which is not a dependency of this package (M's F5.5 ruling, round "
             "P5). An EXTERNAL entity is not resolved and an external DTD is not fetched — the "

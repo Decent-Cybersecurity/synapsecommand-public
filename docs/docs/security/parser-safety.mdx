@@ -43,19 +43,38 @@ hardened against a figure the report does not print.
 
 ### What is enforced today
 
-`max_input_bytes` is declared and enforced on **all fourteen**. The other four are declared absent
-with a reason on all fourteen; none is enforced yet, and no page here says otherwise.
+`max_input_bytes` is declared and enforced on **all fourteen**. `max_depth` is declared and enforced
+on the **two XML adapters**, `tak` and `stanag4676`, since 2026-09-16. The other three bounds are
+declared absent with a reason on all fourteen, and `max_depth` on the other twelve; none of those is
+enforced yet, and no page here says otherwise.
 
-Enforcement is in the base class, at class-definition time:
+Enforcement of `max_input_bytes` is in the base class, at class-definition time:
 `Adapter.__init_subclass__` wraps each subclass's own `to_cdm`, so the bound is checked before any
 adapter's decoder runs, and an adapter cannot forget it while remaining an `Adapter`. A payload
 over the bound raises `InputTooLarge`, whose message names both numbers.
 
-> The bound is on **octets**. A `dict` — the `.parsed.json` twin that ships beside a byte fixture —
-> is **not** bounded, and this is a rule rather than an oversight: a caller holding a parsed
-> document has already done the parse the bound exists to prevent. ADS-B's 14 wire octets serialise
-> to over 400 as a decoded twin, so a bound applied to twins would refuse the format's own legal
-> messages.
+Enforcement of `max_depth` is in the two adapters themselves, immediately after `ET.fromstring`
+returns and before anything walks the tree, and the reason it is there and not in the base class
+is where the danger is. libexpat builds a tree of **any** depth without recursing — a document
+nested fifty thousand elements deep parses — and everything that walks the tree afterwards recurses
+once per level. So until 2026-09-16 a *valid* CoT event or NITS document nesting a thousand empty
+elements — some 7 KB, against a 1 MiB `max_input_bytes` — made both adapters raise
+`RecursionError`, which is one of the conformance suite's four crash classes and not a refusal.
+Each adapter now measures the tree with a stack the moment it exists and refuses past **64** with
+its own `ValueError` naming both numbers. The figure is an **implementation cap** and each
+`declared_because` says so: every CoT fixture in the package nests three elements deep, the deepest
+path AEDP-12's class model admits is seven classes (eight elements at the deepest scalar), and
+sixty-four keeps every walker under two hundred Python frames from any call depth beneath it. Each
+adapter also ships a `malformed/` payload nested one thousand deep, so check **H** records the
+refusal on every run.
+
+> `max_input_bytes` is on **octets**. A `dict` — the `.parsed.json` twin that ships beside a byte
+> fixture — is **not** bounded by it, and this is a rule rather than an oversight: a caller holding
+> a parsed document has already done the parse the bound exists to prevent. ADS-B's 14 wire octets
+> serialise to over 400 as a decoded twin, so a bound applied to twins would refuse the format's
+> own legal messages. `max_depth` is different in kind: the walk it protects happens *after* any
+> parse, so `tak` holds the dict form to the same number, and `stanag4676` does not measure its
+> twin only because that reader never descends past what the class model names.
 
 ### The fourteen declarations
 
@@ -92,6 +111,10 @@ Part 2's AIXM and KML are XML, and so are two adapters that already ship — `ta
 > reference and an entity-expansion bomb, and **MUST** record its parser choice as a limitation
 > where that choice leaves a property to the runtime.
 
+> An adapter parsing XML **MUST** declare `max_depth` and refuse a deeper document before anything
+> walks the tree. The parser is not what recurses; the walk is, and a document inside
+> `max_input_bytes` can be deep enough to exhaust the interpreter's stack.
+
 ### What the standard library actually does — measured, not recited
 
 These are readings taken in round P5 on CPython 3.14.7 with **libexpat 2.7.4**, not claims from
@@ -103,6 +126,7 @@ the documentation:
 | external DTD (`<!DOCTYPE foo SYSTEM "http://…">`) | **not fetched** — the document parses, the URL is never opened |
 | small internal entity (3 levels, ×10) | **expanded**, silently, to 3 000 characters |
 | entity bomb (6 levels, ×10) | **refused** — `ParseError: limit on input amplification factor (from DTD and entities) breached` |
+| fifty thousand nested elements (read 2026-09-16) | **parsed** — the tree is built without recursing; what raised `RecursionError` was the adapter's own walk over it, which is what `max_depth` now bounds |
 
 Two conclusions follow, and both matter more than the reassuring half.
 

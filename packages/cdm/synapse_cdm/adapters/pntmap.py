@@ -150,6 +150,13 @@ GEOLOCATION = {
 }
 
 
+#: The refusal for a JSON document of the wrong SHAPE — `[...]`, `"..."`, a number or `null` where
+#: one alert object was expected. A `ValueError`, like every other refusal here (2026-09-16).
+_NOT_AN_OBJECT = ("PNTMAP payload is a JSON {kind}, not an object. An alert is one object carrying "
+                  "alert_id, alert_time and interference at its top level; an array, a string, a "
+                  "number or null is not one and is refused rather than read")
+
+
 class PntmapAdapter(Adapter):
     name = "pntmap"
     version = "1.0.0"
@@ -389,10 +396,24 @@ class PntmapAdapter(Adapter):
 
     @staticmethod
     def _as_dict(raw: bytes | dict) -> dict:
+        """JSON text or a dict -> the alert object. A JSON value that is not an object is REFUSED
+        here, with a `ValueError` like every other refusal this adapter makes (2026-09-16):
+        before this check a bare array reached `alert.get(...)` and surfaced as an
+        `AttributeError` from inside the decoder, which is the "raised a KeyError from three
+        frames down" the conformance suite's check H records as a different fact from a refusal.
+        A `list` object gets the same refusal as the text `[...]`, because it is what the
+        fixture loader hands over for a JSON array and which layer parsed it changes nothing
+        about the shape; any other object that is not a dict is still a `TypeError`.
+        """
         if isinstance(raw, (bytes, bytearray, str)):
-            return json.loads(raw)
+            document = json.loads(raw)
+            if not isinstance(document, dict):
+                raise ValueError(_NOT_AN_OBJECT.format(kind=type(document).__name__))
+            return document
         if isinstance(raw, dict):
             return raw
+        if isinstance(raw, list):
+            raise ValueError(_NOT_AN_OBJECT.format(kind="list"))
         raise TypeError(f"PNTMAP adapter takes JSON bytes or a dict, got {type(raw).__name__}")
 
     @staticmethod

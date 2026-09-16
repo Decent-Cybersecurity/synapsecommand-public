@@ -9,11 +9,16 @@
       "limits": {
         "absent_because": {
           "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
-          "max_depth": "NITS is XML and does nest; no depth bound is declared yet",
           "max_objects": "no bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)",
           "max_parse_seconds": "no wall-clock bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)"
         },
         "declared_because": {
+          "max_depth": {
+            "enforced_at": "`parse_document` measures the element tree without recursing, immediately after `ET.fromstring` and before `_read_element` walks it, and refuses with `NitsError` naming both numbers. The parsed-dict twin is not measured: it is read by class name against `MODEL` and never descended past what the model names",
+            "kind": "implementation_cap",
+            "source": "NITS is XML, it nests, and AEDP-12 states no maximum depth. 64 is chosen from the parser audit of 2026-09-16: `ET.fromstring` builds a tree of any depth without recursing, both readers after it (`_read_element`, and `ET.tostring` under `_verbatim`) recurse once per level, and a `<NITSRoot>` nesting a thousand empty elements \u2014 about 7 KB \u2014 raised `RecursionError` under a 1 MiB `max_input_bytes`. The deepest path the Edition B class model admits is seven classes, so a conformant document reads eight elements deep at its deepest scalar and every fixture in this package reads seven or eight; 64 is eight times that and keeps the readers under two hundred frames. This is an IMPLEMENTATION CAP (`NITS_MAX_DEPTH`, `adapters/stanag4676.py`) and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_stanag4676_adapter.py::test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it"
+          },
           "max_input_bytes": {
             "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs",
             "kind": "implementation_cap",
@@ -22,7 +27,7 @@
           }
         },
         "max_decompressed_bytes": null,
-        "max_depth": null,
+        "max_depth": 64,
         "max_input_bytes": 1048576,
         "max_objects": null,
         "max_parse_seconds": null
@@ -52,7 +57,7 @@
       "the binary encoding of AEDP-12.1 Annex F is not implemented",
       "leftovers are parked in `Entity.attributes` / `Event.payload` under `source_extras` (`lossless.residual()`), not in the origin-identifying container ARCHITECTURE.md \u00a75 gives to P3 \u2014 the Part 1 stance that section rules for the adapters already shipped",
       "the evidence RECORD for this adapter is not IN the distribution: `evidence/` is untracked and unpackaged, CI generates the set on every run and the release pipeline attaches it to the GitHub Release. `evidence.available` is true because the records for 2.1.2 are attached to the `v2.1.2` Release and retrievable by a third party, and it says nothing about what the wheel contains",
-      "of \u00a73.5's five resource limits this adapter enforces ONE \u2014 `max_input_bytes`, declared in `capabilities.limits` with its basis beside it and refused before decode by the base class (round P5). The other four are still absent, each with its own reason in `capabilities.limits.absent_because`; a depth, object-count, decompression or wall-clock bound is not enforced here today",
+      "of \u00a73.5's five resource limits this adapter enforces TWO \u2014 `max_input_bytes`, declared in `capabilities.limits` with its basis beside it and refused before decode by the base class (round P5), and `max_depth`, declared the same way and refused by `parse_document` immediately after the XML parse and before either reader recurses into the tree (2026-09-16). The other three are still absent, each with its own reason in `capabilities.limits.absent_because`; an object-count, decompression or wall-clock bound is not enforced here today",
       "XML is parsed with the standard library's `xml.etree.ElementTree` and NOT with `defusedxml`, which is not a dependency of this package (M's F5.5 ruling, round P5). An EXTERNAL entity is not resolved and an external DTD is not fetched \u2014 the parser never reads the external subset \u2014 but an INTERNAL entity IS expanded, and what stops an entity bomb is libexpat's own input-amplification limit rather than anything in this package. That protection belongs to the RUNTIME's expat build (2.4.0 and later, on by default), so a deployment on an older expat loses it without this package changing; `max_input_bytes` bounds the document either way. tests/test_cdm_parser_safety.py reads the linked version and takes every one of these readings rather than asserting them"
     ],
     "limitations_empty_reason": null,

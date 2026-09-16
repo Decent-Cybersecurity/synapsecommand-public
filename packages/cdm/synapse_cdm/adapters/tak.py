@@ -65,6 +65,12 @@ does not resolve external entities, but expat does expand INTERNAL ones, which i
 carrying one is refused before the parser sees it. Refusing is right rather than
 conservative: the alternative is an adapter that can be made to consume all available memory
 by a well-formed-looking message.
+
+The parse is bounded in DEPTH as well as in size (2026-09-16). expat builds a tree of any
+depth without recursing; every walk after it recurses once per level; so a document deeper
+than `COT_MAX_DEPTH` is refused the moment the tree exists and before anything descends it,
+and the dict form is held to the same number. That constant is the declared `max_depth` and
+carries the reasoning.
 """
 from __future__ import annotations
 
@@ -94,6 +100,36 @@ SYSTEM = "TAK"
 # large-but-real altitude is unknown, which is a judgement, and 9999999 is the documented
 # value rather than an approximate one.
 COT_UNKNOWN = 9999999.0
+
+# How deep a CoT document may nest before it is refused — §3.5's `max_depth`, declared in the
+# metadata below FROM this constant so the number the manifest publishes is the number the
+# parser enforces (2026-09-16).
+#
+# WHY A BOUND, AND WHY IT IS NOT THE PARSER'S. libexpat and `ET.fromstring` build a tree of any
+# depth without recursing — a document nested fifty thousand elements deep parses — and
+# everything that walks the tree afterwards recurses once per level: `_element_to_dict` here,
+# `lossless.residual` over the dict it produces, and the serialisers that dump what was parked.
+# So before this bound a VALID event whose `<detail>` nested a thousand empty elements — about
+# 7 KB, against a `max_input_bytes` of 1 MiB — raised `RecursionError`, which is one of the four
+# crash classes the conformance suite refuses to count as a refusal (`suite.CRASH_CLASSES`).
+# Rewriting one walker iteratively would have left the others, and a bound the manifest
+# publishes is a fact a consumer can read where an interpreter's recursion limit is not.
+#
+# WHY 64. Every CoT fixture in this package nests THREE elements deep (`event` › `detail` › a
+# child), and the base-event schema constrains nothing below `<detail>`, so the figure is an
+# IMPLEMENTATION CAP and `declared_because` says so: twenty times the deepest detail block this
+# adapter has met, and shallow enough that the walkers' deepest recursion stays under two
+# hundred Python frames — inside the interpreter's default limit of a thousand from any call
+# depth the harness, the suite or a pytest run puts beneath it.
+#
+# THE SAME NUMBER BOUNDS THE PARSED FORM. `to_cdm` also takes the dict the XML parses to, as
+# bytes of JSON or as a dict, and the walkers after the parse recurse over THAT, so the dict
+# form is measured too — one level per dict or list, which is what they descend. The dict form
+# of a document runs at most two levels deeper than the document (the wrapper `_parse_cot` puts
+# round the root, and a list where siblings repeat), so a twin sits that much closer to the
+# bound than its XML; at sixty-four against a fixture set that nests three, that is not a
+# difference this adapter will meet, and it is stated rather than papered over.
+COT_MAX_DEPTH = 64
 
 # CoT `type` field 3 — the battle dimension — to what kind of thing the CDM says it is.
 # Only the dimensions the coverage table names, plus the ones whose omission would force a
@@ -185,13 +221,11 @@ class TakAdapter(Adapter):
             ],
             limits=Limits(
                 max_input_bytes=1048576,
-                max_depth=None,
+                max_depth=COT_MAX_DEPTH,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_depth":
-                        "CoT is XML and does nest; no depth bound is declared yet",
                     "max_objects":
                         "no bound is enforced by this adapter today; the parser-safety "
                         "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
@@ -204,6 +238,28 @@ class TakAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
                 declared_because={
+                    "max_depth": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "Cursor-on-Target is XML, it nests, and the base-event schema "
+                            "constrains nothing below `<detail>`, so no document states a "
+                            "maximum depth. 64 is chosen from the parser audit of 2026-09-16: "
+                            "`ET.fromstring` builds a tree of any depth without recursing, "
+                            "every walk after it recurses once per level, and a valid event "
+                            "nesting a thousand empty elements — about 7 KB — raised "
+                            "`RecursionError` under a 1 MiB `max_input_bytes`. Every CoT "
+                            "fixture in this package nests three deep; 64 is twenty times "
+                            "that and keeps the walkers under two hundred frames. This is an "
+                            "IMPLEMENTATION CAP (`COT_MAX_DEPTH`, `adapters/tak.py`) and is "
+                            "NOT the format's normative maximum."),
+                        enforced_at=(
+                            "`_parse_cot` measures the element tree without recursing, "
+                            "immediately after `ET.fromstring` and before `_element_to_dict` "
+                            "walks it; `_as_parsed` measures the dict form the same way for "
+                            "a JSON or dict payload, before anything descends it. Both "
+                            "refuse with `ValueError`, naming both numbers"),
+                        test="tests/test_cdm_tak_adapter.py::test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it",
+                    ),
                     "max_input_bytes": LimitBasis(
                         kind=LimitKind.IMPLEMENTATION_CAP,
                         source=(
@@ -248,10 +304,12 @@ class TakAdapter(Adapter):
             "pipeline attaches it to the GitHub Release. `evidence.available` is true because "
             "the records for 2.1.2 are attached to the `v2.1.2` Release and retrievable by a "
             "third party, and it says nothing about what the wheel contains",
-            "of §3.5's five resource limits this adapter enforces ONE — `max_input_bytes`, "
+            "of §3.5's five resource limits this adapter enforces TWO — `max_input_bytes`, "
             "declared in `capabilities.limits` with its basis beside it and refused before "
-            "decode by the base class (round P5). The other four are still absent, each with "
-            "its own reason in `capabilities.limits.absent_because`; a depth, object-count, "
+            "decode by the base class (round P5), and `max_depth`, declared the same way and "
+            "refused by this module immediately after the XML parse and before anything "
+            "recurses into the tree (2026-09-16). The other three are still absent, each with "
+            "its own reason in `capabilities.limits.absent_because`; an object-count, "
             "decompression or wall-clock bound is not enforced here today",
             "XML is parsed with the standard library's `xml.etree.ElementTree` and NOT with "
             "`defusedxml`, which is not a dependency of this package (M's F5.5 ruling, round "
@@ -612,6 +670,7 @@ class TakAdapter(Adapter):
     def _as_parsed(self, raw: bytes | dict) -> dict:
         """XML bytes -> the parsed dict form; a dict passes straight through."""
         if isinstance(raw, dict):
+            _refuse_deeper_than(COT_MAX_DEPTH, _document_depth(raw), "container")
             return raw
         if isinstance(raw, (bytes, bytearray, str)):
             text = raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
@@ -620,7 +679,9 @@ class TakAdapter(Adapter):
                 # A .json fixture handed over as bytes. Accepted so the parsed form can be
                 # replayed either way, and distinguished by inspection rather than by suffix,
                 # because the harness does not tell an adapter what it opened.
-                return json.loads(text)
+                document = json.loads(text)
+                _refuse_deeper_than(COT_MAX_DEPTH, _document_depth(document), "container")
+                return document
             return _parse_cot(text)
         raise TypeError(
             f"TAK adapter takes CoT XML bytes, a JSON string or a parsed dict, got "
@@ -668,7 +729,48 @@ def _parse_cot(text: str) -> dict:
         root = ET.fromstring(text)
     except ET.ParseError as e:
         raise ValueError(f"CoT payload is not well-formed XML: {e}") from e
+    # Measured BEFORE the walk below, because the walk is what recurses: expat has already built
+    # the whole tree without recursing, however deep it is (see COT_MAX_DEPTH, 2026-09-16).
+    _refuse_deeper_than(COT_MAX_DEPTH, _tree_depth(root), "element")
     return {root.tag: _element_to_dict(root)}
+
+
+def _tree_depth(root: ET.Element) -> int:
+    """Element nesting of a parsed tree, counted with a stack and never by recursion — a reader
+    that recursed to find out whether recursing is safe would answer by crashing."""
+    deepest, pending = 1, [(root, 1)]
+    while pending:
+        element, depth = pending.pop()
+        deepest = max(deepest, depth)
+        pending.extend((child, depth + 1) for child in element)
+    return deepest
+
+
+def _document_depth(document: Any) -> int:
+    """Container nesting of the dict form — one level per dict or list, which is what every walk
+    after the parse descends — counted the same way `_tree_depth` counts elements."""
+    deepest, pending = 0, [(document, 1)]
+    while pending:
+        node, depth = pending.pop()
+        if isinstance(node, dict):
+            deepest = max(deepest, depth)
+            pending.extend((child, depth + 1) for child in node.values())
+        elif isinstance(node, list):
+            deepest = max(deepest, depth)
+            pending.extend((child, depth + 1) for child in node)
+    return deepest
+
+
+def _refuse_deeper_than(bound: int, depth: int, unit: str) -> None:
+    """The refusal, worded like `adapter.InputTooLarge`'s: both numbers, and where the bound is
+    declared, so a caller who hits it can read the basis rather than guess at it."""
+    if depth > bound:
+        raise ValueError(
+            f"CoT payload nests {depth} {unit}s deep and this adapter declares max_depth = "
+            f"{bound}. Refused before anything recurses into it: the declaration is at "
+            f"capabilities.limits, its basis at capabilities.limits.declared_because"
+            f"['max_depth'], and every walk that follows the parse descends one frame per level"
+        )
 
 
 def _element_to_dict(element: ET.Element) -> Any:

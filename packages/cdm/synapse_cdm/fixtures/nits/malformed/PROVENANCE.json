@@ -3,6 +3,14 @@
   "fixtures": [
     {
       "classification": "PUBLIC",
+      "file": "deeply_nested.nits.xml",
+      "operational_data": false,
+      "origin": "Synthetic malformed payload for the Conformance Suite's check H (\u00a721), written on 2026-09-16 when the adapter gained its max_depth bound: this directory's own synthetic standalone_basic_track fixture with one unmodelled element nested one thousand deep, so that the refusal check H records is the depth refusal and not the RecursionError it replaced.",
+      "personal_data": false,
+      "synthetic": true
+    },
+    {
+      "classification": "PUBLIC",
       "file": "not_well_formed_xml.nits.xml",
       "operational_data": false,
       "origin": "Synthetic malformed payloads for the Conformance Suite's check H (\u00a721), written by round P2 alongside this directory's own README.md, which states \"Malformed nits payloads \u2014 every one synthetic, every one refused\" and that checks A\u2013F never see them.",

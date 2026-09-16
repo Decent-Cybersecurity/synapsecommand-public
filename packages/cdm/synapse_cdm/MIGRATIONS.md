@@ -336,12 +336,16 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 15 files** — `MIGRATIONS.md`, this section being what moved
-in it, and the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the
-two rounds before it did not. Everything else these rounds touched ships in nothing: the release
-workflow, the witness builder it runs and that builder's test module, the generated manifests under
-`manifests/`, `tests/test_cdm_evidence.py`, the ledger, the documentation page and the witness
-record.
+**What moved inside the distribution: 24 files** — `MIGRATIONS.md`, this section being what moved
+in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
+rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
+parser-safety record at the end of this section moves again; and nine files under three
+`malformed/` fixture directories that record added — `tak/malformed/deeply_nested.xml`,
+`nits/malformed/deeply_nested.nits.xml`, `pntmap/malformed/a_json_list.json`, and the `README.md`
+and `PROVENANCE.json` beside each. Everything else these rounds touched ships in nothing: the
+release workflow, the witness builder it runs and that builder's test module, the generated
+manifests under `manifests/`, the test modules under `tests/`, the ledger, the documentation pages
+and the witness record.
 
 **ROUND PW's RECORD, 2026-09-12 — the witness record's approval instant comes from the deployment's
 own status history, because the endpoint the builder asked carries no instant at all.** Unit:
@@ -484,6 +488,70 @@ not in the distribution and not in the repository, "which is why every adapter s
 `evidence.available: false`". The premise is still true and the consequence is not — what the field
 now reports is the attachment to the `v2.1.2` Release, not the contents of the wheel. That sentence
 too stays where it is, in its own tense, corrected here.
+
+**THE PARSER-SAFETY RECORD, 2026-09-16 — the two XML adapters declare and enforce `max_depth`,
+and pntmap refuses a JSON document that is not an object with a `ValueError` and not with a
+stumble.** Units: `synapse_cdm/adapters/tak.py`, `synapse_cdm/adapters/stanag4676.py` and
+`synapse_cdm/adapters/pntmap.py`, each changed on functional lines; the three `malformed/`
+directories named in this section's opening sentence, each gaining one payload; and
+`synapse_cdm/MIGRATIONS.md`, PATCH by the shipped-document row. A `malformed/` payload is not a
+fixture set — the harness never selects from that directory and the gate's MINOR row names "a new
+directory under `synapse_cdm/fixtures/`", of which there is none.
+
+**THE DEFECT, MEASURED.** libexpat and `ET.fromstring` build a tree of ANY depth without recursing
+— a document nested fifty thousand elements deep parses — and everything the two XML adapters did
+with the tree afterwards recursed once per level: `_element_to_dict` in `tak.py`, `_read_element`
+and `ET.tostring` under `_verbatim` in `stanag4676.py`, and `lossless.residual` over the dict the
+first produces. So a VALID CoT event or NITS document nesting a thousand empty elements — about
+7 KB, against the 1 MiB `max_input_bytes` both declare — raised `RecursionError`, which is one of
+the four crash classes the conformance suite refuses to count as a refusal (`suite.CRASH_CLASSES`)
+and which `SECURITY.md` puts in scope as "a payload that makes one crash". Both manifests disclosed
+the gap — `max_depth` was absent with the reason "no depth bound is declared yet" — and nothing
+exercised it: the malformed sets held a truncated and a not-well-formed payload each, and
+`tests/test_cdm_parser_safety.py` asserted "not `RecursionError`" only for the XXE and entity-bomb
+cases. The pntmap half is smaller and of the same family: `_as_dict` returned whatever `json.loads`
+produced, so a bare array, string, number or `null` reached `alert.get(...)` and surfaced as an
+`AttributeError` from inside the decoder — not a crash class, so checks H and O passed, but not the
+`ValueError` every other refusal in this repository raises and `adapter.InputTooLarge`'s docstring
+rests on.
+
+**THE REPAIR, AND WHERE THE BOUND SITS.** Each XML adapter now declares `max_depth = 64` in
+`capabilities.limits` from one module constant — `COT_MAX_DEPTH`, `NITS_MAX_DEPTH` — with its basis
+in `declared_because`, and measures the tree WITH A STACK the moment `ET.fromstring` returns, before
+anything recurses into it; past the bound it raises its own refusal class (`ValueError` in `tak`,
+`NitsError` in `stanag4676`) naming both numbers. The bound is the adapters' and not the base
+class's, because the base class never holds the tree, and it is a bound rather than an iterative
+rewrite of one walker because three things recurse and a published number is a fact a consumer can
+read where an interpreter's recursion limit is not. `tak` holds the dict form to the same number,
+because `to_cdm` takes the parsed twin as JSON bytes or as a dict and the walk after the parse is
+the same walk; `stanag4676` measures only the XML, because its dict reader is driven by the class
+model and never descends past what the model names. Sixty-four is an implementation cap and both
+manifests say so: every CoT fixture nests three elements deep, the deepest path AEDP-12's class
+model admits is seven classes (eight elements at the deepest scalar, which is what every NITS
+fixture reads), and sixty-four keeps every walker under two hundred Python frames from any call
+depth beneath it. `pntmap._as_dict` now refuses a non-object JSON value, and a `list` object — what
+the fixture loader hands over for a JSON array — with one `ValueError`; a non-JSON object type is
+still the `TypeError` it was. Each of the three malformed directories gains the payload that
+exercises the change, so check H records the refusal on every run, and the parser-safety page
+states the fifth reading beside the four from round P5. The manifests are regenerated from the
+metadata, and the parser-safety test module, the two XML adapter test modules and pntmap's each
+gain the tests the manifests' `declared_because['max_depth'].test` fields name.
+
+**WHAT DID NOT MOVE.** No wire field, no golden file, no fixture the harness selects, no
+`SCHEMA_VERSION`; every previously accepted payload in the package is accepted still, and a
+document deeper than sixty-four elements was never a document this package translated — it was one
+it crashed on. The three adapter classes carry these changes under the PATCH ruling round PE
+recorded for them above: the ruling is per unit per arc, and this record states what the second
+change to each of those units was so that the ruling is not read as covering only the first.
+
+**Bump ruling.** The gate finds two units it cannot classify from the table — a refusal added on
+functional lines, no name added or removed, no roster behind it — and both are PATCH, in M's words
+for the same class on 2026-09-12: no Python surface is added, removed or renamed, and no consumer's
+call changes. `synapse_cdm/adapters/tak.py:_parse_cot` — PATCH;
+`synapse_cdm/adapters/stanag4676.py:parse_document` — PATCH. The arc's floor is decided elsewhere
+and is not a ruling: the two constants the declarations are read from are public top-level names,
+and the gate derives MINOR from their appearance by its own row, so the pending arc reads MINOR
+from this commit onwards and the release round takes that derivation as it finds it.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 

@@ -387,6 +387,48 @@ def test_the_adapter_refuses_a_type_it_cannot_take():
         _adapter().to_cdm(42)
 
 
+def _nested_event(depth: int) -> str:
+    """A VALID contact atom whose `<detail>` nests to a total element depth of `depth`."""
+    inner = "<n>" * (depth - 2) + "</n>" * (depth - 2)
+    return ('<event uid="X" type="a-f-G" time="2026-01-01T00:00:00Z" start="2026-01-01T00:00:00Z" '
+            'stale="2026-01-01T00:01:00Z" how="m-g"><point lat="1" lon="2"/>'
+            f"<detail>{inner}</detail></event>")
+
+
+def test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it():
+    """The `max_depth` refusal (2026-09-16), on every form `to_cdm` takes.
+
+    expat builds a tree of any depth without recursing and every walk after it recurses once per
+    level, so before the bound a thousand nested elements — 7 KB, against a 1 MiB
+    `max_input_bytes` — raised `RecursionError`, one of the suite's crash classes. The assertion
+    is `ValueError` and nothing else: `pytest.raises(ValueError)` does not catch a
+    `RecursionError`, so a regression here is a red test and never a green one.
+    """
+    bound = TakAdapter.metadata.capabilities.limits.max_depth
+    assert bound == tak.COT_MAX_DEPTH, "the manifest publishes the number the parser enforces"
+    for depth in (bound + 1, 1000):
+        document = _nested_event(depth)
+        assert len(document.encode()) < TakAdapter.metadata.capabilities.limits.max_input_bytes
+        with pytest.raises(ValueError, match=f"nests {depth} elements deep.*max_depth = {bound}"):
+            _adapter().to_cdm(document.encode())
+    # The parsed form is held to the same number: a JSON twin, as bytes and as a dict.
+    twin = tak._parse_cot(_nested_event(bound))
+    twin["event"]["detail"]["n"] = json.loads(("{\"n\":" * 1000) + "{}" + ("}" * 1000))
+    for payload in (json.dumps(twin).encode(), twin):
+        with pytest.raises(ValueError, match="containers deep.*max_depth"):
+            _adapter().to_cdm(payload)
+
+
+def test_a_document_at_the_declared_depth_still_translates():
+    """The bound is a cap, not a hair trigger: a document AT it translates, and every shipped
+    fixture sits far under it — three elements deep against sixty-four."""
+    bound = TakAdapter.metadata.capabilities.limits.max_depth
+    entity, event = _adapter().to_cdm(_nested_event(bound).encode())
+    assert isinstance(entity, Entity) and isinstance(event, Event)
+    deepest = max(tak._tree_depth(tak.ET.fromstring(path.read_bytes())) for path in XML_FIXTURES)
+    assert deepest == 3 and deepest < bound
+
+
 # ----------------------------------------------------------------- the parser
 
 

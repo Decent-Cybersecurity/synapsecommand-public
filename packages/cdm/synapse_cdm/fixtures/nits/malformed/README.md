@@ -17,7 +17,8 @@ recorded in the report. A refusal is the pass; a crash and an acceptance are bot
 |---|---|
 | `truncated_payload.nits.xml` | a document cut off mid-element |
 | `not_well_formed_xml.nits.xml` | §21's `invalid XML`: a stray `<` where an element name belongs |
+| `deeply_nested.nits.xml` | the `standalone_basic_track` fixture with one unmodelled element nested one thousand deep — under 30 KB, far inside `max_input_bytes`, and past the declared `max_depth` of 64. Added 2026-09-16 with the bound: before it, this document made the adapter raise `RecursionError` out of `ET.tostring`, which is a crash class and not a refusal |
 
-Neither is derived from recorded traffic. Both are built from this directory's own synthetic
-payloads by cutting or corrupting them, so they carry no third party's data and no standard's
-text.
+None is derived from recorded traffic. All three are built from this directory's own synthetic
+payloads by cutting, corrupting or nesting them, so they carry no third party's data and no
+standard's text.
