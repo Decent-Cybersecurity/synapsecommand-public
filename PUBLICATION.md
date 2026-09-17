@@ -2321,6 +2321,11 @@ tarball or the wheel. The same test at the same commit passes in the fresh clone
 that the tree it judges and the artefact this entry is about are not the same tree. **A gate that
 walks the filesystem sees a working directory; a gate that walks the index sees a release** — and
 this is the second round in which that distinction decided a reading rather than merely existing.
+(**Corrected 2026-09-16:** the sweep this paragraph describes enumerates `git ls-files` since this
+date, in the audit commit that made it, and the untracked directory it walked into is ignored by the
+tracked `.gitignore` rather than by `.git/info/exclude` alone, so a working tree that carries it
+reads the same **passed** the fresh clone read. The reading above is kept as the one this entry
+took; the distinction it draws is what the repair acted on.)
 
 **Clone versus maintainer is 66 tests, and the passed counts differ by 65.** Sixty-seven tests skip
 in the clone and run here — 39 in `test_cdm_pins.py`, 10 in `test_cdm_format_coverage.py`, 7 in
@@ -2596,6 +2601,11 @@ in the fresh clone, which is the proof that the tree it judges and the artefact 
 are not the same tree. **A gate that walks the filesystem sees a working directory; a gate that walks
 the index sees a release** — the third round in which that distinction decided a reading, and the
 count has grown by twelve since entry 16 wrote eighteen, entirely from the rounds that ran between.
+(**Corrected 2026-09-16:** the sweep this paragraph describes enumerates `git ls-files` since this
+date, in the audit commit that made it, and the untracked directory it walked into is ignored by the
+tracked `.gitignore` rather than by `.git/info/exclude` alone, so a working tree that carries it
+reads the same **passed** the fresh clone read. The reading above is kept as the one this entry
+took; the distinction it draws is what the repair acted on.)
 
 **Clone versus maintainer is sixty-nine tests, and the passed counts differ by sixty-eight.** Seventy
 tests skip in the clone and run here — **42** in `test_cdm_pins.py`, 10 in `test_cdm_format_coverage.py`,
