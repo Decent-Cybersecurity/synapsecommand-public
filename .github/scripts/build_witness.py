@@ -32,6 +32,21 @@ Every field is a reading of something that did not exist before the upload:
     that carries neither. A private path is not dressed up as a public one: it stays in the
     comment, where the API put it.
 
+    **2026-09-17: `--review-file URL` carries a reference the maintainer designates, for an
+    approval whose comment names nothing.** The `pypi` approval of the v2.2.0 run (35200069387)
+    was given with an EMPTY comment, so this script wrote `""` into both fields — which is what
+    it must do, and `tests/test_cdm_witness_builder.py` holds it there — and the verifier's rule
+    above refused the record the `witness` job built. The record that closes that release
+    carries `review_file` by the maintainer's designation in the witness round: the readiness
+    report at the release commit, the document the release-readiness protocol says an approval
+    is taken on. The flag exists so that designation is a COMMAND — the same builder over the
+    same inputs plus one argument — and not an edit to a JSON file after the fact. It is
+    accepted only as an `https://` URL; it is applied only to an approval whose comment names
+    no URL; and when the comment does name one, the flag must equal it or this script refuses,
+    because two references for one approval would be a choice this script may not make. The
+    comment stays as the API returned it, empty included, and the record says so. `publish.yml`
+    never passes the flag: the pipeline's record is the approval's own words or nothing.
+
     **2026-09-12 (round PW): the instant comes from the deployment and never from the approval.**
     `actions/runs/<id>/approvals` carries no timestamp at any level — an entry's only keys are
     `comment`, `environments`, `state` and `user`, confirmed against the live endpoint for run
@@ -81,8 +96,24 @@ PYPI_JSON = "https://pypi.org/pypi/synapse-cdm/{version}/json"
 #: private path named there stays in `comment` and is NOT lifted into `review_file` (module
 #: header, 2026-09-16). A comment naming no URL leaves the field empty, and an empty comment
 #: leaves both empty, which `gates/witness_verify.py` refuses rather than accepting an approval
-#: nobody can trace.
+#: nobody can trace — unless `--review-file` designates one (module header, 2026-09-17).
 _PUBLIC_REFERENCE = re.compile(r"https://[^\s<>()\"']+")
+
+
+def designated_reference(value: str) -> str:
+    """`--review-file`, checked: an `https://` URL or nothing (module header, 2026-09-17).
+
+    The same shape `_PUBLIC_REFERENCE` lifts out of a comment, required of a value a person
+    typed: a private path or a bare word here would be the 2.1.2 shape re-entering by the front
+    door, and the field's whole meaning since 2026-09-16 is "a reference a reader can open".
+    """
+    if not value:
+        return ""
+    if not _PUBLIC_REFERENCE.fullmatch(value):
+        raise SystemExit(f"build_witness: --review-file {value!r} is not an https:// URL of the "
+                         f"shape a comment's reference is read by; `review_file` carries a public "
+                         f"reference or nothing")
+    return value
 
 
 def _names_run(status: dict, run_id: str) -> bool:
@@ -184,7 +215,7 @@ def pypi_files(version: str) -> list[dict]:
         key=lambda entry: entry["filename"])
 
 
-def approvals_from(payload, statuses, run_id: str) -> list[dict]:
+def approvals_from(payload, statuses, run_id: str, review_file: str = "") -> list[dict]:
     """The `pypi` hold: WHO and WHICH VERDICT from the runs API, WHEN from the deployment.
 
     An empty list is left empty rather than filled with a placeholder: `witness_verify` refuses a
@@ -194,6 +225,10 @@ def approvals_from(payload, statuses, run_id: str) -> list[dict]:
 
     The environment of the status is matched to the environment of the approval, so a repository
     with two held environments cannot date one hold by the other's release.
+
+    `review_file` is the designated reference (`--review-file`, 2026-09-17), already checked by
+    `designated_reference`: it fills the field only where the comment names no URL, and where the
+    comment does name one the two must agree or the build stops.
     """
     out = []
     for approval in payload if isinstance(payload, list) else []:
@@ -201,6 +236,11 @@ def approvals_from(payload, statuses, run_id: str) -> list[dict]:
             comment = approval.get("comment") or ""
             match = _PUBLIC_REFERENCE.search(comment)
             name = environment.get("name", "")
+            if match and review_file and review_file != match.group(0):
+                raise SystemExit(f"build_witness: the {name!r} approval comment names "
+                                 f"{match.group(0)!r} and --review-file names {review_file!r}; "
+                                 f"two references for one approval is a choice this script does "
+                                 f"not make")
             out.append({
                 "environment": name,
                 # NOT `approval.get("created_at")` (there is none) and NOT
@@ -208,7 +248,9 @@ def approvals_from(payload, statuses, run_id: str) -> list[dict]:
                 "approved_at": approved_at_from(statuses, name, run_id),
                 "approver": (approval.get("user") or {}).get("login", ""),
                 "comment": comment,
-                "review_file": match.group(0) if match else "",
+                # The comment's own URL first; the designated one only where the comment has
+                # none; the empty string where neither says anything, which the verifier refuses.
+                "review_file": match.group(0) if match else review_file,
             })
     return out
 
@@ -218,7 +260,7 @@ def build(args) -> dict:
     release = json.loads(args.release.read_text(encoding="utf-8"))
     statuses = json.loads(args.deployment_statuses.read_text(encoding="utf-8"))
     approvals = approvals_from(json.loads(args.approvals.read_text(encoding="utf-8")),
-                               statuses, args.run_id)
+                               statuses, args.run_id, designated_reference(args.review_file))
 
     files = pypi_files(args.version)
     evidence = one(assets, f"evidence-{args.version}.tar.gz")
@@ -285,6 +327,13 @@ def main(argv: list[str] | None = None) -> int:
     # refusal that never fires is not a check.
     ap.add_argument("--attestation-verified", action="store_true", default=False)
     ap.add_argument("--attestation-verified-at", default="")
+    # A witness ROUND's argument and never the workflow's (module header, 2026-09-17): the
+    # reference the maintainer designates for an approval whose comment names nothing. An
+    # `https://` URL or the build stops; ignored where the comment names the same URL; refused
+    # where the comment names a different one.
+    ap.add_argument("--review-file", default="",
+                    help="a public https:// reference designated by the maintainer for an "
+                         "approval whose comment names none; the comment itself is never changed")
     ap.add_argument("--out", required=True, type=pathlib.Path)
     args = ap.parse_args(sys.argv[1:] if argv is None else argv)
 

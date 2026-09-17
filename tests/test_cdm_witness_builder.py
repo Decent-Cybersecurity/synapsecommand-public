@@ -21,6 +21,12 @@ job of the v2.1.2 release — the first time it ever ran — was refused by `gat
 with `an approval entry has no approved_at`. A composed fixture agreed with the code instead of
 with the API, which is the one thing a recorded payload is for.
 
+(Dated note, 2026-09-17: the job's second execution, on the v2.2.0 run 35200069387, built its
+record with this repaired code and was refused for the other reason the verifier has — the
+`pypi` approval comment was the empty string, the case `test_an_empty_approval_comment_leaves_
+both_fields_empty` asserts MUST be refused. The last section of this module is the flag the
+witness round then added so the maintainer's designated reference is a builder argument.)
+
 Both approval-half constants are now CAPTURES, quoted from the live API with their endpoint, run
 and capture instant, and one test asserts what is ABSENT from the approvals payload so that a
 future refactor cannot quietly go back to reading a key GitHub does not send.
@@ -69,7 +75,9 @@ RELEASE = {
 
 #: CAPTURED 2026-09-12T11:38Z (round PW) from
 #: `GET repos/Decent-Cybersecurity/synapsecommand-public/actions/runs/34687815710/approvals`, the
-#: v2.1.2 release run — the only run whose `witness` job has ever executed. The entry's top-level
+#: v2.1.2 release run — the only run whose `witness` job had executed when this was captured (the
+#: v2.2.0 run, 35200069387, is the second, 2026-09-17; its payload has the same four keys and an
+#: empty `comment`). The entry's top-level
 #: key set is VERBATIM: `comment`, `environments`, `state`, `user`, and nothing else. **There is no
 #: timestamp here at any level.** `user` is trimmed to the one key the builder reads; the
 #: `environments` entry is kept whole because its `created_at` is the trap — it is when the `pypi`
@@ -149,6 +157,9 @@ class Args:
         self.attestation_bundles = None
         self.attestation_verified = True
         self.attestation_verified_at = "2026-09-07T11:56:06Z"
+        # No designated reference by default (2026-09-17): the pipeline never passes one, and
+        # every test above the last section is the pipeline's own shape.
+        self.review_file = ""
         self.out = assets.parent / "witness.json"
         for key, value in over.items():
             setattr(self, key, value)
@@ -507,3 +518,93 @@ def test_the_workflow_hands_the_builder_the_wheels_attestations():
     assert 'attestations/sha256:${wheel_digest}" > attestations.json' in workflow, (
         "the witness job no longer reads the attestation store for the wheel, so the builder has "
         "nothing to hash into `attestation.bundle_sha256` and the field is the empty string again")
+
+
+# --------------------------- 2026-09-17: a reference the maintainer designates, as an argument
+#
+# The v2.2.0 run's `pypi` approval was given with an EMPTY comment. The builder wrote `""` into
+# both fields, as the test above requires, and the verifier refused the record the `witness` job
+# built. The record that closes that release carries `review_file` by the maintainer's designation
+# — the readiness report at the release commit — and `--review-file` is how that designation is a
+# COMMAND over the run's own inputs rather than an edit to the JSON afterwards. Four properties:
+# accepted as an `https://` URL, refused otherwise, refused where it contradicts a URL the comment
+# names, and not applied where the comment names one. And the workflow never passes it.
+
+#: The reference the 2.2.0 record carries, verbatim.
+READINESS_AT_2_2_0 = ("https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/"
+                      "5c53e756b9aa31c2881bd4497b2e0b30b7730944/docs/soif-part1-release-readiness.md")
+
+
+def test_a_designated_review_file_fills_the_field_an_empty_comment_leaves_empty(staged, tmp_path):
+    """The 2.2.0 case: comment `""` as the API gave it, `review_file` the designated URL."""
+    silent = [dict(APPROVALS[0], comment="")]
+    (tmp_path / "approvals.json").write_text(json.dumps(silent), encoding="utf-8")
+    record = build_witness.build(Args(staged, review_file=READINESS_AT_2_2_0))
+    assert record["approvals"][0]["review_file"] == READINESS_AT_2_2_0
+    assert record["approvals"][0]["comment"] == "", "the comment is never changed, empty included"
+    assert witness_verify.verify(record, offline=True, download=False, token=None) == []
+
+
+def test_a_designated_review_file_also_fills_it_beside_a_comment_naming_no_url(staged):
+    """The v2.1.2 comment names a private path and no URL: the designation applies, the path stays."""
+    record = build_witness.build(Args(staged, review_file=READINESS_AT_2_2_0))
+    assert record["approvals"][0]["review_file"] == READINESS_AT_2_2_0
+    assert record["approvals"][0]["comment"] == APPROVALS[0]["comment"]
+
+
+@pytest.mark.parametrize("value", ["PR.review.md",
+                                   "http://github.com/Decent-Cybersecurity/synapsecommand-public",
+                                   "docs/soif-part1-release-readiness.md",
+                                   # the scheme alone, and a URL with whitespace in it: each starts
+                                   # with `https://` and neither is a reference a reader can open
+                                   # (the review of 2026-09-17 read the first draft accepting both)
+                                   "https://", "https:// ", "https://github.com/a b"])
+def test_a_designated_review_file_that_is_not_an_https_url_stops_the_build(staged, value):
+    """A private verdict file, a plain-http URL or a tree-relative path: none is a reference a
+    reader can open from the record, and the first is the 2.1.2 shape re-entering by the front
+    door. (The private path is spelled here by its basename alone: `.gitignore` states, and
+    `tests/test_cdm_pins.py` re-derives, how many tracked lines name that directory.)"""
+    with pytest.raises(SystemExit) as exit_:
+        build_witness.build(Args(staged, review_file=value))
+    assert "https://" in str(exit_.value) and value in str(exit_.value)
+
+
+def test_a_designated_review_file_that_contradicts_the_comments_url_stops_the_build(staged,
+                                                                                    tmp_path):
+    """Two references for one approval is a choice the builder does not make."""
+    named = "https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/34687815710"
+    payload = [dict(APPROVALS[0], comment=f"2.1.2, approved on the reviewer's GO ({named})")]
+    (tmp_path / "approvals.json").write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(SystemExit) as exit_:
+        build_witness.build(Args(staged, review_file=READINESS_AT_2_2_0))
+    assert named in str(exit_.value) and READINESS_AT_2_2_0 in str(exit_.value)
+
+
+def test_a_designated_review_file_is_not_applied_where_the_comment_names_the_same_url(staged,
+                                                                                      tmp_path):
+    """Equal is not a contradiction; the field carries the comment's own URL and nothing moves."""
+    named = "https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/34687815710"
+    payload = [dict(APPROVALS[0], comment=f"2.1.2, approved on the reviewer's GO ({named})")]
+    (tmp_path / "approvals.json").write_text(json.dumps(payload), encoding="utf-8")
+    with_flag = build_witness.build(Args(staged, review_file=named))
+    without = build_witness.build(Args(staged))
+    assert with_flag["approvals"][0]["review_file"] == named
+    assert with_flag == without
+
+
+def test_no_designated_review_file_leaves_the_builder_exactly_as_it_was(staged, tmp_path):
+    """The default is the pipeline's shape: an empty comment still yields `""` and a refusal."""
+    silent = [dict(APPROVALS[0], comment="")]
+    (tmp_path / "approvals.json").write_text(json.dumps(silent), encoding="utf-8")
+    record = build_witness.build(Args(staged, review_file=""))
+    assert record["approvals"][0]["review_file"] == ""
+    assert witness_verify.verify(record, offline=True, download=False, token=None) != []
+
+
+def test_the_workflow_never_passes_a_designated_review_file():
+    """The pipeline's record is the approval's own words or nothing; the flag is a round's."""
+    workflow = (REPO / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
+    witness = workflow[workflow.index("\n  witness:\n"):]
+    assert "--review-file" not in witness, (
+        "the witness job passes `--review-file`; a reference typed into the workflow is a value "
+        "the pipeline asserts about every approval, which is the opposite of a witness")

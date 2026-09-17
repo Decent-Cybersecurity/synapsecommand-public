@@ -206,26 +206,44 @@ The tag is the release. `.github/workflows/publish.yml` takes it from there: con
 OIDC with no token anywhere in the process. Condition 4's derivations are in the run summary and in the
 job log; the GitHub release itself is still made by a person, with `gh release create`, from those.
 
+**At the approval: the `pypi` hold MUST be released with a non-empty comment — added
+2026-09-17, because an empty one is what stopped the 2.2.0 witness job.** `gates/witness_verify.py`
+refuses an approval that names nothing — neither a `comment` nor a public `review_file` — and the
+builder derives `review_file` from the comment alone, so the comment typed into the environment's
+approval box is the only thing that can make the pipeline's own record acceptable. Name what the
+approval is taken on, ideally as the readiness report's URL at the release commit
+(`https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/<commit>/docs/soif-part1-release-readiness.md`),
+so that the builder lifts a reference a reader can open; a comment with no URL is carried verbatim
+and accepted, and an empty comment is refused. The `v2.2.0` approval was given with `""`, the
+`witness` job of run 35200069387 built the record and refused it, and the witness round had to
+build the record again with a reference the maintainer designated afterwards, which `PUBLICATION.md`
+entry 20 says in as many words.
+
 **After the run: confirm the `witness` job succeeded, and only then let the witness round commit
-— added 2026-09-16.** `gh run view <run id> --json jobs` must show every job of the run
-`success`, the `witness` job included, before `releases/witness/<v>.json` is committed. The job
-has executed once on a tag push, on `v2.1.2`, and failed at its own verification step; the repair
-(round PW) is not an ancestor of that tag, so the next tag push is the FIRST execution of the
-repaired job — the same "first executed on a tag" class that burned `v2.1.0` at the dependency
-audit and `v2.1.1` at the CodeQL gate, and the class `gates/release_ref_rehearsal.py` cannot reach,
+— added 2026-09-16, and rewritten 2026-09-17 for what the next tag push did.** `gh run view <run
+id> --json jobs` must show every job of the run `success`, the `witness` job included, before
+`releases/witness/<v>.json` is committed. The job has executed twice on a tag push and succeeded
+on neither. On `v2.1.2` it failed at its own verification step because the builder read an
+instant off a key the approvals endpoint does not carry; the repair (round PW) was not an ancestor
+of that tag, and the `v2.2.0` push was the FIRST execution of the repaired job — run 35200069387,
+2026-09-17 — the same "first executed on a tag" class that burned `v2.1.0` at the dependency audit
+and `v2.1.1` at the CodeQL gate, and the class `gates/release_ref_rehearsal.py` cannot reach,
 because the job's inputs (the run's approvals, the deployment's status history, the attestation
-store) do not exist before the tag. A failed `witness` job is not a refused release — the upload
-and the Release stand — but it is a record that was not produced by the pipeline, and a witness
-round that commits a hand-built record in its place says so in the ledger, as entry 19 did.
-Nor is the job the next tag runs the job `v2.1.2` ran with that one repair applied: on
-2026-09-16 the same audit granted it `actions: read` and `deployments: read`, made it read the
-wheel's digest off `SHA256SUMS` and fetch the attestation store by it, handed the builder
-`--attestation-bundles`, and handed the verifier `--download --assets assets` and a token —
-every one asserted by `tests/test_cdm_witness.py` and `tests/test_cdm_witness_builder.py`
-against the workflow text and against payloads captured from the live API, and none of them
-ever run on a tag. The same test module holds this paragraph, `releases/witness/README.md`'s
-and the release-pipeline page's to the tree: the day `releases/witness/` holds a second record
-they go red, and are rewritten to say what that run did rather than deleted.
+store) do not exist before the tag. That execution answered the question this class asks: the
+build step succeeded — the `actions: read` and `deployments: read` grants of 2026-09-16 read the
+approvals and the status history, the wheel's digest was read off `SHA256SUMS` and the attestation
+store fetched by it, the builder was handed `--attestation-bundles`, and it wrote the record with
+the instant and the bundle digest in it — and the verify step, handed `--download --assets assets`
+and a token, refused that record for the other reason it has, an approval with an empty comment
+(the paragraph above). A failed `witness` job is not a refused release — the upload and the
+Release stand — but it is a record that was not produced by the pipeline, and a witness round that
+commits a hand-built record in its place says so in the ledger, as entry 19 did and as entry 20
+did. Every one of the 2026-09-16 additions is asserted by `tests/test_cdm_witness.py` and
+`tests/test_cdm_witness_builder.py` against the workflow text and against payloads captured from
+the live API, and every one has now run on a tag. The same test module holds this paragraph,
+`releases/witness/README.md`'s and the release-pipeline page's to the tree: the day
+`releases/witness/` holds a third record they go red, and are rewritten to say what that run did
+rather than deleted.
 
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
@@ -361,6 +379,16 @@ push is the first execution of, the repairs and the additions of this date inclu
 `releases/witness/README.md` says the same over the directory. Nothing in this paragraph
 changes the design the one before it states.
 
+**Also 2026-09-17: that run happened, and the job is still the design.** The `v2.2.0` push, run
+35200069387, executed the repaired job with every addition of 2026-09-16: the build step
+succeeded and wrote `witness-2.2.0.json` with the approval instant and the bundle digest in it,
+and the verify step refused it because the `pypi` approval comment was the empty string — the
+verifier's rule, working on a human input. `releases/witness/` now holds two records and both
+were built by hand: `2.1.2.json` over the v2.1.2 run's inputs, and `2.2.0.json` over the v2.2.0
+run's inputs with the maintainer's designated `--review-file`, under the ruling `PUBLICATION.md`
+entry 20 records. The release procedure above says what the approval comment must carry so that
+the next execution can succeed.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -372,6 +400,59 @@ sentence above is kept as the design it stated; the verifier's header says, mode
 now true of it.
 
 ## History
+
+### Unreleased
+
+**Nothing in this section is in a release: there is no release that contains it.** The newest
+release tag is `v2.2.0`, and `2.2.0` is what the index serves — `PUBLICATION.md` entry 20 is the
+measurement.
+
+**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section and
+the three witness paragraphs in the release procedure being what moved in it. Everything else the
+round touched ships in nothing: the ledger, the witness record and its README, the documentation
+page, the security policy, the witness builder the release workflow runs and the three test
+modules.
+
+**THE 2.2.0 WITNESS ROUND's RECORD, 2026-09-17 — the 2.2.0 witness half: the record is committed,
+the ledger entry is written, the three paragraphs that said "the next tag push" say what it did,
+and the builder gains the one argument the round needed.** Unit: `synapse_cdm/MIGRATIONS.md`, PATCH
+by the bump table's shipped-document row — no importable name, no harness flag, no fixture set and
+no dependency moves, so the MINOR list does not reach it and the PATCH row does. **No other unit:
+nothing else under `synapse_cdm/` changed at all**, verified by `git ls-tree` against `v2.2.0`.
+
+**WHAT THE RUN DID.** Run 35200069387, the `v2.2.0` push, was the first execution of the repaired
+`witness` job and of everything 2026-09-16 added to it, and it did what the release procedure's
+paragraph said the next tag push would show: the build step succeeded — the read grants, the
+attestation fetch and `--attestation-bundles` all worked — and wrote `witness-2.2.0.json for
+v2.2.0 (2 files, 1 approval(s))` at 15:06:25Z. The verify step then refused it: *an approval
+entry has neither a `review_file` nor a `comment`, so nothing says what it was taken on*. The
+`pypi` approval had been given with an empty comment, so the builder wrote `""` into both fields,
+as its own test module requires, and the verifier's rule of 2026-09-16 held on a human input
+rather than on a defect. The attach step was skipped; the Release carries eight assets and no
+witness record; the bytes the job built are retrievable from nowhere.
+
+**WHAT THIS ROUND DID.** It rebuilt the record with the same builder over the run's own inputs,
+re-fetched from the API, and one argument the pipeline never passes: `--review-file`, added to
+`.github/scripts/build_witness.py` in this commit, carrying the reference the maintainer
+designated — the readiness report at the release commit,
+`https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/5c53e756b9aa31c2881bd4497b2e0b30b7730944/docs/soif-part1-release-readiness.md`.
+The flag is accepted only as an `https://` URL, applied only to an approval whose comment names no
+URL, refused when the comment names a different one, and `publish.yml` is unchanged; seven tests
+hold those properties. The comment in the record stays `""`. `gates/witness_verify.py` accepted
+the result in every mode — `--offline --assets` over a fresh Release download, online, and
+`--download --assets` with a token, the job's own invocation — before it was committed as
+`releases/witness/2.2.0.json`, sha256
+`798daa89bff5fc2332d56e010a4b5837f70fe4abe21b05e1e3c4afb253d7582e`; without the flag the same
+command writes the refused shape, `e9dc2abe…`, one line different. Unlike round PR2's record, this
+one is on no Release: the job that would have attached it was refused, and attaching the committed
+bytes afterwards is a further act this round did not take. The ledger entry says all of this,
+including that the reference was designated afterwards rather than named by the approval.
+
+**AND THE RULE FOR NEXT TIME, WRITTEN INTO THE PROCEDURE.** The release procedure above now says,
+dated, that the `pypi` approval must be released with a non-empty comment naming what it was taken
+on — ideally the readiness report's URL — because the verifier refuses one that names nothing and
+the builder cannot invent one. The docs site was not deployed by this round and the ledger says
+what it serves at the time of writing.
 
 ### 2.2.0 — 2026-09-17 — the audit arc: a declared depth bound on six of the fourteen, a computed L4, evidence that reproduces on another machine, an interpreter matrix and a lint stage in CI, a witness verifier that re-derives the assets, and every sentence the audit found false corrected
 

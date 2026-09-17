@@ -15,6 +15,7 @@ python gates/witness_verify.py releases/witness/2.1.2.json            # index + 
 python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
 python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
 python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json --offline  # every record here
 ```
 
 What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
@@ -32,19 +33,26 @@ The release pipeline's `witness` job produces the record **after** the upload, f
 PyPI's JSON API and the Release API — the two sources that can only be read once the release
 exists. It uploads it as the Release asset `witness-<version>.json`.
 
-**As of 2026-09-16 that job has never produced a committed record.** It has executed once, on the
-`v2.1.2` run, and failed at its own verification step because the builder read an instant off a
-key the approvals endpoint does not carry; the repair (round PW) is not an ancestor of the tag.
-`2.1.2.json` in this directory was built by hand with the repaired builder over that run's inputs,
-under a ruling `PUBLICATION.md` entry 19 records. The next tag push is the first execution of the
-repaired job, and the release procedure in `MIGRATIONS.md` now says to confirm it succeeded
-before the witness round commits anything. Nor is that job the job `v2.1.2` ran plus one
-repair: the read grants (`actions: read`, `deployments: read`), the attestation fetch by the
-wheel's digest and the builder's `--attestation-bundles`, and the verifier's
-`--download --assets assets` with a token were all added on 2026-09-16, are held to the
-workflow text by `tests/test_cdm_witness.py` and `tests/test_cdm_witness_builder.py`, and have
-never run on a tag. The same test module holds this paragraph to the directory: a second
-record here makes it red until the paragraph says what that run did.
+**As of 2026-09-17 that job has never produced a committed record, and it has executed twice.**
+On the `v2.1.2` run it failed at its own verification step because the builder read an instant
+off a key the approvals endpoint does not carry; the repair (round PW) was not an ancestor of
+that tag, and `2.1.2.json` in this directory was built by hand with the repaired builder over
+that run's inputs, under a ruling `PUBLICATION.md` entry 19 records. On the `v2.2.0` run
+([35200069387](https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/35200069387),
+2026-09-17) the repaired job ran for the first time, and its build step succeeded: the read
+grants (`actions: read`, `deployments: read`), the attestation fetch by the wheel's digest and
+the builder's `--attestation-bundles` — all added on 2026-09-16 and, until that run, never
+executed on a tag — read the approvals, the deployment's status history and the attestation
+store and wrote `witness-2.2.0.json for v2.2.0 (2 files, 1 approval(s))`. Its verify step,
+`--download --assets assets` with a token, then refused that record with *an approval entry has
+neither a `review_file` nor a `comment`, so nothing says what it was taken on*, because the
+`pypi` approval was given with an empty comment; the attach step was skipped, and the Release
+carries no `witness-2.2.0.json`. `2.2.0.json` here was built by hand with the same builder over
+that run's own inputs, plus the one argument the next section describes, and `PUBLICATION.md`
+entry 20 records the ruling. The release procedure in `MIGRATIONS.md` says to confirm the job
+succeeded before the witness round commits anything, and since 2026-09-17 also says what the
+approval comment must carry so that it can. `tests/test_cdm_witness.py` holds this paragraph to
+the directory: a third record here makes it red until the paragraph says what that run did.
 
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
@@ -71,7 +79,7 @@ holds this list and that tuple together.
 | `conformance_sha256` | the sweep `synapse conformance run --all --format json` produced |
 | `attestation` | `{bundle_sha256, verified, verified_at}` — the pipeline's own `gh attestation verify` result |
 | `released_at` | when the Release was published |
-| `approvals` | `[{environment, approved_at, approver, comment, review_file}]` — the `pypi` hold: who released it, the approval comment verbatim, and the public reference the comment names, or the empty string |
+| `approvals` | `[{environment, approved_at, approver, comment, review_file}]` — the `pypi` hold: who released it, the approval comment verbatim, and the public reference the comment names — or, for 2.2.0, the reference the ledger's entry 20 designates — or the empty string |
 
 Four of these are beyond §53's example, and each is here because `PUBLICATION.md` entry 18 had to
 state it in prose for want of a field: the tag object, the conformance digest, the attestation
@@ -91,6 +99,21 @@ in the comment stays there and is never lifted into `review_file`. The verifier 
 approval with neither field filled, which is what keeps both shapes traceable and the 2.1.2
 record valid.
 
+**What `review_file` means for 2.2.0 — designated, not derived (2026-09-17).** The `pypi`
+approval of the `v2.2.0` run carried an EMPTY comment: the API's `comment` is `""`, `2.2.0.json`
+carries it as such, and the builder wrote `""` into `review_file` too, which is what the
+pipeline's verify step refused. The value `2.2.0.json` carries instead —
+`https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/5c53e756b9aa31c2881bd4497b2e0b30b7730944/docs/soif-part1-release-readiness.md`,
+the release-readiness report at the release commit, the document the release-readiness protocol
+says an approval is taken on — was designated by the maintainer in the witness round, and not
+named by the approval. It reached the record through the builder's `--review-file URL` flag,
+added the same day so the designation is a command rather than an edit: the flag is accepted only
+as an `https://` URL, applied only to an approval whose comment names no URL, refused when the
+comment names a different one, and never passed by `publish.yml` — the pipeline's record is the
+approval's own words or nothing. `PUBLICATION.md` entry 20 states the designation, states that
+the comment was empty, and gives both digests: the refused shape's and the committed one's, which
+differ in that one line.
+
 ## What the verifier does not do
 
 It does not re-establish the Sigstore attestation; `gh attestation verify` does that, and it needs
@@ -105,7 +128,9 @@ whitespace). The `witness` job passes the API's answer to the builder; with `--d
 verifier reads the same endpoint and requires the record's value to be among the bundles served —
 a check that the record names the bundle the store holds, not a verification of it. The empty
 string means no bundle was handed to the builder: `2.1.2.json` carries it, and the verifier reports
-`not established` rather than refusing, because the absence is recorded as deliberate.
+`not established` rather than refusing, because the absence is recorded as deliberate. `2.2.0.json`
+is the first record to carry a digest — `9d78a520…`, over the one bundle the store serves for the
+2.2.0 wheel — and `--download` reads it back and agrees.
 
 `artifact_sha256` against `pypi.files` is the one cross-check that needs no network at all, and it
 is the one most worth having: those are the same claim written by two different steps, and a

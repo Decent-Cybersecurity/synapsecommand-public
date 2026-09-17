@@ -17,7 +17,10 @@ different jobs and they should not be confused with each other:
    half is empty today — round P7 writes the format and the verifier, and the first record is
    written by the release round's `witness` job and committed by the witness round (PR2). An empty
    parametrization SKIPS, which is the honest report: there is nothing yet to check, and the day
-   there is, these tests start checking it with no edit.
+   there is, these tests start checking it with no edit. (Dated note, 2026-09-17: "empty today"
+   was true when written; the directory holds `2.1.2.json` since 2026-09-12 and `2.2.0.json` since
+   this date, both built by hand — the last section of this module says why — and the
+   parametrization runs over both.)
 
 THE NETWORK HALF IS OPT-IN
 --------------------------
@@ -193,7 +196,10 @@ def test_an_approval_with_neither_a_review_file_nor_a_comment_is_refused():
 
     Neither is an approval nobody can trace. Either alone is accepted — the 2.1.2 record carries
     only the first, and the builder now writes the second with the first empty unless the comment
-    named a URL — so both shapes are asserted here, in both directions.
+    named a URL — so both shapes are asserted here, in both directions. (2026-09-17: the 2.2.0
+    record is the third shape, and it is the first `alone` case below — `review_file` filled by
+    the maintainer's designation through the builder's `--review-file`, `comment` the empty
+    string the API returned; PUBLICATION.md entry 20 states the designation.)
     """
     bare = {"environment": "pypi", "approved_at": "2026-09-07T11:55:47Z",
             "approver": "decentcybersecurity"}
@@ -221,9 +227,10 @@ def test_the_negative_cases_are_not_vacuous():
 # ------------------------------------------------------------------------- the committed records
 
 @pytest.mark.skipif(not COMMITTED,
-                    reason="no witness record is committed yet. Round P7 writes the format and "
-                           "the verifier; the first record is produced by the release pipeline's "
-                           "`witness` job and committed by the witness round (§53, P7 item 4).")
+                    reason="no witness record is committed. Round P7 wrote the format and the "
+                           "verifier; a record is produced by the release pipeline's `witness` "
+                           "job and committed by the witness round (§53, P7 item 4) — two are, "
+                           "since 2026-09-17, so this skip is unreachable on this tree.")
 @pytest.mark.parametrize("path", COMMITTED, ids=[p.name for p in COMMITTED])
 def test_every_committed_witness_agrees_with_itself(path):
     record = json.loads(path.read_text(encoding="utf-8"))
@@ -238,7 +245,9 @@ def test_every_committed_witness_agrees_with_the_index_and_the_release(path):
     """With `download=True` since 2026-09-16: the index's bytes, the Release's assets and its
     SHA256SUMS, the Release's copy of every digested asset re-hashed, and the wheel's attestation
     bundle where the record names one. The 2.1.2 record was read this way on 2026-09-16 and
-    VERIFIED; it names no bundle, which the verifier reports and does not refuse."""
+    VERIFIED; it names no bundle, which the verifier reports and does not refuse. The 2.2.0
+    record was read this way on 2026-09-17, before and after it was committed, and VERIFIED; it
+    names the bundle `9d78a520…`, which the store served."""
     record = json.loads(path.read_text(encoding="utf-8"))
     assert witness_verify.verify(record, offline=False, download=True,
                                  token=os.environ.get("GH_TOKEN")
@@ -588,25 +597,35 @@ def test_every_witness_path_the_documents_quote_exists():
 
 # ------------------ 2026-09-16: "never produced a committed record" is held to the directory
 #
-# Three documents state, dated, that the pipeline's `witness` job has executed once on a tag push,
-# failed, and has never produced a committed record — `2.1.2.json` was built by hand with the
-# repaired builder — and that the next tag push is the first execution of the repaired job and of
-# the additions the same day made to it. A dated sentence about the tree is honest only while the
-# tree is as it says, and nothing read the three paragraphs. This holds each to what it names: the
-# directory holds that one record and no other, each paragraph names the additions it calls
-# unexercised, and the workflow's witness job carries every one of them. The day a second record
-# is committed this goes red, and the sentences are rewritten to say what that run did, not deleted.
+# Three documents state, dated, that the pipeline's `witness` job has never produced a committed
+# record. On 2026-09-16 they said it had executed once on a tag push (`v2.1.2`), failed, and that
+# the next tag push would be the first execution of the repaired job and of the additions the same
+# day made to it; `2.1.2.json` was built by hand with the repaired builder. On 2026-09-17 the next
+# tag push happened — run 35200069387, `v2.2.0` — and this section went red by design and the
+# three paragraphs were rewritten to say what that run did, not deleted: the build step succeeded
+# under the new grants, with the attestation fetch and `--attestation-bundles`, and wrote a record;
+# the verify step, `--download --assets assets` with a token, refused it because the `pypi`
+# approval comment was empty; the attach step was skipped; `2.2.0.json` was built by hand with the
+# same builder and the maintainer's designated `--review-file`. A dated sentence about the tree is
+# honest only while the tree is as it says, and nothing read the three paragraphs. This holds each
+# to what it names: the directory holds exactly the two hand-built records, each paragraph still
+# names the additions it once called unexercised, and the workflow's witness job carries every one
+# of them. The day a third record is committed this goes red again, and the sentences are
+# rewritten to say what that run did.
 
 #: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
 #: a phrase it carries and nothing else in the file does.
 NEVER_SUCCEEDED_SITES = {
-    "packages/cdm/synapse_cdm/MIGRATIONS.md": "the next tag push is the FIRST execution of the repaired job",
+    "packages/cdm/synapse_cdm/MIGRATIONS.md": "the `v2.2.0` push was the FIRST execution of the repaired job",
     "releases/witness/README.md": "that job has never produced a committed record",
     "docs/docs/security/release-pipeline.mdx": "A `witness` job that has succeeded on a tag push",
 }
 
-#: What the witness job gained on 2026-09-16 and has never run on a tag, as the workflow spells it.
-UNEXERCISED_ON_A_TAG = (
+#: What the witness job gained on 2026-09-16, as the workflow spells it. Until 2026-09-17 this was
+#: `UNEXERCISED_ON_A_TAG`; run 35200069387 exercised every one of them — the build step succeeded,
+#: so the reads under the two grants and the attestation fetch worked, and the verify step ran the
+#: last of them with a token — and the name says so now.
+EXERCISED_ON_V2_2_0 = (
     "actions: read",
     "deployments: read",
     "grep -E '\\.whl$' assets/SHA256SUMS",
@@ -619,20 +638,26 @@ UNEXERCISED_ON_A_TAG = (
 #: would present the job as one repair away from proven, which it is not.
 ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bundles`")
 
+#: The records the three paragraphs describe as hand-built, and the reading each rests on.
+HAND_BUILT = ["2.1.2.json", "2.2.0.json"]
+
 
 def _witness_job() -> str:
     workflow = (REPO / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
     return workflow[workflow.index("\n  witness:\n"):]
 
 
-def test_the_never_succeeded_statements_hold_while_the_only_record_is_the_hand_built_one():
+def test_the_never_succeeded_statements_hold_while_both_records_are_the_hand_built_ones():
     records = sorted(path.name for path in WITNESS_DIR.glob("*.json"))
-    assert records == ["2.1.2.json"], (
+    assert records == HAND_BUILT, (
         f"releases/witness/ holds {records}. The three paragraphs in {sorted(NEVER_SUCCEEDED_SITES)} "
-        "say, dated 2026-09-16, that the pipeline's `witness` job has never produced a committed "
-        "record and that 2.1.2.json was built by hand; a second record is either the job's first "
-        "success or a second hand-built one, and either way the paragraphs are rewritten to say "
-        "which — `gh run view <run id> --json jobs` is the reading — rather than left or deleted")
+        "say, dated 2026-09-17, that the pipeline's `witness` job has never produced a committed "
+        "record: it executed on `v2.1.2` (run 34687815710) and was refused on a missing instant, "
+        "and on `v2.2.0` (run 35200069387) and was refused on an empty approval comment — `gh run "
+        "view 35200069387 --json jobs` reads the witness job `failure`, its 'Verify it' step "
+        "`failure` and its 'Attach it to the Release' step `skipped` — so both records were built "
+        "by hand. A third record is either the job's first success or a third hand-built one, and "
+        "either way the paragraphs are rewritten to say which rather than left or deleted")
     for site, phrase in NEVER_SUCCEEDED_SITES.items():
         flat = " ".join((REPO / site).read_text(encoding="utf-8").split())
         assert phrase in flat, (
@@ -641,13 +666,15 @@ def test_the_never_succeeded_statements_hold_while_the_only_record_is_the_hand_b
             "rewrite here and not by deletion")
         for addition in ADDITIONS_NAMED:
             assert addition in flat, (
-                f"{site} does not name {addition} among what the next tag push first executes; "
-                "the job the next tag runs is not the job v2.1.2 ran plus the round-PW repair")
+                f"{site} does not name {addition} among what the `v2.2.0` push first executed; "
+                "the job that ran was not the job v2.1.2 ran plus the round-PW repair")
+        assert "35200069387" in flat, (
+            f"{site} does not name run 35200069387, the reading its rewritten paragraph rests on")
     job = "\n".join(line for line in _witness_job().splitlines() if not line.lstrip().startswith("#"))
-    for text in UNEXERCISED_ON_A_TAG:
+    for text in EXERCISED_ON_V2_2_0:
         assert text in job, (
             f"the witness job no longer carries {text!r}, which the three paragraphs name as an "
-            "addition of 2026-09-16 the next tag first executes; either it moved, and they say "
+            "addition of 2026-09-16 that the `v2.2.0` push executed; either it moved, and they say "
             "where, or it went, and they stop naming it")
 
 

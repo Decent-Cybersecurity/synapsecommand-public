@@ -35,7 +35,7 @@ gate ──► build ──► attest ──► publish ──► release ──
 | `attest` | Sigstore build provenance over the wheel, the sdist, both SBOMs and the evidence bundle, then `gh attestation verify` on each | a digest that changed in the hand-off between jobs; an attestation that does not verify |
 | `publish` | the `pypi` environment's hold, then an OIDC upload with no credential in the file | everything, until a person approves |
 | `release` | `gh release create` with notes rendered by `synapse release-notes` and the full asset set | notes that describe another version |
-| `witness` | builds `witness-<version>.json` from PyPI, the Release API, the deployment's status history and the attestation store, verifies it against the assets on disk and against the index and the Release, attaches it — **and has never succeeded on a tag push**: it ran once, on `v2.1.2`, and failed at its own verification step; §6 says what the next tag is the first execution of | a record whose digests disagree with the index, with the assets, or with the Release's `SHA256SUMS`; an approval or an attestation with no instant |
+| `witness` | builds `witness-<version>.json` from PyPI, the Release API, the deployment's status history and the attestation store, verifies it against the assets on disk and against the index and the Release, attaches it — **and has never succeeded on a tag push**: it ran on `v2.1.2` and failed at its own verification step on a missing instant, and on `v2.2.0` (run 35200069387, 2026-09-17) it built the record and failed at the same step on an empty approval comment; §6 says what that run did | a record whose digests disagree with the index, with the assets, or with the Release's `SHA256SUMS`; an approval or an attestation with no instant; an approval whose comment names nothing |
 
 **`workflow_dispatch` runs the first three and stops.** `publish`, `release` and `witness` each
 carry `if: startsWith(github.ref, 'refs/tags/v')`, so the whole pipeline short of the irreversible
@@ -163,7 +163,7 @@ commands check them.
 **The build provenance**, which chains the artefact to the commit and the workflow that made it:
 
 ```bash
-gh attestation verify synapse_cdm-2.1.2-py3-none-any.whl \
+gh attestation verify synapse_cdm-2.2.0-py3-none-any.whl \
   --repo Decent-Cybersecurity/synapsecommand-public \
   --signer-workflow Decent-Cybersecurity/synapsecommand-public/.github/workflows/publish.yml
 ```
@@ -174,10 +174,11 @@ digest in the release from PyPI and from the Release API", while the verifier re
 id and instant and compared no asset digest at all):
 
 ```bash
-python gates/witness_verify.py releases/witness/2.1.2.json            # index and Release
-python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
-python gates/witness_verify.py releases/witness/2.1.2.json --download # re-hash the served bytes
-python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a download
+python gates/witness_verify.py releases/witness/2.2.0.json            # index and Release
+python gates/witness_verify.py releases/witness/2.2.0.json --offline  # no network
+python gates/witness_verify.py releases/witness/2.2.0.json --download # re-hash the served bytes
+python gates/witness_verify.py releases/witness/2.2.0.json --offline --assets <dir>  # re-hash a download
+python gates/witness_verify.py releases/witness/2.1.2.json releases/witness/2.2.0.json --offline  # both records
 ```
 
 - **Offline**: the record's shape, the agreement between the gate's digests and the index's, the
@@ -198,11 +199,14 @@ and the verifier compares them. A release where those disagree uploaded bytes no
 `releases/witness/README.md` documents every field. The record is produced by CI after the upload
 and **committed by a person afterwards** — a workflow does not commit here, which is why the
 directory is filled by the witness round rather than by the run. That is the design; as of
-2026-09-16 no committed record was produced by it. The `witness` job has executed once on a tag
-push, on `v2.1.2`, and failed at its own verification step; `releases/witness/2.1.2.json` was
-built by hand with the repaired builder over that run's inputs, and the next tag push is the
-first execution of the repaired job — §6 says so, and `MIGRATIONS.md`'s release procedure says
-to confirm it succeeded before the witness round commits.
+2026-09-17 no committed record was produced by it. The `witness` job has executed twice on a tag
+push: on `v2.1.2` it failed at its own verification step on a missing instant, and on `v2.2.0`
+(run 35200069387) the repaired job built the record and failed at the same step because the
+`pypi` approval comment was empty. `releases/witness/2.1.2.json` and `releases/witness/2.2.0.json`
+were both built by hand with the repaired builder over their runs' inputs — the second with a
+`review_file` the maintainer designated, which `PUBLICATION.md` entry 20 states — and §6 says
+what that run did. `MIGRATIONS.md`'s release procedure says to confirm the job succeeded before
+the witness round commits, and what the approval comment must carry so that it can.
 
 ## 5. The release notes
 
@@ -232,15 +236,20 @@ symptom, and it is the one this refusal exists for.
   `ci.yml`'s `lint` job, at the version the package's `[lint]` extra pins.
 * **A refused upload.** It has never happened, so the recovery path is unexercised. The fix is on
   pypi.org, per `PUBLICATION.md` entry 6, and never a token pasted into the workflow.
-* **A `witness` job that has succeeded on a tag push — as of 2026-09-16.** It has executed once,
-  on `v2.1.2`, and failed at its own verification step because the builder read an instant off
-  a key the approvals endpoint does not carry. `releases/witness/2.1.2.json` was built outside
-  the pipeline, with the repaired builder over that run's inputs, under a ruling
-  `PUBLICATION.md` entry 19 records. The next tag push is the first execution of the repaired
-  job and of the additions made to it on 2026-09-16 — the `actions: read` and
-  `deployments: read` grants, the attestation fetch by the wheel's digest,
-  `--attestation-bundles`, and the verifier's `--assets` and token — none of which
-  `gates/release_ref_rehearsal.py` can reach, because the job's inputs do not exist before the
-  tag. `MIGRATIONS.md`'s release procedure says to confirm the job succeeded before the witness
-  round commits, and `tests/test_cdm_witness.py` holds this bullet to the directory: a second
-  committed record makes it red until it says what that run did.
+* **A `witness` job that has succeeded on a tag push — as of 2026-09-17, after two executions.**
+  On `v2.1.2` it failed at its own verification step because the builder read an instant off a
+  key the approvals endpoint does not carry, and `releases/witness/2.1.2.json` was built outside
+  the pipeline with the repaired builder, under a ruling `PUBLICATION.md` entry 19 records. On
+  `v2.2.0` — run 35200069387 — the repaired job ran for the first time, with the additions made to
+  it on 2026-09-16: the `actions: read` and `deployments: read` grants, the attestation fetch by
+  the wheel's digest, `--attestation-bundles`, and the verifier's `--assets` and token. The build
+  step succeeded and wrote the record, instant and bundle digest included; the verify step refused
+  it because the `pypi` approval had been given with an empty comment, which is the rule of
+  2026-09-16 working on a human input; the attach step was skipped. So the additions are proven
+  and the job is not: `releases/witness/2.2.0.json` was built outside the pipeline with the same
+  builder over that run's inputs and a `--review-file` the maintainer designated, and none of the
+  job's inputs can be reached by `gates/release_ref_rehearsal.py`, because they do not exist
+  before the tag. `MIGRATIONS.md`'s release procedure says to confirm the job succeeded before the
+  witness round commits, says what the approval comment must carry, and `tests/test_cdm_witness.py`
+  holds this bullet to the directory: a third committed record makes it red until it says what
+  that run did.

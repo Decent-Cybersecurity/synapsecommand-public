@@ -1,0 +1,51 @@
+{
+  "approvals": [
+    {
+      "approved_at": "2026-09-17T15:05:23Z",
+      "approver": "decentcybersecurity",
+      "comment": "",
+      "environment": "pypi",
+      "review_file": "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/5c53e756b9aa31c2881bd4497b2e0b30b7730944/docs/soif-part1-release-readiness.md"
+    }
+  ],
+  "artifact_sha256": {
+    "synapse_cdm-2.2.0-py3-none-any.whl": "e0e87ff1bb5646e8d7503ce26d7bd55973d5f872a99f6b8f3f8b1ce25b42de23",
+    "synapse_cdm-2.2.0.tar.gz": "4a2c79fde212dcc172f73ccea5933e23e3c81ff5a7a5e4d333e786c1870ca82a"
+  },
+  "attestation": {
+    "bundle_sha256": "9d78a5205dcfcf5967faba5357c3e7f6ff7ea020dabe8b6ebde46083bd4436a1",
+    "verified": true,
+    "verified_at": "2026-09-17T08:44:50Z"
+  },
+  "commit": "5c53e756b9aa31c2881bd4497b2e0b30b7730944",
+  "conformance_sha256": "01131690c7ac046eaac3ef8c881c22c5eb2c19aaf577ac398495ca1354422480",
+  "evidence_sha256": "c28bc7cf468b4847fca8dcac82a26f4f16797a7ce9471380da9136c6800afa44",
+  "github_release": {
+    "id": 390822421,
+    "published_at": "2026-09-17T15:06:11Z",
+    "url": "https://github.com/Decent-Cybersecurity/synapsecommand-public/releases/tag/v2.2.0"
+  },
+  "pypi": {
+    "files": [
+      {
+        "filename": "synapse_cdm-2.2.0-py3-none-any.whl",
+        "sha256": "e0e87ff1bb5646e8d7503ce26d7bd55973d5f872a99f6b8f3f8b1ce25b42de23",
+        "upload_time": "2026-09-17T15:05:40.188470Z"
+      },
+      {
+        "filename": "synapse_cdm-2.2.0.tar.gz",
+        "sha256": "4a2c79fde212dcc172f73ccea5933e23e3c81ff5a7a5e4d333e786c1870ca82a",
+        "upload_time": "2026-09-17T15:05:41.907530Z"
+      }
+    ],
+    "version": "2.2.0"
+  },
+  "release": "2.2.0",
+  "released_at": "2026-09-17T15:06:11Z",
+  "sbom_sha256": {
+    "cyclonedx": "af4de5f3a5f4ccbb6401aa143130e6a556946b2f357c3af9e2636d6daec557be",
+    "spdx": "759d2272e80a85f7e4ba36cc1372534b08665ba645ad887815e673099f53337a"
+  },
+  "tag": "v2.2.0",
+  "tag_object": "55b717ddb9d340633600ece28ec38f5012187e2c"
+}
