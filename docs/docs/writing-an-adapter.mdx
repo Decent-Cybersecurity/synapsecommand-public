@@ -299,10 +299,11 @@ python -m synapse_cdm.harness --adapter <name|module:Class> [--fixtures <dir>] [
 python -m synapse_cdm.harness --list-adapters [--json]
 ```
 
-:::note[`--list-adapters` is on `main` and is not in 1.0.0]
+:::note[`--list-adapters` landed in 1.1.0]
 It prints the registry — name, version, direction, fixture directory, system — and exits `0`,
-so the roster stops being something you can only see by getting a name wrong. On the release
-PyPI serves today the flag does not exist; it arrives in the next one.
+so the roster stops being something you can only see by getting a name wrong. It has shipped in
+every release since 1.1.0 (`MIGRATIONS.md`'s 1.1.0 entry records it), so the release PyPI serves
+has it.
 :::
 
 `--fixtures` is **optional for an adapter the package ships** and required for one given as

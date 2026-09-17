@@ -131,12 +131,17 @@ five of them in a row make a wrong belief about deployment unfalsifiable.
 ```
 docs/
   intro.mdx                    Introduction — the seven rules and where each is enforced
-  cdm/                         one page per canonical object
+  cdm/                         one page per canonical object, plus the policies, the evidence
+                               records and the Conformance Suite
     index.mdx  entity.mdx  event.mdx  track.mdx  plan-object.mdx
+    policies.mdx  conformance-suite.mdx  evidence.mdx
   schema-reference/            GENERATED from /schemas
   sc-oes/                      the semantic layer, hand-written
     index.mdx  ontology.mdx  boundary.mdx
   writing-an-adapter.mdx       the tutorial, with the worked example
+  security/                    the supply-chain, parser-safety and release-pipeline pages;
+                               the POLICY itself is SECURITY.md at the repository root
+    index.mdx  parser-safety.mdx  supply-chain.mdx  release-pipeline.mdx
   changelog.mdx                curated summary of packages/cdm/synapse_cdm/MIGRATIONS.md
 scripts/
   lib/schema-to-mdx.mjs        the generator; pure functions, nothing written here
