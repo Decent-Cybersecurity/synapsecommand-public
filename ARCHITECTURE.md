@@ -501,9 +501,10 @@ workflow" and five exist.** `.github/workflows/` holds `publish.yml`, the releas
 `push:` of a tag matching `v*` and on `workflow_dispatch` (the dispatch trigger exists so the
 gate-and-build half is runnable against any branch without publishing anything; the irreversible
 jobs are guarded on the ref being a tag); `ci.yml`, the workflow that can fail on a branch, on
-`push` to `main` and to `soif/**` and on `pull_request`; `codeql.yml`, on the same pushes and pull
-requests and on a weekly schedule; `dependency-review.yml`, on pull requests only; and
-`rc-build.yml`, a `workflow_dispatch` release-candidate build that publishes nothing.
+`push` to `main` and to `soif/**` and on `pull_request` against any branch; `codeql.yml`, on the
+same pushes, on pull requests against `main` and `soif/**` only, and on a weekly schedule;
+`dependency-review.yml`, on pull requests against `main` and `soif/**` only; and `rc-build.yml`, a
+`workflow_dispatch` release-candidate build that publishes nothing.
 
 **Why `ci.yml` exists, and it was a design constraint rather than a complaint.** Before it, a push
 to a branch started no workflow. Every "CI MUST fail if …" clause in this campaign — a missing or

@@ -369,7 +369,13 @@ checkout: `tests/test_cdm_changelog_claim.py`'s ban on one prose pairing,
 `tests/test_cdm_deploy_workflow.py::test_the_site_list_is_exactly_the_files_that_state_the_mechanism`.
 `git ls-files rounds/` → **0**: not one offending file is tracked, none is in the commit, and none
 exists in a clone — which is why the same suite at the same commit in a fresh clone reads
-**0 failed**. No tracked file is implicated in any of the three.
+**0 failed**. No tracked file is implicated in any of the three. (**Corrected 2026-09-16:** the
+mechanism this paragraph describes is gone. Since this date the three modules enumerate
+`git ls-files` rather than walking the filesystem, and `rounds/` is ignored by the tracked
+`.gitignore` rather than by one checkout's `.git/info/exclude`; measured on a working tree that
+still carries the directory, the three modules read **33 passed, 0 failed**, so the working-tree
+figure and the clone figure no longer part on this. The paragraph is kept as the reading this
+report took.)
 
 Test counts for the modules this campaign added: `test_cdm_oes.py` 106, `test_cdm_examples.py` 157,
 `test_cdm_conformance.py` 103, `test_cdm_profiles.py` 107, `test_cdm_positioning.py` 63,
@@ -478,7 +484,11 @@ Genuine ones, each with the reading or the document that leaves it open.
    filesystem-walking prose sweeps report untracked campaign apparatus sitting beside this
    checkout. `git ls-files rounds/` → 0 and the fresh clone reads 0 failed. It is a property of one
    working directory, not of the repository — but it does mean a contributor with an unusual
-   untracked directory beside their checkout can see the same three fail.
+   untracked directory beside their checkout can see the same three fail. (**Corrected
+   2026-09-16:** since this date the three sweeps read the git index, so an untracked directory
+   beside a checkout — unusual or not — is outside what they enumerate and cannot red them; the
+   working tree that carries `rounds/` reads 0 failed in those modules. Kept as the reading this
+   report took.)
 9. **The branch is not merged and nothing has been published.** `sc-oes/0.1` is 12 commits ahead of
    `origin/main`, which is unmoved; the branch is not on the remote; no tag was created. Pushing,
    opening a pull request, merging, tagging and releasing are deliberately outside this campaign.
@@ -519,7 +529,10 @@ domains named as future work), 8 (three working-tree failures a clone does not h
 branch is unmerged and unpublished) are unchanged and are recorded again in
 `docs/sc-oes-release-readiness-report.md`. **Limitation 7 is also closed**: the docstring count in
 `tests/test_cdm_positioning.py` said five where its tuple held seven, and the round that next
-touched profile prose corrected it where it was stated.
+touched profile prose corrected it where it was stated. (**Corrected 2026-09-16:** limitation 8 no
+longer stands — the sweeps behind it read the git index since this date; its own correction above
+says so, and `docs/sc-oes-release-readiness-report.md` carries the same correction beside its
+tenth limitation.)
 
 **A third packaged registry artefact exists, and this report was written when there were two.**
 Where a sentence above says "both registries" — criterion G's answer among them — it is describing

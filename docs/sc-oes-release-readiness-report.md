@@ -351,7 +351,11 @@ its own Trademark section.
 **The three working-tree failures are the standing untracked-apparatus set** and a clone does not
 have them: three filesystem-walking prose sweeps report untracked campaign apparatus sitting beside
 this checkout, `git ls-files rounds/` is `0`, and the fresh clone reads 0 failed. This is the same
-limitation the campaign report records as its eighth.
+limitation the campaign report records as its eighth. (**Corrected 2026-09-16:** no longer
+standing. Since this date the three sweeps enumerate `git ls-files` rather than walking the
+filesystem, and `rounds/` is ignored by the tracked `.gitignore`; the working tree that carries the
+directory reads 0 failed in those three modules, so the untracked-apparatus set is empty. The
+paragraph is kept as the reading this report took.)
 
 Both runs collect the same 4507 tests. The clone skips 75 where the working tree skips 7, and the
 68-skip difference is the pinned specification documents: 43 in the pin module, 10 in the
@@ -410,7 +414,8 @@ release-readiness defect.
    enumeration has no member for a judgement or an authorization.
 9. **Ten domains are named as future work and none is implemented.** A test asserts that none of
    them has quietly acquired a profile document or a governed type.
-10. **Three working-tree suite failures a clone does not have**, described above.
+10. **Three working-tree suite failures a clone does not have**, described above. (**Corrected
+    2026-09-16:** gone since this date; the correction beside the description above says why.)
 11. **The branch is not merged and nothing is published**, described above.
 
 ---

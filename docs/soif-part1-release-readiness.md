@@ -85,7 +85,14 @@ builds against.
 One known staleness, carried and not repaired: `ARCHITECTURE.md:487` says
 "`.github/workflows/` holds exactly one workflow, `publish.yml`". There are five
 (`ci.yml`, `codeql.yml`, `dependency-review.yml`, `publish.yml`, `rc-build.yml`). It has been false
-since P1 and is section 15's, not this round's.
+since P1 and is section 15's, not this round's. (**Corrected 2026-09-16:** repaired on this date,
+by the audit that rewrote `ARCHITECTURE.md` §7 rather than by a section 15 round. The section now
+opens with a paragraph that names all five files and each one's triggers and says why the
+one-workflow paragraph was replaced; its job table is `ci.yml`'s job set; and
+`tests/test_cdm_architecture_docs.py` derives the file list, each file's triggers and the table
+from `.github/workflows/` since the same date. The citation `ARCHITECTURE.md:487` is the line at
+the commit section 18 names and the sentence it cited no longer exists; the paragraph is kept as
+the reading this report took.)
 
 ## 3. Adapter API
 
@@ -493,7 +500,10 @@ blockers are section 20, and section 20 is empty.
    `All checks passed!`: the configured rule set selects `E9`, which finds nothing, while `F` finds
    48 and fixing them means editing shipped modules. Widening the rule set is a round of its own.
 4. **`ARCHITECTURE.md:487`'s one-workflow sentence is false** (five workflows exist). §7's job
-   table is otherwise satisfied.
+   table is otherwise satisfied. (**Corrected 2026-09-16:** no longer false — §7 was rewritten on
+   this date and `tests/test_cdm_architecture_docs.py` derives its inventory and its job table
+   from `.github/workflows/`; section 2's correction of the same date has the detail. The
+   limitation is kept as the reading this report took.)
 5. **`evidence.available` is `false` on all fourteen** and `artifact_hashes` is empty. Both flip
    only when release evidence is generated from a release commit, attached to a Release and
    retrievable by a third party — the release round's, and a test asserts the declared set is

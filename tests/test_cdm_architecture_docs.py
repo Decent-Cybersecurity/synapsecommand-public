@@ -9,9 +9,9 @@ version. Every one of those was found by a sweep and none of them by a reader.
 
 So the documents STATE and this module DERIVES. Nothing here is a second copy of a figure — each
 check reads the authority (`version.py`'s constants, `adapter.roster()`, `harness._COLUMNS`,
-`conformance.DIMENSIONS`, the documents' own tables) and compares. A figure in one of the three
-documents that no check below reaches is a gap, and the two sweep-bound assertions are what stop
-this module from passing by finding nothing.
+`conformance.DIMENSIONS`, the workflow files under `.github/workflows/`, the documents' own
+tables) and compares. A figure in one of the three documents that no check below reaches is a gap,
+and the two sweep-bound assertions are what stop this module from passing by finding nothing.
 
 THE ONE THING IT DOES NOT CHECK, NAMED SO NOBODY ASSUMES IT DOES
 ----------------------------------------------------------------
@@ -420,3 +420,181 @@ def test_the_axis_table_lists_every_axis_the_version_model_carries():
         "name is not changed, and the mapping is the one sentence a reader arriving from the "
         "specification needs"
     )
+
+
+# ------------------------------------------------------------------------------ §7, the CI layout
+#
+# Added 2026-09-16. ARCHITECTURE.md §7 said "`.github/workflows/` holds exactly one workflow" for
+# nine days after the second one landed, cited `publish.yml`'s `on:` block at a line it had moved
+# off, and tabled two jobs that were steps of another — and this module, which the document's own
+# preamble says "derives every figure the three documents state from the tree", had no check that
+# reached §7. The section was rewritten on the same date; these are the checks that were missing,
+# so the rewrite cannot go stale the way the paragraph it replaced did. The authority is the
+# workflow files themselves, read as text: the dependency budget of this repository is two packages
+# and neither is a YAML parser, and the shape of an `on:` block is fixed enough to scan.
+
+WORKFLOWS = REPO / ".github" / "workflows"
+
+#: The section's opening paragraph, which is the inventory the checks below read.
+INVENTORY_LEAD = "**What exists today"
+
+#: How §7 may spell each event an `on:` block can declare. The prose writes "pull requests" where
+#: the file writes `pull_request:`; a check that demanded the key's spelling would be checking
+#: typography, and one that accepted any word would be checking nothing.
+EVENT_SPELLINGS = {
+    "push": r"push",
+    "pull_request": r"pull[ _-]request",
+    "workflow_dispatch": r"workflow_dispatch",
+    "schedule": r"schedule",
+}
+
+
+def workflow_triggers(path: pathlib.Path) -> dict[str, list[str]]:
+    """One workflow's `on:` block: each event it declares, with that event's branch or tag patterns.
+
+    The block's shape is the one GitHub documents — `on:` at column 0, events two spaces in,
+    `branches:` or `tags:` four in, patterns six in — and the scanner stops at the next top-level
+    key. Anything else under an event (`inputs:`, a `cron:` item) is not a filter and is ignored.
+    An event this module has no spelling for is refused rather than read as nothing.
+    """
+    events: dict[str, list[str]] = {}
+    inside = False
+    current = None
+    filter_key = None
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if not inside:
+            inside = raw == "on:"
+            continue
+        if not raw.startswith(" "):
+            break
+        indent = len(raw) - len(raw.lstrip(" "))
+        if indent == 2:
+            assert re.fullmatch(r"[a-z_]+:", stripped), f"{path.name}: unexpected `on:` line {raw!r}"
+            current = stripped[:-1]
+            assert current in EVENT_SPELLINGS, (
+                f"{path.name} triggers on `{current}`, an event this module has no spelling for; "
+                "add it to EVENT_SPELLINGS rather than letting the check skip it")
+            events[current] = []
+            filter_key = None
+        elif indent == 4:
+            filter_key = stripped if stripped in ("branches:", "tags:") else None
+        elif indent == 6 and filter_key and stripped.startswith("- "):
+            events[current].append(stripped[2:].strip().strip("'\""))
+    assert events, f"{path.name} declares no `on:` block this scanner recognises"
+    return events
+
+
+def ci_section_clauses() -> dict[str, str]:
+    """§7's inventory paragraph, cut into the clause each workflow file gets.
+
+    A clause runs from the file's backticked name to the next file's; the last runs to the end
+    of the paragraph. Each file is named once in that paragraph, or the cut is ambiguous.
+    """
+    paragraphs = [p for p in re.split(r"\n\s*\n", section(ARCHITECTURE, "## 7. CI layout")) if p.strip()]
+    leads = [p for p in paragraphs if p.startswith(INVENTORY_LEAD)]
+    assert len(leads) == 1, (
+        f"§7 has {len(leads)} paragraph(s) opening {INVENTORY_LEAD!r}; the inventory of workflow "
+        "files is read from that one paragraph")
+    inventory = flat(leads[0])
+    names = list(re.finditer(r"`([a-z-]+\.yml)`", inventory))
+    clauses: dict[str, str] = {}
+    for index, match in enumerate(names):
+        end = names[index + 1].start() if index + 1 < len(names) else len(inventory)
+        assert match.group(1) not in clauses, f"§7's inventory names `{match.group(1)}` twice"
+        clauses[match.group(1)] = inventory[match.start():end]
+    return clauses
+
+
+def ci_job_ids() -> list[str]:
+    """`ci.yml`'s job ids, in file order: the keys two spaces in under its one `jobs:` line."""
+    text = (WORKFLOWS / "ci.yml").read_text(encoding="utf-8")
+    assert text.count("\njobs:\n") == 1, "ci.yml does not carry exactly one `jobs:` block"
+    ids = re.findall(r"(?m)^  ([a-z][a-z0-9-]*):$", text[text.index("\njobs:\n"):])
+    assert ids, "ci.yml's `jobs:` block declares no job this scanner recognises"
+    return ids
+
+
+def test_the_ci_section_names_every_workflow_file_the_tree_holds_and_no_other():
+    """The inventory, against `ls .github/workflows`. "Exactly one" was wrong by four."""
+    in_tree = sorted(p.name for p in WORKFLOWS.glob("*.yml"))
+    assert len(in_tree) >= 2, (
+        f".github/workflows/ holds {in_tree}; §7 is about the relationship between the release "
+        "pipeline and the workflow that can fail on a branch, and needs both to be about anything")
+    named = sorted(ci_section_clauses())
+    assert named == in_tree, (
+        f"§7's inventory names {named} and .github/workflows/ holds {in_tree}. Every file gets a "
+        "clause and no clause names a file that is not there")
+
+
+def test_the_ci_section_states_each_workflows_triggers_as_its_on_block_declares_them():
+    """Each clause, against its file's `on:` block, in both directions.
+
+    Every declared event is mentioned in the clause and no undeclared one is; every branch or tag
+    pattern the file filters on appears in the clause, backticked. The second half is what catches
+    "on the same pushes and pull requests" said of a workflow whose pull-request trigger carries a
+    branch filter the workflow it is compared with does not.
+    """
+    wrong = []
+    checked = 0
+    for name, clause in ci_section_clauses().items():
+        declared = workflow_triggers(WORKFLOWS / name)
+        for event, spelling in EVENT_SPELLINGS.items():
+            mentioned = re.search(spelling, clause) is not None
+            checked += 1
+            if (event in declared) and not mentioned:
+                wrong.append(f"{name} triggers on `{event}` and its clause does not say so: {clause!r}")
+            if mentioned and event not in declared:
+                wrong.append(f"{name}'s clause mentions `{event}` and the file does not declare it: {clause!r}")
+        for event, patterns in declared.items():
+            for pattern in patterns:
+                checked += 1
+                if f"`{pattern}`" not in clause:
+                    wrong.append(f"{name} filters `{event}` on `{pattern}` and its clause does not name it: {clause!r}")
+    assert checked, "no clause and no `on:` block was compared; the section or the scanner is empty"
+    assert not wrong, "§7's trigger statements have parted from the workflow files:\n  " + "\n  ".join(wrong)
+
+
+def test_the_ci_job_table_is_ci_ymls_job_set_in_its_order():
+    """The table's first column, against `ci.yml`'s `jobs:` keys, as a list and not a set.
+
+    The P1 design tabled `gates` and `manifests` as jobs; the file made them steps of `suite`,
+    and for nine days the table said otherwise while a `docs-audit` job it never mentioned ran
+    on every push. The section now says "the table is the job set as it stands", and this is
+    what makes that sentence checkable.
+    """
+    tabled = [row[0].strip("`") for row in table_rows(section(ARCHITECTURE, "## 7. CI layout"))]
+    declared = ci_job_ids()
+    assert tabled == declared, (
+        f"§7's job table lists {tabled}; ci.yml declares {declared}, in that order. A job the file "
+        "has and the table lacks is a control a reader is not told about, and the reverse is a "
+        "control that does not exist")
+
+
+def test_the_suite_rows_interpreters_are_ci_ymls_matrix_and_pyprojects_classifiers():
+    """The one figure the job table states, against the two files it is a reading of.
+
+    The `suite` row names the interpreters the job runs on and says they are "every interpreter
+    `pyproject.toml` declares"; the row is compared with `ci.yml`'s matrix and the matrix with the
+    classifiers, so neither half of the sentence can drift on its own.
+    """
+    rows = {row[0].strip("`"): row for row in table_rows(section(ARCHITECTURE, "## 7. CI layout"))}
+    assert "suite" in rows, "§7's job table has no `suite` row"
+    stated = re.findall(r"\b3\.\d{1,2}\b", rows["suite"][2])
+    text = (WORKFLOWS / "ci.yml").read_text(encoding="utf-8")
+    suite_block = re.search(r"(?ms)^  suite:$.*?(?=^  [a-z][a-z0-9-]*:$)", text)
+    assert suite_block, "ci.yml has no `suite` job followed by another job"
+    matrix_line = re.search(r"^\s+python:\s*\[(.*)\]\s*$", suite_block.group(0), re.M)
+    assert matrix_line, "ci.yml's `suite` job carries no `python: [...]` matrix"
+    matrix = re.findall(r"\d+\.\d+", matrix_line.group(1))
+    classifiers = re.findall(
+        r'"Programming Language :: Python :: (\d+\.\d+)"',
+        (REPO / "packages" / "cdm" / "pyproject.toml").read_text(encoding="utf-8"))
+    assert matrix and classifiers, "the matrix or the classifier list is empty; nothing was compared"
+    assert stated == matrix, (
+        f"§7's `suite` row names interpreters {stated}; ci.yml's matrix runs {matrix}")
+    assert matrix == classifiers, (
+        f"ci.yml's matrix runs {matrix}; pyproject.toml's classifiers declare {classifiers}. The "
+        "row says the job runs every declared interpreter, which is only true while these agree")
