@@ -3,22 +3,36 @@
 A documented, time-bounded decision **not to fix a security finding immediately**. SOIF Part 1
 §45: "no permanent undocumented exemptions".
 
-**There are two today, and both are about `docs/`.** `GHSA-w3rx-r6r6-pgpr.json` and
-`GHSA-5p2g-fcmc-qvqq.json` cover `image-size`'s two high npm advisories: a denial of service in
-its ICNS, JXL and HEIF parsers, reachable only when Docusaurus measures an image, at documentation
-build time, in a toolchain the Python distribution does not carry. They were written on
-2026-09-08 by round PB, they have no upstream fix to take, and they expire **2026-11-07** — sixty
-days, on M's ruling of the same day, with removal on the first upstream fix rather than at expiry.
-Each file's `upstream_status` says which event that would be.
+**There are none today, and this is the second time this paragraph has said so.** From
+2026-09-08 to 2026-09-16 it read "there are two today, and both are about `docs/`":
+`GHSA-w3rx-r6r6-pgpr.json` and `GHSA-5p2g-fcmc-qvqq.json`, written by round PB, covered
+`image-size`'s two high npm advisories — a denial of service in its ICNS, JXL and HEIF parsers,
+reachable only when Docusaurus measures an image, at documentation build time, in a toolchain the
+Python distribution does not carry. They were granted because no fixed release existed, bounded at
+sixty days (`expiry` 2026-11-07) on M's ruling of 2026-09-08, and each named in its
+`upstream_status` the event that would end it before that date: an `image-size` release carrying a
+fix. That event happened on 2026-09-14. `image-size` 2.0.3 and 2.0.4 were published from the
+project's new home at `codeberg.org/image-size/image-size` (the GitHub repository both files cited
+is archived and has no tag past v2.0.2), and the commit before 2.0.3 — `e6e83a55`, "fix infinite
+loops" — changes exactly `lib/types/icns.ts`, `lib/types/heif.ts` and `lib/types/jxl.ts` with an
+invalid-input fixture for each. So on 2026-09-16 both files were DELETED, as their own text
+required, and `docs/package.json` pins `image-size` at `^2.0.4` in `overrides`. `npm audit` over
+the committed `docs/package-lock.json` now reads zero high or critical advisories, and the
+`docs-audit` job's own derivation prints `excepted and present: []`.
 
-Until 2026-09-08 this paragraph read "there are none today", and the empty state is still the one
-the tooling is written for: both consumers below derive an EMPTY allowlist from an empty
-directory, which is not the same thing as having no allowlist mechanism. Two tests in other
-modules had encoded that emptiness as a constant and went red the moment these files landed —
-`tests/test_cdm_codeql_gate.py` and `tests/test_cdm_release_notes.py`, both now deriving from the
-directory instead. If you are reading this because you are about to add the third file, that is
-the failure mode to look for: a test that passes because the directory is empty rather than
-because the derivation is right.
+Deleted rather than closed, because the schema has no field for a closed exception and the
+directory is read as the set of exceptions IN FORCE: a file that is present is honoured by every
+consumer below, whatever its prose says. The record of the two having existed is the dated log
+(`packages/cdm/synapse_cdm/MIGRATIONS.md`: rounds PB and PD, and the audit's npm record of
+2026-09-16) and the git history, which is where a record belongs; this directory is the live set.
+
+The empty state is still the one the tooling is written for: every consumer below derives an EMPTY
+allowlist from an empty directory, which is not the same thing as having no allowlist mechanism.
+Two tests in other modules had encoded that emptiness as a constant and went red the moment the
+first two files landed on 2026-09-08 — `tests/test_cdm_codeql_gate.py` and
+`tests/test_cdm_release_notes.py`, both now deriving from the directory instead. If you are
+reading this because you are about to add the next file, that is the failure mode to look for: a
+test that passes because the directory is empty rather than because the derivation is right.
 
 `pip-audit --strict` over the installed Python environment reports *No known vulnerabilities
 found*, and nothing in this directory excepts a Python finding.
@@ -53,21 +67,25 @@ the exception is being GRANTED; `mitigation` is the concrete compensating contro
 `upstream_status` is whether a fix exists, what state the upstream issue or advisory is in, and
 **the event that will trigger removal**. With only the first two, a file can state a risk and a
 reason and say nothing about what holds the risk down or what would end the exception — and the
-first draft of the two files in this directory did exactly that, with both buried inside `reason`.
+first draft of the two `image-size` files this directory carried from 2026-09-08 to 2026-09-16
+did exactly that, with both buried inside `reason`.
 An incomplete file now fails validation, field by field:
 `tests/test_cdm_security_exceptions.py::test_an_incomplete_exception_file_fails_validation_field_by_field`
 omits each required key in turn and requires the refusal to name it.
 
 ## What makes it an exception rather than a note
 
-**One directory, two consumers, no second list.** The allowlists are DERIVED from these files at
-run time and are never typed into a workflow:
+**One directory, three consumers, no second list.** The allowlists are DERIVED from these files
+at run time and are never typed into a workflow:
 
 - `gates/codeql_gate.py` reads this directory and treats a result as excepted only when a valid,
   unexpired file names its rule id. Run it against a downloaded SARIF and it behaves identically
   to the CI step, because it is the same code.
 - the `supply-chain` job in `.github/workflows/ci.yml` runs
   `python gates/codeql_gate.py --emit-pip-audit-ignores` and passes the result to `pip-audit`.
+- the `docs-audit` job in the same file runs the same command and fails on any high or critical
+  npm advisory in `docs/package-lock.json` whose identifier the output does not carry. (Two
+  consumers until 2026-09-16, when this list gained the job round PB had added on 2026-09-08.)
 
 A list written into a workflow file is a list that stops matching this directory the first time
 somebody edits one and not the other, and the divergence is silent in the direction that matters:

@@ -7,22 +7,27 @@ becomes permanent by nobody looking at it, so the enforcement has to be somethin
 without anybody choosing to look. This module is that: an `expiry` in the past fails the WHOLE
 SUITE, on the day it passes, with no flag, no environment variable, no marker and no skip.
 
-That is deliberately harsher than it needs to be for a repository with two exceptions in it, and
+That is deliberately harsher than it needs to be for a repository that has never held more than
+two exceptions at once, and
 the harshness is the point. The two softer arrangements both fail in the same direction:
 
 * a warning — read by nobody, because the run is green;
 * a check in CI only — passed over by anyone running `pytest` locally, and CI is exactly where a
   red build gets an `|| true` added under time pressure.
 
-**There are two exception files, both written on 2026-09-08 by round PB** (`image-size`'s two
-high npm advisories, which have no upstream fix; they expire 2026-11-07). Until that round this
-paragraph read "there are no exception files today", and most of what follows ran over an empty
-directory; the assertions below are written so that they have content in EITHER state, because a
-test that encodes today's emptiness as a fact about the tree is a test that goes red when the
-mechanism is first used — which is exactly what happened to two tests in other modules when these
-two files landed, and they were the things that were wrong, not the code.
+**There are no exception files today, and the directory has been through both states.** Round
+PB wrote two on 2026-09-08 — `image-size`'s two high npm advisories, `GHSA-w3rx-r6r6-pgpr` and
+`GHSA-5p2g-fcmc-qvqq`, with no upstream fix then and an `expiry` of 2026-11-07 — and the audit of
+2026-09-16 deleted them, as each file's own `upstream_status` required, once `image-size` 2.0.3
+(published 2026-09-14) carried the fix and `docs/package-lock.json` had moved to 2.0.4. Before PB
+this paragraph read "there are no exception files today" and most of what follows ran over an
+empty directory; the assertions below are written so that they have content in EITHER state,
+because a test that encodes today's emptiness as a fact about the tree is a test that goes red
+when the mechanism is first used — which is exactly what happened to two tests in other modules
+when the two files landed, and they were the things that were wrong, not the code. The
+parametrised tests below have zero cases today; the derivation tests still run.
 
-`pip-audit --strict` over the Python environment is still clean, and both files are about the
+`pip-audit --strict` over the Python environment is still clean, and both files were about the
 `docs/` npm toolchain, which the Python distribution does not carry.
 
 M's ruling of 2026-09-08T16:45:00Z added `mitigation` and `upstream_status` to the schema's

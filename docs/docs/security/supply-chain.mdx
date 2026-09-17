@@ -2,7 +2,7 @@
 title: Supply chain
 sidebar_label: Supply chain
 sidebar_position: 3
-description: The provenance chain from a commit to an attested artefact, the job that realises each arrow, and what each of the five scanners does and does not cover.
+description: The provenance chain from a commit to an attested artefact, the job that realises each arrow, and what each of the six scanners does and does not cover.
 ---
 
 # Supply chain
@@ -54,28 +54,42 @@ describes nothing — no packages, no components, no `synapse-cdm` entry, or a v
 **Nothing here publishes.** `rc-build.yml` has no PyPI step, creates no release and moves no tag.
 Publishing is `.github/workflows/publish.yml`, which a `v*` tag starts.
 
-## 2. Five scanners, and what each one is blind to
+## 2. Six scanners, and what each one is blind to
 
-Stated as a table because the failure mode is mistaking one green for another.
+Stated as a table because the failure mode is mistaking one green for another. (Five rows until
+2026-09-16: the `npm audit` row was missing, although the job had run on every push since round
+PB on 2026-09-08 and both `image-size` exception files named it as their enforcing mitigation.)
 
 | layer | where | what it reads | blind to |
 |---|---|---|---|
 | Dependabot alerts + security updates | repository settings | the dependency **graph** GitHub builds from the committed manifests | anything not in a manifest; a vulnerability with no advisory yet |
 | Dependabot version updates | `.github/dependabot.yml` | `pip` in `/packages/cdm`, `github-actions` in `/`, `npm` in `/docs` | a dependency reachable only at runtime |
 | Dependency review | `.github/workflows/dependency-review.yml` | what a **pull request** adds | **every commit pushed directly**, which is how this campaign is developed — see below |
-| `pip-audit` | `ci.yml`, job `supply-chain` | the installed environment, **and** the wheel's own frozen closure in a clean venv | JavaScript; anything outside Python packaging |
+| `pip-audit` | `ci.yml`, job `supply-chain` | the installed environment, **and** the wheel's own frozen closure in a clean venv | JavaScript, which is the row below; anything outside Python packaging |
+| `npm audit` | `ci.yml`, job `docs-audit` | the committed `docs/package-lock.json`, installed with `npm ci`, at high, with the exception allowlist derived from `security/exceptions/` | Python; a moderate advisory, which is reported and never blocks; anything outside the docs toolchain's lock |
 | CodeQL | `.github/workflows/codeql.yml` | `python` and `javascript-typescript` sources, `security-extended` | dependencies (that is the four rows above) |
 
 **The dependency-review row is the one worth reading twice.** That action compares the dependency
 graph of a pull request's base and head refs, so it exercises only on pull requests. The SOIF
 Part 1 campaign pushes directly to its branch, which means dependency review **did not run on the
 commits that built this package**. The layer that covers the dependency set as it actually stands,
-on every push, is `pip-audit` in `ci.yml` — two readings, because they answer different questions:
+on every push, is `pip-audit` in `ci.yml` for the Python distribution and `npm audit` in the
+`docs-audit` job for the documentation toolchain (this sentence named `pip-audit` alone until
+2026-09-16). The Python readings are two, because they answer different questions:
 
 - the **installed environment**: the package plus its `test` extra plus everything those drag in;
 - the **wheel's frozen closure**: the wheel installed alone into a clean virtual environment and
   `pip freeze`d. This is what `pip install synapse-cdm` actually creates, and it is the smaller
   and more relevant of the two.
+
+The npm reading is one: `npm ci` from the committed `docs/package-lock.json`, then
+`npm audit --audit-level=high` verbatim for the log, then a step that fails on any high or
+critical advisory not derived from `security/exceptions/` — and, last in the same job, the
+site's own `npm run ci`, so a lock that clears an advisory and breaks the build is not green.
+Where a high advisory sits in a package reachable only under `@docusaurus/*`, the repair is a
+floor in `docs/package.json`'s `overrides` (six today), never `npm audit fix`, which downgraded
+`qs` into its vulnerable range when it was tried; the dated reason for each pin is in
+`packages/cdm/synapse_cdm/MIGRATIONS.md`.
 
 ## 3. What blocks, and the one way past it
 
@@ -97,20 +111,33 @@ The one way past a blocking finding is a documented, time-bounded exception:
 security/exceptions/<identifier>.json
 ```
 
-with an `identifier`, `affected_package`, `version_range`, `risk`, `reason`, `owner`, `expiry`,
-`created` and at least one `reference`. Two properties make it a mechanism rather than a note:
+with an `identifier`, `affected_package`, `version_range`, `risk`, `reason`, `mitigation`,
+`upstream_status`, `owner`, `expiry`, `created` and at least one `reference` — the four prose
+fields separated by what they answer: the impact here, why the exception is granted, the
+compensating controls in force now, and the upstream state with the event that ends the
+exception before its `expiry`. Two properties make it a mechanism rather than a note:
 
-1. **One source, two consumers.** `gates/codeql_gate.py` reads the directory, and the `pip-audit`
-   step runs `python gates/codeql_gate.py --emit-pip-audit-ignores` to derive its `--ignore-vuln`
-   flags. Neither workflow carries a list, and a test asserts that neither ever will — two lists
-   diverge silently in the direction that suppresses a live finding.
+1. **One source, three consumers.** `gates/codeql_gate.py` reads the directory, and the
+   `pip-audit` step and the `docs-audit` job both run
+   `python gates/codeql_gate.py --emit-pip-audit-ignores` to derive their allowlists. No
+   workflow carries a list, and a test asserts that none ever will — two lists diverge silently
+   in the direction that suppresses a live finding.
 2. **Expiry is enforced by the suite, unconditionally.**
    `tests/test_cdm_security_exceptions.py` fails the whole suite on the day an `expiry` passes.
    No flag, no grace period, no skip. The repair is to fix the finding or to write a new exception
    saying what changed — never to move the date.
 
-There are **no exceptions today**, and that is a reading: `pip-audit --strict` reported *No known
-vulnerabilities found* on 2026-09-08.
+There are **no exceptions today**, and that is a reading rather than a first state. Two were in
+force from 2026-09-08 to 2026-09-16 — `GHSA-w3rx-r6r6-pgpr` and `GHSA-5p2g-fcmc-qvqq`,
+`image-size`'s ICNS and JXL/HEIF denial-of-service advisories, high, reachable only when
+Docusaurus measures an image at documentation build time, granted because no fixed release
+existed and bounded at sixty days — and both were deleted, as their own `upstream_status`
+required, when `image-size` 2.0.3 (published 2026-09-14) turned out to carry the fix for exactly
+those three parsers. `docs/package.json` now pins `image-size` at `^2.0.4` in `overrides`, and
+`npm audit` over the committed lock reads zero high or critical advisories. `pip-audit --strict`
+reported *No known vulnerabilities found* on 2026-09-08, and no Python finding and no CodeQL
+finding has ever been excepted. (Until 2026-09-16 this paragraph still read as it had on
+2026-09-08, and was false for the eight days the two files existed.)
 
 ## 4. The gate runs the same way on your machine
 
@@ -160,4 +187,8 @@ reading.
   (`spec/sc-oes/14-security-considerations.md` is where the trust boundaries are written down).
 - **No CodeQL finding has been evaluated yet.** Advanced setup landed in round P6 and its first
   run is round P7's to record. The gate is in place and tested against synthetic SARIF; it has
-  not yet been handed a real analysis of this repository.
+  not yet been handed a real analysis of this repository. *(Dated correction, 2026-09-16: this
+  bullet had been false since round P7 read the first analysis on 2026-09-08 — run 34212170555,
+  RED on four findings at or above 7.0, none in the shipped package, all four fixed at their
+  sites by round PC with no exception written, and the next run GREEN. `SECURITY.md`'s CodeQL
+  row is the record, and the gate has since become a stage of the release pipeline as well.)*

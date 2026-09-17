@@ -367,8 +367,8 @@ parser-safety record added — `tak/malformed/deeply_nested.xml`,
 `nits/malformed/deeply_nested.nits.xml`, `pntmap/malformed/a_json_list.json`, and the `README.md`
 and `PROVENANCE.json` beside each; and six files the harness-evidence record moves — `adapter.py`,
 `harness.py`, `suite.py`, `evidence.py`, `version.py` and the package's own `README.md`; and
-`pyproject.toml`, which the audit's CI record at the end of this section moves for its `[lint]`
-extra and its rule set. Everything else these rounds touched ships in nothing: the release
+`pyproject.toml`, which the audit's CI record below moves for its `[lint]` extra and its rule
+set. Everything else these rounds touched ships in nothing: the release
 workflow, the witness builder it runs and that builder's test module, the generated manifests under
 `manifests/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
 record.
@@ -727,6 +727,71 @@ by `skipif`; `ci.yml` gains a `wheel` job that runs `gates/wheel_install.py --mu
 every push; its `docs-audit` job runs `npm run ci` rather than `npm run build`; and
 `tests/test_cdm_lint_stage.py` holds the pin, the rule set and the two workflows together.
 
+**THE AUDIT'S NPM RECORD, 2026-09-16 — `image-size` has a fix, so the two exceptions are deleted
+and the lock takes it.** Unit: `synapse_cdm/MIGRATIONS.md`, PATCH by the bump table's
+shipped-document row, and it is the unit every record in this section already carries — no other
+unit, because nothing under `synapse_cdm/` moved for this but this file. The rest ships in
+nothing: `docs/package.json`, `docs/package-lock.json`, the two files under `security/exceptions/`,
+`SECURITY.md`, `security/README.md`, two documentation pages and two test modules.
+
+**THE EVENT THE TWO FILES NAMED HAS HAPPENED.** Both `image-size` exceptions (round PB's record
+under 2.1.0 below) said in their `upstream_status` that `image-size` had published nothing after
+2.0.2 and that an `overrides` entry had nothing to point at, and named as their removal trigger
+an `image-size` release that carries a fix, on which M's ruling of 2026-09-08 requires the file
+to be DELETED and the dependency upgraded then rather than at `expiry`. On 2026-09-14 the
+registry gained 2.0.3 (15:57:47Z) and 2.0.4 (16:38:44Z), published by the same npm user as 2.0.2,
+with `repository.url` at `https://codeberg.org/image-size/image-size.git` — the GitHub repository
+both files cited is archived and has no tag past v2.0.2, which is why a reading of GitHub alone
+still says nothing has shipped. Codeberg's history is the evidence: commit `e6e83a55`
+(2026-09-14, its subject a promise to fix the infinite loops) changes `lib/types/icns.ts`,
+`lib/types/heif.ts`, `lib/types/jxl.ts`, `lib/detector.ts`, `lib/lookup.ts` and
+`lib/types/utils.ts` and adds an invalid-input fixture for each of the three parsers
+(`icns-zero-length-entry.icns`, `heif-undersized-ispe.heic`, `jxl-header-only-jxlp.jxl`);
+`fa82e6b9` is the 2.0.3 bump; `8fec4062` bounds the image count in ICO and CUR files; `763bf4e9`
+is 2.0.4. The three parsers are exactly the ones `GHSA-w3rx-r6r6-pgpr` (ICNS) and
+`GHSA-5p2g-fcmc-qvqq` (JXL and HEIF) cover, so 2.0.3 is the fix and 2.0.4 adds an unrelated
+bound. GitHub's advisory records still carry `first_patched_version: null` over `<= 2.0.2`, last
+updated 2026-08-07: the advisories clear at 2.0.4 because the range excludes it, not because
+anybody set a patched version — which is also why no Dependabot update, no `docs-audit` run and
+no expiry check noticed. Nothing in the tree watches the registry, and this record does not
+claim otherwise; the reading was taken by hand, two days late.
+
+**THE REPAIR IS ONE LINE IN `overrides` AND SIX IN THE LOCK.** `"image-size": "^2.0.4"` joins
+the five pins in `docs/package.json`, alphabetically; `npm --prefix docs install --ignore-scripts`
+moves `docs/package-lock.json` by one entry and nothing else — `node_modules/image-size` 2.0.2 →
+2.0.4, its `resolved` URL, its `integrity`, and `engines.node` `>=16.x` → `>=18`, which
+`.node-version` 22 satisfies. `@docusaurus/mdx-loader@3.10.2`'s own spec is `^2.0.2`, so a bare
+`npm update` would also have resolved 2.0.4; the override is there for the reason the five
+before it are — it pins the floor, so a later re-resolution cannot legally go back. Both files
+under `security/exceptions/` are deleted, not edited: the schema has no field for a closed
+exception, and a present file is an exception in force whatever its text says. Readings, taken
+with the `docs-audit` job's own steps over the committed lock: `gates/codeql_gate.py
+--emit-pip-audit-ignores` prints nothing; the enforcing step reads `advisories: 1; excepted and
+present: []; excepted and absent: []` and `OK`; `npm audit --json` → high 0, critical 0,
+moderate 17, where before the override it read high 1 over the same seventeen moderates — the
+one advisory left is `GHSA-w5hq-g745-h8pq` (`uuid`, through `webpack-dev-server`, which no build
+uses); `npm ci --dry-run` accepts the pair; `npm --prefix docs run ci` is exit 0 with `0 written,
+9 already current`, `tsc` clean, the build green and `19 directives in the sources, 19
+admonitions rendered, 0 literal ':::' in 26 built pages`. The release notes, which count the
+directory, will render the exceptions line as **none** — the branch
+`tests/test_cdm_release_notes.py` said would be true again the day the last exception was
+removed.
+
+**AND THE PROSE THAT SAID ZERO WHILE THERE WERE TWO IS CORRECTED WHERE IT STANDS.** Three
+documents said in the present tense, from 2026-09-08 to this record, that the directory held no
+exception file — `SECURITY.md`'s CodeQL and exceptions rows, `security/README.md` (which also
+still said no CodeQL analysis had been read, false since round P7) and the supply-chain page —
+and none of them named the `docs-audit` job or the `overrides` at all, although both exception
+files rested on that job as their enforcing mitigation. The directory is empty again today, so
+each sentence is true again by accident; each now carries the dated history instead, and
+`SECURITY.md`'s controls table gains two rows, one for the job and one for the six pins, with the
+readings above. The supply-chain page's scanner table has six rows where it had five, and
+`tests/test_cdm_security_policy.py` derives the `docs-audit` job from `ci.yml` and requires both
+the page and the policy's table to name it. P6's record of this file, which says there are no
+exception files today, and PD's and PB's records, which say the exceptions stay because there is
+nothing to upgrade to, are dated and were true when written; each gains a dated correction beside
+it under 2.1.0 below.
+
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
@@ -1073,6 +1138,12 @@ HIGHs. The third remaining advisory is `GHSA-w5hq-g745-h8pq` (uuid), MODERATE, b
 threshold and unchanged by this round. `GHSA-4vpr-x523-8j87` (SVGO, MODERATE, published
 21:20:05Z) was cleared by the same upgrade without being the reason for it.
 
+**Corrected 2026-09-16: they no longer stay.** `image-size` 2.0.3 and 2.0.4 were published on
+2026-09-14, 2.0.3 carrying the fix for exactly the three parsers the two advisories cover, so
+the trigger both files named fired; the audit's npm record under the pending heading above
+deletes both files and moves the lock to 2.0.4 by an `overrides` entry of the same shape as the
+two this round added. The reading in the paragraph above was true when it was taken and is kept.
+
 **ROUND PS's RECORD, 2026-09-08 — the release pipeline's SBOM stage, repaired.**
 
 Recorded 2026-09-08 by SOIF Part 1 round PS, on M's rulings of the same day. Nothing here is
@@ -1210,6 +1281,13 @@ reachable upgrade: they are the first two files ever written into `security/exce
 2026-11-07, and are enforced by the new `docs-audit` job in `.github/workflows/ci.yml`, which
 derives its allowlist from that directory through
 `gates/codeql_gate.py --emit-pip-audit-ignores` rather than carrying one of its own.
+
+**Corrected 2026-09-16: no upstream fix and no reachable upgrade stopped being true on
+2026-09-14**, when `image-size` 2.0.3 shipped the fix from the project's new home on Codeberg.
+The two files were deleted on 2026-09-16, as their own `upstream_status` required, and the lock
+resolves 2.0.4 through a sixth `overrides` entry — the audit's npm record under the pending
+heading above. Everything else in this paragraph still holds, and the `docs-audit` job it
+introduces is what read the repaired lock green.
 
 **AN EXCEPTION NOW HAS FOUR PROSE FIELDS AND NOT TWO** (M's ruling, 2026-09-08T16:45:00Z, on this
 round's first attempt). `security/exceptions/schema.json` gains `mitigation` and
@@ -1407,6 +1485,13 @@ the direction that suppresses a live finding. An `expiry` in the past fails the 
 day it passes, with no flag and no skip, which is what makes §45's "no permanent undocumented
 exemptions" enforced rather than intended. **There are no exception files today**, and that is a
 reading: `pip-audit --strict` reported no known vulnerabilities on 2026-09-08.
+
+**Corrected 2026-09-16: that reading was P6's and was overtaken the same day.** Round PB wrote
+the two `image-size` files into the directory that evening (its record above), they stood until
+2026-09-16, and they are deleted again now on their own removal trigger — the audit's npm record
+under the pending heading above has the history. The directory is empty again by a second
+reading, not by this one surviving, and three present-tense sites outside this file that had
+repeated the sentence for eight days while it was false now carry the same correction.
 
 **`gates/codeql_gate.py` is outside the package on purpose and is not a unit.** It is a gate — a
 protocol act, like `gates/wheel_install.py` and `gates/parks_table.py` — so it ships in no wheel,

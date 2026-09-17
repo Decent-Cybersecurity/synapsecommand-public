@@ -237,10 +237,12 @@ def test_the_readme_points_at_the_policy():
 # mode, and it is silent.
 # ------------------------------------------------------------------------------------------------
 
-def test_the_supply_chain_page_exists_and_covers_the_five_layers():
+def test_the_supply_chain_page_exists_and_covers_the_six_layers():
+    """Six since 2026-09-16: `npm audit` in the `docs-audit` job had run on every push since
+    round PB and was the one scanner the page did not list."""
     assert SUPPLY_CHAIN.is_file()
     body = SUPPLY_CHAIN.read_text()
-    for needle in ("Dependabot", "Dependency review", "pip-audit", "CodeQL",
+    for needle in ("Dependabot", "Dependency review", "pip-audit", "npm audit", "CodeQL",
                    "security/exceptions/", "attestation", "SPDX", "CycloneDX"):
         assert needle in body, f"the supply-chain page does not mention {needle!r}"
 
@@ -256,7 +258,7 @@ def test_every_job_the_page_names_is_a_job_the_workflow_declares():
     page = SUPPLY_CHAIN.read_text()
     declared = set(re.findall(r"^  ([a-z][a-z0-9-]*):$", RC_BUILD.read_text(), re.M))
     assert {"qualify", "build", "attest"} <= declared, sorted(declared)
-    chain = page[page.index("## 1. The chain"):page.index("## 2. Five scanners")]
+    chain = page[page.index("## 1. The chain"):page.index("## 2. Six scanners")]
     named = set(re.findall(r"`([a-z][a-z0-9-]*)`(?=,| declares| needs)", chain))
     unknown = sorted(named - declared)
     assert not unknown, (
@@ -269,6 +271,30 @@ def test_the_page_names_the_supply_chain_job_ci_actually_has():
     assert re.search(r"^  supply-chain:$", ci, re.M), (
         "ci.yml has no `supply-chain` job. ARCHITECTURE.md §7's job table names it as round P6's")
     assert "job `supply-chain`" in SUPPLY_CHAIN.read_text()
+
+
+def test_the_page_and_the_policy_name_the_docs_audit_job_ci_actually_has():
+    """The npm half of the every-push dependency layer, in both documents, since 2026-09-16.
+
+    `docs-audit` had run on every push since round PB (2026-09-08) and both `image-size`
+    exception files named it as their enforcing mitigation, yet neither the supply-chain page's
+    scanner table nor SECURITY.md's controls table had a row for it — the one control guarding
+    `docs/package-lock.json` was invisible from the inventory a reporter is told to read. The
+    job is derived from ci.yml here, and both documents are required to name it; the policy's
+    table must also name the `overrides` block that job proves, since that is where every npm
+    floor this repository pins is declared.
+    """
+    ci = CI.read_text()
+    assert re.search(r"^  docs-audit:$", ci, re.M), (
+        "ci.yml has no `docs-audit` job. ARCHITECTURE.md §7's job table names it as round PB's")
+    assert "job `docs-audit`" in SUPPLY_CHAIN.read_text(), (
+        "the supply-chain page's scanner table does not name the `docs-audit` job")
+    body = POLICY.read_text()
+    table = body[body.index("## Controls"):body.index("## Handling a report")]
+    assert "job `docs-audit`" in table, (
+        "SECURITY.md's controls table has no row naming the `docs-audit` job")
+    assert "`overrides`" in table, (
+        "SECURITY.md's controls table has no row naming docs/package.json's `overrides`")
 
 
 def test_the_threshold_is_one_number_in_one_place():
