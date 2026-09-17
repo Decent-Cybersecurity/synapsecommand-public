@@ -211,7 +211,7 @@ VMTI_TARGET_ROLE = "vmti_target"
 #: extent possible". Where it is present, this adapter emits a `Track` and its `Entity` keyed on
 #: it; where it is absent it emits `DETECTION` `Event`s and nothing else. That is
 #: `stanag4676.py`'s convention — key on what the source guarantees, refuse where it does not,
-#: `stanag4676.py:1517` — and where VTracker is absent it coincides with the shipped
+#: `stanag4676.key_of` — and where VTracker is absent it coincides with the shipped
 #: `asterix_cat048.py` and `legion.py` shape, `DETECTION` with no `Track` at all.
 #:
 #: **AND THE CARRIER THIS ADAPTER USES IS ONE THE DOCUMENT DISCOURAGES, WHICH IS RECORDED RATHER
@@ -224,7 +224,8 @@ VMTI_TARGET_ROLE = "vmti_target"
 #: discouraged carrier is the only one in reach, and this repository's STANAG 4676 adapter is
 #: where the recommended one would land.
 VMTI_IDENTITY_RULING = (
-    "M's ruling, 2026-09-05 (rounds/briefs/H2-park6-cdm.md): identity objects are keyed only on "
+    "M's ruling, 2026-09-05 (recorded in a private round brief; the ruling's text is this "
+    "constant): identity objects are keyed only on "
     "the identifier ST 0903.4 guarantees unconditionally, VTracker LS Tag 1's UUID \u2014 'A value "
     "that uniquely identifies a track, using a 128-bit (16-byte) Universal Unique Identification "
     "(UUID) as standardized by the Open Software Foundation in ISO/IEC 9834-8' (page 90). Where "

@@ -848,7 +848,8 @@ class AisAdapter(Adapter):
                         kind=LimitKind.IMPLEMENTATION_CAP,
                         source=(
                             "NMEA 0183 caps one sentence at 82 characters including the "
-                            "delimiters and the checksum (`adapters/ais.py:372`), and the "
+                            "delimiters and the checksum (`adapters/ais.py`, `MAX_PAYLOAD_CHARS`), "
+                            "and the "
                             "AIVDM fragment-count field is a single character, so one whole "
                             "message is at most 9 x 82 = 738 octets. That figure does not "
                             "cover the NMEA 0183 v4.10 TAG blocks this adapter also accepts on "

@@ -17,7 +17,7 @@ description: "JSON Schema reference for CDMObject (the union)."
 | Source file | `schemas/cdm_object.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:2.1.0:cdm_object` |
 | CDM schema version | `2.1.0` |
-| SHA-256 of source | `734dd68a9a5694398062b92aa807ffb1c54653e37c5ff93a2f02e0598469b316` |
+| SHA-256 of source | `cee828660af920e63d88615fbc4a40b225bf58fe4a3904d675015e7018d13504` |
 
 ## The union
 
@@ -39,7 +39,7 @@ complete reference and not a starting point for chasing pointers.
 
 ### Affiliation
 
-Maps to MIL-STD-2525 standard identity — see models.standard_identity().
+Maps to MIL-STD-2525 standard identity — see symbology.standard_identity().
 
 Four members, not 2525's seven: PENDING, ASSUMED_FRIEND and SUSPECT are judgements a
 fusion layer makes, not facts an adapter can read off a wire format. An adapter that
@@ -146,7 +146,7 @@ concern"; this adds the role. The membership rule that keeps the two lists agree
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `entity_id` | string (uuid) | **yes** | Must also appear in the event's related_entities — see Event._oes_entities. |
+| `entity_id` | string (uuid) | **yes** | Must also appear in the event's related_entities — see Event._oes_relations. |
 | `predicate` | string | **yes** | An absolute semantic identifier: a governed ontology term or a valid third-party one. A bare word or a local name is refused. (min length 1) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields

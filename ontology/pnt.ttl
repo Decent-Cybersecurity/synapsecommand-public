@@ -1,7 +1,7 @@
 # SC-OES Operational Ontology — pnt module
 #
 # Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
-# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# the list docs/adr/0002-ontology-representation.md records. No module imports another: the eight files are loaded together, and
 # a parent in another module is referenced by its identifier.
 
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
@@ -18,7 +18,7 @@
     scmeta:module "pnt" ;
     scmeta:maturity "EXPERIMENTAL" .
 
-# §93 names four concepts and stops there deliberately: "Do not create a full EW ontology." Three
+# The private brief (not in this repository) names four concepts and stops there deliberately: "Do not create a full EW ontology." Three
 # of them are objects with no parent stated in the specification, so each takes the most general
 # core class it cannot fail to satisfy (ontology/README.md, the parent rule) rather than the most
 # specific one a reader might guess. `InterferenceSource` is the case that shows the rule has

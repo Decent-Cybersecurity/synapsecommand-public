@@ -17,7 +17,7 @@ description: "Anything that happens. The audit-bearing object: two timestamps an
 | Source file | `schemas/event.schema.json` |
 | `$id` | `urn:synapsecommand:cdm:2.1.0:event` |
 | CDM schema version | `2.1.0` |
-| SHA-256 of source | `79a9a1ad9a688c6df15bee88efda95f463f39bbcad6e2d40cdb1734ae09d8859` |
+| SHA-256 of source | `bf0b167707df1b6262efb2c12fd922aa1cb07dc4887e0d7b870f8d6715b0354c` |
 
 Anything that happens. The audit-bearing object: two timestamps and a source, always.
 
@@ -65,7 +65,7 @@ concern"; this adds the role. The membership rule that keeps the two lists agree
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `entity_id` | string (uuid) | **yes** | Must also appear in the event's related_entities — see Event._oes_entities. |
+| `entity_id` | string (uuid) | **yes** | Must also appear in the event's related_entities — see Event._oes_relations. |
 | `predicate` | string | **yes** | An absolute semantic identifier: a governed ontology term or a valid third-party one. A bare word or a local name is refused. (min length 1) |
 
 `additionalProperties: false` — unknown keys are rejected. Source-specific fields

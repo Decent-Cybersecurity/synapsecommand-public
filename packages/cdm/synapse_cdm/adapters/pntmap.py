@@ -223,7 +223,8 @@ class PntmapAdapter(Adapter):
                             "A PNTMAP GNSS interference alert is a JSON document and no "
                             "document in this tree states a maximum for one. 1 MiB is chosen "
                             "from the parser audit: the payload reaches `json.loads` "
-                            "(`adapters/pntmap.py:375`) and the largest PNTMAP fixture in this "
+                            "(`adapters/pntmap.py`'s `_as_dict`) and the largest PNTMAP fixture in "
+                            "this "
                             "package is 719 octets. This is an IMPLEMENTATION CAP under M's "
                             "F5.4 ruling and is NOT the format's normative maximum."),
                         enforced_at=(

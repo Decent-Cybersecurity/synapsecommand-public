@@ -1,7 +1,7 @@
 # SC-OES Operational Ontology — air module
 #
 # Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
-# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# the list docs/adr/0002-ontology-representation.md records. No module imports another: the eight files are loaded together, and
 # a parent in another module is referenced by its identifier.
 
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
@@ -18,7 +18,7 @@
     scmeta:module "air" ;
     scmeta:maturity "EXPERIMENTAL" .
 
-# §94 states this module's object hierarchy in full — Aircraft -> Platform, UAV -> Aircraft,
+# The private brief (not in this repository) states this module's object hierarchy in full — Aircraft -> Platform, UAV -> Aircraft,
 # Airfield -> Facility, Runway -> FacilityComponent, Airspace -> Area — and it is taken exactly.
 
 air:Aircraft

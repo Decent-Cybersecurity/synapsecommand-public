@@ -56,6 +56,10 @@ this table listed before the constant existed. **The union is unmoved at nine fo
 time**, and the tree's tally is now nine as well, which is the first moment since this table was
 written that the two numbers have been equal for a reason rather than by arithmetic.
 
+*Dated note, 2026-09-16: `version.py:313` was the constant's line when that correction was
+written; `EVIDENCE_SCHEMA_VERSION` has since moved to `version.py:369`, the reading its row in the
+table below carries.*
+
 **Two readings moved in the same round and both are corrections rather than rewrites.**
 `MANIFEST_SCHEMA_VERSION` reads `1.1.0`: §34 of the specification needs an "explicit documented
 exception" a loss classifier can act on, so `AdapterMetadata.limitations` widened from
@@ -266,8 +270,8 @@ commit the reviewed branch does not. That is not a merge conflict and is not fix
 one: it means `main` moved independently of the reviewed branch, so the reviewed thing is not the
 thing that would be released. The release round STOPS, and what follows is a new round that
 reviews the combined history — never a rebase of the branch, and never a force-push. A previously
-accepted and pushed commit is never amended, rebased away or squashed (§54; `RUNNER.md`'s hard
-limits say the same thing for the loop).
+accepted and pushed commit is never amended, rebased away or squashed (§54; the runner protocol,
+a private document, says the same thing for the loop).
 
 **The order is not interchangeable.** The tag is created on `main`'s new tip AFTER the
 fast-forward, because `.github/workflows/publish.yml`'s condition 3 compares the tag's ref against

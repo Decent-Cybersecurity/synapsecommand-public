@@ -35,6 +35,14 @@ marked all 148 of S0's citations mechanically (every one of them was a v1 citati
 construction) and rewrote to v2 in the sections it revised; a `§v1 N` remaining in an unrevised
 section is S0's citation, not a claim about v2.
 
+**Dated note, 2026-09-16.** `SC-OES-SPEC-v2.md`, its `SA.1` addendum and `rounds/PLAN.md` are private
+working briefs in the untracked round apparatus and are not in this repository, so a bare `§N`,
+an `SA.1 §N` or a `§v1 N` in this document cannot be resolved by a public reader. The published
+counterpart is `spec/sc-oes/` — twenty-four documents, none of them carrying section numbers —
+and `docs/adr/0001`–`0010` record each decision the brief's sections asked for; the ADR status
+lines say the same of the brief. The plan is not rewritten, for the reason the dated note of
+2026-09-07 above gives.
+
 Two conventions. **A reading is what a command printed**, not what a document claims — where the
 two differ the difference is the finding. **An item the tree cannot yet answer says so and names
 the reading that would**; the items that ended that way in S0 and have since been settled say

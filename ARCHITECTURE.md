@@ -125,7 +125,7 @@ defined": `__init_subclass__` already refuses the two inconsistent combinations,
 can is that the declaration is separate from the implementation.
 
 **Six values are frozen here.** Three of them exist in the tree today as lower-case literals —
-`adapter.py:42`, `Direction = Literal["ingest", "egress", "bidirectional"]` — and those literals
+`adapter.Direction`, `Direction = Literal["ingest", "egress", "bidirectional"]` — and those literals
 are the **wire and code spellings** of the first three rows. The upper-case forms are the
 specification's names for the same three facts; they are not a second enumeration.
 
@@ -298,10 +298,10 @@ these are the six the framework's contract is written on.
 Unsupported source information MUST be retained when technically and legally possible, in an
 explicit residual structure. Unknown source attributes MUST NOT be silently discarded.
 
-**Enforced today.** `lossless.unrepresented()` (`lossless.py:99`) harvests every scalar leaf of the
+**Enforced today.** `lossless.unrepresented()` harvests every scalar leaf of the
 source payload, harvests every scalar in the CDM output, and reports source values appearing
 nowhere; the harness FAILS an adapter on a non-empty report. `lossless.residual()`
-(`lossless.py:124`) returns everything the adapter did not consume, with structure preserved, for
+returns everything the adapter did not consume, with structure preserved, for
 the adapter to park. Values that legitimately change are declared in `TRANSFORMS` with a reason and
 are PRINTED on every run — an exemption is a visible line in the report, not a silent skip. The
 harness's fourth check (`lossless`) is where an adapter meets this rule.
@@ -323,8 +323,8 @@ accuracy is not `0`. Missing data SHALL remain missing or be explicitly marked u
 
 **Enforced today, structurally.** `Position` requires `lat` and `lon`, so an unknown position
 cannot be spelled as zeros — it is spelled by the absence of a `Position`. The optional scalars
-carry the convention in their own field descriptions: `models.py:159`, `alt_m` — "Metres HAE.
-None = unknown"; `models.py:163`, `accuracy_m` — "Metres, 1-sigma. None = unknown, never 0". The
+carry the convention in their own field descriptions: `Position.alt_m` — "Metres HAE.
+None = unknown"; `Position.accuracy_m` — "Metres, 1-sigma. None = unknown, never 0". The
 mirror-image defect is equally a defect: `0.0` IS a real coordinate, so a truth test on a
 coordinate is as wrong as a null-to-zero substitution.
 
@@ -366,13 +366,13 @@ A canonical object SHALL expose enough to determine: source format; format versi
 if known; adapter; adapter version; original identifier; transformation chain; source hash where
 appropriate; source observation time; and ingest time where relevant.
 
-**What the tree carries today.** `SourceRef` (`models.py:103`) carries `system`, `adapter`,
-`adapter_version` and a REQUIRED `synthetic` with no default. `SourceId` (`models.py:77`) carries
+**What the tree carries today.** `SourceRef` (`models.py`) carries `system`, `adapter`,
+`adapter_version` and a REQUIRED `synthetic` with no default. `SourceId` carries
 one external system's own identifier, as a list on `CDMBase` and required with `min_length=1` on
-every kind — the reason is in `CDMBase`'s docstring (`models.py:185`) and it is a defect found by
+every kind — the reason is in `CDMBase`'s docstring and it is a defect found by
 running the harness: an alert's own identifier appeared nowhere in the output, silently, with every
-other check passing. `Event.observed_at` (`models.py:376`) is when the SOURCE saw it and
-`Event.received_at` (`models.py:377`) is when WE took delivery, and the field descriptions say
+other check passing. `Event.observed_at` is when the SOURCE saw it and
+`Event.received_at` is when WE took delivery, and the field descriptions say
 "Never receipt time" and "Never source time" because that is the confusion they exist to prevent.
 
 **The gap, named as P3's.** Five of Rule 5's items have no canonical home yet: **source format
@@ -540,11 +540,11 @@ confusion would be silent, so the rule is stated before either grows:
 
 | namespace | letters | authority | in the tree |
 |---|---|---|---|
-| harness checks | A–F today, A–O after P2 | this document and the conformance suite | `harness.py:473`, `_COLUMNS` |
+| harness checks | A–F today, A–O after P2 | this document and the conformance suite | `harness._COLUMNS` |
 | SC-OES dimensions | A–E | `spec/sc-oes/` and its own conformance document | `conformance.py:139`, `DIMENSIONS` |
 
 The harness's six checks are the framework's A–F, in this order and with these code names:
-`translate`, `schema`, `provenance`, `lossless`, `roundtrip`, `golden` (`harness.py:473`). P2 adds
+`translate`, `schema`, `provenance`, `lossless`, `roundtrip`, `golden` (`harness._COLUMNS`). P2 adds
 G through O: deterministic, malformed-input, unknown-field-preservation, temporal correctness,
 identity stability, version compatibility, streaming, parser robustness, resource limits.
 

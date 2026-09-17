@@ -1,7 +1,7 @@
 # SC-OES Operational Ontology — isr module
 #
 # Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
-# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# the list docs/adr/0002-ontology-representation.md records. No module imports another: the eight files are loaded together, and
 # a parent in another module is referenced by its identifier.
 
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
@@ -18,7 +18,7 @@
     scmeta:module "isr" ;
     scmeta:maturity "EXPERIMENTAL" .
 
-# §96: "Keep deliberately small." Two concepts, and `ISRSource` is left at `core:OperationalObject`
+# The private brief's module note (not in this repository): "Keep deliberately small." Two concepts, and `ISRSource` is left at `core:OperationalObject`
 # because an ISR source is as legitimately an organisation or a unit as it is an asset — the parent
 # rule in ontology/README.md refuses to choose one of those on the specification's behalf.
 

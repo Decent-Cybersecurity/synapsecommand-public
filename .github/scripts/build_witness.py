@@ -18,10 +18,19 @@ Every field is a reading of something that did not exist before the upload:
     which is only a check because they come from different places.
   * **the Release API** for the id, url and published instant.
   * **the run's approvals** for WHO released the `pypi` hold, and **the deployment's own status
-    history** for WHEN. Under `PLAN.md`'s Autonomy section the approver can be the runner acting on
-    a reviewer's GO, so the verdict file is part of the record — `witness_verify` requires
-    `review_file` and this fills it from the approval comment, which is where the runner is
-    instructed to name it.
+    history** for WHEN. Under the runner protocol — a private document, summarised in
+    `PUBLICATION.md` entry 16 — the approver can be the runner acting on a reviewer's GO, so what
+    the approval was taken on is part of the record: the approval `comment` is carried verbatim,
+    and `review_file` holds the public reference the comment names, if it names one.
+
+    **2026-09-16: `review_file` carries a public reference or nothing.** Until this date the field
+    was filled from a `rounds/reports/<round>.review.md` path in the comment — the reviewer's
+    verdict file in the runner's private, untracked round apparatus, which no reader of this
+    repository can open, and which `releases/witness/2.1.2.json` still records, as the thing that
+    was read. Now the comment is recorded whole under `comment`, `review_file` is the first
+    `https://` URL in it or the empty string, and `gates/witness_verify.py` refuses an approval
+    that carries neither. A private path is not dressed up as a public one: it stays in the
+    comment, where the API put it.
 
     **2026-09-12 (round PW): the instant comes from the deployment and never from the approval.**
     `actions/runs/<id>/approvals` carries no timestamp at any level — an entry's only keys are
@@ -67,10 +76,13 @@ import urllib.request
 
 PYPI_JSON = "https://pypi.org/pypi/synapse-cdm/{version}/json"
 
-#: The runner is told to name the reviewer's verdict file in the approval comment (RUNNER.md step
-#: 7). This is how it comes back out. A comment with no such path leaves the field empty, and
-#: `gates/witness_verify.py` refuses the record rather than accepting an approval nobody can trace.
-_REVIEW_FILE = re.compile(r"(rounds/reports/[A-Za-z0-9._-]+\.review\.md)")
+#: The public reference an approval comment may carry — a URL a reader of the record can open.
+#: The runner protocol tells the runner to name the reviewer's verdict in the approval comment; a
+#: private path named there stays in `comment` and is NOT lifted into `review_file` (module
+#: header, 2026-09-16). A comment naming no URL leaves the field empty, and an empty comment
+#: leaves both empty, which `gates/witness_verify.py` refuses rather than accepting an approval
+#: nobody can trace.
+_PUBLIC_REFERENCE = re.compile(r"https://[^\s<>()\"']+")
 
 
 def _names_run(status: dict, run_id: str) -> bool:
@@ -187,7 +199,7 @@ def approvals_from(payload, statuses, run_id: str) -> list[dict]:
     for approval in payload if isinstance(payload, list) else []:
         for environment in approval.get("environments", []):
             comment = approval.get("comment") or ""
-            match = _REVIEW_FILE.search(comment)
+            match = _PUBLIC_REFERENCE.search(comment)
             name = environment.get("name", "")
             out.append({
                 "environment": name,
@@ -195,7 +207,8 @@ def approvals_from(payload, statuses, run_id: str) -> list[dict]:
                 # `environment.get("created_at")` (that is when the environment was created).
                 "approved_at": approved_at_from(statuses, name, run_id),
                 "approver": (approval.get("user") or {}).get("login", ""),
-                "review_file": match.group(1) if match else "",
+                "comment": comment,
+                "review_file": match.group(0) if match else "",
             })
     return out
 

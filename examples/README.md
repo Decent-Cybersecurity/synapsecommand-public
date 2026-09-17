@@ -46,10 +46,11 @@ all of them on every run.
 ## Shape
 
 Each file is a JSON array in the form the harness writes goldens in: the entities the event
-concerns, then the event, `indent=2`, keys sorted. The specification's §133 sketches a single
+concerns, then the event, `indent=2`, keys sorted. The private implementation brief's example sketch is a single
 event object; the array is the same objects in the serialization this repository actually uses,
-which is what the same section's "adapt exact serialization to real repository models" asks for.
-Section numbers here cite SC-OES-SPEC-v2, the convention `docs/adr/0001`–`0010` already use.
+which is what that sketch's "adapt exact serialization to real repository models" asks for.
+Until 2026-09-16 this file cited that brief by section number, the convention `docs/adr/0001`–`0010`
+use; the brief is not in this repository, so the citations here name the public documents instead.
 
 ## The legacy `event_type` column
 
@@ -57,7 +58,9 @@ Section numbers here cite SC-OES-SPEC-v2, the convention `docs/adr/0001`–`0010
 are separate axes (`docs/adr/0007-legacy-eventtype-mapping.md`). Seven governed types have a
 governed legacy mapping and the examples carry it, because a mismatch is a dimension C failure.
 Six have `legacy_event_type: null`, which means "no meaningful legacy category is governed" — and
-there §28's null branch applies: *ordinary CDM semantics determine the broad EventType*. The
+there the null branch of `docs/adr/0007-legacy-eventtype-mapping.md` applies
+(`spec/sc-oes/03-event-types.md`, "The registry, and where it lives": `legacy_event_type` MUST be
+present even when null): *ordinary CDM semantics determine the broad EventType*. The
 choice each example makes is that example producer's own and governs nothing:
 
 | Example | `oes.type_id` | `event_type` | Governed? |
@@ -86,8 +89,8 @@ asserts their absence.
 
 ## The linked chain
 
-`chain/gnss-interference-to-route-change.json` is the specification's chain (§132), as six
-events over three entities:
+`chain/gnss-interference-to-route-change.json` is the chain the private brief drew and
+`spec/sc-oes/profiles/decision.md` names under "Examples", as six events over three entities:
 
 ```text
 OBSERVATION      GNSS interference observed
@@ -106,5 +109,5 @@ ACTION           route change authorised
 The relationships are explicit — every later event carries a `DERIVED_FROM` `event_relation` and
 an `EVENT` evidence reference to the one before it — and every reference resolves inside the file.
 Nothing here generates the chain: no reasoning engine exists in this repository and none is
-implied by these six objects sitting in one array (§132, and `spec/sc-oes/README.md` on the
-public/private boundary).
+implied by these six objects sitting in one array (`spec/sc-oes/profiles/decision.md`,
+"Examples", and `spec/sc-oes/README.md` on the public/private boundary).

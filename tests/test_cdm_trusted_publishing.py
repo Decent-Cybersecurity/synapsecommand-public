@@ -785,7 +785,7 @@ def test_the_release_notes_are_rendered_and_not_written_in_the_workflow(workflow
 
 
 def test_the_witness_record_is_produced_after_the_release_and_not_committed(workflow):
-    """§53, and RUNNER.md's hard limit that a workflow does not commit."""
+    """§53, and the protocol rule that a workflow does not commit."""
     witness = _executable(job_block(workflow, "witness"))
     assert "build_witness.py" in witness and "witness_verify.py" in witness, (
         "the witness job does not both build and verify the record; a record nothing verified is "
@@ -793,7 +793,7 @@ def test_the_witness_record_is_produced_after_the_release_and_not_committed(work
     assert "gh release upload" in witness
     for forbidden in ("git commit", "git push", "add-and-commit"):
         assert forbidden not in witness, (
-            f"the witness job runs `{forbidden}`. RUNNER.md's hard limits: only the runner commits, "
+            f"the witness job runs `{forbidden}`. The protocol rule: only the runner commits, "
             "and the witness round is what commits the record")
 
 

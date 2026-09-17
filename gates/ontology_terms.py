@@ -5,9 +5,12 @@ WHY A GENERATOR AND NOT TWO HAND-WRITTEN FILES
 The SC-OES Operational Ontology has one authority — `ontology/*.ttl` — and two derived
 publications: `ontology/context.jsonld`, the developer projection, and
 `packages/cdm/synapse_cdm/registry/sc_oes/ontology_terms.json`, the artefact the runtime actually
-reads. SC-OES-SPEC-v2 §18 rules out the cheap arrangement in as many words: the registry "must be
-**generated from the ontology**, not independently hand-maintained", and "a drift test must prove
-the generated registry matches the Turtle authority". §135 says the same of both derived files.
+reads. `spec/sc-oes/README.md` ("Machine authorities": `ontology_terms.json` is "generated from
+the Turtle") and ADR 0002 decision 4 rule out the cheap arrangement, and the private implementation
+brief put it in as many words: the registry "must be **generated from the ontology**, not
+independently hand-maintained", and "a drift test must prove the generated registry matches the
+Turtle authority". `ontology/README.md` ("One authority, two derived files") says the same of both
+derived files. A bare `§N` below cites that brief, which is not in this repository (2026-09-16).
 
 The failure that rule is written against is quiet. Two hand-authored files stating one vocabulary
 give two answers to "is this term governed?" the first time one of them is edited alone, and the
@@ -18,9 +21,10 @@ publication rather than a new idea.
 
 WHY THE RDF PARSER IS IMPORTED INSIDE A FUNCTION
 ------------------------------------------------
-`rdflib` is a TEST/DEVELOPMENT dependency and nothing else (§136, ADR 0002 decision 6, ADR 0010
+`rdflib` is a TEST/DEVELOPMENT dependency and nothing else (ADR 0002 decision 6, ADR 0010
 decision 5). Nothing in `synapse_cdm` imports it, nothing in the wheel needs it, and the runtime
-never parses Turtle — §102 is the binding sentence and §144's dependency budget is the check.
+never parses Turtle — `spec/sc-oes/README.md`'s "Machine authorities" is the binding sentence and
+`README.md`'s "Dependencies, and what is deliberately absent" is the budget.
 Importing it at module scope here would make this file unimportable without it, and this file is
 loaded by the suite to be inspected as well as to be run. So the import sits inside
 `load_graph()`: the module imports anywhere, and only the act of parsing Turtle needs the parser.

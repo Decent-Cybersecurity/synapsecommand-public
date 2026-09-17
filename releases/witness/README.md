@@ -65,12 +65,25 @@ holds this list and that tuple together.
 | `conformance_sha256` | the sweep `synapse conformance run --all --format json` produced |
 | `attestation` | `{bundle_sha256, verified, verified_at}` — the pipeline's own `gh attestation verify` result |
 | `released_at` | when the Release was published |
-| `approvals` | `[{environment, approved_at, approver, review_file}]` — the `pypi` hold, and the verdict file that released it |
+| `approvals` | `[{environment, approved_at, approver, comment, review_file}]` — the `pypi` hold: who released it, the approval comment verbatim, and the public reference the comment names, or the empty string |
 
 Four of these are beyond §53's example, and each is here because `PUBLICATION.md` entry 18 had to
 state it in prose for want of a field: the tag object, the conformance digest, the attestation
-block, and the approval — including `review_file`, because under `PLAN.md`'s Autonomy section an
-upload can be approved on a reviewer's verdict, and which verdict is part of what happened.
+block, and the approval — including what it was taken on, because under the runner protocol (a
+private document, not in this repository; `PUBLICATION.md` entry 16 summarises it) an upload can
+be approved on a reviewer's verdict, and which verdict is part of what happened.
+
+**What `review_file` meant for 2.1.2, and what it means since 2026-09-16.** `2.1.2.json` records
+`review_file: rounds/reports/PR.review.md`. That value is a path in the runner's private, untracked
+round apparatus — the reviewer's verdict the approval comment named — and it names what was read,
+not a file this repository keeps: `rounds/` has no tracked file, and the record is left as written
+because its bytes are the Release asset `witness-2.1.2.json` (`PUBLICATION.md` entry 19 records
+the digest). A record the builder writes from this date on carries the approval `comment`
+verbatim and puts in `review_file` only a reference a reader of this repository can open — the
+first `https://` URL the comment names — or the empty string when it names none; a private path
+in the comment stays there and is never lifted into `review_file`. The verifier refuses an
+approval with neither field filled, which is what keeps both shapes traceable and the 2.1.2
+record valid.
 
 ## What the verifier does not do
 

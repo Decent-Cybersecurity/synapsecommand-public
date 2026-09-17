@@ -358,19 +358,23 @@ now true of it.
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 31 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 45 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
-parser-safety record below moves again, and eleven of which the harness-evidence record at the end
-of this section moves a third time; nine files under three `malformed/` fixture directories the
-parser-safety record added — `tak/malformed/deeply_nested.xml`,
+parser-safety record below moves again, eleven of which the harness-evidence record moves a third
+time, and twelve of which the audit's citations record at the end of this section moves once more
+for their basis sentences and one ruling; nine files under three `malformed/` fixture directories
+the parser-safety record added — `tak/malformed/deeply_nested.xml`,
 `nits/malformed/deeply_nested.nits.xml`, `pntmap/malformed/a_json_list.json`, and the `README.md`
-and `PROVENANCE.json` beside each; and six files the harness-evidence record moves — `adapter.py`,
-`harness.py`, `suite.py`, `evidence.py`, `version.py` and the package's own `README.md`; and
+and `PROVENANCE.json` beside each; six files the harness-evidence record moves — `adapter.py`,
+`harness.py`, `suite.py`, `evidence.py`, `version.py` and the package's own `README.md`;
 `pyproject.toml`, which the audit's CI record below moves for its `[lint]` extra and its rule
-set. Everything else these rounds touched ships in nothing: the release
-workflow, the witness builder it runs and that builder's test module, the generated manifests under
-`manifests/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
+set and the citations record moves for two comments; and fourteen files the citations record
+moves — `enums.py`, `manifest.py`, `oes.py`, `FORMAT_COVERAGE.md`, and the ten KLV goldens of
+the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json` and `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json` and `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json` and `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json` and `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, and `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json` and `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`. Everything else these
+rounds touched ships in nothing: the release workflow, the witness builder it runs and that
+builder's test module, the generated manifests under `manifests/`, the generated schemas under
+`schemas/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
 record.
 
 **ROUND PW's RECORD, 2026-09-12 — the witness record's approval instant comes from the deployment's
@@ -791,6 +795,57 @@ the page and the policy's table to name it. P6's record of this file, which says
 exception files today, and PD's and PB's records, which say the exceptions stay because there is
 nothing to upgrade to, are dated and were true when written; each gains a dated correction beside
 it under 2.1.0 below.
+
+**THE AUDIT'S CITATIONS RECORD, 2026-09-16 — no tracked file points a reader at the private round
+apparatus, and a citation names the symbol it means rather than a line that has moved.** Units,
+every one PATCH by M's words of 2026-09-12 for a declared fact corrected:
+`synapse_cdm/adapters/stanag4609.py`, whose `VMTI_IDENTITY_RULING` names the round brief it was
+recorded in as what it is — private, the ruling's text being the constant — rather than by a
+`rounds/briefs/` path no
+reader of this repository can open, and whose comment on the keying convention cites
+`stanag4676.key_of` where it cited a line that now holds something else; the ten KLV goldens of the
+five VMTI fixtures, which carry that constant's text on every identity object and are regenerated
+with `--update-golden`, nothing else in them moving — thirty-four lines in ten files, every one the
+ruling sentence; `synapse_cdm/oes.py`, where `EntityRelation.entity_id`'s description said "see
+`Event._oes_entities`" and the validator is `Event._oes_relations`, and `SEMVER_RE`'s comment cites
+`CDMBase._semver` by name alone; `synapse_cdm/enums.py`, where `Affiliation` said "see
+`models.standard_identity()`" and the function is `symbology.standard_identity`;
+`synapse_cdm/manifest.py`, whose header cites `adapter._check_metadata`'s docstring for the
+enforcement point and whose `UnknownFields` docstring cites `stanag4609.py`'s `_attributes` for the
+unknown-item carrier, each in place of a line number that landed on a blank line or a brace;
+`synapse_cdm/suite.py`, where the exit-code comment, the `malformed/` comment, check O's docstring
+and `loss_report`'s docstring and `skipped_because` sentence cite `harness.EXIT_NO_FIXTURES`,
+`harness.run` with `harness.FIXTURE_PATTERN`, `manifest.Limits._every_absent_limit_has_a_reason`
+and `harness.run`'s lossless SKIP, in place of four `harness.py:NNN` and one `manifest.py:NNN` that
+no longer land; `synapse_cdm/evidence.py`, where `schema_id`'s comment cites `manifests.SCHEMA_ID`;
+the eleven adapter modules whose `LimitBasis.source` sentences cited a line — `adsb.py`, `ais.py`,
+the five ASTERIX modules, `legion.py`, `pntmap.py`, `tak.py` and `stanag4676.py` — which now name
+the function the parser entry or the LEN read sits in (`_parse_frame_line`, `MAX_PAYLOAD_CHARS`,
+`_parse_block` and `parse_block`, `_as_document`, `_as_dict`, `_parse_cot`, `parse_document`),
+CAT021's additionally saying `_u(data[1:3])` where it said `read_unsigned(data, 1, 2)`, which that
+module never calls; `FORMAT_COVERAGE.md`, whose two live sentences on the RVT mapping proposal name
+an untracked round report and the constant that carries the proposal's substance rather than
+`rounds/reports/F.md`; `pyproject.toml`, whose comments cite `spec/sc-oes/` and the ADRs where they
+cited the private specification brief by section; and this file. The manifests are regenerated
+because eleven basis sentences moved, and the three CDM schemas and the manifest schema because two
+descriptions moved — the one in-place change `tests/test_cdm_schemas.py` names a release as
+allowed; no wire field, no `SCHEMA_VERSION`, no `MANIFEST_SCHEMA_VERSION`, no
+`EVIDENCE_SCHEMA_VERSION`. The rest of the same audit commit ships in nothing: `README.md` expands
+SOIF once, as the Synapse Open Interoperability Framework, and says the framework specification is
+private; the ten ADR status lines, `ontology/`, `examples/README.md`, `gates/ontology_terms.py` and
+three test modules cite `spec/sc-oes/` and the ADRs where they cited `SC-OES-SPEC-v2` by section,
+with a dated note in the implementation plan; `ARCHITECTURE.md`'s prose citations name symbols
+where the line had moved, its gated §1.1 table untouched; and the witness builder records the
+approval `comment` verbatim and puts in `review_file` a public reference or nothing —
+`releases/witness/README.md` says what the 2.1.2 record's value was, and the verifier accepts an
+approval that carries either field.
+
+**Bump ruling.** The gate finds three units it cannot classify from the table, and all three are the
+PATCH M's words of 2026-09-12 name — a declared fact corrected, no name added, removed or renamed,
+no consumer's call changed: `synapse_cdm/adapters/stanag4609.py:VMTI_IDENTITY_RULING` — PATCH, the
+constant's text names its source as private rather than by a path; `synapse_cdm/oes.py:EntityRelation`
+— PATCH, one field description names the validator that exists; `synapse_cdm/suite.py:loss_report`
+— PATCH, a docstring and the `skipped_because` sentence name the guard by symbol.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 

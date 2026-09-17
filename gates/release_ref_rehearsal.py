@@ -2,7 +2,7 @@
 
 WHY THIS FILE EXISTS, AND WHAT IT COST TO LEARN
 -----------------------------------------------
-A tag is the one thing this repository cannot un-spend. `MIGRATIONS.md` and `RUNNER.md` both make a
+A tag is the one thing this repository cannot un-spend. `MIGRATIONS.md`'s release procedure makes a
 pushed release tag permanent — "preserve the state for reviewed recovery rather than rewriting
 history", M, 2026-09-10 — so every release gate that can only be evaluated once the tag exists is a
 gate whose first execution is also its last chance. Two releases were burned that way in two days:
@@ -146,7 +146,7 @@ def scratch_outside_repo(prefix: str) -> pathlib.Path:
     M's standing rule of 2026-09-11, and it is the one rule in this file the repository paid for.
     On 2026-09-10 a red-then-green mutation bound `check_codeql`'s temporary directory to `REPO`,
     and the `finally: shutil.rmtree(...)` below then removed the working tree, `.git`, `.venv` and
-    every untracked file beside them (`rounds/reports/PQ.attempt1.md`). The refusal lives HERE, in
+    every untracked file beside them (the round's own report among them). The refusal lives HERE, in
     the code that deletes, and not only in a test: a test says what this module does today, and
     this says what it cannot be made to do tomorrow — including by a future mutation, a patched
     `tempfile.tempdir`, or a `TMPDIR` pointing inside a checkout.

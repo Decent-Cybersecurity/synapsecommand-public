@@ -114,7 +114,7 @@ MASK_SENTINEL = "<masked>"
 # --------------------------------------------------------------------------- §33: provenance
 
 #: §33's identifier. Spelled `schema_id` and not `schema` on THIS REPOSITORY'S OWN PRECEDENT:
-#: `manifests.py:37` carries §13's `schema:` key under the same name, for the same reason —
+#: `manifests.SCHEMA_ID` carries §13's `schema:` key under the same name, for the same reason —
 #: `schema` shadows an attribute of `pydantic.BaseModel` and a model cannot declare it. One
 #: spelling for one idea across two publications beats matching two specifications' prose and
 #: making a consumer learn which document each key came from.

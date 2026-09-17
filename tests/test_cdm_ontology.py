@@ -1,8 +1,9 @@
-"""The Operational Ontology: §140's checklist, and the drift that would make it a fiction.
+"""The Operational Ontology: its checklist, and the drift that would make it a fiction.
 
 WHAT THIS MODULE IS FOR
 -----------------------
-SC-OES-SPEC-v2 §18 and §135 both say the same thing in different words: the Turtle under
+`spec/sc-oes/README.md` ("Machine authorities") and `ontology/README.md` ("One authority, two
+derived files") both say the same thing in different words: the Turtle under
 `ontology/` is the authority, `ontology/context.jsonld` and
 `packages/cdm/synapse_cdm/registry/sc_oes/ontology_terms.json` are generated from it, and "a drift
 test must prevent semantic registry divergence". Without the test, "generated" is an intention. A
@@ -10,17 +11,21 @@ hand-edit to the registry — adding a term the ontology does not define, or fix
 JSON because that is the file the failure pointed at — leaves two vocabularies with one name, and
 the answer a consumer gets is whichever file its tooling reads.
 
-`§140` lists thirteen conditions and every one of them has a test below, named after it.
+The private implementation brief's ontology checklist lists thirteen conditions and every one of
+them has a test below, named after it. That brief is not in this repository — a bare `§N` in this
+module cites it, and until 2026-09-16 this docstring cited it by name — and the public statement
+of the arrangement is ADR 0002's "Consequences".
 
 WHY THE GRAPH TESTS SKIP RATHER THAN FAIL WITHOUT `rdflib`
 -----------------------------------------------------------
-`rdflib` is a test/development dependency and deliberately not a runtime one (§136, §144). It
+`rdflib` is a test/development dependency and deliberately not a runtime one (ADR 0002 decision 6,
+ADR 0010 decision 5). It
 arrives with the `test` extra, which is the one `README.md` and `CONTRIBUTING.md` both tell a
 reader to install before running this suite, so in the environment this suite is written for it is
 present. Somebody with `pytest` on their path and no extra installed is the case that skips, and
 it skips loudly with the reason — the same treatment `tests/test_cdm_packaging.py::_require_git`
 gives an sdist with no index to read. The checks that need no parser — the committed registry's
-grammar, its record shape, the §91 file list — run either way, so an environment without the
+grammar, its record shape, the eight-module file list `ontology/README.md` tables — run either way, so an environment without the
 parser is narrowed rather than silenced.
 
 WHY THE GATE IS LOADED WITH `exec(compile(...))`

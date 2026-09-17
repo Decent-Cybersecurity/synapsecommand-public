@@ -8,8 +8,8 @@ about.
 
 WHAT `blocked: []` MEANS, AND WHY IT IS NOT "THE RELEASE HAS ALREADY HAPPENED"
 -----------------------------------------------------------------------------
-M's ruling of 2026-09-08, on round P8 attempt 3's HOLD, carried by round PT's brief
-(`rounds/briefs/PT-soif-readiness-rule.md`): `blocked: []` means the tree is release-READY, not
+M's ruling of 2026-09-08, on round P8 attempt 3's HOLD, carried by round PT's brief (a private
+round brief, not in this repository): `blocked: []` means the tree is release-READY, not
 that `PACKAGE_VERSION` and the release headings have already been moved to the final tagged state.
 What it told this module to preserve was the derivation's verdict — that the gate derives a bump,
 that the pending number is the one the gate's own floor names, that nothing is unruled — together
@@ -25,8 +25,8 @@ is unsatisfiable outside a release round, and the reason is in the bump gate.
 tag that NAMES the declared version. So moving the version while no such tag exists leaves the
 gate reading `### Unreleased`; renaming that section while no such tag exists makes `rulings()`
 return `{}`, every unit of the arc unruled, and the gate refuse. The version and the heading can
-only move WITH the tag, and the tag is the release round's (`rounds/templates/release-round.md`
-lists both of them among the sites that round moves).
+only move WITH the tag, and the tag is the release round's (the release-round template, a private
+document, lists both of them among the sites that round moves).
 
 So readiness is a property of a tree BETWEEN releases, and that is what the empty-list branch
 asserts, in five parts: the derivation allows the release (the gate derives a bump over the pending
@@ -52,7 +52,7 @@ the bump gate reads its rulings from the pending section until a tag names the d
 and reports no pending arc once one does. Round PR found it and could not close it: no P round may
 tag, so nothing before PR could reach the state.
 
-M's ruling of 2026-09-09, fork FR.5 of round PR's brief under `rounds/briefs/`: before
+M's ruling of 2026-09-09, fork FR.5 of round PR's brief (a private round brief): before
 `PACKAGE_VERSION` is tagged the readiness report is a live pre-release gate, it must end with
 `blocked: []`, and the version and release-note invariants of a package between releases stay
 enforced. Once a tag exists that exactly names `PACKAGE_VERSION`, the same report becomes the

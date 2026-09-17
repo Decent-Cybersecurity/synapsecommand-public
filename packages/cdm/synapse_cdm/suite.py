@@ -63,7 +63,8 @@ from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION
 
 PASS, FAIL, SKIP = harness.PASS, harness.FAIL, harness.SKIP
 
-#: §40's four, spelled as `conformance.py:151–157` and `harness.py:99` spell them, so a caller who
+#: §40's four, spelled as `conformance.EXIT_OK`–`EXIT_INTERNAL` and `harness.EXIT_NO_FIXTURES`
+#: spell them, so a caller who
 #: knows one tool's codes is not surprised by this one's.
 EXIT_OK = 0
 EXIT_FAILED = 1
@@ -71,7 +72,8 @@ EXIT_USAGE = 2
 EXIT_INTERNAL = 3
 
 #: The subdirectory H reads. A SUBDIRECTORY and not a naming convention, because
-#: `harness.py:343` selects "immediate children of the directory that are FILES" — so every
+#: `harness.run` selects "immediate children of the directory that are FILES"
+#: (`harness.FIXTURE_PATTERN`) — so every
 #: payload in here is invisible to A–F by construction rather than by an exclusion somebody has
 #: to remember to keep in step.
 MALFORMED_DIR = "malformed"
@@ -691,7 +693,8 @@ def check_resource_limits(adapter: Adapter, payloads: list[tuple[str, Any]], *,
     """O: live only where `capabilities.limits.max_input_bytes` is declared (F2.3 → P5).
 
     The SKIP is a DECLARED inapplicability and not an omission, because `Limits` refuses an
-    absent bound that carries no reason (`manifest.py:156`): every one of the fourteen states in
+    absent bound that carries no reason (`manifest.Limits._every_absent_limit_has_a_reason`): every
+    one of the fourteen states in
     its own manifest why it enforces none, and that sentence is what this quotes.
     """
     limits = adapter.metadata.capabilities.limits
@@ -744,7 +747,7 @@ LOSS_SEVERITY: tuple[str, ...] = ("DROPPED", "UNSUPPORTED", "RESIDUAL", "DERIVED
 def loss_report(adapter: Adapter, payloads: list[tuple[str, Any]]) -> dict:
     """§34's six categories over every classifiable fixture, aggregated per source path.
 
-    THE GUARD IS `harness.py:378`'s AND NOT A NEW ONE. The lossless comparison needs a leaf
+    THE GUARD IS `harness.run`'s LOSSLESS SKIP AND NOT A NEW ONE. The lossless comparison needs a leaf
     structure, so a non-JSON payload has nothing to classify — the harness SKIPs check D for
     exactly those fixtures and says so. Classifying them anyway would put the whole byte string
     in DROPPED and report a catastrophic loss for every binary format in the repository, which is
@@ -781,7 +784,8 @@ def loss_report(adapter: Adapter, payloads: list[tuple[str, Any]]) -> dict:
             "total": len(worst),
             "fixtures": {"classified": classified, "skipped": skipped,
                          "skipped_because": "a non-JSON payload has no comparable leaf structure "
-                                            "(harness.py:378, the same guard check D uses)"},
+                                            "(harness.run's lossless SKIP, the same guard check D "
+                                            "uses)"},
             "unsupported_declared": list(declared)}
 
 

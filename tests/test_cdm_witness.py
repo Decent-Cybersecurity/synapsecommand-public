@@ -86,7 +86,8 @@ GOOD = {
     "released_at": "2026-09-07T12:03:26Z",
     "approvals": [{"environment": "pypi", "approved_at": "2026-09-07T11:55:47Z",
                    "approver": "decentcybersecurity",
-                   "review_file": "rounds/reports/RL.review.md"}],
+                   "comment": "2.0.0, approved by the runner after round-reviewer GO",
+                   "review_file": ""}],
 }
 
 
@@ -182,17 +183,27 @@ def test_an_attestation_verified_with_no_instant_is_refused():
 
 
 def test_an_empty_approval_list_is_refused():
-    """Who released it, on what verdict. PLAN.md's Autonomy section makes this the record of an act."""
+    """Who released it, on what verdict. The runner protocol makes this the record of an act."""
     bad = witness_verify.verify(mutate(approvals=[]), offline=True, download=False, token=None)
     assert any("approvals" in c for c in bad), bad
 
 
-def test_an_approval_missing_its_review_file_is_refused():
-    bad = witness_verify.verify(
-        mutate(approvals=[{"environment": "pypi", "approved_at": "2026-09-07T11:55:47Z",
-                           "approver": "decentcybersecurity", "review_file": ""}]),
-        offline=True, download=False, token=None)
+def test_an_approval_with_neither_a_review_file_nor_a_comment_is_refused():
+    """What it was taken on: `review_file` in a record before 2026-09-16, `comment` since.
+
+    Neither is an approval nobody can trace. Either alone is accepted — the 2.1.2 record carries
+    only the first, and the builder now writes the second with the first empty unless the comment
+    named a URL — so both shapes are asserted here, in both directions.
+    """
+    bare = {"environment": "pypi", "approved_at": "2026-09-07T11:55:47Z",
+            "approver": "decentcybersecurity"}
+    bad = witness_verify.verify(mutate(approvals=[dict(bare, review_file="", comment="")]),
+                                offline=True, download=False, token=None)
     assert any("`review_file`" in c for c in bad), bad
+    for alone in ({"review_file": "a verdict path, the shape the 2.1.2 record carries"},
+                  {"comment": "approved on the reviewer's GO"}):
+        assert witness_verify.verify(mutate(approvals=[dict(bare, **alone)]), offline=True,
+                                     download=False, token=None) == [], alone
 
 
 def test_a_digest_that_is_not_a_sha256_is_refused():
@@ -235,7 +246,8 @@ def test_every_committed_witness_agrees_with_the_index_and_the_release(path):
 
 
 def test_the_witness_directory_exists_and_says_what_it_is_for():
-    """`releases/witness/` is named by §53 and by PLAN.md's authorised-root list.
+    """`releases/witness/` is named by §53 (SOIF Part 1) and by the runner protocol's
+    authorised-root list, a private document.
 
     It is created by this round rather than by the release that first fills it, so that the
     verifier, these tests and the pipeline's `witness` job all name a path that exists.

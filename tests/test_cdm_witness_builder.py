@@ -215,15 +215,32 @@ def test_two_builds_of_one_release_are_byte_identical(staged):
 
 # ------------------------------------------------------------------------------ the approval half
 
-def test_the_approval_carries_the_verdict_file_it_was_taken_on(staged):
-    """PLAN.md's Autonomy section: an upload can be approved on a reviewer's GO, and which one."""
+def test_the_approval_carries_the_comment_it_was_taken_on_and_no_private_path(staged):
+    """The runner protocol: an upload can be approved on a reviewer's GO, and which one.
+
+    The v2.1.2 comment names the verdict by a path in the runner's private round apparatus. Since
+    2026-09-16 that path is recorded where the API put it — in `comment`, verbatim — and is NOT
+    lifted into `review_file`, which holds a public reference or nothing: a record presenting a
+    private path as the thing a reader could open would be a witness pointing at a locked door.
+    """
     record = build_witness.build(Args(staged))
     assert record["approvals"] == [{
         "environment": "pypi",
         "approved_at": APPROVED_AT,
         "approver": "decentcybersecurity",
-        "review_file": "rounds/reports/PR.review.md",
+        "comment": APPROVALS[0]["comment"],
+        "review_file": "",
     }]
+
+
+def test_a_comment_naming_a_url_puts_it_in_review_file(staged, tmp_path):
+    """The one thing `review_file` may hold now: a reference a reader of the record can open."""
+    url = "https://github.com/Decent-Cybersecurity/synapsecommand-public/actions/runs/34687815710"
+    named = [dict(APPROVALS[0], comment=f"2.1.2, approved on the reviewer's GO ({url})")]
+    (tmp_path / "approvals.json").write_text(json.dumps(named), encoding="utf-8")
+    record = build_witness.build(Args(staged))
+    assert record["approvals"][0]["review_file"] == url
+    assert witness_verify.verify(record, offline=True, download=False, token=None) == []
 
 
 # ------------------------------------------------------------------- round PW: WHEN, and from where
@@ -338,12 +355,13 @@ def test_the_workflow_hands_the_builder_the_statuses_and_the_run_it_is_dating():
         "has nothing to read the approval instant from")
 
 
-def test_an_approval_comment_naming_no_verdict_file_leaves_the_field_empty(staged, tmp_path):
+def test_an_empty_approval_comment_leaves_both_fields_empty(staged, tmp_path):
     """Empty, and then REFUSED by the verifier. An invented value would be worse than a refusal."""
-    silent = [dict(APPROVALS[0], comment="approved")]
+    silent = [dict(APPROVALS[0], comment="")]
     (tmp_path / "approvals.json").write_text(json.dumps(silent), encoding="utf-8")
     record = build_witness.build(Args(staged))
     assert record["approvals"][0]["review_file"] == ""
+    assert record["approvals"][0]["comment"] == ""
     assert witness_verify.verify(record, offline=True, download=False, token=None) != []
 
 

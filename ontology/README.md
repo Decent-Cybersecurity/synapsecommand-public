@@ -4,8 +4,11 @@
 
 A public *terminological* ontology: classes, relationships, hierarchy, labels, definitions and
 stable identifiers. It contains no operational instances, no inference rules and no reasoning
-(SC-OES-SPEC-v2 §87, §100). The reasoning this vocabulary would be written over is not in this
-repository and is not part of what SC-OES publishes.
+(`../spec/sc-oes/README.md`, "What SC-OES is not"; `docs/adr/0002-ontology-representation.md`,
+decision 7). The reasoning this vocabulary would be written over is not in this repository and is
+not part of what SC-OES publishes. Until 2026-09-16 this file cited the private SC-OES
+implementation brief by section number; the brief is not in this repository, and where a sentence
+below quotes it, the sentence says so.
 
 ## One authority, two derived files
 
@@ -25,21 +28,23 @@ python gates/ontology_terms.py --write    # regenerate them after editing a modu
 
 The runtime never parses Turtle and never loads the JSON-LD context. It reads
 `ontology_terms.json`, which is packaged JSON, requires no network and requires no RDF library
-(§102, §125, §144; `docs/adr/0002-ontology-representation.md`). The RDF parser exists only in the
-`test` extra.
+(`../spec/sc-oes/README.md`, "Machine authorities"; `../spec/sc-oes/01-core.md`, "Offline";
+`docs/adr/0002-ontology-representation.md` decision 3;
+`docs/adr/0010-open-source-packaging-and-licensing.md` decision 5). The RDF parser exists only in
+the `test` extra.
 
 ## The modules
 
 | File | Holds |
 |---|---|
-| `core.ttl` | the two branches of §89–§90, every object class, the eight event classes, and the fifteen §92 relationships |
-| `pnt.ttl` | positioning, navigation and timing (§93) |
-| `air.ttl` | air domain (§94) |
-| `logistics.ttl` | logistics (§95) |
-| `isr.ttl` | intelligence, surveillance and reconnaissance (§96) |
-| `c2.ttl` | command, control and communications (§97) |
-| `mission.ttl` | mission event classes (§98) |
-| `decision.ttl` | recommendation, decision and action records (§99) |
+| `core.ttl` | the two top-level branches, every object class, the eight event classes, and the fifteen relationship properties |
+| `pnt.ttl` | positioning, navigation and timing |
+| `air.ttl` | air domain |
+| `logistics.ttl` | logistics |
+| `isr.ttl` | intelligence, surveillance and reconnaissance |
+| `c2.ttl` | command, control and communications |
+| `mission.ttl` | mission event classes |
+| `decision.ttl` | recommendation, decision and action records |
 
 No module `owl:imports` another. The eight files are loaded together and a parent in another
 module is referred to by its identifier, which keeps each file readable on its own and keeps the
@@ -67,14 +72,16 @@ module document IRIs, and anything else stops the build.
 The specification did not settle these, and each is written down here so that a later reader meets
 the reasoning rather than the result.
 
-**1. The fifteen §92 relationships are `UpperCamelCase` identifiers with §92's spelling as their
-label.** §92 lists them as `partOf`, `hasPart`, `locatedAt`, … and instructs "use governed tag
+**1. The fifteen relationship properties are `UpperCamelCase` identifiers with the brief's spelling
+as their label.** The private brief lists them as `partOf`, `hasPart`, `locatedAt`, … and instructs
+"use governed tag
 identifiers". The governed grammar admits only `[A-Z][A-Za-z0-9]*` in the term segment, so
-`…:core:partOf` is not an identifier this project can mint; SA.1 §17 rules the case directly —
+`…:core:partOf` is not an identifier this project can mint; the brief's `SA.1` addendum rules the
+case directly —
 "If a concept name would violate this grammar, choose a conforming UpperCamelCase public term."
-So the identifier is `…:core:PartOf` and the `rdfs:label` is `partOf`, which is where §92's own
-spelling belongs: `../spec/governance/ONTOLOGY-TERM-PROCESS.md` says a preferred spelling "is a
-property of a term, not a new term". All fifteen of §92's names survive verbatim, as labels.
+So the identifier is `…:core:PartOf` and the `rdfs:label` is `partOf`, which is where the brief's
+own spelling belongs: `../spec/governance/ONTOLOGY-TERM-PROCESS.md` says a preferred spelling "is a
+property of a term, not a new term". All fifteen of the brief's names survive verbatim, as labels.
 
 *One consequence is a defect in a document this round may not edit.* The worked example at
 `../spec/sc-oes/09-entity-semantics.md` writes a predicate as
@@ -83,8 +90,8 @@ below it in that same document refuses. The governed identifier for that relatio
 `…:ontology:core:Affects`. Correcting the example belongs to whoever owns that normative file.
 
 **2. A class the specification left unparented takes the most general core class it cannot fail to
-satisfy.** §94, §95 and §97 state their hierarchies and those are taken exactly. §93 and §96 state
-none, and inventing a specific parent there would publish an axiom the specification did not make
+satisfy.** The brief states the `air`, `logistics` and `c2` hierarchies and those are taken exactly;
+for `pnt` and `isr` it states none, and inventing a specific parent there would publish an axiom the specification did not make
 and a consumer cannot renegotiate. So: `pnt:PNTService` is a `core:Service` (a PNT service cannot
 fail to be a service); `pnt:GNSSReceiver` is a `core:Asset` and not a `core:Sensor`, because a
 receiver's purpose is navigation rather than reporting observations; `pnt:InterferenceSource` is a
@@ -92,7 +99,8 @@ receiver's purpose is navigation rather than reporting observations; `pnt:Interf
 unintentional; `isr:ISRSource` is a `core:OperationalObject`, because an ISR source is as
 legitimately an organisation or a unit as it is an asset.
 
-**3. Maturity and deprecation are carried in a separate metadata namespace.** §88 permits
+**3. Maturity and deprecation are carried in a separate metadata namespace.** The brief's list of
+permitted constructs (the one `docs/adr/0002-ontology-representation.md` records) allows
 "maturity metadata" and "deprecation metadata" and names no vocabulary, and no standard vocabulary
 has a maturity property. This ontology uses `tag:synapsecommand.com,2026-09-06:ontology-metadata:`
 for `maturity`, `replacedBy` and `module`, and the standard `owl:deprecated` for the flag itself.

@@ -1,7 +1,7 @@
 # SC-OES Operational Ontology — c2 module
 #
 # Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
-# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# the list docs/adr/0002-ontology-representation.md records. No module imports another: the eight files are loaded together, and
 # a parent in another module is referenced by its identifier.
 
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
@@ -18,7 +18,7 @@
     scmeta:module "c2" ;
     scmeta:maturity "EXPERIMENTAL" .
 
-# §97 states the hierarchy — C2System -> System, CommunicationSystem -> System — and it is taken
+# The private brief (not in this repository) states the hierarchy — C2System -> System, CommunicationSystem -> System — and it is taken
 # exactly.
 
 c2:C2System

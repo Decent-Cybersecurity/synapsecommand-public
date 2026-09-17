@@ -1,6 +1,8 @@
 """The fourteen committed examples, loaded and validated — the gate that stops them rotting.
 
-`spec/sc-oes/`'s §141 requirement is one sentence: "Every example committed to the repository must
+The requirement this module enforces is one sentence, recorded in the private implementation
+brief — not in this repository; a bare `§N` below cites it, and the public rule is
+`spec/sc-oes/00-conventions.md` ("Synthetic identifiers") plus each profile's "Examples" list: "Every example committed to the repository must
 be loaded and validated in CI. Documentation examples must not silently rot. The linked chain must
 verify local reference consistency." This module is that CI. It is REPOSITORY-BOUND
 (`gates/wheel_install.py`): `examples/` sits at the repository root, does not ship in the wheel,

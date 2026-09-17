@@ -17,7 +17,7 @@
           "max_input_bytes": {
             "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs",
             "kind": "normative",
-            "source": "NORMATIVE. An ASTERIX data block is `CAT | LEN | records`, LEN is a TWO-OCTET field and \u00a74.5.2 makes it the total length of the whole block including CAT and LEN \u2014 quoted at `adapters/asterix_cat023.py:650`, where it is read as `read_unsigned(data, 1, 2)`. Two octets cannot express more than 65535, so no conforming data block of any ASTERIX category is larger; `adapters/asterix_cat021.py:2070` states the same figure as `MAX_BLOCK_OCTETS = 0xFFFF` on the encoding side. The number is the standard's and not this repository's.",
+            "source": "NORMATIVE. An ASTERIX data block is `CAT | LEN | records`, LEN is a TWO-OCTET field and \u00a74.5.2 makes it the total length of the whole block including CAT and LEN \u2014 quoted at `adapters/asterix_cat023.py`'s `parse_block`, where it is read as `codec.read_unsigned(data, 1, 2)`. Two octets cannot express more than 65535, so no conforming data block of any ASTERIX category is larger; `adapters/asterix_cat021.py:2070` states the same figure as `MAX_BLOCK_OCTETS = 0xFFFF` on the encoding side. The number is the standard's and not this repository's.",
             "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
           }
         },

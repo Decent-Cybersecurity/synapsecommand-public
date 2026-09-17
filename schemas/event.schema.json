@@ -5,7 +5,7 @@
       "description": "What ROLE an entity already related to this event plays in it.\n\n`Event.related_entities` remains the single answer to \"which entities does this event\nconcern\"; this adds the role. The membership rule that keeps the two lists agreeing lives on\n`Event` (`models.py`), because it is the only place both lists are visible.",
       "properties": {
         "entity_id": {
-          "description": "Must also appear in the event's related_entities \u2014 see Event._oes_entities.",
+          "description": "Must also appear in the event's related_entities \u2014 see Event._oes_relations.",
           "format": "uuid",
           "title": "Entity Id",
           "type": "string"

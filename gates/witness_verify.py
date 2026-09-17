@@ -191,9 +191,18 @@ def check_shape(record: dict) -> list[str]:
         bad.append("`approvals` is empty. The `pypi` environment holds every upload for a person "
                    "or for a reviewer's GO, and which it was belongs in the record")
     for approval in record["approvals"]:
-        for field in ("environment", "approved_at", "approver", "review_file"):
+        for field in ("environment", "approved_at", "approver"):
             if not approval.get(field):
                 bad.append(f"an approval entry has no `{field}`")
+        # What the approval was taken on. A record from before 2026-09-16 carries it as
+        # `review_file`, a path in the runner's private round apparatus (the 2.1.2 record;
+        # `releases/witness/README.md` says what that value is). A record the builder writes
+        # since carries the approval `comment` verbatim and puts only a public URL, or nothing,
+        # in `review_file`. One of the two must say something, or the approval is one nobody
+        # can trace.
+        if not (approval.get("review_file") or approval.get("comment")):
+            bad.append("an approval entry has neither a `review_file` nor a `comment`, so nothing "
+                       "says what it was taken on")
     return bad
 
 

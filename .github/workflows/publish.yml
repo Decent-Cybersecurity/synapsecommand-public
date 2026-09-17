@@ -1013,8 +1013,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       # The only job in this file that writes to the repository, and it writes a Release rather
-      # than a commit: RUNNER.md's hard limits keep committing a runner's act, and §53's witness
-      # record is committed by the witness round for exactly that reason.
+      # than a commit: the rule that a workflow never commits — `tests/test_cdm_trusted_publishing.py`
+      # gates it on the `witness` job — keeps committing a runner's act, and §53's witness record
+      # is committed by the witness round for exactly that reason.
       contents: write
     steps:
       - name: Check out the tree the tag points at
@@ -1208,7 +1209,8 @@ jobs:
           python gates/witness_verify.py "witness-${version}.json" --download --assets assets
 
       - name: Attach it to the Release
-        # It is NOT committed here. A workflow does not commit to `main` (RUNNER.md's hard limits);
+        # It is NOT committed here. A workflow does not commit to `main` (the rule is gated by
+        # `tests/test_cdm_trusted_publishing.py`'s witness-record test);
         # the witness round commits the same file under `releases/witness/` alongside
         # PUBLICATION.md's ledger entry.
         env:

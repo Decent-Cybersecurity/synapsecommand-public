@@ -4,8 +4,9 @@
 # -----------------------------
 # §43 asks for three separate things and this file is only the third of them: the dependency
 # GRAPH and Dependabot ALERTS are repository settings and are not configurable from the tree
-# (they were switched on in this round through `gh api`, with the before-and-after readings in
-# `rounds/reports/P6.md` and the resulting state quoted in `SECURITY.md`'s controls table). What
+# (they were switched on in this round through `gh api`, with the resulting state quoted in
+# `SECURITY.md`'s controls table; the before-and-after readings are in a private round record,
+# not in this repository). What
 # a file in the tree can decide is the version-UPDATE behaviour, which is what follows.
 #
 # THREE ECOSYSTEMS, AND WHY EACH DIRECTORY IS THE ONE NAMED

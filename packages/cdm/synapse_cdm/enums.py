@@ -22,7 +22,7 @@ class EntityType(StrEnum):
 
 
 class Affiliation(StrEnum):
-    """Maps to MIL-STD-2525 standard identity — see models.standard_identity().
+    """Maps to MIL-STD-2525 standard identity — see symbology.standard_identity().
 
     Four members, not 2525's seven: PENDING, ASSUMED_FRIEND and SUSPECT are judgements a
     fusion layer makes, not facts an adapter can read off a wire format. An adapter that

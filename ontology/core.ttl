@@ -4,15 +4,17 @@
 # `packages/cdm/synapse_cdm/registry/sc_oes/ontology_terms.json` are GENERATED from this file and
 # its seven sibling modules, and are drift-tested against them (ADR 0002, decision 4).
 #
-# Constructs are limited to the list SC-OES-SPEC-v2 §88 permits. Nothing here declares a
-# restriction, a property chain, a cardinality, a disjointness axiom or an inference rule: §100
-# forbids publishing the reasoning, and this file publishes only the vocabulary the reasoning
-# would be written over.
+# Constructs are limited to the list docs/adr/0002-ontology-representation.md records (RDFS and
+# OWL vocabulary only). Nothing here declares a restriction, a property chain, a cardinality, a
+# disjointness axiom or an inference rule: ADR 0002 decision 7 and spec/sc-oes/README.md ("What
+# SC-OES is not") forbid publishing the reasoning, and this file publishes only the vocabulary
+# the reasoning would be written over.
 #
 # Identifiers follow docs/adr/0003-identifier-and-namespace-strategy.md decision 9. See
 # ontology/README.md for the three derivations this module could not read off the specification:
-# the casing of the fifteen §92 relationships, the parent of a class §93–§99 left unparented, and
-# the metadata namespace that carries maturity.
+# the casing of the fifteen relationship properties, the parent of a class the specification left
+# unparented, and the metadata namespace that carries maturity. A bare §N below cites the private
+# SC-OES implementation brief, which is not in this repository (ontology/README.md, 2026-09-16).
 
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
@@ -225,7 +227,7 @@ core:InformationObject
 # `scmeta:eventClass` carries the `event_class` value of spec/sc-oes/02-event-classes.md that this
 # ontology class corresponds to. It is metadata, not an axiom: it lets a test derive the mapping
 # between the two vocabularies from this file instead of restating it as a literal, which is the
-# check spec §140 asks for when it says an event ontology class must subclass the correct core
+# check the private brief's ontology checklist asks for when it says an event ontology class must subclass the correct core
 # event class.
 
 core:ObservationEvent
@@ -300,14 +302,14 @@ core:ActionEvent
     scmeta:maturity "EXPERIMENTAL" ;
     owl:versionInfo "0.1.0" .
 
-# ------------------------------------------------------------------------ the §92 relationships
+# ------------------------------------------------------------- the fifteen relationship properties
 #
-# Fifteen object properties, in the order SC-OES-SPEC-v2 §92 lists them. Each carries §92's own
-# spelling as its `rdfs:label`; the identifier is the UpperCamelCase form the frozen governed
-# grammar admits (ADR 0003 decision 9, SA.1 §17–§18). ontology/README.md records that derivation
-# and why the label is where §92's spelling belongs.
+# Fifteen object properties, in the order the private brief lists them. Each carries the brief's
+# own spelling as its `rdfs:label`; the identifier is the UpperCamelCase form the frozen governed
+# grammar admits (ADR 0003 decision 9, and the brief's SA.1 addendum). ontology/README.md records
+# that derivation and why the label is where the brief's spelling belongs.
 #
-# `rdfs:domain` and `rdfs:range` produce inference, and §92 says to be conservative with them. The
+# `rdfs:domain` and `rdfs:range` produce inference, and the brief says to be conservative with them. The
 # rule this module applies, uniformly: a domain or a range is declared only where EVERY use of the
 # property — in the seven v0.1.0 modules and in any extension of them a reader could foresee — has
 # that class on that side. Where the honest answer is "several unrelated classes", the constraint
@@ -322,7 +324,7 @@ core:PartOf
     scmeta:maturity "EXPERIMENTAL" ;
     owl:versionInfo "0.1.0" .
 
-# The one inverse pair §88 calls unquestionably correct, declared once rather than on both sides:
+# The one inverse pair the brief calls unquestionably correct, declared once rather than on both sides:
 # two declarations of one fact are two places for it to be edited apart.
 core:HasPart
     a owl:ObjectProperty ;

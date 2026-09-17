@@ -50,8 +50,9 @@ deletions(-)**. 84 files are additions.
 
 ## ADR status
 
-Ten decision records under [`docs/adr/`](adr). Every one is **Accepted — M, 2026-09-06, per
-SC-OES-SPEC-v2**, and each was re-examined under the SA.1 architecture correction; the status line
+Ten decision records under [`docs/adr/`](adr). Every one is **Accepted — M, 2026-09-06**, on the
+private SC-OES implementation brief (v2, not in this repository; the published specification is
+`spec/sc-oes/`), and each was re-examined under the SA.1 architecture correction; the status line
 of each names that review.
 
 | ADR | Final decision, in its own first line |

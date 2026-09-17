@@ -1501,7 +1501,8 @@ class Stanag4676Adapter(Adapter):
                         source=(
                             "NITS is XML and AEDP-12 states no maximum document size. 1 MiB is "
                             "chosen from the parser audit: the document reaches "
-                            "`ET.fromstring` (`adapters/stanag4676.py:748`), the largest "
+                            "`ET.fromstring` (`adapters/stanag4676.py`'s `parse_document`), the "
+                            "largest "
                             "STANAG 4676 fixture in this package is 8460 octets, and the bound "
                             "is what makes the stdlib-XML posture defensible in Part 1 — it "
                             "bounds the document, and libexpat's own amplification limit "

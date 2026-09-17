@@ -1,7 +1,7 @@
 # SC-OES Operational Ontology — mission module
 #
 # Authoritative source; see ontology/README.md and ontology/core.ttl. Constructs are limited to
-# SC-OES-SPEC-v2 §88's list. No module imports another: the eight files are loaded together, and
+# the list docs/adr/0002-ontology-representation.md records. No module imports another: the eight files are loaded together, and
 # a parent in another module is referenced by its identifier.
 
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
@@ -18,7 +18,7 @@
     scmeta:module "mission" ;
     scmeta:maturity "EXPERIMENTAL" .
 
-# §98: "`Mission` itself remains core." This module defines the two mission event classes and no
+# The private brief's module note (not in this repository): "`Mission` itself remains core." This module defines the two mission event classes and no
 # object class, which is why nothing here subclasses `core:Mission`.
 
 mission:MissionStatusChangedEvent

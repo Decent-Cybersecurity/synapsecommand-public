@@ -48,7 +48,8 @@
 # it.
 #
 # A third run, `gitleaks dir .`, reported three findings and NONE of them is in the repository:
-# all three are in `rounds/`, the untracked round apparatus (`git ls-files rounds/` -> 0), and all
+# all three are in `rounds/`, the untracked round apparatus (`git ls-files rounds/` -> 0; a local
+# directory `.gitignore` excludes, absent from every clone), and all
 # three are the same string — an SSH signing key FINGERPRINT of the form `SHA256:...`, which is
 # the public half of a signing key written into a round record on purpose. They are not
 # allowlisted here, and deliberately not: the CI job scans the GIT HISTORY, those files are not in

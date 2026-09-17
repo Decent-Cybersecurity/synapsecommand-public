@@ -79,13 +79,14 @@ dependencies = [
 ]
 
 # `rdflib` is the RDF parser the ontology's own tests read `ontology/*.ttl` with, and it is a
-# TEST dependency and nothing else. SC-OES-SPEC-v2 §136 fixes all four conditions and this extra
+# TEST dependency and nothing else. ADR 0002 decision 6 and ADR 0010 decision 5 fix all four
+# conditions and this extra
 # is where the first of them lands: test/development only, licence confirmed compatible before it
 # landed, no RDF runtime dependency, the choice recorded in ADR 0002/0010 lineage. rdflib 7.6.0 is
 # BSD-3-Clause and its one non-optional dependency, pyparsing, is MIT — both permissive and both
 # compatible with Apache-2.0, which is the criterion `docs/adr/0010-...md` decision 5 states for a
 # test extra. Nothing under `synapse_cdm/` imports it: `tests/test_cdm_boundary.py` is the check,
-# and §102 is the reason — the runtime reads the GENERATED `registry/sc_oes/ontology_terms.json`
+# and `spec/sc-oes/README.md` ("Machine authorities") is the reason — the runtime reads the GENERATED `registry/sc_oes/ontology_terms.json`
 # and never parses Turtle.
 [project.optional-dependencies]
 test = ["pytest>=8.0", "rdflib>=7.0"]
@@ -109,7 +110,8 @@ Changelog = "https://github.com/Decent-Cybersecurity/synapsecommand-public/blob/
 
 [project.scripts]
 # The entry points the README documents as `python -m ...`; every one of them stays importable
-# that way. `cdm-conformance` joined 2026-09-06 with the SC-OES conformance tool: §40 requires a
+# that way. `cdm-conformance` joined 2026-09-06 with the SC-OES conformance tool:
+# `spec/sc-oes/13-conformance.md` ("Exit codes") requires a
 # process status a CI system can branch on, and a console script is how this repository has
 # always spelled "runnable without knowing where the package is installed".
 cdm-harness = "synapse_cdm.harness:main"
@@ -237,7 +239,8 @@ include = ["synapse_cdm*"]
 # shipped are named positively below.
 #   registry/**/*                      the machine-readable runtime artefacts of ADR 0004 —
 #                                      `registry/sc_oes/ontology_terms.json` today, the governed
-#                                      event registry beside it later. §17 requires them to ship
+#                                      event registry beside it later. `spec/sc-oes/03-event-types.md`
+#                                      ("The registry, and where it lives") requires them to ship
 #                                      in the wheel, load with `importlib.resources`, need no
 #                                      checkout and no network, and be read as DATA. A recursive
 #                                      glob for the same reason the fixtures one is recursive: the

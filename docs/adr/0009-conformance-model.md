@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
+Accepted — M, 2026-09-06, on the private SC-OES implementation brief (v2), which is not in this
+repository; the published specification is `spec/sc-oes/`, and a bare `§N` below cites the brief.
 
 Amended by SA.1 — M, 2026-09-06 (SA.1 §30–§43, §61, §83). The model is unchanged: five dimensions,
 `PASS`/`FAIL`/`SKIP`, no aggregate score, four exit codes, required-dimension mechanism. What SA.1

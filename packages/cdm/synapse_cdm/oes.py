@@ -176,7 +176,7 @@ GOVERNED_ONTOLOGY_TERM_RE = re.compile(
 #: reference, a bare word and a local name all fail it, which is what §15's first test asks for.
 URI_SCHEME_RE = re.compile(r"[A-Za-z][A-Za-z0-9+.\-]*:")
 
-#: Semver, the same shape `CDMBase._semver` (`models.py:216`) already enforces on
+#: Semver, the same shape `CDMBase._semver` (`models.py`) already enforces on
 #: `schema_version`. Reused rather than invented: the repository has exactly one way of spelling
 #: a version on the wire, and a second one would be a second thing to keep correct.
 SEMVER_RE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
@@ -314,7 +314,7 @@ class EntityRelation(BaseModel):
     """
     model_config = STRICT
     entity_id: uuid.UUID = Field(
-        description="Must also appear in the event's related_entities — see Event._oes_entities."
+        description="Must also appear in the event's related_entities — see Event._oes_relations."
     )
     predicate: str = Field(
         min_length=1,

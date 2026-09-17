@@ -270,7 +270,8 @@ class TakAdapter(Adapter):
                         source=(
                             "Cursor-on-Target is XML and no document in this tree states a "
                             "maximum event size. 1 MiB is chosen from the parser audit: the "
-                            "document reaches `ET.fromstring` (`adapters/tak.py:637`), the "
+                            "document reaches `ET.fromstring` (`adapters/tak.py`'s `_parse_cot`), "
+                            "the "
                             "largest TAK fixture in this package is 1003 octets, and the bound "
                             "is what makes the stdlib-XML posture defensible in Part 1 — it "
                             "bounds the document, and libexpat's own amplification limit "

@@ -17,7 +17,7 @@
           "max_input_bytes": {
             "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs",
             "kind": "implementation_cap",
-            "source": "NMEA 0183 caps one sentence at 82 characters including the delimiters and the checksum (`adapters/ais.py:372`), and the AIVDM fragment-count field is a single character, so one whole message is at most 9 x 82 = 738 octets. That figure does not cover the NMEA 0183 v4.10 TAG blocks this adapter also accepts on each line (`adapters/ais.py:79`), which is why the declared bound is not 738: 1024 carries the 738 plus a TAG block on every fragment. This is an IMPLEMENTATION CAP under M's F5.4 ruling and is NOT the format's normative maximum.",
+            "source": "NMEA 0183 caps one sentence at 82 characters including the delimiters and the checksum (`adapters/ais.py`, `MAX_PAYLOAD_CHARS`), and the AIVDM fragment-count field is a single character, so one whole message is at most 9 x 82 = 738 octets. That figure does not cover the NMEA 0183 v4.10 TAG blocks this adapter also accepts on each line (`adapters/ais.py:79`), which is why the declared bound is not 738: 1024 carries the 738 plus a TAG block on every fragment. This is an IMPLEMENTATION CAP under M's F5.4 ruling and is NOT the format's normative maximum.",
             "test": "tests/test_cdm_input_bounds.py::test_every_adapter_refuses_one_octet_over_its_declared_bound"
           }
         },

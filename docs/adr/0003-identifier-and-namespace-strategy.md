@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
+Accepted — M, 2026-09-06, on the private SC-OES implementation brief (v2), which is not in this
+repository; the published specification is `spec/sc-oes/`, and a bare `§N` below cites the brief.
 
 Amended by SA.1 — M, 2026-09-06 (SA.1 §14–§20, §24–§28, §59, §84–§86). The decision is unchanged:
 the `tag:` family for ontology terms, the existing CDM schema URNs untouched as legacy. What SA.1

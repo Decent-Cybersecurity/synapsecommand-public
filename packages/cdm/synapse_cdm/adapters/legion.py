@@ -498,7 +498,8 @@ class LegionAdapter(Adapter):
                             "`fixtures/legion/spec/openapi_pin.json` states no maximum "
                             "response size and JSON states none, so there is no normative "
                             "figure to take. 1 MiB is chosen from the parser audit: the "
-                            "payload reaches `json.loads` (`adapters/legion.py:991`), whose "
+                            "payload reaches `json.loads` (`adapters/legion.py`'s `_as_document`), "
+                            "whose "
                             "cost is linear in the document, and the largest Legion fixture in "
                             "this package is 1172 octets. This is an IMPLEMENTATION CAP under "
                             "M's F5.4 ruling and is NOT the format's normative maximum."),

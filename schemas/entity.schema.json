@@ -1,7 +1,7 @@
 {
   "$defs": {
     "Affiliation": {
-      "description": "Maps to MIL-STD-2525 standard identity \u2014 see models.standard_identity().\n\nFour members, not 2525's seven: PENDING, ASSUMED_FRIEND and SUSPECT are judgements a\nfusion layer makes, not facts an adapter can read off a wire format. An adapter that\ninvented ASSUMED_FRIEND would be doing business logic, which adapters may not do.\nThe source's own wording is preserved in `attributes` when it is finer than this.",
+      "description": "Maps to MIL-STD-2525 standard identity \u2014 see symbology.standard_identity().\n\nFour members, not 2525's seven: PENDING, ASSUMED_FRIEND and SUSPECT are judgements a\nfusion layer makes, not facts an adapter can read off a wire format. An adapter that\ninvented ASSUMED_FRIEND would be doing business logic, which adapters may not do.\nThe source's own wording is preserved in `attributes` when it is finer than this.",
       "enum": [
         "FRIENDLY",
         "HOSTILE",

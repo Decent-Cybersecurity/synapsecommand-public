@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted — M, 2026-09-06, per SC-OES-SPEC-v2.
+Accepted — M, 2026-09-06, on the private SC-OES implementation brief (v2), which is not in this
+repository; the published specification is `spec/sc-oes/`, and a bare `§N` below cites the brief.
 
 Amended by SA.1 — M, 2026-09-06: reviewed under SA.1 §58 and §66 and **nothing in this ADR moves**.
 The thirteen mappings are unchanged, `sc.air.air_track_observed.v1 -> null` included, and SA.1 §10

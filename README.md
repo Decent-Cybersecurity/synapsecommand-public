@@ -1,8 +1,11 @@
 # synapsecommand — public
 
-SynapseCommand's open integration and semantic contract layer: the **Canonical Data Model**,
-the **Operational Event Specification** (SC-OES), the **Operational Ontology**, the published JSON
-Schemas, the adapters, and the validation and conformance tooling that go with them. Apache 2.0 —
+SynapseCommand's open integration and semantic contract layer — Part 1 of the **Synapse Open
+Interoperability Framework (SOIF)**: the **Canonical Data Model**, the **Operational Event
+Specification** (SC-OES), the **Operational Ontology**, the published JSON Schemas, the adapters,
+and the validation and conformance tooling that go with them. The framework specification itself
+is a private document, and the SOIF `§N` sections cited across this repository are its numbering.
+Apache 2.0 —
 see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE), the latter for the attribution and for what the
 licence does *not* cover:
 the specification documents this repository pins are recorded by hash and remain under their own

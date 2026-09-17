@@ -1,7 +1,7 @@
 {
   "$defs": {
     "Affiliation": {
-      "description": "Maps to MIL-STD-2525 standard identity \u2014 see models.standard_identity().\n\nFour members, not 2525's seven: PENDING, ASSUMED_FRIEND and SUSPECT are judgements a\nfusion layer makes, not facts an adapter can read off a wire format. An adapter that\ninvented ASSUMED_FRIEND would be doing business logic, which adapters may not do.\nThe source's own wording is preserved in `attributes` when it is finer than this.",
+      "description": "Maps to MIL-STD-2525 standard identity \u2014 see symbology.standard_identity().\n\nFour members, not 2525's seven: PENDING, ASSUMED_FRIEND and SUSPECT are judgements a\nfusion layer makes, not facts an adapter can read off a wire format. An adapter that\ninvented ASSUMED_FRIEND would be doing business logic, which adapters may not do.\nThe source's own wording is preserved in `attributes` when it is finer than this.",
       "enum": [
         "FRIENDLY",
         "HOSTILE",
@@ -323,7 +323,7 @@
       "description": "What ROLE an entity already related to this event plays in it.\n\n`Event.related_entities` remains the single answer to \"which entities does this event\nconcern\"; this adds the role. The membership rule that keeps the two lists agreeing lives on\n`Event` (`models.py`), because it is the only place both lists are visible.",
       "properties": {
         "entity_id": {
-          "description": "Must also appear in the event's related_entities \u2014 see Event._oes_entities.",
+          "description": "Must also appear in the event's related_entities \u2014 see Event._oes_relations.",
           "format": "uuid",
           "title": "Entity Id",
           "type": "string"
