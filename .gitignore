@@ -232,12 +232,12 @@ fixtures/klv/provenance/
 # repository, so a second clone that copied the directories in had no rule and `git add -A` would
 # have staged some two hundred files. That is the argument at the top of the pinned-document block,
 # verbatim: a test on the commit is a gate on the COMMIT and not on the operation, and the
-# mechanism has to be in the tree. The paths are not secret — forty tracked lines name `rounds/`
+# mechanism has to be in the tree. The paths are not secret — thirty-seven tracked lines name `rounds/`
 # (`git grep -n 'rounds/' | wc -l`, re-derived 2026-09-16 by `tests/test_cdm_pins.py`; the ruling
-# read seventy, which was the tree before the same day's audit cut every pointer a clone could not
-# follow) and the readiness report advertises `git ls-files rounds/` → 0 as a property of the tree
-# — so ignoring them in the shared file gives away nothing and makes the advertised property one
-# the tree itself enforces, at the lines that report now cites. Ruled by M on 2026-09-16.
+# read seventy, the tree before that day's audit cut every pointer a clone could not follow, and
+# forty before its four leftover spec records were cut) and the readiness report advertises
+# `git ls-files rounds/` → 0 as a property of the tree — so ignoring them in the shared file gives
+# away nothing and makes it one the tree itself enforces, there. Ruled by M on 2026-09-16.
 rounds/
 .claude/
 

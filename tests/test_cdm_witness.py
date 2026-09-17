@@ -584,3 +584,75 @@ def test_every_witness_path_the_documents_quote_exists():
     missing = [f"{where} quotes releases/witness/{name}" for where, name in quoted
                if not (WITNESS_DIR / name).is_file()]
     assert not missing, missing
+
+
+# ------------------ 2026-09-16: "never produced a committed record" is held to the directory
+#
+# Three documents state, dated, that the pipeline's `witness` job has executed once on a tag push,
+# failed, and has never produced a committed record — `2.1.2.json` was built by hand with the
+# repaired builder — and that the next tag push is the first execution of the repaired job and of
+# the additions the same day made to it. A dated sentence about the tree is honest only while the
+# tree is as it says, and nothing read the three paragraphs. This holds each to what it names: the
+# directory holds that one record and no other, each paragraph names the additions it calls
+# unexercised, and the workflow's witness job carries every one of them. The day a second record
+# is committed this goes red, and the sentences are rewritten to say what that run did, not deleted.
+
+#: The release-procedure paragraph, the README paragraph and the release-pipeline bullet, each by
+#: a phrase it carries and nothing else in the file does.
+NEVER_SUCCEEDED_SITES = {
+    "packages/cdm/synapse_cdm/MIGRATIONS.md": "the next tag push is the FIRST execution of the repaired job",
+    "releases/witness/README.md": "that job has never produced a committed record",
+    "docs/docs/security/release-pipeline.mdx": "A `witness` job that has succeeded on a tag push",
+}
+
+#: What the witness job gained on 2026-09-16 and has never run on a tag, as the workflow spells it.
+UNEXERCISED_ON_A_TAG = (
+    "actions: read",
+    "deployments: read",
+    "grep -E '\\.whl$' assets/SHA256SUMS",
+    "attestations/sha256:${wheel_digest}",
+    "--attestation-bundles attestations.json",
+    "--download --assets assets",
+)
+
+#: How each paragraph names those additions; a paragraph that named only the round-PW repair
+#: would present the job as one repair away from proven, which it is not.
+ADDITIONS_NAMED = ("`actions: read`", "`deployments: read`", "`--attestation-bundles`")
+
+
+def _witness_job() -> str:
+    workflow = (REPO / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
+    return workflow[workflow.index("\n  witness:\n"):]
+
+
+def test_the_never_succeeded_statements_hold_while_the_only_record_is_the_hand_built_one():
+    records = sorted(path.name for path in WITNESS_DIR.glob("*.json"))
+    assert records == ["2.1.2.json"], (
+        f"releases/witness/ holds {records}. The three paragraphs in {sorted(NEVER_SUCCEEDED_SITES)} "
+        "say, dated 2026-09-16, that the pipeline's `witness` job has never produced a committed "
+        "record and that 2.1.2.json was built by hand; a second record is either the job's first "
+        "success or a second hand-built one, and either way the paragraphs are rewritten to say "
+        "which — `gh run view <run id> --json jobs` is the reading — rather than left or deleted")
+    for site, phrase in NEVER_SUCCEEDED_SITES.items():
+        flat = " ".join((REPO / site).read_text(encoding="utf-8").split())
+        assert phrase in flat, (
+            f"{site} no longer says {phrase!r}; the statement that the witness job has never "
+            "produced a committed record is dated and this test holds it, so it moves with a "
+            "rewrite here and not by deletion")
+        for addition in ADDITIONS_NAMED:
+            assert addition in flat, (
+                f"{site} does not name {addition} among what the next tag push first executes; "
+                "the job the next tag runs is not the job v2.1.2 ran plus the round-PW repair")
+    job = "\n".join(line for line in _witness_job().splitlines() if not line.lstrip().startswith("#"))
+    for text in UNEXERCISED_ON_A_TAG:
+        assert text in job, (
+            f"the witness job no longer carries {text!r}, which the three paragraphs name as an "
+            "addition of 2026-09-16 the next tag first executes; either it moved, and they say "
+            "where, or it went, and they stop naming it")
+
+
+def test_the_never_succeeded_phrases_are_each_in_one_place_in_their_file():
+    """A phrase that occurs twice would let a stale copy satisfy the test above."""
+    for site, phrase in NEVER_SUCCEEDED_SITES.items():
+        flat = " ".join((REPO / site).read_text(encoding="utf-8").split())
+        assert flat.count(phrase) == 1, f"{site} carries {phrase!r} {flat.count(phrase)} times"

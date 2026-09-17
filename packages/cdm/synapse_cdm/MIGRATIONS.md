@@ -217,6 +217,15 @@ because the job's inputs (the run's approvals, the deployment's status history, 
 store) do not exist before the tag. A failed `witness` job is not a refused release — the upload
 and the Release stand — but it is a record that was not produced by the pipeline, and a witness
 round that commits a hand-built record in its place says so in the ledger, as entry 19 did.
+Nor is the job the next tag runs the job `v2.1.2` ran with that one repair applied: on
+2026-09-16 the same audit granted it `actions: read` and `deployments: read`, made it read the
+wheel's digest off `SHA256SUMS` and fetch the attestation store by it, handed the builder
+`--attestation-bundles`, and handed the verifier `--download --assets assets` and a token —
+every one asserted by `tests/test_cdm_witness.py` and `tests/test_cdm_witness_builder.py`
+against the workflow text and against payloads captured from the live API, and none of them
+ever run on a tag. The same test module holds this paragraph, `releases/witness/README.md`'s
+and the release-pipeline page's to the tree: the day `releases/witness/` holds a second record
+they go red, and are rewritten to say what that run did rather than deleted.
 
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
@@ -343,6 +352,15 @@ the file lands under `releases/witness/` in the witness round that follows, besi
 re-derives every digest in it and exits non-zero on any disagreement — that command is what the word
 "verifiable" is discharged by. `releases/witness/README.md` documents the fields.
 
+**Also 2026-09-16: the `witness` job above is the design, not a run that has happened.** The
+job has executed once on a tag push, on `v2.1.2`, and failed at its own verification step;
+`2.1.2.json`, the one record under `releases/witness/`, was built by hand with the repaired
+builder over that run's inputs, under the ruling `PUBLICATION.md` entry 19 records. The release
+procedure above — after the run, confirm the `witness` job succeeded — says what the next tag
+push is the first execution of, the repairs and the additions of this date included, and
+`releases/witness/README.md` says the same over the directory. Nothing in this paragraph
+changes the design the one before it states.
+
 **Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
 date the verifier compared the Release's id and instant, checked the SBOM, evidence and
 conformance digests for shape, and read no Release asset at all; only the PyPI digests were
@@ -360,7 +378,7 @@ now true of it.
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 55 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 59 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
 parser-safety record below moves again, eleven of which the harness-evidence record moves a third
@@ -377,7 +395,9 @@ the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_
 audit's prose record below moves for a sentence each — `__init__.py`, `schemas.py`,
 `conformance.py`, `klv_vmti_codec.py` and `stanag4586_codec.py`; four files the audit's
 helpers record moves — `canonical.py`, which is new, `models.py`, `manifests.py` and the KLV
-generator `build_fixtures.py`; and `release_notes.py`, which the audit's verbatim record, the
+generator `build_fixtures.py`; four fixture spec records the citations record's addendum moves
+for one sentence each — `adsb_terms.json`, `ais_terms.json`, `tak_terms.json` and
+`klv_pin.json`; and `release_notes.py`, which the audit's verbatim record, the
 last in this section, moves for one comment. Everything else these
 rounds touched ships in nothing: the release workflow, the witness builder it runs and that
 builder's test module, the generated manifests under `manifests/`, the generated schemas under
@@ -864,6 +884,22 @@ no consumer's call changed: `synapse_cdm/adapters/stanag4609.py:VMTI_IDENTITY_RU
 constant's text names its source as private rather than by a path; `synapse_cdm/oes.py:EntityRelation`
 — PATCH, one field description names the validator that exists; `synapse_cdm/suite.py:loss_report`
 — PATCH, a docstring and the `skipped_because` sentence name the guard by symbol.
+
+**AND THE FOUR SPEC RECORDS THE SAME AUDIT LEFT POINTING AT IT, 2026-09-16.** Four fixture spec
+records under `fixtures/` still cited the apparatus by path or by file name with no word that
+it is private: `adsb/spec/adsb_terms.json`, `ais/spec/ais_terms.json` and
+`tak/spec/tak_terms.json`, whose `mapping_rule_applied` quoted the licence-provenance mapping
+rule from the round brief by its path, and `klv/spec/klv_pin.json`, whose ST 0903.4 pin names
+PLAN.md as the gate that permits acquisition by hand. Each now says the document is a private
+one in the untracked round apparatus, the quoted rule's text being what the record carries; no
+reading, no instant, no class and no ruling in any of the four moves, and nothing reads the four
+sentences but a person. The `FORMAT_COVERAGE.md` parks table's ST 0806 row still named the
+round report by path in its live reopen condition — the citations record above rewrote row
+73's sentence and not this one — and it now names the proposal as an untracked round report
+whose substance the constant carries, as row 73 does; the paragraph on the same line that the
+row's dated correction of 2026-09-06 keeps in its own tense is left in it. `.gitignore`'s count
+of tracked lines naming the directory is re-derived by `tests/test_cdm_pins.py` and moved with
+these. PATCH by the same words: a declared fact corrected, in four records and one row.
 
 **THE AUDIT'S PROSE RECORD, 2026-09-16 — the sentences the audit found false are corrected beside
 the record, or rewritten where the file's own convention is to rewrite.** Units, every one PATCH

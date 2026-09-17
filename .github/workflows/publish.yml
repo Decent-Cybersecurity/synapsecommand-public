@@ -450,13 +450,24 @@ jobs:
           echo '--- the third-party set being audited ---'
           cat environment-third-party.txt
           # shellcheck disable=SC2086
-          pip-audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }} | tee pip-audit.log
-          # The verdict §52's notes carry, read off the audit's own last line (`No known
-          # vulnerabilities found` on a pass; `set -o pipefail` stops the step before this line
-          # on anything else), with the scope and the flags in force beside it — so a release
-          # made with an exception in force says so in its notes rather than saying "0 findings".
+          pip-audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }} 2>&1 | tee pip-audit.log
+          # The verdict §52's notes carry, read off the audit's own last line — `No known
+          # vulnerabilities found` on a pass, with `, N ignored` appended when a flag above was
+          # used — which pip-audit 2.10.1 writes to STDERR, so the two streams are merged before
+          # `tee`. Until 2026-09-16 only stdout was captured: the log was empty on every pass,
+          # the exported verdict was an empty field in front of a non-empty suffix, and the
+          # release job's `test -n` could not refuse it. `set -o pipefail` stops the step before
+          # this line on a finding, so a line that is not the tool's pass line is a log this
+          # step does not understand, and it is refused rather than rendered. The scope and the
+          # flags in force are beside it — so a release made with an exception in force says so
+          # in its notes rather than saying "0 findings".
+          verdict="$(tail -1 pip-audit.log)"
+          case "${verdict}" in
+            'No known vulnerabilities found'*) ;;
+            *) echo "::error::pip-audit exited 0 and its last line is not its pass line: ${verdict:-<empty>}" >&2; exit 1 ;;
+          esac
           audited="$(grep -c . environment-third-party.txt)"
-          echo "verdict=$(tail -1 pip-audit.log); strict, over ${audited} third-party distribution(s), ignore-vuln flags in force: [${{ steps.ignores.outputs.flags }}]" >> "${GITHUB_OUTPUT}"
+          echo "verdict=${verdict}; strict, over ${audited} third-party distribution(s), ignore-vuln flags in force: [${{ steps.ignores.outputs.flags }}]" >> "${GITHUB_OUTPUT}"
 
       - name: Security gate — CodeQL, over the analysis this commit already has
         id: codeql

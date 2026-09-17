@@ -1119,8 +1119,23 @@ def test_the_gate_job_exports_both_scan_verdicts(workflow):
         assert f"id: {step}" in gate, f"the gate job has no step with `id: {step}` to export from"
     assert 'echo "verdict=$(tail -1 codeql-gate.log)' in gate, (
         "the CodeQL verdict is not read off gates/codeql_gate.py's own last line")
-    assert 'echo "verdict=$(tail -1 pip-audit.log)' in gate, (
+    # pip-audit 2.10.1 writes `No known vulnerabilities found` to STDERR (reading of
+    # 2026-09-16, `pip-audit --strict -r <one pin>` under a redirect: stdout empty, stderr the one
+    # line), so a `| tee` over stdout alone logs nothing on a pass and `tail -1` reads an empty
+    # field — which is what the export carried until this date, and what the release job's
+    # `test -n` could not see behind the non-empty suffix. The merge, the read and the refusal of
+    # a last line that is not the tool's own pass line are each held here.
+    assert ("pip-audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }} "
+            "2>&1 | tee pip-audit.log") in gate, (
+        "the pip-audit invocation no longer merges stderr into the tee'd log; the verdict line "
+        "is on stderr, and the log is empty on every pass without `2>&1`")
+    assert 'verdict="$(tail -1 pip-audit.log)"' in gate, (
         "the pip-audit verdict is not read off pip-audit's own last line")
+    assert "'No known vulnerabilities found'*) ;;" in gate, (
+        "the pip-audit step does not refuse a last line that is not the tool's pass line, so an "
+        "empty log or a stray line would be rendered into the notes as the verdict")
+    assert 'echo "verdict=${verdict}; strict, over ${audited}' in gate, (
+        "the pip-audit export does not carry the verdict it just checked")
 
 
 def test_the_release_job_reads_the_verdicts_from_the_gate_and_types_neither(workflow):

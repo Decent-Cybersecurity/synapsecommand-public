@@ -38,7 +38,13 @@ key the approvals endpoint does not carry; the repair (round PW) is not an ances
 `2.1.2.json` in this directory was built by hand with the repaired builder over that run's inputs,
 under a ruling `PUBLICATION.md` entry 19 records. The next tag push is the first execution of the
 repaired job, and the release procedure in `MIGRATIONS.md` now says to confirm it succeeded
-before the witness round commits anything.
+before the witness round commits anything. Nor is that job the job `v2.1.2` ran plus one
+repair: the read grants (`actions: read`, `deployments: read`), the attestation fetch by the
+wheel's digest and the builder's `--attestation-bundles`, and the verifier's
+`--download --assets assets` with a token were all added on 2026-09-16, are held to the
+workflow text by `tests/test_cdm_witness.py` and `tests/test_cdm_witness_builder.py`, and have
+never run on a tag. The same test module holds this paragraph to the directory: a second
+record here makes it red until the paragraph says what that run did.
 
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
