@@ -96,7 +96,7 @@ test = ["pytest>=8.0", "rdflib>=7.0"]
 # CONTRIBUTING.md; a workflow line `ruff==` is what `tests/test_cdm_lint_stage.py` refuses. Pinned
 # exactly, not floored, because the rule set below was measured against this version and a newer
 # ruff can add a rule to `E9` or change what F821 sees.
-lint = ["ruff==0.16.6"]
+lint = ["ruff==0.16.7"]
 
 [project.urls]
 Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
