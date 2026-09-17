@@ -231,12 +231,35 @@ def test_reconcile_refuses_an_id_the_project_does_not_list(gate):
     resolves.
     """
     known = sorted(gate.recorded_rows() | gate.recorded_coverage())
+    # Two dropped, not one: the record names more deployments than wrangler's window holds, so a
+    # list one short of the record is a FULL window and reads as such (the test below); a list
+    # short of the window is the whole history and a missing id is the refusal this test is for.
+    short = [_deployment(gate, s) for s in known[2:]]
+    assert len(short) < gate.WRANGLER_WINDOW, "the fixture must be shorter than the window"
     with pytest.raises(gate.Finding) as raised:
-        gate.reconcile([_deployment(gate, s) for s in known[1:]])
-    assert known[0] in str(raised.value), (
-        f"the refusal does not name the id that failed to resolve:\n{raised.value}"
+        gate.reconcile(short)
+    assert known[0] in str(raised.value) and known[1] in str(raised.value), (
+        f"the refusal does not name the ids that failed to resolve:\n{raised.value}"
     )
     assert "does not list" in str(raised.value)
+
+
+def test_a_full_list_is_a_window_and_a_recorded_id_beyond_it_is_reported_not_refused(gate):
+    """2026-09-17, the twenty-sixth deployment: `wrangler pages deployment list` returns the newest
+    twenty-five and no page, so the oldest recorded id fell off the list and direction two refused
+    a record that was right. A full list is read as a window: what the record names beyond it is
+    measured and named, never refused — and a fabricated UNRECORDED id in the same full list is
+    still refused, because direction one never depended on the window."""
+    known = sorted(gate.recorded_rows() | gate.recorded_coverage())
+    assert len(known) > gate.WRANGLER_WINDOW, "the record must name more than the window holds"
+    full = [_deployment(gate, s) for s in known[-gate.WRANGLER_WINDOW:]]
+    result = gate.reconcile(full)
+    assert result["listed"] == gate.WRANGLER_WINDOW
+    assert result["beyond_window"] == known[:-gate.WRANGLER_WINDOW], result
+    assert result["window"] == gate.WRANGLER_WINDOW
+    with pytest.raises(gate.Finding) as raised:
+        gate.reconcile(full[:-1] + [_deployment(gate, "deadbeef")])
+    assert "cannot name" in str(raised.value) and "deadbeef" in str(raised.value)
 
 
 def test_reconcile_refuses_a_deployment_accounted_for_twice(gate):

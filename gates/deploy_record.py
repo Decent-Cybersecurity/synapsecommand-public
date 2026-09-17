@@ -56,6 +56,18 @@ token had expired four hours earlier and the API answered `9109 Invalid access t
 the gate authenticates the same way the deploy does, which is also the only way it can be wrong
 about the same things.
 
+**The list is a window, and the window is twenty-five — found 2026-09-17 by the twenty-sixth
+deployment.** `wrangler pages deployment list` returns the newest twenty-five deployments and
+offers no page; the day the project held twenty-six, the first one this project ever made,
+`039866b1` of 2026-08-22, fell out of the list and direction two read it as "an id Cloudflare does
+not list" — a refusal of a record that was right, by a gate that could no longer see the whole
+list. So direction two is now checked against the window rather than against Cloudflare: while the
+list is SHORTER than the window it is the whole list and a recorded id it lacks is refused as
+before; when the list is FULL, a recorded id it lacks is reported as beyond the window and counted
+in the measurement, never refused. That is a bound and it is stated as one: a deployment deleted
+from beyond the window is a deletion this gate cannot see, and the day wrangler pages the list the
+constant below is what to retire.
+
 USAGE
 
     python gates/deploy_record.py                    # reconcile; exit 0 clean, 1 on any finding
@@ -124,6 +136,12 @@ SERVED_VERSION_PAGE = "/changelog/"
 SERVED_VERSION_SENTENCE = re.compile(
     r"package is at <code>(\d+\.\d+\.\d+)</code>")
 VERSION_PY = REPO / "packages/cdm/synapse_cdm/version.py"
+
+
+#: What `wrangler pages deployment list` returns at most, newest first — a page the command does
+#: not let this gate turn (2026-09-17). A list of exactly this length is read as a window onto a
+#: longer history, and direction two of `reconcile()` is bounded by it, as the docstring says.
+WRANGLER_WINDOW = 25
 
 
 class Finding(Exception):
@@ -387,6 +405,11 @@ def reconcile(deployments: list[Deployment]) -> dict:
             "described by two days."
         )
     invented = sorted(accounted - set(listed))
+    beyond_window: list[str] = []
+    if invented and len(listed) >= WRANGLER_WINDOW:
+        # The list is full, so it is the newest WRANGLER_WINDOW and not the whole history: an id
+        # it lacks is beyond it, not absent from Cloudflare (module docstring, 2026-09-17).
+        beyond_window, invented = invented, []
     if invented:
         raise Finding(
             f"{RECORD.name} names {len(invented)} deployment(s) Cloudflare does not list: "
@@ -396,7 +419,8 @@ def reconcile(deployments: list[Deployment]) -> dict:
             "row account for nothing — or a deployment that was deleted, which is a fact the entry "
             "should state rather than leave as a row that no longer resolves."
         )
-    return {"listed": len(listed), "rows": len(rows), "coverage": len(coverage)}
+    return {"listed": len(listed), "rows": len(rows), "coverage": len(coverage),
+            "window": WRANGLER_WINDOW, "beyond_window": beyond_window}
 
 
 def check_alias(deployments: list[Deployment]) -> dict:
@@ -513,8 +537,11 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"ids": ids, "alias": alias, "served_version": served}, indent=2))
         return 0
 
-    print(f"deployments   {ids['listed']} listed; {ids['rows']} with a row, "
-          f"{ids['coverage']} covered retrospectively; 0 unaccounted for")
+    beyond = ids["beyond_window"]
+    print(f"deployments   {ids['listed']} listed"
+          f"{' (the newest ' + str(ids['window']) + ', which is all wrangler returns)' if beyond else ''}"
+          f"; {ids['rows']} with a row, {ids['coverage']} covered retrospectively; 0 unaccounted for"
+          f"{'; ' + str(len(beyond)) + ' recorded beyond the window: ' + ', '.join(beyond) if beyond else ''}")
     print(f"alias         {measurement['host']} is served by `{measurement['serving']}` — "
           f"{measurement['identical_to_serving']}/{measurement['pages']} pages identical to it, "
           f"{measurement['differing_from_previous']}/{measurement['pages']} differing from "
