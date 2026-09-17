@@ -352,6 +352,9 @@ rather than trusted:
 `publish.yml`'s `attest` job (round P7) takes Sigstore build provenance over the wheel, the sdist,
 both SBOM files and the evidence archive, then runs `gh attestation verify` against each.
 `id-token: write` and `attestations: write` are scoped to that job alone and to no other.
+(**Corrected 2026-09-16:** true of `attestations: write`; `id-token: write` is also on the
+`publish` job, which mints the PyPI Trusted Publishing token with it, and on `rc-build.yml`'s
+`attest` job. The sentence is kept as the reading this report took.)
 
 **Proven on this commit.** In run 34646168965 the `attest` job is **success** (21:02:08Z→21:02:38Z),
 all seven steps: `Attestation created for 5 subjects`, published at
@@ -435,7 +438,10 @@ that carried this commit.
   the upload, from PyPI's JSON API and the Release API; `gates/witness_verify.py` re-derives every
   digest in it and exits non-zero on any disagreement. `releases/witness/` holds `README.md` and
   no record: a workflow does not commit, so the first record lands in the witness round after the
-  release.
+  release. (**Corrected 2026-09-16:** at the time of this report the verifier re-derived the PyPI
+  digests, checked the Release's id and instant, and checked the SBOM, evidence and conformance
+  digests for shape only; it re-derives those three, and the Release's `SHA256SUMS`, since this
+  date. The sentence is kept as the reading this report took.)
 * Main advancement: `VERSIONING.md` §5.1 and `MIGRATIONS.md`'s pipeline section carry the same
   commands — `git merge --ff-only soif/1.0`, then the annotated tag on `main`'s new tip. Round PR
   ran both twice, and the second fast-forward is why section 1 reads `main` at `4409115`.

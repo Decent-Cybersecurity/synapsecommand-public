@@ -380,3 +380,40 @@ def test_dependency_review_is_pull_request_only_and_the_page_says_so():
     assert "only on pull requests" in page or "exercises only on pull requests" in page, (
         "the supply-chain page does not state that dependency review runs only on pull requests")
 
+
+
+def test_the_policy_names_every_job_that_can_mint_an_identity_token():
+    """SECURITY.md's attestation row against the workflows, since 2026-09-16.
+
+    The row said `id-token: write` and `attestations: write` were "on that job alone" of
+    `publish.yml`'s `attest` job, and `publish.yml` grants `id-token: write` to `publish` as well
+    — to mint the PyPI Trusted Publishing token. The holders are DERIVED from the workflows here
+    and the row is required to name each one, so a reader auditing who can mint a token reads the
+    set the files grant and not the set a sentence remembered.
+    """
+    holders: dict[str, set[str]] = {}
+    for path in sorted(WORKFLOWS.glob("*.yml")):
+        text = path.read_text()
+        body = text[text.index("\njobs:"):]
+        jobs = list(re.finditer(r"^  ([a-z][a-z0-9_-]*):[ \t]*$", body, re.M))
+        for index, match in enumerate(jobs):
+            block = body[match.start():jobs[index + 1].start() if index + 1 < len(jobs)
+                         else len(body)]
+            live = [line.strip() for line in block.splitlines()
+                    if not line.lstrip().startswith("#")]
+            if "id-token: write" in live:
+                holders.setdefault(path.name, set()).add(match.group(1))
+    assert holders, "no workflow grants id-token: write; the attestation row describes nothing"
+    body = POLICY.read_text()
+    table = body[body.index("## Controls"):body.index("## Handling a report")]
+    row = next(line for line in table.splitlines()
+               if line.startswith("| Build attestation, no long-lived key"))
+    for workflow, jobs in sorted(holders.items()):
+        for job in sorted(jobs):
+            assert f"`{job}`" in row, (
+                f"{workflow} grants `id-token: write` to its `{job}` job and SECURITY.md's "
+                f"attestation row does not name `{job}`; the row states who can mint an identity "
+                "token, and a holder it omits is the sentence \"on that job alone\" again")
+    assert "publish" in {job for jobs in holders.values() for job in jobs}, (
+        "publish.yml's `publish` job no longer holds id-token: write, so Trusted Publishing has "
+        "no token to upload with; if that is deliberate, PUBLICATION.md entry 6 is wrong")

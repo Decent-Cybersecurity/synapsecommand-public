@@ -204,6 +204,18 @@ The tag is the release. `.github/workflows/publish.yml` takes it from there: con
 OIDC with no token anywhere in the process. Condition 4's derivations are in the run summary and in the
 job log; the GitHub release itself is still made by a person, with `gh release create`, from those.
 
+**After the run: confirm the `witness` job succeeded, and only then let the witness round commit
+— added 2026-09-16.** `gh run view <run id> --json jobs` must show every job of the run
+`success`, the `witness` job included, before `releases/witness/<v>.json` is committed. The job
+has executed once on a tag push, on `v2.1.2`, and failed at its own verification step; the repair
+(round PW) is not an ancestor of that tag, so the next tag push is the FIRST execution of the
+repaired job — the same "first executed on a tag" class that burned `v2.1.0` at the dependency
+audit and `v2.1.1` at the CodeQL gate, and the class `gates/release_ref_rehearsal.py` cannot reach,
+because the job's inputs (the run's approvals, the deployment's status history, the attestation
+store) do not exist before the tag. A failed `witness` job is not a refused release — the upload
+and the Release stand — but it is a record that was not produced by the pipeline, and a witness
+round that commits a hand-built record in its place says so in the ledger, as entry 19 did.
+
 The tag is **annotated** because a release is a statement by a person: an annotated tag carries a
 tagger, a date and a message, and `git describe` prefers it. A lightweight tag is a branch name
 that does not move, and it records nobody — and the workflow now refuses one outright rather than
@@ -328,6 +340,16 @@ the file lands under `releases/witness/` in the witness round that follows, besi
 `PUBLICATION.md`'s ledger entry. `python gates/witness_verify.py releases/witness/<v>.json`
 re-derives every digest in it and exits non-zero on any disagreement — that command is what the word
 "verifiable" is discharged by. `releases/witness/README.md` documents the fields.
+
+**Corrected 2026-09-16: "re-derives every digest in it" was not what the command did.** Until this
+date the verifier compared the Release's id and instant, checked the SBOM, evidence and
+conformance digests for shape, and read no Release asset at all; only the PyPI digests were
+re-derived. It now re-derives, offline with `--assets DIR`, the four non-PyPI assets and a
+`SHA256SUMS` on disk; online, the index's digests, the Release's asset set and the Release's own
+`SHA256SUMS`; and with `--download`, the bytes the index and the Release serve and the wheel's
+attestation bundle. The `witness` job runs it with `--download --assets assets` and a token. The
+sentence above is kept as the design it stated; the verifier's header says, mode by mode, what is
+now true of it.
 
 ## History
 

@@ -11,10 +11,16 @@ from an API rather than from a local clock, and the record is written with sorte
 **Verifiable** means there is a command that disagrees when the record is wrong:
 
 ```bash
-python gates/witness_verify.py releases/witness/2.1.0.json            # index + Release
-python gates/witness_verify.py releases/witness/2.1.0.json --offline  # no network
-python gates/witness_verify.py releases/witness/2.1.0.json --download # also re-hash the bytes
+python gates/witness_verify.py releases/witness/2.1.2.json            # index + Release, and its SHA256SUMS
+python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
+python gates/witness_verify.py releases/witness/2.1.2.json --download # also re-hash the bytes, index and Release
+python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a `gh release download`
 ```
+
+What each mode re-derives is stated in the verifier's own header, mode by mode, and on the
+release-pipeline page. (Until 2026-09-16 the example paths above named `2.1.0.json`, a record
+that never existed — `v2.1.0` was refused by its own gates — and the verifier compared no asset
+digest at all; `tests/test_cdm_witness.py` now requires every path quoted here to be a file.)
 
 A record that asserts its own correctness is not evidence of anything. `PUBLICATION.md` ledger
 entry 5 is what that costs once it reaches an index: a step everybody believed had run, discovered
@@ -25,6 +31,14 @@ missing afterwards from a 404.
 The release pipeline's `witness` job produces the record **after** the upload, from readings of
 PyPI's JSON API and the Release API — the two sources that can only be read once the release
 exists. It uploads it as the Release asset `witness-<version>.json`.
+
+**As of 2026-09-16 that job has never produced a committed record.** It has executed once, on the
+`v2.1.2` run, and failed at its own verification step because the builder read an instant off a
+key the approvals endpoint does not carry; the repair (round PW) is not an ancestor of the tag.
+`2.1.2.json` in this directory was built by hand with the repaired builder over that run's inputs,
+under a ruling `PUBLICATION.md` entry 19 records. The next tag push is the first execution of the
+repaired job, and the release procedure in `MIGRATIONS.md` now says to confirm it succeeded
+before the witness round commits anything.
 
 **A workflow does not commit to `main`.** The file lands in this directory in the witness round
 that follows the release, by the runner, alongside `PUBLICATION.md`'s human-readable ledger entry.
@@ -65,6 +79,14 @@ the bundle and a trust root. The record carries `attestation.verified` as a **wi
 `PUBLICATION.md`'s sense — the pipeline ran the verification and recorded that it passed — and the
 verifier checks the field is present and true rather than pretending to have re-derived it. That
 file's "What is gated and what is witnessed" section is the reason the distinction is kept sharp.
+
+`attestation.bundle_sha256` — defined 2026-09-16 — is the SHA-256 over the canonical JSON of the
+wheel's Sigstore bundle as the attestations API serves it (`attestations[].bundle`, sorted keys, no
+whitespace). The `witness` job passes the API's answer to the builder; with `--download` the
+verifier reads the same endpoint and requires the record's value to be among the bundles served —
+a check that the record names the bundle the store holds, not a verification of it. The empty
+string means no bundle was handed to the builder: `2.1.2.json` carries it, and the verifier reports
+`not established` rather than refusing, because the absence is recorded as deliberate.
 
 `artifact_sha256` against `pypi.files` is the one cross-check that needs no network at all, and it
 is the one most worth having: those are the same claim written by two different steps, and a

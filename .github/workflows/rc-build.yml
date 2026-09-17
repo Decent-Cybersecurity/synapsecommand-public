@@ -27,7 +27,7 @@
 #   CI            -> tests         `qualify`, step "The suite"
 #   tests         -> conformance   `qualify`, steps "Conformance Suite v2" and "Evidence records"
 #   conformance   -> build         `build` needs `qualify`; a red suite builds nothing
-#   build         -> SBOM          `build`, syft over the WHEEL that was just gated
+#   build         -> SBOM          `build`, syft over the clean install created from the gated wheel
 #   SBOM          -> artefact hash `build`, one sha256 table over dist/ and the SBOMs
 #   artefact hash -> attestation   `attest` needs `build`; attests the exact uploaded bytes
 #   attestation   -> (proof)       `attest`, `gh attestation verify` on each artefact
@@ -148,19 +148,65 @@ jobs:
           set -euo pipefail
           python gates/wheel_install.py --mutation-check --export-dist dist
 
+      - name: The release artefacts, named from PACKAGE_VERSION and never from the ref
+        # `publish.yml`'s step of the same name, verbatim (round PS's ruling): the two names are
+        # computed from the package's own version, every later step reads them by name, and a
+        # `dist/` that does not hold exactly those two files is refused.
+        run: |
+          set -euo pipefail
+          version="$(python -c 'from synapse_cdm.version import PACKAGE_VERSION; print(PACKAGE_VERSION)')"
+          wheel="dist/synapse_cdm-${version}-py3-none-any.whl"
+          sdist="dist/synapse_cdm-${version}.tar.gz"
+          held="$(ls dist | wc -l | tr -d ' ')"
+          if [ "${held}" != "2" ]; then
+            echo "::error::dist/ holds ${held} files and a release candidate is exactly two, the wheel and the sdist. Anything else makes every digest below ambiguous: $(ls dist | tr '\n' ' ')" >&2
+            exit 1
+          fi
+          for artefact in "${wheel}" "${sdist}"; do
+            if [ ! -f "${artefact}" ]; then
+              echo "::error::${artefact} does not exist. PACKAGE_VERSION is ${version} and dist/ holds: $(ls dist | tr '\n' ' '). An artefact path is derived from the package's own version, so a mismatch here is a build that produced something else." >&2
+              exit 1
+            fi
+          done
+          mkdir -p sbom
+          {
+            echo "VERSION=${version}"
+            echo "WHEEL=${wheel}"
+            echo "SDIST=${sdist}"
+          } >> "${GITHUB_ENV}"
+          ls -l "${wheel}" "${sdist}"
+
       - name: twine check --strict, on the bytes that were gated
         run: |
           set -euo pipefail
           ls -l dist
-          python -m twine check --strict dist/*
+          python -m twine check --strict "${WHEEL}" "${SDIST}"
 
-      - name: SBOM — SPDX, from syft over the gated wheel
-        # syft reads the WHEEL, not the source tree and not the environment. That is the artefact
-        # a consumer installs, so it is the artefact whose bill of materials means anything; an
-        # SBOM of the CI environment would describe the runner.
+      - name: Clean install from the built package, in a venv of its own
+        # THE SUBJECT OF THE SBOMs BELOW, as in `publish.yml` since round PS (2026-09-08) and here
+        # since 2026-09-16. Until then this workflow took both SBOMs with syft over `dist`, the
+        # shape `publish.yml` records as yielding one SPDX package — the filename — and zero
+        # CycloneDX components: a bill of materials naming no dependency of anything, attested and
+        # uploaded green. The clean venv holds the gated wheel and its runtime closure and nothing
+        # else, in an interpreter that has never seen the source tree.
+        run: |
+          set -euo pipefail
+          python -m venv /tmp/clean
+          /tmp/clean/bin/python -m pip install --upgrade pip
+          /tmp/clean/bin/python -m pip install "${WHEEL}"
+          echo "CLEAN_VENV=/tmp/clean" >> "${GITHUB_ENV}"
+          /tmp/clean/bin/python -m pip list --format=freeze
+          # From `/tmp`, so that an accidental import of the source tree cannot pass for the wheel.
+          cd /tmp
+          /tmp/clean/bin/python -c "import synapse_cdm; print(synapse_cdm.__file__)"
+
+      - name: SBOM — SPDX, from syft over the clean-install environment
+        # syft reads THE ENVIRONMENT the gated wheel was installed into — not the wheel file,
+        # which catalogues as one package with no dependencies, and not the runner's own
+        # environment, which carries the `test` extra and would describe the runner.
         uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
         with:
-          file: dist
+          path: ${{ env.CLEAN_VENV }}
           format: spdx-json
           output-file: sbom/synapse_cdm.spdx.json
           upload-artifact: false
@@ -169,28 +215,96 @@ jobs:
       - name: SBOM — CycloneDX, from the same syft run
         uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26  # v0.24.2
         with:
-          file: dist
+          path: ${{ env.CLEAN_VENV }}
           format: cyclonedx-json
           output-file: sbom/synapse_cdm.cdx.json
           upload-artifact: false
           upload-release-assets: false
 
-      - name: SBOM cross-check — cyclonedx-py over the installed environment
+      - name: SBOM cross-check — cyclonedx-py over the same environment
         # TWO PRODUCERS, and the second is a cross-check rather than a second release artefact
-        # (M's pre-ruled default 4: "the release artefacts are syft's"). They answer different
-        # questions and that is the value: syft reads the wheel's own declared metadata, while
-        # `cyclonedx-py environment` reads what pip actually RESOLVED into this environment. A
-        # dependency that appears in one and not the other is a real discrepancy worth a look,
-        # and neither tool can report it alone. The counts are printed, never asserted equal —
-        # the environment carries the `test` extra and the wheel does not.
+        # (M's pre-ruled default 4: "the release artefacts are syft's"). The value is that the
+        # two read the SAME environment differently: syft catalogues the directory,
+        # `cyclonedx-py environment` asks the interpreter what is importable in it. A distribution
+        # in one and not the other is a real discrepancy, and neither tool can report it alone.
+        #
+        # It writes OUTSIDE `sbom/`: everything in that directory is hashed into `SHA256SUMS` and
+        # attested, and a cross-check is not an artefact of the candidate. (Until 2026-09-16 it
+        # wrote `sbom/environment.cdx.json`, over the runner's own environment, and that file was
+        # hashed and uploaded beside the two release documents.) The difference is printed and
+        # never asserted empty — syft's document also carries file and application components,
+        # which `cyclonedx-py` has no notion of.
         run: |
           set -euo pipefail
-          mkdir -p sbom
-          python -m cyclonedx_py environment --output-format json \
-            --outfile sbom/environment.cdx.json
-          for f in sbom/synapse_cdm.cdx.json sbom/environment.cdx.json; do
-            python -c 'import json,sys; d=json.load(open(sys.argv[1])); print(sys.argv[1], "components:", len(d.get("components") or []))' "$f"
-          done
+          cyclonedx-py environment "${CLEAN_VENV}/bin/python" \
+            --output-format JSON --output-file /tmp/environment.cdx.json
+          python - sbom/synapse_cdm.cdx.json /tmp/environment.cdx.json <<'PY'
+          import json
+          import sys
+
+          def libraries(path):
+              document = json.load(open(path))
+              return {(component["name"], component.get("version")) for component
+                      in (document.get("components") or [])
+                      if component.get("type") == "library"}
+
+          syft, native = libraries(sys.argv[1]), libraries(sys.argv[2])
+          print(f"syft: {len(syft)} library components; cyclonedx-py: {len(native)}")
+          for label, difference in (("only syft", syft - native), ("only cyclonedx-py", native - syft)):
+              print(f"{label}: {sorted(difference)}")
+          PY
+
+      - name: The SBOMs describe this release, or the pipeline stops
+        # `publish.yml`'s four refusals, verbatim — M's ruling of 2026-09-08 written as
+        # assertions: synapse-cdm absent, its version not PACKAGE_VERSION, zero components, or a
+        # generation step that failed (`set -euo pipefail`, and a missing file raises here). A
+        # file that PARSES as an SBOM and describes nothing meets the letter of §46 and none of its
+        # point, which is what this workflow's wheel-file SBOM was.
+        run: |
+          set -euo pipefail
+          python - "${VERSION}" sbom/synapse_cdm.spdx.json sbom/synapse_cdm.cdx.json /tmp/environment.cdx.json <<'PY'
+          import json
+          import re
+          import sys
+
+          version, spdx_path, cdx_path, cross_path = sys.argv[1:5]
+
+
+          def normalise(name: str) -> str:
+              return re.sub(r"[-_.]+", "-", name or "").lower()
+
+
+          def refuse(message: str) -> None:
+              print(f"::error::{message}. SOIF Part 1 §46, round PS: the release SBOM describes "
+                    "the clean-install environment created from the gated wheel, and one that "
+                    "cannot name the package being released describes nothing.", file=sys.stderr)
+              raise SystemExit(1)
+
+
+          spdx = json.load(open(spdx_path))
+          cdx = json.load(open(cdx_path))
+          cross = json.load(open(cross_path))
+          packages = spdx.get("packages") or []
+          components = cdx.get("components") or []
+          if not packages:
+              refuse(f"{spdx_path} carries no packages[] entry at all")
+          if not components:
+              refuse(f"{cdx_path} carries no components[] entry at all")
+
+          for path, entries, field in ((spdx_path, packages, "versionInfo"),
+                                       (cdx_path, components, "version"),
+                                       (cross_path, cross.get("components") or [], "version")):
+              versions = {entry.get(field) for entry in entries
+                          if normalise(entry.get("name", "")) == "synapse-cdm"}
+              if not versions:
+                  refuse(f"{path} names no synapse-cdm entry among its {len(entries)}")
+              if versions != {version}:
+                  refuse(f"{path} carries synapse-cdm at {sorted(map(str, versions))} and this "
+                         f"tree's PACKAGE_VERSION is {version}")
+
+          print(f"SPDX: {len(packages)} packages. CycloneDX: {len(components)} components. "
+                f"synapse-cdm at {version} in both, and in the cross-check.")
+          PY
 
       - name: Hashes — §48's "hash", over every artefact this run produced
         run: |
@@ -238,6 +352,13 @@ jobs:
       # `gh attestation verify` reads the repository. No long-lived key exists anywhere in this
       # arrangement — §47's "avoid long-lived signing secrets where a safer OIDC mechanism is
       # available", and M's pre-ruled default 5.
+      #
+      # CORRECTED 2026-09-16: "the only job" has been false since round P7 (2026-09-08) moved the
+      # attestation stage into `publish.yml` as well. `attestations: write` is on the two `attest`
+      # jobs, this one and `publish.yml`'s; `id-token: write` is on those two and on `publish.yml`'s
+      # `publish` job, which mints the PyPI token with it. The reasoning above is unchanged — a
+      # permission goes on the job that needs it and nowhere wider — and
+      # `tests/test_cdm_security_policy.py` holds the set.
       contents: read
       id-token: write
       attestations: write
@@ -276,7 +397,14 @@ jobs:
         # runs the same command a consumer runs, in the same run that produced it, so a broken
         # chain fails HERE rather than in somebody else's audit.
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: `publish.yml` states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          # This file followed the other spelling until 2026-09-16, and the credential sweep that
+          # enforces the rule read only `publish.yml`; it now reads every workflow.
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           for artefact in artefacts/dist/* artefacts/sbom/synapse_cdm.spdx.json artefacts/sbom/synapse_cdm.cdx.json; do

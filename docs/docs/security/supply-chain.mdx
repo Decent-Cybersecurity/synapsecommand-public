@@ -25,7 +25,7 @@ arrow below is a `needs:` edge or a step, not a description of intent:
 | CI → tests | `qualify`, step **The suite** |
 | tests → conformance | `qualify`, steps **Conformance Suite v2** and **Evidence records** |
 | conformance → build | `build` declares `needs: qualify` — a red suite builds nothing |
-| build → SBOM | `build`, syft over the wheel that was just gated |
+| build → SBOM | `build`, syft over the clean install created from the wheel that was just gated |
 | SBOM → artefact hash | `build`, one `sha256sum` table over `dist/` and `sbom/` |
 | artefact hash → attestation | `attest` declares `needs: build` and re-checks `SHA256SUMS` first |
 | attestation → proof | `attest`, `gh attestation verify` on every artefact |
@@ -38,11 +38,18 @@ in this workflow is over the bytes the thirteen checks passed.
 
 **Two SBOM formats, and one of the two producers is a cross-check.** The release artefacts are
 syft's: `synapse_cdm.spdx.json` (**SPDX** 2.3, JSON) and `synapse_cdm.cdx.json` (**CycloneDX**,
-JSON), both read off the gated wheel rather than off the source tree or the runner's environment.
-Beside them, `cyclonedx-py environment` writes `environment.cdx.json` — the closure pip actually
-resolved. The two answer different questions and neither tool can report the difference alone, so
-the component counts are printed and never asserted equal: the environment carries the `test`
-extra and the wheel does not.
+JSON), both taken over **the clean-install environment** — a venv that has never seen the source
+tree, holding the gated wheel and its runtime closure and nothing else — rather than over the
+wheel file or the runner's own environment. (Until 2026-09-16 this page and `rc-build.yml` said
+"read off the gated wheel", and syft over a wheel *file* catalogues one SPDX package, the
+filename, and zero CycloneDX components; `publish.yml` has taken the venv as its subject since
+round PS.) Beside them, `cyclonedx-py environment` reads the same venv and writes its document
+outside the artefact set — a second tool asking the interpreter what is importable, where syft
+catalogues the directory. The library components of the two are compared and the difference is
+printed, never asserted empty: syft's document also carries file and application components,
+which `cyclonedx-py` has no notion of. Four refusals then stop the build on an SBOM that
+describes nothing — no packages, no components, no `synapse-cdm` entry, or a version that is not
+`PACKAGE_VERSION`.
 
 **Nothing here publishes.** `rc-build.yml` has no PyPI step, creates no release and moves no tag.
 Publishing is `.github/workflows/publish.yml`, which a `v*` tag starts.
@@ -126,10 +133,15 @@ the workflow run's own OIDC token. **There is no signing key in this repository,
 or on anybody's disk** — nothing to rotate, nothing to leak, and nothing that outlives the run
 that used it.
 
-`id-token: write` and `attestations: write` are declared on the `attest` job of `rc-build.yml` and
-nowhere else. Every other job in every workflow here is `contents: read`, with two exceptions that
-name their reason: `security-events: write` on CodeQL's analysis job, for the SARIF upload, and
-`pull-requests: write` on dependency review, for its summary comment.
+`attestations: write` is declared on the two `attest` jobs — `rc-build.yml`'s and `publish.yml`'s
+— and nowhere else; `id-token: write` is declared on those two and on `publish.yml`'s `publish`
+job, which mints the PyPI Trusted Publishing token with it. (This paragraph said "the `attest` job
+of `rc-build.yml` and nowhere else" until 2026-09-16, which had been false since the release
+pipeline gained its own attestation stage.) Every other write is on the job that needs it and
+names its reason: `contents: write` on `publish.yml`'s `release` and `witness` jobs, for the
+Release and its assets; `security-events: write` on CodeQL's analysis job, for the SARIF upload;
+and `pull-requests: write` on dependency review, for its summary comment. Everything else is
+`contents: read`.
 
 Every `uses:` in every workflow is pinned to a **full commit SHA** with the tag it corresponded to
 in a trailing comment. A tag is a moving target on somebody else's account; `github-actions` is in

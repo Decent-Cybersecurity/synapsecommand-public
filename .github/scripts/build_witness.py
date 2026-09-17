@@ -32,8 +32,22 @@ Every field is a reading of something that did not exist before the upload:
     refused the record, which is the behaviour working: **an instant this script cannot read stays
     the empty string. It is never synthesised, never defaulted, never taken from a clock.** The
     instant it does read is the `queued` status of the deployment of THIS run and THIS environment.
+
+    **2026-09-16: the same rule now holds for `attestation.verified_at`, and it did not.** The
+    `attestation` block's instant was written as `args.attestation_verified_at or
+    release["published_at"]` — so an `attest` job output that resolved to the empty string was
+    silently replaced by the RELEASE's instant, which is a different event, which `publish.yml`'s
+    own comment on that job names as the thing §53's "verifiable" exists to rule out, and which
+    made `gates/witness_verify.py`'s refusal of an empty `verified_at` unreachable for anything this
+    script wrote. The `or` is gone: an empty input stays empty and the verifier refuses the record.
   * **the assets on disk** for the SBOM, evidence and conformance digests, recomputed here rather
     than copied out of `SHA256SUMS` for the same reason as above.
+  * **the attestations API's response for the wheel** (`--attestation-bundles`, added 2026-09-16)
+    for `attestation.bundle_sha256`: the SHA-256 over the canonical JSON of the one bundle
+    `GET /repos/{repo}/attestations/sha256:<wheel digest>` serves — the same definition
+    `gates/witness_verify.py` reads it back by. Exactly one bundle is required: none is a build
+    nothing attested, and two is a choice this script must not make. Without the flag the field
+    is the empty string, which is what every record before this date carries.
 
 DETERMINISM
 -----------
@@ -108,6 +122,29 @@ def sha256_of(path: pathlib.Path) -> str:
         for block in iter(lambda: handle.read(1 << 20), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def bundle_sha256_from(path: pathlib.Path | None) -> str:
+    """`attestation.bundle_sha256` from the attestations API's response for the wheel, or "".
+
+    The digest is over the canonical JSON of `attestations[].bundle` — sorted keys, no whitespace —
+    which is the one form two readers of the same payload agree on byte for byte; the raw response
+    is not, because `bundle_url` carries a signed, expiring query string. Exactly one bundle:
+    zero is a wheel nothing attested, and more than one is a choice (the newest? the first?) that a
+    witness may not make on the record's behalf — the same rule `approved_at_from` applies to two
+    deployments of one run.
+    """
+    if path is None:
+        return ""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    bundles = [entry["bundle"] for entry in (payload.get("attestations") or [])
+               if isinstance(entry, dict) and isinstance(entry.get("bundle"), dict)]
+    if len(bundles) != 1:
+        raise SystemExit(f"build_witness: {path} carries {len(bundles)} attestation bundle(s) for "
+                         f"the wheel; exactly one is required, and the most recent is not the "
+                         f"answer")
+    return hashlib.sha256(
+        json.dumps(bundles[0], sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 def one(directory: pathlib.Path, pattern: str) -> pathlib.Path:
@@ -195,9 +232,12 @@ def build(args) -> dict:
         "evidence_sha256": sha256_of(evidence),
         "conformance_sha256": sha256_of(conformance),
         "attestation": {
-            "bundle_sha256": args.attestation_sha256 or "",
+            "bundle_sha256": bundle_sha256_from(args.attestation_bundles),
             "verified": args.attestation_verified,
-            "verified_at": args.attestation_verified_at or release["published_at"],
+            # No fallback. An empty instant stays empty and the verifier refuses the record —
+            # the module header's dated sentence of 2026-09-16 says why the Release's instant is
+            # not a substitute.
+            "verified_at": args.attestation_verified_at,
         },
         "released_at": release["published_at"],
         "approvals": approvals,
@@ -223,7 +263,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="GITHUB_RUN_ID — which of those statuses belong to THIS run")
     ap.add_argument("--assets", required=True, type=pathlib.Path,
                     help="the directory holding the SBOMs, the evidence bundle and the sweep")
-    ap.add_argument("--attestation-sha256", default="")
+    ap.add_argument("--attestation-bundles", default=None, type=pathlib.Path,
+                    help="the attestations API's response for the wheel's digest, as `gh api` "
+                         "wrote it; omitted, `attestation.bundle_sha256` is the empty string")
     # Default FALSE, and the `witness` job passes it because it runs only after `attest`
     # succeeded. A flag defaulting to true could not express an unverified build, and
     # `gates/witness_verify.py` refuses a record whose attestation is not verified — a

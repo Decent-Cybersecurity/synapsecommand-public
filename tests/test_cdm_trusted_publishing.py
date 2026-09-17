@@ -116,6 +116,20 @@ def workflow() -> str:
     return WORKFLOW.read_text()
 
 
+@pytest.fixture(scope="module")
+def rc_build() -> str:
+    """`rc-build.yml`, for the checks both build jobs are held to since 2026-09-16.
+
+    Round PS moved `publish.yml`'s SBOMs onto the clean-install venv and wrote the four refusals;
+    `rc-build.yml` kept syft over `dist` — the shape that yields one SPDX package and zero
+    CycloneDX components — for a round and a half, because every SBOM assertion below read one
+    file. The two `build` jobs are the same design and are now read by the same tests.
+    """
+    path = WORKFLOWS / "rc-build.yml"
+    assert path.exists(), "rc-build.yml is gone; the release-candidate build has no workflow"
+    return path.read_text()
+
+
 def entry_six() -> str:
     text = PUBLICATION.read_text()
     start = text.index("### 6.")
@@ -192,14 +206,21 @@ def test_entry_six_names_the_repository_the_rest_of_the_file_does():
 # --------------------------------------------------------------- no credential, now or by accident
 
 
-def test_the_workflow_carries_no_credential_of_any_kind(workflow):
+@pytest.mark.parametrize("path", sorted(WORKFLOWS.glob("*.yml")), ids=lambda p: p.name)
+def test_the_workflow_carries_no_credential_of_any_kind(path):
     """The point of the round, as an assertion.
 
     A `password:` or a `secrets.` reference appearing here would mean Trusted Publishing had been
     abandoned — probably as a quick fix for a refused upload during a release, which is exactly
     when nobody is reading carefully. Entry 6 would then be describing a mechanism that is no
     longer in use.
+
+    OVER EVERY WORKFLOW, since 2026-09-16, and not over `publish.yml` alone. `publish.yml` states
+    five times that it spells the run token `github.token` so that `secrets.` never appears, and
+    `rc-build.yml` spelt the same token `secrets.GITHUB_TOKEN` for a round and a half because this
+    sweep could not see it — one rule for one file is two rules. Every file gets the same reading.
     """
+    workflow = path.read_text()
     offenders = []
     for number, line in enumerate(workflow.splitlines(), start=1):
         if line.lstrip().startswith("#"):
@@ -209,10 +230,12 @@ def test_the_workflow_carries_no_credential_of_any_kind(workflow):
             if re.search(pattern, line):
                 offenders.append(f"{number}: {line.strip()[:90]}")
     assert not offenders, (
-        f"the publish workflow references a credential: {offenders}. This file publishes over "
-        "OIDC and must contain no token, password or secret. If an upload was refused, the fix is "
-        "on pypi.org — register or correct the trusted publisher per PUBLICATION.md entry 6 — not "
-        "a token pasted in here, which would retire the mechanism and leave the ledger wrong")
+        f"{path.name} references a credential: {offenders}. The workflows publish and attest over "
+        "OIDC and must contain no token, password or secret — the run token is spelt "
+        "`github.token`, never `secrets.GITHUB_TOKEN`, so that `secrets.` is a namespace that "
+        "never appears. If an upload was refused, the fix is on pypi.org — register or correct "
+        "the trusted publisher per PUBLICATION.md entry 6 — not a token pasted in here, which "
+        "would retire the mechanism and leave the ledger wrong")
 
 
 def test_nothing_uploads_to_testpypi_implicitly(workflow):
@@ -362,10 +385,12 @@ def _executable(text: str) -> str:
 
 
 def test_the_oidc_permission_is_not_granted_to_the_whole_workflow(workflow):
-    """`id-token: write` on the publish job alone, never at the top level.
+    """`id-token: write` never at the top level; which jobs hold it is PERMITTED_WRITES' question.
 
     At workflow level, every job can mint a token that PyPI would accept — including the job that
-    runs the test suite, which executes far more code than the publish job does.
+    runs the test suite, which executes far more code than the publish job does. (This docstring
+    said "on the publish job alone" until 2026-09-16; `attest` has held it too since round P7, and
+    the assertion below only ever read the top-level block.)
     """
     head = _executable(workflow[:workflow.index("\njobs:")])
     assert "id-token" not in head, (
@@ -857,15 +882,22 @@ def test_the_release_artefacts_are_named_from_package_version_and_exported_once(
         "the build job still resolves a release artefact through an unconstrained glob")
 
 
-def test_the_release_sbom_is_taken_over_the_clean_install_environment(workflow):
+#: The two workflows with a `build` job, as fixture names, and the step that ENDS each one's SBOM
+#: assertion — `publish.yml` fetches the gate's artefacts next, `rc-build.yml` hashes next.
+BUILD_WORKFLOWS = (("workflow", "- name: Fetch the gate"), ("rc_build", "- name: Hashes"))
+
+
+@pytest.mark.parametrize("fixture,_end", BUILD_WORKFLOWS, ids=[name for name, _ in BUILD_WORKFLOWS])
+def test_the_release_sbom_is_taken_over_the_clean_install_environment(request, fixture, _end):
     """M's ruling: syft over the clean venv, `cyclonedx-py` over the same one, in that order.
 
     The subject of the SBOM is the environment, not the wheel file: an SBOM over the file names
     the file and stops, and what a consumer of a release needs is the closure that got installed.
     The order is part of the property — an SBOM taken before the install describes an environment
     that does not exist yet — and it is checked as an order of steps, since nothing else in the
-    file enforces it.
+    file enforces it. Over both `build` jobs since 2026-09-16 (see the `rc_build` fixture).
     """
+    workflow = request.getfixturevalue(fixture)
     build = job_block(workflow, "build")
     executable = _executable(build)
     assert 'echo "CLEAN_VENV=/tmp/clean" >> "${GITHUB_ENV}"' in executable, (
@@ -898,16 +930,19 @@ def test_the_release_sbom_is_taken_over_the_clean_install_environment(workflow):
         f"job orders them {[order[i] for i in sorted(range(len(order)), key=positions.__getitem__)]}")
 
 
-def test_the_sbom_assertions_refuse_the_four_things_m_ruled(workflow):
+@pytest.mark.parametrize("fixture,end", BUILD_WORKFLOWS, ids=[name for name, _ in BUILD_WORKFLOWS])
+def test_the_sbom_assertions_refuse_the_four_things_m_ruled(request, fixture, end):
     """`the release pipeline MUST fail if` — four conditions, and the step that fails on them.
 
     Generation succeeding is not the property. A file that parses as an SBOM and describes
     nothing passes every check a workflow makes about exit statuses, which is what the wheel-file
-    SBOM did: one SPDX package, zero CycloneDX components, both steps green.
+    SBOM did: one SPDX package, zero CycloneDX components, both steps green. Over both `build`
+    jobs since 2026-09-16.
     """
+    workflow = request.getfixturevalue(fixture)
     build = _executable(job_block(workflow, "build"))
     step = build[build.index("- name: The SBOMs describe this release"):]
-    step = step[:step.index("- name: Fetch the gate")]
+    step = step[:step.index(end)]
     for refusal, why in (
             ("carries no packages[] entry at all", "an empty SPDX document"),
             ("carries no components[] entry at all", "an empty CycloneDX document"),
@@ -1056,3 +1091,65 @@ def test_the_rehearsal_module_exists_and_the_release_record_names_it(workflow):
                                          / "MIGRATIONS.md").read_text(), (
         "MIGRATIONS.md does not name the rehearsal, so the release procedure a person follows "
         "does not include the step that would have caught v2.1.1's refusal before the push")
+
+
+# ------------------------------------ 2026-09-16: the two scan verdicts are the gate's, not typed
+#
+# `release_notes.py` describes `--codeql` and `--pip-audit` as "this run's verdict, as the pipeline
+# read it", and the release job passed both as constants — `"0 findings at or above 7.0, gate
+# green in this run"` and `"0 findings, strict, in this run"` — true only by circumstance, and
+# false the day a CodeQL exception lets a finding at or above 7.0 through the gate or a Python
+# exception makes pip-audit ignore one. The gate job now exports what its two steps printed, the
+# release job reads the exports and refuses an empty one, and these four tests are what keeps the
+# constants from coming back.
+
+#: The literal shape: `--codeql "` followed by anything that is not an expression. A constant
+#: verdict starts with a letter or a digit; a derived one starts with `${{`.
+TYPED_VERDICT = re.compile(r'--(?:codeql|pip-audit)\s+"[^$]')
+
+
+def test_the_gate_job_exports_both_scan_verdicts(workflow):
+    gate = _executable(job_block(workflow, "gate"))
+    assert re.search(r"^    outputs:\s*$", gate, re.M), (
+        "the gate job declares no `outputs:`, so the release job has nothing to read the CodeQL "
+        "and pip-audit verdicts from and will have typed them")
+    for name, step in (("codeql", "codeql"), ("pip_audit", "pipaudit")):
+        assert f"{name}: ${{{{ steps.{step}.outputs.verdict }}}}" in gate, (
+            f"the gate job does not export `{name}` from step `{step}`'s `verdict` output")
+        assert f"id: {step}" in gate, f"the gate job has no step with `id: {step}` to export from"
+    assert 'echo "verdict=$(tail -1 codeql-gate.log)' in gate, (
+        "the CodeQL verdict is not read off gates/codeql_gate.py's own last line")
+    assert 'echo "verdict=$(tail -1 pip-audit.log)' in gate, (
+        "the pip-audit verdict is not read off pip-audit's own last line")
+
+
+def test_the_release_job_reads_the_verdicts_from_the_gate_and_types_neither(workflow):
+    release = _executable(job_block(workflow, "release"))
+    for flag, output in (("--codeql", "codeql"), ("--pip-audit", "pip_audit")):
+        assert f'{flag} "${{{{ needs.gate.outputs.{output} }}}}"' in release, (
+            f"the release job does not pass `{flag}` from `needs.gate.outputs.{output}`")
+        assert f'test -n "${{{{ needs.gate.outputs.{output} }}}}"' in release, (
+            f"the release job does not refuse an empty `needs.gate.outputs.{output}`; an empty "
+            "output would render as a blank verdict, which is a verdict nobody took")
+    typed = [line.strip() for line in release.splitlines() if TYPED_VERDICT.search(line)]
+    assert not typed, (
+        f"the release job types a scan verdict again: {typed}. The verdicts are the gate job's "
+        "outputs; a constant here is true only until the first exception is granted")
+
+
+def test_the_release_job_names_the_gate_so_its_outputs_are_readable(workflow):
+    """`needs.gate.outputs.*` is readable only by a job that lists `gate`; §50's order is unchanged."""
+    assert "gate" in needs_of(workflow)["release"], (
+        "the release job does not list `gate` in `needs:`, so `needs.gate.outputs.*` is empty "
+        "there — and the refusal above would then stop every release")
+    assert "publish" in needs_of(workflow)["release"], (
+        "the release job no longer needs `publish`; naming `gate` is for its outputs, not a "
+        "replacement for the stage before this one")
+
+
+def test_the_typed_verdict_pattern_sees_the_constants_it_exists_to_refuse():
+    """Both old lines, verbatim, and the derived form that replaced them."""
+    assert TYPED_VERDICT.search('--codeql "0 findings at or above 7.0, gate green in this run" \\')
+    assert TYPED_VERDICT.search('--pip-audit "0 findings, strict, in this run" \\')
+    assert not TYPED_VERDICT.search('--codeql "${{ needs.gate.outputs.codeql }}" \\')
+    assert not TYPED_VERDICT.search('--pip-audit "${{ needs.gate.outputs.pip_audit }}" \\')

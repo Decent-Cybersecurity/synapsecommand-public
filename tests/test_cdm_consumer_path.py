@@ -132,6 +132,10 @@ CLONE_ONLY_SITES = {
         "quotes the clone install as the string it validates. It is the CHECKER for that "
         "command, not a document that instructs anybody — the same standing this module's own "
         "SELF exclusion has",
+    "tests/test_cdm_lint_stage.py":
+        "quotes `pip install -e \"packages/cdm[lint]\"` as the line it requires of two workflows "
+        "(2026-09-16). The same standing as test_cdm_getting_started.py: a checker for a command "
+        "that runs inside a clone on a CI runner, addressed to no consumer",
 }
 
 

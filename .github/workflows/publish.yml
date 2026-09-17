@@ -182,6 +182,17 @@ jobs:
   gate:
     name: Gate — lint, suite, conformance, security
     runs-on: ubuntu-latest
+    outputs:
+      # The two scan verdicts §52's notes carry, DERIVED from what the two steps printed rather
+      # than typed into the release job. Until 2026-09-16 the release job passed
+      # `--codeql "0 findings at or above 7.0, gate green in this run"` and
+      # `--pip-audit "0 findings, strict, in this run"` as constants, while
+      # `release_notes.py` describes both as "this run's verdict, as the pipeline read it" — and
+      # a constant is true only by circumstance: it goes false the day a CodeQL exception lets a
+      # finding at or above 7.0 through the gate, or a Python-package exception makes pip-audit
+      # ignore one, with no workflow change to show for it.
+      codeql: ${{ steps.codeql.outputs.verdict }}
+      pip_audit: ${{ steps.pipaudit.outputs.verdict }}
     permissions:
       contents: read
       # The CodeQL gate below reads the analysis this commit already has. READ, not write: this job
@@ -383,6 +394,7 @@ jobs:
           echo "flags=${ignores}" >> "${GITHUB_OUTPUT}"
 
       - name: Security gate — pip-audit, strict
+        id: pipaudit
         # `--strict` makes a dependency pip-audit cannot resolve a FAILURE rather than a skipped
         # line; without it the audit passes on a package whose advisories were never fetched. The
         # identifiers in `flags` are constrained by `security/exceptions/schema.json`'s pattern to
@@ -438,9 +450,16 @@ jobs:
           echo '--- the third-party set being audited ---'
           cat environment-third-party.txt
           # shellcheck disable=SC2086
-          pip-audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }}
+          pip-audit --strict -r environment-third-party.txt ${{ steps.ignores.outputs.flags }} | tee pip-audit.log
+          # The verdict §52's notes carry, read off the audit's own last line (`No known
+          # vulnerabilities found` on a pass; `set -o pipefail` stops the step before this line
+          # on anything else), with the scope and the flags in force beside it — so a release
+          # made with an exception in force says so in its notes rather than saying "0 findings".
+          audited="$(grep -c . environment-third-party.txt)"
+          echo "verdict=$(tail -1 pip-audit.log); strict, over ${audited} third-party distribution(s), ignore-vuln flags in force: [${{ steps.ignores.outputs.flags }}]" >> "${GITHUB_OUTPUT}"
 
       - name: Security gate — CodeQL, over the analysis this commit already has
+        id: codeql
         # §44 and M's amended threshold, applied by `gates/codeql_gate.py` — the SAME module
         # `codeql.yml` runs, over the SAME exceptions directory, so this stage cannot disagree with
         # the scan job about what blocks. What it adds is that the RELEASE refuses to proceed past
@@ -518,7 +537,12 @@ jobs:
               "repos/${GITHUB_REPOSITORY}/code-scanning/analyses/${id}" > "sarif/${id}.sarif"
           done < analysis-ids.txt
           rm -f analysis-ids.txt
-          python gates/codeql_gate.py sarif/*.sarif
+          python gates/codeql_gate.py sarif/*.sarif | tee codeql-gate.log
+          # The verdict §52's notes carry, read off the gate's own last line (`N result(s), 0
+          # blocking` on a pass; `set -o pipefail` stops the step before this line on a blocking
+          # finding). "0 blocking" is what the gate establishes — not "0 findings", which an
+          # excepted finding at or above 7.0 would falsify while the gate stayed green.
+          echo "verdict=$(tail -1 codeql-gate.log) at or above 7.0; gate exit 0 over $(ls sarif | wc -l | tr -d ' ') analysis file(s) of ${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
 
       - name: Hand the gate's artefacts to the jobs that need them
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
@@ -866,9 +890,11 @@ jobs:
       # thing §53's "verifiable" exists to rule out.
       verified_at: ${{ steps.verify.outputs.verified_at }}
     permissions:
-      # Narrow, and on this job alone. `id-token: write` is the OIDC token Sigstore signs with and
-      # `attestations: write` is the attestation store; granting either to the job that runs the
-      # suite would let anything the suite imports mint one.
+      # Narrow. `attestations: write` is the attestation store and is on this job alone;
+      # `id-token: write` is the OIDC token Sigstore signs with, and it is on this job and on
+      # `publish`, which mints the PyPI upload token with it (corrected 2026-09-16: this comment
+      # said "on this job alone" of both). Granting either to the job that runs the suite would
+      # let anything the suite imports mint one.
       contents: read
       id-token: write
       attestations: write
@@ -979,7 +1005,10 @@ jobs:
   # ------------------------------------------------------------------------------------- §52: GitHub Release
   release:
     name: GitHub Release, with notes rendered from the tree
-    needs: publish
+    # `publish` is the stage before it; `gate` is named as well only so that
+    # `needs.gate.outputs.*` — the two scan verdicts — is readable here. The order §50 fixes is
+    # unchanged: `publish` already depends on `gate` transitively.
+    needs: [publish, gate]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -1023,6 +1052,11 @@ jobs:
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
+          # The two verdicts are the gate job's OUTPUTS — what its steps printed — and an empty
+          # one is refused rather than rendered blank: a notes line reading `**`**` would be a
+          # verdict nobody took, and the reason the constants were replaced (2026-09-16).
+          test -n "${{ needs.gate.outputs.codeql }}" || { echo "::error::the gate job exported no CodeQL verdict" >&2; exit 1; }
+          test -n "${{ needs.gate.outputs.pip_audit }}" || { echo "::error::the gate job exported no pip-audit verdict" >&2; exit 1; }
           python -m synapse_cdm.suite release-notes \
             --version "${version}" \
             --from RELEASE_NOTES.md \
@@ -1030,8 +1064,8 @@ jobs:
             --conformance "assets/conformance-${version}.json" \
             --security SECURITY.md \
             --exceptions security/exceptions \
-            --codeql "0 findings at or above 7.0, gate green in this run" \
-            --pip-audit "0 findings, strict, in this run" \
+            --codeql "${{ needs.gate.outputs.codeql }}" \
+            --pip-audit "${{ needs.gate.outputs.pip_audit }}" \
             --out "release-notes-${version}.md"
           sha256sum "release-notes-${version}.md"
 
@@ -1073,6 +1107,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # READ grants, added 2026-09-16 and not yet exercised on a tag. Once a job declares
+      # `permissions:`, every scope it does not list is none; this job reads
+      # `actions/runs/<id>/approvals` (which demonstrably answered under `contents: write` alone
+      # on the v2.1.2 run), `deployments?sha=…` and each deployment's statuses (which no run has
+      # ever made with this token), and the attestations endpoint. A 403 on any of them stops the
+      # job — `set -euo pipefail`, no `||` — which is the designed failure, but it would be the
+      # fourth defect of the "first executed on a tag" class, so the two scopes those reads are
+      # documented under are granted here rather than found wanting on the next release.
+      actions: read
+      deployments: read
     steps:
       - name: Check out the tree the tag points at
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -1120,6 +1164,13 @@ jobs:
                 gh api "repos/${GITHUB_REPOSITORY}/deployments/${deployment}/statuses?per_page=100"
               done \
             | jq -s 'add // []' > deployment-statuses.json
+          # The wheel's Sigstore bundle, read back from the attestation store by the wheel's
+          # digest (2026-09-16). The digest is taken from the build job's SHA256SUMS, which is
+          # what the store was fed; the builder hashes the bundle the store serves, and the
+          # verifier below reads the same endpoint back. Until this line
+          # `attestation.bundle_sha256` was always the empty string.
+          wheel_digest="$(grep -E '\.whl$' assets/SHA256SUMS | awk '{print $1}')"
+          gh api "repos/${GITHUB_REPOSITORY}/attestations/sha256:${wheel_digest}" > attestations.json
           python .github/scripts/build_witness.py \
             --version "${version}" \
             --commit "${GITHUB_SHA}" \
@@ -1130,15 +1181,31 @@ jobs:
             --deployment-statuses deployment-statuses.json \
             --run-id "${GITHUB_RUN_ID}" \
             --assets assets \
+            --attestation-bundles attestations.json \
             --attestation-verified \
             --attestation-verified-at "${{ needs.attest.outputs.verified_at }}" \
             --out "witness-${version}.json"
 
       - name: Verify it — §53's "deterministic and verifiable", as a command
+        # `--assets assets`: the SBOMs, the evidence bundle, the sweep and SHA256SUMS on this
+        # runner's disk are re-hashed against the record before the network half, so the digests
+        # the builder just computed are checked by a second reader with no second download.
+        # `--download` then re-hashes the index's and the Release's copies and reads the wheel's
+        # attestation bundle back from the store.
+        env:
+          # `github.token`, NOT `secrets.GITHUB_TOKEN`. They are the same run-scoped token, and the
+          # spelling is deliberate: this file states, in its header and in
+          # `tests/test_cdm_trusted_publishing.py`, that it contains no `secrets.*` reference at
+          # all — because `secrets.` is the namespace a pasted PyPI token would appear in, and a
+          # rule with one permitted exception is a rule somebody extends during a failed release.
+          # Until 2026-09-16 this step ran with no token: the Release and attestation reads went
+          # out anonymously from a shared runner address, under the 60-an-hour unauthenticated
+          # limit, and the network half of the verifier had never executed in the pipeline.
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
-          python gates/witness_verify.py "witness-${version}.json" --download
+          python gates/witness_verify.py "witness-${version}.json" --download --assets assets
 
       - name: Attach it to the Release
         # It is NOT committed here. A workflow does not commit to `main` (RUNNER.md's hard limits);

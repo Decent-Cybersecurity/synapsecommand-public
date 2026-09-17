@@ -28,12 +28,12 @@ gate ──► build ──► attest ──► publish ──► release ──
 
 | job | what it does | what it refuses |
 | --- | --- | --- |
-| `gate` | ruff `E9`; the suite (**condition 1**); tag names `PACKAGE_VERSION` (**condition 3**); the tag is annotated; schemas and manifests `--check`; the conformance sweep over every shipped adapter; evidence records; gitleaks; `pip-audit --strict`; the CodeQL gate | a red suite, a tag that names another version, a lightweight tag, drifted schemas or manifests, a non-conformant adapter, a secret in history, a vulnerable dependency, a CodeQL finding at or above CVSS 7.0 — **and a commit CodeQL has not analysed at all** |
+| `gate` | ruff `E9,F821`; the suite (**condition 1**); tag names `PACKAGE_VERSION` (**condition 3**); the tag is annotated; schemas and manifests `--check`; the conformance sweep over every shipped adapter; evidence records; gitleaks; `pip-audit --strict`; the CodeQL gate — and it exports the two scan verdicts, read off what the two steps printed, for the `release` job's notes | a red suite, a tag that names another version, a lightweight tag, drifted schemas or manifests, a non-conformant adapter, a secret in history, a vulnerable dependency, a CodeQL finding at or above CVSS 7.0 — **and a commit CodeQL has not analysed at all** |
 | `build` | `gates/wheel_install.py --mutation-check --export-dist` (**condition 2**, and the ONE build); `twine check --strict`; a clean install from the built wheel into a fresh venv; a package test run from that install; SPDX and CycloneDX SBOMs over that install; one `SHA256SUMS`; **condition 4**'s derivations | a wheel that fails its own gate, metadata `twine` rejects, an installed wheel whose adapters are not conformant, a `dist/` that does not hold exactly the two expected artefacts, an SBOM with no components or one that does not name `synapse-cdm` at `PACKAGE_VERSION` |
 | `attest` | Sigstore build provenance over the wheel, the sdist, both SBOMs and the evidence bundle, then `gh attestation verify` on each | a digest that changed in the hand-off between jobs; an attestation that does not verify |
 | `publish` | the `pypi` environment's hold, then an OIDC upload with no credential in the file | everything, until a person approves |
 | `release` | `gh release create` with notes rendered by `synapse release-notes` and the full asset set | notes that describe another version |
-| `witness` | builds `witness-<version>.json` from PyPI and the Release API, verifies it, attaches it | a record whose digests disagree with the index |
+| `witness` | builds `witness-<version>.json` from PyPI, the Release API, the deployment's status history and the attestation store, verifies it against the assets on disk and against the index and the Release, attaches it | a record whose digests disagree with the index, with the assets, or with the Release's `SHA256SUMS`; an approval or an attestation with no instant |
 
 **`workflow_dispatch` runs the first three and stops.** `publish`, `release` and `witness` each
 carry `if: startsWith(github.ref, 'refs/tags/v')`, so the whole pipeline short of the irreversible
@@ -161,19 +161,33 @@ commands check them.
 **The build provenance**, which chains the artefact to the commit and the workflow that made it:
 
 ```bash
-gh attestation verify synapse_cdm-2.1.0-py3-none-any.whl \
+gh attestation verify synapse_cdm-2.1.2-py3-none-any.whl \
   --repo Decent-Cybersecurity/synapsecommand-public \
   --signer-workflow Decent-Cybersecurity/synapsecommand-public/.github/workflows/publish.yml
 ```
 
-**The witness record**, which re-derives every digest in the release from PyPI and from the Release
-API and exits non-zero on any disagreement:
+**The witness record**, and the command that exits non-zero on any disagreement. What it
+re-derives depends on the mode, and this paragraph says which (until 2026-09-16 it said "every
+digest in the release from PyPI and from the Release API", while the verifier read the Release's
+id and instant and compared no asset digest at all):
 
 ```bash
-python gates/witness_verify.py releases/witness/2.1.0.json            # index and Release
-python gates/witness_verify.py releases/witness/2.1.0.json --offline  # no network
-python gates/witness_verify.py releases/witness/2.1.0.json --download # re-hash the served bytes
+python gates/witness_verify.py releases/witness/2.1.2.json            # index and Release
+python gates/witness_verify.py releases/witness/2.1.2.json --offline  # no network
+python gates/witness_verify.py releases/witness/2.1.2.json --download # re-hash the served bytes
+python gates/witness_verify.py releases/witness/2.1.2.json --offline --assets <dir>  # re-hash a download
 ```
+
+- **Offline**: the record's shape, the agreement between the gate's digests and the index's, the
+  tag naming its version. With `--assets <dir>` — a `gh release download` of the Release, or the
+  pipeline's own `assets/` — the SBOMs, the evidence bundle and the conformance sweep on disk are
+  re-hashed against the record, and a `SHA256SUMS` beside them is read line by line.
+- **Online** (the default): the index's digests for the wheel and the sdist; the Release's id and
+  instant; that the Release carries every file the record digests; and the Release's own
+  `SHA256SUMS` against the record.
+- **`--download`**: a SHA-256 recomputed over the bytes the index serves and over the Release's own
+  copy of every digested asset — a second upload, so agreement is a reading — and the wheel's
+  Sigstore bundle read back from the attestation store against `attestation.bundle_sha256`.
 
 The check worth understanding is the one that needs no network at all: the record carries the
 digests the build job produced **and** the digests the index reports, from two different sources,

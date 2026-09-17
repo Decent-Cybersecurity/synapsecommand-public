@@ -144,7 +144,9 @@ class Args:
         self.deployment_statuses = assets.parent / "deployment-statuses.json"
         self.run_id = RUN_ID
         self.assets = assets
-        self.attestation_sha256 = "f" * 64
+        # No attestations payload by default: `bundle_sha256` is then the empty string, which is
+        # what every record before 2026-09-16 carries. The bundle tests below pass a file.
+        self.attestation_bundles = None
         self.attestation_verified = True
         self.attestation_verified_at = "2026-09-07T11:56:06Z"
         self.out = assets.parent / "witness.json"
@@ -391,3 +393,99 @@ def test_the_builder_writes_sorted_keys_so_a_diff_between_releases_is_readable(s
     text = out.read_text(encoding="utf-8")
     assert text.endswith("\n")
     assert list(json.loads(text)) == sorted(json.loads(text))
+
+
+# ------------------------------------------ 2026-09-16: no instant is defaulted, and the bundle
+
+def test_an_empty_attestation_instant_stays_empty_and_is_refused(staged):
+    """The `or release["published_at"]` that stood on the `verified_at` line, as a property.
+
+    `publish.yml` feeds `--attestation-verified-at "${{ needs.attest.outputs.verified_at }}"`, which
+    is the empty string whenever the attest output is missing; until this date the builder wrote
+    the RELEASE's instant in its place — a different event, and the one `publish.yml`'s own comment
+    on the attest job says §53's "verifiable" exists to rule out — and the verifier's refusal of an
+    empty `verified_at` was unreachable for anything this script produced.
+    """
+    record = build_witness.build(Args(staged, attestation_verified_at=""))
+    assert record["attestation"]["verified_at"] == ""
+    assert record["attestation"]["verified_at"] != RELEASE["published_at"]
+    assert any("no `verified_at`" in complaint for complaint in
+               witness_verify.verify(record, offline=True, download=False, token=None))
+
+
+def test_the_verified_at_line_carries_no_fallback():
+    """Source-level, in the style of the `created_at` assertion above: the `or` must not return."""
+    source = _executable(_SOURCE.read_text(encoding="utf-8"))
+    lines = [line for line in source.splitlines() if '"verified_at":' in line]
+    assert lines, "the builder no longer writes `verified_at` at all"
+    for line in lines:
+        assert " or " not in line, (
+            f"the builder defaults `verified_at` again: {line.strip()!r}. An instant this script "
+            "cannot read stays the empty string and the verifier refuses the record")
+
+
+#: The shape `GET repos/<owner>/<repo>/attestations/sha256:<digest>` returns, read on 2026-09-16
+#: for the v2.1.2 wheel: one entry with `bundle`, `bundle_url` (a signed, EXPIRING blob URL — which
+#: is why the digest is over the bundle and never over the response), `initiator` and
+#: `repository_id`. The bundle's three top-level keys are verbatim; their contents are trimmed.
+ATTESTATIONS = {"attestations": [{
+    "bundle": {"mediaType": "application/vnd.dev.sigstore.bundle.v0.3+json",
+               "verificationMaterial": {"tlogEntries": [{"logIndex": "1"}]},
+               "dsseEnvelope": {"payload": "e30=", "payloadType": "application/vnd.in-toto+json"}},
+    "bundle_url": "https://tmaproduction.blob.core.windows.net/attestations/x.json.sn?se=expiring",
+    "initiator": "publish.yml",
+    "repository_id": 1343031092,
+}]}
+
+
+def test_no_bundles_file_leaves_the_bundle_digest_empty(staged):
+    record = build_witness.build(Args(staged))
+    assert record["attestation"]["bundle_sha256"] == ""
+    assert witness_verify.verify(record, offline=True, download=False, token=None) == []
+
+
+def test_the_bundle_digest_is_the_canonical_hash_the_verifier_reads_it_back_by(staged, tmp_path):
+    """One definition in two modules — asserted by computing it both ways."""
+    path = tmp_path / "attestations.json"
+    path.write_text(json.dumps(ATTESTATIONS), encoding="utf-8")
+    record = build_witness.build(Args(staged, attestation_bundles=path))
+    expected = witness_verify.canonical_bundle_sha256(ATTESTATIONS["attestations"][0]["bundle"])
+    assert record["attestation"]["bundle_sha256"] == expected
+    assert record["attestation"]["bundle_sha256"] == hashlib.sha256(json.dumps(
+        ATTESTATIONS["attestations"][0]["bundle"], sort_keys=True,
+        separators=(",", ":")).encode()).hexdigest()
+    assert witness_verify.verify(record, offline=True, download=False, token=None) == []
+
+
+def test_the_bundle_digest_ignores_the_expiring_url_and_key_order(tmp_path):
+    reordered = json.loads(json.dumps(ATTESTATIONS))
+    reordered["attestations"][0]["bundle_url"] = "https://elsewhere.test/?se=later"
+    bundle = reordered["attestations"][0]["bundle"]
+    reordered["attestations"][0]["bundle"] = dict(reversed(list(bundle.items())))
+    first, second = tmp_path / "a.json", tmp_path / "b.json"
+    first.write_text(json.dumps(ATTESTATIONS), encoding="utf-8")
+    second.write_text(json.dumps(reordered, indent=4), encoding="utf-8")
+    assert build_witness.bundle_sha256_from(first) == build_witness.bundle_sha256_from(second)
+
+
+@pytest.mark.parametrize("count", [0, 2])
+def test_anything_but_one_bundle_stops_the_build(tmp_path, count):
+    """Zero is a wheel nothing attested; two is a choice a witness may not make."""
+    payload = {"attestations": [json.loads(json.dumps(ATTESTATIONS["attestations"][0]))
+                                for _ in range(count)]}
+    if count == 2:
+        payload["attestations"][1]["bundle"]["dsseEnvelope"]["payload"] = "e31="
+    path = tmp_path / "attestations.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(SystemExit) as exit_:
+        build_witness.bundle_sha256_from(path)
+    assert f"{count} attestation bundle(s)" in str(exit_.value)
+
+
+def test_the_workflow_hands_the_builder_the_wheels_attestations():
+    """The witness job fetches the store's answer for the wheel's digest and passes the file."""
+    workflow = (REPO / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
+    assert "--attestation-bundles attestations.json" in workflow
+    assert 'attestations/sha256:${wheel_digest}" > attestations.json' in workflow, (
+        "the witness job no longer reads the attestation store for the wheel, so the builder has "
+        "nothing to hash into `attestation.bundle_sha256` and the field is the empty string again")
