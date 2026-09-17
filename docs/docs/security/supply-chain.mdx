@@ -86,10 +86,13 @@ The npm reading is one: `npm ci` from the committed `docs/package-lock.json`, th
 `npm audit --audit-level=high` verbatim for the log, then a step that fails on any high or
 critical advisory not derived from `security/exceptions/` — and, last in the same job, the
 site's own `npm run ci`, so a lock that clears an advisory and breaks the build is not green.
-Where a high advisory sits in a package reachable only under `@docusaurus/*`, the repair is a
-floor in `docs/package.json`'s `overrides` (six today), never `npm audit fix`, which downgraded
-`qs` into its vulnerable range when it was tried; the dated reason for each pin is in
-`packages/cdm/synapse_cdm/MIGRATIONS.md`.
+Where an advisory sits in a package reachable only under `@docusaurus/*`, the repair is a floor
+in `docs/package.json`'s `overrides` (seven today — six until 2026-09-17, each for a high
+advisory, and since then a seventh for the one moderate advisory this job had reported on every
+push and by its own rule never blocked, `uuid`'s), never `npm audit fix`, which downgraded `qs`
+into its vulnerable range when it was tried; the dated reason for each pin is in
+`packages/cdm/synapse_cdm/MIGRATIONS.md`, and `tests/test_cdm_security_policy.py` holds this
+count and `SECURITY.md`'s row to the block itself.
 
 ## 3. What blocks, and the one way past it
 
@@ -134,7 +137,8 @@ Docusaurus measures an image at documentation build time, granted because no fix
 existed and bounded at sixty days — and both were deleted, as their own `upstream_status`
 required, when `image-size` 2.0.3 (published 2026-09-14) turned out to carry the fix for exactly
 those three parsers. `docs/package.json` now pins `image-size` at `^2.0.4` in `overrides`, and
-`npm audit` over the committed lock reads zero high or critical advisories. `pip-audit --strict`
+`npm audit` over the committed lock reads zero high or critical advisories — and, since
+2026-09-17, when `uuid` took the seventh floor, zero advisories at any severity. `pip-audit --strict`
 reported *No known vulnerabilities found* on 2026-09-08, and no Python finding and no CodeQL
 finding has ever been excepted. (Until 2026-09-16 this paragraph still read as it had on
 2026-09-08, and was false for the eight days the two files existed.)

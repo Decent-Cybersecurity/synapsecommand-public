@@ -411,7 +411,8 @@ measurement.
 the three witness paragraphs in the release procedure being what moved in it. Everything else the
 round touched ships in nothing: the ledger, the witness record and its README, the documentation
 page, the security policy, the witness builder the release workflow runs and the three test
-modules.
+modules. The audit's npm record of 2026-09-17, second in this section, moves the same document
+and nothing else under `synapse_cdm/`.
 
 **THE 2.2.0 WITNESS ROUND's RECORD, 2026-09-17 — the 2.2.0 witness half: the record is committed,
 the ledger entry is written, the three paragraphs that said "the next tag push" say what it did,
@@ -453,6 +454,81 @@ dated, that the `pypi` approval must be released with a non-empty comment naming
 on — ideally the readiness report's URL — because the verifier refuses one that names nothing and
 the builder cannot invent one. The docs site was not deployed by this round and the ledger says
 what it serves at the time of writing.
+
+**THE AUDIT'S NPM RECORD, 2026-09-17 — `uuid` takes the seventh floor, and the docs lock reads
+clean at every severity for the first time.** Unit: `synapse_cdm/MIGRATIONS.md`, PATCH by the bump
+table's shipped-document row, the unit every record in this section carries and the one the npm
+record of 2026-09-16 under 2.2.0 took — no other, because nothing under `synapse_cdm/` moved for
+this but this file. The rest ships in nothing: `docs/package.json`, `docs/package-lock.json`,
+`SECURITY.md`, the supply-chain page and one test module.
+
+**WHAT THE 2026-09-16 READING LEFT STANDING.** One advisory: `GHSA-w5hq-g745-h8pq`
+(CVE-2026-41907), `uuid` `< 11.1.1`, *Missing buffer bounds check in v3/v5/v6 when buf is
+provided*, CWE-787 — moderate in npm's label and `medium` in GitHub's, with a CVSS 3.1 base score
+of 7.5 (`AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N`) and a CVSS 4.0 score of 6.3, which is worth
+writing down beside the `docs-audit` job's floor: the job fails on npm's label and not on a score,
+so an advisory scored above the CodeQL gate's 7.0 was reported on every push and blocked nothing,
+by the job's own rule and as the supply-chain page's table says. It reached the lock one way,
+`@docusaurus/core@3.10.2` → `webpack-dev-server@5.2.6` → `sockjs@0.3.24` → `uuid@8.3.2`;
+`sockjs/lib/transport.js` calls `v4()` with no buffer, so the defect was not reachable from its
+one call site, and `webpack-dev-server` serves `docusaurus start`, which no build and no deploy
+runs. Dependabot alert #2, open since 2026-09-08T09:12:07Z, named 11.1.1 as the first patched
+version the whole time, and 11.1.1 was published on 2026-04-29 — before every reading in this
+file that called the advisory unfixed. What those readings reported (round PB's "no fix", the
+readiness report's `fixAvailable: false`) was npm's answer about the TREE, where `sockjs`'s
+`^8.3.2` can never resolve an 11, and not about the registry. The floor was one `overrides` line
+away for the nine days the six others were being pinned, and nobody read the difference between
+the two "no fix"es until today; the dated corrections beside PB's and PD's records under 2.1.0
+say so where each sentence stands.
+
+**THE REPAIR IS ONE LINE IN `overrides` AND ONE ENTRY IN THE LOCK.** `"uuid": "^11.1.1"` joins
+the six pins in `docs/package.json`, alphabetically last; `npm --prefix docs install
+--ignore-scripts` moves `docs/package-lock.json` by one entry and nothing else —
+`node_modules/uuid` 8.3.2 → 11.1.1, its `resolved` URL and `integrity`, the registry's
+`deprecated` notice on 8.x gone, a `funding` list, and the `bin` path `dist/bin/uuid` →
+`dist/esm/bin/uuid`. **Why 11 and not the `latest` dist-tag, 14.0.2:** `sockjs` reads
+`require('uuid').v4`, and 11.1.1 is the last line that publishes a CommonJS build
+(`exports['.'].node.require` → `./dist/cjs/index.js`; the registry tags it `legacy-11`), where
+13.0.2 and 14.0.2 are `"type": "module"` with no `main` and an ESM-only `exports.node`. The
+advisory's own patched versions are 11.1.1, 12.0.1 and 13.0.1, one per range, so 11.1.1 is both
+the lowest patched floor and the one the consumer's `require` was written for; the reading that
+settled it was `require('sockjs')` loading under the new lock and `require('uuid').v4()` returning
+a v4 (node 26.7.0 locally; `.node-version` is 22).
+
+**READINGS, WITH THE `docs-audit` JOB'S OWN STEPS OVER THE COMMITTED LOCK.**
+`gates/codeql_gate.py --emit-pip-audit-ignores` prints nothing; the enforcing step reads
+`advisories: 0; excepted and present: []; excepted and absent: []` and `OK`; `npm audit` reads
+`found 0 vulnerabilities` and `npm audit --json` → info 0, low 0, moderate 0, high 0, critical 0,
+total 0, where 2026-09-16 read moderate 17 over the same lock less this entry and round P8's
+readiness report of 2026-09-08 read seven highs; `npm audit --audit-level=high` exits 0;
+`npm ci --dry-run --ignore-scripts` accepts the pair; `npm --prefix docs run ci` is exit 0 with
+`0 written, 9 already current`, `tsc` clean, the build green and `19 directives in the sources, 19
+admonitions rendered, 0 literal ':::' in 26 built pages`. It is the first time the job's report
+has been empty at every severity since round PB wrote the job.
+
+**THE ALERT, AND TWO OTHERS THIS RECORD DOES NOT RESOLVE.** At 2026-09-17T18:22Z the repository
+had three open Dependabot alerts, the same three `PUBLICATION.md` entry 20 read at 15:38:14Z: #2
+(`uuid`), and #4 and #5 (`image-size`, `<= 2.0.2`, `first_patched_version: null`). #2 closes when
+the dependency graph re-reads `main`'s lock, which this commit does not push and no reading here
+claims. #4 and #5 should already have closed: `main` took 2.0.4 at 08:30:49Z (push
+41f2141..5c53e75, 9d53e25 inside it), yet the SBOM the graph exports at 18:22:48Z (1240 packages)
+still carries `image-size 2.0.2` and `uuid 8.3.2` beside the five floors of 2026-09-08 and
+2026-09-09 at their overridden versions — so the graph has not re-parsed `docs/package-lock.json`
+since before that push. It is not size: the lock is 722 514 bytes at b69a267, the push whose
+parse closed #6–#11 at 2026-09-09T09:02:44Z, and 722 514 at 41f2141. Recorded here and not
+resolved: the push that takes this commit changes the lock again and is the graph's next occasion
+to read it, and whether #4 and #5 close on it is the next reading's to take.
+
+**AND THE PROSE MOVES WITH IT.** `SECURITY.md`'s npm audit row gains the 2026-09-17 reading beside
+the 2026-09-16 one, and its overrides row says seven entries (six until this date) and why the
+seventh is the one moderate; the supply-chain page's "(six today)" is seven with the date, and its
+exceptions paragraph says zero at any severity; `tests/test_cdm_security_policy.py` now derives
+the block from `docs/package.json` — every `name spec` must be in the row, the block alphabetical,
+and the count word on the page and in the row must match — so the next pin cannot leave either
+sentence behind the way this one found them; and the 2026-09-16 record under 2.2.0 and PD's and
+PB's records under 2.1.0 each gain a dated correction beside the sentence that called `uuid`
+unfixed or unchanged. `PUBLICATION.md` entry 20's alert paragraph is a dated reading and stands;
+`RELEASE_NOTES.md` is 2.2.0's and stands.
 
 ### 2.2.0 — 2026-09-17 — the audit arc: a declared depth bound on six of the fourteen, a computed L4, evidence that reproduces on another machine, an interpreter matrix and a lint stage in CI, a witness verifier that re-derives the assets, and every sentence the audit found false corrected
 
@@ -1004,6 +1080,12 @@ admonitions rendered, 0 literal ':::' in 26 built pages`. The release notes, whi
 directory, will render the exceptions line as **none** — the branch
 `tests/test_cdm_release_notes.py` said would be true again the day the last exception was
 removed.
+
+**Corrected 2026-09-17: the one advisory left is gone, and the reading above is kept.** `uuid`
+took a seventh `overrides` entry, `^11.1.1`, on 2026-09-17 — the audit's npm record under the
+Unreleased heading above — and the same steps read `advisories: 0` and `npm audit --json` at
+total 0. Its first patched version had been 11.1.1 all along; "through `webpack-dev-server`,
+which no build uses" still holds and was the reason it waited, not a reason it could not move.
 
 **AND THE PROSE THAT SAID ZERO WHILE THERE WERE TWO IS CORRECTED WHERE IT STANDS.** Three
 documents said in the present tense, from 2026-09-08 to this record, that the directory held no
@@ -1604,6 +1686,13 @@ the trigger both files named fired; the audit's npm record under the pending hea
 deletes both files and moves the lock to 2.0.4 by an `overrides` entry of the same shape as the
 two this round added. The reading in the paragraph above was true when it was taken and is kept.
 
+**Corrected 2026-09-17: the third is no longer unchanged.** `GHSA-w5hq-g745-h8pq` cleared on
+2026-09-17 by a seventh `overrides` entry, `uuid ^11.1.1` — the audit's npm record under the
+Unreleased heading above. "Below the gate's threshold" was and is true of npm's label, which is
+what the job reads; the advisory's CVSS 3.1 score is 7.5, and 11.1.1 had existed since
+2026-04-29, so "unchanged by this round" was a choice this round could have made otherwise and
+did not read as one.
+
 **ROUND PS's RECORD, 2026-09-08 — the release pipeline's SBOM stage, repaired.**
 
 Recorded 2026-09-08 by SOIF Part 1 round PS, on M's rulings of the same day. Nothing here is
@@ -1748,6 +1837,14 @@ The two files were deleted on 2026-09-16, as their own `upstream_status` require
 resolves 2.0.4 through a sixth `overrides` entry — the audit's npm record under the pending
 heading above. Everything else in this paragraph still holds, and the `docs-audit` job it
 introduces is what read the repaired lock green.
+
+**Corrected 2026-09-17: "`uuid` (moderate, no fix, …)" was the tree's reading and not the
+registry's.** `npm audit` answered `fixAvailable: false` because `sockjs@0.3.24` specifies
+`^8.3.2` and no bump of anything above it reaches an 11; the advisory itself had named 11.1.1 as
+its first patched version since it was published, and 11.1.1 had been on the registry since
+2026-04-29. The repair was the one this round made three times — an `overrides` floor — and it
+was taken on 2026-09-17 as the seventh entry, the audit's npm record under the Unreleased heading
+above; "reachable only through `webpack-dev-server`, which no build uses" still holds.
 
 **AN EXCEPTION NOW HAS FOUR PROSE FIELDS AND NOT TWO** (M's ruling, 2026-09-08T16:45:00Z, on this
 round's first attempt). `security/exceptions/schema.json` gains `mitigation` and

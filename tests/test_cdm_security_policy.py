@@ -29,6 +29,7 @@ CODEQL = REPO / ".github" / "workflows" / "codeql.yml"
 DEP_REVIEW = REPO / ".github" / "workflows" / "dependency-review.yml"
 RC_BUILD = REPO / ".github" / "workflows" / "rc-build.yml"
 DEPENDABOT = REPO / ".github" / "dependabot.yml"
+DOCS_MANIFEST = REPO / "docs" / "package.json"
 WORKFLOWS = REPO / ".github" / "workflows"
 
 #: M's F5.1 ruling. The address is published, so it is pinned: a typo here is a report nobody
@@ -295,6 +296,42 @@ def test_the_page_and_the_policy_name_the_docs_audit_job_ci_actually_has():
         "SECURITY.md's controls table has no row naming the `docs-audit` job")
     assert "`overrides`" in table, (
         "SECURITY.md's controls table has no row naming docs/package.json's `overrides`")
+
+
+def test_every_floor_the_docs_manifest_pins_is_named_in_the_policy_and_counted_on_the_page():
+    """The `overrides` block is the source; the policy's row and the page's count are held to it.
+
+    Since 2026-09-17, when `uuid` became the seventh entry. Until then SECURITY.md's row
+    enumerated the six before it by hand and the supply-chain page said "six today" — both true
+    the day they were written, and both the kind of sentence that stays true only until the next
+    pin, which is the drift `tests/test_cdm_prose_counts.py` exists to name. Derived here instead:
+    each entry as `name spec`, exactly as the row writes it, in the alphabetical order every
+    record since round PB has used, and the count as the word both documents spell.
+    """
+    import json
+    overrides = json.loads(DOCS_MANIFEST.read_text()).get("overrides", {})
+    assert overrides, "docs/package.json has no `overrides` block; the policy's row describes nothing"
+    assert list(overrides) == sorted(overrides), (
+        "docs/package.json's `overrides` block is not alphabetical; every record since round PB "
+        "writes it that way, and a reader looking for a pin expects to find it where it sorts")
+    words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+             "ten", "eleven", "twelve"]
+    count = words[len(overrides)]
+    body = POLICY.read_text()
+    table = body[body.index("## Controls"):body.index("## Handling a report")]
+    row = next(line for line in table.splitlines()
+               if line.startswith("| Pinned floors on transitive npm dependencies"))
+    for name, spec in overrides.items():
+        assert f"`{name} {spec}`" in row, (
+            f"docs/package.json pins `{name}` at `{spec}` and SECURITY.md's overrides row does "
+            f"not name `{name} {spec}`; the row enumerates every floor, and one it omits is a "
+            "control nobody can find from the inventory a reporter is told to read")
+    assert f"{count} entries" in row, (
+        f"docs/package.json has {len(overrides)} overrides and SECURITY.md's row does not say "
+        f"\"{count} entries\"")
+    assert f"`overrides` ({count} today" in SUPPLY_CHAIN.read_text(), (
+        f"docs/package.json has {len(overrides)} overrides and the supply-chain page does not say "
+        f"\"`overrides` ({count} today\"")
 
 
 def test_the_threshold_is_one_number_in_one_place():
