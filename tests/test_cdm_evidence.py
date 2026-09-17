@@ -553,19 +553,29 @@ def test_two_records_generated_from_this_tree_differ_only_in_the_masked_fields()
 
 
 def test_a_record_from_another_host_and_checkout_reproduces(tmp_path, record, capsys):
-    """§36 across machines (2026-09-16): a record CI made on Linux, verified from this checkout.
+    """§36 across machines (2026-09-16): a record made on a foreign host, verified from this one.
 
     The test the round that wrote `verify` did not have: `ci.yml` generates and verifies in one
     job, and the §36 test above generates both records in one process, so nothing exercised a
     change of host or path. A copy of the record with a foreign interpreter and platform — and,
     since the fixtures label is portable, nothing else to change — must REPRODUCE, and the two
     host fields must be printed as differing rather than counted as problems.
+
+    The foreign host is whichever this one is not. The first draft (2026-09-16) hard-coded the
+    CI runner's `linux-x86_64` / `3.12.14` as the foreign pair and asserted this host was not
+    it — true on the workstation that wrote it and false on every CI leg, where the first push
+    of the 3.11–3.14 matrix failed here four times. Corrected 2026-09-17: the pair is chosen
+    against the record, so the test asks the same question on every host, and each fallback is
+    a string `sysconfig.get_platform()` or `platform.python_version()` actually emits.
     """
     path = evidence.write(record, tmp_path)
     payload = json.loads(path.read_text())
-    assert payload["test_run"]["platform"] != "linux-x86_64"
-    payload["test_run"]["platform"] = "linux-x86_64"
-    payload["test_run"]["python"] = "3.12.14"
+    here_platform, here_python = payload["test_run"]["platform"], payload["test_run"]["python"]
+    foreign_platform = "linux-x86_64" if here_platform != "linux-x86_64" else "macosx-15.0-arm64"
+    foreign_python = "3.12.14" if here_python != "3.12.14" else "3.11.9"
+    assert foreign_platform != here_platform and foreign_python != here_python
+    payload["test_run"]["platform"] = foreign_platform
+    payload["test_run"]["python"] = foreign_python
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     problems, masked = evidence.verify(path)
     assert problems == [], problems
@@ -573,13 +583,13 @@ def test_a_record_from_another_host_and_checkout_reproduces(tmp_path, record, ca
     fresh = evidence.generate("pntmap").model_dump(mode="json")
     lines = evidence.environment_differences(payload, fresh)
     assert [line.split(":")[0] for line in lines] == ["test_run.python", "test_run.platform"]
-    assert "record says 'linux-x86_64'" in lines[1]
+    assert f"record says {foreign_platform!r}" in lines[1]
     assert evidence.main(["verify", str(path)]) == evidence.EXIT_OK
     out = capsys.readouterr().out
     assert out.startswith("REPRODUCED:")
     assert out.count("environment differs, not compared") == 2
     # The fields are still IN the record: recorded is not the same thing as masked.
-    assert payload["test_run"]["python"] == "3.12.14"
+    assert payload["test_run"]["python"] == foreign_python
 
 
 def test_the_refusal_list_needs_no_mask_because_it_carries_no_wall_clock_reading():

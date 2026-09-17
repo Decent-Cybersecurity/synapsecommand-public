@@ -130,6 +130,17 @@ from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Di
 
 SYSTEM = "LEGION"
 
+# How deep a document may nest before the base class refuses it — §3.5's `max_depth`, declared in
+# the metadata below FROM this constant so the number the manifest publishes is the number that is
+# enforced (2026-09-17). The figure is `tak`'s, for `tak`'s reason: every walk after a parse
+# recurses once per level, and on CPython 3.11 `json.loads` itself recurses once per container
+# and raises `RecursionError` a little under a thousand containers deep (the reading is in
+# `adapter.InputTooDeep`), so `adapter.enforce_depth_bound` reads the depth off the characters
+# before this module's decoder runs. Nine times the deepest JSON document shipped under
+# `fixtures/legion/`, goldens included (it nests seven), and every walker stays under two
+# hundred frames. An IMPLEMENTATION CAP, and the basis says so.
+LEGION_MAX_DEPTH = 64
+
 # ------------------------------------------------------------------ the ellipsoid
 #
 # WGS84, and the constants are spelled out rather than imported so the transform below can be
@@ -471,14 +482,11 @@ class LegionAdapter(Adapter):
             ],
             limits=Limits(
                 max_input_bytes=1048576,
-                max_depth=None,
+                max_depth=LEGION_MAX_DEPTH,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_depth":
-                        "Legion responses are JSON and do nest; no depth bound is declared "
-                        "yet",
                     "max_objects":
                         "no bound is enforced by this adapter today; the parser-safety "
                         "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
@@ -491,6 +499,32 @@ class LegionAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
                 declared_because={
+                    "max_depth": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "Legion responses are JSON and do nest — no JSON document shipped under "
+                            "`fixtures/legion/`, goldens included, nests more than seven "
+                            "containers, and the deepest input `to_cdm` is handed nests five — and "
+                            "the pinned API record states no maximum depth. 64 is chosen on "
+                            "2026-09-17 for the reason `tak` chose it on 2026-09-16: every walk "
+                            "after the parse recurses once per level, and on CPython 3.11 "
+                            "`json.loads` itself recurses once per container and raises "
+                            "`RecursionError` a little under a thousand containers deep (the "
+                            "reading is in `adapter.InputTooDeep`), so the bound is read off the "
+                            "characters before the decoder runs. Nine times the deepest JSON "
+                            "document shipped beside the fixtures, and every walker stays under two "
+                            "hundred frames. This is an IMPLEMENTATION CAP (`LEGION_MAX_DEPTH`, "
+                            "`adapters/legion.py`) and is NOT the format's normative maximum."),
+                        enforced_at=(
+                            "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with "
+                            "`enforce_depth_bound` beside `enforce_input_bound` (`adapter.py`, "
+                            "`_bind_input_bound`): JSON text is measured off its characters by "
+                            "`json_nesting_depth`, decoded the way `json.loads` would decode it, "
+                            "and a parsed dict off its containers by `container_depth`, before "
+                            "`_as_document` or `json.loads` runs; past the bound the wrapper raises "
+                            "`InputTooDeep`, a `ValueError` naming both numbers."),
+                        test="tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it",
+                    ),
                     "max_input_bytes": LimitBasis(
                         kind=LimitKind.IMPLEMENTATION_CAP,
                         source=(

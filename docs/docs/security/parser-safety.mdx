@@ -2,7 +2,7 @@
 title: Parser safety
 sidebar_label: Parser safety
 sidebar_position: 2
-description: The five bounds and where they live, the rules an adapter MUST follow for XML, archives and SQLite, and the audit of every parser call in the fourteen shipped adapters.
+description: The five bounds and where they live, the rules an adapter MUST follow for XML, JSON, archives and SQLite, and the audit of every parser call in the fourteen shipped adapters.
 ---
 
 # Parser safety
@@ -44,37 +44,61 @@ hardened against a figure the report does not print.
 ### What is enforced today
 
 `max_input_bytes` is declared and enforced on **all fourteen**. `max_depth` is declared and enforced
-on the **two XML adapters**, `tak` and `stanag4676`, since 2026-09-16. The other three bounds are
-declared absent with a reason on all fourteen, and `max_depth` on the other twelve; none of those is
-enforced yet, and no page here says otherwise.
+on the **two XML adapters**, `tak` and `stanag4676`, since 2026-09-16, and on the **four other
+adapters that decode JSON** — `adsb`, `ais`, `legion` and `pntmap` — since 2026-09-17. The other
+three bounds are declared absent with a reason on all fourteen, and `max_depth` on the other eight;
+none of those is enforced yet, and no page here says otherwise.
 
 Enforcement of `max_input_bytes` is in the base class, at class-definition time:
 `Adapter.__init_subclass__` wraps each subclass's own `to_cdm`, so the bound is checked before any
 adapter's decoder runs, and an adapter cannot forget it while remaining an `Adapter`. A payload
 over the bound raises `InputTooLarge`, whose message names both numbers.
 
-Enforcement of `max_depth` is in the two adapters themselves, immediately after `ET.fromstring`
-returns and before anything walks the tree, and the reason it is there and not in the base class
-is where the danger is. libexpat builds a tree of **any** depth without recursing — a document
-nested fifty thousand elements deep parses — and everything that walks the tree afterwards recurses
-once per level. So until 2026-09-16 a *valid* CoT event or NITS document nesting a thousand empty
-elements — some 7 KB, against a 1 MiB `max_input_bytes` — made both adapters raise
+Enforcement of `max_depth` is in two places, and which one depends on where the danger is.
+
+For **JSON text and for a parsed document** it is in the base class, beside the size bound: the
+same wrapper calls `enforce_depth_bound`, which reads the nesting off the octets
+(`json_nesting_depth`) or off the containers (`container_depth`) and raises `InputTooDeep` — a
+`ValueError` naming both numbers — before any adapter's decoder runs. *Before* the decoder, because
+on CPython 3.11 `json.loads` itself recurses once per container and raises `RecursionError` a
+little under a thousand containers deep — 995 read from module level on 3.11.15 under the default
+limit, fewer beneath the frames a test runner adds — and no interpreter in the matrix decodes an
+arbitrary depth (3.12.13 raises it near ten thousand, 3.14.7 near a hundred and sixteen thousand;
+the readings are of 2026-09-17, the day the 3.11 leg of the CI matrix first ran, and
+`adapter.InputTooDeep` carries them). So a bound measured after the decode was a bound the decoder
+could fail before. The text is read in one pass and decoded the way `json.loads` would decode it —
+a byte-order mark or a UTF-16 document is measured, not walked past.
+
+> An adapter decoding JSON **MUST** declare `max_depth`, and the text **MUST** be measured before
+> the decoder sees it. Here the parser *is* what recurses — on CPython 3.11 — so a bound applied
+> to the decoded document is applied too late.
+
+For an **XML tree** it is in the two adapters themselves, immediately after `ET.fromstring` returns
+and before anything walks the tree, and the reason it is there and not in the base class is that
+only the adapter holds the tree. libexpat builds a tree of **any** depth without recursing — a
+document nested fifty thousand elements deep parses — and everything that walks the tree afterwards
+recurses once per level. So until 2026-09-16 a *valid* CoT event or NITS document nesting a thousand
+empty elements — some 7 KB, against a 1 MiB `max_input_bytes` — made both adapters raise
 `RecursionError`, which is one of the conformance suite's four crash classes and not a refusal.
-Each adapter now measures the tree with a stack the moment it exists and refuses past **64** with
-its own `ValueError` naming both numbers. The figure is an **implementation cap** and each
-`declared_because` says so: every CoT fixture in the package nests three elements deep, the deepest
-path AEDP-12's class model admits is seven classes (eight elements at the deepest scalar), and
-sixty-four keeps every walker under two hundred Python frames from any call depth beneath it. Each
-adapter also ships a `malformed/` payload nested one thousand deep, so check **H** records the
-refusal on every run.
+Each XML adapter now measures the tree with a stack the moment it exists and refuses past **64**
+with its own `ValueError` naming both numbers.
+
+The figure is **64** on all six and it is an **implementation cap** — each `declared_because` says
+so: every CoT fixture in the package nests three elements deep, the deepest path AEDP-12's class
+model admits is seven classes (eight elements at the deepest scalar), no JSON document shipped under
+the four fixture directories, goldens included, nests more than seven containers (the deepest input
+`to_cdm` is handed nests five), and sixty-four keeps every walker under two hundred
+Python frames from any call depth beneath it. Each XML adapter also ships a `malformed/` payload
+nested one thousand deep, so check **H** records the refusal on every run.
 
 > `max_input_bytes` is on **octets**. A `dict` — the `.parsed.json` twin that ships beside a byte
 > fixture — is **not** bounded by it, and this is a rule rather than an oversight: a caller holding
 > a parsed document has already done the parse the bound exists to prevent. ADS-B's 14 wire octets
 > serialise to over 400 as a decoded twin, so a bound applied to twins would refuse the format's
 > own legal messages. `max_depth` is different in kind: the walk it protects happens *after* any
-> parse, so `tak` holds the dict form to the same number, and `stanag4676` does not measure its
-> twin only because that reader never descends past what the class model names.
+> parse, so the base class holds the parsed form of every adapter that declares the bound to the
+> same number — `stanag4676`'s included, although that reader never descends past what the class
+> model names.
 
 ### The fourteen declarations
 
@@ -216,14 +240,14 @@ Line numbers are as at round P5 and move; the grep is the durable form.
 | adapter | call | reached with | bounded before the call? |
 |---|---|---|---|
 | `tak` | `ET.fromstring` (`tak.py:637`) | XML text | **yes** — 1 MiB, in the base class |
-| `tak` | `json.loads` (`tak.py:592`) | JSON text | **yes** — same bound |
+| `tak` | `json.loads` (`tak.py:592`) | JSON text | **yes** — same bound; and `max_depth` 64, in the base class, since 2026-09-17 |
 | `stanag4676` | `ET.fromstring` (`stanag4676.py:748`) | XML text | **yes** — 1 MiB |
 | `stanag4676` | `ET.fromstring` (`stanag4676.py:2447`) | an **egress** fragment this adapter built | n/a — not attacker input |
 | `stanag4676` | `xml.dom.minidom.parseString` (`stanag4676.py:2473`) | an **egress** document this adapter built, for pretty-printing | n/a — not attacker input |
-| `legion` | `json.loads` (`legion.py:991`) | JSON text | **yes** — 1 MiB |
-| `pntmap` | `json.loads` (`pntmap.py:375`) | JSON text | **yes** — 1 MiB |
-| `ais` | `json.loads` (`ais.py:1144`) | JSON text | **yes** — 1 024 octets |
-| `adsb` | `json.loads` (`adsb.py:1623`) | JSON text | **yes** — 64 octets |
+| `legion` | `json.loads` (`legion.py:991`) | JSON text | **yes** — 1 MiB; and `max_depth` 64, in the base class, since 2026-09-17 |
+| `pntmap` | `json.loads` (`pntmap.py:375`) | JSON text | **yes** — 1 MiB; and `max_depth` 64, in the base class, since 2026-09-17 |
+| `ais` | `json.loads` (`ais.py:1144`) | JSON text | **yes** — 1 024 octets; and `max_depth` 64, in the base class, since 2026-09-17 |
+| `adsb` | `json.loads` (`adsb.py:1623`) | JSON text | **yes** — 64 octets, which no text past `max_depth` 64 fits; the dict form is held to the depth bound in the base class, since 2026-09-17 |
 | the rest of the roster | none | — | the ASTERIX, GMTI and KLV families decode octets with their own codecs and call no general-purpose parser |
 | all fourteen | `zipfile`, `sqlite3`, `gzip`, `zlib` | — | **no hit anywhere** |
 

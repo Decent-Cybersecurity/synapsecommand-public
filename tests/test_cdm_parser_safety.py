@@ -39,15 +39,35 @@ A FIFTH READING, TAKEN 2026-09-16: DEPTH IS NOT THE PARSER'S PROBLEM, IT IS THE 
   the tests below feed a document one past the bound and one a thousand deep and require the
   adapter's own `ValueError`. The bound is the adapter's and its number is the manifest's, which
   is why the tests read it from `capabilities.limits` rather than repeating it.
+
+A SIXTH READING, TAKEN 2026-09-17: ON CPYTHON 3.11 THE JSON DECODER IS A WALKER TOO
+-----------------------------------------------------------------------------------
+* The first push of the 3.11–3.14 matrix failed on 3.11 alone in this suite's own tak test (and
+  on every leg in the evidence module's foreign-host test, a different defect): `json.loads` on
+  CPython 3.11 recurses once per container and raises `RecursionError` a little under a thousand
+  containers deep — the reading and its conditions are in `adapter.InputTooDeep`, and no
+  interpreter in the matrix decodes an arbitrary depth — so a depth measured after the decode,
+  which is what `tak` did for its JSON form, was a depth
+  the decoder could fail before it was measured, and the test built its thousand-deep twin
+  with the very call that fails. The bound now sits in the base class beside `max_input_bytes`
+  (`adapter.enforce_depth_bound`): JSON text is measured off its characters in one pass, decoded
+  the way the decoder would decode it, and a parsed dict off its containers, before any adapter's
+  decoder runs, and every adapter that decodes JSON — the five
+  below — declares `max_depth` with its basis. An XML tree is still the adapter's to measure,
+  because expat builds it without recursing and only the adapter holds it.
 """
+import ast
+import json
 import pathlib
+import time
 import xml.etree.ElementTree as ET
 
 import pyexpat
 import pytest
 
 import synapse_cdm
-from synapse_cdm.adapter import InputTooLarge, discover
+from synapse_cdm.adapter import (InputTooDeep, InputTooLarge, container_depth, discover,
+                                 enforce_depth_bound, json_nesting_depth)
 
 #: The two adapters that parse XML at all. Derived, so a third would be swept without an edit.
 XML_ADAPTERS = ("stanag4676", "tak")
@@ -203,6 +223,172 @@ def test_the_deepest_shipped_document_is_inside_the_declared_bound_and_translate
     assert deepest * 8 <= bound, (
         f"{name}'s deepest fixture nests {deepest} against a bound of {bound}; the margin the "
         "bound was chosen with is gone and the number wants re-deriving, not a wider assertion")
+
+
+# ------------------------------------------------------ JSON: depth before the decoder
+
+#: The adapters whose `to_cdm` decodes JSON text. Derived below, from the syntax tree, so a sixth
+#: would be swept without an edit here and a comment that mentions the call would not.
+JSON_ADAPTERS = ("adsb", "ais", "legion", "pntmap", "tak")
+
+
+def _decodes_json(tree: ast.Module) -> bool:
+    """`json.loads(...)` / `json.load(...)`, or `loads(...)` / `load(...)` imported from `json`."""
+    from_json = {alias.asname or alias.name for node in ast.walk(tree)
+                 if isinstance(node, ast.ImportFrom) and node.module == "json" for alias in node.names}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if (isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name)
+                and func.value.id == "json" and func.attr in {"loads", "load"}):
+            return True
+        if isinstance(func, ast.Name) and func.id in from_json and func.id in {"loads", "load"}:
+            return True
+    return False
+
+
+def test_the_json_decoding_adapters_are_the_ones_this_module_covers():
+    """Derived from the tree by parsing it, not by grepping it: an adapter that starts decoding
+    JSON must not slip past this module, and a docstring that names the call must not pull one in."""
+    root = pathlib.Path(synapse_cdm.__file__).parent / "adapters"
+    decoding = sorted(p.stem for p in root.glob("*.py") if _decodes_json(ast.parse(p.read_text())))
+    assert decoding == list(JSON_ADAPTERS), decoding
+
+
+def _nested_json(depth: int) -> str:
+    """Exactly `depth` nested objects, as text — never through `json.dumps`, which recurses."""
+    return ('{"n":' * (depth - 1)) + "{}" + ("}" * (depth - 1))
+
+
+def _nested_dict(depth: int) -> dict:
+    """Exactly `depth` nested dicts, built with a loop for the same reason."""
+    node: dict = {}
+    for _ in range(depth - 1):
+        node = {"n": node}
+    return node
+
+
+def _shipped_json(name: str) -> list[pathlib.Path]:
+    """Every JSON document under the adapter's fixture directory, goldens included — the set the
+    four bases describe when they say "shipped beside the fixtures"."""
+    cls = discover()[name]
+    directory = pathlib.Path(synapse_cdm.__file__).parent / "fixtures" / (cls.fixture_dir or name)
+    return sorted(p for p in directory.rglob("*.json")
+                  if p.name != "PROVENANCE.json" and "spec" not in p.parts
+                  and "malformed" not in p.parts)
+
+
+def test_the_nesting_depth_is_read_off_the_characters_and_agrees_with_the_decoder():
+    """`json_nesting_depth` counts what `container_depth` would count after a decode — on every
+    shipped JSON document — and counts it where the decoder cannot follow."""
+    assert json_nesting_depth("{}") == 1
+    assert json_nesting_depth('{"a": [1, {"b": []}]}') == 4
+    assert json_nesting_depth('{"a": "[[[[{{{{"}') == 1, "brackets inside a string are text"
+    assert json_nesting_depth('{"a": "\\"[", "b": [[]]}') == 3, "an escaped quote does not end it"
+    assert json_nesting_depth('{"a": "\\\\", "b": [[]]}') == 3, "an escaped backslash is not an escape"
+    assert json_nesting_depth('{"a": "\\n[[["}') == 1, "an escaped letter hides nothing but itself"
+    assert json_nesting_depth("]]]]") == 0, "a close with nothing open is the decoder's to refuse"
+    assert json_nesting_depth('"never closed [[[') == 0, "an unterminated string swallows the rest"
+    assert json_nesting_depth(_nested_json(50_000)) == 50_000, "any depth, on any interpreter"
+    assert container_depth(_nested_dict(1000)) == 1000
+    compared = 0
+    for name in JSON_ADAPTERS:
+        for path in _shipped_json(name):
+            text = path.read_text()
+            assert json_nesting_depth(text) == container_depth(json.loads(text)), path
+            compared += 1
+    assert compared > 100, compared
+
+
+def test_the_scan_is_linear_on_the_shape_that_made_the_first_draft_quadratic():
+    """The review of 2026-09-17 read the first draft — a regular expression that blanked string
+    literals before counting — at seven seconds for 64 KiB of an unterminated run of escaped
+    quotes, and half an hour for a mebibyte: the engine restarted at every quote. One pass over a
+    full mebibyte of either shape is milliseconds; the bound here is generous so the test measures
+    the shape and not the machine."""
+    one_mebibyte = 512 * 1024
+    started = time.perf_counter()
+    assert json_nesting_depth("[" + '\\"' * one_mebibyte) == 1
+    assert json_nesting_depth("[" + '"\\' * one_mebibyte) == 1
+    assert json_nesting_depth("[" * one_mebibyte) == one_mebibyte
+    assert time.perf_counter() - started < 3.0
+
+
+@pytest.mark.parametrize("name", JSON_ADAPTERS)
+def test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it(name):
+    """The sixth reading, on the adapter: the parsed form is refused past the declared bound
+    BEFORE any decoder runs, always; JSON text is refused the same way wherever text past the
+    bound fits the size bound, and where it cannot — adsb, whose 64 octets hold no sixty-five
+    nested containers — the test says the size bound spoke rather than skipping the case.
+    `pytest.raises(InputTooDeep)` catches no `RecursionError`, and on CPython 3.11 `json.loads`
+    raises one a little under a thousand containers deep, so a bound measured after the decode
+    is a red test here on that interpreter and never a green one."""
+    cls = discover()[name]
+    limits = cls.metadata.capabilities.limits
+    assert limits.max_depth is not None, f"{name} declares no max_depth"
+    assert "max_depth" in limits.declared_because, "a declared bound carries its basis (F5.4)"
+    assert "max_depth" not in limits.absent_because
+    text_reached_the_depth_check = False
+    for depth in (limits.max_depth + 1, 1000, 50_000):
+        with pytest.raises(InputTooDeep, match=f"nesting {depth} containers deep") as raised:
+            cls().to_cdm(_nested_dict(depth))
+        assert f"max_depth = {limits.max_depth}" in str(raised.value)
+        text = _nested_json(depth).encode()
+        if len(text) > limits.max_input_bytes:
+            with pytest.raises(InputTooLarge):
+                cls().to_cdm(text)
+            continue
+        with pytest.raises(InputTooDeep, match=f"nesting {depth} containers deep") as raised:
+            cls().to_cdm(text)
+        assert f"max_depth = {limits.max_depth}" in str(raised.value)
+        text_reached_the_depth_check = True
+    tightest = 2 * (limits.max_depth + 1)  # '[' * 65 + ']' * 65, the shortest text past the bound
+    if tightest > limits.max_input_bytes:
+        assert name == "adsb" and not text_reached_the_depth_check, name
+    else:
+        assert text_reached_the_depth_check, f"{name}: no text case reached the depth check"
+
+
+@pytest.mark.parametrize("name", JSON_ADAPTERS)
+def test_a_byte_order_mark_or_a_wide_encoding_does_not_walk_past_the_bound(name):
+    """The review of 2026-09-17 read the first draft's guard decoding bytes as UTF-8 and looking
+    at the first character as it found it, so a document opening with a byte-order mark, or in
+    UTF-16 or UTF-32, went past the guard into `json.loads` — which detects those encodings on
+    bytes — unmeasured. The guard now decodes the way the decoder will. Each payload is a
+    thousand deep; where it cannot fit the size bound, that bound speaks first and the test
+    says so."""
+    cls = discover()[name]
+    limits = cls.metadata.capabilities.limits
+    document = _nested_json(1000)
+    for label, payload in (("utf-8 with a byte-order mark", b"\xef\xbb\xbf" + document.encode()),
+                           ("utf-16-be", document.encode("utf-16-be")),
+                           ("utf-16 with a byte-order mark", document.encode("utf-16")),
+                           ("utf-32-be", document.encode("utf-32-be"))):
+        if len(payload) > limits.max_input_bytes:
+            with pytest.raises(InputTooLarge):
+                cls().to_cdm(payload)
+            continue
+        with pytest.raises(InputTooDeep, match="nesting 1000 containers deep") as raised:
+            cls().to_cdm(payload)
+        assert not isinstance(raised.value, RecursionError), label
+
+
+@pytest.mark.parametrize("name", JSON_ADAPTERS)
+def test_the_deepest_shipped_json_is_inside_the_declared_bound(name):
+    """The bound is a cap and not a hair trigger: a document AT it passes the depth check in both
+    forms, and the deepest JSON document shipped beside the adapter's fixtures, goldens included,
+    sits far below it — read from the files, not asserted."""
+    cls = discover()[name]
+    bound = cls.metadata.capabilities.limits.max_depth
+    assert enforce_depth_bound(cls, _nested_json(bound)) is None
+    assert enforce_depth_bound(cls, _nested_dict(bound)) is None
+    shipped = _shipped_json(name)
+    assert shipped, f"{name} ships no JSON document"
+    deepest = max(container_depth(json.loads(p.read_text())) for p in shipped)
+    assert deepest * 8 <= bound, (
+        f"{name}'s deepest JSON document nests {deepest} against a bound of {bound}; the margin "
+        "the bound was chosen with is gone and the number wants re-deriving, not a wider assertion")
 
 
 @pytest.mark.parametrize("name", XML_ADAPTERS)

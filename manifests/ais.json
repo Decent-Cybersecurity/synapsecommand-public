@@ -9,11 +9,16 @@
       "limits": {
         "absent_because": {
           "max_decompressed_bytes": "this adapter accepts no archived or compressed payload, so there is no expansion to bound",
-          "max_depth": "an AIS message does not nest: a sentence envelope carries a flat armoured payload whose layout is fixed by its message type",
           "max_objects": "no bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)",
           "max_parse_seconds": "no wall-clock bound is enforced by this adapter today; the parser-safety policy's concrete bounds are owed by P5 (ARCHITECTURE.md \u00a79)"
         },
         "declared_because": {
+          "max_depth": {
+            "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_depth_bound` beside `enforce_input_bound` (`adapter.py`, `_bind_input_bound`): JSON text is measured off its characters by `json_nesting_depth`, decoded the way `json.loads` would decode it, and a parsed dict off its containers by `container_depth`, before `_as_parsed` or `json.loads` runs; past the bound the wrapper raises `InputTooDeep`, a `ValueError` naming both numbers.",
+            "kind": "implementation_cap",
+            "source": "An AIS message does not nest, but `to_cdm` also takes the parsed twin \u2014 a dict, or its JSON text \u2014 and the walk after that parse recurses once per level; no JSON document shipped under `fixtures/ais/`, goldens included, nests more than seven containers, and the deepest twin `to_cdm` is handed nests four. 64 is chosen on 2026-09-17 for the reason `tak` chose it on 2026-09-16: every walk after the parse recurses once per level, and on CPython 3.11 `json.loads` itself recurses once per container and raises `RecursionError` a little under a thousand containers deep (the reading is in `adapter.InputTooDeep`), so the bound is read off the characters before the decoder runs. Nine times the deepest JSON document shipped beside the fixtures, and every walker stays under two hundred frames. This is an IMPLEMENTATION CAP (`AIS_MAX_DEPTH`, `adapters/ais.py`) and is NOT the format's normative maximum.",
+            "test": "tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it"
+          },
           "max_input_bytes": {
             "enforced_at": "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with `enforce_input_bound` at class-definition time (`adapter.py`, `_bind_input_bound`), so the payload is measured and refused before any decoder in this module runs",
             "kind": "implementation_cap",
@@ -22,7 +27,7 @@
           }
         },
         "max_decompressed_bytes": null,
-        "max_depth": null,
+        "max_depth": 64,
         "max_input_bytes": 1024,
         "max_objects": null,
         "max_parse_seconds": null

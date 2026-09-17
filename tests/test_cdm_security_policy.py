@@ -94,9 +94,9 @@ def test_the_out_of_scope_list_cites_the_operator_s_trust_decision():
     """The `load_adapter` row. An out-of-scope item with no reason is a refusal to look."""
     body = POLICY.read_text()
     assert "load_adapter" in body
-    assert "adapter.py:513" in body, "the citation has moved; re-derive it rather than dropping it"
+    assert "adapter.py:641" in body, "the citation has moved; re-derive it rather than dropping it"
     source = (REPO / "packages" / "cdm" / "synapse_cdm" / "adapter.py").read_text().splitlines()
-    assert "def load_adapter" in source[512], source[512]
+    assert "def load_adapter" in source[640], source[640]
 
 
 def test_every_control_row_is_active_or_says_what_it_is_not():

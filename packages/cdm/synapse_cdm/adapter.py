@@ -32,8 +32,10 @@ from __future__ import annotations
 import functools
 import importlib
 import importlib.resources
+import json
 import pathlib
 import pkgutil
+import re
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar, Literal
 
@@ -377,8 +379,132 @@ def enforce_input_bound(cls: type["Adapter"], raw: Any) -> None:
         )
 
 
+class InputTooDeep(ValueError):
+    """A payload nesting deeper than the adapter's declared `capabilities.limits.max_depth`.
+
+    The same class as `InputTooLarge`, for the same reason: a refusal is a `ValueError`, and the
+    conformance suite reads "refused without crashing" from the class. What this bound stands
+    between and the caller is `RecursionError`, one of `suite.CRASH_CLASSES` — and on CPython
+    3.11 the standard library's own JSON decoder raises it a little under a thousand containers
+    deep: 995 read from module level on 3.11.15 under the default recursion limit, fewer beneath
+    the frames a test runner or a harness adds (958 from inside a pytest test). No interpreter in
+    the matrix decodes an arbitrary depth — 3.12.13 raises it near ten thousand and 3.14.7 near a
+    hundred and sixteen thousand — and the readings are of 2026-09-17, the day the 3.11 leg of
+    the CI matrix first ran. A depth measured AFTER `json.loads` is therefore a depth the decoder
+    can fail before it is measured, which is why this one is read off the characters. Every other
+    sentence in this package that quotes the 3.11 figure quotes this paragraph.
+    """
+
+
+#: The six characters the depth of JSON text depends on: the two pairs of brackets, the quote
+#: that opens and closes a string literal, and the backslash that escapes the next character
+#: inside one. A single character class, so the pattern cannot backtrack.
+_JSON_SIGNIFICANT = re.compile(r'["{}\[\]\\]')
+
+
+def json_nesting_depth(text: str) -> int:
+    """How deeply JSON text nests its containers — one level per object or array — read from the
+    characters in one pass without decoding them, so it can be read on any interpreter for any
+    depth, and costs the same for a hostile document as for a plain one.
+
+    ONE PASS, AND NO PATTERN THAT CAN RESTART — the review of 2026-09-17 read the first draft's
+    cost. That draft blanked string literals with a regular expression first, and on an
+    unterminated run of escaped quotes the engine gave up at the end of the text and re-tried at
+    every quote: quadratic, seven seconds at 64 KiB, and half an hour for a mebibyte inside the
+    size bound, in the scan that exists to protect the decoder. This one visits each significant
+    character once. Inside a string literal it looks only for the closing quote, and a backslash
+    hides whatever character follows it; outside one it counts the containers. Malformed text is
+    not this function's to refuse: an unterminated string swallows the rest, a close with nothing
+    open is ignored, and the decoder says what is wrong in its own words once the text is known
+    to be shallow enough to decode.
+    """
+    depth = deepest = 0
+    in_string = False
+    hidden_until = -1
+    for match in _JSON_SIGNIFICANT.finditer(text):
+        position, char = match.start(), match.group()
+        if position < hidden_until:
+            continue
+        if in_string:
+            if char == "\\":
+                hidden_until = position + 2
+            elif char == '"':
+                in_string = False
+        elif char == '"':
+            in_string = True
+        elif char in "{[":
+            depth += 1
+            if depth > deepest:
+                deepest = depth
+        elif char in "}]" and depth:
+            depth -= 1
+    return deepest
+
+
+def container_depth(document: Any) -> int:
+    """Container nesting of a parsed document — one level per dict or list, which is what every
+    walk after a parse descends — counted with a stack, for the reason the bound exists."""
+    deepest, pending = 0, [(document, 1)]
+    while pending:
+        node, depth = pending.pop()
+        if isinstance(node, dict):
+            deepest = max(deepest, depth)
+            pending.extend((child, depth + 1) for child in node.values())
+        elif isinstance(node, list):
+            deepest = max(deepest, depth)
+            pending.extend((child, depth + 1) for child in node)
+    return deepest
+
+
+def enforce_depth_bound(cls: type["Adapter"], raw: Any) -> None:
+    """Refuse JSON text or a parsed document nesting past the declared `max_depth`, BEFORE the
+    adapter's own decoder or any walker sees it (2026-09-17).
+
+    Beside `enforce_input_bound` for the reason that function gives: one enforcement point, the
+    one the manifest publishes. What it measures is the two forms the base class CAN measure
+    without a parse — JSON text, off its characters, and a `dict` or `list` handed over already
+    parsed, off its containers. An XML document is not measured here: expat builds its tree
+    without recursing, so the adapter that holds the tree measures it the moment it exists
+    (`tak._parse_cot`, `stanag4676.parse_document`), and the text of one is left alone by the
+    leading-character test below. An adapter that declares no bound is refused nothing, as with
+    the size bound.
+
+    Bytes are decoded THE WAY `json.loads` WOULD DECODE THEM — `json.detect_encoding`, which reads
+    a byte-order mark and the zero-byte patterns of UTF-16 and UTF-32 — and a leading mark is
+    stripped before the leading-character test, so the test and the scan see what the decoder
+    will see. The first draft decoded as UTF-8 and looked at the first character as it found it,
+    and a document that opened with a mark, or arrived in UTF-16, walked past the guard into the
+    decoder unmeasured; the review of 2026-09-17 read that on 3.11 as the crash this bound exists
+    to prevent.
+    """
+    bound = cls.metadata.capabilities.limits.max_depth
+    if bound is None:
+        return
+    if isinstance(raw, (bytes, bytearray, memoryview, str)):
+        if isinstance(raw, str):
+            text = raw
+        else:
+            octets = bytes(raw)
+            text = octets.decode(json.detect_encoding(octets), errors="replace")
+        if text.lstrip("\ufeff").lstrip()[:1] not in ("{", "["):
+            return
+        depth, unit = json_nesting_depth(text), "JSON"
+    elif isinstance(raw, (dict, list)):
+        depth, unit = container_depth(raw), "parsed"
+    else:
+        return
+    if depth > bound:
+        raise InputTooDeep(
+            f"{cls.name} was handed a {unit} document nesting {depth} containers deep and "
+            f"declares max_depth = {bound}. Refused before decode: the declaration is at "
+            f"capabilities.limits, its basis at capabilities.limits.declared_because"
+            f"['max_depth'], and every walk that follows a parse descends one frame per level"
+        )
+
+
 def _bind_input_bound(cls: type["Adapter"]) -> None:
-    """Wrap the subclass's own `to_cdm` so the bound is checked before it runs.
+    """Wrap the subclass's own `to_cdm` so the bounds are checked before it runs — the size bound
+    since §40, the depth bound since 2026-09-17 (`enforce_depth_bound`).
 
     WRAPPED AT CLASS DEFINITION, for the reason `__init_subclass__` gives about every other part
     of this contract: a check installed at first call is a check discovered in production. The
@@ -387,9 +513,10 @@ def _bind_input_bound(cls: type["Adapter"]) -> None:
     the payload twice and report the same refusal from two places.
 
     `functools.wraps` leaves `__wrapped__` on the result, which is not decoration: it is the only
-    way to obtain an adapter that ACCEPTS an oversized payload, and `tests/test_cdm_suite.py`
-    uses it to prove that the conformance suite's check O can still report FAIL. A guard nothing
-    can get past is a guard whose failure branch is untested.
+    way to obtain an adapter that ACCEPTS a payload past either declared bound — size or, since
+    2026-09-17, depth — and `tests/test_cdm_suite.py` uses it, through the size half, to prove
+    that the conformance suite's check O can still report FAIL. A guard nothing can get past is a
+    guard whose failure branch is untested.
     """
     own = cls.__dict__.get("to_cdm")
     if own is None or getattr(own, "__isabstractmethod__", False):
@@ -400,6 +527,7 @@ def _bind_input_bound(cls: type["Adapter"]) -> None:
     @functools.wraps(own)
     def bounded(self, raw, *args, **kwargs):
         enforce_input_bound(type(self), raw)
+        enforce_depth_bound(type(self), raw)
         return own(self, raw, *args, **kwargs)
 
     bounded.__input_bounded__ = True

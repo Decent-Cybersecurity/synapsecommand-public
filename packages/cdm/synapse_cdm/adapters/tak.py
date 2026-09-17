@@ -69,8 +69,9 @@ by a well-formed-looking message.
 The parse is bounded in DEPTH as well as in size (2026-09-16). expat builds a tree of any
 depth without recursing; every walk after it recurses once per level; so a document deeper
 than `COT_MAX_DEPTH` is refused the moment the tree exists and before anything descends it,
-and the dict form is held to the same number. That constant is the declared `max_depth` and
-carries the reasoning.
+and the JSON and dict forms are held to the same number by the base class before this module's
+decoder runs (`adapter.enforce_depth_bound`, 2026-09-17). That constant is the declared
+`max_depth` and carries the reasoning.
 """
 from __future__ import annotations
 
@@ -122,9 +123,15 @@ COT_UNKNOWN = 9999999.0
 # hundred Python frames — inside the interpreter's default limit of a thousand from any call
 # depth the harness, the suite or a pytest run puts beneath it.
 #
-# THE SAME NUMBER BOUNDS THE PARSED FORM. `to_cdm` also takes the dict the XML parses to, as
-# bytes of JSON or as a dict, and the walkers after the parse recurse over THAT, so the dict
-# form is measured too — one level per dict or list, which is what they descend. The dict form
+# THE SAME NUMBER BOUNDS THE PARSED FORM, AND THE BASE CLASS MEASURES IT. `to_cdm` also takes the
+# dict the XML parses to, as bytes of JSON or as a dict, and the walkers after the parse recurse
+# over THAT, so the dict form is measured too — one level per dict or list, which is what they
+# descend — by `adapter.enforce_depth_bound`, off the octets for JSON text and off the containers
+# for a dict, before `_as_parsed` runs. Off the octets and not after `json.loads`, because on
+# CPython 3.11 the decoder itself recurses once per container and raises `RecursionError` a
+# little under a thousand containers deep (the reading and its conditions are in
+# `adapter.InputTooDeep`); the first draft measured the decoded document, which was one step too
+# late on that interpreter. The dict form
 # of a document runs at most two levels deeper than the document (the wrapper `_parse_cot` puts
 # round the root, and a list where siblings repeat), so a twin sits that much closer to the
 # bound than its XML; at sixty-four against a fixture set that nests three, that is not a
@@ -260,9 +267,13 @@ class TakAdapter(Adapter):
                         enforced_at=(
                             "`_parse_cot` measures the element tree without recursing, "
                             "immediately after `ET.fromstring` and before `_element_to_dict` "
-                            "walks it; `_as_parsed` measures the dict form the same way for "
-                            "a JSON or dict payload, before anything descends it. Both "
-                            "refuse with `ValueError`, naming both numbers"),
+                            "walks it, and refuses with `ValueError`. A JSON or dict payload "
+                            "is measured by the base class: `Adapter.__init_subclass__`'s "
+                            "wrapper calls `adapter.enforce_depth_bound` before this class's "
+                            "`to_cdm` runs, reading JSON text off its octets so that CPython "
+                            "3.11's recursive decoder never sees a deep document (2026-09-17), "
+                            "and refuses with `InputTooDeep`, a `ValueError`. Both name both "
+                            "numbers"),
                         test="tests/test_cdm_tak_adapter.py::test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it",
                     ),
                     "max_input_bytes": LimitBasis(
@@ -684,8 +695,10 @@ class TakAdapter(Adapter):
 
     def _as_parsed(self, raw: bytes | dict) -> dict:
         """XML bytes -> the parsed dict form; a dict passes straight through."""
+        # Depth is not measured here: a dict or JSON payload was held to `COT_MAX_DEPTH` by
+        # `adapter.enforce_depth_bound` before `to_cdm` ran (2026-09-17), off the octets, so the
+        # decoder below never meets a document it could recurse into.
         if isinstance(raw, dict):
-            _refuse_deeper_than(COT_MAX_DEPTH, _document_depth(raw), "container")
             return raw
         if isinstance(raw, (bytes, bytearray, str)):
             text = raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
@@ -694,9 +707,7 @@ class TakAdapter(Adapter):
                 # A .json fixture handed over as bytes. Accepted so the parsed form can be
                 # replayed either way, and distinguished by inspection rather than by suffix,
                 # because the harness does not tell an adapter what it opened.
-                document = json.loads(text)
-                _refuse_deeper_than(COT_MAX_DEPTH, _document_depth(document), "container")
-                return document
+                return json.loads(text)
             return _parse_cot(text)
         raise TypeError(
             f"TAK adapter takes CoT XML bytes, a JSON string or a parsed dict, got "
@@ -758,21 +769,6 @@ def _tree_depth(root: ET.Element) -> int:
         element, depth = pending.pop()
         deepest = max(deepest, depth)
         pending.extend((child, depth + 1) for child in element)
-    return deepest
-
-
-def _document_depth(document: Any) -> int:
-    """Container nesting of the dict form — one level per dict or list, which is what every walk
-    after the parse descends — counted the same way `_tree_depth` counts elements."""
-    deepest, pending = 0, [(document, 1)]
-    while pending:
-        node, depth = pending.pop()
-        if isinstance(node, dict):
-            deepest = max(deepest, depth)
-            pending.extend((child, depth + 1) for child in node.values())
-        elif isinstance(node, list):
-            deepest = max(deepest, depth)
-            pending.extend((child, depth + 1) for child in node)
     return deepest
 
 

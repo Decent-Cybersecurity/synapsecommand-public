@@ -217,6 +217,17 @@ from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Di
 
 SYSTEM = "ADSB"
 
+# How deep a document may nest before the base class refuses it — §3.5's `max_depth`, declared in
+# the metadata below FROM this constant so the number the manifest publishes is the number that is
+# enforced (2026-09-17). The figure is `tak`'s, for `tak`'s reason: every walk after a parse
+# recurses once per level, and on CPython 3.11 `json.loads` itself recurses once per container
+# and raises `RecursionError` a little under a thousand containers deep (the reading is in
+# `adapter.InputTooDeep`), so `adapter.enforce_depth_bound` reads the depth off the characters
+# before this module's decoder runs. Twelve times the deepest JSON document shipped under
+# `fixtures/adsb/`, goldens included (it nests five), and every walker stays under two
+# hundred frames. An IMPLEMENTATION CAP, and the basis says so.
+ADSB_MAX_DEPTH = 64
+
 #: The source id system for the 24-bit address, and it is NOT the adapter's own name. The
 #: address is an ICAO Annex 10 aircraft address: stable for the airframe and carried
 #: identically by Mode S replies, ACAS and ASTERIX. A fusion layer joining an ADS-B contact to
@@ -1231,14 +1242,11 @@ class AdsbAdapter(Adapter):
             ],
             limits=Limits(
                 max_input_bytes=64,
-                max_depth=None,
+                max_depth=ADSB_MAX_DEPTH,
                 max_objects=None,
                 max_decompressed_bytes=None,
                 max_parse_seconds=None,
                 absent_because={
-                    "max_depth":
-                        "1090ES does not nest: a frame is 112 bits with a fixed ME layout "
-                        "selected by its type code",
                     "max_objects":
                         "no bound is enforced by this adapter today; the parser-safety "
                         "policy's concrete bounds are owed by P5 (ARCHITECTURE.md §9)",
@@ -1251,6 +1259,37 @@ class AdsbAdapter(Adapter):
                         "(ARCHITECTURE.md §9)",
                 },
                 declared_because={
+                    "max_depth": LimitBasis(
+                        kind=LimitKind.IMPLEMENTATION_CAP,
+                        source=(
+                            "1090ES does not nest and its wire form is bounded at 64 octets, but "
+                            "`to_cdm` also takes the parsed twin — a dict, or its JSON text — and "
+                            "the walk after that parse recurses once per level; no JSON document "
+                            "shipped under `fixtures/adsb/`, goldens included, nests more than five "
+                            "containers, and the deepest twin `to_cdm` is handed nests two. 64 is "
+                            "chosen on 2026-09-17 for the reason `tak` chose it on 2026-09-16: "
+                            "every walk after the parse recurses once per level, and on CPython "
+                            "3.11 `json.loads` itself recurses once per container and raises "
+                            "`RecursionError` a little under a thousand containers deep (the "
+                            "reading is in `adapter.InputTooDeep`), so the bound is read off the "
+                            "characters before the decoder runs. Twelve times the deepest JSON "
+                            "document shipped beside the fixtures, and every walker stays under two "
+                            "hundred frames. This is an IMPLEMENTATION CAP (`ADSB_MAX_DEPTH`, "
+                            "`adapters/adsb.py`) and is NOT the format's normative maximum."),
+                        enforced_at=(
+                            "`Adapter.__init_subclass__` wraps this class's own `to_cdm` with "
+                            "`enforce_depth_bound` beside `enforce_input_bound` (`adapter.py`, "
+                            "`_bind_input_bound`): JSON text is measured off its characters by "
+                            "`json_nesting_depth`, decoded the way `json.loads` would decode it, "
+                            "and a parsed dict off its containers by `container_depth`, before "
+                            "`_as_parsed` or `json.loads` runs; past the bound the wrapper raises "
+                            "`InputTooDeep`, a `ValueError` naming both numbers. For this adapter "
+                            "JSON text past the bound cannot fit `max_input_bytes` — sixty-five "
+                            "nested containers are 130 octets against a bound of 64 — so the size "
+                            "bound speaks first for text and the dict form is what the depth check "
+                            "is exercised on; the test says which bound spoke."),
+                        test="tests/test_cdm_parser_safety.py::test_the_json_adapters_declare_a_depth_bound_and_refuse_a_document_past_it",
+                    ),
                     "max_input_bytes": LimitBasis(
                         kind=LimitKind.IMPLEMENTATION_CAP,
                         source=(

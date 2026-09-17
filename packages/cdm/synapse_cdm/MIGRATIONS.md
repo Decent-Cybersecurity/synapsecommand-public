@@ -381,9 +381,10 @@ release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index a
 **What moved inside the distribution: 70 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
-parser-safety record below moves again, eleven of which the harness-evidence record moves a third
-time, and twelve of which the audit's citations record at the end of this section moves once more
-for their basis sentences and one ruling; nine files under three `malformed/` fixture directories
+parser-safety record below moves again, six of which — `tak.py`, `pntmap.py`, `legion.py`,
+`adsb.py` and `ais.py`, with `adapter.py` — that record's second reading moves once more, eleven
+of which the harness-evidence record moves a third time, and twelve of which the audit's citations
+record at the end of this section moves once more for their basis sentences and one ruling; nine files under three `malformed/` fixture directories
 the parser-safety record added — `tak/malformed/deeply_nested.xml`,
 `nits/malformed/deeply_nested.nits.xml`, `pntmap/malformed/a_json_list.json`, and the `README.md`
 and `PROVENANCE.json` beside each; six files the harness-evidence record moves — `adapter.py`,
@@ -612,6 +613,76 @@ call changes. `synapse_cdm/adapters/tak.py:_parse_cot` — PATCH;
 and is not a ruling: the two constants the declarations are read from are public top-level names,
 and the gate derives MINOR from their appearance by its own row, so the pending arc reads MINOR
 from this commit onwards and the release round takes that derivation as it finds it.
+
+**THE SECOND READING, 2026-09-17 — the bound moves in front of the JSON decoder, the four other
+adapters that decode JSON declare it, and the foreign-host evidence test chooses its host against
+the record.** The first push of the 3.11–3.14 matrix (`ci.yml`, the day it was added) failed twice
+over: on every leg in `tests/test_cdm_evidence.py`, whose foreign-host test hard-coded the runner's
+own `linux-x86_64` / `3.12.14` as the foreign pair and asserted this host was not it — true on the
+workstation that wrote it, false on every runner — and on the 3.11 leg alone in this suite's own
+tak test. The second failure is the reading: on CPython 3.11 `json.loads` recurses once per
+container and raises `RecursionError` a little under a thousand containers deep — 995 read from
+module level on 3.11.15 under the default limit, fewer beneath the frames a test runner adds — and
+no interpreter in the matrix decodes an arbitrary depth (3.12.13 raises it near ten thousand,
+3.14.7 near a hundred and sixteen thousand; `adapter.InputTooDeep` carries the readings). So
+`tak`'s JSON form, measured after the decode, was measured one step too late on 3.11, and the test
+had built its thousand-deep twin with the very call that fails. The sentence of the record above
+that this reading corrects is its "`tak` holds the dict form to the same number … `stanag4676`
+measures only the XML": since this commit the base class holds the parsed form of both, and of
+every adapter that declares the bound.
+
+Units: `synapse_cdm/adapter.py`, which gains `InputTooDeep`, `json_nesting_depth`,
+`container_depth` and `enforce_depth_bound`, and whose `_bind_input_bound` wrapper now calls the
+last beside `enforce_input_bound`; `synapse_cdm/adapters/tak.py`, which no longer measures its
+dict form itself; `synapse_cdm/adapters/pntmap.py`, `legion.py`, `adsb.py` and `ais.py`, each
+declaring `max_depth = 64` from one module constant with its basis in `declared_because` and its
+absence reason gone; the five manifests, regenerated; `tests/test_cdm_parser_safety.py`,
+`tests/test_cdm_tak_adapter.py` and `tests/test_cdm_evidence.py`; and this file, PATCH by the
+shipped-document row. The base class measures the two forms it CAN measure without a parse — JSON
+text off its characters in one pass, decoded the way `json.loads` would decode it
+(`json.detect_encoding`, so a byte-order mark or a UTF-16 document is measured and not walked
+past), and a dict or list off its containers — and refuses past the declared bound with
+`InputTooDeep`, a `ValueError`, before any decoder runs; an XML tree stays the adapter's to
+measure, because expat builds it without recursing and only the adapter holds it. The four new
+declarations take `tak`'s figure for `tak`'s reason: no JSON document shipped under any of the four
+fixture directories, goldens included, nests more than seven containers, the deepest input `to_cdm`
+is handed nests five, and sixty-four keeps every walker under two hundred frames. For `adsb` the
+text form can never reach the depth check — sixty-five nested containers are 130 octets against a
+`max_input_bytes` of 64 — so the size bound speaks first for text and the dict form is what the
+declaration is exercised on, and the test says so rather than skipping it. The evidence test now
+chooses the foreign pair against the record, so it asks the same question on every host.
+
+**WHAT MOVED, AND WHAT DID NOT.** No wire field, no golden file, no fixture the harness selects, no
+`SCHEMA_VERSION`; every shipped fixture and twin is accepted still. What is refused that was not: a
+JSON or dict document nesting between sixty-five containers and the interpreter's recursion
+threshold, which the four adapters translated before this commit — none such ships, the deepest
+input twin nesting five. The five adapter classes carry this change under the PATCH ruling round
+PE recorded for them above, as the record above says of its three: `TakAdapter` and
+`PntmapAdapter` for the third time, `LegionAdapter`, `AdsbAdapter` and `AisAdapter` for the
+second — four gain a `max_depth` declaration with its basis, and `tak`'s basis now names the base
+class as the enforcement point for its parsed form.
+
+**Bump ruling.** The gate finds eighteen units it cannot classify from the table: the five adapter
+classes above, ruled by round PE, and thirteen that are positional or in place; the arc's MINOR
+comes from the four new public names in `adapter.py` and the four new module constants, which the
+floor counts on its own. The anonymous import block of `adapter.py` gains `import json` and
+`import re` and loses nothing: `synapse_cdm/adapter.py:<statement 4>` — PATCH,
+`synapse_cdm/adapter.py:<statement 5>` — PATCH, `synapse_cdm/adapter.py:<statement 6>` — PATCH,
+`synapse_cdm/adapter.py:<statement 7>` — PATCH, `synapse_cdm/adapter.py:<statement 8>` — PATCH,
+`synapse_cdm/adapter.py:<statement 9>` — PATCH, `synapse_cdm/adapter.py:<statement 10>` — PATCH:
+two imports appear at their positions and the block's other members are unchanged as a set; no
+importable surface of the module moved with them. `ais.py` gains the module constant
+`AIS_MAX_DEPTH` above its layout tables, and the anonymous statements beneath it move down by one:
+`synapse_cdm/adapters/ais.py:<statement 43>` — PATCH, `synapse_cdm/adapters/ais.py:<statement 44>`
+— PATCH, `synapse_cdm/adapters/ais.py:<statement 45>` — PATCH,
+`synapse_cdm/adapters/ais.py:<statement 46>` — PATCH, `synapse_cdm/adapters/ais.py:<statement 47>`
+— PATCH: index shift from one added constant, each unit's content unchanged (`legion.py` and
+`pntmap.py` have no anonymous statement below theirs; `adsb.py`'s one, `ME_START, ME_END`, moves
+from 15 to 16 and the gate classifies the move itself). And the wrapper:
+`synapse_cdm/adapter.py:_bind_input_bound` — MINOR: one call added to the function it installs,
+`enforce_depth_bound` beside `enforce_input_bound`, and MINOR rather than a wording because the
+wrapper now refuses, with a `ValueError`, JSON and dict payloads nesting past sixty-four that the
+four adapters translated before — the arc's floor already, and stated here as the change it is.
 
 **THE HARNESS-EVIDENCE RECORD, 2026-09-16 — the harness compares egress octets under a tolerance
 each adapter declares, so L4 is computed for the eleven emitters rather than typed beside an L3

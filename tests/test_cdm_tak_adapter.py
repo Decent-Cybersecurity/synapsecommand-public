@@ -21,6 +21,7 @@ import pytest
 
 import synapse_cdm
 from synapse_cdm import harness, lossless, times
+from synapse_cdm.adapter import InputTooDeep
 from synapse_cdm.adapters import tak
 from synapse_cdm.adapters.tak import TakAdapter
 from synapse_cdm.enums import (
@@ -413,12 +414,23 @@ def test_a_deeply_nested_document_is_refused_before_anything_recurses_into_it():
         assert len(document.encode()) < TakAdapter.metadata.capabilities.limits.max_input_bytes
         with pytest.raises(ValueError, match=f"nests {depth} elements deep.*max_depth = {bound}"):
             _adapter().to_cdm(document.encode())
-    # The parsed form is held to the same number: a JSON twin, as bytes and as a dict.
+    # The parsed form is held to the same number: a JSON twin, as bytes and as a dict. Built
+    # with a loop and spliced in as text, NOT through `json.loads` and `json.dumps`: on CPython
+    # 3.11 both recurse once per container and raise `RecursionError` a little under a thousand
+    # deep (the reading is in `adapter.InputTooDeep`), which is what the first draft of this block
+    # did to itself on the 3.11 leg of the CI matrix (2026-09-17). The bound is read off the
+    # characters by the base class for the same reason.
     twin = tak._parse_cot(_nested_event(bound))
-    twin["event"]["detail"]["n"] = json.loads(("{\"n\":" * 1000) + "{}" + ("}" * 1000))
-    for payload in (json.dumps(twin).encode(), twin):
-        with pytest.raises(ValueError, match="containers deep.*max_depth"):
+    deep: dict = {}
+    for _ in range(1000):
+        deep = {"n": deep}
+    twin["event"]["detail"]["n"] = "DEEP"
+    as_text = json.dumps(twin).replace('"DEEP"', ('{"n":' * 1000) + "{}" + ("}" * 1000))
+    twin["event"]["detail"]["n"] = deep
+    for payload in (as_text.encode(), twin):
+        with pytest.raises(ValueError, match="containers deep.*max_depth") as raised:
             _adapter().to_cdm(payload)
+        assert isinstance(raised.value, InputTooDeep), "the base class spoke, not this module"
 
 
 def test_a_document_at_the_declared_depth_still_translates():
