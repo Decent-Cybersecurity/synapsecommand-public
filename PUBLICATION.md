@@ -3159,6 +3159,14 @@ status above; `review_file` reads `rounds/reports/PR.review.md`, which is the ve
 was taken on. It is the **first** record in `releases/witness/`, which until this commit held only
 its README.
 
+**Corrected 2026-09-16, on the path `review_file` names.** The value the paragraph above quotes
+is a path in the runner's private, untracked round apparatus — the reviewer's verdict the
+approval comment named — and not a file this repository keeps: the directory has no tracked
+file on any clone, and `releases/witness/README.md` says so beside the record. The record is
+left as written, because its bytes are the Release asset whose digest this entry states; the
+builder has since been changed to lift into `review_file` only a reference a reader of this
+repository can open, or nothing, and `tests/test_cdm_witness_builder.py` holds it to that.
+
 **THE EVIDENCE IS ATTACHED AND RETRIEVABLE AND THE FOURTEEN MANIFESTS STILL DECLARE IT IS NOT, AND
 THAT GAP IS DEFERRED RATHER THAN OVERLOOKED.** `evidence-2.1.2.tar.gz` is the Release's own asset,
 136 114 bytes, digest above, downloadable by anybody; the witness record references it. The condition

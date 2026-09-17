@@ -721,9 +721,9 @@ and can only be regenerated from the tag by a new release, which is when this ta
 **WHAT IS LEFT SAYING THE OLD THING, ON PURPOSE.** `docs/soif-part1-release-readiness.md` and this
 file's 2.1.2 record describe the arrangement as it stood at that release, and `RELEASE_NOTES.md`
 says `ADAPTER_API_VERSION` is `2.0.0` because for 2.1.2 it is; they are records, not prose, and the
-release round's notes will describe 2.1.0 of the contract. `rounds/reports/P2.md` anticipated
-exactly this change and deferred it; the design taken measures rather than declares, which is the
-half that report asked for.
+release round's notes will describe 2.1.0 of the contract. `rounds/reports/P2.md` (an untracked
+round report, not in this repository) anticipated exactly this change and deferred it; the design
+taken measures rather than declares, which is the half that report asked for.
 
 **Bump ruling.** The arc's floor is MINOR from the new public names and the contract constant, and
 the gate cannot classify ten changed units from the table alone. Three are additions to a surface a
@@ -892,17 +892,28 @@ constant's text names its source as private rather than by a path; `synapse_cdm/
 records under `fixtures/` still cited the apparatus by path or by file name with no word that
 it is private: `adsb/spec/adsb_terms.json`, `ais/spec/ais_terms.json` and
 `tak/spec/tak_terms.json`, whose `mapping_rule_applied` quoted the licence-provenance mapping
-rule from the round brief by its path, and `klv/spec/klv_pin.json`, whose ST 0903.4 pin names
-PLAN.md as the gate that permits acquisition by hand. Each now says the document is a private
-one in the untracked round apparatus, the quoted rule's text being what the record carries; no
-reading, no instant, no class and no ruling in any of the four moves, and nothing reads the four
-sentences but a person. The `FORMAT_COVERAGE.md` parks table's ST 0806 row still named the
-round report by path in its live reopen condition — the citations record above rewrote row
-73's sentence and not this one — and it now names the proposal as an untracked round report
-whose substance the constant carries, as row 73 does; the paragraph on the same line that the
-row's dated correction of 2026-09-06 keeps in its own tense is left in it. `.gitignore`'s count
-of tracked lines naming the directory is re-derived by `tests/test_cdm_pins.py` and moved with
-these. PATCH by the same words: a declared fact corrected, in four records and one row.
+rule from the round brief by its path, and `klv/spec/klv_pin.json`, whose MISP-2019.1 Motion
+Imagery Handbook pin — the one document in that record that arrived over no URL — names
+PLAN.md as the gate that permits acquisition by hand (a first draft of this paragraph, the same
+day, attributed that sentence to the ST 0903.4 pin, which cites no plan; the verifiers of that
+draft read both blocks, and the attribution is corrected here rather than beside, the record
+being a pending one). Each now says the document is a private one in the untracked round
+apparatus, the quoted rule's text being what the record carries; no reading, no instant, no
+class and no ruling in any of the four moves, and nothing reads the four sentences but a
+person. The `FORMAT_COVERAGE.md` parks table's ST 0806 row still named the round report by
+path in its live reopen condition — the citations record above rewrote row 73's sentence and
+not this one — and it now names the proposal as an untracked round report whose substance the
+constant carries, as row 73 does; the paragraph on the same line that the row's dated
+correction of 2026-09-06 keeps in its own tense keeps it, and since the same day says in a
+parenthesis, in that tense, that the report it wrote the fork up in is an untracked round
+report this repository does not hold. Two sentences of this file that named a round document
+bare say the same: the contract paragraph above, on the report that anticipated a measured
+`ADAPTER_API_VERSION`, in a parenthesis, and the 1.8.0 record's paragraph on the twelve units
+ruled by shape, on the runner's hard limits, by a dated note beside a closed record; and
+`PUBLICATION.md` entry 19 carries the same dated correction beside the sentence that quotes
+the 2.1.2 witness's `review_file`. `.gitignore`'s count of tracked lines naming the directory
+is re-derived by `tests/test_cdm_pins.py` and moved with these. PATCH by the same words: a
+declared fact corrected, in four records, one row and three sentences of this file.
 
 **AND THE FOURTEEN `malformed/README.md` FILES THE SAME AUDIT LEFT CITING A LINE, 2026-09-16.**
 Each fixture directory's `malformed/README.md` — a file the wheel ships — said the harness selects
@@ -4069,6 +4080,13 @@ removed, none in either; names added, `RVT_TAG` and `RVT_BASIS` in `klv_uas_code
 classified MINOR by the gate's own new-name row and none of them ambiguous. So the STOP arm of the
 rule is unused and it is stated anyway, because a rule quoted only where it fires is a rule whose
 other arm nobody can check.
+
+**Dated note, 2026-09-16.** The runner's hard-limits document the paragraph above names is a
+private one in the untracked round apparatus, not in this repository, and the limit it cites —
+a runner writes no ruling nobody gave it — is stated in full by the sentence that cites it, so
+nothing in the ruling rests on the path. The paragraph is left as written, on the rule the pin
+records keep for a closed record: one that quietly updates its own history is one nobody can
+date.
 
 **Bump ruling.** `synapse_cdm/adapters/klv_uas_codec.py:<statement 6>` — PATCH: an import line,
 renumbered in place by the insertion of `from synapse_cdm.adapters import klv_rvt_codec as rvt`
