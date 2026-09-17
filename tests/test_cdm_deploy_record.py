@@ -327,28 +327,41 @@ def test_the_gate_is_not_a_suite_member_and_says_so(gate):
 #: two fixtures in `gates/bump_derivation.py`, and the repair is to stop stating the fact rather
 #: than to exempt the file. The clause is elided; the version sentence and the decoy semvers, which
 #: are what this parser has to get right, are verbatim.
+#: TWO DATED SENTENCES, OLDEST FIRST — since 2026-09-16. The page's versioning note is append-only,
+#: so the rendered page carries one "package is at" sentence per dated paragraph and the newest is
+#: LAST; the fixture has the same shape, and the second sentence is the one the parser must read.
 SERVED_PAGE = (
     "and the two are allowed to diverge: adapters have shipped without a single\n"
     "change to <code>schema_version</code>, and each of them would have been a release of the "
     "package. They were\nboth <code>1.0.0</code> at first release, by coincidence of two first "
     "releases, and they parted at 1.1.0: the\npackage is at <code>1.5.0</code> and the schema "
     "stays at <code>1.0.0</code>."
+    "\n<strong>Updated later, and the reading moved.</strong> On this tree the\n"
+    "package is at <code>1.6.0</code> and the schema stays at <code>1.0.0</code>."
 )
 
 
 def test_the_served_version_parser_reads_the_page_the_site_actually_serves(gate):
     """The witness's parser, over the saved page. It must find the PACKAGE version and not another.
 
-    The trap this pins is specific and the page is full of it: that fragment carries `1.0.0` three
-    times and `1.1.0` once, and only one of the four is the distribution's version. A parser keyed
-    on "the first semver on the page" would read the schema's, agree with nothing, and disagree
-    with `version.py` forever — which is the failure mode of a witness that cannot fail a build:
-    nobody would find out from a red run.
+    The trap this pins is specific and the page is full of it: that fragment carries `1.0.0` four
+    times and `1.1.0` once, and only two of the six semvers are the distribution's version — and
+    of those two, only the LAST is current. A parser keyed on "the first semver on the page" would
+    read the schema's; one keyed on the first package sentence read `2.0.0` against a page that
+    had just been deployed at `2.1.2` (`PUBLICATION.md` entry 19, the ninth witness of that
+    kind), because the page appends a dated reading and never edits one. Both are the failure mode
+    of a witness that cannot fail a build: nobody would find out from a red run.
     """
-    assert gate.served_version(SERVED_PAGE) == "1.5.0", (
-        "served_version() no longer reads the package version out of the served changelog. The "
-        "sentence is 'the package is at <code>X.Y.Z</code>' with the number inside a code element; "
-        "if the page's markup changed, re-anchor the pattern rather than loosening it to any semver"
+    assert gate.served_version(SERVED_PAGE) == "1.6.0", (
+        "served_version() no longer reads the CURRENT package version out of the served changelog. "
+        "The sentence is 'the package is at <code>X.Y.Z</code>' with the number inside a code "
+        "element, the page carries one per dated paragraph, and the newest is appended last; if the "
+        "page's markup changed, re-anchor the pattern rather than loosening it to any semver"
+    )
+    oldest_only = SERVED_PAGE.split("<strong>Updated later")[0]
+    assert gate.served_version(oldest_only) == "1.5.0", (
+        "the first sentence alone no longer reads as the package version, so the fixture's second "
+        "sentence is not what the assertion above is exercising"
     )
 
 

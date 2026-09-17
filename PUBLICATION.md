@@ -3199,6 +3199,14 @@ by this; the check is named here rather than corrected, because a gate is not re
 the round that trips it, and because the repair is a choice between changing the parser and changing
 the page's append rule, which is not this entry's to make.
 
+**Corrected 2026-09-16, and it is the parser that moved, not the page.** The choice above was made
+by the maintainer's audit brief: the page's append rule stands — a dated reading is appended and
+never edited — and `gates/deploy_record.py`'s `served_version` reads the **last** `package is at`
+sentence rather than the first, in the audit commit that carries this paragraph.
+`tests/test_cdm_deploy_record.py`'s fixture now carries two dated sentences in the page's shape and
+requires the newer one. The finding above is kept as written; the witness read `DISAGREE` for the
+reason it states, and reads `AGREE` against the same page from this commit on.
+
 **This round writes four files**, and the fifth is the test module that states the ledger count.
 `releases/witness/2.1.2.json` is new; `PUBLICATION.md` gains this entry and entry 8's row, count and
 alias paragraph; `docs/docs/changelog.mdx` gains a dated correction beside the release paragraph whose

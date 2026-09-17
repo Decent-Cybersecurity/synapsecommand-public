@@ -112,6 +112,14 @@ ALIAS_SEARCH_DEPTH = 4
 #: is built from `docs/` and deployed by an act, so what it serves is a fact about the last deploy
 #: and never about this tree — which is exactly the class rule 12 in `synapse_cdm/README.md` says
 #: cannot be re-derived from anything in here. The witness below reads it and dates it.
+#:
+#: THE PAGE STATES IT MORE THAN ONCE, AND THE CURRENT STATEMENT IS THE LAST — 2026-09-16. The
+#: page's versioning note is append-only: every dated reading is kept as written and a newer one is
+#: appended AFTER it (`docs/docs/changelog.mdx` says so of its own corrections), so after the 2.1.x
+#: transitions the rendered page carries five sentences of this shape, oldest first. `search()`
+#: took the first and the witness read `states 2.0.0` against a page that had just been deployed
+#: correctly — `PUBLICATION.md` entry 19 recorded the finding and left the repair to a ruling;
+#: this is the parser side of that choice, and `served_version` reads the last match.
 SERVED_VERSION_PAGE = "/changelog/"
 SERVED_VERSION_SENTENCE = re.compile(
     r"package is at <code>(\d+\.\d+\.\d+)</code>")
@@ -429,8 +437,11 @@ def served_version(html: str) -> str | None:
     the part that can be wrong quietly, and the fetch is the part that cannot be tested offline at
     all. `tests/test_cdm_deploy_record.py` runs it over a fixture in both directions.
     """
-    found = SERVED_VERSION_SENTENCE.search(html)
-    return found.group(1) if found else None
+    # The page is append-only: every dated reading is kept and the newest is appended LAST
+    # (docs/docs/changelog.mdx states the rule of its own corrections), so the CURRENT statement
+    # is the last match, not the first — the comment above SERVED_VERSION_PAGE has the history.
+    found = SERVED_VERSION_SENTENCE.findall(html)
+    return found[-1] if found else None
 
 
 def check_served_version() -> dict:
