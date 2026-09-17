@@ -57,8 +57,9 @@ time**, and the tree's tally is now nine as well, which is the first moment sinc
 written that the two numbers have been equal for a reason rather than by arithmetic.
 
 *Dated note, 2026-09-16: `version.py:313` was the constant's line when that correction was
-written; `EVIDENCE_SCHEMA_VERSION` has since moved to `version.py:369`, the reading its row in the
-table below carries.*
+written; `EVIDENCE_SCHEMA_VERSION` has since moved to `version.py:371`, the reading its row in the
+table below carries — two lines further down than that morning's 369, because the semver
+pattern the file gained the same day brought `import re` above every constant.*
 
 **Two readings moved in the same round and both are corrections rather than rewrites.**
 `MANIFEST_SCHEMA_VERSION` reads `1.1.0`: §34 of the specification needs an "explicit documented
@@ -83,12 +84,12 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.2` | `packages/cdm/synapse_cdm/version.py:303` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:273` |
-| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:309` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.1.0` | `packages/cdm/synapse_cdm/version.py:320` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:355` |
-| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:369` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.2` | `packages/cdm/synapse_cdm/version.py:305` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:275` |
+| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:311` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.1.0` | `packages/cdm/synapse_cdm/version.py:322` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:357` |
+| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:371` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
 | Event semantic major | — | — | a segment of the identifier | the `type_id` itself, e.g. `sc.pnt.gnss_interference.v1` |

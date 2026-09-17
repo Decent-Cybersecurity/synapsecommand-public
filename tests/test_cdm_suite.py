@@ -16,10 +16,9 @@ import pytest
 
 import synapse_cdm
 from synapse_cdm import harness, ids, suite, times, version
-from synapse_cdm.adapter import Adapter, packaged_fixtures, roster
+from synapse_cdm.adapter import Adapter, roster
 from synapse_cdm.adapters.pntmap import PntmapAdapter
 from synapse_cdm.enums import Affiliation, EntityType
-from synapse_cdm.manifest import UnknownFields
 from synapse_cdm.models import Entity
 
 from tests import probe_metadata

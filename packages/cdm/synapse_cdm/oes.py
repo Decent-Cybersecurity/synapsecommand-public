@@ -66,6 +66,7 @@ from typing import TYPE_CHECKING, Any, Iterable
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from synapse_cdm.models import STRICT, SourceId, Timestamp
+from synapse_cdm.version import SEMVER_RE as _SEMVER_RE
 
 if TYPE_CHECKING:                                  # pragma: no cover - annotations only
     from synapse_cdm.models import Event
@@ -176,10 +177,14 @@ GOVERNED_ONTOLOGY_TERM_RE = re.compile(
 #: reference, a bare word and a local name all fail it, which is what §15's first test asks for.
 URI_SCHEME_RE = re.compile(r"[A-Za-z][A-Za-z0-9+.\-]*:")
 
-#: Semver, the same shape `CDMBase._semver` (`models.py`) already enforces on
-#: `schema_version`. Reused rather than invented: the repository has exactly one way of spelling
-#: a version on the wire, and a second one would be a second thing to keep correct.
-SEMVER_RE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
+#: Semver, the same shape every version field of this package enforces: `version.SEMVER_RE`,
+#: re-exported here under the name `oes_registry` reads it by (an assignment and not a bare
+#: import, so the name stays a top-level unit of this module to `gates/bump_derivation.py`, which
+#: would otherwise read a public name as removed). Until 2026-09-16 this module owned the
+#: pattern and said the repository had exactly one way of spelling a version on the wire — it had
+#: three, and `CDMBase._semver` was the loosest of them; the pattern moved to `version.py`, the
+#: leaf every one of the three already imported.
+SEMVER_RE = _SEMVER_RE
 
 #: The reserved extension namespace. Every `sc.*` key fails in v0.1 as "reserved but undefined",
 #: and no extension registry is created to represent an empty governed set (§30, ADR 0008).

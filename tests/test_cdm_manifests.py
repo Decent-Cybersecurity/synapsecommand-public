@@ -28,7 +28,7 @@ import re
 import jsonschema
 import pytest
 
-from synapse_cdm import adapter, harness, manifests, schemas, suite, times
+from synapse_cdm import adapter, manifests, schemas, suite, times
 from synapse_cdm.manifest import (AdapterMetadata, Capabilities, ClaimStatus, Direction,
                                   MaturityLevel)
 from synapse_cdm.version import ADAPTER_API_VERSION, MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
@@ -361,3 +361,20 @@ def test_no_adapter_declares_a_maturity_its_current_evidence_does_not_support():
             f"{name}: {path} carries no `{function}`. The rung rests on that test and the "
             "citation has gone stale, which is the figure this repository never leaves unchecked"
         )
+
+
+def test_a_manifests_adapter_version_is_held_to_the_packages_one_semver_pattern():
+    """`AdapterMetadata.adapter_version` reads `version.is_semver` since 2026-09-16.
+
+    Its own `^\\d+\\.\\d+\\.\\d+$` under `.match` took "01.0.0" and "1.0.0\\n" — the trailing
+    newline is what `$` admits and `fullmatch` does not, which is the rule `oes.py`'s header
+    states — while the same strings were refused as a `spec_version`. One pattern now, in
+    `version.py`, and the manifest field refuses what the wire fields refuse.
+    """
+    import pydantic
+
+    from tests import probe_metadata
+    for bad in ("01.0.0", "1.0.0\n", " 1.0.0", "1.0", "v1.0.0"):
+        with pytest.raises(pydantic.ValidationError):
+            probe_metadata("probe", version=bad)
+    assert probe_metadata("probe", version="9.9.9").adapter_version == "9.9.9"

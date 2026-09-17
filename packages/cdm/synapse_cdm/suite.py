@@ -55,10 +55,11 @@ import time
 import uuid
 from typing import Any
 
+from synapse_cdm import canonical as _canonical
 from synapse_cdm import harness, lossless, manifest, times, version
-from synapse_cdm.adapter import Adapter, load_adapter, packaged_fixtures, roster
+from synapse_cdm.adapter import (Adapter, is_shipped, load_adapter, packaged_fixtures, roster,
+                                 shipped)
 from synapse_cdm.manifest import UnknownFields
-from synapse_cdm.models import CDMBase
 from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION
 
 PASS, FAIL, SKIP = harness.PASS, harness.FAIL, harness.SKIP
@@ -167,7 +168,11 @@ def _verdict(verdict: str, *, reason: str | None = None, declared: bool = False,
 
 
 def canonical(objects: list[dict]) -> str:
-    """ARCHITECTURE.md §6.2's one serialisation, quoted there and written once here.
+    """ARCHITECTURE.md §6.2's one serialisation, quoted there and written once in `canonical.py`.
+
+    This docstring said "written once here" until 2026-09-16, when the same expression was at
+    six other sites; the module `synapse_cdm.canonical` is now the one place, and this is G's
+    name for it.
 
     WHY G COMPARES THESE STRINGS AND DOES NOT HASH THEM — A COLLISION, RECORDED RATHER THAN
     RESOLVED IN PASSING
@@ -191,26 +196,25 @@ def canonical(objects: list[dict]) -> str:
     belongs to whoever rules on P4, and it is written up in this round's report rather than taken
     here.
     """
-    return json.dumps(objects, sort_keys=True, indent=2) + "\n"
+    return _canonical.serialise(objects)
 
 
-def _dump(objects: list[CDMBase]) -> list[dict]:
-    return [obj.model_dump(mode="json") for obj in objects]
+#: The harness's, by name: one dump, so the objects G compares are the objects F judged.
+_dump = harness._dump
 
 
 def _fixtures(directory: pathlib.Path) -> list[pathlib.Path]:
-    """`harness.py`'s predicates, applied to the same directory it applies them to.
+    """`harness.select_fixtures`, under the name this module's callers and tests use.
 
-    Restated rather than imported for the reason the harness's own docstring gives — the two
-    modules select fixtures for two different purposes — and kept identical by
-    `tests/test_cdm_suite.py`, which asserts the two selections agree over every shipped
-    directory. §33's `PROVENANCE.json` is excluded HERE too, and by the same NAME the harness
-    excludes it by: `check_malformed` reads `malformed/` through this function, and every
-    `malformed/` directory carries a provenance record of its own.
+    Until 2026-09-16 this restated the harness's four predicates and said the restatement was
+    "kept identical by `tests/test_cdm_suite.py`" for "the reason the harness's own docstring
+    gives" — and neither was so: the holding test is `tests/test_cdm_evidence.py`'s
+    `test_the_harness_and_the_suite_both_stop_selecting_the_record`, and the harness gave no
+    reason. It now calls the one definition. §33's `PROVENANCE.json` is therefore excluded here
+    by the harness's own name for it: `check_malformed` reads `malformed/` through this
+    function, and every `malformed/` directory carries a provenance record of its own.
     """
-    return sorted(p for p in directory.iterdir()
-                  if p.is_file() and not p.name.startswith(".")
-                  and p.name not in ("README.md", harness.PROVENANCE_FILE))
+    return harness.select_fixtures(directory)
 
 
 def _fresh(adapter: Adapter, clock: times.Clock) -> Adapter:
@@ -1025,11 +1029,10 @@ def shipped_adapters() -> dict[str, type[Adapter]]:
     any adapter a caller has merely IMPORTED: a third party's class, or a test double. A release's
     conformance sweep must not grow or shrink with what else is in the interpreter, so `--all`
     reads this and not `roster()`. `tests/test_cdm_suite.py` had already written the same filter
-    for its own parametrisation and its docstring names the hazard; the rule belongs here, where
-    the shipped sweep is defined, rather than only in the tests that noticed it.
+    for its own parametrisation and its docstring names the hazard; the rule lives in
+    `adapter.shipped`, beside `roster()`, since 2026-09-16, and this is the suite's name for it.
     """
-    return {name: cls for name, cls in roster().items()
-            if cls.__module__.startswith("synapse_cdm.adapters.")}
+    return shipped()
 
 
 def packaged_label(adapter_class: type[Adapter]) -> str:
@@ -1150,11 +1153,10 @@ def main(argv: list[str] | None = None) -> int:
 
     fixtures = args.fixtures
     if fixtures is None:
-        if not adapter_class.__module__.startswith("synapse_cdm.adapters."):
-            print(f"synapse conformance: --fixtures is required for {args.adapter!r}: "
-                  f"{adapter_class.__module__}.{adapter_class.__qualname__} is not one of the "
-                  "adapters this package ships, so the package has no fixtures for it and will "
-                  "not guess at a directory", file=sys.stderr)
+        if not is_shipped(adapter_class):
+            print("synapse conformance: "
+                  f"{harness.fixtures_required_message(args.adapter, adapter_class)}",
+                  file=sys.stderr)
             return EXIT_USAGE
         fixtures = packaged_fixtures(adapter_class)
 

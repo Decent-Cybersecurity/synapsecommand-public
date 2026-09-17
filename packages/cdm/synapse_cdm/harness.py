@@ -75,8 +75,8 @@ from typing import Any
 
 import jsonschema
 
-from synapse_cdm import lossless, schemas, times
-from synapse_cdm.adapter import Adapter, load_adapter, packaged_fixtures, roster
+from synapse_cdm import canonical, lossless, schemas, times
+from synapse_cdm.adapter import Adapter, is_shipped, load_adapter, packaged_fixtures, roster
 from synapse_cdm.models import CDMBase
 
 GOLDEN_DIR = "golden"
@@ -98,6 +98,19 @@ PROVENANCE_FILE = "PROVENANCE.json"
 #: document nobody claimed was a message.
 FIXTURE_PATTERN = ("immediate children of the directory that are files, "
                    "excluding dotfiles, README.md and PROVENANCE.json")
+
+
+def select_fixtures(directory: pathlib.Path) -> list[pathlib.Path]:
+    """`FIXTURE_PATTERN`, executed: the one definition of "a fixture", sorted.
+
+    The suite's `_fixtures` and the evidence generator's `harness_selects` restated these four
+    predicates and a test held the three restatements equal; since 2026-09-16 both call this,
+    so the three modules cannot select different sets, and the test holds one function to the
+    sentence above it.
+    """
+    return sorted(p for p in directory.iterdir()
+                  if p.is_file() and not p.name.startswith(".")
+                  and p.name not in ("README.md", PROVENANCE_FILE))
 
 #: Exit status for a run that could not happen. Distinct from 1, which means fixtures ran and
 #: some failed: this one means the INVOCATION was wrong, and conflating the two would tell a
@@ -352,6 +365,19 @@ def _no_fixtures_message(adapter: Adapter, fixtures: pathlib.Path, *, existed: b
     return "\n".join(lines)
 
 
+def fixtures_required_message(reference: str, adapter_class: type[Adapter]) -> str:
+    """The refusal of `--adapter module:ClassName` without `--fixtures`, minus the CLI's name.
+
+    One text for this CLI and for `synapse conformance`, because the two refuse the same
+    invocation for the same reason and a reader who meets both should read one sentence; each
+    prints it behind its own name and returns its own exit constant.
+    """
+    return (f"--fixtures is required for {reference!r}: "
+            f"{adapter_class.__module__}.{adapter_class.__qualname__} is not one of the "
+            "adapters this package ships, so the package has no fixtures for it and will "
+            "not guess at a directory")
+
+
 def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False,
         schema_dir: pathlib.Path | None = None) -> dict:
     """Replay every fixture. Returns a machine-readable report.
@@ -400,10 +426,8 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
     # them in the exit code would be distinguishing two ways of proving nothing.
     if not fixtures.is_dir():
         raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=False))
-    paths = sorted(p for p in fixtures.iterdir()
-                   if p.is_file() and not p.name.startswith(".")
-                   and p.name not in ("README.md", PROVENANCE_FILE)
-                   and p.parent.name != GOLDEN_DIR)
+    # A directory NAMED `golden` is a golden directory and not a fixture set, whatever it holds.
+    paths = select_fixtures(fixtures) if fixtures.name != GOLDEN_DIR else []
     if not paths:
         raise NoFixturesFound(_no_fixtures_message(adapter, fixtures, existed=True))
     golden_dir = fixtures / GOLDEN_DIR
@@ -465,7 +489,7 @@ def run(adapter: Adapter, fixtures: pathlib.Path, *, update_golden: bool = False
             reference_normalised.append(path.name)
 
         golden_path = golden_dir / f"{path.stem}.cdm.json"
-        rendered = json.dumps(dumped, indent=2, sort_keys=True) + "\n"
+        rendered = canonical.serialise(dumped)
         if update_golden:
             golden_dir.mkdir(parents=True, exist_ok=True)
             golden_path.write_text(rendered)
@@ -661,11 +685,9 @@ def main(argv: list[str] | None = None) -> int:
         # naming a directory the caller never mentioned — or DOES, because the name collides with
         # one of ours, and then a third-party adapter is silently judged against our payloads and
         # every check passes or fails for reasons that have nothing to do with it.
-        if not adapter_class.__module__.startswith("synapse_cdm.adapters."):
-            print(f"harness: --fixtures is required for {args.adapter!r}: "
-                  f"{adapter_class.__module__}.{adapter_class.__qualname__} is not one of the "
-                  "adapters this package ships, so the package has no fixtures for it and will "
-                  "not guess at a directory", file=sys.stderr)
+        if not is_shipped(adapter_class):
+            print(f"harness: {fixtures_required_message(args.adapter, adapter_class)}",
+                  file=sys.stderr)
             return EXIT_NO_FIXTURES
         fixtures = packaged_fixtures(adapter_class)
 

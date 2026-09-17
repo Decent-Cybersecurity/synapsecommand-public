@@ -588,3 +588,22 @@ def packaged_fixtures(adapter: type[Adapter] | Adapter) -> pathlib.Path:
     """
     cls = adapter if isinstance(adapter, type) else type(adapter)
     return fixture_root() / (cls.fixture_dir or cls.name)
+
+
+def is_shipped(cls: type[Adapter]) -> bool:
+    """Is this adapter one THIS PACKAGE ships, as opposed to one that is merely registered?
+
+    `REGISTRY` is filled by `__init_subclass__`, so it carries any `Adapter` subclass any
+    module has defined — a partner's `module:ClassName`, or a test double — and a publication
+    of what the distribution ships cannot read it raw. The test is the module path: shipped
+    adapters live under `synapse_cdm.adapters`, and nothing else does. Written once here since
+    2026-09-16; `manifests.shipped`, `suite.shipped_adapters` and both CLIs' refusal of
+    `--adapter module:ClassName` without `--fixtures` read it, where each had spelled the same
+    prefix test for itself.
+    """
+    return cls.__module__.startswith(f"{__package__}.adapters.")
+
+
+def shipped() -> dict[str, type[Adapter]]:
+    """`roster()`, narrowed to the adapters this package ships, in roster order."""
+    return {name: cls for name, cls in roster().items() if is_shipped(cls)}

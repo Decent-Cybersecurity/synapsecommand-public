@@ -615,3 +615,38 @@ def test_the_union_still_discriminates_every_kind_after_the_widening():
     adapter = TypeAdapter(CDMObject)
     for obj in (_entity(), _event(), _track(), _plan_object()):
         assert adapter.validate_python(obj.model_dump(mode="json")).object_kind == obj.object_kind
+
+
+# ------------------------------------------------- one semver pattern, and the fields held to it
+
+#: Spellings a loose validator takes as a version and a consumer's comparison sorts three ways:
+#: a leading zero, a trailing newline (what `$` admits and `fullmatch` does not), leading space
+#: (what `int()` strips). `tests/test_cdm_oes.py` refuses the first for `spec_version`; until
+#: 2026-09-16 `schema_version` took all three and `SourceRef.adapter_version` took anything.
+NOT_A_VERSION = ("01.0.0", "1.0.0\n", " 1.0.0", "1.0", "v1.0.0", "1.0.0-rc1", "")
+
+
+@pytest.mark.parametrize("bad", NOT_A_VERSION)
+def test_schema_version_is_held_to_the_one_semver_pattern(bad):
+    """`version.is_semver`, on the wire field every object carries."""
+    with pytest.raises(ValidationError):
+        _entity(schema_version=bad)
+
+
+@pytest.mark.parametrize("bad", NOT_A_VERSION)
+def test_source_ref_adapter_version_is_held_to_the_same_pattern(bad):
+    """The version stamped on every object was the one version field nothing checked."""
+    with pytest.raises(ValidationError):
+        SourceRef(system="S", adapter="a", adapter_version=bad, synthetic=True)
+    assert SourceRef(system="S", adapter="a", adapter_version="9.9.9", synthetic=True)
+
+
+def test_the_three_validators_read_one_pattern():
+    """`models`, `manifest` and `oes` spell semver through `version.SEMVER_RE`, not three ways."""
+    from synapse_cdm import manifest, oes
+    assert oes.SEMVER_RE is version.SEMVER_RE
+    assert manifest.is_semver is version.is_semver
+    assert not hasattr(manifest, "_SEMVER"), "manifest.py has grown a pattern of its own again"
+    for bad in NOT_A_VERSION:
+        assert not version.is_semver(bad), bad
+    assert version.is_semver("0.0.0") and version.is_semver("10.20.30")

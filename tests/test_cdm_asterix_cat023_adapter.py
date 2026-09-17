@@ -41,8 +41,7 @@ import synapse_cdm
 from synapse_cdm import ids, times
 from synapse_cdm.adapters import cat023_codec as codec
 from synapse_cdm.adapters.asterix_cat023 import (
-    ALWAYS_MANDATORY, CATEGORY, COUNTER_GENERIC_BAND, COUNTER_TYPE_TEXT, ENCODERS, FRN_BY_ITEM,
-    REPORT_TYPE_TEXT, SERVICE_REPORT_TYPES, SERVICE_STATUS_SEVERITY, SERVICE_STATUS_TEXT,
+    COUNTER_GENERIC_BAND, ENCODERS, FRN_BY_ITEM, SERVICE_STATUS_SEVERITY,
     SERVICE_SYSTEM, SERVICE_TYPE_TEXT, STATION_SYSTEM, TABLE_2, TABLE_2_ITEMS, TIME_ITEM, UAP,
     AsterixCat023Adapter, Cat023ParseError, build_block, parse_block,
 )

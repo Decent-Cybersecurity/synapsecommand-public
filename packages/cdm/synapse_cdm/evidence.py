@@ -52,8 +52,8 @@ from typing import Any, Iterable
 
 from pydantic import ConfigDict, field_validator
 
-from synapse_cdm import harness, suite, times, version
-from synapse_cdm.adapter import Adapter, fixture_root, load_adapter, packaged_fixtures
+from synapse_cdm import canonical, harness, suite, times
+from synapse_cdm.adapter import fixture_root, load_adapter, packaged_fixtures
 from synapse_cdm.manifest import Strict
 from synapse_cdm.manifests import manifest, shipped
 from synapse_cdm.version import (ADAPTER_API_VERSION, EVIDENCE_SCHEMA_VERSION,
@@ -217,10 +217,8 @@ def covered_directories(root: pathlib.Path | None = None) -> list[pathlib.Path]:
 
 
 def harness_selects(directory: pathlib.Path) -> list[pathlib.Path]:
-    """`harness.py`'s four predicates over one directory. The one definition of 'a fixture'."""
-    return sorted(p for p in directory.iterdir()
-                  if p.is_file() and not p.name.startswith(".")
-                  and p.name not in ("README.md", harness.PROVENANCE_FILE))
+    """`harness.select_fixtures`, the one definition of 'a fixture', under this module's name."""
+    return harness.select_fixtures(directory)
 
 
 def provenance_problems(root: pathlib.Path | None = None) -> list[str]:
@@ -502,8 +500,8 @@ def generate(adapter_name: str, *, fixtures: pathlib.Path | None = None,
 
 
 def serialise(record: EvidenceRecord) -> str:
-    """ARCHITECTURE.md §6.2's one serialisation, which every generated file here uses."""
-    return json.dumps(record.model_dump(mode="json"), indent=2, sort_keys=True) + "\n"
+    """ARCHITECTURE.md §6.2's one serialisation — `canonical.serialise` — over the record."""
+    return canonical.serialise(record.model_dump(mode="json"))
 
 
 def record_path(out_dir: pathlib.Path, record: EvidenceRecord) -> pathlib.Path:
@@ -725,12 +723,12 @@ def write_badges(records: dict[str, dict], out_dir: pathlib.Path) -> list[pathli
         for slug, badge in sorted(badges(record).items()):
             path = out_dir / adapter_id / f"{slug}.json"
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(badge, indent=2, sort_keys=True) + "\n")
+            path.write_text(canonical.serialise(badge))
             written.append(path)
     for slug, badge in sorted(repository_badges(records.values()).items()):
         path = out_dir / "repository" / f"{slug}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(badge, indent=2, sort_keys=True) + "\n")
+        path.write_text(canonical.serialise(badge))
         written.append(path)
     return written
 

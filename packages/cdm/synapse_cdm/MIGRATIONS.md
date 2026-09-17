@@ -360,7 +360,7 @@ now true of it.
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 50 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 54 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
 parser-safety record below moves again, eleven of which the harness-evidence record moves a third
@@ -373,9 +373,11 @@ and `PROVENANCE.json` beside each; six files the harness-evidence record moves �
 `pyproject.toml`, which the audit's CI record below moves for its `[lint]` extra and its rule
 set and the citations record moves for two comments; and fourteen files the citations record
 moves — `enums.py`, `manifest.py`, `oes.py`, `FORMAT_COVERAGE.md`, and the ten KLV goldens of
-the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json` and `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json` and `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json` and `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json` and `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, and `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json` and `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`; and five files the
-audit's prose record at the end of this section moves for a sentence each — `__init__.py`,
-`schemas.py`, `conformance.py`, `klv_vmti_codec.py` and `stanag4586_codec.py`. Everything else these
+the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json` and `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json` and `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json` and `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json` and `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, and `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json` and `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`; five files the
+audit's prose record below moves for a sentence each — `__init__.py`, `schemas.py`,
+`conformance.py`, `klv_vmti_codec.py` and `stanag4586_codec.py`; and four files the audit's
+helpers record, the last in this section, moves — `canonical.py`, which is new, `models.py`,
+`manifests.py` and the KLV generator `build_fixtures.py`. Everything else these
 rounds touched ships in nothing: the release workflow, the witness builder it runs and that
 builder's test module, the generated manifests under `manifests/`, the generated schemas under
 `schemas/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
@@ -884,6 +886,74 @@ lines" of a 416-line file; `spec/sc-oes/03-event-types.md` names the shipping re
 four helpers where it said "a later round"; `ontology/README.md` says the `core:affects` defect it
 reported was repaired in round SD; and `tests/test_cdm_harness.py`'s comment matches the
 harness's. The gate finds no unit it cannot classify.
+
+**THE AUDIT'S HELPERS RECORD, 2026-09-16 — one semver pattern, the shared helpers written once,
+and the unused imports gone.** Three things, and none of them changes a byte any consumer
+receives.
+
+*One pattern.* Three validators spelled semver three ways: `manifest.py` had `^\d+\.\d+\.\d+$`
+under `.match`, which admits a trailing newline and a leading zero; `CDMBase._semver` split on
+dots and called `int()`, which admits both and leading space; `oes.py`'s `SEMVER_RE` under
+`fullmatch` refused all three — while `oes.py`'s own comment said the repository had exactly one
+way of spelling a version on the wire, and `SourceRef.adapter_version`, the version stamped on
+every object, was held to `min_length=1` and nothing else. The pattern now lives in `version.py`,
+the leaf of the import graph, as `SEMVER_RE` with `is_semver()`; `manifest.py` and `models.py`
+call it, `oes.py` re-exports it under its old name for `oes_registry`, and `SourceRef` gains a
+validator on the same rule. A validator and not a schema `pattern`, deliberately: the JSON
+Schemas are unchanged (`--check` is CURRENT), because a pattern on a published type is "a type
+narrowed" by the table above and a MAJOR, and every value the tree has ever written to these
+fields — "1.0.0" on all 1 347 `adapter_version` sites under `fixtures/` and `manifests/`, and
+"2.1.0" or "1.0.0" on every `schema_version` site under `fixtures/` — passes.
+`tests/test_cdm_models.py` and `tests/test_cdm_manifests.py` now refuse "01.0.0", "1.0.0\n" and
+" 1.0.0" on all three fields, as `tests/test_cdm_oes.py` already did on one. `import re` above
+`version.py`'s constants moves each of the six two lines down; VERSIONING.md's axis table is
+re-read to 275, 305, 311, 322, 357 and 371.
+
+*Written once.* `canonical.py` is new and holds ARCHITECTURE.md §6.2's serialisation,
+`json.dumps(obj, sort_keys=True, indent=2)` with a trailing newline, which was written at seven
+sites — `schemas._serialise`, `manifests._serialise`, the harness's golden comparison,
+`suite.canonical` (whose docstring said "written once here"), `evidence.serialise` and its two
+badge writes — three of which called their own copy §6.2's one serialisation; all seven call it,
+and the bytes cannot differ, so no golden, manifest or evidence digest moves. The fixture
+predicate — files, no dotfiles, not `README.md`, not `PROVENANCE.json` — is
+`harness.select_fixtures`, and `suite._fixtures` and `evidence.harness_selects` call it where
+they restated it (`suite._fixtures`'s docstring said the restatement was held equal by
+`tests/test_cdm_suite.py` for a reason the harness's docstring gave; the test is in
+`tests/test_cdm_evidence.py` and the harness gave none). The shipped-adapter test —
+`__module__` under `synapse_cdm.adapters` — is `adapter.is_shipped` and `adapter.shipped`,
+beside `roster()`; `manifests.shipped`, `suite.shipped_adapters` and both CLIs' refusal of
+`--adapter module:ClassName` without `--fixtures` call them, and that refusal's text is
+`harness.fixtures_required_message`, printed behind each CLI's own name with each CLI's own
+exit constant. `suite._dump` is the harness's. Left alone, on purpose: the four
+"interval runs backwards" validators name four different field pairs in their messages, and
+`_required` and `render_roster` are parallel variants over different sets, not copies.
+
+*Gone.* The 29 unused imports `ruff --select F401` reported over `packages/cdm`, `gates/` and
+`tests/` — eight of them in the distribution, `evidence.py`'s `Adapter` and `version` among them —
+are removed, and the reading is 0; `select` is not widened, for the reason `pyproject.toml`'s
+lint comment now records beside its own count.
+
+**Bump ruling.** The arc's floor is MINOR from the new public names — `synapse_cdm/canonical.py`
+itself, `version.SEMVER_RE` and `version.is_semver`, `adapter.is_shipped` and `adapter.shipped`,
+`harness.select_fixtures` and `harness.fixtures_required_message` — which the gate classifies
+from the table. The units it cannot classify are modifications in place, and every one is PATCH
+by M's words of 2026-09-12: no name removed, no consumer's call changed, no wire byte moved.
+The bodies that now call a shared definition instead of restating it:
+`synapse_cdm/schemas.py:_serialise` — PATCH, `synapse_cdm/manifests.py:_serialise` — PATCH,
+`synapse_cdm/manifests.py:shipped` — PATCH, `synapse_cdm/suite.py:canonical` — PATCH,
+`synapse_cdm/suite.py:_dump` — PATCH, `synapse_cdm/suite.py:_fixtures` — PATCH,
+`synapse_cdm/suite.py:shipped_adapters` — PATCH, `synapse_cdm/evidence.py:harness_selects` —
+PATCH, `synapse_cdm/evidence.py:serialise` — PATCH, `synapse_cdm/evidence.py:write_badges` —
+PATCH, `synapse_cdm/harness.py:main` — PATCH and `synapse_cdm/suite.py:main` — PATCH (the two
+CLIs print the one refusal text through one function; the text and the exit codes are what they
+were). The validators that now read the one pattern — a refusal added on input no golden, fixture
+or manifest ever carried, the class the parser-safety record above ruled PATCH:
+`synapse_cdm/models.py:CDMBase` — PATCH, `synapse_cdm/models.py:SourceRef` — PATCH,
+`synapse_cdm/manifest.py:AdapterMetadata` — PATCH, and `synapse_cdm/oes.py:SEMVER_RE` — PATCH,
+the same compiled pattern under the same name, assigned from `version.py` rather than compiled
+here. The import statements, which the gate keys by position — an unused name removed, or the
+shared definition imported in place of a local copy — none of them a name any module exports:
+`synapse_cdm/adapters/gmtif.py:<statement 2>` — PATCH, `synapse_cdm/adapters/legion.py:<statement 4>` — PATCH, `synapse_cdm/adapters/stanag4609.py:<statement 3>` — PATCH, `synapse_cdm/adapters/stanag4676.py:<statement 5>` — PATCH, `synapse_cdm/adapters/stanag4676.py:<statement 6>` — PATCH, `synapse_cdm/evidence.py:<statement 13>` — PATCH, `synapse_cdm/evidence.py:<statement 14>` — PATCH, `synapse_cdm/harness.py:<statement 9>` — PATCH, `synapse_cdm/harness.py:<statement 10>` — PATCH, `synapse_cdm/manifest.py:<statement 2>` — PATCH, `synapse_cdm/manifest.py:<statement 3>` — PATCH, `synapse_cdm/manifests.py:<statement 2>` — PATCH, `synapse_cdm/manifests.py:<statement 3>` — PATCH, `synapse_cdm/manifests.py:<statement 4>` — PATCH, `synapse_cdm/manifests.py:<statement 5>` — PATCH, `synapse_cdm/models.py:<statement 8>` — PATCH, `synapse_cdm/oes.py:<statement 7>` — PATCH, `synapse_cdm/schemas.py:<statement 2>` — PATCH, `synapse_cdm/schemas.py:<statement 3>` — PATCH, `synapse_cdm/schemas.py:<statement 4>` — PATCH, `synapse_cdm/schemas.py:<statement 5>` — PATCH, `synapse_cdm/suite.py:<statement 11>` — PATCH, `synapse_cdm/suite.py:<statement 12>` — PATCH, `synapse_cdm/suite.py:<statement 13>` — PATCH, `synapse_cdm/suite.py:<statement 14>` — PATCH.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 

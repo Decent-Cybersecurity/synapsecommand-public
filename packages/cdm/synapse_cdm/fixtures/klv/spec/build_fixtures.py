@@ -79,7 +79,6 @@ from synapse_cdm.adapters import imapb_codec as imapb              # noqa: E402
 from synapse_cdm.adapters import klv_codec as codec                # noqa: E402
 from synapse_cdm.adapters import klv_miis_codec as miis             # noqa: E402
 from synapse_cdm.adapters import klv_pack_codec as packs           # noqa: E402
-from synapse_cdm.adapters import klv_security_codec as security   # noqa: E402
 from synapse_cdm.adapters import klv_uas_codec as uas               # noqa: E402
 from synapse_cdm.adapters import klv_vmti_codec as vmti             # noqa: E402
 

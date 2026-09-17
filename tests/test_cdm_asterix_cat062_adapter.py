@@ -48,9 +48,9 @@ import synapse_cdm
 from synapse_cdm import ids, times
 from synapse_cdm.adapters import cat062_codec as codec
 from synapse_cdm.adapters.asterix_cat062 import (
-    ALWAYS_MANDATORY, CATEGORY, ECAT_TEXT, EMS_TEXT, ENCODERS, FRN_BY_ITEM, ICAO24_SYSTEM,
-    IMPLEMENTATION_DEPENDENT, PS3_BACK_MAPPING, PS3_TEXT, REPORT_SYSTEM, SRC_TEXT, UAP,
-    UAP_BY_FRN, VFI_TEXT, AsterixCat062Adapter, Cat062ParseError, build_block, parse_block,
+    ECAT_TEXT, EMS_TEXT, ENCODERS, FRN_BY_ITEM, ICAO24_SYSTEM,
+    IMPLEMENTATION_DEPENDENT, PS3_BACK_MAPPING, PS3_TEXT, REPORT_SYSTEM, UAP,
+    VFI_TEXT, AsterixCat062Adapter, Cat062ParseError, build_block, parse_block,
 )
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
 from synapse_cdm.models import Entity, Event, Track, TrackSample

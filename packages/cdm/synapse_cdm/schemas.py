@@ -18,12 +18,12 @@ exist only because a test makes drift impossible.
 from __future__ import annotations
 
 import argparse
-import json
 import pathlib
 import sys
 
 from pydantic import BaseModel, TypeAdapter
 
+from synapse_cdm import canonical
 from synapse_cdm.manifest import AdapterManifest
 from synapse_cdm.models import KINDS, PAYLOAD_MODELS, CDMObject
 from synapse_cdm.version import MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
@@ -154,8 +154,9 @@ def evidence_schema() -> dict:
 
 def _serialise(schema: dict) -> str:
     # sort_keys, because an export whose key order depends on dict insertion produces a diff
-    # on every re-run and teaches everyone to ignore diffs in this directory.
-    return json.dumps(schema, indent=2, sort_keys=True) + "\n"
+    # on every re-run and teaches everyone to ignore diffs in this directory. The form is
+    # `canonical.serialise`'s, ARCHITECTURE.md §6.2's, and not a copy of it.
+    return canonical.serialise(schema)
 
 
 def write(out_dir: pathlib.Path) -> list[pathlib.Path]:

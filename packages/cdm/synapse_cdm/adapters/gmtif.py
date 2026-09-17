@@ -114,7 +114,7 @@ fixture.
 from __future__ import annotations
 
 import datetime as _dt
-from typing import Any, Iterable, Sequence
+from typing import Any, Sequence
 
 from synapse_cdm import ids, lossless, times
 from synapse_cdm.adapter import Adapter

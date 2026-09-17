@@ -63,7 +63,7 @@ from synapse_cdm.geo import (
     VerticalExtent,
     VerticalPosition,
 )
-from synapse_cdm.version import SCHEMA_VERSION
+from synapse_cdm.version import SCHEMA_VERSION, is_semver
 
 STRICT = ConfigDict(extra="forbid", use_enum_values=False, validate_assignment=True)
 
@@ -190,6 +190,20 @@ class SourceRef(BaseModel):
                     "in the order it applied them. Empty = nothing was transformed, which is a "
                     "claim the lossless check can contradict.",
     )
+
+    @field_validator("adapter_version")
+    @classmethod
+    def _semver(cls, v: str) -> str:
+        # The same shape `schema_version` and a manifest's `adapter_version` are held to. Until
+        # 2026-09-16 this field carried `min_length=1` and nothing else, so the version stamped
+        # on every object on the wire was the one version field the package did not check. A
+        # validator and not a schema `pattern`: the JSON Schema is unchanged, because narrowing
+        # a published type is a MAJOR by MIGRATIONS.md's table and every value the tree has
+        # ever written here already passes.
+        if not is_semver(v):
+            raise ValueError(f"adapter_version must be semver MAJOR.MINOR.PATCH with no leading "
+                             f"zeroes, got {v!r}")
+        return v
 
 
 class Integrity(BaseModel):
@@ -692,12 +706,12 @@ class CDMBase(BaseModel):
     @field_validator("schema_version")
     @classmethod
     def _semver(cls, v: str) -> str:
-        try:
-            major, minor, patch = (int(p) for p in v.split("."))
-        except ValueError as e:
-            raise ValueError(f"schema_version must be semver MAJOR.MINOR.PATCH, got {v!r}") from e
-        if min(major, minor, patch) < 0:
-            raise ValueError(f"schema_version parts must not be negative: {v!r}")
+        # `version.is_semver`, since 2026-09-16. This split on dots and called `int()`, which
+        # took "01.0.0", "1.0.0\n" and " 1.0.0" as versions — three spellings of one number,
+        # which is three strings a consumer's comparison sorts three ways.
+        if not is_semver(v):
+            raise ValueError(f"schema_version must be semver MAJOR.MINOR.PATCH with no leading "
+                             f"zeroes, got {v!r}")
         return v
 
 

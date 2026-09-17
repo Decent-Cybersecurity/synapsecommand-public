@@ -150,7 +150,6 @@ from __future__ import annotations
 import argparse
 import ast
 import dataclasses
-import fnmatch
 import json
 import pathlib
 import re

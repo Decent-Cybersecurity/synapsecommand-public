@@ -776,6 +776,7 @@ packages/cdm/
     version.py      the six version constants and the compatibility rule
     symbology.py    MIL-STD-2525D standard identity, CoT affiliation letters
     lossless.py     the never-drop rule as a computable check
+    canonical.py    the one serialisation (sort_keys, indent 2, trailing newline), written once
     adapter.py      the Adapter ABC, its class-definition-time gates, the registry
     schemas.py      JSON Schema export (+ --check for CI)
     harness.py      the adapter-agnostic validation harness

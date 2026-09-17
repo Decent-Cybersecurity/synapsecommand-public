@@ -114,9 +114,9 @@ import datetime as _dt
 import math
 import re
 import xml.etree.ElementTree as ET
-from typing import Any, Iterable, Sequence
+from typing import Any, Sequence
 
-from synapse_cdm import ids, lossless, times
+from synapse_cdm import ids, times
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.enums import (
     Affiliation,

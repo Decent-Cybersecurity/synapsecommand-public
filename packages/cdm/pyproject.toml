@@ -160,6 +160,13 @@ synapse = "synapse_cdm.suite:main"
 # `--fix`able) is still the documented limitation and still a ruling of its own. The version is
 # pinned once, in the `[lint]` extra above, and `ci.yml` now runs this set on every push.
 #
+# AND, LATER THE SAME DAY, THE F401s WERE REMOVED. The audit's helpers commit deleted every unused
+# import the reading above counted — 29 by then, two test modules having gained one each that
+# morning — and `ruff check --select F401` over the three roots reads 0. `select` is NOT widened
+# here: `tests/test_cdm_lint_stage.py` makes widening a ruling and an edit to both files, and the
+# readiness report's item 3 makes it a round of its own. What remains of `F` is 13 F841 and 8 F541,
+# measured with ruff 0.16.6 on 2026-09-16, none of which changes what the package does.
+#
 # There is no `[tool.mypy]`, and that is also F7.1: the package has never had a type config, and
 # adding one in a release-engineering round would put a first type-check run inside the pipeline
 # that publishes. P8 §57 records it as a limitation.

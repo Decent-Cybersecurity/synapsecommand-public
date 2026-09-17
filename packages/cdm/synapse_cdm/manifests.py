@@ -24,11 +24,11 @@ module and `schemas.py` both exist to prevent.
 from __future__ import annotations
 
 import argparse
-import json
 import pathlib
 import sys
 
-from synapse_cdm.adapter import roster
+from synapse_cdm import canonical
+from synapse_cdm.adapter import shipped as _shipped
 from synapse_cdm.manifest import AdapterManifest, ApiRef, CdmRef
 from synapse_cdm.version import (ADAPTER_API_VERSION, MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION,
                                  parse)
@@ -70,8 +70,7 @@ def shipped() -> dict:
     and takes any `Adapter` subclass. What is scoped here is the DIRECTORY this repository
     maintains, not the ability to make a manifest.
     """
-    return {name: cls for name, cls in roster().items()
-            if cls.__module__.startswith(f"{__package__}.adapters.")}
+    return _shipped()
 
 
 def generate() -> dict[str, dict]:
@@ -86,8 +85,12 @@ def generate() -> dict[str, dict]:
 
 
 def _serialise(payload: dict) -> str:
-    """The goldens' form, which ARCHITECTURE.md §6.2 fixes for everything this framework hashes."""
-    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    """The goldens' form, which ARCHITECTURE.md §6.2 fixes for everything this framework hashes.
+
+    `canonical.serialise`, by the name this module's callers use: until 2026-09-16 this was a
+    second copy of the expression and called itself §6.2's one serialisation.
+    """
+    return canonical.serialise(payload)
 
 
 def write(out_dir: pathlib.Path) -> list[pathlib.Path]:

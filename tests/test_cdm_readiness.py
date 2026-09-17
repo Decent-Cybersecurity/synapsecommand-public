@@ -360,8 +360,6 @@ def test_an_empty_blocked_list_means_the_tree_is_release_ready_and_not_that_it_w
     would refuse it; the released mode below is what the report is held to then. Both modes share
     the report's own verdict, which is the last block of this test.
     """
-    from synapse_cdm.version import PACKAGE_VERSION
-
     if _blocked():
         pytest.skip(f"blocked is {_blocked()}, so this report does not claim readiness; the "
                     "converse direction is the test below")

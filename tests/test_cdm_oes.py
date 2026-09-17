@@ -41,7 +41,6 @@ from synapse_cdm.oes import (
     is_governed_ontology_term,
     validate_event_bundle,
     validate_ontology_identifier,
-    validate_type_id,
 )
 
 SOURCE = SourceRef(system="TEST", adapter="test", adapter_version="1.0.0", synthetic=True)

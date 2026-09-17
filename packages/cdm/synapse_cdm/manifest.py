@@ -43,13 +43,16 @@ unreachable would otherwise read as an oversight.
 from __future__ import annotations
 
 import enum
-import re
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-#: Semver, and nothing looser. An `adapter_version` of "1.0" or "v1.0.0" is a version string a
-#: consumer's comparison silently mis-sorts, which is worse than one it refuses.
-_SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
+from synapse_cdm.version import is_semver
+
+#: Semver, and nothing looser: `version.is_semver`, the package's one spelling of a version on
+#: the wire. An `adapter_version` of "1.0" or "v1.0.0" is a version string a consumer's
+#: comparison silently mis-sorts, which is worse than one it refuses — and until 2026-09-16 this
+#: module had a pattern of its own, `^\d+\.\d+\.\d+$` under `.match`, which took "01.0.0" and
+#: "1.0.0\n" where `spec_version` refused both.
 
 
 class Strict(BaseModel):
@@ -471,9 +474,9 @@ class AdapterMetadata(Strict):
     @field_validator("adapter_version")
     @classmethod
     def _semver(cls, value: str) -> str:
-        if not _SEMVER.match(value):
-            raise ValueError(f"adapter_version {value!r} is not `major.minor.patch`. A version a "
-                             "consumer cannot order is not a version")
+        if not is_semver(value):
+            raise ValueError(f"adapter_version {value!r} is not `major.minor.patch` with no leading "
+                             "zeroes. A version a consumer cannot order is not a version")
         return value
 
     @model_validator(mode="after")

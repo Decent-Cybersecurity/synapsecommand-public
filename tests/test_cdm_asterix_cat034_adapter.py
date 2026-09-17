@@ -42,7 +42,7 @@ from synapse_cdm.adapters.asterix_cat034 import (
     ALWAYS_MANDATORY, CATEGORY, COUNTER_TYP_TEXT, DATA_FILTER_TEXT, ENCODERS,
     EVENT_TYPE_BY_MESSAGE_TYPE, FRN_BY_ITEM, JAMMING_TYPES, MESSAGE_TYPE_TEXT, PER_SECTOR_TYPS,
     SEVERITY_BY_MESSAGE_TYPE, STATION_SYSTEM, TABLE_2, TABLE_2_ITEMS, UAP,
-    AsterixCat034Adapter, Cat034ParseError, build_block, parse_block,
+    AsterixCat034Adapter, Cat034ParseError, parse_block,
 )
 from synapse_cdm.enums import Affiliation, EntityType, EventType, PositionSource, Severity
 from synapse_cdm.models import Entity, Event, Track, TrackSample

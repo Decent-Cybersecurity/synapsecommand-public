@@ -111,7 +111,7 @@ from __future__ import annotations
 import datetime as _dt
 import json
 import math
-from typing import Any, Sequence
+from typing import Any
 
 from synapse_cdm import ids, lossless, times
 from synapse_cdm.adapter import Adapter

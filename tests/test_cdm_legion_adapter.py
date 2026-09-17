@@ -17,7 +17,6 @@ weight moves elsewhere:
 import json
 import math
 import pathlib
-import uuid
 
 import pytest
 
@@ -29,10 +28,9 @@ from synapse_cdm.enums import (
     Affiliation,
     EntityType,
     EventType,
-    PositionSource,
     Severity,
 )
-from synapse_cdm.models import Entity, Event, Track
+from synapse_cdm.models import Entity, Track
 
 PACKAGE = pathlib.Path(synapse_cdm.__file__).resolve().parent
 FIXTURES = PACKAGE / "fixtures" / "legion"

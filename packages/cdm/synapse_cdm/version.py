@@ -256,6 +256,8 @@ For ``SC_OES_VERSION`` — semver over the wire-semantic contract in ``spec/sc-o
 object written by 1.2.0 is readable by a 1.0.0 consumer and refusing it would be a
 self-inflicted outage. ``PACKAGE_VERSION`` needs no such helper: ``pip`` resolves it.
 """
+import re
+
 #: The wire contract. Governed by MIGRATIONS.md. Carried in every serialised object.
 #: Moved 1.0.0 -> 2.0.0 on 2026-09-06, a MAJOR: `Event` gained `oes` and `Entity` gained
 #: `ontology_types`, and the canonical objects are `additionalProperties: false`, so a 1.x
@@ -388,3 +390,20 @@ def compatible(written_with: str, read_by: str = SCHEMA_VERSION) -> bool:
     w_major, _, _ = parse(written_with)
     r_major, _, _ = parse(read_by)
     return w_major == r_major
+
+
+#: Semver as it is spelled on the wire — `MAJOR.MINOR.PATCH`, no leading zeroes, no prefix, no
+#: suffix — applied with `re.fullmatch` and never `$`, which admits a trailing newline. One
+#: pattern since 2026-09-16, where there were three: `manifest.py` had `^\d+\.\d+\.\d+$` under
+#: `.match` and `models.CDMBase._semver` split on dots and called `int()`, so "01.0.0" and
+#: "1.0.0\n" were a version to an adapter manifest and to `schema_version` while `spec_version`
+#: refused them, and `SourceRef.adapter_version` had no shape check at all. This file is the
+#: home because it is the leaf of the package's import graph: every module that validates a
+#: version already imports it, and it imports nothing of theirs. `oes.py`, which had this
+#: pattern, re-exports it under the same name for `oes_registry`.
+SEMVER_RE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
+
+
+def is_semver(value: str) -> bool:
+    """Does `value` spell a version the way every version field of this package requires?"""
+    return SEMVER_RE.fullmatch(value) is not None

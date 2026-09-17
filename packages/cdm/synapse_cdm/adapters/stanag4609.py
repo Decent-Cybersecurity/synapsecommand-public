@@ -127,7 +127,7 @@ from __future__ import annotations
 import datetime as _dt
 from typing import Any
 
-from synapse_cdm import ids, lossless, symbology, times
+from synapse_cdm import ids, lossless, symbology
 from synapse_cdm.adapter import Adapter
 from synapse_cdm.adapters import imapb_codec as imapb
 from synapse_cdm.adapters import klv_codec as framing
