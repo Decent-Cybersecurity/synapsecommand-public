@@ -251,6 +251,14 @@ bounds are declared per adapter in each manifest's `capabilities.limits`, with
   `GHSA-w3rx-r6r6-pgpr.json`), `README.md` and `schema.json`. Both files carry all eleven required
   keys, including PB's `mitigation` and `upstream_status`, and both carry `expiry` `2026-11-07` — a
   date the gate reads, after which the exception is dropped rather than honoured.
+  (**Corrected 2026-09-16:** neither file exists since this date. `image-size` 2.0.3 and 2.0.4
+  were published on 2026-09-14, and 2.0.3 carries the fix for exactly the three parsers the two
+  advisories cover — the removal trigger both files' `upstream_status` named, on which M's ruling
+  of 2026-09-08 requires deletion and an upgrade rather than a wait for `expiry`. Both files were
+  deleted on 2026-09-16, `docs/package.json` pins `image-size` at `^2.0.4` in `overrides`, and
+  `docs/package-lock.json` resolves 2.0.4. The directory holds `README.md` and `schema.json` only;
+  `MIGRATIONS.md`'s npm record of 2026-09-16 is the full account. The bullet is kept as the
+  reading this report took.)
 * No-network proof: `pytest -k "no_network or network"` → **66 passed**, 5158 deselected.
 
 ## 10. Dependencies
@@ -320,13 +328,26 @@ The gate's blocking set is the high-or-critical ones that are not excepted, and 
 excepted and absent: []`. The bare `npm audit --audit-level=high` still exits **1** —
 `20 vulnerabilities (3 moderate, 17 high)` — here and on the runner, and always will while either
 `image-size` exception is outstanding; the step that decides is the one above, and the `docs-audit`
-job is green on this commit.
+job is green on this commit. (**Corrected 2026-09-16:** the table and the two sentences after it
+describe the lock as it stood on 2026-09-11, when `image-size` had published no fix. It has one
+since 2026-09-14 — 2.0.3, with 2.0.4 the same day — and since 2026-09-16 the lock resolves 2.0.4
+through an `overrides` entry in `docs/package.json` and both exception files are deleted. The
+same derivation over the committed lock now reads `advisories: 1; excepted and present: [];
+excepted and absent: []` — the `uuid` moderate alone — and the bare
+`npm audit --audit-level=high` exits **0**, `17 moderate`, high 0, critical 0: "always will while
+either `image-size` exception is outstanding" ended the day neither was. No code, lock, test or
+CI change is outstanding. The table is kept as the reading this report took.)
 
 **Open Dependabot alerts: three, and they are exactly the excepted pair plus one moderate.**
 `gh api …/dependabot/alerts?state=open` → **3**: `#5` and `#4` `image-size` (high, both excepted,
 no fix published) and `#2` `uuid` (moderate, below the gate's floor). Nothing open is a HIGH with
 an available fix, and the set is identical to the baseline every prior attempt and both release
-attempts recorded.
+attempts recorded. (**Corrected 2026-09-16:** "no fix published" stopped being true on
+2026-09-14, when `image-size` 2.0.3 shipped, and "both excepted" on 2026-09-16, when both
+exception files were deleted and the tree took 2.0.4. The two alerts themselves still read open
+on 2026-09-16: Dependabot reads the lock the remote holds, and this branch has not been pushed
+since the change — the advisory range is `<= 2.0.2`, which 2.0.4 is outside. The set is kept as
+the reading this report took.)
 
 ## 11. SBOM
 
@@ -553,7 +574,14 @@ blockers are section 20, and section 20 is empty.
     report took.)
 18. **Two advisories have no taken fix**: the `image-size` pair, HIGH, excepted because
     `first_patched_version` is `null` and npm's `latest` for that package is the installed version.
-    The `uuid` moderate is below the floor the `docs-audit` gate enforces.
+    The `uuid` moderate is below the floor the `docs-audit` gate enforces. (**Corrected
+    2026-09-16:** no longer a limitation. `image-size` 2.0.3 and 2.0.4 were published on
+    2026-09-14, the first carrying the fix, and npm's `latest` has read 2.0.4 since; the tree takes
+    2.0.4 through `docs/package.json`'s `overrides`, `docs/package-lock.json` resolves it, and both
+    exception files were deleted on 2026-09-16 on the trigger their own `upstream_status` named.
+    `first_patched_version` is still `null` on GitHub's records — the advisories clear because
+    their range `<= 2.0.2` excludes 2.0.4, not because anyone set it. No code, lock, test or CI
+    change is outstanding; the item is kept as the reading this report took.)
 19. **`docs/docs/security/supply-chain.mdx` under-describes the two pip-audit layers** as they
     stand after round PP. No test reads those sentences; PP's review named it and no round has been
     authorised to touch it since.

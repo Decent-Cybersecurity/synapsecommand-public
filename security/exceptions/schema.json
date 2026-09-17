@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Decent-Cybersecurity/synapsecommand-public/security/exceptions/schema.json",
   "title": "Security exception",
-  "description": "A documented, time-bounded decision not to fix a security finding immediately. SOIF Part 1 §45. This schema is HAND-WRITTEN and lives beside the files it governs rather than under `schemas/`, because `schemas/` is generated from the package's models by `python -m synapse_cdm.schemas` and a hand-written file there would be deleted by the next regeneration. An exception is not package surface: no code imports it, and the two consumers that read it (`gates/codeql_gate.py` and the pip-audit step in `.github/workflows/ci.yml`) read the directory, not the package.",
+  "description": "A documented, time-bounded decision not to fix a security finding immediately. SOIF Part 1 §45. This schema is HAND-WRITTEN and lives beside the files it governs rather than under `schemas/`, because `schemas/` is generated from the package's models by `python -m synapse_cdm.schemas` and a hand-written file there would be deleted by the next regeneration. An exception is not package surface: no code imports it, and the three consumers that read it (`gates/codeql_gate.py`, and the pip-audit step and the `docs-audit` job in `.github/workflows/ci.yml`, both of which derive their allowlist by running that gate) read the directory, not the package. This sentence said two consumers from 2026-09-08, when round PB added the `docs-audit` job, until 2026-09-16.",
   "type": "object",
   "additionalProperties": false,
   "required": [

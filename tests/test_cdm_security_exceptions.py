@@ -185,7 +185,10 @@ def test_an_incomplete_exception_file_fails_validation_field_by_field(schema, tm
     required field on its own is what proves that each is required.
 
     Written through a FILE on disk, because that is what a person adds to
-    `security/exceptions/`, and because it exercises the same read the two consumers do.
+    `security/exceptions/`, and because it exercises the same read the three consumers do —
+    `gates/codeql_gate.py`, and the `pip-audit` step and the `docs-audit` job in `ci.yml`
+    through it. (This line said two until 2026-09-16; `docs-audit` has been the third since
+    round PB, 2026-09-08.)
     """
     complete = tmp_path / "GHSA-aaaa-bbbb-cccc.json"
     complete.write_text(json.dumps(VALID_EXCEPTION), encoding="utf-8")

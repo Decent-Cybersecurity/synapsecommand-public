@@ -252,7 +252,9 @@ def test_the_schema_and_the_readme_are_not_read_as_exceptions():
 
 
 # --------------------------------------------------------------------------------------------
-# The pip-audit half: one source, two consumers.
+# The pip-audit half: one source, three consumers — `gates/codeql_gate.py` itself, and the
+# `pip-audit` step and the `docs-audit` job in ci.yml, which both run `--emit-pip-audit-ignores`.
+# (Said "two consumers" until 2026-09-16; `docs-audit` has been the third since round PB.)
 # --------------------------------------------------------------------------------------------
 
 def test_the_pip_audit_flags_are_derived_from_the_directory(tmp_path, monkeypatch, capsys):

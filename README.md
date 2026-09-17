@@ -269,7 +269,7 @@ build and the Cloudflare Pages settings. Its JSON Schema reference is generated 
 | [`ontology/README.md`](ontology/README.md) | the Operational Ontology: the eight Turtle modules, the two derived artefacts, and the drift gate |
 | [`examples/README.md`](examples/README.md) | the synthetic examples, one per governed event type, and the linked decision chain |
 | [`spec/governance/`](spec/governance) | how a governed type or term is proposed, reviewed, versioned and deprecated |
-| [`SECURITY.md`](SECURITY.md) | **Security:** how to report a vulnerability privately, which versions are supported, what is in and out of scope, and every control with the reading behind it — and, from round P6, the supply chain: Dependabot, `pip-audit` over both the environment and the wheel's frozen closure, CodeQL with a gate that blocks HIGH and CRITICAL, SBOMs in SPDX and CycloneDX, OIDC build attestation, and `security/exceptions/` as the one documented, time-bounded way past a blocking finding |
+| [`SECURITY.md`](SECURITY.md) | **Security:** how to report a vulnerability privately, which versions are supported, what is in and out of scope, and every control with the reading behind it — and, from round P6, the supply chain: Dependabot, `pip-audit` over both the environment and the wheel's frozen closure, CodeQL with a gate that blocks HIGH and CRITICAL, SBOMs in SPDX and CycloneDX, OIDC build attestation, `security/exceptions/` as the one documented, time-bounded way past a blocking finding, and — on every push since round PB, in the table since 2026-09-16 — `npm audit` over `docs/` (the `docs-audit` job) with the floors `docs/package.json`'s `overrides` pin |
 
 ## Dependencies, and what is deliberately absent
 
