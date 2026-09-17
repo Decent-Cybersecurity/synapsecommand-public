@@ -545,8 +545,12 @@ blockers are section 20, and section 20 is empty.
     five tests live in — `test_cdm_changelog_claim.py`, `test_cdm_consumer_path.py` and
     `test_cdm_deploy_workflow.py` — enumerate `git ls-files` instead of walking the filesystem,
     and the directory is ignored by the tracked `.gitignore` rather than by `.git/info/exclude`
-    alone, so a working tree that carries it reads **0 failed** in those modules too. The
-    limitation is kept as the reading this report took.)
+    alone, so a working tree that carries it reads **0 failed** in those modules too. The first
+    sentence's mechanism is therefore the superseded one: `.git/info/exclude` does not travel with
+    the repository, and since this date the rule is `rounds/` at `.gitignore:241`, with `.claude/`
+    at `.gitignore:242` beside it, which every clone receives and
+    `tests/test_cdm_pins.py` holds to those lines. The limitation is kept as the reading this
+    report took.)
 18. **Two advisories have no taken fix**: the `image-size` pair, HIGH, excepted because
     `first_patched_version` is `null` and npm's `latest` for that package is the installed version.
     The `uuid` moderate is below the floor the `docs-audit` gate enforces.

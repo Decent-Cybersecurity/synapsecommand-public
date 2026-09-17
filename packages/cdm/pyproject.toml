@@ -252,6 +252,23 @@ include = ["synapse_cdm*"]
 #                                      checkout and no network, and be read as DATA. A recursive
 #                                      glob for the same reason the fixtures one is recursive: the
 #                                      second artefact must not depend on somebody remembering.
+#
+# THE TWO LARGE DOCUMENTS SHIP WHOLE, AND THEIR SIZE IS RECORDED HERE RATHER THAN BOUNDED. Noted
+# 2026-09-16 by the repo-hygiene audit, which found the fact stated nowhere in the tree. The
+# `*.md` glob below carries `FORMAT_COVERAGE.md` — 1,887,457 bytes and 16,125 lines on that date,
+# the largest tracked file in this repository and nearly twice the next — and `MIGRATIONS.md`
+# (978,711 bytes, 12,037 lines) into every consumer's site-packages, and both grow on every round
+# that closes a park or records an arc: 93 historical blobs of the first (117 MB) and 140 of the
+# second (59 MB) delta-compress to a 10.37 MiB pack on the same date. They ship ON PURPOSE and the
+# shipping is load-bearing, not incidental: `tests/test_cdm_klv_framing.py` reads both from the
+# INSTALLED package through `synapse_cdm.__file__` — `gates/wheel_install.py` says why that module
+# is package-only — and the same gate refuses a wheel whose `.py`/`.md` count is not
+# `git ls-files synapse_cdm`'s, so a wheel that dropped either would not pass. The size is the
+# cost of the SHIPS row above (the protocol documents a partner reads travel with the code they
+# describe), and no ceiling is set on it: a ceiling would be one more figure typed in this file,
+# and a document that has grown too large to ship whole is a document to split, not to cap. The
+# figures are a reading and not a derivation — nothing re-derives them, and a later reader who
+# finds them stale has found the growth this note says to expect, not a defect.
 [tool.setuptools.package-data]
 synapse_cdm = [
     "fixtures/**/*",

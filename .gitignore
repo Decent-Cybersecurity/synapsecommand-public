@@ -53,7 +53,7 @@ docs/.cache-loader/
 # commit as the substantive change, and it is the less interesting of the two corrections.
 #
 # AND THE PARAGRAPH ABOVE WAS KEPT TO FOUR LINES ON PURPOSE, which is the reason this note is here
-# and not there. `*.pdf` is cited as `.gitignore:42` on twenty-six lines of this tree (2026-09-16 count); a fifth line above the rule
+# and not there. `*.pdf` is cited as `.gitignore:42` on twenty-eight lines of this tree (2026-09-16 count, derived by `tests/test_cdm_pins.py`); a fifth line above the rule
 # would have re-pointed every one of them at a comment. The foot of this block states that rule for
 # comments and this round found it applies to a REWRITE of an existing comment just as much.
 #
@@ -213,8 +213,13 @@ fixtures/klv/provenance/
 # provenance records under `spec/` — adsb, ais, legion, tak — and the derived-set paragraph went on
 # saying `.json` pin record (9): the nine PIN records are still nine, but the paragraph enumerates
 # every file under `spec/`, and the command it names returns 13. The citation count for
-# `.gitignore:42` said twenty-four and never matched the tree that wrote it;
-# `git grep -n '\.gitignore:42' | wc -l` gives 26 lines today and is what the sentence now states.
+# `.gitignore:42` said twenty-four and never matched the tree that wrote it; the first correction
+# said twenty-six, which was the count of the tree BEFORE this note existed — a note that names the
+# citation is itself two more lines that carry it, and a figure derived before the sentence that
+# states it is written is a figure derived over the wrong tree. `git grep -n '\.gitignore:42' | wc -l`
+# gives 28 lines with this note in place, five of them in this file, and that is what the sentence
+# now states; `tests/test_cdm_pins.py` re-derives the figure on every run, so the sixth drift fails
+# the suite instead of waiting for a seventh audit.
 # The `.pdf` (60) and `.txt` (1) figures are NOT re-derived here: this checkout holds no pinned
 # document, so the command above cannot count them, and they stand as the text-pins round derived
 # them. The evidence paragraph's "is false" was four days stale — round PE flipped every manifest
@@ -227,10 +232,12 @@ fixtures/klv/provenance/
 # repository, so a second clone that copied the directories in had no rule and `git add -A` would
 # have staged some two hundred files. That is the argument at the top of the pinned-document block,
 # verbatim: a test on the commit is a gate on the COMMIT and not on the operation, and the
-# mechanism has to be in the tree. The paths are not secret — seventy tracked lines name `rounds/`
-# and the readiness report advertises `git ls-files rounds/` → 0 as a property of the tree — so
-# ignoring them in the shared file gives away nothing and makes the advertised property one the
-# tree itself enforces. Ruled by M on 2026-09-16.
+# mechanism has to be in the tree. The paths are not secret — forty tracked lines name `rounds/`
+# (`git grep -n 'rounds/' | wc -l`, re-derived 2026-09-16 by `tests/test_cdm_pins.py`; the ruling
+# read seventy, which was the tree before the same day's audit cut every pointer a clone could not
+# follow) and the readiness report advertises `git ls-files rounds/` → 0 as a property of the tree
+# — so ignoring them in the shared file gives away nothing and makes the advertised property one
+# the tree itself enforces, at the lines that report now cites. Ruled by M on 2026-09-16.
 rounds/
 .claude/
 

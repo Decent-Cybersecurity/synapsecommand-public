@@ -1912,6 +1912,108 @@ def test_the_cited_gitignore_line_for_the_provenance_rule_is_the_line_it_cites()
     )
 
 
+def _tracked_lines_naming(literal: str) -> int:
+    """How many tracked lines carry `literal`, by the command `.gitignore`'s own notes cite."""
+    out = subprocess.run(["git", "grep", "-n", "--fixed-strings", literal], cwd=REPO,
+                         capture_output=True, text=True).stdout
+    return len(out.splitlines())
+
+
+def _gitignore_sentence(pattern: str) -> re.Match:
+    text = (REPO / ".gitignore").read_text()
+    found = re.search(pattern, text)
+    assert found, f"`.gitignore` no longer carries a sentence matching {pattern!r}; re-anchor"
+    return found
+
+
+def test_the_gitignore_states_the_derived_count_of_the_lines_that_cite_line_42():
+    """`.gitignore` says how many tracked lines cite `*.pdf` by line number, and the figure is derived.
+
+    The comment beside `*.pdf` describes its own counts as derived, and the citation count drifted
+    FIVE TIMES between 2026-08-26 and 2026-09-16: twenty-four never matched the tree that wrote
+    it, and the first audit correction said twenty-six — the count of the tree BEFORE the note
+    stating it was written, when the note's own lines are two of the lines it counts. A figure that
+    only a person re-derives is a figure that is stale by the next round, so this derives it on
+    every run, at both of the sites that state it: the sentence beside the rule (line 56) and the
+    corrective note at the foot.
+
+    The literal is ASSEMBLED rather than written, on purpose, in the patterns and in the messages
+    as well as in the census: a test that wrote the citation in a string would be one more of the
+    lines it counts, and the assertion would still hold — a self-including count is stable — but
+    the figure in the comment would then be one nobody can check by eye against the file.
+    Assembling it keeps this module out of the census.
+    """
+    from tests.test_cdm_prose_counts import spelled
+    literal = ".gitignore:" + str(42)
+    derived = _tracked_lines_naming(literal)
+    assert derived, "git grep found no line citing `*.pdf` by number — the derivation is broken"
+    beside_the_rule = _gitignore_sentence(
+        rf"`\*\.pdf` is cited as `{re.escape(literal)}` on ([a-z-]+) lines of this tree")
+    assert spelled(beside_the_rule.group(1)) == derived, (
+        f".gitignore:56 says `{literal}` is cited on {beside_the_rule.group(1)} lines; "
+        f"`git grep -n` finds {derived}. Re-derive the sentence in the commit that moved the count"
+    )
+    the_note = _gitignore_sentence(
+        rf"`git grep -n '\\{re.escape(literal)}' \| wc -l`\s*\n#\s*gives (\d+) lines with this "
+        r"note in place")
+    assert int(the_note.group(1)) == derived, (
+        f"the corrective note at the foot of .gitignore says the command gives "
+        f"{the_note.group(1)} lines; it gives {derived}. Both sites move together"
+    )
+
+
+def test_the_rounds_apparatus_is_refused_by_the_tracked_gitignore_at_the_lines_the_report_cites():
+    """The rounds and agent directories are ignored by a rule that travels with the repository.
+
+    Until 2026-09-16 the private round apparatus stayed out of the index by `.git/info/exclude`
+    alone, a file no clone receives — the argument the pinned-document block at the top of
+    `.gitignore` makes about a gate on the COMMIT applied verbatim, and nothing asserted it. The
+    readiness report now cites the two rules BY LINE, so this holds the three facts a citation
+    promises: `check-ignore` attributes each path to `.gitignore` at the cited line and to no other
+    rule, nothing under either directory is tracked, and the count the comment beside the rules
+    states — how many tracked lines name the rounds directory — is the count `git grep` finds.
+
+    The directory names are assembled for the same reason the sibling test above gives: a test
+    that wrote one in a string, a pattern or a message would be a line the count counts.
+    """
+    from tests.test_cdm_prose_counts import spelled
+    rounds = "rounds" + "/"
+    claude = ".claude" + "/"
+    report = (REPO / "docs" / "soif-part1-release-readiness.md").read_text()
+    cited = re.search(
+        rf"the rule is `{re.escape(rounds)}` at `\.gitignore:(\d+)`, with `{re.escape(claude)}`\s+at "
+        r"`\.gitignore:(\d+)`", report)
+    assert cited, (
+        "docs/soif-part1-release-readiness.md item 17 no longer cites the two ignore rules by "
+        "line; the correction of 2026-09-16 does, and this test holds those lines still"
+    )
+    rounds_line, claude_line = int(cited.group(1)), int(cited.group(2))
+    lines = (REPO / ".gitignore").read_text().splitlines()
+    assert lines[rounds_line - 1] == rounds and lines[claude_line - 1] == claude, (
+        f".gitignore:{rounds_line} is {lines[rounds_line - 1]!r} and .gitignore:{claude_line} is "
+        f"{lines[claude_line - 1]!r}; the readiness report cites them for `{rounds}` and "
+        f"`{claude}`. A line inserted above them re-pointed the citation"
+    )
+    for path, line, rule in ((rounds + "PLAN.md", rounds_line, rounds),
+                             (claude + "agents/round-reviewer.md", claude_line, claude)):
+        reported = subprocess.run(["git", "check-ignore", "-v", "--no-index", path], cwd=REPO,
+                                  capture_output=True, text=True).stdout.strip()
+        assert reported.startswith(f".gitignore:{line}:{rule}"), (
+            f"check-ignore attributes {path!r} to {reported!r}, not to the tracked rule at "
+            f".gitignore:{line}. `.git/info/exclude` is not a rule of this tree"
+        )
+    tracked = subprocess.run(["git", "ls-files", rounds, claude], cwd=REPO,
+                             capture_output=True, text=True).stdout.split()
+    assert not tracked, f"tracked under the ignored directories: {tracked[:6]}"
+    stated = _gitignore_sentence(
+        rf"The paths are not secret — ([a-z-]+) tracked lines name `{re.escape(rounds)}`")
+    derived = _tracked_lines_naming(rounds)
+    assert spelled(stated.group(1)) == derived, (
+        f"the comment beside the `{rounds}` rule says {stated.group(1)} tracked lines name it; "
+        f"`git grep -n` finds {derived}. Re-derive the sentence in the commit that moved the count"
+    )
+
+
 # ================== every reopen condition carries the date it was last tested
 #
 # README sweep rule 12: an external-state reading is dated at the point of reading, and an undated
