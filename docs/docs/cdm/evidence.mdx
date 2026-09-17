@@ -13,8 +13,10 @@ was earned or typed, and cannot tell which tree, which fixtures or which version
 describes.
 
 An evidence record is the missing document. One JSON file per adapter, carrying the manifest it
-measured, the commit it measured at, every version axis in force, the conformance report
-verbatim, the loss report, and a SHA-256 of every fixture file the run read.
+measured, the commit it measured at, every version axis in force, the Conformance Suite's own
+report with one field made portable — `conformance.adapter.fixtures` reads `<packaged>/<directory>`
+and never the absolute path the run read, since 2026-09-16, because the path made every record
+machine-specific — the loss report, and a SHA-256 of every fixture file the run read.
 
 ```bash
 pip install synapse-cdm
