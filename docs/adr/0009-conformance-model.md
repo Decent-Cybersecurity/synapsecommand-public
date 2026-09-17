@@ -49,6 +49,18 @@ models. No dimension is merged into another and no dimension acquires a second a
 decided in this ADR moves; the note records where each verdict's evidence now comes from. Still
 Accepted.
 
+**Dated note, 2026-09-16. Every `file:line` citation below is a reading taken on 2026-09-06
+against `23ec65d5` — the tree `docs/sc-oes-implementation-plan.md` names — and the lines have
+moved since; the symbol beside each citation is the durable reference, and this note is added
+rather than the citations rewritten because an accepted record is not edited.** Where a sentence
+gives a line alone: `harness.py:99` is `harness.EXIT_NO_FIXTURES`; `harness.py:588` is the last
+line of `harness.main`, `return 1 if report["failed"] else 0`; `harness.py:534` is the `--json`
+argument `harness.main` declares, and `harness.py:532`–`:534` the `--update-golden` and `--json`
+arguments together; `harness.py:473` is `harness._COLUMNS`; `harness.py:476` is
+`harness.render_report`; `harness.py:230`–`:231` is the SKIP-never-PASS sentence in
+`harness._check_roundtrip`'s docstring; `adapter.py:231` is `adapter.fixture_root`. Nothing
+decided here moves. Still Accepted.
+
 ## Context
 
 §34 retains five separately reportable dimensions — **A** CDM Conformance, **B** SC-OES Core

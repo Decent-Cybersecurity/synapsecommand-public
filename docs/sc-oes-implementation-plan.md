@@ -43,6 +43,14 @@ and `docs/adr/0001`–`0010` record each decision the brief's sections asked for
 lines say the same of the brief. The plan is not rewritten, for the reason the dated note of
 2026-09-07 above gives.
 
+**Dated note, 2026-09-16.** Every `file:line` citation in this plan is likewise a reading at
+`23ec65d5`, and the lines have moved with the tree; the symbol beside each citation is what to look
+up. Where a sentence gives a line and no symbol, the three the audit named are: `adapter.py:96` is
+`Adapter.__init_subclass__`; `harness.py:99` is `harness.EXIT_NO_FIXTURES`; `harness.py:588` is
+the last line of `harness.main`, `return 1 if report["failed"] else 0`. `docs/adr/0009` carries the
+same note for its own citations. The plan is not rewritten, for the reason the dated note of
+2026-09-07 above gives.
+
 Two conventions. **A reading is what a command printed**, not what a document claims — where the
 two differ the difference is the finding. **An item the tree cannot yet answer says so and names
 the reading that would**; the items that ended that way in S0 and have since been settled say

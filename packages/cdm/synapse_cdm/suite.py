@@ -65,18 +65,16 @@ from synapse_cdm.version import PACKAGE_VERSION, SCHEMA_VERSION
 PASS, FAIL, SKIP = harness.PASS, harness.FAIL, harness.SKIP
 
 #: §40's four, spelled as `conformance.EXIT_OK`–`EXIT_INTERNAL` and `harness.EXIT_NO_FIXTURES`
-#: spell them, so a caller who
-#: knows one tool's codes is not surprised by this one's.
+#: spell them, so a caller who knows one tool's codes is not surprised by this one's.
 EXIT_OK = 0
 EXIT_FAILED = 1
 EXIT_USAGE = 2
 EXIT_INTERNAL = 3
 
 #: The subdirectory H reads. A SUBDIRECTORY and not a naming convention, because
-#: `harness.run` selects "immediate children of the directory that are FILES"
-#: (`harness.FIXTURE_PATTERN`) — so every
-#: payload in here is invisible to A–F by construction rather than by an exclusion somebody has
-#: to remember to keep in step.
+#: `harness.select_fixtures` selects "immediate children of the directory that are FILES"
+#: (`harness.FIXTURE_PATTERN`) — so every payload in here is invisible to A–F by construction
+#: rather than by an exclusion somebody has to remember to keep in step.
 MALFORMED_DIR = "malformed"
 
 #: §21's bound on one refusal. A malformed payload that has not been refused in five seconds has
@@ -698,8 +696,8 @@ def check_resource_limits(adapter: Adapter, payloads: list[tuple[str, Any]], *,
 
     The SKIP is a DECLARED inapplicability and not an omission, because `Limits` refuses an
     absent bound that carries no reason (`manifest.Limits._every_absent_limit_has_a_reason`): every
-    one of the fourteen states in
-    its own manifest why it enforces none, and that sentence is what this quotes.
+    one of the fourteen states in its own manifest why it enforces none, and that sentence is what
+    this quotes.
     """
     limits = adapter.metadata.capabilities.limits
     if limits.max_input_bytes is None:

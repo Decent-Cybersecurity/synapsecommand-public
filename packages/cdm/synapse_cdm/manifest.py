@@ -120,11 +120,10 @@ class UnknownFields(str, enum.Enum):
     the adapter accepts — the dict a caller hands `to_cdm` — and not of every carrier the wire
     format has: `stanag4609` preserves unknown KLV local-set TAGS on the wire
     (`attributes.klv_unknown_items`, written by `stanag4609.py`'s `_attributes`) and has no
-    carrier for an unknown key
-    in the decoded twin, and those are two true facts that one enum value cannot hold. The
-    accompanying `unknown_fields_basis` is where the distinction is stated, in the adapter's own
-    words, which is the same arrangement `Limits.absent_because` uses for a bound that does not
-    apply.
+    carrier for an unknown key in the decoded twin, and those are two true facts that one enum
+    value cannot hold. The accompanying `unknown_fields_basis` is where the distinction is stated,
+    in the adapter's own words, which is the same arrangement `Limits.absent_because` uses for a
+    bound that does not apply.
     """
 
     PRESERVED = "preserved"

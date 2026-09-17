@@ -378,7 +378,7 @@ now true of it.
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 59 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 70 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
 parser-safety record below moves again, eleven of which the harness-evidence record moves a third
@@ -397,8 +397,11 @@ audit's prose record below moves for a sentence each — `__init__.py`, `schemas
 helpers record moves — `canonical.py`, which is new, `models.py`, `manifests.py` and the KLV
 generator `build_fixtures.py`; four fixture spec records the citations record's addendum moves
 for one sentence each — `adsb_terms.json`, `ais_terms.json`, `tak_terms.json` and
-`klv_pin.json`; and `release_notes.py`, which the audit's verbatim record, the
-last in this section, moves for one comment. Everything else these
+`klv_pin.json`; `release_notes.py`, which the audit's verbatim record, the
+last in this section, moves for one comment; and the eleven `malformed/README.md` files under
+the fixture directories other than `nits/`, `pntmap/` and `tak/` — whose three the
+parser-safety record's nine already count — which the citations record's second addendum moves
+for one citation each. Everything else these
 rounds touched ships in nothing: the release workflow, the witness builder it runs and that
 builder's test module, the generated manifests under `manifests/`, the generated schemas under
 `schemas/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
@@ -900,6 +903,27 @@ whose substance the constant carries, as row 73 does; the paragraph on the same 
 row's dated correction of 2026-09-06 keeps in its own tense is left in it. `.gitignore`'s count
 of tracked lines naming the directory is re-derived by `tests/test_cdm_pins.py` and moved with
 these. PATCH by the same words: a declared fact corrected, in four records and one row.
+
+**AND THE FOURTEEN `malformed/README.md` FILES THE SAME AUDIT LEFT CITING A LINE, 2026-09-16.**
+Each fixture directory's `malformed/README.md` — a file the wheel ships — said the harness selects
+files by `harness.py:343`, the line the predicate sat on when round P2 wrote them; since the
+helpers record below moved selection into `harness.select_fixtures`, that line is a comment
+inside `_no_fixtures_message`. All fourteen now cite `harness.select_fixtures` and
+`harness.FIXTURE_PATTERN` by name, the substitution the citations record made in `suite.py`; the
+`malformed/` comment in `suite.py` names `harness.select_fixtures` rather than `harness.run`,
+which calls it; and the four comment and docstring lines that record left short — two in
+`suite.py`'s exit-code and `malformed/` comments, one in check O's docstring, one in
+`manifest.py`'s `UnknownFields` docstring — are rewrapped, the gate finding no unit moved by it;
+the last of the four is the enum's description in the manifest schema, so
+`schemas/manifests/adapter-manifest.schema.json` is regenerated for the same line breaks, the
+in-place change the citations record already made once, and nothing else in it moves. The 2.1.0
+record of the `malformed/` directories in this file's history cited the same line and
+carries a dated correction beside it. PATCH by the same words: a declared fact corrected, in
+fourteen shipped documents. Outside the distribution, `docs/adr/0009-conformance-model.md` and
+`docs/sc-oes-implementation-plan.md` each gain a dated note saying their `file:line` citations
+are readings at the commit the plan names, `23ec65d5`, and naming the symbol each line the audit
+found — `harness.py:99`, `harness.py:588`, `adapter.py:96` — means today, in the form the plan's
+note of 2026-09-07 set for its version figures; neither document is rewritten.
 
 **THE AUDIT'S PROSE RECORD, 2026-09-16 — the sentences the audit found false are corrected beside
 the record, or rewritten where the file's own convention is to rewrite.** Units, every one PATCH
@@ -2075,6 +2099,12 @@ is not JSON — and each must be REFUSED: any exception except `SystemExit`, `Ke
 `MemoryError` or `RecursionError`, inside the time bound, returning no object, with the class
 recorded. All twenty-eight are built by cutting or corrupting this repository's own synthetic
 payloads, so none carries anybody else's data.
+
+**Corrected 2026-09-16: `harness.py:343` is the line the predicate sat on when this was written,
+and the fourteen `README.md` files repeated it.** The selection is `harness.select_fixtures`,
+which executes `harness.FIXTURE_PATTERN` — the one definition of "a fixture" since the audit's
+helpers record under the pending heading — and the fourteen `malformed/README.md` files now cite
+it by that name; the sentence above is kept as the reading it was.
 
 **The twenty-eight, named, because this section's subject is the arc and a file it does not name
 is a change no reader of the history can find.** Each row's directory also holds a `README.md`
