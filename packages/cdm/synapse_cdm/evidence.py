@@ -9,10 +9,13 @@ can name, on a tree nobody recorded, at a moment nobody wrote down. A third part
 `manifests/adsb.json` cannot tell whether `maturity: L4` was earned or typed.
 
 An evidence record is that missing thing: one JSON document per adapter carrying the manifest it
-measured, the commit it measured at, every version axis in force, the suite's own report
-verbatim, the loss report, and a digest of every fixture file the run read. `verify` re-derives
-all of it and reports what differs. §36's reproducibility is therefore a COMMAND rather than a
-promise, and a claim that cannot be reproduced is visible as a diff rather than as a rumour.
+measured, the commit it measured at, every version axis in force, the suite's own report with
+one field made portable (`suite.portable`: `conformance.adapter.fixtures` reads `<packaged>/<dir>`
+and never the absolute path the run read — since 2026-09-16, because the path made every record
+machine-specific), the loss report, and a digest of every fixture file the run read. `verify`
+re-derives all of it and reports what differs, comparing every field but `MASKED`, `ENVIRONMENT`
+and a dirty `source_commit`. §36's reproducibility is therefore a COMMAND rather than a promise,
+and a claim that cannot be reproduced is visible as a diff rather than as a rumour.
 
 WHY `hashlib` IS IMPORTED HERE AND NOWHERE ELSE UNDER THIS PACKAGE — M's ruling, 2026-09-08
 --------------------------------------------------------------------------------------------

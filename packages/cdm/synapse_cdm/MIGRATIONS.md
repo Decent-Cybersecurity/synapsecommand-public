@@ -360,7 +360,7 @@ now true of it.
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 54 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 55 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
 parser-safety record below moves again, eleven of which the harness-evidence record moves a third
@@ -375,9 +375,10 @@ set and the citations record moves for two comments; and fourteen files the cita
 moves — `enums.py`, `manifest.py`, `oes.py`, `FORMAT_COVERAGE.md`, and the ten KLV goldens of
 the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json` and `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json` and `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json` and `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json` and `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, and `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json` and `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`; five files the
 audit's prose record below moves for a sentence each — `__init__.py`, `schemas.py`,
-`conformance.py`, `klv_vmti_codec.py` and `stanag4586_codec.py`; and four files the audit's
-helpers record, the last in this section, moves — `canonical.py`, which is new, `models.py`,
-`manifests.py` and the KLV generator `build_fixtures.py`. Everything else these
+`conformance.py`, `klv_vmti_codec.py` and `stanag4586_codec.py`; four files the audit's
+helpers record moves — `canonical.py`, which is new, `models.py`, `manifests.py` and the KLV
+generator `build_fixtures.py`; and `release_notes.py`, which the audit's verbatim record, the
+last in this section, moves for one comment. Everything else these
 rounds touched ships in nothing: the release workflow, the witness builder it runs and that
 builder's test module, the generated manifests under `manifests/`, the generated schemas under
 `schemas/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
@@ -965,6 +966,24 @@ the same compiled pattern under the same name, assigned from `version.py` rather
 here. The import statements, which the gate keys by position — an unused name removed, or the
 shared definition imported in place of a local copy — none of them a name any module exports:
 `synapse_cdm/adapters/gmtif.py:<statement 2>` — PATCH, `synapse_cdm/adapters/legion.py:<statement 4>` — PATCH, `synapse_cdm/adapters/stanag4609.py:<statement 3>` — PATCH, `synapse_cdm/adapters/stanag4676.py:<statement 5>` — PATCH, `synapse_cdm/adapters/stanag4676.py:<statement 6>` — PATCH, `synapse_cdm/evidence.py:<statement 13>` — PATCH, `synapse_cdm/evidence.py:<statement 14>` — PATCH, `synapse_cdm/harness.py:<statement 9>` — PATCH, `synapse_cdm/harness.py:<statement 10>` — PATCH, `synapse_cdm/manifest.py:<statement 2>` — PATCH, `synapse_cdm/manifest.py:<statement 3>` — PATCH, `synapse_cdm/manifests.py:<statement 2>` — PATCH, `synapse_cdm/manifests.py:<statement 3>` — PATCH, `synapse_cdm/manifests.py:<statement 4>` — PATCH, `synapse_cdm/manifests.py:<statement 5>` — PATCH, `synapse_cdm/models.py:<statement 8>` — PATCH, `synapse_cdm/oes.py:<statement 7>` — PATCH, `synapse_cdm/schemas.py:<statement 2>` — PATCH, `synapse_cdm/schemas.py:<statement 3>` — PATCH, `synapse_cdm/schemas.py:<statement 4>` — PATCH, `synapse_cdm/schemas.py:<statement 5>` — PATCH, `synapse_cdm/suite.py:<statement 11>` — PATCH, `synapse_cdm/suite.py:<statement 12>` — PATCH, `synapse_cdm/suite.py:<statement 13>` — PATCH, `synapse_cdm/suite.py:<statement 14>` — PATCH.
+
+**THE AUDIT'S VERBATIM RECORD, 2026-09-16 — the three sentences that still said the evidence
+record carries the suite's report verbatim now say which field is made portable.** The
+harness-evidence record above made `conformance.adapter.fixtures` read `<packaged>/<directory>`
+through `suite.portable`, and three sentences written before it went on describing the old
+embedding: `evidence.py`'s module docstring ("the suite's own report verbatim"), a comment in
+`release_notes.py`'s `main` ("embeds `suite.run`'s report verbatim, and `tests/test_cdm_evidence.py`
+is what holds those two together" — the test it meant is now
+`test_the_conformance_block_is_the_suites_own_report_made_portable` and asserts equality with
+`suite.portable(fresh, "<packaged>/pntmap")`), and the comment on `ci.yml`'s verify step, which
+said the step "compares every field but the instant and the wall time" of a `compare()` that also
+excludes `ENVIRONMENT`, and gave "in the same job and therefore on the same tree" as the reason
+cross-host reproduction went unexercised when
+`tests/test_cdm_evidence.py::test_a_record_from_another_host_and_checkout_reproduces` now
+exercises it. Each now says what the code does, dated. Units: `synapse_cdm/evidence.py`, whose
+docstring moves and nothing below it, and `synapse_cdm/release_notes.py`, one comment — PATCH by
+M's words of 2026-09-12 for a declared fact corrected, no name or call moved; the gate finds no
+unit it cannot classify. `ci.yml` ships in nothing.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 

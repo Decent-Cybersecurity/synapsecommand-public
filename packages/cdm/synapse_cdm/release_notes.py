@@ -360,8 +360,12 @@ def main(argv: list[str] | None = None) -> int:
         conformance = load_conformance(args.conformance)
         if not conformance and args.evidence.is_dir():
             # The evidence records carry the same sweep, one adapter per record. Reading them is
-            # not a second derivation: `evidence.generate` embeds `suite.run`'s report verbatim,
-            # and `tests/test_cdm_evidence.py` is what holds those two together.
+            # not a second derivation: `evidence.generate` embeds `suite.run`'s report through
+            # `suite.portable`, which changes `adapter.fixtures` to the `<packaged>/<dir>` label
+            # and nothing else (2026-09-16), and the `--all` sweep this reader stands in for is
+            # relabelled the same way. `tests/test_cdm_evidence.py::
+            # test_the_conformance_block_is_the_suites_own_report_made_portable` is what holds
+            # the two together, and nothing this renderer reads is the field that moved.
             for record in sorted(args.evidence.glob("*/*/evidence.json")):
                 payload = json.loads(record.read_text(encoding="utf-8"))
                 report = payload.get("conformance") or {}

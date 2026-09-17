@@ -280,10 +280,15 @@ jobs:
         run: python -m synapse_cdm.evidence generate --all --out evidence
 
       - name: Verify every record against the tree it was generated from
-        # §36's reproducibility, in the same job and therefore on the same tree: `verify`
-        # re-hashes the fixtures and re-runs the suite, and compares every field but the instant
-        # and the wall time. A record that cannot be reproduced by the machine that made it is a
-        # record of nothing, and this is the step that would say so.
+        # §36's reproducibility: `verify` re-hashes the fixtures and re-runs the suite, and
+        # compares every field but `MASKED` (the instant and the wall time) and `ENVIRONMENT`
+        # (`test_run.python`, `test_run.platform` — recorded and printed, never compared, since
+        # 2026-09-16). This step runs in the same job and therefore on the same tree and host;
+        # the cross-host half of §36 — a record made on one machine, verified from another
+        # checkout — is exercised by `tests/test_cdm_evidence.py::
+        # test_a_record_from_another_host_and_checkout_reproduces`, which the `suite` job runs. A
+        # record that cannot be reproduced by the machine that made it is a record of nothing,
+        # and this is the step that would say so.
         run: |
           set -euo pipefail
           find evidence -name evidence.json -print0 \
