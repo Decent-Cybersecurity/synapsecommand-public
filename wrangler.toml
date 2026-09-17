@@ -21,6 +21,15 @@
 # repository contains no `.github/workflows`. The sentence was not wrong about where a build
 # command WOULD live; it was wrong that one runs at all.
 #
+# CORRECTED 2026-09-16, and the two paragraphs above are left as written because the conclusion
+# they reach still holds. "46 files" was the 1.8.0-era measurement (`PUBLICATION.md`, entry 17);
+# the 2.1.2 deploy carried sixty-six files (entry 19) and `docs/build` holds 66 today. And there
+# HAS been CI since 2026-08-26 (fadbd59 added `publish.yml`; `.github/workflows/` holds five files
+# now, and `ci.yml`'s `docs-audit` job runs `npm --prefix docs run ci` on every push to `main` and
+# `soif/**`). What has not changed is the part this file rests on: the Pages project still reports
+# `Git Provider: No`, no workflow uploads `docs/build`, and every deployment is the explicit
+# direct upload written out below.
+#
 # THE DEPLOY, IN FULL
 # -------------------
 #     npm --prefix docs run ci                    # build + the three gates, from the repo root

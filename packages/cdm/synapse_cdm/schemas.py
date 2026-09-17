@@ -36,7 +36,7 @@ from synapse_cdm.version import MANIFEST_SCHEMA_VERSION, SCHEMA_VERSION
 #: 1. **Registers the schema under it**, so `$ref` can resolve. That needs uniqueness and
 #:    stability and nothing else.
 #: 2. **May try to FETCH it.** This is the one that rules out `https://`. Every `$ref` in these
-#:    six schemas is internal — `#/$defs/...`, no schema references another by `$id` — so nothing
+#:    eight schemas is internal — `#/$defs/...`, none references another by `$id` — so nothing
 #:    here needs retrieval to work. But an `https://` identifier INVITES retrieval, and this
 #:    repository does not serve these files at any URL and will not promise to: the documentation
 #:    site renders reference PAGES generated from `/schemas`, not the schema files. An identifier

@@ -744,7 +744,7 @@ reason is indistinguishable from "nobody thought about it".
 
 **Licensing posture, read 2026-09-07.** `fixtures/adsb/spec/adsb_terms.json` records both publishers, and both sell. `my.rtca.org/nc__store?search=DO-260B` answered **200** at **2026-09-07T20:54:47Z** and prices the document *"DO-260B - Electronic / Retail Price: $875.00"* and *"DO-260B - Hard Copy / Retail Price: $715.00"*; `www.rtca.org/content/electronic-license-agreement` answered **200** at **20:55:49Z** and reads *"YOU ACKNOWLEDGE THAT YOU HAVE PURCHASED ONLY THE RIGHT TO ACCESS, DOWNLOAD, AND PRINT ONE COPY … FOR YOUR PERSONAL USE AND NOT FOR RESALE, TRANSFER, OR DISTRIBUTION TO ANY THIRD PARTY."* `store.icao.int/en/annexes/annex-10?p=2` answered **200** at **20:54:25Z** and prices *"Annex 10 - Aeronautical Telecommunications - Volume IV- Surveillance Radar and Collision Avoidance Systems / Sixth Edition, August 2026 / USD 240.00"* — so the free-public-download branch that names ICAO is refuted by ICAO's own store, and no page read states a free route to an Annex. **Class: `LICENSED`**. Nothing was acquired: this is a reading of a publisher's page, not a pin.
 
-## Picogrid Legion Platform API v3 — ingest (specification only)
+## Picogrid Legion Platform API v3 — ingest
 
 Implemented by `adapters/legion.py` (**ingest only** — see the last section for why there is no
 `from_cdm()`). Every row below was written and reviewed as a specification BEFORE any code
@@ -4139,7 +4139,7 @@ corrections; a retraction-only `TrackSegment` that must become an `Event` and no
 `relTimeIncrement` that is not a whole number of milliseconds, so the parking rule is what the
 round trip depends on.
 
-## STANAG 4607 / AEDP-4607 — NATO Ground Moving Target Indicator Format (GMTIF), ingest
+## STANAG 4607 / AEDP-4607 — NATO Ground Moving Target Indicator Format (GMTIF), ingest and egress
 
 Implemented by `adapters/gmtif.py` (bidirectional), on the Annex C wire codec in
 `adapters/gmtif_codec.py`. Ingest translates one GMTI packet into an `Entity` and a `Track` for the

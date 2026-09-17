@@ -129,10 +129,10 @@ class NoFixturesFound(RuntimeError):
     THE FAILURE THIS EXISTS FOR
     ---------------------------
     `--adapter stanag4676 --fixtures fixtures/stanag4676` used to print "0 passed, 0 failed" and
-    exit 0. That directory holds only a `spec/` subdirectory of pinned standards; the adapter's
-    fixtures are in `fixtures/nits`. So a gate sweep over all nine adapters reported nine greens
-    while one of them had replayed nothing, and the run that proves the least looks exactly like
-    the run that proves the most.
+    exit 0. That directory held only a `spec/` subdirectory of pinned standards (it no longer
+    exists); the adapter's fixtures are in `fixtures/nits`. So a gate sweep over all nine adapters
+    reported nine greens while one of them had replayed nothing, and the run that proves the
+    least looks exactly like the run that proves the most.
 
     It is the same failure `test_cdm_prose_counts.py` guards in prose — "a regex that silently
     matches nothing is worse than no test at all, it reads as a passing check on a site nobody is

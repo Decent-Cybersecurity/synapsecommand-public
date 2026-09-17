@@ -65,7 +65,7 @@ two places is a rule set that can disagree with itself; `PROFILE_RULES` below is
 OFFLINE, AND ASSERTED RATHER THAN PROMISED (§125)
 --------------------------------------------------
 Nothing in the assessment path opens a socket, resolves a name or reads a path a caller did not
-give it. Both registries are read from packaged resources through `importlib.resources`
+give it. All three registries are read from packaged resources through `importlib.resources`
 (`oes_registry.py`), the schemas are generated from the models with no file, and a third-party
 ontology identifier is classified by its syntax and never dereferenced.
 `tests/test_cdm_conformance.py` asserts both halves: the import closure of this module by AST, and

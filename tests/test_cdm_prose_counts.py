@@ -32,6 +32,7 @@ cannot grow fourteen slightly different opinions" — and that is exactly the sh
 last time: commit 94c000a had to repair "seven adapters cannot grow six slightly different
 opinions", a sentence that had been half-updated and read as prose either way.
 """
+import inspect
 import os
 import pathlib
 import re
@@ -1556,6 +1557,60 @@ def test_the_roster_table_and_the_shipped_adapter_sentence_agree():
     assert spelled(match.group("n")) == len(tabled), (
         f"{PKG_README_PATH} says {match.group('n')!r} integration adapters are shipped and its "
         f"own table three lines later has {len(tabled)} rows"
+    )
+
+
+#: The package docstring's enumeration: the parenthetical after "… integration adapters are
+#: shipped (", read by `help(synapse_cdm)`.
+INIT_PATH = "packages/cdm/synapse_cdm/__init__.py"
+INIT_ENUMERATION = re.compile(r"integration adapters are shipped \((?P<names>[^)]+)\)")
+
+
+def test_the_package_docstring_names_one_adapter_per_shipped_adapter():
+    """The list beside the numeral, counted — the half-edit the numeral gate cannot see.
+
+    238bc8c moved the word at `SITES`' `__init__.py` row from "Thirteen" to "Fourteen" and left
+    the parenthetical after it at thirteen names, and the gate passed, because it reads the word
+    and not the list. The names are prose ("PNTMAP GNSS alerts", "TAK / Cursor-on-Target"), so
+    they are not matched to registry keys; they are counted against the registry, which is the
+    check that would have failed that commit.
+    """
+    text = (REPO / INIT_PATH).read_text()
+    match = INIT_ENUMERATION.search(text)
+    assert match, (
+        f"{INIT_PATH}'s shipped-adapter sentence no longer carries a parenthetical list; "
+        "re-anchor INIT_ENUMERATION deliberately, do not delete the check"
+    )
+    names = [name.strip()
+             for part in " ".join(match.group("names").split()).split(",")
+             for name in part.split(" and ")]
+    assert len(names) == len(shipped_adapters()), (
+        f"{INIT_PATH} enumerates {len(names)} adapters and the registry ships "
+        f"{len(shipped_adapters())}: {names}"
+    )
+
+
+def test_the_reference_adapter_the_readme_calls_the_shortest_is_the_shortest():
+    """README.md, "Writing your first adapter", step 1 — a size claim derived, not typed.
+
+    The sentence said "it is 250 lines" from 1a62104, when `pntmap.py` was 252 lines, until
+    2026-09-16, when it was 416: nothing read the figure, and the repository's rule is that a
+    figure in prose is derived by a test or not written. It now says the reference adapter is the
+    shortest of the shipped adapters, which is a claim about the roster and is held to it here.
+    """
+    text = (REPO / "README.md").read_text()
+    assert "and it is the shortest of the shipped adapters" in text, (
+        "README.md's first-adapter step no longer calls the reference adapter the shortest of "
+        "the shipped adapters; re-anchor deliberately if the sentence was rewritten"
+    )
+    lengths = {}
+    for cls in shipped_adapters().values():
+        path = pathlib.Path(inspect.getsourcefile(cls))
+        lengths[path.name] = len(path.read_text().splitlines())
+    shortest = min(lengths, key=lengths.get)
+    assert shortest == "pntmap.py", (
+        f"README.md calls pntmap.py the shortest shipped adapter and {shortest} is shorter "
+        f"({lengths[shortest]} lines against pntmap.py's {lengths['pntmap.py']})"
     )
 
 

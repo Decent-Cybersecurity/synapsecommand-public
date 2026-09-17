@@ -83,11 +83,13 @@ So the identifier is `…:core:PartOf` and the `rdfs:label` is `partOf`, which i
 own spelling belongs: `../spec/governance/ONTOLOGY-TERM-PROCESS.md` says a preferred spelling "is a
 property of a term, not a new term". All fifteen of the brief's names survive verbatim, as labels.
 
-*One consequence is a defect in a document this round may not edit.* The worked example at
-`../spec/sc-oes/09-entity-semantics.md` writes a predicate as
+*One consequence was a defect in a document this round could not edit, and it has since been
+repaired.* The worked example at `../spec/sc-oes/09-entity-semantics.md` wrote a predicate as
 `tag:synapsecommand.com,2026-09-06:ontology:core:affects`, which the grammar quoted eight lines
-below it in that same document refuses. The governed identifier for that relationship is
-`…:ontology:core:Affects`. Correcting the example belongs to whoever owns that normative file.
+below it in that same document refuses; the governed identifier is `…:ontology:core:Affects`,
+and the example has read that way since round SD (commit 71d09c9). This note stood as a live
+defect report until 2026-09-16 — recorded rather than deleted, because the reasoning about
+identifiers versus labels above is what produced it.
 
 **2. A class the specification left unparented takes the most general core class it cannot fail to
 satisfy.** The brief states the `air`, `logistics` and `c2` hierarchies and those are taken exactly;

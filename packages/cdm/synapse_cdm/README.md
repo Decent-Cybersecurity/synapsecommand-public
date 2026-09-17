@@ -41,7 +41,7 @@ With one, an adapter is a thin translator and nothing else.
 pip install synapse-cdm
 
 python -m synapse_cdm.harness --adapter pntmap        # replays the fixtures that came with it
-python -m synapse_cdm.schemas --out ./schemas         # writes the six JSON Schemas, anywhere
+python -m synapse_cdm.schemas --out ./schemas         # writes the eight JSON Schemas, anywhere
 
 python -m synapse_cdm.harness --list-adapters         # the names --adapter takes
 ```
@@ -274,8 +274,8 @@ in that case, because the shape of a report is itself a claim that fixtures were
 **The fixture directory is not always the adapter's name, and you no longer have to know that.**
 `stanag4676` reads its fixtures from `fixtures/nits` — the adapter is named for a covering
 document and the directory for the bytes it holds — and pointing `--fixtures` at
-`fixtures/stanag4676` is the invocation that used to pass vacuously, because that directory holds
-only pinned standards. Each adapter now DECLARES its directory (`Adapter.fixture_dir`) and the
+`fixtures/stanag4676` is the invocation that used to pass vacuously, because that directory held
+only pinned standards (it has since been removed; the pins are in `fixtures/nits/spec/`). Each adapter now DECLARES its directory (`Adapter.fixture_dir`) and the
 harness resolves it through `importlib.resources`, so omitting `--fixtures` is always right for a
 shipped adapter. `tests/test_cdm_harness.py` holds the same map written out by hand and requires
 the two to agree, so a new adapter cannot join the roster without one.
@@ -770,15 +770,24 @@ packages/cdm/
   synapse_cdm/
     models.py       the four objects, Position, Kinematics, SourceRef, Integrity, payloads
     enums.py        closed vocabularies; UNKNOWN is a member, never a null
-    geo.py          GeoJSON Point/LineString/Polygon, [lon, lat], ring closure enforced
+    geo.py          GeoJSON Point/LineString/Polygon and their Multi* forms, [lon, lat], ring closure enforced
     times.py        one timestamp form, one injectable clock
     ids.py          derived stable identity (uuid5) and the id basis
-    version.py      SCHEMA_VERSION and the compatibility rule
+    version.py      the six version constants and the compatibility rule
     symbology.py    MIL-STD-2525D standard identity, CoT affiliation letters
     lossless.py     the never-drop rule as a computable check
     adapter.py      the Adapter ABC, its class-definition-time gates, the registry
     schemas.py      JSON Schema export (+ --check for CI)
     harness.py      the adapter-agnostic validation harness
+    suite.py        Conformance Suite v2 and the `synapse` CLI: checks G–O over the harness's A–F
+    conformance.py  the SC-OES conformance tool, dimensions A–E
+    manifest.py     the adapter-manifest model
+    manifests.py    manifest generation for the shipped roster (+ --check for CI)
+    evidence.py     evidence records and badges; the one module allowed hashlib
+    oes.py          the SC-OES event block: type ids, ontology identifiers, effective intervals
+    oes_registry.py the packaged SC-OES registries, read offline, and their helper surface
+    release_notes.py release-note rendering for the release pipeline
+    registry/       the three packaged SC-OES registries, read as data
     adapters/       one module per external system (pntmap, tak, ais, adsb, …)
     fixtures/       synthetic payloads + golden outputs
 schemas/            published JSON Schema, generated — never hand-edited

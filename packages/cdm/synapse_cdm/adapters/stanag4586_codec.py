@@ -4,7 +4,7 @@ Every constant, width, scale and enumeration in this module is read from the pin
 STANAG 4586 Edition 3, `fixtures/stanag4586/spec/STANAG_4586_Ed3.pdf`, SHA-256 `a4fa6e54…c15da`,
 509 pages, and each carries the section it came from. `fixtures/stanag4586/spec/stanag4586_pin.json`
 is the record; this module is that record made executable, and where the two could disagree the
-pin is the claim and `tests/test_cdm_stanag4586_codec.py` is what stops them parting.
+pin is the claim and `tests/test_cdm_stanag4586_adapter.py` is what stops them parting.
 
 THE EDITION IS NOT THE CURRENT ONE AND THAT IS A RULING, NOT AN OVERSIGHT
 -------------------------------------------------------------------------

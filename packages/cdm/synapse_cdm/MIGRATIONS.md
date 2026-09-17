@@ -11,7 +11,9 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `1.2.1` and `SCHEMA_VERSION` is `1.0.0`.
+`PACKAGE_VERSION` is `2.1.2` and `SCHEMA_VERSION` is `2.1.0`. (That sentence was typed at the
+1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
+`version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red.)
 
 ## What each bump means
 
@@ -358,7 +360,7 @@ now true of it.
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 45 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 50 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
 parser-safety record below moves again, eleven of which the harness-evidence record moves a third
@@ -371,7 +373,9 @@ and `PROVENANCE.json` beside each; six files the harness-evidence record moves �
 `pyproject.toml`, which the audit's CI record below moves for its `[lint]` extra and its rule
 set and the citations record moves for two comments; and fourteen files the citations record
 moves — `enums.py`, `manifest.py`, `oes.py`, `FORMAT_COVERAGE.md`, and the ten KLV goldens of
-the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json` and `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json` and `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json` and `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json` and `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, and `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json` and `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`. Everything else these
+the five VMTI fixtures under `fixtures/klv/golden/`: `a_target_location_pack_is_absolute_and_needs_no_frame_centre.cdm.json` and `a_target_location_pack_is_absolute_and_needs_no_frame_centre.parsed.cdm.json`, `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.cdm.json` and `a_vtarget_with_no_vtracker_is_a_detection_and_never_a_track.parsed.cdm.json`, `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.cdm.json` and `a_vtracker_uuid_is_the_only_key_a_vmti_track_gets.parsed.cdm.json`, `an_offset_target_with_no_frame_centre_emits_no_position.cdm.json` and `an_offset_target_with_no_frame_centre_emits_no_position.parsed.cdm.json`, and `two_vtargets_sharing_one_target_id_number_are_two_detections.cdm.json` and `two_vtargets_sharing_one_target_id_number_are_two_detections.parsed.cdm.json`; and five files the
+audit's prose record at the end of this section moves for a sentence each — `__init__.py`,
+`schemas.py`, `conformance.py`, `klv_vmti_codec.py` and `stanag4586_codec.py`. Everything else these
 rounds touched ships in nothing: the release workflow, the witness builder it runs and that
 builder's test module, the generated manifests under `manifests/`, the generated schemas under
 `schemas/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
@@ -847,6 +851,40 @@ constant's text names its source as private rather than by a path; `synapse_cdm/
 — PATCH, one field description names the validator that exists; `synapse_cdm/suite.py:loss_report`
 — PATCH, a docstring and the `skipped_because` sentence name the guard by symbol.
 
+**THE AUDIT'S PROSE RECORD, 2026-09-16 — the sentences the audit found false are corrected beside
+the record, or rewritten where the file's own convention is to rewrite.** Units, every one PATCH
+by M's words of 2026-09-12 for a declared fact corrected, none moving a name or a call:
+`synapse_cdm/__init__.py`, whose docstring enumerated thirteen names under the word "Fourteen"
+since 238bc8c moved the numeral and not the list — STANAG 4586 DLI is named, and
+`tests/test_cdm_prose_counts.py` now counts the parenthetical against the registry; the package
+`README.md`, whose install block said the exporter writes six JSON Schemas (eight, since the
+manifest and evidence schemas), whose Layout omitted the nine entries that arrived with SC-OES and
+SOIF Part 1 — `suite.py`, `conformance.py`, `manifest.py`, `manifests.py`, `evidence.py`,
+`oes.py`, `oes_registry.py`, `release_notes.py` and `registry/` — and described `geo.py` without
+its Multi* forms and `version.py` as one constant, and whose `fixtures/stanag4676` sentence is in
+the past tense; `synapse_cdm/schemas.py`, the same "six" in the `$id` comment;
+`synapse_cdm/conformance.py`, whose offline paragraph said "Both registries" of three, as
+`spec/sc-oes/13-conformance.md`'s normative sentence did (an editorial change under the
+governance table: a count, not a requirement); `synapse_cdm/adapters/klv_vmti_codec.py`, whose
+header still said in bold that it is wired into no adapter, corrected beside the paragraph
+because 492a326 wired it; `synapse_cdm/adapters/stanag4586_codec.py`, which cited
+`tests/test_cdm_stanag4586_codec.py`, a module that has never existed, where
+`tests/test_cdm_stanag4586_adapter.py` is the gate; `FORMAT_COVERAGE.md`, whose GMTIF heading
+said "ingest" over seven egress rows and a bidirectional manifest and whose Legion heading said
+"(specification only)" over an implemented adapter; `adapter.py`, `adapters/stanag4676.py` and
+`harness.py`, whose sentences about `fixtures/stanag4676` said the directory holds pinned
+standards — it held them, and it is gone; and this file, whose introduction said
+`PACKAGE_VERSION` is `1.2.1` and `SCHEMA_VERSION` is `1.0.0` from the 1.2.1 release through
+eleven tags, now held to `version.py` by `tests/test_cdm_packaging.py`, and whose 2.1.0 section
+carries a dated note beside `releases/witness/2.1.0.json`. The rest of the same commit ships in
+nothing: `wrangler.toml` records that there has been CI since 2026-08-26 and that the 2.1.2 deploy
+carried sixty-six files, beside the paragraphs that said neither; the root `README.md` calls the
+reference adapter the shortest of the shipped adapters, derived by a test, where it said "250
+lines" of a 416-line file; `spec/sc-oes/03-event-types.md` names the shipping registry and its
+four helpers where it said "a later round"; `ontology/README.md` says the `core:affects` defect it
+reported was repaired in round SD; and `tests/test_cdm_harness.py`'s comment matches the
+harness's. The gate finds no unit it cannot classify.
+
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 
 **This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
@@ -1134,7 +1172,9 @@ tag and green after it, in that order, on this commit.
 serves, the digests of the published files, the run that uploaded them and the approval that let it
 are measured facts about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s
 ledger and in `releases/witness/2.1.0.json` by the witness round that reads them from PyPI and from
-the Release API after the fact. Nothing here is written before it has happened.
+the Release API after the fact. Nothing here is written before it has happened. *(Dated note,
+2026-09-16: no witness round read 2.1.0, because the index never served it — the 2.1.2 heading
+above says so — and the record that exists is `releases/witness/2.1.2.json`.)*
 
 **ROUND PD's RECORD, 2026-09-08 — the docs site's two HIGH npm advisories, upgraded away.**
 

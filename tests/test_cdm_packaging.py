@@ -360,6 +360,30 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     )
 
 
+def test_the_migrations_introduction_states_the_two_versions_this_tree_carries():
+    """MIGRATIONS.md's opening paragraph, against `version.py`.
+
+    The sentence "`PACKAGE_VERSION` is `x` and `SCHEMA_VERSION` is `y`" was typed at the 1.2.1
+    release and read 1.2.1 / 1.0.0 through the eleven tags after it, because nothing compared it
+    with the constants it names. It opens the file `pyproject.toml`'s Changelog URL points at, so
+    it is the version number a reader meets first. Pinned the way the assertion above pins the
+    constants: a release moves this sentence deliberately, or goes red.
+    """
+    text = (PKG / "MIGRATIONS.md").read_text()
+    introduction = text.split("\n## ", 1)[0]
+    match = re.search(r"`PACKAGE_VERSION` is `(?P<p>[0-9.]+)` and `SCHEMA_VERSION` is `(?P<s>[0-9.]+)`",
+                      introduction)
+    assert match, (
+        "MIGRATIONS.md's introduction no longer states the two versions in the pinned form. "
+        "Re-anchor deliberately if the sentence was rewritten; do not delete the check"
+    )
+    assert (match["p"], match["s"]) == (PACKAGE_VERSION, SCHEMA_VERSION), (
+        f"MIGRATIONS.md's introduction says PACKAGE_VERSION is {match['p']} and SCHEMA_VERSION is "
+        f"{match['s']}; version.py declares {PACKAGE_VERSION} and {SCHEMA_VERSION}. The sentence "
+        "is a present-tense claim and moves with the release that moves the constant"
+    )
+
+
 def test_version_py_is_the_only_place_the_distinction_is_explained():
     """Stated once. Every other site points at it rather than restating it.
 

@@ -246,8 +246,9 @@ A sixth dimension must not be able to silently shift a fifth column's meaning.
 
 Normative:
 
-> Conformance assessment MUST complete with no network access. Both registries are read from local
-> packaged resources.
+> Conformance assessment MUST complete with no network access. All three packaged registries —
+> `event_types.json`, `ontology_terms.json` and `profiles.json` under `synapse_cdm/registry/sc_oes/`
+> — are read from local packaged resources.
 
 ## Claiming conformance
 

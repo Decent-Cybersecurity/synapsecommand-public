@@ -70,8 +70,11 @@ Normative:
 > maturity, ontology class, payload model and legacy mapping. Where this document and the registry
 > disagree, the registry is correct and this document is a defect at the sentence that disagrees.
 
-The registry is written in a later round and is not maintained as a copy of the table below; the
-table is the human index of the same governed set. Each registry entry carries:
+The registry is `synapse_cdm/registry/sc_oes/event_types.json`, packaged and shipping, and it is not
+maintained as a copy of the table below; the table is the human index of the same governed set.
+(That sentence read "written in a later round" until 2026-09-16 — true when it was written on
+2026-09-06 and false since 2026-09-07; `README.md` in this directory carried the same correction
+on that date and this document did not.) Each registry entry carries:
 
 ```text
 id
@@ -99,8 +102,10 @@ mapping, the second says somebody considered it and there is none.
 `docs/adr/0007-legacy-eventtype-mapping.md` governs what those mappings are and what a mismatch
 means.
 
-Helper access is provided so that consumers need not depend on packaged file paths; the helper
-surface is defined by the round that adds it.
+Helper access is provided so that consumers need not depend on packaged file paths:
+`synapse_cdm.oes_registry.list_event_types()`, `get_event_type(type_id)`,
+`get_profile_event_types(profile)` and `get_legacy_event_type(type_id)` are the surface (ADR 0004
+decision 7 lists it in full).
 
 ## The thirteen initial governed types
 

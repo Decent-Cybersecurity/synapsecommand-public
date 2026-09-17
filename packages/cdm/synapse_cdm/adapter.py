@@ -124,8 +124,8 @@ class Adapter(ABC):
     #: WHY THIS IS DECLARED BY THE ADAPTER AND NOT LOOKED UP BY THE HARNESS
     #: -------------------------------------------------------------------
     #: The relation was folklore, and folklore is how `--adapter stanag4676 --fixtures
-    #: fixtures/stanag4676` came to report a green run that replayed nothing: that directory holds
-    #: only pinned standards, the fixtures are in `fixtures/nits`, and a nine-adapter gate sweep
+    #: fixtures/stanag4676` came to report a green run that replayed nothing: that directory (since
+    #: gone) held only pinned standards; the fixtures are in `fixtures/nits`; a nine-adapter sweep
     #: reported nine passes with one of them vacuous. `harness.NoFixturesFound` stopped that
     #: reading as a pass; this stops it being typed. The split is not an accident to be tidied
     #: away either — an adapter named after a STANDARD is named for a covering document, and the

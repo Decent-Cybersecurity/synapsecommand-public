@@ -170,7 +170,7 @@ The shortest honest path from an empty file to a green harness run. Nothing belo
 from the protocol documents; each step names the one that decides it.
 
 1. **Read the reference adapter.** `packages/cdm/synapse_cdm/adapters/pntmap.py`. Every rule
-   appears in it at least once, and it is 250 lines.
+   appears in it at least once, and it is the shortest of the shipped adapters.
 2. **Learn the four objects and the seven rules** —
    [the package README](packages/cdm/synapse_cdm/README.md) has both, with the site of
    enforcement named for each rule. There are only four objects and one of them is probably

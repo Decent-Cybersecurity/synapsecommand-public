@@ -15,6 +15,14 @@ document's own shapes, so that the decision is made against fields that have bee
 than against fields that have been read about. `klv_uas_codec` is untouched by this round; the
 wiring is the next round's, together with the mapping.
 
+**CORRECTED 2026-09-16 — the paragraph above describes the round that wrote this module, and
+the next round did what it said.** Since 492a326 (park 6's ruling: item 74's targets become
+detections) `klv_uas_codec` imports this module and decodes item 74 into `DecodedPacket.vmti`,
+`stanag4609` imports it and `_vmti_objects` emits one `DETECTION` `Event` per VTarget, with a
+`Track` and an `Entity` where a VTracker Track ID exists, and `manifests/stanag4609.json`
+advertises "the VMTI Local Set (ST 0903.4)". This module still builds no CDM object itself —
+the objects are the adapter's — which is the half of the sentence that was never wrong.
+
 THE COPY THIS IS READ FROM
 ---------------------------
 Every clause cited below was read first-hand from the copy pinned at `SOURCE_ST_0903_4` — the

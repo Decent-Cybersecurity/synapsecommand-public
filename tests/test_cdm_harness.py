@@ -428,7 +428,8 @@ def test_a_fixture_directory_may_document_itself(tmp_path):
 # nor the pattern, and an empty or subdirectory-only one printed "0 passed, 0 failed" and exited
 # 0. The last of those is the dangerous one, because it is indistinguishable in a sweep from a
 # run that judged everything. `--adapter stanag4676 --fixtures fixtures/stanag4676` was the real
-# instance: that directory holds only `spec/`, the fixtures are in `fixtures/nits`, and a
+# instance: that directory held only `spec/` (it no longer exists), the fixtures are in
+# `fixtures/nits`, and a
 # nine-adapter gate sweep reported nine greens with one of them having replayed nothing.
 
 EMPTY_CASES = ("absent", "empty", "subdirectory-only")

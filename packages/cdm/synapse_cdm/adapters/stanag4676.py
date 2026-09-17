@@ -1563,7 +1563,8 @@ class Stanag4676Adapter(Adapter):
 
     #: `fixtures/nits`, not `fixtures/stanag4676`. The adapter is named for the STANDARD, because
     #: STANAG 4676 is a covering document; the directory is named for the PAYLOAD, because a
-    #: directory holds bytes. `fixtures/stanag4676` holds only pinned specifications, and pointing
+    #: directory holds bytes. `fixtures/stanag4676` held only pinned specifications (the pins now
+    #: live in `fixtures/nits/spec/` and that directory is gone), and pointing
     #: the harness at it used to print "0 passed, 0 failed" and exit 0 — a gate sweep over nine
     #: adapters reporting nine greens with one of them having replayed nothing. Declared here so
     #: the harness resolves it and nobody has to remember.
