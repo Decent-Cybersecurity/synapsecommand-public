@@ -531,7 +531,12 @@ blockers are section 20, and section 20 is empty.
 17. **A local apparatus directory reds five suite tests in the working tree only.** It is excluded
     at `.git/info/exclude`, so it is invisible to a clone and to every commit, and the tests that
     see it walk the filesystem rather than the git index. A fresh clone of this commit is **0
-    failed** (section 17).
+    failed** (section 17). (**Corrected 2026-09-16:** since this date the three modules those
+    five tests live in — `test_cdm_changelog_claim.py`, `test_cdm_consumer_path.py` and
+    `test_cdm_deploy_workflow.py` — enumerate `git ls-files` instead of walking the filesystem,
+    and the directory is ignored by the tracked `.gitignore` rather than by `.git/info/exclude`
+    alone, so a working tree that carries it reads **0 failed** in those modules too. The
+    limitation is kept as the reading this report took.)
 18. **Two advisories have no taken fix**: the `image-size` pair, HIGH, excepted because
     `first_patched_version` is `null` and npm's `latest` for that package is the installed version.
     The `uuid` moderate is below the floor the `docs-audit` gate enforces.
@@ -543,6 +548,8 @@ blockers are section 20, and section 20 is empty.
     `build`, `twine`, `ruff` and `cyclonedx-py` provisioned into a throwaway virtual environment
     beside it. Skip counts from this environment are therefore **not** comparable with any figure
     taken before that date; the binding invariant is the failure set, and it is named in section 17.
+    (**Corrected 2026-09-16:** since this date that set is empty — the correction of the same
+    date in section 17 says why — and the invariant is that it stays empty.)
 
 ## 16. Intentionally deferred work
 
@@ -634,7 +641,9 @@ every one of them naming a file in the local apparatus directory of limitation 1
 file. **The binding invariant is that failure set: those five and no sixth.** The pass/skip
 difference between the two runs is the same apparatus plus the virtual environment sitting inside
 the tree and outside the clone, and neither skip count is comparable with a figure taken before the
-2026-09-10 environment rebuild (limitation 20).
+2026-09-10 environment rebuild (limitation 20). (**Corrected 2026-09-16:** the mechanism behind
+those five failures is gone since this date, and the in-tree failure set is empty; the second
+correction below has the reading. The paragraph is kept as the reading this report took.)
 
 **Correction, 2026-09-11, appended by the round that repairs this file.** The paragraph above was
 true of the commit section 18 names and was NOT true of the commit that first carried this report.
@@ -647,7 +656,22 @@ red on its `Suite, gates and manifests` job for that line alone. The sentence "a
 above is corrected to read: no tracked file other than this one, and only until this repair. The
 line is now narrowed to describe the check instead of quoting it, and the sweep over the tracked
 tree is empty again; the in-tree run still reports the failure, because the apparatus directory of
-limitation 17 is untracked yet sits inside the repository and inside the sweep.
+limitation 17 is untracked yet sits inside the repository and inside the sweep. (**Corrected
+2026-09-16:** it no longer does; the correction below says why.)
+
+**Correction, 2026-09-16, appended by the audit that repaired the sweeps.** Both paragraphs above
+describe a mechanism that no longer exists. Since this date the three modules that carried the
+five failures — `test_cdm_changelog_claim.py`, `test_cdm_consumer_path.py` and
+`test_cdm_deploy_workflow.py` — enumerate `git ls-files` rather than walking the filesystem behind
+a hand-written skip set, as the repository's other sweep modules already did; and the apparatus
+directory of limitation 17 is ignored by the tracked `.gitignore` rather than by
+`.git/info/exclude` alone, so the exclusion travels with the repository instead of with one
+checkout. Measured on the working tree that still carries the directory: those three modules read
+**33 passed, 0 failed**, and `git check-ignore -v` on a file inside it names the `.gitignore` line
+rather than the local exclude file. The in-tree failure set is therefore **empty**, and the
+binding invariant since this date is that it stays empty — "those five and no sixth" is the
+reading of the commit section 18 names, kept as taken. No §56 figure, no gate and no schema moves
+with this correction; the clone figure above stands.
 
 **The ref-dependent steps, rehearsed against a real tag.** `gates/release_ref_rehearsal.py`
 (484 lines, round PQ) replays each step of `publish.yml` whose behaviour depends on the ref, against
