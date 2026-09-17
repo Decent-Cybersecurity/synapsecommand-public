@@ -78,6 +78,7 @@ import os
 import pathlib
 import re
 import subprocess
+import sys
 import tokenize
 import tomllib
 
@@ -264,9 +265,11 @@ def discover() -> list[pathlib.Path]:
 
     `.github/scripts/` joined the same way on 2026-09-08 (round P7), and the decision is the same
     one for a different reason. `build_witness.py` runs in the release pipeline's `witness` job on
-    the runner's interpreter — 3.12 today, and pinned in one line of one workflow. It is IN SCOPE
-    because a release is the worst place to meet a `SyntaxError`, and because the pin is a choice
-    somebody can lower: the floor is what says which interpreters that choice may range over.
+    the runner's interpreter — 3.12 today, and pinned in one line of one workflow (`ci.yml` runs
+    the SUITE on the whole declared range since 2026-09-16; the witness job's pin is
+    `publish.yml`'s alone). It is IN SCOPE because a release is the worst place to meet a
+    `SyntaxError`, and because the pin is a choice somebody can lower: the floor is what says
+    which interpreters that choice may range over.
     """
     out = []
     for root in ROOTS:
@@ -472,6 +475,20 @@ def _pep701_violations(source: str, filename: str) -> list[str]:
     return findings
 
 
+#: The three self-tests below assert on the WORDING of findings a >=3.12 parser produces when asked
+#: for `feature_version=(3, 11)`. On a genuine 3.11 the tokenizer refuses a PEP 701 construct
+#: before the parser sees it, so the gate still fails there — with a different message — and the
+#: three assertions about the message cannot hold. Guarded since 2026-09-16, when `ci.yml` began
+#: running the suite on 3.11: the floor leg reads the corroboration test at the end of this module
+#: instead, which only RUNS when a real 3.11 is on PATH and is therefore that leg's extra value.
+_NEEDS_A_PARSER_ABOVE_THE_FLOOR = pytest.mark.skipif(
+    sys.version_info < (3, 12),
+    reason="asserts the finding text a >=3.12 parser produces at feature_version=(3, 11); on a "
+           "real 3.11 the tokenizer refuses the construct first, which the corroboration test at "
+           "the end of this module reads instead")
+
+
+@_NEEDS_A_PARSER_ABOVE_THE_FLOOR
 def test_the_pep701_scanner_agrees_with_a_real_interpreter_on_known_cases():
     """The scanner is calibrated against ground truth, not against the PEP's wording.
 
@@ -506,6 +523,7 @@ def test_the_pep701_scanner_agrees_with_a_real_interpreter_on_known_cases():
         )
 
 
+@_NEEDS_A_PARSER_ABOVE_THE_FLOOR
 def test_feature_version_alone_would_not_have_caught_the_defect_this_module_exists_for():
     """THE MEASUREMENT behind this module's design, asserted so it cannot quietly stop being true.
 
@@ -567,6 +585,7 @@ def test_every_file_parses_at_the_declared_floor(path):
     )
 
 
+@_NEEDS_A_PARSER_ABOVE_THE_FLOOR
 def test_the_gate_would_fail_on_the_construct_that_prompted_it():
     """AN ABSENCE made positive: the gate is exercised against the original defect, verbatim.
 

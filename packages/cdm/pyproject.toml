@@ -51,8 +51,10 @@ classifiers = [
     "Intended Audience :: Information Technology",
     # Enumerated rather than left to `Programming Language :: Python :: 3`, because the floor is
     # a real declaration here — `tests/test_cdm_version_floor.py` asserts the package PARSES at
-    # 3.11 — and the ceiling is what is actually exercised. 3.14 is the interpreter the suite
-    # runs on today; 3.11 is the floor that gate defends.
+    # 3.11 — and the ceiling is what is actually exercised. Since 2026-09-16 the suite runs on
+    # all four in `ci.yml`'s `suite` matrix, so each classifier is an executed reading rather
+    # than a declaration; the version-floor module still gates grammar at 3.11 on every
+    # interpreter, and 3.12 is the release interpreter `publish.yml` pins.
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -87,6 +89,13 @@ dependencies = [
 # and never parses Turtle.
 [project.optional-dependencies]
 test = ["pytest>=8.0", "rdflib>=7.0"]
+# The lint stage's ONE pin, added 2026-09-16. `ci.yml`'s `lint` job and `publish.yml`'s gate both
+# install this extra rather than typing a version of their own, so the tool version and the rule
+# set below are read from one file by both workflows and by a contributor following
+# CONTRIBUTING.md; a workflow line `ruff==` is what `tests/test_cdm_lint_stage.py` refuses. Pinned
+# exactly, not floored, because the rule set below was measured against this version and a newer
+# ruff can add a rule to `E9` or change what F821 sees.
+lint = ["ruff==0.16.6"]
 
 [project.urls]
 Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
@@ -138,6 +147,17 @@ synapse = "synapse_cdm.suite:main"
 # has no business making. A stage added red is a stage somebody switches off in the release it
 # first blocks; this one is added green and can only go red on something new.
 #
+# CORRECTED 2026-09-16: THE SENTENCE ABOVE DESCRIBED A SET THIS FILE DID NOT SELECT. Under ruff
+# 0.16.6, `select = ["E9"]` enables exactly one rule — `io-error` (E902), read off
+# `ruff check --show-settings` — a syntax error is reported regardless of selection, and "a name
+# that is not defined at all" is pyflakes' F821, which `E9` never included. So the stage as
+# configured caught syntax errors and unreadable files and never an undefined name, on a tag or
+# anywhere else. The set is now `E9,F821`, which is what the sentence meant: measured at 0
+# findings over `packages/cdm gates tests` on 2026-09-16, so it is added green, under the same
+# escape clause as the original narrowing. The rest of `F` (27 F401 on the same reading, all
+# `--fix`able) is still the documented limitation and still a ruling of its own. The version is
+# pinned once, in the `[lint]` extra above, and `ci.yml` now runs this set on every push.
+#
 # There is no `[tool.mypy]`, and that is also F7.1: the package has never had a type config, and
 # adding one in a release-engineering round would put a first type-check run inside the pipeline
 # that publishes. P8 §57 records it as a limitation.
@@ -146,7 +166,7 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E9"]
+select = ["E9", "F821"]
 
 [tool.setuptools.dynamic]
 version = { attr = "synapse_cdm.version.PACKAGE_VERSION" }

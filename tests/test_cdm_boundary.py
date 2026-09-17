@@ -363,12 +363,21 @@ def test_no_forbidden_runtime_dependency_is_declared():
 
 
 def test_the_rdf_parser_is_declared_in_the_test_extra_and_only_there():
-    """The one place `rdflib` is allowed to be, stated as a positive so it cannot drift upward."""
+    """The one place `rdflib` is allowed to be, stated as a positive so it cannot drift upward.
+
+    Re-anchored 2026-09-16, when the `lint` extra (ruff's one pin, `tests/test_cdm_lint_stage.py`)
+    joined `test`: the extras are exactly those two, and `rdflib` is in `test`, in no other extra,
+    and in no runtime dependency.
+    """
     project = _pyproject()["project"]
     extras = project["optional-dependencies"]
-    assert sorted(extras) == ["test"], f"unexpected extras: {sorted(extras)}"
+    assert sorted(extras) == ["lint", "test"], f"unexpected extras: {sorted(extras)}"
     test_extra = " ".join(extras["test"]).lower()
     assert "rdflib" in test_extra, "rdflib left the test extra; the ontology's graph tests need it"
+    for name, requirements in extras.items():
+        if name != "test":
+            assert "rdflib" not in " ".join(requirements).lower(), (
+                f"rdflib is declared in the `{name}` extra; `test` is the one place it may be")
     assert "rdflib" not in " ".join(project["dependencies"]).lower()
 
 

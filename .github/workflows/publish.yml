@@ -202,9 +202,12 @@ jobs:
         with:
           # NOT the declared floor, and the reason is in this file's history: `pyproject.toml`
           # declares `requires-python = ">=3.11"` and three of `tests/test_cdm_version_floor.py`'s
-          # OWN self-tests fail on a genuine 3.11 interpreter, because they assert on the wording
-          # of findings a 3.14 parser produces at `feature_version=(3, 11)`. The suite needs a host
-          # ABOVE the floor to test the floor.
+          # OWN self-tests assert on the wording of findings a >=3.12 parser produces at
+          # `feature_version=(3, 11)`, which a genuine 3.11 cannot produce. The suite needs a host
+          # ABOVE the floor to test the floor. 3.12 is the RELEASE interpreter, and since
+          # 2026-09-16 it is no longer the only one the suite runs on: `ci.yml` executes the suite
+          # on 3.11, 3.12, 3.13 and 3.14, and the three self-tests are guarded there with `skipif`
+          # below 3.12 so that the floor leg reads the corroboration test instead.
           python-version: '3.12'
 
       - name: Install what the suite and the gate need, by the documented path
@@ -225,9 +228,19 @@ jobs:
         # added red is a stage somebody disables. So the gate is `E9` — syntax errors and undefined
         # names, the class that is never a style opinion — and the `F` set is a known limitation
         # P8 §57 records rather than a rule this file pretends to enforce.
+        #
+        # CORRECTED 2026-09-16: "`E9` — syntax errors and undefined names" was not what the set
+        # selected. Under ruff 0.16.6 `select = ["E9"]` enables exactly one rule, `io-error`
+        # (E902); a syntax error is reported regardless of selection; and an undefined name is
+        # F821, which was NOT selected — so this stage never caught the one class the sentence
+        # above promised. The set is now `E9,F821` (0 findings today, measured), which delivers
+        # the sentence's intent; the wider `F` set stays a documented limitation. The version is
+        # no longer typed here: the `[lint]` extra of `packages/cdm/pyproject.toml` is the one pin,
+        # `ci.yml`'s `lint` job installs the same extra on every push, and
+        # `tests/test_cdm_lint_stage.py` refuses a `ruff==` line in either workflow.
         run: |
           set -euo pipefail
-          python -m pip install "ruff==0.16.6"
+          python -m pip install -e "packages/cdm[lint]"
           # `--config` explicitly, because there is no pyproject.toml at the repository ROOT: ruff
           # discovers configuration by walking up from each file, so `gates/` and `tests/` would
           # otherwise be linted under ruff's DEFAULT rule set while `packages/cdm/` used the

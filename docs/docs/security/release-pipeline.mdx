@@ -203,7 +203,11 @@ symptom, and it is the one this refusal exists for.
   reads source rather than dependencies. Dependabot alerts cover it and no job in this pipeline
   fails on one — see [Supply chain](./supply-chain.mdx) §2.
 * **Type checking.** There is no mypy configuration in this package and none is run. The lint stage
-  is ruff `E9` only — syntax errors and undefined names — and the narrowing is documented in
-  `packages/cdm/pyproject.toml` beside the config, with the readings that decided it.
+  is ruff with `E9` and `F821` — syntax errors (which ruff reports whatever is selected), E902
+  unreadable files, and F821 undefined names — and the narrowing is documented in
+  `packages/cdm/pyproject.toml` beside the config, with the readings that decided it. (Until
+  2026-09-16 the set was `E9` alone, which under ruff 0.16.6 selects only E902 and never caught an
+  undefined name; the sentence here said otherwise.) The same command runs on every push in
+  `ci.yml`'s `lint` job, at the version the package's `[lint]` extra pins.
 * **A refused upload.** It has never happened, so the recovery path is unexercised. The fix is on
   pypi.org, per `PUBLICATION.md` entry 6, and never a token pasted into the workflow.

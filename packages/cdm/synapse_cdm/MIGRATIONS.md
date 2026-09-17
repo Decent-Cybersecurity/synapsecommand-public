@@ -336,7 +336,7 @@ re-derives every digest in it and exits non-zero on any disagreement — that co
 **Nothing in this section is in a release: there is no release that contains it.** The newest
 release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
 
-**What moved inside the distribution: 30 files** — `MIGRATIONS.md`, this section being what moved
+**What moved inside the distribution: 31 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
 rounds before it did not, three of which — `tak.py`, `stanag4676.py` and `pntmap.py` — the
 parser-safety record below moves again, and eleven of which the harness-evidence record at the end
@@ -344,10 +344,12 @@ of this section moves a third time; nine files under three `malformed/` fixture 
 parser-safety record added — `tak/malformed/deeply_nested.xml`,
 `nits/malformed/deeply_nested.nits.xml`, `pntmap/malformed/a_json_list.json`, and the `README.md`
 and `PROVENANCE.json` beside each; and six files the harness-evidence record moves — `adapter.py`,
-`harness.py`, `suite.py`, `evidence.py`, `version.py` and the package's own `README.md`. Everything
-else these rounds touched ships in nothing: the release workflow, the witness builder it runs and
-that builder's test module, the generated manifests under `manifests/`, the test modules under
-`tests/`, the ledger, the documentation pages and the witness record.
+`harness.py`, `suite.py`, `evidence.py`, `version.py` and the package's own `README.md`; and
+`pyproject.toml`, which the audit's CI record at the end of this section moves for its `[lint]`
+extra and its rule set. Everything else these rounds touched ships in nothing: the release
+workflow, the witness builder it runs and that builder's test module, the generated manifests under
+`manifests/`, the test modules under `tests/`, the ledger, the documentation pages and the witness
+record.
 
 **ROUND PW's RECORD, 2026-09-12 — the witness record's approval instant comes from the deployment's
 own status history, because the endpoint the builder asked carries no instant at all.** Unit:
@@ -682,6 +684,26 @@ added, removed or renamed and no consumer's call changed, M's words for PATCH on
 `synapse_cdm/harness.py:_check_roundtrip` — PATCH, a private name with an optional parameter;
 `synapse_cdm/harness.py:render_report` — PATCH, a block rendered for an emitting adapter;
 `synapse_cdm/suite.py:_sweep` — PATCH, the label it writes names the directory.
+
+**THE AUDIT'S CI RECORD, 2026-09-16 — the lint stage is pinned once, in a `[lint]` extra, and runs
+on every push with the rule set its comments always described.** Unit: `pyproject.toml`, MINOR by
+the bump table's optional-dependency row — `[project.optional-dependencies]` gains
+`lint = ["ruff==0.16.6"]`, the one pin that `ci.yml`'s new `lint` job and `publish.yml`'s gate both
+install rather than typing a version of their own, and that CONTRIBUTING.md's install line now
+names beside `[test]`. The arc's floor is already MINOR from the harness-evidence record above, so
+the number does not move again. In the same file `[tool.ruff.lint]` selects `E9,F821` where it
+selected `E9` alone: under ruff 0.16.6 that was exactly one rule, `io-error` (E902), a syntax error
+is reported whatever is selected, and the "undefined names" the comments in this file's
+neighbourhood, in `publish.yml` and on the release-pipeline page all promised are F821, which the
+set never included — so the stage as configured had never caught one. The new set reads 0 findings
+over `packages/cdm gates tests`, measured, so it is still added green under the narrowing rule's
+own escape clause; the wider `F` set stays the documented limitation. Nothing else under
+`synapse_cdm/` moved for this. The rest of the same audit commit ships in nothing: `ci.yml`'s
+`suite` job now runs on every interpreter the classifiers declare (3.11 through 3.14), with the
+three self-tests of `tests/test_cdm_version_floor.py` that need a parser above the floor guarded
+by `skipif`; `ci.yml` gains a `wheel` job that runs `gates/wheel_install.py --mutation-check` on
+every push; its `docs-audit` job runs `npm run ci` rather than `npm run build`; and
+`tests/test_cdm_lint_stage.py` holds the pin, the rule set and the two workflows together.
 
 ### 2.1.2 — 2026-09-12 — SOIF Part 1: Foundation & Assurance (corrective of the tagged-never-published 2.1.0 and 2.1.1)
 

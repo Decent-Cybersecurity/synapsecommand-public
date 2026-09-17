@@ -56,7 +56,10 @@ non-zero saying so.
 
 It needs a network for `pip` and it is therefore a protocol act rather than a suite member, the
 same standing as the pin sweep. The half of it that IS decidable offline lives in
-`tests/test_cdm_packaging.py` and runs on every `pytest`.
+`tests/test_cdm_packaging.py` and runs on every `pytest`. Since 2026-09-16 `ci.yml`'s `wheel` job
+runs the whole gate, with `--mutation-check`, on every push and pull request as well — it is still
+not a `pytest` member, and the rosters below are still compared offline by
+`tests/test_cdm_gate_rosters.py`, but a red here no longer waits for a dispatch or a tag.
 """
 from __future__ import annotations
 
@@ -203,6 +206,7 @@ REPO_BOUND_TESTS = {
     "test_cdm_profiles.py": "spec/sc-oes/profiles/ — the seven normative profile documents against the packaged registry they describe; the documents are at the repository root and none of them ships",
     "test_cdm_deploy_record.py": "gates/deploy_record.py and the deployment ledger",
     "test_cdm_gate_rosters.py": "the rosters in gates/, which the wheel does not carry",
+    "test_cdm_lint_stage.py": ".github/workflows/ci.yml and publish.yml read as text, and packages/cdm/pyproject.toml's [lint] extra and [tool.ruff.lint] table — the lint stage's one pin and the two workflows that install it; none of the three is inside the wheel, and an installed wheel has no workflow for the module to hold to the pin",
     "test_cdm_witness.py": "gates/witness_verify.py and releases/witness/ — the verifier is not in the distribution and neither is the directory of records it reads, so an installed wheel has no witness for this module to be right about",
     "test_cdm_witness_builder.py": "the release pipeline's own .github/scripts/build_witness.py, compiled from the repository's copy, plus gates/witness_verify.py; neither path ships",
     "test_cdm_release_notes.py": "manifests/, SECURITY.md and security/exceptions/ at the repository root. The renderer it drives DOES ship, and this module is still repository-bound: every input it asserts on is a file outside the wheel, and against an installed wheel the adapter table and the controls table would both be empty",

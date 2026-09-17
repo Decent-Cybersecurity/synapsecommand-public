@@ -198,28 +198,38 @@ one that is allowed to be ugly.
 ## Running everything before you open a pull request
 
 ```bash
-pip install -e "packages/cdm[test]"                  # editable install, plus pytest
+pip install -e "packages/cdm[test,lint]"             # editable install, plus pytest and ruff
 pytest -q                                            # the whole suite
 python -m synapse_cdm.schemas --check --out schemas   # published schemas match the models
+ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests   # the lint gate publish.yml applies
 
 python gates/wheel_install.py                        # the built WHEEL, in a clean environment
 
 cd docs && npm install && npm run ci                 # docs: drift gate, typecheck, build
 ```
 
-The third line is a **gate rather than a test**, and the distinction is the reason it is here.
+The `gates/wheel_install.py` line is a **gate rather than a test**, and the distinction is the
+reason it is here.
 `pytest.ini` puts `packages/cdm` on `sys.path`, so the suite judges the working tree and never an
 installed copy — deliberately, because a stale wheel passing for the source is a green run that
 means nothing. The cost is that nothing in the suite exercises the artefact a partner receives.
 `gates/wheel_install.py` builds the distribution, installs the wheel into an environment with no
 part of this repository on its path, and runs the harness and the package-only half of the suite
-against **that**. It needs a network for `pip`, which is why it is not a suite member.
+against **that**. It needs a network for `pip`, which is why it is not a suite member — since
+2026-09-16 `ci.yml`'s `wheel` job runs it on every push, so a red arrives on the push rather than
+at the release, and it is still not something `pytest` runs.
 
 Add `--mutation-check` and it also builds a wheel with its fixtures stripped out and requires
 itself to refuse it. Run that form if you touched packaging.
 
-The `[test]` extra carries `pytest`; the quotes are for `zsh`, which would otherwise glob the
-brackets. `README.md` documents the same first two lines and a test requires the two to agree.
+The `ruff` line is the lint gate `publish.yml` applies at a tag and `ci.yml` applies on every
+push, run here with the same command; the `[lint]` extra installs ruff at the one version
+`pyproject.toml` pins, so the reading is the workflows' reading.
+
+The `[test]` extra carries `pytest` and `[lint]` carries `ruff`; the quotes are for `zsh`, which
+would otherwise glob the brackets. `README.md` documents the same install and suite lines with the
+`[test]` extra alone, and a test requires every extra either document names to be one
+`pyproject.toml` declares.
 
 `synapse_cdm` depends on `pydantic` and `jsonschema` and nothing else. It imports nothing from
 the SynapseCommand product repository and contains no crypto — both enforced by AST in

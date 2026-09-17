@@ -1,9 +1,10 @@
 /**
  * Where things are, resolved from this file rather than from the working directory.
  *
- * `process.cwd()` is wrong here: these scripts are run from `docs/` by npm, from the repo
- * root by CI, and from wherever Cloudflare's build container happens to start. Resolving
- * against `import.meta.url` makes every path independent of all three.
+ * `process.cwd()` is wrong here: these scripts are run from `docs/` by npm — locally, and in
+ * CI's `docs-audit` job through `npm --prefix docs run ci` — and from wherever Cloudflare's
+ * build container happens to start. Resolving against `import.meta.url` makes every path
+ * independent of all of them.
  */
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';

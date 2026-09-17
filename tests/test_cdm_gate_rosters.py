@@ -3,10 +3,12 @@
 WHY THIS MODULE EXISTS
 ----------------------
 `gates/wheel_install.py` is a protocol act rather than a suite member: it builds a wheel, makes a
-venv and installs into it, so it is run deliberately before a release and not on every commit.
-That is a defensible arrangement, and it had one consequence nobody had priced in — the gate holds
-three rosters, and being outside the suite meant they were the only rosters in this repository
-that nothing derived and nothing compared.
+venv and installs into it, so it is not something `pytest` runs. When this module was written it
+was also run only deliberately, before a release, and not on every commit — since 2026-09-16
+`ci.yml`'s `wheel` job runs it on every push, and this module still owns the offline roster check
+below, which is what runs on every `pytest`. The arrangement it was written against had one
+consequence nobody had priced in — the gate holds three rosters, and being outside the suite meant
+they were the only rosters in this repository that nothing derived and nothing compared.
 
 They drifted. `cat023` and `cat062` shipped with their tests, their fixtures and their prose
 counts all updated, and `pytest` stayed green at 2867 passed because no test in it reads that
@@ -160,3 +162,27 @@ def test_the_repository_bound_list_names_a_reason_for_every_module(gate):
     assert not thin, (
         f"these entries name no real repository fact: {thin}. The value is the decision's "
         "justification — 'the repository' or '' is the module drifting in unexamined")
+
+
+# ------------------------------------------------------------- 2026-09-16: the gate runs on every push
+
+def test_ci_runs_the_whole_gate_on_every_push_and_this_module_says_so():
+    """The other half of this module's own history, closed.
+
+    The rosters drifted because the gate ran only when somebody remembered to run it. This module
+    put the roster comparison on every `pytest`; `ci.yml`'s `wheel` job, since 2026-09-16, puts the
+    REST of the gate — the build, the clean install, the thirteen checks and the mutation check —
+    on every push. The assertion is the executable line, in the same shape
+    `tests/test_cdm_trusted_publishing.py` uses for `publish.yml`'s condition 2, minus
+    `--export-dist`: nothing in `ci.yml` uploads, so nothing there needs the bytes.
+    """
+    ci = REPO / ".github" / "workflows" / "ci.yml"
+    executable = "\n".join(line for line in ci.read_text().splitlines()
+                           if not line.lstrip().startswith("#"))
+    assert "python gates/wheel_install.py --mutation-check" in executable, (
+        "ci.yml no longer runs gates/wheel_install.py with the mutation check on every push, so "
+        "the gate is back to being the thing nobody runs — which is the failure this module's "
+        "header records")
+    assert "--export-dist" not in executable, (
+        "ci.yml exports a distribution; the CI reading needs the verdict and not the bytes, and "
+        "an exported dist/ on every push is an artefact nobody asked for")

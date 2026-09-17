@@ -59,6 +59,17 @@ def declared_extras() -> dict[str, list[str]]:
     return data.get("project", {}).get("optional-dependencies", {})
 
 
+def named_extras(extra: str | None) -> list[str]:
+    """The extras one bracket names, as pip reads them: `[test,lint]` is two, not one.
+
+    Split since 2026-09-16, when CONTRIBUTING.md's install line gained the `[lint]` extra beside
+    `[test]`. Each name is judged on its own below — declared, and between them supplying pytest —
+    because pip installs the declared ones and warns past the rest, so a typo in the second name
+    is exactly as silent as a typo in the first.
+    """
+    return [name.strip() for name in (extra or "").split(",") if name.strip()]
+
+
 def test_every_documented_install_of_this_package_names_a_declared_extra():
     """The agreement, at every site that states the command."""
     extras = declared_extras()
@@ -74,12 +85,13 @@ def test_every_documented_install_of_this_package_names_a_declared_extra():
                 "`pydantic` and `jsonschema` and nothing else. Use the `[test]` extra, which has "
                 "been declared in pyproject.toml since the package was lifted out"
             )
-            assert extra in extras, (
-                f"{rel} documents the extra `[{extra}]` and pyproject.toml declares "
-                f"{sorted(extras)}. `pip` fails an undeclared extra with a warning and installs "
-                "the package anyway, so this reads as a working command and leaves the reader "
-                "without whatever the extra was for"
-            )
+            for name in named_extras(extra):
+                assert name in extras, (
+                    f"{rel} documents the extra `[{name}]` (in `[{extra}]`) and pyproject.toml "
+                    f"declares {sorted(extras)}. `pip` fails an undeclared extra with a warning "
+                    "and installs the package anyway, so this reads as a working command and "
+                    "leaves the reader without whatever the extra was for"
+                )
     assert found >= 2, (
         f"the install pattern matched {found} command(s) across {SITES}. Both documents state the "
         "sequence and a pattern that stops matching is a FAILURE, not a pass — re-anchor it "
@@ -97,9 +109,9 @@ def test_the_extra_the_documents_name_is_the_one_that_supplies_pytest():
     for rel in SITES:
         for match in INSTALL.finditer((REPO / rel).read_text()):
             extra = match.group("extra")
-            requirements = extras.get(extra, [])
+            requirements = [req for name in named_extras(extra) for req in extras.get(name, [])]
             assert any(re.match(r"pytest\b", req) for req in requirements), (
-                f"{rel} points a reader at `[{extra}]` and that extra declares {requirements}, "
+                f"{rel} points a reader at `[{extra}]` and that declares {requirements}, "
                 "which does not include pytest. The command after it in the same block is "
                 "`pytest -q`"
             )
@@ -125,3 +137,16 @@ def test_the_install_pattern_can_see_the_command_that_was_wrong():
         "pyproject.toml no longer declares a `[test]` extra. Both documents send readers to it; "
         "if the extra was renamed, rename it at all three sites in the same commit"
     )
+
+
+def test_the_extra_splitter_reads_one_bracket_as_the_names_pip_reads():
+    """`[test,lint]` is two extras to pip, and to this module since 2026-09-16.
+
+    A splitter that handed the bracket back whole would report `test,lint` as undeclared and fail
+    the documented command for the wrong reason; one that dropped the second name would let a
+    typo in it through, which is the silent failure the module exists to catch.
+    """
+    assert named_extras("test,lint") == ["test", "lint"]
+    assert named_extras("test, lint") == ["test", "lint"], "pip tolerates the space; so must this"
+    assert named_extras("test") == ["test"]
+    assert named_extras(None) == []

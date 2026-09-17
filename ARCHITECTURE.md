@@ -496,28 +496,37 @@ diffs and chain hashes compare.
 
 ## 7. CI layout
 
-**What exists today.** `.github/workflows/` holds exactly one workflow, `publish.yml`, and its
-triggers are `push:` on tags matching `v*` and `workflow_dispatch` (`publish.yml:119–125`). The
-dispatch trigger exists so the build-and-gate half is runnable against any branch without
-publishing anything; the publish job is guarded on the ref being a tag.
+**What exists today — rewritten 2026-09-16, because the paragraph it replaces said "exactly one
+workflow" and five exist.** `.github/workflows/` holds `publish.yml`, the release pipeline, on
+`push:` of a tag matching `v*` and on `workflow_dispatch` (the dispatch trigger exists so the
+gate-and-build half is runnable against any branch without publishing anything; the irreversible
+jobs are guarded on the ref being a tag); `ci.yml`, the workflow that can fail on a branch, on
+`push` to `main` and to `soif/**` and on `pull_request`; `codeql.yml`, on the same pushes and pull
+requests and on a weekly schedule; `dependency-review.yml`, on pull requests only; and
+`rc-build.yml`, a `workflow_dispatch` release-candidate build that publishes nothing.
 
-**What that means, and it is a design constraint rather than a complaint.** A push to a branch
-starts no workflow. Every "CI MUST fail if …" clause in this campaign — a missing or invalid
-manifest, an impossible direction, an unknown maturity value, a conformance regression, a fixture
-without provenance — therefore has nothing to fail on until a second workflow exists.
+**Why `ci.yml` exists, and it was a design constraint rather than a complaint.** Before it, a push
+to a branch started no workflow. Every "CI MUST fail if …" clause in this campaign — a missing or
+invalid manifest, an impossible direction, an unknown maturity value, a conformance regression, a
+fixture without provenance — had nothing to fail on until a second workflow existed.
 
-**`ci.yml`, designed here and created by P1.** One workflow, on `push` to `main` and to `soif/**`
-and on `pull_request`:
+**`ci.yml`, designed here, created by P1, and grown since.** The table is the job set as it stands;
+the file's own header carries the reasoning for each job, and the P1 design's `gates` and
+`manifests` rows are steps of `suite` rather than jobs of their own:
 
 | job | added by | what it runs |
 |---|---|---|
-| `suite` | P1 | the repository's own test suite from a clean checkout |
-| `gates` | P1 | the checks under `gates/` that do not need the network |
-| `manifests` | P1 | manifest presence, schema validity and consistency with the implementation |
-| `conformance` | P2 | Conformance Suite v2 over every shipped adapter, JSON output retained |
-| `evidence` | P4 | evidence generation and verification, and fixture provenance |
-| `secrets` | P5 | the secret-scanning gate |
-| `supply-chain` | P6 | dependency review, dependency audit and the static-analysis gate |
+| `suite` | P1 | the repository's own test suite from a clean checkout, on CPython 3.11, 3.12, 3.13 and 3.14 — every interpreter `pyproject.toml` declares — then the schema and manifest `--check`s, the pin gate, the parks gate and the commit-message gate |
+| `lint` | 2026-09-16 | ruff, at the version and with the rule set `pyproject.toml` pins, on every push rather than only at a tag |
+| `wheel` | 2026-09-16 | `gates/wheel_install.py --mutation-check`: the installed wheel is the tested package |
+| `conformance` | P2 | Conformance Suite v2 over every shipped adapter, and the JSON report |
+| `evidence` | P4 | fixture provenance, evidence generation and verification, and the badges |
+| `secrets` | P5 | gitleaks over the full history the push carries |
+| `supply-chain` | P6 | `pip-audit --strict` over the installed environment and over the wheel's own frozen closure |
+| `docs-audit` | PB | `npm audit` over `docs/` at high with the exceptions derived from `security/exceptions/`, then `npm run ci` — the schema-reference drift gate, the typecheck, the build and the admonition check |
+
+Dependency review and the static-analysis gate, which the P6 row of the original table named, are
+`dependency-review.yml` and `codeql.yml` rather than jobs of `ci.yml`.
 
 `publish.yml` keeps its present shape and its present triggers. The two files have separate jobs: a
 release pipeline that also runs pull-request checks becomes a release pipeline nobody may restructure.

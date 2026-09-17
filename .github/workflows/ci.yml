@@ -7,8 +7,10 @@
 # if …" clause of the SOIF Part 1 specification — a missing or invalid manifest, an impossible
 # direction, an unknown maturity value, a conformance regression, a fixture without provenance —
 # had nothing to fail on. `ARCHITECTURE.md` §7 designs this file and gives the job table it grows
-# into; P1 landed the first three rows, P2 and P4 have added theirs — a conformance job and an
-# evidence job — and P5 and P6 add the rest.
+# into; P1 landed the first rows, P2, P4, P5, P6 and PB added theirs, and on 2026-09-16 two checks
+# that until then ran only at a tag — the lint stage and `gates/wheel_install.py` — became the
+# `lint` and `wheel` jobs, so that a red in either arrives on the push and not on the release.
+# §7's table is the job set as it stands.
 #
 # WHY IT IS A SEPARATE FILE AND NOT MORE JOBS IN `publish.yml`
 # ------------------------------------------------------------
@@ -18,13 +20,16 @@
 #
 # THE STEPS ARE `publish.yml`'s GATE HALF, DELIBERATELY IDENTICAL IN SUBSTANCE
 # ----------------------------------------------------------------------------
-# Same Python (3.12, and `publish.yml` explains at length why it is not the declared 3.11 floor),
-# same install — `pip install -e "packages/cdm[test]"`, which is CONTRIBUTING.md's documented
+# Same install — `pip install -e "packages/cdm[test]"`, which is CONTRIBUTING.md's documented
 # setup command — and the same `pytest -q`. Two files running the suite two different ways is two
-# different greens, and the one that gates a release would be the one nobody had read.
+# different greens, and the one that gates a release would be the one nobody had read. The one
+# deliberate difference, since 2026-09-16: the `suite` job here runs on EVERY interpreter
+# `pyproject.toml` declares (the matrix below), where `publish.yml` runs it once, on 3.12, the
+# release interpreter; the other jobs of this file use 3.12 for the same reason `publish.yml` does.
 #
-# ACTIONS PINNED BY SHA, from the first commit. P6 will require it of every workflow; starting
-# compliant is cheaper than a migration, and a tag is a moving target on somebody else's account.
+# ACTIONS PINNED BY SHA, from the first commit. `tests/test_cdm_security_policy.py` requires it of
+# every workflow; starting compliant was cheaper than a migration, and a tag is a moving target on
+# somebody else's account.
 name: CI
 
 on:
@@ -35,7 +40,11 @@ on:
   pull_request:
 
 # Read-only, and nothing here widens it. This workflow publishes nothing, signs nothing and
-# needs no token: `id-token: write` lives on `publish.yml`'s publish job alone.
+# needs no token. `id-token: write` is granted on `publish.yml`'s `publish` job (the PyPI token)
+# and `attest` job (the Sigstore token) and on `rc-build.yml`'s `attest` job, and nowhere else —
+# `tests/test_cdm_security_policy.py` and `tests/test_cdm_trusted_publishing.py`'s
+# PERMITTED_WRITES hold that. (Corrected 2026-09-16: this sentence said "`publish.yml`'s publish
+# job alone", which stopped being true when round P7 added the attestation stage.)
 permissions:
   contents: read
 
@@ -45,8 +54,20 @@ concurrency:
 
 jobs:
   suite:
-    name: Suite, gates and manifests
+    name: Suite, gates and manifests (Python ${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      # Every interpreter `packages/cdm/pyproject.toml` declares (classifiers 3.11–3.14), so the
+      # floor and the ceiling are EXECUTED here rather than parsed at grammar level only — until
+      # 2026-09-16 the only floor evidence was `tests/test_cdm_version_floor.py`'s parse of the
+      # tree at 3.11 grammar, and nothing ran the suite on 3.11, 3.13 or 3.14 anywhere but a
+      # maintainer's machine. The three self-tests in that module that assert on the wording of
+      # findings a >=3.12 parser produces are guarded with `skipif` for the 3.11 leg, whose extra
+      # value is the corroboration test that only RUNS when a real 3.11 is on PATH.
+      # `fail-fast: false`: a red on one interpreter must not cancel the reading on the others.
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
     steps:
       - name: Check out the tree
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -57,10 +78,10 @@ jobs:
           # shallow clone makes both of those pass vacuously rather than fail.
           fetch-depth: 0
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python }}
 
       - name: Install by the documented path
         run: |
@@ -93,6 +114,76 @@ jobs:
 
       - name: The commit-message gate
         run: python gates/commit_message.py --rev HEAD
+
+  lint:
+    name: Lint — ruff, the release gate's rule set, on every push
+    # A job of its own and NOT a step of the matrixed `suite` job, which would run it four times
+    # for one reading. Until 2026-09-16 ruff ran only in `publish.yml`'s gate — on a tag push or a
+    # dispatch — so a finding surfaced at release time and nowhere earlier, which is the exposure
+    # `packages/cdm/pyproject.toml`'s own lint comment names: a stage added red is a stage somebody
+    # switches off. Here it goes red on the push that introduced the finding.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install the pinned linter from the package's own extra
+        # `[lint]` is the ONE place the ruff version is pinned. `publish.yml` installs the same
+        # extra, and `tests/test_cdm_lint_stage.py` refuses a `ruff==` typed into either workflow,
+        # so the tool version and the rule set are read from one file by both.
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[lint]"
+
+      - name: ruff, the same command publish.yml's gate runs
+        # `--config` explicitly for the reason publish.yml gives: there is no pyproject.toml at
+        # the repository root, so `gates/` and `tests/` would otherwise be linted under ruff's
+        # DEFAULT rule set.
+        run: ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests
+
+  wheel:
+    name: The installed package is the tested package (gates/wheel_install.py)
+    # Until 2026-09-16 this gate ran end to end only in `rc-build.yml` and in `publish.yml`'s
+    # build job — a dispatch or a tag — and its own history says what that costs: its rosters
+    # drifted and it stayed red on `main` for a period because "the thing that noticed was the
+    # thing nobody runs" (`tests/test_cdm_gate_rosters.py`). The offline half already runs on
+    # every `pytest`; this is the other half, on every push. It is a job of its own because the
+    # `supply-chain` job installs `build` for its own `python -m build`, and the gate refuses to
+    # share an interpreter with a second copy of `build` — a second copy alongside would leave
+    # which one built the artefact depending on PATH (`rc-build.yml` and `publish.yml` state the
+    # same reason).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          # The release interpreter (`publish.yml`'s build job): this gate builds the twin of the
+          # release artefact, and building it on the same interpreter is what makes the reading
+          # comparable.
+          python-version: '3.12'
+
+      - name: Install by the documented path
+        # `build` is deliberately NOT installed here — the gate provisions it into a venv of its
+        # own. The `[test]` extra is needed because the gate's `slice` check runs a test slice
+        # with THIS interpreter and `PYTHONPATH=packages/cdm`.
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "packages/cdm[test]"
+
+      - name: The gate, including the mutation check
+        # Same invocation as publish.yml's condition 2 minus `--export-dist`: nothing here uploads,
+        # so nothing here needs the bytes. 13 checks plus the proof that they can refuse a wheel.
+        run: python gates/wheel_install.py --mutation-check
 
   conformance:
     name: Conformance Suite v2, every shipped adapter
@@ -468,7 +559,19 @@ jobs:
           path: npm-audit.json
           if-no-files-found: error
 
-      - name: The site still builds from the audited tree
+      - name: The site still builds from the audited tree, and its own gates pass
         # Last step of the same job, deliberately: an upgrade that clears an advisory and breaks
         # the build is not a fix, and a separate job could go green on a lock the build rejects.
-        run: npm --prefix docs run build
+        #
+        # `npm run ci` AND NOT `npm run build`, since 2026-09-16. `docs/README.md` has always
+        # described `ci` as "what CI runs", and until this line CI ran only `build` — whose
+        # `prebuild` hook REGENERATES the schema-reference pages rather than checking them, so a
+        # hand-edited or stale committed page, a TypeScript error under `docs/src` or a broken
+        # admonition passed here and was caught only by whoever ran the deploy block locally.
+        # `ci` is `check:schemas && typecheck && build && check:admonitions`: the drift gate, the
+        # type check, the build, and the check that every `:::` directive rendered. It runs
+        # offline against the committed lock — the read that decided this was 2.3 s wall on a
+        # warm checkout — and `--prefix` rather than `cd`, because
+        # `tests/test_cdm_deploy_workflow.py` records what a persisting `cd` did to the deploy
+        # sequence.
+        run: npm --prefix docs run ci
