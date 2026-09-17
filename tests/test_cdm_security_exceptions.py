@@ -101,8 +101,8 @@ def test_the_directory_exists_with_its_schema_and_its_readme():
     """§45 names the path. `security/README.md` promised it and round P6 is where it lands."""
     assert EXCEPTIONS.is_dir(), (
         f"{EXCEPTIONS.relative_to(REPO)} does not exist. §45 names it as the exception mechanism "
-        "and both consumers read it; without the directory the derivation below silently yields "
-        "an empty allowlist for the wrong reason")
+        "and all three consumers read it; without the directory the derivation below silently "
+        "yields an empty allowlist for the wrong reason")
     assert SCHEMA_PATH.is_file()
     assert README.is_file()
 
@@ -268,15 +268,20 @@ def test_no_exception_is_granted_for_longer_than_a_year(path):
 
 
 # --------------------------------------------------------------------------------------------
-# The empty state, which is today's, and the derivation both consumers share.
+# The empty state, which is today's, and the derivation all three consumers share:
+# `gates/codeql_gate.py`, and the `pip-audit` step and the `docs-audit` job in ci.yml through it.
+# (This heading and the docstring below said "both consumers" until 2026-09-16; `docs-audit`
+# has been the third since round PB, 2026-09-08.)
 # --------------------------------------------------------------------------------------------
 
 def test_the_gate_reads_the_live_directory_without_refusing():
-    """A malformed file here would REFUSE both consumers; this is where that surfaces.
+    """A malformed file here would REFUSE every consumer; this is where that surfaces.
 
     `gates/codeql_gate.py` exits 2 on a refusal, which in CI reads as a broken gate rather than
-    as a finding. Catching it under `pytest` means the commit that adds a bad exception file
-    fails on this line rather than on a CodeQL run somebody has to go and read.
+    as a finding — and the `pip-audit` step and the `docs-audit` job derive their allowlists by
+    running that gate, so the one refusal takes all three down. Catching it under `pytest`
+    means the commit that adds a bad exception file fails on this line rather than on a CodeQL
+    run somebody has to go and read.
     """
     exemptions = codeql_gate.load_exceptions()
     assert len(exemptions) == len(EXCEPTION_FILES)
