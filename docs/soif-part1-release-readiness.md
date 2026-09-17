@@ -34,6 +34,16 @@ is precisely how `v2.1.0` and `v2.1.1` were both lost. The pre-push proof of the
 `gates/release_ref_rehearsal.py`, run against the tag that was refused, and section 17 records it
 as such.
 
+**Re-qualified 2026-09-17 for the 2.2.0 release — appended, and not a rewrite.** The 2.1.2 release
+this report certified completed on 2026-09-12 (`PUBLICATION.md` entry 19), and the twenty-eight
+commits since `v2.1.2` — three witness-side rounds and twenty-five audit commits — are the pending arc
+this re-qualification reads: `gates/bump_derivation.py
+--json` derives **MINOR**, number **2.2.0**, `unruled` **`[]`** over eighty-three rulings in
+`MIGRATIONS.md`'s pending section, `PACKAGE_VERSION` is still `2.1.2` and moves in the release
+round with the tag, and section 20 is still empty. Sections 18, 19 and 20 each carry a dated
+paragraph of the same date with the readings; every other section stands as corrected through
+2026-09-16, because the audit's own commits appended those corrections as they went.
+
 ---
 
 ## 1. Baseline
@@ -757,6 +767,15 @@ The commit that carries **this file** is the round-P8 commit immediately after i
 begins `SOIF P8`. Its hash is deliberately not written here: a hash cannot name the commit that
 carries it, and a number written before the commit exists is a number nobody re-derived.
 
+**Re-qualification, 2026-09-17.** This report also describes **`2baf6fb0d8434e75c109791bbd1e9b70c5d8c27b`** — the
+tip of `soif/1.0` at the end of the audit of 2026-09-16/17, twenty-eight commits after `v2.1.2`,
+every one pushed to `origin/soif/1.0` and none to `main`. `origin/main` is at
+`41f2141822c3d15d89b531c8f936a56e7209baa2`, the 2.1.2 witness commit; `git merge-base HEAD
+origin/main` is that same commit, so a fast-forward is available. The tag `v2.1.2` names `5ab80f5`
+and does **not** contain this commit. The commit that carries this re-qualification is the one
+immediately after it, whose subject begins `Audit readiness`; the release transition is the one
+after that, and the tag that names 2.2.0 contains all three.
+
 ## 19. Release status
 
 **The verdict is `ready for PR` (corrective 2.1.2)** — §57's own phrase for an empty blocker list,
@@ -805,6 +824,45 @@ and this tree earns it. The release round is the next step.
    reading taken here can predict it — only that `git merge-base HEAD origin/main` equals
    `origin/main`'s tip today, which is the condition a fast-forward needs.
 
+**Re-qualification, 2026-09-17: the verdict is `ready for PR` (2.2.0)**, read on the commit the
+paragraph of this date in section 18 names.
+
+* The derivation allows the release: `gates/bump_derivation.py --json` reads `declared` **2.1.2**,
+  arc `v2.1.1`→`v2.1.2`, `derived_kind` **PATCH** over one signal (`synapse_cdm/MIGRATIONS.md`),
+  and `pending` **MINOR**, number **2.2.0**, `unruled` **`[]`**. The MINOR is the floor the new
+  public names carry — `adapter.InputTooDeep` and the depth-bound helpers, the round-trip
+  tolerance members that moved `ADAPTER_API_VERSION` to 2.1.0, `canonical.py`,
+  `harness.select_fixtures`, `version.SEMVER_RE`, six `*_MAX_DEPTH` constants and a `[lint]`
+  extra — and the eighty-three units the table cannot decide are ruled, every one, in the
+  pending section's `**Bump ruling.**` paragraphs; the gate's raw reading of the same arc names
+  exactly those eighty-three.
+* `PACKAGE_VERSION` stays **`2.1.2`**, and that is the point. It moves in the release commit,
+  with the tag. `SCHEMA_VERSION` 2.1.0, `SC_OES_VERSION` 0.1.0, `MANIFEST_SCHEMA_VERSION` 1.2.0 and
+  `EVIDENCE_SCHEMA_VERSION` 1.0.0 are unmoved; `ADAPTER_API_VERSION` is **2.1.0** since 2026-09-16,
+  by `VERSIONING.md` §3's own row, for three additive members on `Adapter`.
+* `MIGRATIONS.md` carries `### 2.1.2` with the published-arc record and, above it, the pending
+  section with rounds PW, PR2 and PE and the audit's eight dated records, opening on
+  **70 files** moved inside the distribution, derived by `tests/test_cdm_release.py` against
+  `git diff --name-only v2.1.2 -- packages/cdm`. `RELEASE_NOTES.md` opens `# synapse-cdm 2.1.2`,
+  which is the version this tree is on.
+* Schemas `CURRENT: schemas vs models at 2.1.0`; manifests `CURRENT: manifests vs 14 shipped
+  adapters at manifest schema 1.2.0`; `gates/wheel_install.py` **13 checks, 0 failed**, 14
+  adapters × 2 schema modes, **1076 fixture verdicts, 0 failed**, 552 fixture files; the harness
+  over the roster **538 verdicts, 0 failed**, the same fourteen adapters in the same two
+  directions as 2.1.2; `security/exceptions/` holds no exception file.
+* Suite, on this commit: **5288 passed, 79 skipped, 0 failed** (172.89s) in a fresh `git clone --no-local` (the citable figure),
+  **5289 passed, 78 skipped, 0 failed** (172.49s) in the working tree; in-tree failure set **empty**, as section 17's
+  correction of 2026-09-16 requires.
+* CI on this commit: `ci.yml` run 35188342101 **success** on every leg of the 3.11–3.14 matrix, the
+  `lint` and `wheel` jobs included; `codeql.yml` run 35188342035 **success**, two languages,
+  0 results each. The rehearsal `gates/release_ref_rehearsal.py --tag v2.2.0 --commit
+  2baf6fb0…` stops at condition 3 (`PACKAGE_VERSION is 2.1.2`), which is the expected red at
+  qualification time and not a blocker: the release round runs it green, after the tag and before
+  the push, as the sequence requires.
+
+What "ready" does not decide is unchanged: the maintainer's authorisation of the number, and the
+fast-forward of `main`, which is the release round's first act.
+
 ## 20. Blockers
 
 ```text
@@ -819,6 +877,11 @@ green here, and the second is additionally proved by a module that replays the r
 against a real tag before it is pushed. Limitations 1 and 2 record the two standing tags and the
 structural limit of a branch dispatch, and both are properties of the releases that did not
 complete rather than of this tree.
+
+**Re-qualification, 2026-09-17: none.** No §56 item is red on the commit section 18's paragraph of
+this date names, no CI job is red on it, the pending arc leaves nothing unruled, and nothing in
+section 15 — every item of which now carries its 2026-09-16 correction where the audit closed it —
+rises to a blocker. The machine-readable statement below is unchanged.
 
 ## Appendix — §58's definition of done, line by line
 
