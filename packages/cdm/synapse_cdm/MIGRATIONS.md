@@ -846,6 +846,17 @@ approval `comment` verbatim and puts in `review_file` a public reference or noth
 `releases/witness/README.md` says what the 2.1.2 record's value was, and the verifier accepts an
 approval that carries either field.
 
+**AND WHERE ELSE SOIF IS EXPANDED, AND WHERE IT DELIBERATELY IS NOT, 2026-09-16.** The docs site
+never renders `README.md`, so a reader of the site could still not learn what the abbreviation
+stood for: the introduction page now expands it once, beside the layer table, with the same
+sentence about the private specification and its `§N` numbering, and the release-pipeline page
+expands it at its first use, which is the page's first section citation. `RELEASE_NOTES.md` is
+left as it stands, on purpose: its opening "SOIF Part 1 — Foundation & Assurance" is the body of
+the published 2.1.2 Release, and the file is the release round's to rewrite — every commit that
+has moved it since v2.0.0 is a round's. The next release's notes expand the abbreviation at their
+first use; the ruling is recorded here so that the omission in the 2.1.2 notes is documented
+rather than silent. Nothing in this paragraph ships in the distribution.
+
 **Bump ruling.** The gate finds three units it cannot classify from the table, and all three are the
 PATCH M's words of 2026-09-12 name — a declared fact corrected, no name added, removed or renamed,
 no consumer's call changed: `synapse_cdm/adapters/stanag4609.py:VMTI_IDENTITY_RULING` — PATCH, the

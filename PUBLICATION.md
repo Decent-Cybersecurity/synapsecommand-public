@@ -2923,7 +2923,12 @@ same commit **pass** in the fresh clone above — `3 passed` where the tree read
 the proof that the tree they judge and the artefact this entry is about are not the same tree. **A gate
 that walks the filesystem sees a working directory; a gate that walks the index sees a release** — the
 fourth release at which that distinction decided a reading, and the changelog-claim count has grown
-from thirty at entry 17 to fifty-nine entirely from the rounds that ran between.
+from thirty at entry 17 to fifty-nine entirely from the rounds that ran between. (**Corrected
+2026-09-16:** the three sweeps this paragraph describes enumerate `git ls-files` since this date, in
+the audit commit that made them, and the untracked directory they walked into is ignored by the
+tracked `.gitignore` rather than by `.git/info/exclude` alone, so a working tree that carries it
+reads the same **passed** the fresh clone read. The reading above is kept as the one this entry
+took; the distinction it draws is what the repair acted on.)
 
 **THE GITHUB RELEASE DID NOT EXIST AND WAS CREATED BY THIS ROUND, AS IT WAS FOR 1.4.1, 1.5.0, 1.6.0,
 1.7.0 AND 1.8.0.** Checked before anything was made: `gh release view v2.0.0` answered **release not
