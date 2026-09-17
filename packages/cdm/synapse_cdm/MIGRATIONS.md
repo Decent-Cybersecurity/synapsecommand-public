@@ -407,12 +407,14 @@ now true of it.
 release tag is `v2.2.0`, and `2.2.0` is what the index serves — `PUBLICATION.md` entry 20 is the
 measurement.
 
-**What moved inside the distribution: one shipped document** — `MIGRATIONS.md`, this section and
-the three witness paragraphs in the release procedure being what moved in it. Everything else the
-round touched ships in nothing: the ledger, the witness record and its README, the documentation
-page, the security policy, the witness builder the release workflow runs and the three test
-modules. The audit's npm record of 2026-09-17, second in this section, moves the same document
-and nothing else under `synapse_cdm/`.
+**What moved inside the distribution: two files** — `MIGRATIONS.md`, this section and the three
+witness paragraphs in the release procedure being what moved in it, and, since the ruff record of
+2026-09-17 below, `pyproject.toml`, whose `[lint]` pin is that record's one line. Everything else
+the witness round touched ships in nothing: the ledger, the witness record and its README, the
+documentation page, the security policy, the witness builder the release workflow runs and the
+three test modules. The audit's npm record of 2026-09-17, second in this section, moves this
+document and nothing else under `synapse_cdm/`; the ruff record, third, moves this document and
+the pin, and rules the pin PATCH where it is recorded.
 
 **THE 2.2.0 WITNESS ROUND's RECORD, 2026-09-17 — the 2.2.0 witness half: the record is committed,
 the ledger entry is written, the three paragraphs that said "the next tag push" say what it did,
@@ -529,6 +531,38 @@ sentence behind the way this one found them; and the 2026-09-16 record under 2.2
 PB's records under 2.1.0 each gain a dated correction beside the sentence that called `uuid`
 unfixed or unchanged. `PUBLICATION.md` entry 20's alert paragraph is a dated reading and stands;
 `RELEASE_NOTES.md` is 2.2.0's and stands.
+
+**THE AUDIT'S RUFF RECORD, 2026-09-17 — the `[lint]` pin moves 0.16.6 -> 0.16.7, Dependabot's #5
+landed by hand, and every reading the pin was measured with is re-taken and holds.** Unit:
+`pyproject.toml:optional-dependencies`, which the gate names and cannot decide from the table: the
+row it knows is *an optional dependency appears* (MINOR), a pin moving in place is one member
+leaving the set as another arrives, and the gate calls that a constraint moving rather than a set
+gaining or losing a member and asks whether the new constraint breaks an existing install. It does
+not. The extra keeps its one member and its exact-pin shape, `ruff==X.Y.Z`, which
+`tests/test_cdm_lint_stage.py` requires and from which no assertion derives a number; nothing in
+the package imports ruff, so no consumer's resolution moves; and what the pin exists to hold
+constant — the rule set the two workflows read — was re-read under 0.16.7 with `--show-settings`:
+`E9` alone still enables exactly one rule, `io-error` (E902); the configured set enables E902 and
+F821 and nothing else; the workflows' command,
+`ruff check --config packages/cdm/pyproject.toml packages/cdm gates tests`, reads `All checks
+passed!`; and `--select F` still counts 13 F841 and 8 F541, the 2026-09-16 remainder unchanged. So
+the number moved and the reading did not, which is the PATCH row's "a pin record moves". The PR's
+branch was not merged: it edits the one line, and this tree carries the version in sentences as
+well — the dated paragraph beside the pin, and this record — so the line is landed with them.
+
+**Bump ruling.** `pyproject.toml:optional-dependencies` — PATCH: the `[lint]` extra's one pin
+moves `ruff==0.16.6` -> `ruff==0.16.7` in place; the extra's shape, its member count and the rule
+set the workflows read from it are measured unchanged under the new version, and nothing
+importable moved.
+
+**WHAT STAYS DATED.** Every other `0.16.6` in the tree is a reading taken with that version and
+stands as written: the 2026-09-16 correction in this file's 2.2.0 record, in `pyproject.toml`'s
+lint comment, in `publish.yml` and on the release-pipeline page; `RELEASE_NOTES.md`, which is
+2.2.0's; the readiness report's re-derivation of the `F` count; and `tests/test_cdm_lint_stage.py`'s
+docstring, one assertion message and the comment-filter self-test that quotes the old workflow
+line. The live sentences — CONTRIBUTING.md's "the one version `pyproject.toml` pins" and the
+release-pipeline page's "at the version the package's `[lint]` extra pins" — name no number and
+move with the pin.
 
 ### 2.2.0 — 2026-09-17 — the audit arc: a declared depth bound on six of the fourteen, a computed L4, evidence that reproduces on another machine, an interpreter matrix and a lint stage in CI, a witness verifier that re-derives the assets, and every sentence the audit found false corrected
 

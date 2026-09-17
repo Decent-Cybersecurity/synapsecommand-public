@@ -96,7 +96,14 @@ test = ["pytest>=8.0", "rdflib>=7.0"]
 # CONTRIBUTING.md; a workflow line `ruff==` is what `tests/test_cdm_lint_stage.py` refuses. Pinned
 # exactly, not floored, because the rule set below was measured against this version and a newer
 # ruff can add a rule to `E9` or change what F821 sees.
-lint = ["ruff==0.16.6"]
+#
+# MOVED 0.16.6 -> 0.16.7 ON 2026-09-17, Dependabot's #5 landed by hand, because the number lives
+# here and in this tree's prose and not in a manifest alone. Re-read under 0.16.7 with
+# `--show-settings`: `E9` alone still enables exactly one rule, `io-error` (E902); the configured
+# set enables E902 and F821 and nothing else; the workflows' command reads `All checks passed!`
+# over `packages/cdm gates tests`; and `--select F` still counts 13 F841 and 8 F541. Every reading
+# below was taken with 0.16.6 and every one of them holds at 0.16.7, so none is re-dated.
+lint = ["ruff==0.16.7"]
 
 [project.urls]
 Homepage = "https://github.com/Decent-Cybersecurity/synapsecommand-public"
