@@ -312,6 +312,116 @@ UNRULED_HISTORICAL_ARCS = {
                            "synapse_cdm/schemas.py:write",
                            "synapse_cdm/schemas.py:<statement 6>",
                            "synapse_cdm/schemas.py:<statement 7>"},
+    # `v2.1.2 → v2.2.0` is the ninth entry and the largest the set holds, at EIGHTY-THREE units,
+    # and it arrives by the second entry's route: every one of the eighty-three WAS ruled, in
+    # `MIGRATIONS.md`'s 2.2.0 section, by the audit records of 2026-09-16 and 17 that made them
+    # — the parser-safety record and its second reading, the harness-evidence record, the
+    # citations record and the helpers record, and round PE's fourteen adapter classes before
+    # them. The ruled set and this set are the same eighty-three names, derived rather than
+    # asserted: the gate's `--json` reports `pending.unruled` as the empty list on the tree the
+    # transition was cut from, and this test derives the arc RAW and never calls
+    # `apply_rulings()`, so the eighty-three belong here whatever the section says about them.
+    #
+    # WHY IT IS LARGER THAN THE ENTRY ABOVE, and it is the arc's subject again. Fourteen adapter
+    # classes moved in place for `evidence.available` (round PE) and six of them again for a
+    # depth bound; the helpers record made seven bodies call `canonical.serialise` or
+    # `harness.select_fixtures` instead of restating them and removed twenty-nine unused imports,
+    # which the gate keys by position, so twenty-five `<statement N>` units are import lines that
+    # gained or lost a name or moved down by one; and the evidence, harness and suite bodies
+    # moved for the portable fixture label and the computed round-trip. `version.py`'s
+    # `ADAPTER_API_VERSION` is here because a constant's value moved and the table decides
+    # nothing about a value.
+    #
+    # THIS ROW WAS WRITTEN BEFORE THE TAG EXISTED, which the entry above says cannot be done.
+    # It can: the set is the raw derivation from `v2.1.2` to the working tree, and the transition
+    # commit itself adds no unit — its `version.py` edit is the assignment the gate excludes plus
+    # docstring and comment lines the functional AST does not see, and `MIGRATIONS.md` is the
+    # shipped-document PATCH row. The release round tagged and read this test green on the first
+    # tag, so the local re-tag the 2.1.0 round needed did not happen here.
+    ("v2.1.2", "v2.2.0"): {
+        "synapse_cdm/adapter.py:<statement 10>",
+        "synapse_cdm/adapter.py:<statement 4>",
+        "synapse_cdm/adapter.py:<statement 5>",
+        "synapse_cdm/adapter.py:<statement 6>",
+        "synapse_cdm/adapter.py:<statement 7>",
+        "synapse_cdm/adapter.py:<statement 8>",
+        "synapse_cdm/adapter.py:<statement 9>",
+        "synapse_cdm/adapter.py:Adapter",
+        "synapse_cdm/adapter.py:_bind_input_bound",
+        "synapse_cdm/adapters/adsb.py:AdsbAdapter",
+        "synapse_cdm/adapters/ais.py:<statement 43>",
+        "synapse_cdm/adapters/ais.py:<statement 44>",
+        "synapse_cdm/adapters/ais.py:<statement 45>",
+        "synapse_cdm/adapters/ais.py:<statement 46>",
+        "synapse_cdm/adapters/ais.py:<statement 47>",
+        "synapse_cdm/adapters/ais.py:AisAdapter",
+        "synapse_cdm/adapters/asterix_cat021.py:AsterixCat021Adapter",
+        "synapse_cdm/adapters/asterix_cat023.py:AsterixCat023Adapter",
+        "synapse_cdm/adapters/asterix_cat034.py:AsterixCat034Adapter",
+        "synapse_cdm/adapters/asterix_cat048.py:AsterixCat048Adapter",
+        "synapse_cdm/adapters/asterix_cat062.py:AsterixCat062Adapter",
+        "synapse_cdm/adapters/gmtif.py:<statement 2>",
+        "synapse_cdm/adapters/gmtif.py:GmtifAdapter",
+        "synapse_cdm/adapters/legion.py:<statement 4>",
+        "synapse_cdm/adapters/legion.py:LegionAdapter",
+        "synapse_cdm/adapters/pntmap.py:PntmapAdapter",
+        "synapse_cdm/adapters/stanag4586.py:Stanag4586Adapter",
+        "synapse_cdm/adapters/stanag4609.py:<statement 3>",
+        "synapse_cdm/adapters/stanag4609.py:Stanag4609Adapter",
+        "synapse_cdm/adapters/stanag4609.py:VMTI_IDENTITY_RULING",
+        "synapse_cdm/adapters/stanag4676.py:<statement 5>",
+        "synapse_cdm/adapters/stanag4676.py:<statement 6>",
+        "synapse_cdm/adapters/stanag4676.py:Stanag4676Adapter",
+        "synapse_cdm/adapters/stanag4676.py:parse_document",
+        "synapse_cdm/adapters/tak.py:TakAdapter",
+        "synapse_cdm/adapters/tak.py:_parse_cot",
+        "synapse_cdm/evidence.py:<statement 13>",
+        "synapse_cdm/evidence.py:<statement 14>",
+        "synapse_cdm/evidence.py:compare",
+        "synapse_cdm/evidence.py:generate",
+        "synapse_cdm/evidence.py:harness_selects",
+        "synapse_cdm/evidence.py:main",
+        "synapse_cdm/evidence.py:serialise",
+        "synapse_cdm/evidence.py:verify",
+        "synapse_cdm/evidence.py:write_badges",
+        "synapse_cdm/harness.py:<statement 10>",
+        "synapse_cdm/harness.py:<statement 9>",
+        "synapse_cdm/harness.py:_check_roundtrip",
+        "synapse_cdm/harness.py:main",
+        "synapse_cdm/harness.py:render_report",
+        "synapse_cdm/harness.py:run",
+        "synapse_cdm/manifest.py:<statement 2>",
+        "synapse_cdm/manifest.py:<statement 3>",
+        "synapse_cdm/manifest.py:AdapterMetadata",
+        "synapse_cdm/manifests.py:<statement 2>",
+        "synapse_cdm/manifests.py:<statement 3>",
+        "synapse_cdm/manifests.py:<statement 4>",
+        "synapse_cdm/manifests.py:<statement 5>",
+        "synapse_cdm/manifests.py:_serialise",
+        "synapse_cdm/manifests.py:shipped",
+        "synapse_cdm/models.py:<statement 8>",
+        "synapse_cdm/models.py:CDMBase",
+        "synapse_cdm/models.py:SourceRef",
+        "synapse_cdm/oes.py:<statement 7>",
+        "synapse_cdm/oes.py:EntityRelation",
+        "synapse_cdm/oes.py:SEMVER_RE",
+        "synapse_cdm/schemas.py:<statement 2>",
+        "synapse_cdm/schemas.py:<statement 3>",
+        "synapse_cdm/schemas.py:<statement 4>",
+        "synapse_cdm/schemas.py:<statement 5>",
+        "synapse_cdm/schemas.py:_serialise",
+        "synapse_cdm/suite.py:<statement 11>",
+        "synapse_cdm/suite.py:<statement 12>",
+        "synapse_cdm/suite.py:<statement 13>",
+        "synapse_cdm/suite.py:<statement 14>",
+        "synapse_cdm/suite.py:_dump",
+        "synapse_cdm/suite.py:_fixtures",
+        "synapse_cdm/suite.py:_sweep",
+        "synapse_cdm/suite.py:canonical",
+        "synapse_cdm/suite.py:loss_report",
+        "synapse_cdm/suite.py:main",
+        "synapse_cdm/suite.py:shipped_adapters",
+        "synapse_cdm/version.py:ADAPTER_API_VERSION"},
 }
 
 

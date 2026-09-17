@@ -47,7 +47,7 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
     the union was nine before this constant existed and is nine after it, because listing an
     owed axis before it exists is exactly what that table is for.)
 
-    Python package        2.1.2   this file, ``PACKAGE_VERSION``. Semver over the importable
+    Python package        2.2.0   this file, ``PACKAGE_VERSION``. Semver over the importable
                                   surface, the ``Adapter`` contract, the harness CLI, the
                                   fixture set. What ``pip install synapse-cdm==…`` resolves.
     CDM schema            2.1.0   this file, ``SCHEMA_VERSION``. The WIRE CONTRACT, carried in
@@ -63,7 +63,10 @@ authored, which is the same rule stated one level up. The full set, as of 2026-0
                                   a third time on 2026-09-12, at 2.1.2 against 2.1.0, for the same
                                   class of reason: the tag 2.1.1 named was refused by the release
                                   pipeline's CodeQL gate, so the package took one more corrective
-                                  PATCH and the wire contract still had no part in it.)
+                                  PATCH and the wire contract still had no part in it. And on
+                                  2026-09-17, at 2.2.0 against 2.1.0, for the ordinary reason at
+                                  last: the audit arc added public names and moved the Adapter
+                                  API to 2.1.0, and no wire field, schema or golden moved.)
     SC-OES                0.1.0   this file, ``SC_OES_VERSION``. The wire-SEMANTIC contract in
                                   ``spec/sc-oes/``, claimed by a producer in
                                   ``Event.oes.spec_version``. Still a Draft specification.
@@ -106,8 +109,8 @@ test_cdm_packaging.py`` sweeps for an assignment that would, and §46 forbids de
 WHY THEY MUST BE ALLOWED TO DIVERGE — AND, SINCE 1.1.0, WHY THAT IS NO LONGER AN ARGUMENT
 -----------------------------------------------------------------------------------------
 **They have diverged, and 1.2.0 widened the gap without anybody arguing about it.**
-``PACKAGE_VERSION`` is ``2.1.2`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
-seventh version of itself that does not have to reason about a hypothetical. (Corrected
+``PACKAGE_VERSION`` is ``2.2.0`` and ``SCHEMA_VERSION`` is ``2.1.0``, and this paragraph is the
+eighth version of itself that does not have to reason about a hypothetical. (Corrected
 2026-09-08, round P3. It read "``SCHEMA_VERSION`` is ``2.0.0``" and "third version" for one day:
 the schema took a MINOR for the CDM foundation primitives and the package took nothing, so the
 paragraph below — written the day the two became equal — is already describing a state that has
@@ -128,7 +131,14 @@ for the code-scanning analyses of a tag ref no workflow in this repository can p
 package took a second corrective PATCH the wire contract again had no part in. Two of the five
 partings in this file's life are now workflow defects rather than contract decisions, which is
 worth stating plainly: this axis records what was RELEASED, and a release is a thing a pipeline
-can refuse.)
+can refuse. **Corrected a fifth time 2026-09-17, the 2.2.0 release, and the parting is now a
+MINOR wide for the reason this section was written to describe**: the audit arc since ``v2.1.2``
+added importable names — ``adapter.InputTooDeep`` and the depth-bound helpers, the round-trip
+tolerance members that moved ``ADAPTER_API_VERSION`` to 2.1.0, ``canonical.py``,
+``harness.select_fixtures``, ``SEMVER_RE`` and ``is_semver`` in this file — and removed nothing,
+so ``gates/bump_derivation.py`` derived MINOR with nothing unruled; the schema moved by nothing,
+because no field, no published schema and no golden changed. The surface grew and the contract
+did not, which is what two numbers are FOR.)
 
 **AND ON 2026-09-07 THEY BECAME EQUAL AGAIN, WHICH IS A COINCIDENCE AND NOT A DERIVATION.**
 ``PACKAGE_VERSION`` moved 1.8.0 -> 2.0.0 by ADR 0005's decision, over its own table: a third
@@ -302,7 +312,18 @@ SCHEMA_VERSION = "2.1.0"
 #: module's own test derive the tag from this constant rather than write it down. Neither 2.1.0
 #: nor 2.1.1 reached the index; both tags stay where they are. The floor for the arc
 #: v2.1.1 -> v2.1.2 is PATCH with nothing unruled, and this number is that floor.
-PACKAGE_VERSION = "2.1.2"
+#: Moved 2.1.2 -> 2.2.0 on 2026-09-17, a MINOR, and this one IS the derived floor again — the first
+#: number since 2.1.0 that moved for what the distribution carries rather than for what a workflow
+#: refused. The audit arc since `v2.1.2` adds public names and removes nothing: `adapter.InputTooDeep`,
+#: `json_nesting_depth`, `container_depth`, `enforce_depth_bound`, `is_shipped` and `shipped`; the
+#: `ROUNDTRIP_TOLERANCE`, `ROUNDTRIP_TRANSFORMS` and `roundtrip_reference()` members of `Adapter`,
+#: which moved `ADAPTER_API_VERSION` 2.0.0 -> 2.1.0 on its own row; `canonical.py`;
+#: `harness.select_fixtures` and `fixtures_required_message`; `SEMVER_RE` and `is_semver` below;
+#: six `*_MAX_DEPTH` module constants; and a `[lint]` extra in `pyproject.toml`.
+#: `gates/bump_derivation.py` derives MINOR over that arc with nothing unruled once MIGRATIONS.md's
+#: eighty-three rulings in the 2.2.0 section are read, so the gate's floor and this number are one
+#: number. `SCHEMA_VERSION` stays at 2.1.0: no wire field, no published schema and no golden moved.
+PACKAGE_VERSION = "2.2.0"
 
 #: The SC-OES wire-semantic contract's version, and a THIRD axis. Carried by a producer in
 #: `Event.oes.spec_version`; read by nothing in this package as a gate, because an event written

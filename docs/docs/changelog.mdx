@@ -90,6 +90,18 @@ which is exactly why this correction is appended beside it rather than made insi
 contract took no part in the move and is unchanged by it. `PUBLICATION.md`'s ledger entry 19 is the
 measurement, taken after the upload rather than asserted before it, and it is also where the two
 tagged commits that never reached the index are recorded as permanent.
+
+**Updated 2026-09-17, the 2.2.0 release, and the gap is now a MINOR wide — for the ordinary reason
+at last.** On this tree the package is at `2.2.0` and the schema stays at `2.1.0`, and the number
+moved for what the distribution carries rather than for what a pipeline refused: the audit arc
+since `v2.1.2` added importable names — a depth bound in the adapter base class, the round-trip
+tolerance declarations that moved the Adapter API to 2.1.0, one semver pattern for every version
+field, a canonical serialiser written once — and `gates/bump_derivation.py` derived MINOR over it
+with nothing unruled. No wire field and no published schema moved, and no golden but the ten KLV
+ones whose VMTI identity ruling string quoted a private document by path, so a 2.1.x reader reads
+a 2.2.0 object unchanged. The paragraphs above are kept as written. **What the index serves
+is still a separate fact from what this tree says** — at the time of writing it is `2.1.2` — and
+`PUBLICATION.md`'s ledger is still where it is measured.
 :::
 
 :::note[1.2.0 added output and did not move this number, deliberately]

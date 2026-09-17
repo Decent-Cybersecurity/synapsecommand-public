@@ -59,7 +59,10 @@ written that the two numbers have been equal for a reason rather than by arithme
 *Dated note, 2026-09-16: `version.py:313` was the constant's line when that correction was
 written; `EVIDENCE_SCHEMA_VERSION` has since moved to `version.py:371`, the reading its row in the
 table below carries — two lines further down than that morning's 369, because the semver
-pattern the file gained the same day brought `import re` above every constant.*
+pattern the file gained the same day brought `import re` above every constant. And to
+`version.py:392` at the 2.2.0 release of 2026-09-17, when `PACKAGE_VERSION` gained the dated
+paragraph every release adds above it; the table is re-read at every release and this note is
+not, so the table's figure is the one to trust.*
 
 **Two readings moved in the same round and both are corrections rather than rewrites.**
 `MANIFEST_SCHEMA_VERSION` reads `1.1.0`: §34 of the specification needs an "explicit documented
@@ -84,12 +87,12 @@ comment lines were added above `MANIFEST_SCHEMA_VERSION` — and both are re-rea
 
 | axis | spec name | tree name | version today | authored in |
 |---|---|---|---|---|
-| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.1.2` | `packages/cdm/synapse_cdm/version.py:305` |
-| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:275` |
-| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:311` |
-| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.1.0` | `packages/cdm/synapse_cdm/version.py:322` |
-| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:357` |
-| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:371` |
+| Python package | `PACKAGE_VERSION` | `PACKAGE_VERSION` | `PACKAGE_VERSION` is `2.2.0` | `packages/cdm/synapse_cdm/version.py:326` |
+| CDM schema | `CDM_SCHEMA_VERSION` | `SCHEMA_VERSION` | `SCHEMA_VERSION` is `2.1.0` | `packages/cdm/synapse_cdm/version.py:285` |
+| SC-OES specification | `SC_OES_VERSION` | `SC_OES_VERSION` | `SC_OES_VERSION` is `0.1.0` | `packages/cdm/synapse_cdm/version.py:332` |
+| Adapter API | `ADAPTER_API_VERSION` | `ADAPTER_API_VERSION` | `2.1.0` | `packages/cdm/synapse_cdm/version.py:343` |
+| Manifest schema | `MANIFEST_SCHEMA_VERSION` | `MANIFEST_SCHEMA_VERSION` | `1.2.0` | `packages/cdm/synapse_cdm/version.py:378` |
+| Evidence schema | `EVIDENCE_SCHEMA_VERSION` | `EVIDENCE_SCHEMA_VERSION` | `1.0.0` | `packages/cdm/synapse_cdm/version.py:392` |
 | Operational Ontology | — | — | declared in its own metadata | `ontology/*.ttl`, projected into `registry/sc_oes/ontology_terms.json` |
 | Profile versions | — | — | one per profile, declared per document | each profile document, and `registry/sc_oes/profiles.json` |
 | Event semantic major | — | — | a segment of the identifier | the `type_id` itself, e.g. `sc.pnt.gnss_interference.v1` |
@@ -224,6 +227,14 @@ higher. The paragraph above is left standing: it said the number is taken at the
 sentence is what gets corrected, and it has now been corrected twice for the same class of reason
 — a ref-dependent release step whose first execution on a tag was also its only chance.
 
+**Dated note, 2026-09-17: the campaign's number is settled at `2.1.2`, and the release after it is
+`2.2.0` by the first bullet above doing what it said.** The arc since `v2.1.2` — the audit of
+2026-09-16 and 17 — added importable names and moved `ADAPTER_API_VERSION` 2.0.0 → 2.1.0 on §3's
+row, and `gates/bump_derivation.py` derived MINOR over it with nothing unruled once
+`MIGRATIONS.md`'s rulings were read; the release round typed that floor and nothing above it. The
+schema did not move. Nothing above is edited: this paragraph is the one that says the campaign's
+sentence stopped being corrected because the number it was about had shipped.
+
 ---
 
 ## 5. Main advancement
@@ -256,7 +267,7 @@ matters is the one that cannot be undone.
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0        # STOP here if it refuses. Do not merge. Do not rebase.
-git tag -a v2.1.2 -m "…"            # annotated; the workflow refuses a lightweight tag
+git tag -a v2.2.0 -m "…"            # annotated; the workflow refuses a lightweight tag
 git push origin main --follow-tags
 ```
 

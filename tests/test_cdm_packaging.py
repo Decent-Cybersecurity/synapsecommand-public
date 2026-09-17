@@ -325,6 +325,13 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     are `2.1.2` and `2.1.0`. Two of the partings this docstring tracks are now release-pipeline
     defects, and the pin below is what keeps them from being quietly re-linked while nobody is
     looking at the release.
+
+    **AND ON 2026-09-17 THE GAP WIDENED TO A MINOR, FOR THE ORDINARY REASON.** The 2.2.0 release
+    took the audit arc's MINOR — importable names added, the Adapter API at 2.1.0, nothing removed
+    — and the schema took nothing, because no field and no published schema moved (ten KLV goldens moved by one citation string): the
+    numbers are `2.2.0` and `2.1.0`. It is the parting `version.py`'s two tables describe as the
+    normal case, and the first since v2.1.0 that was argued from the diff rather than done by a
+    workflow.
     """
     offenders = []
     for path in sorted(PKG.rglob("*.py")):
@@ -344,13 +351,14 @@ def test_the_two_versions_are_independent_and_nothing_derives_one_from_the_other
     # The instruction the previous form of this assertion carried — "that is the expected event,
     # and the fix is to update this assertion to the two numbers you now mean, not to re-link
     # them" — is what was followed to get these values, and it still applies to the next bump.
-    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.1.2", "2.1.0"), (
+    assert (PACKAGE_VERSION, SCHEMA_VERSION) == ("2.2.0", "2.1.0"), (
         f"the two versions are {PACKAGE_VERSION} and {SCHEMA_VERSION}; this test pins them at "
-        "2.1.2 and 2.1.0. They are UNEQUAL by two PATCHes — the level they reached on 2026-09-09 "
-        "lasted one day, and two release tags were then refused by two steps of this project's "
-        "own release pipeline, each costing the package a PATCH the wire contract had no part in. "
-        "If you bumped one of them just now: that is the expected event, and the fix is to update "
-        "this assertion to the two numbers you now mean, not to re-link them"
+        "2.2.0 and 2.1.0. They are UNEQUAL by a MINOR — two release tags were refused by two steps "
+        "of this project's own release pipeline, each costing the package a PATCH the wire "
+        "contract had no part in, and the 2.2.0 release then took the audit arc's MINOR for "
+        "importable names the wire contract had no part in either. If you bumped one of them just "
+        "now: that is the expected event, and the fix is to update this assertion to the two "
+        "numbers you now mean, not to re-link them"
     )
     assert PACKAGE_VERSION != SCHEMA_VERSION or SCHEMA_VERSION != "1.0.0", (
         "the two numbers are equal at 1.0.0 again, which is the state this sweep was written for "

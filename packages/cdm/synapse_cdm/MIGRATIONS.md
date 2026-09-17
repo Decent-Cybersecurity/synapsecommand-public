@@ -11,7 +11,7 @@ because the section "Adapters that landed with no schema change" is thirteen ent
 every one of them would have been a package release. Both are declared in `version.py`, which is the
 one place the distinction is argued; nothing here restates it. They were both `1.0.0` at first
 release, by coincidence of two first releases, and they parted at the 1.1.0 release below:
-`PACKAGE_VERSION` is `2.1.2` and `SCHEMA_VERSION` is `2.1.0`. (That sentence was typed at the
+`PACKAGE_VERSION` is `2.2.0` and `SCHEMA_VERSION` is `2.1.0`. (That sentence was typed at the
 1.2.1 release and not moved for the eleven tags after it; since 2026-09-16 it is held to
 `version.py` by `tests/test_cdm_packaging.py`, so a release moves it or goes red.)
 
@@ -183,7 +183,7 @@ behind it.
 ### The sequence
 
 ```bash
-git tag -a v2.1.2 -m "..."                           # annotated, never lightweight
+git tag -a v2.2.0 -m "..."                           # annotated, never lightweight
 python gates/release_ref_rehearsal.py                # MANDATORY, and red means do not push
 git push origin main --follow-tags                   # this is the whole of it
 ```
@@ -334,7 +334,7 @@ pushed to its own remote; `main` moves once, at the release:
 git fetch origin
 git switch main
 git merge --ff-only soif/1.0     # a refusal is a STOP: never a merge commit, never a rebase
-git tag -a v2.1.2 -m "..."       # on main's new tip, after the fast-forward
+git tag -a v2.2.0 -m "..."       # on main's new tip, after the fast-forward
 git push origin main --follow-tags
 ```
 
@@ -373,10 +373,52 @@ now true of it.
 
 ## History
 
-### Unreleased
+### 2.2.0 — 2026-09-17 — the audit arc: a declared depth bound on six of the fourteen, a computed L4, evidence that reproduces on another machine, an interpreter matrix and a lint stage in CI, a witness verifier that re-derives the assets, and every sentence the audit found false corrected
 
-**Nothing in this section is in a release: there is no release that contains it.** The newest
-release tag is `v2.1.2`, and it is the first of the three 2.1.x tags the index actually serves.
+**This section carried the pending-arc heading and this release absorbed it** — the token itself is elided here, as at every roll since the third one recreated the carrier defect, because prose that spells it leaves the file answering four release gates in the affirmative with no such section present.
+
+**This section is a release and no longer the pending arc.** `PACKAGE_VERSION` is `2.2.0` at this
+commit, in `version.py`, and the tag `v2.2.0` names it. What the index actually serves is a
+measured fact about an upload rather than about this tree, so it is recorded in `PUBLICATION.md`'s
+ledger by the round that watched the upload and is not asserted here before it has happened. The
+paragraph this replaces said that nothing in the section was in a release and that the newest
+release tag was `v2.1.2`, the first of the three 2.1.x tags the index actually serves — the first
+clause stops being true at this commit and the second stays true until an upload changes it.
+
+**THE PACKAGE VERSION MOVED 2.1.2 -> 2.2.0 ON 2026-09-17, AND THE NUMBER IS THE DERIVED FLOOR.**
+`gates/bump_derivation.py` reads the arc from `v2.1.2` and derives MINOR with nothing unruled. The
+floor comes from the public names the records below added and from nothing removed —
+`adapter.InputTooDeep`, `json_nesting_depth`, `container_depth`, `enforce_depth_bound`,
+`is_shipped` and `shipped`; the `ROUNDTRIP_TOLERANCE`, `ROUNDTRIP_TRANSFORMS` and
+`roundtrip_reference()` members of `Adapter`, with `ADAPTER_API_VERSION` moving 2.0.0 -> 2.1.0 on
+its own row; `canonical.py`; `harness.select_fixtures` and `fixtures_required_message`;
+`version.SEMVER_RE` and `is_semver`; the six `*_MAX_DEPTH` module constants; and the `[lint]`
+extra — and the eighty-three units the table cannot decide are every one ruled in this section's
+`**Bump ruling.**` paragraphs, which the gate reads from this section from the moment the tag
+exists. So the floor and the number are one number and no Version ruling is needed or present.
+It is the first number since 2.1.0 that moved for what the distribution carries rather than for
+what a workflow refused. `SCHEMA_VERSION` does not move and stays at `2.1.0`: no wire field, no
+published schema and no golden moved in this arc, and the two axes are now a MINOR apart.
+
+**THE RELEASE TRANSITION ITSELF, 2026-09-17 — the release-state set and nothing else.**
+`version.py`'s constant and the live readings in its docstring; this section's heading and its
+opening paragraphs, the introduction's two-number sentence, and the two tag-command examples in
+the procedure and in the pipeline section; `RELEASE_NOTES.md`, rewritten for this release;
+`README.md`'s tag example; `VERSIONING.md`'s package-version figure, its axis-table line
+references, its tag-command example and a dated note under §4; `docs/docs/changelog.mdx`'s live
+pair of numbers; the two version literals `tests/test_cdm_packaging.py` pins; and the ninth
+`UNRULED_HISTORICAL_ARCS` row in `tests/test_cdm_bump_derivation.py`, for `("v2.1.2", "v2.2.0")`
+at eighty-three units — the same eighty-three this section rules, compared set to set. No adapter,
+no schema, no fixture and no dependency moves in this commit: the distribution's contents are the
+arc's, and the arc is what the records below describe. Units: `synapse_cdm/MIGRATIONS.md` and
+`synapse_cdm/version.py`, both already inside the count the next paragraph states.
+
+**What the release does NOT assert, for the reason every section since 2.0.0 gives.** What the
+index serves, the digests of the published files, the run that uploaded them, the approval that
+let it, and whether the pipeline's `witness` job produced a record this time are measured facts
+about an upload and not about this tree. They are recorded in `PUBLICATION.md`'s ledger and in the
+witness record under `releases/witness/` by the witness round that reads them from PyPI and from
+the Release API after the fact. Nothing here is written before it has happened.
 
 **What moved inside the distribution: 70 files** — `MIGRATIONS.md`, this section being what moved
 in it; the fourteen adapter modules under `synapse_cdm/adapters/`, which round PE moved and the two
